@@ -28,7 +28,6 @@ export async function middleware(req: NextRequest) {
     });
   }
 
-  console.log("middleware", MULTI_TENANT, `/${hostname}${pathname}${search}`);
   // rewrite everything else to `/[domain]/[slug] dynamic route
   return NextResponse.rewrite(
     new URL(`/${hostname}${pathname}${search}`, req.url),

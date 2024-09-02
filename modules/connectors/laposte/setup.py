@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.laposte",
-    version="2024.6-rc9",
+    version="2024.6",
     description="Karrio - La Poste Shipping Extension",
     long_description=long_description,
     long_description_content_type="text/markdown",

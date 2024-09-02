@@ -1942,13 +1942,10 @@ class Country(utils.Enum):
     ZW = "Zimbabwe"
     # Adding missing country codes
     EH = "Western Sahara"
-    GG = "Guernsey"
     IM = "Isle of Man"
-    JE = "Jersey"
     BL = "Saint Barthelemy"
     MF = "Saint Martin"
     SX = "Sint Maarten"
-    SS = "South Sudan"
     XK = "Kosovo"
 
 

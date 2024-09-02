@@ -4032,6 +4032,12 @@
         "interfaces": null,
         "enumValues": [
           {
+            "name": "AC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "AD",
             "description": null,
             "isDeprecated": false,
@@ -5431,6 +5437,36 @@
           },
           {
             "name": "ZW",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "EH",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "IM",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "BL",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "MF",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SX",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null

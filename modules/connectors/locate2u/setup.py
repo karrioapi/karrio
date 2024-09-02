@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.locate2u",
-    version="2024.6-rc9",
+    version="2024.6",
     description="Karrio - Locate2u Shipping Extension",
     long_description=long_description,
     long_description_content_type="text/markdown",

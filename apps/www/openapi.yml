@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2024.6`.
+    The current version is `2024.6.1`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: '2024.6'
+  version: 2024.6.1
 paths:
   /:
     get:
@@ -4021,6 +4021,7 @@ components:
           maxLength: 50
         country_code:
           enum:
+          - AC
           - AD
           - AE
           - AF
@@ -4255,8 +4256,13 @@ components:
           - ZA
           - ZM
           - ZW
+          - EH
+          - IM
+          - BL
+          - MF
+          - SX
           type: string
-          x-spec-enum-id: f907b2af5d9d32f1
+          x-spec-enum-id: 05a7b91de773db3e
           description: The address country code
         email:
           type: string
@@ -4347,6 +4353,7 @@ components:
           maxLength: 50
         country_code:
           enum:
+          - AC
           - AD
           - AE
           - AF
@@ -4581,8 +4588,13 @@ components:
           - ZA
           - ZM
           - ZW
+          - EH
+          - IM
+          - BL
+          - MF
+          - SX
           type: string
-          x-spec-enum-id: f907b2af5d9d32f1
+          x-spec-enum-id: 05a7b91de773db3e
           description: The address country code
         email:
           type: string
@@ -5268,6 +5280,7 @@ components:
           description: The currency of the commodity value amount
         origin_country:
           enum:
+          - AC
           - AD
           - AE
           - AF
@@ -5502,9 +5515,14 @@ components:
           - ZA
           - ZM
           - ZW
+          - EH
+          - IM
+          - BL
+          - MF
+          - SX
           - null
           type: string
-          x-spec-enum-id: f907b2af5d9d32f1
+          x-spec-enum-id: 05a7b91de773db3e
           nullable: true
           description: The origin or manufacture country
         parent_id:
@@ -5724,6 +5742,7 @@ components:
           description: The currency of the commodity value amount
         origin_country:
           enum:
+          - AC
           - AD
           - AE
           - AF
@@ -5958,9 +5977,14 @@ components:
           - ZA
           - ZM
           - ZW
+          - EH
+          - IM
+          - BL
+          - MF
+          - SX
           - null
           type: string
-          x-spec-enum-id: f907b2af5d9d32f1
+          x-spec-enum-id: 05a7b91de773db3e
           nullable: true
           description: The origin or manufacture country
         parent_id:
@@ -6872,6 +6896,7 @@ components:
           description: The currency of the commodity value amount
         origin_country:
           enum:
+          - AC
           - AD
           - AE
           - AF
@@ -7106,9 +7131,14 @@ components:
           - ZA
           - ZM
           - ZW
+          - EH
+          - IM
+          - BL
+          - MF
+          - SX
           - null
           type: string
-          x-spec-enum-id: f907b2af5d9d32f1
+          x-spec-enum-id: 05a7b91de773db3e
           nullable: true
           description: The origin or manufacture country
         parent_id:
@@ -7851,6 +7881,7 @@ components:
           maxLength: 50
         country_code:
           enum:
+          - AC
           - AD
           - AE
           - AF
@@ -8085,8 +8116,13 @@ components:
           - ZA
           - ZM
           - ZW
+          - EH
+          - IM
+          - BL
+          - MF
+          - SX
           type: string
-          x-spec-enum-id: f907b2af5d9d32f1
+          x-spec-enum-id: 05a7b91de773db3e
           description: The address country code
         email:
           type: string
