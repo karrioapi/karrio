@@ -1,18 +1,40 @@
-# Karrio preview 2024.6-rc35
+# Karrio OSS 2024.6
 
-## Changes
+> [!IMPORTANT]
+> Thank you for your patience as I go through a time of workload adjustment between my new role and the maintenance of Karrio. [Read my community announcement here](https://github.com/orgs/karrioapi/discussions/585)
 
 ### Feat
 
+-   refactor: dashboard extracting non-routing code and dependencies to `@karrio/core` package
+-   [refactor: dashboard from Nextjs page router to app router](https://github.com/karrioapi/karrio/pull/656/commits/8d0e2feec8c284b7f5bb577ea0b0a50b727001c2)
 -   [feat: apply utc timezone to sapient integration ship date](https://github.com/karrioapi/karrio/commit/06e378d6eada14f10c91138078caad4d9f122e25)
-
-### Chore
-
--   [chore: handle `eshipper` credential transfer from username|password to principal|credential](https://github.com/karrioapi/karrio/commit/536fc037860d04cac648963e7dd038399cd7296e)
-
-# Karrio preview 2024.6-rc33
-
-## Changes
+-   [feat: add support for FedEx scan events multi-datetime formats](https://github.com/karrioapi/karrio/pull/655/commits/2039e5d51523f368dbbee1b0d8e631eed2b1b347)
+-   [feat: handle shipment_date update when passed upstream instead of per extension implementations](https://github.com/karrioapi/karrio/pull/655/commits/0d73add6247ed558b3068f817bcdda173d0d11c8)
+-   feat: add `karrio.lib` to document template context
+-   feat: Disable "note" alert types as previously done in `fedex_ws` #638
+-   feat: rename legacy USPS extensions to `usps_wt` (for USPS Web Tools)
+-   feat: Carrier Connection REST API #582
+-   reat: [carrier-integration | interoperability] SAPIENT #633
+-   feat: FedEx Tracking should be giving us the `signed_by` #635
+-   feat: USPS REST API integration
+-   feat: Handle defaulting size units to LB/IN for UPS US rates and shipment requests
+-   feat: add a description field to parcel forms
+-   feat: add missing per package description data mapping to `ups` extension
+-   feat: cherry-pick `hay_post` integration
+-   feat: Finalize `eShipper` new API integration
+-   feat: add back FedEx tracking POD image
+-   feat: add workspace config for automatically applying insurance to full package value
+-   feat: add support for metadata link rendering
+-   feat: Add standardized flag for all supported carriers
+-   feat: expose return_address to GraphQL and API specs and generated clients
+-   feat: Add return address to create label forms across the dashboard
+-   Introduce the `return_address` field
+-   feat: Add Django admin editor for document templates
+-   feat: Add support for env config of Redis username and password (#564)
+-   feat: Bootstrap new `eshipper` API extension
+-   feat: Make cache available to all connection settings
+-   feat: add `carrier_id` to the `POST /v1/proxy/shipping/{carrier_name}/cancel` to allow precise carrier account selection for the operation. #590
+-   feat: Enhance Documents REST API with support for template management CRUD operations and generic document generator API in addition to Trade API upload API. #581
 
 ### Fix
 
@@ -21,207 +43,66 @@
 -   fix: tracker filter to return tracker if already existent
 -   fix: `fedex` tracking estimated delivery date response parsing
 -   fix: migration defaulting to hardcoded `eshipper` for `carrier_name`
-
-# Karrio preview 2024.6-rc32
-
-## Changes
-
-### Fix
-
 -   [fix: sapient shipment cancellation response parsing](https://github.com/karrioapi/karrio/commit/660e397eb473096dc4bfc3d22eb8dcdeb3823dca)
-
-# Karrio preview 2024.6-rc31
-
-## Changes
-
-### Feat
-
--   [feat: add support for FedEx scan events multi-datetime formats](https://github.com/karrioapi/karrio/pull/655/commits/2039e5d51523f368dbbee1b0d8e631eed2b1b347)
--   [feat: handle shipment_date update when passed upstream instead of per extension implementations](https://github.com/karrioapi/karrio/pull/655/commits/0d73add6247ed558b3068f817bcdda173d0d11c8)
-
-### Fix
-
 -   [Fix FedEx multi shipment creating multiple of packages](https://github.com/karrioapi/karrio/pull/655/commits/9597f2fdfa187f1e2f7dc30583e4e05f46b33a3c)
-
-# Karrio preview 2024.6-rc30
-
-## Changes
-
-### Fix
-
 -   [fix: invalid language and lang field default state assignment](https://github.com/karrioapi/karrio/commit/f7c1be38323853d0a61af4e7b7ff8d35b58cee73)
 -   [fix: eshipper carrier data parsing for both rating and shipping response data](https://github.com/karrioapi/karrio/commit/58f37b190d0bbb9bcf3a59a067b74e2b4cb5c9fa)
 -   [fix: debug and consolidate eshipper shipment cancellation with live tests](https://github.com/karrioapi/karrio/commit/e333436e29dff9718068c1d580fd43c2cd2310ac)
 -   [fix: connection data parsing when saving tracing records](https://github.com/karrioapi/karrio/commit/3ff91671982a9b763d976f815a9ec40509b99635)
 -   [feat: handle fedex max contact and company name](https://github.com/karrioapi/karrio/commit/71de4b7fba324ee661935a90888175b7bf792fcb)
+-   fix: `usps` API token missing scope
+-   fix: eShipper server URL for production mode and label problem
+-   [hotfix: add fallback values to SAPIENT shipment request](https://github.com/karrioapi/karrio/commit/1fc830346f0653aefb89ed896f8817a32a1a978b)
+-   fix: consolidate SAPIENT integration with live tests
+-   fix: `eshipper` dimension parsing requirements
+-   hot-fix(`2024.6-rc24`): migration race condition issue #645
+-   clean up: remaining usage of deprecated `providers.MODELS` dynamic object created by old carrier settings models
+-   hot-fix for `2024.6-rc24`: regression on carrier configuration `test_mode` assignment for carrier connection registration in live mode.
+-   fix: Incorrect Item Quantity Distribution in Multi-Package Orders #634
+-   fix: `eshipper` database migration leaving orphan carrier data
+-   fix: #628
+-   fix: authenticated requests race condition issues
+-   fix: Dashboard environment variables configuration breaking change
+-   fix: dashboard Nextjs undefined env var caused by deprecated environment Configs
+-   fix: shipment sample fallback on document generation module
+-   fix: cancel shipment `carrier_id` check
+-   fix: UPS Saturday delivery option flag mapping
+-   fix: FedEx variableOptions fallback value to None
+-   fix: regression on FedEx shipping options parsing
+-   fix: regression of quicktype schema type generation commands
+-   fix: FedEx `"variableOptions"` format issue
+-   fix(2 birds): cache declaration leftovers and tracing record saving failing due to cache handle
+
+### Docs
+
+-   docs: Update API specs and generate API docs
+-   docs: update API docs with new return_address support
+-   docs: setup `docusaurus` `docusaurus-openapi-docs` plugin
+-   docs: Improve generated OpenAPI with annotation
 
 ### Chore
 
+-   [chore: deprecate apps module from OSS build](https://github.com/karrioapi/karrio/pull/656/commits/e115dddee06d498d5ad5a6de0b21094e528dfc53)
+-   [chore: handle `eshipper` credential transfer from username|password to principal|credential](https://github.com/karrioapi/karrio/commit/536fc037860d04cac648963e7dd038399cd7296e)
 -   [chore: fix generic carrier configration parsing](https://github.com/karrioapi/karrio/commit/3ef15ca26d9a7d108f6cdceb411e94df060cae11)
 -   [chore: fix docs generation and docusaurus dependencies](https://github.com/karrioapi/karrio/commit/e5dd6978569d7c6987d080e875c2b67843091754)
 -   [chore: improve enum typing for lang and language configs for connectors and handle default values for carrier registration modal](https://github.com/karrioapi/karrio/commit/5a40c51755874359fc9f3356b79c18e14628d352)
 -   [refactor: carrier proxies to only be generated for django admin and prevent migration requirement](https://github.com/karrioapi/karrio/commit/6889a8245eb8091d02e05644a046815f7798cc7c)
-
-# Karrio preview 2024.6-rc29
-
-## Changes
-
-### Feat
-
--   feat: add `karrio.lib` to document template context
-
-### Fix
-
--   fix: `usps` API token missing scope
--   fix: eShipper server URL for production mode and label problem #647# Karrio preview 2024.6-rc28
-    > [!IMPORTANT]
-    > This is a release candidate for the upcoming 2024.6 major release. There are already a couple of breaking changes to watch out for.
-
-## Changes
-
-### Hotfix
-
--   [hotfix: add fallback values to SAPIENT shipment request](https://github.com/karrioapi/karrio/commit/1fc830346f0653aefb89ed896f8817a32a1a978b)# Karrio preview 2024.6-rc27
-    > [!IMPORTANT]
-    > This is a release candidate for the upcoming 2024.6 major release. There are already a couple of breaking changes to watch out for.
-
-## Changes
-
-### Fix
-
--   fix: consolidate SAPIENT integration with live tests
--   fix: `eshipper` dimension parsing requirements# Karrio preview 2024.6-rc26
-    > [!IMPORTANT]
-    > This is a release candidate for the upcoming 2024.6 major release. There are already a couple of breaking changes to watch out for.
-    >
-    > Thank you for your patience as I go through a time of workload adjustment between my new role and the maintenance of Karrio. [Read my community announcement here](https://github.com/orgs/karrioapi/discussions/585)
-
-## Changes
-
-> [!NOTE]
-> This release candidate introduces the last major breaking changes. I highly recommend testing the upgrade in a staging/testing environment.
->
-> The next release should hopefully be the official `2024.6`. Please open an issue if you have any migrations or upgrade issues.
-
--   hot-fix(`2024.6-rc24`): migration race condition issue #645
--   clean up: remaining usage of deprecated `providers.MODELS` dynamic object created by old carrier settings models
-
-[View https://github.com/karrioapi/karrio/releases/tag/v2024.6-rc24 for changelog](https://github.com/karrioapi/karrio/releases/tag/v2024.6-rc24)
-
-# Karrio preview 2024.6-rc25
-
-> [!IMPORTANT]
-> This is a release candidate for the upcoming 2024.6 major release. There are already a couple of breaking changes to watch out for.
->
-> Thank you for your patience as I go through a time of workload adjustment between my new role and the maintenance of Karrio. [Read my community announcement here](https://github.com/orgs/karrioapi/discussions/585)
-
-## Changes
-
-> [!NOTE]
-> This release candidate introduces the last major breaking changes. I highly recommend testing the upgrade in a staging/testing environment.
->
-> The next release should hopefully be the official `2024.6`. Please open an issue if you have any migrations or upgrade issues.
-
--   hot-fix for `2024.6-rc24`: regression on carrier configuration `test_mode` assignment for carrier connection registration in live mode.
-
-[View https://github.com/karrioapi/karrio/releases/tag/v2024.6-rc24 for changelog](https://github.com/karrioapi/karrio/releases/tag/v2024.6-rc24)
-
-# Karrio preview 2024.6-rc24
-
-> [!IMPORTANT]
-> This is a release candidate for the upcoming 2024.6 major release. There are already a couple of breaking changes to watch out for.
->
-> Thank you for your patience as I go through a time of workload adjustment between my new role and the maintenance of Karrio. [Read my community announcement here](https://github.com/orgs/karrioapi/discussions/585)
-
-## Changes
-
-> [!NOTE]
-> This release candidate introduces the last major breaking changes. I highly recommend testing the upgrade in a staging/testing environment.
->
-> The next release should hopefully be the official `2024.6`. Please open an issue if you have any migrations or upgrade issues.
-
--   Disable "note" alert types as previously done in `fedex_ws` #638
--   feat: rename legacy USPS extensions to `usps_wt` (for USPS Web Tools)
--   [feat] Carrier Connection REST API #582
--   [carrier-integration | interoperability] SAPIENT #633
--   FedEx Tracking should be giving us the `signed_by` #635
--   Incorrect Item Quantity Distribution in Multi-Package Orders #634
-
-Special thanks to @ChrisNolan (🎉 first contribution) and @jacobshilitz
-
-# Karrio preview 2024.6-rc22
-
-> [!IMPORTANT]
-> This is a release candidate for the upcoming 2024.6 major release. There are already a couple of breaking changes to watch out for.
->
-> Thank you for your patience as I go through a time of workload adjustment between my new role and the maintenance of Karrio. [Read my community announcement here](https://github.com/orgs/karrioapi/discussions/585)
-
-## Changes
-
-### Feat
-
--   feat: USPS REST API integration
--   feat: Handle defaulting size units to LB/IN for UPS US rates and shipment requests
-
-### Fix
-
--   fix: `eshipper` database migration leaving orphan carrier data
--   fix: #628
+-   chore: update create_label component formatting
+-   chore: update API tests for the return_address field
+-   chore: update unit tests for the new return_address field
+-   chore: update Readme dashboard illustration
+-   chore: Apply minimal query optimization
+-   chore: Prevent backup file creation from `sed` command
+-   chore: investigate Admin user creation issue: `/admin/user_accounts trying to add a new user account does not get added`
 
 ### Breaking changes
 
-This PR introduces the new USPS REST API integration. It is still in beta and needs further live tests.
-
-# Karrio preview 2024.6-rc21
-
-> [!IMPORTANT]
-> This is a release candidate for the upcoming 2024.6 major release. There are already a couple of breaking changes to watch out for.
->
-> Thank you for your patience as I go through a time of workload adjustment between my new role and the maintenance of Karrio. [Read my community announcement here](https://github.com/orgs/karrioapi/discussions/585)
-
-## Changes
-
-### Feat
-
--   feat: add a description field to parcel forms
--   feat: add missing per package description data mapping to `ups` extension
-
-### Fix
-
--   fix: authenticated requests race condition issues
-
-# Karrio preview 2024.6-rc20
-
-> [!IMPORTANT]
-> This is a release candidate for the upcoming 2024.6 major release. There are already a couple of breaking changes to watch out for.
->
-> Thank you for your patience as I go through a time of workload adjustment between my new role and the maintenance of Karrio. [Read my community announcement here](https://github.com/orgs/karrioapi/discussions/585)
->
-> Please make sure to update your deployment environment variables for the dashboard when upgrading to `rc10 +`
-> Check out the docs here and the following files to make sure you have the right environment variables especially if you are not using our public docker-compose files and have a custom deployment or hosted on something live Vercel.
->
-> -   [Dashboard env config](https://docs.karrio.io/product/self-hosting/environment/#karrio-dashboard)
-> -   Local dev [docker-compose.yml](https://github.com/karrioapi/karrio/blob/main/docker/docker-compose.yml)
-> -   Hobby [docker-compose.hobby.yml](https://github.com/karrioapi/karrio/blob/main/docker/docker-compose.hobby.yml)
-
-## Changes
-
-### Fix
-
--   finally got a stable build for the dashboard docker image
-
-# Karrio preview 2024.6-rc14
-
-> [!IMPORTANT]
-> This is a release candidate for the upcoming 2024.6 major release. There are already a couple of breaking changes to watch out for.
->
-> Thank you for your patience as I go through a time of workload adjustment between my new role and the maintenance of Karrio. [Read my community announcement here](https://github.com/orgs/karrioapi/discussions/585)
-
-## Changes
-
-### Fix
-
--   fix: Dashboard environment variables configuration breaking change
+-   feat: add daytime precision to tracking event time format (`AM/PM`)
+-   feat: remove deprecated `eshipper_xml` extension
+-   Rename legacy extension `eshiper` -> `eshipper_xml` to prepare for the upgrade to the new eShipper API
+-   The Electronic Trade Document upload API was changed from `POST /v1/documents` to `POST /v1/documents/uploads`
+-   The `GET /v1/documents` endpoint returning ETD upload records is now `GET /v1/documents/uploads`
 
 > [!CAUTION]
 > Please make sure to update your deployment environment variables for the dashboard when upgrading to `rc10 +`
@@ -231,190 +112,9 @@ This PR introduces the new USPS REST API integration. It is still in beta and ne
 > -   Local dev [docker-compose.yml](https://github.com/karrioapi/karrio/blob/main/docker/docker-compose.yml)
 > -   Hobby [docker-compose.hobby.yml](https://github.com/karrioapi/karrio/blob/main/docker/docker-compose.hobby.yml)
 
-# Karrio preview 2024.6-rc11
+Special thanks to contributors: @ChrisNolan (🎉 first contribution), @jacobshilitz and @david-kocharyan
 
-> [!IMPORTANT]
-> This is a release candidate for the upcoming 2024.6 major release. There are already a couple of breaking changes to watch out for.
->
-> Thank you for your patience as I go through a time of workload adjustment between my new role and the maintenance of Karrio. [Read my community announcement here](https://github.com/orgs/karrioapi/discussions/585)
-
-## Changes
-
-### Feat
-
--   feat: cherry-pick `hay_post` integration# Karrio preview 2024.6-rc10
-    > [!IMPORTANT]
-    > This is a release candidate for the upcoming 2024.6 major release. There are already a couple of breaking changes to watch out for.
-    >
-    > Thank you for your patience as I go through a time of workload adjustment between my new role and the maintenance of Karrio. [Read my community announcement here](https://github.com/orgs/karrioapi/discussions/585)
-
-## Changes
-
-### Fix
-
--   fix: dashboard Nextjs undefined env var caused by deprecated environment Configs
-
-# Karrio preview 2024.6-rc9
-
-> [!IMPORTANT]
-> This is a release candidate for the upcoming 2024.6 major release. There are already a couple of breaking changes to watch out for.
->
-> Thank you for your patience as I go through a time of workload adjustment between my new role and the maintenance of Karrio. [Read my community announcement here](https://github.com/orgs/karrioapi/discussions/585)
-
-## Changes
-
-### Feat
-
--   feat: Finalize `eShipper` new API integration
--   feat: add back FedEx tracking POD image
--   feat: add workspace config for automatically applying insurance to full package value
--   feat: add support for metadata link rendering
-
-### Fix
-
--   fix: shipment sample fallback on document generation module
-
-### Breaking change
-
--   feat: add daytime precision to tracking event time format (`AM/PM`)
--   feat: remove deprecated `eshipper_xml` extension
-
-Special thanks to contributors: @jacobshilitz and @david-kocharyan
-
-### 🚀 Celebrating a new sponsor:
-
-@ alissonf216
-
-# Karrio preview 2024.6-rc8
-
-> [!IMPORTANT]
-> This is a release candidate for the upcoming 2024.6 major release. There are already a couple of breaking changes to watch out for.
->
-> Thank you for your patience as I go through a time of workload adjustment between my new role and the maintenance of Karrio. [Read my community announcement here](https://github.com/orgs/karrioapi/discussions/585)
-
-## Changes
-
-### Fix
-
--   Fix cancel shipment `carrier_id` check
-
-# Karrio preview 2024.6-rc7
-
-> [!IMPORTANT]
-> This is a release candidate for the upcoming 2024.6 major release. There are already a couple of breaking changes to watch out for.
-
-## Changes
-
-### Feat
-
--   feat: Add standardized flag for all supported carriers
-
-### Fix
-
--   fix: UPS Saturday delivery option flag mapping
--   fix: FedEx variableOptions fallback value to None
-
-### Docs
-
--   docs: Update API specs and generate API docs
-
-# Karrio preview 2024.6-rc5
-
-> [!IMPORTANT]
-> This is a release candidate for the upcoming 2024.6 major release. There are already a couple of breaking changes to watch out for.
-
-## Changes
-
-### Feat
-
--   feat: expose return_address to GraphQL and API specs and generated clients
--   feat: Add return address to create label forms across the dashboard
-
-### Fix
-
--   fix: regression on FedEx shipping options parsing
--   fix: regression of quicktype schema type generation commands
-
-### Docs
-
--   docs: update API docs to the latest RC version
-
-### Chore
-
--   chore: update create_label component formatting
-    # Karrio preview 2024.6-rc4
-    > [!IMPORTANT]
-    > This is a release candidate for the upcoming 2024.6 major release. There are already a couple of breaking changes to watch out for.
-
-## Changes
-
-### Feat
-
--   Introduce the `return_address` field
-
-### Docs
-
--   docs: update API docs with new return_address support
-
-### Chore
-
--   chore: update API tests for the return_address field
--   chore: update unit tests for the new return_address field
-
-# Karrio preview 2024.6-rc3
-
-> [!IMPORTANT]
-> This is a release candidate for the upcoming 2024.6 major release. There are already a couple of breaking changes to watch out for.
-
-## Changes
-
-### Feat
-
--   feat: Add Django admin editor for document templates
-
-### Fix
-
--   fix: FedEx `"variableOptions"` format issue
-
-### Chore
-
--   investigate: Admin user creation issue: `/admin/user_accounts trying to add a new user account does not get added`
-    # Karrio preview 2024.6-rc2
-    > [!IMPORTANT]
-    > This is a release candidate for the upcoming 2024.6 major release. There are already a couple of breaking changes to watch out for.
-
-## Changes
-
-### Fix
-
--   fix(2 birds): cache declaration leftovers and tracing record saving failing due to cache handle# Karrio preview 2024.6-rc1
-    > [!IMPORTANT]
-    > This is a release candidate for the upcoming 2024.6 major release. There are already a couple of breaking changes to watch out for.
-
-### Feat
-
--   feat: Add support for env config of Redis username and password (#564)
--   feat: Bootstrap new `eshipper` API extension
--   feat: Make cache available to all connection settings
--   feat: add `carrier_id` to the `POST /v1/proxy/shipping/{carrier_name}/cancel` to allow precise carrier account selection for the operation. #590
--   feat: Enhance Documents REST API with support for template management CRUD operations and generic document generator API in addition to Trade API upload API. #581
-
-### Docs
-
--   docs: setup `docusaurus` `docusaurus-openapi-docs` plugin
--   docs: Improve generated OpenAPI with annotation
-
-### Chore
-
--   chore: update Readme dashboard illustration
--   chore: Apply minimal query optimization
--   chore: Prevent backup file creation from `sed` command
-
-### Breaking changes
-
--   Rename legacy extension `eshiper` -> `eshipper_xml` to prepare for the upgrade to the new eShipper API
--   The Electronic Trade Document upload API was changed from `POST /v1/documents` to `POST /v1/documents/uploads`
--   The `GET /v1/documents` endpoint returning ETD upload records is now `GET /v1/documents/uploads`
+### 🚀 Celebrating a new sponsor: @alissonf216
 
 # Karrio patch 2024.2.17
 
