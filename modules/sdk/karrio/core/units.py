@@ -1705,6 +1705,7 @@ class Currency(utils.Enum):
 
 
 class Country(utils.Enum):
+    AC = "Ascension Island"
     AD = "Andorra"
     AE = "United Arab Emirates"
     AF = "Afghanistan"
@@ -1939,9 +1940,20 @@ class Country(utils.Enum):
     ZA = "South Africa"
     ZM = "Zambia"
     ZW = "Zimbabwe"
+    # Adding missing country codes
+    EH = "Western Sahara"
+    GG = "Guernsey"
+    IM = "Isle of Man"
+    JE = "Jersey"
+    BL = "Saint Barthelemy"
+    MF = "Saint Martin"
+    SX = "Sint Maarten"
+    SS = "South Sudan"
+    XK = "Kosovo"
 
 
 class CountryCurrency(utils.Enum):
+    AC = "USD"
     AD = "EUR"
     AE = "AED"
     AF = "USD"
