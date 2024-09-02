@@ -21,7 +21,7 @@ export default async function Layout({
           <div className="container">
             <div className="has-text-centered my-6 pt-5">
               <a
-                href={url$`${metadata?.APP_WEBSITE}`}
+                href={url$`${metadata?.APP_WEBSITE || "/"}`}
                 className="is-size-4 has-text-primary has-text-weight-bold"
               >
                 {metadata?.APP_NAME}

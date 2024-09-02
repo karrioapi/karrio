@@ -4,6 +4,7 @@ import {
   KARRIO_ADMIN_API_KEY,
   KARRIO_ADMIN_URL,
   KARRIO_URL,
+  logger,
   MULTI_TENANT,
   ServerErrorCode,
   TENANT_ENV_KEY,
@@ -21,19 +22,26 @@ const AUTH_HTTP_CODES = [401, 403, 407];
 export async function requireAuthentication(session: Session | null) {
   if (!session || (session as any)?.error === "RefreshAccessTokenError") {
     const [pathname, search] = [
-      headers().get("x-pathname") || "",
+      headers().get("x-pathname") || "/",
       headers().get("x-search") || "",
     ];
 
-    const location = search.includes("next") ? search : `${pathname}${search}`;
+    if (pathname.includes("/signin")) return;
 
-    redirect(`/signin?next=${location}`);
+    const location = search.includes("next")
+      ? `?${search}`
+      : `?next=${pathname}${search}`;
+
+    logger.debug("redirecting to signin");
+    redirect(`/signin${location}`);
   }
 }
 
 export async function loadMetadata() {
   // Attempt connection to the karrio API to retrieve the API metadata
   const API_URL = await getAPIURL();
+
+  logger.debug("loadMetadata", API_URL);
 
   const { data: metadata, error } = await axios
     .get<Metadata>(url$`${API_URL}`, {
@@ -160,7 +168,7 @@ export const loadTenantInfo = unstable_cache(
     app_domain?: string;
     schema_name?: string;
   }): Promise<TenantType | null> => {
-    console.log("loadTenantInfo", filter);
+    logger.debug("loadTenantInfo", filter);
     try {
       const { data } = await axios({
         url: url$`${KARRIO_ADMIN_URL}/admin/graphql/`,
@@ -170,7 +178,6 @@ export const loadTenantInfo = unstable_cache(
         },
         data: { variables: { filter }, query: TENANT_QUERY },
       });
-      // console.log(JSON.stringify(data, null, 2));
       return data.data?.tenants?.edges[0]?.node;
     } catch (e: any) {
       console.log(e);

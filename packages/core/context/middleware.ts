@@ -3,19 +3,6 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { IMAGES } from "@karrio/types";
 
-export const config = {
-  matcher: [
-    /*
-     * Match all paths except for:
-     * 1. /api routes
-     * 2. /_next (Next.js internals)
-     * 3. /examples (inside /public)
-     * 4. all root files inside /public (e.g. /favicon.ico)
-     */
-    "/((?!api/|_next/|_static/|[\\w-]+\\.\\w+).*)",
-  ],
-};
-
 export async function middleware(req: NextRequest) {
   const { pathname, search, href } = req.nextUrl;
   const hostname = req.headers.get("host") as string;
@@ -33,7 +20,7 @@ export async function middleware(req: NextRequest) {
     return;
   }
 
-  if (MULTI_TENANT === false) {
+  if (pathname.startsWith("/api") || MULTI_TENANT === false) {
     return NextResponse.next({
       request: {
         headers: requestHeaders,
@@ -41,6 +28,14 @@ export async function middleware(req: NextRequest) {
     });
   }
 
+  console.log("middleware", MULTI_TENANT, `/${hostname}${pathname}${search}`);
   // rewrite everything else to `/[domain]/[slug] dynamic route
-  return NextResponse.rewrite(new URL(`/${hostname}${pathname}`, req.url));
+  return NextResponse.rewrite(
+    new URL(`/${hostname}${pathname}${search}`, req.url),
+    {
+      request: {
+        headers: requestHeaders,
+      },
+    },
+  );
 }
