@@ -35,6 +35,7 @@ Django==4.2.15
 -e ./modules/connectors/roadie
 -e ./modules/connectors/royalmail
 -e ./modules/connectors/sapient
+-e ./modules/connectors/seko
 -e ./modules/connectors/sendle
 -e ./modules/connectors/tge
 -e ./modules/connectors/tnt
