@@ -291,8 +291,6 @@ def shipment_request(
                 MovementReferenceNumber=None,
                 ReferenceNumber=(
                     ups.ReferenceNumberType(
-                        BarCodeIndicator=None,
-                        Code=shipper.country_code,
                         Value=payload.reference,
                     )
                     if (country_pair not in ["US/US", "PR/PR"])
@@ -617,6 +615,14 @@ def shipment_request(
                         Commodity=None,
                         PackageServiceOptions=None,
                         UPSPremier=None,
+                        ReferenceNumber=(
+                            ups.ReferenceNumberType(
+                                Value=package.reference_number,
+                            )
+                            if (country_pair not in ["US/US", "PR/PR"])
+                               and any(package.reference_number or "")
+                            else None
+                        ),
                     )
                     for package in packages
                 ],
