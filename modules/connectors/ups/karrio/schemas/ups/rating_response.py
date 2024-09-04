@@ -91,6 +91,7 @@ class NegotiatedRateChargesType:
     TaxCharges: List[TaxChargeType] = JList[TaxChargeType]
     TotalCharge: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
     TotalChargesWithTaxes: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
+    BaseServiceCharge: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
 
 
 @s(auto_attribs=True)
