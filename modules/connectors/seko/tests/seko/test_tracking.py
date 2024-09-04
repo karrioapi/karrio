@@ -25,7 +25,7 @@ class TestSEKOLogisticsTracking(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/labels/statusv2",
             )
 
     def test_parse_tracking_response(self):
@@ -52,12 +52,63 @@ if __name__ == "__main__":
 
 
 TrackingPayload = {
-    "tracking_numbers": ["89108749065090"],
+    "tracking_numbers": ["6994008906", "6994008907"],
 }
 
-ParsedTrackingResponse = []
+ParsedTrackingResponse = [
+    [
+        {
+            "carrier_id": "seko",
+            "carrier_name": "seko",
+            "delivered": False,
+            "events": [
+                {
+                    "code": "OP-1",
+                    "date": "2021-03-01",
+                    "description": "Tracking number allocated & order ready",
+                    "location": "SAN BERNARDINO,CA,US",
+                    "time": "21:47 PM",
+                },
+                {
+                    "code": "OP-3",
+                    "date": "2021-03-05",
+                    "description": "Processed through Export Hub",
+                    "location": "Carson, CA,US",
+                    "time": "08:56 AM",
+                },
+                {
+                    "code": "OP-4",
+                    "date": "2021-03-05",
+                    "description": "International transit to destination country ",
+                    "location": "CARSON, CA,US",
+                    "time": "13:53 PM",
+                },
+            ],
+            "status": "in_transit",
+            "tracking_number": "WFY9001843",
+        }
+    ],
+    [],
+]
 
-ParsedErrorResponse = []
+ParsedErrorResponse = [
+    [],
+    [
+        {
+            "carrier_id": "seko",
+            "carrier_name": "seko",
+            "code": "Error",
+            "details": {
+                "Key": "CountryCode",
+                "Message": "CountryCode is required",
+                "Property": "Destination.Address.CountryCode",
+                "code": "Error",
+                "message": "CountryCode is required",
+            },
+            "message": "CountryCode is required",
+        }
+    ],
+]
 
 
 TrackingRequest = ["6994008906", "6994008907"]
@@ -101,9 +152,13 @@ TrackingResponse = """[
 """
 
 ErrorResponse = """{
-  "Property": "Destination.Address.CountryCode",
-  "Message": "CountryCode is required",
-  "Key": "CountryCode",
-  "Value": ""
+  "Errors": [
+    {
+      "Property": "Destination.Address.CountryCode",
+      "Message": "CountryCode is required",
+      "Key": "CountryCode",
+      "Value": ""
+    }
+  ]
 }
 """

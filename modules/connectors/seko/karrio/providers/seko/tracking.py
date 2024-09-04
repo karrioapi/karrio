@@ -12,7 +12,7 @@ import karrio.providers.seko.units as provider_units
 
 
 def parse_tracking_response(
-    _response: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
+    _response: lib.Deserializable[typing.List[dict]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
     responses = _response.deserialize()
@@ -20,7 +20,11 @@ def parse_tracking_response(
     messages: typing.List[models.Message] = error.parse_error_response(
         responses, settings
     )
-    tracking_details = [_extract_details(details, settings) for _, details in responses]
+    tracking_details = [
+        _extract_details(_, settings)
+        for _ in (responses if isinstance(responses, list) else [responses])
+        if any(_.get("Events", []))
+    ]
 
     return tracking_details, messages
 
@@ -29,12 +33,12 @@ def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
 ) -> models.TrackingDetails:
-    details = None  # parse carrier tracking object type
+    details = lib.to_object(tracking.TrackingResponseElementType, data)
     status = next(
         (
             status.name
             for status in list(provider_units.TrackingStatus)
-            if getattr(details, "status", None) in status.value
+            if getattr(details, "Status", None) in status.value
         ),
         provider_units.TrackingStatus.in_transit.name,
     )
@@ -42,18 +46,17 @@ def _extract_details(
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number="",
+        tracking_number=details.ConsignmentNo,
         events=[
             models.TrackingEvent(
-                date=lib.fdate(""),
-                description="",
-                code="",
-                time=lib.flocaltime(""),
-                location="",
+                date=lib.fdate(event.EventDT, "%Y-%m-%dT%H:%M:%S.%f"),
+                description=event.Description,
+                code=event.Code or event.OmniCode,
+                time=lib.flocaltime(event.EventDT, "%Y-%m-%dT%H:%M:%S.%f"),
+                location=event.Location,
             )
-            for event in []
+            for event in details.Events
         ],
-        estimated_delivery=lib.fdate(""),
         delivered=status == "delivered",
         status=status,
     )

@@ -19,7 +19,7 @@ def parse_rate_response(
     response = _response.deserialize()
 
     messages = error.parse_error_response(response, settings)
-    rates = [_extract_details(rate, settings) for rate in response]
+    rates = [_extract_details(rate, settings) for rate in response.get("Available", [])]
 
     return rates, messages
 
@@ -28,17 +28,25 @@ def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
 ) -> models.RateDetails:
-    details = None  # parse carrier rate type
+    details = lib.to_object(rating.AvailableType, data)
+    service = provider_units.ShippingService.map(details.CarrierServiceType)
 
     return models.RateDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        service="",  # extract service from rate
-        total_charge=lib.to_money(0.0),  # extract the rate total rate cost
-        currency="",  # extract the rate pricing currency
-        transit_days=0,  # extract the rate transit days
+        service=service.name_or_key,
+        total_charge=lib.to_money(details.Cost),
+        currency="USD",
         meta=dict(
-            service_name="",  # extract the rate service human readable name
+            service_name=service.value_or_key,
+            seko_carrier=details.CarrierName,
+            Route=details.Route,
+            QuoteId=details.QuoteId,
+            DeliveryType=details.DeliveryType,
+            CarrierServiceType=details.CarrierServiceType,
+            IsFreightForward=details.IsFreightForward,
+            IsRuralDelivery=details.IsRuralDelivery,
+            IsSaturdayDelivery=details.IsSaturdayDelivery,
         ),
     )
 
@@ -47,49 +55,52 @@ def rate_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
-    packages = lib.to_packages(payload.parcels)
-    services = lib.to_services(payload.services, provider_units.ShippingService)
     options = lib.to_shipping_options(
         payload.options,
-        package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
+    )
+    packages = lib.to_packages(
+        payload.parcels,
+        options=options,
+        shipping_options_initializer=provider_units.shipping_options_initializer,
     )
 
     # map data to convert karrio model to seko specific type
-    request = seko.RateRequestType(
-        DeliveryReference=None,
+    request = seko.RatingRequestType(
+        DeliveryReference=payload.reference,
         Destination=seko.DestinationType(
-            Id=None,
-            Name=None,
+            Id=options.seko_destination_id.state,
+            Name=recipient.company_name,
             Address=seko.AddressType(
-                BuildingName=None,
-                StreetAddress=None,
+                BuildingName="",
+                StreetAddress=recipient.street,
                 Suburb=None,
-                City=None,
-                PostCode=None,
-                CountryCode=None,
+                City=recipient.city,
+                PostCode=recipient.postal_code,
+                CountryCode=recipient.country_code,
             ),
-            ContactPerson=None,
-            PhoneNumber=None,
-            Email=None,
-            DeliveryInstructions=None,
-            RecipientTaxId=None,
+            ContactPerson=recipient.contact,
+            PhoneNumber=recipient.phone_number,
+            Email=recipient.email,
+            DeliveryInstructions=options.destination_instructions.state,
+            RecipientTaxId=recipient.tax_id,
         ),
-        IsSaturdayDelivery=None,
-        IsSignatureRequired=None,
+        IsSaturdayDelivery=options.seko_is_saturday_delivery.state,
+        IsSignatureRequired=options.seko_is_signature_required.state,
         Packages=[
             seko.PackageType(
-                Height=None,
-                Length=None,
-                Id=None,
-                Width=None,
-                Kg=None,
-                Name=None,
-                PackageCode=None,
-                Type=None,
+                Height=package.height.CM,
+                Length=package.length.CM,
+                Id=package.options.seko_package_id.state,
+                Width=package.width.CM,
+                Kg=package.weight.KG,
+                Name=lib.text(package.description, max=50),
+                Type=provider_units.PackagingType.map(
+                    package.packaging_type or "your_packaging"
+                ).value,
             )
+            for package in packages
         ],
     )
 

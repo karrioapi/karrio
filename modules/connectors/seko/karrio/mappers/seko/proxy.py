@@ -34,7 +34,7 @@ class Proxy(proxy.Proxy):
             },
         )
 
-        return lib.Deserializable(response, lib.to_dict)
+        return lib.Deserializable(response, lib.to_dict, request.ctx)
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
@@ -48,7 +48,10 @@ class Proxy(proxy.Proxy):
             },
         )
 
-        return lib.Deserializable(response, lib.to_dict)
+        return lib.Deserializable(
+            response,
+            lib.to_dict,
+        )
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(

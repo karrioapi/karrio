@@ -35,7 +35,7 @@ class TestSEKOLogisticsShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/labels/printshipment",
             )
 
     def test_cancel_shipment(self):
@@ -45,7 +45,7 @@ class TestSEKOLogisticsShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/labels/delete",
             )
 
     def test_parse_shipment_response(self):
@@ -76,48 +76,140 @@ if __name__ == "__main__":
 
 
 ShipmentPayload = {
+    "service": "seko_ecommerce_express_tracked",
     "shipper": {
-        "company_name": "TESTING COMPANY",
-        "address_line1": "17 VULCAN RD",
-        "city": "CANNING VALE",
-        "postal_code": "6155",
+        "company_name": "OriginName",
+        "address_line1": "285 Main Street",
+        "city": "GLENWOOD",
+        "postal_code": "2768",
         "country_code": "AU",
-        "person_name": "TEST USER",
-        "state_code": "WA",
-        "email": "test@gmail.com",
-        "phone_number": "(07) 3114 1499",
+        "person_name": "Origin contact name",
+        "state_code": "NSW",
+        "email": "originemail@sekologistics.com",
+        "phone_number": "02 9111 01101",
+        "state_tax_id": "123456",
     },
     "recipient": {
-        "company_name": "CGI",
-        "address_line1": "23 jardin private",
-        "city": "Ottawa",
-        "postal_code": "k1k 4t3",
-        "country_code": "CA",
-        "person_name": "Jain",
-        "state_code": "ON",
+        "company_name": "Destination Name",
+        "address_line1": "285 Coward Street",
+        "city": "TESBURY",
+        "postal_code": "3260",
+        "country_code": "AU",
+        "person_name": "JOHN SMITH",
+        "state_code": "VIC",
+        "email": "destinationemail@test.com",
+        "phone_number": "02 9111 1111",
+        "state_tax_id": "123456",
     },
     "parcels": [
         {
-            "height": 50,
-            "length": 50,
-            "weight": 20,
-            "width": 12,
+            "height": 1.0,
+            "length": 1.0,
+            "weight": 5.0,
+            "width": 1.0,
             "dimension_unit": "CM",
             "weight_unit": "KG",
+            "reference_number": "TEST0301201902",
+            "packaging_type": "small_box",
+            "description": "PARCEL",
         }
     ],
-    "service": "carrier_service",
     "options": {
-        "signature_required": True,
+        "origin_instructions": "Desinationdeliveryinstructions",
+        "destination_instructions": "LEAVE AT FRONT DOOR",
+        "seko_send_tracking_email": True,
+        "seko_carrier": "Omni Parcel",
+        "signature_required": False,
+        "seko_amount_collected": 10.0,
+        "cash_on_delivery": 10.0,
+        "currency": "USD",
     },
-    "reference": "#Order 11111",
+    "reference": "OrderNumber123",
+    "customs": {
+        "commodities": [
+            {
+                "description": "Food Bar",
+                "quantity": 1,
+                "value_amount": 50,
+                "value_currency": "USD",
+                "weight": 0.6,
+                "origin_country": "AU",
+                "sku": "SKU123",
+            },
+            {
+                "description": "Food Bar",
+                "quantity": 1,
+                "value_amount": 50,
+                "value_currency": "USD",
+                "weight": 0.6,
+                "origin_country": "AU",
+            },
+        ],
+        "options": {
+            "XIEORINumber": "0121212112",
+            "IOSSNUMBER": "0121212112",
+            "GBEORINUMBER": "0121212112",
+            "VOECNUMBER": "0121212112",
+            "VATNUMBER": "0121212112",
+            "VENDORID": "0121212113",
+            "NZIRDNUMBER": "0121212115",
+            "SWISS_VAT": "CHE-123.456.789",
+            "OVRNUMBER": "0121212112",
+            "EUEORINumber": "0121212112",
+            "EUVATNumber": "0121212112",
+            "LVGRegistrationNumber": "0121212112",
+        },
+    },
 }
 
 ShipmentCancelPayload = {
     "shipment_identifier": "794947717776",
+    "options": {
+        "shipment_identifiers": [
+            "SSPOT014115",
+            "SSPOT014114",
+            "SSPOT014113",
+            "SSPOT014112",
+        ]
+    },
 }
 
-ParsedShipmentResponse = []
+ParsedShipmentResponse = [
+    {
+        "carrier_id": "seko",
+        "carrier_name": "seko",
+        "docs": {
+            "label": "JVBERi0xLjcKJeLjz9MKMSAwIG9iago8PAovVHlwZSAvUGFnZXMKL0NvdW50IDEKL0tpZHMgWyA0IDAgUiBdCj4+CmVuZG9iagoyIDAgb2JqCjw8Ci9Qcm9kdWNlciAoUHlQREYyKQo+PgplbmRvYmoKMyAwIG9iago8PAovVHlwZSAvQ2F0YWxvZwovUGFnZXMgMSAwIFIKPj4KZW5kb2JqCjQgMCBvYmoKPDwKL1R5cGUgL1BhZ2UKL01lZGlhQm94IFsgMCAwIDMuNiAzLjYgXQovQ29udGVudHMgNSAwIFIKL1Jlc291cmNlcyA2IDAgUgovVHJpbUJveCBbIDAgMCAzLjYgMy42IF0KL0JsZWVkQm94IFsgMCAwIDMuNiAzLjYgXQovUGFyZW50IDEgMCBSCj4+CmVuZG9iago1IDAgb2JqCjw8Ci9GaWx0ZXIgL0ZsYXRlRGVjb2RlCi9MZW5ndGggNzEKPj4Kc3RyZWFtCnjaM1QwAEJdQyBhrGemkJzLVchloGduChaGM8DChVyGCiBYlM6ln2ioZ6CQXswFkjTRswDjolSucK48dKE0rkAQBAAu7xTjCmVuZHN0cmVhbQplbmRvYmoKNiAwIG9iago8PAovRXh0R1N0YXRlIDw8Ci9hMS4wIDw8Ci9jYSAxCj4+Cj4+Ci9YT2JqZWN0IDw8Cj4+Ci9QYXR0ZXJuIDw8Cj4+Ci9TaGFkaW5nIDw8Cj4+Ci9Gb250IDcgMCBSCj4+CmVuZG9iago3IDAgb2JqCjw8Cj4+CmVuZG9iagp4cmVmCjAgOAowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMTUgMDAwMDAgbiAKMDAwMDAwMDA3NCAwMDAwMCBuIAowMDAwMDAwMTE0IDAwMDAwIG4gCjAwMDAwMDAxNjMgMDAwMDAgbiAKMDAwMDAwMDMyMCAwMDAwMCBuIAowMDAwMDAwNDYyIDAwMDAwIG4gCjAwMDAwMDA1NzUgMDAwMDAgbiAKdHJhaWxlcgo8PAovU2l6ZSA4Ci9Sb290IDMgMCBSCi9JbmZvIDIgMCBSCj4+CnN0YXJ0eHJlZgo1OTYKJSVFT0YK"
+        },
+        "label_type": "PDF",
+        "meta": {
+            "CarrierId": 567,
+            "CarrierName": "MyChildData",
+            "ConsignmentId": 5473553,
+            "ConsignmentIds": [5473553],
+            "SiteId": 1153896,
+            "TrackingUrls": ["http://track.omniparcel.com/1153896-6994008906"],
+            "carrier_tracking_link": "http://track.omniparcel.com/1153896-6994008906",
+        },
+        "shipment_identifier": 5473553,
+        "tracking_number": "6994008906",
+    },
+    [
+        {
+            "carrier_id": "seko",
+            "carrier_name": "seko",
+            "code": "Error",
+            "details": {
+                "Key": "CountryCode",
+                "Message": "CountryCode is required",
+                "Property": "Destination.Address.CountryCode",
+                "code": "Error",
+                "message": "CountryCode is required",
+            },
+            "message": "CountryCode is required",
+        }
+    ],
+]
 
 ParsedCancelShipmentResponse = ParsedCancelShipmentResponse = [
     {
@@ -132,16 +224,11 @@ ParsedCancelShipmentResponse = ParsedCancelShipmentResponse = [
 
 ShipmentRequest = {
     "DeliveryReference": "OrderNumber123",
-    "Reference2": "",
-    "Reference3": "",
     "Origin": {
-        "Id": 0,
         "Name": "OriginName",
         "Address": {
-            "BuildingName": "",
             "StreetAddress": "285 Main Street",
-            "Suburb": "GLENWOOD",
-            "City": "NSW",
+            "City": "GLENWOOD",
             "PostCode": "2768",
             "CountryCode": "AU",
         },
@@ -152,13 +239,10 @@ ShipmentRequest = {
         "RecipientTaxId": "123456",
     },
     "Destination": {
-        "Id": 0,
         "Name": "Destination Name",
         "Address": {
-            "BuildingName": "Markettown",
             "StreetAddress": "285 Coward Street",
-            "Suburb": "TESBURY",
-            "City": "VIC",
+            "City": "TESBURY",
             "PostCode": "3260",
             "CountryCode": "AU",
         },
@@ -167,72 +251,25 @@ ShipmentRequest = {
         "Email": "destinationemail@test.com",
         "DeliveryInstructions": "LEAVE AT FRONT DOOR",
         "RecipientTaxId": "123456",
-        "SendTrackingEmail": "true",
-    },
-    "DangerousGoods": {
-        "AdditionalHandlingInfo": "sample",
-        "HazchemCode": "sample",
-        "IsRadioActive": "false",
-        "CargoAircraftOnly": "false",
-        "IsDGLQ": "false",
-        "TotalQuantity": 2,
-        "TotalKg": 1.2,
-        "SignOffName": "name",
-        "SignOffRole": "dangerous goods officer",
-        "LineItems": [
-            {
-                "HarmonizedCode": "sample",
-                "Description": "sample",
-                "ClassOrDivision": "sample",
-                "UNorIDNo": "sample",
-                "PackingGroup": "sample",
-                "SubsidaryRisk": "sample",
-                "Packing": "sample",
-                "PackingInstr": "sample",
-                "Authorization": "sample",
-            }
-        ],
+        "SendTrackingEmail": True,
     },
     "Commodities": [
         {
             "Description": "Food Bar",
-            "Units": "1",
+            "Units": 1,
             "UnitValue": 50,
             "UnitKg": 0.6,
             "Currency": "USD",
             "Country": "AU",
-            "IsDG": true,
             "itemSKU": "SKU123",
-            "DangerousGoodsItem": {
-                "HarmonizedCode": "sample",
-                "Description": "sample",
-                "ClassOrDivision": "sample",
-                "UNorIDNo": "sample",
-                "PackingGroup": "sample",
-                "SubsidaryRisk": "sample",
-                "Packing": "sample",
-                "PackingInstr": "sample",
-                "Authorization": "sample",
-            },
         },
         {
             "Description": "Food Bar",
-            "Units": "1",
+            "Units": 1,
             "UnitValue": 50,
             "UnitKg": 0.6,
             "Currency": "USD",
             "Country": "AU",
-            "IsDG": true,
-            "DangerousGoodsItem": {
-                "Description": "sample",
-                "ClassOrDivision": "sample",
-                "UNorIDNo": "sample",
-                "PackingGroup": "sample",
-                "SubsidaryRisk": "sample",
-                "Packing": "sample",
-                "PackingInstr": "sample",
-                "Authorization": "sample",
-            },
         },
     ],
     "Packages": [
@@ -246,15 +283,15 @@ ShipmentRequest = {
             "OverLabelBarcode": "TEST0301201902",
         }
     ],
-    "issignaturerequired": false,
-    "DutiesAndTaxesByReceiver": false,
-    "PrintToPrinter": true,
-    "IncludeLineDetails": true,
+    "issignaturerequired": False,
+    "DutiesAndTaxesByReceiver": False,
+    "PrintToPrinter": True,
+    "IncludeLineDetails": True,
     "Carrier": "Omni Parcel",
     "Service": "eCommerce Express Tracked",
     "CostCentreName": "mysite.com",
     "CodValue": 10.0,
-    "TaxCollected": true,
+    "TaxCollected": True,
     "AmountCollected": 10.0,
     "TaxIds": [
         {"IdType": "XIEORINumber", "IdNumber": "0121212112"},
@@ -307,7 +344,7 @@ ShipmentResponse = """{
       "ConsignmentId": 5473553,
       "OutputFiles": {
         "LABEL_PDF_100X150": [
-          "JVBERi0xLjQKJdP0zOEKMSAwIG9iago8PAovQ3JlYXRpb25EYXRlKEQ6MjAxNzAyMTMwOTA0MTkrMDU...."
+          "JVBERi0xLjcKJeLjz9MKMSAwIG9iago8PAovVHlwZSAvUGFnZXMKL0NvdW50IDEKL0tpZHMgWyA0IDAgUiBdCj4+CmVuZG9iagoyIDAgb2JqCjw8Ci9Qcm9kdWNlciAoUHlQREYyKQo+PgplbmRvYmoKMyAwIG9iago8PAovVHlwZSAvQ2F0YWxvZwovUGFnZXMgMSAwIFIKPj4KZW5kb2JqCjQgMCBvYmoKPDwKL1R5cGUgL1BhZ2UKL01lZGlhQm94IFsgMCAwIDMuNiAzLjYgXQovQ29udGVudHMgNSAwIFIKL1Jlc291cmNlcyA2IDAgUgovVHJpbUJveCBbIDAgMCAzLjYgMy42IF0KL0JsZWVkQm94IFsgMCAwIDMuNiAzLjYgXQovUGFyZW50IDEgMCBSCj4+CmVuZG9iago1IDAgb2JqCjw8Ci9GaWx0ZXIgL0ZsYXRlRGVjb2RlCi9MZW5ndGggNzEKPj4Kc3RyZWFtCnjaM1QwAEJdQyBhrGemkJzLVchloGduChaGM8DChVyGCiBYlM6ln2ioZ6CQXswFkjTRswDjolSucK48dKE0rkAQBAAu7xTjCmVuZHN0cmVhbQplbmRvYmoKNiAwIG9iago8PAovRXh0R1N0YXRlIDw8Ci9hMS4wIDw8Ci9jYSAxCj4+Cj4+Ci9YT2JqZWN0IDw8Cj4+Ci9QYXR0ZXJuIDw8Cj4+Ci9TaGFkaW5nIDw8Cj4+Ci9Gb250IDcgMCBSCj4+CmVuZG9iago3IDAgb2JqCjw8Cj4+CmVuZG9iagp4cmVmCjAgOAowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMTUgMDAwMDAgbiAKMDAwMDAwMDA3NCAwMDAwMCBuIAowMDAwMDAwMTE0IDAwMDAwIG4gCjAwMDAwMDAxNjMgMDAwMDAgbiAKMDAwMDAwMDMyMCAwMDAwMCBuIAowMDAwMDAwNDYyIDAwMDAwIG4gCjAwMDAwMDA1NzUgMDAwMDAgbiAKdHJhaWxlcgo8PAovU2l6ZSA4Ci9Sb290IDMgMCBSCi9JbmZvIDIgMCBSCj4+CnN0YXJ0eHJlZgo1OTYKJSVFT0YK"
         ]
       },
       "Items": [

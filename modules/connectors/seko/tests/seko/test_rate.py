@@ -25,7 +25,7 @@ class TestSEKOLogisticsRating(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/ratesqueryv1/availablerates",
             )
 
     def test_parse_rate_response(self):
@@ -55,62 +55,99 @@ RatePayload = {
         "phone_number": "(07) 3114 1499",
     },
     "recipient": {
-        "company_name": "CGI",
-        "address_line1": "23 jardin private",
-        "city": "Ottawa",
-        "postal_code": "k1k 4t3",
-        "country_code": "CA",
-        "person_name": "Jain",
-        "state_code": "ON",
+        "address_line1": "DestinationStreetAddress",
+        "city": "Christchurch",
+        "postal_code": "8061",
+        "country_code": "NZ",
+        "person_name": "DestinationName",
+        "phone_number": "123456789",
+        "email": "destinationemail@email.com",
+        "state_tax_id": "123456",
     },
     "parcels": [
         {
-            "height": 50,
-            "length": 50,
-            "weight": 20,
-            "width": 12,
+            "height": 1,
+            "length": 1,
+            "weight": 0.1,
+            "width": 10,
             "dimension_unit": "CM",
             "weight_unit": "KG",
+            "description": "SATCHEL",
+            "packaging_type": "small_box",
         }
     ],
-    "options": {},
-    "reference": "REF-001",
+    "options": {
+        "saturday_delivery": False,
+        "seko_is_signature_required": True,
+        "destination_instructions": "Desinationdeliveryinstructions",
+    },
+    "reference": "ORDER123",
 }
 
-ParsedRateResponse = []
+ParsedRateResponse = [
+    [
+        {
+            "carrier_id": "seko",
+            "carrier_name": "seko",
+            "currency": "USD",
+            "meta": {
+                "CarrierServiceType": "InternationalCourier",
+                "DeliveryType": "AIR TRACKED",
+                "IsFreightForward": False,
+                "IsRuralDelivery": False,
+                "IsSaturdayDelivery": False,
+                "QuoteId": "e7fdf36c-8f6a-4d3f-8d96-c8b5893a0e7f",
+                "Route": "OFFSHORE->AKL- SI",
+                "seko_carrier": "Omni Parcel",
+                "service_name": "InternationalCourier",
+            },
+            "service": "InternationalCourier",
+            "total_charge": 5.82,
+        }
+    ],
+    [
+        {
+            "carrier_id": "seko",
+            "carrier_name": "seko",
+            "code": "ValidationError",
+            "message": "CountryCode is required",
+            "details": {
+                "Key": "CountryCode",
+                "Message": "CountryCode is required",
+                "Property": "Destination.Address.CountryCode",
+                "code": "ValidationError",
+                "message": "CountryCode is required",
+            },
+        }
+    ],
+]
 
 
 RateRequest = {
     "DeliveryReference": "ORDER123",
     "Destination": {
-        "Id": 0,
-        "Name": "DestinationName",
         "Address": {
-            "BuildingName": "",
-            "StreetAddress": "DestinationStreetAddress",
-            "Suburb": "Avonside",
             "City": "Christchurch",
-            "PostCode": "8061",
             "CountryCode": "NZ",
+            "PostCode": "8061",
+            "StreetAddress": "DestinationStreetAddress",
         },
-        "ContactPerson": "DestinationContact",
-        "PhoneNumber": "123456789",
-        "Email": "destinationemail@email.com",
+        "ContactPerson": "DestinationName",
         "DeliveryInstructions": "Desinationdeliveryinstructions",
+        "Email": "destinationemail@email.com",
+        "PhoneNumber": "123456789",
         "RecipientTaxId": "123456",
     },
     "IsSaturdayDelivery": False,
     "IsSignatureRequired": True,
     "Packages": [
         {
-            "Height": 1,
-            "Length": 1,
-            "Id": 0,
-            "Width": 10,
+            "Height": 1.0,
             "Kg": 0.1,
+            "Length": 1.0,
             "Name": "SATCHEL",
-            "PackageCode": "DLE",
             "Type": "Box",
+            "Width": 10.0,
         }
     ],
 }

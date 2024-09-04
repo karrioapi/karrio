@@ -12,15 +12,54 @@ def parse_error_response(
     **kwargs,
 ) -> typing.List[models.Message]:
     responses = response if isinstance(response, list) else [response]
-    errors: list = []  # compute the carrier error object list
+    errors: list = sum(
+        [
+            [
+                *lib.identity(
+                    [
+                        {"code": "Error", "message": e.get("Message"), **e}
+                        for e in _.get("Errors", [])
+                    ]
+                    if any(_.get("Errors", []))
+                    else []
+                ),
+                *lib.identity(
+                    [
+                        {"code": "Error", "message": e.get("Message"), **e}
+                        for e in _.get("Error", [])
+                    ]
+                    if any(_.get("Error", []))
+                    else []
+                ),
+                *lib.identity(
+                    [
+                        {"code": "Rejected", "message": e.get("Reason"), **e}
+                        for e in _.get("Error", [])
+                    ]
+                    if any(_.get("Rejected", []))
+                    else []
+                ),
+                *lib.identity(
+                    [
+                        {"code": "ValidationError", "message": e.get("Message"), **e}
+                        for e in [_.get("ValidationErrors")]
+                    ]
+                    if _.get("ValidationErrors")
+                    else []
+                ),
+            ]
+            for _ in responses
+        ],
+        [],
+    )
 
     return [
         models.Message(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
-            code="",
-            message="",
-            details={**kwargs},
+            code=error["code"],
+            message=error["message"],
+            details={**kwargs, **error},
         )
         for error in errors
     ]

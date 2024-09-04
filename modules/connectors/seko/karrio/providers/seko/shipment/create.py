@@ -17,10 +17,12 @@ def parse_shipment_response(
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
     response = _response.deserialize()
-
+    print(_response.ctx)
     messages = error.parse_error_response(response, settings)
-    shipment = (
-        _extract_details(response, settings) if "tracking_number" in response else None
+    shipment = lib.identity(
+        _extract_details(response, settings, ctx=_response.ctx)
+        if any(response.get("Consignments", []))
+        else None
     )
 
     return shipment, messages
@@ -29,23 +31,35 @@ def parse_shipment_response(
 def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
+    ctx: dict = None,
 ) -> models.ShipmentDetails:
-    details = None  # parse carrier shipment type from "data"
-    label = ""  # extract and process the shipment label to a valid base64 text
-    # invoice = ""  # extract and process the shipment invoice to a valid base64 text if applies
+    details = lib.to_object(shipping.ShippingResponseType, data)
+    Connotes = [_.Connote for _ in details.Consignments]
+    TrackingUrls = [_.TrackingUrl for _ in details.Consignments]
+    ConsignmentIds = [_.ConsignmentId for _ in details.Consignments]
+    label_type = ctx.get("label_type")
+    label_format = ctx.get("label_format")
+
+    label = lib.bundle_base64(
+        sum([_["OutputFiles"][label_type] for _ in data["Consignments"]], []),
+        label_format,
+    )
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number="",  # extract tracking number from shipment
-        shipment_identifier="",  # extract shipment identifier from shipment
-        label_type="PDF",  # extract shipment label file format
-        docs=models.Documents(
-            label=label,  # pass label base64 text
-            # invoice=invoice,  # pass invoice base64 text if applies
-        ),
+        tracking_number=Connotes[0],
+        shipment_identifier=ConsignmentIds[0],
+        label_type=label_format,
+        docs=models.Documents(label=label),
         meta=dict(
-            # any relevent meta
+            SiteId=details.SiteId,
+            carrier_tracking_link=TrackingUrls[0],
+            TrackingUrls=TrackingUrls,
+            ConsignmentId=ConsignmentIds[0],
+            ConsignmentIds=ConsignmentIds,
+            CarrierId=details.CarrierId,
+            CarrierName=details.CarrierName,
         ),
     )
 
@@ -57,129 +71,130 @@ def shipment_request(
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels)
-    service = provider_units.ShippingService.map(payload.service).value_or_key
+    service = provider_units.ShippingService.map(payload.service)
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
+    customs = lib.to_customs_info(
+        payload.customs,
+        shipper=payload.shipper,
+        recipient=payload.recipient,
+        weight_unit=units.WeightUnit.KG.name,
+        option_type=provider_units.CustomsOption,
+    )
+    commodities: units.Products = lib.identity(
+        customs.commodities if payload.customs else packages.items
+    )
+    [label_format, label_type] = lib.identity(
+        provider_units.LabelType.map(payload.label_type).value
+        or provider_units.LabelType.PDF.value
+    )
 
     # map data to convert karrio model to seko specific type
     request = seko.ShippingRequestType(
-        DeliveryReference=None,
+        DeliveryReference=payload.reference,
         Reference2=None,
         Reference3=None,
         Origin=seko.DestinationType(
-            Id=None,
-            Name=None,
+            Id=options.seko_origin_id.state,
+            Name=shipper.company_name,
             Address=seko.AddressType(
                 BuildingName=None,
-                StreetAddress=None,
+                StreetAddress=shipper.street,
                 Suburb=None,
-                City=None,
-                PostCode=None,
-                CountryCode=None,
+                City=shipper.city,
+                PostCode=shipper.postal_code,
+                CountryCode=shipper.country_code,
             ),
-            ContactPerson=None,
-            PhoneNumber=None,
-            Email=None,
-            DeliveryInstructions=None,
-            RecipientTaxId=None,
+            ContactPerson=shipper.contact,
+            PhoneNumber=shipper.phone_number,
+            Email=shipper.email,
+            DeliveryInstructions=options.origin_instructions.state,
+            RecipientTaxId=shipper.tax_id,
             SendTrackingEmail=None,
         ),
         Destination=seko.DestinationType(
-            Id=None,
-            Name=None,
+            Id=options.seko_destination_id.state,
+            Name=recipient.company_name,
             Address=seko.AddressType(
                 BuildingName=None,
-                StreetAddress=None,
+                StreetAddress=recipient.street,
                 Suburb=None,
-                City=None,
-                PostCode=None,
-                CountryCode=None,
+                City=recipient.city,
+                PostCode=recipient.postal_code,
+                CountryCode=recipient.country_code,
             ),
-            ContactPerson=None,
-            PhoneNumber=None,
-            Email=None,
-            DeliveryInstructions=None,
-            RecipientTaxId=None,
-            SendTrackingEmail=None,
+            ContactPerson=recipient.contact,
+            PhoneNumber=recipient.phone_number,
+            Email=recipient.email,
+            DeliveryInstructions=options.destination_instructions.state,
+            RecipientTaxId=recipient.tax_id,
+            SendTrackingEmail=options.seko_send_tracking_email.state,
         ),
-        DangerousGoods=seko.DangerousGoodsType(
-            AdditionalHandlingInfo=None,
-            HazchemCode=None,
-            IsRadioActive=None,
-            CargoAircraftOnly=None,
-            IsDGLQ=None,
-            TotalQuantity=None,
-            TotalKg=None,
-            SignOffName=None,
-            SignOffRole=None,
-            LineItems=[
-                seko.ItemType(
-                    HarmonizedCode=None,
-                    Description=None,
-                    ClassOrDivision=None,
-                    UNorIDNo=None,
-                    PackingGroup=None,
-                    SubsidaryRisk=None,
-                    Packing=None,
-                    PackingInstr=None,
-                    Authorization=None,
-                )
-            ],
-        ),
+        DangerousGoods=None,
         Commodities=[
             seko.CommodityType(
-                Description=None,
-                Units=None,
-                UnitValue=None,
-                UnitKg=None,
-                Currency=None,
-                Country=None,
+                Description=lib.text(commodity.description, max=35),
+                Units=commodity.quantity,
+                UnitValue=commodity.value_amount,
+                UnitKg=commodity.weight,
+                Currency=commodity.value_currency,
+                Country=commodity.origin_country,
                 IsDG=None,
-                itemSKU=None,
-                DangerousGoodsItem=seko.ItemType(
-                    HarmonizedCode=None,
-                    Description=None,
-                    ClassOrDivision=None,
-                    UNorIDNo=None,
-                    PackingGroup=None,
-                    SubsidaryRisk=None,
-                    Packing=None,
-                    PackingInstr=None,
-                    Authorization=None,
-                ),
+                itemSKU=commodity.sku,
+                DangerousGoodsItem=None,
             )
+            for commodity in commodities
         ],
         Packages=[
             seko.PackageType(
-                Height=None,
-                Length=None,
-                Width=None,
-                Kg=None,
-                Name=None,
-                Type=None,
-                OverLabelBarcode=None,
+                Height=package.height.CM,
+                Length=package.length.CM,
+                Width=package.width.CM,
+                Kg=package.weight.KG,
+                Name=package.description,
+                Type=lib.identity(
+                    provider_units.PackagingType.map(package.packaging_type).value
+                ),
+                OverLabelBarcode=package.reference_number,
             )
+            for package in packages
         ],
-        issignaturerequired=None,
-        DutiesAndTaxesByReceiver=None,
-        PrintToPrinter=None,
-        IncludeLineDetails=None,
-        Carrier=None,
-        Service=None,
-        CostCentreName=None,
-        CodValue=None,
-        TaxCollected=None,
-        AmountCollected=None,
+        issignaturerequired=options.seko_is_signature_required.state,
+        DutiesAndTaxesByReceiver=lib.identity(
+            customs.duty.paid_by == "recipient" if payload.customs else None
+        ),
+        PrintToPrinter=lib.identity(
+            options.seko_print_to_printer.state
+            if options.seko_print_to_printer.state is not None
+            else True
+        ),
+        IncludeLineDetails=True,
+        Carrier=options.seko_carrier.state,
+        Service=service.value_or_key,
+        CostCentreName=settings.connection_config.cost_center.state,
+        CodValue=options.cash_on_delivery.state,
+        TaxCollected=lib.identity(
+            options.seko_tax_collected.state
+            if options.seko_tax_collected.state is not None
+            else True
+        ),
+        AmountCollected=lib.to_money(options.seko_amount_collected.state),
         TaxIds=[
             seko.TaxIDType(
-                IdType=None,
-                IdNumber=None,
+                IdType=option.code,
+                IdNumber=option.state,
             )
+            for key, option in customs.options.items()
+            if key in provider_units.CustomsOption and option.state is not None
         ],
-        Outputs=[],
+        Outputs=[label_type],
     )
 
-    return lib.Serializable(request, lib.to_dict)
+    return lib.Serializable(
+        request,
+        lib.to_dict,
+        dict(label_type=label_type, label_format=label_format),
+    )

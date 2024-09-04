@@ -1,8 +1,8 @@
-
 import karrio
 
 gateway = karrio.gateway["seko"].create(
     dict(
-        # add required carrier API setting key/value here
+        access_key="access_key",
+        config=dict(cost_center="mysite.com"),
     )
 )

@@ -38,13 +38,15 @@ def shipment_cancel_request(
             "PickupOptions",
             # fmt: off
             {
-                "shipment_ids": lib.OptionEnum("shipment_ids", lib.to_list),
+                "shipment_identifiers": lib.OptionEnum("shipment_identifiers", lib.to_list),
             },
             # fmt: on
         ),
     )
 
     # map data to convert karrio model to seko specific type
-    request = lib.identity(options.shipment_ids.state or [payload.shipment_identifier])
+    request = lib.identity(
+        options.shipment_identifiers.state or [payload.shipment_identifier]
+    )
 
     return lib.Serializable(request, lib.to_dict)

@@ -93,5 +93,6 @@ class Settings(core.Settings):
 
 
 class ConnectionConfig(lib.Enum):
+    cost_center = lib.OptionEnum("CostCentreName", str)
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
