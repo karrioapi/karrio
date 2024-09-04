@@ -7,7 +7,7 @@ certifi==2024.8.30
 cffi==1.17.0
 charset-normalizer==3.3.2
 click==8.1.7
-cryptography==43.0.0
+cryptography==43.0.1
 cssselect2==0.7.0
 deprecation==2.1.0
 diff-match-patch==20230430
