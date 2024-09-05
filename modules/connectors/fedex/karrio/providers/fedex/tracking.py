@@ -131,7 +131,7 @@ def _extract_details(
             ),
         ),
         images=lib.identity(models.Images(signature_image=img) if img else None),
-        estimated_delivery=lib.fdate(estimated_delivery, try_formats=DATETIME_FORMATS),
+        estimated_delivery=estimated_delivery,
         delivered=(status == "delivered"),
         status=status,
     )
