@@ -29,7 +29,7 @@ def _extract_details(
     service = provider_units.ShippingService.map(str(rate.serviceId))
     carrierId = provider_units.ShippingService.carrier_id(service.value_or_key)
     rate_provider = provider_units.ShippingService.carrier(service.value_or_key).lower()
-    service_name = service.name.replace("eshipper_", "")
+    service_name = (service.name or rate.serviceName.lower().replace(" ", "_")).replace("eshipper_", "")
 
     charges = [
         ("baseCharge", rate.baseCharge),
