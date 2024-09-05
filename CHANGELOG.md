@@ -1,3 +1,31 @@
+# Patch 2024.6.2
+
+## Changes
+
+### Fix
+
+-   [Fixes](https://github.com/karrioapi/karrio/commit/4f26746ec34fd0bb41a6cef08def822eb21f3391) https://github.com/karrioapi/karrio/issues/667[: UPS ReferenceNumber changes](https://github.com/karrioapi/karrio/commit/4f26746ec34fd0bb41a6cef08def822eb21f3391)
+
+Special thanks to @mazzarito
+
+# Patch 2024.6.1
+
+## Changes
+
+### Feat
+
+-[feat: Add GraphQL queries and typings for apps](https://github.com/karrioapi/karrio/pull/656/commits/551c73dbfa5feb5c3f47cb49736ecb57f3460d6b)
+
+### Refactor
+
+-   refactor: dashboard extracting non-routing code and dependencies to `@karrio/core` package
+-   [refactor: dashboard from Nextjs page router to app router](https://github.com/karrioapi/karrio/pull/656/commits/8d0e2feec8c284b7f5bb577ea0b0a50b727001c2)
+
+### Chore
+
+-   [chore: deprecate apps module from OSS build](https://github.com/karrioapi/karrio/pull/656/commits/e115dddee06d498d5ad5a6de0b21094e528dfc53)
+-   [chore: introduce CHANGELOG.md](https://github.com/karrioapi/karrio/commit/df9a232d7df0e9fdbb89b915a9ef546637d60dd1)
+
 # Karrio OSS 2024.6
 
 > [!IMPORTANT]
