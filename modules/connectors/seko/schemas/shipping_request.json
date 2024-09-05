@@ -64,6 +64,7 @@
   "Commodities": [
     {
       "Description": "Food Bar",
+      "HarmonizedCode": "sample",
       "Units": "1",
       "UnitValue": 50,
       "UnitKg": 0.6,

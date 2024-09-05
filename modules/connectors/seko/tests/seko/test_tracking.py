@@ -100,10 +100,7 @@ ParsedErrorResponse = [
             "code": "Error",
             "details": {
                 "Key": "CountryCode",
-                "Message": "CountryCode is required",
                 "Property": "Destination.Address.CountryCode",
-                "code": "Error",
-                "message": "CountryCode is required",
             },
             "message": "CountryCode is required",
         }

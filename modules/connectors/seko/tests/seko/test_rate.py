@@ -99,9 +99,9 @@ ParsedRateResponse = [
                 "QuoteId": "e7fdf36c-8f6a-4d3f-8d96-c8b5893a0e7f",
                 "Route": "OFFSHORE->AKL- SI",
                 "seko_carrier": "Omni Parcel",
-                "service_name": "InternationalCourier",
+                "service_name": "AIR TRACKED",
             },
-            "service": "InternationalCourier",
+            "service": "AIR TRACKED",
             "total_charge": 5.82,
         }
     ],
@@ -113,10 +113,7 @@ ParsedRateResponse = [
             "message": "CountryCode is required",
             "details": {
                 "Key": "CountryCode",
-                "Message": "CountryCode is required",
                 "Property": "Destination.Address.CountryCode",
-                "code": "ValidationError",
-                "message": "CountryCode is required",
             },
         }
     ],
@@ -127,7 +124,7 @@ RateRequest = {
     "DeliveryReference": "ORDER123",
     "Destination": {
         "Address": {
-            "City": "Christchurch",
+            "Suburb": "Christchurch",
             "CountryCode": "NZ",
             "PostCode": "8061",
             "StreetAddress": "DestinationStreetAddress",

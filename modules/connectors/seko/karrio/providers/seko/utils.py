@@ -96,3 +96,15 @@ class ConnectionConfig(lib.Enum):
     cost_center = lib.OptionEnum("CostCentreName", str)
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
+
+
+def parse_error_response(response):
+    """Parse the error response from the SAPIENT API."""
+    content = lib.failsafe(lambda: lib.decode(response.read()))
+
+    if any(content or ""):
+        return content
+
+    return lib.to_json(
+        dict(Errors=[dict(code=str(response.code), Message=response.reason)])
+    )

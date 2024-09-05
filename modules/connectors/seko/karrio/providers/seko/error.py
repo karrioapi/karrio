@@ -59,7 +59,14 @@ def parse_error_response(
             carrier_name=settings.carrier_name,
             code=error["code"],
             message=error["message"],
-            details={**kwargs, **error},
+            details={
+                **kwargs,
+                **{
+                    k: v
+                    for k, v in error.items()
+                    if k not in ["code", "message", "Code", "Message"]
+                },
+            },
         )
         for error in errors
     ]

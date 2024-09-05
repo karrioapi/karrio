@@ -29,6 +29,11 @@ class ItemType:
 
 
 @s(auto_attribs=True)
+class OutputFilesType:
+    LABELPDF100X150: List[str] = []
+
+
+@s(auto_attribs=True)
 class ConsignmentType:
     Connote: Optional[str] = None
     TrackingUrl: Optional[str] = None
@@ -39,7 +44,7 @@ class ConsignmentType:
     IsOvernight: Optional[bool] = None
     HasTrackPaks: Optional[bool] = None
     ConsignmentId: Optional[int] = None
-    OutputFiles: Optional[dict] = {}
+    OutputFiles: Optional[OutputFilesType] = JStruct[OutputFilesType]
     Items: List[ItemType] = JList[ItemType]
 
 

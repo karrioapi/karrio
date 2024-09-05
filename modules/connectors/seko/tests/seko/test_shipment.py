@@ -201,10 +201,7 @@ ParsedShipmentResponse = [
             "code": "Error",
             "details": {
                 "Key": "CountryCode",
-                "Message": "CountryCode is required",
                 "Property": "Destination.Address.CountryCode",
-                "code": "Error",
-                "message": "CountryCode is required",
             },
             "message": "CountryCode is required",
         }
@@ -218,7 +215,26 @@ ParsedCancelShipmentResponse = ParsedCancelShipmentResponse = [
         "operation": "Cancel Shipment",
         "success": True,
     },
-    [],
+    [
+        {
+            "carrier_id": "seko",
+            "carrier_name": "seko",
+            "code": "Error",
+            "details": {
+                "ConsignmentId": "SSPOT014114",
+            },
+            "message": "Cannot be deleted. Already deleted.",
+        },
+        {
+            "carrier_id": "seko",
+            "carrier_name": "seko",
+            "code": "Error",
+            "details": {
+                "ConsignmentId": "SSPOT014115",
+            },
+            "message": "Cannot be deleted. Already in transit.",
+        },
+    ],
 ]
 
 
@@ -227,10 +243,11 @@ ShipmentRequest = {
     "Origin": {
         "Name": "OriginName",
         "Address": {
+            "City": "NSW",
             "StreetAddress": "285 Main Street",
-            "City": "GLENWOOD",
             "PostCode": "2768",
             "CountryCode": "AU",
+            "Suburb": "GLENWOOD",
         },
         "ContactPerson": "Origin contact name",
         "PhoneNumber": "02 9111 01101",
@@ -242,9 +259,11 @@ ShipmentRequest = {
         "Name": "Destination Name",
         "Address": {
             "StreetAddress": "285 Coward Street",
-            "City": "TESBURY",
+            "City": "VIC",
+            "Suburb": "TESBURY",
             "PostCode": "3260",
             "CountryCode": "AU",
+            "Suburb": "TESBURY",
         },
         "ContactPerson": "JOHN SMITH",
         "PhoneNumber": "02 9111 1111",

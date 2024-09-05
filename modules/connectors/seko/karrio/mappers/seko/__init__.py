@@ -16,7 +16,7 @@ METADATA = Metadata(
     Settings=Settings,
     # Data Units
     is_hub=False,
-    # options=units.ShippingOption,
-    # services=units.ShippingService,
-    # connection_configs=utils.ConnectionConfig,
+    options=units.ShippingOption,
+    services=units.ShippingService,
+    connection_configs=utils.ConnectionConfig,
 )

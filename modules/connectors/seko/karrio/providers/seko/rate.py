@@ -29,7 +29,7 @@ def _extract_details(
     settings: provider_utils.Settings,
 ) -> models.RateDetails:
     details = lib.to_object(rating.AvailableType, data)
-    service = provider_units.ShippingService.map(details.CarrierServiceType)
+    service = provider_units.ShippingService.map(details.DeliveryType)
 
     return models.RateDetails(
         carrier_id=settings.carrier_id,
@@ -75,8 +75,8 @@ def rate_request(
             Address=seko.AddressType(
                 BuildingName="",
                 StreetAddress=recipient.street,
-                Suburb=None,
-                City=recipient.city,
+                Suburb=recipient.city,
+                City=recipient.state_code,
                 PostCode=recipient.postal_code,
                 CountryCode=recipient.country_code,
             ),

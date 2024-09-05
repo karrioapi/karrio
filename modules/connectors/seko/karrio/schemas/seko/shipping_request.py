@@ -19,6 +19,7 @@ class ItemType:
 @s(auto_attribs=True)
 class CommodityType:
     Description: Optional[str] = None
+    HarmonizedCode: Optional[str] = None
     Units: Optional[int] = None
     UnitValue: Optional[int] = None
     UnitKg: Optional[float] = None

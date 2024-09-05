@@ -2,6 +2,7 @@
 
 import karrio.lib as lib
 import karrio.api.proxy as proxy
+import karrio.providers.seko.utils as provider_utils
 import karrio.mappers.seko.settings as provider_settings
 
 
@@ -16,8 +17,9 @@ class Proxy(proxy.Proxy):
             method="POST",
             headers={
                 "Content-Type": "application/json; charset=utf-8",
-                "Authorization": f"{self.settings.access_key}",
+                "access_key": f"{self.settings.access_key}",
             },
+            on_error=provider_utils.parse_error_response,
         )
 
         return lib.Deserializable(response, lib.to_dict)
@@ -30,8 +32,9 @@ class Proxy(proxy.Proxy):
             method="POST",
             headers={
                 "Content-Type": "application/json; charset=utf-8",
-                "Authorization": f"{self.settings.access_key}",
+                "access_key": f"{self.settings.access_key}",
             },
+            on_error=provider_utils.parse_error_response,
         )
 
         return lib.Deserializable(response, lib.to_dict, request.ctx)
@@ -44,8 +47,9 @@ class Proxy(proxy.Proxy):
             method="POST",
             headers={
                 "Content-Type": "application/json; charset=utf-8",
-                "Authorization": f"{self.settings.access_key}",
+                "access_key": f"{self.settings.access_key}",
             },
+            on_error=provider_utils.parse_error_response,
         )
 
         return lib.Deserializable(
@@ -61,8 +65,9 @@ class Proxy(proxy.Proxy):
             method="POST",
             headers={
                 "Content-Type": "application/json; charset=utf-8",
-                "Authorization": f"{self.settings.access_key}",
+                "access_key": f"{self.settings.access_key}",
             },
+            on_error=provider_utils.parse_error_response,
         )
 
         return lib.Deserializable(response, lib.to_dict)
@@ -75,8 +80,9 @@ class Proxy(proxy.Proxy):
             method="POST",
             headers={
                 "Content-Type": "application/json; charset=utf-8",
-                "Authorization": f"{self.settings.access_key}",
+                "access_key": f"{self.settings.access_key}",
             },
+            on_error=provider_utils.parse_error_response,
         )
 
         return lib.Deserializable(response, lib.to_dict)

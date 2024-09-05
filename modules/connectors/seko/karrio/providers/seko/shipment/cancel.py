@@ -11,8 +11,17 @@ def parse_shipment_cancel_response(
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
     response = _response.deserialize()
-    messages = error.parse_error_response(response, settings)
-    success = True  # compute shipment cancel success state
+    messages = error.parse_error_response(
+        dict(
+            Errors=[
+                {"ConsignmentId": _, "Message": __}
+                for _, __ in response.items()
+                if isinstance(__, str) and "Deleted" not in __
+            ]
+        ),
+        settings,
+    )
+    success = any(["Deleted" in _ for _ in response.values() if isinstance(_, str)])
 
     confirmation = (
         models.ConfirmationDetails(
