@@ -49,10 +49,12 @@ def _extract_details(
                 (
                     provider_units.SurchargeType.map(
                         str(getattr(c, "Code", None) or getattr(c, "Type", None))
-                    ).name_or_key
-                    or (getattr(c, "Code", None) or getattr(c, "Type", None)
-                        )
-                ).replace("_", " "),
+                    ).name.capitalize().replace("_", " ")
+                    if provider_units.SurchargeType.map(
+                        str(getattr(c, "Code", None) or getattr(c, "Type", None))
+                    ).name
+                    else (getattr(c, "Code", None) or getattr(c, "Type", None))
+                ),
                 c.MonetaryValue
             )
             for c in itemized_charges
