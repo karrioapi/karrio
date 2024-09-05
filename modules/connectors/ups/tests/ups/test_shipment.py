@@ -233,7 +233,6 @@ ShipmentRequestJSON = {
             },
             "RatingMethodRequestedIndicator": "Y",
             "ReferenceNumber": {
-                "Code": "CountryCode",
                 "Value": "Your Customer Context",
             },
             "Service": {"Code": "01", "Description": "ups_next_day_air"},
@@ -338,7 +337,6 @@ ShipmentRequestWithPresetJSON = {
             },
             "RatingMethodRequestedIndicator": "Y",
             "ReferenceNumber": {
-                "Code": "CountryCode",
                 "Value": "Your Customer Context",
             },
             "Service": {"Code": "01", "Description": "ups_next_day_air"},

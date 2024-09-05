@@ -617,10 +617,10 @@ def shipment_request(
                         UPSPremier=None,
                         ReferenceNumber=(
                             ups.ReferenceNumberType(
-                                Value=package.reference_number,
+                                Value=package.parcel.reference_number,
                             )
                             if (country_pair not in ["US/US", "PR/PR"])
-                               and any(package.reference_number or "")
+                            and any(package.parcel.reference_number or "")
                             else None
                         ),
                     )
