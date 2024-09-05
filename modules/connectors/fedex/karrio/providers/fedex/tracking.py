@@ -122,10 +122,16 @@ def _extract_details(
             shipment_origin_country=lib.failsafe(
                 lambda: detail.originLocation.locationContactAndAddress.address.countryCode
             ),
-            signed_by=lib.failsafe(lambda: detail.deliveryDetails.signedByName),
+            signed_by=lib.failsafe(
+                lambda: (
+                    detail.deliveryDetails.signedByName
+                    if detail.deliveryDetails.signedByName
+                    else (detail.deliveryDetails.receivedByName)
+                )
+            ),
         ),
         images=lib.identity(models.Images(signature_image=img) if img else None),
-        estimated_delivery=estimated_delivery,
+        estimated_delivery=lib.fdate(estimated_delivery, try_formats=DATETIME_FORMATS),
         delivered=(status == "delivered"),
         status=status,
     )
