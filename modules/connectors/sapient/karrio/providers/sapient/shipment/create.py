@@ -80,6 +80,10 @@ def shipment_request(
     commodities: units.Products = lib.identity(
         customs.commodities if payload.customs else packages.items
     )
+    shipment_date = lib.to_next_business_datetime(
+        options.shipment_date.state or datetime.datetime.now(),
+        "%Y-%m-%d",
+    )
 
     # map data to convert karrio model to sapient specific type
     request = sapient.ShipmentRequestType(
@@ -91,12 +95,7 @@ def shipment_request(
             DescriptionOfGoods=lib.text(
                 packages.description or packages.items.description or "N/A", max=70
             ),
-            ShipmentDate=lib.fdate(
-                lib.to_date(
-                    options.shipment_date.state or datetime.datetime.now()
-                ).astimezone(datetime.timezone.utc),
-                "%Y-%m-%d",
-            ),
+            ShipmentDate=lib.fdate(shipment_date.astimezone(datetime.timezone.utc)),
             CurrencyCode=options.currency.state or "GBP",
             WeightUnitOfMeasure="KG",
             DimensionsUnitOfMeasure="CM",

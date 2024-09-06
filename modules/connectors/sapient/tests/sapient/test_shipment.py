@@ -278,7 +278,7 @@ ShipmentRequest = {
         "DimensionsUnitOfMeasure": "CM",
         "LabelFormat": "PDF",
         "ServiceCode": "carrier_service",
-        "ShipmentDate": "2024-08-11",
+        "ShipmentDate": "2024-08-12",
         "WeightUnitOfMeasure": "KG",
     },
     "Shipper": {
