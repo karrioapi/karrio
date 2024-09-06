@@ -6,7 +6,7 @@ import {
   ShipmentType,
 } from "@karrio/types";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
-import { formatRef, isNone, isNoneOrEmpty, url$ } from "@karrio/lib";
+import { formatRef, isNone, isNoneOrEmpty, p, url$ } from "@karrio/lib";
 import { ConfirmModalContext } from "../modals/confirm-modal";
 import { useShipmentMutation } from "@karrio/hooks/shipment";
 import React, { useState, useRef, useContext } from "react";
@@ -56,10 +56,10 @@ export const ShipmentMenu: React.FC<ShipmentMenuComponent> = ({
   const createLabel = (_: React.MouseEvent) => {
     if (!!shipment.meta?.orders) {
       router.push(
-        `${basePath}/orders/create_label?shipment_id=${shipment.id}&order_id=${shipment.meta.orders}`,
+        p`${basePath}/orders/create_label?shipment_id=${shipment.id}&order_id=${shipment.meta.orders}`,
       );
     } else {
-      router.push(`${basePath}/create_label?shipment_id=${shipment.id}`);
+      router.push(p`${basePath}/create_label?shipment_id=${shipment.id}`);
     }
   };
   const displayDetails = (_: React.MouseEvent) => {

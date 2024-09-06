@@ -25,6 +25,7 @@ import {
   insertUrlParam,
   isNoneOrEmpty,
   onError,
+  p,
 } from "@karrio/lib";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNotifier } from "@karrio/ui/components/notifier";
@@ -347,7 +348,9 @@ export function useOrderForm({ id = "new" }: { id?: string }) {
           type: NotificationType.success,
           message: "Order saved!",
         });
-        router.push(`${basePath}/draft_orders/${order?.id}`.replace("//", "/"));
+        router.push(
+          p`${basePath}/draft_orders/${order?.id}`.replace("//", "/"),
+        );
       } else {
         await mutation.updateOrder.mutateAsync({
           id,

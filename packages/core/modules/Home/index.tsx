@@ -8,6 +8,7 @@ import { useAPIUsage } from "@karrio/hooks/usage";
 import { useUser } from "@karrio/hooks/user";
 import { useRouter } from "next/navigation";
 import moment from "moment";
+import { p } from "@karrio/lib";
 
 export const generateMetadata = dynamicMetadata("Home");
 
@@ -311,7 +312,7 @@ export default function Page() {
         <div className="column" style={{ minWidth: "350px" }}>
           <div
             className="card is-clickable"
-            onClick={() => router.push(`${basePath}/settings/addresses`)}
+            onClick={() => router.push(p`${basePath}/settings/addresses`)}
           >
             <div className="columns icon-text has-text-grey m-0 p-4">
               <span className="tag is-primary icon has-text-white is-medium mt-1">
@@ -335,7 +336,7 @@ export default function Page() {
         <div className="column" style={{ minWidth: "350px" }}>
           <div
             className="card is-clickable"
-            onClick={() => router.push(`${basePath}/connections`)}
+            onClick={() => router.push(p`${basePath}/connections`)}
           >
             <div className="columns icon-text has-text-grey m-0 p-4">
               <span className="tag is-primary icon has-text-white is-medium mt-1">
@@ -381,7 +382,7 @@ export default function Page() {
         <div className="column" style={{ minWidth: "350px" }}>
           <div
             className="card is-clickable"
-            onClick={() => router.push(`${basePath}/trackers?modal=new`)}
+            onClick={() => router.push(p`${basePath}/trackers?modal=new`)}
           >
             <div className="columns icon-text has-text-grey m-0 p-4">
               <span className="tag is-primary icon has-text-white is-medium mt-1">
@@ -405,7 +406,7 @@ export default function Page() {
         <div className="column" style={{ minWidth: "350px" }}>
           <div
             className="card is-clickable"
-            onClick={() => router.push(`${basePath}/developers/apikeys`)}
+            onClick={() => router.push(p`${basePath}/developers/apikeys`)}
           >
             <div className="columns icon-text has-text-grey m-0 p-4">
               <span className="tag is-primary icon has-text-white is-medium mt-1">
@@ -429,7 +430,7 @@ export default function Page() {
         <div className="column" style={{ minWidth: "350px" }}>
           <div
             className="card is-clickable"
-            onClick={() => router.push(`${basePath}/developers/logs`)}
+            onClick={() => router.push(p`${basePath}/developers/logs`)}
           >
             <div className="columns icon-text has-text-grey m-0 p-4">
               <span className="tag is-primary icon has-text-white is-medium mt-1">

@@ -42,6 +42,7 @@ import {
   isEqual,
   isNoneOrEmpty,
   onError,
+  p,
 } from "@karrio/lib";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useWorkflowConnectionMutation } from "./workflow-connections";
@@ -458,7 +459,9 @@ export function useWorkflowForm({ id }: { id?: string } = {}) {
           type: NotificationType.success,
           message: "Workflow saved!",
         });
-        router.push(`${basePath}/workflows/${workflow?.id}`.replace("//", "/"));
+        router.push(
+          p`${basePath}/workflows/${workflow?.id}`.replace("//", "/"),
+        );
       } else {
         await mutation.updateWorkflow.mutateAsync({
           id,
