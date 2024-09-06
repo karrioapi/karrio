@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2024.6.2`.
+    The current version is `2024.6.3`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2024.6.2
+  version: 2024.6.3
 paths:
   /:
     get:
@@ -753,7 +753,7 @@ paths:
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
           `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
           `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
-          `sapient`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `sapient`, `seko`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `usps_wt`, `usps_wt_international`, `zoom2u`'
         required: true
       tags:
@@ -826,7 +826,7 @@ paths:
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
           `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
           `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
-          `sapient`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `sapient`, `seko`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `usps_wt`, `usps_wt_international`, `zoom2u`'
       - in: query
         name: metadata_key
@@ -1417,7 +1417,7 @@ paths:
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
           `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
           `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
-          `sapient`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `sapient`, `seko`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `usps_wt`, `usps_wt_international`, `zoom2u`'
       - in: query
         name: created_after
@@ -2316,6 +2316,7 @@ paths:
           - roadie
           - royalmail
           - sapient
+          - seko
           - sendle
           - tge
           - tnt
@@ -2410,6 +2411,7 @@ paths:
           - roadie
           - royalmail
           - sapient
+          - seko
           - sendle
           - tge
           - tnt
@@ -2504,6 +2506,7 @@ paths:
           - roadie
           - royalmail
           - sapient
+          - seko
           - sendle
           - tge
           - tnt
@@ -2691,6 +2694,7 @@ paths:
           - roadie
           - royalmail
           - sapient
+          - seko
           - sendle
           - tge
           - tnt
@@ -2826,6 +2830,7 @@ paths:
           - purolator
           - roadie
           - royalmail
+          - seko
           - sendle
           - tge
           - tnt
@@ -2957,7 +2962,7 @@ paths:
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
           `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
           `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
-          `sapient`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `sapient`, `seko`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `usps_wt`, `usps_wt_international`, `zoom2u`'
       - in: query
         name: created_after
@@ -3391,7 +3396,7 @@ paths:
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
           `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
           `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
-          `sapient`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `sapient`, `seko`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `usps_wt`, `usps_wt_international`, `zoom2u`'
       - in: query
         name: created_after
@@ -3546,6 +3551,7 @@ paths:
           - purolator
           - roadie
           - royalmail
+          - seko
           - sendle
           - tge
           - tnt
@@ -4832,6 +4838,7 @@ components:
           - roadie
           - royalmail
           - sapient
+          - seko
           - sendle
           - tge
           - tnt
@@ -4842,7 +4849,7 @@ components:
           - usps_wt_international
           - zoom2u
           type: string
-          x-spec-enum-id: 43d080c02eec5b40
+          x-spec-enum-id: 4d1bcfc36bdc8769
           description: A carrier connection type.
         display_name:
           type: string
@@ -4927,6 +4934,7 @@ components:
           - roadie
           - royalmail
           - sapient
+          - seko
           - sendle
           - tge
           - tnt
@@ -4937,7 +4945,7 @@ components:
           - usps_wt_international
           - zoom2u
           type: string
-          x-spec-enum-id: 43d080c02eec5b40
+          x-spec-enum-id: 4d1bcfc36bdc8769
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -5030,6 +5038,7 @@ components:
           - roadie
           - royalmail
           - sapient
+          - seko
           - sendle
           - tge
           - tnt
@@ -5040,7 +5049,7 @@ components:
           - usps_wt_international
           - zoom2u
           type: string
-          x-spec-enum-id: 43d080c02eec5b40
+          x-spec-enum-id: 4d1bcfc36bdc8769
           description: Indicates a carrier (type)
         display_name:
           type: string
@@ -6005,6 +6014,7 @@ components:
       - weight_unit
     ConnectionCredentialsField:
       oneOf:
+      - $ref: '#/components/schemas/seko'
       - $ref: '#/components/schemas/zoom2u'
       - $ref: '#/components/schemas/usps_wt_international'
       - $ref: '#/components/schemas/usps_wt'
@@ -8203,6 +8213,7 @@ components:
           - roadie
           - royalmail
           - sapient
+          - seko
           - sendle
           - tge
           - tnt
@@ -8213,7 +8224,7 @@ components:
           - usps_wt_international
           - zoom2u
           type: string
-          x-spec-enum-id: 43d080c02eec5b40
+          x-spec-enum-id: 4d1bcfc36bdc8769
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -10149,6 +10160,7 @@ components:
           - purolator
           - roadie
           - royalmail
+          - seko
           - sendle
           - tge
           - tnt
@@ -10159,7 +10171,7 @@ components:
           - usps_wt_international
           - zoom2u
           type: string
-          x-spec-enum-id: 5af7591a7c1a0806
+          x-spec-enum-id: 0253dcf2d811f867
           description: The tracking carrier
         account_number:
           type: string
@@ -11084,6 +11096,13 @@ components:
       - client_id
       - client_secret
       - shipping_account_id
+    seko:
+      type: object
+      properties:
+        access_key:
+          type: string
+      required:
+      - access_key
     sendle:
       type: object
       properties:
@@ -11328,6 +11347,7 @@ tags:
     ## Carriers
     | Carrier Name | Display Name |
     | ------------ | ------------ |
+    | seko | SEKO Logistics |
     | zoom2u | Zoom2u |
     | usps_wt_international | USPS Web Tools International |
     | usps_wt | USPS Web Tools |
@@ -11377,6 +11397,15 @@ tags:
     when purchasing shipping labels using single call label creation.
     You can also find all of the possible service levels for each of your carrier
     accounts by using [this endpoint](#operation/&&get_services).
+    ### SEKO Logistics
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | seko_ecommerce_standard_tracked | eCommerce Standard Tracked |
+    | seko_ecommerce_express_tracked | eCommerce Express Tracked |
+    | seko_domestic_express | Domestic Express |
+    | seko_domestic_standard | Domestic Standard |
+    | seko_domestic_large_parcel | Domestic Large Parcel |
+
     ### Zoom2u
     | Code         | Service Name |
     | ------------ | ------------ |
