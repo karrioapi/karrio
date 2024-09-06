@@ -1,3 +1,14 @@
+# Patch 2024.6.3
+
+## Changes
+
+### Feat
+
+-   feat: bootstrap `seko` carrier extension
+-   feat: prepare `seko` requests schemas
+-   feat: test drive `seko` request mapper implementation
+-   feat: compute next business `datetime` for sapient shipment_date
+
 # Patch 2024.6.2
 
 ## Changes

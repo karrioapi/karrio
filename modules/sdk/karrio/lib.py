@@ -267,6 +267,18 @@ def to_date(
     )
 
 
+def to_next_business_datetime(
+    date_value: typing.Union[str, datetime.datetime] = None,
+    current_format: str = "%Y-%m-%d %H:%M:%S",
+    try_formats: typing.List[str] = None,
+) -> datetime.datetime:
+    return utils.DF.next_business_datetime(
+        date_value,
+        current_format=current_format,
+        try_formats=try_formats,
+    )
+
+
 # endregion
 
 # -----------------------------------------------------------

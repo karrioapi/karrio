@@ -783,6 +783,10 @@ class Package:
 
         return self.items.value_amount
 
+    @property
+    def reference_number(self) -> typing.Optional[str]:
+        return self.parcel.reference_number
+
 
 class Packages(typing.Iterable[Package]):
     """The parcel collection common processing helper"""
@@ -1204,6 +1208,7 @@ class CustomsOption(utils.Enum):
     """common shipment customs identifiers"""
 
     aes = utils.OptionEnum("aes")
+    ioss = utils.OptionEnum("ioss")
     eel_pfc = utils.OptionEnum("eel_pfc")
     nip_number = utils.OptionEnum("eori_number")
     eori_number = utils.OptionEnum("eori_number")

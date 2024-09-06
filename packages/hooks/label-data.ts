@@ -7,6 +7,7 @@ import {
   isEqual,
   isNone,
   isNoneOrEmpty,
+  p,
   toNumber,
 } from "@karrio/lib";
 import {
@@ -617,7 +618,7 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
           message: "Label successfully purchased!",
         });
 
-        !!action.redirect && router.push(`${basePath}/shipments/${id}`);
+        !!action.redirect && router.push(p`${basePath}/shipments/${id}`);
       } catch (error: any) {
         loader.setLoading(false);
         updateShipment({ messages: errorToMessages(error) });

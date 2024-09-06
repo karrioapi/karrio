@@ -1,0 +1,31 @@
+{
+  "Available": [
+    {
+      "QuoteId": "e7fdf36c-8f6a-4d3f-8d96-c8b5893a0e7f",
+      "CarrierId": 604,
+      "CarrierName": "Omni Parcel",
+      "DeliveryType": "AIR TRACKED",
+      "Cost": 5.82,
+      "ServiceStandard": "",
+      "Comments": "",
+      "Route": "OFFSHORE->AKL- SI",
+      "IsRuralDelivery": false,
+      "IsSaturdayDelivery": false,
+      "IsFreightForward": false,
+      "CarrierServiceType": "InternationalCourier"
+    }
+  ],
+  "Rejected": [
+    {
+      "CarrierName": "CarrierName",
+      "DeliveryType": "DeliveryType",
+      "Reason": "Reason"
+    }
+  ],
+  "ValidationErrors": {
+    "Property": "Destination.Address.CountryCode",
+    "Message": "CountryCode is required",
+    "Key": "CountryCode",
+    "Value": ""
+  }
+}
