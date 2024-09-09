@@ -27,14 +27,14 @@ import { OrdersFilter } from "@karrio/ui/filters/orders-filter";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
 import { OrderMenu } from "@karrio/ui/components/order-menu";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { AddressType, ShipmentType } from "@karrio/types";
+import { AddressType, RateType, ShipmentType } from "@karrio/types";
 import { useLoader } from "@karrio/ui/components/loader";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { ModalProvider } from "@karrio/ui/modals/modal";
 import { Spinner } from "@karrio/ui/components/spinner";
 import { bundleContexts } from "@karrio/hooks/utils";
+import { useSearchParams } from "next/navigation";
 import { useOrders } from "@karrio/hooks/order";
-import { useRouter, useSearchParams } from "next/navigation";
 
 export const generateMetadata = dynamicMetadata("Orders");
 const ContextProviders = bundleContexts([
@@ -45,7 +45,6 @@ const ContextProviders = bundleContexts([
 
 export default function OrdersPage(pageProps: any) {
   const Component: React.FC = () => {
-    const router = useRouter();
     const { setLoading } = useLoader();
     const searchParams = useSearchParams();
     const { references } = useAPIMetadata();
@@ -80,7 +79,7 @@ export default function OrdersPage(pageProps: any) {
       default_rate ||
       shipment?.selected_rate ||
       (shipment?.rates || []).find(
-        (_) => _.service === shipment?.options?.preferred_service,
+        (_: RateType) => _.service === shipment?.options?.preferred_service,
       ) ||
       (shipment?.rates || [])[0] ||
       shipment;
@@ -161,17 +160,23 @@ export default function OrdersPage(pageProps: any) {
     const computeOrderService = (order: any) => {
       const shipment =
         order.shipments.find(
-          ({ status, tracking_number }) =>
+          ({ status, tracking_number }: ShipmentType) =>
             !!tracking_number && !["cancelled", "draft"].includes(status),
-        ) || order.shipments.find(({ status }) => ["draft"].includes(status));
+        ) ||
+        order.shipments.find(({ status }: ShipmentType) =>
+          ["draft"].includes(status),
+        );
       const rate = getRate(shipment);
 
       if (!shipment) {
         const _shipment =
           order.shipments.find(
-            ({ status }) => !["cancelled", "draft"].includes(status),
+            ({ status }: ShipmentType) =>
+              !["cancelled", "draft"].includes(status),
           ) ||
-          order.shipments.find(({ status }) => !["draft"].includes(status));
+          order.shipments.find(
+            ({ status }: ShipmentType) => !["draft"].includes(status),
+          );
         const _rate = getRate(_shipment);
 
         return (

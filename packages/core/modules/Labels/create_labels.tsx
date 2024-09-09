@@ -215,7 +215,7 @@ export default function Page(pageProps: any) {
         ({ id }, index) => `${id || index}` === `${selected}`,
       );
       const shipment = shipments[shipment_index];
-      const ShipmentEditor: React.FC =
+      const ShipmentEditor: React.FC<any> =
         !!shipment && !isNone(shipment_index)
           ? (
               f: (props: {
@@ -295,7 +295,7 @@ export default function Page(pageProps: any) {
       setSelectedRow(undefined);
       setIsOpen(false);
     };
-    const selectedRate = (shipment) =>
+    const selectedRate = (shipment: ShipmentType) =>
       (shipment?.rates || []).find(
         (_) => _.service === shipment?.options?.preferred_service,
       ) || (shipment?.rates || [])[0];
@@ -691,1290 +691,461 @@ export default function Page(pageProps: any) {
                     {retrieveShipment(
                       batch.shipments,
                       selectedRow,
-                    )(({ shipment, shipment_index }) => {
-                      const shipmentOrderIds = (
-                        shipment.meta?.order_id ||
-                        shipment.metadata?.order_ids ||
-                        ""
-                      )
-                        .split(",")
-                        .filter((_) => !isNoneOrEmpty(_));
-                      const orders = (shipmentOrderList?.edges || [])
-                        .filter(({ node }) =>
-                          shipmentOrderIds.includes(node.order_id),
+                    )(
+                      ({
+                        shipment,
+                        shipment_index,
+                      }: {
+                        shipment: ShipmentType;
+                        shipment_index: number;
+                      }) => {
+                        const shipmentOrderIds = (
+                          shipment.meta?.order_id ||
+                          shipment.metadata?.order_ids ||
+                          ""
                         )
-                        .map(({ node }) => node) as OrderType[];
+                          .split(",")
+                          .filter((_?: string) => !isNoneOrEmpty(_));
+                        const orders = (shipmentOrderList?.edges || [])
+                          .filter(({ node }) =>
+                            shipmentOrderIds.includes(node.order_id),
+                          )
+                          .map(({ node }) => node) as OrderType[];
 
-                      return (
-                        <React.Fragment key={keys[shipment_index]}>
-                          <ContextProviders>
-                            <CommodityEditModalProvider
-                              orderFilter={{ id: shipmentOrderIds }}
-                            >
-                              <header className="form-floating-header p-3 is-flex is-justify-content-space-between is-size-7">
-                                <div>
-                                  <span className="has-text-weight-bold text-ellipsis">
-                                    {`#${shipment.meta?.order_id || shipment.metadata?.order_ids || " - "}`}
-                                  </span>
-                                  <br />
-                                  <span className="has-text-weight-medium text-ellipsis">
-                                    {formatAddressLocationShort(
-                                      shipment.recipient as AddressType,
-                                    )}
-                                  </span>
-                                </div>
-                                <div>
-                                  <button
-                                    className="button is-white m-0"
-                                    style={{ borderRadius: "50%" }}
-                                    onClick={onClose}
-                                  >
-                                    <span className="icon is-size-6">
-                                      <i className="fas fa-lg fa-times"></i>
+                        return (
+                          <React.Fragment key={keys[shipment_index]}>
+                            <ContextProviders>
+                              <CommodityEditModalProvider
+                                orderFilter={{ id: shipmentOrderIds }}
+                              >
+                                <header className="form-floating-header p-3 is-flex is-justify-content-space-between is-size-7">
+                                  <div>
+                                    <span className="has-text-weight-bold text-ellipsis">
+                                      {`#${shipment.meta?.order_id || shipment.metadata?.order_ids || " - "}`}
                                     </span>
-                                  </button>
-                                </div>
-                              </header>
-                              <div className="p-5 my-2"></div>
-
-                              <div className="pb-6">
-                                {/* Address section */}
-                                <div className="card p-0 mt-3">
-                                  <div className="p-3">
-                                    <header className="is-flex is-justify-content-space-between">
-                                      <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
-                                        Customer
-                                      </span>
-                                      <div className="is-vcentered">
-                                        <AddressModalEditor
-                                          shipment={shipment}
-                                          address={shipment.recipient}
-                                          onSubmit={(address) =>
-                                            onChange(shipment_index, shipment, {
-                                              recipient: address,
-                                            })
-                                          }
-                                          trigger={
-                                            <button className="button is-small is-info is-text is-inverted p-1">
-                                              Edit address
-                                            </button>
-                                          }
-                                        />
-                                      </div>
-                                    </header>
-
-                                    <AddressDescription
-                                      address={shipment.recipient}
-                                    />
-
-                                    {Object.values(shipment.recipient || {})
-                                      .length === 0 && (
-                                      <>
-                                        <div className="notification is-warning is-light my-2 py-2 px-4 my-2">
-                                          Please add a customer address.
-                                        </div>
-                                      </>
-                                    )}
+                                    <br />
+                                    <span className="has-text-weight-medium text-ellipsis">
+                                      {formatAddressLocationShort(
+                                        shipment.recipient as AddressType,
+                                      )}
+                                    </span>
                                   </div>
-
-                                  <hr
-                                    className="my-1"
-                                    style={{ height: "1px" }}
-                                  />
-
-                                  <div className="p-3">
-                                    <header className="is-flex is-justify-content-space-between">
-                                      <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
-                                        Ship from
+                                  <div>
+                                    <button
+                                      className="button is-white m-0"
+                                      style={{ borderRadius: "50%" }}
+                                      onClick={onClose}
+                                    >
+                                      <span className="icon is-size-6">
+                                        <i className="fas fa-lg fa-times"></i>
                                       </span>
-                                      <div className="is-vcentered">
-                                        <AddressModalEditor
-                                          shipment={shipment}
-                                          address={shipment.shipper}
-                                          onSubmit={(address) =>
-                                            onChange(shipment_index, shipment, {
-                                              shipper: address,
-                                            })
-                                          }
-                                          trigger={
-                                            <button className="button is-small is-info is-text is-inverted p-1">
-                                              Edit address
-                                            </button>
-                                          }
-                                        />
-                                      </div>
-                                    </header>
-
-                                    <AddressDescription
-                                      address={shipment.shipper}
-                                    />
-
-                                    {Object.values(shipment.shipper || {})
-                                      .length === 0 && (
-                                      <>
-                                        <div className="notification is-warning is-light my-2 py-2 px-4 my-2">
-                                          Please specify an address.
-                                        </div>
-                                      </>
-                                    )}
+                                    </button>
                                   </div>
+                                </header>
+                                <div className="p-5 my-2"></div>
 
-                                  {/* Retrun address section */}
-                                  <hr
-                                    className="my-1"
-                                    style={{ height: "1px" }}
-                                  />
-
-                                  <div className="p-3">
-                                    <header className="is-flex is-justify-content-space-between">
-                                      <div>
-                                        <CheckBoxField
-                                          name="addInsurance"
-                                          fieldClass="column mb-0 is-12 px-0 py-2"
-                                          defaultChecked={
-                                            addReturn ||
-                                            !isNone(shipment.return_address)
-                                          }
-                                          onChange={(e) => {
-                                            setAddReturn(e.target.checked);
-                                            if (
-                                              !e.target.checked &&
-                                              !isNone(shipment.return_address)
-                                            ) {
-                                              onChange(
-                                                shipment_index,
-                                                shipment,
-                                                {
-                                                  return_address: null,
-                                                },
-                                              );
-                                            }
-                                          }}
-                                        >
-                                          <span>
-                                            Add a return address (optional)
-                                          </span>
-                                        </CheckBoxField>
-                                      </div>
-                                      <div className="is-vcentered">
-                                        {(addReturn ||
-                                          !isNone(shipment.return_address)) && (
+                                <div className="pb-6">
+                                  {/* Address section */}
+                                  <div className="card p-0 mt-3">
+                                    <div className="p-3">
+                                      <header className="is-flex is-justify-content-space-between">
+                                        <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
+                                          Customer
+                                        </span>
+                                        <div className="is-vcentered">
                                           <AddressModalEditor
                                             shipment={shipment}
-                                            address={
-                                              shipment.return_address ||
-                                              ({
-                                                country_code:
-                                                  shipment.shipper
-                                                    ?.country_code,
-                                              } as AddressType)
-                                            }
+                                            address={shipment.recipient}
                                             onSubmit={(address) =>
                                               onChange(
                                                 shipment_index,
                                                 shipment,
                                                 {
-                                                  return_address: address,
+                                                  recipient: address,
                                                 },
                                               )
                                             }
                                             trigger={
                                               <button className="button is-small is-info is-text is-inverted p-1">
-                                                Edit return address
+                                                Edit address
                                               </button>
+                                            }
+                                          />
+                                        </div>
+                                      </header>
+
+                                      <AddressDescription
+                                        address={shipment.recipient}
+                                      />
+
+                                      {Object.values(shipment.recipient || {})
+                                        .length === 0 && (
+                                        <>
+                                          <div className="notification is-warning is-light my-2 py-2 px-4 my-2">
+                                            Please add a customer address.
+                                          </div>
+                                        </>
+                                      )}
+                                    </div>
+
+                                    <hr
+                                      className="my-1"
+                                      style={{ height: "1px" }}
+                                    />
+
+                                    <div className="p-3">
+                                      <header className="is-flex is-justify-content-space-between">
+                                        <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
+                                          Ship from
+                                        </span>
+                                        <div className="is-vcentered">
+                                          <AddressModalEditor
+                                            shipment={shipment}
+                                            address={shipment.shipper}
+                                            onSubmit={(address) =>
+                                              onChange(
+                                                shipment_index,
+                                                shipment,
+                                                {
+                                                  shipper: address,
+                                                },
+                                              )
+                                            }
+                                            trigger={
+                                              <button className="button is-small is-info is-text is-inverted p-1">
+                                                Edit address
+                                              </button>
+                                            }
+                                          />
+                                        </div>
+                                      </header>
+
+                                      <AddressDescription
+                                        address={shipment.shipper}
+                                      />
+
+                                      {Object.values(shipment.shipper || {})
+                                        .length === 0 && (
+                                        <>
+                                          <div className="notification is-warning is-light my-2 py-2 px-4 my-2">
+                                            Please specify an address.
+                                          </div>
+                                        </>
+                                      )}
+                                    </div>
+
+                                    {/* Retrun address section */}
+                                    <hr
+                                      className="my-1"
+                                      style={{ height: "1px" }}
+                                    />
+
+                                    <div className="p-3">
+                                      <header className="is-flex is-justify-content-space-between">
+                                        <div>
+                                          <CheckBoxField
+                                            name="addInsurance"
+                                            fieldClass="column mb-0 is-12 px-0 py-2"
+                                            defaultChecked={
+                                              addReturn ||
+                                              !isNone(shipment.return_address)
+                                            }
+                                            onChange={(e) => {
+                                              setAddReturn(e.target.checked);
+                                              if (
+                                                !e.target.checked &&
+                                                !isNone(shipment.return_address)
+                                              ) {
+                                                onChange(
+                                                  shipment_index,
+                                                  shipment,
+                                                  {
+                                                    return_address: null,
+                                                  },
+                                                );
+                                              }
+                                            }}
+                                          >
+                                            <span>
+                                              Add a return address (optional)
+                                            </span>
+                                          </CheckBoxField>
+                                        </div>
+                                        <div className="is-vcentered">
+                                          {(addReturn ||
+                                            !isNone(
+                                              shipment.return_address,
+                                            )) && (
+                                            <AddressModalEditor
+                                              shipment={shipment}
+                                              address={
+                                                shipment.return_address ||
+                                                ({
+                                                  country_code:
+                                                    shipment.shipper
+                                                      ?.country_code,
+                                                } as AddressType)
+                                              }
+                                              onSubmit={(address) =>
+                                                onChange(
+                                                  shipment_index,
+                                                  shipment,
+                                                  {
+                                                    return_address: address,
+                                                  },
+                                                )
+                                              }
+                                              trigger={
+                                                <button className="button is-small is-info is-text is-inverted p-1">
+                                                  Edit return address
+                                                </button>
+                                              }
+                                            />
+                                          )}
+                                        </div>
+                                      </header>
+
+                                      <div
+                                        style={{
+                                          display: `${isNone(shipment.return_address) ? "none" : "block"}`,
+                                        }}
+                                      >
+                                        {shipment?.return_address && (
+                                          <AddressDescription
+                                            address={
+                                              shipment!.return_address as any
                                             }
                                           />
                                         )}
                                       </div>
-                                    </header>
 
-                                    <div
-                                      style={{
-                                        display: `${isNone(shipment.return_address) ? "none" : "block"}`,
-                                      }}
-                                    >
-                                      {shipment?.return_address && (
-                                        <AddressDescription
-                                          address={
-                                            shipment!.return_address as any
-                                          }
-                                        />
+                                      {Object.values(
+                                        shipment?.return_address || [],
+                                      ).length === 0 && (
+                                        <div className="notification is-default p-2 is-size-7">
+                                          <span>
+                                            Use this to specify an origin
+                                            address different from the shipper
+                                            address above. <br />
+                                            This address will be used for pickup
+                                            and return.
+                                          </span>
+                                        </div>
                                       )}
                                     </div>
 
-                                    {Object.values(
-                                      shipment?.return_address || [],
-                                    ).length === 0 && (
-                                      <div className="notification is-default p-2 is-size-7">
-                                        <span>
-                                          Use this to specify an origin address
-                                          different from the shipper address
-                                          above. <br />
-                                          This address will be used for pickup
-                                          and return.
-                                        </span>
-                                      </div>
-                                    )}
-                                  </div>
+                                    {/* Billing address section */}
+                                    <hr
+                                      className="my-1"
+                                      style={{ height: "1px" }}
+                                    />
 
-                                  {/* Billing address section */}
-                                  <hr
-                                    className="my-1"
-                                    style={{ height: "1px" }}
-                                  />
-
-                                  <div className="p-3">
-                                    <label
-                                      className="label is-capitalized"
-                                      style={{ fontSize: "0.8em" }}
-                                    >
-                                      Shipment Paid By
-                                    </label>
-
-                                    <div className="control">
-                                      <label className="radio">
-                                        <input
-                                          className="mr-1"
-                                          type="radio"
-                                          name="paid_by"
-                                          defaultChecked={
-                                            shipment.payment?.paid_by ===
-                                            PaidByEnum.sender
-                                          }
-                                          onChange={() =>
-                                            onChange(shipment_index, shipment, {
-                                              payment: {
-                                                paid_by: PaidByEnum.sender,
-                                              },
-                                              billing_address: null,
-                                            } as any)
-                                          }
-                                        />
-                                        <span className="is-size-7 has-text-weight-bold">
-                                          {formatRef(
-                                            PaidByEnum.sender.toString(),
-                                          )}
-                                        </span>
+                                    <div className="p-3">
+                                      <label
+                                        className="label is-capitalized"
+                                        style={{ fontSize: "0.8em" }}
+                                      >
+                                        Shipment Paid By
                                       </label>
-                                      <label className="radio">
-                                        <input
-                                          className="mr-1"
-                                          type="radio"
-                                          name="paid_by"
-                                          defaultChecked={
-                                            shipment.payment?.paid_by ===
-                                            PaidByEnum.recipient
-                                          }
-                                          onChange={() =>
-                                            onChange(shipment_index, shipment, {
-                                              payment: {
-                                                ...shipment.payment,
-                                                paid_by: PaidByEnum.recipient,
-                                              },
-                                              billing_address: null,
-                                            })
-                                          }
-                                        />
-                                        <span className="is-size-7 has-text-weight-bold">
-                                          {formatRef(
-                                            PaidByEnum.recipient.toString(),
-                                          )}
-                                        </span>
-                                      </label>
-                                      <label className="radio">
-                                        <input
-                                          className="mr-1"
-                                          type="radio"
-                                          name="paid_by"
-                                          defaultChecked={
-                                            shipment.payment?.paid_by ===
-                                            PaidByEnum.third_party
-                                          }
-                                          onChange={() =>
-                                            onChange(shipment_index, shipment, {
-                                              payment: {
-                                                ...shipment.payment,
-                                                paid_by: PaidByEnum.third_party,
-                                              },
-                                            })
-                                          }
-                                        />
-                                        <span className="is-size-7 has-text-weight-bold">
-                                          {formatRef(
-                                            PaidByEnum.third_party.toString(),
-                                          )}
-                                        </span>
-                                      </label>
-                                    </div>
 
-                                    {shipment.payment?.paid_by &&
-                                      shipment.payment?.paid_by !==
-                                        PaidByEnum.sender && (
-                                        <div
-                                          className="columns m-1 px-2 py-0"
-                                          style={{
-                                            borderLeft: "solid 2px #ddd",
-                                          }}
-                                        >
-                                          <InputField
-                                            label="account number"
-                                            className="is-small"
-                                            defaultValue={
-                                              shipment?.payment
-                                                ?.account_number as string
+                                      <div className="control">
+                                        <label className="radio">
+                                          <input
+                                            className="mr-1"
+                                            type="radio"
+                                            name="paid_by"
+                                            defaultChecked={
+                                              shipment.payment?.paid_by ===
+                                              PaidByEnum.sender
                                             }
-                                            onChange={(e) =>
+                                            onChange={() =>
+                                              onChange(
+                                                shipment_index,
+                                                shipment,
+                                                {
+                                                  payment: {
+                                                    paid_by: PaidByEnum.sender,
+                                                  },
+                                                  billing_address: null,
+                                                } as any,
+                                              )
+                                            }
+                                          />
+                                          <span className="is-size-7 has-text-weight-bold">
+                                            {formatRef(
+                                              PaidByEnum.sender.toString(),
+                                            )}
+                                          </span>
+                                        </label>
+                                        <label className="radio">
+                                          <input
+                                            className="mr-1"
+                                            type="radio"
+                                            name="paid_by"
+                                            defaultChecked={
+                                              shipment.payment?.paid_by ===
+                                              PaidByEnum.recipient
+                                            }
+                                            onChange={() =>
                                               onChange(
                                                 shipment_index,
                                                 shipment,
                                                 {
                                                   payment: {
                                                     ...shipment.payment,
-                                                    account_number:
-                                                      e.target.value,
+                                                    paid_by:
+                                                      PaidByEnum.recipient,
+                                                  },
+                                                  billing_address: null,
+                                                },
+                                              )
+                                            }
+                                          />
+                                          <span className="is-size-7 has-text-weight-bold">
+                                            {formatRef(
+                                              PaidByEnum.recipient.toString(),
+                                            )}
+                                          </span>
+                                        </label>
+                                        <label className="radio">
+                                          <input
+                                            className="mr-1"
+                                            type="radio"
+                                            name="paid_by"
+                                            defaultChecked={
+                                              shipment.payment?.paid_by ===
+                                              PaidByEnum.third_party
+                                            }
+                                            onChange={() =>
+                                              onChange(
+                                                shipment_index,
+                                                shipment,
+                                                {
+                                                  payment: {
+                                                    ...shipment.payment,
+                                                    paid_by:
+                                                      PaidByEnum.third_party,
                                                   },
                                                 },
                                               )
                                             }
                                           />
-                                        </div>
-                                      )}
-                                  </div>
+                                          <span className="is-size-7 has-text-weight-bold">
+                                            {formatRef(
+                                              PaidByEnum.third_party.toString(),
+                                            )}
+                                          </span>
+                                        </label>
+                                      </div>
 
-                                  {(shipment?.billing_address ||
-                                    shipment.payment?.paid_by ===
-                                      PaidByEnum.third_party) && (
-                                    <>
-                                      <div className="p-3">
-                                        <header className="is-flex is-justify-content-space-between">
-                                          <label
-                                            className="label is-capitalized"
-                                            style={{ fontSize: "0.8em" }}
+                                      {shipment.payment?.paid_by &&
+                                        shipment.payment?.paid_by !==
+                                          PaidByEnum.sender && (
+                                          <div
+                                            className="columns m-1 px-2 py-0"
+                                            style={{
+                                              borderLeft: "solid 2px #ddd",
+                                            }}
                                           >
-                                            Billing address
-                                          </label>
-                                          <div className="is-vcentered">
-                                            <AddressModalEditor
-                                              shipment={shipment}
-                                              address={
-                                                shipment.billing_address ||
-                                                ({} as AddressType)
+                                            <InputField
+                                              label="account number"
+                                              className="is-small"
+                                              defaultValue={
+                                                shipment?.payment
+                                                  ?.account_number as string
                                               }
-                                              onSubmit={(address) =>
+                                              onChange={(e) =>
                                                 onChange(
                                                   shipment_index,
                                                   shipment,
-                                                  { billing_address: address },
+                                                  {
+                                                    payment: {
+                                                      ...shipment.payment,
+                                                      account_number:
+                                                        e.target.value,
+                                                    },
+                                                  },
                                                 )
                                               }
-                                              trigger={
-                                                <button className="button is-small is-info is-text is-inverted p-1">
-                                                  Edit address
-                                                </button>
-                                              }
                                             />
                                           </div>
-                                        </header>
-
-                                        {shipment?.billing_address && (
-                                          <AddressDescription
-                                            address={
-                                              shipment!.billing_address as any
-                                            }
-                                          />
                                         )}
-
-                                        {isNone(shipment?.billing_address) && (
-                                          <div className="notification is-default p-2 is-size-7 my-2">
-                                            Add shipment billing address.
-                                            (optional)
-                                          </div>
-                                        )}
-                                      </div>
-                                    </>
-                                  )}
-                                </div>
-
-                                {/* Parcel & Items section */}
-                                <div className="card px-0 py-3 mt-5">
-                                  <header className="px-3 is-flex is-justify-content-space-between">
-                                    <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
-                                      PACKAGES
-                                    </span>
-                                    <div className="is-vcentered">
-                                      <ParcelModalEditor
-                                        header="Add package"
-                                        shipment={shipment}
-                                        onSubmit={mutation.addParcel(
-                                          shipment_index,
-                                        )}
-                                        trigger={
-                                          <button className="button is-small is-info is-text is-inverted p-1">
-                                            Add package
-                                          </button>
-                                        }
-                                      />
                                     </div>
-                                  </header>
 
-                                  <hr
-                                    className="my-1"
-                                    style={{ height: "1px" }}
-                                  />
-
-                                  {shipment.parcels.map((pkg, pkg_index) => (
-                                    <React.Fragment
-                                      key={
-                                        pkg.id || `${pkg_index}-${new Date()}`
-                                      }
-                                    >
-                                      {pkg_index > 0 && (
-                                        <hr
-                                          className="my-1"
-                                          style={{ height: "3px" }}
-                                        />
-                                      )}
-
-                                      <div className="p-3" key={pkg_index}>
-                                        {/* Parcel header */}
-                                        <div className="is-flex is-justify-content-space-between mb-4">
-                                          <div>
-                                            <ParcelDescription
-                                              parcel={pkg}
-                                              suffix={
-                                                <span className="tag ml-1 has-text-weight-bold">
-                                                  {pkg_index + 1}
-                                                </span>
-                                              }
-                                            />
-                                          </div>
-                                          <div>
-                                            <ParcelModalEditor
-                                              header="Edit package"
-                                              onSubmit={mutation.updateParcel(
-                                                shipment_index,
-                                              )(pkg_index, pkg.id)}
-                                              parcel={pkg}
-                                              shipment={shipment}
-                                              trigger={
-                                                <button
-                                                  type="button"
-                                                  className="button is-small is-white"
-                                                >
-                                                  <span className="icon is-small">
-                                                    <i className="fas fa-pen"></i>
-                                                  </span>
-                                                </button>
-                                              }
-                                            />
-                                            <button
-                                              type="button"
-                                              className="button is-small is-white"
-                                              disabled={
-                                                shipment.parcels.length === 1
-                                              }
-                                              onClick={mutation.removeParcel(
-                                                shipment_index,
-                                              )(pkg_index, pkg.id)}
+                                    {(shipment?.billing_address ||
+                                      shipment.payment?.paid_by ===
+                                        PaidByEnum.third_party) && (
+                                      <>
+                                        <div className="p-3">
+                                          <header className="is-flex is-justify-content-space-between">
+                                            <label
+                                              className="label is-capitalized"
+                                              style={{ fontSize: "0.8em" }}
                                             >
-                                              <span className="icon is-small">
-                                                <i className="fas fa-times"></i>
-                                              </span>
-                                            </button>
-                                          </div>
-                                        </div>
-
-                                        {/* Items section */}
-                                        <span className="is-size-7 has-text-weight-semibold">
-                                          ITEMS
-                                        </span>
-
-                                        {(pkg.items || []).map(
-                                          (item, item_index) => (
-                                            <React.Fragment
-                                              key={
-                                                item.id ||
-                                                `${item_index}-${new Date()}`
-                                              }
-                                            >
-                                              <hr
-                                                className="my-1"
-                                                style={{ height: "1px" }}
-                                              />
-                                              <div
-                                                key={item_index}
-                                                className="py-1 is-flex is-justify-content-space-between"
-                                              >
-                                                <div>
-                                                  <p className="is-size-7 my-1 has-text-weight-semibold">
-                                                    {item_index + 1}{" "}
-                                                    {`${item.title || item.description || "Item"}`}
-                                                  </p>
-                                                  <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-grey">
-                                                    {isNoneOrEmpty(item.sku)
-                                                      ? "SKU: 0000000"
-                                                      : `SKU: ${item.sku}`}
-                                                    {getOrder(
-                                                      orders,
-                                                      item.parent_id,
-                                                    ) && (
-                                                      <span className="has-text-info">
-                                                        {` | ORDER: ${getOrder(orders, item.parent_id)?.order_id}`}
-                                                      </span>
-                                                    )}
-                                                  </p>
-                                                  <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-grey"></p>
-                                                </div>
-                                                <div className="is-flex">
-                                                  <div className="is-size-7 has-text-grey has-text-weight-semibold is-flex px-2">
-                                                    <span
-                                                      className="p-2 has-text-right"
-                                                      style={{
-                                                        minWidth: "90px",
-                                                      }}
-                                                    >
-                                                      {formatWeight(item)}
-                                                    </span>
-                                                    <div className="field has-addons">
-                                                      <p className="control is-expanded">
-                                                        <input
-                                                          min={1}
-                                                          type="number"
-                                                          value={
-                                                            item.quantity as number
-                                                          }
-                                                          onChange={(e) => {
-                                                            mutation.updateItem(
-                                                              shipment_index,
-                                                            )(
-                                                              pkg_index,
-                                                              item_index,
-                                                              pkg.id,
-                                                            )({
-                                                              quantity:
-                                                                parseInt(
-                                                                  e.target
-                                                                    .value,
-                                                                ),
-                                                            } as CommodityType);
-                                                          }}
-                                                          className="input is-small"
-                                                          style={{
-                                                            width: "60px",
-                                                            textAlign: "center",
-                                                          }}
-                                                          {...(getParent(
-                                                            orders,
-                                                            item.parent_id,
-                                                          )
-                                                            ? {
-                                                                max: getAvailableQuantity(
-                                                                  shipment,
-                                                                  orders,
-                                                                  item,
-                                                                  item_index,
-                                                                ),
-                                                              }
-                                                            : {})}
-                                                        />
-                                                      </p>
-                                                      {getParent(
-                                                        orders,
-                                                        item.parent_id,
-                                                      ) && (
-                                                        <p className="control">
-                                                          <a className="button is-static is-small">
-                                                            of{" "}
-                                                            {getParent(
-                                                              orders,
-                                                              item.parent_id,
-                                                            )
-                                                              ?.unfulfilled_quantity ||
-                                                              item.quantity}
-                                                          </a>
-                                                        </p>
-                                                      )}
-                                                    </div>
-                                                  </div>
-                                                  <CommodityStateContext.Consumer>
-                                                    {({ editCommodity }) => (
-                                                      <button
-                                                        type="button"
-                                                        className="button is-small is-white"
-                                                        disabled={
-                                                          !isNone(
-                                                            item.parent_id,
-                                                          )
-                                                        }
-                                                        onClick={() =>
-                                                          editCommodity({
-                                                            commodity: item,
-                                                            onSubmit: (_) =>
-                                                              mutation.updateItem(
-                                                                shipment_index,
-                                                              )(
-                                                                pkg_index,
-                                                                item_index,
-                                                                pkg.id,
-                                                              )(_),
-                                                          })
-                                                        }
-                                                      >
-                                                        <span className="icon is-small">
-                                                          <i className="fas fa-pen"></i>
-                                                        </span>
-                                                      </button>
-                                                    )}
-                                                  </CommodityStateContext.Consumer>
-                                                  <button
-                                                    type="button"
-                                                    className="button is-small is-white"
-                                                    onClick={mutation.removeItem(
-                                                      shipment_index,
-                                                    )(
-                                                      pkg_index,
-                                                      item_index,
-                                                      item.id,
-                                                    )}
-                                                  >
-                                                    <span className="icon is-small">
-                                                      <i className="fas fa-times"></i>
-                                                    </span>
-                                                  </button>
-                                                </div>
-                                              </div>
-                                            </React.Fragment>
-                                          ),
-                                        )}
-
-                                        {(pkg.items || []).length === 0 && (
-                                          <div className="notification is-light my-2 py-2 px-4 is-size-7">
-                                            You can specify content items.
-                                          </div>
-                                        )}
-
-                                        <div className="is-flex is-justify-content-space-between mt-4">
-                                          <CommodityStateContext.Consumer>
-                                            {({ editCommodity }) => (
-                                              <button
-                                                type="button"
-                                                className="button is-small is-info is-inverted p-2"
-                                                onClick={() =>
-                                                  editCommodity({
-                                                    onSubmit: (_) =>
-                                                      mutation.addItems(
-                                                        shipment_index,
-                                                      )(
-                                                        pkg_index,
-                                                        pkg.id,
-                                                      )([_] as any),
-                                                  })
+                                              Billing address
+                                            </label>
+                                            <div className="is-vcentered">
+                                              <AddressModalEditor
+                                                shipment={shipment}
+                                                address={
+                                                  shipment.billing_address ||
+                                                  ({} as AddressType)
                                                 }
-                                              >
-                                                <span className="icon is-small">
-                                                  <i className="fas fa-plus"></i>
-                                                </span>
-                                                <span>Add item</span>
-                                              </button>
-                                            )}
-                                          </CommodityStateContext.Consumer>
-                                        </div>
-                                      </div>
-                                    </React.Fragment>
-                                  ))}
-
-                                  {(shipment.parcels || []).length === 0 && (
-                                    <div className="m-4 notification is-default">
-                                      Add one or more packages to create a
-                                      shipment.
-                                    </div>
-                                  )}
-                                </div>
-
-                                {/* Shipping options section */}
-                                <div className="card px-0 py-3 mt-5">
-                                  <header className="px-3 is-flex is-justify-content-space-between">
-                                    <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
-                                      Shipping options
-                                    </span>
-                                  </header>
-
-                                  <hr
-                                    className="my-1"
-                                    style={{ height: "1px" }}
-                                  />
-
-                                  <div className="p-3 pb-0">
-                                    {/* shipping date */}
-                                    <InputField
-                                      name="shipping_date"
-                                      label="shipping date"
-                                      type="datetime-local"
-                                      className="is-small"
-                                      fieldClass="column mb-0 is-8 p-0 mb-2"
-                                      defaultValue={
-                                        shipment.options?.shipping_date
-                                      }
-                                      onChange={(e) =>
-                                        onChange(shipment_index, shipment, {
-                                          options: {
-                                            ...shipment.options,
-                                            shipping_date: e.target.value,
-                                          },
-                                        })
-                                      }
-                                    />
-
-                                    {/* currency */}
-                                    <SelectField
-                                      name="currency"
-                                      label="shipment currency"
-                                      wrapperClass="py-2"
-                                      className="is-small is-fullwidth"
-                                      fieldClass="column is-8 mb-0 px-0"
-                                      value={shipment.options?.currency}
-                                      required={
-                                        !isNone(shipment.options?.insurance) ||
-                                        !isNone(
-                                          shipment.options?.cash_on_delivery,
-                                        ) ||
-                                        !isNone(
-                                          shipment.options?.declared_value,
-                                        )
-                                      }
-                                      onChange={(e) =>
-                                        onChange(shipment_index, shipment, {
-                                          options: {
-                                            ...shipment.options,
-                                            currency: e.target.value,
-                                          },
-                                        })
-                                      }
-                                    >
-                                      <option value="">
-                                        Select a currency
-                                      </option>
-                                      {CURRENCY_OPTIONS.map((unit) => (
-                                        <option key={unit} value={unit}>
-                                          {unit}
-                                        </option>
-                                      ))}
-                                    </SelectField>
-
-                                    {/* signature confirmation */}
-                                    <CheckBoxField
-                                      name="signature_confirmation"
-                                      fieldClass="column mb-0 is-12 px-1 py-2"
-                                      defaultChecked={
-                                        shipment.options?.signature_confirmation
-                                      }
-                                      onChange={(e) =>
-                                        onChange(shipment_index, shipment, {
-                                          options: {
-                                            ...shipment.options,
-                                            signature_confirmation:
-                                              e.target.checked || null,
-                                          },
-                                        })
-                                      }
-                                    >
-                                      <span>Add signature confirmation</span>
-                                    </CheckBoxField>
-
-                                    {/* insurance */}
-                                    <CheckBoxField
-                                      name="addInsurance"
-                                      fieldClass="column mb-0 is-12 px-1 py-2"
-                                      defaultChecked={
-                                        !isNoneOrEmpty(
-                                          shipment.options?.insurance,
-                                        )
-                                      }
-                                      onChange={(e) =>
-                                        onChange(shipment_index, shipment, {
-                                          options: {
-                                            ...shipment.options,
-                                            insurance:
-                                              e.target.checked === true
-                                                ? ""
-                                                : null,
-                                          },
-                                        })
-                                      }
-                                    >
-                                      <span>Add insurance coverage</span>
-                                    </CheckBoxField>
-
-                                    <div
-                                      className="column is-multiline mb-0 ml-4 my-1 px-2 py-0"
-                                      style={{
-                                        borderLeft: "solid 1px #ddd",
-                                        display: `${isNone(shipment.options?.insurance) ? "none" : "block"}`,
-                                      }}
-                                    >
-                                      <InputField
-                                        name="insurance"
-                                        label="Coverage value"
-                                        type="number"
-                                        min={0}
-                                        step="any"
-                                        className="column is-4 is-small"
-                                        wrapperClass="px-1 py-2"
-                                        fieldClass="mb-0 p-0"
-                                        controlClass="has-icons-left has-icons-right"
-                                        defaultValue={
-                                          shipment.options?.insurance
-                                        }
-                                        required={
-                                          !isNone(shipment.options?.insurance)
-                                        }
-                                        onChange={(e) =>
-                                          onChange(shipment_index, shipment, {
-                                            options: {
-                                              ...shipment.options,
-                                              insurance: parseFloat(
-                                                e.target.value,
-                                              ),
-                                            },
-                                          })
-                                        }
-                                        iconLeft={
-                                          <span className="icon is-small is-left">
-                                            <i className="fas fa-dollar-sign"></i>
-                                          </span>
-                                        }
-                                        iconRight={
-                                          <span className="icon is-small is-right">
-                                            {shipment.options?.currency}
-                                          </span>
-                                        }
-                                      />
-                                    </div>
-
-                                    {/* Cash on delivery */}
-                                    <CheckBoxField
-                                      name="addCOD"
-                                      fieldClass="column mb-0 is-12 px-1 py-2"
-                                      defaultChecked={
-                                        !isNoneOrEmpty(
-                                          shipment.options?.cash_on_delivery,
-                                        )
-                                      }
-                                      onChange={(e) =>
-                                        onChange(shipment_index, shipment, {
-                                          options: {
-                                            ...shipment.options,
-                                            cash_on_delivery:
-                                              e.target.checked === true
-                                                ? ""
-                                                : null,
-                                          },
-                                        })
-                                      }
-                                    >
-                                      <span>Collect on delivery</span>
-                                    </CheckBoxField>
-
-                                    <div
-                                      className="column is-multiline mb-0 ml-4 my-1 px-2 py-0"
-                                      style={{
-                                        borderLeft: "solid 1px #ddd",
-                                        display: `${isNone(shipment.options?.cash_on_delivery) ? "none" : "block"}`,
-                                      }}
-                                    >
-                                      <InputField
-                                        name="cash_on_delivery"
-                                        label="Amount to collect"
-                                        type="number"
-                                        min={0}
-                                        step="any"
-                                        className="is-small"
-                                        wrapperClass="px-1 py-2"
-                                        fieldClass="column mb-0 is-4 p-0"
-                                        controlClass="has-icons-left has-icons-right"
-                                        defaultValue={
-                                          shipment.options?.cash_on_delivery
-                                        }
-                                        required={
-                                          !isNone(
-                                            shipment.options?.cash_on_delivery,
-                                          )
-                                        }
-                                        onChange={(e) =>
-                                          onChange(shipment_index, shipment, {
-                                            options: {
-                                              ...shipment.options,
-                                              cash_on_delivery: parseFloat(
-                                                e.target.value,
-                                              ),
-                                            },
-                                          })
-                                        }
-                                        iconLeft={
-                                          <span className="icon is-small is-left">
-                                            <i className="fas fa-dollar-sign"></i>
-                                          </span>
-                                        }
-                                        iconRight={
-                                          <span className="icon is-small is-right">
-                                            {shipment.options?.currency}
-                                          </span>
-                                        }
-                                      />
-                                    </div>
-
-                                    {/* Declared value */}
-                                    <CheckBoxField
-                                      name="addCOD"
-                                      fieldClass="column mb-0 is-12 px-1 py-2"
-                                      defaultChecked={
-                                        !isNoneOrEmpty(
-                                          shipment.options?.declared_value,
-                                        )
-                                      }
-                                      onChange={(e) =>
-                                        onChange(shipment_index, shipment, {
-                                          options: {
-                                            ...shipment.options,
-                                            declared_value:
-                                              e.target.checked === true
-                                                ? ""
-                                                : null,
-                                          },
-                                        })
-                                      }
-                                    >
-                                      <span>Add package value</span>
-                                    </CheckBoxField>
-
-                                    <div
-                                      className="column is-multiline mb-0 ml-4 my-1 px-2 py-0"
-                                      style={{
-                                        borderLeft: "solid 1px #ddd",
-                                        display: `${isNone(shipment.options?.declared_value) ? "none" : "block"}`,
-                                      }}
-                                    >
-                                      <InputField
-                                        name="declared_value"
-                                        label="Package value"
-                                        type="number"
-                                        min={0}
-                                        step="any"
-                                        className="is-small"
-                                        wrapperClass="px-1 py-2"
-                                        fieldClass="column mb-0 is-4 p-0"
-                                        controlClass="has-icons-right"
-                                        value={shipment.options?.declared_value}
-                                        required={
-                                          !isNone(
-                                            shipment.options?.declared_value,
-                                          )
-                                        }
-                                        onChange={(e) =>
-                                          onChange(shipment_index, shipment, {
-                                            options: {
-                                              ...shipment.options,
-                                              declared_value: parseFloat(
-                                                e.target.value,
-                                              ),
-                                            },
-                                          })
-                                        }
-                                        iconRight={
-                                          <span className="icon is-small is-right pr-2">
-                                            {shipment.options?.currency}
-                                          </span>
-                                        }
-                                      />
-                                    </div>
-
-                                    {/* paperless trade */}
-                                    <CheckBoxField
-                                      name="paperless_trade"
-                                      fieldClass="column mb-0 is-12 px-1 py-2"
-                                      defaultChecked={
-                                        shipment.options?.paperless_trade
-                                      }
-                                      onChange={(e) =>
-                                        onChange(shipment_index, shipment, {
-                                          options: {
-                                            ...shipment.options,
-                                            paperless_trade: e.target.checked,
-                                          },
-                                        })
-                                      }
-                                    >
-                                      <span>Paperless trade</span>
-                                    </CheckBoxField>
-
-                                    {/* hold at location */}
-                                    <CheckBoxField
-                                      name="hold_at_location"
-                                      fieldClass="column mb-0 is-12 px-1 py-2"
-                                      defaultChecked={
-                                        shipment.options?.hold_at_location
-                                      }
-                                      onChange={(e) =>
-                                        onChange(shipment_index, shipment, {
-                                          options: {
-                                            ...shipment.options,
-                                            hold_at_location: e.target.checked,
-                                          },
-                                        })
-                                      }
-                                    >
-                                      <span>Hold at location</span>
-                                    </CheckBoxField>
-
-                                    {/* dangerous good */}
-                                    <CheckBoxField
-                                      name="dangerous_good"
-                                      fieldClass="column mb-0 is-12 px-1 py-2"
-                                      defaultChecked={
-                                        shipment.options?.dangerous_good
-                                      }
-                                      onChange={(e) =>
-                                        onChange(shipment_index, shipment, {
-                                          options: {
-                                            ...shipment.options,
-                                            dangerous_good: e.target.checked,
-                                          },
-                                        })
-                                      }
-                                    >
-                                      <span>Dangerous good</span>
-                                    </CheckBoxField>
-                                  </div>
-
-                                  {/* CARRIER OPTIONS SECTION */}
-                                  {Object.keys(carrierOptions).length > 0 && (
-                                    <div className="card mb-4 px-3 mx-2">
-                                      <Disclosure>
-                                        {({ open }) => (
-                                          <div className="block">
-                                            <Disclosure.Button
-                                              as="div"
-                                              style={{ boxShadow: "none" }}
-                                              className="is-flex is-justify-content-space-between is-clickable py-2"
-                                            >
-                                              <div className="has-text-grey has-text-weight-semibold is-size-7 pt-1">
-                                                CARRIER SPECIFIC OPTIONS
-                                              </div>
-                                              <span className="icon is-small m-1">
-                                                {open ? (
-                                                  <i className="fas fa-chevron-up"></i>
-                                                ) : (
-                                                  <i className="fas fa-chevron-down"></i>
-                                                )}
-                                              </span>
-                                            </Disclosure.Button>
-                                            <Disclosure.Panel
-                                              className="is-flat m-0 px-0"
-                                              style={{ maxHeight: "40vh" }}
-                                            >
-                                              {Object.entries(
-                                                carrierOptions,
-                                              ).map(([carrier, options]) => (
-                                                <React.Fragment key={carrier}>
-                                                  <label
-                                                    className="label is-capitalized"
-                                                    style={{
-                                                      fontSize: "0.8em",
-                                                    }}
-                                                  >
+                                                onSubmit={(address) =>
+                                                  onChange(
+                                                    shipment_index,
+                                                    shipment,
                                                     {
-                                                      references!.carriers[
-                                                        carrier
-                                                      ]
-                                                    }
-                                                  </label>
-                                                  <hr
-                                                    className="my-1"
-                                                    style={{ height: "1px" }}
-                                                  />
+                                                      billing_address: address,
+                                                    },
+                                                  )
+                                                }
+                                                trigger={
+                                                  <button className="button is-small is-info is-text is-inverted p-1">
+                                                    Edit address
+                                                  </button>
+                                                }
+                                              />
+                                            </div>
+                                          </header>
 
-                                                  <div className="is-flex is-flex-wrap-wrap m-0 p-0">
-                                                    {options.map(
-                                                      (option, index) => (
-                                                        <React.Fragment
-                                                          key={option}
-                                                        >
-                                                          {references!.options[
-                                                            carrier
-                                                          ][option]?.type ===
-                                                            "boolean" && (
-                                                            <div
-                                                              style={{
-                                                                minWidth:
-                                                                  "225px",
-                                                              }}
-                                                            >
-                                                              <CheckBoxField
-                                                                name={option}
-                                                                fieldClass="mb-0 p-1"
-                                                                defaultChecked={
-                                                                  shipment
-                                                                    .options?.[
-                                                                    option
-                                                                  ]
-                                                                }
-                                                                onChange={(e) =>
-                                                                  onChange(
-                                                                    shipment_index,
-                                                                    shipment,
-                                                                    {
-                                                                      options: {
-                                                                        ...shipment.options,
-                                                                        [option]:
-                                                                          e
-                                                                            .target
-                                                                            .checked ||
-                                                                          null,
-                                                                      },
-                                                                    },
-                                                                  )
-                                                                }
-                                                              >
-                                                                <span>
-                                                                  {formatRef(
-                                                                    option,
-                                                                  )}
-                                                                </span>
-                                                              </CheckBoxField>
-                                                            </div>
-                                                          )}
+                                          {shipment?.billing_address && (
+                                            <AddressDescription
+                                              address={
+                                                shipment!.billing_address as any
+                                              }
+                                            />
+                                          )}
 
-                                                          {references!.options[
-                                                            carrier
-                                                          ][option]?.type ===
-                                                            "string" && (
-                                                            <>
-                                                              <InputField
-                                                                name={option}
-                                                                style={{
-                                                                  minWidth:
-                                                                    "225px",
-                                                                }}
-                                                                label={formatRef(
-                                                                  option,
-                                                                )}
-                                                                placeholder={formatRef(
-                                                                  option,
-                                                                )}
-                                                                className="is-small"
-                                                                wrapperClass="pl-0 pr-2 py-1"
-                                                                fieldClass="column mb-0 is-6 p-0"
-                                                                defaultValue={
-                                                                  shipment
-                                                                    .options[
-                                                                    option
-                                                                  ]
-                                                                }
-                                                                onChange={(e) =>
-                                                                  onChange(
-                                                                    shipment_index,
-                                                                    shipment,
-                                                                    {
-                                                                      options: {
-                                                                        ...shipment.options,
-                                                                        [option]:
-                                                                          e
-                                                                            .target
-                                                                            .value,
-                                                                      },
-                                                                    },
-                                                                  )
-                                                                }
-                                                              />
-                                                            </>
-                                                          )}
-                                                        </React.Fragment>
-                                                      ),
-                                                    )}
-                                                  </div>
-
-                                                  <div className="p-2"></div>
-                                                </React.Fragment>
-                                              ))}
-                                            </Disclosure.Panel>
-                                          </div>
-                                        )}
-                                      </Disclosure>
-                                    </div>
-                                  )}
-
-                                  <hr
-                                    className="my-1"
-                                    style={{ height: "1px" }}
-                                  />
-
-                                  <div className="p-3">
-                                    <InputField
-                                      label="Reference"
-                                      name="reference"
-                                      defaultValue={
-                                        shipment.reference as string
-                                      }
-                                      onChange={(e) =>
-                                        onChange(shipment_index, shipment, {
-                                          reference: e.target.value as string,
-                                        })
-                                      }
-                                      placeholder="shipment reference"
-                                      className="is-small"
-                                      autoComplete="off"
-                                    />
+                                          {isNone(
+                                            shipment?.billing_address,
+                                          ) && (
+                                            <div className="notification is-default p-2 is-size-7 my-2">
+                                              Add shipment billing address.
+                                              (optional)
+                                            </div>
+                                          )}
+                                        </div>
+                                      </>
+                                    )}
                                   </div>
-                                </div>
 
-                                {/* Customs declaration section */}
-                                {isInternational(shipment) && (
+                                  {/* Parcel & Items section */}
                                   <div className="card px-0 py-3 mt-5">
                                     <header className="px-3 is-flex is-justify-content-space-between">
                                       <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
-                                        CUSTOMS DECLARATION
+                                        PACKAGES
                                       </span>
                                       <div className="is-vcentered">
-                                        <CustomsModalEditor
-                                          header="Edit customs info"
+                                        <ParcelModalEditor
+                                          header="Add package"
                                           shipment={shipment}
-                                          customs={
-                                            (shipment?.customs as any) || {
-                                              ...DEFAULT_CUSTOMS_CONTENT,
-                                              incoterm:
-                                                shipment.payment?.paid_by ==
-                                                PaidByEnum.sender
-                                                  ? "DDP"
-                                                  : "DDU",
-                                              duty: {
-                                                ...DEFAULT_CUSTOMS_CONTENT.duty,
-                                                currency:
-                                                  shipment.options?.currency,
-                                                paid_by:
-                                                  shipment.payment?.paid_by,
-                                                account_number:
-                                                  shipment.payment
-                                                    ?.account_number,
-                                                declared_value:
-                                                  shipment.options
-                                                    ?.declared_value,
-                                              },
-                                              duty_billing_address:
-                                                shipment.billing_address,
-                                              commodities:
-                                                getShipmentCommodities(
-                                                  shipment,
-                                                ),
-                                              options:
-                                                workspace_config.customsOptions,
-                                            }
-                                          }
-                                          onSubmit={mutation.updateCustoms(
+                                          onSubmit={mutation.addParcel(
                                             shipment_index,
-                                          )(shipment?.customs?.id)}
+                                          )}
                                           trigger={
                                             <button className="button is-small is-info is-text is-inverted p-1">
-                                              Edit customs info
+                                              Add package
                                             </button>
                                           }
                                         />
@@ -1986,97 +1157,235 @@ export default function Page(pageProps: any) {
                                       style={{ height: "1px" }}
                                     />
 
-                                    <div className="p-3">
-                                      {!isNone(shipment.customs) && (
-                                        <>
-                                          <CustomsInfoDescription
-                                            customs={
-                                              shipment.customs as CustomsType
-                                            }
+                                    {shipment.parcels.map((pkg, pkg_index) => (
+                                      <React.Fragment
+                                        key={
+                                          pkg.id || `${pkg_index}-${new Date()}`
+                                        }
+                                      >
+                                        {pkg_index > 0 && (
+                                          <hr
+                                            className="my-1"
+                                            style={{ height: "3px" }}
                                           />
+                                        )}
 
-                                          {/* Commodities section */}
-                                          <span className="is-size-7 mt-4 has-text-weight-semibold">
-                                            COMMODITIES
-                                          </span>
-
-                                          {(
-                                            shipment.customs!.commodities || []
-                                          ).map((commodity, index) => (
-                                            <React.Fragment
-                                              key={index + "customs-info"}
-                                            >
-                                              <hr
-                                                className="mt-1 mb-2"
-                                                style={{ height: "1px" }}
+                                        <div className="p-3" key={pkg_index}>
+                                          {/* Parcel header */}
+                                          <div className="is-flex is-justify-content-space-between mb-4">
+                                            <div>
+                                              <ParcelDescription
+                                                parcel={pkg}
+                                                suffix={
+                                                  <span className="tag ml-1 has-text-weight-bold">
+                                                    {pkg_index + 1}
+                                                  </span>
+                                                }
                                               />
-                                              <div className="is-flex is-justify-content-space-between is-vcentered">
-                                                <CommodityDescription
-                                                  className="is-flex-grow-1 pr-2"
-                                                  commodity={commodity}
-                                                  prefix={`${index + 1} - `}
-                                                />
-                                                <div>
-                                                  <CommodityStateContext.Consumer>
-                                                    {({ editCommodity }) => (
-                                                      <button
-                                                        type="button"
-                                                        className="button is-small is-white"
-                                                        disabled={isPackedItem(
-                                                          commodity,
-                                                          shipment,
-                                                        )}
-                                                        onClick={() =>
-                                                          editCommodity({
-                                                            commodity,
-                                                            onSubmit: (_) =>
-                                                              mutation.updateCommodity(
-                                                                shipment_index,
-                                                              )(
-                                                                index,
-                                                                shipment.customs
-                                                                  ?.id,
-                                                              )(_),
-                                                          })
-                                                        }
-                                                      >
-                                                        <span className="icon is-small">
-                                                          <i className="fas fa-pen"></i>
-                                                        </span>
-                                                      </button>
-                                                    )}
-                                                  </CommodityStateContext.Consumer>
+                                            </div>
+                                            <div>
+                                              <ParcelModalEditor
+                                                header="Edit package"
+                                                onSubmit={mutation.updateParcel(
+                                                  shipment_index,
+                                                )(pkg_index, pkg.id)}
+                                                parcel={pkg}
+                                                shipment={shipment}
+                                                trigger={
                                                   <button
                                                     type="button"
                                                     className="button is-small is-white"
-                                                    disabled={
-                                                      shipment.customs!
-                                                        .commodities.length ===
-                                                      1
-                                                    }
-                                                    onClick={() =>
-                                                      mutation.removeCommodity(
-                                                        shipment_index,
-                                                      )(
-                                                        index,
-                                                        shipment.customs?.id,
-                                                      )(commodity.id)
-                                                    }
                                                   >
                                                     <span className="icon is-small">
-                                                      <i className="fas fa-times"></i>
+                                                      <i className="fas fa-pen"></i>
                                                     </span>
                                                   </button>
-                                                </div>
-                                              </div>
-                                            </React.Fragment>
-                                          ))}
+                                                }
+                                              />
+                                              <button
+                                                type="button"
+                                                className="button is-small is-white"
+                                                disabled={
+                                                  shipment.parcels.length === 1
+                                                }
+                                                onClick={mutation.removeParcel(
+                                                  shipment_index,
+                                                )(pkg_index, pkg.id)}
+                                              >
+                                                <span className="icon is-small">
+                                                  <i className="fas fa-times"></i>
+                                                </span>
+                                              </button>
+                                            </div>
+                                          </div>
 
-                                          {(shipment.customs!.commodities || [])
-                                            .length === 0 && (
-                                            <div className="notification is-warning is-light my-2 py-2 px-4 is-size-7">
-                                              You need provide commodity items
-                                              for customs purpose. (required)
+                                          {/* Items section */}
+                                          <span className="is-size-7 has-text-weight-semibold">
+                                            ITEMS
+                                          </span>
+
+                                          {(pkg.items || []).map(
+                                            (item, item_index) => (
+                                              <React.Fragment
+                                                key={
+                                                  item.id ||
+                                                  `${item_index}-${new Date()}`
+                                                }
+                                              >
+                                                <hr
+                                                  className="my-1"
+                                                  style={{ height: "1px" }}
+                                                />
+                                                <div
+                                                  key={item_index}
+                                                  className="py-1 is-flex is-justify-content-space-between"
+                                                >
+                                                  <div>
+                                                    <p className="is-size-7 my-1 has-text-weight-semibold">
+                                                      {item_index + 1}{" "}
+                                                      {`${item.title || item.description || "Item"}`}
+                                                    </p>
+                                                    <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-grey">
+                                                      {isNoneOrEmpty(item.sku)
+                                                        ? "SKU: 0000000"
+                                                        : `SKU: ${item.sku}`}
+                                                      {getOrder(
+                                                        orders,
+                                                        item.parent_id,
+                                                      ) && (
+                                                        <span className="has-text-info">
+                                                          {` | ORDER: ${getOrder(orders, item.parent_id)?.order_id}`}
+                                                        </span>
+                                                      )}
+                                                    </p>
+                                                    <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-grey"></p>
+                                                  </div>
+                                                  <div className="is-flex">
+                                                    <div className="is-size-7 has-text-grey has-text-weight-semibold is-flex px-2">
+                                                      <span
+                                                        className="p-2 has-text-right"
+                                                        style={{
+                                                          minWidth: "90px",
+                                                        }}
+                                                      >
+                                                        {formatWeight(item)}
+                                                      </span>
+                                                      <div className="field has-addons">
+                                                        <p className="control is-expanded">
+                                                          <input
+                                                            min={1}
+                                                            type="number"
+                                                            value={
+                                                              item.quantity as number
+                                                            }
+                                                            onChange={(e) => {
+                                                              mutation.updateItem(
+                                                                shipment_index,
+                                                              )(
+                                                                pkg_index,
+                                                                item_index,
+                                                                pkg.id,
+                                                              )({
+                                                                quantity:
+                                                                  parseInt(
+                                                                    e.target
+                                                                      .value,
+                                                                  ),
+                                                              } as CommodityType);
+                                                            }}
+                                                            className="input is-small"
+                                                            style={{
+                                                              width: "60px",
+                                                              textAlign:
+                                                                "center",
+                                                            }}
+                                                            {...(getParent(
+                                                              orders,
+                                                              item.parent_id,
+                                                            )
+                                                              ? {
+                                                                  max: getAvailableQuantity(
+                                                                    shipment,
+                                                                    orders,
+                                                                    item,
+                                                                    item_index,
+                                                                  ),
+                                                                }
+                                                              : {})}
+                                                          />
+                                                        </p>
+                                                        {getParent(
+                                                          orders,
+                                                          item.parent_id,
+                                                        ) && (
+                                                          <p className="control">
+                                                            <a className="button is-static is-small">
+                                                              of{" "}
+                                                              {getParent(
+                                                                orders,
+                                                                item.parent_id,
+                                                              )
+                                                                ?.unfulfilled_quantity ||
+                                                                item.quantity}
+                                                            </a>
+                                                          </p>
+                                                        )}
+                                                      </div>
+                                                    </div>
+                                                    <CommodityStateContext.Consumer>
+                                                      {({ editCommodity }) => (
+                                                        <button
+                                                          type="button"
+                                                          className="button is-small is-white"
+                                                          disabled={
+                                                            !isNone(
+                                                              item.parent_id,
+                                                            )
+                                                          }
+                                                          onClick={() =>
+                                                            editCommodity({
+                                                              commodity: item,
+                                                              onSubmit: (_) =>
+                                                                mutation.updateItem(
+                                                                  shipment_index,
+                                                                )(
+                                                                  pkg_index,
+                                                                  item_index,
+                                                                  pkg.id,
+                                                                )(_),
+                                                            })
+                                                          }
+                                                        >
+                                                          <span className="icon is-small">
+                                                            <i className="fas fa-pen"></i>
+                                                          </span>
+                                                        </button>
+                                                      )}
+                                                    </CommodityStateContext.Consumer>
+                                                    <button
+                                                      type="button"
+                                                      className="button is-small is-white"
+                                                      onClick={mutation.removeItem(
+                                                        shipment_index,
+                                                      )(
+                                                        pkg_index,
+                                                        item_index,
+                                                        item.id,
+                                                      )}
+                                                    >
+                                                      <span className="icon is-small">
+                                                        <i className="fas fa-times"></i>
+                                                      </span>
+                                                    </button>
+                                                  </div>
+                                                </div>
+                                              </React.Fragment>
+                                            ),
+                                          )}
+
+                                          {(pkg.items || []).length === 0 && (
+                                            <div className="notification is-light my-2 py-2 px-4 is-size-7">
+                                              You can specify content items.
                                             </div>
                                           )}
 
@@ -2089,8 +1398,11 @@ export default function Page(pageProps: any) {
                                                   onClick={() =>
                                                     editCommodity({
                                                       onSubmit: (_) =>
-                                                        mutation.addCommodities(
+                                                        mutation.addItems(
                                                           shipment_index,
+                                                        )(
+                                                          pkg_index,
+                                                          pkg.id,
                                                         )([_] as any),
                                                     })
                                                   }
@@ -2098,320 +1410,1069 @@ export default function Page(pageProps: any) {
                                                   <span className="icon is-small">
                                                     <i className="fas fa-plus"></i>
                                                   </span>
-                                                  <span>add commodity</span>
+                                                  <span>Add item</span>
                                                 </button>
                                               )}
                                             </CommodityStateContext.Consumer>
-                                            {metadata.ORDERS_MANAGEMENT && (
-                                              <LineItemSelector
-                                                title="Add commodities"
-                                                shipment={shipment}
-                                                onChange={(_) =>
-                                                  mutation.addCommodities(
-                                                    _ as any,
-                                                  )
-                                                }
-                                              />
-                                            )}
                                           </div>
-
-                                          {/* Duty Billing address section */}
-                                          {(shipment.customs!
-                                            .duty_billing_address ||
-                                            shipment.customs!.duty?.paid_by ===
-                                              PaidByEnum.third_party) && (
-                                            <>
-                                              <hr
-                                                className="my-1"
-                                                style={{ height: "1px" }}
-                                              />
-
-                                              <div className="py-3">
-                                                <header className="is-flex is-justify-content-space-between">
-                                                  <label
-                                                    className="label is-capitalized"
-                                                    style={{
-                                                      fontSize: "0.8em",
-                                                    }}
-                                                  >
-                                                    Billing address
-                                                  </label>
-                                                  <div className="is-vcentered">
-                                                    <AddressModalEditor
-                                                      address={
-                                                        shipment.customs
-                                                          ?.duty_billing_address ||
-                                                        ({} as AddressType)
-                                                      }
-                                                      onSubmit={(address) =>
-                                                        mutation.updateShipment(
-                                                          shipment_index,
-                                                        )({
-                                                          customs: {
-                                                            ...shipment!
-                                                              .customs,
-                                                            duty_billing_address:
-                                                              address,
-                                                          } as any,
-                                                        })
-                                                      }
-                                                      trigger={
-                                                        <button className="button is-small is-info is-text is-inverted p-1">
-                                                          Edit duty billing
-                                                          address
-                                                        </button>
-                                                      }
-                                                    />
-                                                  </div>
-                                                </header>
-
-                                                {shipment!.customs!
-                                                  .duty_billing_address && (
-                                                  <AddressDescription
-                                                    address={
-                                                      shipment!.customs!
-                                                        .duty_billing_address as any
-                                                    }
-                                                  />
-                                                )}
-
-                                                {isNone(
-                                                  shipment!.customs!
-                                                    .duty_billing_address,
-                                                ) && (
-                                                  <div className="notification is-default p-2 is-size-7">
-                                                    Add customs duty billing
-                                                    address. (optional)
-                                                  </div>
-                                                )}
-                                              </div>
-                                            </>
-                                          )}
-                                        </>
-                                      )}
-
-                                      {isNone(shipment.customs) && (
-                                        <div className="notification is-warning is-light my-2 py-2 px-4 is-size-7">
-                                          Looks like you have an international
-                                          shipment. You may need to provide a
-                                          customs declaration unless you are
-                                          shipping documents only.
                                         </div>
-                                      )}
-                                    </div>
-                                  </div>
-                                )}
+                                      </React.Fragment>
+                                    ))}
 
-                                {/* Shipment Summary */}
-                                <CommoditySummary
-                                  shipment={shipment}
-                                  orders={orders}
-                                  className="card px-0 mt-3"
-                                />
-
-                                {/* Metadata section */}
-                                <div className="card px-0 mt-3">
-                                  <div className="p-1 pb-4">
-                                    <MetadataEditor
-                                      object_type={
-                                        MetadataObjectTypeEnum.shipment
-                                      }
-                                      metadata={shipment.metadata}
-                                      onChange={(metadata) =>
-                                        onChange(shipment_index, shipment, {
-                                          metadata,
-                                        })
-                                      }
-                                    >
-                                      <MetadataEditorContext.Consumer>
-                                        {({ isEditing, editMetadata }) => (
-                                          <>
-                                            <header className="is-flex is-justify-content-space-between p-2">
-                                              <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
-                                                METADATA
-                                              </span>
-                                              <div className="is-vcentered">
-                                                <button
-                                                  type="button"
-                                                  className="button is-small is-info is-text is-inverted p-1"
-                                                  disabled={isEditing}
-                                                  onClick={() => editMetadata()}
-                                                >
-                                                  <span>Edit metadata</span>
-                                                </button>
-                                              </div>
-                                            </header>
-                                          </>
-                                        )}
-                                      </MetadataEditorContext.Consumer>
-                                    </MetadataEditor>
-                                  </div>
-                                </div>
-
-                                {/* Instructions section */}
-                                <div className="card px-0 mt-5">
-                                  <div className="p-3">
-                                    <TextAreaField
-                                      rows={2}
-                                      label="Shipping instructions"
-                                      autoComplete="off"
-                                      name="instructions"
-                                      className="is-small"
-                                      placeholder="shipping instructions"
-                                      defaultValue={
-                                        shipment.options?.instructions
-                                      }
-                                      required={
-                                        !isNone(shipment.options?.instructions)
-                                      }
-                                      onChange={(e) =>
-                                        onChange(shipment_index, shipment, {
-                                          options: {
-                                            ...shipment.options,
-                                            instructions: e.target.value,
-                                          },
-                                        })
-                                      }
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="p-6"></div>
-
-                              {/* Service section */}
-                              <div
-                                className="form-floating-footer px-2 pt-2 pb-4"
-                                style={{ borderTop: "1px solid #ddd" }}
-                              >
-                                <header className="py-2 is-flex is-justify-content-space-between">
-                                  <div>
-                                    <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
-                                      Service
-                                    </span>
-                                  </div>
-                                  <div className="is-vcentered">
-                                    <button
-                                      className="button is-small is-info is-text is-inverted p-1"
-                                      onClick={() =>
-                                        mutation.fetchRates.mutateAsync(
-                                          shipment_index,
-                                        )
-                                      }
-                                      disabled={
-                                        requireInfoForRating(shipment) ||
-                                        mutation.fetchRates.isLoading
-                                      }
-                                    >
-                                      Refresh rates
-                                    </button>
-                                  </div>
-                                </header>
-
-                                {/* Shipping service */}
-                                <Dropdown
-                                  direction="is-up"
-                                  style={{ display: "block" }}
-                                  menuWrapperStyle={{
-                                    right: 0,
-                                    bottom: "100%",
-                                  }}
-                                >
-                                  {/* Dropdown trigger  */}
-                                  <label className="panel-block p-0 card flex">
-                                    <div className="icon-text is-flex-grow-1">
-                                      <CarrierImage
-                                        carrier_name={
-                                          selectedRate(shipment)?.carrier_name
-                                        }
-                                        containerClassName="mt-2 ml-1 mr-2 pl-1"
-                                        height={34}
-                                        width={34}
-                                        text_color={
-                                          getCarrier(selectedRate(shipment))
-                                            ?.config?.text_color
-                                        }
-                                        background={
-                                          getCarrier(selectedRate(shipment))
-                                            ?.config?.brand_color
-                                        }
-                                      />
-                                      <div
-                                        className="text-ellipsis"
-                                        style={{
-                                          maxWidth: "190px",
-                                          lineHeight: "16px",
-                                        }}
-                                      >
-                                        {!!selectedRate(shipment) && (
-                                          <RateDescription
-                                            rate={selectedRate(shipment)}
-                                          />
-                                        )}
+                                    {(shipment.parcels || []).length === 0 && (
+                                      <div className="m-4 notification is-default">
+                                        Add one or more packages to create a
+                                        shipment.
                                       </div>
-                                    </div>
-                                    <Image
-                                      src={p`/unfold.svg`}
-                                      width={30}
-                                      height={30}
-                                      alt={"select services"}
-                                    />
-                                  </label>
+                                    )}
+                                  </div>
 
-                                  {/* Dropdown content  */}
-                                  <div
-                                    className="dropdown-content has-background-color-white"
-                                    onClick={(e) => closeDropdown(e.target)}
-                                    id="dropdown-menu"
-                                    role="menu"
-                                    style={{
-                                      maxHeight: "20rem",
-                                      overflowY: "auto",
-                                    }}
-                                  >
-                                    {(shipment.rates || []).map((rate) => (
-                                      <a
-                                        key={rate.id}
-                                        className={`dropdown-item m-0 p-0 is-vcentered ${rate.service === shipment.options.preferred_service ? "has-text-grey-dark has-background-success-light" : "has-text-grey"} ${rate.id === selectedRate(shipment)?.id ? "has-text-grey-dark has-background-grey-lighter" : "has-text-grey"}`}
-                                        onClick={() =>
+                                  {/* Shipping options section */}
+                                  <div className="card px-0 py-3 mt-5">
+                                    <header className="px-3 is-flex is-justify-content-space-between">
+                                      <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
+                                        Shipping options
+                                      </span>
+                                    </header>
+
+                                    <hr
+                                      className="my-1"
+                                      style={{ height: "1px" }}
+                                    />
+
+                                    <div className="p-3 pb-0">
+                                      {/* shipping date */}
+                                      <InputField
+                                        name="shipping_date"
+                                        label="shipping date"
+                                        type="datetime-local"
+                                        className="is-small"
+                                        fieldClass="column mb-0 is-8 p-0 mb-2"
+                                        defaultValue={
+                                          shipment.options?.shipping_date
+                                        }
+                                        onChange={(e) =>
                                           onChange(shipment_index, shipment, {
                                             options: {
                                               ...shipment.options,
-                                              preferred_service: rate.service,
+                                              shipping_date: e.target.value,
+                                            },
+                                          })
+                                        }
+                                      />
+
+                                      {/* currency */}
+                                      <SelectField
+                                        name="currency"
+                                        label="shipment currency"
+                                        wrapperClass="py-2"
+                                        className="is-small is-fullwidth"
+                                        fieldClass="column is-8 mb-0 px-0"
+                                        value={shipment.options?.currency}
+                                        required={
+                                          !isNone(
+                                            shipment.options?.insurance,
+                                          ) ||
+                                          !isNone(
+                                            shipment.options?.cash_on_delivery,
+                                          ) ||
+                                          !isNone(
+                                            shipment.options?.declared_value,
+                                          )
+                                        }
+                                        onChange={(e) =>
+                                          onChange(shipment_index, shipment, {
+                                            options: {
+                                              ...shipment.options,
+                                              currency: e.target.value,
                                             },
                                           })
                                         }
                                       >
-                                        <div className="icon-text">
-                                          <CarrierImage
-                                            width={30}
-                                            height={30}
-                                            carrier_name={
-                                              (rate.meta as any)?.carrier ||
-                                              rate.carrier_name
-                                            }
-                                            text_color={
-                                              getCarrier(rate)?.config
-                                                ?.text_color
-                                            }
-                                            background={
-                                              getCarrier(rate)?.config
-                                                ?.brand_color
-                                            }
-                                            containerClassName="mt-2 ml-1 mr-2 pl-1"
-                                          />
-                                          <RateDescription rate={rate} />
-                                        </div>
-                                      </a>
-                                    ))}
+                                        <option value="">
+                                          Select a currency
+                                        </option>
+                                        {CURRENCY_OPTIONS.map((unit) => (
+                                          <option key={unit} value={unit}>
+                                            {unit}
+                                          </option>
+                                        ))}
+                                      </SelectField>
+
+                                      {/* signature confirmation */}
+                                      <CheckBoxField
+                                        name="signature_confirmation"
+                                        fieldClass="column mb-0 is-12 px-1 py-2"
+                                        defaultChecked={
+                                          shipment.options
+                                            ?.signature_confirmation
+                                        }
+                                        onChange={(e) =>
+                                          onChange(shipment_index, shipment, {
+                                            options: {
+                                              ...shipment.options,
+                                              signature_confirmation:
+                                                e.target.checked || null,
+                                            },
+                                          })
+                                        }
+                                      >
+                                        <span>Add signature confirmation</span>
+                                      </CheckBoxField>
+
+                                      {/* insurance */}
+                                      <CheckBoxField
+                                        name="addInsurance"
+                                        fieldClass="column mb-0 is-12 px-1 py-2"
+                                        defaultChecked={
+                                          !isNoneOrEmpty(
+                                            shipment.options?.insurance,
+                                          )
+                                        }
+                                        onChange={(e) =>
+                                          onChange(shipment_index, shipment, {
+                                            options: {
+                                              ...shipment.options,
+                                              insurance:
+                                                e.target.checked === true
+                                                  ? ""
+                                                  : null,
+                                            },
+                                          })
+                                        }
+                                      >
+                                        <span>Add insurance coverage</span>
+                                      </CheckBoxField>
+
+                                      <div
+                                        className="column is-multiline mb-0 ml-4 my-1 px-2 py-0"
+                                        style={{
+                                          borderLeft: "solid 1px #ddd",
+                                          display: `${isNone(shipment.options?.insurance) ? "none" : "block"}`,
+                                        }}
+                                      >
+                                        <InputField
+                                          name="insurance"
+                                          label="Coverage value"
+                                          type="number"
+                                          min={0}
+                                          step="any"
+                                          className="column is-4 is-small"
+                                          wrapperClass="px-1 py-2"
+                                          fieldClass="mb-0 p-0"
+                                          controlClass="has-icons-left has-icons-right"
+                                          defaultValue={
+                                            shipment.options?.insurance
+                                          }
+                                          required={
+                                            !isNone(shipment.options?.insurance)
+                                          }
+                                          onChange={(e) =>
+                                            onChange(shipment_index, shipment, {
+                                              options: {
+                                                ...shipment.options,
+                                                insurance: parseFloat(
+                                                  e.target.value,
+                                                ),
+                                              },
+                                            })
+                                          }
+                                          iconLeft={
+                                            <span className="icon is-small is-left">
+                                              <i className="fas fa-dollar-sign"></i>
+                                            </span>
+                                          }
+                                          iconRight={
+                                            <span className="icon is-small is-right">
+                                              {shipment.options?.currency}
+                                            </span>
+                                          }
+                                        />
+                                      </div>
+
+                                      {/* Cash on delivery */}
+                                      <CheckBoxField
+                                        name="addCOD"
+                                        fieldClass="column mb-0 is-12 px-1 py-2"
+                                        defaultChecked={
+                                          !isNoneOrEmpty(
+                                            shipment.options?.cash_on_delivery,
+                                          )
+                                        }
+                                        onChange={(e) =>
+                                          onChange(shipment_index, shipment, {
+                                            options: {
+                                              ...shipment.options,
+                                              cash_on_delivery:
+                                                e.target.checked === true
+                                                  ? ""
+                                                  : null,
+                                            },
+                                          })
+                                        }
+                                      >
+                                        <span>Collect on delivery</span>
+                                      </CheckBoxField>
+
+                                      <div
+                                        className="column is-multiline mb-0 ml-4 my-1 px-2 py-0"
+                                        style={{
+                                          borderLeft: "solid 1px #ddd",
+                                          display: `${isNone(shipment.options?.cash_on_delivery) ? "none" : "block"}`,
+                                        }}
+                                      >
+                                        <InputField
+                                          name="cash_on_delivery"
+                                          label="Amount to collect"
+                                          type="number"
+                                          min={0}
+                                          step="any"
+                                          className="is-small"
+                                          wrapperClass="px-1 py-2"
+                                          fieldClass="column mb-0 is-4 p-0"
+                                          controlClass="has-icons-left has-icons-right"
+                                          defaultValue={
+                                            shipment.options?.cash_on_delivery
+                                          }
+                                          required={
+                                            !isNone(
+                                              shipment.options
+                                                ?.cash_on_delivery,
+                                            )
+                                          }
+                                          onChange={(e) =>
+                                            onChange(shipment_index, shipment, {
+                                              options: {
+                                                ...shipment.options,
+                                                cash_on_delivery: parseFloat(
+                                                  e.target.value,
+                                                ),
+                                              },
+                                            })
+                                          }
+                                          iconLeft={
+                                            <span className="icon is-small is-left">
+                                              <i className="fas fa-dollar-sign"></i>
+                                            </span>
+                                          }
+                                          iconRight={
+                                            <span className="icon is-small is-right">
+                                              {shipment.options?.currency}
+                                            </span>
+                                          }
+                                        />
+                                      </div>
+
+                                      {/* Declared value */}
+                                      <CheckBoxField
+                                        name="addCOD"
+                                        fieldClass="column mb-0 is-12 px-1 py-2"
+                                        defaultChecked={
+                                          !isNoneOrEmpty(
+                                            shipment.options?.declared_value,
+                                          )
+                                        }
+                                        onChange={(e) =>
+                                          onChange(shipment_index, shipment, {
+                                            options: {
+                                              ...shipment.options,
+                                              declared_value:
+                                                e.target.checked === true
+                                                  ? ""
+                                                  : null,
+                                            },
+                                          })
+                                        }
+                                      >
+                                        <span>Add package value</span>
+                                      </CheckBoxField>
+
+                                      <div
+                                        className="column is-multiline mb-0 ml-4 my-1 px-2 py-0"
+                                        style={{
+                                          borderLeft: "solid 1px #ddd",
+                                          display: `${isNone(shipment.options?.declared_value) ? "none" : "block"}`,
+                                        }}
+                                      >
+                                        <InputField
+                                          name="declared_value"
+                                          label="Package value"
+                                          type="number"
+                                          min={0}
+                                          step="any"
+                                          className="is-small"
+                                          wrapperClass="px-1 py-2"
+                                          fieldClass="column mb-0 is-4 p-0"
+                                          controlClass="has-icons-right"
+                                          value={
+                                            shipment.options?.declared_value
+                                          }
+                                          required={
+                                            !isNone(
+                                              shipment.options?.declared_value,
+                                            )
+                                          }
+                                          onChange={(e) =>
+                                            onChange(shipment_index, shipment, {
+                                              options: {
+                                                ...shipment.options,
+                                                declared_value: parseFloat(
+                                                  e.target.value,
+                                                ),
+                                              },
+                                            })
+                                          }
+                                          iconRight={
+                                            <span className="icon is-small is-right pr-2">
+                                              {shipment.options?.currency}
+                                            </span>
+                                          }
+                                        />
+                                      </div>
+
+                                      {/* paperless trade */}
+                                      <CheckBoxField
+                                        name="paperless_trade"
+                                        fieldClass="column mb-0 is-12 px-1 py-2"
+                                        defaultChecked={
+                                          shipment.options?.paperless_trade
+                                        }
+                                        onChange={(e) =>
+                                          onChange(shipment_index, shipment, {
+                                            options: {
+                                              ...shipment.options,
+                                              paperless_trade: e.target.checked,
+                                            },
+                                          })
+                                        }
+                                      >
+                                        <span>Paperless trade</span>
+                                      </CheckBoxField>
+
+                                      {/* hold at location */}
+                                      <CheckBoxField
+                                        name="hold_at_location"
+                                        fieldClass="column mb-0 is-12 px-1 py-2"
+                                        defaultChecked={
+                                          shipment.options?.hold_at_location
+                                        }
+                                        onChange={(e) =>
+                                          onChange(shipment_index, shipment, {
+                                            options: {
+                                              ...shipment.options,
+                                              hold_at_location:
+                                                e.target.checked,
+                                            },
+                                          })
+                                        }
+                                      >
+                                        <span>Hold at location</span>
+                                      </CheckBoxField>
+
+                                      {/* dangerous good */}
+                                      <CheckBoxField
+                                        name="dangerous_good"
+                                        fieldClass="column mb-0 is-12 px-1 py-2"
+                                        defaultChecked={
+                                          shipment.options?.dangerous_good
+                                        }
+                                        onChange={(e) =>
+                                          onChange(shipment_index, shipment, {
+                                            options: {
+                                              ...shipment.options,
+                                              dangerous_good: e.target.checked,
+                                            },
+                                          })
+                                        }
+                                      >
+                                        <span>Dangerous good</span>
+                                      </CheckBoxField>
+                                    </div>
+
+                                    {/* CARRIER OPTIONS SECTION */}
+                                    {Object.keys(carrierOptions).length > 0 && (
+                                      <div className="card mb-4 px-3 mx-2">
+                                        <Disclosure>
+                                          {({ open }) => (
+                                            <div className="block">
+                                              <Disclosure.Button
+                                                as="div"
+                                                style={{ boxShadow: "none" }}
+                                                className="is-flex is-justify-content-space-between is-clickable py-2"
+                                              >
+                                                <div className="has-text-grey has-text-weight-semibold is-size-7 pt-1">
+                                                  CARRIER SPECIFIC OPTIONS
+                                                </div>
+                                                <span className="icon is-small m-1">
+                                                  {open ? (
+                                                    <i className="fas fa-chevron-up"></i>
+                                                  ) : (
+                                                    <i className="fas fa-chevron-down"></i>
+                                                  )}
+                                                </span>
+                                              </Disclosure.Button>
+                                              <Disclosure.Panel
+                                                className="is-flat m-0 px-0"
+                                                style={{ maxHeight: "40vh" }}
+                                              >
+                                                {Object.entries(
+                                                  carrierOptions,
+                                                ).map(([carrier, options]) => (
+                                                  <React.Fragment key={carrier}>
+                                                    <label
+                                                      className="label is-capitalized"
+                                                      style={{
+                                                        fontSize: "0.8em",
+                                                      }}
+                                                    >
+                                                      {
+                                                        references!.carriers[
+                                                          carrier
+                                                        ]
+                                                      }
+                                                    </label>
+                                                    <hr
+                                                      className="my-1"
+                                                      style={{ height: "1px" }}
+                                                    />
+
+                                                    <div className="is-flex is-flex-wrap-wrap m-0 p-0">
+                                                      {options.map(
+                                                        (option, index) => (
+                                                          <React.Fragment
+                                                            key={option}
+                                                          >
+                                                            {references!
+                                                              .options[carrier][
+                                                              option
+                                                            ]?.type ===
+                                                              "boolean" && (
+                                                              <div
+                                                                style={{
+                                                                  minWidth:
+                                                                    "225px",
+                                                                }}
+                                                              >
+                                                                <CheckBoxField
+                                                                  name={option}
+                                                                  fieldClass="mb-0 p-1"
+                                                                  defaultChecked={
+                                                                    shipment
+                                                                      .options?.[
+                                                                      option
+                                                                    ]
+                                                                  }
+                                                                  onChange={(
+                                                                    e,
+                                                                  ) =>
+                                                                    onChange(
+                                                                      shipment_index,
+                                                                      shipment,
+                                                                      {
+                                                                        options:
+                                                                          {
+                                                                            ...shipment.options,
+                                                                            [option]:
+                                                                              e
+                                                                                .target
+                                                                                .checked ||
+                                                                              null,
+                                                                          },
+                                                                      },
+                                                                    )
+                                                                  }
+                                                                >
+                                                                  <span>
+                                                                    {formatRef(
+                                                                      option,
+                                                                    )}
+                                                                  </span>
+                                                                </CheckBoxField>
+                                                              </div>
+                                                            )}
+
+                                                            {references!
+                                                              .options[carrier][
+                                                              option
+                                                            ]?.type ===
+                                                              "string" && (
+                                                              <>
+                                                                <InputField
+                                                                  name={option}
+                                                                  style={{
+                                                                    minWidth:
+                                                                      "225px",
+                                                                  }}
+                                                                  label={formatRef(
+                                                                    option,
+                                                                  )}
+                                                                  placeholder={formatRef(
+                                                                    option,
+                                                                  )}
+                                                                  className="is-small"
+                                                                  wrapperClass="pl-0 pr-2 py-1"
+                                                                  fieldClass="column mb-0 is-6 p-0"
+                                                                  defaultValue={
+                                                                    shipment
+                                                                      .options[
+                                                                      option
+                                                                    ]
+                                                                  }
+                                                                  onChange={(
+                                                                    e,
+                                                                  ) =>
+                                                                    onChange(
+                                                                      shipment_index,
+                                                                      shipment,
+                                                                      {
+                                                                        options:
+                                                                          {
+                                                                            ...shipment.options,
+                                                                            [option]:
+                                                                              e
+                                                                                .target
+                                                                                .value,
+                                                                          },
+                                                                      },
+                                                                    )
+                                                                  }
+                                                                />
+                                                              </>
+                                                            )}
+                                                          </React.Fragment>
+                                                        ),
+                                                      )}
+                                                    </div>
+
+                                                    <div className="p-2"></div>
+                                                  </React.Fragment>
+                                                ))}
+                                              </Disclosure.Panel>
+                                            </div>
+                                          )}
+                                        </Disclosure>
+                                      </div>
+                                    )}
+
+                                    <hr
+                                      className="my-1"
+                                      style={{ height: "1px" }}
+                                    />
+
+                                    <div className="p-3">
+                                      <InputField
+                                        label="Reference"
+                                        name="reference"
+                                        defaultValue={
+                                          shipment.reference as string
+                                        }
+                                        onChange={(e) =>
+                                          onChange(shipment_index, shipment, {
+                                            reference: e.target.value as string,
+                                          })
+                                        }
+                                        placeholder="shipment reference"
+                                        className="is-small"
+                                        autoComplete="off"
+                                      />
+                                    </div>
                                   </div>
-                                </Dropdown>
-                              </div>
-                            </CommodityEditModalProvider>
-                          </ContextProviders>
-                        </React.Fragment>
-                      );
-                    })}
+
+                                  {/* Customs declaration section */}
+                                  {isInternational(shipment) && (
+                                    <div className="card px-0 py-3 mt-5">
+                                      <header className="px-3 is-flex is-justify-content-space-between">
+                                        <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
+                                          CUSTOMS DECLARATION
+                                        </span>
+                                        <div className="is-vcentered">
+                                          <CustomsModalEditor
+                                            header="Edit customs info"
+                                            shipment={shipment}
+                                            customs={
+                                              (shipment?.customs as any) || {
+                                                ...DEFAULT_CUSTOMS_CONTENT,
+                                                incoterm:
+                                                  shipment.payment?.paid_by ==
+                                                  PaidByEnum.sender
+                                                    ? "DDP"
+                                                    : "DDU",
+                                                duty: {
+                                                  ...DEFAULT_CUSTOMS_CONTENT.duty,
+                                                  currency:
+                                                    shipment.options?.currency,
+                                                  paid_by:
+                                                    shipment.payment?.paid_by,
+                                                  account_number:
+                                                    shipment.payment
+                                                      ?.account_number,
+                                                  declared_value:
+                                                    shipment.options
+                                                      ?.declared_value,
+                                                },
+                                                duty_billing_address:
+                                                  shipment.billing_address,
+                                                commodities:
+                                                  getShipmentCommodities(
+                                                    shipment,
+                                                  ),
+                                                options:
+                                                  workspace_config.customsOptions,
+                                              }
+                                            }
+                                            onSubmit={mutation.updateCustoms(
+                                              shipment_index,
+                                            )(shipment?.customs?.id)}
+                                            trigger={
+                                              <button className="button is-small is-info is-text is-inverted p-1">
+                                                Edit customs info
+                                              </button>
+                                            }
+                                          />
+                                        </div>
+                                      </header>
+
+                                      <hr
+                                        className="my-1"
+                                        style={{ height: "1px" }}
+                                      />
+
+                                      <div className="p-3">
+                                        {!isNone(shipment.customs) && (
+                                          <>
+                                            <CustomsInfoDescription
+                                              customs={
+                                                shipment.customs as CustomsType
+                                              }
+                                            />
+
+                                            {/* Commodities section */}
+                                            <span className="is-size-7 mt-4 has-text-weight-semibold">
+                                              COMMODITIES
+                                            </span>
+
+                                            {(
+                                              shipment.customs!.commodities ||
+                                              []
+                                            ).map((commodity, index) => (
+                                              <React.Fragment
+                                                key={index + "customs-info"}
+                                              >
+                                                <hr
+                                                  className="mt-1 mb-2"
+                                                  style={{ height: "1px" }}
+                                                />
+                                                <div className="is-flex is-justify-content-space-between is-vcentered">
+                                                  <CommodityDescription
+                                                    className="is-flex-grow-1 pr-2"
+                                                    commodity={commodity}
+                                                    prefix={`${index + 1} - `}
+                                                  />
+                                                  <div>
+                                                    <CommodityStateContext.Consumer>
+                                                      {({ editCommodity }) => (
+                                                        <button
+                                                          type="button"
+                                                          className="button is-small is-white"
+                                                          disabled={isPackedItem(
+                                                            commodity,
+                                                            shipment,
+                                                          )}
+                                                          onClick={() =>
+                                                            editCommodity({
+                                                              commodity,
+                                                              onSubmit: (_) =>
+                                                                mutation.updateCommodity(
+                                                                  shipment_index,
+                                                                )(
+                                                                  index,
+                                                                  shipment
+                                                                    .customs
+                                                                    ?.id,
+                                                                )(_),
+                                                            })
+                                                          }
+                                                        >
+                                                          <span className="icon is-small">
+                                                            <i className="fas fa-pen"></i>
+                                                          </span>
+                                                        </button>
+                                                      )}
+                                                    </CommodityStateContext.Consumer>
+                                                    <button
+                                                      type="button"
+                                                      className="button is-small is-white"
+                                                      disabled={
+                                                        shipment.customs!
+                                                          .commodities
+                                                          .length === 1
+                                                      }
+                                                      onClick={() =>
+                                                        mutation.removeCommodity(
+                                                          shipment_index,
+                                                        )(
+                                                          index,
+                                                          shipment.customs?.id,
+                                                        )(commodity.id)
+                                                      }
+                                                    >
+                                                      <span className="icon is-small">
+                                                        <i className="fas fa-times"></i>
+                                                      </span>
+                                                    </button>
+                                                  </div>
+                                                </div>
+                                              </React.Fragment>
+                                            ))}
+
+                                            {(
+                                              shipment.customs!.commodities ||
+                                              []
+                                            ).length === 0 && (
+                                              <div className="notification is-warning is-light my-2 py-2 px-4 is-size-7">
+                                                You need provide commodity items
+                                                for customs purpose. (required)
+                                              </div>
+                                            )}
+
+                                            <div className="is-flex is-justify-content-space-between mt-4">
+                                              <CommodityStateContext.Consumer>
+                                                {({ editCommodity }) => (
+                                                  <button
+                                                    type="button"
+                                                    className="button is-small is-info is-inverted p-2"
+                                                    onClick={() =>
+                                                      editCommodity({
+                                                        onSubmit: (_) =>
+                                                          mutation.addCommodities(
+                                                            shipment_index,
+                                                          )([_] as any),
+                                                      })
+                                                    }
+                                                  >
+                                                    <span className="icon is-small">
+                                                      <i className="fas fa-plus"></i>
+                                                    </span>
+                                                    <span>add commodity</span>
+                                                  </button>
+                                                )}
+                                              </CommodityStateContext.Consumer>
+                                              {metadata.ORDERS_MANAGEMENT && (
+                                                <LineItemSelector
+                                                  title="Add commodities"
+                                                  shipment={shipment}
+                                                  onChange={(_) =>
+                                                    mutation.addCommodities(
+                                                      _ as any,
+                                                    )
+                                                  }
+                                                />
+                                              )}
+                                            </div>
+
+                                            {/* Duty Billing address section */}
+                                            {(shipment.customs!
+                                              .duty_billing_address ||
+                                              shipment.customs!.duty
+                                                ?.paid_by ===
+                                                PaidByEnum.third_party) && (
+                                              <>
+                                                <hr
+                                                  className="my-1"
+                                                  style={{ height: "1px" }}
+                                                />
+
+                                                <div className="py-3">
+                                                  <header className="is-flex is-justify-content-space-between">
+                                                    <label
+                                                      className="label is-capitalized"
+                                                      style={{
+                                                        fontSize: "0.8em",
+                                                      }}
+                                                    >
+                                                      Billing address
+                                                    </label>
+                                                    <div className="is-vcentered">
+                                                      <AddressModalEditor
+                                                        address={
+                                                          shipment.customs
+                                                            ?.duty_billing_address ||
+                                                          ({} as AddressType)
+                                                        }
+                                                        onSubmit={(address) =>
+                                                          mutation.updateShipment(
+                                                            shipment_index,
+                                                          )({
+                                                            customs: {
+                                                              ...shipment!
+                                                                .customs,
+                                                              duty_billing_address:
+                                                                address,
+                                                            } as any,
+                                                          })
+                                                        }
+                                                        trigger={
+                                                          <button className="button is-small is-info is-text is-inverted p-1">
+                                                            Edit duty billing
+                                                            address
+                                                          </button>
+                                                        }
+                                                      />
+                                                    </div>
+                                                  </header>
+
+                                                  {shipment!.customs!
+                                                    .duty_billing_address && (
+                                                    <AddressDescription
+                                                      address={
+                                                        shipment!.customs!
+                                                          .duty_billing_address as any
+                                                      }
+                                                    />
+                                                  )}
+
+                                                  {isNone(
+                                                    shipment!.customs!
+                                                      .duty_billing_address,
+                                                  ) && (
+                                                    <div className="notification is-default p-2 is-size-7">
+                                                      Add customs duty billing
+                                                      address. (optional)
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              </>
+                                            )}
+                                          </>
+                                        )}
+
+                                        {isNone(shipment.customs) && (
+                                          <div className="notification is-warning is-light my-2 py-2 px-4 is-size-7">
+                                            Looks like you have an international
+                                            shipment. You may need to provide a
+                                            customs declaration unless you are
+                                            shipping documents only.
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {/* Shipment Summary */}
+                                  <CommoditySummary
+                                    shipment={shipment}
+                                    orders={orders}
+                                    className="card px-0 mt-3"
+                                  />
+
+                                  {/* Metadata section */}
+                                  <div className="card px-0 mt-3">
+                                    <div className="p-1 pb-4">
+                                      <MetadataEditor
+                                        object_type={
+                                          MetadataObjectTypeEnum.shipment
+                                        }
+                                        metadata={shipment.metadata}
+                                        onChange={(metadata) =>
+                                          onChange(shipment_index, shipment, {
+                                            metadata,
+                                          })
+                                        }
+                                      >
+                                        <MetadataEditorContext.Consumer>
+                                          {({ isEditing, editMetadata }) => (
+                                            <>
+                                              <header className="is-flex is-justify-content-space-between p-2">
+                                                <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
+                                                  METADATA
+                                                </span>
+                                                <div className="is-vcentered">
+                                                  <button
+                                                    type="button"
+                                                    className="button is-small is-info is-text is-inverted p-1"
+                                                    disabled={isEditing}
+                                                    onClick={() =>
+                                                      editMetadata()
+                                                    }
+                                                  >
+                                                    <span>Edit metadata</span>
+                                                  </button>
+                                                </div>
+                                              </header>
+                                            </>
+                                          )}
+                                        </MetadataEditorContext.Consumer>
+                                      </MetadataEditor>
+                                    </div>
+                                  </div>
+
+                                  {/* Instructions section */}
+                                  <div className="card px-0 mt-5">
+                                    <div className="p-3">
+                                      <TextAreaField
+                                        rows={2}
+                                        label="Shipping instructions"
+                                        autoComplete="off"
+                                        name="instructions"
+                                        className="is-small"
+                                        placeholder="shipping instructions"
+                                        defaultValue={
+                                          shipment.options?.instructions
+                                        }
+                                        required={
+                                          !isNone(
+                                            shipment.options?.instructions,
+                                          )
+                                        }
+                                        onChange={(e) =>
+                                          onChange(shipment_index, shipment, {
+                                            options: {
+                                              ...shipment.options,
+                                              instructions: e.target.value,
+                                            },
+                                          })
+                                        }
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className="p-6"></div>
+
+                                {/* Service section */}
+                                <div
+                                  className="form-floating-footer px-2 pt-2 pb-4"
+                                  style={{ borderTop: "1px solid #ddd" }}
+                                >
+                                  <header className="py-2 is-flex is-justify-content-space-between">
+                                    <div>
+                                      <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
+                                        Service
+                                      </span>
+                                    </div>
+                                    <div className="is-vcentered">
+                                      <button
+                                        className="button is-small is-info is-text is-inverted p-1"
+                                        onClick={() =>
+                                          mutation.fetchRates.mutateAsync(
+                                            shipment_index,
+                                          )
+                                        }
+                                        disabled={
+                                          requireInfoForRating(shipment) ||
+                                          mutation.fetchRates.isLoading
+                                        }
+                                      >
+                                        Refresh rates
+                                      </button>
+                                    </div>
+                                  </header>
+
+                                  {/* Shipping service */}
+                                  <Dropdown
+                                    direction="is-up"
+                                    style={{ display: "block" }}
+                                    menuWrapperStyle={{
+                                      right: 0,
+                                      bottom: "100%",
+                                    }}
+                                  >
+                                    {/* Dropdown trigger  */}
+                                    <label className="panel-block p-0 card flex">
+                                      <div className="icon-text is-flex-grow-1">
+                                        <CarrierImage
+                                          carrier_name={
+                                            selectedRate(shipment)?.carrier_name
+                                          }
+                                          containerClassName="mt-2 ml-1 mr-2 pl-1"
+                                          height={34}
+                                          width={34}
+                                          text_color={
+                                            getCarrier(selectedRate(shipment))
+                                              ?.config?.text_color
+                                          }
+                                          background={
+                                            getCarrier(selectedRate(shipment))
+                                              ?.config?.brand_color
+                                          }
+                                        />
+                                        <div
+                                          className="text-ellipsis"
+                                          style={{
+                                            maxWidth: "190px",
+                                            lineHeight: "16px",
+                                          }}
+                                        >
+                                          {!!selectedRate(shipment) && (
+                                            <RateDescription
+                                              rate={selectedRate(shipment)}
+                                            />
+                                          )}
+                                        </div>
+                                      </div>
+                                      <Image
+                                        src={p`/unfold.svg`}
+                                        width={30}
+                                        height={30}
+                                        alt={"select services"}
+                                      />
+                                    </label>
+
+                                    {/* Dropdown content  */}
+                                    <div
+                                      className="dropdown-content has-background-color-white"
+                                      onClick={(e) => closeDropdown(e.target)}
+                                      id="dropdown-menu"
+                                      role="menu"
+                                      style={{
+                                        maxHeight: "20rem",
+                                        overflowY: "auto",
+                                      }}
+                                    >
+                                      {(shipment.rates || []).map((rate) => (
+                                        <a
+                                          key={rate.id}
+                                          className={`dropdown-item m-0 p-0 is-vcentered ${rate.service === shipment.options.preferred_service ? "has-text-grey-dark has-background-success-light" : "has-text-grey"} ${rate.id === selectedRate(shipment)?.id ? "has-text-grey-dark has-background-grey-lighter" : "has-text-grey"}`}
+                                          onClick={() =>
+                                            onChange(shipment_index, shipment, {
+                                              options: {
+                                                ...shipment.options,
+                                                preferred_service: rate.service,
+                                              },
+                                            })
+                                          }
+                                        >
+                                          <div className="icon-text">
+                                            <CarrierImage
+                                              width={30}
+                                              height={30}
+                                              carrier_name={
+                                                (rate.meta as any)?.carrier ||
+                                                rate.carrier_name
+                                              }
+                                              text_color={
+                                                getCarrier(rate)?.config
+                                                  ?.text_color
+                                              }
+                                              background={
+                                                getCarrier(rate)?.config
+                                                  ?.brand_color
+                                              }
+                                              containerClassName="mt-2 ml-1 mr-2 pl-1"
+                                            />
+                                            <RateDescription rate={rate} />
+                                          </div>
+                                        </a>
+                                      ))}
+                                    </div>
+                                  </Dropdown>
+                                </div>
+                              </CommodityEditModalProvider>
+                            </ContextProviders>
+                          </React.Fragment>
+                        );
+                      },
+                    )}
                   </section>
                 </Dialog.Panel>
               </Dialog>
