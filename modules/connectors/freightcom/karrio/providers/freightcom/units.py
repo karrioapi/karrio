@@ -134,6 +134,9 @@ class ShippingOption(lib.Enum):
     freightcom_dangerous_goods_type = lib.OptionEnum("dangerousGoodsType", bool)
     freightcom_stackable = lib.OptionEnum("stackable", bool)
 
+    """ Unified Option type mapping """
+    saturday_delivery = freightcom_saturday_pickup_required
+
 
 def shipping_options_initializer(
     options: dict,

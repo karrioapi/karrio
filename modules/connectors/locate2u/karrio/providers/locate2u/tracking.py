@@ -54,7 +54,7 @@ def _extract_details(
                 date=lib.fdate(tracking.lastModifiedDate, "%Y-%m-%dT%H:%M:%S.%fZ"),
                 description=tracking.status,
                 code=tracking.status,
-                time=lib.ftime(tracking.lastModifiedDate, "%Y-%m-%dT%H:%M:%S.%fZ"),
+                time=lib.flocaltime(tracking.lastModifiedDate, "%Y-%m-%dT%H:%M:%S.%fZ"),
                 latitude=tracking.location.latitude,
                 longitude=tracking.location.longitude,
             )

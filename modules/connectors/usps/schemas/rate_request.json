@@ -1,0 +1,17 @@
+{
+  "originZIPCode": "string",
+  "destinationZIPCode": "string",
+  "weight": 5,
+  "length": 0,
+  "width": 0,
+  "height": 0,
+  "mailClass": "PARCEL_SELECT",
+  "mailClasses": ["USPS_GROUND_ADVANTAGE", "USPS_RETAIL_GROUND"],
+  "priceType": "RETAIL",
+  "mailingDate": "2021-07-01",
+  "accountType": "EPS",
+  "accountNumber": "string",
+  "itemValue": 0,
+  "extraServices": [415]
+}
+

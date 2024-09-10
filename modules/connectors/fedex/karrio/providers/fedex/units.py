@@ -229,11 +229,13 @@ class PaymentType(lib.Enum):
 
 
 class ConnectionConfig(lib.Enum):
-    locale = lib.OptionEnum("locale")
-    label_type = lib.OptionEnum("label_type")
+    label_type = lib.OptionEnum("label_type", LabelType)
     smart_post_hub_id = lib.OptionEnum("smart_post_hub_id")
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
+    locale = lib.OptionEnum(
+        "locale", lib.units.create_enum("Locale", ["en_US", "fr_CA"])
+    )
 
 
 class ShippingService(lib.Enum):
@@ -341,6 +343,7 @@ class ShippingOption(lib.Enum):
     cash_on_delivery = fedex_cod
     dangerous_good = fedex_dangerous_goods
     notification = fedex_event_notification
+    saturday_delivery = fedex_saturday_delivery
     paperless_trade = fedex_electronic_trade_documents
     doc_files = lib.OptionEnum("doc_files", lib.to_dict)
     doc_references = lib.OptionEnum("doc_references", lib.to_dict)

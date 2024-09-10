@@ -2,7 +2,7 @@ import django.db.models as models
 import karrio.server.providers.models as providers
 
 
-@providers.has_rate_sheet("colissimo")
+# @providers.has_rate_sheet("colissimo")
 class ColissimoSettings(providers.Carrier):
     class Meta:
         db_table = "colissimo-settings"

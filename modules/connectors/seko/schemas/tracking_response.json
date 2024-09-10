@@ -1,0 +1,36 @@
+[
+  {
+    "ConsignmentNo": "WFY9001843",
+    "Status": "International transit to destination country ",
+    "Picked": null,
+    "Delivered": null,
+    "Tracking": "http://track.omniparcel.com/1481576-WFY9001843",
+    "Reference1": "S5828797:0",
+    "Events": [
+      {
+        "EventDT": "2021-03-01T21:47:50.643",
+        "Code": null,
+        "OmniCode": "OP-1",
+        "Description": "Tracking number allocated & order ready",
+        "Location": "SAN BERNARDINO,CA,US",
+        "Part": 1
+      },
+      {
+        "EventDT": "2021-03-05T08:56:22.287",
+        "Code": null,
+        "OmniCode": "OP-3",
+        "Description": "Processed through Export Hub",
+        "Location": "Carson, CA,US",
+        "Part": 1
+      },
+      {
+        "EventDT": "2021-03-05T13:53:00.55",
+        "Code": null,
+        "OmniCode": "OP-4",
+        "Description": "International transit to destination country ",
+        "Location": "CARSON, CA,US",
+        "Part": 1
+      }
+    ]
+  }
+]

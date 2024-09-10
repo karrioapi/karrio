@@ -76,7 +76,7 @@ class CarrierSettings:
                 "capabilities",
                 "active_users",
                 "active_orgs",
-                *(["display_name"] if self.carrier_name == "generic" else []),
+                *([] if self.carrier_name == "generic" else ["display_name"]),
             ]
         }
 
@@ -150,6 +150,7 @@ class PickupCancelRequest(BasePickupCancelRequest):
     address: Address = jstruct.JStruct[Address]
     pickup_date: str = None
     reason: str = None
+    options: typing.Dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -175,6 +176,8 @@ class RateRequest(BaseRateRequest):
     recipient: Address = jstruct.JStruct[Address, jstruct.REQUIRED]
     parcels: typing.List[Parcel] = jstruct.JList[Parcel, jstruct.REQUIRED]
 
+    return_address: Address = jstruct.JStruct[Address]
+    billing_address: Address = jstruct.JStruct[Address]
     services: typing.List[str] = []
     options: typing.Dict = {}
     reference: str = ""
@@ -194,6 +197,7 @@ class ShipmentRequest(BaseShipmentRequest):
 
     payment: Payment = jstruct.JStruct[Payment]
     customs: Customs = jstruct.JStruct[Customs]
+    return_address: Address = jstruct.JStruct[Address]
     billing_address: Address = jstruct.JStruct[Address]
 
     options: typing.Dict = {}

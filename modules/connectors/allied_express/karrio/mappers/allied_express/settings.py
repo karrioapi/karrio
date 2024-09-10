@@ -1,18 +1,18 @@
 """Karrio Allied Express client settings."""
 
 import attr
-import karrio.providers.allied_express.utils as provider_utils
+import karrio.providers.allied_express.utils as utils
 
 
 @attr.s(auto_attribs=True)
-class Settings(provider_utils.Settings):
+class Settings(utils.Settings):
     """Allied Express connection settings."""
 
     # required carrier specific properties
     username: str
     password: str
     account: str = None
-    service_type: str = "R"
+    service_type: utils.AlliedServiceType = "R"  # type: ignore
 
     # generic properties
     id: str = None

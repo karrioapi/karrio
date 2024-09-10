@@ -1,7 +1,10 @@
+"use client";
 import React from "react";
 
-
-export class ErrorBoundary extends React.Component<{ children?: React.ReactNode }, { hasError: boolean }> {
+export class ErrorBoundary extends React.Component<
+  { children?: React.ReactNode },
+  { hasError: boolean }
+> {
   constructor(props: any) {
     super(props);
     this.state = { hasError: false };
@@ -14,7 +17,7 @@ export class ErrorBoundary extends React.Component<{ children?: React.ReactNode 
 
   componentDidCatch(error: any, errorInfo: any) {
     // You can also log the error to an error reporting service
-    console.log("Error boundaries caught...")
+    console.log("Error boundaries caught...");
     console.error(error);
     // console.error(errorInfo);
   }
@@ -26,7 +29,9 @@ export class ErrorBoundary extends React.Component<{ children?: React.ReactNode 
         <section className="hero is-fullheight">
           <div className="container">
             <div className="has-text-centered mt-4 mb-5">
-              <span className="has-text-primary has-text-weight-bold is-size-4">Uh Oh!</span>
+              <span className="has-text-primary has-text-weight-bold is-size-4">
+                Uh Oh!
+              </span>
             </div>
 
             <div className="card isolated-card my-6">

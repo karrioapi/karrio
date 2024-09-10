@@ -1,9 +1,8 @@
-from karrio.providers.colissimo.units import ServiceName
 import karrio.schemas.eshipper.rate_request as eshipper
 import karrio.schemas.eshipper.rate_response as rating
 import typing
+import datetime
 import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
 import karrio.providers.eshipper.error as error
 import karrio.providers.eshipper.utils as provider_utils
@@ -27,7 +26,9 @@ def _extract_details(
     settings: provider_utils.Settings,
 ) -> models.RateDetails:
     rate = lib.to_object(rating.QuoteType, data)
-    service = provider_units.ShippingService(rate.serviceId)
+    service = provider_units.ShippingService.map(str(rate.serviceId))
+    carrierId = provider_units.ShippingService.carrier_id(service.value_or_key)
+    rate_provider = provider_units.ShippingService.carrier(service.value_or_key).lower()
     charges = [
         ("baseCharge", rate.baseCharge),
         ("fuelSurcharge", rate.fuelSurcharge),
@@ -55,8 +56,10 @@ def _extract_details(
             if amount
         ],
         meta=dict(
-            service_name=service.name or rate.serviceName,
-            ServiceName=rate.ServiceName,
+            rate_provider=rate_provider,
+            service_name=rate.serviceName or service.name,
+            carrierId=carrierId,
+            serviceName=rate.serviceName,
             carrierName=rate.carrierName,
         ),
     )
@@ -74,9 +77,10 @@ def rate_request(
         payload.options,
         package_options=packages.options,
     )
+    shipping_date = lib.to_date(options.shipment_date.state or datetime.datetime.now())
 
     request = eshipper.RateRequestType(
-        scheduledShipDate=lib.fdate(options.shipment_date),
+        scheduledShipDate=lib.fdatetime(shipping_date, output_format="%Y-%m-%d %H:%M"),
         raterequestfrom=eshipper.FromType(
             attention=shipper.contact,
             company=shipper.company_name,
@@ -111,19 +115,18 @@ def rate_request(
             confirmDelivery=None,
             notifyRecipient=None,
         ),
-        packagingUnit=provider_units.PackageType.map(packages.package_type).value,
+        packagingUnit="Metric" if packages.weight_unit.lower() == "kg" else "Imperial",
         packages=eshipper.PackagesType(
-            type=None,
+            type="Package",
             packages=[
                 eshipper.PackageType(
-                    height=package.height.CM,
-                    length=package.length.CM,
-                    width=package.width.CM,
-                    weight=package.weight.KG,
-                    dimensionUnit=units.DimensionUnit.CM.value,
-                    weight=package.weight.KG,
-                    weightUnit=units.WeightUnit.KG.value,
-                    type=provider_units.PackageType.map(package.package_type).value,
+                    height=lib.to_int(package.height.value),
+                    length=lib.to_int(package.length.value),
+                    width=lib.to_int(package.width.value),
+                    weight=lib.to_int(package.weight.value),
+                    dimensionUnit=package.dimension_unit.value,
+                    weightUnit=package.weight_unit.value,
+                    type=provider_units.PackagingType.map(package.packaging_type).value,
                     freightClass=None,
                     nmfcCode=None,
                     insuranceAmount=None,
@@ -161,5 +164,5 @@ def rate_request(
 
     return lib.Serializable(
         request,
-        lambda _: lib.to_dict(lib.to_json(_).replace("ratequestfrom", "from")),
+        lambda _: lib.to_dict(lib.to_json(_).replace("raterequestfrom", "from")),
     )

@@ -68,7 +68,7 @@ ParsedTrackingResponse = [
                     "description": "Pending",
                     "latitude": -33.8706672,
                     "longitude": 151.192487,
-                    "time": "13:07",
+                    "time": "13:07 PM",
                 }
             ],
             "tracking_number": "164557",
@@ -163,7 +163,7 @@ TrackingResponse = """{
 """
 
 ErrorResponse = """{
-    "error": "Unauthorized", 
+    "error": "Unauthorized",
     "code": "401"
 }
 """

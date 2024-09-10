@@ -4,7 +4,11 @@
 source "bin/activate-env" >/dev/null 2>&1
 
 # Run server commands
-if [[ "$*" == *gen:graph* ]]; then
+if [[ "$*" == *gen:ee* ]]; then
+    cd "${ROOT:?}"
+    npx apollo service:download --endpoint=http://0.0.0.0:5002/graphql/ "${ROOT:?}/schemas/graphql-ee.json"
+    cd -
+elif [[ "$*" == *gen:graph* ]]; then
     cd "${ROOT:?}"
     npx apollo service:download --endpoint=http://0.0.0.0:5002/graphql/ "${ROOT:?}/schemas/graphql.json"
     cd -
@@ -41,6 +45,7 @@ elif [[ "$*" == *build:js* ]]; then
 else
     echo "Help: You can pass any the following commands to the server"
     echo "-----"
+    echo "gen:ee - Generate GraphQL ee schema"
     echo "gen:graph - Generate GraphQL schema"
     echo "gen:admin - Generate Admin GraphQL schema"
     echo "gen:openapi - Generate OpenAPI schema"

@@ -10,9 +10,11 @@ import karrio.server.conf as conf
 import karrio.server.core.utils as utils
 import karrio.server.core.gateway as gateway
 
+import karrio.server.core.dataunits as dataunits
 import karrio.server.core.datatypes as datatypes
 import karrio.server.core.exceptions as exceptions
 import karrio.server.providers.models as providers
+import karrio.server.core.validators as validators
 from karrio.server.serializers import (
     Serializer,
     CharField,
@@ -153,6 +155,12 @@ class ShipmentSerializer(ShipmentData):
                     payload=validated_data,
                     context=context,
                 ),
+                "return_address": save_one_to_one_data(
+                    "return_address",
+                    AddressSerializer,
+                    payload=validated_data,
+                    context=context,
+                ),
                 "billing_address": save_one_to_one_data(
                     "billing_address",
                     AddressSerializer,
@@ -224,6 +232,16 @@ class ShipmentSerializer(ShipmentData):
             context=context,
         )
 
+        if "return_address" in validated_data:
+            changes.append("return_address")
+            instance.return_address = save_one_to_one_data(
+                "return_address",
+                AddressSerializer,
+                instance,
+                payload=validated_data,
+                context=context,
+            )
+
         if "billing_address" in validated_data:
             changes.append("billing_address")
             instance.billing_address = save_one_to_one_data(
@@ -290,7 +308,7 @@ class ShipmentPurchaseData(Serializer):
     )
 
 
-class ShipmentUpdateData(Serializer):
+class ShipmentUpdateData(validators.OptionDefaultSerializer):
     label_type = ChoiceField(
         required=False,
         choices=LABEL_TYPES,
@@ -300,6 +318,7 @@ class ShipmentUpdateData(Serializer):
     payment = Payment(required=False, help_text="The payment details")
     options = PlainDictField(
         required=False,
+        default={},
         help_text="""<details>
         <summary>The options available for the shipment.</summary>
 
@@ -307,12 +326,33 @@ class ShipmentUpdateData(Serializer):
             "currency": "USD",
             "insurance": 100.00,
             "cash_on_delivery": 30.00,
-            "shipment_date": "2020-01-01",
             "dangerous_good": true,
             "declared_value": 150.00,
+            "sms_notification": true,
             "email_notification": true,
             "email_notification_to": "shipper@mail.com",
+            "hold_at_location": true,
+            "paperless_trade": true,
+            "preferred_service": "fedex_express_saver",
+            "shipment_date": "2020-01-01",
+            "shipment_note": "This is a shipment note",
             "signature_confirmation": true,
+            "saturday_delivery": true,
+            "is_return": true,
+            "doc_files": [
+                {
+                    "doc_type": "commercial_invoice",
+                    "doc_file": "base64 encoded file",
+                    "doc_name": "commercial_invoice.pdf",
+                    "doc_format": "pdf",
+                }
+            ],
+            "doc_references": [
+                {
+                    "doc_id": "123456789",
+                    "doc_type": "commercial_invoice",
+                }
+            ],
         }
         </details>
         """,
@@ -328,7 +368,7 @@ class ShipmentUpdateData(Serializer):
     )
 
 
-class ShipmentRateData(Serializer):
+class ShipmentRateData(validators.OptionDefaultSerializer):
     services = StringListField(
         required=False,
         allow_null=True,
@@ -343,6 +383,47 @@ class ShipmentRateData(Serializer):
         allow_null=True,
         help_text="""The list of configured carriers you wish to get rates from.<br/>
         **Note that the request will be sent to all carriers in nothing is specified**
+        """,
+    )
+    options = PlainDictField(
+        required=False,
+        default={},
+        help_text="""<details>
+        <summary>The options available for the shipment.</summary>
+
+        {
+            "currency": "USD",
+            "insurance": 100.00,
+            "cash_on_delivery": 30.00,
+            "dangerous_good": true,
+            "declared_value": 150.00,
+            "sms_notification": true,
+            "email_notification": true,
+            "email_notification_to": "shipper@mail.com",
+            "hold_at_location": true,
+            "paperless_trade": true,
+            "preferred_service": "fedex_express_saver",
+            "shipment_date": "2020-01-01",
+            "shipment_note": "This is a shipment note",
+            "signature_confirmation": true,
+            "saturday_delivery": true,
+            "is_return": true,
+            "doc_files": [
+                {
+                    "doc_type": "commercial_invoice",
+                    "doc_file": "base64 encoded file",
+                    "doc_name": "commercial_invoice.pdf",
+                    "doc_format": "pdf",
+                }
+            ],
+            "doc_references": [
+                {
+                    "doc_id": "123456789",
+                    "doc_type": "commercial_invoice",
+                }
+            ],
+        }
+        </details>
         """,
     )
     reference = CharField(
@@ -360,6 +441,47 @@ class ShipmentRateData(Serializer):
 class ShipmentPurchaseSerializer(Shipment):
     rates = Rate(many=True, required=True)
     payment = Payment(required=True)
+    options = PlainDictField(
+        required=False,
+        default={},
+        help_text="""<details>
+        <summary>The options available for the shipment.</summary>
+
+        {
+            "currency": "USD",
+            "insurance": 100.00,
+            "cash_on_delivery": 30.00,
+            "dangerous_good": true,
+            "declared_value": 150.00,
+            "sms_notification": true,
+            "email_notification": true,
+            "email_notification_to": "shipper@mail.com",
+            "hold_at_location": true,
+            "paperless_trade": true,
+            "preferred_service": "fedex_express_saver",
+            "shipment_date": "2020-01-01",
+            "shipment_note": "This is a shipment note",
+            "signature_confirmation": true,
+            "saturday_delivery": true,
+            "is_return": true,
+            "doc_files": [
+                {
+                    "doc_type": "commercial_invoice",
+                    "doc_file": "base64 encoded file",
+                    "doc_name": "commercial_invoice.pdf",
+                    "doc_format": "pdf",
+                }
+            ],
+            "doc_references": [
+                {
+                    "doc_id": "123456789",
+                    "doc_type": "commercial_invoice",
+                }
+            ],
+        }
+        </details>
+        """,
+    )
     reference = CharField(required=False, allow_blank=True, allow_null=True)
 
     def create(self, validated_data: dict, **kwargs) -> datatypes.Shipment:
@@ -470,7 +592,7 @@ def buy_shipment_label(
         carrier_id=rate["carrier_id"],
         test_mode=rate["test_mode"],
     )
-    is_paperless_trade = (
+    is_paperless_trade = lib.identity(
         "paperless" in carrier.capabilities
         and shipment.options.get("paperless_trade") == True
     )
@@ -618,8 +740,14 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
     carrier = shipment.selected_rate_carrier
 
     # Get rate provider carrier if supported instead of carrier account
-    if (rate_provider != shipment.carrier_name) and rate_provider in providers.MODELS:
-        carrier = providers.MODELS[rate_provider].access_by(context).first()
+    if (
+        rate_provider != shipment.carrier_name
+    ) and rate_provider in dataunits.CARRIER_NAMES:
+        carrier = (
+            providers.Carrier.access_by(context)
+            .filter(carrier_code=rate_provider)
+            .first()
+        )
 
     # Handle hub extension tracking
     if shipment.selected_rate_carrier.gateway.is_hub and carrier is None:

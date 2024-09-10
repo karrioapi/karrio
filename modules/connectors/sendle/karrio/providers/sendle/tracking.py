@@ -78,7 +78,7 @@ def _extract_details(
                 time=lib.fdatetime(
                     event.local_scan_time or event.scan_time,
                     try_formats=["%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%SZ"],
-                    output_format="%H:%M",
+                    output_format="%H:%M %p",
                 ),
             )
             for event in events

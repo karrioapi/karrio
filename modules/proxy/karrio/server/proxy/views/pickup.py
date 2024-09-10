@@ -5,7 +5,8 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 
 import karrio.server.openapi as openapi
-import karrio.server.serializers as serializers
+import karrio.server.core.utils as utils
+import karrio.server.core.dataunits as dataunits
 import karrio.server.providers.models as providers
 from karrio.server.proxy.router import router
 from karrio.server.core.gateway import Pickups
@@ -22,7 +23,6 @@ from karrio.server.core.serializers import (
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
-CARRIER_NAMES = list(providers.MODELS.keys())
 
 
 class PickupSchedule(APIView):
@@ -45,7 +45,7 @@ class PickupSchedule(APIView):
                 "carrier_name",
                 location=openapi.OpenApiParameter.PATH,
                 type=openapi.OpenApiTypes.STR,
-                enum=CARRIER_NAMES,
+                enum=dataunits.CARRIER_NAMES,
             ),
         ],
     )
@@ -80,7 +80,7 @@ class PickupUpdate(APIView):
                 "carrier_name",
                 location=openapi.OpenApiParameter.PATH,
                 type=openapi.OpenApiTypes.STR,
-                enum=CARRIER_NAMES,
+                enum=dataunits.CARRIER_NAMES,
             ),
         ],
     )
@@ -115,7 +115,7 @@ class PickupCancel(APIView):
                 "carrier_name",
                 location=openapi.OpenApiParameter.PATH,
                 type=openapi.OpenApiTypes.STR,
-                enum=CARRIER_NAMES,
+                enum=dataunits.CARRIER_NAMES,
             ),
         ],
     )

@@ -79,10 +79,10 @@ def _extract_details(
                         join=True,
                         separator=", ",
                     )
-                    if a.location
+                    if a.location and a.location.address
                     else None
                 ),
-                time=lib.ftime(a.time, "%H%M%S"),
+                time=lib.flocaltime(a.time, "%H%M%S"),
                 code=getattr(last_event.status, "code", None),
             )
             for a in package.activity

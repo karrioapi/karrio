@@ -603,6 +603,9 @@ class Products(typing.Iterable[Product]):
         weight_unit: str = None,
     ):
         self._items = [Product(item, weight_unit=weight_unit) for item in items]
+        self._weight_unit = (
+            weight_unit or self._items[0].weight_unit if any(self._items) else None
+        )
 
     def __len__(self) -> int:
         return len(self._items)
@@ -619,8 +622,22 @@ class Products(typing.Iterable[Product]):
 
     @property
     def value_amount(self):
-        return sum((item.value_amount or 0.0 for item in self._items), 0.0)
-    
+        return sum(
+            (
+                item.value_amount * item.quantity
+                for item in self._items
+                if utils.NF.decimal(item.value_amount) is not None
+            ),
+            0.0,
+        )
+
+    @property
+    def weight(self) -> Weight:
+        return Weight(
+            sum([item.weight * item.quantity for item in self._items], 0.0),
+            self._weight_unit,
+        )
+
     @property
     def description(self) -> typing.Optional[str]:
         descriptions = set([item.description for item in self._items])
@@ -765,6 +782,11 @@ class Package:
             return None
 
         return self.items.value_amount
+
+    @property
+    def reference_number(self) -> typing.Optional[str]:
+        return self.parcel.reference_number
+
 
 class Packages(typing.Iterable[Package]):
     """The parcel collection common processing helper"""
@@ -955,8 +977,7 @@ class Packages(typing.Iterable[Package]):
             return None
 
         return sum(
-            [pkg.total_value for pkg in self._items if pkg.total_value is not None],
-            0.0
+            [pkg.total_value for pkg in self._items if pkg.total_value is not None], 0.0
         )
 
     def validate(self, required: typing.List[str] = None, max_weight: Weight = None):
@@ -1080,7 +1101,6 @@ class ShippingOption(utils.Enum):
     insurance = utils.OptionEnum("insurance", float)
     cash_on_delivery = utils.OptionEnum("COD", float)
     shipment_note = utils.OptionEnum("shipment_note")
-    shipment_date = utils.OptionEnum("shipment_date")
     dangerous_good = utils.OptionEnum("dangerous_good", bool)
     declared_value = utils.OptionEnum("declared_value", float)
     paperless_trade = utils.OptionEnum("paperless_trade", bool)
@@ -1089,6 +1109,7 @@ class ShippingOption(utils.Enum):
     email_notification_to = utils.OptionEnum("email_notification_to")
     signature_confirmation = utils.OptionEnum("signature_confirmation", bool)
     saturday_delivery = utils.OptionEnum("saturday_delivery", bool)
+    sunday_delivery = utils.OptionEnum("sunday_delivery", bool)
     doc_files = utils.OptionEnum("doc_files", utils.DP.to_dict)
     doc_references = utils.OptionEnum("doc_references", utils.DP.to_dict)
     hold_at_location = utils.OptionEnum("hold_at_location", bool)
@@ -1096,6 +1117,13 @@ class ShippingOption(utils.Enum):
         "hold_at_location_address",
         functools.partial(utils.DP.to_object, models.Address),
     )
+
+    """TODO: dreprecate these"""
+    shipment_date = utils.OptionEnum("shipment_date")
+
+    """TODO: standardize to these"""
+    shipping_date = utils.OptionEnum("shipping_date")  # TODO: change format to datetime
+    shipping_time = utils.OptionEnum("shipping_time")
 
 
 class ShippingOptions(Options):
@@ -1144,6 +1172,14 @@ class ShippingOptions(Options):
         return self[ShippingOption.shipment_date.name]
 
     @property
+    def shipping_date(self) -> utils.OptionEnum:
+        return self[ShippingOption.shipping_date.name] or self.shipment_date
+
+    @property
+    def shipping_time(self) -> utils.OptionEnum:
+        return self[ShippingOption.shipping_time.name]
+
+    @property
     def signature_confirmation(self) -> utils.OptionEnum:
         return self[ShippingOption.signature_confirmation.name]
 
@@ -1172,12 +1208,48 @@ class CustomsOption(utils.Enum):
     """common shipment customs identifiers"""
 
     aes = utils.OptionEnum("aes")
+    ioss = utils.OptionEnum("ioss")
     eel_pfc = utils.OptionEnum("eel_pfc")
     nip_number = utils.OptionEnum("eori_number")
     eori_number = utils.OptionEnum("eori_number")
     license_number = utils.OptionEnum("license_number")
     certificate_number = utils.OptionEnum("certificate_number")
     vat_registration_number = utils.OptionEnum("vat_registration_number")
+
+
+class CustomsOptions(Options):
+    """The options common processing helper"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs, base_option_type=CustomsOption)
+
+    @property
+    def aes(self) -> utils.OptionEnum:
+        return self[CustomsOption.aes.name]
+
+    @property
+    def eel_pfc(self) -> utils.OptionEnum:
+        return self[CustomsOption.eel_pfc.name]
+
+    @property
+    def nip_number(self) -> utils.OptionEnum:
+        return self[CustomsOption.nip_number.name]
+
+    @property
+    def eori_number(self) -> utils.OptionEnum:
+        return self[CustomsOption.eori_number.name]
+
+    @property
+    def license_number(self) -> utils.OptionEnum:
+        return self[CustomsOption.license_number.name]
+
+    @property
+    def certificate_number(self) -> utils.OptionEnum:
+        return self[CustomsOption.certificate_number.name]
+
+    @property
+    def vat_registration_number(self) -> utils.OptionEnum:
+        return self[CustomsOption.vat_registration_number.name]
 
 
 class CustomsInfo(models.Customs):
@@ -1193,10 +1265,9 @@ class CustomsInfo(models.Customs):
         recipient: typing.Optional[models.Address] = None,
     ):
         _customs = customs or default_to
-        options = Options(
+        options = CustomsOptions(
             getattr(_customs, "options", None) or {},
             option_type=option_type,
-            base_option_type=CustomsOption,
         )
 
         self._customs = _customs
@@ -1219,7 +1290,7 @@ class CustomsInfo(models.Customs):
         return self._customs is not None
 
     @property
-    def duty(self) -> typing.Optional[models.Duty]:  # type:ignore
+    def duty(self) -> models.Duty:  # type:ignore
         return getattr(self._customs, "duty", None) or models.Duty()
 
     @property
@@ -1486,7 +1557,7 @@ class TrackingStatus(utils.Enum):
     ready_for_pickup = ["ready_for_pickup"]
 
 
-def create_enum(name, values):
+def create_enum(name, values) -> utils.Enum:
     return utils.Enum(name, values)  # type: ignore
 
 
@@ -1639,6 +1710,7 @@ class Currency(utils.Enum):
 
 
 class Country(utils.Enum):
+    AC = "Ascension Island"
     AD = "Andorra"
     AE = "United Arab Emirates"
     AF = "Afghanistan"
@@ -1873,9 +1945,17 @@ class Country(utils.Enum):
     ZA = "South Africa"
     ZM = "Zambia"
     ZW = "Zimbabwe"
+    # Adding missing country codes
+    EH = "Western Sahara"
+    IM = "Isle of Man"
+    BL = "Saint Barthelemy"
+    MF = "Saint Martin"
+    SX = "Sint Maarten"
+    XK = "Kosovo"
 
 
 class CountryCurrency(utils.Enum):
+    AC = "USD"
     AD = "EUR"
     AE = "AED"
     AF = "USD"

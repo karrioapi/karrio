@@ -1,0 +1,30 @@
+{
+  "SCANFormMetadata": {
+    "form": "5630",
+    "imageType": "PDF",
+    "labelType": "8.5x11LABEL",
+    "mailingDate": "2019-08-24",
+    "overwriteMailingDate": false,
+    "entryFacilityZIPCode": "20260",
+    "destinationEntryFacilityType": "NONE",
+    "shipment": {},
+    "manifestNumber": "string",
+    "trackingNumbers": ["string"],
+    "fromAddress": {
+      "ignoreBadAddress": true,
+      "streetAddress": "string",
+      "streetAddressAbbreviation": "string",
+      "secondaryAddress": "string",
+      "cityAbbreviation": "string",
+      "city": "string",
+      "state": "st",
+      "ZIPCode": "string",
+      "ZIPPlus4": "string",
+      "urbanization": "string",
+      "firstName": "string",
+      "lastName": "string",
+      "firm": "string"
+    }
+  },
+  "SCANFormImage": "string"
+}

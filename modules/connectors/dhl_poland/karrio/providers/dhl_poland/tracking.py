@@ -52,7 +52,7 @@ def _extract_tracking_details(
                 description=event.description,
                 location=event.terminal,
                 code=event.status,
-                time=lib.ftime(event.timestamp, "%Y-%m-%d %H:%M:%S"),
+                time=lib.flocaltime(event.timestamp, "%Y-%m-%d %H:%M:%S"),
             )
             for event in events
         ],

@@ -16,7 +16,7 @@ if REDIS_HOST is not None:
     INSTALLED_APPS += ["health_check.contrib.redis"]
     REDIS_AUTH = f"{REDIS_USERNAME}:{REDIS_PASSWORD}@" if REDIS_PASSWORD else ""
 
-    REDIS_CONNECTION_URL = f'redis://${REDIS_AUTH}{REDIS_HOST}:{REDIS_PORT or "6379"}/1'
+    REDIS_CONNECTION_URL = f'redis://{REDIS_AUTH}{REDIS_HOST}:{REDIS_PORT or "6379"}/1'
     CACHES = {
         "default": {
             "BACKEND": "django_redis.cache.RedisCache",

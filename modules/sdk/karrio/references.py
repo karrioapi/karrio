@@ -1,4 +1,5 @@
 """Karrio Interface references."""
+
 import attr
 import pydoc
 import typing
@@ -13,6 +14,15 @@ import karrio.core.metadata as metadata
 PROVIDERS = None
 PROVIDERS_DATA = None
 REFERENCES = None
+COMMON_FIELDS = [
+    "id",
+    "test_mode",
+    "carrier_id",
+    "account_country_code",
+    "metadata",
+    "config",
+    # "services",
+]
 
 
 def import_extensions() -> typing.Dict[str, metadata.Metadata]:
@@ -79,10 +89,51 @@ def collect_references() -> dict:
         if mapper.get("options") is not None
     }
     connection_configs = {
-        key: {c.name: dict(code=c.value.code, type=parse_type(c.value.type)) for c in list(mapper["connection_configs"])}  # type: ignore
+        key: {
+            c.name: lib.to_dict(
+                dict(
+                    name=c.name,
+                    code=c.value.code,
+                    required=False,
+                    type=parse_type(c.value.type),
+                    enum=lib.identity(
+                        None
+                        if "enum" not in str(c.value.type).lower()
+                        else [c.name for c in c.value.type]
+                    ),
+                )
+            )
+            for c in list(mapper["connection_configs"])
+        }
         for key, mapper in PROVIDERS_DATA.items()
         if mapper.get("connection_configs") is not None
-    }
+    }  # type: ignore
+    connection_fields = {
+        mapper["id"]: {
+            _.name: lib.to_dict(
+                dict(
+                    name=_.name,
+                    type=parse_type(_.type),
+                    required="NOTHING" in str(_.default),
+                    default=lib.identity(
+                        lib.to_dict(lib.to_json(_.default))
+                        if ("NOTHING" not in str(_.default))
+                        else None
+                    ),
+                    enum=lib.identity(
+                        None
+                        if "enum" not in str(_.type).lower()
+                        else [c.name for c in _.type]
+                    ),
+                )
+            )
+            for _ in mapper["Settings"].__attrs_attrs__
+            if (_.name not in COMMON_FIELDS)
+            or (mapper.get("has_intl_accounts") and _.name == "account_country_code")
+        }
+        for _, mapper in PROVIDERS_DATA.items()
+        if mapper.get("Settings") is not None
+    }  # type: ignore
 
     REFERENCES = {
         "countries": {c.name: c.value for c in list(units.Country)},
@@ -90,7 +141,7 @@ def collect_references() -> dict:
         "weight_units": {c.name: c.value for c in list(units.WeightUnit)},
         "dimension_units": {c.name: c.value for c in list(units.DimensionUnit)},
         "states": {
-            c.name: {s.name: s.value for s in list(c.value)}
+            c.name: {s.name: s.value for s in list(c.value)}  # type: ignore
             for c in list(units.CountryState)
         },
         "payment_types": {c.name: c.value for c in list(units.PaymentType)},
@@ -108,6 +159,7 @@ def collect_references() -> dict:
         },
         "services": services,
         "options": options,
+        "connection_fields": connection_fields,
         "connection_configs": connection_configs,
         "carrier_capabilities": {
             key: detect_capabilities(detect_proxy_methods(mapper["Proxy"]))
@@ -163,11 +215,11 @@ def parse_type(_type: type) -> str:
         return "float"
     if "Address" in str(_type):
         return "Address"
-    if _name is not None and "Enum" in _name:
+    if "enum" in str(_type):
         return "string"
-    if _name is not None and "list" in _name:
+    if _name is not None and ("list" in _name or "List" in _name):
         return "list"
-    if _name is not None and "dict" in _name:
+    if _name is not None and ("dict" in _name or "Dict" in _name):
         return "object"
 
     return str(_type)

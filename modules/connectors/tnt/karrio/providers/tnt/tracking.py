@@ -40,7 +40,7 @@ def _extract_detail(
                     status.Depot, status.DepotName, join=True, separator="-"
                 ),
                 code=status.StatusCode,
-                time=lib.ftime(status.LocalEventTime.valueOf_, "%H%M"),
+                time=lib.flocaltime(status.LocalEventTime.valueOf_, "%H%M"),
             )
             for status in events
         ],

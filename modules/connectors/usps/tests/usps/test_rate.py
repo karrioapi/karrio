@@ -1,234 +1,168 @@
 import unittest
-import urllib.parse
-from unittest.mock import patch
-from karrio.core.utils import DP
-from karrio.core.models import RateRequest
-from karrio import Rating
+from unittest.mock import patch, ANY
 from .fixture import gateway
+from tests import logger
+
+import karrio
+import karrio.lib as lib
+import karrio.core.models as models
 
 
 class TestUSPSRating(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.RateRequest = RateRequest(**RATE_PAYLOAD)
+        self.RateRequest = models.RateRequest(**RatePayload)
 
     def test_create_rate_request(self):
         request = gateway.mapper.create_rate_request(self.RateRequest)
-        self.assertEqual(request.serialize(), RATE_REQUEST_XML)
+        logger.debug(request.serialize())
+        self.assertEqual(request.serialize(), RateRequest)
 
-    @patch("karrio.mappers.usps.proxy.http", return_value="<a></a>")
-    def test_get_rates(self, http_mock):
-        Rating.fetch(self.RateRequest).from_(gateway)
+    def test_get_rate(self):
+        with patch("karrio.mappers.usps.proxy.lib.request") as mock:
+            mock.return_value = "{}"
+            karrio.Rating.fetch(self.RateRequest).from_(gateway)
 
-        url = http_mock.call_args[1]["url"]
-        self.assertEqual(
-            url, f"{gateway.settings.server_url}?{urllib.parse.urlencode(RATE_REQUEST)}"
-        )
+            self.assertEqual(
+                mock.call_args[1]["url"],
+                f"{gateway.settings.server_url}/v3/total-rates/search",
+            )
 
     def test_parse_rate_response(self):
-        with patch("karrio.mappers.usps.proxy.http") as mock:
-            mock.return_value = RATE_RESPONSE_XML
-            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-
-            self.assertListEqual(DP.to_dict(parsed_response), PARSED_RATE_RESPONSE)
-
-    def test_parse_rate_response_errors(self):
-        with patch("karrio.mappers.usps.proxy.http") as mock:
-            mock.return_value = ERROR_XML
-            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-
-            self.assertListEqual(DP.to_dict(parsed_response), PARSED_ERRORS)
+        with patch("karrio.mappers.usps.proxy.lib.request") as mock:
+            mock.return_value = RateResponse
+            parsed_response = (
+                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
+            )
+            logger.debug(lib.to_dict(parsed_response))
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
 
 
 if __name__ == "__main__":
     unittest.main()
 
 
-RATE_PAYLOAD = {
-    "shipper": {"postal_code": "44106"},
-    "recipient": {"postal_code": "20770"},
+RatePayload = {
+    "shipper": {
+        "company_name": "ABC Corp.",
+        "address_line1": "1098 N Fraser Street",
+        "city": "Georgetown",
+        "postal_code": "29440",
+        "country_code": "US",
+        "person_name": "Tall Tom",
+        "phone_number": "8005554526",
+        "state_code": "SC",
+    },
+    "recipient": {
+        "company_name": "Horizon",
+        "address_line1": "1309 S Agnew Avenue",
+        "address_line2": "Apt 303",
+        "city": "Oklahoma City",
+        "postal_code": "73108",
+        "country_code": "US",
+        "person_name": "Lina Smith",
+        "phone_number": "+1 123 456 7890",
+        "state_code": "OK",
+    },
     "parcels": [
         {
-            "width": 5,
-            "height": 5,
-            "length": 3,
-            "weight": 1,
-            "weight_unit": "LB",
-            "dimension_unit": "IN",
+            "height": 50,
+            "length": 50,
+            "weight": 20,
+            "width": 12,
+            "dimension_unit": "CM",
+            "weight_unit": "KG",
         }
     ],
-    "services": ["usps_priority"],
     "options": {
-        "usps_insurance": 55.0,
-        "usps_signature_confirmation": True,
+        "usps_label_delivery_service": True,
+        "usps_price_type": "RETAIL",
+        "shipment_date": "2024-07-28",
     },
+    "services": ["usps_parcel_select"],
+    "reference": "REF-001",
 }
 
-PARSED_RATE_RESPONSE = [
+ParsedRateResponse = [
     [
         {
             "carrier_id": "usps",
             "carrier_name": "usps",
             "currency": "USD",
-            "meta": {"service_name": "usps_priority_mail_express"},
-            "service": "usps_priority_mail_express",
-            "total_charge": 31.15,
-        },
-        {
-            "carrier_id": "usps",
-            "carrier_name": "usps",
-            "currency": "USD",
-            "meta": {"service_name": "usps_priority_mail_express_hold_for_pickup"},
-            "service": "usps_priority_mail_express_hold_for_pickup",
-            "total_charge": 31.15,
-        },
-        {
-            "carrier_id": "usps",
-            "carrier_name": "usps",
-            "currency": "USD",
-            "meta": {
-                "service_name": "usps_priority_mail_express_sunday_holiday_delivery"
-            },
-            "service": "usps_priority_mail_express_sunday_holiday_delivery",
-            "total_charge": 43.65,
-        },
-        {
-            "carrier_id": "usps",
-            "carrier_name": "usps",
-            "currency": "USD",
-            "meta": {"service_name": "usps_priority_mail"},
-            "service": "usps_priority_mail",
-            "total_charge": 8.85,
-        },
-        {
-            "carrier_id": "usps",
-            "carrier_name": "usps",
-            "currency": "USD",
-            "meta": {"service_name": "usps_priority_mail_large_flat_rate_box"},
-            "service": "usps_priority_mail_large_flat_rate_box",
-            "total_charge": 21.9,
-        },
-        {
-            "carrier_id": "usps",
-            "carrier_name": "usps",
-            "currency": "USD",
-            "meta": {"service_name": "usps_priority_mail_medium_flat_rate_box"},
-            "service": "usps_priority_mail_medium_flat_rate_box",
-            "total_charge": 15.5,
-        },
-        {
-            "carrier_id": "usps",
-            "carrier_name": "usps",
-            "currency": "USD",
-            "meta": {"service_name": "usps_media_mail"},
-            "service": "usps_media_mail",
-            "total_charge": 3.45,
-        },
-        {
-            "carrier_id": "usps",
-            "carrier_name": "usps",
-            "currency": "USD",
-            "meta": {"service_name": "usps_library_mail"},
-            "service": "usps_library_mail",
-            "total_charge": 3.28,
-        },
-    ],
-    [],
-]
-
-PARSED_ERRORS = [
-    [],
-    [
-        {
-            "carrier_name": "usps",
-            "carrier_id": "usps",
-            "code": "-2147218040",
-            "message": "Invalid International Mail Type",
+            "extra_charges": [
+                {"amount": 3.35, "currency": "USD", "name": "Base Charge"},
+                {"amount": 3.35, "currency": "USD", "name": "string"},
+                {"amount": 3.35, "currency": "USD", "name": "Adult Signature Required"},
+            ],
+            "meta": {"service_name": "usps_parcel_select", "zone": "01"},
+            "service": "usps_parcel_select",
+            "total_charge": 3.35,
         }
     ],
+    [],
 ]
 
 
-ERROR_XML = """<?xml version="1.0" encoding="UTF-8"?>
-<Error>
-    <Number>-2147218040</Number>
-    <Source>IntlPostage;clsIntlPostage.CalcAllPostageDimensionsXML;IntlRateV2.ProcessRequest</Source>
-    <Description>Invalid International Mail Type</Description>
-    <HelpFile />
-    <HelpContext>1000440</HelpContext>
-</Error>
-"""
+RateRequest = [
+    {
+        "accountNumber": "Your Account Number",
+        "accountType": "EPS",
+        "destinationZIPCode": "73108",
+        "extraServices": [415],
+        "height": 19.69,
+        "length": 19.69,
+        "mailClasses": ["PARCEL_SELECT"],
+        "mailingDate": "2024-07-28",
+        "originZIPCode": "29440",
+        "priceType": "RETAIL",
+        "weight": 44.1,
+        "width": 4.72,
+    }
+]
 
-RATE_REQUEST_XML = """<RateV4Request USERID="username" PASSWORD="password">
-    <Revision>2</Revision>
-    <Package ID="0">
-        <Service>Priority</Service>
-        <ZipOrigination>44106</ZipOrigination>
-        <ZipDestination>20770</ZipDestination>
-        <Pounds>0</Pounds>
-        <Ounces>16</Ounces>
-        <Container>VARIABLE</Container>
-        <Width>5</Width>
-        <Length>3</Length>
-        <Height>5</Height>
-        <SpecialServices>
-            <SpecialService>100</SpecialService>
-            <SpecialService>108</SpecialService>
-        </SpecialServices>
-        <Machinable>false</Machinable>
-    </Package>
-</RateV4Request>
-"""
 
-RATE_REQUEST = {"API": "RateV4", "XML": RATE_REQUEST_XML}
-
-RATE_RESPONSE_XML = """<?xml version="1.0" encoding="UTF-8"?>
-<RateV4Response>
-  <Package ID="0">
-    <ZipOrigination>44106</ZipOrigination>
-    <ZipDestination>20770</ZipDestination>
-    <Pounds>1</Pounds>
-    <Ounces>16.</Ounces>
-    <Machinable>FALSE</Machinable>
-    <Zone>3</Zone>
-    <Postage CLASSID="3">
-      <MailService>Priority Mail Express 2-Day&amp;lt;sup&amp;gt;&amp;#8482;&amp;lt;/sup&amp;gt;</MailService>
-      <Rate>31.15</Rate>
-      <CommitmentName>2-Day</CommitmentName>
-    </Postage>
-    <Postage CLASSID="2">
-      <MailService>Priority Mail Express 2-Day&amp;lt;sup&amp;gt;&amp;#8482;&amp;lt;/sup&amp;gt; Hold For Pickup</MailService>
-      <Rate>31.15</Rate>
-      <CommitmentName>2-Day</CommitmentName>
-    </Postage>
-    <Postage CLASSID="23">
-      <MailService>Priority Mail Express 2-Day&amp;lt;sup&amp;gt;&amp;#8482;&amp;lt;/sup&amp;gt; Sunday/Holiday Delivery</MailService>
-      <Rate>43.65</Rate>
-      <CommitmentName>2-Day</CommitmentName>
-    </Postage>
-    <Postage CLASSID="1">
-      <MailService>Priority Mail 2-Day&amp;lt;sup&amp;gt;&amp;#8482;&amp;lt;/sup&amp;gt;</MailService>
-      <Rate>8.85</Rate>
-      <CommitmentName>2-Day</CommitmentName>
-    </Postage>
-    <Postage CLASSID="22">
-      <MailService>Priority Mail 2-Day&amp;lt;sup&amp;gt;&amp;#8482;&amp;lt;/sup&amp;gt; Large Flat Rate Box</MailService>
-      <Rate>21.90</Rate>
-      <CommitmentName>2-Day</CommitmentName>
-    </Postage>
-    <Postage CLASSID="17">
-      <MailService>Priority Mail 2-Day&amp;lt;sup&amp;gt;&amp;#8482;&amp;lt;/sup&amp;gt; Medium Flat Rate Box</MailService>
-      <Rate>15.50</Rate>
-      <CommitmentName>2-Day</CommitmentName>
-    </Postage>
-    <Postage CLASSID="6">
-      <MailService>Media Mail Parcel</MailService>
-      <Rate>3.45</Rate>
-    </Postage>
-    <Postage CLASSID="7">
-      <MailService>Library Mail Parcel</MailService>
-      <Rate>3.28</Rate>
-    </Postage>
-  </Package>
-</RateV4Response>
+RateResponse = """{
+  "rateOptions": [
+    {
+      "totalBasePrice": 3.35,
+      "rates": [
+        {
+          "SKU": "DPXX0XXXXX07200",
+          "description": "string",
+          "priceType": "RETAIL",
+          "price": 3.35,
+          "weight": 5,
+          "dimWeight": 5,
+          "fees": [
+            {
+              "name": "string",
+              "SKU": "string",
+              "price": 0
+            }
+          ],
+          "startDate": "2021-07-16",
+          "endDate": "2021-07-16",
+          "mailClass": "PARCEL_SELECT",
+          "zone": "01"
+        }
+      ],
+      "extraServices": [
+        {
+          "extraService": "922",
+          "name": "Adult Signature Required",
+          "SKU": "DPXX0XXXXX07200",
+          "priceType": "RETAIL",
+          "price": 3.35,
+          "warnings": [
+            {
+              "warningCode": "string",
+              "warningDescription": "string"
+            }
+          ]
+        }
+      ],
+      "totalPrice": 3.35
+    }
+  ]
+}
 """

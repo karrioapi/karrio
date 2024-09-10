@@ -25,7 +25,7 @@ REFERENCE_EXCLUSIONS = [
     "customs_content_type",
     "options",
 ]
-CARRIER_NAMES = list(sorted(providers.MODELS.keys()))
+CARRIER_NAMES = list(sorted(REFERENCE_MODELS["carriers"].keys()))
 CARRIER_HUBS = list(sorted(REFERENCE_MODELS["carrier_hubs"].keys()))
 NON_HUBS_CARRIERS = [
     carrier_name for carrier_name in CARRIER_NAMES if carrier_name not in CARRIER_HUBS
@@ -78,11 +78,10 @@ def contextual_reference(request: Request = None, reduced: bool = True):
 
     def _get_generic_carriers():
         system_custom_carriers = [
-            c.settings
-            for c in gateway.Carriers.list(system_only=True, carrier_name="generic")
+            c for c in gateway.Carriers.list(system_only=True, carrier_name="generic")
         ]
         custom_carriers = [
-            c.settings
+            c
             for c in (
                 gateway.Carriers.list(context=request, carrier_name="generic").exclude(
                     is_system=True
@@ -93,13 +92,15 @@ def contextual_reference(request: Request = None, reduced: bool = True):
         ]
 
         extra_carriers = {
-            c.custom_carrier_name: c.display_name for c in custom_carriers
+            f"{c.credentials.get('custom_carrier_name') or 'generic'}": c.display_name
+            for c in custom_carriers
         }
         system_carriers = {
-            c.custom_carrier_name: c.display_name for c in system_custom_carriers
+            f"{c.credentials.get('custom_carrier_name') or 'generic'}": c.display_name
+            for c in system_custom_carriers
         }
         extra_services = {
-            c.custom_carrier_name: {
+            f"{c.credentials.get('custom_carrier_name') or 'generic'}": {
                 s.service_code: s.service_code for s in c.services.all()
             }
             for c in custom_carriers
@@ -118,7 +119,7 @@ def contextual_reference(request: Request = None, reduced: bool = True):
             )
         )
 
-    if request is not None and "generic" in providers.MODELS:
+    if request is not None and "generic" in CARRIER_NAMES:
         _get_generic_carriers()
 
     return references

@@ -1,3 +1,4 @@
+
 # karrio.usps
 
 This package is a USPS extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
@@ -20,7 +21,7 @@ from karrio.mappers.usps.settings import Settings
 
 
 # Initialize a carrier gateway
-canadapost = karrio.gateway["usps"].create(
+usps = karrio.gateway["usps"].create(
     Settings(
         ...
     )

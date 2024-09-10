@@ -86,6 +86,7 @@ def rate_request(
 ) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
+    return_address = lib.to_address(payload.return_address or payload.shipper)
     packages = lib.to_packages(payload.parcels, provider_units.PackagePresets)
     is_document = all([parcel.is_document for parcel in payload.parcels])
     service = lib.to_services(payload.services, provider_units.ServiceCode).first
@@ -95,13 +96,17 @@ def rate_request(
         initializer=provider_units.shipping_options_initializer,
     )
     currency = options.currency.state or settings.default_currency
-    mps_packaging = (
+    mps_packaging = lib.identity(
         provider_units.PackagingType.ups_unknown.value if len(packages) > 1 else None
     )
     indications = [
         *(["01"] if options.pickup_options.state else []),
         *(["02"] if options.delivery_options.state else []),
     ]
+    weight_unit, dim_unit = lib.identity(
+        provider_units.COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
+        or packages.compatible_units
+    )
 
     request = ups.RatingRequestType(
         RateRequest=ups.RateRequestType(
@@ -144,14 +149,14 @@ def rate_request(
                     ),
                 ),
                 ShipFrom=ups.ShipType(
-                    Name=shipper.name,
-                    AttentionName=shipper.contact,
+                    Name=return_address.name,
+                    AttentionName=return_address.contact,
                     Address=ups.ShipFromAddressType(
-                        AddressLine=shipper.address_line,
-                        City=shipper.city,
-                        StateProvinceCode=shipper.state_code,
-                        PostalCode=shipper.postal_code,
-                        CountryCode=shipper.country_code,
+                        AddressLine=return_address.address_line,
+                        City=return_address.city,
+                        StateProvinceCode=return_address.state_code,
+                        PostalCode=return_address.postal_code,
+                        CountryCode=return_address.country_code,
                     ),
                 ),
                 AlternateDeliveryAddress=None,
@@ -203,15 +208,15 @@ def rate_request(
                             ),
                             Description="Packaging Type",
                         ),
-                        Dimensions=(
+                        Dimensions=lib.identity(
                             ups.DimensionsType(
                                 UnitOfMeasurement=ups.CustomerClassificationType(
-                                    Code=package.dimension_unit.value,
+                                    Code=dim_unit.value,
                                     Description="Dimension",
                                 ),
-                                Length=str(package.length.value),
-                                Width=str(package.width.value),
-                                Height=str(package.height.value),
+                                Length=str(package.length[dim_unit.name]),
+                                Width=str(package.width[dim_unit.name]),
+                                Height=str(package.height[dim_unit.name]),
                             )
                             if any([package.length, package.width, package.height])
                             else None
@@ -219,12 +224,12 @@ def rate_request(
                         DimWeight=None,
                         PackageWeight=ups.WeightType(
                             UnitOfMeasurement=ups.CustomerClassificationType(
-                                Code=provider_units.WeightUnit[
-                                    str(package.weight.unit)
-                                ].value,
+                                Code=provider_units.WeightUnit.map(
+                                    weight_unit.name
+                                ).value,
                                 Description="Weight",
                             ),
-                            Weight=str(package.weight.value),
+                            Weight=str(package.weight[weight_unit.name]),
                         ),
                         Commodity=None,
                         PackageServiceOptions=None,
@@ -234,37 +239,47 @@ def rate_request(
                     )
                     for package in packages
                 ],
-                ShipmentServiceOptions=(
+                ShipmentServiceOptions=lib.identity(
                     ups.ShipmentServiceOptionsType(
-                        SaturdayDeliveryIndicator=(
-                            "Y" if options.ups_saturday_delivery.state else None
+                        SaturdayDeliveryIndicator=lib.identity(
+                            "Y"
+                            if options.ups_saturday_delivery_indicator.state
+                            else None
                         ),
-                        SaturdayPickupIndicator=(
-                            "Y" if options.ups_saturday_pickup.state else None
+                        SaturdayPickupIndicator=lib.identity(
+                            "Y" if options.ups_saturday_pickup_indicator.state else None
                         ),
-                        SundayDeliveryIndicator=(
-                            "Y" if options.ups_sunday_delivery.state else None
+                        SundayDeliveryIndicator=lib.identity(
+                            "Y" if options.ups_sunday_delivery_indicator.state else None
                         ),
                         AvailableServicesOption=None,
                         AccessPointCOD=None,
-                        DeliverToAddresseeOnlyIndicator=(
-                            "Y" if options.ups_deliver_to_addressee_only.state else None
+                        DeliverToAddresseeOnlyIndicator=lib.identity(
+                            "Y"
+                            if options.ups_deliver_to_addressee_only_indicator.state
+                            else None
                         ),
-                        DirectDeliveryOnlyIndicator=(
-                            "Y" if options.ups_direct_delivery_only.state else None
+                        DirectDeliveryOnlyIndicator=lib.identity(
+                            "Y"
+                            if options.ups_direct_delivery_only_indicator.state
+                            else None
                         ),
                         COD=None,
                         DeliveryConfirmation=None,
-                        ReturnOfDocumentIndicator=(
-                            "Y" if options.ups_return_of_document.state else None
+                        ReturnOfDocumentIndicator=lib.identity(
+                            "Y"
+                            if options.ups_return_of_document_indicator.state
+                            else None
                         ),
-                        UPScarbonneutralIndicator=(
-                            "Y" if options.ups_carbonneutral.state else None
+                        UPScarbonneutralIndicator=lib.identity(
+                            "Y" if options.ups_carbonneutral_indicator.state else None
                         ),
-                        CertificateOfOriginIndicator=(
-                            "Y" if options.ups_certificate_of_origin.state else None
+                        CertificateOfOriginIndicator=lib.identity(
+                            "Y"
+                            if options.ups_certificate_of_origin_indicator.state
+                            else None
                         ),
-                        PickupOptions=(
+                        PickupOptions=lib.identity(
                             ups.PickupOptionsType(
                                 HoldForPickupIndicator="Y",
                                 LiftGateForPickUpIndicator=(
@@ -276,7 +291,7 @@ def rate_request(
                             if options.pickup_options.state
                             else None
                         ),
-                        DeliveryOptions=(
+                        DeliveryOptions=lib.identity(
                             ups.DeliveryOptionsType(
                                 DropOffAtUPSFacilityIndicator="Y",
                                 LiftGateForDeliveryIndicator=(
@@ -288,7 +303,7 @@ def rate_request(
                             if options.delivery_options.state
                             else None
                         ),
-                        RestrictedArticles=(
+                        RestrictedArticles=lib.identity(
                             ups.RestrictedArticlesType(
                                 AlcoholicBeveragesIndicator=None,
                                 DiagnosticSpecimensIndicator=None,
@@ -301,20 +316,20 @@ def rate_request(
                             if options.dangerous_goods.state
                             else None
                         ),
-                        ShipperExportDeclarationIndicator=(
+                        ShipperExportDeclarationIndicator=lib.identity(
                             "Y"
-                            if options.ups_shipper_export_declaration.state
+                            if options.ups_shipper_export_declaration_indicator.state
                             else None
                         ),
-                        CommercialInvoiceRemovalIndicator=(
+                        CommercialInvoiceRemovalIndicator=lib.identity(
                             "Y"
-                            if options.ups_commercial_invoice_removal.state
+                            if options.ups_commercial_invoice_removal_indicator.state
                             else None
                         ),
                         ImportControl=None,
                         ReturnService=None,
                         SDLShipmentIndicator=(
-                            "Y" if options.ups_sdl_shipment.state else None
+                            "Y" if options.ups_sdl_shipment_indicator.state else None
                         ),
                         EPRAIndicator=(
                             "Y" if options.ups_epra_indicator.state else None

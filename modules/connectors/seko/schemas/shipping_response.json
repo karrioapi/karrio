@@ -1,0 +1,75 @@
+{
+  "CarrierId": 567,
+  "CarrierName": "MyChildData",
+  "IsFreightForward": false,
+  "IsOvernight": false,
+  "IsSaturdayDelivery": false,
+  "IsRural": false,
+  "HasTrackPaks": false,
+  "Message": "Connote created and print queued.",
+  "Errors": [
+    {
+      "Property": "Destination.Address.CountryCode",
+      "Message": "CountryCode is required",
+      "Key": "CountryCode",
+      "Value": ""
+    }
+  ],
+  "SiteId": 1153896,
+  "Consignments": [
+    {
+      "Connote": "6994008906",
+      "TrackingUrl": "http://track.omniparcel.com/1153896-6994008906",
+      "Cost": 6.0,
+      "CarrierType": 33,
+      "IsSaturdayDelivery": false,
+      "IsRural": false,
+      "IsOvernight": false,
+      "HasTrackPaks": false,
+      "ConsignmentId": 5473553,
+      "OutputFiles": {
+        "LABEL_PDF_100X150": [
+          "JVBERi0xLjQKJdP0zOEKMSAwIG9iago8PAovQ3JlYXRpb25EYXRlKEQ6MjAxNzAyMTMwOTA0MTkrMDU...."
+        ]
+      },
+      "Items": [
+        {
+          "PartNo": 1,
+          "TrackingNo": "699400890601",
+          "Barcode": "019931265099999891699400890601",
+          "InternalBarcode": "019931265099999891699400890601",
+          "Charge": 6.54,
+          "Charge_FAF": 0.0,
+          "Charge_Rural": 0.0,
+          "Charge_SatDel": 0.0,
+          "Charge_Insurance": 0.0,
+          "IsTrackPack": false,
+          "BarcodeText": "699400890601",
+          "TrackingBarcode": "019931265099999891699400890601",
+          "TrackingBarcode2": "019931265099999891699400890601"
+        }
+      ]
+    }
+  ],
+  "DestinationPort": "SYD",
+  "Downloads": [],
+  "CommodityChanges": [
+    {
+      "OriginalDescription": "OriginalDS1",
+      "SuitableDescription": "SuitableDS1 - OriginalDS1",
+      "OriginalHSCode": null,
+      "SuitableHsCode": "1234567890"
+    },
+    {
+      "OriginalDescription": "OriginalDS2",
+      "SuitableDescription": "SuitableDS2 - OriginalDS2",
+      "OriginalHSCode": null,
+      "SuitableHsCode": "1234567890"
+    }
+  ],
+  "CarrierType": 33,
+  "AlertPath": null,
+  "Notifications": [],
+  "InvoiceResponse": "No Invoice found",
+  "LogoPath": "http://cdn.omniparcel.com/images/aramex_logo_h50.png"
+}

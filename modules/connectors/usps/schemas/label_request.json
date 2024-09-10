@@ -1,0 +1,169 @@
+{
+  "imageInfo": {
+    "imageType": "PDF",
+    "labelType": "4X5LABEL",
+    "shipInfo": true,
+    "receiptOption": "SAME_PAGE",
+    "suppressPostage": true,
+    "suppressMailDate": true,
+    "returnLabel": false
+  },
+  "toAddress": {
+    "streetAddress": "string",
+    "secondaryAddress": "string",
+    "city": "string",
+    "state": "st",
+    "ZIPCode": "string",
+    "ZIPPlus4": "string",
+    "urbanization": "string",
+    "firstName": "string",
+    "lastName": "string",
+    "firm": "string",
+    "phone": "string",
+    "email": "user@example.com",
+    "ignoreBadAddress": true,
+    "parcelLockerDelivery": false,
+    "holdForPickup": false,
+    "facilityId": "string"
+  },
+  "fromAddress": {
+    "streetAddress": "string",
+    "secondaryAddress": "string",
+    "city": "string",
+    "state": "st",
+    "ZIPCode": "string",
+    "ZIPPlus4": "string",
+    "urbanization": "string",
+    "firstName": "string",
+    "lastName": "string",
+    "firm": "string",
+    "phone": "string",
+    "email": "user@example.com",
+    "ignoreBadAddress": true
+  },
+  "senderAddress": {
+    "streetAddress": "string",
+    "secondaryAddress": "string",
+    "city": "string",
+    "state": "st",
+    "ZIPCode": "string",
+    "ZIPPlus4": "string",
+    "urbanization": "string",
+    "firstName": "string",
+    "lastName": "string",
+    "firm": "string",
+    "phone": "string",
+    "email": "user@example.com",
+    "ignoreBadAddress": true,
+    "platformUserId": "string"
+  },
+  "returnAddress": {
+    "streetAddress": "string",
+    "secondaryAddress": "string",
+    "city": "string",
+    "state": "st",
+    "ZIPCode": "string",
+    "ZIPPlus4": "string",
+    "urbanization": "string",
+    "firstName": "string",
+    "lastName": "string",
+    "firm": "string",
+    "phone": "string",
+    "email": "user@example.com",
+    "ignoreBadAddress": true
+  },
+  "packageDescription": {
+    "weightUOM": "lb",
+    "weight": 0,
+    "dimensionsUOM": "in",
+    "length": 0,
+    "height": 0,
+    "width": 0,
+    "girth": 0,
+    "mailClass": "PARCEL_SELECT",
+    "rateIndicator": "3D",
+    "processingCategory": "LETTERS",
+    "destinationEntryFacilityType": "NONE",
+    "destinationEntryFacilityAddress": {
+      "streetAddress": "string",
+      "secondaryAddress": "string",
+      "city": "string",
+      "state": "st",
+      "ZIPCode": "string",
+      "ZIPPlus4": "string",
+      "urbanization": "string"
+    },
+    "packageOptions": {
+      "packageValue": 35,
+      "nonDeliveryOption": "RETURN",
+      "redirectAddress": {
+        "streetAddress": "string",
+        "secondaryAddress": "string",
+        "city": "string",
+        "state": "st",
+        "ZIPCode": "string",
+        "ZIPPlus4": "string",
+        "urbanization": "string",
+        "firstName": "string",
+        "lastName": "string",
+        "firm": "string",
+        "phone": "string",
+        "email": "user@example.com",
+        "ignoreBadAddress": true
+      },
+      "contentType": "HAZMAT",
+      "generateGXEvent": true,
+      "containers": [
+        {
+          "containerID": "string",
+          "sortType": "TRUCK_BEDLOAD"
+        }
+      ],
+      "ancillaryServiceEndorsements": "CHANGE_SERVICE_REQUESTED",
+      "originalPackage": {
+        "originalTrackingNumber": "4201234567899212391234567812345671",
+        "originalConstructCode": "C01"
+      }
+    },
+    "customerReference": [
+      {
+        "referenceNumber": "string",
+        "printReferenceNumber": true
+      }
+    ],
+    "extraServices": [365],
+    "mailingDate": "2019-08-24",
+    "carrierRelease": true,
+    "physicalSignatureRequired": true,
+    "inductionZIPCode": "string"
+  },
+  "customsForm": {
+    "contentComments": "string",
+    "restrictionType": "QUARANTINE",
+    "restrictionComments": "string",
+    "AESITN": "string",
+    "invoiceNumber": "string",
+    "licenseNumber": "string",
+    "certificateNumber": "string",
+    "customsContentType": "MERCHANDISE",
+    "importersReference": "string",
+    "importersContact": "string",
+    "exportersReference": "string",
+    "exportersContact": "string",
+    "contents": [
+      {
+        "itemDescription": "Policy guidelines document",
+        "itemQuantity": 1,
+        "itemValue": 1,
+        "itemTotalValue": 1,
+        "weightUOM": "lb",
+        "itemWeight": 1.0001,
+        "itemTotalWeight": 1.0001,
+        "HSTariffNumber": "string",
+        "countryofOrigin": "string",
+        "itemCategory": "string",
+        "itemSubcategory": "string"
+      }
+    ]
+  }
+}

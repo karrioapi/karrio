@@ -1,0 +1,6 @@
+{
+  "dispatchConfirmationNumber": "PRG201220123456",
+  "readyByTime": "10:00",
+  "nextPickupDate": "2020-06-01",
+  "warnings": ["Pickup has been updated but something went wrong"]
+}

@@ -36,21 +36,40 @@ Serializer = serializers.Serializer
 HTTP_STATUS = [getattr(drf.status, a) for a in dir(drf.status) if "HTTP" in a]
 SHIPMENT_STATUS = [(c.name, c.name) for c in list(ShipmentStatus)]
 TRACKER_STATUS = [(c.name, c.name) for c in list(TrackerStatus)]
-CUSTOMS_CONTENT_TYPE = [(c.name, c.name) for c in list(units.CustomsContentType)]
 INCOTERMS = [(c.name, c.name) for c in list(units.Incoterm)]
-CARRIERS = [(k, k) for k in sorted(providers.MODELS.keys())]
+CARRIERS = [(k, k) for k in dataunits.CARRIER_NAMES]
 COUNTRIES = [(c.name, c.name) for c in list(units.Country)]
 CURRENCIES = [(c.name, c.name) for c in list(units.Currency)]
 WEIGHT_UNIT = [(c.name, c.name) for c in list(units.WeightUnit)]
+PAYMENT_TYPES = [(c.name, c.name) for c in list(units.PaymentType)]
 DIMENSION_UNIT = [(c.name, c.name) for c in list(units.DimensionUnit)]
 PACKAGING_UNIT = [(c.name, c.name) for c in list(units.PackagingUnit)]
-PAYMENT_TYPES = [(c.name, c.name) for c in list(units.PaymentType)]
+CUSTOMS_CONTENT_TYPE = [(c.name, c.name) for c in list(units.CustomsContentType)]
 UPLOAD_DOCUMENT_TYPE = [(c.name, c.name) for c in list(units.UploadDocumentType)]
 LABEL_TYPES = [(c.name, c.name) for c in list(units.LabelType)]
-LABEL_TEMPLATE_TYPES = [
-    ("SVG", "SVG"),
-    ("ZPL", "ZPL"),
-]
+LABEL_TEMPLATE_TYPES = [("SVG", "SVG"), ("ZPL", "ZPL")]
+
+
+class CarrierDetails(serializers.Serializer):
+    carrier_name = serializers.ChoiceField(
+        choices=CARRIERS,
+        help_text="Indicates a carrier (type)",
+    )
+    display_name = serializers.CharField(
+        help_text="The carrier verbose name.",
+    )
+    capabilities = serializers.StringListField(
+        default=[],
+        help_text="""The carrier supported and enabled capabilities.""",
+    )
+    connection_fields = serializers.PlainDictField(
+        default={},
+        help_text="The carrier connection fields.",
+    )
+    config_fields = serializers.PlainDictField(
+        default={},
+        help_text="The carrier connection config.",
+    )
 
 
 class CarrierSettings(serializers.Serializer):
@@ -636,6 +655,7 @@ class RateRequest(validators.OptionDefaultSerializer):
             "shipment_date": "2020-01-01",
             "shipment_note": "This is a shipment note",
             "signature_confirmation": true,
+            "saturday_delivery": true,
             "is_return": true,
             "doc_files": [
                 {
@@ -999,7 +1019,9 @@ class Images(serializers.Serializer):
 
 
 class TrackingEvent(serializers.Serializer):
-    date = serializers.CharField(required=False, help_text="The tracking event's date")
+    date = serializers.CharField(
+        required=False, help_text="The tracking event's date. Format: `YYYY-MM-DD`"
+    )
     description = serializers.CharField(
         required=False, help_text="The tracking event's description"
     )
@@ -1016,7 +1038,7 @@ class TrackingEvent(serializers.Serializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        help_text="The tracking event's time",
+        help_text="The tracking event's time. Format: `HH:MM AM/PM`",
     )
     latitude = serializers.FloatField(
         required=False,
@@ -1178,17 +1200,11 @@ class Rate(serializers.EntitySerializer):
         ("recipient", "karrio.server.manager.models.Address"),
         ("parcels", "karrio.server.manager.models.Parcel"),
         ("customs", "karrio.server.manager.models.Customs"),
+        ("return_address", "karrio.server.manager.models.Address"),
         ("billing_address", "karrio.server.manager.models.Address"),
     ]
 )
 class ShippingData(validators.OptionDefaultSerializer):
-    shipper = AddressData(
-        required=True,
-        help_text="""The address of the party.<br/>
-        Origin address (ship from) for the **shipper**<br/>
-        Destination address (ship to) for the **recipient**
-        """,
-    )
     recipient = AddressData(
         required=True,
         help_text="""The address of the party.<br/>
@@ -1196,8 +1212,27 @@ class ShippingData(validators.OptionDefaultSerializer):
         Destination address (ship to) for the **recipient**
         """,
     )
+    shipper = AddressData(
+        required=True,
+        help_text="""The address of the party.<br/>
+        Origin address (ship from) for the **shipper**<br/>
+        Destination address (ship to) for the **recipient**
+        """,
+    )
+    return_address = AddressData(
+        required=False,
+        allow_null=True,
+        help_text="The return address for this shipment. Defaults to the shipper address.",
+    )
+    billing_address = AddressData(
+        required=False,
+        allow_null=True,
+        help_text="The payor address.",
+    )
     parcels = ParcelData(
-        many=True, allow_empty=False, help_text="The shipment's parcels"
+        many=True,
+        allow_empty=False,
+        help_text="The shipment's parcels",
     )
     options = serializers.PlainDictField(
         required=False,
@@ -1220,6 +1255,7 @@ class ShippingData(validators.OptionDefaultSerializer):
             "shipment_date": "2020-01-01",
             "shipment_note": "This is a shipment note",
             "signature_confirmation": true,
+            "saturday_delivery": true,
             "is_return": true,
             "doc_files": [
                 {
@@ -1239,9 +1275,10 @@ class ShippingData(validators.OptionDefaultSerializer):
         </details>
         """,
     )
-    payment = Payment(required=False, default={}, help_text="The payment details")
-    billing_address = AddressData(
-        required=False, allow_null=True, help_text="The payor address."
+    payment = Payment(
+        required=False,
+        default={},
+        help_text="The payment details",
     )
     customs = CustomsData(
         required=False,
@@ -1395,8 +1432,21 @@ class ShipmentContent(serializers.Serializer):
         Destination address (ship to) for the **recipient**
         """,
     )
-    parcels = Parcel(many=True, allow_empty=False, help_text="The shipment's parcels")
-
+    return_address = AddressData(
+        required=False,
+        allow_null=True,
+        help_text="The return address for this shipment. Defaults to the shipper address.",
+    )
+    billing_address = AddressData(
+        required=False,
+        allow_null=True,
+        help_text="The payor address.",
+    )
+    parcels = Parcel(
+        many=True,
+        allow_empty=False,
+        help_text="The shipment's parcels",
+    )
     services = serializers.StringListField(
         required=False,
         allow_null=True,
@@ -1427,6 +1477,7 @@ class ShipmentContent(serializers.Serializer):
             "shipment_date": "2020-01-01",
             "shipment_note": "This is a shipment note",
             "signature_confirmation": true,
+            "saturday_delivery": true,
             "is_return": true,
             "doc_files": [
                 {
@@ -1446,9 +1497,10 @@ class ShipmentContent(serializers.Serializer):
         </details>
         """,
     )
-    payment = Payment(required=False, default={}, help_text="The payment details")
-    billing_address = Address(
-        required=False, allow_null=True, help_text="The payor address."
+    payment = Payment(
+        required=False,
+        default={},
+        help_text="The payment details",
     )
     customs = Customs(
         required=False,

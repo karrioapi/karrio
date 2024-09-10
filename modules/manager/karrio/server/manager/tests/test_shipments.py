@@ -358,6 +358,7 @@ SHIPMENT_RESPONSE = {
         }
     ],
     "payment": {"account_number": None, "currency": "CAD", "paid_by": "sender"},
+    "return_address": None,
     "billing_address": None,
     "services": [],
     "options": {"shipment_date": ANY},
@@ -510,6 +511,7 @@ PURCHASED_SHIPMENT = {
     "services": [],
     "options": {"shipment_date": ANY},
     "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
+    "return_address": None,
     "billing_address": None,
     "customs": None,
     "rates": [
@@ -657,6 +659,7 @@ CANCEL_RESPONSE = {
     "services": [],
     "options": {},
     "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
+    "return_address": None,
     "billing_address": None,
     "customs": None,
     "rates": [
@@ -774,6 +777,7 @@ CANCEL_PURCHASED_RESPONSE = {
     "services": [],
     "options": {},
     "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
+    "return_address": None,
     "billing_address": None,
     "customs": None,
     "rates": [

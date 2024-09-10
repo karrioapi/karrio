@@ -1,0 +1,15 @@
+{
+  "Message": "Invalid Request",
+  "Errors": [
+    {
+      "Message": "The name maximum length is 50 characters.",
+      "Cause": "Destination.Address.ContactName",
+      "ErrorCode": "E1002"
+    },
+    {
+      "Message": "The service code is required.",
+      "Cause": "ShipmentInformation.ServiceCode",
+      "ErrorCode": "E1001"
+    }
+  ]
+}

@@ -43,7 +43,7 @@ class LabelDataType:
 @s(auto_attribs=True)
 class OrderType:
     trackingId: Optional[str] = None
-    orderId: Optional[str] = None
+    id: Optional[str] = None
     message: Optional[str] = None
 
 

@@ -283,10 +283,10 @@ class PackageType(lib.StrEnum):
 
 
 class ConnectionConfig(lib.Enum):
-    label_type = lib.OptionEnum("label_type")
-    skip_service_filter = lib.OptionEnum("skip_service_filter")
+    label_type = lib.OptionEnum("label_type", LabelType)
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
+    skip_service_filter = lib.OptionEnum("skip_service_filter", bool)
 
 
 class ShippingService(lib.Enum):
@@ -593,6 +593,7 @@ class ShippingOption(lib.Enum):
     insurance = dhl_shipment_insurance
     paperless_trade = dhl_paperless_trade
     cash_on_delivery = dhl_cash_on_delivery
+    saturday_delivery = dhl_saturday_delivery
 
 
 def shipping_options_initializer(

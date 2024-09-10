@@ -126,6 +126,7 @@ class ShipmentRequest:
 
     payment: Payment = JStruct[Payment]
     customs: Customs = JStruct[Customs]
+    return_address: Address = JStruct[Address]
     billing_address: Address = JStruct[Address]
 
     options: Dict = {}
@@ -153,6 +154,8 @@ class RateRequest:
     recipient: Address = JStruct[Address, REQUIRED]
     parcels: List[Parcel] = JList[Parcel, REQUIRED]
 
+    return_address: Address = JStruct[Address]
+    billing_address: Address = JStruct[Address]
     services: List[str] = []
     options: Dict = {}
     reference: str = ""
@@ -178,8 +181,8 @@ class PickupRequest:
     address: Address = JStruct[Address, REQUIRED]
 
     parcels: List[Parcel] = JList[Parcel]
-    instruction: str = None
     package_location: str = None
+    instruction: str = None
     options: Dict = {}
 
     metadata: Dict = {}
@@ -196,8 +199,8 @@ class PickupUpdateRequest:
     address: Address = JStruct[Address, REQUIRED]
 
     parcels: List[Parcel] = JList[Parcel]
-    instruction: str = None
     package_location: str = None
+    instruction: str = None
     options: Dict = {}
 
 
@@ -210,6 +213,7 @@ class PickupCancelRequest:
     address: Address = JStruct[Address]
     pickup_date: str = None
     reason: str = None
+    options: Dict = {}
 
 
 @attr.s(auto_attribs=True)

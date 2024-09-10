@@ -23,7 +23,9 @@ class PackagingType(lib.StrEnum):
 
 
 class ConnectionConfig(lib.Enum):
-    currency = lib.OptionEnum("currency")
+    currency = lib.OptionEnum(
+        "currency", lib.units.create_enum("Currency", ["AUD", "USD"])
+    )
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
 

@@ -1,0 +1,87 @@
+[
+  {
+    "customerId": 999999999,
+    "serviceCategoryDirectionId": 79,
+    "weight": 100,
+    "totalPrice": 0,
+    "currencyId": 1,
+    "comment": "string",
+    "returnRegisteredAddress": true,
+    "partner": 0,
+    "externalId": "string",
+    "destinationAddress": {
+      "countryId": 0,
+      "provinceStateId": 0,
+      "provinceState": "string",
+      "cityVillageId": 0,
+      "cityVillage": "string",
+      "streetId": 0,
+      "street": "string",
+      "buildingId": 0,
+      "building": "string",
+      "apartment": "string",
+      "apartmentId": 0,
+      "address": "string",
+      "postalCode": "string",
+      "deliveryDate": "2024-04-25T14:00:15.916Z",
+      "receiverInfo": {
+        "companyName": "string",
+        "firstName": "string",
+        "lastName": "string",
+        "phoneNumber": "string",
+        "email": "string",
+        "nickname": "string"
+      }
+    },
+    "returnAddress": {
+      "countryId": 0,
+      "provinceStateId": 0,
+      "provinceState": "string",
+      "cityVillageId": 0,
+      "cityVillage": "string",
+      "streetId": 0,
+      "street": "string",
+      "buildingId": 0,
+      "building": "string",
+      "apartment": "string","apartmentId": 0,
+      "address": "string",
+      "postalCode": "string",
+      "deliveryDate": "2024-04-25T14:00:15.916Z",
+      "receiverInfo": {
+        "companyName": "string",
+        "firstName": "string",
+        "lastName": "string",
+        "phoneNumber": "string",
+        "email": "string",
+        "nickname": "string"
+      }
+    },
+    "orderInfo": {
+      "valuedAmount": 0,
+      "valuedAmountCurrency": 0,
+      "enclosure": [
+        {
+          "enclosures": [
+            {
+              "description": "string",
+              "hsCode": "string",
+              "quantity": 0,
+              "weight": 0,
+              "amount": 0,
+              "countryOfOrigin": "string"
+            }
+          ],
+          "enclosureTypeId": 0
+        }
+      ],
+      "cod": {
+        "amount": 0,
+        "bank": "string",
+        "accountNumber": "string"
+      }
+    },
+    "additionalServices": [
+      0
+    ]
+  }
+]

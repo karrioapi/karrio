@@ -23,21 +23,26 @@
 -e ./modules/connectors/fedex_ws
 -e ./modules/connectors/generic
 -e ./modules/connectors/geodis
+-e ./modules/connectors/hay_post
 -e ./modules/connectors/laposte
 -e ./modules/connectors/nationex
 -e ./modules/connectors/purolator
 -e ./modules/connectors/roadie
 -e ./modules/connectors/royalmail
+-e ./modules/connectors/sapient
+-e ./modules/connectors/seko
 -e ./modules/connectors/sendle
 -e ./modules/connectors/tge
 -e ./modules/connectors/tnt
 -e ./modules/connectors/ups
 -e ./modules/connectors/usps
 -e ./modules/connectors/usps_international
+-e ./modules/connectors/usps_wt
+-e ./modules/connectors/usps_wt_international
 
 # Carrier Hub Extentions packages
 -e ./modules/connectors/easypost
--e ./modules/connectors/eshipper_xml
+-e ./modules/connectors/eshipper
 -e ./modules/connectors/freightcom
 -e ./modules/connectors/locate2u
 -e ./modules/connectors/zoom2u

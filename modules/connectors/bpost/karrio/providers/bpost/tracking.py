@@ -54,7 +54,7 @@ def _extract_details(
                 date=lib.fdate(event.time, "%Y-%m-%dT%H:%M:%S%z"),
                 description=event.stateDescription,
                 code=event.stateCode,
-                time=lib.ftime(event.time, "%Y-%m-%dT%H:%M:%S%z"),
+                time=lib.flocaltime(event.time, "%Y-%m-%dT%H:%M:%S%z"),
             )
             for event in details.stateInfo
         ],

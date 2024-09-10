@@ -1,7 +1,9 @@
-import { BASE_PATH, TEST_BASE_PATH } from "./karrio";
-import { setCookie, useLocation } from "@karrio/lib";
-import React from "react";
+"use client";
 
+import { BASE_PATH, TEST_BASE_PATH, setCookie } from "@karrio/lib";
+import { usePathname } from "next/navigation";
+import { useLocation } from "./location";
+import React from "react";
 
 type AppModeType = {
   basePath: string;
@@ -11,35 +13,42 @@ type AppModeType = {
 
 export function computeMode(pathname: string) {
   return pathname?.startsWith(TEST_BASE_PATH);
-};
+}
 
 export function computeBasePath(testMode: boolean) {
   return testMode ? TEST_BASE_PATH : BASE_PATH;
-};
+}
 
 // Init the APP client mode
 export const AppMode = React.createContext<AppModeType>({} as AppModeType);
 
-const AppModeProvider: React.FC<{ pathname?: string, children?: React.ReactNode }> = ({ children, pathname }) => {
+const AppModeProvider: React.FC<{
+  pathname?: string;
+  children?: React.ReactNode;
+}> = ({ children, pathname }) => {
+  const currentPathName = usePathname();
   const { insertUrlParam } = useLocation();
 
   const switchMode = () => {
     insertUrlParam({});
-    const currentPathName = `${window.location.pathname}`;
+    // const currentPathName = `${location.pathname}`;
     const isTestMode = computeMode(currentPathName);
 
     setCookie("testMode", !isTestMode);
 
-    if (isTestMode) window.location.pathname = currentPathName.replace(TEST_BASE_PATH, '');
-    else window.location.replace(TEST_BASE_PATH + currentPathName);
+    if (isTestMode)
+      location.pathname = currentPathName.replace(TEST_BASE_PATH, "");
+    else location.replace(TEST_BASE_PATH + currentPathName);
   };
 
   return (
-    <AppMode.Provider value={{
-      testMode: computeMode(pathname || window.location.pathname),
-      basePath: computeBasePath(computeMode(pathname || window.location.pathname)),
-      switchMode
-    }}>
+    <AppMode.Provider
+      value={{
+        testMode: computeMode(pathname || currentPathName),
+        basePath: computeBasePath(computeMode(pathname || currentPathName)),
+        switchMode,
+      }}
+    >
       {children}
     </AppMode.Provider>
   );

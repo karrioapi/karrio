@@ -1,9 +1,11 @@
 """Karrio Canada post client settings."""
 
-import karrio.schemas.canadapost.shipment as canadapost
 import base64
 import karrio.lib as lib
 import karrio.core.settings as settings
+
+
+LanguageEnum = lib.units.create_enum("LanguageEnum", ["en", "fr"])
 
 
 class Settings(settings.Settings):
@@ -13,11 +15,7 @@ class Settings(settings.Settings):
     password: str
     customer_number: str
     contract_id: str = None
-    language: str = "en"
-
-    id: str = None
-    account_country_code: str = "CA"
-    metadata: dict = {}
+    language: LanguageEnum = "en"  # type: ignore
 
     @property
     def carrier_name(self):
@@ -77,6 +75,8 @@ def parse_label_references(shipement_response: str) -> dict:
 
 
 def parse_submitted_shipment(shipment_response: str, ctx) -> str:
+    import karrio.schemas.canadapost.shipment as canadapost
+
     shipment = lib.to_object(
         canadapost.ShipmentInfoType, lib.to_element(shipment_response)
     )

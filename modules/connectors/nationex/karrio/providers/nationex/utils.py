@@ -1,5 +1,8 @@
 import base64
+import karrio.lib as lib
 import karrio.core as core
+
+LanguageEnum = lib.units.create_enum("LanguageEnum", ["en", "fr"])
 
 
 class Settings(core.Settings):
@@ -8,7 +11,7 @@ class Settings(core.Settings):
     api_key: str
     customer_id: str
     billing_account: str = None
-    language: str = "en"
+    language: LanguageEnum = "en"  # type: ignore
 
     @property
     def carrier_name(self):

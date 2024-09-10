@@ -205,6 +205,7 @@ ShipmentRequestJSON = {
             "NumOfPiecesInShipment": "0",
             "Package": [
                 {
+                    "Description": "Description",
                     "Dimensions": {
                         "Height": "2.0",
                         "Length": "7.0",
@@ -232,7 +233,6 @@ ShipmentRequestJSON = {
             },
             "RatingMethodRequestedIndicator": "Y",
             "ReferenceNumber": {
-                "Code": "CountryCode",
                 "Value": "Your Customer Context",
             },
             "Service": {"Code": "01", "Description": "ups_next_day_air"},
@@ -309,6 +309,7 @@ ShipmentRequestWithPresetJSON = {
             "NumOfPiecesInShipment": "0",
             "Package": [
                 {
+                    "Description": "Description",
                     "Dimensions": {
                         "Height": "11.0",
                         "Length": "3.0",
@@ -336,7 +337,6 @@ ShipmentRequestWithPresetJSON = {
             },
             "RatingMethodRequestedIndicator": "Y",
             "ReferenceNumber": {
-                "Code": "CountryCode",
                 "Value": "Your Customer Context",
             },
             "Service": {"Code": "01", "Description": "ups_next_day_air"},

@@ -269,6 +269,7 @@ SHIPPING_RESPONSE = {
         },
     ],
     "reference": "",
+    "return_address": None,
     "label_type": "PDF",
     "carrier_ids": [],
     "tracker_id": None,

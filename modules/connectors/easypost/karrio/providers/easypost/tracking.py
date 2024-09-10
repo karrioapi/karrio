@@ -45,7 +45,7 @@ def _extract_details(
                 date=lib.fdate(event.datetime, "%Y-%m-%dT%H:%M:%SZ"),
                 description=event.message or "",
                 code=event.status,
-                time=lib.ftime(event.datetime, "%Y-%m-%dT%H:%M:%SZ"),
+                time=lib.flocaltime(event.datetime, "%Y-%m-%dT%H:%M:%SZ"),
                 location=lib.join(
                     event.tracking_location.city,
                     event.tracking_location.state,

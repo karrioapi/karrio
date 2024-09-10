@@ -16,7 +16,7 @@ class Settings(provider_utils.Settings):
     api_key: str
     identifier: str
     code_client: str = None
-    language: str = "fr"
+    language: provider_utils.LanguageEnum = "fr"  # type: ignore
 
     # generic properties
     id: str = None
@@ -27,3 +27,10 @@ class Settings(provider_utils.Settings):
     config: dict = {}
 
     services: typing.List[models.ServiceLevel] = jstruct.JList[models.ServiceLevel, False, dict(default=provider_units.DEFAULT_SERVICES)]  # type: ignore
+
+    @property
+    def shipping_services(self) -> typing.List[models.ServiceLevel]:
+        if any(self.services or []):
+            return self.services
+
+        return provider_units.DEFAULT_SERVICES

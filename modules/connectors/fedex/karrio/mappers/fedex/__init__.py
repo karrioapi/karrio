@@ -18,4 +18,5 @@ METADATA = Metadata(
     services=units.ShippingService,
     options=units.ShippingOption,
     connection_configs=units.ConnectionConfig,
+    has_intl_accounts=True,
 )

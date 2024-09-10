@@ -9,8 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 def register_signals():
-    for model in models.MODELS.values():
-        signals.post_save.connect(carrier_changed, sender=model)
+    signals.post_save.connect(carrier_changed, sender=models.Carrier)
 
     logger.info("karrio.providers signals registered...")
 
@@ -24,8 +23,5 @@ def carrier_changed(
         return
 
     if len(instance.capabilities or []) == 0:
-        carrier_name = next(
-            (k for k, v in models.MODELS.items() if v == instance.__class__), None
-        )
-        instance.capabilities = ref.get_carrier_capabilities(carrier_name)
+        instance.capabilities = ref.get_carrier_capabilities(instance.carrier_code)
         instance.save()

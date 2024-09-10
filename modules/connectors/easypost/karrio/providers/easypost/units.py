@@ -990,6 +990,7 @@ class ShippingOption(lib.Enum):
     currency = easypost_currency
     shipment_date = easypost_label_date
     cash_on_delivery = easypost_cod_amount
+    saturday_delivery = easypost_saturday_delivery
     signature_confirmation = easypost_delivery_confirmation
 
 

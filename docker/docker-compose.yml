@@ -1,9 +1,7 @@
-version: "3"
-
 services:
   api:
     container_name: karrio.api
-    image: karrio.docker.scarf.sh/karrio/server:2024.6-rc1
+    image: karrio.docker.scarf.sh/karrio/server:2024.6.3
     restart: unless-stopped
     ports:
       - ${KARRIO_HTTP_PORT}:${KARRIO_HTTP_PORT}
@@ -13,6 +11,7 @@ services:
     environment:
       DEBUG_MODE: "True"
       DETACHED_WORKER: "True"
+      SECRET_KEY: ${SECRET_KEY}
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
       DATABASE_HOST: ${DATABASE_HOST}
@@ -25,7 +24,7 @@ services:
 
   worker:
     container_name: karrio.worker
-    image: karrio.docker.scarf.sh/karrio/server:2024.6-rc1
+    image: karrio.docker.scarf.sh/karrio/server:2024.6.3
     restart: unless-stopped
     depends_on:
       - db
@@ -33,7 +32,6 @@ services:
       - api
     environment:
       DEBUG_MODE: "True"
-      SECRET_KEY: ${SECRET_KEY}
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
       DATABASE_HOST: ${DATABASE_HOST}
@@ -46,17 +44,17 @@ services:
 
   dashboard:
     container_name: karrio.dashboard
-    image: karrio.docker.scarf.sh/karrio/dashboard:2024.6-rc1
+    image: karrio.docker.scarf.sh/karrio/dashboard:2024.6.3
     restart: unless-stopped
     ports:
       - ${DASHBOARD_PORT}:3000/tcp
     depends_on:
       - api
     environment:
-      JWT_SECRET: ${JWT_SECRET}
       KARRIO_URL: http://api:${KARRIO_HTTP_PORT:-5002}
-      DASHBOARD_URL: ${DASHBOARD_URL}
-      KARRIO_PUBLIC_URL: ${KARRIO_PUBLIC_URL}
+      NEXTAUTH_SECRET: ${JWT_SECRET}
+      NEXT_PUBLIC_DASHBOARD_URL: ${DASHBOARD_URL}
+      NEXT_PUBLIC_KARRIO_PUBLIC_URL: ${KARRIO_PUBLIC_URL}
 
   maildev:
     container_name: karrio.mail

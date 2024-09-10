@@ -11,12 +11,15 @@
     "eslint": "^8.48.0",
     "prettier": "^3.0.3",
     "tsconfig": "*",
-    "turbo": "^1.13.0"
+    "turbo": "^2.0.14"
   },
   "name": "karrio",
-  "packageManager": "npm@9.8.0",
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "packageManager": "npm@10.8.2",
+  "dependencies": {
+    "next-auth": "^5.0.0-beta.20"
+  }
 }

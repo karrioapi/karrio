@@ -68,7 +68,7 @@ ParsedTrackingResponse = [
                     "description": "at_delivery",
                     "latitude": 36.123456,
                     "longitude": -82.345678,
-                    "time": "10:38",
+                    "time": "10:38 AM",
                 },
                 {
                     "code": "delivery_confirmed",
@@ -76,7 +76,7 @@ ParsedTrackingResponse = [
                     "description": "delivery_confirmed",
                     "latitude": 36.123456,
                     "longitude": -82.345678,
-                    "time": "12:23",
+                    "time": "12:23 PM",
                 },
             ],
             "info": {
@@ -106,7 +106,7 @@ ParsedTrackingResponse = [
                     "description": "at_delivery",
                     "latitude": 36.123456,
                     "longitude": -82.345678,
-                    "time": "10:38",
+                    "time": "10:38 AM",
                 },
                 {
                     "code": "delivery_confirmed",
@@ -114,7 +114,7 @@ ParsedTrackingResponse = [
                     "description": "delivery_confirmed",
                     "latitude": 36.123456,
                     "longitude": -82.345678,
-                    "time": "12:23",
+                    "time": "12:23 PM",
                 },
             ],
             "info": {

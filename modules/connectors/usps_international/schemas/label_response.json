@@ -1,0 +1,43 @@
+{
+  "labelMetadata": {
+    "labelAddress": {
+      "streetAddress": "string",
+      "streetAddressAbbreviation": "string",
+      "secondaryAddress": "string",
+      "cityAbbreviation": "string",
+      "city": "string",
+      "postalCode": "string",
+      "province": "string",
+      "country": "string",
+      "countryISOAlpha2Code": "string",
+      "firstName": "string",
+      "lastName": "string",
+      "firm": "string",
+      "phone": "string"
+    },
+    "internationalTrackingNumber": "string",
+    "constructCode": "string",
+    "SKU": "string",
+    "postage": 0,
+    "extraServices": [
+      {
+        "serviceID": "string",
+        "serviceName": "string",
+        "price": 0
+      }
+    ],
+    "internationalPriceGroup": "string",
+    "weightUOM": "lb",
+    "weight": 5,
+    "dimensionalWeight": "string",
+    "fees": [
+      {
+        "name": "string",
+        "SKU": "string",
+        "price": 0
+      }
+    ],
+    "labelBrokerID": "string"
+  },
+  "labelImage": "string"
+}

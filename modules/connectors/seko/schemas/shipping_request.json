@@ -1,0 +1,179 @@
+{
+  "DeliveryReference": "OrderNumber123",
+  "Reference2": "",
+  "Reference3": "",
+  "Origin": {
+    "Id": 0,
+    "Name": "OriginName",
+    "Address": {
+      "BuildingName": "",
+      "StreetAddress": "285 Main Street",
+      "Suburb": "GLENWOOD",
+      "City": "NSW",
+      "PostCode": "2768",
+      "CountryCode": "AU"
+    },
+    "ContactPerson": "Origin contact name",
+    "PhoneNumber": "02 9111 01101",
+    "Email": "originemail@sekologistics.com",
+    "DeliveryInstructions": "Desinationdeliveryinstructions",
+    "RecipientTaxId": "123456"
+  },
+  "Destination": {
+    "Id": 0,
+    "Name": "Destination Name",
+    "Address": {
+      "BuildingName": "Markettown",
+      "StreetAddress": "285 Coward Street",
+      "Suburb": "TESBURY",
+      "City": "VIC",
+      "PostCode": "3260",
+      "CountryCode": "AU"
+    },
+    "ContactPerson": "JOHN SMITH",
+    "PhoneNumber": "02 9111 1111",
+    "Email": "destinationemail@test.com",
+    "DeliveryInstructions": "LEAVE AT FRONT DOOR",
+    "RecipientTaxId": "123456",
+    "SendTrackingEmail": "true"
+  },
+  "DangerousGoods": {
+    "AdditionalHandlingInfo": "sample",
+    "HazchemCode": "sample",
+    "IsRadioActive": "false",
+    "CargoAircraftOnly": "false",
+    "IsDGLQ": "false",
+    "TotalQuantity": 2,
+    "TotalKg": 1.2,
+    "SignOffName": "name",
+    "SignOffRole": "dangerous goods officer",
+    "LineItems": [
+      {
+        "HarmonizedCode": "sample",
+        "Description": "sample",
+        "ClassOrDivision": "sample",
+        "UNorIDNo": "sample",
+        "PackingGroup": "sample",
+        "SubsidaryRisk": "sample",
+        "Packing": "sample",
+        "PackingInstr": "sample",
+        "Authorization": "sample"
+      }
+    ]
+  },
+  "Commodities": [
+    {
+      "Description": "Food Bar",
+      "HarmonizedCode": "sample",
+      "Units": "1",
+      "UnitValue": 50,
+      "UnitKg": 0.6,
+      "Currency": "USD",
+      "Country": "AU",
+      "IsDG": true,
+      "itemSKU": "SKU123",
+      "DangerousGoodsItem": {
+        "HarmonizedCode": "sample",
+        "Description": "sample",
+        "ClassOrDivision": "sample",
+        "UNorIDNo": "sample",
+        "PackingGroup": "sample",
+        "SubsidaryRisk": "sample",
+        "Packing": "sample",
+        "PackingInstr": "sample",
+        "Authorization": "sample"
+      }
+    },
+    {
+      "Description": "Food Bar",
+      "Units": "1",
+      "UnitValue": 50,
+      "UnitKg": 0.6,
+      "Currency": "USD",
+      "Country": "AU",
+      "IsDG": true,
+      "DangerousGoodsItem": {
+        "Description": "sample",
+        "ClassOrDivision": "sample",
+        "UNorIDNo": "sample",
+        "PackingGroup": "sample",
+        "SubsidaryRisk": "sample",
+        "Packing": "sample",
+        "PackingInstr": "sample",
+        "Authorization": "sample"
+      }
+    }
+  ],
+  "Packages": [
+    {
+      "Height": 1.0,
+      "Length": 1.0,
+      "Width": 1.0,
+      "Kg": 5.0,
+      "Name": "PARCEL",
+      "Type": "Box",
+      "OverLabelBarcode": "TEST0301201902"
+    }
+  ],
+  "issignaturerequired": false,
+  "DutiesAndTaxesByReceiver": false,
+  "PrintToPrinter": true,
+  "IncludeLineDetails": true,
+  "Carrier": "Omni Parcel",
+  "Service": "eCommerce Express Tracked",
+  "CostCentreName": "mysite.com",
+  "CodValue": 10.0,
+  "TaxCollected": true,
+  "AmountCollected": 10.0,
+  "TaxIds": [
+    {
+      "IdType": "XIEORINumber",
+      "IdNumber": "0121212112"
+    },
+    {
+      "IdType": "IOSSNUMBER",
+      "IdNumber": "0121212112"
+    },
+    {
+      "IdType": "GBEORINUMBER",
+      "IdNumber": "0121212112"
+    },
+    {
+      "IdType": "VOECNUMBER",
+      "IdNumber": "0121212112"
+    },
+    {
+      "IdType": "VATNUMBER",
+      "IdNumber": "0121212112"
+    },
+    {
+      "IdType": "VENDORID",
+      "IdNumber": "0121212113"
+    },
+    {
+      "IdType": "NZIRDNUMBER",
+      "IdNumber": "0121212115"
+    },
+    {
+      "IdType": "SWISS VAT",
+      "IdNumber": "CHE-123.456.789"
+    },
+    {
+      "IdType": "OVRNUMBER",
+      "IdNumber": "0121212112"
+    },
+    {
+      "IdType": "EUEORINumber",
+      "IdNumber": "0121212112"
+    },
+    {
+      "IdType": "EUVATNumber",
+      "IdNumber": "0121212112"
+    },
+    {
+      "IdType": "LVGRegistrationNumber",
+      "IdNumber": "0121212112"
+    }
+  ],
+  "Outputs": ["LABEL_PDF_100X150"]
+}

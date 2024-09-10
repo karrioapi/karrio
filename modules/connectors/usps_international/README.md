@@ -1,6 +1,7 @@
-# karrio.usps_international
 
-This package is a USPS International extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
+# karrio.usps
+
+This package is a USPS extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
 ## Requirements
 
@@ -9,7 +10,7 @@ This package is a USPS International extension of the [karrio](https://pypi.org/
 ## Installation
 
 ```bash
-pip install karrio.usps_international
+pip install karrio.usps
 ```
 
 ## Usage
@@ -20,7 +21,7 @@ from karrio.mappers.usps_international.settings import Settings
 
 
 # Initialize a carrier gateway
-canadapost = karrio.gateway["usps"].create(
+usps = karrio.gateway["usps"].create(
     Settings(
         ...
     )

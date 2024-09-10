@@ -123,12 +123,7 @@ class TrackerList(GenericAPIView):
 
         instance = (
             models.Tracking.access_by(request)
-            .filter(
-                **{
-                    "tracking_number": data["tracking_number"],
-                    f"tracking_carrier__{carrier_name.replace('_', '')}settings__isnull": False,
-                }
-            )
+            .filter(tracking_number=data["tracking_number"])
             .first()
         )
 

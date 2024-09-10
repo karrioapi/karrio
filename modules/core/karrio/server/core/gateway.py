@@ -1,7 +1,7 @@
 import uuid
 import typing
 import logging
-from datetime import datetime
+import datetime
 
 from django.db.models import Q
 from django.conf import settings
@@ -12,14 +12,12 @@ import karrio
 import karrio.lib as lib
 import karrio.server.core.utils as utils
 import karrio.server.core.models as core
+import karrio.server.core.datatypes as datatypes
+import karrio.server.core.dataunits as dataunits
+import karrio.server.core.validators as validators
+import karrio.server.core.exceptions as exceptions
 import karrio.server.providers.models as providers
-from karrio.server.core import (
-    datatypes,
-    dataunits,
-    serializers,
-    exceptions,
-    validators,
-)
+import karrio.server.core.serializers as serializers
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +30,7 @@ class Carriers:
 
         test_mode = list_filter.get("test_mode") or getattr(context, "test_mode", None)
         system_only = list_filter.get("system_only") is True
-        active_key = (
+        active_key = lib.identity(
             "active_orgs__id" if settings.MULTI_ORGANIZATIONS else "active_users__id"
         )
         access_id = getattr(
@@ -40,7 +38,7 @@ class Carriers:
             "id",
             None,
         )
-        creator_filter = (
+        creator_filter = lib.identity(
             Q(
                 created_by__id=context.user.id,
                 **(dict(org=None) if settings.MULTI_ORGANIZATIONS else {}),
@@ -60,7 +58,7 @@ class Carriers:
                 }
             )
         )
-        _queryset = (
+        _queryset = lib.identity(
             _system_carriers if system_only else _user_carriers | _system_carriers
         )
 
@@ -114,31 +112,10 @@ class Carriers:
             ]
 
             if len(carrier_names) > 0:
-                _queries = (
-                    Q(**{f"{carrier_names[0].replace('_', '')}settings__isnull": False})
-                    if carrier_names[0] in providers.MODELS.keys()
-                    else Q(genericsettings__custom_carrier_name=carrier_names[0])
-                )
-                for carrier_name in carrier_names[1:]:
-                    _queries |= (
-                        Q(**{f"{carrier_name.replace('_', '')}settings__isnull": False})
-                        if carrier_name in providers.MODELS.keys()
-                        else Q(genericsettings__custom_carrier_name=carrier_name)
-                    )
-
-                _queryset = _queryset.filter(_queries)
-
+                _queryset = _queryset.filter(carrier_code__in=carrier_names)
         if "carrier_name" in list_filter:
             carrier_name = list_filter["carrier_name"]
-
-            if carrier_name not in providers.MODELS.keys():
-                raise NotFound(
-                    f"No extension installed for the carrier: '{carrier_name}'"
-                )
-
-            _queryset = _queryset.filter(
-                Q(**{f"{carrier_name.replace('_', '')}settings__isnull": False})
-            )
+            _queryset = _queryset.filter(carrier_code=carrier_name)
 
         carriers = _queryset.distinct()
 
@@ -221,7 +198,7 @@ class Shipments:
                 "ext": carrier.ext,
                 "carrier": rate_provider,
                 "service_name": service_name,
-                "rate_provider": rate_provider,  # TODO: deprecate rate_provider
+                "rate_provider": rate_provider,  # TODO: deprecate 'rate_provider' in favor of 'carrier'
             }
 
         def process_selected_rate() -> dict:
@@ -241,7 +218,7 @@ class Shipments:
 
         def process_tracking_url(rate: datatypes.Rate) -> str:
             rate_provider = (rate.get("meta") or {}).get("rate_provider")
-            if (rate_provider not in providers.MODELS) and (
+            if (rate_provider not in dataunits.CARRIER_NAMES) and (
                 (shipment.meta or {}).get("tracking_url") is not None
             ):
                 return shipment.meta["tracking_url"]
@@ -286,7 +263,9 @@ class Shipments:
                 "parcels": process_parcel_refs(payload["parcels"]),
                 "tracking_url": process_tracking_url(shipment_rate),
                 "status": serializers.ShipmentStatus.purchased.value,
-                "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f%z"),
+                "created_at": datetime.datetime.now().strftime(
+                    "%Y-%m-%d %H:%M:%S.%f%z"
+                ),
                 "meta": process_meta(shipment),
                 "messages": messages,
             },
@@ -298,7 +277,7 @@ class Shipments:
     ) -> datatypes.ConfirmationResponse:
         carrier_id = lib.identity(
             dict(carrier_id=payload.pop("carrier_id"))
-            if any(payload.get("carrier_id") or "") in payload
+            if any(payload.get("carrier_id") or "")
             else {}
         )
         carrier = carrier or Carriers.first(
@@ -384,10 +363,10 @@ class Shipments:
             tracking_number=tracking_number,
             events=[
                 datatypes.TrackingEvent(
-                    date=datetime.now().strftime("%Y-%m-%d"),
+                    date=datetime.datetime.now().strftime("%Y-%m-%d"),
                     description="Awaiting update from carrier...",
                     code="UNKNOWN",
-                    time=datetime.now().strftime("%H:%M"),
+                    time=datetime.datetime.now().strftime("%H:%M"),
                 )
             ],
             delivered=False,
@@ -526,7 +505,7 @@ class Pickups:
     ) -> datatypes.ConfirmationResponse:
         carrier = carrier or Carriers.first(
             **{
-                **dict(active=True, capability="pickup", raise_not_found=True),
+                **dict(active=True, capability="pickup"),
                 **carrier_filters,
             }
         )
@@ -539,7 +518,7 @@ class Pickups:
         )
 
         # The request call is wrapped in utils.identity to simplify mocking in tests
-        confirmation, messages = (
+        confirmation, messages = lib.identity(
             utils.identity(lambda: request.from_(carrier.gateway).parse())
             if "cancel_shipment" in carrier.gateway.proxy_methods
             else (

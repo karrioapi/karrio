@@ -65,6 +65,7 @@ class ShipmentManager(models.Manager):
                 "shipper",
                 "customs",
                 "manifest",
+                "return_address",
                 "billing_address",
                 "shipment_tracker",
                 "selected_rate_carrier",
@@ -202,18 +203,6 @@ class Address(core.OwnedEntity):
         return None
 
 
-# class ParcelManager(models.Manager):
-#     def get_queryset(self):
-#         return (
-#             super()
-#             .get_queryset()
-#             .prefetch_related(
-#                 "items",
-#             )
-#             .order_by("-created_by")
-#         )
-
-
 @core.register_model
 class Parcel(core.OwnedEntity):
     HIDDEN_PROPS = (
@@ -272,20 +261,6 @@ class Parcel(core.OwnedEntity):
     @property
     def shipment(self):
         return self.parcel_shipment.first()
-
-
-# class CommodityManager(models.Manager):
-#     def get_queryset(self):
-#         return (
-#             super()
-#             .get_queryset()
-#             .prefetch_related(
-#                 "children",
-#             )
-#             .select_related(
-#                 "parent",
-#             )
-#         )
 
 
 @core.register_model
@@ -374,22 +349,6 @@ class Commodity(core.OwnedEntity):
         return None
 
 
-# class CustomsManager(models.Manager):
-#     def get_queryset(self):
-#         return (
-#             super()
-#             .get_queryset()
-#             .prefetch_related(
-#                 "commodities",
-#             )
-#             .select_related(
-#                 "created_by",
-#                 "duty_billing_address",
-#
-#             )
-#         )
-
-
 @core.register_model
 class Customs(core.OwnedEntity):
     DIRECT_PROPS = [
@@ -469,19 +428,6 @@ class Customs(core.OwnedEntity):
             return self.customs_shipment
 
         return None
-
-
-# class PickupManager(models.Manager):
-#     def get_queryset(self):
-#         return (
-#             super()
-#             .get_queryset()
-#             .prefetch_related(
-#                 "pickup_carrier",
-#                 "shipments",
-#                 "created_by",
-#             )
-#         )
 
 
 @core.register_model
@@ -676,34 +622,6 @@ class Tracking(core.OwnedEntity):
         )
 
 
-# class ShipmentManager(models.Manager):
-#     def get_queryset(self):
-#         return (
-#             super()
-#             .get_queryset()
-#             .defer(
-#                 "label",
-#                 "invoice",
-#             )
-#             .prefetch_related(
-#                 "parcels",
-#                 "carriers",
-#             )
-#             .select_related(
-#                 "created_by",
-#                 "recipient",
-#                 "shipper",
-#                 "customs",
-#                 "manifest",
-#                 "billing_address",
-#                 "shipment_tracker",
-#                 "selected_rate_carrier",
-#                 "shipment_upload_record",
-#
-#             )
-#         )
-
-
 @core.register_model
 class Shipment(core.OwnedEntity):
     DIRECT_PROPS = [
@@ -729,6 +647,7 @@ class Shipment(core.OwnedEntity):
         "parcels",
         "customs",
         "selected_rate",
+        "return_address",
         "billing_address",
     ]
     HIDDEN_PROPS = (
@@ -773,6 +692,12 @@ class Shipment(core.OwnedEntity):
     )
     shipper = models.OneToOneField(
         "Address", on_delete=models.CASCADE, related_name="shipper_shipment"
+    )
+    return_address = models.OneToOneField(
+        "Address",
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="return_address_shipment",
     )
     billing_address = models.OneToOneField(
         "Address",

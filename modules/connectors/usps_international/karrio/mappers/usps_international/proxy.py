@@ -1,60 +1,151 @@
-import urllib.parse
-from karrio.schemas.usps.track_field_request import TrackFieldRequest
+"""Karrio USPS client proxy."""
 
-from karrio.api.proxy import Proxy as BaseProxy
-from karrio.core.utils import Serializable, Deserializable, XP, request as http
-from karrio.mappers.usps_international.settings import Settings
+import karrio.lib as lib
+import karrio.api.proxy as proxy
+import karrio.mappers.usps_international.settings as provider_settings
 
 
-class Proxy(BaseProxy):
-    settings: Settings
+class Proxy(proxy.Proxy):
+    settings: provider_settings.Settings
 
-    """ Proxy interface method implementations """
-
-    def get_tracking(self, request: Serializable) -> Deserializable:
-        query = urllib.parse.urlencode({"API": "TrackV2", "XML": request.serialize()})
-        response = http(
-            url=f"{self.settings.server_url}?{query}",
-            trace=self.trace_as("xml"),
-            method="GET",
+    def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = lib.run_asynchronously(
+            lambda _: lib.request(
+                url=f"{self.settings.server_url}/v3/total-rates/search",
+                data=lib.to_json(_),
+                trace=self.trace_as("json"),
+                method="POST",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.settings.access_token}",
+                },
+            ),
+            request.serialize(),
         )
 
-        return Deserializable(response, XP.to_xml)
+        return lib.Deserializable(response, lambda _: [lib.to_dict(_) for _ in _])
 
-    def get_rates(self, request: Serializable) -> Deserializable:
-        query = urllib.parse.urlencode(
-            {"API": "IntlRateV2", "XML": request.serialize()}
-        )
-        response = http(
-            url=f"{self.settings.server_url}?{query}",
-            trace=self.trace_as("xml"),
-            method="GET",
-        )
-
-        return Deserializable(response, XP.to_xml)
-
-    def create_shipment(self, request: Serializable) -> Deserializable:
-        tag = request.value.__class__.__name__.replace("Request", "")
-        api = f"{tag}Certify" if self.settings.test_mode else tag
-        serialized_request = request.serialize().replace(tag, api)
-        query = urllib.parse.urlencode({"API": api, "XML": serialized_request})
-        response = http(
-            url=f"{self.settings.server_url}?{query}",
-            trace=self.trace_as("xml"),
-            method="GET",
+    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = lib.run_asynchronously(
+            lambda _: lib.request(
+                url=f"{self.settings.server_url}/v3/international-label",
+                data=lib.to_json(_),
+                trace=self.trace_as("json"),
+                method="POST",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.settings.access_token}",
+                },
+            ),
+            request.serialize(),
         )
 
-        return Deserializable(response, XP.to_xml)
-
-    def cancel_shipment(self, request: Serializable) -> Deserializable:
-        tag = request.value.__class__.__name__.replace("Request", "")
-        api = f"{tag}Certify" if self.settings.test_mode else tag
-        serialized_request = request.serialize().replace(tag, api)
-        query = urllib.parse.urlencode({"API": api, "XML": serialized_request})
-        response = http(
-            url=f"{self.settings.server_url}?{query}",
-            trace=self.trace_as("xml"),
-            method="GET",
+        return lib.Deserializable(
+            response,
+            lambda _: [lib.to_dict(_) for _ in _],
+            request.ctx,
         )
 
-        return Deserializable(response, XP.to_xml)
+    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = lib.run_asynchronously(
+            lambda _: (
+                _["trackingNumber"],
+                lib.request(
+                    url=f"{self.settings.server_url}/v3/international-label/{_['trackingNumber']}",
+                    data=lib.to_json(request.serialize()),
+                    trace=self.trace_as("json"),
+                    method="POST",
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {self.settings.access_token}",
+                    },
+                    on_ok=lambda _: '{"ok": true}',
+                ),
+            ),
+            request.serialize(),
+        )
+
+        return lib.Deserializable(
+            response,
+            lambda __: [(_[0], lib.to_dict(_[1])) for _ in __],
+        )
+
+    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = lib.run_asynchronously(
+            lambda trackingNumber: (
+                trackingNumber,
+                lib.request(
+                    url=f"{self.settings.server_url}/v3/tracking/{trackingNumber}",
+                    data=lib.to_json(request.serialize()),
+                    trace=self.trace_as("json"),
+                    method="POST",
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {self.settings.access_token}",
+                    },
+                ),
+            ),
+            request.serialize(),
+        )
+
+        return lib.Deserializable(
+            response,
+            lambda __: [(_[0], lib.to_dict(_[1])) for _ in __],
+        )
+
+    def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = lib.request(
+            url=f"{self.settings.server_url}/v3/carrier-pickup",
+            data=lib.to_json(request.serialize()),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {self.settings.access_token}",
+            },
+        )
+
+        return lib.Deserializable(response, lib.to_dict)
+
+    def modify_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = lib.request(
+            url=f"{self.settings.server_url}/v3/carrier-pickup/{request.ctx['confirmationNumber']}",
+            data=lib.to_json(request.serialize()),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {self.settings.access_token}",
+            },
+        )
+
+        return lib.Deserializable(response, lib.to_dict)
+
+    def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = lib.request(
+            url=f"{self.settings.server_url}/v3/carrier-pickup/{request.serialize()['confirmationNumber']}",
+            data=lib.to_json(request.serialize()),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {self.settings.access_token}",
+            },
+            on_ok=lambda _: '{"ok": true}',
+        )
+
+        return lib.Deserializable(response, lib.to_dict)
+
+    def create_manifest(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = lib.request(
+            url=f"{self.settings.server_url}/v3/scan-form",
+            data=lib.to_json(request.serialize()),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {self.settings.access_token}",
+            },
+        )
+
+        return lib.Deserializable(response, lib.to_dict)

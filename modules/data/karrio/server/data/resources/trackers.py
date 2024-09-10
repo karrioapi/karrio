@@ -59,7 +59,13 @@ def tracker_export_resource(query_params: dict, context, data_fields: dict = Non
     return Resource()
 
 
-def tracker_import_resource(query_params: dict, context, data_fields: dict = None, batch_id: str = None, **kwargs):
+def tracker_import_resource(
+    query_params: dict,
+    context,
+    data_fields: dict = None,
+    batch_id: str = None,
+    **kwargs,
+):
     queryset = manager.Tracking.access_by(context)
     field_headers = data_fields if data_fields is not None else DEFAULT_HEADERS
     _exclude = query_params.get("exclude", "").split(",")
@@ -86,23 +92,28 @@ def tracker_import_resource(query_params: dict, context, data_fields: dict = Non
             return [field_headers.get(k, k) for k in headers]
 
         def init_instance(self, row=None):
-            carrier_id = row.get('tracking_carrier')
-            tracking_number = row.get('tracking_number')
+            carrier_id = row.get("tracking_carrier")
+            tracking_number = row.get("tracking_number")
 
             errors = []
-            if len(tracking_number or '') == 0:
-                errors.append(exceptions.APIException(
-                    f"A tracking number is required.",
-                    code="tracking_number_required",
-                ))
+            if len(tracking_number or "") == 0:
+                errors.append(
+                    exceptions.APIException(
+                        f"A tracking number is required.",
+                        code="tracking_number_required",
+                    )
+                )
             if carrier_id is None:
-                errors.append(exceptions.APIException(
-                    f"No carrier connection found.",
-                    code="invalid_carrier",
-                ))
+                errors.append(
+                    exceptions.APIException(
+                        f"No carrier connection found.",
+                        code="invalid_carrier",
+                    )
+                )
             if any(errors):
                 raise exceptions.APIExceptions(
-                    errors, code="invalid_row",
+                    errors,
+                    code="invalid_row",
                 )
 
             tracker = (
@@ -112,22 +123,28 @@ def tracker_import_resource(query_params: dict, context, data_fields: dict = Non
             )
             carrier = providers.Carrier.objects.get(id=carrier_id).settings
             exists = getattr(tracker, "carrier_name", None) == carrier.carrier_name
-            meta = ({} if batch_id is None else dict(meta=dict(batch_id=batch_id)))
+            meta = {} if batch_id is None else dict(meta=dict(batch_id=batch_id))
 
-            instance = tracker if exists else manager.Tracking(
-                status="unknown",
-                test_mode=context.test_mode,
-                created_by_id=context.user.id,
-                tracking_number=tracking_number,
-                events=utils.default_tracking_event(
-                    description="Awaiting update from carrier...",
-                    code="UNKNOWN",
-                ),
-                **meta,
+            instance = (
+                tracker
+                if exists
+                else manager.Tracking(
+                    status="unknown",
+                    test_mode=context.test_mode,
+                    created_by_id=context.user.id,
+                    tracking_number=tracking_number,
+                    events=utils.default_tracking_event(
+                        description="Awaiting update from carrier...",
+                        code="UNKNOWN",
+                    ),
+                    **meta,
+                )
             )
             return instance
 
-        def save_instance(self, instance, is_create, using_transactions=True, dry_run=False):
+        def save_instance(
+            self, instance, is_create, using_transactions=True, dry_run=False
+        ):
             is_create = instance.pk is None
 
             print(instance.pk, instance.id, is_create, "<<<")
@@ -150,12 +167,14 @@ def tracker_import_resource(query_params: dict, context, data_fields: dict = Non
                     dataset.headers.index(data_fields.get("tracking_carrier"))
                 )
                 carriers = {
-                    carrier_name: utils.failsafe(lambda: gateway.Carriers.first(
-                        context=context,
-                        capability='tracking',
-                        carrier_name=carrier_name,
-                        raise_not_found=False,
-                    ))
+                    carrier_name: utils.failsafe(
+                        lambda: gateway.Carriers.first(
+                            context=context,
+                            capability="tracking",
+                            carrier_name=carrier_name,
+                            raise_not_found=False,
+                        )
+                    )
                     for carrier_name in set(carrier_col)
                 }
 

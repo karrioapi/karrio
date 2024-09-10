@@ -1,17 +1,17 @@
 """Karrio DHL Universal settings."""
 
 import attr
-from karrio.providers.dhl_universal.utils import Settings as BaseSettings
+import karrio.providers.dhl_universal.utils as utils
 
 
 @attr.s(auto_attribs=True)
-class Settings(BaseSettings):
+class Settings(utils.Settings):
     """DHL Universal connection settings."""
 
     # Carrier specific properties
     consumer_key: str
     consumer_secret: str
-    language: str = "en"
+    language: utils.LanguageEnum = "en"  # type: ignore
 
     # Base properties
     id: str = None

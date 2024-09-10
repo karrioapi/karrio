@@ -75,14 +75,14 @@ ParsedTrackingResponse = [
                     "code": "pre_transit",
                     "date": "2022-03-11",
                     "description": "Pre-Shipment Info Sent to USPS",
-                    "time": "03:34",
+                    "time": "03:34 AM",
                 },
                 {
                     "code": "pre_transit",
                     "date": "2022-03-11",
                     "description": "Shipping Label Created",
                     "location": "HOUSTON, TX, 77063",
-                    "time": "16:11",
+                    "time": "16:11 PM",
                 },
             ],
             "info": {
@@ -114,14 +114,14 @@ ParsedTrackingResponse = [
                     "code": "pre_transit",
                     "date": "2022-03-11",
                     "description": "Pre-Shipment Info Sent to USPS",
-                    "time": "03:34",
+                    "time": "03:34 AM",
                 },
                 {
                     "code": "pre_transit",
                     "date": "2022-03-11",
                     "description": "Shipping Label Created",
                     "location": "HOUSTON, TX, 77063",
-                    "time": "16:11",
+                    "time": "16:11 PM",
                 },
             ],
             "info": {

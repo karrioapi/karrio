@@ -1,0 +1,34 @@
+{
+  "DeliveryReference": "ORDER123",
+  "Destination": {
+    "Id": 0,
+    "Name": "DestinationName",
+    "Address": {
+      "BuildingName": "",
+      "StreetAddress": "DestinationStreetAddress",
+      "Suburb": "Avonside",
+      "City": "Christchurch",
+      "PostCode": "8061",
+      "CountryCode": "NZ"
+    },
+    "ContactPerson": "DestinationContact",
+    "PhoneNumber": "123456789",
+    "Email": "destinationemail@email.com",
+    "DeliveryInstructions": "Desinationdeliveryinstructions",
+    "RecipientTaxId": "123456"
+  },
+  "IsSaturdayDelivery": false,
+  "IsSignatureRequired": true,
+  "Packages": [
+    {
+      "Height": 1,
+      "Length": 1,
+      "Id": 0,
+      "Width": 10,
+      "Kg": 0.1,
+      "Name": "SATCHEL",
+      "PackageCode": "DLE",
+      "Type": "Box"
+    }
+  ]
+}

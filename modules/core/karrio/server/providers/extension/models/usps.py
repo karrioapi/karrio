@@ -1,22 +1,23 @@
-from django.db import models
-from karrio.server.providers.models.carrier import Carrier
+import django.db.models as models
+import karrio.server.providers.models as providers
 
 
-class USPSSettings(Carrier):
+class USPSSettings(providers.Carrier):
+    CARRIER_NAME = "usps"
+
     class Meta:
         db_table = "usps-settings"
-        verbose_name = 'USPS Settings'
-        verbose_name_plural = 'USPS Settings'
+        verbose_name = "USPS Settings"
+        verbose_name_plural = "USPS Settings"
 
-    username = models.CharField(max_length=200)
-    password = models.CharField(max_length=200)
-    mailer_id = models.CharField(max_length=200, null=True, blank=True)
-    customer_registration_id = models.CharField(max_length=200, blank=True, null=True)
-    logistics_manager_mailer_id = models.CharField(max_length=200, blank=True, null=True)
+    client_id = models.CharField(max_length=100)
+    client_secret = models.CharField(max_length=100)
+    account_type = models.CharField(max_length=100, null=True, blank=True)
+    account_number = models.CharField(max_length=100, blank=True, null=True)
 
     @property
     def carrier_name(self) -> str:
-        return 'usps'
+        return self.CARRIER_NAME
 
 
 SETTINGS = USPSSettings

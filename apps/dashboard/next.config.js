@@ -6,73 +6,25 @@
 const path = require('path');
 const { withSentryConfig } = require('@sentry/nextjs');
 
-const BASE_PATH = process.env.BASE_PATH || '';
-const KARRIO_PUBLIC_URL = (
-  process.env.KARRIO_PUBLIC_URL || process.env.NEXT_PUBLIC_KARRIO_API_URL
-);
-const KARRIO_URL = (
-  process.env.KARRIO_URL || process.env.KARRIO_HOSTNAME || KARRIO_PUBLIC_URL
-);
-const SENTRY_DSN = (
-  process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN
-);
-const MULTI_TENANT = (
-  Boolean(JSON.parse(process.env.MULTI_TENANT || 'false'))
-);
-const POSTHOG_KEY = (
-  process.env.POSTHOG_KEY || process.env.NEXT_PUBLIC_POSTHOG_KEY
-);
-const POSTHOG_HOST = (
-  process.env.POSTHOG_HOST || process.env.NEXT_PUBLIC_POSTHOG_HOST
-);
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
+/** @type {import('next').NextConfig} */
 const moduleExports = {
-  swcMinify: true,
+  swcMinify: false,
   reactStrictMode: true,
-  transpilePackages: ['@karrio/hooks', '@karrio/ui', '@karrio/lib', '@karrio/types'],
+  transpilePackages: ['@karrio/core', '@karrio/hooks', '@karrio/ui', '@karrio/lib', '@karrio/types'],
   basePath: BASE_PATH,
   sassOptions: {
     includePaths: [path.join(__dirname, 'src', 'styles')],
-  },
-  serverRuntimeConfig: {
-    KARRIO_URL: KARRIO_URL,
-    JWT_SECRET: process.env.JWT_SECRET,
-    TENANT_ENV_KEY: process.env.TENANT_ENV_KEY,
-    KARRIO_ADMIN_URL: process.env.KARRIO_ADMIN_URL,
-    KARRIO_ADMIN_API_KEY: process.env.KARRIO_ADMIN_API_KEY,
-  },
-  publicRuntimeConfig: {
-    BASE_PATH: BASE_PATH,
-    SENTRY_DSN: SENTRY_DSN,
-    MULTI_TENANT: MULTI_TENANT,
-    KARRIO_PUBLIC_URL: KARRIO_PUBLIC_URL,
-    NEXTAUTH_URL: process.env.DASHBOARD_URL,
-    DASHBOARD_URL: process.env.DASHBOARD_URL,
-    DASHBOARD_VERSION: process.env.DASHBOARD_VERSION,
-    POSTHOG_KEY: POSTHOG_KEY,
-    POSTHOG_HOST: POSTHOG_HOST,
   },
   sentry: {
     disableServerWebpackPlugin: true,
     disableClientWebpackPlugin: true,
   },
-
-  async headers() {
-    return [
-      {
-        source: '/api/auth/:slug',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'no-store, max-age=0',
-          },
-          {
-            key: 'CDN-Cache-Control',
-            value: 'no-store, max-age=0',
-          },
-        ],
-      },
-    ];
+  webpack: (config) => {
+    config.resolve.fallback = { fs: false, net: false, tls: false };
+    config.externals.push('pino-pretty', 'encoding');
+    return config;
   },
 };
 

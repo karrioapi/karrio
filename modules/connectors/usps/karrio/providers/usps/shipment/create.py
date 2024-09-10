@@ -1,5 +1,7 @@
-import karrio.schemas.usps.evs_request as usps
-import karrio.schemas.usps.evs_response as shipping
+"""Karrio USPS create label implementation."""
+
+import karrio.schemas.usps.label_request as usps
+import karrio.schemas.usps.label_response as shipping
 
 import time
 import typing
@@ -7,38 +9,57 @@ import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
 import karrio.core.errors as errors
-import karrio.providers.usps.error as provider_error
-import karrio.providers.usps.units as provider_units
+import karrio.providers.usps.error as error
 import karrio.providers.usps.utils as provider_utils
+import karrio.providers.usps.units as provider_units
 
 
 def parse_shipment_response(
-    _response: lib.Deserializable[lib.Element], settings: provider_utils.Settings
-) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
-    response = _response.deserialize()
-    errors = provider_error.parse_error_response(response, settings)
-    details = (
-        _extract_details(response, settings)
-        if len(lib.find_element("BarcodeNumber", response)) > 0
-        else None
+    _response: lib.Deserializable[typing.List[dict]],
+    settings: provider_utils.Settings,
+) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    responses = _response.deserialize()
+
+    shipment = lib.to_multi_piece_shipment(
+        [
+            (
+                f"{_}",
+                _extract_details(response, settings, _response.ctx),
+            )
+            for _, response in enumerate(responses, start=1)
+            if response.get("error") is None
+        ]
+    )
+    messages: typing.List[models.Message] = sum(
+        [error.parse_error_response(response, settings) for response in responses],
+        start=[],
     )
 
-    return details, errors
+    return shipment, messages
 
 
 def _extract_details(
-    response: lib.Element, settings: provider_utils.Settings
+    data: dict,
+    settings: provider_utils.Settings,
+    ctx: dict = None,
 ) -> models.ShipmentDetails:
-    shipment = lib.to_object(shipping.eVSResponse, response)
+    details = lib.to_object(shipping.LabelResponseType, data)
+    label = details.labelImage
+    invoice = details.receiptImage
+    label_type = ctx.get("label_type", "PDF")
 
     return models.ShipmentDetails(
-        carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        tracking_number=shipment.BarcodeNumber,
-        shipment_identifier=shipment.BarcodeNumber,
-        docs=models.Documents(label=shipment.LabelImage),
+        carrier_name=settings.carrier_name,
+        tracking_number=details.labelMetadata.trackingNumber,
+        shipment_identifier=details.labelMetadata.trackingNumber,
+        label_type=label_type,
+        docs=models.Documents(label=label, invoice=invoice),
         meta=dict(
-            carrier_tracking_link=settings.tracking_url.format(shipment.BarcodeNumber),
+            SKU=details.labelMetadata.SKU,
+            postage=details.labelMetadata.postage,
+            routingInformation=details.labelMetadata.routingInformation,
+            labelBrokerID=details.labelMetadata.labelBrokerID,
         ),
     )
 
@@ -62,160 +83,181 @@ def shipment_request(
     ):
         raise errors.DestinationNotServicedError(recipient.country_code)
 
-    package = lib.to_packages(
-        payload.parcels, package_option_type=provider_units.ShippingOption
-    ).single
-    service = provider_units.ServiceType.map(payload.service).value_or_key
+    return_address = lib.to_address(payload.return_address)
+    service = provider_units.ShippingService.map(payload.service).value_or_key
     options = lib.to_shipping_options(
         payload.options,
-        package_options=package.options,
         initializer=provider_units.shipping_options_initializer,
     )
-
-    customs = lib.to_customs_info(payload.customs or models.Customs(commodities=[]))
-    label_format = provider_units.LabelFormat[
-        payload.label_type or "usps_6_x_4_label"
-    ].value
-    redirect_address = models.Address(
-        **(options.usps_option_redirect_non_delivery.state or {})
+    packages = lib.to_packages(
+        payload.parcels,
+        options=options,
+        package_option_type=provider_units.ShippingOption,
+        shipping_options_initializer=provider_units.shipping_options_initializer,
     )
+    pickup_location = lib.to_address(options.hold_for_pickup_address.state)
+    label_type = provider_units.LabelType.map(payload.label_type).value or "PDF"
 
-    request = usps.eVSRequest(
-        USERID=settings.username,
-        PASSWORD=settings.password,
-        Option=None,
-        Revision="1",
-        ImageParameters=usps.ImageParametersType(
-            ImageParameter=label_format,
-            LabelSequence=usps.LabelSequenceType(PackageNumber=1, TotalPackages=1),
-        ),
-        FromName=shipper.person_name,
-        FromFirm=shipper.company_name or "N/A",
-        FromAddress1=shipper.address_line2 or "",
-        FromAddress2=shipper.street,
-        FromCity=shipper.city,
-        FromState=shipper.state_code,
-        FromZip5=lib.to_zip5(shipper.postal_code) or "",
-        FromZip4=lib.to_zip4(shipper.postal_code) or "",
-        FromPhone=provider_utils.parse_phone_number(shipper.phone_number),
-        POZipCode=None,
-        AllowNonCleansedOriginAddr=(
-            options.usps_option_allow_non_cleansed_origin_addr.state
-            if options.usps_option_allow_non_cleansed_origin_addr.state is not None
-            else True
-        ),
-        ToName=recipient.person_name,
-        ToFirm=recipient.company_name or "N/A",
-        ToAddress1=recipient.address_line2 or "",
-        ToAddress2=recipient.street,
-        ToCity=recipient.city,
-        ToState=recipient.state_code,
-        ToZip5=lib.to_zip5(recipient.postal_code) or "",
-        ToZip4=lib.to_zip4(recipient.postal_code) or "",
-        ToPhone=provider_utils.parse_phone_number(recipient.phone_number),
-        POBox=None,
-        ToContactPreference=None,
-        ToContactMessaging=recipient.email,
-        ToContactEmail=recipient.email,
-        AllowNonCleansedDestAddr=(
-            lib.to_json(options.usps_option_allow_non_cleansed_dest_addr.state)
-            if options.usps_option_allow_non_cleansed_dest_addr.state is not None
-            else True
-        ),
-        WeightInOunces=package.weight.OZ,
-        ServiceType=service,
-        Container=provider_units.PackagingType[
-            package.packaging_type or "variable"
-        ].value,
-        Width=package.width.IN,
-        Length=package.length.IN,
-        Height=package.height.IN,
-        Girth=(package.girth.value if package.packaging_type == "tube" else None),
-        Machinable=options.usps_option_machinable_item.state,
-        ProcessingCategory=None,
-        PriceOptions=None,
-        InsuredAmount=provider_units.ShippingOption.insurance_from(options),
-        AddressServiceRequested=None,
-        ExpressMailOptions=None,
-        ShipDate=lib.fdatetime(
-            (options.shipment_date.state or time.strftime("%Y-%m-%d")),
-            current_format="%Y-%m-%d",
-            output_format="%m/%d/%Y",
-        ),
-        CustomerRefNo=None,
-        # ExtraServices=(
-        #     usps.ExtraServicesType(
-        #         ExtraService=[option.code for _, option in options.items()]
-        #     )
-        #     if any(options.items())
-        #     else None
-        # ),
-        CRID=settings.customer_registration_id,
-        MID=settings.mailer_id,
-        LogisticsManagerMID=settings.logistics_manager_mailer_id,
-        VendorCode=None,
-        VendorProductVersionNumber=None,
-        SenderName=shipper.contact,
-        SenderEMail=shipper.email,
-        RecipientName=recipient.contact,
-        RecipientEMail=recipient.email,
-        ReceiptOption="SEPARATE PAGE",
-        ImageType="PDF",
-        HoldForManifest=None,
-        NineDigitRoutingZip=None,
-        ShipInfo=options.usps_option_ship_info.state,
-        CarrierRelease=None,
-        DropOffTime=None,
-        ReturnCommitments=None,
-        PrintCustomerRefNo=None,
-        Content=None,
-        ShippingContents=(
-            usps.ShippingContentsType(
-                ItemDetail=[
-                    usps.ItemDetailType(
-                        Description=lib.text(item.description or item.title or "N/A"),
-                        Quantity=item.quantity,
-                        Value=item.value_amount,
-                        NetPounds=0,
-                        NetOunces=units.Weight(
-                            item.weight, units.WeightUnit[item.weight_unit or "LB"]
-                        ).OZ,
-                        HSTariffNumber=item.hs_code or item.sku,
-                        CountryOfOrigin=lib.to_country_name(item.origin_country),
+    # map data to convert karrio model to usps specific type
+    request = [
+        usps.LabelRequestType(
+            imageInfo=usps.ImageInfoType(
+                imageType=label_type,
+                labelType="4X6LABEL",
+                # shipInfo=None,
+                receiptOption="SEPARATE_PAGE",
+                suppressPostage=None,
+                suppressMailDate=None,
+                returnLabel=None,
+            ),
+            toAddress=usps.AddressType(
+                streetAddress=recipient.address_line1,
+                secondaryAddress=recipient.address_line2,
+                city=recipient.city,
+                state=recipient.state,
+                ZIPCode=lib.to_zip5(recipient.postal_code) or "",
+                ZIPPlus4=lib.to_zip4(recipient.postal_code) or "",
+                urbanization=None,
+                firstName=recipient.person_name,
+                lastName=None,
+                firm=recipient.company_name,
+                phone=recipient.phone_number,
+                email=recipient.email,
+                ignoreBadAddress=True,
+                platformUserId=None,
+                parcelLockerDelivery=None,
+                holdForPickup=package.options.usps_hold_for_pickup.state,
+                facilityId=package.options.usps_facility_id.state,
+            ),
+            fromAddress=usps.AddressType(
+                streetAddress=shipper.address_line1,
+                secondaryAddress=shipper.address_line2,
+                city=shipper.city,
+                state=shipper.state,
+                ZIPCode=lib.to_zip4(shipper.postal_code) or "",
+                ZIPPlus4=lib.to_zip5(shipper.postal_code) or "",
+                urbanization=None,
+                firstName=shipper.person_name,
+                lastName=None,
+                firm=shipper.company_name,
+                phone=shipper.phone_number,
+                email=shipper.email,
+                ignoreBadAddress=True,
+                platformUserId=None,
+                parcelLockerDelivery=None,
+                holdForPickup=None,
+                facilityId=None,
+            ),
+            senderAddress=usps.AddressType(
+                streetAddress=shipper.address_line1,
+                secondaryAddress=shipper.address_line2r,
+                city=shipper.city,
+                state=shipper.state,
+                ZIPCode=lib.to_zip4(shipper.postal_code) or "",
+                ZIPPlus4=lib.to_zip5(shipper.postal_code) or "",
+                urbanization=None,
+                firstName=shipper.person_name,
+                lastName=None,
+                firm=shipper.company_name,
+                phone=shipper.phone_number,
+                email=shipper.email,
+                ignoreBadAddress=True,
+                platformUserId=None,
+                parcelLockerDelivery=None,
+                holdForPickup=None,
+                facilityId=None,
+            ),
+            returnAddress=lib.identity(
+                usps.AddressType(
+                    streetAddress=return_address.address_line1,
+                    secondaryAddress=return_address.address_line2r,
+                    city=return_address.city,
+                    state=return_address.state,
+                    ZIPCode=lib.to_zip4(return_address.postal_code) or "",
+                    ZIPPlus4=lib.to_zip5(return_address.postal_code) or "",
+                    urbanization=None,
+                    firstName=return_address.person_name,
+                    lastName=None,
+                    firm=return_address.company_name,
+                    phone=return_address.phone_number,
+                    email=return_address.email,
+                    ignoreBadAddress=True,
+                    platformUserId=None,
+                    parcelLockerDelivery=None,
+                    holdForPickup=None,
+                    facilityId=None,
+                )
+                if payload.return_address is not None
+                else None
+            ),
+            packageDescription=usps.PackageDescriptionType(
+                weightUOM="lb",
+                weight=package.weight.LB,
+                dimensionsUOM="in",
+                length=package.length.IN,
+                height=package.height.IN,
+                width=package.width.IN,
+                girth=package.girth.value,
+                mailClass=service,
+                rateIndicator=package.options.usps_rate_indicator.state or "SP",
+                processingCategory=lib.identity(
+                    package.options.usps_processing_category.state or "NON_MACHINABLE"
+                ),
+                destinationEntryFacilityType=lib.identity(
+                    package.options.usps_destination_facility_type.state or "NONE"
+                ),
+                destinationEntryFacilityAddress=lib.identity(
+                    usps.DestinationEntryFacilityAddressType(
+                        streetAddress=pickup_location.address_line1,
+                        secondaryAddress=pickup_location.address_line2r,
+                        city=pickup_location.city,
+                        state=pickup_location.state,
+                        ZIPCode=lib.to_zip4(pickup_location.postal_code) or "",
+                        ZIPPlus4=lib.to_zip5(pickup_location.postal_code) or "",
+                        urbanization=None,
                     )
-                    for item in customs.commodities
-                ]
-            )
-            if payload.customs is not None
-            else None
-        ),
-        CustomsContentType=(
-            provider_units.ContentType[customs.content_type or "other"].value
-            if payload.customs is not None
-            else None
-        ),
-        ContentComments=None,
-        RestrictionType=None,
-        RestrictionComments=None,
-        AESITN=customs.options.aes.state,
-        ImportersReference=None,
-        ImportersContact=None,
-        ExportersReference=None,
-        ExportersContact=None,
-        InvoiceNumber=customs.invoice,
-        LicenseNumber=customs.options.license_number.state,
-        CertificateNumber=customs.options.certificate_number.state,
-        NonDeliveryOption=provider_units.ShippingOption.non_delivery_from(options),
-        AltReturnAddress1=redirect_address.address_line1,
-        AltReturnAddress2=redirect_address.address_line2,
-        AltReturnAddress3=None,
-        AltReturnAddress4=None,
-        AltReturnAddress5=None,
-        AltReturnAddress6=None,
-        AltReturnCountry=None,
-        LabelImportType=None,
-        ChargebackCode=None,
-        TrackingRetentionPeriod=None,
-    )
+                    if package.options.hold_for_pickup_address.state is not None
+                    else None
+                ),
+                packageOptions=lib.identity(
+                    usps.PackageOptionsType(
+                        packageValue=package.total_value,
+                        nonDeliveryOption=None,
+                        redirectAddress=None,
+                        contentType=None,
+                        generateGXEvent=None,
+                        containers=[],
+                        ancillaryServiceEndorsements=None,
+                        originalPackage=None,
+                    )
+                    if (package.total_value or 0.0) > 0.0
+                    else None
+                ),
+                customerReference=[
+                    usps.CustomerReferenceType(
+                        referenceNumber=reference,
+                        printReferenceNumber=True,
+                    )
+                    for reference in [payload.reference]
+                    if reference is not None
+                ],
+                extraServices=[
+                    lib.to_int(_.code)
+                    for __, _ in package.options.items()
+                    if _.name not in provider_units.CUSTOM_OPTIONS
+                ],
+                mailingDate=lib.fdate(
+                    package.options.shipment_date.state or time.strftime("%Y-%m-%d")
+                ),
+                carrierRelease=package.options.usps_carrier_release.state,
+                physicalSignatureRequired=package.options.usps_physical_signature_required.state,
+                inductionZIPCode=lib.identity(
+                    return_address.postal_code or shipper.postal_code
+                ),
+            ),
+            customsForm=None,
+        )
+        for package in packages
+    ]
 
-    return lib.Serializable(request, lib.to_xml)
+    return lib.Serializable(request, lib.to_dict, dict(label_type=label_type))

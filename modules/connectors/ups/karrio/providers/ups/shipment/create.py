@@ -96,6 +96,7 @@ def shipment_request(
 ) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
+    return_address = lib.to_address(payload.return_address or payload.shipper)
     packages = lib.to_packages(
         payload.parcels,
         provider_units.PackagePresets,
@@ -106,7 +107,10 @@ def shipment_request(
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
-    weight_unit, _ = packages.compatible_units
+    weight_unit, dim_unit = lib.identity(
+        provider_units.COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
+        or packages.compatible_units
+    )
     customs = lib.to_customs_info(
         payload.customs,
         shipper=payload.shipper,
@@ -138,11 +142,11 @@ def shipment_request(
         *(["02"] if options.delivery_options.state else []),
     ]
     currency = options.currency.state or settings.default_currency
-    mps_packaging = (
+    mps_packaging = lib.identity(
         provider_units.PackagingType.your_packaging.value if len(packages) > 1 else None
     )
     enforce_zpl = settings.connection_config.enforce_zpl.state
-    label_format, label_height, label_width = (
+    label_format, label_height, label_width = lib.identity(
         provider_units.LabelType.map(
             payload.label_type or settings.connection_config.label_type.state
         ).value
@@ -209,22 +213,22 @@ def shipment_request(
                 ),
                 AlternateDeliveryAddress=None,
                 ShipFrom=ups.ShipFromType(
-                    Name=(shipper.company_name or shipper.person_name),
-                    AttentionName=shipper.contact,
-                    CompanyDisplayableName=shipper.company_name,
-                    TaxIdentificationNumber=shipper.tax_id,
+                    Name=(return_address.company_name or return_address.person_name),
+                    AttentionName=return_address.contact,
+                    CompanyDisplayableName=return_address.company_name,
+                    TaxIdentificationNumber=return_address.tax_id,
                     Phone=ups.ShipFromPhoneType(
-                        Number=shipper.phone_number or "000-000-0000",
+                        Number=return_address.phone_number or "000-000-0000",
                     ),
                     FaxNumber=None,
                     Address=ups.AlternateDeliveryAddressAddressType(
-                        AddressLine=shipper.address_line,
-                        City=shipper.city,
-                        StateProvinceCode=shipper.state_code,
-                        PostalCode=shipper.postal_code,
-                        CountryCode=shipper.country_code,
+                        AddressLine=return_address.address_line,
+                        City=return_address.city,
+                        StateProvinceCode=return_address.state_code,
+                        PostalCode=return_address.postal_code,
+                        CountryCode=return_address.country_code,
                         ResidentialAddressIndicator=(
-                            "Y" if shipper.is_residential else None
+                            "Y" if return_address.is_residential else None
                         ),
                     ),
                     VendorInfo=None,
@@ -287,8 +291,6 @@ def shipment_request(
                 MovementReferenceNumber=None,
                 ReferenceNumber=(
                     ups.ReferenceNumberType(
-                        BarCodeIndicator=None,
-                        Code=shipper.country_code,
                         Value=payload.reference,
                     )
                     if (country_pair not in ["US/US", "PR/PR"])
@@ -333,15 +335,17 @@ def shipment_request(
                 MIDualReturnShipmentKey=None,
                 RatingMethodRequestedIndicator="Y",
                 TaxInformationIndicator="Y",
-                ShipmentServiceOptions=(
+                ShipmentServiceOptions=lib.identity(
                     ups.ShipmentServiceOptionsType(
-                        SaturdayPickupIndicator=(
-                            "Y" if options.ups_saturday_pickup.state else None
+                        SaturdayPickupIndicator=lib.identity(
+                            "Y" if options.ups_saturday_pickup_indicator.state else None
                         ),
-                        SaturdayDeliveryIndicator=(
-                            "Y" if options.ups_saturday_delivery.state else None
+                        SaturdayDeliveryIndicator=lib.identity(
+                            "Y"
+                            if options.ups_saturday_delivery_indicator.state
+                            else None
                         ),
-                        COD=(
+                        COD=lib.identity(
                             ups.CodType(
                                 CODFundsCode="0",  # TODO: find reference
                                 CODAmount=ups.InvoiceLineTotalType(
@@ -352,7 +356,7 @@ def shipment_request(
                             if options.cash_on_delivery.state
                             else None
                         ),
-                        AccessPointCOD=(
+                        AccessPointCOD=lib.identity(
                             ups.InvoiceLineTotalType(
                                 CurrencyCode=options.currency.state,
                                 MonetaryValue=lib.to_money(
@@ -364,7 +368,7 @@ def shipment_request(
                         ),
                         DeliverToAddresseeOnlyIndicator=None,
                         DirectDeliveryOnlyIndicator=None,
-                        Notification=(
+                        Notification=lib.identity(
                             [
                                 ups.NotificationElementType(
                                     NotificationCode=event,
@@ -396,7 +400,7 @@ def shipment_request(
                             else []
                         ),
                         LabelDelivery=None,
-                        InternationalForms=(
+                        InternationalForms=lib.identity(
                             ups.InternationalFormsType(
                                 FormType=(
                                     "07" if options.paperless_trade.state else "01"
@@ -482,8 +486,8 @@ def shipment_request(
                                             ),
                                             Weight=str(
                                                 units.Weight(
-                                                    item.weight, weight_unit.name
-                                                )[weight_unit.name]
+                                                    item.weight, item.weight_unit
+                                                )[weight_unit]
                                             ),
                                         ),
                                         VehicleID=None,
@@ -563,6 +567,9 @@ def shipment_request(
                         InsideDelivery=None,
                         ItemDisposal=None,
                     )
+                    if any(options.items())
+                    or options.email_notification.state is not False
+                    else None
                 ),
                 ShipmentValueThresholdCode=None,
                 MasterCartonID=None,
@@ -571,6 +578,7 @@ def shipment_request(
                 ShipmentDate=None,
                 Package=[
                     ups.PackageType(
+                        Description=package.description,
                         Packaging=ups.LabelImageFormatType(
                             Code=(
                                 mps_packaging
@@ -581,15 +589,15 @@ def shipment_request(
                             ),
                             Description="Packaging Type",
                         ),
-                        Dimensions=(
+                        Dimensions=lib.identity(
                             ups.DimensionsType(
                                 UnitOfMeasurement=ups.LabelImageFormatType(
-                                    Code=package.dimension_unit.value,
+                                    Code=dim_unit.value,
                                     Description="Dimension",
                                 ),
-                                Length=str(package.length.value),
-                                Width=str(package.width.value),
-                                Height=str(package.height.value),
+                                Length=str(package.length[dim_unit.name]),
+                                Width=str(package.width[dim_unit.name]),
+                                Height=str(package.height[dim_unit.name]),
                             )
                             if any([package.length, package.width, package.height])
                             else None
@@ -597,16 +605,24 @@ def shipment_request(
                         DimWeight=None,
                         PackageWeight=ups.WeightType(
                             UnitOfMeasurement=ups.LabelImageFormatType(
-                                Code=provider_units.WeightUnit[
-                                    str(package.weight.unit)
-                                ].value,
+                                Code=provider_units.WeightUnit.map(
+                                    weight_unit.name
+                                ).value,
                                 Description="Weight",
                             ),
-                            Weight=str(package.weight.value),
+                            Weight=str(package.weight[weight_unit.name]),
                         ),
                         Commodity=None,
                         PackageServiceOptions=None,
                         UPSPremier=None,
+                        ReferenceNumber=(
+                            ups.ReferenceNumberType(
+                                Value=package.parcel.reference_number,
+                            )
+                            if (country_pair not in ["US/US", "PR/PR"])
+                            and any(package.parcel.reference_number or "")
+                            else None
+                        ),
                     )
                     for package in packages
                 ],
