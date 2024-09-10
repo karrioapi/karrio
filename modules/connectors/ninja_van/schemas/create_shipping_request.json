@@ -1,0 +1,68 @@
+{
+  "service_type": "Parcel",
+  "service_level": "Standard",
+  "requested_tracking_number": "1234-56789",
+  "reference": {
+    "merchant_order_number": "SHIP-1234-56789"
+  },
+  "from": {
+    "name": "John Doe",
+    "phone_number": "+60138201527",
+    "email": "john.doe@gmail.com",
+    "address": {
+      "address1": "17 Lorong Jambu 3",
+      "address2": "",
+      "area": "Taman Sri Delima",
+      "city": "Simpang Ampat",
+      "state": "Pulau Pinang",
+      "address_type": "office",
+      "country": "MY",
+      "postcode": "51200"
+    }
+  },
+  "to": {
+    "name": "Jane Doe",
+    "phone_number": "+60103067174",
+    "email": "jane.doe@gmail.com",
+    "address": {
+      "address1": "Jalan PJU 8/8",
+      "address2": "",
+      "area": "Damansara Perdana",
+      "city": "Petaling Jaya",
+      "state": "Selangor",
+      "address_type": "home",
+      "country": "MY",
+      "postcode": "47820"
+    }
+  },
+  "parcel_job": {
+    "is_pickup_required": true,
+    "pickup_address_id": "98989012",
+    "pickup_service_type": "Scheduled",
+    "pickup_service_level": "Standard",
+    "pickup_date": "2021-12-15",
+    "pickup_timeslot": {
+      "start_time": "09:00",
+      "end_time": "12:00",
+      "timezone": "Asia/Kuala_Lumpur"
+    },
+    "pickup_instructions": "Pickup with care!",
+    "delivery_instructions": "If recipient is not around, leave parcel in power riser.",
+    "delivery_start_date": "2021-12-16",
+    "delivery_timeslot": {
+      "start_time": "09:00",
+      "end_time": "12:00",
+      "timezone": "Asia/Kuala_Lumpur"
+    },
+    "dimensions": {
+      "weight": 1.5
+    },
+    "items": [
+      {
+        "item_description": "Sample description",
+        "quantity": 1,
+        "is_dangerous_good": false
+      }
+    ]
+  }
+}

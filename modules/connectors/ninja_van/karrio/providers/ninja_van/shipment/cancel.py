@@ -23,7 +23,6 @@ def parse_shipment_cancel_response(
             success=success,
         ) if success else None
     )
-
     return confirmation, messages
 
 
@@ -33,6 +32,6 @@ def shipment_cancel_request(
 ) -> lib.Serializable:
 
     # map data to convert karrio model to ninja_van specific type
-    request = None
+    request = payload
 
     return lib.Serializable(request, lib.to_dict)

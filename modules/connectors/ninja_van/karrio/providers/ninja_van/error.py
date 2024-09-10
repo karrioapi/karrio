@@ -6,19 +6,30 @@ import karrio.providers.ninja_van.utils as provider_utils
 
 
 def parse_error_response(
-    response: dict,
+    response: typing.Union[typing.List[dict], dict],
     settings: provider_utils.Settings,
-    **kwargs,
+    **details,
 ) -> typing.List[models.Message]:
-    errors: list = []  # compute the carrier error object list
+    responses = response if isinstance(response, list) else [response]
+    errors: typing.List[dict] = sum(
+        [
+            result["error"]["details"]
+            if "error" in result and "details" in result["error"]
+            else []
+            for result in responses
+        ],
+        [],
+    )
 
-    return [
+    messages: typing.List[models.Message] = [
         models.Message(
-            carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
-            code="",
-            message="",
-            details={**kwargs},
+            carrier_id=settings.carrier_id,
+            code=error.get("reason"),
+            message=error.get("message"),
+            details=details,
         )
         for error in errors
     ]
+
+    return messages

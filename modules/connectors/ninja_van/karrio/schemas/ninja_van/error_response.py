@@ -1,16 +1,22 @@
 from attr import s
 from typing import Optional, List
-from jstruct import JList
+from jstruct import JList, JStruct
 
 
 @s(auto_attribs=True)
-class ErrorType:
-    code: Optional[str] = None
+class DetailType:
+    reason: Optional[str] = None
     message: Optional[str] = None
 
 
 @s(auto_attribs=True)
+class ErrorType:
+    requestid: Optional[str] = None
+    title: Optional[str] = None
+    message: Optional[str] = None
+    details: List[DetailType] = JList[DetailType]
+
+
+@s(auto_attribs=True)
 class ErrorResponseType:
-    transactionId: Optional[str] = None
-    customerTransactionId: Optional[str] = None
-    errors: List[ErrorType] = JList[ErrorType]
+    error: Optional[ErrorType] = JStruct[ErrorType]

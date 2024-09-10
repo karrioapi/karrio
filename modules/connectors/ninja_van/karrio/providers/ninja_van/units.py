@@ -50,10 +50,10 @@ def shipping_options_initializer(
 
 
 class TrackingStatus(lib.Enum):
-    on_hold = ["on_hold"]
-    delivered = ["delivered"]
-    in_transit = ["in_transit"]
-    delivery_failed = ["delivery_failed"]
+    on_hold = ["Pending Pickup","Delivery Attempted"]
+    delivered = ["Delivered", "Delivered, Received by Customer", ]
+    in_transit = ["Pickup", "Drop Off", "Dropped Off", "In Transit", "Arrived at Origin Hub"]
+    delivery_failed = ["Unable to Deliver"]
     delivery_delayed = ["delivery_delayed"]
-    out_for_delivery = ["out_for_delivery"]
+    out_for_delivery = ["Out for Delivery"]
     ready_for_pickup = ["ready_for_pickup"]

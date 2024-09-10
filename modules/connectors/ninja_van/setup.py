@@ -1,4 +1,3 @@
-
 """Warning: This setup.py is only there for git install until poetry support git subdirectory"""
 from setuptools import setup, find_namespace_packages
 
@@ -7,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.ninja_van",
-    version="2024.5",
+    version="2024.6",
     description="Karrio - Ninja Van Shipping Extension",
     long_description=long_description,
     long_description_content_type="text/markdown",

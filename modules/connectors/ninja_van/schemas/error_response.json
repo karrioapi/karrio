@@ -1,10 +1,13 @@
 {
-  "transactionId": "624deea6-b709-470c-8c39-4b5511281492",
-  "customerTransactionId": "AnyCo_order123456789",
-  "errors": [
-    {
-      "code": "TRACKING.TRACKINGNUMBER.EMPTY",
-      "message": "Please provide tracking number."
-    }
-  ]
+  "error": {
+    "request_id": "1ba6da4f-0709-416e-9e30-a5546130b4d2",
+    "title": "Invalid Data",
+    "message": "Please check your request payload for validation errors.",
+    "details": [
+      {
+        "reason": "Validation Error",
+        "message": "Service Level is not supported for this shipper account"
+      }
+    ]
+  }
 }

@@ -1,0 +1,12 @@
+{
+  "weight": 0,
+  "service_level": "Standard",
+  "from": {
+    "l1_tier_code": "string",
+    "l2_tier_code": "string"
+  },
+  "to": {
+    "l1_tier_code": "string",
+    "l2_tier_code": "string"
+  }
+}
