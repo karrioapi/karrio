@@ -1,5 +1,4 @@
 
-
 from karrio.core.metadata import Metadata
 
 from karrio.mappers.ninja_van.mapper import Mapper
