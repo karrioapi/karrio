@@ -39,6 +39,7 @@
 -e ./modules/connectors/usps_international
 -e ./modules/connectors/usps_wt
 -e ./modules/connectors/usps_wt_international
+-e ./modules/connectors/ninja_van
 
 # Carrier Hub Extentions packages
 -e ./modules/connectors/easypost
