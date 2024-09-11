@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
-from karrio.core.utils import DP
-from karrio.core.models import RateRequest
+import karrio.lib as lib
+import karrio.core.models as models
 from .fixture import gateway
 import karrio
 
@@ -9,7 +9,7 @@ import karrio
 class TestUPSRating(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.RateRequest = RateRequest(**rate_req_data)
+        self.RateRequest = models.RateRequest(**rate_req_data)
 
     def test_create_rate_request(self):
         request = gateway.mapper.create_rate_request(self.RateRequest)
@@ -17,7 +17,7 @@ class TestUPSRating(unittest.TestCase):
 
     def test_create_rate_with_package_preset_request(self):
         request = gateway.mapper.create_rate_request(
-            RateRequest(**rate_req_with_package_preset_data)
+            models.RateRequest(**rate_req_with_package_preset_data)
         )
         self.assertEqual(request.serialize(), RateRequestWithPackagePresetData)
 
@@ -37,7 +37,19 @@ class TestUPSRating(unittest.TestCase):
             parsed_response = (
                 karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
             )
-            self.assertListEqual(DP.to_dict(parsed_response), ParsedRateResponse)
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
+
+    def test_parse_fr_rate_response(self):
+        with patch("karrio.mappers.ups.proxy.lib.request") as mock:
+            mock.return_value = FRRateResponseJSON
+            RateRequest = models.RateRequest(
+                **{
+                    **rate_req_data,
+                    **{"shipper": {**rate_req_data["shipper"], "country_code": "FR"}},
+                }
+            )
+            parsed_response = karrio.Rating.fetch(RateRequest).from_(gateway).parse()
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedFRRateResponse)
 
 
 if __name__ == "__main__":
@@ -119,9 +131,8 @@ ParsedRateResponse = [
             "carrier_name": "ups",
             "currency": "CAD",
             "extra_charges": [
-                {"amount": 137.87, "currency": "CAD", "name": "Base charge"},
-                {"amount": 0.0, "currency": "CAD", "name": "14"},
-                {"amount": 21.52, "currency": "CAD", "name": "375"},
+                {"amount": 116.35, "currency": "CAD", "name": "BASE CHARGE"},
+                {"amount": 21.52, "currency": "CAD", "name": "FUEL SURCHARGE"},
                 {"amount": 20.68, "currency": "CAD", "name": "HST"},
             ],
             "meta": {"service_name": "ups_express_early_ca"},
@@ -134,9 +145,8 @@ ParsedRateResponse = [
             "carrier_name": "ups",
             "currency": "CAD",
             "extra_charges": [
-                {"amount": 85.26, "currency": "CAD", "name": "Base charge"},
-                {"amount": 0.0, "currency": "CAD", "name": "01"},
-                {"amount": 13.31, "currency": "CAD", "name": "375"},
+                {"amount": 71.95, "currency": "CAD", "name": "BASE CHARGE"},
+                {"amount": 13.31, "currency": "CAD", "name": "FUEL SURCHARGE"},
                 {"amount": 12.79, "currency": "CAD", "name": "HST"},
             ],
             "meta": {"service_name": "ups_express_ca"},
@@ -149,9 +159,8 @@ ParsedRateResponse = [
             "carrier_name": "ups",
             "currency": "CAD",
             "extra_charges": [
-                {"amount": 84.02, "currency": "CAD", "name": "Base charge"},
-                {"amount": 0.0, "currency": "CAD", "name": "13"},
-                {"amount": 13.12, "currency": "CAD", "name": "375"},
+                {"amount": 70.90, "currency": "CAD", "name": "BASE CHARGE"},
+                {"amount": 13.12, "currency": "CAD", "name": "FUEL SURCHARGE"},
                 {"amount": 12.6, "currency": "CAD", "name": "HST"},
             ],
             "meta": {"service_name": "ups_express_saver_ca"},
@@ -164,9 +173,8 @@ ParsedRateResponse = [
             "carrier_name": "ups",
             "currency": "CAD",
             "extra_charges": [
-                {"amount": 79.51, "currency": "CAD", "name": "Base charge"},
-                {"amount": 0.0, "currency": "CAD", "name": "02"},
-                {"amount": 12.41, "currency": "CAD", "name": "375"},
+                {"amount": 67.10, "currency": "CAD", "name": "BASE CHARGE"},
+                {"amount": 12.41, "currency": "CAD", "name": "FUEL SURCHARGE"},
                 {"amount": 11.93, "currency": "CAD", "name": "HST"},
             ],
             "meta": {"service_name": "ups_expedited_ca"},
@@ -178,6 +186,53 @@ ParsedRateResponse = [
     [],
 ]
 
+ParsedFRRateResponse = [
+    [
+        {
+            "carrier_id": "ups",
+            "carrier_name": "ups",
+            "currency": "EUR",
+            "extra_charges": [
+                {"amount": 12.37, "currency": "EUR", "name": "BASE CHARGE"},
+                {"amount": 2.74, "currency": "EUR", "name": "FUEL SURCHARGE"},
+                {"amount": 3.02, "currency": "EUR", "name": "TVA"},
+            ],
+            "meta": {"service_name": "ups_express"},
+            "service": "ups_express",
+            "total_charge": 18.13,
+            "transit_days": 1,
+        },
+        {
+            "carrier_id": "ups",
+            "carrier_name": "ups",
+            "currency": "EUR",
+            "extra_charges": [
+                {"amount": 10.21, "currency": "EUR", "name": "BASE CHARGE"},
+                {"amount": 2.26, "currency": "EUR", "name": "FUEL SURCHARGE"},
+                {"amount": 2.49, "currency": "EUR", "name": "TVA"},
+            ],
+            "meta": {"service_name": "ups_worldwide_saver"},
+            "service": "ups_worldwide_saver",
+            "total_charge": 14.96,
+            "transit_days": 1,
+        },
+        {
+            "carrier_id": "ups",
+            "carrier_name": "ups",
+            "currency": "EUR",
+            "extra_charges": [
+                {"amount": 8.22, "currency": "EUR", "name": "BASE CHARGE"},
+                {"amount": 1.16, "currency": "EUR", "name": "FUEL SURCHARGE"},
+                {"amount": 1.87, "currency": "EUR", "name": "TVA"},
+            ],
+            "meta": {"service_name": "ups_standard"},
+            "service": "ups_standard",
+            "total_charge": 11.25,
+            "transit_days": 1,
+        },
+    ],
+    [],
+]
 
 RateRequestData = {
     "RateRequest": {
@@ -708,6 +763,291 @@ RateResponseJSON = """{
               "DayOfWeek": "THU",
               "CustomerCenterCutoff": "140000",
               "TotalTransitDays": "3"
+            },
+            "SaturdayDelivery": "0"
+          }
+        }
+      }
+    ]
+  }
+}
+"""
+
+FRRateResponseJSON = """{
+  "RateResponse": {
+    "Response": {
+      "ResponseStatus": { "Code": "1", "Description": "Success" },
+      "Alert": {
+        "Code": "110971",
+        "Description": "Your invoice may vary from the displayed reference rates"
+      },
+      "TransactionReference": {
+        "CustomerContext": "x-trans-src",
+        "TransactionIdentifier": "wssoa2t278w6TLJX3HT1t0"
+      }
+    },
+    "RatedShipment": [
+      {
+        "Disclaimer": {
+          "Code": "01",
+          "Description": "Taxes are included in the shipping cost and apply to the transportation charges but additional duties/taxes may apply and are not reflected in the total amount due."
+        },
+        "Service": { "Code": "07", "Description": "" },
+        "RatedShipmentAlert": {
+          "Code": "110971",
+          "Description": "Your invoice may vary from the displayed reference rates"
+        },
+        "RatingMethod": "01",
+        "BillableWeightCalculationMethod": "02",
+        "BillingWeight": {
+          "UnitOfMeasurement": { "Code": "KGS", "Description": "Kilograms" },
+          "Weight": "3.0"
+        },
+        "TransportationCharges": {
+          "CurrencyCode": "EUR",
+          "MonetaryValue": "68.05"
+        },
+        "BaseServiceCharge": {
+          "CurrencyCode": "EUR",
+          "MonetaryValue": "52.55"
+        },
+        "ItemizedCharges": {
+          "Code": "375",
+          "CurrencyCode": "EUR",
+          "MonetaryValue": "15.50"
+        },
+        "ServiceOptionsCharges": {
+          "CurrencyCode": "EUR",
+          "MonetaryValue": "0.00"
+        },
+        "TotalCharges": { "CurrencyCode": "EUR", "MonetaryValue": "68.05" },
+        "NegotiatedRateCharges": {
+          "BaseServiceCharge": {
+            "CurrencyCode": "EUR",
+            "MonetaryValue": "12.37"
+          },
+          "ItemizedCharges": {
+            "Code": "375",
+            "CurrencyCode": "EUR",
+            "MonetaryValue": "2.74"
+          },
+          "TaxCharges": { "Type": "TVA", "MonetaryValue": "3.02" },
+          "TotalCharge": { "CurrencyCode": "EUR", "MonetaryValue": "15.11" },
+          "TotalChargesWithTaxes": {
+            "CurrencyCode": "EUR",
+            "MonetaryValue": "18.13"
+          }
+        },
+        "RatedPackage": {
+          "NegotiatedCharges": {
+            "BaseServiceCharge": {
+              "CurrencyCode": "EUR",
+              "MonetaryValue": "0.00"
+            },
+            "TransportationCharges": {
+              "CurrencyCode": "EUR",
+              "MonetaryValue": "0.00"
+            },
+            "ServiceOptionsCharges": {
+              "CurrencyCode": "EUR",
+              "MonetaryValue": "0.00"
+            },
+            "TotalCharge": { "CurrencyCode": "EUR", "MonetaryValue": "0.00" }
+          },
+          "Weight": "3.0"
+        },
+        "TimeInTransit": {
+          "PickupDate": "20240827",
+          "PackageBillType": "03",
+          "AutoDutyCode": "02",
+          "Disclaimer": "Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance.",
+          "ServiceSummary": {
+            "Service": { "Description": "UPS Express" },
+            "EstimatedArrival": {
+              "Arrival": { "Date": "20240828", "Time": "120000" },
+              "BusinessDaysInTransit": "1",
+              "Pickup": { "Date": "20240827", "Time": "180000" },
+              "DayOfWeek": "WED",
+              "CustomerCenterCutoff": "160000",
+              "TotalTransitDays": "1"
+            },
+            "GuaranteedIndicator": "",
+            "SaturdayDelivery": "0"
+          }
+        }
+      },
+      {
+        "Disclaimer": {
+          "Code": "01",
+          "Description": "Taxes are included in the shipping cost and apply to the transportation charges but additional duties/taxes may apply and are not reflected in the total amount due."
+        },
+        "Service": { "Code": "65", "Description": "" },
+        "RatedShipmentAlert": {
+          "Code": "110971",
+          "Description": "Your invoice may vary from the displayed reference rates"
+        },
+        "RatingMethod": "01",
+        "BillableWeightCalculationMethod": "02",
+        "BillingWeight": {
+          "UnitOfMeasurement": { "Code": "KGS", "Description": "Kilograms" },
+          "Weight": "3.0"
+        },
+        "TransportationCharges": {
+          "CurrencyCode": "EUR",
+          "MonetaryValue": "58.21"
+        },
+        "BaseServiceCharge": {
+          "CurrencyCode": "EUR",
+          "MonetaryValue": "44.95"
+        },
+        "ItemizedCharges": {
+          "Code": "375",
+          "CurrencyCode": "EUR",
+          "MonetaryValue": "13.26"
+        },
+        "ServiceOptionsCharges": {
+          "CurrencyCode": "EUR",
+          "MonetaryValue": "0.00"
+        },
+        "TotalCharges": { "CurrencyCode": "EUR", "MonetaryValue": "58.21" },
+        "NegotiatedRateCharges": {
+          "BaseServiceCharge": {
+            "CurrencyCode": "EUR",
+            "MonetaryValue": "10.21"
+          },
+          "ItemizedCharges": {
+            "Code": "375",
+            "CurrencyCode": "EUR",
+            "MonetaryValue": "2.26"
+          },
+          "TaxCharges": { "Type": "TVA", "MonetaryValue": "2.49" },
+          "TotalCharge": { "CurrencyCode": "EUR", "MonetaryValue": "12.47" },
+          "TotalChargesWithTaxes": {
+            "CurrencyCode": "EUR",
+            "MonetaryValue": "14.96"
+          }
+        },
+        "RatedPackage": {
+          "NegotiatedCharges": {
+            "BaseServiceCharge": {
+              "CurrencyCode": "EUR",
+              "MonetaryValue": "0.00"
+            },
+            "TransportationCharges": {
+              "CurrencyCode": "EUR",
+              "MonetaryValue": "0.00"
+            },
+            "ServiceOptionsCharges": {
+              "CurrencyCode": "EUR",
+              "MonetaryValue": "0.00"
+            },
+            "TotalCharge": { "CurrencyCode": "EUR", "MonetaryValue": "0.00" }
+          },
+          "Weight": "3.0"
+        },
+        "TimeInTransit": {
+          "PickupDate": "20240827",
+          "PackageBillType": "03",
+          "AutoDutyCode": "02",
+          "Disclaimer": "Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance.",
+          "ServiceSummary": {
+            "Service": { "Description": "UPS Express Saver" },
+            "EstimatedArrival": {
+              "Arrival": { "Date": "20240828", "Time": "233000" },
+              "BusinessDaysInTransit": "1",
+              "Pickup": { "Date": "20240827", "Time": "180000" },
+              "DayOfWeek": "WED",
+              "CustomerCenterCutoff": "160000",
+              "TotalTransitDays": "1"
+            },
+            "GuaranteedIndicator": "",
+            "SaturdayDelivery": "0"
+          }
+        }
+      },
+      {
+        "Disclaimer": {
+          "Code": "01",
+          "Description": "Taxes are included in the shipping cost and apply to the transportation charges but additional duties/taxes may apply and are not reflected in the total amount due."
+        },
+        "Service": { "Code": "11", "Description": "" },
+        "RatedShipmentAlert": {
+          "Code": "110971",
+          "Description": "Your invoice may vary from the displayed reference rates"
+        },
+        "RatingMethod": "01",
+        "BillableWeightCalculationMethod": "02",
+        "BillingWeight": {
+          "UnitOfMeasurement": { "Code": "KGS", "Description": "Kilograms" },
+          "Weight": "3.0"
+        },
+        "TransportationCharges": {
+          "CurrencyCode": "EUR",
+          "MonetaryValue": "36.40"
+        },
+        "BaseServiceCharge": {
+          "CurrencyCode": "EUR",
+          "MonetaryValue": "30.65"
+        },
+        "ItemizedCharges": {
+          "Code": "375",
+          "CurrencyCode": "EUR",
+          "MonetaryValue": "5.75"
+        },
+        "ServiceOptionsCharges": {
+          "CurrencyCode": "EUR",
+          "MonetaryValue": "0.00"
+        },
+        "TotalCharges": { "CurrencyCode": "EUR", "MonetaryValue": "36.40" },
+        "NegotiatedRateCharges": {
+          "BaseServiceCharge": {
+            "CurrencyCode": "EUR",
+            "MonetaryValue": "8.22"
+          },
+          "ItemizedCharges": {
+            "Code": "375",
+            "CurrencyCode": "EUR",
+            "MonetaryValue": "1.16"
+          },
+          "TaxCharges": { "Type": "TVA", "MonetaryValue": "1.87" },
+          "TotalCharge": { "CurrencyCode": "EUR", "MonetaryValue": "9.38" },
+          "TotalChargesWithTaxes": {
+            "CurrencyCode": "EUR",
+            "MonetaryValue": "11.25"
+          }
+        },
+        "RatedPackage": {
+          "NegotiatedCharges": {
+            "BaseServiceCharge": {
+              "CurrencyCode": "EUR",
+              "MonetaryValue": "0.00"
+            },
+            "TransportationCharges": {
+              "CurrencyCode": "EUR",
+              "MonetaryValue": "0.00"
+            },
+            "ServiceOptionsCharges": {
+              "CurrencyCode": "EUR",
+              "MonetaryValue": "0.00"
+            },
+            "TotalCharge": { "CurrencyCode": "EUR", "MonetaryValue": "0.00" }
+          },
+          "Weight": "3.0"
+        },
+        "TimeInTransit": {
+          "PickupDate": "20240827",
+          "PackageBillType": "03",
+          "AutoDutyCode": "02",
+          "Disclaimer": "Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance.",
+          "ServiceSummary": {
+            "Service": { "Description": "UPS Standard" },
+            "EstimatedArrival": {
+              "Arrival": { "Date": "20240828", "Time": "233000" },
+              "BusinessDaysInTransit": "1",
+              "Pickup": { "Date": "20240827", "Time": "180000" },
+              "DayOfWeek": "WED",
+              "CustomerCenterCutoff": "160000",
+              "TotalTransitDays": "1"
             },
             "SaturdayDelivery": "0"
           }

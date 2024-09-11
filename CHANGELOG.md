@@ -1,3 +1,21 @@
+# Patch 2024.6.4
+
+## Changes
+
+### Feature
+
+- feat: Add field to unified class for future support of message level
+
+### Chore
+
+- chore: Add tests for `UPS` EU rates parsing
+- chore: make ups upper case for uniform charges details
+- chore: use localhost address for default `NEXT_PUBLIC_KARRIO_PUBLIC_URL` during build
+
+### Refactor
+
+- refactor: #673
+
 # Patch 2024.6.3
 
 ## Changes

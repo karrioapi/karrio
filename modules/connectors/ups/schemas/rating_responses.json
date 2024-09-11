@@ -1,0 +1,1017 @@
+[
+  {
+    "RateResponse": {
+      "Response": {
+        "ResponseStatus": {
+          "Code": "string",
+          "Description": "string"
+        },
+        "Alert": [
+          {
+            "Code": "string",
+            "Description": "string"
+          }
+        ],
+        "AlertDetail": [
+          {
+            "Code": "string",
+            "Description": "string",
+            "ElementLevelInformation": {
+              "Level": "string",
+              "ElementIdentifier": [
+                {
+                  "Code": "string",
+                  "Value": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "TransactionReference": {
+          "CustomerContext": "string"
+        }
+      },
+      "RatedShipment": [
+        {
+          "Disclaimer": [
+            {
+              "Code": "string",
+              "Description": "string"
+            }
+          ],
+          "Service": {
+            "Code": "string",
+            "Description": "string"
+          },
+          "RateChart": "string",
+          "RatedShipmentAlert": [
+            {
+              "Code": "string",
+              "Description": "string"
+            }
+          ],
+          "BillableWeightCalculationMethod": "string",
+          "RatingMethod": "string",
+          "BillingWeight": {
+            "UnitOfMeasurement": {
+              "Code": "string",
+              "Description": "string"
+            },
+            "Weight": "string"
+          },
+          "TransportationCharges": {
+            "CurrencyCode": "string",
+            "MonetaryValue": "string"
+          },
+          "BaseServiceCharge": {
+            "CurrencyCode": "string",
+            "MonetaryValue": "string"
+          },
+          "ItemizedCharges": [
+            {
+              "Code": "string",
+              "Description": "string",
+              "CurrencyCode": "string",
+              "MonetaryValue": "string",
+              "SubType": "string"
+            }
+          ],
+          "FRSShipmentData": {
+            "TransportationCharges": {
+              "GrossCharge": {
+                "CurrencyCode": "string",
+                "MonetaryValue": "string"
+              },
+              "DiscountAmount": {
+                "CurrencyCode": "string",
+                "MonetaryValue": "string"
+              },
+              "DiscountPercentage": "string",
+              "NetCharge": {
+                "CurrencyCode": "string",
+                "MonetaryValue": "string"
+              }
+            },
+            "FreightDensityRate": {
+              "Density": "string",
+              "TotalCubicFeet": "string"
+            },
+            "HandlingUnits": [
+              {
+                "Quantity": "string",
+                "Type": {
+                  "Code": "string",
+                  "Description": "string"
+                },
+                "Dimensions": {
+                  "UnitOfMeasurement": {
+                    "Code": "string",
+                    "Description": "string"
+                  },
+                  "Length": "string",
+                  "Width": "string",
+                  "Height": "string"
+                },
+                "AdjustedHeight": {
+                  "Value": "string",
+                  "UnitOfMeasurement": {
+                    "Code": "string",
+                    "Description": "string"
+                  }
+                }
+              }
+            ]
+          },
+          "ServiceOptionsCharges": {
+            "CurrencyCode": "string",
+            "MonetaryValue": "string"
+          },
+          "TaxCharges": [
+            {
+              "Type": "string",
+              "MonetaryValue": "string"
+            }
+          ],
+          "TotalCharges": {
+            "CurrencyCode": "string",
+            "MonetaryValue": "string"
+          },
+          "TotalChargesWithTaxes": {
+            "CurrencyCode": "string",
+            "MonetaryValue": "string"
+          },
+          "NegotiatedRateCharges": {
+            "ItemizedCharges": [
+              {
+                "Code": "string",
+                "Description": "string",
+                "CurrencyCode": "string",
+                "MonetaryValue": "string",
+                "SubType": "string"
+              }
+            ],
+            "TaxCharges": [
+              {
+                "Type": "string",
+                "MonetaryValue": "string"
+              }
+            ],
+            "TotalCharge": {
+              "CurrencyCode": "string",
+              "MonetaryValue": "string"
+            },
+            "TotalChargesWithTaxes": {
+              "CurrencyCode": "string",
+              "MonetaryValue": "string"
+            }
+          },
+          "RatedPackage": [
+            {
+              "BaseServiceCharge": {
+                "CurrencyCode": "string",
+                "MonetaryValue": "string"
+              },
+              "TransportationCharges": {
+                "CurrencyCode": "string",
+                "MonetaryValue": "string"
+              },
+              "ServiceOptionsCharges": {
+                "CurrencyCode": "string",
+                "MonetaryValue": "string"
+              },
+              "TotalCharges": {
+                "CurrencyCode": "string",
+                "MonetaryValue": "string"
+              },
+              "Weight": "string",
+              "BillingWeight": {
+                "UnitOfMeasurement": {
+                  "Code": "string",
+                  "Description": "string"
+                },
+                "Weight": "string"
+              },
+              "Accessorial": [
+                {
+                  "Code": "string",
+                  "Description": "string"
+                }
+              ],
+              "ItemizedCharges": [
+                {
+                  "Code": "string",
+                  "Description": "string",
+                  "CurrencyCode": "string",
+                  "MonetaryValue": "string",
+                  "SubType": "string"
+                }
+              ],
+              "NegotiatedCharges": {
+                "ItemizedCharges": [
+                  {
+                    "Code": "string",
+                    "Description": "string",
+                    "CurrencyCode": "string",
+                    "MonetaryValue": "string",
+                    "SubType": "string"
+                  }
+                ]
+              },
+              "RateModifier": [
+                {
+                  "ModifierType": "string",
+                  "ModifierDesc": "string",
+                  "CurrencyCode": "string",
+                  "Amount": "string"
+                }
+              ]
+            }
+          ],
+          "GuaranteedDelivery": {
+            "BusinessDaysInTransit": "1",
+            "DeliveryByTime": "3: 00 P.M."
+          },
+          "TimeInTransit": {
+            "PickupDate": "string",
+            "DocumentsOnlyIndicator": "string",
+            "PackageBillType": "string",
+            "ServiceSummary": {
+              "Service": {
+                "Description": "string"
+              },
+              "GuaranteedIndicator": "string",
+              "Disclaimer": "string",
+              "EstimatedArrival": {
+                "Arrival": {
+                  "Date": "string",
+                  "Time": "string"
+                },
+                "BusinessDaysInTransit": "string",
+                "Pickup": {
+                  "Date": "string",
+                  "Time": "string"
+                },
+                "DayOfWeek": "string",
+                "CustomerCenterCutoff": "string",
+                "DelayCount": "string",
+                "HolidayCount": "string",
+                "RestDays": "string",
+                "TotalTransitDays": "string"
+              },
+              "SaturdayDelivery": "string",
+              "SaturdayDeliveryDisclaimer": "string",
+              "SundayDelivery": "string",
+              "SundayDeliveryDisclaimer": "string"
+            },
+            "AutoDutyCode": "string",
+            "Disclaimer": "string"
+          },
+          "ScheduledDeliveryDate": "string",
+          "RoarRatedIndicator": "string"
+        }
+      ]
+    }
+  },
+  {
+    "RateResponse": {
+      "Response": {
+        "ResponseStatus": { "Code": "1", "Description": "Success" },
+        "Alert": [
+          {
+            "Code": "112081",
+            "Description": "A Delivery Area surcharge has been added to the service cost."
+          },
+          {
+            "Code": "110971",
+            "Description": "Your invoice may vary from the displayed reference rates"
+          }
+        ],
+        "TransactionReference": {
+          "CustomerContext": "x-trans-src",
+          "TransactionIdentifier": "xwssoat479c7h7kN9rmWGd"
+        }
+      },
+      "RatedShipment": [
+        {
+          "Disclaimer": [
+            {
+              "Code": "01",
+              "Description": "Taxes are included in the shipping cost and apply to the transportation charges but additional duties/taxes may apply and are not reflected in the total amount due."
+            }
+          ],
+          "Service": { "Code": "01", "Description": "" },
+          "RatedShipmentAlert": [
+            {
+              "Code": "112081",
+              "Description": "A Delivery Area Surcharge has been added to the service cost."
+            },
+            {
+              "Code": "110971",
+              "Description": "Your invoice may vary from the displayed reference rates"
+            }
+          ],
+          "RatingMethod": "01",
+          "BillableWeightCalculationMethod": "02",
+          "BillingWeight": {
+            "UnitOfMeasurement": { "Code": "LBS", "Description": "Pounds" },
+            "Weight": "6.0"
+          },
+          "TransportationCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "81.97"
+          },
+          "BaseServiceCharge": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "50.60"
+          },
+          "ItemizedCharges": [
+            {
+              "Code": "190",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "17.85",
+              "SubType": "Extended Area Destination"
+            },
+            { "Code": "375", "CurrencyCode": "CAD", "MonetaryValue": "13.52" }
+          ],
+          "ServiceOptionsCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "0.00"
+          },
+          "TotalCharges": { "CurrencyCode": "CAD", "MonetaryValue": "81.97" },
+          "NegotiatedRateCharges": {
+            "BaseServiceCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "15.18"
+            },
+            "ItemizedCharges": [
+              {
+                "Code": "190",
+                "CurrencyCode": "CAD",
+                "MonetaryValue": "6.25",
+                "SubType": "Extended Area Destination"
+              },
+              { "Code": "375", "CurrencyCode": "CAD", "MonetaryValue": "4.23" }
+            ],
+            "TaxCharges": [
+              { "Type": "QST", "MonetaryValue": "2.56" },
+              { "Type": "GST", "MonetaryValue": "1.28" }
+            ],
+            "TotalCharge": { "CurrencyCode": "CAD", "MonetaryValue": "25.66" },
+            "TotalChargesWithTaxes": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "29.50"
+            }
+          },
+          "GuaranteedDelivery": { "BusinessDaysInTransit": "1" },
+          "RatedPackage": [
+            {
+              "NegotiatedCharges": {
+                "BaseServiceCharge": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "TransportationCharges": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "ServiceOptionsCharges": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "TotalCharge": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                }
+              },
+              "Weight": "6.0"
+            }
+          ],
+          "TimeInTransit": {
+            "PickupDate": "20240911",
+            "PackageBillType": "03",
+            "AutoDutyCode": "02",
+            "Disclaimer": "All services are guaranteed if shipment is paid for in full by a payee in Canada. Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance.",
+            "ServiceSummary": {
+              "Service": { "Description": "UPS Express" },
+              "EstimatedArrival": {
+                "Arrival": { "Date": "20240912", "Time": "233000" },
+                "BusinessDaysInTransit": "1",
+                "Pickup": { "Date": "20240911", "Time": "163000" },
+                "DayOfWeek": "THU",
+                "CustomerCenterCutoff": "153000",
+                "TotalTransitDays": "1"
+              },
+              "GuaranteedIndicator": "",
+              "SaturdayDelivery": "0"
+            }
+          }
+        },
+        {
+          "Disclaimer": [
+            {
+              "Code": "01",
+              "Description": "Taxes are included in the shipping cost and apply to the transportation charges but additional duties/taxes may apply and are not reflected in the total amount due."
+            }
+          ],
+          "Service": { "Code": "13", "Description": "" },
+          "RatedShipmentAlert": [
+            {
+              "Code": "112081",
+              "Description": "A Delivery Area Surcharge has been added to the service cost."
+            },
+            {
+              "Code": "110971",
+              "Description": "Your invoice may vary from the displayed reference rates"
+            }
+          ],
+          "RatingMethod": "01",
+          "BillableWeightCalculationMethod": "02",
+          "BillingWeight": {
+            "UnitOfMeasurement": { "Code": "LBS", "Description": "Pounds" },
+            "Weight": "6.0"
+          },
+          "TransportationCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "73.77"
+          },
+          "BaseServiceCharge": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "43.75"
+          },
+          "ItemizedCharges": [
+            {
+              "Code": "190",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "17.85",
+              "SubType": "Extended Area Destination"
+            },
+            { "Code": "375", "CurrencyCode": "CAD", "MonetaryValue": "12.17" }
+          ],
+          "ServiceOptionsCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "0.00"
+          },
+          "TotalCharges": { "CurrencyCode": "CAD", "MonetaryValue": "73.77" },
+          "NegotiatedRateCharges": {
+            "BaseServiceCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "13.12"
+            },
+            "ItemizedCharges": [
+              {
+                "Code": "190",
+                "CurrencyCode": "CAD",
+                "MonetaryValue": "6.25",
+                "SubType": "Extended Area Destination"
+              },
+              { "Code": "375", "CurrencyCode": "CAD", "MonetaryValue": "3.83" }
+            ],
+            "TaxCharges": [
+              { "Type": "QST", "MonetaryValue": "2.31" },
+              { "Type": "GST", "MonetaryValue": "1.16" }
+            ],
+            "TotalCharge": { "CurrencyCode": "CAD", "MonetaryValue": "23.20" },
+            "TotalChargesWithTaxes": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "26.67"
+            }
+          },
+          "GuaranteedDelivery": { "BusinessDaysInTransit": "1" },
+          "RatedPackage": [
+            {
+              "NegotiatedCharges": {
+                "BaseServiceCharge": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "TransportationCharges": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "ServiceOptionsCharges": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "TotalCharge": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                }
+              },
+              "Weight": "6.0"
+            }
+          ],
+          "TimeInTransit": {
+            "PickupDate": "20240911",
+            "PackageBillType": "03",
+            "AutoDutyCode": "02",
+            "Disclaimer": "All services are guaranteed if shipment is paid for in full by a payee in Canada. Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance.",
+            "ServiceSummary": {
+              "Service": { "Description": "UPS Express Saver" },
+              "EstimatedArrival": {
+                "Arrival": { "Date": "20240912", "Time": "233000" },
+                "BusinessDaysInTransit": "1",
+                "Pickup": { "Date": "20240911", "Time": "163000" },
+                "DayOfWeek": "THU",
+                "CustomerCenterCutoff": "153000",
+                "TotalTransitDays": "1"
+              },
+              "GuaranteedIndicator": "",
+              "SaturdayDelivery": "0"
+            }
+          }
+        },
+        {
+          "Disclaimer": [
+            {
+              "Code": "01",
+              "Description": "Taxes are included in the shipping cost and apply to the transportation charges but additional duties/taxes may apply and are not reflected in the total amount due."
+            }
+          ],
+          "Service": { "Code": "02", "Description": "" },
+          "RatedShipmentAlert": [
+            {
+              "Code": "112081",
+              "Description": "A Delivery Area Surcharge has been added to the service cost."
+            },
+            {
+              "Code": "110971",
+              "Description": "Your invoice may vary from the displayed reference rates"
+            }
+          ],
+          "RatingMethod": "01",
+          "BillableWeightCalculationMethod": "02",
+          "BillingWeight": {
+            "UnitOfMeasurement": { "Code": "LBS", "Description": "Pounds" },
+            "Weight": "6.0"
+          },
+          "TransportationCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "69.93"
+          },
+          "BaseServiceCharge": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "40.55"
+          },
+          "ItemizedCharges": [
+            {
+              "Code": "190",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "17.85",
+              "SubType": "Extended Area Destination"
+            },
+            { "Code": "375", "CurrencyCode": "CAD", "MonetaryValue": "11.53" }
+          ],
+          "ServiceOptionsCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "0.00"
+          },
+          "TotalCharges": { "CurrencyCode": "CAD", "MonetaryValue": "69.93" },
+          "NegotiatedRateCharges": {
+            "BaseServiceCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "12.16"
+            },
+            "ItemizedCharges": [
+              {
+                "Code": "190",
+                "CurrencyCode": "CAD",
+                "MonetaryValue": "6.25",
+                "SubType": "Extended Area Destination"
+              },
+              { "Code": "375", "CurrencyCode": "CAD", "MonetaryValue": "3.63" }
+            ],
+            "TaxCharges": [
+              { "Type": "QST", "MonetaryValue": "2.20" },
+              { "Type": "GST", "MonetaryValue": "1.10" }
+            ],
+            "TotalCharge": { "CurrencyCode": "CAD", "MonetaryValue": "22.04" },
+            "TotalChargesWithTaxes": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "25.34"
+            }
+          },
+          "RatedPackage": [
+            {
+              "NegotiatedCharges": {
+                "BaseServiceCharge": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "TransportationCharges": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "ServiceOptionsCharges": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "TotalCharge": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                }
+              },
+              "Weight": "6.0"
+            }
+          ],
+          "TimeInTransit": {
+            "PickupDate": "20240911",
+            "PackageBillType": "03",
+            "AutoDutyCode": "02",
+            "Disclaimer": "All services are guaranteed if shipment is paid for in full by a payee in Canada. Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance.",
+            "ServiceSummary": {
+              "Service": { "Description": "UPS Expedited" },
+              "EstimatedArrival": {
+                "Arrival": { "Date": "20240912", "Time": "233000" },
+                "BusinessDaysInTransit": "1",
+                "Pickup": { "Date": "20240911", "Time": "163000" },
+                "DayOfWeek": "THU",
+                "CustomerCenterCutoff": "153000",
+                "TotalTransitDays": "1"
+              },
+              "GuaranteedIndicator": "",
+              "SaturdayDelivery": "0"
+            }
+          }
+        },
+        {
+          "Disclaimer": [
+            {
+              "Code": "01",
+              "Description": "Taxes are included in the shipping cost and apply to the transportation charges but additional duties/taxes may apply and are not reflected in the total amount due."
+            }
+          ],
+          "Service": { "Code": "11", "Description": "" },
+          "RatedShipmentAlert": [
+            {
+              "Code": "112081",
+              "Description": "A Delivery Area Surcharge has been added to the service cost."
+            },
+            {
+              "Code": "110971",
+              "Description": "Your invoice may vary from the displayed reference rates"
+            }
+          ],
+          "RatingMethod": "01",
+          "BillableWeightCalculationMethod": "02",
+          "BillingWeight": {
+            "UnitOfMeasurement": { "Code": "LBS", "Description": "Pounds" },
+            "Weight": "6.0"
+          },
+          "TransportationCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "70.69"
+          },
+          "BaseServiceCharge": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "38.25"
+          },
+          "ItemizedCharges": [
+            {
+              "Code": "190",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "17.85",
+              "SubType": "Extended Area Destination"
+            },
+            { "Code": "375", "CurrencyCode": "CAD", "MonetaryValue": "14.59" }
+          ],
+          "ServiceOptionsCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "0.00"
+          },
+          "TotalCharges": { "CurrencyCode": "CAD", "MonetaryValue": "70.69" },
+          "NegotiatedRateCharges": {
+            "BaseServiceCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "8.41"
+            },
+            "ItemizedCharges": [
+              {
+                "Code": "190",
+                "CurrencyCode": "CAD",
+                "MonetaryValue": "6.25",
+                "SubType": "Extended Area Destination"
+              },
+              { "Code": "375", "CurrencyCode": "CAD", "MonetaryValue": "3.81" }
+            ],
+            "TaxCharges": [
+              { "Type": "QST", "MonetaryValue": "1.84" },
+              { "Type": "GST", "MonetaryValue": "0.92" }
+            ],
+            "TotalCharge": { "CurrencyCode": "CAD", "MonetaryValue": "18.47" },
+            "TotalChargesWithTaxes": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "21.23"
+            }
+          },
+          "RatedPackage": [
+            {
+              "NegotiatedCharges": {
+                "BaseServiceCharge": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "TransportationCharges": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "ServiceOptionsCharges": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "TotalCharge": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                }
+              },
+              "Weight": "6.0"
+            }
+          ],
+          "TimeInTransit": {
+            "PickupDate": "20240911",
+            "PackageBillType": "03",
+            "AutoDutyCode": "02",
+            "Disclaimer": "All services are guaranteed if shipment is paid for in full by a payee in Canada. Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance.",
+            "ServiceSummary": {
+              "Service": { "Description": "UPS Standard" },
+              "EstimatedArrival": {
+                "Arrival": { "Date": "20240912", "Time": "233000" },
+                "BusinessDaysInTransit": "1",
+                "Pickup": { "Date": "20240911", "Time": "163000" },
+                "DayOfWeek": "THU",
+                "CustomerCenterCutoff": "153000",
+                "TotalTransitDays": "1"
+              },
+              "GuaranteedIndicator": "",
+              "SaturdayDelivery": "0"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "RateResponse": {
+      "Response": {
+        "ResponseStatus": {
+          "Code": "string",
+          "Description": "string"
+        },
+        "Alert": [
+          {
+            "Code": "string",
+            "Description": "string"
+          }
+        ],
+        "AlertDetail": [
+          {
+            "Code": "string",
+            "Description": "string",
+            "ElementLevelInformation": {
+              "Level": "string",
+              "ElementIdentifier": [
+                {
+                  "Code": "string",
+                  "Value": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "TransactionReference": {
+          "CustomerContext": "string"
+        }
+      },
+      "RatedShipment": [
+        {
+          "Disclaimer": [
+            {
+              "Code": "string",
+              "Description": "string"
+            }
+          ],
+          "Service": {
+            "Code": "string",
+            "Description": "string"
+          },
+          "RateChart": "string",
+          "RatedShipmentAlert": [
+            {
+              "Code": "string",
+              "Description": "string"
+            }
+          ],
+          "BillableWeightCalculationMethod": "string",
+          "RatingMethod": "string",
+          "BillingWeight": {
+            "UnitOfMeasurement": {
+              "Code": "string",
+              "Description": "string"
+            },
+            "Weight": "string"
+          },
+          "TransportationCharges": {
+            "CurrencyCode": "string",
+            "MonetaryValue": "stringstringstri"
+          },
+          "BaseServiceCharge": {
+            "CurrencyCode": "string",
+            "MonetaryValue": "stringstringstri"
+          },
+          "ItemizedCharges": [
+            {
+              "Code": "string",
+              "Description": "string",
+              "CurrencyCode": "string",
+              "MonetaryValue": "string",
+              "SubType": "string"
+            }
+          ],
+          "FRSShipmentData": {
+            "TransportationCharges": {
+              "GrossCharge": {
+                "CurrencyCode": "string",
+                "MonetaryValue": "string"
+              },
+              "DiscountAmount": {
+                "CurrencyCode": "string",
+                "MonetaryValue": "string"
+              },
+              "DiscountPercentage": "string",
+              "NetCharge": {
+                "CurrencyCode": "string",
+                "MonetaryValue": "string"
+              }
+            },
+            "FreightDensityRate": {
+              "Density": "string",
+              "TotalCubicFeet": "string"
+            },
+            "HandlingUnits": [
+              {
+                "Quantity": "string",
+                "Type": {
+                  "Code": "string",
+                  "Description": "string"
+                },
+                "Dimensions": {
+                  "UnitOfMeasurement": "string",
+                  "Length": "string",
+                  "Width": "string",
+                  "Height": "string"
+                },
+                "AdjustedHeight": {
+                  "Value": "string",
+                  "UnitOfMeasurement": {
+                    "Code": "string",
+                    "Description": "string"
+                  }
+                }
+              }
+            ]
+          },
+          "ServiceOptionsCharges": {
+            "CurrencyCode": "string",
+            "MonetaryValue": "string"
+          },
+          "TaxCharges": [
+            {
+              "Type": "string",
+              "MonetaryValue": "string"
+            }
+          ],
+          "TotalCharges": {
+            "CurrencyCode": "string",
+            "MonetaryValue": "string"
+          },
+          "TotalChargesWithTaxes": {
+            "CurrencyCode": "string",
+            "MonetaryValue": "string"
+          },
+          "NegotiatedRateCharges": {
+            "ItemizedCharges": [
+              {
+                "Code": "string",
+                "Description": "string",
+                "CurrencyCode": "string",
+                "MonetaryValue": "string",
+                "SubType": "string"
+              }
+            ],
+            "TaxCharges": [
+              {
+                "Type": "string",
+                "MonetaryValue": "string"
+              }
+            ],
+            "TotalCharge": {
+              "CurrencyCode": "string",
+              "MonetaryValue": "string"
+            },
+            "TotalChargesWithTaxes": {
+              "CurrencyCode": "string",
+              "MonetaryValue": "string"
+            }
+          },
+          "RatedPackage": [
+            {
+              "BaseServiceCharge": {
+                "CurrencyCode": "string",
+                "MonetaryValue": "string"
+              },
+              "TransportationCharges": {
+                "CurrencyCode": "string",
+                "MonetaryValue": "string"
+              },
+              "ServiceOptionsCharges": {
+                "CurrencyCode": "string",
+                "MonetaryValue": "string"
+              },
+              "TotalCharges": {
+                "CurrencyCode": "string",
+                "MonetaryValue": "string"
+              },
+              "Weight": "string",
+              "BillingWeight": {
+                "UnitOfMeasurement": {
+                  "Code": "string",
+                  "Description": "string"
+                },
+                "Weight": "string"
+              },
+              "Accessorial": [
+                {
+                  "Code": "string",
+                  "Description": "string"
+                }
+              ],
+              "ItemizedCharges": [
+                {
+                  "Code": "string",
+                  "Description": "string",
+                  "CurrencyCode": "string",
+                  "MonetaryValue": "string",
+                  "SubType": "string"
+                }
+              ],
+              "NegotiatedCharges": {
+                "ItemizedCharges": ["string"]
+              },
+              "SimpleRate": {
+                "Code": "string"
+              },
+              "RateModifier": [
+                {
+                  "ModifierType": "string",
+                  "ModifierDesc": "string",
+                  "Amount": "string"
+                }
+              ]
+            }
+          ],
+          "TimeInTransit": {
+            "PickupDate": "stringst",
+            "DocumentsOnlyIndicator": "string",
+            "PackageBillType": "string",
+            "ServiceSummary": {
+              "Service": {
+                "Description": "string"
+              },
+              "GuaranteedIndicator": "string",
+              "Disclaimer": "string",
+              "EstimatedArrival": {
+                "Arrival": {
+                  "Date": "string",
+                  "Time": "string"
+                },
+                "BusinessDaysInTransit": "string",
+                "Pickup": {
+                  "Date": "string",
+                  "Time": "string"
+                },
+                "DayOfWeek": "string",
+                "CustomerCenterCutoff": "string",
+                "DelayCount": "string",
+                "HolidayCount": "string",
+                "RestDays": "string",
+                "TotalTransitDays": "string"
+              },
+              "SaturdayDelivery": "string",
+              "SaturdayDeliveryDisclaimer": "string",
+              "SundayDelivery": "string",
+              "SundayDeliveryDisclaimer": "string"
+            },
+            "AutoDutyCode": "string",
+            "Disclaimer": "string"
+          },
+          "GuaranteedDelivery": {
+            "BusinessDaysInTransit": "string",
+            "DeliveryByTime": "string",
+            "ScheduledDeliveryDate": "string"
+          },
+          "ScheduledDeliveryDate": "string",
+          "RoarRatedIndicator": "string"
+        }
+      ]
+    }
+  }
+]

@@ -3,6 +3,7 @@ import karrio.schemas.ups.rating_response as ups_response
 import time
 import typing
 import karrio.lib as lib
+import karrio.core.units as units
 import karrio.core.models as models
 import karrio.providers.ups.error as provider_error
 import karrio.providers.ups.units as provider_units
@@ -27,29 +28,36 @@ def _extract_details(
     ctx: dict,
 ) -> typing.List[models.RateDetails]:
     rate = lib.to_object(ups_response.RatedShipmentType, detail)
-
-    if rate.NegotiatedRateCharges is not None:
-        total_charge = (
-            rate.NegotiatedRateCharges.TotalChargesWithTaxes
-            or rate.NegotiatedRateCharges.TotalCharge
-        )
-        taxes = rate.NegotiatedRateCharges.TaxCharges or []
-        itemized_charges = [*rate.NegotiatedRateCharges.ItemizedCharges, *taxes]
-    else:
-        total_charge = rate.TotalChargesWithTaxes or rate.TotalCharges
-        taxes = rate.TaxCharges or []
-        itemized_charges = [*rate.ItemizedCharges, *taxes]
+    effective_rate = lib.identity(
+        rate.NegotiatedRateCharges if rate.NegotiatedRateCharges is not None else rate
+    )
+    total_charge = effective_rate.TotalChargesWithTaxes or effective_rate.TotalCharges
+    taxes = effective_rate.TaxCharges or []
+    itemized_charges = [*effective_rate.ItemizedCharges, *taxes]
 
     charges = [
-        ("Base charge", rate.TransportationCharges.MonetaryValue),
-        *(
+        ("BASE CHARGE", effective_rate.BaseServiceCharge.MonetaryValue),
+        *lib.identity(
             []
             if any(itemized_charges)
             else [("Taxes", sum(lib.to_money(c.MonetaryValue) for c in taxes))]
         ),
-        (rate.Service.Code, rate.ServiceOptionsCharges.MonetaryValue),
-        *(
-            (getattr(c, "Code", None) or getattr(c, "Type", None), c.MonetaryValue)
+        *lib.identity(
+            (rate.Service.Code, rate.ServiceOptionsCharges.MonetaryValue)
+            if lib.to_int(rate.ServiceOptionsCharges.MonetaryValue) > 0
+            else []
+        ),
+        *lib.identity(
+            (
+                lib.identity(
+                    provider_units.SurchargeType.map(
+                        str(getattr(c, "Code", None) or getattr(c, "Type", None))
+                    )
+                    .name_or_key.replace("_", " ")
+                    .upper()
+                ),
+                c.MonetaryValue,
+            )
             for c in itemized_charges
         ),
     ]
@@ -99,13 +107,16 @@ def rate_request(
     mps_packaging = lib.identity(
         provider_units.PackagingType.ups_unknown.value if len(packages) > 1 else None
     )
+    weight_unit, dim_unit = lib.identity(
+        provider_units.COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
+        or packages.compatible_units
+    )
     indications = [
         *(["01"] if options.pickup_options.state else []),
         *(["02"] if options.delivery_options.state else []),
     ]
-    weight_unit, dim_unit = lib.identity(
-        provider_units.COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
-        or packages.compatible_units
+    origin = lib.identity(
+        "EU" if shipper.country_code in units.EUCountry else shipper.country_code
     )
 
     request = ups.RatingRequestType(
