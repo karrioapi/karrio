@@ -120,7 +120,7 @@ ParsedRateResponse = [
             "currency": "CAD",
             "extra_charges": [
                 {"amount": 116.35, "currency": "CAD", "name": "Base charge"},
-                {"amount": 21.52, "currency": "CAD", "name": "Fuel surcharge"},
+                {"amount": 21.52, "currency": "CAD", "name": "FUEL SURCHARGE"},
                 {"amount": 20.68, "currency": "CAD", "name": "HST"},
             ],
             "meta": {"service_name": "ups_express_early_ca"},
@@ -134,7 +134,7 @@ ParsedRateResponse = [
             "currency": "CAD",
             "extra_charges": [
                 {"amount": 71.95, "currency": "CAD", "name": "Base charge"},
-                {"amount": 13.31, "currency": "CAD", "name": "Fuel surcharge"},
+                {"amount": 13.31, "currency": "CAD", "name": "FUEL SURCHARGE"},
                 {"amount": 12.79, "currency": "CAD", "name": "HST"},
             ],
             "meta": {"service_name": "ups_express_ca"},
@@ -148,7 +148,7 @@ ParsedRateResponse = [
             "currency": "CAD",
             "extra_charges": [
                 {"amount": 70.90, "currency": "CAD", "name": "Base charge"},
-                {"amount": 13.12, "currency": "CAD", "name": "Fuel surcharge"},
+                {"amount": 13.12, "currency": "CAD", "name": "FUEL SURCHARGE"},
                 {"amount": 12.6, "currency": "CAD", "name": "HST"},
             ],
             "meta": {"service_name": "ups_express_saver_ca"},
@@ -162,7 +162,7 @@ ParsedRateResponse = [
             "currency": "CAD",
             "extra_charges": [
                 {"amount": 67.10, "currency": "CAD", "name": "Base charge"},
-                {"amount": 12.41, "currency": "CAD", "name": "Fuel surcharge"},
+                {"amount": 12.41, "currency": "CAD", "name": "FUEL SURCHARGE"},
                 {"amount": 11.93, "currency": "CAD", "name": "HST"},
             ],
             "meta": {"service_name": "ups_expedited_ca"},

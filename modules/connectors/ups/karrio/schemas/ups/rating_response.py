@@ -1,5 +1,5 @@
 from attr import s
-from typing import Optional, List
+from typing import Optional, Any, Union, List
 from jstruct import JStruct, JList
 
 
@@ -10,14 +10,14 @@ class BaseServiceChargeType:
 
 
 @s(auto_attribs=True)
-class AlertType:
+class ResponseStatusType:
     Code: Optional[str] = None
     Description: Optional[str] = None
 
 
 @s(auto_attribs=True)
 class BillingWeightType:
-    UnitOfMeasurement: Optional[AlertType] = JStruct[AlertType]
+    UnitOfMeasurement: Optional[ResponseStatusType] = JStruct[ResponseStatusType]
     Weight: Optional[str] = None
 
 
@@ -30,21 +30,21 @@ class FreightDensityRateType:
 @s(auto_attribs=True)
 class AdjustedHeightType:
     Value: Optional[str] = None
-    UnitOfMeasurement: Optional[AlertType] = JStruct[AlertType]
+    UnitOfMeasurement: Optional[ResponseStatusType] = JStruct[ResponseStatusType]
 
 
 @s(auto_attribs=True)
 class DimensionsType:
-    UnitOfMeasurement: Optional[AlertType] = JStruct[AlertType]
+    UnitOfMeasurement: Union[ResponseStatusType, Any, str]
     Length: Optional[str] = None
     Width: Optional[str] = None
     Height: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class HandlingUnitsType:
+class HandlingUnitType:
     Quantity: Optional[str] = None
-    Type: Optional[AlertType] = JStruct[AlertType]
+    Type: Optional[ResponseStatusType] = JStruct[ResponseStatusType]
     Dimensions: Optional[DimensionsType] = JStruct[DimensionsType]
     AdjustedHeight: Optional[AdjustedHeightType] = JStruct[AdjustedHeightType]
 
@@ -61,17 +61,18 @@ class TransportationChargesType:
 class FRSShipmentDataType:
     TransportationCharges: Optional[TransportationChargesType] = JStruct[TransportationChargesType]
     FreightDensityRate: Optional[FreightDensityRateType] = JStruct[FreightDensityRateType]
-    HandlingUnits: Optional[HandlingUnitsType] = JStruct[HandlingUnitsType]
+    HandlingUnits: List[HandlingUnitType] = JList[HandlingUnitType]
 
 
 @s(auto_attribs=True)
 class GuaranteedDeliveryType:
-    BusinessDaysInTransit: Optional[int] = None
+    BusinessDaysInTransit: Optional[str] = None
     DeliveryByTime: Optional[str] = None
+    ScheduledDeliveryDate: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class ItemizedChargeType:
+class ItemizedChargeClassType:
     Code: Optional[str] = None
     Description: Optional[str] = None
     CurrencyCode: Optional[str] = None
@@ -87,7 +88,7 @@ class TaxChargeType:
 
 @s(auto_attribs=True)
 class NegotiatedRateChargesType:
-    ItemizedCharges: List[ItemizedChargeType] = JList[ItemizedChargeType]
+    ItemizedCharges: List[ItemizedChargeClassType] = JList[ItemizedChargeClassType]
     TaxCharges: List[TaxChargeType] = JList[TaxChargeType]
     TotalCharge: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
     TotalChargesWithTaxes: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
@@ -96,7 +97,11 @@ class NegotiatedRateChargesType:
 
 @s(auto_attribs=True)
 class NegotiatedChargesType:
-    ItemizedCharges: List[ItemizedChargeType] = JList[ItemizedChargeType]
+    ItemizedCharges: List[Union[ItemizedChargeClassType, str]] = JList[Union[ItemizedChargeClassType, str]]
+    BaseServiceCharge: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
+    TransportationCharges: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
+    ServiceOptionsCharges: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
+    TotalCharge: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
 
 
 @s(auto_attribs=True)
@@ -108,6 +113,11 @@ class RateModifierType:
 
 
 @s(auto_attribs=True)
+class SimpleRateType:
+    Code: Optional[str] = None
+
+
+@s(auto_attribs=True)
 class RatedPackageType:
     BaseServiceCharge: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
     TransportationCharges: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
@@ -115,10 +125,11 @@ class RatedPackageType:
     TotalCharges: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
     Weight: Optional[str] = None
     BillingWeight: Optional[BillingWeightType] = JStruct[BillingWeightType]
-    Accessorial: List[AlertType] = JList[AlertType]
-    ItemizedCharges: List[ItemizedChargeType] = JList[ItemizedChargeType]
+    Accessorial: List[ResponseStatusType] = JList[ResponseStatusType]
+    ItemizedCharges: List[ItemizedChargeClassType] = JList[ItemizedChargeClassType]
     NegotiatedCharges: Optional[NegotiatedChargesType] = JStruct[NegotiatedChargesType]
-    RateModifier: Optional[RateModifierType] = JStruct[RateModifierType]
+    RateModifier: List[RateModifierType] = JList[RateModifierType]
+    SimpleRate: Optional[SimpleRateType] = JStruct[SimpleRateType]
 
 
 @s(auto_attribs=True)
@@ -169,16 +180,16 @@ class TimeInTransitType:
 
 @s(auto_attribs=True)
 class RatedShipmentType:
-    Disclaimer: List[AlertType] = JList[AlertType]
-    Service: Optional[AlertType] = JStruct[AlertType]
+    Disclaimer: List[ResponseStatusType] = JList[ResponseStatusType]
+    Service: Optional[ResponseStatusType] = JStruct[ResponseStatusType]
     RateChart: Optional[str] = None
-    RatedShipmentAlert: List[AlertType] = JList[AlertType]
+    RatedShipmentAlert: List[ResponseStatusType] = JList[ResponseStatusType]
     BillableWeightCalculationMethod: Optional[str] = None
     RatingMethod: Optional[str] = None
     BillingWeight: Optional[BillingWeightType] = JStruct[BillingWeightType]
     TransportationCharges: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
     BaseServiceCharge: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
-    ItemizedCharges: List[ItemizedChargeType] = JList[ItemizedChargeType]
+    ItemizedCharges: List[ItemizedChargeClassType] = JList[ItemizedChargeClassType]
     FRSShipmentData: Optional[FRSShipmentDataType] = JStruct[FRSShipmentDataType]
     ServiceOptionsCharges: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
     TaxCharges: List[TaxChargeType] = JList[TaxChargeType]
@@ -214,13 +225,14 @@ class AlertDetailType:
 @s(auto_attribs=True)
 class TransactionReferenceType:
     CustomerContext: Optional[str] = None
+    TransactionIdentifier: Optional[str] = None
 
 
 @s(auto_attribs=True)
 class ResponseType:
-    ResponseStatus: Optional[AlertType] = JStruct[AlertType]
-    Alert: Optional[AlertType] = JStruct[AlertType]
-    AlertDetail: Optional[AlertDetailType] = JStruct[AlertDetailType]
+    ResponseStatus: Optional[ResponseStatusType] = JStruct[ResponseStatusType]
+    Alert: List[ResponseStatusType] = JList[ResponseStatusType]
+    AlertDetail: List[AlertDetailType] = JList[AlertDetailType]
     TransactionReference: Optional[TransactionReferenceType] = JStruct[TransactionReferenceType]
 
 
@@ -231,5 +243,5 @@ class RateResponseType:
 
 
 @s(auto_attribs=True)
-class RatingResponseType:
+class RatingResponseElementType:
     RateResponse: Optional[RateResponseType] = JStruct[RateResponseType]

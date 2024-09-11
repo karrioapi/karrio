@@ -27,7 +27,9 @@ def _extract_details(
     ctx: dict,
 ) -> typing.List[models.RateDetails]:
     rate = lib.to_object(ups_response.RatedShipmentType, detail)
-    effective_rate = rate.NegotiatedRateCharges if rate.NegotiatedRateCharges is not None else rate
+    effective_rate = lib.identity(
+        rate.NegotiatedRateCharges if rate.NegotiatedRateCharges is not None else rate
+    )
     total_charge = effective_rate.TotalChargesWithTaxes or effective_rate.TotalCharges
     taxes = effective_rate.TaxCharges or []
     itemized_charges = [*effective_rate.ItemizedCharges, *taxes]
@@ -46,16 +48,14 @@ def _extract_details(
         ),
         *(
             (
-                (
+                lib.identity(
                     provider_units.SurchargeType.map(
                         str(getattr(c, "Code", None) or getattr(c, "Type", None))
-                    ).name.capitalize().replace("_", " ")
-                    if provider_units.SurchargeType.map(
-                        str(getattr(c, "Code", None) or getattr(c, "Type", None))
-                    ).name
-                    else (getattr(c, "Code", None) or getattr(c, "Type", None))
+                    )
+                    .name_or_key.replace("_", " ")
+                    .upper()
                 ),
-                c.MonetaryValue
+                c.MonetaryValue,
             )
             for c in itemized_charges
         ),
@@ -106,14 +106,14 @@ def rate_request(
     mps_packaging = lib.identity(
         provider_units.PackagingType.ups_unknown.value if len(packages) > 1 else None
     )
-    indications = [
-        *(["01"] if options.pickup_options.state else []),
-        *(["02"] if options.delivery_options.state else []),
-    ]
     weight_unit, dim_unit = lib.identity(
         provider_units.COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
         or packages.compatible_units
     )
+    indications = [
+        *(["01"] if options.pickup_options.state else []),
+        *(["02"] if options.delivery_options.state else []),
+    ]
 
     request = ups.RatingRequestType(
         RateRequest=ups.RateRequestType(
