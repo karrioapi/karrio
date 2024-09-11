@@ -243,6 +243,7 @@ class Message:
     carrier_id: str
     message: Union[str, Any] = None
     code: str = None
+    level: str = None
     details: Dict = None
 
 
