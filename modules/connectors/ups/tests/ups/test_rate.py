@@ -131,7 +131,7 @@ ParsedRateResponse = [
             "carrier_name": "ups",
             "currency": "CAD",
             "extra_charges": [
-                {"amount": 116.35, "currency": "CAD", "name": "Base charge"},
+                {"amount": 116.35, "currency": "CAD", "name": "BASE CHARGE"},
                 {"amount": 21.52, "currency": "CAD", "name": "FUEL SURCHARGE"},
                 {"amount": 20.68, "currency": "CAD", "name": "HST"},
             ],
@@ -145,7 +145,7 @@ ParsedRateResponse = [
             "carrier_name": "ups",
             "currency": "CAD",
             "extra_charges": [
-                {"amount": 71.95, "currency": "CAD", "name": "Base charge"},
+                {"amount": 71.95, "currency": "CAD", "name": "BASE CHARGE"},
                 {"amount": 13.31, "currency": "CAD", "name": "FUEL SURCHARGE"},
                 {"amount": 12.79, "currency": "CAD", "name": "HST"},
             ],
@@ -159,7 +159,7 @@ ParsedRateResponse = [
             "carrier_name": "ups",
             "currency": "CAD",
             "extra_charges": [
-                {"amount": 70.90, "currency": "CAD", "name": "Base charge"},
+                {"amount": 70.90, "currency": "CAD", "name": "BASE CHARGE"},
                 {"amount": 13.12, "currency": "CAD", "name": "FUEL SURCHARGE"},
                 {"amount": 12.6, "currency": "CAD", "name": "HST"},
             ],
@@ -173,7 +173,7 @@ ParsedRateResponse = [
             "carrier_name": "ups",
             "currency": "CAD",
             "extra_charges": [
-                {"amount": 67.10, "currency": "CAD", "name": "Base charge"},
+                {"amount": 67.10, "currency": "CAD", "name": "BASE CHARGE"},
                 {"amount": 12.41, "currency": "CAD", "name": "FUEL SURCHARGE"},
                 {"amount": 11.93, "currency": "CAD", "name": "HST"},
             ],
@@ -193,7 +193,7 @@ ParsedFRRateResponse = [
             "carrier_name": "ups",
             "currency": "EUR",
             "extra_charges": [
-                {"amount": 12.37, "currency": "EUR", "name": "Base charge"},
+                {"amount": 12.37, "currency": "EUR", "name": "BASE CHARGE"},
                 {"amount": 2.74, "currency": "EUR", "name": "FUEL SURCHARGE"},
                 {"amount": 3.02, "currency": "EUR", "name": "TVA"},
             ],
@@ -207,7 +207,7 @@ ParsedFRRateResponse = [
             "carrier_name": "ups",
             "currency": "EUR",
             "extra_charges": [
-                {"amount": 10.21, "currency": "EUR", "name": "Base charge"},
+                {"amount": 10.21, "currency": "EUR", "name": "BASE CHARGE"},
                 {"amount": 2.26, "currency": "EUR", "name": "FUEL SURCHARGE"},
                 {"amount": 2.49, "currency": "EUR", "name": "TVA"},
             ],
@@ -221,7 +221,7 @@ ParsedFRRateResponse = [
             "carrier_name": "ups",
             "currency": "EUR",
             "extra_charges": [
-                {"amount": 8.22, "currency": "EUR", "name": "Base charge"},
+                {"amount": 8.22, "currency": "EUR", "name": "BASE CHARGE"},
                 {"amount": 1.16, "currency": "EUR", "name": "FUEL SURCHARGE"},
                 {"amount": 1.87, "currency": "EUR", "name": "TVA"},
             ],

@@ -36,7 +36,7 @@ def _extract_details(
     itemized_charges = [*effective_rate.ItemizedCharges, *taxes]
 
     charges = [
-        ("Base charge", effective_rate.BaseServiceCharge.MonetaryValue),
+        ("BASE CHARGE", effective_rate.BaseServiceCharge.MonetaryValue),
         *lib.identity(
             []
             if any(itemized_charges)
