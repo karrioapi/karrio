@@ -27,29 +27,36 @@ def _extract_details(
     ctx: dict,
 ) -> typing.List[models.RateDetails]:
     rate = lib.to_object(ups_response.RatedShipmentType, detail)
-
-    if rate.NegotiatedRateCharges is not None:
-        total_charge = (
-            rate.NegotiatedRateCharges.TotalChargesWithTaxes
-            or rate.NegotiatedRateCharges.TotalCharge
-        )
-        taxes = rate.NegotiatedRateCharges.TaxCharges or []
-        itemized_charges = [*rate.NegotiatedRateCharges.ItemizedCharges, *taxes]
-    else:
-        total_charge = rate.TotalChargesWithTaxes or rate.TotalCharges
-        taxes = rate.TaxCharges or []
-        itemized_charges = [*rate.ItemizedCharges, *taxes]
+    effective_rate = rate.NegotiatedRateCharges if rate.NegotiatedRateCharges is not None else rate
+    total_charge = effective_rate.TotalChargesWithTaxes or effective_rate.TotalCharges
+    taxes = effective_rate.TaxCharges or []
+    itemized_charges = [*effective_rate.ItemizedCharges, *taxes]
 
     charges = [
-        ("Base charge", rate.TransportationCharges.MonetaryValue),
+        ("Base charge", effective_rate.BaseServiceCharge.MonetaryValue),
         *(
             []
             if any(itemized_charges)
             else [("Taxes", sum(lib.to_money(c.MonetaryValue) for c in taxes))]
         ),
-        (rate.Service.Code, rate.ServiceOptionsCharges.MonetaryValue),
         *(
-            (getattr(c, "Code", None) or getattr(c, "Type", None), c.MonetaryValue)
+            (rate.Service.Code, rate.ServiceOptionsCharges.MonetaryValue)
+            if lib.to_int(rate.ServiceOptionsCharges.MonetaryValue) > 0
+            else []
+        ),
+        *(
+            (
+                (
+                    provider_units.SurchargeType.map(
+                        str(getattr(c, "Code", None) or getattr(c, "Type", None))
+                    ).name.capitalize().replace("_", " ")
+                    if provider_units.SurchargeType.map(
+                        str(getattr(c, "Code", None) or getattr(c, "Type", None))
+                    ).name
+                    else (getattr(c, "Code", None) or getattr(c, "Type", None))
+                ),
+                c.MonetaryValue
+            )
             for c in itemized_charges
         ),
     ]
