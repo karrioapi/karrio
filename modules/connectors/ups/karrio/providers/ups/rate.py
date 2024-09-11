@@ -3,6 +3,7 @@ import karrio.schemas.ups.rating_response as ups_response
 import time
 import typing
 import karrio.lib as lib
+import karrio.core.units as units
 import karrio.core.models as models
 import karrio.providers.ups.error as provider_error
 import karrio.providers.ups.units as provider_units
@@ -36,17 +37,17 @@ def _extract_details(
 
     charges = [
         ("Base charge", effective_rate.BaseServiceCharge.MonetaryValue),
-        *(
+        *lib.identity(
             []
             if any(itemized_charges)
             else [("Taxes", sum(lib.to_money(c.MonetaryValue) for c in taxes))]
         ),
-        *(
+        *lib.identity(
             (rate.Service.Code, rate.ServiceOptionsCharges.MonetaryValue)
             if lib.to_int(rate.ServiceOptionsCharges.MonetaryValue) > 0
             else []
         ),
-        *(
+        *lib.identity(
             (
                 lib.identity(
                     provider_units.SurchargeType.map(
@@ -114,6 +115,9 @@ def rate_request(
         *(["01"] if options.pickup_options.state else []),
         *(["02"] if options.delivery_options.state else []),
     ]
+    origin = lib.identity(
+        "EU" if shipper.country_code in units.EUCountry else shipper.country_code
+    )
 
     request = ups.RatingRequestType(
         RateRequest=ups.RateRequestType(
