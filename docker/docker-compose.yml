@@ -1,13 +1,19 @@
 services:
   api:
     container_name: karrio.api
-    image: karrio.docker.scarf.sh/karrio/server:2024.6.4
+    image: karrio-api:local
     restart: unless-stopped
     ports:
       - ${KARRIO_HTTP_PORT}:${KARRIO_HTTP_PORT}
     depends_on:
       - db
       - redis
+    healthcheck:
+      test: curl --fail http://api:5002/ || exit 1
+      interval: 40s
+      timeout: 30s
+      retries: 5
+      start_period: 60s
     environment:
       DEBUG_MODE: "True"
       DETACHED_WORKER: "True"
@@ -24,7 +30,7 @@ services:
 
   worker:
     container_name: karrio.worker
-    image: karrio.docker.scarf.sh/karrio/server:2024.6.4
+    image: karrio-api:local
     restart: unless-stopped
     depends_on:
       - db
@@ -44,12 +50,14 @@ services:
 
   dashboard:
     container_name: karrio.dashboard
-    image: karrio.docker.scarf.sh/karrio/dashboard:2024.6.4
+    image: karrio.docker.scarf.sh/karrio/dashboard:2024.6.3
     restart: unless-stopped
     ports:
       - ${DASHBOARD_PORT}:3000/tcp
     depends_on:
-      - api
+      api:
+        condition: service_healthy
+        restart: true
     environment:
       KARRIO_URL: http://api:${KARRIO_HTTP_PORT:-5002}
       NEXTAUTH_SECRET: ${JWT_SECRET}
