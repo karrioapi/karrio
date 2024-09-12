@@ -1,7 +1,7 @@
 services:
   api:
     container_name: karrio.api
-    image: karrio-api:local
+    image: karrio.docker.scarf.sh/karrio/server:2024.6.4
     restart: unless-stopped
     ports:
       - ${KARRIO_HTTP_PORT}:${KARRIO_HTTP_PORT}
