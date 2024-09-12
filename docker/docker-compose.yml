@@ -8,6 +8,12 @@ services:
     depends_on:
       - db
       - redis
+    healthcheck:
+      test: curl --fail http://api:5002/ || exit 1
+      interval: 40s
+      timeout: 30s
+      retries: 5
+      start_period: 60s
     environment:
       DEBUG_MODE: "True"
       DETACHED_WORKER: "True"
@@ -49,7 +55,9 @@ services:
     ports:
       - ${DASHBOARD_PORT}:3000/tcp
     depends_on:
-      - api
+      api:
+        condition: service_healthy
+        restart: true
     environment:
       KARRIO_URL: http://api:${KARRIO_HTTP_PORT:-5002}
       NEXTAUTH_SECRET: ${JWT_SECRET}
