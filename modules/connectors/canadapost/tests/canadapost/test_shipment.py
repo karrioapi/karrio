@@ -87,11 +87,11 @@ class TestCanadaPostShipment(unittest.TestCase):
             info_call, cancel_call = mocks.call_args_list
             self.assertEqual(
                 info_call[1]["url"],
-                f"{gateway.settings.server_url}/rs/2004381/2004381/shipment/123456789012",
+                f"{gateway.settings.server_url}/rs/2004381/2004381/shipment/545021584835957806",
             )
             self.assertEqual(
                 cancel_call[1]["url"],
-                f"{gateway.settings.server_url}/rs/2004381/2004381/shipment/123456789012",
+                f"{gateway.settings.server_url}/rs/2004381/2004381/shipment/545021584835957806",
             )
 
     def test_cancel_transmitted_shipment(self):
@@ -103,11 +103,11 @@ class TestCanadaPostShipment(unittest.TestCase):
             info_call, refund_call = mocks.call_args_list
             self.assertEqual(
                 info_call[1]["url"],
-                f"{gateway.settings.server_url}/rs/2004381/2004381/shipment/123456789012",
+                f"{gateway.settings.server_url}/rs/2004381/2004381/shipment/545021584835957806",
             )
             self.assertEqual(
                 refund_call[1]["url"],
-                f"{gateway.settings.server_url}/rs/2004381/2004381/shipment/123456789012/refund",
+                f"{gateway.settings.server_url}/rs/2004381/2004381/shipment/545021584835957806/refund",
             )
 
     def test_parse_shipment_response(self):
@@ -156,7 +156,7 @@ if __name__ == "__main__":
 
 
 shipment_cancel_data = {
-    "shipment_identifier": "123456789012",
+    "shipment_identifier": "545021584835957806",
     "options": {"email": "test@test.com"},
 }
 
@@ -292,7 +292,7 @@ ParsedShipmentResponse = [
         "carrier_name": "canadapost",
         "carrier_id": "canadapost",
         "tracking_number": "123456789012",
-        "shipment_identifier": "123456789012",
+        "shipment_identifier": "545021584835957806",
         "label_type": "PDF",
         "docs": {"label": ANY},
         "meta": {
@@ -317,7 +317,7 @@ ParsedMultiPieceShipmentResponse = [
             "manifest_required": False,
         },
         "label_type": "PDF",
-        "shipment_identifier": "123456789012",
+        "shipment_identifier": "545021584835957806",
         "tracking_number": "123456789012",
     },
     [],

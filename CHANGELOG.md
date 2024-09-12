@@ -1,3 +1,11 @@
+# Patch 2024.6.6
+
+## Changes
+
+### Fix
+
+- fix: `canadapost` shipment identifier data mapping (#683)
+
 # Patch 2024.6.5
 
 ## Changes
