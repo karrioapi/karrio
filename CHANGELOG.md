@@ -2,6 +2,14 @@
 
 ## Changes
 
+### Fix
+
+- fix: `canadapost` shipment identifier data mapping (#683)
+
+# Patch 2024.6.5
+
+## Changes
+
 ### Devx
 
 -   devx: improve karrio docker container startup with healthchecks #684
