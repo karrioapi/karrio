@@ -1,3 +1,11 @@
+# Patch 2024.6.5
+
+## Changes
+
+### Devx
+
+-   devx: improve karrio docker container startup with healthchecks #684
+
 # Patch 2024.6.4
 
 ## Changes
