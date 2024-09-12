@@ -50,7 +50,7 @@ services:
 
   dashboard:
     container_name: karrio.dashboard
-    image: karrio.docker.scarf.sh/karrio/dashboard:2024.6.3
+    image: karrio.docker.scarf.sh/karrio/dashboard:2024.6.4
     restart: unless-stopped
     ports:
       - ${DASHBOARD_PORT}:3000/tcp
