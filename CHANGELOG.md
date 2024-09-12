@@ -1,3 +1,12 @@
+# Patch 2024.6.7
+
+## Changes
+
+### Fix
+
+- hotfix: `canadapost` group_id invalid string format #686
+
+
 # Patch 2024.6.6
 
 ## Changes
