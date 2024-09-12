@@ -49,7 +49,7 @@ def _extract_shipment(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=info.tracking_pin,
-        shipment_identifier=info.tracking_pin,
+        shipment_identifier=info.shipment_id,
         docs=models.Documents(label=label),
         label_type=ctx["label_type"],
         meta=lib.to_dict(
