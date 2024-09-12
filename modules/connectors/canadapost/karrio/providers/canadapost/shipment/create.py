@@ -90,7 +90,7 @@ def shipment_request(
     label_encoding, label_format = provider_units.LabelType.map(
         payload.label_type or "PDF_4x6"
     ).value
-    group_id = lib.to_date(datetime.datetime.now(), "%Y%m%d")
+    group_id = lib.fdate(datetime.datetime.now(), "%Y%m%d")
     customer_request_ids = [f"{str(uuid.uuid4().hex)}" for _ in range(len(packages))]
     submit_shipment = lib.identity(
         #  set to true if canadapost_submit_shipment is true
