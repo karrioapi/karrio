@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "available_balance": 0,
+    "easyship_shipment_ids": ["ESSG10006001"],
+    "request_id": "01563646-58c1-4607-8fe0-cae3e92c4477"
+  },
+  "pickup": {
+    "address": {
+      "city": "City",
+      "company_name": "Test Plc.",
+      "contact_email": "asd@asd.com",
+      "contact_name": "Foo Bar",
+      "contact_phone": "+852-1234-5678",
+      "country_alpha2": "HK",
+      "default_for": {
+        "billing": false,
+        "pickup": true,
+        "return": true,
+        "sender": true
+      },
+      "hk_district": {
+        "area": "Admiralty",
+        "district": "Central and Western",
+        "id": 1,
+        "zone": "Hong Kong Island"
+      },
+      "id": "01563646-58c1-4607-8fe0-cae3e33c0005",
+      "line_1": "123 Test Street",
+      "line_2": "Block 3",
+      "postal_code": "ABC123",
+      "state": "State",
+      "validation": {
+        "detail": "Address is not valid",
+        "status": "invalid_address",
+        "comparison": {
+          "changes": "",
+          "post": "",
+          "pre": ""
+        }
+      }
+    },
+    "courier": {
+      "id": "01563646-58c1-4607-8fe0-cae3e33c0001",
+      "name": "USPS"
+    },
+    "easyship_pickup_id": "PHK10000001",
+    "pickup_fee": 0,
+    "pickup_reference_number": "string",
+    "pickup_state": "pending-confirmation",
+    "provider_name": "Standard Pickup",
+    "selected_from_time": "2022-02-23T12:00",
+    "selected_to_time": "2022-02-23T16:00",
+    "shipments_count": 1,
+    "total_actual_weight": 30.0
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "destination_address": {
+    "city": "Singapore",
+    "company_name": "Test Plc.",
+    "contact_email": "asd@asd.com",
+    "contact_name": "Foo Bar",
+    "contact_phone": "+65 6910 1185",
+    "country_alpha2": "SG",
+    "line_1": "123 Test Street",
+    "line_2": "Block 3",
+    "postal_code": "247964",
+    "state": "Singapore"
+  },
+  "origin_address": {
+    "city": "City",
+    "company_name": "Test Plc.",
+    "contact_email": "asd@asd.com",
+    "contact_name": "Foo Bar",
+    "contact_phone": "+852-1234-5678",
+    "country_alpha2": "SG",
+    "line_1": "123 Test Street",
+    "line_2": "Block 3",
+    "postal_code": "ABC123",
+    "state": "State",
+    "validation": {
+      "detail": "Address is not valid",
+      "status": "invalid_address",
+      "comparison": {
+        "changes": "",
+        "post": "",
+        "pre": ""
+      }
+    }
+  },
+  "courier_id": "01563646-58c1-4607-8fe0-cae3e33c0002",
+  "origin_address_id": "01563646-58c1-4607-8fe0-cae3e33c0002",
+  "platform_order_number": "1234567890",
+  "items": [
+    {
+      "description": "iPhone",
+      "quantity": 1
+    },
+    {
+      "description": "Macbook"
+    }
+  ],
+  "tracking_number": "13213213"
+}

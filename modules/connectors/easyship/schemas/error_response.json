@@ -1,0 +1,11 @@
+{
+  "error": {
+    "code": "over_limit",
+    "details": [
+      "We were unable to generate a label as your maximum balance limit has been reached. Please contact your account manager."
+    ],
+    "message": "You have reached your plan limit. Please upgrade your subscription plan.",
+    "request_id": "01563646-58c1-4607-8fe0-cae3e92c4477",
+    "type": "invalid_request_error"
+  }
+}
