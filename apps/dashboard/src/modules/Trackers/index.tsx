@@ -142,7 +142,7 @@ export default function TrackersPage(pageProps: any) {
                       <button className="button is-white is-pulled-right"
                         onClick={(e) => {
                           e.stopPropagation();
-                          confirmDeletion({ label: "Delet Shipment Tracker", identifier: tracker.id as string, onConfirm: remove(tracker.id) })
+                          confirmDeletion({ label: "Delete Shipment Tracker", identifier: `${tracker.id} / ${tracker.tracking_number}` as string, onConfirm: remove(tracker.id) })
                         }}>
                         <span className="icon is-small">
                           <i className="fas fa-trash"></i>
