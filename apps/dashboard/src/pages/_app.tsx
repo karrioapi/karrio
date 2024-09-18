@@ -12,16 +12,32 @@ import type { AppProps } from "next/app";
 
 const queryClient = new QueryClient();
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps, router }: AppProps) {
+  // Check for error in pageProps and render an error screen
+  if (pageProps?.error) {
+    return (
+      <div>
+        <h1>Error</h1>
+        <p>{pageProps.error.message}</p>
+      </div>
+    );
+  }
+
+  const isErrorPage = router.pathname === "/404" || router.pathname === "/500";
+
   return (
     <SessionProvider session={pageProps.session} refetchInterval={5 * 60}>
       <NextPostHogProvider>
         <QueryClientProvider client={queryClient}>
           <APIMetadataProvider {...pageProps}>
             <ClientProvider {...pageProps}>
-              <MainLayout error={pageProps?.error}>
+              {isErrorPage ? (
                 <Component {...pageProps} />
-              </MainLayout>
+              ) : (
+                <MainLayout error={pageProps?.error}>
+                  <Component {...pageProps} />
+                </MainLayout>
+              )}
             </ClientProvider>
           </APIMetadataProvider>
         </QueryClientProvider>
