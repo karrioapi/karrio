@@ -1,20 +1,18 @@
 import {
   formatAddressRegion,
-  formatDayDate,
   formatRef,
   isNone,
 } from "@karrio/lib";
 import {
-  TrackerStatusEnum,
   TrackerType,
-  TrackingEventType,
 } from "@karrio/types";
-import { CarrierImage } from "@karrio/ui/components/carrier-image";
 import { AppLink } from "@karrio/ui/components/app-link";
 import React, { useRef, useState } from "react";
 import { useLocation } from "@karrio/hooks/location";
+import TrackingHeader from "./TrackingHeader";
+import TrackingEvents from "./TrackingEvents";
+import TrackingMessages from "./TrackingMessages";
 
-type DayEvents = { [k: string]: TrackingEventType[] };
 type TrackingPreviewContextType = {
   previewTracker: (tracker: TrackerType) => void;
 };
@@ -60,54 +58,6 @@ export const TrackingPreview: React.FC<TrackingPreviewComponent> = ({
     document.execCommand("copy");
     document.body.removeChild(input);
   };
-  const computeColor = (tracker: TrackerType) => {
-    if (tracker?.delivered) return "has-background-success";
-    else if (tracker?.status === TrackerStatusEnum.pending.toString())
-      return "has-background-grey-dark";
-    else if (
-      [
-        TrackerStatusEnum.on_hold.toString(),
-        TrackerStatusEnum.delivery_delayed.toString(),
-      ].includes(tracker?.status as string)
-    )
-      return "has-background-warning";
-    else if (
-      [TrackerStatusEnum.unknown.toString()].includes(tracker?.status as string)
-    )
-      return "has-background-grey";
-    else if (
-      [TrackerStatusEnum.delivery_failed.toString()].includes(
-        tracker?.status as string,
-      )
-    )
-      return "has-background-danger";
-    else return "has-background-info";
-  };
-  const computeStatus = (tracker: TrackerType) => {
-    if (tracker?.delivered) return "Delivered";
-    else if (tracker?.status === TrackerStatusEnum.pending.toString())
-      return "Pending";
-    else if (
-      [
-        TrackerStatusEnum.on_hold.toString(),
-        TrackerStatusEnum.delivery_delayed.toString(),
-        TrackerStatusEnum.ready_for_pickup.toString(),
-        TrackerStatusEnum.unknown.toString(),
-        TrackerStatusEnum.delivery_failed.toString(),
-      ].includes(tracker?.status as string)
-    )
-      return formatRef(tracker!.status as string);
-    else return "In-Transit";
-  };
-  const computeEvents = (tracker: TrackerType): DayEvents => {
-    return (tracker?.events || []).reduce(
-      (days: any, event: TrackingEventType) => {
-        const daydate = formatDayDate(event.date as string);
-        return { ...days, [daydate]: [...(days[daydate] || []), event] };
-      },
-      {} as DayEvents,
-    );
-  };
 
   return (
     <>
@@ -122,60 +72,7 @@ export const TrackingPreview: React.FC<TrackingPreviewComponent> = ({
         {!isNone(tracker) && (
           <div className="modal-card">
             <section className="modal-card-body">
-              <div className="has-text-centered pb-4">
-                <CarrierImage
-                  carrier_name={
-                    (tracker?.meta as any)?.carrier || tracker?.carrier_name
-                  }
-                  width={60}
-                  height={60}
-                  text_color={tracker?.tracking_carrier?.config?.text_color}
-                  background={tracker?.tracking_carrier?.config?.brand_color}
-                />
-              </div>
-
-              <p className="subtitle has-text-centered is-6 my-3">
-                <span>Tracking ID</span>{" "}
-                <strong>{tracker?.tracking_number}</strong>
-              </p>
-
-              {!isNone(tracker?.info) && (
-                <>
-                  <hr />
-                  <p className="has-text-weight-bold my-4 is-size-6">
-                    Additional Information
-                  </p>
-                  <div className="columns is-multiline">
-                    {Object.entries(tracker?.info || {})
-                      .filter(([_, value]) => value != null) // Exclude null or undefined values
-                      .map(([key, value], index) => (
-                        <div key={index} className="column is-6">
-                          <strong>{key}: </strong> <span>{String(value)}</span>
-                        </div>
-                      ))}
-                  </div>
-                </>
-              )}
-
-              {!isNone(tracker?.estimated_delivery) && (
-                <p className="subtitle has-text-centered is-6 mb-3">
-                  <span>
-                    {tracker?.delivered ? "Delivered" : "Estimated Delivery"}
-                  </span>{" "}
-                  <strong>
-                    {formatDayDate(tracker!.estimated_delivery as string)}
-                  </strong>
-                </p>
-              )}
-
-              <p
-                className={
-                  computeColor(tracker as TrackerType) +
-                  " block has-text-centered has-text-white is-size-4 py-3"
-                }
-              >
-                {computeStatus(tracker as TrackerType)}
-              </p>
+              <TrackingHeader tracker={tracker as TrackingType} />
 
               <hr />
 
@@ -183,45 +80,11 @@ export const TrackingPreview: React.FC<TrackingPreviewComponent> = ({
                 className="my-3 pl-3"
                 style={{ maxHeight: "40vh", overflowY: "scroll" }}
               >
-                <aside className="menu">
-                  <ul className="menu-list mb-5" style={{ maxWidth: "28rem" }}>
-                    {Object.entries(computeEvents(tracker as TrackerType)).map(
-                      ([day, events], index) => (
-                        <li key={index}>
-                          <p className="menu-label is-size-6 is-capitalized">
-                            {day}
-                          </p>
-
-                          {events.map((event, index) => (
-                            <ul key={index}>
-                              <li className="my-2">
-                                <code>{event.time}</code>
-                                <span className="is-subtitle is-size-7 my-1 has-text-weight-semibold">
-                                  {event.location}
-                                </span>
-                              </li>
-                              <li className="my-2">
-                                <span className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-grey">
-                                  {event.description}
-                                </span>
-                              </li>
-                            </ul>
-                          ))}
-                        </li>
-                      ),
-                    )}
-                  </ul>
-                </aside>
+                <TrackingEvents tracker={tracker as TrackingType} />
               </div>
 
-              {(tracker?.messages || []).length > 0 && (
-                <div className="notification is-warning">
-                  <p className="is-size-7 my-1 has-text-weight-semibold has-text-grey">
-                    {(tracker?.messages || [{}])[0].message}
-                  </p>
-                </div>
-              )}
-
+              <TrackingMessages messages={tracker?.messages || [] } />
+              
               {!isNone(tracker?.shipment) && (
                 <>
                   <hr />

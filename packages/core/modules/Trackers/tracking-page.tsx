@@ -1,11 +1,13 @@
 import { TrackingEvent, TrackingStatus } from "@karrio/types/rest/api";
 import { formatDayDate, isNone, KARRIO_API, url$ } from "@karrio/lib";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { CarrierImage } from "@karrio/ui/components/carrier-image";
 import { Collection, KarrioClient } from "@karrio/types";
 import { loadMetadata } from "@karrio/core/context/main";
 import Link from "next/link";
 import React from "react";
+import TrackingHeader from "@karrio/core/components/TrackingHeader";
+import TrackingEvents from "@karrio/core/components/TrackingEvents";
+import TrackingMessages from "@karrio/core/components/TrackingMessages";
 
 export const generateMetadata = dynamicMetadata("Tracking");
 
@@ -51,91 +53,20 @@ export default async function Page({ params }: { params: Collection }) {
             <>
               <div className="card isolated-card">
                 <div className="card-content">
-                  <div className="pb-4 is-flex is-justify-content-center">
-                    <CarrierImage
-                      carrier_name={tracker!.carrier_name}
-                      width={60}
-                      height={60}
-                    />
-                  </div>
-
-                  <p className="subtitle has-text-centered is-6 my-3">
-                    <span>Tracking ID</span>{" "}
-                    <strong>{tracker?.tracking_number}</strong>
-                  </p>
-
-                  {!isNone(tracker?.estimated_delivery) && (
-                    <p className="subtitle has-text-centered is-6 mb-3">
-                      <span>
-                        {tracker?.delivered
-                          ? "Delivered"
-                          : "Estimated Delivery"}
-                      </span>{" "}
-                      <strong>
-                        {formatDayDate(tracker!.estimated_delivery as string)}
-                      </strong>
-                    </p>
-                  )}
+                  <TrackingHeader tracker={tracker as TrackingType} />
                 </div>
 
-                <footer className="card-footer">
-                  {tracker?.status === "delivered" && (
-                    <p className="card-footer-item has-background-success has-text-white is-size-4">
-                      Delivered
-                    </p>
-                  )}
-
-                  {tracker?.status === "in_transit" && (
-                    <p className="card-footer-item has-background-info has-text-white is-size-4">
-                      In-Transit
-                    </p>
-                  )}
-
-                  {tracker?.status !== "delivered" &&
-                    tracker?.status !== "in_transit" && (
-                      <p className="card-footer-item has-background-grey-dark has-text-white is-size-4">
-                        Pending
-                      </p>
-                    )}
-                </footer>
+                <footer className="card-footer"></footer>
               </div>
 
               <hr />
-
-              <div className="my-6">
-                <aside className="menu">
-                  <ul className="menu-list mb-5" style={{ maxWidth: "28rem" }}>
-                    {Object.entries(
-                      computeEvents(tracker as TrackingStatus),
-                    ).map(([day, events], index) => (
-                      <li key={index}>
-                        <p className="menu-label is-size-6 is-capitalized">
-                          {day}
-                        </p>
-
-                        {events.map((event, index) => (
-                          <ul key={index}>
-                            <li className="my-2">
-                              <code>{event.time}</code>
-                              <span className="is-subtitle is-size-7 my-1 has-text-weight-semibold">
-                                {event.location}
-                              </span>
-                            </li>
-                            <li className="my-2">
-                              <span className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-grey">
-                                {event.description}
-                              </span>
-                            </li>
-                          </ul>
-                        ))}
-                      </li>
-                    ))}
-                  </ul>
-                </aside>
-              </div>
+              
+              <TrackingEvents tracker={tracker as TrackingType} />
             </>
           )}
 
+          <TrackingMessages messages={tracker?.messages || [] } />
+          
           {!isNone(message) && (
             <div className="card isolated-card my-6">
               <div className="card-content has-text-centered ">
