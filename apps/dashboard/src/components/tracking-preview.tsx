@@ -104,6 +104,22 @@ export const TrackingPreview: React.FC<TrackingPreviewComponent> = ({ children }
               <span>Tracking ID</span> <strong>{tracker?.tracking_number}</strong>
             </p>
 
+            {!isNone(tracker?.info) && (
+              <>
+                <hr />
+                <p className="has-text-weight-bold my-4 is-size-6">Additional Information</p>
+                <div className="columns is-multiline">
+                  {Object.entries(tracker.info)
+                    .filter(([_, value]) => value != null) // Exclude null or undefined values
+                    .map(([key, value], index) => (
+                      <div key={index} className="column is-6">
+                        <strong>{key}: </strong> <span>{String(value)}</span>
+                      </div>
+                  ))}
+                </div>
+              </>
+            )}
+
             {!isNone(tracker?.estimated_delivery) && <p className="subtitle has-text-centered is-6 mb-3">
               <span>{tracker?.delivered ? 'Delivered' : 'Estimated Delivery'}</span> {' '}
               <strong>{formatDayDate(tracker!.estimated_delivery as string)}</strong>
