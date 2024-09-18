@@ -10,7 +10,7 @@ import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { useLoader } from "@karrio/ui/components/loader";
 import { Spinner } from "@karrio/ui/components/spinner";
-import { TrackingEvent } from "@karrio/types/rest/api";
+import { TrackingEvent, TrackingInfo } from "@karrio/types/rest/api";
 import React, { useContext, useEffect } from "react";
 import { useRouter } from "next/dist/client/router";
 import Head from "next/head";
@@ -127,12 +127,27 @@ export default function TrackersPage(pageProps: any) {
                     <td className="status is-vcentered">
                       <StatusBadge status={tracker.status as string} style={{ width: '100%' }} />
                     </td>
-                    <td className="last-event is-vcentered py-1 last-event is-size-7 has-text-weight-bold has-text-grey text-ellipsis">
-                      <span className="text-ellipsis"
-                        title={isNoneOrEmpty(tracker?.events) ? "" : formatEventDescription((tracker?.events as TrackingEvent[])[0])}>
-                        {isNoneOrEmpty(tracker?.events) ? "" : formatEventDescription((tracker?.events as TrackingEvent[])[0])}
-                      </span>
-                    </td>
+                      <td className="last-event is-vcentered py-1 last-event is-size-7 has-text-weight-bold has-text-grey text-ellipsis">
+                        {(() => {
+                          const formattedDescription = isNoneOrEmpty(
+                            tracker?.events,
+                          )
+                            ? ""
+                            : formatEventDescription(
+                                (tracker?.events as TrackingEvent[])[0],
+                                tracker?.info as TrackingInfo,
+                              );
+
+                          return (
+                            <span
+                              className="text-ellipsis"
+                              title={formattedDescription}
+                            >
+                              {formattedDescription}
+                            </span>
+                          );
+                        })()}
+                      </td>
                     <td className="date is-vcentered has-text-right">
                       <p className="is-size-7 has-text-weight-semibold has-text-grey">
                         {isNoneOrEmpty(tracker?.events) ? "" : formatEventDate((tracker?.events as TrackingEvent[])[0])}
@@ -205,8 +220,22 @@ export default function TrackersPage(pageProps: any) {
   ), pageProps)
 }
 
-function formatEventDescription(last_event?: TrackingEvent): string {
-  return last_event?.description || '';
+function formatEventDescription(
+  last_event?: TrackingEvent,
+  tracking_info?: TrackingInfo,
+): string {
+  if (!last_event) {
+    return "";
+  }
+
+  const { description } = last_event;
+  const { signed_by } = tracking_info || {};
+
+  if (description === "Delivered" && signed_by) {
+    return `${description} (Signed by: ${signed_by})`;
+  }
+
+  return description || "";
 }
 
 function formatEventDate(last_event?: TrackingEvent): string {
