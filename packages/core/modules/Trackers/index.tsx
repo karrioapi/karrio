@@ -281,7 +281,7 @@ export default function TrackersPage(pageProps: any) {
                           onClick={(e) => {
                             e.stopPropagation();
                             confirmDeletion({
-                              label: "Delet Shipment Tracker",
+                              label: "Delete Shipment Tracker",
                               identifier: tracker.id as string,
                               onConfirm: remove(tracker.id),
                             });
