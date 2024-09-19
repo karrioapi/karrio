@@ -6,6 +6,12 @@ import karrio.core.models as models
 import karrio.providers.fedex.error as provider_error
 import karrio.providers.fedex.utils as provider_utils
 import karrio.providers.fedex.units as provider_units
+import karrio.mappers.fedex.proxy as proxy
+import logging
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
+
 
 DATETIME_FORMATS = ["%Y-%m-%dT%H:%M:%S%z", "%Y-%m-%dT%H:%M:%S"]
 
@@ -68,13 +74,28 @@ def _extract_details(
         provider_units.TrackingStatus.in_transit.name,
     )
     delivered = status == "delivered"
-    img = lib.failsafe(
-        lambda: (
-            provider_utils.get_proof_of_delivery(package.trackingNumber, settings)
-            if delivered
-            else None
-        )
+    # Create a proxy instance with settings
+    logger.debug(f"Settings being passed to the proxy_instance: {settings}")
+    proxy_instance = proxy.Proxy(settings=settings)
+
+    # img = lib.failsafe(
+    #     lambda: (
+    #         proxy_instance.get_proof_of_delivery(package.trackingNumber)
+    #         if delivered
+    #         else None
+    #     )
+    # )
+    img = (
+        proxy_instance.get_proof_of_delivery(package.trackingNumber)
+        if delivered
+        else None
     )
+    logger.debug(f"Image for {package.trackingNumber}: {img}")
+    if img:
+        logger.info(f"Successfully retrieved SPOD image for {package.trackingNumber}")
+    else:
+        logger.warning(f"No SPOD image available for {package.trackingNumber}")
+
 
     return models.TrackingDetails(
         carrier_name=settings.carrier_name,
