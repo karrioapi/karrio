@@ -10,6 +10,7 @@ import { SessionProvider } from "next-auth/react";
 import MainLayout from "@/layouts/main-layout";
 import type { AppProps } from "next/app";
 
+// Set up query client
 const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps, router }: AppProps) {
@@ -22,8 +23,22 @@ function MyApp({ Component, pageProps, router }: AppProps) {
       </div>
     );
   }
+  console.log("Current Component Name: |", Component.name, "|");
 
-  const isErrorPage = router.pathname === "/404" || router.pathname === "/500";
+  // Check if the component is a known error page like 404 or 500
+  const isErrorPage =
+    Component.name?.trim() === "Custom404" ||
+    Component.name?.trim() === "Custom500";
+
+  console.log("isErrorPage? ", isErrorPage);
+
+  if (isErrorPage) {
+    return (
+      <div>
+        <Component {...pageProps} />
+      </div>
+    );
+  }
 
   return (
     <SessionProvider session={pageProps.session} refetchInterval={5 * 60}>
@@ -31,6 +46,7 @@ function MyApp({ Component, pageProps, router }: AppProps) {
         <QueryClientProvider client={queryClient}>
           <APIMetadataProvider {...pageProps}>
             <ClientProvider {...pageProps}>
+              {/* Skip MainLayout for error pages */}
               {isErrorPage ? (
                 <Component {...pageProps} />
               ) : (
