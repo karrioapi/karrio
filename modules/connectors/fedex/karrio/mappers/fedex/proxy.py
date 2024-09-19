@@ -1,8 +1,13 @@
+import typing
 import urllib.parse
 import karrio.lib as lib
 import karrio.api.proxy as proxy
 import karrio.providers.fedex.utils as provider_utils
 import karrio.mappers.fedex.settings as provider_settings
+import karrio.schemas.fedex.tracking_document_request as fedex
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Proxy(proxy.Proxy):
@@ -26,6 +31,7 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(response, lib.to_dict, request.ctx)
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable:
+        logger.debug(f"get_tracking settings: {self.settings}")
         response = lib.request(
             url=f"{self.settings.server_url}/track/v1/trackingnumbers",
             data=lib.to_json(request.serialize()),
@@ -99,3 +105,80 @@ class Proxy(proxy.Proxy):
             response,
             lambda __: [lib.to_dict(_) for _ in __],
         )
+    
+    def get_proof_of_delivery(self, tracking_number: str) -> typing.Optional[str]:
+        import karrio.providers.fedex.error as error
+        logger.debug(f"Entering get_proof_of_delivery for tracking number {tracking_number}")
+        logger.debug(f"Using access token of Bearer")
+        logger.debug(self.settings)
+        logger.debug(self.settings.track_access_token)
+        logger.debug("------")
+
+        # Construct the request
+        request = fedex.TrackingDocumentRequestType(
+            trackDocumentSpecification=[
+                fedex.TrackDocumentSpecificationType(
+                    trackingNumberInfo=fedex.TrackingNumberInfoType(
+                        trackingNumber=tracking_number
+                    )
+                )
+            ],
+            trackDocumentDetail=fedex.TrackDocumentDetailType(
+                documentType="SIGNATURE_PROOF_OF_DELIVERY",
+                documentFormat="PNG",
+            ),
+        )
+        logger.debug(f"Request package: {lib.to_json(request)}")  # Log full request as JSON
+
+        try:
+            # Send the request
+            logger.debug("Sending request to fedex...")
+            response = lib.to_dict(
+                lib.request(
+                    url=f"{self.settings.server_url}/track/v1/trackingdocuments",
+                    data=lib.to_json(request),
+                    method="POST",
+                    headers={
+                        "x-locale": "en_US",
+                        "content-type": "application/json",
+                        "authorization": f"Bearer {self.settings.track_access_token}",
+                    },
+                    decoder=provider_utils.parse_response,
+                    on_error=lambda b: self.log_request_error(b),  # Custom error handler
+                )
+            )
+            logger.debug("Processing fedex response...")
+
+            logger.debug(f"Full response from POST to trackingdocuments: {response}")
+
+            # Check if there are any error messages in the response
+            logger.debug("Checking response for errors...")
+            messages = error.parse_error_response(response, self.settings)
+            if any(messages):
+                logger.error(f"FedEx SPOD Error for tracking number {tracking_number}: {messages}")
+                return None
+
+            # Check if the documents are present in the response
+            logger.debug("Parsing documents from response!")
+            documents = response.get("output", {}).get("documents")
+            if not documents:
+                logger.error(f"No POD documents found in the response for tracking number {tracking_number}")
+                return None
+
+            # Convert documents to base64
+            logger.debug(f"bundling documents")
+            #return lib.failsafe(lambda: lib.bundle_base64(documents, format="PNG"))
+            docs_to_return = lib.bundle_base64(documents, format="PNG")
+            logger.debug(f"Docs to return {docs_to_return}")
+            return docs_to_return
+        
+        except Exception as e:
+            # Catch any other exceptions and log the details
+            logger.error(f"An error occurred while fetching POD for tracking number {tracking_number}: {e}")
+            return None
+
+    def log_request_error(self, response_body):
+        # Custom handler for logging errors during the request
+        error_content = response_body.read().decode()
+        logger.error(f"FedEx API Request Error: {error_content}")
+        return provider_utils.parse_response(error_content)
