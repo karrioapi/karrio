@@ -23,6 +23,39 @@ class NUMBERFORMAT:
         return round(float(value), 2)
 
     @staticmethod
+    def numeric_decimal(
+        input_float: float,
+        total_digits: int = 3,
+        decimal_digits: int = 3,
+    ) -> str:
+        """Convert a float to a zero-padded string with customizable total length and decimal places.
+
+        Args:
+        input_float (float): A floating point number to be formatted.
+        total_digits (int): The total length of the output string (including both numeric and decimal parts).
+        decimal_digits (int): The number of decimal digits (d) in the final output.
+
+        Returns:
+        str: A zero-padded string of total_digits length, with the last decimal_digits as decimals.
+
+        Examples:
+        >>> format_to_custom_numeric_decimal(1.0, 7, 3)  # NNNNddd
+        '0001000'
+
+        >>> format_to_custom_numeric_decimal(1.0, 8, 3)  # NNNNNddd
+        '00001000'
+
+        >>> format_to_custom_numeric_decimal(1.0, 6, 3)  # NNNddd
+        '001000'
+        """
+        # Multiply the input float by 10^decimal_digits to scale the decimal part
+        scaling_factor = 10**decimal_digits
+        scaled_value = int(input_float * scaling_factor)
+
+        # Format as a zero-padded string with the total number of digits
+        return f"{scaled_value:0{total_digits}d}"
+
+    @staticmethod
     def integer(
         value: Union[str, int, bytes] = None, base: int = None
     ) -> Optional[int]:

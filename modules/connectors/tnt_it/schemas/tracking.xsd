@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="Document">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Application" type="xs:string" />
+                <xs:element name="Version" type="xs:string" />
+                <xs:element name="Login" type="LoginType" />
+                <xs:element name="SearchCriteria" type="SearchCriteriaType" />
+                <xs:element name="SearchParameters" type="SearchParametersType" />
+                <xs:element name="ExtraDetails" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="LoginType">
+        <xs:sequence>
+            <xs:element name="Customer" type="xs:string" />
+            <xs:element name="User" type="xs:string" />
+            <xs:element name="Password" type="xs:string" />
+            <xs:element name="LangID" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SearchCriteriaType">
+        <xs:sequence>
+            <xs:element name="ConNo" type="xs:string" />
+            <xs:element name="RTLSearch" type="xs:string" />
+            <xs:element name="AccountNo" type="xs:string" />
+            <xs:element name="StartDate" type="xs:string" />
+            <xs:element name="EndDate" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SearchParametersType">
+        <xs:sequence>
+            <xs:element name="SearchType" type="xs:string" />
+            <xs:element name="SearchOption" type="xs:string" />
+            <xs:element name="SearchKeyValue" type="xs:string" />
+            <xs:element name="SearchMethod" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>
