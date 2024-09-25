@@ -148,6 +148,34 @@ def to_decimal(
     return utils.NF.decimal(value, quant)
 
 
+def to_numeric_decimal(
+    input_float: float,
+    total_digits: int = 6,
+    decimal_digits: int = 3,
+) -> str:
+    """Convert a float to a zero-padded string with customizable total length and decimal places.
+
+    Args:
+    input_float (float): A floating point number to be formatted.
+    total_digits (int): The total length of the output string (including both numeric and decimal parts).
+    decimal_digits (int): The number of decimal digits (d) in the final output.
+
+    Returns:
+    str: A zero-padded string of total_digits length, with the last decimal_digits as decimals.
+
+    Examples:
+    >>> format_to_custom_numeric_decimal(1.0, 7, 3)  # NNNNddd
+    '0001000'
+
+    >>> format_to_custom_numeric_decimal(1.0, 8, 3)  # NNNNNddd
+    '00001000'
+
+    >>> format_to_custom_numeric_decimal(1.0, 6, 3)  # NNNddd
+    '001000'
+    """
+    return utils.NF.numeric_decimal(value, total_digits, decimal_digits)
+
+
 def to_money(
     value: typing.Union[str, float, bytes] = None,
 ) -> typing.Optional[float]:
