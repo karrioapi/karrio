@@ -443,6 +443,7 @@ class Pickup(core.OwnedEntity):
         "pickup_charge",
         "created_by",
         "metadata",
+        "meta",
     ]
     objects = PickupManager()
 
@@ -479,6 +480,9 @@ class Pickup(core.OwnedEntity):
     )
     metadata = models.JSONField(
         blank=True, null=True, default=functools.partial(utils.identity, value={})
+    )
+    meta = models.JSONField(
+        blank=True, default=functools.partial(utils.identity, value={})
     )
 
     # System Reference fields
