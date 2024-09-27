@@ -25,12 +25,12 @@ class TestEasyshipManifest(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/2023-01/manifests",
             )
 
     def test_parse_manifest_response(self):
         with patch("karrio.mappers.easyship.proxy.lib.request") as mock:
-            mock.return_value = ManifestResponse
+            mock.side_effect = [ManifestResponse, "base64_encoded_file"]
             parsed_response = (
                 karrio.Manifest.create(self.ManifestRequest).from_(gateway).parse()
             )
@@ -43,14 +43,16 @@ if __name__ == "__main__":
 
 
 ManifestPayload = {
-    "shipment_identifiers": ["794947717776"],
+    "shipment_identifiers": ["ESSG10006001"],
     "address": {
         "city": "Los Angeles",
         "state_code": "CA",
         "postal_code": "90001",
         "country_code": "US",
     },
-    "options": {},
+    "options": {
+        "easyship_courier_account_id": "01563646-58c1-4607-8fe0-cae3e33c0001",
+    },
 }
 
 ParsedManifestResponse = [
@@ -58,7 +60,13 @@ ParsedManifestResponse = [
         "carrier_id": "easyship",
         "carrier_name": "easyship",
         "doc": {"manifest": ANY},
-        "meta": {},
+        "meta": {
+            "courier_account_id": "01563646-58c1-4607-8fe0-cae3e33c0001",
+            "courier_umbrella_name": "USPS",
+            "manifest_id": "01563646-58c1-4607-8fe0-cae3e33c0001",
+            "manifest_url": "http://document.url",
+            "reference": "ABC123",
+        },
     },
     [],
 ]

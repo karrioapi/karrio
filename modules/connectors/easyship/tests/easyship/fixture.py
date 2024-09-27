@@ -1,8 +1,7 @@
-
 import karrio
 
 gateway = karrio.gateway["easyship"].create(
     dict(
-        # add required carrier API setting key/value here
+        access_token="access_token",
     )
 )

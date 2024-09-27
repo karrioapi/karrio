@@ -19,8 +19,11 @@ def parse_shipment_response(
     response = _response.deserialize()
 
     messages = error.parse_error_response(response, settings)
-    shipment = (
-        _extract_details(response, settings) if "tracking_number" in response else None
+    shipment = lib.identity(
+        _extract_details(response, settings, ctx=_response.ctx)
+        if response.get("shipment")
+        and any(response["shipment"]["shipping_documents"] or [])
+        else None
     )
 
     return shipment, messages
@@ -29,23 +32,28 @@ def parse_shipment_response(
 def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
+    ctx: dict,
 ) -> models.ShipmentDetails:
-    details = None  # parse carrier shipment type from "data"
-    label = ""  # extract and process the shipment label to a valid base64 text
-    # invoice = ""  # extract and process the shipment invoice to a valid base64 text if applies
+    details = lib.to_object(shipping.ShipmentType, data["shipment"])
+    label_document = next(
+        (_ for _ in details.shipping_documents if _.category == "label"), None
+    )
+    label_type = (label_document.format or ctx.get("label_type") or "PDF").upper()
+    label = lib.bundle_base64(label_document.base64_encoded_strings, label_type)
+    tracking_numbers = [tracking.tracking_number for tracking in details.trackings]
+    tracking_number, *__ = tracking_numbers
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number="",  # extract tracking number from shipment
-        shipment_identifier="",  # extract shipment identifier from shipment
-        label_type="PDF",  # extract shipment label file format
-        docs=models.Documents(
-            label=label,  # pass label base64 text
-            # invoice=invoice,  # pass invoice base64 text if applies
-        ),
+        tracking_number=tracking_number,
+        shipment_identifier=details.easyship_shipment_id,
+        label_type=label_type,
+        docs=models.Documents(label=label),
         meta=dict(
-            # any relevent meta
+            tracking_numbers=tracking_numbers,
+            easyship_shipment_id=details.easyship_shipment_id,
+            easyship_courier_account_id=details.courier.id,
         ),
     )
 
@@ -56,212 +64,207 @@ def shipment_request(
 ) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
-    packages = lib.to_packages(payload.parcels)
-    service = provider_units.ShippingService.map(payload.service).value_or_key
+    return_address = lib.to_address(payload.return_address or payload.shipper)
+    packages = lib.to_packages(payload.parcels, options=payload.options)
+    weight_unit, dimension_unit = packages.compatible_units
+    service = provider_units.ShippingService.map(payload.service).name_or_key
+    courrier_id = provider_units.ShippingServiceID.map(service).value_or_key
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
+    customs = lib.to_customs_info(
+        payload.customs,
+        shipper=payload.shipper,
+        recipient=payload.recipient,
+        weight_unit=weight_unit.name,
+    )
+    incoterms = lib.identity(
+        options.easyship_incoterms.state or customs.options.incoterm
+    )
+    label_type = provider_units.LabelFormat.map(payload.label_type)
 
     # map data to convert karrio model to easyship specific type
     request = easyship.ShipmentRequestType(
-        buyerregulatoryidentifiers=easyship.BuyerRegulatoryIdentifiersType(
-            ein=recipient.extra.get("ein"),
-            vatnumber=recipient.extra.get("vat_number"),
+        buyer_regulatory_identifiers=lib.identity(
+            easyship.BuyerRegulatoryIdentifiersType(
+                ein=customs.duty_billing_address.tax_id,
+                vat_number=customs.options.vat_registration_number.state,
+            )
+            if any(
+                [
+                    customs.options.vat_registration_number.state,
+                    customs.duty_billing_address.tax_id,
+                ]
+            )
+            else None
         ),
-        courierselection=easyship.CourierSelectionType(
-            allowcourierfallback=options.get("allow_courier_fallback", False),
-            applyshippingrules=options.get("apply_shipping_rules", True),
-            listunavailablecouriers=options.get("list_unavailable_couriers", False),
-            selectedcourierid=service,
+        courier_selection=easyship.CourierSelectionType(
+            allow_courier_fallback=lib.identity(
+                options.easyship_allow_courier_fallback.state
+                if options.easyship_allow_courier_fallback.state is not None
+                else settings.connection_config.allow_courier_fallback.state
+            ),
+            apply_shipping_rules=lib.identity(
+                options.easyship_apply_shipping_rules.state
+                if options.easyship_apply_shipping_rules.state is not None
+                else settings.connection_config.apply_shipping_rules.state
+            ),
+            list_unavailable_couriers=lib.identity(
+                options.easyship_list_unavailable_couriers.state
+                if options.easyship_list_unavailable_couriers.state is not None
+                else False
+            ),
+            selected_courier_id=courrier_id,
         ),
-        destinationaddress=easyship.AddressType(
+        destination_address=easyship.AddressType(
             city=recipient.city,
-            companyname=recipient.company_name,
-            contactemail=recipient.email,
-            contactname=recipient.person_name,
-            contactphone=recipient.phone_number,
-            countryalpha2=recipient.country_code,
-            line1=recipient.address_line1,
-            line2=recipient.address_line2,
-            postalcode=recipient.postal_code,
+            company_name=recipient.company_name,
+            contact_email=recipient.email,
+            contact_name=recipient.person_name,
+            contact_phone=recipient.phone_number,
+            country_alpha2=recipient.country_code,
+            line_1=recipient.address_line1,
+            line_2=recipient.address_line2,
+            postal_code=recipient.postal_code,
             state=recipient.state_code,
-            validation=easyship.ValidationType(
-                detail=None,
-                status=None,
-                comparison=easyship.ComparisonType(
-                    changes=None,
-                    post=None,
-                    pre=None,
-                ),
-            ),
         ),
-        consigneetaxid=recipient.extra.get("tax_id"),
-        eeireference=payload.customs.eel or payload.customs.ppa,
-        incoterms=payload.incoterm,
-        metadata=[easyship.Any(key=k, value=v) for k, v in payload.metadata.items()],
+        consignee_tax_id=recipient.tax_id,
+        eei_reference=options.easyship_eei_reference.state,
+        incoterms=incoterms,
+        metadata=payload.metadata,
         insurance=easyship.InsuranceType(
-            isinsured=payload.insurance.amount > 0 if payload.insurance else False,
+            is_insured=options.insurance.state is not None
         ),
-        orderdata=easyship.OrderDataType(
-            buyernotes=payload.options.get("buyer_notes"),
-            buyerselectedcouriername=None,
-            ordercreatedat=payload.options.get("order_date"),
-            platformname=payload.options.get("platform_name"),
-            platformordernumber=payload.options.get("platform_order_number"),
-            ordertaglist=payload.options.get("order_tags", []),
-            sellernotes=payload.options.get("seller_notes"),
+        order_data=None,
+        origin_address=easyship.AddressType(
+            city=return_address.city,
+            company_name=return_address.company_name,
+            contact_email=return_address.email,
+            contact_name=return_address.person_name,
+            contact_phone=return_address.phone_number,
+            country_alpha2=return_address.country_code,
+            line_1=return_address.address_line1,
+            line_2=return_address.address_line2,
+            postal_code=return_address.postal_code,
+            state=return_address.state_code,
         ),
-        originaddress=easyship.AddressType(
+        regulatory_identifiers=lib.identity(
+            easyship.RegulatoryIdentifiersType(
+                eori=customs.options.eori.state,
+                ioss=customs.options.ioss.state,
+                vat_number=customs.options.vat_registration_number.state,
+            )
+            if any(
+                [
+                    customs.options.eori.state,
+                    customs.options.vat_registration_number.state,
+                    customs.duty_billing_address.tax_id,
+                ]
+            )
+            else None
+        ),
+        shipment_request_return=options.is_return.state,
+        return_address=easyship.AddressType(
+            city=return_address.city,
+            company_name=return_address.company_name,
+            contact_email=return_address.email,
+            contact_name=return_address.person_name,
+            contact_phone=return_address.phone_number,
+            country_alpha2=return_address.country_code,
+            line_1=return_address.address_line1,
+            line_2=return_address.address_line2,
+            postal_code=return_address.postal_code,
+            state=return_address.state_code,
+        ),
+        return_address_id=options.easyship_return_address_id.state,
+        sender_address=easyship.AddressType(
             city=shipper.city,
-            companyname=shipper.company_name,
-            contactemail=shipper.email,
-            contactname=shipper.person_name,
-            contactphone=shipper.phone_number,
-            countryalpha2=shipper.country_code,
-            line1=shipper.address_line1,
-            line2=shipper.address_line2,
-            postalcode=shipper.postal_code,
+            company_name=shipper.company_name,
+            contact_email=shipper.email,
+            contact_name=shipper.person_name,
+            contact_phone=shipper.phone_number,
+            country_alpha2=shipper.country_code,
+            line_1=shipper.address_line1,
+            line_2=shipper.address_line2,
+            postal_code=shipper.postal_code,
             state=shipper.state_code,
-            validation=easyship.ValidationType(
-                detail=None,
-                status=None,
-                comparison=easyship.ComparisonType(
-                    changes=None,
-                    post=None,
-                    pre=None,
-                ),
-            ),
         ),
-        regulatoryidentifiers=easyship.RegulatoryIdentifiersType(
-            eori=shipper.extra.get("eori"),
-            ioss=shipper.extra.get("ioss"),
-            vatnumber=shipper.extra.get("vat_number"),
-        ),
-        shipmentrequestreturn=payload.options.get("is_return", False),
-        returnaddress=easyship.AddressType(
-            city=payload.return_address.city if payload.return_address else None,
-            companyname=(
-                payload.return_address.company_name if payload.return_address else None
+        sender_address_id=options.easyship_sender_address_id.state,
+        set_as_residential=recipient.residential,
+        shipping_settings=easyship.ShippingSettingsType(
+            additional_services=lib.identity(
+                easyship.AdditionalServicesType(
+                    delivery_confirmation=None,
+                    qr_code=None,
+                )
+                if any(
+                    [
+                        options.easyship_delivery_confirmation.state,
+                        options.easyship_qr_code.state,
+                    ]
+                )
+                else None
             ),
-            contactemail=(
-                payload.return_address.email if payload.return_address else None
-            ),
-            contactname=(
-                payload.return_address.person_name if payload.return_address else None
-            ),
-            contactphone=(
-                payload.return_address.phone_number if payload.return_address else None
-            ),
-            countryalpha2=(
-                payload.return_address.country_code if payload.return_address else None
-            ),
-            line1=(
-                payload.return_address.address_line1 if payload.return_address else None
-            ),
-            line2=(
-                payload.return_address.address_line2 if payload.return_address else None
-            ),
-            postalcode=(
-                payload.return_address.postal_code if payload.return_address else None
-            ),
-            state=payload.return_address.state_code if payload.return_address else None,
-            validation=easyship.ValidationType(
-                detail=None,
-                status=None,
-                comparison=easyship.ComparisonType(
-                    changes=None,
-                    post=None,
-                    pre=None,
-                ),
-            ),
-        ),
-        returnaddressid=payload.options.get("return_address_id"),
-        senderaddress=easyship.AddressType(
-            city=shipper.city,
-            companyname=shipper.company_name,
-            contactemail=shipper.email,
-            contactname=shipper.person_name,
-            contactphone=shipper.phone_number,
-            countryalpha2=shipper.country_code,
-            line1=shipper.address_line1,
-            line2=shipper.address_line2,
-            postalcode=shipper.postal_code,
-            state=shipper.state_code,
-            validation=easyship.ValidationType(
-                detail=None,
-                status=None,
-                comparison=easyship.ComparisonType(
-                    changes=None,
-                    post=None,
-                    pre=None,
-                ),
-            ),
-        ),
-        senderaddressid=payload.options.get("sender_address_id"),
-        setasresidential=recipient.residential,
-        shippingsettings=easyship.ShippingSettingsType(
-            additionalservices=easyship.AdditionalServicesType(
-                deliveryconfirmation=options.get("delivery_confirmation"),
-                qrcode=options.get("qr_code"),
-            ),
-            b13afiling=easyship.B13AFilingType(
-                option=options.get("b13a_filing_option"),
-                optionexportcompliancestatement=options.get(
-                    "b13a_export_compliance_statement"
-                ),
-                permitnumber=options.get("b13a_permit_number"),
-            ),
-            buylabel=True,
-            buylabelsynchronous=True,
-            printingoptions=easyship.PrintingOptionsType(
-                commercialinvoice=options.get("commercial_invoice", True),
-                format=options.get("label_format", "pdf"),
-                label=options.get("label", True),
-                packingslip=options.get("packing_slip", False),
-                remarks=options.get("remarks"),
+            b13_a_filing=None,
+            buy_label=True,
+            buy_label_synchronous=True,
+            printing_options=easyship.PrintingOptionsType(
+                commercial_invoice="A4",
+                format=label_type.value or "pdf",
+                label="4x6",
+                packing_slip=None,
+                remarks=payload.reference,
             ),
             units=easyship.UnitsType(
-                dimensions=options.get("dimension_unit", "cm"),
-                weight=options.get("weight_unit", "kg"),
+                dimensions=provider_units.DimensionUnit.map(dimension_unit.name).value,
+                weight=provider_units.WeightUnit.map(weight_unit.name).value,
             ),
         ),
         parcels=[
             easyship.ParcelType(
                 box=easyship.BoxType(
-                    height=parcel.height.value,
-                    length=parcel.length.value,
-                    weight=parcel.weight.value,
-                    width=parcel.width.value,
-                    slug=parcel.packaging_type or None,
+                    height=package.height.value,
+                    length=package.length.value,
+                    width=package.width.value,
+                    slug=package.parcel.options.get("easyship_box_slug"),
                 ),
                 items=[
                     easyship.ItemType(
-                        actualweight=item.weight.value,
-                        category=item.product_id,
-                        containsbatterypi966=item.contains_battery,
-                        containsbatterypi967=item.contains_battery,
-                        containsliquids=item.contains_liquids,
-                        declaredcurrency=item.currency,
-                        declaredcustomsvalue=item.value_amount,
-                        description=item.description,
-                        dimensions=easyship.DimensionsType(
-                            height=item.height.value,
-                            length=item.length.value,
-                            width=item.width.value,
-                        ),
-                        hscode=item.hs_code,
-                        origincountryalpha2=item.origin_country,
+                        dimensions=None,
+                        declared_currency=item.value_currency or options.currency.state,
+                        origin_country_alpha2=item.origin_country,
                         quantity=item.quantity,
+                        actual_weight=item.weight,
+                        category=item.category,
+                        declared_customs_value=item.value_amount,
+                        description=item.description or item.title,
                         sku=item.sku,
+                        hs_code=item.hs_code,
+                        contains_liquids=item.metadata.get("contains_liquids"),
+                        contains_battery_pi966=item.metadata.get(
+                            "contains_battery_pi966"
+                        ),
+                        contains_battery_pi967=item.metadata.get(
+                            "contains_battery_pi967"
+                        ),
                     )
-                    for item in parcel.items
+                    for item in package.items
                 ],
-                totalactualweight=parcel.weight.value,
+                total_actual_weight=package.weight.value,
             )
-            for parcel in packages
+            for package in packages
         ],
     )
 
-    return lib.Serializable(request, lib.to_dict)
+    return lib.Serializable(
+        request,
+        lambda _: lib.to_dict(
+            lib.to_json(_).replace("shipment_request_return", "return")
+        ),
+        ctx=dict(
+            courier_id=courrier_id,
+            label_type=label_type.name or "PDF",
+        ),
+    )

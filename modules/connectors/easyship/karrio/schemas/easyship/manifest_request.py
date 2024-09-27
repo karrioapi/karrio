@@ -4,5 +4,5 @@ from typing import Optional, List
 
 @s(auto_attribs=True)
 class ManifestRequestType:
-    courieraccountid: Optional[str] = None
-    shipmentids: List[str] = []
+    courier_account_id: Optional[str] = None
+    shipment_ids: List[str] = []

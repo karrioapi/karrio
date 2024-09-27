@@ -5,16 +5,16 @@ from jstruct import JStruct
 
 @s(auto_attribs=True)
 class MetaType:
-    availablebalance: Optional[int] = None
-    easyshipshipmentids: List[str] = []
-    requestid: Optional[str] = None
+    available_balance: Optional[int] = None
+    easyship_shipment_ids: List[str] = []
+    request_id: Optional[str] = None
 
 
 @s(auto_attribs=True)
 class DefaultForType:
     billing: Optional[bool] = None
     pickup: Optional[bool] = None
-    defaultforreturn: Optional[bool] = None
+    default_for_return: Optional[bool] = None
     sender: Optional[bool] = None
 
 
@@ -43,17 +43,17 @@ class ValidationType:
 @s(auto_attribs=True)
 class AddressType:
     city: Optional[str] = None
-    companyname: Optional[str] = None
-    contactemail: Optional[str] = None
-    contactname: Optional[str] = None
-    contactphone: Optional[str] = None
-    countryalpha2: Optional[str] = None
-    defaultfor: Optional[DefaultForType] = JStruct[DefaultForType]
-    hkdistrict: Optional[HkDistrictType] = JStruct[HkDistrictType]
+    company_name: Optional[str] = None
+    contact_email: Optional[str] = None
+    contact_name: Optional[str] = None
+    contact_phone: Optional[str] = None
+    country_alpha2: Optional[str] = None
+    default_for: Optional[DefaultForType] = JStruct[DefaultForType]
+    hk_district: Optional[HkDistrictType] = JStruct[HkDistrictType]
     id: Optional[str] = None
-    line1: Optional[str] = None
-    line2: Optional[str] = None
-    postalcode: Optional[str] = None
+    line_1: Optional[str] = None
+    line_2: Optional[str] = None
+    postal_code: Optional[str] = None
     state: Optional[str] = None
     validation: Optional[ValidationType] = JStruct[ValidationType]
 
@@ -68,15 +68,15 @@ class CourierType:
 class PickupType:
     address: Optional[AddressType] = JStruct[AddressType]
     courier: Optional[CourierType] = JStruct[CourierType]
-    easyshippickupid: Optional[str] = None
-    pickupfee: Optional[int] = None
-    pickupreferencenumber: Optional[str] = None
-    pickupstate: Optional[str] = None
-    providername: Optional[str] = None
-    selectedfromtime: Optional[str] = None
-    selectedtotime: Optional[str] = None
-    shipmentscount: Optional[int] = None
-    totalactualweight: Optional[float] = None
+    easyship_pickup_id: Optional[str] = None
+    pickup_fee: Optional[int] = None
+    pickup_reference_number: Optional[str] = None
+    pickup_state: Optional[str] = None
+    provider_name: Optional[str] = None
+    selected_from_time: Optional[str] = None
+    selected_to_time: Optional[str] = None
+    shipments_count: Optional[int] = None
+    total_actual_weight: Optional[float] = None
 
 
 @s(auto_attribs=True)

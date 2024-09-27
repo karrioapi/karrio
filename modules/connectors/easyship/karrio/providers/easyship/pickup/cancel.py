@@ -1,4 +1,3 @@
-
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -14,7 +13,7 @@ def parse_pickup_cancel_response(
 ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
-    success = True  # compute address validation success state
+    success = response.get("success") is not None
 
     confirmation = (
         models.ConfirmationDetails(
@@ -22,7 +21,9 @@ def parse_pickup_cancel_response(
             carrier_name=settings.carrier_name,
             operation="Cancel Pickup",
             success=success,
-        ) if success else None
+        )
+        if success
+        else None
     )
 
     return confirmation, messages
@@ -34,6 +35,8 @@ def pickup_cancel_request(
 ) -> lib.Serializable:
 
     # map data to convert karrio model to easyship specific type
-    request = None
+    request = dict(
+        easyship_pickup_id=payload.confirmation_number,
+    )
 
     return lib.Serializable(request, lib.to_dict)

@@ -19,16 +19,7 @@
     "line_1": "Kennedy Town",
     "line_2": "Block 3",
     "postal_code": "0000",
-    "state": "Yuen Long",
-    "validation": {
-      "detail": "Address is not valid",
-      "status": "invalid_address",
-      "comparison": {
-        "changes": "",
-        "post": "",
-        "pre": ""
-      }
-    }
+    "state": "Yuen Long"
   },
   "consignee_tax_id": "1234567890",
   "eei_reference": "1234567890",
@@ -56,16 +47,7 @@
     "line_1": "Kennedy Town",
     "line_2": "Block 3",
     "postal_code": "0000",
-    "state": "Yuen Long",
-    "validation": {
-      "detail": "Address is not valid",
-      "status": "invalid_address",
-      "comparison": {
-        "changes": "",
-        "post": "",
-        "pre": ""
-      }
-    }
+    "state": "Yuen Long"
   },
   "regulatory_identifiers": {
     "eori": "DE 123456789 12345",
@@ -83,16 +65,7 @@
     "line_1": "Kennedy Town",
     "line_2": "Block 3",
     "postal_code": "0000",
-    "state": "Yuen Long",
-    "validation": {
-      "detail": "Address is not valid",
-      "status": "invalid_address",
-      "comparison": {
-        "changes": "",
-        "post": "",
-        "pre": ""
-      }
-    }
+    "state": "Yuen Long"
   },
   "return_address_id": "return_address_id",
   "sender_address": {
@@ -105,16 +78,7 @@
     "line_1": "Kennedy Town",
     "line_2": "Block 3",
     "postal_code": "0000",
-    "state": "Yuen Long",
-    "validation": {
-      "detail": "Address is not valid",
-      "status": "invalid_address",
-      "comparison": {
-        "changes": "",
-        "post": "",
-        "pre": ""
-      }
-    }
+    "state": "Yuen Long"
   },
   "sender_address_id": "sender_address_id",
   "set_as_residential": false,
@@ -147,7 +111,6 @@
       "box": {
         "height": 10,
         "length": 10,
-        "weight": 10,
         "width": 10,
         "slug": "custom"
       },

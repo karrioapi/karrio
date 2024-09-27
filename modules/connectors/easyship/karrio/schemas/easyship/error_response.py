@@ -8,7 +8,7 @@ class ErrorType:
     code: Optional[str] = None
     details: List[str] = []
     message: Optional[str] = None
-    requestid: Optional[str] = None
+    request_id: Optional[str] = None
     type: Optional[str] = None
 
 

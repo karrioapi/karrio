@@ -37,17 +37,21 @@ class TestEasyshipPickup(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/2023-01/pickups",
             )
 
     def test_update_pickup(self):
         with patch("karrio.mappers.easyship.proxy.lib.request") as mock:
-            mock.return_value = "{}"
+            mock.side_effect = ["{}", "{}"]
             karrio.Pickup.update(self.PickupUpdateRequest).from_(gateway)
 
             self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                mock.call_args_list[0][1]["url"],
+                f"{gateway.settings.server_url}/2023-01/pickups/PHK10000001/cancel",
+            )
+            self.assertEqual(
+                mock.call_args_list[1][1]["url"],
+                f"{gateway.settings.server_url}/2023-01/pickups",
             )
 
     def test_cancel_pickup(self):
@@ -57,7 +61,7 @@ class TestEasyshipPickup(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/2023-01/pickups/PHK10000001/cancel",
             )
 
     def test_parse_pickup_response(self):
@@ -86,9 +90,9 @@ if __name__ == "__main__":
 
 
 PickupPayload = {
-    "pickup_date": "2013-10-19",
-    "ready_time": "10:20",
-    "closing_time": "09:20",
+    "pickup_date": "2022-02-23",
+    "ready_time": "12:00",
+    "closing_time": "16:00",
     "instruction": "behind the front desk",
     "address": {
         "company_name": "ABC Corp.",
@@ -101,14 +105,17 @@ PickupPayload = {
         "state_code": "SC",
     },
     "parcels": [{"weight": 20, "weight_unit": "LB"}],
-    "options": {"usps_package_type": "FIRST-CLASS_PACKAGE_SERVICE"},
+    "options": {
+        "shipment_identifiers": ["ESSG10006001"],
+        "easyship_courier_account_id": "01563646-58c1-4607-8fe0-cae3e33c0001",
+    },
 }
 
 PickupUpdatePayload = {
-    "confirmation_number": "0074698052",
-    "pickup_date": "2013-10-19",
-    "ready_time": "10:20",
-    "closing_time": "09:20",
+    "confirmation_number": "PHK10000001",
+    "pickup_date": "2022-02-23",
+    "ready_time": "12:00",
+    "closing_time": "16:00",
     "instruction": "behind the front desk",
     "address": {
         "company_name": "ABC Corp.",
@@ -121,17 +128,27 @@ PickupUpdatePayload = {
         "state_code": "SC",
     },
     "parcels": [{"weight": 20, "weight_unit": "LB"}],
-    "options": {"usps_package_type": "FIRST-CLASS_PACKAGE_SERVICE"},
+    "options": {
+        "shipment_identifiers": ["ESSG10006001"],
+        "easyship_courier_account_id": "01563646-58c1-4607-8fe0-cae3e33c0001",
+    },
 }
 
-PickupCancelPayload = {"confirmation_number": "0074698052"}
+PickupCancelPayload = {"confirmation_number": "PHK10000001"}
 
 ParsedPickupResponse = [
     {
         "carrier_id": "easyship",
         "carrier_name": "easyship",
-        "confirmation_number": "string",
-        "pickup_date": "2019-08-24",
+        "closing_time": "16:00",
+        "confirmation_number": "PHK10000001",
+        "meta": {
+            "easyship_courier_id": "01563646-58c1-4607-8fe0-cae3e33c0001",
+            "easyship_pickup_id": "PHK10000001",
+            "easyship_shipment_ids": ["ESSG10006001"],
+        },
+        "pickup_date": "2022-02-23",
+        "ready_time": "12:00",
     },
     [],
 ]
@@ -153,7 +170,6 @@ PickupRequest = {
     "selected_date": "2022-02-23",
     "selected_from_time": "12:00",
     "selected_to_time": "16:00",
-    "time_slot_id": "01563646-58c1-4607-8fe0-cae3e33c0001",
 }
 
 
@@ -163,11 +179,10 @@ PickupUpdateRequest = {
     "selected_date": "2022-02-23",
     "selected_from_time": "12:00",
     "selected_to_time": "16:00",
-    "time_slot_id": "01563646-58c1-4607-8fe0-cae3e33c0001",
 }
 
 
-PickupCancelRequest = {}
+PickupCancelRequest = {"easyship_pickup_id": "PHK10000001"}
 
 
 PickupResponse = """{

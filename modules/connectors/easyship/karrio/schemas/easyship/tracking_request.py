@@ -20,14 +20,14 @@ class ValidationType:
 @s(auto_attribs=True)
 class NAddressType:
     city: Optional[str] = None
-    companyname: Optional[str] = None
-    contactemail: Optional[str] = None
-    contactname: Optional[str] = None
-    contactphone: Optional[str] = None
-    countryalpha2: Optional[str] = None
-    line1: Optional[str] = None
-    line2: Optional[str] = None
-    postalcode: Optional[str] = None
+    company_name: Optional[str] = None
+    contact_email: Optional[str] = None
+    contact_name: Optional[str] = None
+    contact_phone: Optional[str] = None
+    country_alpha2: Optional[str] = None
+    line_1: Optional[str] = None
+    line_2: Optional[str] = None
+    postal_code: Optional[str] = None
     state: Optional[str] = None
     validation: Optional[ValidationType] = JStruct[ValidationType]
 
@@ -40,10 +40,10 @@ class ItemType:
 
 @s(auto_attribs=True)
 class TrackingRequestType:
-    destinationaddress: Optional[NAddressType] = JStruct[NAddressType]
-    originaddress: Optional[NAddressType] = JStruct[NAddressType]
-    courierid: Optional[str] = None
-    originaddressid: Optional[str] = None
-    platformordernumber: Optional[int] = None
+    destination_address: Optional[NAddressType] = JStruct[NAddressType]
+    origin_address: Optional[NAddressType] = JStruct[NAddressType]
+    courier_id: Optional[str] = None
+    origin_address_id: Optional[str] = None
+    platform_order_number: Optional[int] = None
     items: List[ItemType] = JList[ItemType]
-    trackingnumber: Optional[int] = None
+    tracking_number: Optional[int] = None

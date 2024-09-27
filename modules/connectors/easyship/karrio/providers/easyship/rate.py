@@ -19,7 +19,7 @@ def parse_rate_response(
     response = _response.deserialize()
 
     messages = error.parse_error_response(response, settings)
-    rates = [_extract_details(rate, settings) for rate in response]
+    rates = [_extract_details(rate, settings) for rate in response.get("rates", [])]
 
     return rates, messages
 
@@ -28,17 +28,54 @@ def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
 ) -> models.RateDetails:
-    details = None  # parse carrier rate type
+    details = lib.to_object(rating.RateType, data)
+    service = provider_units.ShippingService.map(details.courier_id)
+    courier = provider_units.ShippingCourierID.map(details.courier_id)
+    charges = [
+        ("Shipment Charge", details.shipment_charge),
+        ("Insurance", details.insurance_fee),
+        ("Other Surcharges", details.other_surcharges),
+        ("Fuel Surcharge", details.fuel_surcharge),
+        ("Additional Surcharge", details.additional_services_surcharge),
+        ("Import Duty Charge", details.import_duty_charge),
+        ("Import Tax Charge", details.import_tax_charge),
+        ("Minimum Pickup Fee", details.minimum_pickup_fee),
+        ("Oversized Surcharge", details.oversized_surcharge),
+        ("Provincial Sales Tax", details.provincial_sales_tax),
+        ("Remote Area Surcharge", details.remote_area_surcharge),
+        ("Sales Tax", details.sales_tax),
+        ("Warehouse Handling Fee", details.warehouse_handling_fee),
+        ("Discount", lib.failsafe(lambda: details.discount.amount)),
+    ]
 
     return models.RateDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        service="",  # extract service from rate
-        total_charge=lib.to_money(0.0),  # extract the rate total rate cost
-        currency="",  # extract the rate pricing currency
-        transit_days=0,  # extract the rate transit days
+        service=service.name_or_key,
+        total_charge=lib.to_money(details.total_charge),
+        currency=details.currency,
+        transit_days=details.max_delivery_time,
+        extra_charges=[
+            models.ChargeDetails(
+                name=name,
+                amount=lib.to_money(amount),
+                currency=details.currency,
+            )
+            for name, amount in charges
+            if amount is not None
+        ],
         meta=dict(
-            service_name="",  # extract the rate service human readable name
+            rate_provider=courier.name,
+            easyship_incoterms=details.incoterms,
+            easyship_courier_id=details.courier_id,
+            service_name=service.name or details.courier_name,
+            available_handover_options=details.available_handover_options,
+            value_for_money_rank=details.value_for_money_rank,
+            tracking_rating=details.tracking_rating,
+            min_delivery_time=details.min_delivery_time,
+            max_delivery_time=details.max_delivery_time,
+            delivery_time_rank=details.delivery_time_rank,
+            cost_rank=details.cost_rank,
         ),
     )
 
@@ -50,104 +87,107 @@ def rate_request(
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels)
-    services = lib.to_services(payload.services, provider_units.ShippingService)
+    weight_unit, dimension_unit = packages.compatible_units
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
+    incoterms = lib.identity(
+        options.easyship_incoterms.state
+        or getattr(getattr(payload, "customs", None), "incoterm", None)
+    )
 
     # map data to convert karrio model to easyship specific type
     request = easyship.RateRequestType(
-        courierselection=easyship.CourierSelectionType(
-            applyshippingrules=None,
-            showcourierlogourl=None,
-        ),
-        destinationaddress=easyship.NAddressType(
-            countryalpha2=None,
-            city=None,
-            companyname=easyship.Any(),
-            contactemail=None,
-            contactname=None,
-            contactphone=easyship.Any(),
-            line1=None,
-            line2=None,
-            postalcode=None,
-            state=None,
-            validation=easyship.ValidationType(
-                detail=None,
-                status=None,
-                comparison=easyship.ComparisonType(
-                    changes=None,
-                    post=None,
-                    pre=None,
+        courier_selection=lib.identity(
+            easyship.CourierSelectionType(
+                apply_shipping_rules=lib.identity(
+                    options.easyship_apply_shipping_rules.state
+                    if options.easyship_apply_shipping_rules.state is not None
+                    else settings.connection_config.apply_shipping_rules.state
                 ),
-            ),
+                show_courier_logo_url=options.easyship_show_courier_logo_url.state,
+            )
+            if any(
+                [
+                    settings.connection_config.apply_shipping_rules.state,
+                    options.easyship_apply_shipping_rules.state,
+                    options.easyship_show_courier_logo_url.state,
+                ]
+            )
+            else None
         ),
-        incoterms=None,
+        destination_address=easyship.NAddressType(
+            country_alpha2=recipient.country_code,
+            city=recipient.city,
+            company_name=recipient.company_name,
+            contact_email=recipient.email,
+            contact_name=recipient.person_name,
+            contact_phone=recipient.phone_number,
+            line_1=recipient.address_line1,
+            line_2=recipient.address_line2,
+            postal_code=recipient.postal_code,
+            state=recipient.state_code,
+        ),
+        incoterms=incoterms,
         insurance=easyship.InsuranceType(
-            insuredamount=None,
-            insuredcurrency=None,
-            isinsured=None,
-        ),
-        originaddress=easyship.NAddressType(
-            countryalpha2=None,
-            city=None,
-            companyname=easyship.Any(),
-            contactemail=None,
-            contactname=None,
-            contactphone=easyship.Any(),
-            line1=None,
-            line2=None,
-            postalcode=None,
-            state=None,
-            validation=easyship.ValidationType(
-                detail=None,
-                status=None,
-                comparison=easyship.ComparisonType(
-                    changes=None,
-                    post=None,
-                    pre=None,
-                ),
+            insured_amount=options.insurance.state,
+            insured_currency=lib.identity(
+                options.currency.state if options.insurance.state is not None else None
             ),
+            is_insured=options.insurance.state is not None,
+        ),
+        origin_address=easyship.NAddressType(
+            country_alpha2=shipper.country_code,
+            city=shipper.city,
+            company_name=shipper.company_name,
+            contact_email=shipper.email,
+            contact_name=shipper.person_name,
+            contact_phone=shipper.phone_number,
+            line_1=shipper.address_line1,
+            line_2=shipper.address_line2,
+            postal_code=shipper.postal_code,
+            state=shipper.state_code,
         ),
         parcels=[
             easyship.ParcelType(
                 box=easyship.BoxType(
-                    height=None,
-                    length=None,
-                    weight=None,
-                    width=None,
-                    slug=None,
+                    height=package.height.value,
+                    length=package.length.value,
+                    width=package.width.value,
+                    slug=package.options.easyship_box_slug.state,
                 ),
                 items=[
                     easyship.ItemType(
-                        containsbatterypi966=None,
-                        containsbatterypi967=None,
-                        containsliquids=None,
-                        declaredcurrency=None,
-                        dimensions=easyship.DimensionsType(
-                            height=None,
-                            length=None,
-                            width=None,
+                        contains_battery_pi966=item.metadata.get(
+                            "contains_battery_pi966"
                         ),
-                        origincountryalpha2=None,
-                        quantity=None,
-                        actualweight=None,
-                        category=None,
-                        declaredcustomsvalue=None,
-                        description=None,
-                        sku=None,
+                        contains_battery_pi967=item.metadata.get(
+                            "contains_battery_pi967"
+                        ),
+                        contains_liquids=item.metadata.get("contains_liquids"),
+                        declared_currency=item.value_currency or options.currency.state,
+                        dimensions=None,
+                        origin_country_alpha2=item.origin_country,
+                        quantity=item.quantity,
+                        actual_weight=item.weight,
+                        category=item.category,
+                        declared_customs_value=item.value_amount,
+                        description=item.description or item.title,
+                        sku=item.sku,
                     )
+                    for item in package.items
                 ],
-                totalactualweight=None,
+                total_actual_weight=package.weight.value,
             )
+            for package in packages
         ],
-        shippingsettings=easyship.ShippingSettingsType(
-            outputcurrency=None,
+        shipping_settings=easyship.ShippingSettingsType(
+            output_currency=options.currency.state,
             units=easyship.UnitsType(
-                dimensions=None,
-                weight=None,
+                dimensions=provider_units.DimensionUnit.map(dimension_unit.name).value,
+                weight=provider_units.WeightUnit.map(weight_unit.name).value,
             ),
         ),
     )

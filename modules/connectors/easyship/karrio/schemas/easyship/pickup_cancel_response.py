@@ -5,7 +5,7 @@ from jstruct import JStruct
 
 @s(auto_attribs=True)
 class MetaType:
-    requestid: Optional[str] = None
+    request_id: Optional[str] = None
 
 
 @s(auto_attribs=True)

@@ -230,11 +230,20 @@
     "shipment_state": "created",
     "shipping_documents": [
       {
-        "b13a_filing": {
-          "option": "not_required",
-          "option_export_compliance_statement": "string",
-          "permit_number": "string"
-        }
+        "base64_encoded_strings": ["base64_encoded"],
+        "category": "label",
+        "format": "png",
+        "page_size": "4x6",
+        "required": true,
+        "url": null
+      },
+      {
+        "base64_encoded_strings": ["base64_encoded"],
+        "category": "packing_slip",
+        "format": "png",
+        "page_size": "4x6",
+        "required": true,
+        "url": null
       }
     ],
     "shipping_settings": {

@@ -11,15 +11,22 @@ def parse_error_response(
     settings: provider_utils.Settings,
     **kwargs,
 ) -> typing.List[models.Message]:
-    errors: list = []  # compute the carrier error object list
+    errors: list = [response["error"]] if response.get("error") else []
 
     return [
         models.Message(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
-            code="",
-            message="",
-            details={**kwargs},
+            code=error.get("code"),
+            message=error.get("message"),
+            details=lib.to_dict(
+                {
+                    **kwargs,
+                    "details": error.get("details"),
+                    "request_id": error.get("request_id"),
+                    "type": error.get("type"),
+                }
+            ),
         )
         for error in errors
     ]

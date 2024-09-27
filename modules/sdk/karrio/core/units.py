@@ -1098,6 +1098,7 @@ class ShippingOption(utils.Enum):
     """universal shipment options (special services)"""
 
     currency = utils.OptionEnum("currency")
+    is_return = utils.OptionEnum("is_return", bool)
     insurance = utils.OptionEnum("insurance", float)
     cash_on_delivery = utils.OptionEnum("COD", float)
     shipment_note = utils.OptionEnum("shipment_note")

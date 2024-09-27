@@ -42,6 +42,7 @@
 
 # Carrier Hub Extentions packages
 -e ./modules/connectors/easypost
+-e ./modules/connectors/easyship
 -e ./modules/connectors/eshipper
 -e ./modules/connectors/freightcom
 -e ./modules/connectors/locate2u

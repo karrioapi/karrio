@@ -4,9 +4,9 @@ from typing import Optional, List
 
 @s(auto_attribs=True)
 class PickupRequestType:
-    courierid: Optional[str] = None
-    easyshipshipmentids: List[str] = []
-    selecteddate: Optional[str] = None
-    selectedfromtime: Optional[str] = None
-    selectedtotime: Optional[str] = None
-    timeslotid: Optional[str] = None
+    courier_id: Optional[str] = None
+    easyship_shipment_ids: List[str] = []
+    selected_date: Optional[str] = None
+    selected_from_time: Optional[str] = None
+    selected_to_time: Optional[str] = None
+    time_slot_id: Optional[str] = None

@@ -99,6 +99,19 @@ def text(
     return typing.cast(str, _text[0:max] if max else _text)
 
 
+def to_snake_case(input_string: typing.Optional[str]) -> typing.Optional[str]:
+    """Convert any string format to snake case."""
+    return utils.SF.to_snake_case(input_string)
+
+
+def to_slug(
+    *values,
+    separator: str = "_",
+) -> typing.Optional[str]:
+    """Convert a set of string values into a slug string, changing camel case to snake_case."""
+    return utils.SF.to_slug(*values, separator=separator)
+
+
 def to_int(
     value: typing.Union[str, int, bytes] = None,
     base: int = None,

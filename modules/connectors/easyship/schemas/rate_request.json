@@ -6,10 +6,10 @@
   "destination_address": {
     "country_alpha2": "HK",
     "city": "Hong Kong",
-    "company_name": null,
+    "company_name": "",
     "contact_email": "asd@asd.com",
     "contact_name": "Foo Bar",
-    "contact_phone": null,
+    "contact_phone": "",
     "line_1": "Kennedy Town",
     "line_2": "Block 3",
     "postal_code": "0000",
@@ -23,10 +23,10 @@
   },
   "origin_address": {
     "city": "Hong Kong",
-    "company_name": null,
+    "company_name": "",
     "contact_email": "asd@asd.com",
     "contact_name": "Foo Bar",
-    "contact_phone": null,
+    "contact_phone": "",
     "country_alpha2": "HK",
     "line_1": "Kennedy Town",
     "line_2": "Block 3",
@@ -47,7 +47,6 @@
       "box": {
         "height": 10,
         "length": 10,
-        "weight": 10,
         "width": 10,
         "slug": "custom"
       },

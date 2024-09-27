@@ -89,5 +89,10 @@ class Settings(core.Settings):
 
 
 class ConnectionConfig(lib.Enum):
+    """Carrier specific connection configs"""
+
+    platform_name = lib.OptionEnum("platform_name")
+    apply_shipping_rules = lib.OptionEnum("apply_shipping_rules", bool)
+    allow_courier_fallback = lib.OptionEnum("allow_courier_fallback", bool)
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)

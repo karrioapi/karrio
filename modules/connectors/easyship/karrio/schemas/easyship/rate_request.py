@@ -1,12 +1,12 @@
 from attr import s
-from typing import Optional, Any, List
+from typing import Optional, List
 from jstruct import JStruct, JList
 
 
 @s(auto_attribs=True)
 class CourierSelectionType:
-    applyshippingrules: Optional[bool] = None
-    showcourierlogourl: Optional[bool] = None
+    apply_shipping_rules: Optional[bool] = None
+    show_courier_logo_url: Optional[bool] = None
 
 
 @s(auto_attribs=True)
@@ -25,54 +25,46 @@ class ValidationType:
 
 @s(auto_attribs=True)
 class NAddressType:
-    countryalpha2: Optional[str] = None
+    country_alpha2: Optional[str] = None
     city: Optional[str] = None
-    companyname: Any = None
-    contactemail: Optional[str] = None
-    contactname: Optional[str] = None
-    contactphone: Any = None
-    line1: Optional[str] = None
-    line2: Optional[str] = None
-    postalcode: Optional[str] = None
+    company_name: Optional[str] = None
+    contact_email: Optional[str] = None
+    contact_name: Optional[str] = None
+    contact_phone: Optional[str] = None
+    line_1: Optional[str] = None
+    line_2: Optional[str] = None
+    postal_code: Optional[str] = None
     state: Optional[str] = None
     validation: Optional[ValidationType] = JStruct[ValidationType]
 
 
 @s(auto_attribs=True)
 class InsuranceType:
-    insuredamount: Optional[float] = None
-    insuredcurrency: Optional[str] = None
-    isinsured: Optional[bool] = None
+    insured_amount: Optional[float] = None
+    insured_currency: Optional[str] = None
+    is_insured: Optional[bool] = None
 
 
 @s(auto_attribs=True)
 class BoxType:
     height: Optional[int] = None
     length: Optional[int] = None
-    weight: Optional[int] = None
     width: Optional[int] = None
     slug: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class DimensionsType:
-    height: Optional[int] = None
-    length: Optional[int] = None
-    width: Optional[int] = None
-
-
-@s(auto_attribs=True)
 class ItemType:
-    containsbatterypi966: Optional[bool] = None
-    containsbatterypi967: Optional[bool] = None
-    containsliquids: Optional[bool] = None
-    declaredcurrency: Optional[str] = None
-    dimensions: Optional[DimensionsType] = JStruct[DimensionsType]
-    origincountryalpha2: Optional[str] = None
+    contains_battery_pi966: Optional[bool] = None
+    contains_battery_pi967: Optional[bool] = None
+    contains_liquids: Optional[bool] = None
+    declared_currency: Optional[str] = None
+    dimensions: Optional[BoxType] = JStruct[BoxType]
+    origin_country_alpha2: Optional[str] = None
     quantity: Optional[int] = None
-    actualweight: Optional[int] = None
+    actual_weight: Optional[int] = None
     category: Optional[str] = None
-    declaredcustomsvalue: Optional[int] = None
+    declared_customs_value: Optional[int] = None
     description: Optional[str] = None
     sku: Optional[str] = None
 
@@ -81,7 +73,7 @@ class ItemType:
 class ParcelType:
     box: Optional[BoxType] = JStruct[BoxType]
     items: List[ItemType] = JList[ItemType]
-    totalactualweight: Optional[int] = None
+    total_actual_weight: Optional[int] = None
 
 
 @s(auto_attribs=True)
@@ -92,16 +84,16 @@ class UnitsType:
 
 @s(auto_attribs=True)
 class ShippingSettingsType:
-    outputcurrency: Optional[str] = None
+    output_currency: Optional[str] = None
     units: Optional[UnitsType] = JStruct[UnitsType]
 
 
 @s(auto_attribs=True)
 class RateRequestType:
-    courierselection: Optional[CourierSelectionType] = JStruct[CourierSelectionType]
-    destinationaddress: Optional[NAddressType] = JStruct[NAddressType]
+    courier_selection: Optional[CourierSelectionType] = JStruct[CourierSelectionType]
+    destination_address: Optional[NAddressType] = JStruct[NAddressType]
     incoterms: Optional[str] = None
     insurance: Optional[InsuranceType] = JStruct[InsuranceType]
-    originaddress: Optional[NAddressType] = JStruct[NAddressType]
+    origin_address: Optional[NAddressType] = JStruct[NAddressType]
     parcels: List[ParcelType] = JList[ParcelType]
-    shippingsettings: Optional[ShippingSettingsType] = JStruct[ShippingSettingsType]
+    shipping_settings: Optional[ShippingSettingsType] = JStruct[ShippingSettingsType]

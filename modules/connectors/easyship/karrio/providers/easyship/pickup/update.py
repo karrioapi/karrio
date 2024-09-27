@@ -19,9 +19,9 @@ def parse_pickup_update_response(
     response = _response.deserialize()
 
     messages = error.parse_error_response(response, settings)
-    pickup = (
+    pickup = lib.identity(
         _extract_details(response, settings)
-        if "confirmation_number" in response
+        if response.get("pickup") is not None
         else None
     )
 
@@ -32,13 +32,20 @@ def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
 ) -> models.PickupDetails:
-    details = None  # parse carrier pickup type from "data"
+    details = lib.to_object(pickup.PickupResponseType, data)
 
     return models.PickupDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        confirmation_number="",  # extract confirmation number from pickup
-        pickup_date=lib.fdate(""),  # extract tracking event date
+        confirmation_number=details.pickup.easyship_pickup_id,
+        pickup_date=lib.fdate(details.pickup.selected_from_time, "%Y-%m-%dT%H:%M"),
+        ready_time=lib.ftime(details.pickup.selected_from_time, "%Y-%m-%dT%H:%M"),
+        closing_time=lib.ftime(details.pickup.selected_to_time, "%Y-%m-%dT%H:%M"),
+        meta=dict(
+            easyship_courier_id=details.pickup.courier.id,
+            easyship_pickup_id=details.pickup.easyship_pickup_id,
+            easyship_shipment_ids=details.meta.easyship_shipment_ids,
+        ),
     )
 
 
@@ -46,15 +53,36 @@ def pickup_update_request(
     payload: models.PickupUpdateRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
+    options = lib.units.Options(
+        payload.options,
+        option_type=lib.units.create_enum(
+            "PickupOptions",
+            {
+                "shipments": lib.OptionEnum("shipments", list),
+                "easyship_time_slot_id": lib.OptionEnum("time_slot_id", str),
+                "shipment_identifiers": lib.OptionEnum("shipment_identifiers", list),
+                "easyship_courier_account_id": lib.OptionEnum(
+                    "courier_account_id", str
+                ),
+            },
+        ),
+    )
+    easyship_shipment_ids = lib.identity(
+        [_["shipment_identifier"] for _ in options.shipments.state]
+        if any(options.shipments.state or [])
+        else options.shipment_identifiers.state
+    )
 
     # map data to convert karrio model to easyship specific type
     request = easyship.PickupRequestType(
-        courierid=None,
-        easyshipshipmentids=[],
-        selecteddate=None,
-        selectedfromtime=None,
-        selectedtotime=None,
-        timeslotid=None,
+        easyship_shipment_ids=easyship_shipment_ids,
+        time_slot_id=options.easyship_time_slot_id.state,
+        courier_id=options.easyship_courier_account_id.state,
+        selected_from_time=lib.ftime(payload.ready_time, "%H:%M"),
+        selected_to_time=lib.ftime(payload.closing_time, "%H:%M"),
+        selected_date=lib.fdate(payload.pickup_date),
     )
 
-    return lib.Serializable(request, lib.to_dict)
+    return lib.Serializable(
+        request, lib.to_dict, dict(easyship_pickup_id=payload.confirmation_number)
+    )
