@@ -24,11 +24,9 @@ class ManifestSerializer(core.ManifestData):
         )
 
         shipments = models.Shipment.access_by(context).filter(
-            **{
-                "id__in": shipment_ids,
-                "manifest__isnull": True,
-                f"selected_rate_carrier__{carrier_name.replace('_', '')}settings__isnull": False,
-            }
+            id__in=shipment_ids,
+            manifest__isnull=True,
+            selected_rate_carrier__carrier_code=carrier_name,
         )
         shipment_identifiers = [_.shipment_identifier for _ in shipments]
 
