@@ -162,7 +162,7 @@ def to_decimal(
 
 
 def to_numeric_decimal(
-    input_float: float,
+    value: typing.Union[str, float, bytes] = None,
     total_digits: int = 6,
     decimal_digits: int = 3,
 ) -> str:
@@ -487,6 +487,45 @@ def envelope_serializer(
         apply_namespaceprefix(node, _prefix, ns_prefixes)
 
     return to_xml(envelope, namespacedef_=namespace)
+
+
+def load_json(path: str):
+    """Load and parse a JSON file from the given path.
+
+    Args:
+        path (str): The path to the JSON file to be loaded.
+
+    Returns:
+        dict: The parsed JSON content as a Python dictionary.
+
+    Raises:
+        FileNotFoundError: If the specified file is not found.
+        JSONDecodeError: If the file content is not valid JSON.
+        IOError: If there's an error reading the file.
+    """
+    return to_dict(load_file_content(path))
+
+
+def load_file_content(path: str) -> str:
+    """Load the content of a file from the given path.
+
+    Args:
+        path (str): The path to the file to be read.
+
+    Returns:
+        str: The content of the file as a string.
+
+    Raises:
+        FileNotFoundError: If the specified file is not found.
+        IOError: If there's an error reading the file.
+    """
+    try:
+        with open(path, "r", encoding="utf-8") as file:
+            return file.read()
+    except FileNotFoundError:
+        raise FileNotFoundError(f"File not found: {path}")
+    except IOError as e:
+        raise IOError(f"Error reading file {path}: {str(e)}")
 
 
 # endregion
