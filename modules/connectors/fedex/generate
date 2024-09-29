@@ -23,3 +23,7 @@ quicktype --src="${SCHEMAS}/tracking_request.json" --out="${LIB_MODULES}/trackin
 quicktype --src="${SCHEMAS}/tracking_response.json" --out="${LIB_MODULES}/tracking_response.py"
 quicktype --src="${SCHEMAS}/tracking_document_request.json" --out="${LIB_MODULES}/tracking_document_request.py"
 quicktype --src="${SCHEMAS}/tracking_document_response.json" --out="${LIB_MODULES}/tracking_document_response.py"
+quicktype --src="${SCHEMAS}/pickup_request.json" --out="${LIB_MODULES}/pickup_request.py"
+quicktype --src="${SCHEMAS}/pickup_response.json" --out="${LIB_MODULES}/pickup_response.py"
+quicktype --src="${SCHEMAS}/cancel_pickup_request.json" --out="${LIB_MODULES}/cancel_pickup_request.py"
+quicktype --src="${SCHEMAS}/cancel_pickup_response.json" --out="${LIB_MODULES}/cancel_pickup_response.py"

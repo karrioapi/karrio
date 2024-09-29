@@ -17,7 +17,7 @@ def parse_shipment_response(
     response = _response.deserialize()
 
     messages = provider_error.parse_error_response(response, settings)
-    shipment = (
+    shipment = lib.identity(
         _extract_details(
             response["output"]["transactionShipments"][0],
             settings,
@@ -82,6 +82,9 @@ def _extract_details(
             carrier_tracking_link=settings.tracking_url.format(tracking_number),
             trackingIdType=shipment.pieceResponses[0].trackingIdType,
             serviceCategory=shipment.pieceResponses[0].serviceCategory,
+            fedex_carrier_code=lib.failsafe(
+                lambda: shipment.completedShipmentDetail.carrierCode
+            ),
         ),
     )
 
