@@ -159,7 +159,7 @@ def _request_serializer(request: CreatePickupRequest) -> str:
 
     return XP.export(
         envelope,
-        namespacedef_='xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v22="http://fedex.com/ws/pickup/v22"',
+        namespacedef_='xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v22="http://fedex.com/ws/pickup/v22"',
     )
 
 

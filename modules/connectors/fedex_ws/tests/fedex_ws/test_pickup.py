@@ -162,7 +162,7 @@ ParsedPickupCancelResponse = [
 ]
 
 
-PickupAvailabilityRequestXML = """<tns:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v22="http://fedex.com/ws/pickup/v22">
+PickupAvailabilityRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v22="http://fedex.com/ws/pickup/v22">
     <tns:Body>
         <v22:PickupAvailabilityRequest>
             <v22:WebAuthenticationDetail>
@@ -206,7 +206,7 @@ PickupAvailabilityRequestXML = """<tns:Envelope xmlns:soapenv="http://schemas.xm
 </tns:Envelope>
 """
 
-PickupRequestXML = """<tns:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v22="http://fedex.com/ws/pickup/v22">
+PickupRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v22="http://fedex.com/ws/pickup/v22">
     <tns:Body>
         <v22:CreatePickupRequest>
             <v22:WebAuthenticationDetail>
@@ -261,7 +261,7 @@ PickupRequestXML = """<tns:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/so
 </tns:Envelope>
 """
 
-PickupUpdateAvailabilityRequestXML = """<tns:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v22="http://fedex.com/ws/pickup/v22">
+PickupUpdateAvailabilityRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v22="http://fedex.com/ws/pickup/v22">
     <tns:Body>
         <v22:PickupAvailabilityRequest>
             <v22:WebAuthenticationDetail>
@@ -300,7 +300,7 @@ PickupUpdateAvailabilityRequestXML = """<tns:Envelope xmlns:soapenv="http://sche
 </tns:Envelope>
 """
 
-PickupUpdateRequestXML = """<tns:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v22="http://fedex.com/ws/pickup/v22">
+PickupUpdateRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v22="http://fedex.com/ws/pickup/v22">
     <tns:Body>
         <v22:CreatePickupRequest>
             <v22:WebAuthenticationDetail>
@@ -353,7 +353,7 @@ PickupUpdateRequestXML = """<tns:Envelope xmlns:soapenv="http://schemas.xmlsoap.
 </tns:Envelope>
 """
 
-PickupCancelRequestXML = """<tns:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v22="http://fedex.com/ws/pickup/v22">
+PickupCancelRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v22="http://fedex.com/ws/pickup/v22">
     <tns:Body>
         <v22:CancelPickupRequest>
             <v22:WebAuthenticationDetail>
