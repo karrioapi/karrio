@@ -105,7 +105,9 @@ export async function loadUserData(session: any, metadata?: Metadata) {
 }
 
 export async function loadOrgData(session: any, metadata?: Metadata) {
-  if (!session || !metadata) return { organization: null };
+  if (!session || !metadata || !metadata.MULTI_ORGANIZATIONS) {
+    return { organization: null };
+  }
 
   const { accessToken, orgId, testMode } = session;
   const { data, error } = await axios
