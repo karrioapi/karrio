@@ -326,7 +326,7 @@ RateRequest = {
         "zip": "L4T3T1",
         "country": "CA",
     },
-    "scheduledShipDate": "2024-07-16T10:00:00.000000Z",
+    "scheduledShipDate": "2024-07-16 10:00",
     "packagingUnit": "Metric",
     "packages": {
         "type": "Package",

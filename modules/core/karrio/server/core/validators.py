@@ -117,18 +117,22 @@ class OptionDefaultSerializer(serializers.Serializer):
                 current_format="%Y-%m-%dT%H:%M",
             )
 
-            if shipping_date is None or shipping_date.date() < datetime.now().date():
-                options.update(shipping_date=datetime.now().strftime("%Y-%m-%dT%H:%M"))
-                kwargs["data"].update(dict(options=options))
-
-            if shipping_date or options.get("shipping_date"):
+            if shipping_date is None or shipping_date < datetime.now():
                 options.update(
-                    shipment_date=lib.fdate(
-                        shipping_date or options.get("shipping_date"),
-                        current_format="%Y-%m-%dT%H:%M",
+                    shipping_date=lib.fdatetime(
+                        lib.to_next_business_datetime(),
+                        output_format="%Y-%m-%dT%H:%M",
                     )
                 )
                 kwargs["data"].update(dict(options=options))
+
+            options.update(
+                shipment_date=lib.fdate(
+                    shipping_date or options.get("shipping_date"),
+                    current_format="%Y-%m-%dT%H:%M",
+                )
+            )
+            kwargs["data"].update(dict(options=options))
 
         super().__init__(instance, **kwargs)
 

@@ -178,7 +178,7 @@ ShipmentRequest = {
         "type": "Package",
     },
     "packagingUnit": "Metric",
-    "scheduledShipDate": "2024-07-16T10:30:00.000000Z",
+    "scheduledShipDate": "2024-07-16 10:30",
     "serviceId": 4500,
     "from": {
         "address1": "9, Van Der Graaf Court",

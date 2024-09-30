@@ -139,7 +139,7 @@ def shipment_request(
                 options.shipping_date.state or datetime.datetime.now(),
                 current_format="%Y-%m-%dT%H:%M",
             ),
-            output_format="%Y-%m-%dT%H:%M:%S.%fZ",  # 2024-09-30T09:10:29.195Z
+            output_format="%Y-%m-%d %H:%M",
         ),
         shippingrequestfrom=eshipper.FromType(
             attention=shipper.contact,

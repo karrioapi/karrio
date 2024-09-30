@@ -88,10 +88,18 @@ def rate_request(
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels)
-    services = lib.to_services(payload.services, provider_units.ShippingService)
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
+    )
+    services = lib.to_services(payload.services, provider_units.ShippingService)
+    print(services, "<<<")
+    service_id = lib.identity(
+        options.eshipper_service_id.state
+        or provider_units.ShippingService.service_id(
+            services.first,
+            test_mode=settings.test_mode,
+        )
     )
 
     request = eshipper.RateRequestType(
@@ -100,7 +108,7 @@ def rate_request(
                 options.shipping_date.state or datetime.datetime.now(),
                 current_format="%Y-%m-%dT%H:%M",
             ),
-            output_format="%Y-%m-%dT%H:%M:%S.%fZ",  # 2024-09-30T09:10:29.195Z
+            output_format="%Y-%m-%d %H:%M",
         ),
         raterequestfrom=eshipper.FromType(
             attention=shipper.contact,
@@ -178,7 +186,7 @@ def rate_request(
         insidePickup=options.eshipper_inside_pickup.state,
         saturdayPickupRequired=options.eshipper_saturday_pickup_required.state,
         stackable=options.eshipper_stackable.state,
-        serviceId=getattr(services.first, "value", None),
+        serviceId=service_id,
         thirdPartyBilling=None,
         commodityType=None,
     )
