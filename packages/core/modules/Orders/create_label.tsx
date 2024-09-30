@@ -776,20 +776,20 @@ export default function Page(pageProps: any) {
                   <hr className="my-1" style={{ height: "1px" }} />
 
                   <div className="p-3 pb-0">
-                    {/* shipment date */}
+                    {/* shipping date */}
                     <InputField
-                      name="shipment_date"
-                      label="shipment date"
-                      type="date"
+                      name="shipping_date"
+                      label="shipping date"
+                      type="datetime-local"
                       className="is-small"
                       wrapperClass="px-1 py-2"
                       fieldClass="column mb-0 is-4 p-0"
-                      defaultValue={shipment.options?.shipment_date}
+                      defaultValue={shipment.options?.shipping_date}
                       onChange={(e) =>
                         onChange({
                           options: {
                             ...shipment.options,
-                            shipment_date: e.target.value,
+                            shipping_date: e.target.value,
                           },
                         })
                       }

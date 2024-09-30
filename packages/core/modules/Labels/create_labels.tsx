@@ -73,6 +73,7 @@ import { useAppMode } from "@karrio/hooks/app-mode";
 import { useSearchParams } from "next/navigation";
 import { useOrders } from "@karrio/hooks/order";
 import Image from "next/legacy/image";
+import moment from "moment";
 import React from "react";
 
 export const generateMetadata = dynamicMetadata("Create labels");
@@ -1404,21 +1405,21 @@ export default function Page(pageProps: any) {
                                   />
 
                                   <div className="p-3 pb-0">
-                                    {/* shipment date */}
+                                    {/* shipping date */}
                                     <InputField
-                                      name="shipment_date"
-                                      label="shipment date"
-                                      type="date"
+                                      name="shipping_date"
+                                      label="shipping date"
+                                      type="datetime-local"
                                       className="is-small"
                                       fieldClass="column mb-0 is-8 p-0 mb-2"
                                       defaultValue={
-                                        shipment.options?.shipment_date
+                                        shipment.options?.shipping_date
                                       }
                                       onChange={(e) =>
                                         onChange(shipment_index, shipment, {
                                           options: {
                                             ...shipment.options,
-                                            shipment_date: e.target.value,
+                                            shipping_date: e.target.value,
                                           },
                                         })
                                       }

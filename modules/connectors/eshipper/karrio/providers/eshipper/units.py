@@ -113,7 +113,7 @@ def to_service_code(service: typing.Dict[str, str]) -> str:
     parts = list(
         dict.fromkeys(
             [
-                to_carrier_code(service.get("carrierDTO")),
+                to_carrier_code(service.get("carrierDTO")),  # type: ignore
                 *[
                     _.lower()
                     for _ in (
@@ -132,7 +132,7 @@ def to_service_code(service: typing.Dict[str, str]) -> str:
     return output
 
 
-def get_service(search: str, test_mode: bool = False, service_id: str = None) -> str:
+def get_service(search: str, test_mode: bool = False, service_id: str = None):
     prod_metadata = METADATA_JSON["PROD_SERVICES"]
     test_metadata = METADATA_JSON["DEV_SERVICES"]
     metadata = lib.identity(
@@ -152,7 +152,7 @@ def get_service(search: str, test_mode: bool = False, service_id: str = None) ->
     )
 
 
-def get_service_id(search: str, test_mode: bool = False, service_id: str = None) -> str:
+def get_service_id(search: str, test_mode: bool = False, service_id: str = None):
     return (
         get_service(search, test_mode=test_mode, service_id=service_id).get("id")
         or service_id
@@ -177,7 +177,7 @@ def get_carrier(
     test_mode: bool = False,
     service_search: str = None,
     service_id: str = None,
-) -> str:
+):
     id_key = "test_id" if test_mode else "prod_id"
     alternate_key = "prod_id" if not test_mode else "test_id"
     service = get_service(service_search, test_mode=test_mode, service_id=service_id)
@@ -204,7 +204,7 @@ def get_carrier_id(
     test_mode: bool = False,
     service_search: str = None,
     service_id: str = None,
-) -> str:
+):
     return get_carrier(
         search,
         test_mode=test_mode,
@@ -218,7 +218,7 @@ def find_rate_provider(
     test_mode: bool = False,
     service_search: str = None,
     service_id: str = None,
-) -> str:
+):
 
     if RateProvider.map(lib.to_snake_case(search)).name:
         return RateProvider.map(lib.to_snake_case(search))

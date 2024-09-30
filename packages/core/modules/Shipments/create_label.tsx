@@ -65,9 +65,10 @@ import { bundleContexts } from "@karrio/hooks/utils";
 import { useLocation } from "@karrio/hooks/location";
 import { useAppMode } from "@karrio/hooks/app-mode";
 import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useOrders } from "@karrio/hooks/order";
 import { Disclosure } from "@headlessui/react";
-import { useSearchParams } from "next/navigation";
+import moment from "moment";
 
 export const generateMetadata = dynamicMetadata("Create Label");
 const ContextProviders = bundleContexts([
@@ -870,20 +871,20 @@ export default function CreateLabelPage(pageProps: any) {
                   <hr className="my-1" style={{ height: "1px" }} />
 
                   <div className="p-3 pb-0">
-                    {/* shipment date */}
+                    {/* shipping date */}
                     <InputField
-                      name="shipment_date"
-                      label="shipment date"
-                      type="date"
+                      name="shipping_date"
+                      label="shipping date"
+                      type="datetime-local"
                       className="is-small"
                       wrapperClass="px-1 py-2"
                       fieldClass="column mb-0 is-4 p-0"
-                      defaultValue={shipment.options?.shipment_date}
+                      defaultValue={shipment.options?.shipping_date}
                       onChange={(e) =>
                         onChange({
                           options: {
                             ...shipment.options,
-                            shipment_date: e.target.value,
+                            shipping_date: e.target.value,
                           },
                         })
                       }

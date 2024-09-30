@@ -40,7 +40,7 @@ const DEFAULT_SHIPMENT_DATA = {
   shipper: {} as AddressType,
   recipient: {} as AddressType,
   parcels: [] as ParcelType[],
-  options: { shipment_date: moment().format("YYYY-MM-DD") },
+  options: { shipping_date: moment().format("YYYY-MM-DDTHH:mm") },
   payment: { paid_by: PaidByEnum.sender },
   label_type: LabelTypeEnum.PDF,
 } as ShipmentType;

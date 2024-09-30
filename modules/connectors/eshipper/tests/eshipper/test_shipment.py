@@ -113,8 +113,7 @@ ShipmentPayload = {
         },
     ],
     "options": {
-        "shipping_date": "2024-07-16",
-        "shipping_time": "10:30",
+        "shipping_date": "2024-07-16T10:30",
     },
 }
 
@@ -179,7 +178,7 @@ ShipmentRequest = {
         "type": "Package",
     },
     "packagingUnit": "Metric",
-    "scheduledShipDate": "2024-07-16 10:30",
+    "scheduledShipDate": "2024-07-16T10:30:00.000000Z",
     "serviceId": 4500,
     "from": {
         "address1": "9, Van Der Graaf Court",

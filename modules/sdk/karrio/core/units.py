@@ -1123,8 +1123,7 @@ class ShippingOption(utils.Enum):
     shipment_date = utils.OptionEnum("shipment_date")
 
     """TODO: standardize to these"""
-    shipping_date = utils.OptionEnum("shipping_date")  # TODO: change format to datetime
-    shipping_time = utils.OptionEnum("shipping_time")
+    shipping_date = utils.OptionEnum("shipping_date")  # format: %Y-%m-%dT%H:%M
 
 
 class ShippingOptions(Options):
@@ -1174,11 +1173,7 @@ class ShippingOptions(Options):
 
     @property
     def shipping_date(self) -> utils.OptionEnum:
-        return self[ShippingOption.shipping_date.name] or self.shipment_date
-
-    @property
-    def shipping_time(self) -> utils.OptionEnum:
-        return self[ShippingOption.shipping_time.name]
+        return self[ShippingOption.shipping_date.name]
 
     @property
     def signature_confirmation(self) -> utils.OptionEnum:
