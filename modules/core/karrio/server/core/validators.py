@@ -114,9 +114,19 @@ class OptionDefaultSerializer(serializers.Serializer):
                 options.get("shipment_date")
                 or (getattr(instance, "options", None) or {}).get("shipment_date")
             )
+            shipping_date = lib.to_date(
+                options.get("shipping_date")
+                or (getattr(instance, "options", None) or {}).get("shipping_date")
+            )
 
             if shipment_date is None or shipment_date.date() < datetime.now().date():
                 options.update(shipment_date=datetime.now().strftime("%Y-%m-%d"))
+                kwargs["data"].update(dict(options=options))
+
+            if shipping_date is None or shipping_date.date() < datetime.now().date():
+                options.update(
+                    shipping_date=datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+                )
                 kwargs["data"].update(dict(options=options))
 
         super().__init__(instance, **kwargs)

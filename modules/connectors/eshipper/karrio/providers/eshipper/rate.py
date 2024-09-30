@@ -26,9 +26,24 @@ def _extract_details(
     settings: provider_utils.Settings,
 ) -> models.RateDetails:
     rate = lib.to_object(rating.QuoteType, data)
-    service = provider_units.ShippingService.map(str(rate.serviceId))
-    carrierId = provider_units.ShippingService.carrier_id(service.value_or_key)
-    rate_provider = provider_units.ShippingService.carrier(service.value_or_key).lower()
+    service = provider_units.ShippingService.find(
+        rate.serviceName,
+        service_id=rate.serviceId,
+        test_mode=settings.test_mode,
+    )
+    carrier_id = provider_units.ShippingService.carrier_id(
+        rate.carrierName,
+        test_mode=settings.test_mode,
+        service_search=service.name_or_key,
+        service_id=rate.serviceId,
+    )
+    rate_provider = provider_units.RateProvider.find(
+        rate.carrierName,
+        test_mode=settings.test_mode,
+        service_search=service.name_or_key,
+        service_id=rate.serviceId,
+    )
+
     charges = [
         ("baseCharge", rate.baseCharge),
         ("fuelSurcharge", rate.fuelSurcharge),
@@ -56,11 +71,12 @@ def _extract_details(
             if amount
         ],
         meta=dict(
-            rate_provider=rate_provider,
-            service_name=rate.serviceName or service.name,
-            carrierId=carrierId,
-            serviceName=rate.serviceName,
-            carrierName=rate.carrierName,
+            eshipper_carrier_id=carrier_id,
+            eshipper_service_id=rate.serviceId,
+            eshipper_carrier_name=rate.carrierName,
+            eshipper_service_name=rate.serviceName,
+            rate_provider=rate_provider.name_or_key,
+            service_name=service.name or rate.serviceName,
         ),
     )
 

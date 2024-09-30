@@ -361,7 +361,7 @@ SHIPMENT_RESPONSE = {
     "return_address": None,
     "billing_address": None,
     "services": [],
-    "options": {"shipment_date": ANY},
+    "options": {"shipment_date": ANY, "shipping_date": ANY},
     "customs": None,
     "reference": None,
     "carrier_ids": ["canadapost"],

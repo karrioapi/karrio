@@ -16,7 +16,9 @@ class Settings(core.Settings):
 
     @property
     def server_url(self):
-        return "https://uu2.eshipper.com" if self.test_mode else "https://ww2.eshipper.com"
+        return (
+            "https://uu2.eshipper.com" if self.test_mode else "https://ww2.eshipper.com"
+        )
 
     @property
     def access_token(self):
