@@ -1,5 +1,6 @@
 """Karrio universal data types and units definitions"""
 
+from ctypes import util
 import attr
 import typing
 import numbers
@@ -1057,6 +1058,7 @@ class Options:
                 _key = key
                 option_values[key] = _val
 
+        self._raw_options = options
         self._options = option_values
         self._option_list = self._filter(
             option_values, (items_filter or utils.identity)
@@ -1169,6 +1171,16 @@ class ShippingOptions(Options):
 
     @property
     def shipment_date(self) -> utils.OptionEnum:
+        # Check if shipment_date is not defined and fallback to shipping_date
+        if not self[ShippingOption.shipment_date.name].state:
+            return utils.OptionEnum(
+                "shipment_date",
+                str,
+                utils.DF.fdate(
+                    self._raw_options.get("shipping_date"), "%Y-%m-%dT%H:%M"
+                ),
+            )
+
         return self[ShippingOption.shipment_date.name]
 
     @property

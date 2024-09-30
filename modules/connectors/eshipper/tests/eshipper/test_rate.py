@@ -79,7 +79,7 @@ RatePayload = {
         },
     ],
     "options": {
-        "shipment_date": "2024-07-16",
+        "shipping_date": "2024-07-16T10:00",
     },
 }
 
@@ -326,7 +326,7 @@ RateRequest = {
         "zip": "L4T3T1",
         "country": "CA",
     },
-    "scheduledShipDate": "2024-07-16 00:00",
+    "scheduledShipDate": "2024-07-16T10:00:00.000000Z",
     "packagingUnit": "Metric",
     "packages": {
         "type": "Package",

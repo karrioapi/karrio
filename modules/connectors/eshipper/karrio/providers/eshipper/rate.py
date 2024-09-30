@@ -93,10 +93,15 @@ def rate_request(
         payload.options,
         package_options=packages.options,
     )
-    shipping_date = lib.to_date(options.shipment_date.state or datetime.datetime.now())
 
     request = eshipper.RateRequestType(
-        scheduledShipDate=lib.fdatetime(shipping_date, output_format="%Y-%m-%d %H:%M"),
+        scheduledShipDate=lib.fdatetime(
+            lib.to_next_business_datetime(
+                options.shipping_date.state or datetime.datetime.now(),
+                current_format="%Y-%m-%dT%H:%M",
+            ),
+            output_format="%Y-%m-%dT%H:%M:%S.%fZ",  # 2024-09-30T09:10:29.195Z
+        ),
         raterequestfrom=eshipper.FromType(
             attention=shipper.contact,
             company=shipper.company_name,
