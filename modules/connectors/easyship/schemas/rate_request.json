@@ -67,7 +67,8 @@
           "category": "fashion",
           "declared_customs_value": 20,
           "description": "item",
-          "sku": "sku"
+          "sku": "sku",
+          "hs_code": "sku"
         }
       ],
       "total_actual_weight": 1

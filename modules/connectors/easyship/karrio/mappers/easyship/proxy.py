@@ -14,7 +14,11 @@ class Proxy(proxy.Proxy):
             data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="POST",
-            headers={"Authorization": f"Bearer {self.settings.access_token}"},
+            headers={
+                "Authorization": f"Bearer {self.settings.access_token}",
+                "Content-Type": "application/json",
+                "user-agent": "app/1.0",
+            },
         )
 
         return lib.Deserializable(response, lib.to_dict)
@@ -26,7 +30,11 @@ class Proxy(proxy.Proxy):
             data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="POST",
-            headers={"Authorization": f"Bearer {self.settings.access_token}"},
+            headers={
+                "Authorization": f"Bearer {self.settings.access_token}",
+                "Content-Type": "application/json",
+                "user-agent": "app/1.0",
+            },
         )
 
         return lib.Deserializable(response, lib.to_dict, request.ctx)
@@ -37,7 +45,11 @@ class Proxy(proxy.Proxy):
             url=f"{self.settings.server_url}/2023-01/shipments/{easyship_shipment_id}/cancel",
             trace=self.trace_as("json"),
             method="POST",
-            headers={"Authorization": f"Bearer {self.settings.access_token}"},
+            headers={
+                "Authorization": f"Bearer {self.settings.access_token}",
+                "Content-Type": "application/json",
+                "user-agent": "app/1.0",
+            },
         )
 
         return lib.Deserializable(response, lib.to_dict)
@@ -50,7 +62,11 @@ class Proxy(proxy.Proxy):
                     url=f"{self.settings.server_url}/2023-01/shipments/{easyship_shipment_id}",
                     trace=self.trace_as("json"),
                     method="GET",
-                    headers={"Authorization": f"Bearer {self.settings.access_token}"},
+                    headers={
+                        "Authorization": f"Bearer {self.settings.access_token}",
+                        "Content-Type": "application/json",
+                        "user-agent": "app/1.0",
+                    },
                 ),
             ),
             request.serialize(),
@@ -67,7 +83,11 @@ class Proxy(proxy.Proxy):
             data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="POST",
-            headers={"Authorization": f"Bearer {self.settings.access_token}"},
+            headers={
+                "Authorization": f"Bearer {self.settings.access_token}",
+                "Content-Type": "application/json",
+                "user-agent": "app/1.0",
+            },
         )
 
         return lib.Deserializable(response, lib.to_dict)
@@ -86,7 +106,11 @@ class Proxy(proxy.Proxy):
             url=f"{self.settings.server_url}/2023-01/pickups/{easyship_pickup_id}/cancel",
             trace=self.trace_as("json"),
             method="POST",
-            headers={"Authorization": f"Bearer {self.settings.access_token}"},
+            headers={
+                "Authorization": f"Bearer {self.settings.access_token}",
+                "Content-Type": "application/json",
+                "user-agent": "app/1.0",
+            },
         )
 
         return lib.Deserializable(response, lib.to_dict)
@@ -99,7 +123,11 @@ class Proxy(proxy.Proxy):
                 data=lib.to_json(request.serialize()),
                 trace=self.trace_as("json"),
                 method="POST",
-                headers={"Authorization": f"Bearer {self.settings.access_token}"},
+                headers={
+                    "Authorization": f"Bearer {self.settings.access_token}",
+                    "Content-Type": "application/json",
+                    "user-agent": "app/1.0",
+                },
             )
         )
 
@@ -114,7 +142,11 @@ class Proxy(proxy.Proxy):
                 else lib.request(
                     url=manifest_url,
                     method="GET",
-                    headers={"Authorization": f"Bearer {self.settings.access_token}"},
+                    headers={
+                        "Authorization": f"Bearer {self.settings.access_token}",
+                        "origin": "http://localhost:5002",
+                        "user-agent": "app/1.0",
+                    },
                     decoder=lib.encode_base64,
                 )
             )

@@ -67,6 +67,7 @@ class ItemType:
     declared_customs_value: Optional[int] = None
     description: Optional[str] = None
     sku: Optional[str] = None
+    hs_code: Optional[str] = None
 
 
 @s(auto_attribs=True)

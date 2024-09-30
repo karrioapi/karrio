@@ -29,8 +29,9 @@ def _extract_details(
     settings: provider_utils.Settings,
 ) -> models.RateDetails:
     details = lib.to_object(rating.RateType, data)
-    service = provider_units.ShippingService.map(details.courier_id)
-    courier = provider_units.ShippingCourierID.map(details.courier_id)
+    service = provider_units.ShippingServiceID.map(details.courier_id)
+    courier = provider_units.ShippingCourierID.find(service.value_or_key)
+
     charges = [
         ("Shipment Charge", details.shipment_charge),
         ("Insurance", details.insurance_fee),
@@ -51,7 +52,7 @@ def _extract_details(
     return models.RateDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        service=service.name_or_key,
+        service=service.value_or_key,
         total_charge=lib.to_money(details.total_charge),
         currency=details.currency,
         transit_days=details.max_delivery_time,
@@ -65,10 +66,10 @@ def _extract_details(
             if amount is not None
         ],
         meta=dict(
-            rate_provider=courier.name,
+            rate_provider=courier.name_or_key,
             easyship_incoterms=details.incoterms,
             easyship_courier_id=details.courier_id,
-            service_name=service.name or details.courier_name,
+            service_name=service.value or details.courier_name,
             available_handover_options=details.available_handover_options,
             value_for_money_rank=details.value_for_money_rank,
             tracking_rating=details.tracking_rating,
@@ -167,17 +168,34 @@ def rate_request(
                             "contains_battery_pi967"
                         ),
                         contains_liquids=item.metadata.get("contains_liquids"),
-                        declared_currency=item.value_currency or options.currency.state,
+                        declared_currency=lib.identity(
+                            item.value_currency or options.currency.state or "USD"
+                        ),
                         dimensions=None,
                         origin_country_alpha2=item.origin_country,
                         quantity=item.quantity,
                         actual_weight=item.weight,
                         category=item.category,
                         declared_customs_value=item.value_amount,
-                        description=item.description or item.title,
-                        sku=item.sku,
+                        description=item.description or item.title or "N/A",
+                        sku=item.sku or "N/A",
+                        hs_code=item.hs_code or "N/A",
                     )
-                    for item in package.items
+                    for item in lib.identity(
+                        package.items
+                        if any(package.items)
+                        else [
+                            models.Commodity(
+                                title=lib.text(package.description, max=35),
+                                description=package.description,
+                                quantity=1,
+                                hs_code="N/A",
+                                value_amount=1.0,
+                                value_currency=options.currency.state or "USD",
+                                category="bags_luggages",
+                            )
+                        ]
+                    )
                 ],
                 total_actual_weight=package.weight.value,
             )

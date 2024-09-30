@@ -139,6 +139,7 @@ ShipmentPayload = {
         "easyship_apply_shipping_rules": True,
         "easyship_list_unavailable_couriers": True,
         "easyship_incoterms": "DDU",
+        "easyship_courier_id": "b85683b8-1d32-41d7-b9af-63ae712ef3fe",
     },
 }
 
@@ -154,8 +155,10 @@ ParsedShipmentResponse = [
         "label_type": "PNG",
         "meta": {
             "easyship_courier_account_id": "7505df80-af51-46a0-b2ee-ac9eacfcd3e4",
+            "easyship_courier_id": "b85683b8-1d32-41d7-b9af-63ae712ef3fe",
             "easyship_shipment_id": "ESUS220509144",
             "tracking_numbers": ["9405509104250026972189"],
+            "rate_provider": "ups",
         },
         "shipment_identifier": "ESUS220509144",
         "tracking_number": "9405509104250026972189",
@@ -257,6 +260,7 @@ ShipmentRequest = {
             },
             "items": [
                 {
+                    "category": "bags_luggages",
                     "actual_weight": 10.0,
                     "contains_battery_pi966": True,
                     "contains_battery_pi967": True,

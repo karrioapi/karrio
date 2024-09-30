@@ -5,6 +5,10 @@ import karrio.core.units as units
 
 METADATA_JSON = lib.load_json(pathlib.Path(__file__).resolve().parent / "metadata.json")
 EASYSHIP_CARRIER_METADATA = [_ for sublist in METADATA_JSON for _ in sublist]
+KARRIO_CARRIER_MAPPING = {
+    "canada_post": "canadapost",
+    "dhl": "dhl_express",
+}
 
 
 class LabelFormat(lib.StrEnum):
@@ -103,11 +107,33 @@ class TrackingStatus(lib.Enum):
 
 
 def to_service_code(service: typing.Dict[str, str]) -> str:
-    return f'easyship_{service["umbrella_name"].lower()}_{lib.to_snake_case(service["service_name"])}'
+    return lib.to_slug(
+        f'easyship_{to_carrier_code(service)}_{lib.to_snake_case(service["service_name"])}'
+    )
 
 
-def get_easyship_service_id(service: str) -> str:
-    return ShippingService[f"easyship_{service}"]
+def to_carrier_code(service: typing.Dict[str, str]) -> str:
+    code = lib.to_slug(service["umbrella_name"])
+    return KARRIO_CARRIER_MAPPING.get(code, code)
+
+
+def find_courier(search: str):
+    courier: dict = next(
+        (
+            item
+            for item in EASYSHIP_CARRIER_METADATA
+            if item["name"] == search
+            or item["id"] == search
+            or item["umbrella_name"] == search
+            or to_service_code(item) == search
+            or to_carrier_code(item) == search
+        ),
+        {},
+    )
+    if courier:
+        return ShippingCourierID.map(to_carrier_code(courier))
+
+    return ShippingCourierID.map(search)
 
 
 ShippingService = lib.StrEnum(
@@ -120,13 +146,17 @@ ShippingService = lib.StrEnum(
 
 ShippingServiceID = lib.StrEnum(
     "ShippingServiceID",
-    {to_service_code(service): service["id"] for service in EASYSHIP_CARRIER_METADATA},
+    {service["id"]: to_service_code(service) for service in EASYSHIP_CARRIER_METADATA},
 )
 
 ShippingCourierID = lib.StrEnum(
     "ShippingCourierID",
     {
-        lib.to_slug(name): name
-        for name in list(set([_["umbrella_name"] for _ in EASYSHIP_CARRIER_METADATA]))
+        to_carrier_code(courier): courier["name"]
+        for courier in {
+            _["umbrella_name"]: _ for _ in EASYSHIP_CARRIER_METADATA
+        }.values()
     },
 )
+
+setattr(ShippingCourierID, "find", find_courier)
