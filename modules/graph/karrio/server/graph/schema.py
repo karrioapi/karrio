@@ -3,7 +3,6 @@ import logging
 import strawberry
 import strawberry
 import strawberry.schema.config as config
-import strawberry_django.optimizer as optimizer
 
 import karrio.server.graph.schemas as schemas
 
@@ -43,7 +42,5 @@ schema = strawberry.Schema(  # type: ignore
     mutation=Mutation,
     types=[*EXTRA_TYPES],
     config=config.StrawberryConfig(auto_camel_case=False),
-    extensions=[
-        optimizer.DjangoOptimizerExtension,
-    ],
+    extensions=[],
 )

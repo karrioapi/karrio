@@ -3,7 +3,6 @@ import typing
 import logging
 import datetime
 import strawberry
-import strawberry_django
 from django.db import models
 from strawberry.types import Info
 from django.forms.models import model_to_dict
@@ -27,7 +26,7 @@ User = get_user_model()
 logger = logging.getLogger(__name__)
 
 
-@strawberry_django.type(User)
+@strawberry.type
 class UserType:
     email: str
     full_name: str
@@ -52,7 +51,7 @@ class UserType:
         return User.objects.get(id=info.context.request.user.id)
 
 
-@strawberry_django.type(auth.WorkspaceConfig)
+@strawberry.type
 class WorkspaceConfigType:
     object_type: str
 
@@ -158,7 +157,7 @@ class WorkspaceConfigType:
         return auth.WorkspaceConfig.access_by(info.context.request).first()
 
 
-@strawberry_django.type(core.Metafield)
+@strawberry.type
 class MetafieldType:
     object_type: str
     id: str
@@ -168,7 +167,7 @@ class MetafieldType:
     value: typing.Optional[str] = None
 
 
-@strawberry_django.type(core.APILog)
+@strawberry.type
 class LogType:
     object_type: str
     id: int
@@ -239,7 +238,7 @@ class LogType:
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
-@strawberry_django.type(tracing.TracingRecord)
+@strawberry.type
 class TracingRecordType:
     object_type: str
     id: typing.Optional[str]
@@ -284,7 +283,7 @@ class TracingRecordType:
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
-@strawberry_django.type(auth.Token)
+@strawberry.type
 class TokenType:
     object_type: str
     key: str
@@ -305,7 +304,7 @@ class TokenType:
         )
 
 
-@strawberry_django.type(auth.Token)
+@strawberry.type
 class APIKeyType:
     object_type: str
     key: str
@@ -483,7 +482,7 @@ class DutyType:
     bill_to: typing.Optional[AddressType] = None
 
 
-@strawberry_django.type(manager.Customs)
+@strawberry.type
 class CustomsType:
     id: str
     object_type: str
@@ -513,7 +512,7 @@ class CustomsType:
         return self.commodities.all()
 
 
-@strawberry_django.type(graph.Template)
+@strawberry.type
 class AddressTemplateType:
     id: str
     object_type: str
@@ -573,7 +572,7 @@ class AddressTemplateType:
         return utils.paginated_connection(_queryset, **_filter.pagination())
 
 
-@strawberry_django.type(graph.Template)
+@strawberry.type
 class ParcelTemplateType:
     id: str
     object_type: str
@@ -607,7 +606,7 @@ class ParcelTemplateType:
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
-@strawberry_django.type(graph.Template)
+@strawberry.type
 class CustomsTemplateType:
     id: str
     object_type: str
@@ -634,7 +633,7 @@ class CustomsTemplateType:
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
-@strawberry_django.type(graph.Template)
+@strawberry.type
 class DefaultTemplatesType:
     default_address: typing.Optional[AddressTemplateType] = None
     default_customs: typing.Optional[CustomsTemplateType] = None
@@ -704,7 +703,7 @@ class TrackingInfoType:
         )
 
 
-@strawberry_django.type(manager.Tracking)
+@strawberry.type
 class TrackerType:
     id: str
     object_type: str
@@ -767,7 +766,7 @@ class TrackerType:
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
-@strawberry_django.type(manager.Manifest)
+@strawberry.type
 class ManifestType:
     id: str
     object_type: str
@@ -825,7 +824,7 @@ class PaymentType:
     currency: typing.Optional[utils.CurrencyCodeEnum] = None
 
 
-@strawberry_django.type(manager.Shipment)
+@strawberry.type
 class ShipmentType:
     id: str
     object_type: str
@@ -991,7 +990,7 @@ class LabelTemplateType:
     template_type: typing.Optional[utils.LabelTemplateTypeEnum]
 
 
-@strawberry_django.type(providers.RateSheet)
+@strawberry.type
 class RateSheetType:
     object_type: str
     id: str
@@ -1032,7 +1031,7 @@ class RateSheetType:
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
-@strawberry_django.type(providers.Carrier)
+@strawberry.type
 class SystemConnectionType:
     id: str
     active: bool
@@ -1075,7 +1074,7 @@ class SystemConnectionType:
         return connections
 
 
-@strawberry_django.type(providers.Carrier)
+@strawberry.type
 class CarrierConnectionType:
     id: str
     carrier_id: str
