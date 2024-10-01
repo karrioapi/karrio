@@ -82,8 +82,10 @@ class PickupSerializer(PickupRequest):
         if "data" in kwargs:
             data = kwargs.get("data").copy()
 
-            self._shipments = models.Shipment.objects.filter(
-                tracking_number__in=data.get("tracking_numbers", [])
+            self._shipments: typing.List[models.Shipment] = (
+                models.Shipment.objects.filter(
+                    tracking_number__in=data.get("tracking_numbers", [])
+                )
             )
 
             if data.get("address") is None and instance is None:
@@ -122,6 +124,16 @@ class PickupSerializer(PickupRequest):
 class PickupData(PickupSerializer):
     def create(self, validated_data: dict, context: Context, **kwargs) -> models.Pickup:
         carrier_filter = validated_data["carrier_filter"]
+        shipment_identifiers = [
+            _
+            for shipment in self._shipments
+            for _ in set(
+                [
+                    *(shipment.meta.get("shipment_identifiers") or []),
+                    shipment.shipment_identifier,
+                ]
+            )
+        ]
         carrier = Carriers.first(
             context=context,
             **{"raise_not_found": True, **DEFAULT_CARRIER_FILTER, **carrier_filter},
@@ -130,6 +142,10 @@ class PickupData(PickupSerializer):
             {
                 **validated_data,
                 "parcels": sum([list(s.parcels.all()) for s in self._shipments], []),
+                "options": {
+                    "shipment_identifiers": shipment_identifiers,
+                    **(validated_data.get("options") or {}),
+                },
             }
         ).data
 
@@ -206,6 +222,17 @@ class PickupUpdateData(PickupSerializer):
     def update(
         self, instance: models.Pickup, validated_data: dict, context: dict, **kwargs
     ) -> models.Tracking:
+        shipment_identifiers = [
+            _
+            for shipment in self._shipments
+            for _ in set(
+                [
+                    *(shipment.meta.get("shipment_identifiers") or []),
+                    shipment.shipment_identifier,
+                ]
+            )
+        ]
+
         request_data = PickupUpdateRequest(
             {
                 **PickupUpdateRequest(instance).data,
@@ -213,6 +240,11 @@ class PickupUpdateData(PickupSerializer):
                 "address": AddressData(
                     {**AddressData(instance.address).data, **validated_data["address"]}
                 ).data,
+                "options": {
+                    "shipment_identifiers": shipment_identifiers,
+                    **(instance.meta or {}),
+                    **(validated_data.get("options") or {}),
+                },
             }
         ).data
 

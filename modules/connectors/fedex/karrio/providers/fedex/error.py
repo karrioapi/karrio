@@ -16,13 +16,17 @@ def parse_error_response(
                 *(result["errors"] if "errors" in result else []),
                 *(
                     result["output"]["alerts"]
-                    if "alerts" in result.get("output", {})
+                    if "output" in result
+                    and not isinstance(result["output"], str)
+                    and "alerts" in result.get("output", {})
                     and not isinstance(result["output"]["alerts"], str)
                     else []
                 ),
                 *(
                     [{"message": result["output"]["message"]}]
-                    if "message" in result.get("output", {})
+                    if "output" in result
+                    and not isinstance(result["output"], str)
+                    and "message" in result.get("output", {})
                     and isinstance(result["output"]["message"], str)
                     and not result["output"]["alertType"] != "NOTE"
                     else []

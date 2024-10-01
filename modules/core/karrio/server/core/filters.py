@@ -460,12 +460,7 @@ class ShipmentFilters(filters.FilterSet):
 
     def carrier_filter(self, queryset, name, values):
         _filters = [
-            models.Q(
-                **{
-                    f"selected_rate_carrier__{value.replace('_', '')}settings__isnull": False
-                }
-            )
-            for value in values
+            models.Q(selected_rate_carrier__carrier_code=value) for value in values
         ]
         query = models.Q(meta__rate_provider__in=values)
 
@@ -596,12 +591,7 @@ class TrackerFilters(filters.FilterSet):
         fields: typing.List[str] = []
 
     def carrier_filter(self, queryset, name, values):
-        _filters = [
-            models.Q(
-                **{f"tracking_carrier__{value.replace('_', '')}settings__isnull": False}
-            )
-            for value in values
-        ]
+        _filters = [models.Q(tracking_carrier__carrier_code=value) for value in values]
         query = _filters.pop()
 
         for item in _filters:
@@ -801,12 +791,7 @@ class ManifestFilters(filters.FilterSet):
         fields: typing.List[str] = []
 
     def carrier_filter(self, queryset, name, values):
-        _filters = [
-            models.Q(
-                **{f"manifest_carrier__{value.replace('_', '')}settings__isnull": False}
-            )
-            for value in values
-        ]
+        _filters = [models.Q(manifest_carrier__carrier_code=value) for value in values]
         query = _filters.pop()
 
         for item in _filters:

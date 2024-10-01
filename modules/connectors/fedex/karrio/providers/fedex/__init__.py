@@ -14,3 +14,11 @@ from karrio.providers.fedex.document import (
     parse_document_upload_response,
     document_upload_request,
 )
+from karrio.providers.fedex.pickup import (
+    parse_pickup_cancel_response,
+    parse_pickup_update_response,
+    parse_pickup_response,
+    pickup_cancel_request,
+    pickup_update_request,
+    pickup_request,
+)

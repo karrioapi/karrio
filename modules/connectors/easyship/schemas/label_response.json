@@ -1,0 +1,18 @@
+{
+  "labels": [
+    {
+      "easyship_shipment_id": "ESSG10006001",
+      "label_state": "pending",
+      "label_url": "http://localhost:9003/shipment-tracking/ESSG10006001",
+      "platform_order_number": "",
+      "status": "success",
+      "tracking_number": "1Z12345E0292024000",
+      "tracking_page_url": "http://localhost:9003/shipment-tracking/ESSG10006001"
+    }
+  ],
+  "meta": {
+    "available_balance": -10,
+    "request_id": "01563646-58c1-4607-8fe0-cae3e92c4477",
+    "total_cost": 10
+  }
+}

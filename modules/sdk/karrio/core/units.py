@@ -1,5 +1,6 @@
 """Karrio universal data types and units definitions"""
 
+from ctypes import util
 import attr
 import typing
 import numbers
@@ -918,6 +919,15 @@ class Packages(typing.Iterable[Package]):
         return description
 
     @property
+    def content(self) -> typing.Optional[str]:
+        contents = set([item.parcel.content for item in self._items])
+        content: typing.Optional[str] = utils.SF.concat_str(
+            *list(contents), join=True
+        )  # type:ignore
+
+        return content
+
+    @property
     def options(self) -> "ShippingOptions":
         def merge_options(acc, pkg) -> dict:
             """Merge package options into one
@@ -1057,6 +1067,7 @@ class Options:
                 _key = key
                 option_values[key] = _val
 
+        self._raw_options = options
         self._options = option_values
         self._option_list = self._filter(
             option_values, (items_filter or utils.identity)
@@ -1098,6 +1109,7 @@ class ShippingOption(utils.Enum):
     """universal shipment options (special services)"""
 
     currency = utils.OptionEnum("currency")
+    is_return = utils.OptionEnum("is_return", bool)
     insurance = utils.OptionEnum("insurance", float)
     cash_on_delivery = utils.OptionEnum("COD", float)
     shipment_note = utils.OptionEnum("shipment_note")
@@ -1122,8 +1134,7 @@ class ShippingOption(utils.Enum):
     shipment_date = utils.OptionEnum("shipment_date")
 
     """TODO: standardize to these"""
-    shipping_date = utils.OptionEnum("shipping_date")  # TODO: change format to datetime
-    shipping_time = utils.OptionEnum("shipping_time")
+    shipping_date = utils.OptionEnum("shipping_date")  # format: %Y-%m-%dT%H:%M
 
 
 class ShippingOptions(Options):
@@ -1169,15 +1180,21 @@ class ShippingOptions(Options):
 
     @property
     def shipment_date(self) -> utils.OptionEnum:
+        # Check if shipment_date is not defined and fallback to shipping_date
+        if not self[ShippingOption.shipment_date.name].state:
+            return utils.OptionEnum(
+                "shipment_date",
+                str,
+                utils.DF.fdate(
+                    self._raw_options.get("shipping_date"), "%Y-%m-%dT%H:%M"
+                ),
+            )
+
         return self[ShippingOption.shipment_date.name]
 
     @property
     def shipping_date(self) -> utils.OptionEnum:
-        return self[ShippingOption.shipping_date.name] or self.shipment_date
-
-    @property
-    def shipping_time(self) -> utils.OptionEnum:
-        return self[ShippingOption.shipping_time.name]
+        return self[ShippingOption.shipping_date.name]
 
     @property
     def signature_confirmation(self) -> utils.OptionEnum:

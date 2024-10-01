@@ -26,9 +26,24 @@ def _extract_details(
     settings: provider_utils.Settings,
 ) -> models.RateDetails:
     rate = lib.to_object(rating.QuoteType, data)
-    service = provider_units.ShippingService.map(str(rate.serviceId))
-    carrierId = provider_units.ShippingService.carrier_id(service.value_or_key)
-    rate_provider = provider_units.ShippingService.carrier(service.value_or_key).lower()
+    service = provider_units.ShippingService.find(
+        rate.serviceName,
+        service_id=rate.serviceId,
+        test_mode=settings.test_mode,
+    )
+    carrier_id = provider_units.ShippingService.carrier_id(
+        rate.carrierName,
+        test_mode=settings.test_mode,
+        service_search=service.name_or_key,
+        service_id=rate.serviceId,
+    )
+    rate_provider = provider_units.RateProvider.find(
+        rate.carrierName,
+        test_mode=settings.test_mode,
+        service_search=service.name_or_key,
+        service_id=rate.serviceId,
+    )
+
     charges = [
         ("baseCharge", rate.baseCharge),
         ("fuelSurcharge", rate.fuelSurcharge),
@@ -56,11 +71,12 @@ def _extract_details(
             if amount
         ],
         meta=dict(
-            rate_provider=rate_provider,
-            service_name=rate.serviceName or service.name,
-            carrierId=carrierId,
-            serviceName=rate.serviceName,
-            carrierName=rate.carrierName,
+            eshipper_carrier_id=carrier_id,
+            eshipper_service_id=rate.serviceId,
+            eshipper_carrier_name=rate.carrierName,
+            eshipper_service_name=rate.serviceName,
+            rate_provider=rate_provider.name_or_key,
+            service_name=service.name or rate.serviceName,
         ),
     )
 
@@ -72,15 +88,28 @@ def rate_request(
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels)
-    services = lib.to_services(payload.services, provider_units.ShippingService)
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
     )
-    shipping_date = lib.to_date(options.shipment_date.state or datetime.datetime.now())
+    services = lib.to_services(payload.services, provider_units.ShippingService)
+    print(services, "<<<")
+    service_id = lib.identity(
+        options.eshipper_service_id.state
+        or provider_units.ShippingService.service_id(
+            services.first,
+            test_mode=settings.test_mode,
+        )
+    )
 
     request = eshipper.RateRequestType(
-        scheduledShipDate=lib.fdatetime(shipping_date, output_format="%Y-%m-%d %H:%M"),
+        scheduledShipDate=lib.fdatetime(
+            lib.to_next_business_datetime(
+                options.shipping_date.state or datetime.datetime.now(),
+                current_format="%Y-%m-%dT%H:%M",
+            ),
+            output_format="%Y-%m-%d %H:%M",
+        ),
         raterequestfrom=eshipper.FromType(
             attention=shipper.contact,
             company=shipper.company_name,
@@ -157,7 +186,7 @@ def rate_request(
         insidePickup=options.eshipper_inside_pickup.state,
         saturdayPickupRequired=options.eshipper_saturday_pickup_required.state,
         stackable=options.eshipper_stackable.state,
-        serviceId=getattr(services.first, "value", None),
+        serviceId=service_id,
         thirdPartyBilling=None,
         commodityType=None,
     )

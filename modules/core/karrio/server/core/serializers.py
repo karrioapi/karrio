@@ -652,7 +652,8 @@ class RateRequest(validators.OptionDefaultSerializer):
             "hold_at_location": true,
             "paperless_trade": true,
             "preferred_service": "fedex_express_saver",
-            "shipment_date": "2020-01-01",
+            "shipment_date": "2020-01-01",  # TODO: deprecate
+            "shipping_date": "2020-01-01T00:00",
             "shipment_note": "This is a shipment note",
             "signature_confirmation": true,
             "saturday_delivery": true,
@@ -1252,7 +1253,8 @@ class ShippingData(validators.OptionDefaultSerializer):
             "hold_at_location": true,
             "paperless_trade": true,
             "preferred_service": "fedex_express_saver",
-            "shipment_date": "2020-01-01",
+            "shipment_date": "2020-01-01",  # TODO: deprecate
+            "shipping_date": "2020-01-01T00:00",
             "shipment_note": "This is a shipment note",
             "signature_confirmation": true,
             "saturday_delivery": true,
@@ -1474,7 +1476,8 @@ class ShipmentContent(serializers.Serializer):
             "hold_at_location": true,
             "paperless_trade": true,
             "preferred_service": "fedex_express_saver",
-            "shipment_date": "2020-01-01",
+            "shipment_date": "2020-01-01",  # TODO: deprecate
+            "shipping_date": "2020-01-01T00:00",
             "shipment_note": "This is a shipment note",
             "signature_confirmation": true,
             "saturday_delivery": true,

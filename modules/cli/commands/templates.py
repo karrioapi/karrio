@@ -1146,7 +1146,7 @@ PROVIDER_MANIFEST_TEMPLATE = Template(
     '''"""Karrio {{name}} manifest API implementation."""
 
 # import karrio.schemas.{{id}}.manifest_request as {{id}}
-# import karrio.schemas.{{id}}.manifest_response as manifest
+# import karrio.schemas.{{id}}.manifest_response as manifests
 
 import typing
 import karrio.lib as lib

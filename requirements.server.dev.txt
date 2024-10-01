@@ -1,4 +1,3 @@
-strawberry-graphql==0.234.0
 django-constance==3.1.0
 django-debug-toolbar
 Django==4.2.15
@@ -46,6 +45,7 @@ Django==4.2.15
 -e ./modules/connectors/usps_wt_international
 
 -e ./modules/connectors/easypost
+-e ./modules/connectors/easyship
 -e ./modules/connectors/eshipper
 -e ./modules/connectors/freightcom
 -e ./modules/connectors/locate2u

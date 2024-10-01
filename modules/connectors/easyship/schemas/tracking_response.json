@@ -1,0 +1,39 @@
+{
+  "meta": {
+    "request_id": "01563646-58c1-4607-8fe0-cae3e92c4477"
+  },
+  "tracking": {
+    "courier": {
+      "id": "01563646-58c1-4607-8fe0-cae3e33c0001",
+      "umbrella_name": "DHL"
+    },
+    "destination_country_alpha2": "SG",
+    "easyship_shipment_id": "ESSG10006002",
+    "eta_date": "string",
+    "id": "01563646-58c1-4607-8fe0-cae3e33c0001",
+    "origin_country_alpha2": "HK",
+    "platform_order_number": "string",
+    "source": "external",
+    "status": "string",
+    "tracking_number": "Z5400000001",
+    "tracking_status": "created",
+    "tracking_page_url": "http://localhost:9003/shipment-tracking/ESSG10006002",
+    "checkpoints": [
+      {
+        "checkpoint_time": "2024-05-01T00:00:00Z",
+        "city": "City",
+        "country_iso3": "string",
+        "country_name": "string",
+        "handler": "string",
+        "location": "string",
+        "message": "string",
+        "order_number": "string",
+        "postal_code": "string",
+        "country_alpha2": "SG",
+        "description": "Description",
+        "primary_status": "string",
+        "state": "State"
+      }
+    ]
+  }
+}

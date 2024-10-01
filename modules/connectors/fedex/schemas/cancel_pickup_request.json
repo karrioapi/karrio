@@ -1,0 +1,20 @@
+{
+  "associatedAccountNumber": {
+    "value": "Your account number"
+  },
+  "pickupConfirmationCode": "7",
+  "remarks": "Please ring bell at loading dock.",
+  "carrierCode": "FDXE",
+  "accountAddressOfRecord": {
+    "streetLines": ["123 Ship Street"],
+    "urbanizationCode": "URB FAIR OAKS",
+    "city": "Memphis",
+    "stateOrProvinceCode": "ON",
+    "postalCode": "38017",
+    "countryCode": "US",
+    "residential": false,
+    "addressClassification": "MIXED"
+  },
+  "scheduledDate": "2019-10-15",
+  "location": "LOSA"
+}

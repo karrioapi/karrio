@@ -1,5 +1,6 @@
 """Karrio Unified model definitions module."""
 
+from unicodedata import category
 import attr
 from typing import List, Dict, Any, Union
 from jstruct import JList, JStruct, REQUIRED
@@ -45,6 +46,7 @@ class Commodity:
     value_amount: float = None
     value_currency: str = None
     origin_country: str = None
+    category: str = None
 
     metadata: Dict = {}
 
@@ -181,6 +183,7 @@ class PickupRequest:
     address: Address = JStruct[Address, REQUIRED]
 
     parcels: List[Parcel] = JList[Parcel]
+    shipment_identifiers: List[str] = []
     package_location: str = None
     instruction: str = None
     options: Dict = {}
@@ -199,6 +202,7 @@ class PickupUpdateRequest:
     address: Address = JStruct[Address, REQUIRED]
 
     parcels: List[Parcel] = JList[Parcel]
+    shipment_identifiers: List[str] = []
     package_location: str = None
     instruction: str = None
     options: Dict = {}

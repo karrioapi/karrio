@@ -113,8 +113,7 @@ ShipmentPayload = {
         },
     ],
     "options": {
-        "shipping_date": "2024-07-16",
-        "shipping_time": "10:30",
+        "shipping_date": "2024-07-16T10:30",
     },
 }
 
@@ -132,9 +131,9 @@ ParsedShipmentResponse = [
         "meta": {
             "carrier_tracking_link": "https://www.purolator.com/en/shipping/tracker?pin=329041222335",
             "rate_provider": "purolator",
-            "carrierName": "Purolator",
             "orderId": "8000000010948",
-            "service_name": "Purolator Ground 1030",
+            "eshipper_carrier_name": "Purolator",
+            "service_name": "eshipper_purolator_ground_1030",
             "tracking_numbers": ["329041222335"],
         },
         "shipment_identifier": "8000000010948",
@@ -180,7 +179,7 @@ ShipmentRequest = {
     },
     "packagingUnit": "Metric",
     "scheduledShipDate": "2024-07-16 10:30",
-    "serviceId": "5000184",
+    "serviceId": 4500,
     "from": {
         "address1": "9, Van Der Graaf Court",
         "attention": "Test Company- From",

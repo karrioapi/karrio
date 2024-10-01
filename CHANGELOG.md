@@ -1,3 +1,22 @@
+# Karrio 2024.9
+
+## Changes
+
+### Feat
+
+- feat: Easyship integration (#569)
+- feat: Add `pickup` support for `fedex` JSON API integration (#690)
+- feat: introduce `shipping_date` field of `datetime` type and deprecate `shipment_date` of `date` type to capture time for carriers that expect full future `datetime` ship date values.
+- feat: Add dhl_express content description for insurance (#694)
+
+### Fix
+
+- fix: `eshipper` carrier and services mapping (#675)
+- fix: `canadapost` non-uniq shipment group_id across account (#679)
+- fix: `fedex_ws` pickup request encoding (#690)
+- fix: organization GraphQL queries running on OSS build (#687)
+- fix: Nextjs cache build issue (#688)
+
 # Patch 2024.6.7
 
 ## Changes
@@ -618,8 +637,8 @@ Special thanks to @jacobshilitz for the powerful performance fix for API log ind
 
 -   Introduce the Karrio admin server module with an admin GraphQL API
 -   Lay the foundation of the Karrio admin dashboard in the same codebase as the current dashboard# Karrio patch 2023.9.3
--   [x] (fix) **DEFAULT_SERVICE** imports for carriers with custom rate sheets
--   [x] (fix) `dhl_express` paperless trade option processing# Karrio patch 2023.9.2
+-   (fix) **DEFAULT_SERVICE** imports for carriers with custom rate sheets
+-   (fix) `dhl_express` paperless trade option processing# Karrio patch 2023.9.2
 -   (refactor) Enum types and various usages due to related breaking changes in `Python 11`
 -   (update) docker base images to `python:3.12-slim` and development image to `python:3.12-slim-bullseye` to improve development on Mac M chips# Karrio patch 2023.9.1
 -   (merge) `dhl_express` dutiable fix by @DarkSwoop

@@ -1,0 +1,84 @@
+{
+  "courier_selection": {
+    "apply_shipping_rules": true,
+    "show_courier_logo_url": false
+  },
+  "destination_address": {
+    "country_alpha2": "HK",
+    "city": "Hong Kong",
+    "company_name": "",
+    "contact_email": "asd@asd.com",
+    "contact_name": "Foo Bar",
+    "contact_phone": "",
+    "line_1": "Kennedy Town",
+    "line_2": "Block 3",
+    "postal_code": "0000",
+    "state": "Yuen Long"
+  },
+  "incoterms": "DDU",
+  "insurance": {
+    "insured_amount": 10.0,
+    "insured_currency": "USD",
+    "is_insured": false
+  },
+  "origin_address": {
+    "city": "Hong Kong",
+    "company_name": "",
+    "contact_email": "asd@asd.com",
+    "contact_name": "Foo Bar",
+    "contact_phone": "",
+    "country_alpha2": "HK",
+    "line_1": "Kennedy Town",
+    "line_2": "Block 3",
+    "postal_code": "0000",
+    "state": "Yuen Long",
+    "validation": {
+      "detail": "Address is not valid",
+      "status": "invalid_address",
+      "comparison": {
+        "changes": "",
+        "post": "",
+        "pre": ""
+      }
+    }
+  },
+  "parcels": [
+    {
+      "box": {
+        "height": 10,
+        "length": 10,
+        "width": 10,
+        "slug": "custom"
+      },
+      "items": [
+        {
+          "contains_battery_pi966": true,
+          "contains_battery_pi967": true,
+          "contains_liquids": true,
+          "declared_currency": "USD",
+          "dimensions": {
+            "height": 3,
+            "length": 1,
+            "width": 2
+          },
+          "origin_country_alpha2": "HK",
+          "quantity": 2,
+          "actual_weight": 10,
+          "category": "fashion",
+          "declared_customs_value": 20,
+          "description": "item",
+          "sku": "sku",
+          "hs_code": "sku"
+        }
+      ],
+      "total_actual_weight": 1
+    }
+  ],
+  "shipping_settings": {
+    "output_currency": "USD",
+    "units": {
+      "dimensions": "cm",
+      "weight": "kg"
+    }
+  }
+}

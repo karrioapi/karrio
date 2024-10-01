@@ -1,0 +1,8 @@
+SCHEMAS=./schemas
+LIB_MODULES=./karrio/schemas/tnt_it
+find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
+touch "${LIB_MODULES}/__init__.py"
+
+generateDS --no-namespace-defs -o "${LIB_MODULES}/rating.py" $SCHEMAS/rating.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/routinglabel.py" $SCHEMAS/routinglabel.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/tracking.py" $SCHEMAS/tracking.xsd

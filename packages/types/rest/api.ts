@@ -2,9 +2,9 @@
 /* eslint-disable */
 /**
  * Karrio API
- *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6.7`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
+ *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.9`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
  *
- * The version of the OpenAPI document: 2024.6.7
+ * The version of the OpenAPI document: 2024.9
  * 
  *
  * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -1411,6 +1411,7 @@ export const CarrierConnectionCarrierNameEnum = {
     Dpd: 'dpd',
     Dpdhl: 'dpdhl',
     Easypost: 'easypost',
+    Easyship: 'easyship',
     Eshipper: 'eshipper',
     Fedex: 'fedex',
     FedexWs: 'fedex_ws',
@@ -1425,6 +1426,7 @@ export const CarrierConnectionCarrierNameEnum = {
     Roadie: 'roadie',
     Royalmail: 'royalmail',
     Sapient: 'sapient',
+    Seko: 'seko',
     Sendle: 'sendle',
     Tge: 'tge',
     Tnt: 'tnt',
@@ -1509,6 +1511,7 @@ export const CarrierConnectionDataCarrierNameEnum = {
     Dpd: 'dpd',
     Dpdhl: 'dpdhl',
     Easypost: 'easypost',
+    Easyship: 'easyship',
     Eshipper: 'eshipper',
     Fedex: 'fedex',
     FedexWs: 'fedex_ws',
@@ -1523,6 +1526,7 @@ export const CarrierConnectionDataCarrierNameEnum = {
     Roadie: 'roadie',
     Royalmail: 'royalmail',
     Sapient: 'sapient',
+    Seko: 'seko',
     Sendle: 'sendle',
     Tge: 'tge',
     Tnt: 'tnt',
@@ -1626,6 +1630,7 @@ export const CarrierDetailsCarrierNameEnum = {
     Dpd: 'dpd',
     Dpdhl: 'dpdhl',
     Easypost: 'easypost',
+    Easyship: 'easyship',
     Eshipper: 'eshipper',
     Fedex: 'fedex',
     FedexWs: 'fedex_ws',
@@ -1640,6 +1645,7 @@ export const CarrierDetailsCarrierNameEnum = {
     Roadie: 'roadie',
     Royalmail: 'royalmail',
     Sapient: 'sapient',
+    Seko: 'seko',
     Sendle: 'sendle',
     Tge: 'tge',
     Tnt: 'tnt',
@@ -2722,7 +2728,7 @@ export type CommodityDataOriginCountryEnum = typeof CommodityDataOriginCountryEn
  * @type ConnectionCredentialsField
  * @export
  */
-export type ConnectionCredentialsField = AlliedExpress | AlliedExpressLocal | AmazonShipping | Aramex | AsendiaUs | Australiapost | Boxknight | Bpost | Canadapost | Canpar | Chronopost | Colissimo | DhlExpress | DhlParcelDe | DhlPoland | DhlUniversal | Dicom | Dpd | Dpdhl | Easypost | Eshipper | Fedex | FedexWs | Freightcom | Generic | Geodis | HayPost | Laposte | Locate2u | Nationex | Purolator | Roadie | Royalmail | Sapient | Sendle | Tge | Tnt | Ups | Usps | UspsInternational | UspsWt | UspsWtInternational | Zoom2u;
+export type ConnectionCredentialsField = AlliedExpress | AlliedExpressLocal | AmazonShipping | Aramex | AsendiaUs | Australiapost | Boxknight | Bpost | Canadapost | Canpar | Chronopost | Colissimo | DhlExpress | DhlParcelDe | DhlPoland | DhlUniversal | Dicom | Dpd | Dpdhl | Easypost | Easyship | Eshipper | Fedex | FedexWs | Freightcom | Generic | Geodis | HayPost | Laposte | Locate2u | Nationex | Purolator | Roadie | Royalmail | Sapient | Seko | Sendle | Tge | Tnt | Ups | Usps | UspsInternational | UspsWt | UspsWtInternational | Zoom2u;
 
 /**
  * 
@@ -3774,6 +3780,19 @@ export interface Easypost {
      * @memberof Easypost
      */
     'api_key': string;
+}
+/**
+ * 
+ * @export
+ * @interface Easyship
+ */
+export interface Easyship {
+    /**
+     * 
+     * @type {string}
+     * @memberof Easyship
+     */
+    'access_token': string;
 }
 /**
  * 
@@ -5948,6 +5967,7 @@ export const PatchedCarrierConnectionDataCarrierNameEnum = {
     Dpd: 'dpd',
     Dpdhl: 'dpdhl',
     Easypost: 'easypost',
+    Easyship: 'easyship',
     Eshipper: 'eshipper',
     Fedex: 'fedex',
     FedexWs: 'fedex_ws',
@@ -5962,6 +5982,7 @@ export const PatchedCarrierConnectionDataCarrierNameEnum = {
     Roadie: 'roadie',
     Royalmail: 'royalmail',
     Sapient: 'sapient',
+    Seko: 'seko',
     Sendle: 'sendle',
     Tge: 'tge',
     Tnt: 'tnt',
@@ -6987,7 +7008,7 @@ export interface RateRequest {
      */
     'services'?: Array<string> | null;
     /**
-     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
      * @type {{ [key: string]: any; }}
      * @memberof RateRequest
      */
@@ -7101,6 +7122,19 @@ export type SapientCarrierCodeEnum = typeof SapientCarrierCodeEnum[keyof typeof 
 /**
  * 
  * @export
+ * @interface Seko
+ */
+export interface Seko {
+    /**
+     * 
+     * @type {string}
+     * @memberof Seko
+     */
+    'access_key': string;
+}
+/**
+ * 
+ * @export
  * @interface Sendle
  */
 export interface Sendle {
@@ -7184,7 +7218,7 @@ export interface Shipment {
      */
     'services'?: Array<string> | null;
     /**
-     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
      * @type {{ [key: string]: any; }}
      * @memberof Shipment
      */
@@ -7414,7 +7448,7 @@ export interface ShipmentData {
      */
     'parcels': Array<ParcelData>;
     /**
-     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
      * @type {{ [key: string]: any; }}
      * @memberof ShipmentData
      */
@@ -7514,7 +7548,7 @@ export interface ShipmentDataReference {
      */
     'parcels': Array<ParcelData>;
     /**
-     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
      * @type {{ [key: string]: any; }}
      * @memberof ShipmentDataReference
      */
@@ -7648,7 +7682,7 @@ export interface ShipmentRateData {
      */
     'carrier_ids'?: Array<string> | null;
     /**
-     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
      * @type {{ [key: string]: any; }}
      * @memberof ShipmentRateData
      */
@@ -7685,7 +7719,7 @@ export interface ShipmentUpdateData {
      */
     'payment'?: Payment;
     /**
-     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
      * @type {{ [key: string]: any; }}
      * @memberof ShipmentUpdateData
      */
@@ -7749,7 +7783,7 @@ export interface ShippingRequest {
      */
     'parcels': Array<ParcelData>;
     /**
-     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
      * @type {{ [key: string]: any; }}
      * @memberof ShippingRequest
      */
@@ -7861,7 +7895,7 @@ export interface ShippingResponse {
      */
     'services'?: Array<string> | null;
     /**
-     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
      * @type {{ [key: string]: any; }}
      * @memberof ShippingResponse
      */
@@ -8422,6 +8456,7 @@ export const TrackingDataCarrierNameEnum = {
     Purolator: 'purolator',
     Roadie: 'roadie',
     Royalmail: 'royalmail',
+    Seko: 'seko',
     Sendle: 'sendle',
     Tge: 'tge',
     Tnt: 'tnt',
@@ -10886,7 +10921,7 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
         /**
          * Retrieve a carrier\'s services
          * @summary Get carrier services
-         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -10960,7 +10995,7 @@ export const CarriersApiFp = function(configuration?: Configuration) {
         /**
          * Retrieve a carrier\'s services
          * @summary Get carrier services
-         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -11021,7 +11056,7 @@ export const CarriersApiFactory = function (configuration?: Configuration, baseP
  */
 export interface CarriersApiGetServicesRequest {
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
      * @type {string}
      * @memberof CarriersApiGetServices
      */
@@ -11121,7 +11156,7 @@ export const ConnectionsApiAxiosParamCreator = function (configuration?: Configu
          * Retrieve all carrier connections
          * @summary List carrier connections
          * @param {boolean} [active] 
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [metadataKey] 
          * @param {string} [metadataValue] 
          * @param {boolean} [systemOnly] 
@@ -11361,7 +11396,7 @@ export const ConnectionsApiFp = function(configuration?: Configuration) {
          * Retrieve all carrier connections
          * @summary List carrier connections
          * @param {boolean} [active] 
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [metadataKey] 
          * @param {string} [metadataValue] 
          * @param {boolean} [systemOnly] 
@@ -11505,7 +11540,7 @@ export interface ConnectionsApiListRequest {
     readonly active?: boolean
 
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
      * @type {string}
      * @memberof ConnectionsApiList
      */
@@ -12649,7 +12684,7 @@ export const ManifestsApiAxiosParamCreator = function (configuration?: Configura
         /**
          * Retrieve all manifests.
          * @summary List manifests
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
          * @param {*} [options] Override http request option.
@@ -12783,7 +12818,7 @@ export const ManifestsApiFp = function(configuration?: Configuration) {
         /**
          * Retrieve all manifests.
          * @summary List manifests
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
          * @param {*} [options] Override http request option.
@@ -12872,7 +12907,7 @@ export interface ManifestsApiCreateRequest {
  */
 export interface ManifestsApiListRequest {
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
      * @type {string}
      * @memberof ManifestsApiList
      */
@@ -15377,7 +15412,7 @@ export interface ProxyApiBuyLabelRequest {
 export interface ProxyApiCancelPickupRequest {
     /**
      * 
-     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'eshipper' | 'fedex' | 'fedex_ws' | 'freightcom' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sapient' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
+     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'easyship' | 'eshipper' | 'fedex' | 'fedex_ws' | 'freightcom' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sapient' | 'seko' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
      * @memberof ProxyApiCancelPickup
      */
     readonly carrierName: CancelPickupCarrierNameEnum
@@ -15447,7 +15482,7 @@ export interface ProxyApiGetTrackingRequest {
 export interface ProxyApiSchedulePickupRequest {
     /**
      * 
-     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'eshipper' | 'fedex' | 'fedex_ws' | 'freightcom' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sapient' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
+     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'easyship' | 'eshipper' | 'fedex' | 'fedex_ws' | 'freightcom' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sapient' | 'seko' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
      * @memberof ProxyApiSchedulePickup
      */
     readonly carrierName: SchedulePickupCarrierNameEnum
@@ -15468,7 +15503,7 @@ export interface ProxyApiSchedulePickupRequest {
 export interface ProxyApiTrackShipmentRequest {
     /**
      * 
-     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'fedex' | 'fedex_ws' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
+     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'fedex' | 'fedex_ws' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'seko' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
      * @memberof ProxyApiTrackShipment
      */
     readonly carrierName: TrackShipmentCarrierNameEnum
@@ -15496,7 +15531,7 @@ export interface ProxyApiTrackShipmentRequest {
 export interface ProxyApiUpdatePickupRequest {
     /**
      * 
-     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'eshipper' | 'fedex' | 'fedex_ws' | 'freightcom' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sapient' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
+     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'easyship' | 'eshipper' | 'fedex' | 'fedex_ws' | 'freightcom' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sapient' | 'seko' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
      * @memberof ProxyApiUpdatePickup
      */
     readonly carrierName: UpdatePickupCarrierNameEnum
@@ -15517,7 +15552,7 @@ export interface ProxyApiUpdatePickupRequest {
 export interface ProxyApiVoidLabelRequest {
     /**
      * 
-     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'eshipper' | 'fedex' | 'fedex_ws' | 'freightcom' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sapient' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
+     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'easyship' | 'eshipper' | 'fedex' | 'fedex_ws' | 'freightcom' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sapient' | 'seko' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
      * @memberof ProxyApiVoidLabel
      */
     readonly carrierName: VoidLabelCarrierNameEnum
@@ -15671,6 +15706,7 @@ export const CancelPickupCarrierNameEnum = {
     Dpd: 'dpd',
     Dpdhl: 'dpdhl',
     Easypost: 'easypost',
+    Easyship: 'easyship',
     Eshipper: 'eshipper',
     Fedex: 'fedex',
     FedexWs: 'fedex_ws',
@@ -15685,6 +15721,7 @@ export const CancelPickupCarrierNameEnum = {
     Roadie: 'roadie',
     Royalmail: 'royalmail',
     Sapient: 'sapient',
+    Seko: 'seko',
     Sendle: 'sendle',
     Tge: 'tge',
     Tnt: 'tnt',
@@ -15720,6 +15757,7 @@ export const SchedulePickupCarrierNameEnum = {
     Dpd: 'dpd',
     Dpdhl: 'dpdhl',
     Easypost: 'easypost',
+    Easyship: 'easyship',
     Eshipper: 'eshipper',
     Fedex: 'fedex',
     FedexWs: 'fedex_ws',
@@ -15734,6 +15772,7 @@ export const SchedulePickupCarrierNameEnum = {
     Roadie: 'roadie',
     Royalmail: 'royalmail',
     Sapient: 'sapient',
+    Seko: 'seko',
     Sendle: 'sendle',
     Tge: 'tge',
     Tnt: 'tnt',
@@ -15779,6 +15818,7 @@ export const TrackShipmentCarrierNameEnum = {
     Purolator: 'purolator',
     Roadie: 'roadie',
     Royalmail: 'royalmail',
+    Seko: 'seko',
     Sendle: 'sendle',
     Tge: 'tge',
     Tnt: 'tnt',
@@ -15814,6 +15854,7 @@ export const UpdatePickupCarrierNameEnum = {
     Dpd: 'dpd',
     Dpdhl: 'dpdhl',
     Easypost: 'easypost',
+    Easyship: 'easyship',
     Eshipper: 'eshipper',
     Fedex: 'fedex',
     FedexWs: 'fedex_ws',
@@ -15828,6 +15869,7 @@ export const UpdatePickupCarrierNameEnum = {
     Roadie: 'roadie',
     Royalmail: 'royalmail',
     Sapient: 'sapient',
+    Seko: 'seko',
     Sendle: 'sendle',
     Tge: 'tge',
     Tnt: 'tnt',
@@ -15863,6 +15905,7 @@ export const VoidLabelCarrierNameEnum = {
     Dpd: 'dpd',
     Dpdhl: 'dpdhl',
     Easypost: 'easypost',
+    Easyship: 'easyship',
     Eshipper: 'eshipper',
     Fedex: 'fedex',
     FedexWs: 'fedex_ws',
@@ -15877,6 +15920,7 @@ export const VoidLabelCarrierNameEnum = {
     Roadie: 'roadie',
     Royalmail: 'royalmail',
     Sapient: 'sapient',
+    Seko: 'seko',
     Sendle: 'sendle',
     Tge: 'tge',
     Tnt: 'tnt',
@@ -15998,7 +16042,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
          * Retrieve all shipments.
          * @summary List all shipments
          * @param {string} [address] 
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
          * @param {boolean} [hasManifest] 
@@ -16378,7 +16422,7 @@ export const ShipmentsApiFp = function(configuration?: Configuration) {
          * Retrieve all shipments.
          * @summary List all shipments
          * @param {string} [address] 
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
          * @param {boolean} [hasManifest] 
@@ -16584,7 +16628,7 @@ export interface ShipmentsApiListRequest {
     readonly address?: string
 
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
      * @type {string}
      * @memberof ShipmentsApiList
      */
@@ -17008,7 +17052,7 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
         /**
          * Retrieve all shipment trackers.
          * @summary List all package trackers
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
          * @param {string} [status] Valid tracker status. &lt;br/&gt;Values: &#x60;pending&#x60;, &#x60;unknown&#x60;, &#x60;on_hold&#x60;, &#x60;delivered&#x60;, &#x60;in_transit&#x60;, &#x60;delivery_delayed&#x60;, &#x60;out_for_delivery&#x60;, &#x60;ready_for_pickup&#x60;, &#x60;delivery_failed&#x60;
@@ -17271,7 +17315,7 @@ export const TrackersApiFp = function(configuration?: Configuration) {
         /**
          * Retrieve all shipment trackers.
          * @summary List all package trackers
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
          * @param {string} [status] Valid tracker status. &lt;br/&gt;Values: &#x60;pending&#x60;, &#x60;unknown&#x60;, &#x60;on_hold&#x60;, &#x60;delivered&#x60;, &#x60;in_transit&#x60;, &#x60;delivery_delayed&#x60;, &#x60;out_for_delivery&#x60;, &#x60;ready_for_pickup&#x60;, &#x60;delivery_failed&#x60;
@@ -17442,7 +17486,7 @@ export interface TrackersApiCreateRequest {
 
     /**
      * 
-     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'fedex' | 'fedex_ws' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
+     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'fedex' | 'fedex_ws' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'seko' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
      * @memberof TrackersApiCreate
      */
     readonly carrierName2: CreateCarrierNameEnum
@@ -17469,7 +17513,7 @@ export interface TrackersApiCreateRequest {
  */
 export interface TrackersApiListRequest {
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;usps_wt&#x60;, &#x60;usps_wt_international&#x60;, &#x60;zoom2u&#x60;
      * @type {string}
      * @memberof TrackersApiList
      */
@@ -17668,6 +17712,7 @@ export const CreateCarrierNameEnum = {
     Purolator: 'purolator',
     Roadie: 'roadie',
     Royalmail: 'royalmail',
+    Seko: 'seko',
     Sendle: 'sendle',
     Tge: 'tge',
     Tnt: 'tnt',

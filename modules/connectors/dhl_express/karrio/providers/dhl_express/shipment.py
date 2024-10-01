@@ -80,7 +80,7 @@ def shipment_request(
     )
     product = provider_units.ShippingService.map(payload.service).value_or_key
 
-    weight_unit, dim_unit = (
+    weight_unit, dim_unit = lib.identity(
         provider_units.COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
         or packages.compatible_units
     )
@@ -113,9 +113,15 @@ def shipment_request(
         option for _, option in options.items() if option.state is not False
     ]
     duty = customs.duty or models.Duty(paid_by="sender")
-    content = packages[0].parcel.content or customs.content_description or "N/A"
+    content = lib.identity(
+        options.dhl_shipment_content.state
+        or customs.content_description
+        or packages.content
+        or packages.description
+        or "N/A"
+    )
     reference = payload.reference or getattr(payload, "id", None)
-    currency = (
+    currency = lib.identity(
         options.currency.state
         or units.CountryCurrency.map(payload.shipper.country_code).value
         or settings.default_currency
@@ -171,7 +177,7 @@ def shipment_request(
             ),
             BusinessPartyTypeCode=None,
         ),
-        Commodity=(
+        Commodity=lib.identity(
             [
                 dhl.Commodity(
                     CommodityCode=c.hs_code or c.sku or "N/A",
@@ -182,7 +188,7 @@ def shipment_request(
             if any(customs.commodities)
             else None
         ),
-        Dutiable=(
+        Dutiable=lib.identity(
             dhl_global.Dutiable(
                 DeclaredValue=(
                     duty.declared_value or options.declared_value.state or 1.0
@@ -212,10 +218,10 @@ def shipment_request(
         ),
         UseDHLInvoice=("Y" if is_dutiable else None),
         DHLInvoiceLanguageCode=("en" if is_dutiable else None),
-        DHLInvoiceType=(
+        DHLInvoiceType=lib.identity(
             ("CMI" if customs.commercial_invoice else "PFI") if is_dutiable else None
         ),
-        ExportDeclaration=(
+        ExportDeclaration=lib.identity(
             dhl_global.ExportDeclaration(
                 InterConsignee=None,
                 IsPartiesRelation=None,
@@ -291,7 +297,7 @@ def shipment_request(
                     "COMMERCIAL" if customs.commercial_invoice else "PERSONAL"
                 ),
                 DocumentFunction=None,
-                CustomsDocuments=(
+                CustomsDocuments=lib.identity(
                     dhl_global.CustomsDocuments(
                         CustomsDocument=[
                             dhl.CustomsDocument(
@@ -314,7 +320,7 @@ def shipment_request(
             if is_dutiable
             else None
         ),
-        Reference=(
+        Reference=lib.identity(
             [dhl.Reference(ReferenceID=lib.text(reference, max=30))]
             if any(reference or "")
             else None
@@ -373,7 +379,7 @@ def shipment_request(
             IsDutiable=("Y" if is_dutiable else "N"),
             CurrencyCode=currency,
             CustData=getattr(payload, "id", None),
-            ShipmentCharges=(
+            ShipmentCharges=lib.identity(
                 options.cash_on_delivery.state
                 if options.cash_on_delivery.state
                 else None

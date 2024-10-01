@@ -1,4 +1,3 @@
-import time
 import karrio.schemas.eshipper.shipping_request as eshipper
 import karrio.schemas.eshipper.shipping_response as shipping
 import typing
@@ -32,7 +31,14 @@ def _extract_details(
     label = lib.bundle_base64([_.data for _ in shipment.labelData.label], label_type)
     invoice = lib.failsafe(lambda: shipment.customsInvoice.data)
     trackingNumbers = [_.trackingNumber for _ in shipment.packages]
-    rate_provider = provider_units.ShippingService.carrier(shipment.quote.serviceId)
+    service = provider_units.ShippingService.find(
+        shipment.carrier.serviceName,
+        test_mode=settings.test_mode,
+    )
+    rate_provider = provider_units.RateProvider.find(
+        shipment.carrier.carrierName,
+        test_mode=settings.test_mode,
+    )
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
@@ -43,14 +49,14 @@ def _extract_details(
         docs=models.Documents(label=label, invoice=invoice),
         meta=lib.to_dict(
             dict(
-                rate_provider=rate_provider,
+                service_name=service.name_or_key,
+                rate_provider=rate_provider.name_or_key,
                 carrier_tracking_link=shipment.trackingUrl,
-                service_name=shipment.carrier.serviceName,
                 tracking_numbers=trackingNumbers,
                 orderId=shipment.order.id,
-                carrierName=shipment.carrier.carrierName,
                 transactionId=shipment.transactionId,
                 billingReference=shipment.billingReference,
+                eshipper_carrier_name=shipment.carrier.carrierName,
             )
         ),
     )
@@ -63,8 +69,6 @@ def shipment_request(
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     is_intl = shipper.country_code != recipient.country_code
-    service = provider_units.ShippingService.map(payload.service).value_or_key
-    carrier_id = provider_units.ShippingService.carrier_id(service)
 
     payment = payload.payment or models.Payment()
     payor = lib.to_address(
@@ -84,6 +88,24 @@ def shipment_request(
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
+    service = provider_units.ShippingService.map(payload.service)
+    service_id = lib.identity(
+        options.eshipper_service_id.state
+        or provider_units.ShippingService.service_id(
+            service.name_or_key,
+            test_mode=settings.test_mode,
+        )
+    )
+    carrier_id = lib.identity(
+        options.eshipper_carrier_id.state
+        or provider_units.ShippingService.carrier_id(
+            service.name_or_key,
+            service_id=service_id,
+            test_mode=settings.test_mode,
+            service_search=service.name_or_key,
+        )
+    )
+
     customs = lib.to_customs_info(
         payload.customs,
         shipper=payload.shipper,
@@ -110,14 +132,13 @@ def shipment_request(
             else None
         ),
     )
-    now = datetime.datetime.now() + datetime.timedelta(minutes=5)
-    shipping_time = lib.ftime(options.shipping_time.state or now, "%H:%M")
-    shipping_date = lib.fdate(options.shipping_date.state or now)
 
     request = eshipper.ShippingRequestType(
         scheduledShipDate=lib.fdatetime(
-            f"{shipping_date} {shipping_time}",
-            current_format="%Y-%m-%d %H:%M",
+            lib.to_next_business_datetime(
+                options.shipping_date.state or datetime.datetime.now(),
+                current_format="%Y-%m-%dT%H:%M",
+            ),
             output_format="%Y-%m-%d %H:%M",
         ),
         shippingrequestfrom=eshipper.FromType(
@@ -254,7 +275,7 @@ def shipment_request(
         insidePickup=options.eshipper_inside_pickup.state,
         saturdayPickupRequired=options.eshipper_saturday_pickup_required.state,
         stackable=options.eshipper_stackable.state,
-        serviceId=service,
+        serviceId=service_id,
         thirdPartyBilling=lib.identity(
             eshipper.ThirdPartyBillingType(
                 carrier=carrier_id,

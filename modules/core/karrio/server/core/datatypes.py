@@ -123,10 +123,11 @@ class PickupRequest(BasePickupRequest):
     address: Address = jstruct.JStruct[Address, jstruct.REQUIRED]
 
     parcels: typing.List[Parcel] = jstruct.JList[Parcel]
-    instruction: str = None
+    shipment_identifiers: typing.List[str] = []
     package_location: str = None
     metadata: typing.Dict = {}
     options: typing.Dict = {}
+    instruction: str = None
 
 
 @attr.s(auto_attribs=True)
@@ -138,9 +139,10 @@ class PickupUpdateRequest(BasePickupUpdateRequest):
     address: Address = jstruct.JStruct[Address, jstruct.REQUIRED]
 
     parcels: typing.List[Parcel] = jstruct.JList[Parcel]
-    instruction: str = None
+    shipment_identifiers: typing.List[str] = []
     package_location: str = None
     options: typing.Dict = {}
+    instruction: str = None
 
 
 @attr.s(auto_attribs=True)

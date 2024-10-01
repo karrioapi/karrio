@@ -99,3 +99,46 @@ class Proxy(proxy.Proxy):
             response,
             lambda __: [lib.to_dict(_) for _ in __],
         )
+
+    def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = lib.request(
+            url=f"{self.settings.server_url}/pickup/v1/pickups",
+            data=lib.to_json(request.serialize()),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={
+                "x-locale": "en_US",
+                "content-type": "application/json",
+                "authorization": f"Bearer {self.settings.access_token}",
+            },
+            decoder=provider_utils.parse_response,
+            on_error=lambda b: provider_utils.parse_response(b.read()),
+        )
+
+        return lib.Deserializable(response, lib.to_dict, request.ctx)
+
+    def modify_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = self.cancel_pickup(lib.Serializable(request.ctx["cancel"]))
+        confirmation = response.deserialize().get("output") or {}
+
+        if confirmation.get("pickupConfirmationCode") is not None:
+            return self.schedule_pickup(request)
+
+        return response
+
+    def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = lib.request(
+            url=f"{self.settings.server_url}/pickup/v1/pickups/cancel",
+            data=lib.to_json(request.serialize()),
+            trace=self.trace_as("json"),
+            method="PUT",
+            headers={
+                "x-locale": "en_US",
+                "content-type": "application/json",
+                "authorization": f"Bearer {self.settings.access_token}",
+            },
+            decoder=provider_utils.parse_response,
+            on_error=lambda b: provider_utils.parse_response(b.read()),
+        )
+
+        return lib.Deserializable(response, lib.to_dict, request.ctx)

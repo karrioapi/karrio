@@ -99,6 +99,19 @@ def text(
     return typing.cast(str, _text[0:max] if max else _text)
 
 
+def to_snake_case(input_string: typing.Optional[str]) -> typing.Optional[str]:
+    """Convert any string format to snake case."""
+    return utils.SF.to_snake_case(input_string)
+
+
+def to_slug(
+    *values,
+    separator: str = "_",
+) -> typing.Optional[str]:
+    """Convert a set of string values into a slug string, changing camel case to snake_case."""
+    return utils.SF.to_slug(*values, separator=separator)
+
+
 def to_int(
     value: typing.Union[str, int, bytes] = None,
     base: int = None,
@@ -146,6 +159,34 @@ def to_decimal(
     :return: a valid decimal number or None.
     """
     return utils.NF.decimal(value, quant)
+
+
+def to_numeric_decimal(
+    value: typing.Union[str, float, bytes] = None,
+    total_digits: int = 6,
+    decimal_digits: int = 3,
+) -> str:
+    """Convert a float to a zero-padded string with customizable total length and decimal places.
+
+    Args:
+    input_float (float): A floating point number to be formatted.
+    total_digits (int): The total length of the output string (including both numeric and decimal parts).
+    decimal_digits (int): The number of decimal digits (d) in the final output.
+
+    Returns:
+    str: A zero-padded string of total_digits length, with the last decimal_digits as decimals.
+
+    Examples:
+    >>> format_to_custom_numeric_decimal(1.0, 7, 3)  # NNNNddd
+    '0001000'
+
+    >>> format_to_custom_numeric_decimal(1.0, 8, 3)  # NNNNNddd
+    '00001000'
+
+    >>> format_to_custom_numeric_decimal(1.0, 6, 3)  # NNNddd
+    '001000'
+    """
+    return utils.NF.numeric_decimal(value, total_digits, decimal_digits)
 
 
 def to_money(
@@ -446,6 +487,45 @@ def envelope_serializer(
         apply_namespaceprefix(node, _prefix, ns_prefixes)
 
     return to_xml(envelope, namespacedef_=namespace)
+
+
+def load_json(path: str):
+    """Load and parse a JSON file from the given path.
+
+    Args:
+        path (str): The path to the JSON file to be loaded.
+
+    Returns:
+        dict: The parsed JSON content as a Python dictionary.
+
+    Raises:
+        FileNotFoundError: If the specified file is not found.
+        JSONDecodeError: If the file content is not valid JSON.
+        IOError: If there's an error reading the file.
+    """
+    return to_dict(load_file_content(path))
+
+
+def load_file_content(path: str) -> str:
+    """Load the content of a file from the given path.
+
+    Args:
+        path (str): The path to the file to be read.
+
+    Returns:
+        str: The content of the file as a string.
+
+    Raises:
+        FileNotFoundError: If the specified file is not found.
+        IOError: If there's an error reading the file.
+    """
+    try:
+        with open(path, "r", encoding="utf-8") as file:
+            return file.read()
+    except FileNotFoundError:
+        raise FileNotFoundError(f"File not found: {path}")
+    except IOError as e:
+        raise IOError(f"Error reading file {path}: {str(e)}")
 
 
 # endregion

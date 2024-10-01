@@ -13,7 +13,7 @@ import karrio.providers.sapient.units as provider_units
 def parse_pickup_update_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> typing.Tuple[typing.List[models.PickupDetails], typing.List[models.Message]]:
     response = _response.deserialize()
 
     messages = error.parse_error_response(response, settings, _response.ctx)

@@ -1,0 +1,141 @@
+{
+  "buyer_regulatory_identifiers": {
+    "ein": "12-3456789",
+    "vat_number": "EU1234567890"
+  },
+  "courier_selection": {
+    "allow_courier_fallback": false,
+    "apply_shipping_rules": true,
+    "list_unavailable_couriers": true,
+    "selected_courier_id": "courier_id"
+  },
+  "destination_address": {
+    "city": "Hong Kong",
+    "company_name": "Test Plc.",
+    "contact_email": "asd@asd.com",
+    "contact_name": "Foo Bar",
+    "contact_phone": "+852-3008-5678",
+    "country_alpha2": "HK",
+    "line_1": "Kennedy Town",
+    "line_2": "Block 3",
+    "postal_code": "0000",
+    "state": "Yuen Long"
+  },
+  "consignee_tax_id": "1234567890",
+  "eei_reference": "1234567890",
+  "incoterms": "DDU",
+  "metadata": [],
+  "insurance": {
+    "is_insured": false
+  },
+  "order_data": {
+    "buyer_notes": "test_notes",
+    "buyer_selected_courier_name": "test_courier",
+    "order_created_at": "2024-01-31T18:00:00Z",
+    "platform_name": "test plat_form",
+    "platform_order_number": "test_order_number",
+    "order_tag_list": ["test_tag"],
+    "seller_notes": "test_seller_notes"
+  },
+  "origin_address": {
+    "city": "Hong Kong",
+    "company_name": "Test Plc.",
+    "contact_email": "asd@asd.com",
+    "contact_name": "Foo Bar",
+    "contact_phone": "+852-3008-5678",
+    "country_alpha2": "HK",
+    "line_1": "Kennedy Town",
+    "line_2": "Block 3",
+    "postal_code": "0000",
+    "state": "Yuen Long"
+  },
+  "regulatory_identifiers": {
+    "eori": "DE 123456789 12345",
+    "ioss": "IM1234567890",
+    "vat_number": "EU1234567890"
+  },
+  "return": false,
+  "return_address": {
+    "city": "Hong Kong",
+    "company_name": "Test Plc.",
+    "contact_email": "asd@asd.com",
+    "contact_name": "Foo Bar",
+    "contact_phone": "+852-3008-5678",
+    "country_alpha2": "HK",
+    "line_1": "Kennedy Town",
+    "line_2": "Block 3",
+    "postal_code": "0000",
+    "state": "Yuen Long"
+  },
+  "return_address_id": "return_address_id",
+  "sender_address": {
+    "city": "Hong Kong",
+    "company_name": "Test Plc.",
+    "contact_email": "asd@asd.com",
+    "contact_name": "Foo Bar",
+    "contact_phone": "+852-3008-5678",
+    "country_alpha2": "HK",
+    "line_1": "Kennedy Town",
+    "line_2": "Block 3",
+    "postal_code": "0000",
+    "state": "Yuen Long"
+  },
+  "sender_address_id": "sender_address_id",
+  "set_as_residential": false,
+  "shipping_settings": {
+    "additional_services": {
+      "delivery_confirmation": "string",
+      "qr_code": "none"
+    },
+    "b13a_filing": {
+      "option": "string",
+      "option_export_compliance_statement": "string",
+      "permit_number": "string"
+    },
+    "buy_label": false,
+    "buy_label_synchronous": false,
+    "printing_options": {
+      "commercial_invoice": "A4",
+      "format": "png",
+      "label": "4x6",
+      "packing_slip": "4x6",
+      "remarks": "string"
+    },
+    "units": {
+      "dimensions": "cm",
+      "weight": "kg"
+    }
+  },
+  "parcels": [
+    {
+      "box": {
+        "height": 10,
+        "length": 10,
+        "width": 10,
+        "slug": "custom"
+      },
+      "items": [
+        {
+          "actual_weight": 10,
+          "category": null,
+          "contains_battery_pi966": true,
+          "contains_battery_pi967": true,
+          "contains_liquids": true,
+          "declared_currency": "USD",
+          "declared_customs_value": 20,
+          "description": "item",
+          "dimensions": {
+            "height": 3,
+            "length": 1,
+            "width": 2
+          },
+          "hs_code": "123456",
+          "origin_country_alpha2": "HK",
+          "quantity": 2,
+          "sku": "sku"
+        }
+      ],
+      "total_actual_weight": 1
+    }
+  ]
+}

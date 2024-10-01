@@ -1,0 +1,99 @@
+{
+  "meta": {
+    "pagination": {
+      "count": 1,
+      "next": "string",
+      "page": 1
+    },
+    "request_id": "01563646-58c1-4607-8fe0-cae3e92c4477"
+  },
+  "rates": [
+    {
+      "additional_services_surcharge": 0,
+      "available_handover_options": [],
+      "cost_rank": 1,
+      "courier_id": "01563646-58c1-4607-8fe0-cae3e33c0001",
+      "courier_logo_url": "string",
+      "courier_name": "Courier 1",
+      "courier_remarks": "string",
+      "currency": "HKD",
+      "ddp_handling_fee": 0,
+      "delivery_time_rank": 2,
+      "description": "Estimated  65.96 tax & duty due on delivery (Tax handling fees may apply)",
+      "discount": {
+        "amount": 1,
+        "origin_amount": 1
+      },
+      "easyship_rating": 2,
+      "estimated_import_duty": 0,
+      "estimated_import_tax": 65.96,
+      "fuel_surcharge": 1400,
+      "full_description": "Courier 1 (19-39 working days) Estimated  65.96 tax & duty due on delivery (Tax handling fees may apply)",
+      "import_duty_charge": 0,
+      "import_tax_charge": 0,
+      "import_tax_non_chargeable": 0,
+      "incoterms": "DDU",
+      "insurance_fee": 0,
+      "is_above_threshold": true,
+      "max_delivery_time": 39,
+      "min_delivery_time": 19,
+      "minimum_pickup_fee": 0,
+      "other_surcharges": {
+        "details": [
+          {
+            "fee": 1,
+            "name": "Surcharge Name",
+            "origin_fee": 1
+          }
+        ],
+        "total_fee": 2
+      },
+      "oversized_surcharge": 0,
+      "payment_recipient": "Easyship",
+      "provincial_sales_tax": 0,
+      "rates_in_origin_currency": {
+        "additional_services_surcharge": 0,
+        "currency": "HKD",
+        "ddp_handling_fee": 0,
+        "estimated_import_duty": 0,
+        "estimated_import_tax": 65.96,
+        "fuel_surcharge": 1400,
+        "import_duty_charge": 0,
+        "import_tax_charge": 0,
+        "import_tax_non_chargeable": 0,
+        "insurance_fee": 0,
+        "minimum_pickup_fee": 0,
+        "oversized_surcharge": 0,
+        "provincial_sales_tax": 0,
+        "remote_area_surcharge": 2,
+        "residential_discounted_fee": 0,
+        "residential_full_fee": 0,
+        "sales_tax": 0,
+        "shipment_charge": 140,
+        "shipment_charge_total": 1544,
+        "total_charge": 1544,
+        "warehouse_handling_fee": 0
+      },
+      "remote_area_surcharge": 2,
+      "remote_area_surcharges": {
+        "destination": {
+          "base": 1,
+          "name": "Destination Surcharge Name"
+        },
+        "origin": {
+          "base": 1,
+          "name": "Origin Surcharge Name"
+        }
+      },
+      "residential_discounted_fee": 0,
+      "residential_full_fee": 0,
+      "sales_tax": 0,
+      "shipment_charge": 140,
+      "shipment_charge_total": 1544,
+      "total_charge": 1544,
+      "tracking_rating": 2,
+      "value_for_money_rank": 1,
+      "warehouse_handling_fee": 0
+    }
+  ]
+}

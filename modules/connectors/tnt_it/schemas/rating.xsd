@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="Document">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Application" type="xs:string" minOccurs="1" maxOccurs="1" />
+                <xs:element name="Version" type="xs:string" minOccurs="1" maxOccurs="1" />
+                <xs:element name="Login" type="LoginType" minOccurs="0" maxOccurs="1" />
+                <xs:element name="ApplicationFunction" type="xs:string" minOccurs="1" maxOccurs="1" />
+                <xs:element name="Details" type="DetailsType" minOccurs="0" maxOccurs="1" />
+                <xs:element name="Shipment" type="ShipmentType" minOccurs="0" maxOccurs="1" />
+                <xs:element name="CMessage" type="xs:string" minOccurs="0" maxOccurs="1" />
+                <xs:element name="ExtraCee" type="xs:string" minOccurs="1" maxOccurs="1" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="LoginType">
+        <xs:sequence>
+            <xs:element name="Customer" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="User" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="Password" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="LangID" type="xs:string" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="DetailsType">
+        <xs:sequence>
+            <xs:element name="AccountNo" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="Package" type="PackageType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="Common" type="CommonType" minOccurs="1" maxOccurs="1" />
+            <xs:element name="Domestic" type="DomesticType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="International" type="InternationalType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="CheckPriceEnabled" type="xs:string" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PackageType">
+        <xs:sequence>
+            <xs:element name="Items" type="ItemsType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ItemsType">
+        <xs:sequence>
+            <xs:element name="ItemSeqNo" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="Type" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="INumber" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="IWeight" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="Length" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="Height" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="Width" type="xs:string" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="CommonType">
+        <xs:sequence>
+            <xs:element name="ContactName" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="Service" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="Insurance" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="InsuranceCurrency" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="SenderReference" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="Payment" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="Instructions" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="SpecialGoods" type="xs:string" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="DomesticType">
+        <xs:sequence>
+            <xs:element name="COD" type="CODType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="OperationalOptions" type="OperationalOptionsType" minOccurs="1"
+                maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="CODType">
+        <xs:sequence>
+            <xs:element name="Amount" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="Currency" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="SenderComm" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="SenderRefund" type="xs:string" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="OperationalOptionsType">
+        <xs:sequence>
+            <xs:element name="Option" type="xs:string" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="InternationalType">
+        <xs:sequence>
+            <xs:element name="GoodsValue" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="GoodsValueCurrency" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="Priority" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="FDA" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="DryIce" type="xs:string" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ShipmentType">
+        <xs:sequence>
+            <xs:element name="Date" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="Receiver" type="ReceiverType" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ReceiverType">
+        <xs:sequence>
+            <xs:element name="Address" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="CompanyName" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="ReceiverAccountNo" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="Town" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="ProvinceState" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="Postcode" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="CountryID" type="xs:string" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

@@ -187,6 +187,7 @@ ParsedShipmentResponse = [
             "serviceCategory": "EXPRESS",
             "service_name": "fedex_standard_overnight",
             "trackingIdType": "FEDEX",
+            "fedex_carrier_code": "FDXE",
         },
         "shipment_identifier": "794953535000",
         "tracking_number": "794953535000",
@@ -211,6 +212,7 @@ ParsedIntlShipmentResponse = [
         "meta": {
             "carrier_tracking_link": "https://www.fedex.com/fedextrack/?trknbr=794791341818",
             "service_name": "fedex_international_priority_express",
+            "fedex_carrier_code": "FDXE",
         },
         "shipment_identifier": "794791341818",
         "tracking_number": "794791341818",
