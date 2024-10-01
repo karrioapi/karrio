@@ -31,7 +31,6 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(response, lib.to_dict, request.ctx)
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable:
-        logger.debug(f"get_tracking settings: {self.settings}")
         response = lib.request(
             url=f"{self.settings.server_url}/track/v1/trackingnumbers",
             data=lib.to_json(request.serialize()),
@@ -151,11 +150,6 @@ class Proxy(proxy.Proxy):
     
     def get_proof_of_delivery(self, tracking_number: str) -> typing.Optional[str]:
         import karrio.providers.fedex.error as error
-        logger.debug(f"Entering get_proof_of_delivery for tracking number {tracking_number}")
-        logger.debug(f"Using access token of Bearer")
-        logger.debug(self.settings)
-        logger.debug(self.settings.track_access_token)
-        logger.debug("------")
 
         # Construct the request
         request = fedex.TrackingDocumentRequestType(
@@ -171,11 +165,9 @@ class Proxy(proxy.Proxy):
                 documentFormat="PNG",
             ),
         )
-        logger.debug(f"Request package: {lib.to_json(request)}")  # Log full request as JSON
 
         try:
             # Send the request
-            logger.debug("Sending request to fedex...")
             response = lib.to_dict(
                 lib.request(
                     url=f"{self.settings.server_url}/track/v1/trackingdocuments",
@@ -190,30 +182,19 @@ class Proxy(proxy.Proxy):
                     on_error=lambda b: self.log_request_error(b),  # Custom error handler
                 )
             )
-            logger.debug("Processing fedex response...")
-
-            logger.debug(f"Full response from POST to trackingdocuments: {response}")
-
-            # Check if there are any error messages in the response
-            logger.debug("Checking response for errors...")
             messages = error.parse_error_response(response, self.settings)
             if any(messages):
                 logger.error(f"FedEx SPOD Error for tracking number {tracking_number}: {messages}")
                 return None
 
             # Check if the documents are present in the response
-            logger.debug("Parsing documents from response!")
             documents = response.get("output", {}).get("documents")
             if not documents:
                 logger.error(f"No POD documents found in the response for tracking number {tracking_number}")
                 return None
 
             # Convert documents to base64
-            logger.debug(f"bundling documents")
-            #return lib.failsafe(lambda: lib.bundle_base64(documents, format="PNG"))
-            docs_to_return = lib.bundle_base64(documents, format="PNG")
-            logger.debug(f"Docs to return {docs_to_return}")
-            return docs_to_return
+            return lib.failsafe(lambda: lib.bundle_base64(documents, format="PNG"))
         
         except Exception as e:
             # Catch any other exceptions and log the details
