@@ -59,17 +59,17 @@ export const TrackingPreview: React.FC<TrackingPreviewComponent> = ({ children }
 
         {!isNone(tracker) && <div className="modal-card">
           <section className="modal-card-body">
-            <TrackingHeader tracker={tracker as TrackingType} />
+            <TrackingHeader tracker={tracker as TrackerType} />
 
             <hr />
 
             <div className="my-3 pl-3" style={{ maxHeight: '40vh', overflowY: 'scroll' }}>
 
-              <TrackingEvents tracker={tracker as TrackingType} />
+              <TrackingEvents tracker={tracker as TrackerType} />
               
             </div>
 
-            <TrackingMessages messages={tracker?.messages} />
+            <TrackingMessages messages={tracker?.messages || []} />
 
             {!isNone(tracker?.shipment) && <>
               <hr />

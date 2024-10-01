@@ -1,30 +1,37 @@
-import { TrackingEvent, TrackingStatus } from "@karrio/types/rest/api";
+import { TrackingStatus } from "@karrio/types/rest/api";
 import TrackingHeader from "@/components/TrackingHeader";
 import TrackingEvents from "@/components/TrackingEvents";
 import TrackingMessages from "@/components/TrackingMessages";
-import { formatDayDate, isNone } from "@karrio/lib";
-import { Metadata } from "@karrio/types";
+import { isNone } from "@karrio/lib";
+import { Metadata, TrackerType } from "@karrio/types";
 import { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import React from "react";
 
-export { getServerSideProps } from '@/context/tracker';
+export { getServerSideProps } from "@/context/tracker";
 
-type DayEvents = { [k: string]: TrackingEvent[] };
-
-const Tracking: NextPage<{ id: string, metadata: Metadata, tracker?: TrackingStatus, message?: string }> = ({ metadata, id, tracker, message }) => {
-
-  const computeEvents = (tracker: TrackingStatus): DayEvents => {
-    return (tracker?.events || []).reduce((days, event: TrackingEvent) => {
-      const daydate = formatDayDate(event.date as string);
-      return { ...days, [daydate]: [...(days[daydate] || []), event] };
-    }, {} as DayEvents);
-  };
+const Tracking: NextPage<{
+  id: string;
+  metadata: Metadata;
+  tracker?: TrackingStatus;
+  message?: string;
+}> = ({ metadata, id, tracker, message }) => {
+  // Normalize messages to replace undefined with null for TypeScript compatibility
+  const normalizedMessages = (tracker?.messages || []).map((message) => ({
+    ...message,
+    carrier_name: message.carrier_name ?? null, // Convert undefined to null
+    carrier_id: message.carrier_id ?? null, // Convert undefined to null
+    message: message.message ?? null,
+    code: message.code ?? null,
+    details: message.details ?? null,
+  }));
 
   return (
     <>
-      <Head><title>{`Tracking - ${tracker?.tracking_number || id} - ${metadata?.APP_NAME}`}</title></Head>
+      <Head>
+        <title>{`Tracking - ${tracker?.tracking_number || id} - ${metadata?.APP_NAME}`}</title>
+      </Head>
 
       <section className="hero is-fullheight p-2">
 
@@ -32,40 +39,36 @@ const Tracking: NextPage<{ id: string, metadata: Metadata, tracker?: TrackingSta
 
           <div className="has-text-centered my-4">
             <Link legacyBehavior href="/">
-              <span className="is-size-4 has-text-primary has-text-weight-bold is-lowercase">{metadata?.APP_NAME}</span>
+              <span className="is-size-4 has-text-primary has-text-weight-bold is-lowercase">
+                {metadata?.APP_NAME}
+              </span>
             </Link>
           </div>
 
-          {!isNone(tracker) && <>
-            <div className="card isolated-card">
-              <div className="card-content">
-
-                <TrackingHeader tracker={tracker as TrackingType} />
-
+          {!isNone(tracker) && (
+            <>
+              <div className="card isolated-card">
+                <div className="card-content">
+                  <TrackingHeader tracker={tracker as TrackerType} />
+                </div>
+                <footer className="card-footer"></footer>
               </div>
+              <hr />
+              <TrackingEvents tracker={tracker as TrackerType} />
+            </>
+          )}
 
-              <footer className="card-footer">
+          {/* Pass normalized messages to the component */}
+          <TrackingMessages messages={normalizedMessages} />
 
-              </footer>
-
+          {!isNone(message) && (
+            <div className="card isolated-card my-6">
+              <div className="card-content has-text-centered ">
+                <p>{message}</p>
+              </div>
             </div>
-
-            <hr />
-
-            <TrackingEvents tracker={tracker as TrackingType} />
-
-          </>}
-
-          <TrackingMessages messages={tracker?.messages} />
-
-          {!isNone(message) && <div className="card isolated-card my-6">
-            <div className="card-content has-text-centered ">
-              <p>{message}</p>
-            </div>
-          </div>}
-
-        </div >
-
+          )}
+        </div>
         <hr className="mt-4" />
 
         <div className="hero-footer mb-4">
@@ -77,10 +80,9 @@ const Tracking: NextPage<{ id: string, metadata: Metadata, tracker?: TrackingSta
             </p>
           </div>
         </div>
-
-      </section >
+      </section>
     </>
-  )
+  );
 };
 
 export default Tracking;
