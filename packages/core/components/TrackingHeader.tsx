@@ -1,10 +1,9 @@
 // components/TrackingHeader.tsx
-import { TrackingStatus } from "@karrio/types/rest/api";
 import { TrackerStatusEnum, TrackerType } from "@karrio/types";
 import { formatDayDate, formatRef, isNone } from "@karrio/lib";
 import { CarrierImage } from "@karrio/ui/components/carrier-image";
 
-const TrackingHeader: React.FC<{ tracker: TrackingStatus }> = ({ tracker }) => {
+const TrackingHeader: React.FC<{ tracker: TrackerType }> = ({ tracker }) => {
   const computeColor = (tracker: TrackerType) => {
     if (tracker?.delivered) return "has-background-success";
     else if (tracker?.status === TrackerStatusEnum.pending.toString())
@@ -77,7 +76,7 @@ const TrackingHeader: React.FC<{ tracker: TrackingStatus }> = ({ tracker }) => {
             Additional Information
           </p>
           <div className="columns is-multiline">
-            {Object.entries(tracker.info)
+            {Object.entries(tracker.info || {})
               .filter(([_, value]) => value != null) // Exclude null or undefined values
               .map(([key, value], index) => (
                 <div key={index} className="column is-6">

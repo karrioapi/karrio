@@ -1,7 +1,6 @@
-import { TrackingEvent, TrackingStatus } from "@karrio/types/rest/api";
-import { formatDayDate, isNone, KARRIO_API, url$ } from "@karrio/lib";
+import { isNone, KARRIO_API, url$ } from "@karrio/lib";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { Collection, KarrioClient } from "@karrio/types";
+import { Collection, KarrioClient, TrackerType } from "@karrio/types";
 import { loadMetadata } from "@karrio/core/context/main";
 import Link from "next/link";
 import React from "react";
@@ -10,8 +9,6 @@ import TrackingEvents from "@karrio/core/components/TrackingEvents";
 import TrackingMessages from "@karrio/core/components/TrackingMessages";
 
 export const generateMetadata = dynamicMetadata("Tracking");
-
-type DayEvents = { [k: string]: TrackingEvent[] };
 
 export default async function Page({ params }: { params: Collection }) {
   const id = params?.id as string;
@@ -29,13 +26,15 @@ export default async function Page({ params }: { params: Collection }) {
         message: `No Tracker ID nor Tracking Number found for ${id}`,
       };
     });
-
-  const computeEvents = (tracker: TrackingStatus): DayEvents => {
-    return (tracker?.events || []).reduce((days, event: TrackingEvent) => {
-      const daydate = formatDayDate(event.date as string);
-      return { ...days, [daydate]: [...(days[daydate] || []), event] };
-    }, {} as DayEvents);
-  };
+  // Normalize messages to replace undefined with null for TypeScript compatibility
+  const normalizedMessages = (tracker?.messages || []).map((message) => ({
+    ...message,
+    carrier_name: message.carrier_name ?? null, // Convert undefined to null
+    carrier_id: message.carrier_id ?? null, // Convert undefined to null
+    message: message.message ?? null,
+    code: message.code ?? null,
+    details: message.details ?? null,
+  }));
 
   return (
     <>
@@ -53,20 +52,20 @@ export default async function Page({ params }: { params: Collection }) {
             <>
               <div className="card isolated-card">
                 <div className="card-content">
-                  <TrackingHeader tracker={tracker as TrackingType} />
+                  <TrackingHeader tracker={tracker as TrackerType} />
                 </div>
 
                 <footer className="card-footer"></footer>
               </div>
 
               <hr />
-              
-              <TrackingEvents tracker={tracker as TrackingType} />
+
+              <TrackingEvents tracker={tracker as TrackerType} />
             </>
           )}
 
-          <TrackingMessages messages={tracker?.messages || [] } />
-          
+          <TrackingMessages messages={normalizedMessages} />
+
           {!isNone(message) && (
             <div className="card isolated-card my-6">
               <div className="card-content has-text-centered ">
