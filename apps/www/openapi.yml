@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2024.6.7`.
+    The current version is `2024.9`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2024.6.7
+  version: '2024.9'
 paths:
   /:
     get:
@@ -751,9 +751,9 @@ paths:
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
-          `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
-          `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
-          `sapient`, `seko`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `easypost`, `easyship`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`,
+          `geodis`, `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`,
+          `royalmail`, `sapient`, `seko`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `usps_wt`, `usps_wt_international`, `zoom2u`'
         required: true
       tags:
@@ -824,9 +824,9 @@ paths:
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
-          `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
-          `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
-          `sapient`, `seko`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `easypost`, `easyship`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`,
+          `geodis`, `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`,
+          `royalmail`, `sapient`, `seko`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `usps_wt`, `usps_wt_international`, `zoom2u`'
       - in: query
         name: metadata_key
@@ -1415,9 +1415,9 @@ paths:
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
-          `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
-          `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
-          `sapient`, `seko`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `easypost`, `easyship`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`,
+          `geodis`, `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`,
+          `royalmail`, `sapient`, `seko`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `usps_wt`, `usps_wt_international`, `zoom2u`'
       - in: query
         name: created_after
@@ -2302,6 +2302,7 @@ paths:
           - dpd
           - dpdhl
           - easypost
+          - easyship
           - eshipper
           - fedex
           - fedex_ws
@@ -2397,6 +2398,7 @@ paths:
           - dpd
           - dpdhl
           - easypost
+          - easyship
           - eshipper
           - fedex
           - fedex_ws
@@ -2492,6 +2494,7 @@ paths:
           - dpd
           - dpdhl
           - easypost
+          - easyship
           - eshipper
           - fedex
           - fedex_ws
@@ -2680,6 +2683,7 @@ paths:
           - dpd
           - dpdhl
           - easypost
+          - easyship
           - eshipper
           - fedex
           - fedex_ws
@@ -2960,9 +2964,9 @@ paths:
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
-          `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
-          `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
-          `sapient`, `seko`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `easypost`, `easyship`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`,
+          `geodis`, `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`,
+          `royalmail`, `sapient`, `seko`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `usps_wt`, `usps_wt_international`, `zoom2u`'
       - in: query
         name: created_after
@@ -3394,9 +3398,9 @@ paths:
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
-          `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
-          `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
-          `sapient`, `seko`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `easypost`, `easyship`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`,
+          `geodis`, `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`,
+          `royalmail`, `sapient`, `seko`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `usps_wt`, `usps_wt_international`, `zoom2u`'
       - in: query
         name: created_after
@@ -4824,6 +4828,7 @@ components:
           - dpd
           - dpdhl
           - easypost
+          - easyship
           - eshipper
           - fedex
           - fedex_ws
@@ -4849,7 +4854,7 @@ components:
           - usps_wt_international
           - zoom2u
           type: string
-          x-spec-enum-id: 4d1bcfc36bdc8769
+          x-spec-enum-id: 3812983dc743ed62
           description: A carrier connection type.
         display_name:
           type: string
@@ -4920,6 +4925,7 @@ components:
           - dpd
           - dpdhl
           - easypost
+          - easyship
           - eshipper
           - fedex
           - fedex_ws
@@ -4945,7 +4951,7 @@ components:
           - usps_wt_international
           - zoom2u
           type: string
-          x-spec-enum-id: 4d1bcfc36bdc8769
+          x-spec-enum-id: 3812983dc743ed62
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -5024,6 +5030,7 @@ components:
           - dpd
           - dpdhl
           - easypost
+          - easyship
           - eshipper
           - fedex
           - fedex_ws
@@ -5049,7 +5056,7 @@ components:
           - usps_wt_international
           - zoom2u
           type: string
-          x-spec-enum-id: 4d1bcfc36bdc8769
+          x-spec-enum-id: 3812983dc743ed62
           description: Indicates a carrier (type)
         display_name:
           type: string
@@ -6038,6 +6045,7 @@ components:
       - $ref: '#/components/schemas/fedex_ws'
       - $ref: '#/components/schemas/fedex'
       - $ref: '#/components/schemas/eshipper'
+      - $ref: '#/components/schemas/easyship'
       - $ref: '#/components/schemas/easypost'
       - $ref: '#/components/schemas/dpdhl'
       - $ref: '#/components/schemas/dpd'
@@ -8199,6 +8207,7 @@ components:
           - dpd
           - dpdhl
           - easypost
+          - easyship
           - eshipper
           - fedex
           - fedex_ws
@@ -8224,7 +8233,7 @@ components:
           - usps_wt_international
           - zoom2u
           type: string
-          x-spec-enum-id: 4d1bcfc36bdc8769
+          x-spec-enum-id: 3812983dc743ed62
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -9025,7 +9034,8 @@ components:
             : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
             \            \"hold_at_location\": true,\n            \"paperless_trade\"\
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
-            \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
+            \            \"shipment_date\": \"2020-01-01\",  # TODO: deprecate\n \
+            \           \"shipping_date\": \"2020-01-01T00:00\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
             : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
             : true,\n            \"doc_files\": [\n                {\n           \
@@ -9131,7 +9141,8 @@ components:
             : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
             \            \"hold_at_location\": true,\n            \"paperless_trade\"\
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
-            \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
+            \            \"shipment_date\": \"2020-01-01\",  # TODO: deprecate\n \
+            \           \"shipping_date\": \"2020-01-01T00:00\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
             : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
             : true,\n            \"doc_files\": [\n                {\n           \
@@ -9336,7 +9347,8 @@ components:
             : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
             \            \"hold_at_location\": true,\n            \"paperless_trade\"\
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
-            \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
+            \            \"shipment_date\": \"2020-01-01\",  # TODO: deprecate\n \
+            \           \"shipping_date\": \"2020-01-01T00:00\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
             : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
             : true,\n            \"doc_files\": [\n                {\n           \
@@ -9449,7 +9461,8 @@ components:
             : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
             \            \"hold_at_location\": true,\n            \"paperless_trade\"\
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
-            \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
+            \            \"shipment_date\": \"2020-01-01\",  # TODO: deprecate\n \
+            \           \"shipping_date\": \"2020-01-01T00:00\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
             : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
             : true,\n            \"doc_files\": [\n                {\n           \
@@ -9584,7 +9597,8 @@ components:
             : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
             \            \"hold_at_location\": true,\n            \"paperless_trade\"\
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
-            \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
+            \            \"shipment_date\": \"2020-01-01\",  # TODO: deprecate\n \
+            \           \"shipping_date\": \"2020-01-01T00:00\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
             : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
             : true,\n            \"doc_files\": [\n                {\n           \
@@ -9631,7 +9645,8 @@ components:
             : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
             \            \"hold_at_location\": true,\n            \"paperless_trade\"\
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
-            \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
+            \            \"shipment_date\": \"2020-01-01\",  # TODO: deprecate\n \
+            \           \"shipping_date\": \"2020-01-01T00:00\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
             : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
             : true,\n            \"doc_files\": [\n                {\n           \
@@ -9693,7 +9708,8 @@ components:
             : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
             \            \"hold_at_location\": true,\n            \"paperless_trade\"\
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
-            \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
+            \            \"shipment_date\": \"2020-01-01\",  # TODO: deprecate\n \
+            \           \"shipping_date\": \"2020-01-01T00:00\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
             : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
             : true,\n            \"doc_files\": [\n                {\n           \
@@ -9811,7 +9827,8 @@ components:
             : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
             \            \"hold_at_location\": true,\n            \"paperless_trade\"\
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
-            \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
+            \            \"shipment_date\": \"2020-01-01\",  # TODO: deprecate\n \
+            \           \"shipping_date\": \"2020-01-01T00:00\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
             : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
             : true,\n            \"doc_files\": [\n                {\n           \
@@ -10890,6 +10907,13 @@ components:
           type: string
       required:
       - api_key
+    easyship:
+      type: object
+      properties:
+        access_token:
+          type: string
+      required:
+      - access_token
     eshipper:
       type: object
       properties:
@@ -11370,6 +11394,7 @@ tags:
     | fedex_ws | FedEx Web Service |
     | fedex | FedEx |
     | eshipper | eShipper |
+    | easyship | Easyship |
     | easypost | EasyPost |
     | dpdhl | Deutsche Post DHL |
     | dpd | DPD |
@@ -12055,200 +12080,418 @@ tags:
     ### eShipper
     | Code         | Service Name |
     | ------------ | ------------ |
-    | eshipper_aramex_economy_document_express | 5000049 |
-    | eshipper_aramex_economy_parcel_express | 5000048 |
-    | eshipper_aramex_priority_letter_express | 5000046 |
-    | eshipper_aramex_priority_parcel_express | 5000047 |
-    | eshipper_canada_post_air_parcel_intl | 5000030 |
-    | eshipper_canada_post_expedited | 5000026 |
-    | eshipper_canada_post_expedited_parcel_usa | 5000032 |
-    | eshipper_canada_post_priority_courier | 5000024 |
-    | eshipper_canada_post_regular | 5000027 |
-    | eshipper_canada_post_small_packet | 5000033 |
-    | eshipper_canada_post_small_packet_international_air | 5000034 |
-    | eshipper_canada_post_small_packet_international_surface | 5000035 |
-    | eshipper_canada_post_surface_parcel_intl | 5000031 |
-    | eshipper_canada_post_xpress_post | 5000025 |
-    | eshipper_canada_post_xpress_post_intl | 5000029 |
-    | eshipper_canada_post_xpress_post_usa | 5000028 |
-    | eshipper_canada_post_xpresspost | 5000181 |
-    | eshipper_canpar_express_letter | 5000129 |
-    | eshipper_canpar_express_pak | 5000130 |
-    | eshipper_canpar_express_parcel | 5000131 |
-    | eshipper_canpar_ground | 5000184 |
-    | eshipper_canpar_international | 5000135 |
-    | eshipper_canpar_select_letter | 5000126 |
-    | eshipper_canpar_select_pak | 5000127 |
-    | eshipper_canpar_select_parcel | 5000128 |
-    | eshipper_canpar_usa | 5000125 |
-    | eshipper_canpar_usa_select_letter | 5000132 |
-    | eshipper_canpar_usa_select_pak | 5000133 |
-    | eshipper_canpar_usa_select_parcel | 5000134 |
-    | eshipper_cpx_canada_post | 5000454 |
-    | eshipper_day_ross_ltl | 5000457 |
-    | eshipper_dhl_dhl_ground | 5000022 |
-    | eshipper_dhl_economy_select | 5000186 |
-    | eshipper_dhl_esi_export | 5000018 |
-    | eshipper_dhl_express_1030am | 5000016 |
-    | eshipper_dhl_express_12pm | 5000017 |
-    | eshipper_dhl_express_900 | 5000180 |
-    | eshipper_dhl_express_9am | 5000014 |
-    | eshipper_dhl_express_envelope | 5000023 |
-    | eshipper_dhl_express_worldwide | 5000015 |
-    | eshipper_dhl_import_express | 5000019 |
-    | eshipper_dhl_import_express_12pm | 5000021 |
-    | eshipper_dhl_import_express_9am | 5000020 |
-    | eshipper_ltl_apex_v | 5000414 |
-    | eshipper_ltl_apex_trucking | 5000120 |
-    | eshipper_ltl_apex_trucking_v | 5000124 |
-    | eshipper_ltl_fastfrate_rail | 5000118 |
-    | eshipper_ltl_kindersley_expedited | 5000420 |
-    | eshipper_ltl_kindersley_rail | 5000121 |
-    | eshipper_ltl_kindersley_regular | 5000421 |
-    | eshipper_ltl_kindersley_road | 5000122 |
-    | eshipper_ltl_kingsway_road | 5000117 |
-    | eshipper_ltl_m_o_eastbound | 5000123 |
-    | eshipper_ltl_mo_rail | 5000116 |
-    | eshipper_ltl_national_fastfreight_rail | 5000114 |
-    | eshipper_ltl_national_fastfreight_road | 5000119 |
-    | eshipper_ltl_vitran_rail | 5000112 |
-    | eshipper_ltl_vitran_road | 5000113 |
-    | eshipper_ltl_western_canada_rail | 5000115 |
-    | eshipper_federal_express_2day_freight | 5000177 |
-    | eshipper_federal_express_3day_freight | 5000178 |
-    | eshipper_federal_express_fedex_2nd_day | 5000173 |
-    | eshipper_federal_express_fedex_economy | 5000174 |
-    | eshipper_federal_express_fedex_first_overnight | 5000170 |
-    | eshipper_federal_express_fedex_ground | 5000171 |
-    | eshipper_federal_express_fedex_ground_us | 5000183 |
-    | eshipper_federal_express_fedex_international_priority | 8000017 |
-    | eshipper_federal_express_fedex_international_priority_express | 8000018 |
-    | eshipper_federal_express_fedex_intl_economy | 5000179 |
-    | eshipper_federal_express_fedex_intl_economy_freight | 5000176 |
-    | eshipper_federal_express_fedex_intl_priority | 8000022 |
-    | eshipper_federal_express_fedex_intl_priority_express | 8000023 |
-    | eshipper_federal_express_fedex_intl_priority_freight | 5000175 |
-    | eshipper_federal_express_fedex_priority | 5000169 |
-    | eshipper_federal_express_fedex_standard_overnight | 5000172 |
-    | eshipper_flashbird_ground | 8000032 |
-    | eshipper_fleet_optics_ground | 5000458 |
-    | eshipper_project44_a_duie_pyle | 5000103 |
-    | eshipper_project44_aaa_cooper_transportation | 5000081 |
-    | eshipper_project44_aberdeen_express | 5000092 |
-    | eshipper_project44_abfs | 5000111 |
-    | eshipper_project44_averitt_express | 5000079 |
-    | eshipper_project44_brown_transfer_company | 5000102 |
-    | eshipper_project44_central_freight_lines | 5000066 |
-    | eshipper_project44_central_transport | 5000085 |
-    | eshipper_project44_chicago_suburban_express | 5000086 |
-    | eshipper_project44_clear_lane_freight | 5000095 |
-    | eshipper_project44_con_way_freight | 5000057 |
-    | eshipper_project44_crosscountry_courier | 5000083 |
-    | eshipper_project44_day_ross | 5000099 |
-    | eshipper_project44_day_ross_v | 5000101 |
-    | eshipper_project44_dayton_freight_lines | 5000072 |
-    | eshipper_project44_dependable_highway_express | 5000091 |
-    | eshipper_project44_dohrn_transfer_company | 5000078 |
-    | eshipper_project44_dugan_truck_line | 5000076 |
-    | eshipper_project44_estes_express_lines | 5000061 |
-    | eshipper_project44_expedited_freight_systems | 5000077 |
-    | eshipper_project44_fedex_freight_canada | 5000105 |
-    | eshipper_project44_fedex_freight_east | 5000059 |
-    | eshipper_project44_fedex_freight_national_canada | 5000107 |
-    | eshipper_project44_fedex_freight_national_usa | 5000108 |
-    | eshipper_project44_fedex_freight_usa | 5000106 |
-    | eshipper_project44_fedex_national | 5000060 |
-    | eshipper_project44_forwardair | 5000062 |
-    | eshipper_project44_frontline_freight | 5000096 |
-    | eshipper_project44_holland_motor_express | 5000051 |
-    | eshipper_project44_lakeville_motor_express | 5000074 |
-    | eshipper_project44_manitoulin_tlx_inc | 5000104 |
-    | eshipper_project44_midwest_motor_express | 5000075 |
-    | eshipper_project44_monroe_transportation_services | 5000087 |
-    | eshipper_project44_n_m_transfer | 5000090 |
-    | eshipper_project44_new_england_motor_freight | 5000064 |
-    | eshipper_project44_new_penn_motor_express | 5000054 |
-    | eshipper_project44_pitt_ohio | 5000071 |
-    | eshipper_project44_polaris | 5000094 |
-    | eshipper_project44_purolator_freight | 5000100 |
-    | eshipper_project44_rl_carriers | 5000058 |
-    | eshipper_project44_roadrunner_transportation_services | 5000052 |
-    | eshipper_project44_saia_motor_freight | 5000067 |
-    | eshipper_project44_southeastern_freight_lines | 5000082 |
-    | eshipper_project44_southwestern_motor_transport | 5000084 |
-    | eshipper_project44_standard_forwarding | 5000093 |
-    | eshipper_project44_total_transportation_distribution | 5000097 |
-    | eshipper_project44_tst_overland_express | 5000098 |
-    | eshipper_project44_ups | 5000073 |
-    | eshipper_project44_usf_reddaway | 5000080 |
-    | eshipper_project44_valley_cartage | 5000089 |
-    | eshipper_project44_vision_express_ltl | 5000065 |
-    | eshipper_project44_ward_trucking | 5000088 |
-    | eshipper_project44_xpo_logistics | 5000110 |
-    | eshipper_project44_xpress_global_systems | 5000109 |
-    | eshipper_project44_yrc | 5000053 |
-    | eshipper_purolator_express | 5000001 |
-    | eshipper_purolator_express_1030 | 5000003 |
-    | eshipper_purolator_express_9am | 5000002 |
-    | eshipper_purolator_expresscheque | 5000011 |
-    | eshipper_purolator_ground | 5000010 |
-    | eshipper_purolator_ground_1030 | 5000013 |
-    | eshipper_purolator_ground_9am | 5000012 |
-    | eshipper_purolator_puroletter | 5000004 |
-    | eshipper_purolator_puroletter_1030 | 5000006 |
-    | eshipper_purolator_puroletter_9am | 5000005 |
-    | eshipper_purolator_puropak | 5000007 |
-    | eshipper_purolator_puropak_1030 | 5000009 |
-    | eshipper_purolator_puropak_9am | 5000008 |
-    | eshipper_pyk_ground_advantage | 5000459 |
-    | eshipper_pyk_priority_mail | 5000460 |
-    | eshipper_sameday_9am_guaranteed | 5000156 |
-    | eshipper_sameday_am_service | 5000157 |
-    | eshipper_sameday_ground_service | 5000158 |
-    | eshipper_sameday_h1_deliver_to_curbside | 5000159 |
-    | eshipper_sameday_h2_delivery_to_room_of_choice | 5000160 |
-    | eshipper_sameday_h3_delivery_packaging_removal | 5000161 |
-    | eshipper_sameday_h4_delivery_to_curbside | 5000162 |
-    | eshipper_sameday_h5_delivery_to_room_of_choice_2_man | 5000163 |
-    | eshipper_sameday_h6_delivery_packaging_removal_2_man | 5000164 |
-    | eshipper_sameday_ltl_service | 5000165 |
-    | eshipper_sameday_pm_service | 5000166 |
-    | eshipper_sameday_urgent_letter | 5000167 |
-    | eshipper_sameday_urgent_pac | 5000168 |
-    | eshipper_skip | 8000019 |
-    | eshipper_smartepost_intl_dhl_parcel_international_direct_ngr | 8000053 |
-    | eshipper_smartepost_intl_global_mail_business_priority | 5000137 |
-    | eshipper_smartepost_intl_global_mail_business_standard | 5000138 |
-    | eshipper_smartepost_intl_global_mail_packet_plus_priority | 5000139 |
-    | eshipper_smartepost_intl_global_mail_packet_priority | 5000140 |
-    | eshipper_smartepost_intl_global_mail_packet_standard | 5000141 |
-    | eshipper_smartepost_intl_global_mail_parcel_direct_priority_yyz | 5000142 |
-    | eshipper_smartepost_intl_global_mail_parcel_direct_standard_yyz | 5000143 |
-    | eshipper_smartepost_intl_global_mail_parcel_priority | 5000144 |
-    | eshipper_smartepost_intl_global_mail_parcel_standard | 5000145 |
-    | eshipper_ups_expedited | 5000182 |
-    | eshipper_ups_express | 5000036 |
-    | eshipper_ups_express_early_am | 5000040 |
-    | eshipper_ups_ground | 5000043 |
-    | eshipper_ups_second_day_air_am | 5000045 |
-    | eshipper_ups_standard | 5000039 |
-    | eshipper_ups_three_day_select | 5000041 |
-    | eshipper_ups_ups_saver | 5000042 |
-    | eshipper_ups_worldwide_expedited | 5000038 |
-    | eshipper_ups_worldwide_express | 5000037 |
-    | eshipper_ups_worldwide_express_plus | 5000044 |
-    | eshipper_usps_first_class_mail | 5000146 |
-    | eshipper_usps_first_class_package_return_service | 8000002 |
-    | eshipper_usps_library_mail | 5000147 |
-    | eshipper_usps_media_mail | 5000148 |
-    | eshipper_usps_parcel_select | 5000149 |
-    | eshipper_usps_pbx | 5000154 |
-    | eshipper_usps_pbx_lightweight | 5000155 |
-    | eshipper_usps_priority_mail | 5000150 |
-    | eshipper_usps_priority_mail_express | 5000151 |
-    | eshipper_usps_priority_mail_open_and_distribute | 5000152 |
-    | eshipper_usps_priority_mail_return_service | 8000003 |
-    | eshipper_usps_retail_ground_formerly_standard_post | 5000153 |
+    | eshipper_fedex_2day_freight | 2Day Freight |
+    | eshipper_fedex_3day_freight | 3Day Freight |
+    | eshipper_sameday_9_am_guaranteed | 9:AM GUARANTEED |
+    | eshipper_project44_a_duie_pyle | A Duie Pyle` |
+    | eshipper_project44_aaa_cooper_transportation | AAA Cooper Transportation`` |
+    | eshipper_project44_aberdeen_express | Aberdeen Express` |
+    | eshipper_project44_abf_freight | ABF Freight`` |
+    | eshipper_project44_abfs | ABFS |
+    | eshipper_sameday_am_service | AM Service |
+    | eshipper_apex_trucking | Apex Trucking |
+    | eshipper_project44_averitt_express | Averitt Express` |
+    | eshipper_project44_brown_transfer_company | BROWN TRANSFER COMPANY` |
+    | eshipper_canada_worldwide_next_flight_out | Canada Worldwide Next Flight Out |
+    | eshipper_project44_central_freight_lines | Central Freight Lines` |
+    | eshipper_project44_central_transport | Central Transport`` |
+    | eshipper_project44_chicago_suburban_express | Chicago Suburban Express` |
+    | eshipper_project44_clear_lane_freight | Clear Lane Freight` |
+    | eshipper_project44_con_way_freight | Con-way Freight` |
+    | eshipper_project44_conway_freight | Con-way Freight`` |
+    | eshipper_project44_crosscountry_courier | Crosscountry Courier` |
+    | eshipper_project44_day_ross | Day & Ross |
+    | eshipper_day_and_ross | DAY AND ROSS |
+    | eshipper_day_ross_r_and_l | DAY AND ROSS (R AND L) |
+    | eshipper_project44_daylight_transport | Daylight Transport`` |
+    | eshipper_project44_dayton_freight_lines | Dayton Freight Lines` |
+    | eshipper_project44_dependable_highway_express | Dependable Highway Express`` |
+    | eshipper_dhl_ground | DHL Ground |
+    | eshipper_smarte_post_int_l_dhl_packet_international | DHL Packet International |
+    | eshipper_smarte_post_int_l_dhl_parcel_international_direct | DHL Parcel International Direct |
+    | eshipper_smarte_post_int_l_dhl_parcel_international_standard | DHL Parcel International Standard |
+    | eshipper_project44_dohrn_transfer_company | Dohrn Transfer Company` |
+    | eshipper_project44_dugan_truck_line | Dugan Truck Line` |
+    | eshipper_aramex_economy_document_express | Economy Document Express |
+    | eshipper_aramex_economy_parcel_express | Economy Parcel Express |
+    | eshipper_envoi_same_day_delivery | Envoi - Same Day Delivery |
+    | eshipper_dhl_esi_export | ESI Export |
+    | eshipper_project44_estes_express_lines | Estes`` |
+    | eshipper_ups_expedited | Expedited |
+    | eshipper_project44_expedited_freight_systems | Expedited Freight Systems` |
+    | eshipper_ups_express | Express |
+    | eshipper_dhl_express_1030am | Express 1030AM |
+    | eshipper_dhl_express_12pm | Express 12PM |
+    | eshipper_dhl_express_9am | EXPRESS 9:00 |
+    | eshipper_dhl_express_envelope | Express Envelope |
+    | eshipper_canpar_express_letter | Express Letter |
+    | eshipper_canpar_express_pak | Express Pak |
+    | eshipper_canpar_express_parcel | Express Parcel |
+    | eshipper_dhl_express_worldwide | Express Worldwide |
+    | eshipper_fastfrate_rail | RAIL |
+    | eshipper_fedex_2nd_day | Fedex 2nd Day |
+    | eshipper_fedex_economy | Fedex Economy |
+    | eshipper_fedex_first_overnight | Fedex First Overnight |
+    | eshipper_project44_fedex_freight_canada | Fedex Freight Canada` |
+    | eshipper_project44_fedex_freight_east | FedEx Freight East` |
+    | eshipper_fedex_freight_economy | FedEx Freight Economy |
+    | eshipper_project44_fedex_freight_national_canada | FedEx Freight National Canada |
+    | eshipper_project44_fedex_freight_national_usa | FedEx Freight National USA |
+    | eshipper_fedex_freight_priority | FedEx Freight Priority |
+    | eshipper_project44_fedex_freight_usa | Fedex Freight USA |
+    | eshipper_fedex_ground | Fedex Ground |
+    | eshipper_fedex_international_connect_plus | FedEx Intl Connect Plus |
+    | eshipper_fedex_intl_economy | Fedex Intl Economy |
+    | eshipper_fedex_intl_economy_freight | Fedex Intl Economy Freight |
+    | eshipper_fedex_intl_priority | Fedex Intl Priority |
+    | eshipper_fedex_intl_priority_express | Fedex Intl Priority Express |
+    | eshipper_fedex_intl_priority_freight | Fedex Intl Priority Freight |
+    | eshipper_project44_fedex_national | FedEx National` |
+    | eshipper_fedex_priority | Fedex Priority |
+    | eshipper_fedex_standard_overnight | Fedex Standard Overnight |
+    | eshipper_project44_forwardair | ForwardAir` |
+    | eshipper_project44_frontline_freight | Frontline Freight` |
+    | eshipper_ups_ground | Ground |
+    | eshipper_sameday_ground_service | GROUND SERVICE |
+    | eshipper_sameday_h1_deliver_to_curbside | H1 Deliver to Curbside |
+    | eshipper_sameday_h3_delivery_packaging_removal | H3 Delivery & Packaging Removal |
+    | eshipper_sameday_h4_delivery_to_curbside | H4 Delivery to Curbside |
+    | eshipper_sameday_h5_delivery_to_room_of_choice_2_man | H5 Delivery to Room of Choice - 2 man |
+    | eshipper_sameday_h6_delivery_packaging_removal_2_man | H6 Delivery & packaging Removal - 2 man |
+    | eshipper_project44_holland_motor_express | Holland Motor Express` |
+    | eshipper_dhl_import_express | Import Express |
+    | eshipper_dhl_import_express_12pm | Import Express 12PM |
+    | eshipper_dhl_import_express_9am | Import Express 9AM |
+    | eshipper_project44_jp_express | J.P. Express`` |
+    | eshipper_kindersley_expedited | Kindersley Expedited |
+    | eshipper_kindersley_rail | Kindersley Rail * |
+    | eshipper_kindersley_regular | Kindersley Regular |
+    | eshipper_kindersley_road | Kindersley Road * |
+    | eshipper_project44_lakeville_motor_express | Lakeville Motor Express` |
+    | eshipper_day_ross_ltl | LTL |
+    | eshipper_sameday_ltl_service | LTL SERVICE |
+    | eshipper_mainliner_road | Mainliner Road |
+    | eshipper_project44_manitoulin_tlx_inc | MANITOULIN TLX INC` |
+    | eshipper_project44_midwest_motor_express | Midwest Motor Express` |
+    | eshipper_mo_rail | MO Rail |
+    | eshipper_project44_monroe_transportation_services | Monroe Transportation Services` |
+    | eshipper_project44_mountain_valley_express | Mountain Valley Express`` |
+    | eshipper_project44_n_m_transfer | N&M Transfer` |
+    | eshipper_project44_new_england_motor_freight | New England Motor Freight` |
+    | eshipper_project44_new_penn_motor_express | New Penn Motor Express` |
+    | eshipper_project44_oak_harbor_freight | Oak Harbor Freight`` |
+    | eshipper_project44_old_dominion_freight | Old Dominion Freight`` |
+    | eshipper_project44_pitt_ohio | Pitt Ohio`` |
+    | eshipper_sameday_pm_service | PM SERVICE |
+    | eshipper_project44_polaris | Polaris |
+    | eshipper_aramex_priority_letter_express | Priority Letter Express |
+    | eshipper_aramex_priority_parcel_express | Priority Parcel Express |
+    | eshipper_purolator_express | Purolator Express |
+    | eshipper_purolator_express_1030 | Purolator Express 1030 |
+    | eshipper_purolator_express_9am | Purolator Express 9AM |
+    | eshipper_purolator_expresscheque | Purolator ExpressCheque |
+    | eshipper_purolator_ground | Purolator Ground |
+    | eshipper_purolator_ground_1030 | Purolator Ground 1030 |
+    | eshipper_purolator_ground_9am | Purolator Ground 9AM |
+    | eshipper_purolator | Puroletter |
+    | eshipper_purolator_10_30 | Puroletter 10:30 |
+    | eshipper_purolator_9am | Puroletter 9AM |
+    | eshipper_purolator_puropak | PuroPak |
+    | eshipper_purolator_puropak_10_30 | PuroPak 10:30 |
+    | eshipper_purolator_puropak_9am | PuroPak 9AM |
+    | eshipper_project44_rl_carriers | R+L Carriers`` |
+    | eshipper_project44_roadrunner_transportation_services | Roadrunner Transportation Systems`` |
+    | eshipper_project44_saia_ltl_freight | Saia LTL Freight`` |
+    | eshipper_project44_saia_motor_freight | SAIA Motor Freight` |
+    | eshipper_ups_second_day_air_a_m | Second Day Air A.M. |
+    | eshipper_canpar_select_letter | Select Letter |
+    | eshipper_canpar_select_pak | Select Pak |
+    | eshipper_canpar_select_parcel | Select Parcel |
+    | eshipper_project44_southeastern_freight_lines | SouthEastern Freight`` |
+    | eshipper_project44_southwestern_motor_transport | Southwestern Motor Transport` |
+    | eshipper_speedy | Speedy |
+    | eshipper_ups_standard | Standard |
+    | eshipper_project44_standard_forwarding | Standard Forwarding` |
+    | eshipper_tforce_freight_ltl | TForce Freight LTL |
+    | eshipper_tforce_freight_ltl_guaranteed | TForce Freight LTL - Guaranteed |
+    | eshipper_tforce_freight_ltl_guaranteed_a_m | TForce Freight LTL - Guaranteed A.M. |
+    | eshipper_tforce_standard_ltl | TForce Standard LTL |
+    | eshipper_ups_three_day_select | Three-Day Select |
+    | eshipper_project44_total_transportation_distribution | Total Transportation & Distribution` |
+    | eshipper_project44_tst_overland_express | TST Overland Express |
+    | eshipper_project44_ups | UPS`` |
+    | eshipper_ups_freight | UPS-Freight |
+    | eshipper_ups_freight_canada | UPS Freight Canada |
+    | eshipper_ups_saver | UPS Saver |
+    | eshipper_sameday_urgent_letter | URGENT LETTER |
+    | eshipper_sameday_urgent_pac | URGENT PAC |
+    | eshipper_canpar_usa | USA |
+    | eshipper_project44_usf_reddaway | USF Reddaway` |
+    | eshipper_ods_usps_light_weight_parcel_budget | USPS Light Weight Parcel Budget |
+    | eshipper_ods_usps_light_weight_parcel_expedited | USPS Light Weight Parcel Expedited |
+    | eshipper_ods_usps_parcel_select_budget | USPS Parcel Select Budget |
+    | eshipper_ods_usps_parcel_select_expedited | USPS Parcel Select Expedited |
+    | eshipper_project44_valley_cartage | Valley Cartage` |
+    | eshipper_project44_vision_express_ltl | Vision Express LTL` |
+    | eshipper_project44_ward_trucking | WARD Trucking`` |
+    | eshipper_western_canada_rail | Western Canada Rail |
+    | eshipper_ups_worldwide_expedited | Worldwide Expedited |
+    | eshipper_ups_worldwide_express | Worldwide Express |
+    | eshipper_project44_xpo_logistics | XPO Logistics |
+    | eshipper_project44_xpress_global_systems | Xpress Global Systems |
+    | eshipper_canadapost_xpress_post | Xpress Post |
+    | eshipper_project44_yrc | YRC` |
+    | eshipper_canadapost_air_parcel_intl | Air Parcel Intl |
+    | eshipper_canadapost_expedited_parcel_usa | Expedited Parcel USA |
+    | eshipper_canadapost_priority_courier | Priority Courier |
+    | eshipper_canadapost_regular | Regular |
+    | eshipper_canadapost_small_packet | Small Packet |
+    | eshipper_canadapost_small_packet_international_air | Small Packet International Air |
+    | eshipper_canadapost_small_packet_international_surface | Small Packet International Surface |
+    | eshipper_canadapost_surface_parcel_intl | Surface Parcel Intl |
+    | eshipper_canadapost_xpress_post_intl | Xpress Post Intl |
+    | eshipper_canadapost_xpress_post_usa | Xpress Post USA |
+    | eshipper_canpar_international | International |
+    | eshipper_canpar_usa_select_letter | USA Select Letter |
+    | eshipper_canpar_usa_select_pak | USA Select Pak |
+    | eshipper_canpar_usa_select_parcel | USA Select Parcel |
+    | eshipper_cpx_canada_post | Canada Post |
+    | eshipper_dhl_economy_select | ECONOMY SELECT |
+    | eshipper_apex_v | Apex - V |
+    | eshipper_apex_trucking_v | Apex Trucking-V |
+    | eshipper_kingsway_road | Kingsway Road |
+    | eshipper_m_o_eastbound | M-O Eastbound |
+    | eshipper_national_fastfreight_rail | National Fastfreight Rail |
+    | eshipper_national_fastfreight_road | National Fastfreight Road |
+    | eshipper_vitran_rail | Vitran Rail |
+    | eshipper_vitran_road | Vitran Road |
+    | eshipper_fedex_ground_us | Fedex Ground US |
+    | eshipper_fedex_international_priority | FedEx International Priority |
+    | eshipper_fedex_international_priority_express | FedEx International Priority Express |
+    | eshipper_project44_day_ross_v | Day & Ross-V |
+    | eshipper_project44_purolator_freight | Purolator Freight |
+    | eshipper_project44_r_l_carriers | R+L Carriers` |
+    | eshipper_pyk_ground_advantage | Ground Advantage |
+    | eshipper_usps_priority_mail | Priority Mail |
+    | eshipper_skip | Skip |
+    | eshipper_smarte_post_intl_dhl_parcel_international_direct_ngr | DHL Parcel International Direct (NGR) |
+    | eshipper_smarte_post_intl_global_mail_business_priority | GLOBAL Mail Business Priority |
+    | eshipper_smarte_post_intl_global_mail_business_standard | GLOBAL Mail Business Standard |
+    | eshipper_smarte_post_intl_global_mail_packet_plus_priority | Global Mail Packet Plus Priority |
+    | eshipper_smarte_post_intl_global_mail_packet_priority | Global Mail Packet Priority |
+    | eshipper_smarte_post_intl_global_mail_packet_standard | GLOBAL Mail Packet Standard |
+    | eshipper_smarte_post_intl_global_mail_parcel_direct_priority_yyz | Global Mail Parcel Direct Priority (YYZ) |
+    | eshipper_smarte_post_intl_global_mail_parcel_direct_standard_yyz | Global Mail Parcel Direct Standard (YYZ) |
+    | eshipper_smarte_post_intl_global_mail_parcel_priority | Global Mail Parcel Priority |
+    | eshipper_smarte_post_intl_global_mail_parcel_standard | Global Mail Parcel Standard |
+    | eshipper_ups_express_early_am | Express Early AM |
+    | eshipper_ups_worldwide_express_plus | Worldwide Express Plus |
+    | eshipper_usps_first_class_package_return_service | First-Class Package Return Service |
+    | eshipper_usps_library_mail | Library Mail |
+    | eshipper_usps_media_mail | Media Mail |
+    | eshipper_usps_parcel_select | Parcel Select |
+    | eshipper_usps_pbx | PBX |
+    | eshipper_usps_pbx_lightweight | PBX Lightweight |
+    | eshipper_usps_priority_mail_express | Priority Mail Express |
+    | eshipper_usps_priority_mail_open_and_distribute | Priority Mail Open AND Distribute |
+    | eshipper_usps_priority_mail_return_service | Priority Mail Return Service |
+    | eshipper_usps_retail_ground_formerly_standard_post | Retail Ground (formerly Standard Post) |
+
+    ### Easyship
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | easyship_aramex_parcel | Parcel |
+    | easyship_sfexpress_domestic | Domestic |
+    | easyship_hkpost_speedpost | Speedpost |
+    | easyship_hkpost_air_mail_tracking | Air Mail Tracking |
+    | easyship_hkpost_eexpress | EExpress |
+    | easyship_hkpost_air_parcel | Air Parcel  |
+    | easyship_sfexpress_mail | Mail  |
+    | easyship_hkpost_local_parcel | Local Parcel |
+    | easyship_ups_saver_net_battery | SaverNet Battery |
+    | easyship_ups_worldwide_saver | Worldwide Saver® |
+    | easyship_hkpost_air_parcel_xp | Air Parcel XP |
+    | easyship_singpost_airmail | Airmail |
+    | easyship_simplypost_express | Express |
+    | easyship_singpost_e_pack | ePack |
+    | easyship_usps_priority_mail_express | Priority Mail Express |
+    | easyship_usps_first_class_international | First Class International |
+    | easyship_usps_priority_mail_international_express | Priority Mail International Express |
+    | easyship_usps_priority_mail_international | Priority Mail International |
+    | easyship_fedex_international_priority | InternationalPriority |
+    | easyship_usps_ground_advantage | GroundAdvantage |
+    | easyship_usps_priority_mail | PriorityMail |
+    | easyship_ups_worldwide_express | Worldwide Express® |
+    | easyship_ups_ground | Ground |
+    | easyship_ups_worldwide_expedited | Worldwide Expedited® |
+    | easyship_fedex_international_economy | International Economy® |
+    | easyship_fedex_priority_overnight | Priority Overnight® |
+    | easyship_fedex_standard_overnight | Standard Overnight® |
+    | easyship_fedex_2_day_a_m | 2Day® A.M. |
+    | easyship_fedex_2_day | 2Day® |
+    | easyship_fedex_express_saver | Express Saver® |
+    | easyship_ups_next_day_air | Next Day Air® |
+    | easyship_ups_2nd_day_air | 2nd Day Air® |
+    | easyship_ups_3_day_select | 3DaySelect |
+    | easyship_ups_standard | Standard |
+    | easyship_usps_media | Media |
+    | easyship_sfexpress_standard_express | Standard Express |
+    | easyship_sfexpress_economy_express | Economy Express |
+    | easyship_global_post_global_post_economy | GlobalPost Economy |
+    | easyship_global_post_global_post_priority | GlobalPost Priority |
+    | easyship_singpost_speed_post_priority | SpeedPost Priority |
+    | easyship_skypostal_standard_private_delivery | Standard Private Delivery |
+    | easyship_tnt_1000_express | 1000Express |
+    | easyship_toll_express_parcel | Express Parcel |
+    | easyship_sendle_premium_international | Premium International |
+    | easyship_sendle_premium_domestic | PremiumDomestic |
+    | easyship_sendle_pro_domestic | Pro Domestic |
+    | easyship_quantium_e_pac | ePac |
+    | easyship_usps_pm_flat_rate | PM Flat Rate |
+    | easyship_usps_pmi_flat_rate | PMI Flat Rate |
+    | easyship_quantium_mail | Mail |
+    | easyship_quantium_international_mail | International Mail |
+    | easyship_apc_parcel_connect_expedited | ParcelConnect Expedited |
+    | easyship_aramex_epx | EPX |
+    | easyship_tnt_road_express | Road Express |
+    | easyship_tnt_overnight | Overnight |
+    | easyship_usps_pme_flat_rate | PME Flat Rate |
+    | easyship_usps_pmei_flat_rate | PMEI Flat Rate |
+    | easyship_easyship_cdek_russia | CDEK Russia |
+    | easyship_usps_pmei_flat_rate_padded_envelope | PMEI Flat Rate Padded Envelope |
+    | easyship_easyship_mate_bike_shipping_services | Mate Bike Shipping Services |
+    | easyship_dhl_express_documents | Documents |
+    | easyship_evri_uk_home_delivery | UK_HomeDelivery |
+    | easyship_evri_home_delivery | HomeDelivery |
+    | easyship_dpd_next_day | NextDay |
+    | easyship_dpd_classic_parcel | ClassicParcel |
+    | easyship_dpd_classic_expresspak | ClassicExpresspak |
+    | easyship_dpd_air_classic | AirClassic |
+    | easyship_singpost_speed_post_express | SpeedPostExpress |
+    | easyship_ups_expedited | Expedited |
+    | easyship_tnt_0900_express | 0900Express |
+    | easyship_tnt_1200_express | 1200Express |
+    | easyship_canadapost_domestic_regular_parcel | Domestic Regular Parcel |
+    | easyship_canadapost_domestic_expedited_parcel | Domestic Expedited Parcel |
+    | easyship_canadapost_domestic_xpresspost_domestic | Domestic Xpresspost Domestic |
+    | easyship_canadapost_domestic_priority | Domestic Priority |
+    | easyship_canadapost_usa_small_packet_air | USA Small Packet Air |
+    | easyship_canadapost_usa_expedited_parcel | USA Expedited Parcel |
+    | easyship_canadapost_usa_tracked_parcel | USA Tracked Parcel |
+    | easyship_canadapost_usa_xpresspost | USA Xpresspost |
+    | easyship_canadapost_international_xpresspost | International Xpresspost |
+    | easyship_canadapost_international_small_packet_air | International Small Packet Air |
+    | easyship_canadapost_international_tracked_packet | International Tracked Packet |
+    | easyship_canadapost_international_small_packet_surface | International Small Packet Surface |
+    | easyship_canadapost_international_parcel_surface | International Parcel Surface |
+    | easyship_canadapost_international_parcel_air | International Parcel Air |
+    | easyship_couriersplease_atl | ATL |
+    | easyship_couriersplease_signature | Signature |
+    | easyship_canpar_international | International |
+    | easyship_canpar_usa | USA |
+    | easyship_canpar_select_usa | Select USA |
+    | easyship_canpar_usa_pak | USA Pak |
+    | easyship_canpar_overnight_pak | Overnight Pak |
+    | easyship_canpar_select_pak | Select Pak |
+    | easyship_canpar_select | Select |
+    | easyship_ups_express_saver | ExpressSaver |
+    | easyship_ebay_send_sf_express_economy_express | SF Express Economy Express |
+    | easyship_ups_worldwide_express_plus | Worldwide Express Plus® |
+    | easyship_quantium_intl_priority | IntlPriority |
+    | easyship_ups_next_day_air_early | Next Day Air® Early |
+    | easyship_ups_next_day_air_saver | Next Day Air Saver® |
+    | easyship_ups_2nd_day_air_a_m | 2nd Day Air® A.M. |
+    | easyship_fedex_home_delivery | Home Delivery® |
+    | easyship_asendia_country_tracked | CountryTracked |
+    | easyship_asendia_fully_tracked | FullyTracked |
+    | easyship_dhl_express_express_dg | ExpressDG |
+    | easyship_fedex_international_priority_dg | InternationalPriorityDG |
+    | easyship_colissimo_expert | Expert |
+    | easyship_colissimo_access | Access |
+    | easyship_mondialrelay_international_home_delivery | InternationalHomeDelivery |
+    | easyship_fedex_economy | Economy |
+    | easyship_dhl_express_express1200 | Express1200 |
+    | easyship_dhl_express_express0900 | Express0900 |
+    | easyship_dhl_express_express1800 | Express1800 |
+    | easyship_dhl_express_express_worldwide | ExpressWorldwide |
+    | easyship_dhl_express_economy_select | EconomySelect |
+    | easyship_dhl_express_express1030_international | Express1030International |
+    | easyship_dhl_express_domestic_express0900 | DomesticExpress0900 |
+    | easyship_dhl_express_domestic_express1200 | DomesticExpress1200 |
+    | easyship_evri_lightand_large | LightandLarge |
+    | easyship_ninjavan_standard_deliveries | Standard Deliveries |
+    | easyship_couriersplease_parcel_tier2 | ParcelTier2 |
+    | easyship_skypostal_postal_packet_standard | Postal Packet Standard |
+    | easyship_easyshipdemo_basic | Basic |
+    | easyship_easyshipdemo_tracked | Tracked |
+    | easyship_easyshipdemo_battery | Battery |
+    | easyship_dhl_express_domestic_express | DomesticExpress |
+    | easyship_fedex_smart_post | SmartPost |
+    | easyship_fedex_international_connect_plus | InternationalConnectPlus |
+    | easyship_ups_saver_net | SaverNet |
+    | easyship_chronopost_chrono_classic | ChronoClassic |
+    | easyship_chronopost_chrono_express | ChronoExpress |
+    | easyship_chronopost_chrono10 | Chrono10 |
+    | easyship_chronopost_chrono13 | Chrono13 |
+    | easyship_chronopost_chrono18 | Chrono18 |
+    | easyship_omniparcel_parcel_expedited | Parcel Expedited |
+    | easyship_omniparcel_parcel_expedited_plus | Parcel Expedited Plus |
+    | easyship_evri_home_delivery_domestic | HomeDeliveryDomestic |
+    | easyship_evri_home_domestic_postable | HomeDomesticPostable |
+    | easyship_skypostal_packet_express | PacketExpress |
+    | easyship_parcelforce_express48_large | Express48Large |
+    | easyship_parcelforce_express24 | Express24 |
+    | easyship_parcelforce_express1000 | Express1000 |
+    | easyship_parcelforce_express_am | ExpressAM |
+    | easyship_parcelforce_express48 | Express48 |
+    | easyship_parcelforce_euro_economy | EuroEconomy |
+    | easyship_parcelforce_global_priority | GlobalPriority |
+    | easyship_fedex_cross_border_trakpak_worldwide_hermes | TrakpakWorldwideHermes |
+    | easyship_fedex_cross_border_trakpak_worldwide | TrakpakWorldwide |
+    | easyship_evri_home_domestic_postable_next_day | HomeDomesticPostableNextDay |
+    | easyship_dpd_express_pak_next_day | ExpressPakNextDay |
+    | easyship_dpd_classic_express_pak | ClassicExpressPak |
+    | easyship_evri_light_and_large | LightAndLarge |
+    | easyship_evri_home_delivery_domestic_next_day | Home Delivery Domestic NextDay |
+    | easyship_evri_home_delivery_eu | HomeDeliveryEU |
+    | easyship_asendia_epaq_plus | EpaqPlus |
+    | easyship_asendia_epaq_select | EpaqSelect |
+    | easyship_usps_lightweight_standard | LightweightStandard |
+    | easyship_usps_lightweight_economy | LightweightEconomy |
+    | easyship_ups_domestic_express_saver | DomesticExpressSaver |
+    | easyship_apg_e_packet | ePacket |
+    | easyship_apg_e_packet_plus | ePacketPlus |
+    | easyship_couriersplease_ecom_base_kilo | EComBaseKilo |
+    | easyship_couriersplease_stdatlbase_kilo | STDATLBaseKilo |
+    | easyship_nz_post_international_courier | InternationalCourier |
+    | easyship_nz_post_air_small_parcel | AirSmallParcel |
+    | easyship_nz_post_tracked_air_satchel | TrackedAirSatchel |
+    | easyship_nz_post_economy_parcel | Economy Parcel |
+    | easyship_nz_post_parcel_local | ParcelLocal |
+    | easyship_dhl_express_express_domestic | ExpressDomestic |
+    | easyship_alliedexpress_roadexpress | Roadexpress |
+    | easyship_flatexportrate_asendiae_paqselect | AsendiaePAQSelect |
+    | easyship_flatexportrate_asendia_country_tracked | AsendiaCountryTracked |
+    | easyship_singpost_nsaver | NSaver |
+    | easyship_colisprive_home | Home |
+    | easyship_osm_domestic_parcel | Domestic Parcel |
+    | easyship_malca_amit_door_to_door | Door To Door |
+    | easyship_ninjavan_next_day_deliveries | Next Day Deliveries |
+    | easyship_asendia_e_paqselect | ePAQSelect |
+    | easyship_dpd_classic | Classic |
+    | easyship_usps_priority_mail_signature | PriorityMailSignature |
+    | easyship_bringer_packet_standard | PacketStandard |
+    | easyship_bringer_prime | Prime |
+    | easyship_orangeds_expedited_ddp | ExpeditedDDP |
+    | easyship_orangeds_expedited_ddu | ExpeditedDDU |
+    | easyship_sendle_preferred | Preferred |
+    | easyship_ups_ground_saver | GroundSaver |
+    | easyship_ups_upsground_saver_us | UPSGroundSaverUS |
+    | easyship_passport_priority_delcon_dduewr | PriorityDelconDDUEWR |
+    | easyship_passport_priority_delcon_ddpewr | PriorityDelconDDPEWR |
+    | easyship_bringer_tracked_parcel | TrackedParcel |
+    | easyship_ups_express_early | ExpressEarly |
+    | easyship_ups_wolrdwide_express | WolrdwideExpress |
 
     ### EasyPost
     | Code         | Service Name |

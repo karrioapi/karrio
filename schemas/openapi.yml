@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2024.6.7`.
+    The current version is `2024.9`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2024.6.7
+  version: '2024.9'
 paths:
   /:
     get:
@@ -12337,8 +12337,8 @@ tags:
     | easyship_usps_media | Media |
     | easyship_sfexpress_standard_express | Standard Express |
     | easyship_sfexpress_economy_express | Economy Express |
-    | easyship_global post_global_post_economy | GlobalPost Economy |
-    | easyship_global post_global_post_priority | GlobalPost Priority |
+    | easyship_global_post_global_post_economy | GlobalPost Economy |
+    | easyship_global_post_global_post_priority | GlobalPost Priority |
     | easyship_singpost_speed_post_priority | SpeedPost Priority |
     | easyship_skypostal_standard_private_delivery | Standard Private Delivery |
     | easyship_tnt_1000_express | 1000Express |
@@ -12360,7 +12360,7 @@ tags:
     | easyship_easyship_cdek_russia | CDEK Russia |
     | easyship_usps_pmei_flat_rate_padded_envelope | PMEI Flat Rate Padded Envelope |
     | easyship_easyship_mate_bike_shipping_services | Mate Bike Shipping Services |
-    | easyship_dhl_documents | Documents |
+    | easyship_dhl_express_documents | Documents |
     | easyship_evri_uk_home_delivery | UK_HomeDelivery |
     | easyship_evri_home_delivery | HomeDelivery |
     | easyship_dpd_next_day | NextDay |
@@ -12371,20 +12371,20 @@ tags:
     | easyship_ups_expedited | Expedited |
     | easyship_tnt_0900_express | 0900Express |
     | easyship_tnt_1200_express | 1200Express |
-    | easyship_canada post_domestic_regular_parcel | Domestic Regular Parcel |
-    | easyship_canada post_domestic_expedited_parcel | Domestic Expedited Parcel |
-    | easyship_canada post_domestic_xpresspost_domestic | Domestic Xpresspost Domestic |
-    | easyship_canada post_domestic_priority | Domestic Priority |
-    | easyship_canada post_usa_small_packet_air | USA Small Packet Air |
-    | easyship_canada post_usa_expedited_parcel | USA Expedited Parcel |
-    | easyship_canada post_usa_tracked_parcel | USA Tracked Parcel |
-    | easyship_canada post_usa_xpresspost | USA Xpresspost |
-    | easyship_canada post_international_xpresspost | International Xpresspost |
-    | easyship_canada post_international_small_packet_air | International Small Packet Air |
-    | easyship_canada post_international_tracked_packet | International Tracked Packet |
-    | easyship_canada post_international_small_packet_surface | International Small Packet Surface |
-    | easyship_canada post_international_parcel_surface | International Parcel Surface |
-    | easyship_canada post_international_parcel_air | International Parcel Air |
+    | easyship_canadapost_domestic_regular_parcel | Domestic Regular Parcel |
+    | easyship_canadapost_domestic_expedited_parcel | Domestic Expedited Parcel |
+    | easyship_canadapost_domestic_xpresspost_domestic | Domestic Xpresspost Domestic |
+    | easyship_canadapost_domestic_priority | Domestic Priority |
+    | easyship_canadapost_usa_small_packet_air | USA Small Packet Air |
+    | easyship_canadapost_usa_expedited_parcel | USA Expedited Parcel |
+    | easyship_canadapost_usa_tracked_parcel | USA Tracked Parcel |
+    | easyship_canadapost_usa_xpresspost | USA Xpresspost |
+    | easyship_canadapost_international_xpresspost | International Xpresspost |
+    | easyship_canadapost_international_small_packet_air | International Small Packet Air |
+    | easyship_canadapost_international_tracked_packet | International Tracked Packet |
+    | easyship_canadapost_international_small_packet_surface | International Small Packet Surface |
+    | easyship_canadapost_international_parcel_surface | International Parcel Surface |
+    | easyship_canadapost_international_parcel_air | International Parcel Air |
     | easyship_couriersplease_atl | ATL |
     | easyship_couriersplease_signature | Signature |
     | easyship_canpar_international | International |
@@ -12395,7 +12395,7 @@ tags:
     | easyship_canpar_select_pak | Select Pak |
     | easyship_canpar_select | Select |
     | easyship_ups_express_saver | ExpressSaver |
-    | easyship_ebay send_sf_express_economy_express | SF Express Economy Express |
+    | easyship_ebay_send_sf_express_economy_express | SF Express Economy Express |
     | easyship_ups_worldwide_express_plus | Worldwide Express Plus® |
     | easyship_quantium_intl_priority | IntlPriority |
     | easyship_ups_next_day_air_early | Next Day Air® Early |
@@ -12404,20 +12404,20 @@ tags:
     | easyship_fedex_home_delivery | Home Delivery® |
     | easyship_asendia_country_tracked | CountryTracked |
     | easyship_asendia_fully_tracked | FullyTracked |
-    | easyship_dhl_express_dg | ExpressDG |
+    | easyship_dhl_express_express_dg | ExpressDG |
     | easyship_fedex_international_priority_dg | InternationalPriorityDG |
     | easyship_colissimo_expert | Expert |
     | easyship_colissimo_access | Access |
     | easyship_mondialrelay_international_home_delivery | InternationalHomeDelivery |
     | easyship_fedex_economy | Economy |
-    | easyship_dhl_express1200 | Express1200 |
-    | easyship_dhl_express0900 | Express0900 |
-    | easyship_dhl_express1800 | Express1800 |
-    | easyship_dhl_express_worldwide | ExpressWorldwide |
-    | easyship_dhl_economy_select | EconomySelect |
-    | easyship_dhl_express1030_international | Express1030International |
-    | easyship_dhl_domestic_express0900 | DomesticExpress0900 |
-    | easyship_dhl_domestic_express1200 | DomesticExpress1200 |
+    | easyship_dhl_express_express1200 | Express1200 |
+    | easyship_dhl_express_express0900 | Express0900 |
+    | easyship_dhl_express_express1800 | Express1800 |
+    | easyship_dhl_express_express_worldwide | ExpressWorldwide |
+    | easyship_dhl_express_economy_select | EconomySelect |
+    | easyship_dhl_express_express1030_international | Express1030International |
+    | easyship_dhl_express_domestic_express0900 | DomesticExpress0900 |
+    | easyship_dhl_express_domestic_express1200 | DomesticExpress1200 |
     | easyship_evri_lightand_large | LightandLarge |
     | easyship_ninjavan_standard_deliveries | Standard Deliveries |
     | easyship_couriersplease_parcel_tier2 | ParcelTier2 |
@@ -12425,7 +12425,7 @@ tags:
     | easyship_easyshipdemo_basic | Basic |
     | easyship_easyshipdemo_tracked | Tracked |
     | easyship_easyshipdemo_battery | Battery |
-    | easyship_dhl_domestic_express | DomesticExpress |
+    | easyship_dhl_express_domestic_express | DomesticExpress |
     | easyship_fedex_smart_post | SmartPost |
     | easyship_fedex_international_connect_plus | InternationalConnectPlus |
     | easyship_ups_saver_net | SaverNet |
@@ -12446,8 +12446,8 @@ tags:
     | easyship_parcelforce_express48 | Express48 |
     | easyship_parcelforce_euro_economy | EuroEconomy |
     | easyship_parcelforce_global_priority | GlobalPriority |
-    | easyship_fedex cross border_trakpak_worldwide_hermes | TrakpakWorldwideHermes |
-    | easyship_fedex cross border_trakpak_worldwide | TrakpakWorldwide |
+    | easyship_fedex_cross_border_trakpak_worldwide_hermes | TrakpakWorldwideHermes |
+    | easyship_fedex_cross_border_trakpak_worldwide | TrakpakWorldwide |
     | easyship_evri_home_domestic_postable_next_day | HomeDomesticPostableNextDay |
     | easyship_dpd_express_pak_next_day | ExpressPakNextDay |
     | easyship_dpd_classic_express_pak | ClassicExpressPak |
@@ -12463,19 +12463,19 @@ tags:
     | easyship_apg_e_packet_plus | ePacketPlus |
     | easyship_couriersplease_ecom_base_kilo | EComBaseKilo |
     | easyship_couriersplease_stdatlbase_kilo | STDATLBaseKilo |
-    | easyship_nz post_international_courier | InternationalCourier |
-    | easyship_nz post_air_small_parcel | AirSmallParcel |
-    | easyship_nz post_tracked_air_satchel | TrackedAirSatchel |
-    | easyship_nz post_economy_parcel | Economy Parcel |
-    | easyship_nz post_parcel_local | ParcelLocal |
-    | easyship_dhl_express_domestic | ExpressDomestic |
+    | easyship_nz_post_international_courier | InternationalCourier |
+    | easyship_nz_post_air_small_parcel | AirSmallParcel |
+    | easyship_nz_post_tracked_air_satchel | TrackedAirSatchel |
+    | easyship_nz_post_economy_parcel | Economy Parcel |
+    | easyship_nz_post_parcel_local | ParcelLocal |
+    | easyship_dhl_express_express_domestic | ExpressDomestic |
     | easyship_alliedexpress_roadexpress | Roadexpress |
     | easyship_flatexportrate_asendiae_paqselect | AsendiaePAQSelect |
     | easyship_flatexportrate_asendia_country_tracked | AsendiaCountryTracked |
     | easyship_singpost_nsaver | NSaver |
     | easyship_colisprive_home | Home |
     | easyship_osm_domestic_parcel | Domestic Parcel |
-    | easyship_malca amit_door_to_door | Door To Door |
+    | easyship_malca_amit_door_to_door | Door To Door |
     | easyship_ninjavan_next_day_deliveries | Next Day Deliveries |
     | easyship_asendia_e_paqselect | ePAQSelect |
     | easyship_dpd_classic | Classic |
