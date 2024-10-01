@@ -8679,13 +8679,13 @@ export interface TrackingStatus {
      */
     'messages'?: Array<Message>;
     /**
-     * The shipment invoice URL
+     * The photo proof of delivery image URL
      * @type {string}
      * @memberof TrackingStatus
      */
     'delivery_image_url'?: string | null;
     /**
-     * The shipment invoice URL
+     * The the signature proof of delivery image URL
      * @type {string}
      * @memberof TrackingStatus
      */

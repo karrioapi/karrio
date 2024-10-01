@@ -13,7 +13,7 @@ import type { AppProps } from "next/app";
 // Set up query client
 const queryClient = new QueryClient();
 
-function MyApp({ Component, pageProps, router }: AppProps) {
+function MyApp({ Component, pageProps }: AppProps) {
   // Check for error in pageProps and render an error screen
   if (pageProps?.error) {
     return (
@@ -23,14 +23,11 @@ function MyApp({ Component, pageProps, router }: AppProps) {
       </div>
     );
   }
-  console.log("Current Component Name: |", Component.name, "|");
 
   // Check if the component is a known error page like 404 or 500
   const isErrorPage =
     Component.name?.trim() === "Custom404" ||
     Component.name?.trim() === "Custom500";
-
-  console.log("isErrorPage? ", isErrorPage);
 
   if (isErrorPage) {
     return (
