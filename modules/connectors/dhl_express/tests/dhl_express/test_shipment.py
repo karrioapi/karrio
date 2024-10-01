@@ -136,7 +136,9 @@ shipment_data = {
         "incoterm": "DAP",
         "invoice": "N/A",
         "invoice_date": "2021-05-03",
-        "commodities": [{"description": "cn", "weight": 4.0, "sku": "sku", "hs_code": "hs_code"}],
+        "commodities": [
+            {"description": "cn", "weight": 4.0, "sku": "sku", "hs_code": "hs_code"}
+        ],
         "duty": {
             "account_number": "123456789",
             "paid_by": "sender",
@@ -538,7 +540,7 @@ NonParelessShipmentRequestXml = """<req:ShipmentRequest xsi:schemaLocation="http
         <GlobalProductCode>8</GlobalProductCode>
         <LocalProductCode>8</LocalProductCode>
         <Date>2023-12-15</Date>
-        <Contents>N/A</Contents>
+        <Contents>title</Contents>
         <DimensionUnit>C</DimensionUnit>
         <PackageType>JJ</PackageType>
         <IsDutiable>Y</IsDutiable>

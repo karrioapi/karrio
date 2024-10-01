@@ -919,6 +919,15 @@ class Packages(typing.Iterable[Package]):
         return description
 
     @property
+    def content(self) -> typing.Optional[str]:
+        contents = set([item.parcel.content for item in self._items])
+        content: typing.Optional[str] = utils.SF.concat_str(
+            *list(contents), join=True
+        )  # type:ignore
+
+        return content
+
+    @property
     def options(self) -> "ShippingOptions":
         def merge_options(acc, pkg) -> dict:
             """Merge package options into one

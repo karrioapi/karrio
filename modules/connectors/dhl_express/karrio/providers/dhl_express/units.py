@@ -589,6 +589,9 @@ class ShippingOption(lib.Enum):
     dhl_customer_rebate = lib.OptionEnum("ZD", bool)
     dhl_e_com_discount = lib.OptionEnum("ZE", bool)
 
+    """ Custom Options """
+    dhl_shipment_content = lib.OptionEnum("content")
+
     """ Unified Option type mapping """
     insurance = dhl_shipment_insurance
     paperless_trade = dhl_paperless_trade
@@ -613,7 +616,7 @@ def shipping_options_initializer(
         _options.update(package_options.content)
 
     def items_filter(key: str) -> bool:
-        return key in ShippingOption  # type: ignore
+        return key in ShippingOption and key != "dhl_shipment_content"  # type: ignore
 
     return lib.units.ShippingOptions(
         _options, ShippingOption, items_filter=items_filter
