@@ -18,7 +18,6 @@ setup(
         "karrio.server.core",
         "django-filter",
         "strawberry-graphql",
-        "strawberry-graphql-django",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

@@ -1,3 +1,11 @@
+# Karrio 2024.9.1
+
+## Changes
+
+### Chore
+
+- remove `strawberry-graphql-django` dependency as it is not fully integrate for the value it is supposed to provide
+
 # Karrio 2024.9
 
 ## Changes
