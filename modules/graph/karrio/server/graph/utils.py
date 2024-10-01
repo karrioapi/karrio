@@ -276,7 +276,7 @@ def paginated_connection(
 
 
 def is_unset(v: typing.Any) -> bool:
-    return isinstance(v, strawberry.unset.UnsetType)
+    return isinstance(v, type(strawberry.UNSET)) or v == strawberry.UNSET
 
 
 def _dict_factory(items):
