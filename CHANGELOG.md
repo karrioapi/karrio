@@ -1,3 +1,11 @@
+# Karrio 2024.9.2
+
+## Changes
+
+### Fix
+
+- fix: `ups` TotalCharge parsing for `negotiated_rates`
+
 # Karrio 2024.9.1
 
 ## Changes
