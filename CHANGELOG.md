@@ -1,3 +1,11 @@
+# Karrio 2024.9.3
+
+## Changes
+
+### Feat
+
+- feat: Add fallback values for `easyship` rate request `parcels.items`
+
 # Karrio 2024.9.2
 
 ## Changes
