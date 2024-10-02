@@ -72,7 +72,7 @@ class GuaranteedDeliveryType:
 
 
 @s(auto_attribs=True)
-class ItemizedChargeClassType:
+class ItemizedChargeType:
     Code: Optional[str] = None
     Description: Optional[str] = None
     CurrencyCode: Optional[str] = None
@@ -88,7 +88,7 @@ class TaxChargeType:
 
 @s(auto_attribs=True)
 class NegotiatedRateChargesType:
-    ItemizedCharges: List[ItemizedChargeClassType] = JList[ItemizedChargeClassType]
+    ItemizedCharges: List[ItemizedChargeType] = JList[ItemizedChargeType]
     TaxCharges: List[TaxChargeType] = JList[TaxChargeType]
     TotalCharge: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
     TotalChargesWithTaxes: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
@@ -97,7 +97,7 @@ class NegotiatedRateChargesType:
 
 @s(auto_attribs=True)
 class NegotiatedChargesType:
-    ItemizedCharges: List[Union[ItemizedChargeClassType, str]] = JList[Union[ItemizedChargeClassType, str]]
+    ItemizedCharges: List[ItemizedChargeType] = JList[ItemizedChargeType]
     BaseServiceCharge: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
     TransportationCharges: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
     ServiceOptionsCharges: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
@@ -126,7 +126,7 @@ class RatedPackageType:
     Weight: Optional[str] = None
     BillingWeight: Optional[BillingWeightType] = JStruct[BillingWeightType]
     Accessorial: List[ResponseStatusType] = JList[ResponseStatusType]
-    ItemizedCharges: List[ItemizedChargeClassType] = JList[ItemizedChargeClassType]
+    ItemizedCharges: List[ItemizedChargeType] = JList[ItemizedChargeType]
     NegotiatedCharges: Optional[NegotiatedChargesType] = JStruct[NegotiatedChargesType]
     RateModifier: List[RateModifierType] = JList[RateModifierType]
     SimpleRate: Optional[SimpleRateType] = JStruct[SimpleRateType]
@@ -160,7 +160,7 @@ class ServiceType:
 class ServiceSummaryType:
     Service: Optional[ServiceType] = JStruct[ServiceType]
     GuaranteedIndicator: Optional[str] = None
-    Disclaimer: Optional[str] = None
+    Disclaimer: List[str] = []
     EstimatedArrival: Optional[EstimatedArrivalType] = JStruct[EstimatedArrivalType]
     SaturdayDelivery: Optional[str] = None
     SaturdayDeliveryDisclaimer: Optional[str] = None
@@ -175,7 +175,7 @@ class TimeInTransitType:
     PackageBillType: Optional[str] = None
     ServiceSummary: Optional[ServiceSummaryType] = JStruct[ServiceSummaryType]
     AutoDutyCode: Optional[str] = None
-    Disclaimer: Optional[str] = None
+    Disclaimer: List[str] = []
 
 
 @s(auto_attribs=True)
@@ -189,7 +189,7 @@ class RatedShipmentType:
     BillingWeight: Optional[BillingWeightType] = JStruct[BillingWeightType]
     TransportationCharges: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
     BaseServiceCharge: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
-    ItemizedCharges: List[ItemizedChargeClassType] = JList[ItemizedChargeClassType]
+    ItemizedCharges: List[ItemizedChargeType] = JList[ItemizedChargeType]
     FRSShipmentData: Optional[FRSShipmentDataType] = JStruct[FRSShipmentDataType]
     ServiceOptionsCharges: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
     TaxCharges: List[TaxChargeType] = JList[TaxChargeType]

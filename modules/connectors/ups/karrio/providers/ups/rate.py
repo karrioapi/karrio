@@ -31,7 +31,7 @@ def _extract_details(
     effective_rate = lib.identity(
         rate.NegotiatedRateCharges if rate.NegotiatedRateCharges is not None else rate
     )
-    total_charge = effective_rate.TotalChargesWithTaxes or effective_rate.TotalCharges
+    total_charge = effective_rate.TotalChargesWithTaxes or effective_rate.TotalCharge
     taxes = effective_rate.TaxCharges or []
     itemized_charges = [*effective_rate.ItemizedCharges, *taxes]
 
