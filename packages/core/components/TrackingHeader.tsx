@@ -1,9 +1,14 @@
 // components/TrackingHeader.tsx
+"use client";
+
+import { useState } from "react";
 import { TrackerStatusEnum, TrackerType } from "@karrio/types";
 import { formatDayDate, formatRef, isNone } from "@karrio/lib";
 import { CarrierImage } from "@karrio/ui/components/carrier-image";
 
 const TrackingHeader: React.FC<{ tracker: TrackerType }> = ({ tracker }) => {
+  const [isExpanded, setIsExpanded] = useState(false); // State to control expansion
+
   const computeColor = (tracker: TrackerType) => {
     if (tracker?.delivered) return "has-background-success";
     else if (tracker?.status === TrackerStatusEnum.pending.toString())
@@ -29,6 +34,7 @@ const TrackingHeader: React.FC<{ tracker: TrackerType }> = ({ tracker }) => {
       return "has-background-danger";
     else return "has-background-info";
   };
+
   const computeStatus = (tracker: TrackerType) => {
     if (tracker?.delivered) return "Delivered";
     else if (tracker?.status === TrackerStatusEnum.pending.toString())
@@ -44,6 +50,27 @@ const TrackingHeader: React.FC<{ tracker: TrackerType }> = ({ tracker }) => {
     )
       return formatRef(tracker!.status as string);
     else return "In-Transit";
+  };
+
+  const prettifyKey = (key: string) => {
+    // Convert snake_case to "Pretty Case"
+    return key
+      .replace(/_/g, " ") // Replace underscores with spaces
+      .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize each word
+  };
+
+  const customRender = (key: string, value: any) => {
+    switch (key) {
+      case "carrier_tracking_link":
+        return (
+          <a href={String(value)} target="_blank" rel="noopener noreferrer">
+            {String(value)}
+          </a>
+        );
+      // Add more cases as needed for custom rendering of specific fields
+      default:
+        return <span>{String(value)}</span>;
+    }
   };
 
   return (
@@ -72,18 +99,31 @@ const TrackingHeader: React.FC<{ tracker: TrackerType }> = ({ tracker }) => {
       {!isNone(tracker?.info) && (
         <>
           <hr />
-          <p className="has-text-weight-bold my-4 is-size-6">
-            Additional Information
-          </p>
-          <div className="columns is-multiline">
-            {Object.entries(tracker.info || {})
-              .filter(([_, value]) => value != null) // Exclude null or undefined values
-              .map(([key, value], index) => (
-                <div key={index} className="column is-6">
-                  <strong>{key}: </strong> <span>{String(value)}</span>
-                </div>
-              ))}
-          </div>
+          {/* Accessible button to toggle section */}
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            aria-expanded={isExpanded} // Accessibility: indicate expanded state
+            aria-controls="additional-info" // Accessibility: points to content
+            className="has-text-weight-bold my-4 is-size-6 is-flex is-align-items-center"
+            style={{ cursor: "pointer", background: "none", border: "none" }}
+          >
+            <span>{isExpanded ? "-" : "+"}</span>
+            <span className="ml-2">Additional Information</span>
+          </button>
+
+          {/* Conditionally render additional info */}
+          {isExpanded && (
+            <div id="additional-info" className="columns is-multiline">
+              {Object.entries(tracker.info || {})
+                .filter(([_, value]) => value != null) // Exclude null or undefined values
+                .map(([key, value], index) => (
+                  <div key={index} className="column is-6">
+                    <strong>{prettifyKey(key)}: </strong>{" "}
+                    {customRender(key, value)}
+                  </div>
+                ))}
+            </div>
+          )}
         </>
       )}
 

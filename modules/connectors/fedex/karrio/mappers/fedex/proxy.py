@@ -194,7 +194,7 @@ class Proxy(proxy.Proxy):
 
             # Convert documents to base64
             return lib.failsafe(lambda: lib.bundle_base64(documents, format="PNG"))
-        
+
         except Exception as e:
             # Catch any other exceptions and log the details
             logger.error(f"An error occurred while fetching POD for tracking number {tracking_number}: {e}")
