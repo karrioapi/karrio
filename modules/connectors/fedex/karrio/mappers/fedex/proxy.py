@@ -1,5 +1,4 @@
 import typing
-import typing
 import urllib.parse
 import karrio.lib as lib
 import karrio.api.proxy as proxy
@@ -147,7 +146,7 @@ class Proxy(proxy.Proxy):
         )
 
         return lib.Deserializable(response, lib.to_dict, request.ctx)
-    
+
     def get_proof_of_delivery(self, tracking_number: str) -> typing.Optional[str]:
         import karrio.providers.fedex.error as error
 
@@ -179,7 +178,7 @@ class Proxy(proxy.Proxy):
                         "authorization": f"Bearer {self.settings.track_access_token}",
                     },
                     decoder=provider_utils.parse_response,
-                    on_error=lambda b: self.log_request_error(b),  # Custom error handler
+                    on_error=self.log_request_error,  # Direct function reference
                 )
             )
             messages = error.parse_error_response(response, self.settings)
