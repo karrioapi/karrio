@@ -9,7 +9,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
 class Proxy(proxy.Proxy):
     settings: provider_settings.Settings
 
