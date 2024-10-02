@@ -161,25 +161,27 @@ def rate_request(
                 ),
                 items=[
                     easyship.ItemType(
+                        dimensions=None,
+                        declared_currency=lib.identity(
+                            item.value_currency or options.currency.state or "USD"
+                        ),
+                        origin_country_alpha2=lib.identity(
+                            item.origin_country or shipper.country_code
+                        ),
+                        quantity=item.quantity,
+                        actual_weight=item.weight,
+                        category=item.category or "bags_luggages",
+                        declared_customs_value=item.value_amount,
+                        description=item.description or item.title or "Item",
+                        sku=item.sku or "N/A",
+                        hs_code=item.hs_code or "N/A",
+                        contains_liquids=item.metadata.get("contains_liquids"),
                         contains_battery_pi966=item.metadata.get(
                             "contains_battery_pi966"
                         ),
                         contains_battery_pi967=item.metadata.get(
                             "contains_battery_pi967"
                         ),
-                        contains_liquids=item.metadata.get("contains_liquids"),
-                        declared_currency=lib.identity(
-                            item.value_currency or options.currency.state or "USD"
-                        ),
-                        dimensions=None,
-                        origin_country_alpha2=item.origin_country,
-                        quantity=item.quantity,
-                        actual_weight=item.weight,
-                        category=item.category,
-                        declared_customs_value=item.value_amount,
-                        description=item.description or item.title or "N/A",
-                        sku=item.sku or "N/A",
-                        hs_code=item.hs_code or "N/A",
                     )
                     for item in lib.identity(
                         package.items

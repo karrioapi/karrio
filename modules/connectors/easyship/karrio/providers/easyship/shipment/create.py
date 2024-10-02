@@ -255,13 +255,15 @@ def shipment_request(
                         declared_currency=lib.identity(
                             item.value_currency or options.currency.state or "USD"
                         ),
-                        origin_country_alpha2=item.origin_country,
+                        origin_country_alpha2=lib.identity(
+                            item.origin_country or shipper.country_code
+                        ),
                         quantity=item.quantity,
                         actual_weight=item.weight,
                         category=item.category or "bags_luggages",
                         declared_customs_value=item.value_amount,
                         description=item.description or item.title or "Item",
-                        sku=item.sku,
+                        sku=item.sku or "N/A",
                         hs_code=item.hs_code or "N/A",
                         contains_liquids=item.metadata.get("contains_liquids"),
                         contains_battery_pi966=item.metadata.get(
