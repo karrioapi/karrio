@@ -1,3 +1,11 @@
+# Karrio 2024.9.4
+
+## Changes
+
+### Feat
+
+- feat: Add `service_level` to `sapient` carrier connection settings
+
 # Karrio 2024.9.3
 
 ## Changes

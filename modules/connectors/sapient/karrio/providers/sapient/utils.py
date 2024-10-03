@@ -105,6 +105,7 @@ def login(settings: Settings):
 
 
 class ConnectionConfig(lib.Enum):
+    service_level = lib.OptionEnum("service_level", str)
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
 
