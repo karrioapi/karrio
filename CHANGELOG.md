@@ -1,3 +1,15 @@
+# Karrio 2024.9.5
+
+## Changes
+
+### Feat
+
+- feat: Add `Duplicate Shipment` action to shipment menu (#680)
+
+### Fix
+
+- fix: `ups` TotalCharge parsing for `negotiated_rates` (#703)
+
 # Karrio 2024.9.4
 
 ## Changes

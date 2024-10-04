@@ -1,5 +1,5 @@
 import karrio.schemas.ups.rating_request as ups
-import karrio.schemas.ups.rating_response as ups_response
+import karrio.schemas.ups.rating_response as rating
 import time
 import typing
 import karrio.lib as lib
@@ -27,12 +27,19 @@ def _extract_details(
     settings: provider_utils.Settings,
     ctx: dict,
 ) -> typing.List[models.RateDetails]:
-    rate = lib.to_object(ups_response.RatedShipmentType, detail)
-    effective_rate = lib.identity(
+    rate = lib.to_object(rating.RatedShipmentType, detail)
+    effective_rate: typing.Union[
+        rating.NegotiatedRateChargesType, rating.RatedShipmentType
+    ] = lib.identity(
         rate.NegotiatedRateCharges if rate.NegotiatedRateCharges is not None else rate
     )
-    total_charge = effective_rate.TotalChargesWithTaxes or effective_rate.TotalCharge
-    taxes = effective_rate.TaxCharges or []
+    total_charge: rating.BaseServiceChargeType = lib.identity(
+        getattr(effective_rate, "TotalChargesWithTaxes", None)
+        or getattr(effective_rate, "TotalCharges", None)
+        or getattr(effective_rate, "TotalCharge", None)
+        or rate.TransportationCharges
+    )
+    taxes = getattr(effective_rate, "TaxCharges", [])
     itemized_charges = [*effective_rate.ItemizedCharges, *taxes]
 
     charges = [

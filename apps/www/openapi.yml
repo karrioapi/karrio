@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2024.9.4`.
+    The current version is `2024.9.5`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2024.9.4
+  version: 2024.9.5
 paths:
   /:
     get:
@@ -6021,12 +6021,12 @@ components:
       - weight_unit
     ConnectionCredentialsField:
       oneOf:
+      - $ref: '#/components/schemas/ups'
       - $ref: '#/components/schemas/zoom2u'
       - $ref: '#/components/schemas/usps_wt_international'
       - $ref: '#/components/schemas/usps_wt'
       - $ref: '#/components/schemas/usps_international'
       - $ref: '#/components/schemas/usps'
-      - $ref: '#/components/schemas/ups'
       - $ref: '#/components/schemas/tnt'
       - $ref: '#/components/schemas/tge'
       - $ref: '#/components/schemas/sendle'
@@ -11371,12 +11371,12 @@ tags:
     ## Carriers
     | Carrier Name | Display Name |
     | ------------ | ------------ |
+    | ups | UPS |
     | zoom2u | Zoom2u |
     | usps_wt_international | USPS Web Tools International |
     | usps_wt | USPS Web Tools |
     | usps_international | USPS International |
     | usps | USPS |
-    | ups | UPS |
     | tnt | TNT |
     | tge | TGE |
     | sendle | Sendle |
@@ -11422,6 +11422,69 @@ tags:
     when purchasing shipping labels using single call label creation.
     You can also find all of the possible service levels for each of your carrier
     accounts by using [this endpoint](#operation/&&get_services).
+    ### UPS
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | ups_standard | UPS Standard |
+    | ups_worldwide_express | UPS Worldwide Express |
+    | ups_worldwide_expedited | UPS Worldwide Expedited |
+    | ups_worldwide_express_plus | UPS Worldwide Express Plus |
+    | ups_worldwide_saver | UPS Worldwide Saver |
+    | ups_2nd_day_air | UPS 2nd Day Air |
+    | ups_2nd_day_air_am | UPS 2nd Day Air A.M. |
+    | ups_3_day_select | UPS 3 Day Select |
+    | ups_ground | UPS Ground |
+    | ups_next_day_air | UPS Next Day Air |
+    | ups_next_day_air_early | UPS Next Day Air Early |
+    | ups_next_day_air_saver | UPS Next Day Air Saver |
+    | ups_expedited_ca | UPS Expedited CA |
+    | ups_express_saver_ca | UPS Express Saver CA |
+    | ups_3_day_select_ca_us | UPS 3 Day Select CA US |
+    | ups_access_point_economy_ca | UPS Access Point Economy CA |
+    | ups_express_ca | UPS Express CA |
+    | ups_express_early_ca | UPS Express Early CA |
+    | ups_express_saver_intl_ca | UPS Express Saver Intl CA |
+    | ups_standard_ca | UPS Standard CA |
+    | ups_worldwide_expedited_ca | UPS Worldwide Expedited CA |
+    | ups_worldwide_express_ca | UPS Worldwide Express CA |
+    | ups_worldwide_express_plus_ca | UPS Worldwide Express Plus CA |
+    | ups_express_early_ca_us | UPS Express Early CA US |
+    | ups_access_point_economy_eu | UPS Access Point Economy EU |
+    | ups_expedited_eu | UPS Expedited EU |
+    | ups_express_eu | UPS Express EU |
+    | ups_standard_eu | UPS Standard EU |
+    | ups_worldwide_express_plus_eu | UPS Worldwide Express Plus EU |
+    | ups_worldwide_saver_eu | UPS Worldwide Saver EU |
+    | ups_access_point_economy_mx | UPS Access Point Economy MX |
+    | ups_expedited_mx | UPS Expedited MX |
+    | ups_express_mx | UPS Express MX |
+    | ups_standard_mx | UPS Standard MX |
+    | ups_worldwide_express_plus_mx | UPS Worldwide Express Plus MX |
+    | ups_worldwide_saver_mx | UPS Worldwide Saver MX |
+    | ups_access_point_economy_pl | UPS Access Point Economy PL |
+    | ups_today_dedicated_courrier_pl | UPS Today Dedicated Courrier PL |
+    | ups_today_express_pl | UPS Today Express PL |
+    | ups_today_express_saver_pl | UPS Today Express Saver PL |
+    | ups_today_standard_pl | UPS Today Standard PL |
+    | ups_expedited_pl | UPS Expedited PL |
+    | ups_express_pl | UPS Express PL |
+    | ups_express_plus_pl | UPS Express Plus PL |
+    | ups_express_saver_pl | UPS Express Saver PL |
+    | ups_standard_pl | UPS Standard PL |
+    | ups_2nd_day_air_pr | UPS 2nd Day Air PR |
+    | ups_ground_pr | UPS Ground PR |
+    | ups_next_day_air_pr | UPS Next Day Air PR |
+    | ups_next_day_air_early_pr | UPS Next Day Air Early PR |
+    | ups_worldwide_expedited_pr | UPS Worldwide Expedited PR |
+    | ups_worldwide_express_pr | UPS Worldwide Express PR |
+    | ups_worldwide_express_plus_pr | UPS Worldwide Express Plus PR |
+    | ups_worldwide_saver_pr | UPS Worldwide Saver PR |
+    | ups_express_12_00_de | UPS Express 12:00 DE |
+    | ups_worldwide_express_freight | UPS Worldwide Express Freight |
+    | ups_worldwide_express_freight_midday | UPS Worldwide Express Freight Midday |
+    | ups_worldwide_economy_ddu | UPS Worldwide Economy DDU |
+    | ups_worldwide_economy_ddp | UPS Worldwide Economy DDP |
+
     ### Zoom2u
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -11531,69 +11594,6 @@ tags:
     | usps_ground_advantage | USPS_GROUND_ADVANTAGE |
     | usps_retail_ground | USPS_RETAIL_GROUND |
     | usps_all | ALL |
-
-    ### UPS
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | ups_standard | UPS Standard |
-    | ups_worldwide_express | UPS Worldwide Express |
-    | ups_worldwide_expedited | UPS Worldwide Expedited |
-    | ups_worldwide_express_plus | UPS Worldwide Express Plus |
-    | ups_worldwide_saver | UPS Worldwide Saver |
-    | ups_2nd_day_air | UPS 2nd Day Air |
-    | ups_2nd_day_air_am | UPS 2nd Day Air A.M. |
-    | ups_3_day_select | UPS 3 Day Select |
-    | ups_ground | UPS Ground |
-    | ups_next_day_air | UPS Next Day Air |
-    | ups_next_day_air_early | UPS Next Day Air Early |
-    | ups_next_day_air_saver | UPS Next Day Air Saver |
-    | ups_expedited_ca | UPS Expedited CA |
-    | ups_express_saver_ca | UPS Express Saver CA |
-    | ups_3_day_select_ca_us | UPS 3 Day Select CA US |
-    | ups_access_point_economy_ca | UPS Access Point Economy CA |
-    | ups_express_ca | UPS Express CA |
-    | ups_express_early_ca | UPS Express Early CA |
-    | ups_express_saver_intl_ca | UPS Express Saver Intl CA |
-    | ups_standard_ca | UPS Standard CA |
-    | ups_worldwide_expedited_ca | UPS Worldwide Expedited CA |
-    | ups_worldwide_express_ca | UPS Worldwide Express CA |
-    | ups_worldwide_express_plus_ca | UPS Worldwide Express Plus CA |
-    | ups_express_early_ca_us | UPS Express Early CA US |
-    | ups_access_point_economy_eu | UPS Access Point Economy EU |
-    | ups_expedited_eu | UPS Expedited EU |
-    | ups_express_eu | UPS Express EU |
-    | ups_standard_eu | UPS Standard EU |
-    | ups_worldwide_express_plus_eu | UPS Worldwide Express Plus EU |
-    | ups_worldwide_saver_eu | UPS Worldwide Saver EU |
-    | ups_access_point_economy_mx | UPS Access Point Economy MX |
-    | ups_expedited_mx | UPS Expedited MX |
-    | ups_express_mx | UPS Express MX |
-    | ups_standard_mx | UPS Standard MX |
-    | ups_worldwide_express_plus_mx | UPS Worldwide Express Plus MX |
-    | ups_worldwide_saver_mx | UPS Worldwide Saver MX |
-    | ups_access_point_economy_pl | UPS Access Point Economy PL |
-    | ups_today_dedicated_courrier_pl | UPS Today Dedicated Courrier PL |
-    | ups_today_express_pl | UPS Today Express PL |
-    | ups_today_express_saver_pl | UPS Today Express Saver PL |
-    | ups_today_standard_pl | UPS Today Standard PL |
-    | ups_expedited_pl | UPS Expedited PL |
-    | ups_express_pl | UPS Express PL |
-    | ups_express_plus_pl | UPS Express Plus PL |
-    | ups_express_saver_pl | UPS Express Saver PL |
-    | ups_standard_pl | UPS Standard PL |
-    | ups_2nd_day_air_pr | UPS 2nd Day Air PR |
-    | ups_ground_pr | UPS Ground PR |
-    | ups_next_day_air_pr | UPS Next Day Air PR |
-    | ups_next_day_air_early_pr | UPS Next Day Air Early PR |
-    | ups_worldwide_expedited_pr | UPS Worldwide Expedited PR |
-    | ups_worldwide_express_pr | UPS Worldwide Express PR |
-    | ups_worldwide_express_plus_pr | UPS Worldwide Express Plus PR |
-    | ups_worldwide_saver_pr | UPS Worldwide Saver PR |
-    | ups_express_12_00_de | UPS Express 12:00 DE |
-    | ups_worldwide_express_freight | UPS Worldwide Express Freight |
-    | ups_worldwide_express_freight_midday | UPS Worldwide Express Freight Midday |
-    | ups_worldwide_economy_ddu | UPS Worldwide Economy DDU |
-    | ups_worldwide_economy_ddp | UPS Worldwide Economy DDP |
 
     ### TNT
     | Code         | Service Name |

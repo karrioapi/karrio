@@ -71,8 +71,17 @@ export const ShipmentMenu: React.FC<ShipmentMenuComponent> = ({
   const changeStatus =
     ({ id }: ShipmentType, status: ManualShipmentStatusEnum) =>
     async () => {
-      await mutation.changeStatus.mutateAsync({ id: shipment.id, status });
+      await mutation.changeStatus.mutateAsync({ id, status });
     };
+  const duplicateShipment = async (_: React.MouseEvent) => {
+    console.log("> duplicating shipment...");
+    const duplicatedShipment =
+      await mutation.duplicateShipment.mutateAsync(shipment);
+    console.log("> shipment duplicate created successfully!");
+    router.push(
+      p`${basePath}/create_label?shipment_id=${duplicatedShipment.id}`,
+    );
+  };
 
   return (
     <div
@@ -114,6 +123,10 @@ export const ShipmentMenu: React.FC<ShipmentMenuComponent> = ({
               View Shipment
             </a>
           )}
+
+          <a className="dropdown-item" onClick={duplicateShipment}>
+            Duplicate Shipment
+          </a>
 
           {![
             ShipmentStatusEnum.cancelled,
