@@ -1,3 +1,11 @@
+# Karrio 2024.9.6
+
+## Changes
+
+### Fix
+
+- fix: `ups` EU rate code parsing using context origin
+
 # Karrio 2024.9.5
 
 ## Changes
