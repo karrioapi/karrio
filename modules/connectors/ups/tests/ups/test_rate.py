@@ -9,7 +9,7 @@ import karrio
 class TestUPSRating(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.RateRequest = models.RateRequest(**rate_req_data)
+        self.RateRequest = models.RateRequest(**RatePayload)
 
     def test_create_rate_request(self):
         request = gateway.mapper.create_rate_request(self.RateRequest)
@@ -17,7 +17,7 @@ class TestUPSRating(unittest.TestCase):
 
     def test_create_rate_with_package_preset_request(self):
         request = gateway.mapper.create_rate_request(
-            models.RateRequest(**rate_req_with_package_preset_data)
+            models.RateRequest(**RateWithPresetPayload)
         )
         self.assertEqual(request.serialize(), RateRequestWithPackagePresetData)
 
@@ -44,8 +44,8 @@ class TestUPSRating(unittest.TestCase):
             mock.return_value = FRRateResponseJSON
             RateRequest = models.RateRequest(
                 **{
-                    **rate_req_data,
-                    **{"shipper": {**rate_req_data["shipper"], "country_code": "FR"}},
+                    **RatePayload,
+                    **{"shipper": {**RatePayload["shipper"], "country_code": "FR"}},
                 }
             )
             parsed_response = karrio.Rating.fetch(RateRequest).from_(gateway).parse()
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     unittest.main()
 
 
-rate_req_data = {
+RatePayload = {
     "shipper": {
         "postal_code": "V6M2V9",
         "city": "Vancouver",
@@ -102,7 +102,7 @@ rate_req_data = {
     },
 }
 
-rate_req_with_package_preset_data = {
+RateWithPresetPayload = {
     "shipper": {
         "company_name": "Shipper Name",
         "postal_code": "H3N1S4",
@@ -207,8 +207,8 @@ ParsedFRRateResponse = [
                 {"amount": 2.74, "currency": "EUR", "name": "FUEL SURCHARGE"},
                 {"amount": 3.02, "currency": "EUR", "name": "TVA"},
             ],
-            "meta": {"service_name": "ups_express"},
-            "service": "ups_express",
+            "meta": {"service_name": "ups_express_eu"},
+            "service": "ups_express_eu",
             "total_charge": 18.13,
             "transit_days": 1,
         },
@@ -221,8 +221,8 @@ ParsedFRRateResponse = [
                 {"amount": 2.26, "currency": "EUR", "name": "FUEL SURCHARGE"},
                 {"amount": 2.49, "currency": "EUR", "name": "TVA"},
             ],
-            "meta": {"service_name": "ups_worldwide_saver"},
-            "service": "ups_worldwide_saver",
+            "meta": {"service_name": "ups_worldwide_saver_eu"},
+            "service": "ups_worldwide_saver_eu",
             "total_charge": 14.96,
             "transit_days": 1,
         },
@@ -235,8 +235,8 @@ ParsedFRRateResponse = [
                 {"amount": 1.16, "currency": "EUR", "name": "FUEL SURCHARGE"},
                 {"amount": 1.87, "currency": "EUR", "name": "TVA"},
             ],
-            "meta": {"service_name": "ups_standard"},
-            "service": "ups_standard",
+            "meta": {"service_name": "ups_standard_eu"},
+            "service": "ups_standard_eu",
             "total_charge": 11.25,
             "transit_days": 1,
         },

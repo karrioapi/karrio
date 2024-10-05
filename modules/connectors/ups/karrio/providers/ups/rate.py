@@ -389,5 +389,5 @@ def rate_request(
     return lib.Serializable(
         request,
         lib.to_dict,
-        ctx=dict(origin=shipper.country_code),
+        ctx=dict(origin=origin),
     )
