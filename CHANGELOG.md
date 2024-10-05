@@ -1,3 +1,15 @@
+# Karrio 2024.9.7
+
+## Changes
+
+### Feat
+
+- feat: Add `system_usage` to base `graphql` types
+
+### Chore
+
+- remove deprecated `karrio.server.admin` module from OSS build
+
 # Karrio 2024.9.6
 
 ## Changes
