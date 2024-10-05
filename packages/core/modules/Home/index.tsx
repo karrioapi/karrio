@@ -7,8 +7,8 @@ import { useAppMode } from "@karrio/hooks/app-mode";
 import { useAPIUsage } from "@karrio/hooks/usage";
 import { useUser } from "@karrio/hooks/user";
 import { useRouter } from "next/navigation";
-import moment from "moment";
 import { p } from "@karrio/lib";
+import moment from "moment";
 
 export const generateMetadata = dynamicMetadata("Home");
 

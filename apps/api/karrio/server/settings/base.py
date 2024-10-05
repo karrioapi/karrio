@@ -127,11 +127,6 @@ KARRIO_CONF = [
             "urls": "karrio.server.data.urls",
         },
         {
-            "app": "karrio.server.admin",
-            "module": "karrio.server.admin",
-            "urls": "karrio.server.admin.urls",
-        },
-        {
             "app": "karrio.server.pricing",
             "module": "karrio.server.pricing",
         },

@@ -26,6 +26,9 @@ class Query:
     workspace_config: typing.Optional[types.WorkspaceConfigType] = strawberry.field(
         resolver=types.WorkspaceConfigType.resolve
     )
+    system_usage: types.SystemUsageType = strawberry.field(
+        resolver=types.SystemUsageType.resolve
+    )
 
     user_connections: typing.List[types.CarrierConnectionType] = strawberry.field(
         resolver=types.CarrierConnectionType.resolve_list_legacy

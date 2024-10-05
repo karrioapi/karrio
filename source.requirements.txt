@@ -85,7 +85,6 @@ karrio.sapient @ file://${PWD}/modules/connectors/sapient
 karrio.seko @ file://${PWD}/modules/connectors/seko
 karrio.sendle @ file://${PWD}/modules/connectors/sendle
 karrio.server @ file://${PWD}/apps/api
-karrio.server.admin @ file://${PWD}/modules/admin
 karrio.server.core @ file://${PWD}/modules/core
 karrio.server.data @ file://${PWD}/modules/data
 karrio.server.documents @ file://${PWD}/modules/documents

@@ -4,6 +4,74 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GetSystemUsage
+// ====================================================
+
+export interface GetSystemUsage_system_usage_api_errors {
+  label: string | null;
+  count: number | null;
+  date: string | null;
+}
+
+export interface GetSystemUsage_system_usage_api_requests {
+  label: string | null;
+  count: number | null;
+  date: string | null;
+}
+
+export interface GetSystemUsage_system_usage_order_volumes {
+  label: string | null;
+  count: number | null;
+  date: string | null;
+}
+
+export interface GetSystemUsage_system_usage_shipment_count {
+  label: string | null;
+  count: number | null;
+  date: string | null;
+}
+
+export interface GetSystemUsage_system_usage_tracker_count {
+  label: string | null;
+  count: number | null;
+  date: string | null;
+}
+
+export interface GetSystemUsage_system_usage_shipping_spend {
+  label: string | null;
+  count: number | null;
+  date: string | null;
+}
+
+export interface GetSystemUsage_system_usage {
+  total_errors: number | null;
+  order_volume: number | null;
+  total_requests: number | null;
+  total_trackers: number | null;
+  total_shipments: number | null;
+  organization_count: number | null;
+  total_shipping_spend: number | null;
+  api_errors: GetSystemUsage_system_usage_api_errors[] | null;
+  api_requests: GetSystemUsage_system_usage_api_requests[] | null;
+  order_volumes: GetSystemUsage_system_usage_order_volumes[] | null;
+  shipment_count: GetSystemUsage_system_usage_shipment_count[] | null;
+  tracker_count: GetSystemUsage_system_usage_tracker_count[] | null;
+  shipping_spend: GetSystemUsage_system_usage_shipping_spend[] | null;
+}
+
+export interface GetSystemUsage {
+  system_usage: GetSystemUsage_system_usage;
+}
+
+export interface GetSystemUsageVariables {
+  filter?: UsageFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: get_address_templates
 // ====================================================
 
@@ -4980,6 +5048,13 @@ export enum BatchOperationStatus {
   failed = "failed",
   queued = "queued",
   running = "running",
+}
+
+// null
+export interface UsageFilter {
+  date_after?: string | null;
+  date_before?: string | null;
+  omit?: string[] | null;
 }
 
 // null

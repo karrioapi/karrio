@@ -1,24 +1,25 @@
-import pydoc
 import typing
 import logging
 import datetime
 import strawberry
-from django.db import models
+import django.db.models as models
+import django.db.models.functions as functions
 from strawberry.types import Info
-from django.forms.models import model_to_dict
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
 import karrio.lib as lib
+import karrio.server.conf as conf
 import karrio.server.user.models as auth
 import karrio.server.core.models as core
 import karrio.server.graph.utils as utils
 import karrio.server.graph.models as graph
 import karrio.server.core.filters as filters
+import karrio.server.orders.models as orders
 import karrio.server.manager.models as manager
 import karrio.server.tracing.models as tracing
-import karrio.server.serializers as serializers
 import karrio.server.providers.models as providers
+import karrio.server.orders.filters as order_filters
 import karrio.server.user.serializers as user_serializers
 import karrio.server.graph.schemas.base.inputs as inputs
 
@@ -155,6 +156,154 @@ class WorkspaceConfigType:
     @utils.authentication_required
     def resolve(info) -> typing.Optional["WorkspaceConfigType"]:
         return auth.WorkspaceConfig.access_by(info.context.request).first()
+
+
+@strawberry.type
+class SystemUsageType:
+    total_errors: typing.Optional[int] = None
+    order_volume: typing.Optional[float] = None
+    total_requests: typing.Optional[int] = None
+    total_trackers: typing.Optional[int] = None
+    total_shipments: typing.Optional[int] = None
+    organization_count: typing.Optional[int] = None
+    total_shipping_spend: typing.Optional[float] = None
+    api_errors: typing.Optional[typing.List[utils.UsageStatType]] = None
+    api_requests: typing.Optional[typing.List[utils.UsageStatType]] = None
+    order_volumes: typing.Optional[typing.List[utils.UsageStatType]] = None
+    shipment_count: typing.Optional[typing.List[utils.UsageStatType]] = None
+    shipping_spend: typing.Optional[typing.List[utils.UsageStatType]] = None
+    tracker_count: typing.Optional[typing.List[utils.UsageStatType]] = None
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve(
+        info,
+        filter: typing.Optional[utils.UsageFilter] = strawberry.UNSET,
+    ) -> "SystemUsageType":
+        _test_mode = info.context.request.test_mode
+        _test_filter = dict(test_mode=_test_mode)
+        _filter = {
+            "date_before": datetime.datetime.now(),
+            "date_after": (datetime.datetime.now() - datetime.timedelta(days=30)),
+            **(filter if not utils.is_unset(filter) else utils.UsageFilter()).to_dict(),
+        }
+
+        api_requests = (
+            filters.LogFilter(
+                _filter,
+                core.APILogIndex.objects.filter(**_test_filter),
+            )
+            .qs.annotate(date=functions.TruncDay("requested_at"))
+            .values("date")
+            .annotate(count=models.Count("id"))
+            .order_by("-date")
+        )
+        api_errors = (
+            filters.LogFilter(
+                {**_filter, "status": "failed"},
+                core.APILogIndex.objects.filter(**_test_filter),
+            )
+            .qs.annotate(date=functions.TruncDay("requested_at"))
+            .values("date")
+            .annotate(count=models.Count("id"))
+            .order_by("-date")
+        )
+        order_volumes = (
+            order_filters.OrderFilters(
+                dict(
+                    created_before=_filter["date_before"],
+                    created_after=_filter["date_after"],
+                ),
+                orders.Order.objects.filter(**_test_filter).exclude(
+                    status__in=["cancelled", "unfulfilled"]
+                ),
+            )
+            .qs.annotate(date=functions.TruncDay("created_at"))
+            .values("date")
+            .annotate(
+                count=models.Sum(
+                    models.F("line_items__value_amount")
+                    * models.F("line_items__quantity")
+                )
+            )
+            .order_by("-date")
+        )
+        shipment_count = (
+            filters.ShipmentFilters(
+                dict(
+                    created_before=_filter["date_before"],
+                    created_after=_filter["date_after"],
+                ),
+                manager.Shipment.objects.filter(**_test_filter),
+            )
+            .qs.annotate(date=functions.TruncDay("created_at"))
+            .values("date")
+            .annotate(count=models.Count("id"))
+            .order_by("-date")
+        )
+        shipping_spend = (
+            filters.ShipmentFilters(
+                dict(
+                    created_before=_filter["date_before"],
+                    created_after=_filter["date_after"],
+                ),
+                manager.Shipment.objects.filter(**_test_filter).exclude(
+                    status__in=["cancelled", "draft"]
+                ),
+            )
+            .qs.annotate(date=functions.TruncDay("created_at"))
+            .values("date")
+            .annotate(
+                count=models.Sum(
+                    functions.Cast("selected_rate__total_charge", models.FloatField())
+                )
+            )
+            .order_by("-date")
+        )
+        tracker_count = (
+            filters.TrackerFilters(
+                dict(
+                    created_before=_filter["date_before"],
+                    created_after=_filter["date_after"],
+                ),
+                manager.Tracking.objects.filter(**_test_filter),
+            )
+            .qs.annotate(date=functions.TruncDay("created_at"))
+            .values("date")
+            .annotate(count=models.Count("id"))
+            .order_by("-date")
+        )
+
+        total_errors = sum([item["count"] for item in api_errors], 0)
+        total_requests = sum([item["count"] for item in api_requests], 0)
+        total_trackers = sum([item["count"] for item in tracker_count], 0)
+        total_shipments = sum([item["count"] for item in shipment_count], 0)
+        order_volume = lib.to_money(sum([item["count"] for item in order_volumes], 0.0))
+        total_shipping_spend = lib.to_money(
+            sum([item["count"] for item in shipping_spend], 0.0)
+        )
+        organization_count = 0
+
+        if conf.settings.MULTI_ORGANIZATIONS:
+            import karrio.server.orgs.models as orgs
+
+            organization_count = orgs.Organization.objects.count()
+
+        return SystemUsageType(
+            order_volume=order_volume,
+            total_errors=total_errors,
+            total_requests=total_requests,
+            total_trackers=total_trackers,
+            total_shipments=total_shipments,
+            organization_count=organization_count,
+            total_shipping_spend=total_shipping_spend,
+            api_errors=[utils.UsageStatType.parse(item) for item in api_errors],
+            api_requests=[utils.UsageStatType.parse(item) for item in api_requests],
+            order_volumes=[utils.UsageStatType.parse(item) for item in order_volumes],
+            shipment_count=[utils.UsageStatType.parse(item) for item in shipment_count],
+            shipping_spend=[utils.UsageStatType.parse(item) for item in shipping_spend],
+            tracker_count=[utils.UsageStatType.parse(item) for item in tracker_count],
+        )
 
 
 @strawberry.type

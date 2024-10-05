@@ -5,7 +5,6 @@ import karrio.core.utils as utils
 import karrio.server.serializers as serializers
 import karrio.server.core.dataunits as dataunits
 import karrio.server.core.validators as validators
-import karrio.server.providers.models as providers
 
 
 class ShipmentStatus(utils.Enum):

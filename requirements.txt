@@ -84,7 +84,6 @@ jwcrypto==1.5.6
 -e git+ssh://git@github.com/karrioapi/karrio.git@1040c434c8d5760d52b5eb0ac1ccd642154baf12#egg=karrio.sapient&subdirectory=modules/connectors/sapient
 -e git+ssh://git@github.com/karrioapi/karrio.git@1040c434c8d5760d52b5eb0ac1ccd642154baf12#egg=karrio.sendle&subdirectory=modules/connectors/sendle
 -e git+ssh://git@github.com/karrioapi/karrio.git@1040c434c8d5760d52b5eb0ac1ccd642154baf12#egg=karrio.server&subdirectory=apps/api
--e git+ssh://git@github.com/karrioapi/karrio.git@1040c434c8d5760d52b5eb0ac1ccd642154baf12#egg=karrio.server.admin&subdirectory=modules/admin
 -e git+ssh://git@github.com/karrioapi/karrio.git@1040c434c8d5760d52b5eb0ac1ccd642154baf12#egg=karrio.server.core&subdirectory=modules/core
 -e git+ssh://git@github.com/karrioapi/karrio.git@1040c434c8d5760d52b5eb0ac1ccd642154baf12#egg=karrio.server.data&subdirectory=modules/data
 -e git+ssh://git@github.com/karrioapi/karrio.git@1040c434c8d5760d52b5eb0ac1ccd642154baf12#egg=karrio.server.documents&subdirectory=modules/documents
