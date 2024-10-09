@@ -67,7 +67,7 @@ export default function Page(pageProps: any) {
     const getRate = (shipment: any) =>
       shipment.selected_rate ||
       (shipment?.rates || []).find(
-        (_) => _.service === shipment?.options?.preferred_service,
+        (_: any) => _.service === shipment?.options?.preferred_service,
       ) ||
       (shipment?.rates || [])[0] ||
       shipment;
