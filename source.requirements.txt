@@ -12,7 +12,7 @@ cssselect2==0.7.0
 deprecation==2.1.0
 diff-match-patch==20230430
 dj-database-url==2.2.0
-Django==4.2.15
+Django==4.2.16
 django-constance==3.1.0
 django-cors-headers==4.4.0
 django-downloadview==2.4.0
