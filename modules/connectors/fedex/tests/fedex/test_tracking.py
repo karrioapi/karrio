@@ -107,7 +107,7 @@ ParsedTrackingResponse = [
                 "shipment_origin_postal_code": "98101",
                 "shipment_origin_country": "US",
                 "shipment_service": "FedEx Freight Economy.",
-                "signed_by": "Reciever",
+                "signed_by": "Reciever", # How do I do a test for the 'fall over' when we set signed_by to recievedBy instead of signedBy?
             },
             "status": "in_transit",
             "tracking_number": "123456789012",

@@ -40,6 +40,7 @@ export const ConfirmModal: React.FC<ConfirmModalComponent> = ({ children }) => {
     try {
       await operation?.onConfirm();
       notify({
+        // TODO check grammar here
         type: NotificationType.success, message: `${operation?.label} successfully!...`
       });
       setTimeout(() => { close(); }, 2000);
