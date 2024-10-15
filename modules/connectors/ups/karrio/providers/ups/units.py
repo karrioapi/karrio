@@ -153,6 +153,7 @@ class ServiceCode(utils.StrEnum):
     ups_express_saver_intl_ca = ups_worldwide_saver
     ups_standard_ca = ups_standard
     ups_worldwide_expedited_ca = ups_worldwide_expedited
+    ups_worldwide_express = ups_express
     ups_worldwide_express_ca = ups_express
     ups_worldwide_express_plus_ca = ups_worldwide_express_plus
     ups_express_early_ca_us = ups_worldwide_express_plus
@@ -462,6 +463,7 @@ class TrackingStatus(utils.Enum):
     in_transit = [""]
     delivery_failed = ["RS"]
     out_for_delivery = ["OT"]
+
 
 # from https://developer.ups.com/api/reference/rating/appendix?loc=en_US
 class SurchargeType(utils.StrEnum):

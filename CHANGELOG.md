@@ -1,3 +1,12 @@
+# Karrio 2024.9.8
+
+## Changes
+
+### Fix
+
+- fix: `ups` product origin country code mapping
+- fix: `ups` `ups_worldwide_express` product code mapping
+
 # Karrio 2024.9.7
 
 ## Changes

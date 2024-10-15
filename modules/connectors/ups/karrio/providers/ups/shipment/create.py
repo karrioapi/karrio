@@ -469,7 +469,9 @@ def shipment_request(
                                         ),
                                         CommodityCode=item.hs_code,
                                         PartNumber=item.sku,
-                                        OriginCountryCode=item.origin_country,
+                                        OriginCountryCode=lib.identity(
+                                            item.origin_country or shipper.country_code
+                                        ),
                                         JointProductionIndicator=None,
                                         NetCostCode=None,
                                         NetCostDateRange=None,
