@@ -50,7 +50,7 @@ def _extract_details(
             else [("Taxes", sum(lib.to_money(c.MonetaryValue) for c in taxes))]
         ),
         *lib.identity(
-            (rate.Service.Code, rate.ServiceOptionsCharges.MonetaryValue)
+            [(rate.Service.Code, rate.ServiceOptionsCharges.MonetaryValue)]
             if lib.to_int(rate.ServiceOptionsCharges.MonetaryValue) > 0
             else []
         ),
@@ -58,7 +58,11 @@ def _extract_details(
             (
                 lib.identity(
                     provider_units.SurchargeType.map(
-                        str(getattr(c, "Code", None) or getattr(c, "Type", None))
+                        str(
+                            getattr(c, "Code", None)
+                            or getattr(c, "Type", None)
+                            or "000"
+                        )
                     )
                     .name_or_key.replace("_", " ")
                     .upper()
