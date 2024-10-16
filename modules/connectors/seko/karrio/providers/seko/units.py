@@ -66,6 +66,8 @@ class ShippingOption(lib.Enum):
     seko_amount_collected = lib.OptionEnum("AmountCollected", float)
     seko_tax_collected = lib.OptionEnum("TaxCollected", bool)
     seko_cod_amount = lib.OptionEnum("CODAmount", float)
+    seko_reference_2 = lib.OptionEnum("Reference2")
+    seko_reference_3 = lib.OptionEnum("Reference3")
 
     """ Unified Option type mapping """
     saturday_delivery = seko_is_saturday_delivery

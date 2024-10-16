@@ -71,7 +71,7 @@ def shipment_request(
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels)
-    service = provider_units.ShippingService.map(payload.service)
+    service = provider_units.ShippingService.map(payload.service).value_or_key
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
@@ -95,8 +95,8 @@ def shipment_request(
     # map data to convert karrio model to seko specific type
     request = seko.ShippingRequestType(
         DeliveryReference=payload.reference,
-        Reference2=None,
-        Reference3=None,
+        Reference2=options.seko_reference_2.state,
+        Reference3=options.seko_reference_3.state,
         Origin=seko.DestinationType(
             Id=options.seko_origin_id.state,
             Name=shipper.company_name,
@@ -174,7 +174,7 @@ def shipment_request(
         ),
         IncludeLineDetails=True,
         Carrier=options.seko_carrier.state,
-        Service=service.value_or_key,
+        Service=service,
         CostCentreName=settings.connection_config.cost_center.state,
         CodValue=options.cash_on_delivery.state,
         TaxCollected=lib.identity(
