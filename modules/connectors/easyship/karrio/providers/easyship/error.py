@@ -11,7 +11,13 @@ def parse_error_response(
     settings: provider_utils.Settings,
     **kwargs,
 ) -> typing.List[models.Message]:
-    errors: list = [response["error"]] if response.get("error") else []
+    errors: list = [
+        *([response["error"]] if response.get("error") else []),
+        *[
+            dict(code="warning", message=message)
+            for message in response.get("meta", {}).get("errors", [])
+        ],
+    ]
 
     return [
         models.Message(
