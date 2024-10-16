@@ -104,7 +104,7 @@ PickupPayload = {
     "options": {
         "sapient_slot_reservation_id": "1f3c991f-a6ff-4ffb-9292-17690d745992",
         "sapient_shipment_id": "fa3bb603-2687-4b38-ba18-3264208446c6",
-        "sapient_carrier": "RM",
+        "sapient_carrier_code": "RM",
     },
 }
 
@@ -127,7 +127,7 @@ PickupUpdatePayload = {
     "parcels": [{"weight": 20, "weight_unit": "LB"}],
     "options": {
         "sapient_shipment_id": "fa3bb603-2687-4b38-ba18-3264208446c6",
-        "sapient_carrier": "RM",
+        "sapient_carrier_code": "RM",
         "sapient_bring_my_label": True,
     },
 }
@@ -136,7 +136,7 @@ PickupCancelPayload = {
     "confirmation_number": "0074698052",
     "options": {
         "sapient_shipment_id": "fa3bb603-2687-4b38-ba18-3264208446c6",
-        "sapient_carrier": "RM",
+        "sapient_carrier_code": "RM",
     },
 }
 
@@ -148,7 +148,7 @@ ParsedPickupResponse = [
         "pickup_date": "2023-07-04",
         "meta": {
             "sapient_shipment_id": "fa3bb603-2687-4b38-ba18-3264208446c6",
-            "sapient_carrier": "RM",
+            "sapient_carrier_code": "RM",
         },
     },
     [],
@@ -179,7 +179,7 @@ PickupUpdateRequest = {
 
 
 PickupCancelRequest = {
-    "carrier": "RM",
+    "carrier_code": "RM",
     "shipmentId": "fa3bb603-2687-4b38-ba18-3264208446c6",
 }
 

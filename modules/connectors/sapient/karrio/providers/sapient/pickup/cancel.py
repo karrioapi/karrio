@@ -39,7 +39,7 @@ def pickup_cancel_request(
             "PickupOptions",
             # fmt: off
             {
-                "sapient_carrier": lib.OptionEnum("sapient_carrier"),
+                "sapient_carrier_code": lib.OptionEnum("sapient_carrier_code"),
                 "sapient_shipment_id": lib.OptionEnum("sapient_shipment_id"),
             },
             # fmt: on
@@ -49,7 +49,9 @@ def pickup_cancel_request(
     # map data to convert karrio model to sapient specific type
     request = dict(
         shipmentId=options.sapient_shipment_id.state,
-        carrier=options.sapient_carrier.state or settings.carrier_code,
+        carrier_code=lib.identity(
+            options.sapient_carrier_code.state or settings.sapient_carrier_code
+        ),
     )
 
     return lib.Serializable(request, lib.to_dict)

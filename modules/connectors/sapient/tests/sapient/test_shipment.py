@@ -178,7 +178,8 @@ ParsedShipmentResponse = [
         },
         "label_type": "PDF",
         "meta": {
-            "sapient_carrier": "RM",
+            "sapient_carrier_code": "RM",
+            "rate_provider": "royalmail",
             "sapient_shipment_id": "fa3bb603-2687-4b38-ba18-3264208446c6",
             "shipment_ids": ["fa3bb603-2687-4b38-ba18-3264208446c6"],
             "tracking_numbers": ["TT123456785GB"],

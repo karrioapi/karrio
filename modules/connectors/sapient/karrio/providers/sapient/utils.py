@@ -18,7 +18,7 @@ class Settings(core.Settings):
     client_id: str
     client_secret: str
     shipping_account_id: str
-    carrier_code: SapientCarrierCode = "RM"  # type: ignore
+    sapient_carrier_code: SapientCarrierCode = "RM"  # type: ignore
 
     @property
     def carrier_name(self):

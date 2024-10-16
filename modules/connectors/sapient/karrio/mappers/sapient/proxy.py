@@ -15,7 +15,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
-            url=f"{self.settings.server_url}/v4/shipments/{request.ctx['carrier']}",
+            url=f"{self.settings.server_url}/v4/shipments/{request.ctx['carrier_code']}",
             data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="POST",
@@ -48,7 +48,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
 
     def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
-            url=f"{self.settings.server_url}/v4/collections/{request.ctx['carrier']}/{request.ctx['shipmentId']}",
+            url=f"{self.settings.server_url}/v4/collections/{request.ctx['carrier_code']}/{request.ctx['shipmentId']}",
             data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="POST",
@@ -73,7 +73,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
     def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
         payload = request.serialize()
         response = lib.request(
-            url=f"{self.settings.server_url}/v4/collections/{payload['carrier']}/{payload['shipmentId']}/cancel",
+            url=f"{self.settings.server_url}/v4/collections/{payload['carrier_code']}/{payload['shipmentId']}/cancel",
             trace=self.trace_as("json"),
             method="PUT",
             headers={
