@@ -1,3 +1,11 @@
+# Karrio 2024.9.9
+
+## Changes
+
+### Fix
+
+- hotfix: `ups` rate service charge parsing regression
+
 # Karrio 2024.9.8
 
 ## Changes
