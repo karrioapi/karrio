@@ -281,26 +281,45 @@ def exec_parrallel(
     function: Callable, sequence: List[S], max_workers: int = None
 ) -> List[T]:
     """Return a list of result for function execution on each element of the sequence."""
-    workers = len(sequence) or max_workers or 2
+    if not sequence:
+        return []  # No work to do
+
+    workers = min(len(sequence), max_workers or len(sequence))
+
     with ThreadPoolExecutor(max_workers=workers) as executor:
-        requests = {executor.submit(function, item): item for item in sequence}
-        return [response.result() for response in as_completed(requests)]
+        # Submit tasks
+        futures = [executor.submit(function, item) for item in sequence]
+
+        # Collect results as tasks complete
+        results = []
+        for future in as_completed(futures):
+            try:
+                results.append(future.result())  # Append result of the completed task
+            except Exception as e:
+                results.append(e)  # Optionally handle or log exceptions here
+
+        return results
 
 
 def exec_async(action: Callable, sequence: List[S]) -> List[T]:
-    async def run_tasks(loop):
+    async def run_tasks():
+        # Use asyncio.to_thread instead of loop.run_in_executor
+        # This ensures proper task scheduling and prevents potential task dropping
         return await asyncio.gather(
-            *[loop.run_in_executor(None, lambda: action(args)) for args in sequence]
+            *[asyncio.to_thread(action, args) for args in sequence]
         )
 
-    def run_loop():
-        loop = asyncio.new_event_loop()
-        result = loop.run_until_complete(run_tasks(loop))
-        loop.close()
+    async def run_loop():
+        # Simplified to just return the result of run_tasks
+        # No need for manual loop creation and closing
+        return await run_tasks()
 
-        return result
+    # Use asyncio.run instead of ThreadPoolExecutor
+    # This properly sets up and tears down the event loop
+    # Preventing issues with loop closure and task cleanup
+    result = asyncio.run(run_loop())
 
-    result = ThreadPoolExecutor().submit(run_loop).result()
+    # Cast the result to the expected type
     return cast(List[T], result)
 
 

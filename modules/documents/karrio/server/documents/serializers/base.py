@@ -21,6 +21,9 @@ class DocumentTemplateData(serializers.Serializer):
     metadata = serializers.PlainDictField(
         help_text="The template metadata", required=False
     )
+    options = serializers.PlainDictField(
+        help_text="The template rendering options", required=False
+    )
     related_object = serializers.ChoiceField(
         choices=TemplateRelatedObject,
         help_text="The template related object",
@@ -56,6 +59,10 @@ class DocumentData(serializers.Serializer):
         help_text="The template data",
         required=False,
         default={},
+    )
+    options = serializers.PlainDictField(
+        help_text="The template rendering options",
+        required=False,
     )
 
 

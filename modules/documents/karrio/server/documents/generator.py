@@ -1,4 +1,5 @@
 import io
+import string
 import typing
 import base64
 import jinja2
@@ -33,6 +34,8 @@ class Documents:
         related_object: str = None,
         **kwargs,
     ) -> io.BytesIO:
+        options = kwargs.get("options") or {}
+        metadata = kwargs.get("metadata") or {}
         shipment_contexts = data.get("shipments_context") or lib.identity(
             get_shipments_context(data["shipments"])
             if "shipments" in data and related_object == "shipment"
@@ -46,28 +49,49 @@ class Documents:
         generic_contexts = data.get("generic_context") or lib.identity(
             [{"data": data}] if related_object is None else []
         )
-
         filename = lib.identity(
             dict(filename=kwargs.get("doc_name")) if kwargs.get("doc_name") else {}
         )
 
+        prefetch = lambda ctx: {
+            k: v
+            for o in lib.run_concurently(
+                lambda _: {
+                    _[0]: str(
+                        lib.failsafe(
+                            lambda: _[1].render(
+                                **ctx,
+                                metadata=metadata,
+                                units=UNITS,
+                                utils=utils,
+                                lib=lib,
+                            )
+                            or ""
+                        )
+                    )
+                },
+                [
+                    (key, jinja2.Template(value))
+                    for key, value in options.get("prefetch", {}).items()
+                ],
+            )
+            for k, v in o.items()
+        }
+
         jinja_template = jinja2.Template(template)
-        content = PAGE_SEPARATOR.join(
-            [
-                *[
-                    jinja_template.render(**ctx, units=UNITS, utils=utils, lib=lib)
-                    for ctx in shipment_contexts
-                ],
-                *[
-                    jinja_template.render(**ctx, units=UNITS, utils=utils, lib=lib)
-                    for ctx in order_contexts
-                ],
-                *[
-                    jinja_template.render(**ctx, units=UNITS, utils=utils, lib=lib)
-                    for ctx in generic_contexts
-                ],
-            ]
+        all_contexts = shipment_contexts + order_contexts + generic_contexts
+        rendered_pages = lib.run_asynchronously(
+            lambda ctx: jinja_template.render(
+                **ctx,
+                metadata=metadata,
+                units=UNITS,
+                utils=utils,
+                lib=lib,
+                prefetch=prefetch(ctx),
+            ),
+            all_contexts,
         )
+        content = PAGE_SEPARATOR.join(rendered_pages)
 
         buffer = io.BytesIO()
         weasyprint.HTML(string=content).write_pdf(
@@ -87,6 +111,8 @@ class Documents:
         return Documents.generate(
             template=document.template,
             data=data,
+            options=document.options,
+            metadata=document.metadata,
             related_object=document.related_object,
             **kwargs,
         )

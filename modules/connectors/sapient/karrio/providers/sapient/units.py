@@ -252,7 +252,7 @@ class ShippingService(lib.StrEnum):
     # fmt: on
 
     @classmethod
-    def carrier(cls, value: str) -> str:
+    def carrier(cls, value: str) -> dict:
         return next((_ for _ in SAPIENT_CARRIERS if _["alias"] in value), None)
 
     @classmethod

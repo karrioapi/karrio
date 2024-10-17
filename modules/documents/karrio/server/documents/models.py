@@ -42,6 +42,11 @@ class DocumentTemplate(core.OwnedEntity):
         null=True,
         default=core.field_default({}),
     )
+    options = models.JSONField(
+        blank=True,
+        null=True,
+        default=core.field_default({}),
+    )
 
     @property
     def object_type(self):
