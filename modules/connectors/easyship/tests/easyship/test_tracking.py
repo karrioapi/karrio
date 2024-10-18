@@ -67,7 +67,15 @@ ParsedTrackingResponse = [
             "tracking_number": "Courier 1",
         }
     ],
-    [],
+    [
+        {
+            "carrier_id": "easyship",
+            "carrier_name": "easyship",
+            "code": "warning",
+            "details": {"shipment_id": "ESSG10006002"},
+            "message": "string",
+        }
+    ],
 ]
 
 ParsedErrorResponse = [

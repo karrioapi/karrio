@@ -1,3 +1,17 @@
+# Karrio 2024.9.10
+
+## Changes
+
+### Feat
+
+- feat: add support for additional seko_reference_*
+- feat: add rate_provider mapping to sapient integration and refactor sapient_carrier_code references to avoid clash with carrier_code reserved field
+- feat: Introduce document template options field for pre-rendering optimization
+
+### Fix
+
+- fix: shipment parsing when label generation fails but shipment creation succeeds
+
 # Karrio 2024.9.9
 
 ## Changes

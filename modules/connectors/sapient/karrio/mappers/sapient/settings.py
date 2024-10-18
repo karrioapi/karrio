@@ -16,7 +16,7 @@ class Settings(provider_utils.Settings):
     client_id: str
     client_secret: str
     shipping_account_id: str
-    carrier_code: provider_utils.SapientCarrierCode = "RM"  # type: ignore
+    sapient_carrier_code: provider_utils.SapientCarrierCode = "RM"  # type: ignore
 
     # generic properties
     id: str = None

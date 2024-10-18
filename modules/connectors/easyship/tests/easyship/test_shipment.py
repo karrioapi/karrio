@@ -70,6 +70,17 @@ class TestEasyshipShipping(unittest.TestCase):
                 lib.to_dict(parsed_response), ParsedCancelShipmentResponse
             )
 
+    def test_parse_shipment_response_without_label(self):
+        with patch("karrio.mappers.easyship.proxy.lib.request") as mock:
+            mock.return_value = ShipmentWithoutLabelResponse
+            parsed_response = (
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+            )
+
+            self.assertEqual(
+                lib.to_dict(parsed_response), ParsedShipmentResponseWithoutLabel
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -176,6 +187,20 @@ ParsedCancelShipmentResponse = ParsedCancelShipmentResponse = [
     [],
 ]
 
+ParsedShipmentResponseWithoutLabel = [
+    None,
+    [
+        {
+            "carrier_id": "easyship",
+            "carrier_name": "easyship",
+            "code": "warning",
+            "details": {},
+            "message": "Invalid address provided for Receiver Address - Unable to "
+            "identify address if street number is missing.",
+        }
+    ],
+]
+
 
 ShipmentRequest = {
     "courier_selection": {
@@ -279,8 +304,8 @@ ShipmentRequest = {
     ],
 }
 
-
 ShipmentCancelRequest = {"easyship_shipment_id": "ESUS220509144"}
+
 
 ShipmentResponse = """{
 	"shipment": {
@@ -1087,6 +1112,204 @@ ShipmentCancelResponse = """{
   },
   "success": {
     "message": "Shipment successfully cancelled"
+  }
+}
+"""
+
+ShipmentWithoutLabelResponse = """{
+  "shipment": {
+    "easyship_shipment_id": "ESUS222545538",
+    "buyer_regulatory_identifiers": {
+      "ein": null,
+      "ssn": null,
+      "vat_number": null
+    },
+    "consignee_tax_id": null,
+    "courier": {
+      "id": "c3e97b11-2842-44f1-84d1-afaa6b3f0a7c",
+      "name": "USPS - Ground Advantage"
+    },
+    "created_at": "2024-10-10T15:55:23Z",
+    "currency": "USD",
+    "delivery_state": "not_created",
+    "destination_address": {
+      "city": "North Charleston",
+      "company_name": "N/A",
+      "contact_email": "user@mail.com",
+      "contact_name": "Antoine Jean Philippe Mosneron Dupin",
+      "contact_phone": "N/A",
+      "country_alpha2": "US",
+      "line_1": "Park Circle",
+      "line_2": null,
+      "postal_code": "29405",
+      "state": "SC"
+    },
+    "eei_reference": null,
+    "incoterms": "DDU",
+    "insurance": {
+      "is_insured": false,
+      "insured_amount": 533.75,
+      "insured_currency": "USD"
+    },
+    "label_generated_at": null,
+    "label_paid_at": "2024-10-10T15:55:24Z",
+    "label_state": "failed",
+    "last_failure_http_response_messages": [
+      {
+        "code": "1019000",
+        "content": "Invalid address provided for Receiver Address - Unable to identify address if street number is missing."
+      }
+    ],
+    "metadata": {},
+    "order_created_at": null,
+    "order_data": {
+      "buyer_notes": null,
+      "buyer_selected_courier_name": null,
+      "order_created_at": null,
+      "order_tag_list": [],
+      "platform_name": null,
+      "platform_order_number": null,
+      "seller_notes": null
+    },
+    "origin_address": {
+      "city": "Jamaica",
+      "company_name": "N/A",
+      "contact_email": "user@mail.com",
+      "contact_name": "Mark3 JFK C/O Teleship",
+      "contact_phone": "N/A",
+      "country_alpha2": "US",
+      "line_1": "147-02 181st St",
+      "line_2": null,
+      "postal_code": "11413",
+      "state": "NY"
+    },
+    "parcels": [
+      {
+        "box": {
+          "id": null,
+          "name": null,
+          "outer_dimensions": { "length": 40, "width": 30, "height": 16 },
+          "slug": null,
+          "type": "box",
+          "weight": 0
+        },
+        "id": "d6456c12-0bc0-401f-84d9-ddebf28e404b",
+        "items": [
+          {
+            "actual_weight": 0.18,
+            "category": "Bags & Luggages",
+            "contains_battery_pi966": false,
+            "contains_battery_pi967": false,
+            "contains_liquids": false,
+            "declared_currency": "GBP",
+            "declared_customs_value": 134,
+            "description": "These elegant Ilios earrings feature a delicate and intricate flowery design, crafted from high-q...",
+            "dimensions": { "length": 0, "width": 0, "height": 0 },
+            "hs_code": null,
+            "id": "dff7df0b-9c10-4dd8-b5de-8de8e826310a",
+            "origin_country_alpha2": "GB",
+            "origin_currency": "USD",
+            "origin_customs_value": 175.1482878609744,
+            "quantity": 3,
+            "sku": "stock-1"
+          }
+        ],
+        "total_actual_weight": 1.2
+      }
+    ],
+    "pickup_state": "not_requested",
+    "rates": [
+      {
+        "additional_services_surcharge": 0,
+        "available_handover_options": ["dropoff", "free_pickup"],
+        "cost_rank": 1,
+        "courier_id": "c3e97b11-2842-44f1-84d1-afaa6b3f0a7c",
+        "courier_logo_url": null,
+        "courier_name": "USPS - Ground Advantage",
+        "courier_remarks": null,
+        "currency": "USD",
+        "ddp_handling_fee": 0,
+        "delivery_time_rank": 1,
+        "description": null,
+        "discount": { "amount": 0, "origin_amount": 0 },
+        "easyship_rating": null,
+        "estimated_import_duty": 0,
+        "estimated_import_tax": 0,
+        "fuel_surcharge": 0,
+        "full_description": null,
+        "import_duty_charge": 0,
+        "import_tax_charge": 0,
+        "import_tax_non_chargeable": 0,
+        "incoterms": "DDU",
+        "insurance_fee": 0,
+        "is_above_threshold": false,
+        "max_delivery_time": 5,
+        "min_delivery_time": 2,
+        "minimum_pickup_fee": 0,
+        "other_surcharges": null,
+        "oversized_surcharge": 0,
+        "payment_recipient": "Easyship",
+        "provincial_sales_tax": 0,
+        "rates_in_origin_currency": null,
+        "remote_area_surcharge": 0,
+        "remote_area_surcharges": null,
+        "residential_discounted_fee": null,
+        "residential_full_fee": null,
+        "sales_tax": 0,
+        "shipment_charge": 8.31,
+        "shipment_charge_total": 8.31,
+        "total_charge": 8.31,
+        "tracking_rating": 2,
+        "value_for_money_rank": 1,
+        "warehouse_handling_fee": 0
+      }
+    ],
+    "regulatory_identifiers": {
+      "eori": null,
+      "ioss": null,
+      "vat_number": null
+    },
+    "return": false,
+    "return_address": {
+      "city": "Jamaica",
+      "company_name": "N/A",
+      "contact_email": "user@mail.com",
+      "contact_name": "Mark3 JFK C/O Teleship",
+      "contact_phone": "N/A",
+      "country_alpha2": "US",
+      "line_1": "147-02 181st St",
+      "line_2": null,
+      "postal_code": "11413",
+      "state": "NY"
+    },
+    "sender_address": {
+      "city": "Jamaica",
+      "company_name": "N/A",
+      "contact_email": "user@mail.com",
+      "contact_name": "Mark3 JFK C/O Teleship",
+      "contact_phone": "N/A",
+      "country_alpha2": "US",
+      "line_1": "147-02 181st St",
+      "line_2": null,
+      "postal_code": "11413",
+      "state": "NY"
+    },
+    "set_as_residential": true,
+    "shipment_state": "created",
+    "shipping_documents": [],
+    "shipping_settings": { "b13a_filing": null },
+    "tracking_page_url": "https://www.trackmyshipment.co/shipment-tracking/ESUS222545538",
+    "trackings": [],
+    "updated_at": "2024-10-10T15:55:25Z",
+    "warehouse_state": "none"
+  },
+  "meta": {
+    "errors": [
+      "Invalid address provided for Receiver Address - Unable to identify address if street number is missing."
+    ],
+    "request_id": "a9dc653f7581c0520cf3471595233ff8",
+    "status": "partial_success",
+    "unavailable_couriers": []
   }
 }
 """

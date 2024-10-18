@@ -27,7 +27,7 @@ class DocumentTemplateAdmin(admin.ModelAdmin):
     list_display = ("slug", "name", "related_object", "active", "created_at")
     search_fields = ("name", "description", "slug", "related_object")
     list_filter = ("slug", "active")
-    readonly_fields = ("metadata", "created_by")
+    readonly_fields = ("created_by",)
 
     def get_queryset(self, request):
         if settings.MULTI_ORGANIZATIONS:

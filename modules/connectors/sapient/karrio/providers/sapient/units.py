@@ -252,10 +252,16 @@ class ShippingService(lib.StrEnum):
     # fmt: on
 
     @classmethod
-    def carrier(cls, value: str) -> str:
-        return next(
-            (_["CarrierCode"] for _ in SAPIENT_CARRIERS if _["alias"] in value), None
-        )
+    def carrier(cls, value: str) -> dict:
+        return next((_ for _ in SAPIENT_CARRIERS if _["alias"] in value), None)
+
+    @classmethod
+    def carrier_code(cls, value: str) -> str:
+        return (cls.carrier(value) or {}).get("CarrierCode")
+
+    @classmethod
+    def carrier_alias(cls, value: str) -> str:
+        return (cls.carrier(value) or {}).get("alias")
 
 
 class ShippingOption(lib.Enum):
@@ -330,7 +336,7 @@ SAPIENT_CARRIERS = [
         "CarrierCode": "RM",
         "Name": "Royal Mail",
         "Description": "Produces labels, required documentation, billing management for shipments sent via the Royal Mail network.",
-        "alias": "royal_mail",
+        "alias": "royalmail",
     },
     {
         "CarrierCode": "UPS",
@@ -625,3 +631,8 @@ DEFAULT_SERVICES = [
     )
     for _, __ in SERVICES_DATA
 ]
+
+ShippingCarrier = lib.Enum(
+    "ShippingCarrier",
+    {carrier["alias"]: carrier["CarrierCode"] for carrier in SAPIENT_CARRIERS},
+)

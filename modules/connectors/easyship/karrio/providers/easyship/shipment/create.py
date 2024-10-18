@@ -22,7 +22,7 @@ def parse_shipment_response(
     shipment = lib.identity(
         _extract_details(response, settings, ctx=_response.ctx)
         if response.get("shipment")
-        and any(response["shipment"]["shipping_documents"] or [])
+        and any(response["shipment"].get("shipping_documents") or [])
         else None
     )
 

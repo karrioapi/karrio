@@ -50,8 +50,9 @@ def _extract_details(
             carrier_tracking_link=lib.failsafe(lambda: details.Packages[0].TrackingUrl),
             shipment_ids=shipment_ids,
             tracking_numbers=tracking_numbers,
-            sapient_carrier=ctx.get("carrier"),
             sapient_shipment_id=shipment_ids[0],
+            rate_provider=ctx.get("rate_provider"),
+            sapient_carrier_code=ctx.get("carrier_code"),
         ),
     )
 
@@ -65,7 +66,11 @@ def shipment_request(
     return_address = lib.to_address(payload.return_address)
     packages = lib.to_packages(payload.parcels)
     service = provider_units.ShippingService.map(payload.service).value_or_key
-    carrier = provider_units.ShippingService.carrier(service) or settings.carrier_code
+    carrier_code = lib.identity(
+        provider_units.ShippingService.carrier_code(service)
+        or settings.sapient_carrier_code
+    )
+    rate_provider = provider_units.ShippingCarrier.map(carrier_code).name_or_key
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
@@ -233,4 +238,8 @@ def shipment_request(
         ),
     )
 
-    return lib.Serializable(request, lib.to_dict, dict(carrier=carrier))
+    return lib.Serializable(
+        request,
+        lib.to_dict,
+        dict(carrier_code=carrier_code, rate_provider=rate_provider),
+    )

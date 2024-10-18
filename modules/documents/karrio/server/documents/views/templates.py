@@ -177,10 +177,13 @@ class DocumentGenerator(api.APIView):
             if data.get("template_id") is None
             else models.DocumentTemplate.objects.get(pk=data.get("template_id"))
         )
+
         doc_file = generator.Documents.generate(
             getattr(document_template, "template", data.get("template")),
             related_object=getattr(document_template, "related_object", None),
+            metadata=getattr(document_template, "metadata", {}),
             data=data.get("data"),
+            options=data.get("options"),
             doc_name=data.get("doc_name"),
             doc_fomat=data.get("doc_format"),
         )

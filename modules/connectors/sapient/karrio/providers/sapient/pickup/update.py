@@ -40,7 +40,7 @@ def _extract_details(
         pickup_date=lib.fdate(details.CollectionDate),
         meta=dict(
             sapient_shipment_id=ctx.get("shipmentId"),
-            sapient_carrier=ctx.get("carrier"),
+            sapient_carrier_code=ctx.get("carrier_code"),
         ),
     )
 
@@ -55,8 +55,8 @@ def pickup_update_request(
             "PickupOptions",
             # fmt: off
             {
-                "sapient_carrier": lib.OptionEnum("sapient_carrier"),
                 "sapient_shipment_id": lib.OptionEnum("shipment_id"),
+                "sapient_carrier_code": lib.OptionEnum("sapient_carrier_code"),
                 "sapient_slot_reservation_id": lib.OptionEnum("SlotReservationId"),
                 "sapient_bring_my_label": lib.OptionEnum("BringMyLabel", bool),
             },
@@ -80,6 +80,8 @@ def pickup_update_request(
         lib.to_dict,
         dict(
             shipmentId=options.sapient_shipment_id.state,
-            carrier=options.sapient_carrier.state or settings.carrier_code,
+            carrier_code=lib.identity(
+                options.sapient_carrier_code.state or settings.sapient_carrier_code
+            ),
         ),
     )
