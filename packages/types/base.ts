@@ -50,6 +50,7 @@ export type ShipmentType = graph.get_shipment_shipment & {
   messages?: MessageType[];
   selected_rate?: RateType;
   payment?: PaymentType;
+  tracker?: TrackerType;
 };
 export interface OrderType extends graph.get_order_order {
   line_items: graph.get_order_order_line_items[];
@@ -415,6 +416,7 @@ export const CARRIER_IMAGES: Collection = {
   dhl_ecom: "dhl_express",
   dhl_express: "dhl_express",
   dhl_poland: "dhl_express",
+  dhl: "dhl",
   dpdhl: "dhl_express",
   dhl_parcel_de: "dhl_express",
   dhl_universal: "dhl_universal",
