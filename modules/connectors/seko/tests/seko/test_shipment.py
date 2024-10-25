@@ -281,6 +281,7 @@ ShipmentRequest = {
             "Currency": "USD",
             "Country": "AU",
             "itemSKU": "SKU123",
+            "HarmonizedCode": "0000.00.00",
         },
         {
             "Description": "Food Bar",
@@ -289,6 +290,7 @@ ShipmentRequest = {
             "UnitKg": 0.6,
             "Currency": "USD",
             "Country": "AU",
+            "HarmonizedCode": "0000.00.00",
         },
     ],
     "Packages": [

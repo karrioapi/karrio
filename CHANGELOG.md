@@ -1,3 +1,18 @@
+# Karrio 2024.9.11
+
+## Changes
+
+### Feat
+
+- feat: consolidate SEKO printlabel for EU shipments
+- feat: skip customs declaration for sapient when not international shipment
+- feat: add DAP incoterms
+- feat: make start-server script port configurable through env var
+
+### Chore
+
+- deps: add pycairo as dependency for document generation Macos compatibility
+
 # Karrio 2024.9.10
 
 ## Changes
