@@ -76,6 +76,7 @@ class Incoterm(utils.StrEnum):
     CIF = "Cost Insurance and Freight"
     CIP = "Carriage and Insurance Paid"
     CPT = "Carriage Paid To"
+    DAP = "Delivery at Place"
     DAF = "Delivered at Frontier"
     DDP = "Delivery Duty Paid"
     DDU = "Delivery Duty Unpaid"

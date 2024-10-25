@@ -7,11 +7,11 @@ certifi==2024.8.30
 cffi==1.17.1
 charset-normalizer==3.4.0
 click==8.1.7
-cryptography==43.0.1
+cryptography==43.0.3
 cssselect2==0.7.0
 deprecation==2.1.0
-diff-match-patch==20230430
-dj-database-url==2.2.0
+diff-match-patch==20241021
+dj-database-url==2.3.0
 Django==4.2.16
 django-constance==3.1.0
 django-cors-headers==4.5.0
@@ -20,7 +20,7 @@ django-email-verification==0.3.3
 django-filter==24.3
 django-formtools==2.5.1
 django-health-check==3.18.3
-django-import-export==4.1.1
+django-import-export==4.2.0
 django-oauth-toolkit==3.0.1
 django-otp==1.5.4
 django-phonenumber-field==8.0.0
@@ -46,74 +46,75 @@ jsonschema==4.23.0
 jsonschema-specifications==2024.10.1
 jstruct==2021.11
 jwcrypto==1.5.6
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio&subdirectory=modules/sdk
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.allied_express&subdirectory=modules/connectors/allied_express
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.allied_express_local&subdirectory=modules/connectors/allied_express_local
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.amazon_shipping&subdirectory=modules/connectors/amazon_shipping
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.aramex&subdirectory=modules/connectors/aramex
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.asendia_us&subdirectory=modules/connectors/asendia_us
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.australiapost&subdirectory=modules/connectors/australiapost
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.boxknight&subdirectory=modules/connectors/boxknight
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.bpost&subdirectory=modules/connectors/bpost
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.canadapost&subdirectory=modules/connectors/canadapost
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.canpar&subdirectory=modules/connectors/canpar
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.chronopost&subdirectory=modules/connectors/chronopost
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.colissimo&subdirectory=modules/connectors/colissimo
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.dhl_express&subdirectory=modules/connectors/dhl_express
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.dhl_parcel_de&subdirectory=modules/connectors/dhl_parcel_de
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.dhl_poland&subdirectory=modules/connectors/dhl_poland
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.dhl_universal&subdirectory=modules/connectors/dhl_universal
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.dicom&subdirectory=modules/connectors/dicom
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.dpd&subdirectory=modules/connectors/dpd
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.dpdhl&subdirectory=modules/connectors/dpdhl
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.easypost&subdirectory=modules/connectors/easypost
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.easyship&subdirectory=modules/connectors/easyship
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.eshipper&subdirectory=modules/connectors/eshipper
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.fedex&subdirectory=modules/connectors/fedex
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.fedex_ws&subdirectory=modules/connectors/fedex_ws
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.freightcom&subdirectory=modules/connectors/freightcom
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.generic&subdirectory=modules/connectors/generic
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.geodis&subdirectory=modules/connectors/geodis
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.hay_post&subdirectory=modules/connectors/hay_post
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.laposte&subdirectory=modules/connectors/laposte
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.locate2u&subdirectory=modules/connectors/locate2u
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.nationex&subdirectory=modules/connectors/nationex
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.purolator&subdirectory=modules/connectors/purolator
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.roadie&subdirectory=modules/connectors/roadie
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.royalmail&subdirectory=modules/connectors/royalmail
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.sapient&subdirectory=modules/connectors/sapient
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.sendle&subdirectory=modules/connectors/sendle
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.server&subdirectory=apps/api
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.server.core&subdirectory=modules/core
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.server.data&subdirectory=modules/data
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.server.documents&subdirectory=modules/documents
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.server.events&subdirectory=modules/events
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.server.graph&subdirectory=modules/graph
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.server.manager&subdirectory=modules/manager
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.server.orders&subdirectory=modules/orders
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.server.pricing&subdirectory=modules/pricing
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.server.proxy&subdirectory=modules/proxy
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.tge&subdirectory=modules/connectors/tge
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.tnt&subdirectory=modules/connectors/tnt
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.ups&subdirectory=modules/connectors/ups
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.usps&subdirectory=modules/connectors/usps
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.usps_international&subdirectory=modules/connectors/usps_international
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.usps_wt&subdirectory=modules/connectors/usps_wt
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.usps_wt_international&subdirectory=modules/connectors/usps_wt_international
--e git+ssh://git@github.com/karrioapi/karrio.git@a5ec98b5db5ffd2e7b3d30c56f0f07a52aba4f57#egg=karrio.zoom2u&subdirectory=modules/connectors/zoom2u
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio&subdirectory=modules/sdk
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.allied_express&subdirectory=modules/connectors/allied_express
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.allied_express_local&subdirectory=modules/connectors/allied_express_local
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.amazon_shipping&subdirectory=modules/connectors/amazon_shipping
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.aramex&subdirectory=modules/connectors/aramex
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.asendia_us&subdirectory=modules/connectors/asendia_us
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.australiapost&subdirectory=modules/connectors/australiapost
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.boxknight&subdirectory=modules/connectors/boxknight
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.bpost&subdirectory=modules/connectors/bpost
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.canadapost&subdirectory=modules/connectors/canadapost
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.canpar&subdirectory=modules/connectors/canpar
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.chronopost&subdirectory=modules/connectors/chronopost
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.colissimo&subdirectory=modules/connectors/colissimo
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.dhl_express&subdirectory=modules/connectors/dhl_express
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.dhl_parcel_de&subdirectory=modules/connectors/dhl_parcel_de
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.dhl_poland&subdirectory=modules/connectors/dhl_poland
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.dhl_universal&subdirectory=modules/connectors/dhl_universal
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.dicom&subdirectory=modules/connectors/dicom
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.dpd&subdirectory=modules/connectors/dpd
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.dpdhl&subdirectory=modules/connectors/dpdhl
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.easypost&subdirectory=modules/connectors/easypost
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.easyship&subdirectory=modules/connectors/easyship
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.eshipper&subdirectory=modules/connectors/eshipper
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.fedex&subdirectory=modules/connectors/fedex
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.fedex_ws&subdirectory=modules/connectors/fedex_ws
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.freightcom&subdirectory=modules/connectors/freightcom
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.generic&subdirectory=modules/connectors/generic
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.geodis&subdirectory=modules/connectors/geodis
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.hay_post&subdirectory=modules/connectors/hay_post
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.laposte&subdirectory=modules/connectors/laposte
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.locate2u&subdirectory=modules/connectors/locate2u
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.nationex&subdirectory=modules/connectors/nationex
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.purolator&subdirectory=modules/connectors/purolator
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.roadie&subdirectory=modules/connectors/roadie
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.royalmail&subdirectory=modules/connectors/royalmail
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.sapient&subdirectory=modules/connectors/sapient
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.sendle&subdirectory=modules/connectors/sendle
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.server&subdirectory=apps/api
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.server.core&subdirectory=modules/core
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.server.data&subdirectory=modules/data
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.server.documents&subdirectory=modules/documents
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.server.events&subdirectory=modules/events
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.server.graph&subdirectory=modules/graph
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.server.manager&subdirectory=modules/manager
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.server.orders&subdirectory=modules/orders
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.server.pricing&subdirectory=modules/pricing
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.server.proxy&subdirectory=modules/proxy
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.tge&subdirectory=modules/connectors/tge
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.tnt&subdirectory=modules/connectors/tnt
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.ups&subdirectory=modules/connectors/ups
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.usps&subdirectory=modules/connectors/usps
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.usps_international&subdirectory=modules/connectors/usps_international
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.usps_wt&subdirectory=modules/connectors/usps_wt
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.usps_wt_international&subdirectory=modules/connectors/usps_wt_international
+-e git+ssh://git@github.com/karrioapi/karrio.git@1c595c376aea286e9bad4730bbbcf6eac32c389b#egg=karrio.zoom2u&subdirectory=modules/connectors/zoom2u
 lxml==4.9.4
 lxml-stubs==0.5.1
-MarkupSafe==3.0.1
+MarkupSafe==3.0.2
 monotonic==1.6
 more-itertools==10.5.0
 oauthlib==3.2.2
 packaging==24.1
-phonenumbers==8.13.47
+phonenumbers==8.13.48
 pillow==11.0.0
 posthog==3.7.0
-psutil==6.0.0
+psutil==6.1.0
 psycopg2-binary==2.9.10
 py-soap==2020.3.2
+pycairo==1.27.0
 pycparser==2.22
 pydyf==0.11.0
 PyJWT==2.9.0
@@ -126,17 +127,17 @@ python-decouple==3.8
 pytz==2024.2
 PyYAML==6.0.2
 qrcode==7.4.2
-redis==5.1.1
+redis==5.2.0
 referencing==0.35.1
 requests==2.32.3
 rpds-py==0.20.0
 sentry-sdk==2.17.0
 six==1.16.0
 sqlparse==0.5.1
-strawberry-graphql==0.246.2
-tablib==3.5.0
-tinycss2==1.3.0
-treepoem==3.24.0
+strawberry-graphql==0.247.0
+tablib==3.7.0
+tinycss2==1.4.0
+treepoem==3.25.0
 typing_extensions==4.12.2
 uritemplate==4.1.1
 urllib3==2.2.3
@@ -146,4 +147,4 @@ weasyprint==62.3
 webencodings==0.5.1
 whitenoise==6.7.0
 xmltodict==0.14.2
-zopfli==0.2.3
+zopfli==0.2.3.post1

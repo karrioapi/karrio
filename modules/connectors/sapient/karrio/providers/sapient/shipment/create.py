@@ -76,6 +76,7 @@ def shipment_request(
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
+    is_intl = payload.recipient.country_code != payload.shipper.country_code
     customs = lib.to_customs_info(
         payload.customs,
         weight_unit="KG",
@@ -233,7 +234,7 @@ def shipment_request(
                 ExportLicenceRequired=None,
                 Airn=customs.options.sapient_airn.state,
             )
-            if payload.customs
+            if payload.customs and is_intl
             else None
         ),
     )
