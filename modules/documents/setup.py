@@ -16,7 +16,6 @@ setup(
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[
         "treepoem",
-        "pycairo",
         "weasyprint",
         "karrio.server.core",
         "karrio.server.graph",
