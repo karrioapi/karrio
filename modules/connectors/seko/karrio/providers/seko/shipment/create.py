@@ -99,7 +99,7 @@ def shipment_request(
         Reference3=options.seko_reference_3.state,
         Origin=seko.DestinationType(
             Id=options.seko_origin_id.state,
-            Name=shipper.company_name,
+            Name=lib.identity(shipper.company_name or shipper.contact or "Shipper"),
             Address=seko.AddressType(
                 BuildingName=None,
                 StreetAddress=shipper.street,
@@ -117,7 +117,9 @@ def shipment_request(
         ),
         Destination=seko.DestinationType(
             Id=options.seko_destination_id.state,
-            Name=recipient.company_name,
+            Name=lib.identity(
+                recipient.company_name or recipient.contact or "Recipient"
+            ),
             Address=seko.AddressType(
                 BuildingName=None,
                 StreetAddress=recipient.street,
@@ -136,8 +138,10 @@ def shipment_request(
         DangerousGoods=None,
         Commodities=[
             seko.CommodityType(
-                Description=lib.text(commodity.description, max=35),
-                HarmonizedCode=commodity.hs_code,
+                Description=lib.identity(
+                    lib.text(commodity.description or commodity.title, max=35) or "item"
+                ),
+                HarmonizedCode=commodity.hs_code or "0000.00.00",
                 Units=commodity.quantity,
                 UnitValue=commodity.value_amount,
                 UnitKg=commodity.weight,
