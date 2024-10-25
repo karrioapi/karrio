@@ -3,6 +3,7 @@ name: karrio-build
 on:
   push:
     branches: ["main"]
+  workflow_dispatch:
 
 jobs:
   changes:
@@ -21,7 +22,7 @@ jobs:
 
   server-build:
     needs: changes
-    if: ${{ needs.changes.outputs.version == 'true' }}
+    if: ${{ needs.changes.outputs.version == 'true' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -52,7 +53,7 @@ jobs:
 
   dashboard-build:
     needs: changes
-    if: ${{ needs.changes.outputs.version == 'true' }}
+    if: ${{ needs.changes.outputs.version == 'true' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
