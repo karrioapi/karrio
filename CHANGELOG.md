@@ -1,3 +1,9 @@
+# Karrio 2024.9.12
+
+## Fix
+
+- fix: missing dependencies in the build process
+
 # Karrio 2024.9.11
 
 ## Changes
