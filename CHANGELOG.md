@@ -1,3 +1,19 @@
+# Karrio 2024.9.13
+
+## Changes
+
+### Feat
+
+- feat: use actual city as fallback value for seko shipment state addresses
+
+### Fix
+
+- fix: fedex payment account numbers assignments
+
+### Chore
+
+- deps: add back pycairo as optional dependency on macos
+
 # Karrio 2024.9.12
 
 ## Fix
