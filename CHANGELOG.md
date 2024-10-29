@@ -1,3 +1,11 @@
+# Karrio 2024.9.14
+
+## Changes
+
+### Feat
+
+- feat: switch export line item description to description (`dhl express`) @DarkSwoop
+
 # Karrio 2024.9.13
 
 ## Changes
