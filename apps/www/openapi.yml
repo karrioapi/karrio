@@ -6021,7 +6021,6 @@ components:
       - weight_unit
     ConnectionCredentialsField:
       oneOf:
-      - $ref: '#/components/schemas/fedex'
       - $ref: '#/components/schemas/zoom2u'
       - $ref: '#/components/schemas/usps_wt_international'
       - $ref: '#/components/schemas/usps_wt'
@@ -6044,6 +6043,7 @@ components:
       - $ref: '#/components/schemas/generic'
       - $ref: '#/components/schemas/freightcom'
       - $ref: '#/components/schemas/fedex_ws'
+      - $ref: '#/components/schemas/fedex'
       - $ref: '#/components/schemas/eshipper'
       - $ref: '#/components/schemas/easyship'
       - $ref: '#/components/schemas/easypost'
@@ -11389,7 +11389,6 @@ tags:
     ## Carriers
     | Carrier Name | Display Name |
     | ------------ | ------------ |
-    | fedex | FedEx |
     | zoom2u | Zoom2u |
     | usps_wt_international | USPS Web Tools International |
     | usps_wt | USPS Web Tools |
@@ -11411,6 +11410,7 @@ tags:
     | geodis | GEODIS |
     | freightcom | Freightcom |
     | fedex_ws | FedEx Web Service |
+    | fedex | FedEx |
     | eshipper | eShipper |
     | easyship | Easyship |
     | easypost | EasyPost |
@@ -11440,48 +11440,6 @@ tags:
     when purchasing shipping labels using single call label creation.
     You can also find all of the possible service levels for each of your carrier
     accounts by using [this endpoint](#operation/&&get_services).
-    ### FedEx
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | fedex_international_priority_express | FEDEX_INTERNATIONAL_PRIORITY_EXPRESS |
-    | fedex_international_first | INTERNATIONAL_FIRST |
-    | fedex_international_priority | FEDEX_INTERNATIONAL_PRIORITY |
-    | fedex_international_economy | INTERNATIONAL_ECONOMY |
-    | fedex_ground | FEDEX_GROUND |
-    | fedex_cargo_mail | FEDEX_CARGO_MAIL |
-    | fedex_cargo_international_premium | FEDEX_CARGO_INTERNATIONAL_PREMIUM |
-    | fedex_first_overnight | FIRST_OVERNIGHT |
-    | fedex_first_overnight_freight | FIRST_OVERNIGHT_FREIGHT |
-    | fedex_1_day_freight | FEDEX_1_DAY_FREIGHT |
-    | fedex_2_day_freight | FEDEX_2_DAY_FREIGHT |
-    | fedex_3_day_freight | FEDEX_3_DAY_FREIGHT |
-    | fedex_international_priority_freight | INTERNATIONAL_PRIORITY_FREIGHT |
-    | fedex_international_economy_freight | INTERNATIONAL_ECONOMY_FREIGHT |
-    | fedex_cargo_airport_to_airport | FEDEX_CARGO_AIRPORT_TO_AIRPORT |
-    | fedex_international_priority_distribution | INTERNATIONAL_PRIORITY_DISTRIBUTION |
-    | fedex_ip_direct_distribution_freight | FEDEX_IP_DIRECT_DISTRIBUTION_FREIGHT |
-    | fedex_intl_ground_distribution | INTL_GROUND_DISTRIBUTION |
-    | fedex_ground_home_delivery | GROUND_HOME_DELIVERY |
-    | fedex_smart_post | SMART_POST |
-    | fedex_priority_overnight | PRIORITY_OVERNIGHT |
-    | fedex_standard_overnight | STANDARD_OVERNIGHT |
-    | fedex_2_day | FEDEX_2_DAY |
-    | fedex_2_day_am | FEDEX_2_DAY_AM |
-    | fedex_express_saver | FEDEX_EXPRESS_SAVER |
-    | fedex_same_day | SAME_DAY |
-    | fedex_same_day_city | SAME_DAY_CITY |
-    | fedex_one_day_freight | FEDEX_ONE_DAY_FREIGHT |
-    | fedex_international_economy_distribution | INTERNATIONAL_ECONOMY_DISTRIBUTION |
-    | fedex_international_connect_plus | FEDEX_INTERNATIONAL_CONNECT_PLUS |
-    | fedex_international_distribution_freight | INTERNATIONAL_DISTRIBUTION_FREIGHT |
-    | fedex_regional_economy | FEDEX_REGIONAL_ECONOMY |
-    | fedex_next_day_freight | FEDEX_NEXT_DAY_FREIGHT |
-    | fedex_next_day | FEDEX_NEXT_DAY |
-    | fedex_next_day_10am | FEDEX_NEXT_DAY_10AM |
-    | fedex_next_day_12pm | FEDEX_NEXT_DAY_12PM |
-    | fedex_next_day_end_of_day | FEDEX_NEXT_DAY_END_OF_DAY |
-    | fedex_distance_deferred | FEDEX_DISTANCE_DEFERRED |
-
     ### Zoom2u
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -12094,6 +12052,48 @@ tags:
     | fedex_smart_post | SMART_POST |
     | fedex_standard_overnight | STANDARD_OVERNIGHT |
     | fedex_transborder_distribution_consolidation | TRANSBORDER_DISTRIBUTION_CONSOLIDATION |
+
+    ### FedEx
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | fedex_international_priority_express | FEDEX_INTERNATIONAL_PRIORITY_EXPRESS |
+    | fedex_international_first | INTERNATIONAL_FIRST |
+    | fedex_international_priority | FEDEX_INTERNATIONAL_PRIORITY |
+    | fedex_international_economy | INTERNATIONAL_ECONOMY |
+    | fedex_ground | FEDEX_GROUND |
+    | fedex_cargo_mail | FEDEX_CARGO_MAIL |
+    | fedex_cargo_international_premium | FEDEX_CARGO_INTERNATIONAL_PREMIUM |
+    | fedex_first_overnight | FIRST_OVERNIGHT |
+    | fedex_first_overnight_freight | FIRST_OVERNIGHT_FREIGHT |
+    | fedex_1_day_freight | FEDEX_1_DAY_FREIGHT |
+    | fedex_2_day_freight | FEDEX_2_DAY_FREIGHT |
+    | fedex_3_day_freight | FEDEX_3_DAY_FREIGHT |
+    | fedex_international_priority_freight | INTERNATIONAL_PRIORITY_FREIGHT |
+    | fedex_international_economy_freight | INTERNATIONAL_ECONOMY_FREIGHT |
+    | fedex_cargo_airport_to_airport | FEDEX_CARGO_AIRPORT_TO_AIRPORT |
+    | fedex_international_priority_distribution | INTERNATIONAL_PRIORITY_DISTRIBUTION |
+    | fedex_ip_direct_distribution_freight | FEDEX_IP_DIRECT_DISTRIBUTION_FREIGHT |
+    | fedex_intl_ground_distribution | INTL_GROUND_DISTRIBUTION |
+    | fedex_ground_home_delivery | GROUND_HOME_DELIVERY |
+    | fedex_smart_post | SMART_POST |
+    | fedex_priority_overnight | PRIORITY_OVERNIGHT |
+    | fedex_standard_overnight | STANDARD_OVERNIGHT |
+    | fedex_2_day | FEDEX_2_DAY |
+    | fedex_2_day_am | FEDEX_2_DAY_AM |
+    | fedex_express_saver | FEDEX_EXPRESS_SAVER |
+    | fedex_same_day | SAME_DAY |
+    | fedex_same_day_city | SAME_DAY_CITY |
+    | fedex_one_day_freight | FEDEX_ONE_DAY_FREIGHT |
+    | fedex_international_economy_distribution | INTERNATIONAL_ECONOMY_DISTRIBUTION |
+    | fedex_international_connect_plus | FEDEX_INTERNATIONAL_CONNECT_PLUS |
+    | fedex_international_distribution_freight | INTERNATIONAL_DISTRIBUTION_FREIGHT |
+    | fedex_regional_economy | FEDEX_REGIONAL_ECONOMY |
+    | fedex_next_day_freight | FEDEX_NEXT_DAY_FREIGHT |
+    | fedex_next_day | FEDEX_NEXT_DAY |
+    | fedex_next_day_10am | FEDEX_NEXT_DAY_10AM |
+    | fedex_next_day_12pm | FEDEX_NEXT_DAY_12PM |
+    | fedex_next_day_end_of_day | FEDEX_NEXT_DAY_END_OF_DAY |
+    | fedex_distance_deferred | FEDEX_DISTANCE_DEFERRED |
 
     ### eShipper
     | Code         | Service Name |
