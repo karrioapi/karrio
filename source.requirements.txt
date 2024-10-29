@@ -14,7 +14,7 @@ diff-match-patch==20241021
 dj-database-url==2.3.0
 Django==4.2.16
 django-constance==3.1.0
-django-cors-headers==4.5.0
+django-cors-headers==4.6.0
 django-downloadview==2.4.0
 django-email-verification==0.3.3
 django-filter==24.3
@@ -36,7 +36,6 @@ graphql-core==3.2.5
 gunicorn==23.0.0
 h11==0.14.0
 hiredis==3.0.0
-html5lib==1.1
 huey==2.5.2
 idna==3.10
 inflection==0.5.1
@@ -110,7 +109,7 @@ more-itertools==10.5.0
 oauthlib==3.2.2
 packaging==24.1
 phonenumbers==8.13.48
-pillow==11.0.0
+pillow==10.4.0
 posthog==3.7.0
 psutil==6.1.0
 psycopg2-binary==2.9.10
@@ -119,7 +118,7 @@ pycparser==2.22
 pydyf==0.11.0
 PyJWT==2.9.0
 PyPDF2==3.0.1
-pyphen==0.16.0
+pyphen==0.15.0
 pypng==0.20220715.0
 python-barcode==0.15.1
 python-dateutil==2.9.0.post0
@@ -137,15 +136,15 @@ sqlparse==0.5.1
 strawberry-graphql==0.247.0
 tablib==3.7.0
 tinycss2==1.4.0
+tinyhtml5==2.0.0
 treepoem==3.25.0
 typing_extensions==4.12.2
 uritemplate==4.1.1
 urllib3==2.2.3
 uvicorn==0.32.0
 validators==0.34.0
-weasyprint==62.3
+weasyprint==63.0
 webencodings==0.5.1
-whitenoise==6.7.0
+whitenoise==6.8.1
 xmltodict==0.14.2
 zopfli==0.2.3.post1
-
