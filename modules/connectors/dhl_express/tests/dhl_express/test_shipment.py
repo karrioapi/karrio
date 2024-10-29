@@ -507,7 +507,7 @@ NonParelessShipmentRequestXml = """<req:ShipmentRequest xsi:schemaLocation="http
             <LineNumber>1</LineNumber>
             <Quantity>1</Quantity>
             <QuantityUnit>PCS</QuantityUnit>
-            <Description>title</Description>
+            <Description>description</Description>
             <Value>928.1</Value>
             <CommodityCode>hs_code</CommodityCode>
             <Weight>

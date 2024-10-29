@@ -254,7 +254,7 @@ def shipment_request(
                         Quantity=item.quantity,
                         QuantityUnit="PCS",
                         Description=lib.text(
-                            item.title or item.description or "N/A", max=35
+                            item.description or item.title or "N/A", max=75
                         ),
                         Value=item.value_amount or 0.0,
                         IsDomestic=None,
