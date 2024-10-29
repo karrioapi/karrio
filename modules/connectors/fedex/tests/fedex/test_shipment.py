@@ -377,7 +377,7 @@ ShipmentRequest = {
         },
         "shippingChargesPayment": {
             "paymentType": "THIRD_PARTY",
-            "payor": {"responsibleParty": {"accountNumber": "2349857"}},
+            "payor": {"responsibleParty": {"accountNumber": {"value": "2349857"}}},
         },
         "shippingDocumentSpecification": {
             "commercialInvoiceDetail": {
@@ -551,7 +551,7 @@ MultiPieceShipmentRequest = {
         },
         "shippingChargesPayment": {
             "paymentType": "THIRD_PARTY",
-            "payor": {"responsibleParty": {"accountNumber": "2349857"}},
+            "payor": {"responsibleParty": {"accountNumber": {"value": "2349857"}}},
         },
         "totalPackageCount": 2,
         "totalWeight": 3.0,
