@@ -261,47 +261,53 @@ def shipment_request(
                 paymentType=provider_units.PaymentType.map(
                     payment.paid_by
                 ).value_or_key,
-                payor=fedex.PayorType(
-                    responsibleParty=fedex.ResponsiblePartyType(
-                        address=lib.identity(
-                            fedex.AddressType(
-                                streetLines=billing_address.address_lines,
-                                city=billing_address.city,
-                                stateOrProvinceCode=provider_utils.state_code(
-                                    billing_address
-                                ),
-                                postalCode=billing_address.postal_code,
-                                countryCode=billing_address.country_code,
-                                residential=billing_address.residential,
-                            )
-                            if billing_address.address is not None
-                            else None
+                payor=lib.identity(
+                    fedex.PayorType(
+                        responsibleParty=fedex.ResponsiblePartyType(
+                            address=lib.identity(
+                                fedex.AddressType(
+                                    streetLines=billing_address.address_lines,
+                                    city=billing_address.city,
+                                    stateOrProvinceCode=provider_utils.state_code(
+                                        billing_address
+                                    ),
+                                    postalCode=billing_address.postal_code,
+                                    countryCode=billing_address.country_code,
+                                    residential=billing_address.residential,
+                                )
+                                if billing_address.address is not None
+                                else None
+                            ),
+                            contact=lib.identity(
+                                fedex.ResponsiblePartyContactType(
+                                    personName=lib.text(
+                                        billing_address.contact, max=35
+                                    ),
+                                    emailAddress=billing_address.email,
+                                    phoneNumber=billing_address.phone_number,
+                                    phoneExtension=None,
+                                    companyName=lib.text(
+                                        billing_address.company_name, max=35
+                                    ),
+                                    faxNumber=None,
+                                )
+                                if billing_address.address is not None
+                                else None
+                            ),
+                            accountNumber=fedex.AccountNumberType(
+                                value=payment.account_number
+                            ),
+                            tins=lib.identity(
+                                fedex.TinType(number=billing_address.tax_id)
+                                if billing_address.has_tax_info
+                                else []
+                            ),
                         ),
-                        contact=lib.identity(
-                            fedex.ResponsiblePartyContactType(
-                                personName=lib.text(billing_address.contact, max=35),
-                                emailAddress=billing_address.email,
-                                phoneNumber=billing_address.phone_number,
-                                phoneExtension=None,
-                                companyName=lib.text(
-                                    billing_address.company_name, max=35
-                                ),
-                                faxNumber=None,
-                            )
-                            if billing_address.address is not None
-                            else None
-                        ),
-                        accountNumber=lib.identity(
-                            fedex.AccountNumberType(value=payment.account_number)
-                            if payment.account_number
-                            else None
-                        ),
-                        tins=lib.identity(
-                            fedex.TinType(number=billing_address.tax_id)
-                            if billing_address.has_tax_info
-                            else []
-                        ),
-                    ),
+                    )
+                    if payment.paid_by != "sender"
+                    and billing_address.address
+                    and payment.account_number
+                    else None
                 ),
             ),
             shipmentSpecialServices=lib.identity(
@@ -436,56 +442,57 @@ def shipment_request(
                         emailNotificationDetail=None,
                     ),
                     freightOnValue=None,
-                    dutiesPayment=fedex.DutiesPaymentType(
-                        payor=fedex.PayorType(
-                            responsibleParty=fedex.ResponsiblePartyType(
-                                address=lib.identity(
-                                    fedex.AddressType(
-                                        streetLines=duty_billing_address.address_lines,
-                                        city=duty_billing_address.city,
-                                        stateOrProvinceCode=provider_utils.state_code(
-                                            duty_billing_address
+                    dutiesPayment=lib.identity(
+                        fedex.DutiesPaymentType(
+                            paymentType=provider_units.PaymentType.map(
+                                customs.duty.paid_by
+                            ).value,
+                            payor=lib.identity(
+                                fedex.PayorType(
+                                    responsibleParty=fedex.ResponsiblePartyType(
+                                        address=fedex.AddressType(
+                                            streetLines=duty_billing_address.address_lines,
+                                            city=duty_billing_address.city,
+                                            stateOrProvinceCode=provider_utils.state_code(
+                                                duty_billing_address
+                                            ),
+                                            postalCode=duty_billing_address.postal_code,
+                                            countryCode=duty_billing_address.country_code,
+                                            residential=duty_billing_address.residential,
                                         ),
-                                        postalCode=duty_billing_address.postal_code,
-                                        countryCode=duty_billing_address.country_code,
-                                        residential=duty_billing_address.residential,
-                                    )
-                                    if duty_billing_address
-                                    else None
-                                ),
-                                contact=lib.identity(
-                                    fedex.ResponsiblePartyContactType(
-                                        personName=lib.text(
-                                            duty_billing_address.contact, max=35
+                                        contact=fedex.ResponsiblePartyContactType(
+                                            personName=lib.text(
+                                                duty_billing_address.contact, max=35
+                                            ),
+                                            emailAddress=duty_billing_address.email,
+                                            phoneNumber=duty_billing_address.phone_number,
+                                            phoneExtension=None,
+                                            companyName=lib.text(
+                                                duty_billing_address.company_name,
+                                                max=35,
+                                            ),
+                                            faxNumber=None,
                                         ),
-                                        emailAddress=duty_billing_address.email,
-                                        phoneNumber=duty_billing_address.phone_number,
-                                        phoneExtension=None,
-                                        companyName=lib.text(
-                                            duty_billing_address.company_name, max=35
+                                        accountNumber=fedex.AccountNumberType(
+                                            value=customs.duty.account_number
                                         ),
-                                        faxNumber=None,
+                                        tins=lib.identity(
+                                            fedex.TinType(
+                                                number=duty_billing_address.tax_id,
+                                                tinType="FEDERAL",
+                                            )
+                                            if duty_billing_address.has_tax_info
+                                            else []
+                                        ),
                                     )
-                                    if duty_billing_address
-                                    else None
-                                ),
-                                accountNumber=lib.identity(
-                                    fedex.AccountNumberType(
-                                        value=customs.duty.account_number
-                                    )
-                                    if customs.duty.account_number
-                                    else None
-                                ),
-                                tins=lib.identity(
-                                    fedex.TinType(number=duty_billing_address.tax_id)
-                                    if duty_billing_address.has_tax_info
-                                    else []
-                                ),
-                            )
-                        ),
-                        paymentType=provider_units.PaymentType.map(
-                            getattr(customs.duty, "paid_by", None) or "sender"
-                        ).value,
+                                )
+                                if duty_billing_address.address
+                                else None
+                            ),
+                        )
+                        if customs.duty.paid_by != "sender"
+                        and customs.duty.account_number
+                        else None
                     ),
                     commodities=[
                         fedex.CommodityType(

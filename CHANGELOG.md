@@ -1,4 +1,14 @@
-# Karrio 2024.9.14
+# Karrio 2024.9.15
+
+## Changes
+
+### Fix
+
+- fix: `fedex` payor info data mapping #718
+- fix: easyship required defaults and max contact name size
+
+
+# Karrio 2024.9.15
 
 ## Changes
 
