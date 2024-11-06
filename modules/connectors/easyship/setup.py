@@ -1,5 +1,5 @@
-
 """Warning: This setup.py is only there for git install until poetry support git subdirectory"""
+
 from setuptools import setup, find_namespace_packages
 
 with open("README.md", "r") as fh:
@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.easyship",
-    version="2024.9",
+    version="2024.9.15",
     description="Karrio - Easyship Shipping Extension",
     long_description=long_description,
     long_description_content_type="text/markdown",
