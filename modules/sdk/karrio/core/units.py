@@ -1536,7 +1536,7 @@ class ComputedAddress(models.Address):
     def _compute_street_number(self):
         _value = getattr(self.address, "street_number", None)
 
-        if _value is None:
+        if _value is None and self.address:
             words = self.address.address_line1.split(" ")
 
             if any(_.isdigit() for _ in words[0]):

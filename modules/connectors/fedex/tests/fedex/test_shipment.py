@@ -11,6 +11,9 @@ class TestFedExShipping(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = models.ShipmentRequest(**ShipmentPayload)
+        self.ShipmentPaidByRecipientRequest = models.ShipmentRequest(
+            **ShipmentPaidByRecipientPayload
+        )
         self.ShipmentCancelRequest = models.ShipmentCancelRequest(
             **ShipmentCancelPayload
         )
@@ -22,6 +25,13 @@ class TestFedExShipping(unittest.TestCase):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
 
         self.assertEqual(request.serialize(), ShipmentRequest)
+
+    def test_create_shipment_request_paid_by_recipient(self):
+        request = gateway.mapper.create_shipment_request(
+            self.ShipmentPaidByRecipientRequest
+        )
+
+        self.assertEqual(request.serialize(), ShipmentPaidByRecipientRequest)
 
     def test_create_multi_piece_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.MultiPieceShipmentRequest)
@@ -118,6 +128,18 @@ ShipmentPayload = {
         "postal_code": "V7C4v7",
         "country_code": "CA",
     },
+    "billing_address": {
+        "person_name": "Input Your Information",
+        "company_name": "Input Your Information",
+        "phone_number": "Input Your Information",
+        "email": "Input Your Information",
+        "address_line1": "Input Your Information",
+        "address_line2": "Input Your Information",
+        "city": "RICHMOND",
+        "state_code": "BC",
+        "postal_code": "V7C4v7",
+        "country_code": "CA",
+    },
     "parcels": [
         {
             "packaging_type": "your_packaging",
@@ -142,6 +164,52 @@ ShipmentPayload = {
         "commodities": [{"weight": "10", "title": "test", "hs_code": "00339BB"}],
         "commercial_invoice": True,
     },
+    "reference": "#Order 11111",
+}
+
+ShipmentPaidByRecipientPayload = {
+    "shipper": {
+        "person_name": "Input Your Information",
+        "company_name": "Input Your Information",
+        "phone_number": "Input Your Information",
+        "email": "Input Your Information",
+        "address_line1": "Input Your Information",
+        "address_line2": "Input Your Information",
+        "city": "MEMPHIS",
+        "state_code": "TN",
+        "postal_code": "38117",
+        "country_code": "US",
+    },
+    "recipient": {
+        "person_name": "Recipient Information",
+        "company_name": "Recipient Information",
+        "phone_number": "Recipient Information",
+        "email": "Recipient Information",
+        "address_line1": "Recipient Information",
+        "address_line2": "Recipient Information",
+        "city": "RICHMOND",
+        "state_code": "BC",
+        "postal_code": "V7C4v7",
+        "country_code": "CA",
+    },
+    "parcels": [
+        {
+            "packaging_type": "your_packaging",
+            "weight_unit": "LB",
+            "dimension_unit": "IN",
+            "weight": 20.0,
+            "length": 12,
+            "width": 12,
+            "height": 12,
+        }
+    ],
+    "service": "fedex_international_priority",
+    "options": {
+        "currency": "USD",
+        "shipment_date": "2024-02-15",
+        "fedex_one_rate": True,
+    },
+    "payment": {"paid_by": "recipient", "account_number": "2349857"},
     "reference": "#Order 11111",
 }
 
@@ -266,30 +334,6 @@ ShipmentRequest = {
                     "weight": {"units": "LB", "value": 10.0},
                 }
             ],
-            "dutiesPayment": {
-                "paymentType": "SENDER",
-                "payor": {
-                    "responsibleParty": {
-                        "address": {
-                            "city": "MEMPHIS",
-                            "countryCode": "US",
-                            "postalCode": "38117",
-                            "residential": False,
-                            "stateOrProvinceCode": "TN",
-                            "streetLines": [
-                                "Input Your Information",
-                                "Input Your Information",
-                            ],
-                        },
-                        "contact": {
-                            "companyName": "Input Your Information",
-                            "emailAddress": "Input Your Information",
-                            "personName": "Input Your Information",
-                            "phoneNumber": "Input Your Information",
-                        },
-                    }
-                },
-            },
             "insuranceCharge": {"amount": 0.0, "currency": "USD"},
             "isDocumentOnly": False,
         },
@@ -377,13 +421,153 @@ ShipmentRequest = {
         },
         "shippingChargesPayment": {
             "paymentType": "THIRD_PARTY",
-            "payor": {"responsibleParty": {"accountNumber": {"value": "2349857"}}},
+            "payor": {
+                "responsibleParty": {
+                    "accountNumber": {"value": "2349857"},
+                    "address": {
+                        "city": "RICHMOND",
+                        "countryCode": "CA",
+                        "postalCode": "V7C4v7",
+                        "residential": False,
+                        "stateOrProvinceCode": "BC",
+                        "streetLines": [
+                            "Input Your Information",
+                            "Input Your Information",
+                        ],
+                    },
+                    "contact": {
+                        "companyName": "Input Your Information",
+                        "emailAddress": "Input Your Information",
+                        "personName": "Input Your Information",
+                        "phoneNumber": "Input Your Information",
+                    },
+                }
+            },
         },
         "shippingDocumentSpecification": {
             "commercialInvoiceDetail": {
                 "documentFormat": {"docType": "PDF", "stockType": "PAPER_LETTER"}
             },
             "shippingDocumentTypes": ["COMMERCIAL_INVOICE"],
+        },
+        "totalPackageCount": 1,
+        "totalWeight": 20.0,
+    },
+    "shipAction": "CONFIRM",
+}
+
+ShipmentPaidByRecipientRequest = {
+    "accountNumber": {"value": "2349857"},
+    "labelResponseOptions": "LABEL",
+    "oneLabelAtATime": False,
+    "requestedShipment": {
+        "blockInsightVisibility": False,
+        "emailNotificationDetail": {
+            "aggregationType": "PER_SHIPMENT",
+            "emailNotificationRecipients": [
+                {
+                    "emailAddress": "Recipient Information",
+                    "emailNotificationRecipientType": "RECIPIENT",
+                    "name": "Recipient Information",
+                    "notificationEventType": [
+                        "ON_DELIVERY",
+                        "ON_EXCEPTION",
+                        "ON_SHIPMENT",
+                    ],
+                    "notificationFormatType": "HTML",
+                    "notificationType": "EMAIL",
+                }
+            ],
+        },
+        "labelSpecification": {
+            "imageType": "PDF",
+            "labelFormatType": "COMMON2D",
+            "labelOrder": "SHIPPING_LABEL_FIRST",
+            "labelStockType": "STOCK_4X6",
+        },
+        "packagingType": "YOUR_PACKAGING",
+        "pickupType": "DROPOFF_AT_FEDEX_LOCATION",
+        "preferredCurrency": "USD",
+        "rateRequestType": ["LIST", "ACCOUNT", "PREFERRED"],
+        "recipients": [
+            {
+                "address": {
+                    "city": "RICHMOND",
+                    "countryCode": "CA",
+                    "postalCode": "V7C4v7",
+                    "residential": False,
+                    "stateOrProvinceCode": "BC",
+                    "streetLines": ["Recipient Information", "Recipient Information"],
+                },
+                "contact": {
+                    "companyName": "Recipient Information",
+                    "emailAddress": "Recipient Information",
+                    "personName": "Recipient Information",
+                    "phoneNumber": "Recipient Information",
+                },
+            }
+        ],
+        "requestedPackageLineItems": [
+            {
+                "declaredValue": {"amount": 1.0, "currency": "USD"},
+                "dimensions": {
+                    "height": 12.0,
+                    "length": 12.0,
+                    "units": "IN",
+                    "width": 12.0,
+                },
+                "groupPackageCount": 1,
+                "packageSpecialServices": {
+                    "signatureOptionType": "SERVICE_DEFAULT",
+                    "specialServiceTypes": ["SIGNATURE_OPTION"],
+                },
+                "subPackagingType": "OTHER",
+                "weight": {"units": "LB", "value": 20.0},
+            }
+        ],
+        "serviceType": "FEDEX_INTERNATIONAL_PRIORITY",
+        "shipDatestamp": "2024-02-15",
+        "shipmentSpecialServices": {"specialServiceTypes": ["FEDEX_ONE_RATE"]},
+        "shipper": {
+            "address": {
+                "city": "MEMPHIS",
+                "countryCode": "US",
+                "postalCode": "38117",
+                "residential": False,
+                "stateOrProvinceCode": "TN",
+                "streetLines": ["Input Your Information", "Input Your Information"],
+            },
+            "contact": {
+                "companyName": "Input Your Information",
+                "emailAddress": "Input Your Information",
+                "personName": "Input Your Information",
+                "phoneNumber": "Input Your Information",
+            },
+        },
+        "shippingChargesPayment": {
+            "paymentType": "RECIPIENT",
+            "payor": {
+                "responsibleParty": {
+                    "accountNumber": {"value": "2349857"},
+                    "address": {
+                        "city": "RICHMOND",
+                        "countryCode": "CA",
+                        "postalCode": "V7C4v7",
+                        "residential": False,
+                        "stateOrProvinceCode": "BC",
+                        "streetLines": [
+                            "Recipient Information",
+                            "Recipient Information",
+                        ],
+                    },
+                    "contact": {
+                        "companyName": "Recipient Information",
+                        "emailAddress": "Recipient Information",
+                        "personName": "Recipient Information",
+                        "phoneNumber": "Recipient Information",
+                    },
+                }
+            },
         },
         "totalPackageCount": 1,
         "totalWeight": 20.0,
@@ -418,30 +602,6 @@ MultiPieceShipmentRequest = {
                     "weight": {"units": "LB", "value": 10.0},
                 }
             ],
-            "dutiesPayment": {
-                "paymentType": "SENDER",
-                "payor": {
-                    "responsibleParty": {
-                        "address": {
-                            "city": "MEMPHIS",
-                            "countryCode": "US",
-                            "postalCode": "38117",
-                            "residential": False,
-                            "stateOrProvinceCode": "TN",
-                            "streetLines": [
-                                "Input Your Information",
-                                "Input Your Information",
-                            ],
-                        },
-                        "contact": {
-                            "companyName": "Input Your Information",
-                            "emailAddress": "Input Your Information",
-                            "personName": "Input Your Information",
-                            "phoneNumber": "Input Your Information",
-                        },
-                    }
-                },
-            },
             "insuranceCharge": {"amount": 0.0, "currency": "USD"},
             "isDocumentOnly": False,
         },
@@ -551,7 +711,28 @@ MultiPieceShipmentRequest = {
         },
         "shippingChargesPayment": {
             "paymentType": "THIRD_PARTY",
-            "payor": {"responsibleParty": {"accountNumber": {"value": "2349857"}}},
+            "payor": {
+                "responsibleParty": {
+                    "accountNumber": {"value": "2349857"},
+                    "address": {
+                        "city": "RICHMOND",
+                        "countryCode": "CA",
+                        "postalCode": "V7C4v7",
+                        "residential": False,
+                        "stateOrProvinceCode": "BC",
+                        "streetLines": [
+                            "Input Your Information",
+                            "Input Your Information",
+                        ],
+                    },
+                    "contact": {
+                        "companyName": "Input Your Information",
+                        "emailAddress": "Input Your Information",
+                        "personName": "Input Your Information",
+                        "phoneNumber": "Input Your Information",
+                    },
+                }
+            },
         },
         "totalPackageCount": 2,
         "totalWeight": 3.0,
