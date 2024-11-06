@@ -546,6 +546,7 @@ RateRequest = {
         "show_courier_logo_url": False,
     },
     "destination_address": {
+        "company_name": "N/A",
         "country_alpha2": "HK",
         "city": "Hong Kong",
         "contact_email": "asd@asd.com",
@@ -560,6 +561,7 @@ RateRequest = {
         "is_insured": False,
     },
     "origin_address": {
+        "company_name": "N/A",
         "city": "Hong Kong",
         "contact_email": "asd@asd.com",
         "contact_name": "Foo Bar",

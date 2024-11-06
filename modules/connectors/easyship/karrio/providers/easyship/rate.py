@@ -122,9 +122,9 @@ def rate_request(
         destination_address=easyship.NAddressType(
             country_alpha2=recipient.country_code,
             city=recipient.city,
-            company_name=recipient.company_name,
+            company_name=lib.text(recipient.company_name or "N/A", max=22),
             contact_email=recipient.email,
-            contact_name=recipient.person_name,
+            contact_name=lib.text(recipient.person_name, max=22),
             contact_phone=recipient.phone_number,
             line_1=recipient.address_line1,
             line_2=recipient.address_line2,
@@ -142,9 +142,9 @@ def rate_request(
         origin_address=easyship.NAddressType(
             country_alpha2=shipper.country_code,
             city=shipper.city,
-            company_name=shipper.company_name,
+            company_name=lib.text(shipper.company_name or "N/A", max=22),
             contact_email=shipper.email,
-            contact_name=shipper.person_name,
+            contact_name=lib.text(shipper.person_name, max=22),
             contact_phone=shipper.phone_number,
             line_1=shipper.address_line1,
             line_2=shipper.address_line2,

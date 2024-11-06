@@ -125,13 +125,13 @@ def shipment_request(
         ),
         destination_address=easyship.AddressType(
             city=recipient.city,
-            company_name=recipient.company_name or "N/A",
+            company_name=lib.text(recipient.company_name or "N/A", max=22),
             contact_email=lib.identity(
                 recipient.email
                 or options.email_notification_to.state
                 or "user@mail.com"
             ),
-            contact_name=recipient.person_name,
+            contact_name=lib.text(recipient.person_name, max=22),
             contact_phone=recipient.phone_number or "N/A",
             country_alpha2=recipient.country_code,
             line_1=recipient.address_line1,
@@ -149,13 +149,13 @@ def shipment_request(
         order_data=None,
         origin_address=easyship.AddressType(
             city=return_address.city,
-            company_name=return_address.company_name or "N/A",
+            company_name=lib.text(return_address.company_name or "N/A", max=22),
             contact_email=lib.identity(
                 return_address.email
                 or options.email_notification_to.state
                 or "user@mail.com"
             ),
-            contact_name=return_address.person_name,
+            contact_name=lib.text(return_address.person_name, max=22),
             contact_phone=return_address.phone_number or "N/A",
             country_alpha2=return_address.country_code,
             line_1=return_address.address_line1,
@@ -181,13 +181,13 @@ def shipment_request(
         shipment_request_return=options.is_return.state,
         return_address=easyship.AddressType(
             city=return_address.city,
-            company_name=return_address.company_name or "N/A",
+            company_name=lib.text(return_address.company_name or "N/A", max=22),
             contact_email=lib.identity(
                 return_address.email
                 or options.email_notification_to.state
                 or "user@mail.com"
             ),
-            contact_name=return_address.person_name,
+            contact_name=lib.text(return_address.person_name, max=22),
             contact_phone=return_address.phone_number or "N/A",
             country_alpha2=return_address.country_code,
             line_1=return_address.address_line1,
@@ -198,11 +198,11 @@ def shipment_request(
         return_address_id=options.easyship_return_address_id.state,
         sender_address=easyship.AddressType(
             city=shipper.city,
-            company_name=shipper.company_name or "N/A",
+            company_name=lib.text(shipper.company_name or "N/A", max=22),
             contact_email=lib.identity(
                 shipper.email or options.email_notification_to.state or "user@mail.com"
             ),
-            contact_name=shipper.person_name,
+            contact_name=lib.text(shipper.person_name, max=22),
             contact_phone=shipper.phone_number or "N/A",
             country_alpha2=shipper.country_code,
             line_1=shipper.address_line1,
