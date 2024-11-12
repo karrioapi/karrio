@@ -25,7 +25,7 @@ class TestUSPSTracking(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/v3/tracking/89108749065090",
+                f"{gateway.settings.server_url}/tracking/v3/tracking/89108749065090",
             )
 
     def test_parse_tracking_response(self):

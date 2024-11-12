@@ -11,7 +11,7 @@ class Proxy(proxy.Proxy):
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.run_asynchronously(
             lambda _: lib.request(
-                url=f"{self.settings.server_url}/v3/total-rates/search",
+                url=f"{self.settings.server_url}/prices/v3/total-rates/search",
                 data=lib.to_json(_),
                 trace=self.trace_as("json"),
                 method="POST",
@@ -28,13 +28,13 @@ class Proxy(proxy.Proxy):
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.run_asynchronously(
             lambda _: lib.request(
-                url=f"{self.settings.server_url}/v3/label",
+                url=f"{self.settings.server_url}/labels/v3/label",
                 data=lib.to_json(_),
                 trace=self.trace_as("json"),
                 method="POST",
                 headers={
                     "Content-Type": "application/json",
-                    "Authorization": f"Bearer {self.settings.access_token}",
+                    "X-Payment-Authorization-Token": f"Bearer {self.settings.payment_token}",
                 },
             ),
             request.serialize(),
@@ -51,13 +51,13 @@ class Proxy(proxy.Proxy):
             lambda _: (
                 _["trackingNumber"],
                 lib.request(
-                    url=f"{self.settings.server_url}/v3/label/{_['trackingNumber']}",
+                    url=f"{self.settings.server_url}/labels/v3/label/{_['trackingNumber']}",
                     data=lib.to_json(request.serialize()),
                     trace=self.trace_as("json"),
                     method="POST",
                     headers={
                         "Content-Type": "application/json",
-                        "Authorization": f"Bearer {self.settings.access_token}",
+                        "X-Payment-Authorization-Token": f"Bearer {self.settings.payment_token}",
                     },
                     on_ok=lambda _: '{"ok": true}',
                 ),
@@ -75,7 +75,7 @@ class Proxy(proxy.Proxy):
             lambda trackingNumber: (
                 trackingNumber,
                 lib.request(
-                    url=f"{self.settings.server_url}/v3/tracking/{trackingNumber}",
+                    url=f"{self.settings.server_url}/tracking/v3/tracking/{trackingNumber}",
                     data=lib.to_json(request.serialize()),
                     trace=self.trace_as("json"),
                     method="POST",
@@ -95,7 +95,7 @@ class Proxy(proxy.Proxy):
 
     def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
-            url=f"{self.settings.server_url}/v3/carrier-pickup",
+            url=f"{self.settings.server_url}/pickup/v3/carrier-pickup",
             data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="POST",
@@ -109,7 +109,7 @@ class Proxy(proxy.Proxy):
 
     def modify_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
-            url=f"{self.settings.server_url}/v3/carrier-pickup/{request.ctx['confirmationNumber']}",
+            url=f"{self.settings.server_url}/pickup/v3/carrier-pickup/{request.ctx['confirmationNumber']}",
             data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="POST",
@@ -123,7 +123,7 @@ class Proxy(proxy.Proxy):
 
     def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
-            url=f"{self.settings.server_url}/v3/carrier-pickup/{request.serialize()['confirmationNumber']}",
+            url=f"{self.settings.server_url}/pickup/v3/carrier-pickup/{request.serialize()['confirmationNumber']}",
             data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="POST",
@@ -138,7 +138,7 @@ class Proxy(proxy.Proxy):
 
     def create_manifest(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
-            url=f"{self.settings.server_url}/v3/scan-form",
+            url=f"{self.settings.server_url}/scan-forms/v3/scan-form",
             data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="POST",
