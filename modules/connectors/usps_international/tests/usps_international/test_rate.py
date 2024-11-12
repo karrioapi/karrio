@@ -25,7 +25,7 @@ class TestUSPSRating(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/v3/total-rates/search",
+                f"{gateway.settings.server_url}/international-prices/v3/total-rates/search",
             )
 
     def test_parse_rate_response(self):

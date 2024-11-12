@@ -35,7 +35,7 @@ class TestUSPSShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/v3/international-label",
+                f"{gateway.settings.server_url}/international-labels/v3/international-label",
             )
 
     def test_cancel_shipment(self):
@@ -45,7 +45,7 @@ class TestUSPSShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/v3/international-label/794947717776",
+                f"{gateway.settings.server_url}/international-labels/v3/international-label/794947717776",
             )
 
     def test_parse_shipment_response(self):
