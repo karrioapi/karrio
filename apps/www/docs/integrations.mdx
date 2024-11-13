@@ -8,75 +8,56 @@ import integrations from "./carriers/integrations.json";
 
 # Karrio Carriers
 
-Karrio allow you to access a network of shipping carriers and integrate with any
-additional logistics provider.
+Karrio allows you to access a network of shipping carriers and integrate with any additional logistics provider.
 
 ## Carriers Connections
 
-You can connect and use services from several carriers.
-
 <div id="tailwind">
-  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:mr-8">
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
     {integrations.map((integration, key) => (
       <a
         key={key}
-        className="group rounded border border-slate-300 p-3 hover:shadow no-underline"
         href={integration.href}
-        style={{ color: "var(--ifm-font-color-base)" }}
+        className="block p-6 bg-white rounded-lg border border-slate-200 shadow-sm hover:border-blue-400 hover:shadow-md transition-all"
       >
-        <div className="flex justify-between">
-          <div className="text-base font-semibold ">{integration.name}</div>
-          <code className="text-sm font-light px-2">{integration.status}</code>
-        </div>
-        {integration.features.map((feature, index) => (
-          <div
-            key={index}
-            className="border border-slate-300 px-1 text-sm mt-2 rounded-sm flex justify-between"
-          >
-            <div>{feature}</div>
-            <div>yes</div>
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h3 className="text-lg font-semibold text-slate-800 mb-1">
+              {integration.name}
+            </h3>
+            <div className="flex flex-wrap gap-2 mb-3">
+              {integration.features?.map((feature, idx) => (
+                <span
+                  key={idx}
+                  className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full text-xs font-medium"
+                >
+                  {feature}
+                </span>
+              ))}
+            </div>
           </div>
-        ))}
+          <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
+            integration.status === 'production'
+              ? 'bg-green-100 text-green-800'
+              : 'bg-yellow-100 text-yellow-800'
+          }`}>
+            {integration.status}
+          </span>
+        </div>
+
+        <p className="text-slate-600 text-sm mb-4">
+          {integration.description}
+        </p>
       </a>
     ))}
-  </div>
-</div>
 
-## Generic Carrier
-
-Karrio allow you to define your own carrier. This is often use to manage carriers without APIs (e.g: LTL carrier or local courier)
-under a single platform.
-
-And you guess right, this also means that carriers can use Karrio as their API, design their label and expose their rate sheets to customers
-and modernize their infrastructure.
-
-<div id="tailwind">
-  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:mr-8">
-    <a
-      className="group rounded border border-slate-300 p-3 hover:shadow no-underline"
-      href="/carriers/integrations/generic"
-      style={{ color: "var(--ifm-font-color-base)" }}
-    >
-      <div className="flex justify-between">
-        <div className="text-base font-semibold ">Generic Carrier</div>
-        <code className="text-sm font-light px-2">production</code>
-      </div>
-      <div className="border border-slate-300 px-1 text-sm mt-2 rounded-sm flex justify-between">
-        <div>Rating</div>
-        <div>yes</div>
-      </div>
-      <div className="border border-slate-300 px-1 text-sm mt-2 rounded-sm flex justify-between">
-        <div>Shipping</div>
-        <div>yes</div>
-      </div>
-    </a>
   </div>
 </div>
 
 ## Missing a carrier?
 
-You can get your shipping providers added to karrio:
+You can get your shipping providers added to Karrio:
 
-- [Sponsor an Issue](https://github.com/karrioapi/karrio/issues/new?assignees=&labels=&template=feature_request.md)
-- [Submit a PR](https://github.com/karrioapi/karrio)
-- [Carrier integration guide](/carriers/sdk/extension)
+-   [Sponsor an Issue](https://github.com/karrioapi/karrio/issues/new?assignees=&labels=&template=feature_request.md)
+-   [Submit a PR](https://github.com/karrioapi/karrio)
+-   [Carrier integration guide](/carriers/sdk/extension)
