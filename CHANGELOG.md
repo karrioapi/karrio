@@ -8,7 +8,7 @@
 - fix: easyship required defaults and max contact name size
 
 
-# Karrio 2024.9.15
+# Karrio 2024.9.14
 
 ## Changes
 
