@@ -9,3 +9,6 @@ source "${ROOT:?}/bin/create-new-env" --empty &&
     pip freeze
 
 echo -e "--extra-index-url https://karrio.gateway.scarf.sh/simple/\n$(pip freeze)" >requirements.txt
+
+# git+ssh://git@ by git+https:// i
+sed -i '' -e 's/git+ssh:\/\/git@/git+https:\/\//g' requirements.txt
