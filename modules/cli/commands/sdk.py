@@ -5,6 +5,9 @@ import string
 import pathlib
 from rich.progress import Progress, SpinnerColumn, TextColumn
 import commands.templates as templates
+import utils
+import typing
+import datetime
 
 BASE_DIR = pathlib.Path(__file__).resolve().parent.parent.parent.parent
 
@@ -20,7 +23,7 @@ SCHEMA_DATATYPES_DIR = string.Template(
 )
 
 
-def add_extension(
+def _add_extension(
     id: str,
     name: str,
     feature: str,
@@ -206,7 +209,7 @@ def add_extension(
     typer.echo("Done!")
 
 
-def add_features(
+def _add_features(
     id: str,
     name: str,
     feature: str,
@@ -324,3 +327,76 @@ def add_features(
             )
 
     typer.echo("Done!")
+
+
+app = typer.Typer()
+
+
+@app.command()
+def add_extension(
+    carrier_slug: str = typer.Option(..., prompt=True),
+    display_name: str = typer.Option(..., prompt=True),
+    features: typing.Optional[str] = typer.Option(
+        ", ".join(utils.DEFAULT_FEATURES), prompt=True
+    ),
+    version: typing.Optional[str] = typer.Option(
+        f"{datetime.datetime.now().strftime('%Y.%-m')}", prompt=True
+    ),
+    is_xml_api: typing.Optional[bool] = typer.Option(False, prompt="Is XML API?"),
+):
+    typer.confirm(
+        f'Generate new carrier: "{display_name}" extension with id "{carrier_slug}" and features [{features}]',
+        abort=True,
+    )
+
+    _add_extension(
+        carrier_slug.lower(),
+        display_name,
+        features,
+        version,
+        is_xml_api,
+    )
+
+
+@app.command()
+def add_features(
+    carrier_slug: str = typer.Option(..., prompt=True),
+    display_name: str = typer.Option(..., prompt=True),
+    features: typing.Optional[str] = typer.Option(
+        ", ".join(utils.DEFAULT_FEATURES), prompt=True
+    ),
+    is_xml_api: typing.Optional[bool] = typer.Option(False, prompt="Is XML API?"),
+):
+    if not carrier_slug:
+        print("No carrier slug provided")
+        raise typer.Abort()
+
+    typer.confirm(
+        f'Bootstrap features for: "{display_name}" extension with id "{carrier_slug}"',
+        abort=True,
+    )
+
+    _add_features(
+        carrier_slug.lower(),
+        display_name,
+        features,
+        is_xml_api,
+    )
+
+
+@app.command()
+def create_tree(
+    module: str = typer.Option(..., prompt=True),
+    class_name: str = typer.Option(..., prompt=True),
+    module_alias: str = typer.Option("", prompt=False),
+):
+    if not module or not class_name:
+        print("module and class_name are required")
+        raise typer.Abort()
+
+    output = utils.instantiate_class_from_module(
+        module,
+        class_name,
+        module_alias=module_alias,
+    )
+    typer.echo(output)
