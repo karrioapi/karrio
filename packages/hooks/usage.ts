@@ -34,7 +34,7 @@ const USAGE_FILTERS: Record<string, UsageFilter> = {
     date_after: moment().subtract(30, "days").toISOString(),
   },
 };
-const DAYS_LIST = {
+const DAYS_LIST: Record<string, string[]> = {
   "7 days": Array.from(Array(7))
     .map((_, i) => i)
     .reverse()

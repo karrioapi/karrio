@@ -26,7 +26,7 @@ import { CarrierImage } from "@karrio/ui/components/carrier-image";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { AddressType, ShipmentType } from "@karrio/types";
+import { AddressType, RateType, ShipmentType } from "@karrio/types";
 import { useLoader } from "@karrio/ui/components/loader";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { Spinner } from "@karrio/ui/components/spinner";
@@ -147,7 +147,7 @@ export default function Page(pageProps: any) {
     const getRate = (shipment: any) =>
       shipment.selected_rate ||
       (shipment?.rates || []).find(
-        (_) => _.service === shipment?.options?.preferred_service,
+        (_: RateType) => _.service === shipment?.options?.preferred_service,
       ) ||
       (shipment?.rates || [])[0] ||
       shipment;
