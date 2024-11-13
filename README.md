@@ -135,6 +135,7 @@ We are building an open and global shipping tech stack that makes shipping integ
 Special thanks to our sponsors
 
 <a href="https://appsandbrains.com/" target="_blank"><img alt="Apps & Brains" src="screenshots/apps-&-brains.png" style="width: 150px; height: 30px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
+<a href="https://superroute.ca/" target="_blank"><img alt="SuperRoute" src="screenshots/superroute.png" style="width: 150px; height: 30px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
 
 ### Become a sponsor
 
