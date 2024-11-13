@@ -16,9 +16,10 @@ import {
   OrderPreviewContext,
 } from "@karrio/core/components/order-preview";
 import { GoogleGeocodingScript } from "@karrio/ui/components/google-geocoding-script";
-import { useSystemCarrierConnections } from "@karrio/hooks/admin/connections";
+import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
+import { AddressType, RateType, ShipmentType } from "@karrio/types";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { CarrierImage } from "@karrio/ui/components/carrier-image";
 import React, { ChangeEvent, useContext, useEffect } from "react";
@@ -27,7 +28,6 @@ import { OrdersFilter } from "@karrio/ui/filters/orders-filter";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
 import { OrderMenu } from "@karrio/ui/components/order-menu";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { AddressType, RateType, ShipmentType } from "@karrio/types";
 import { useLoader } from "@karrio/ui/components/loader";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { ModalProvider } from "@karrio/ui/modals/modal";
@@ -62,7 +62,7 @@ export default function OrdersPage(pageProps: any) {
     } = useCarrierConnections();
     const {
       query: { data: { system_connections } = {} },
-    } = useSystemCarrierConnections();
+    } = useSystemConnections();
     const {
       query: { data: { orders } = {}, ...query },
       filter,

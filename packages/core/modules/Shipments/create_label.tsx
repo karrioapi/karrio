@@ -40,10 +40,10 @@ import { GoogleGeocodingScript } from "@karrio/ui/components/google-geocoding-sc
 import { CommodityDescription } from "@karrio/ui/components/commodity-description";
 import { MessagesDescription } from "@karrio/ui/components/messages-description";
 import { AddressDescription } from "@karrio/ui/components/address-description";
-import { useSystemCarrierConnections } from "@karrio/hooks/admin/connections";
 import { ParcelDescription } from "@karrio/ui/components/parcel-description";
 import { CommoditySummary } from "@karrio/ui/components/commodity-summary";
 import { RateDescription } from "@karrio/ui/components/rate-description";
+import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { LineItemSelector } from "@karrio/ui/forms/line-item-selector";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { useDefaultTemplates } from "@karrio/hooks/default-template";
@@ -68,7 +68,6 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useOrders } from "@karrio/hooks/order";
 import { Disclosure } from "@headlessui/react";
-import moment from "moment";
 
 export const generateMetadata = dynamicMetadata("Create Label");
 const ContextProviders = bundleContexts([
@@ -95,7 +94,7 @@ export default function CreateLabelPage(pageProps: any) {
     } = useCarrierConnections();
     const {
       query: { data: { system_connections } = {} },
-    } = useSystemCarrierConnections();
+    } = useSystemConnections();
     const {
       state: { shipment, query },
       ...mutation

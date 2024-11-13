@@ -40,10 +40,10 @@ import {
 } from "@karrio/types";
 import { MessagesDescription } from "@karrio/ui/components/messages-description";
 import { AddressDescription } from "@karrio/ui/components/address-description";
-import { useSystemCarrierConnections } from "@karrio/hooks/admin/connections";
 import { ParcelDescription } from "@karrio/ui/components/parcel-description";
 import { CommoditySummary } from "@karrio/ui/components/commodity-summary";
 import { RateDescription } from "@karrio/ui/components/rate-description";
+import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { LineItemSelector } from "@karrio/ui/forms/line-item-selector";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { useDefaultTemplates } from "@karrio/hooks/default-template";
@@ -101,7 +101,7 @@ export default function Page(pageProps: any) {
     } = useCarrierConnections();
     const {
       query: { data: { system_connections } = {} },
-    } = useSystemCarrierConnections();
+    } = useSystemConnections();
     const {
       state: { shipment, query },
       ...mutation

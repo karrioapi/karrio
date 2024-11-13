@@ -7,8 +7,8 @@ import {
   formatRef,
   preventPropagation,
 } from "@karrio/lib";
-import { useSystemCarrierConnections } from "@karrio/hooks/admin/connections";
 import { CreateManifestModal } from "@karrio/ui/modals/create-manifest-modal";
+import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { CarrierImage } from "@karrio/ui/components/carrier-image";
 import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
@@ -45,7 +45,7 @@ export default function Page(pageProps: any) {
     } = useCarrierConnections();
     const {
       query: { data: { system_connections } = {} },
-    } = useSystemCarrierConnections();
+    } = useSystemConnections();
     const context = useShipments({
       status: ["purchased"] as any,
       meta_key: "manifest_required",

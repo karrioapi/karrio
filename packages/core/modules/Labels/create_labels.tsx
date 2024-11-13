@@ -47,7 +47,7 @@ import { GoogleGeocodingScript } from "@karrio/ui/components/google-geocoding-sc
 import { CommodityDescription } from "@karrio/ui/components/commodity-description";
 import { MessagesDescription } from "@karrio/ui/components/messages-description";
 import { AddressDescription } from "@karrio/ui/components/address-description";
-import { useSystemCarrierConnections } from "@karrio/hooks/admin/connections";
+import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { ParcelDescription } from "@karrio/ui/components/parcel-description";
 import { CommoditySummary } from "@karrio/ui/components/commodity-summary";
 import { RateDescription } from "@karrio/ui/components/rate-description";
@@ -109,7 +109,7 @@ export default function Page(pageProps: any) {
     } = useCarrierConnections();
     const {
       query: { data: { system_connections } = {} },
-    } = useSystemCarrierConnections();
+    } = useSystemConnections();
     const ordersQuery = useOrders({
       id: orderIds,
       isDisabled: orderIds.length === 0,

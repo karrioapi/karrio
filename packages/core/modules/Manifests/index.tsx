@@ -8,7 +8,7 @@ import {
   preventPropagation,
   url$,
 } from "@karrio/lib";
-import { useSystemCarrierConnections } from "@karrio/hooks/admin/connections";
+import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { CarrierImage } from "@karrio/ui/components/carrier-image";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
@@ -42,7 +42,7 @@ export default function Page(pageProps: any) {
     } = useCarrierConnections();
     const {
       query: { data: { system_connections } = {} },
-    } = useSystemCarrierConnections();
+    } = useSystemConnections();
     const {
       query: { data: { manifests } = {}, ...query },
       filter,
