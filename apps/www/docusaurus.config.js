@@ -5,6 +5,8 @@
 // See: https://docusaurus.io/docs/api/docusaurus-config
 
 import { themes as prismThemes } from 'prism-react-renderer';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 const posthogPlugins = (
   process.env.POSTHOG_KEY ? [[
@@ -37,8 +39,13 @@ const config = {
     locales: ['en'],
   },
 
+  markdown: {
+    mermaid: true,
+  },
+
   plugins: [
     'tailwind-loader',
+    // 'content-pages',
     ...posthogPlugins,
     [
       '@docusaurus/plugin-client-redirects',
@@ -133,6 +140,8 @@ const config = {
           editUrl: 'https://github.com/karrioapi/docs/edit/main/apps/www/',
           sidebarCollapsible: false,
           docItemComponent: "@theme/ApiItem",
+          remarkPlugins: [remarkMath],
+          rehypePlugins: [rehypeKatex],
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -303,7 +312,10 @@ const config = {
       },
     }),
 
-  themes: ["docusaurus-theme-openapi-docs"],
+  themes: [
+    '@docusaurus/theme-mermaid',
+    'docusaurus-theme-openapi-docs',
+  ],
 };
 
 export default config;

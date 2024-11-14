@@ -3,62 +3,83 @@ id: architecture
 title: Architecture
 ---
 
+import Mermaid from "@theme/Mermaid";
+
 ## Overview
 
 karrio proposes a set of unified APIs accepting all required data to send requests to the supported carrier services.
 
 The typical data flows for all requests processed by karrio is illustrated bellow.
 
-<figure>
-  <img style={{ borderRadius: 5 }} src="/img/assets/karrio-sequence-diagram.svg" width="100%" />
-  <figcaption>karrio - Sequence</figcaption>
-</figure>
+<Mermaid
+    value={`
+    sequenceDiagram
+        participant User as 👤
+        participant API
+        participant Mapper
+        participant Proxy
+        participant Carrier as Carrier webservice
+
+        Note over API: Unified Datatypes
+        Note over Carrier: Carrier webservice
+
+        User->>API: JSON data
+        API->>Mapper: Validated unified request payload
+        Mapper->>Proxy: Serializable<br/>Carrier specific datatype
+        Proxy->>Carrier: HTTP Request
+        Carrier-->>Proxy: HTTP Response
+        Proxy-->>Mapper: Deserializable<br/>Carrier specific response<br/>(JSON, XML, ...)
+        Mapper-->>API: Parsed unified response data
+        API-->>User: JSON data
+    `}
+
+/>
 
 To accomplish this, the overall abstraction proposed by karrio come down to the implementation these abstract classes.
 
 <figure>
-  <img style={{ borderRadius: 5 }} src="/img/assets/karrio-class-diagram.svg" width="100%" />
-  <figcaption>karrio - Class Diagram</figcaption>
+    <img
+        style={{ borderRadius: 5 }}
+        src="/img/assets/karrio-class-diagram.svg"
+        width="100%"
+    />
+    <figcaption>karrio - Class Diagram</figcaption>
 </figure>
-
 
 ### The `Settings`
 
 :::info
-  The `Settings` class defines all the carrier specific credential required to authenticate connections
-  and additionally
+The `Settings` class defines all the carrier specific credential required to authenticate connections
+and additionally
 
-  - a unique `carrier_name` (a readonly name. e.g: canadapost)
-  - a unique `carrier_id` (a nickname provided for each instance. e.g: canadapost_test_account)
-  - optionally an `account_country_code` (a country specific account number)
-  - optionally a unique `id` reference in your system or a database
-:::
-
+-   a unique `carrier_name` (a readonly name. e.g: canadapost)
+-   a unique `carrier_id` (a nickname provided for each instance. e.g: canadapost_test_account)
+-   optionally an `account_country_code` (a country specific account number)
+-   optionally a unique `id` reference in your system or a database
+    :::
 
 ### The `Mapper`
 
 :::info
-  The `Mapper` class translates the unified karrio API data into carrier specific data to send requests
-  and also takes care or parsing the response returned back into a unified data model
+The `Mapper` class translates the unified karrio API data into carrier specific data to send requests
+and also takes care or parsing the response returned back into a unified data model
 
-  Learn more about the Mapper pattern from [Martin Fowler Enterprise Pattern](https://martinfowler.com/eaaCatalog/dataMapper.html)
+Learn more about the Mapper pattern from [Martin Fowler Enterprise Pattern](https://martinfowler.com/eaaCatalog/dataMapper.html)
 :::
-
 
 ### The `Proxy`
 
 :::info
-  The `Proxy` class defines one or many HTTP requests required to communicate with a carrier service
+The `Proxy` class defines one or many HTTP requests required to communicate with a carrier service
 
-  [Learn more about the Proxy pattern](https://en.wikipedia.org/wiki/Proxy_pattern)
+[Learn more about the Proxy pattern](https://en.wikipedia.org/wiki/Proxy_pattern)
 :::
-
 
 ## In practice
 
 This is how these classes come together to make a request to a carrier service
 
-```python
+````python
 from karrio.mappers.canadapost import Settings, Mapper, Proxy
 
 # Instantiate a connection settings
@@ -118,22 +139,21 @@ print(pickup_response)
     ),
     [] # message and error list here
 )
-```
+````
 
 :::info
-  The example above illustrates a Pickup scheduling but the idea is that all requests made by karrio follow the same lifecycle:
+The example above illustrates a Pickup scheduling but the idea is that all requests made by karrio follow the same lifecycle:
 
-  - convert unified karrio API data into a carrier specific request using the `Mapper`
-  - send the request to the carrier using the `Proxy`
-  - and parse back the response into a unified karrio data using the `Mapper`
-:::
+-   convert unified karrio API data into a carrier specific request using the `Mapper`
+-   send the request to the carrier using the `Proxy`
+-   and parse back the response into a unified karrio data using the `Mapper`
+    :::
 
 :::caution
-  Note that karrio does not raise exceptions when there is a failure during requests but rather always return
-  a tuple of a `response` if `successful` with a list of `messages` if any **notes**, **messages** or **errors**
-  in case of `failures` are returned.
+Note that karrio does not raise exceptions when there is a failure during requests but rather always return
+a tuple of a `response` if `successful` with a list of `messages` if any **notes**, **messages** or **errors**
+in case of `failures` are returned.
 :::
-
 
 ## Fluent API
 
@@ -170,8 +190,8 @@ pickup_response = pickup_request.with_(canadapost_gateway).parse()
 ```
 
 :::info
-  Note the concept of Gateway introduced here to encapsulate the access to the external system that are carrier servers
-  in our case.
+Note the concept of Gateway introduced here to encapsulate the access to the external system that are carrier servers
+in our case.
 
-  Learn more about the Gateway pattern from [Martin Fowler Enterprise Pattern](https://martinfowler.com/eaaCatalog/gateway.html)
+Learn more about the Gateway pattern from [Martin Fowler Enterprise Pattern](https://martinfowler.com/eaaCatalog/gateway.html)
 :::
