@@ -109,30 +109,38 @@ class OptionDefaultSerializer(serializers.Serializer):
     def __init__(self, instance=None, **kwargs):
         data = kwargs.get("data", {})
         if data:
-            options = (data or {}).get("options") or {}
+            # Get existing options from data and instance
+            options = {
+                **(
+                    getattr(instance, "options", None) or {}
+                ),  # Start with instance options
+                **(data.get("options") or {}),  # Override with new options
+            }
 
-            shipping_date = lib.to_date(
-                options.get("shipping_date")
-                or (getattr(instance, "options", None) or {}).get("shipping_date"),
-                current_format="%Y-%m-%dT%H:%M",
-            )
+            # Get shipping_date from options or default to next business day
+            shipping_date = options.get("shipping_date")
+            shipment_date = options.get("shipment_date")
 
-            if shipping_date is None or shipping_date < datetime.now():
-                options.update(
-                    shipping_date=lib.fdatetime(
-                        lib.to_next_business_datetime(),
-                        output_format="%Y-%m-%dT%H:%M",
-                    )
+            if not shipping_date:
+                shipping_date = lib.fdatetime(
+                    lib.to_next_business_datetime(
+                        lib.to_date(shipment_date) or datetime.now()
+                    ),
+                    output_format="%Y-%m-%dT%H:%M",
                 )
-                kwargs["data"].update(dict(options=options))
 
+            if not shipment_date:
+                shipment_date = lib.fdate(
+                    shipping_date, current_format="%Y-%m-%dT%H:%M"
+                )
+
+            # Update only the date fields in options
             options.update(
-                shipment_date=lib.fdate(
-                    shipping_date or options.get("shipping_date"),
-                    current_format="%Y-%m-%dT%H:%M",
-                )
+                {"shipping_date": shipping_date, "shipment_date": shipment_date}
             )
-            kwargs["data"].update(dict(options=options))
+
+            # Update the data with merged options
+            kwargs["data"]["options"] = options
 
         super().__init__(instance, **kwargs)
 
