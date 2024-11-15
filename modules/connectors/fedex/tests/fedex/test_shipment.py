@@ -334,6 +334,10 @@ ShipmentRequest = {
                     "weight": {"units": "LB", "value": 10.0},
                 }
             ],
+            "dutiesPayment": {
+                "paymentType": "SENDER",
+                "payor": {"responsibleParty": {}},
+            },
             "insuranceCharge": {"amount": 0.0, "currency": "USD"},
             "isDocumentOnly": False,
         },
@@ -602,6 +606,10 @@ MultiPieceShipmentRequest = {
                     "weight": {"units": "LB", "value": 10.0},
                 }
             ],
+            "dutiesPayment": {
+                "paymentType": "SENDER",
+                "payor": {"responsibleParty": {}},
+            },
             "insuranceCharge": {"amount": 0.0, "currency": "USD"},
             "isDocumentOnly": False,
         },
