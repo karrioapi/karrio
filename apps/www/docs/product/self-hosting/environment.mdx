@@ -209,6 +209,24 @@ Karrio support [Sentry](https://sentry.io/) and [PostHog] for APM and product an
 -   **`POSTHOG_KEY`**
 -   **`POSTHOG_HOST`** | **default:** `https://app.posthog.com`
 
+### Rate Limiting
+
+Karrio uses Django REST framework's throttling system to control API request rates. You can customize these limits using the following environment variables:
+
+-   **`ANON_RATE_LIMIT`** | **default:** `60/minute`
+
+The rate limit for anonymous users. Format should be "number/period" where period can be `second`, `minute`, `hour` or `day`.
+
+-   **`USER_RATE_LIMIT`** | **default:** `600/minute`
+
+The rate limit for authenticated users. Uses the same format as `ANON_RATE_LIMIT`.
+
+-   **`CARRIER_REQUEST_RATE_LIMIT`** | **default:** `300/minute`
+
+The rate limit for carrier-specific API requests. Uses the same format as `ANON_RATE_LIMIT`.
+
+Example configuration:
+
 ## Karrio Dashboard
 
 -   **`NEXT_PUBLIC_KARRIO_PUBLIC_URL`** | **required**
@@ -224,3 +242,63 @@ The URL of the Karrio Dashboard for auth redirection. `DASHBOARD_URL` was deprec
 -   **`NEXTAUTH_SECRET`** | **required**
 
 The environment secret encryption key for JWT.
+
+### JWT Configuration
+
+-   **`JWT_ACCESS_EXPIRY`** | **default:** `30`
+
+The JWT access token expiry time in minutes.
+
+-   **`JWT_REFRESH_EXPIRY`** | **default:** `3`
+
+The JWT refresh token expiry time in days.
+
+-   **`JWT_SECRET`** | **required**
+
+The secret key used for JWT token encryption. Should be at least 32 characters long.
+
+### Redis Configuration
+
+-   **`REDIS_HOST`** | **default:** `redis`
+
+The Redis server host.
+
+-   **`REDIS_PORT`** | **default:** `6379`
+
+The Redis server port.
+
+-   **`REDIS_PASSWORD`** | **optional**
+
+The Redis server password if authentication is required.
+
+### Logging
+
+-   **`LOG_LEVEL`** | **default:** `INFO`
+
+The logging level for Karrio services. Valid values are: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`.
+
+-   **`DJANGO_LOG_LEVEL`** | **default:** `WARNING`
+
+The logging level for Django framework. Uses same values as `LOG_LEVEL`.
+
+-   **`LOG_DIR`** | **default:** `WORK_DIR`
+
+The directory where log files will be stored.
+
+### Feature Flags
+
+-   **`ALLOW_SIGNUP`** | **default:** `false`
+
+Enable or disable user registration.
+
+-   **`ALLOW_ADMIN_APPROVED_SIGNUP`** | **default:** `false`
+
+Enable or disable admin approval requirement for new user registrations.
+
+-   **`ALLOW_MULTI_ACCOUNT`** | **default:** `false`
+
+Enable or disable multiple account support.
+
+-   **`PERSIST_SDK_TRACING`** | **default:** `true`
+
+Enable or disable persistent storage of SDK tracing information.
