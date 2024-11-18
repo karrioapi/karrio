@@ -6,6 +6,8 @@ import karrio.core.models as models
 import karrio.providers.fedex.error as provider_error
 import karrio.providers.fedex.utils as provider_utils
 import karrio.providers.fedex.units as provider_units
+import karrio.mappers.fedex.proxy as proxy
+
 
 DATETIME_FORMATS = ["%Y-%m-%dT%H:%M:%S%z", "%Y-%m-%dT%H:%M:%S"]
 
@@ -68,13 +70,21 @@ def _extract_details(
         provider_units.TrackingStatus.in_transit.name,
     )
     delivered = status == "delivered"
+    # Create a proxy instance with settings
+    proxy_instance = proxy.Proxy(settings=settings)
+
     img = lib.failsafe(
         lambda: (
-            provider_utils.get_proof_of_delivery(package.trackingNumber, settings)
+            proxy_instance.get_proof_of_delivery(package.trackingNumber)
             if delivered
             else None
         )
     )
+    # if img:
+    #     logger.info(f"Successfully retrieved SPOD image for {package.trackingNumber}")
+    # else:
+    #     logger.warning(f"No SPOD image available for {package.trackingNumber}")
+
 
     return models.TrackingDetails(
         carrier_name=settings.carrier_name,
@@ -122,7 +132,13 @@ def _extract_details(
             shipment_origin_country=lib.failsafe(
                 lambda: detail.originLocation.locationContactAndAddress.address.countryCode
             ),
-            signed_by=lib.failsafe(lambda: detail.deliveryDetails.signedByName),
+            signed_by=lib.failsafe(
+                lambda: (
+                    detail.deliveryDetails.signedByName
+                    if detail.deliveryDetails.signedByName
+                    else (detail.deliveryDetails.receivedByName)
+                )
+            ),
         ),
         images=lib.identity(models.Images(signature_image=img) if img else None),
         estimated_delivery=estimated_delivery,
