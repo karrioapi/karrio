@@ -3,12 +3,25 @@
 # Activate python env
 source "bin/activate-env" >/dev/null 2>&1
 
-echo 'reset env...'
-source "${ROOT:?}/bin/create-new-env" --empty &&
-    pip install -r requirements.build.txt &&
-    pip freeze
+# Function to generate requirements file
+generate_requirements() {
+    local input_file=$1
+    local output_file=$2
 
-echo -e "--extra-index-url https://karrio.gateway.scarf.sh/simple/\n$(pip freeze)" >requirements.txt
+    echo "Generating ${output_file}..."
+    pip install -r "$input_file"
 
-# git+ssh://git@ by git+https:// i
-sed -i '' -e 's/git+ssh:\/\/git@/git+https:\/\//g' requirements.txt
+    echo -e "--extra-index-url https://karrio.gateway.scarf.sh/simple/\n$(pip freeze)" >"$output_file"
+
+    # Replace git+ssh:// with git+https://
+    sed -i '' -e 's/git+ssh:\/\/git@/git+https:\/\//g' "$output_file"
+}
+
+# Start with clean environment
+echo 'Creating clean environment...'
+source "${ROOT:?}/bin/create-new-env" --empty
+
+# Generate requirements files incrementally
+generate_requirements "requirements.build.txt" "requirements.txt"
+generate_requirements "requirements.build.insiders.txt" "requirements.insiders.txt"
+generate_requirements "requirements.build.platform.txt" "requirements.platform.txt"

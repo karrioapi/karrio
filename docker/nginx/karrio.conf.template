@@ -1,0 +1,29 @@
+upstream api {
+    server 127.0.0.1:5002;
+}
+
+server {
+
+    listen 80;
+    listen [::]:80;
+    server_name "~^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$" $HEALTH_CHECK_HOST;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
+
+}
+
+server {
+
+    listen 80;
+    server_name $KARRIO_API_DOMAIN;
+
+    location / {
+        proxy_pass http://api;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+        proxy_redirect off;
+    }
+}

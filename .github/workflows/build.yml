@@ -83,3 +83,32 @@ jobs:
           docker push karrio/dashboard:${{ env.tag }}
           docker tag karrio/dashboard:${{ env.tag }} karrio/dashboard:latest-rc
           docker push karrio/dashboard:latest-rc
+
+  insiders-build:
+    needs: changes
+    if: ${{ needs.changes.outputs.version == 'true' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - id: get_tag
+        run: |
+          cat ./apps/api/karrio/server/VERSION
+          echo "tag=$(cat ./apps/api/karrio/server/VERSION)" >> "$GITHUB_ENV"
+
+      - name: Build insider server image
+        run: |
+          echo 'Build and push karrio-insiders server:${{ env.tag }}...'
+          echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u USERNAME --password-stdin
+          ./bin/build-insiders-image ${{ env.tag }} &&
+          docker push ghcr.io/karrioapi/server:${{ env.tag }} || exit 1
+
+      - name: Build insider dashboard image
+        run: |
+          echo 'Build and push karrio-insiders dashboard:${{ env.tag }}...'
+          echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u USERNAME --password-stdin
+          KARRIO_IMAGE=ghcr.io/karrioapi/dashboard ./bin/build-dashboard-image ${{ env.tag }} &&
+          docker push ghcr.io/karrioapi/dashboard:${{ env.tag }} || exit 1

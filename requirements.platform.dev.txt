@@ -1,0 +1,4 @@
+# Karrio platform packages
+
+-e ./ee/platform/modules/tenants
+

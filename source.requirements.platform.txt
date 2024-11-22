@@ -13,19 +13,23 @@ deprecation==2.1.0
 diff-match-patch==20241021
 dj-database-url==2.3.0
 Django==4.2.16
+django-auditlog==3.0.0
 django-constance==3.1.0
 django-cors-headers==4.6.0
 django-downloadview==2.4.0
 django-email-verification==0.3.3
+django-extensions==3.2.3
 django-filter==24.3
 django-formtools==2.5.1
 django-health-check==3.18.3
 django-import-export==4.3.1
 django-oauth-toolkit==3.0.1
+django-organizations==2.5.0
 django-otp==1.5.4
 django-phonenumber-field==8.0.0
 django-picklefield==3.2
 django-redis==5.4.0
+django-tenants==3.7.0
 django-two-factor-auth==1.17.0
 djangorestframework==3.15.2
 djangorestframework-simplejwt==5.3.1
@@ -84,6 +88,11 @@ karrio.sapient @ file://${PWD}/modules/connectors/sapient
 karrio.seko @ file://${PWD}/modules/connectors/seko
 karrio.sendle @ file://${PWD}/modules/connectors/sendle
 karrio.server @ file://${PWD}/apps/api
+karrio.server.admin @ file://${PWD}/ee/insiders/modules/admin
+karrio.server.apps @ file://${PWD}/ee/insiders/modules/apps
+karrio.server.audit @ file://${PWD}/ee/insiders/modules/audit
+karrio.server.automation @ file://${PWD}/ee/insiders/modules/automation
+karrio.server.cloud @ file://${PWD}/ee/insiders/modules/cloud
 karrio.server.core @ file://${PWD}/modules/core
 karrio.server.data @ file://${PWD}/modules/data
 karrio.server.documents @ file://${PWD}/modules/documents
@@ -91,8 +100,10 @@ karrio.server.events @ file://${PWD}/modules/events
 karrio.server.graph @ file://${PWD}/modules/graph
 karrio.server.manager @ file://${PWD}/modules/manager
 karrio.server.orders @ file://${PWD}/modules/orders
+karrio.server.orgs @ file://${PWD}/ee/insiders/modules/orgs
 karrio.server.pricing @ file://${PWD}/modules/pricing
 karrio.server.proxy @ file://${PWD}/modules/proxy
+karrio.server.tenants @ file://${PWD}/ee/platform/modules/tenants
 karrio.tge @ file://${PWD}/modules/connectors/tge
 karrio.tnt @ file://${PWD}/modules/connectors/tnt
 karrio.ups @ file://${PWD}/modules/connectors/ups

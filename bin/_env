@@ -1,17 +1,24 @@
 #!/usr/bin/env bash
 
 # Python virtual environment helpers
-ROOT="$( pwd )"
+ROOT="$(pwd)"
 BASE_DIR="${ROOT##*/}"
 ENV_DIR=".venv"
 LOG_DIR=".karrio"
 DIST="${ROOT:?}/${ENV_DIR}/dist"
-INSIDERS_DIR="${ROOT:?}/../karrio-insiders"
+INSIDERS_ROOT="${ROOT:?}/ee/insiders"
+PLATFORM_ROOT="${ROOT:?}/ee/platform"
 
-if [ -d "$INSIDERS_DIR" ]; then
+if [ -d "$INSIDERS_ROOT/modules" ]; then
     HAS_INSIDERS="true"
 else
     HAS_INSIDERS="false"
+fi
+
+if [ -d "$PLATFORM_ROOT/modules" ]; then
+    HAS_PLATFORM="true"
+else
+    HAS_PLATFORM="false"
 fi
 
 mkdir -p "${DIST}" "${LOG_DIR}"
@@ -20,7 +27,6 @@ mkdir -p "${DIST}" "${LOG_DIR}"
 cross=$'\u274c'
 check=$'\u2714'
 
-
 clean_build_files() {
     find $1 -type d -name dist -prune -exec rm -rf '{}' \; || true
     find $1 -type d -name build -prune -exec rm -rf '{}' \; || true
@@ -28,8 +34,7 @@ clean_build_files() {
 }
 
 backup_wheels() {
-    if [[ "$*" != *--ee* ]];
-    then
+    if [[ "$*" != *--ee* ]]; then
         find "${1}/dist" -name \*.whl -prune -exec mv '{}' "${DIST}" \;
     else
         find "${1}/dist" -name \*.whl -prune -exec mv '{}' "${EE_DIST}" \;

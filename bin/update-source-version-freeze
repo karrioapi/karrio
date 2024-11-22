@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+# Function to generate source requirements file
+generate_source_requirements() {
+    local input_file=$1
+    local output_file=$2
+    local repo_type=$3
+
+    echo "Generating ${output_file}..."
+
+    # Create a temporary file
+    TMP_FILE=$(mktemp)
+
+    # Copy the header (--extra-index-url line)
+    grep "^--extra-index" "$input_file" >"$TMP_FILE"
+
+    # Process each line
+    while IFS= read -r line; do
+        if [[ $line == -e\ git+https://github.com/karrioapi/* ]]; then
+            # Extract repository name, egg name and subdirectory
+            if [[ $line =~ github.com/karrioapi/([^.]+)(.git)?@[^#]+#egg=([^&]+)\&subdirectory=(.+)$ ]]; then
+                repo="${BASH_REMATCH[1]}"
+                egg_name="${BASH_REMATCH[3]}"
+                subdir="${BASH_REMATCH[4]}"
+
+                # Handle different repository paths based on repo_type
+                case $repo in
+                "karrio-insiders")
+                    subdir="ee/insiders/${subdir#../../ee/insiders/}"
+                    ;;
+                "karrio-platform")
+                    subdir="ee/platform/${subdir#../../../ee/platform/}"
+                    ;;
+                "karrio")
+                    # Keep the subdirectory as is
+                    ;;
+                esac
+
+                # Replace git URL with local file path
+                echo "${egg_name} @ file://\${PWD}/${subdir}" >>"$TMP_FILE"
+            fi
+        elif [[ $line != --extra-index* ]]; then
+            # Copy non-git requirements as-is
+            echo "$line" >>"$TMP_FILE"
+        fi
+    done <"$input_file"
+
+    # Add a newline at the end
+    echo "" >>"$TMP_FILE"
+
+    # Replace the original file
+    mv "$TMP_FILE" "$output_file"
+}
+
+# Generate source requirements for each variant
+generate_source_requirements "requirements.txt" "source.requirements.txt" "base"
+generate_source_requirements "requirements.insiders.txt" "source.requirements.insiders.txt" "insiders"
+generate_source_requirements "requirements.platform.txt" "source.requirements.platform.txt" "platform"
+
+echo "Generated source requirements files from requirements files"

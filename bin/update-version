@@ -6,4 +6,8 @@ sed -i '' -e "s/${1}/${2}/g" schemas/openapi.yml
 sed -i '' -e "s/${1}/${2}/g" packages/types/rest/api.ts
 sed -i '' -e "s/${1}/${2}/g" bin/deploy-hobby
 sed -i '' -e "s/${1}/${2}/g" bin/upgrade-hobby
-sed -i '' -e "s/${1}/${2}/g" docker/docker-compose.yml
+sed -i '' -e "s/${1}/${2}/g" docker/.env
+
+if [ -d "ee/insiders" ]; then
+    sed -i '' -e "s/${1}/${2}/g" ee/insiders/docker/.env
+fi

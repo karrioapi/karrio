@@ -1,10 +1,10 @@
 {
-  "name": "@karrio/platform",
+  "name": "@karrio/board",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev --port 3002",
-    "dev:platform": "next dev --port 3002",
+    "dev:board": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

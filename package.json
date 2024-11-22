@@ -19,7 +19,9 @@
   "name": "karrio",
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "packages/*",
+    "ee/platform/apps/*",
+    "ee/platform/packages/*"
   ],
   "packageManager": "npm@10.8.2",
   "dependencies": {

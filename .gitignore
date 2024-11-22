@@ -129,3 +129,16 @@ apps/api/karrio/server/staticfiles/*
 .karrio/
 packages/karriojs/api/generated
 !docker/.env
+
+# Meta-repo private directories
+meta/private/
+
+# Testing
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Temporary files
+*.tmp
+*.backup

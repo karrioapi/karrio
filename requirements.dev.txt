@@ -6,6 +6,6 @@ Jinja2
 mypy
 twine
 wheel
-typer[all]
+typer
 setuptools
 pycairo; platform_system == "Darwin"

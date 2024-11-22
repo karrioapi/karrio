@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
-echo building image karrio/dashboard:$1 ...
-docker build \
-  --no-cache \
-  -t karrio/dashboard:$1 \
-  --build-arg VERSION=$1 \
-  -f ./docker/dashboard/Dockerfile .
+KARRIO_IMAGE=${KARRIO_IMAGE:-"karrio/dashboard"}
+
+echo building image ${KARRIO_IMAGE}:${TAG} ...
+
+docker build -t ${KARRIO_IMAGE}:${TAG} \
+    --no-cache \
+    --build-arg VERSION=$1 \
+    -f ./docker/dashboard/Dockerfile \
+    . "${@:2}"
