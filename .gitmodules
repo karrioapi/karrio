@@ -1,0 +1,7 @@
+[submodule "insiders"]
+	path = ee/insiders
+	url = git@github.com:karrioapi/karrio-insiders.git
+	branch = karrio-2024.12-rc1
+[submodule "ee/platform"]
+	path = ee/platform
+	url = git@github.com:karrioapi/karrio-platform.git
