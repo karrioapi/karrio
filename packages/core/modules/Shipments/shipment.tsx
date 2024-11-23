@@ -44,8 +44,8 @@ export const ShipmentComponent: React.FC<{
 }> = ({ shipmentId, isPreview }) => {
   const notifier = useNotifier();
   const { setLoading } = useLoader();
-  const $fileInput = React.useRef<HTMLInputElement>();
-  const $fileSelectInput = React.useRef<HTMLSelectElement>();
+  const $fileInput = React.useRef<HTMLInputElement>(undefined);
+  const $fileSelectInput = React.useRef<HTMLSelectElement>(undefined);
   const {
     references: { carrier_capabilities = {} },
   } = useAPIMetadata();

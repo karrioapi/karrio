@@ -22,8 +22,8 @@ const AUTH_HTTP_CODES = [401, 403, 407];
 export async function requireAuthentication(session: Session | null) {
   if (!session || (session as any)?.error === "RefreshAccessTokenError") {
     const [pathname, search] = [
-      headers().get("x-pathname") || "/",
-      headers().get("x-search") || "",
+      (await headers()).get("x-pathname") || "/",
+      (await headers()).get("x-search") || "",
     ];
 
     if (pathname.includes("/signin")) return;
@@ -148,7 +148,7 @@ async function getAPIURL() {
     !isNone(KARRIO_ADMIN_URL) &&
     !isNone(KARRIO_ADMIN_API_KEY)
   ) {
-    const app_domain = headers().get("host") as string;
+    const app_domain = (await headers()).get("host") as string;
     const tenant =
       MULTI_TENANT && !!app_domain
         ? await loadTenantInfo({ app_domain })
