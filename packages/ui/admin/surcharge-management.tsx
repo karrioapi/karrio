@@ -3,7 +3,7 @@ import { useSurcharges } from "@karrio/hooks/admin/surcharges";
 
 interface SurchargeManagementComponent { }
 
-export const SurchargeManagement: React.FC<SurchargeManagementComponent> = () => {
+export const SurchargeManagement= (): JSX.Element =>  {
   const { query: { data: { surcharges } = {}, ...query } } = useSurcharges();
 
   return (

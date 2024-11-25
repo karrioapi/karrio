@@ -44,7 +44,7 @@ const ContextProviders = bundleContexts([
 ]);
 
 export default function OrdersPage(pageProps: any) {
-  const Component: React.FC = () => {
+  const Component= (): JSX.Element =>  {
     const { setLoading } = useLoader();
     const searchParams = useSearchParams();
     const { references } = useAPIMetadata();

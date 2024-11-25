@@ -12,10 +12,13 @@ import hljs from "highlight.js";
 export const generateMetadata = dynamicMetadata("Event");
 hljs.registerLanguage("json", json);
 
-export const EventComponent: React.FC<{
+export const EventComponent = ({
+  eventId,
+  isPreview,
+}: {
   eventId: string;
   isPreview?: boolean;
-}> = ({ eventId, isPreview }) => {
+}): JSX.Element => {
   const { setLoading } = useLoader();
   const entity_id = eventId;
   const [data, setData] = useState<string>();

@@ -73,9 +73,9 @@ function reducer(
   }
 }
 
-export const LabelTemplateEditModalProvider: React.FC<
-  LabelTemplateEditModalComponent
-> = ({ children }) => {
+export const LabelTemplateEditModalProvider = ({
+  children,
+}: LabelTemplateEditModalComponent): JSX.Element => {
   const { references } = useAPIMetadata();
   const { loading, setLoading } = useContext(Loading);
   const [isActive, setIsActive] = useState<boolean>(false);
@@ -247,6 +247,7 @@ export const LabelTemplateEditModalProvider: React.FC<
                       style={{ position: "relative" }}
                     >
                       <div className="card" style={{ borderRadius: 0 }}>
+                        {/* @ts-ignore */}
                         <CodeMirror
                           height="80vh"
                           extensions={[htmlLanguage]}
@@ -257,6 +258,7 @@ export const LabelTemplateEditModalProvider: React.FC<
                         />
                       </div>
                       <div className="card" style={{ borderRadius: 0 }}>
+                        {/* @ts-ignore */}
                         <CodeMirror
                           height="80vh"
                           extensions={[jsonLanguage]}

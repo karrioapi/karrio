@@ -22,7 +22,7 @@ import { useLogs } from "@karrio/hooks/log";
 export const generateMetadata = dynamicMetadata("API Logs");
 
 export default function LogsPage(pageProps: any) {
-  const Component: React.FC = () => {
+  const Component= (): JSX.Element =>  {
     const searchParams = useSearchParams();
     const modal = searchParams.get("modal");
     const { setLoading } = useLoader();

@@ -27,13 +27,13 @@ export const TabStateContext = React.createContext<TabStateInterface>(
   {} as TabStateInterface,
 );
 
-export const TabStateProvider: React.FC<TabStateProviderProps> = ({
+export const TabStateProvider = ({
   children,
   tabs,
   defaultSelected,
   disabledTabs = [],
   setSelectedToURL,
-}) => {
+}: TabStateProviderProps): JSX.Element => {
   const searchParams = useSearchParams();
   const tab = searchParams.get("tab") as string;
   const { addUrlParam } = useLocation();
@@ -82,14 +82,14 @@ export const TabStateProvider: React.FC<TabStateProviderProps> = ({
   );
 };
 
-export const Tabs: React.FC<TabsComponent> = ({
+export const Tabs = ({
   eventKey,
   tabClass,
   tabContainerClass,
   children,
   onSwitch,
   ...props
-}) => {
+}: TabsComponent): JSX.Element => {
   const { tabs, disabledTabs, selected, selectTab } =
     useContext(TabStateContext);
   const ref = useRef<any>();

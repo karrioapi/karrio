@@ -20,7 +20,7 @@ export const generateMetadata = dynamicMetadata("API Keys");
 export default function ApiPage(pageProps: any) {
   const { references } = useAPIMetadata();
 
-  const Component: React.FC = () => {
+  const Component= (): JSX.Element =>  {
     const {
       query: { data: { usage } = {} },
       setFilter,

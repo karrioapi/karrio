@@ -1,38 +1,34 @@
 "use client";
 import {
   ParcelEditModal,
-  ParcelEditContext,
+  useParcelEditModal,
 } from "@karrio/ui/modals/parcel-edit-modal";
 import {
   useParcelTemplateMutation,
   useParcelTemplates,
 } from "@karrio/hooks/parcel";
-import {
-  ConfirmModal,
-  ConfirmModalContext,
-} from "@karrio/ui/modals/confirm-modal";
+import { ConfirmModal, useConfirmModal } from "@karrio/ui/modals/confirm-modal";
 import { ParcelDescription } from "@karrio/ui/components/parcel-description";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { getURLSearchParams, isNoneOrEmpty } from "@karrio/lib";
 import { AppLink } from "@karrio/ui/components/app-link";
-import { Loading } from "@karrio/ui/components/loader";
+import { useLoader } from "@karrio/ui/components/loader";
+import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useContext, useEffect } from "react";
-import React from "react";
 
 export const generateMetadata = dynamicMetadata("Parcels");
 
 export default function ParcelsPage(pageProps: any) {
   const { MULTI_ORGANIZATIONS } = (pageProps as any).metadata || {};
 
-  const Component: React.FC = () => {
+  const Component = (): JSX.Element => {
     const searchParams = useSearchParams();
     const modal = searchParams.get("modal") as string;
-    const { setLoading } = useContext(Loading);
+    const { setLoading } = useLoader();
     const mutation = useParcelTemplateMutation();
-    const { editParcel } = useContext(ParcelEditContext);
-    const [initialized, setInitialized] = React.useState(false);
-    const { confirm: confirmDeletion } = useContext(ConfirmModalContext);
+    const { editParcel } = useParcelEditModal();
+    const [initialized, setInitialized] = useState(false);
+    const { confirm: confirmDeletion } = useConfirmModal();
     const {
       query: { data: { parcel_templates } = {}, ...query },
       filter,

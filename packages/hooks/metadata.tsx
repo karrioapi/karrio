@@ -36,12 +36,12 @@ export const MetadataStateContext = React.createContext<MetadataStateInterface>(
   {} as MetadataStateInterface,
 );
 
-const MetadataStateProvider: React.FC<MetadataProviderComponent> = ({
+const MetadataStateProvider = ({
   children,
   id,
   object_type,
   value,
-}) => {
+}: MetadataProviderComponent): JSX.Element => {
   const mutation = useMetadataMutation([
     `${object_type || "generic"}s`,
     id || "",

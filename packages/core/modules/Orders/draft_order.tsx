@@ -30,7 +30,7 @@ const ContextProviders = bundleContexts([
 ]);
 
 export default function Page({ params }: { params: { id: string } }) {
-  const Component: React.FC = () => {
+  const Component = (): JSX.Element => {
     const loader = useLoader();
     const id = params.id || "new";
     const [ready, setReady] = useState<boolean>(false);
@@ -104,6 +104,7 @@ export default function Page({ params }: { params: { id: string } }) {
                       LINE ITEMS
                     </span>
                     <div className="is-vcentered">
+                      {/* @ts-ignore */}
                       <CommodityStateContext.Consumer>
                         {({ editCommodity }) => (
                           <button
@@ -140,6 +141,7 @@ export default function Page({ params }: { params: { id: string } }) {
                             commodity={item as any}
                           />
                           <div>
+                            {/* @ts-ignore */}
                             <CommodityStateContext.Consumer>
                               {({ editCommodity }) => (
                                 <button
@@ -164,7 +166,7 @@ export default function Page({ params }: { params: { id: string } }) {
                               className="button is-small is-white"
                               disabled={
                                 query.isFetching ||
-                                order.line_items.length === 1
+                                (order.line_items || []).length === 1
                               }
                               onClick={() =>
                                 mutation.deleteItem(index, item?.id)()
@@ -369,14 +371,14 @@ export default function Page({ params }: { params: { id: string } }) {
 
                       <div className="p-0 pb-1">
                         <p className="is-title is-size-7 px-3 has-text-weight-semibold">
-                          {`ITEMS (${order.line_items.reduce((_, { quantity }) => _ + (isNone(quantity) ? 1 : (quantity as any)), 0)})`}
+                          {`ITEMS (${(order.line_items || []).reduce((_, { quantity }) => _ + (isNone(quantity) ? 1 : (quantity as any)), 0)})`}
                         </p>
 
                         <div
                           className="menu-list px-3 py-1"
                           style={{ maxHeight: "14em", overflow: "auto" }}
                         >
-                          {order.line_items.map((item, index) => (
+                          {(order.line_items || []).map((item, index) => (
                             <React.Fragment key={index + "parcel-info"}>
                               <hr className="my-1" style={{ height: "1px" }} />
                               <CommodityDescription commodity={item as any} />
@@ -390,7 +392,7 @@ export default function Page({ params }: { params: { id: string } }) {
                           TOTAL:{" "}
                           {
                             <span>
-                              {order.line_items.reduce(
+                              {(order.line_items || []).reduce(
                                 (_, { quantity, value_amount }) =>
                                   _ +
                                   (isNone(quantity) ? 1 : (quantity as any)) *
@@ -399,7 +401,7 @@ export default function Page({ params }: { params: { id: string } }) {
                                       : (value_amount as any)),
                                 0.0,
                               )}{" "}
-                              {order.line_items[0]?.value_currency}
+                              {(order.line_items || [])[0]?.value_currency}
                             </span>
                           }
                         </p>
@@ -407,14 +409,14 @@ export default function Page({ params }: { params: { id: string } }) {
                           TOTAL WEIGHT:{" "}
                           {
                             <span>
-                              {order.line_items.reduce(
+                              {(order.line_items || []).reduce(
                                 (_, { quantity, weight }) =>
                                   _ +
                                   (isNone(quantity) ? 1 : (quantity as any)) *
                                     (isNone(weight) ? 1.0 : (weight as any)),
                                 0.0,
                               )}{" "}
-                              {order.line_items[0]?.weight_unit}
+                              {(order.line_items || [])[0]?.weight_unit}
                             </span>
                           }
                         </p>
@@ -511,6 +513,7 @@ export default function Page({ params }: { params: { id: string } }) {
                         metadata={order.metadata}
                         onChange={(metadata) => handleChange({ metadata })}
                       >
+                        {/* @ts-ignore */}
                         <MetadataEditorContext.Consumer>
                           {({ isEditing, editMetadata }) => (
                             <>

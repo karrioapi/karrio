@@ -10,9 +10,9 @@ import {
 import { TemplateDescription } from "@karrio/ui/components/template-description";
 import { DocumentTemplateType, NotificationType } from "@karrio/types";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
+import { useConfirmModal } from "@karrio/ui/modals/confirm-modal";
+import { useNotifier } from "@karrio/ui/components/notifier";
 import { AppLink } from "@karrio/ui/components/app-link";
-import { Notify } from "@karrio/ui/components/notifier";
-import { useContext } from "react";
 import React from "react";
 
 export const generateMetadata = dynamicMetadata("Document Templates");
@@ -20,10 +20,10 @@ export const generateMetadata = dynamicMetadata("Document Templates");
 export default function TemplatesPage(pageProps: any) {
   const { MULTI_ORGANIZATIONS } = (pageProps as any).metadata || {};
 
-  const Component: React.FC = () => {
-    const { notify } = useContext(Notify);
+  const Component = (): JSX.Element => {
+    const { notify } = useNotifier();
     const mutation = useDocumentTemplateMutation();
-    const { confirm: confirmDeletion } = useContext(ConfirmModalContext);
+    const { confirm: confirmDeletion } = useConfirmModal();
     const {
       query: { data: { document_templates } = {}, ...query },
       filter,

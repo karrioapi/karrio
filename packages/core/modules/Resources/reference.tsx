@@ -8,7 +8,7 @@ import React from "react";
 export const generateMetadata = dynamicMetadata("API Reference");
 
 export default function Page(pageProps: any) {
-  const Component: React.FC = () => {
+  const Component= (): JSX.Element =>  {
     const { references } = useAPIMetadata();
 
     return (

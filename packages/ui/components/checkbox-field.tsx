@@ -1,24 +1,20 @@
 import React from "react";
 
-interface CheckBoxFieldComponent extends React.InputHTMLAttributes<any> {
+interface CheckBoxFieldProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
   fieldClass?: string;
   labelClass?: string;
   controlClass?: string;
   children?: React.ReactNode;
 }
 
-export const CheckBoxField = React.forwardRef<
-  HTMLInputElement,
-  CheckBoxFieldComponent
->((props, ref) => {
-  const {
-    fieldClass = "",
-    controlClass = "",
-    labelClass = "",
-    children,
-    ...Props
-  } = props;
-
+export const CheckBoxField = ({
+  fieldClass = "",
+  controlClass = "",
+  labelClass = "",
+  children,
+  ...props
+}: CheckBoxFieldProps): JSX.Element => {
   return (
     <div className={`field ${fieldClass || ""}`}>
       <div className={`control ${controlClass || ""}`}>
@@ -26,15 +22,10 @@ export const CheckBoxField = React.forwardRef<
           className={`checkbox is-capitalized ${labelClass || ""}`}
           style={{ fontSize: ".8em" }}
         >
-          <input
-            style={{ marginRight: ".5em" }}
-            type="checkbox"
-            {...Props}
-            ref={ref}
-          />
+          <input style={{ marginRight: ".5em" }} type="checkbox" {...props} />
           {children}
         </label>
       </div>
     </div>
   );
-});
+};

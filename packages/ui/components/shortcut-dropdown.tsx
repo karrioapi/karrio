@@ -6,7 +6,7 @@ import React from 'react';
 interface ShortcutDropdownComponent { }
 
 
-export const ShortcutDropdown: React.FC<ShortcutDropdownComponent> = ({ ...props }) => {
+export const ShortcutDropdown= ({ ...props }): JSX.Element =>  {
 
   return (
     <Dropdown>

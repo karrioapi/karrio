@@ -3,7 +3,7 @@ import { SubscriptionType } from '@karrio/types';
 
 export const Subscription = React.createContext<{ subscription?: SubscriptionType }>({});
 
-export const SubscriptionProvider: React.FC<{ subscription?: SubscriptionType, children?: React.ReactNode }> = ({ children, subscription }) => {
+export const SubscriptionProvider= ({ children, subscription }): JSX.Element =>  {
   return (
     <Subscription.Provider value={{ subscription }}>
       {children}

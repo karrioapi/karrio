@@ -27,10 +27,15 @@ import React from "react";
 
 export const generateMetadata = dynamicMetadata("Orders");
 
-export const OrderComponent: React.FC<{
+type OrderComponentProps = {
   orderId: string;
   isPreview?: boolean;
-}> = ({ orderId, isPreview }) => {
+};
+
+export const OrderComponent = ({
+  orderId,
+  isPreview,
+}: OrderComponentProps): JSX.Element => {
   const { setLoading } = useLoader();
   const entity_id = orderId;
   const { query: logs } = useLogs({ entity_id });
@@ -217,6 +222,7 @@ export const OrderComponent: React.FC<{
             object_type={MetadataObjectTypeEnum.order}
             metadata={order?.metadata}
           >
+            {/* @ts-ignore */}
             <MetadataEditorContext.Consumer>
               {({ isEditing, editMetadata }) => (
                 <>
@@ -403,7 +409,11 @@ export const OrderComponent: React.FC<{
   );
 };
 
-export default function Page({ params }: { params: { id: string } }) {
+export default function Page({
+  params,
+}: {
+  params: { id: string };
+}): JSX.Element {
   return (
     <>
       <OrderComponent orderId={params.id} />

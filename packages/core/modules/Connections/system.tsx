@@ -17,7 +17,7 @@ const ContextProviders = bundleContexts([
 ]);
 
 export default function Page(pageProps: any) {
-  const Component: React.FC = () => {
+  const Component= (): JSX.Element =>  {
     return (
       <>
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">

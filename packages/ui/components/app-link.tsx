@@ -13,7 +13,7 @@ interface AppLinkProps extends LinkProps<HTMLElement> {
   style?: React.CSSProperties;
 }
 
-export const AppLink: React.FC<AppLinkProps> = ({
+export const AppLink = ({
   href,
   className,
   target,
@@ -21,7 +21,7 @@ export const AppLink: React.FC<AppLinkProps> = ({
   children,
   style,
   ...props
-}) => {
+}: AppLinkProps): JSX.Element => {
   const { basePath } = useAppMode();
 
   return (

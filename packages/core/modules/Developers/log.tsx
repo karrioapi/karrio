@@ -22,10 +22,13 @@ import React from "react";
 export const generateMetadata = dynamicMetadata("API Log");
 hljs.registerLanguage("json", json);
 
-export const LogComponent: React.FC<{ logId: string; isPreview?: boolean }> = ({
+export const LogComponent = ({
   logId,
   isPreview,
-}) => {
+}: {
+  logId: string;
+  isPreview?: boolean;
+}): JSX.Element => {
   const { setLoading } = useLoader();
   const entity_id = logId;
   const [data, setData] = React.useState<string>();

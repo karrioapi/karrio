@@ -7,7 +7,7 @@ import React, { useEffect } from 'react';
 import moment from 'moment';
 
 
-export const SearchBar: React.FC = () => {
+export const SearchBar= (): JSX.Element =>  {
   const { query, setFilter } = useSearch();
   const ref = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);

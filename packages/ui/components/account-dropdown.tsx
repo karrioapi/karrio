@@ -4,13 +4,12 @@ import { signOut } from "next-auth/react";
 import { Dropdown } from "./dropdown";
 import { AppLink } from "./app-link";
 import React from "react";
-import { p } from "@karrio/lib";
 
 interface AccountDropdownComponent {}
 
-export const AccountDropdown: React.FC<AccountDropdownComponent> = ({
+export const AccountDropdown = ({
   ...props
-}) => {
+}: AccountDropdownComponent): JSX.Element => {
   const { references } = useAPIMetadata();
   const {
     query: { data: { user } = {} },

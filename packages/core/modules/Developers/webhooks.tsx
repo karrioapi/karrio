@@ -9,30 +9,30 @@ import {
 } from "@karrio/ui/modals/webhook-edit-modal";
 import {
   ConfirmModal,
-  ConfirmModalContext,
+  useConfirmModalContext,
 } from "@karrio/ui/modals/confirm-modal";
 import { useWebhookMutation, useWebhooks } from "@karrio/hooks/webhook";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { NotificationType, WebhookType } from "@karrio/types";
+import { useNotifier } from "@karrio/ui/components/notifier";
 import { formatDateTime, isNoneOrEmpty } from "@karrio/lib";
 import { AppLink } from "@karrio/ui/components/app-link";
-import { Notify } from "@karrio/ui/components/notifier";
-import { useContext, useEffect } from "react";
-import React from "react";
 import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import React from "react";
 
 export const generateMetadata = dynamicMetadata("Webhooks");
 
 export default function WebhooksPage(pageProps: any) {
-  const Component: React.FC = () => {
+  const Component = (): JSX.Element => {
     const searchParams = useSearchParams();
     const modal = searchParams.get("modal");
     const { query } = useWebhooks();
     const mutation = useWebhookMutation();
-    const { notify } = useContext(Notify);
+    const { notify } = useNotifier();
     const { editWebhook } = useWebhookModal();
     const { testWebhook } = useTestWebhookModal();
-    const { confirm: confirmDeletion } = useContext(ConfirmModalContext);
+    const { confirm: confirmDeletion } = useConfirmModalContext();
     const [initialized, setInitialized] = React.useState(false);
 
     const remove = (id: string) => async () => {

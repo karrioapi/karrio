@@ -13,7 +13,7 @@ interface LogsFilterComponent {
 }
 
 
-export const LogsFilter: React.FC<LogsFilterComponent> = ({ context }) => {
+export const LogsFilter= ({ context }): JSX.Element =>  {
   const { query, filter: variables, setFilter } = context;
   const [filters, dispatch] = useReducer((state: any, { name, checked, value }: { name: string, checked?: boolean, value?: string | boolean | object }) => {
     switch (name) {

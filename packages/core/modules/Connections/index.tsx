@@ -1,7 +1,7 @@
 "use client";
 import {
   ConnectProviderModal,
-  ConnectProviderModalContext,
+  useConnectProviderModalContext,
 } from "@karrio/ui/modals/connect-provider-modal";
 import {
   useCarrierConnectionMutation,
@@ -13,8 +13,8 @@ import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
 import { AppLink } from "@karrio/ui/components/app-link";
+import { useLoader } from "@karrio/ui/components/loader";
 import { ModalProvider } from "@karrio/ui/modals/modal";
-import { Loading } from "@karrio/ui/components/loader";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { useSearchParams } from "next/navigation";
 import { useContext, useEffect } from "react";
@@ -28,14 +28,14 @@ const ContextProviders = bundleContexts([
 ]);
 
 export default function ConnectionsPage(pageProps: any) {
-  const Component: React.FC = () => {
+  const Component = (): JSX.Element => {
     const searchParams = useSearchParams();
     const modal = searchParams.get("modal");
-    const { setLoading } = useContext(Loading);
+    const { setLoading } = useLoader();
     const mutation = useCarrierConnectionMutation();
     const { query: systemQuery } = useSystemConnections();
     const { query: carrierQuery } = useCarrierConnections();
-    const { editConnection } = useContext(ConnectProviderModalContext);
+    const { editConnection } = useConnectProviderModalContext();
 
     useEffect(() => {
       setLoading(carrierQuery.isFetching || systemQuery.isFetching);

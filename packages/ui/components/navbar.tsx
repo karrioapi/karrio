@@ -4,9 +4,7 @@ import { AccountDropdown } from "./account-dropdown";
 import { SearchBar } from "../forms/search-bar";
 import React from "react";
 
-interface NavbarComponent {}
-
-export const Navbar: React.FC<NavbarComponent> = ({}) => {
+export const Navbar = ({}): JSX.Element => {
   const openSidebar = (e: React.MouseEvent) => {
     e.preventDefault();
     document.querySelector(".plex-sidebar")?.classList.add("is-mobile-active");

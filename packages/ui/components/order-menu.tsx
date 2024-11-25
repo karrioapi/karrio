@@ -20,10 +20,10 @@ interface OrderMenuComponent extends React.InputHTMLAttributes<HTMLDivElement> {
   isViewing?: boolean;
 }
 
-export const OrderMenu: React.FC<OrderMenuComponent> = ({
+export const OrderMenu = ({
   order,
   isViewing,
-}) => {
+}: OrderMenuComponent): JSX.Element => {
   const router = useRouter();
   const { basePath } = useAppMode();
   const { references } = useAPIMetadata();

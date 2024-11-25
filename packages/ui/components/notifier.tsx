@@ -16,9 +16,11 @@ export const Notify = React.createContext<LoadingNotifier>(
   {} as LoadingNotifier,
 );
 
-export const Notifier: React.FC<{ children?: React.ReactNode }> = ({
+export const Notifier = ({
   children,
-}) => {
+}: {
+  children?: React.ReactNode;
+}): JSX.Element => {
   const [notification, setNotification] = useState<Notification>();
   const [timer, setTimer] = useState<NodeJS.Timeout | number>();
 

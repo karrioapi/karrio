@@ -1,10 +1,10 @@
 "use client";
 import { GenerateAPIModal } from "@karrio/ui/modals/generate-api-dialog";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { AppLink } from "@karrio/ui/components/app-link";
-import { Loading } from "@karrio/ui/components/loader";
+import { useLoader } from "@karrio/ui/components/loader";
 import { useAPIToken } from "@karrio/hooks/api-token";
 
 export const generateMetadata = dynamicMetadata("API Keys");
@@ -12,8 +12,8 @@ export const generateMetadata = dynamicMetadata("API Keys");
 export default function ApiPage(pageProps: any) {
   const { references } = useAPIMetadata();
 
-  const Component: React.FC = () => {
-    const { setLoading } = useContext(Loading);
+  const Component = (): JSX.Element => {
+    const { setLoading } = useLoader();
     const tokenInput = useRef<HTMLInputElement>(null);
     const [isRevealed, setIsRevealed] = useState<boolean>(false);
     const {

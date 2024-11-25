@@ -37,7 +37,7 @@ import { useSearchParams } from "next/navigation";
 export const generateMetadata = dynamicMetadata("Shipments");
 
 export default function Page(pageProps: any) {
-  const Component: React.FC = () => {
+  const Component= (): JSX.Element =>  {
     const searchParams = useSearchParams();
     const { setLoading } = useLoader();
     const { references } = useAPIMetadata();

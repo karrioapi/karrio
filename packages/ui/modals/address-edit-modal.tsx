@@ -37,9 +37,9 @@ interface AddressEditModalComponent {
   children?: React.ReactNode;
 }
 
-export const AddressEditModal: React.FC<AddressEditModalComponent> = ({
+export const AddressEditModal = ({
   children,
-}) => {
+}: AddressEditModalComponent): JSX.Element => {
   const { notify } = useContext(Notify);
   const { setLoading } = useContext(Loading);
   const mutation = useAddressTemplateMutation();
@@ -174,3 +174,7 @@ export const AddressEditModal: React.FC<AddressEditModalComponent> = ({
     </Notifier>
   );
 };
+
+export function useAddressEditModal() {
+  return React.useContext(AddressEditContext);
+}

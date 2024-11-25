@@ -5,7 +5,7 @@ interface TemplateDescriptionComponent {
   template: DocumentTemplateType;
 }
 
-export const TemplateDescription: React.FC<TemplateDescriptionComponent> = ({ template }) => (
+export const TemplateDescription= ({ template }): JSX.Element =>  (
   <>
     <p className="is-size-7 my-1 has-text-weight-semibold">{template.name}</p>
     <p className="is-size-7 my-1 has-text-grey">{template.description}</p>

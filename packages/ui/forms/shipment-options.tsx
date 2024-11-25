@@ -45,10 +45,10 @@ function reducer(
   }
 }
 
-export const ShipmentOptions: React.FC<ShipmentOptionsComponent> = ({
+export const ShipmentOptions = ({
   shipment,
   onSubmit,
-}) => {
+}: ShipmentOptionsComponent): JSX.Element => {
   const { notify } = useContext(Notify);
   const { loading, setLoading } = useContext(Loading);
   const [options, dispatch] = useReducer(
@@ -287,6 +287,7 @@ export const ShipmentOptions: React.FC<ShipmentOptionsComponent> = ({
         metadata={metadata}
         onChange={setMetadata}
       >
+        {/* @ts-ignore */}
         <MetadataEditorContext.Consumer>
           {({ isEditing, editMetadata }) => (
             <>

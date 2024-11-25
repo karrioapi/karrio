@@ -1,5 +1,5 @@
 "use client";
-import { LoadingProvider, Loading } from "@karrio/ui/components/loader";
+import { LoadingProvider, useLoader } from "@karrio/ui/components/loader";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ButtonField } from "@karrio/ui/components/button-field";
 import { useUserMutation } from "@karrio/hooks/user";
@@ -11,11 +11,11 @@ import Link from "next/link";
 export const generateMetadata = dynamicMetadata("Password Reset");
 
 export default function Page(pageProps: any) {
-  const Component: React.FC<{}> = () => {
+  const Component = (): JSX.Element => {
     const router = useRouter();
     const email = useRef<HTMLInputElement>(null);
     const [errors, setErrors] = React.useState<any[]>([]);
-    const { loading, setLoading } = React.useContext(Loading);
+    const { loading, setLoading } = useLoader();
     const { requestPasswordReset } = useUserMutation();
 
     const onSubmit = async (e: FormEvent<HTMLFormElement>) => {

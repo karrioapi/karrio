@@ -52,6 +52,7 @@ export default function Page(pageProps: any) {
             }}
           >
             <div className="field mt-6">
+              {/* @ts-ignore */}
               <form.Field
                 name="email"
                 validators={{
@@ -82,6 +83,7 @@ export default function Page(pageProps: any) {
             </div>
 
             <div className="field mt-5">
+              {/* @ts-ignore */}
               <form.Field
                 name="password"
                 validators={{
@@ -123,6 +125,7 @@ export default function Page(pageProps: any) {
 
             <div className="field mt-6">
               <div className="control">
+                {/* @ts-ignore */}
                 <form.Subscribe
                   selector={(state) => [state.canSubmit, state.isSubmitting]}
                   children={([canSubmit, isSubmitting]) => (

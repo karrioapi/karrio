@@ -43,7 +43,7 @@ function reducer(
   }
 }
 
-export const WorkspaceConfigForm: React.FC<WorkspaceConfigFormProps> = () => {
+export const WorkspaceConfigForm= (): JSX.Element =>  {
   const karrio = useKarrio();
   const { references } = useAPIMetadata();
   const mutation = useWorkspaceConfigMutation();

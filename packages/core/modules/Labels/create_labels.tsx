@@ -73,14 +73,13 @@ import { useAppMode } from "@karrio/hooks/app-mode";
 import { useSearchParams } from "next/navigation";
 import { useOrders } from "@karrio/hooks/order";
 import Image from "next/legacy/image";
-import moment from "moment";
 import React from "react";
 
 export const generateMetadata = dynamicMetadata("Create labels");
 const ContextProviders = bundleContexts([ModalProvider]);
 
 export default function Page(pageProps: any) {
-  const Component: React.FC = () => {
+  const Component = (): JSX.Element => {
     // General context data         -----------------------------------------------------------
     //#region
     const loader = useLoader();
@@ -215,15 +214,14 @@ export default function Page(pageProps: any) {
         ({ id }, index) => `${id || index}` === `${selected}`,
       );
       const shipment = shipments[shipment_index];
-      const ShipmentEditor: React.FC<any> =
-        !!shipment && !isNone(shipment_index)
-          ? (
-              f: (props: {
-                shipment: ShipmentType;
-                shipment_index: number;
-              }) => any,
-            ) => f({ shipment, shipment_index })
-          : () => <></>;
+      const ShipmentEditor = (
+        f: (props: { shipment: ShipmentType; shipment_index: number }) => any,
+      ): JSX.Element =>
+        !!shipment && !isNone(shipment_index) ? (
+          f({ shipment, shipment_index })
+        ) : (
+          <></>
+        );
       return ShipmentEditor;
     };
 
@@ -353,7 +351,7 @@ export default function Page(pageProps: any) {
     }, [selection, batch.shipments]);
     React.useEffect(() => {
       if (ready === true) return;
-      if (batch.shipments.length === 0) return;
+      if ((batch.shipments || []).length === 0) return;
       if (workspace_config.query.isLoading) return;
       if (orderIds.length > 0 && ordersQuery.query.isLoading) return;
       if (shipmentIds.length > 0 && shipmentsQuery.query.isLoading) return;
@@ -361,7 +359,7 @@ export default function Page(pageProps: any) {
 
       setReady(true);
       setKeys(
-        batch.shipments.reduce(
+        (batch.shipments || []).reduce(
           (acc, shipment, index) => ({
             ...acc,
             [index]: `${shipment.id || index}-${new Date()}`,
@@ -425,10 +423,11 @@ export default function Page(pageProps: any) {
         {ready && Object.keys(keys).length > 0 && (
           <>
             {/* Error & messages */}
-            {batch.shipments.map((_) => _.messages || []).flat().length > 0 && (
+            {(batch.shipments || []).map((_) => _.messages || []).flat()
+              .length > 0 && (
               <>
                 <div className="notification is-warning is-light is-size-7 my-2 p-2">
-                  {batch.shipments
+                  {(batch.shipments || [])
                     .filter((_) => (_.messages || []).length > 0)
                     .map((shipment, index) => (
                       <React.Fragment key={`${index}-${new Date()}`}>
@@ -479,7 +478,7 @@ export default function Page(pageProps: any) {
                       <td className="service is-vcentered">Shipping service</td>
                     </tr>
 
-                    {batch.shipments.map((shipment, shipment_index) => (
+                    {(batch.shipments || []).map((shipment, shipment_index) => (
                       <tr
                         className="items is-size-7"
                         key={keys[shipment_index]}
@@ -689,7 +688,7 @@ export default function Page(pageProps: any) {
                 <Dialog.Panel className="modal-card side-modal-body">
                   <section className="modal-card-body has-background-white p-2">
                     {retrieveShipment(
-                      batch.shipments,
+                      batch.shipments || [],
                       selectedRow,
                     )(
                       ({
@@ -1332,6 +1331,7 @@ export default function Page(pageProps: any) {
                                                         )}
                                                       </div>
                                                     </div>
+                                                    {/* @ts-ignore */}
                                                     <CommodityStateContext.Consumer>
                                                       {({ editCommodity }) => (
                                                         <button
@@ -1390,6 +1390,7 @@ export default function Page(pageProps: any) {
                                           )}
 
                                           <div className="is-flex is-justify-content-space-between mt-4">
+                                            {/* @ts-ignore */}
                                             <CommodityStateContext.Consumer>
                                               {({ editCommodity }) => (
                                                 <button
@@ -2069,6 +2070,7 @@ export default function Page(pageProps: any) {
                                                     prefix={`${index + 1} - `}
                                                   />
                                                   <div>
+                                                    {/* @ts-ignore */}
                                                     <CommodityStateContext.Consumer>
                                                       {({ editCommodity }) => (
                                                         <button
@@ -2136,6 +2138,7 @@ export default function Page(pageProps: any) {
                                             )}
 
                                             <div className="is-flex is-justify-content-space-between mt-4">
+                                              {/* @ts-ignore */}
                                               <CommodityStateContext.Consumer>
                                                 {({ editCommodity }) => (
                                                   <button
@@ -2279,6 +2282,7 @@ export default function Page(pageProps: any) {
                                           })
                                         }
                                       >
+                                        {/* @ts-ignore */}
                                         <MetadataEditorContext.Consumer>
                                           {({ isEditing, editMetadata }) => (
                                             <>
@@ -2309,6 +2313,7 @@ export default function Page(pageProps: any) {
                                   {/* Instructions section */}
                                   <div className="card px-0 mt-5">
                                     <div className="p-3">
+                                      {/* @ts-ignore */}
                                       <TextAreaField
                                         rows={2}
                                         label="Shipping instructions"

@@ -8,7 +8,7 @@ import React, { useContext } from 'react';
 import { jsonify } from '@karrio/lib';
 
 
-export const SystemConnectionList: React.FC = () => {
+export const SystemConnectionList= (): JSX.Element =>  {
   const { testMode } = useAppMode();
   const { notify } = useContext(Notify);
   const { query } = useSystemConnections();

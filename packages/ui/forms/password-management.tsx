@@ -24,7 +24,7 @@ function reducer(state: Partial<ChangePasswordMutationInput>, { name, value }: {
   }
 }
 
-export const PasswordManagement: React.FC<{}> = () => {
+export const PasswordManagement= (): JSX.Element =>  {
   const mutation = useUserMutation();
   const { notify } = useContext(Notify);
   const { loading, setLoading } = useContext(Loading);

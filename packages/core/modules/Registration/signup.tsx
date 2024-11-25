@@ -3,20 +3,14 @@ import {
   RegisterUserMutationInput,
   register_user_register_user_errors,
 } from "@karrio/types";
-import React, {
-  FormEvent,
-  useContext,
-  useEffect,
-  useReducer,
-  useState,
-} from "react";
-import { LoadingProvider, Loading } from "@karrio/ui/components/loader";
+import React, { FormEvent, useEffect, useReducer, useState } from "react";
+import { LoadingProvider, useLoader } from "@karrio/ui/components/loader";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ButtonField } from "@karrio/ui/components/button-field";
 import { InputField } from "@karrio/ui/components/input-field";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useUserMutation } from "@karrio/hooks/user";
 import { isNone, isNoneOrEmpty } from "@karrio/lib";
-import { useRouter, useSearchParams } from "next/navigation";
 import { p } from "@karrio/lib";
 import Link from "next/link";
 
@@ -43,12 +37,12 @@ function reducer(
   }
 }
 
-const Component: React.FC = () => {
+const Component = (): JSX.Element => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email") as string;
   const mutation = useUserMutation();
-  const { loading, setLoading } = useContext(Loading);
+  const { loading, setLoading } = useLoader();
   const [user, dispatch] = useReducer(
     reducer,
     DEFAULT_VALUE,

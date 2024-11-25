@@ -60,9 +60,9 @@ function reducer(
   }
 }
 
-export const RateSheetEditModalProvider: React.FC<
-  RateSheetEditModalComponent
-> = ({ children }) => {
+export const RateSheetEditModalProvider = ({
+  children,
+}: RateSheetEditModalComponent): JSX.Element => {
   const editor = React.useRef<ReactCodeMirrorRef>(null);
   const { loading, setLoading } = useLoader();
   const {
@@ -469,6 +469,7 @@ export const RateSheetEditModalProvider: React.FC<
                         className="card"
                         style={{ borderRadius: 0, overflow: "auto" }}
                       >
+                        {/* @ts-ignore */}
                         <CodeMirror
                           ref={editor}
                           height="76vh"
@@ -488,6 +489,7 @@ export const RateSheetEditModalProvider: React.FC<
                       </div>
 
                       <div className="card" style={{ borderRadius: 0 }}>
+                        {/* @ts-ignore */}
                         <CodeMirror
                           height="76vh"
                           extensions={[jsonLanguage]}

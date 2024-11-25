@@ -10,7 +10,7 @@ import Link from "next/link";
 export const generateMetadata = dynamicMetadata("Email Change Confirmation");
 
 export default function Page(pageProps: any) {
-  const Component: React.FC = () => {
+  const Component= (): JSX.Element =>  {
     const searchParams = useSearchParams();
     const token = searchParams.get("token") as string;
     const { confirmEmailChange } = useUserMutation();

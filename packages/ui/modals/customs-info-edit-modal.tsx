@@ -30,7 +30,7 @@ interface CustomsInfoEditModalComponent {
   children?: React.ReactNode;
 }
 
-export const CustomsInfoEditModal: React.FC<CustomsInfoEditModalComponent> = ({ children }) => {
+export const CustomsInfoEditModal= ({ children }): JSX.Element =>  {
   const { notify } = useContext(Notify);
   const { setLoading } = useContext(Loading);
   const mutation = useCustomsTemplateMutation();

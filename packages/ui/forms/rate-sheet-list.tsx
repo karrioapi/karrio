@@ -6,7 +6,7 @@ import { useAPIMetadata } from '@karrio/hooks/api-metadata';
 import React from 'react';
 
 
-export const RateSheetList: React.FC = () => {
+export const RateSheetList= (): JSX.Element =>  {
   const { references } = useAPIMetadata();
   const mutation = useRateSheetMutation();
   const { query: { data: { rate_sheets } = {} } } = useRateSheets();

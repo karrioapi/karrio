@@ -10,7 +10,7 @@ import axios from 'axios';
 
 interface SubscriptionManagementComponent { }
 
-export const SubscriptionManagement: React.FC<SubscriptionManagementComponent> = () => {
+export const SubscriptionManagement= (): JSX.Element =>  {
   const { references } = useAPIMetadata();
   const { notify } = useContext(Notify);
   const { loading, setLoading } = useLoader();

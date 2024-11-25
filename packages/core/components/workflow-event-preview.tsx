@@ -6,14 +6,13 @@ type EventPreviewModalProps = {
   eventId: string;
 };
 
-export const WorkflowPreviewModal: React.FC<
-  ModalFormProps<EventPreviewModalProps>
-> = ({ trigger, ...args }) => {
+export const WorkflowPreviewModal = ({
+  trigger,
+  ...args
+}: ModalFormProps<EventPreviewModalProps>): JSX.Element => {
   const modal = useModal();
 
-  const ModalComponent: React.FC<EventPreviewModalProps> = (props) => {
-    const { eventId } = props;
-
+  const ModalComponent = ({ eventId }: EventPreviewModalProps): JSX.Element => {
     return (
       <section className="modal-card-body px-5 pt-0 pb-6">
         <Component eventId={eventId} isPreview />
@@ -21,11 +20,14 @@ export const WorkflowPreviewModal: React.FC<
     );
   };
 
-  return React.cloneElement(trigger, {
-    onClick: () =>
-      modal.open(<ModalComponent {...args} />, {
-        className: "is-medium-modal",
-        backgroundDismiss: true,
-      }),
-  });
+  return React.cloneElement(
+    trigger as React.ReactElement,
+    {
+      onClick: () =>
+        modal.open(<ModalComponent {...args} />, {
+          className: "is-medium-modal",
+          backgroundDismiss: true,
+        }),
+    } as any,
+  );
 };

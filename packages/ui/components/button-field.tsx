@@ -1,16 +1,24 @@
-import React from 'react';
+import React from "react";
 
 interface ButtonFieldComponent extends React.ButtonHTMLAttributes<any> {
-    fieldClass?: string;
-    controlClass?: string;
+  fieldClass?: string;
+  controlClass?: string;
 }
 
-export const ButtonField: React.FC<ButtonFieldComponent> = ({ className, fieldClass, controlClass, children, ...props } = { className: "", fieldClass: "", controlClass: "" }) => {
-    return (
-        <div className={`field ${fieldClass}`}>
-            <div className={`control ${controlClass}`}>
-                <button className={`button ${className}`} {...props}>{children}</button>
-            </div>
-        </div>
-    )
+export const ButtonField = ({
+  className,
+  fieldClass,
+  controlClass,
+  children,
+  ...props
+}: ButtonFieldComponent): JSX.Element => {
+  return (
+    <div className={`field ${fieldClass}`}>
+      <div className={`control ${controlClass}`}>
+        <button className={`button ${className}`} {...props}>
+          {children}
+        </button>
+      </div>
+    </div>
+  );
 };

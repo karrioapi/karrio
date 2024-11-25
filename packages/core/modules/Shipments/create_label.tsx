@@ -76,7 +76,7 @@ const ContextProviders = bundleContexts([
 ]);
 
 export default function CreateLabelPage(pageProps: any) {
-  const Component: React.FC = () => {
+  const Component = (): JSX.Element => {
     const notifier = useNotifier();
     const { basePath } = useAppMode();
     const { references } = useAPIMetadata();
@@ -763,6 +763,7 @@ export default function CreateLabelPage(pageProps: any) {
                                     )}
                                   </div>
                                 </div>
+                                {/* @ts-ignore */}
                                 <CommodityStateContext.Consumer>
                                   {({ editCommodity }) => (
                                     <button
@@ -815,6 +816,7 @@ export default function CreateLabelPage(pageProps: any) {
                         )}
 
                         <div className="is-flex is-justify-content-space-between mt-4">
+                          {/* @ts-ignore */}
                           <CommodityStateContext.Consumer>
                             {({ editCommodity }) => (
                               <button
@@ -1370,6 +1372,7 @@ export default function CreateLabelPage(pageProps: any) {
                                     prefix={`${index + 1} - `}
                                   />
                                   <div>
+                                    {/* @ts-ignore */}
                                     <CommodityStateContext.Consumer>
                                       {({ editCommodity }) => (
                                         <button
@@ -1430,6 +1433,7 @@ export default function CreateLabelPage(pageProps: any) {
                           )}
 
                           <div className="is-flex is-justify-content-space-between mt-4">
+                            {/* @ts-ignore */}
                             <CommodityStateContext.Consumer>
                               {({ editCommodity }) => (
                                 <button
@@ -1723,6 +1727,7 @@ export default function CreateLabelPage(pageProps: any) {
                         metadata={shipment.metadata}
                         onChange={(metadata) => onChange({ metadata })}
                       >
+                        {/* @ts-ignore */}
                         <MetadataEditorContext.Consumer>
                           {({ isEditing, editMetadata }) => (
                             <>
@@ -1751,6 +1756,7 @@ export default function CreateLabelPage(pageProps: any) {
                   {/* Instructions section */}
                   <div className="card px-0 mt-5">
                     <div className="p-3">
+                      {/* @ts-ignore */}
                       <TextAreaField
                         rows={2}
                         label="Shipping instructions"

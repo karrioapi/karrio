@@ -1,12 +1,20 @@
-import { DropdownInput, DropdownInputComponent } from '../components/dropdown-input';
-import { useAPIMetadata } from '@karrio/hooks/api-metadata';
-import React, { useEffect, useState } from 'react';
-import { isNone } from '@karrio/lib';
+import {
+  DropdownInput,
+  DropdownInputComponent,
+} from "../components/dropdown-input";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { useEffect, useState } from "react";
+import { isNone } from "@karrio/lib";
 
-interface CountryInputComponent extends Omit<DropdownInputComponent, 'items'> { }
+interface CountryInputComponent extends Omit<DropdownInputComponent, "items"> {}
 
-export const CountryInput: React.FC<CountryInputComponent> = ({ name, ...props }) => {
-  const { references: { countries } } = useAPIMetadata();
+export const CountryInput = ({
+  name,
+  ...props
+}: CountryInputComponent): JSX.Element => {
+  const {
+    references: { countries },
+  } = useAPIMetadata();
   const [items, setItems] = useState<[string, string][]>();
 
   useEffect(() => {
@@ -15,7 +23,5 @@ export const CountryInput: React.FC<CountryInputComponent> = ({ name, ...props }
     }
   }, [countries]);
 
-  return (
-    <DropdownInput name={name || 'country'} items={items} {...props} />
-  )
+  return <DropdownInput name={name || "country"} items={items} {...props} />;
 };

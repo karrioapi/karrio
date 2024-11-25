@@ -41,7 +41,7 @@ hljs.registerLanguage("django", django);
 hljs.registerLanguage("json", json);
 
 export default function Page({ params }: { params: { id: string } }) {
-  const Component: React.FC = () => {
+  const Component = (): JSX.Element => {
     const loader = useLoader();
     const id = params.id;
     const { references } = useAPIMetadata();
@@ -133,7 +133,7 @@ export default function Page({ params }: { params: { id: string } }) {
                     className="is-small"
                     required
                   />
-
+                  {/* @ts-ignore */}
                   <TextAreaField
                     label="description"
                     name="description"
@@ -400,6 +400,7 @@ export default function Page({ params }: { params: { id: string } }) {
                                 >
                                   <div className="control">
                                     <div className="card is-radiusless">
+                                      {/* @ts-ignore */}
                                       <CodeMirror
                                         height="297px"
                                         extensions={[htmlLanguage]}
@@ -445,6 +446,7 @@ export default function Page({ params }: { params: { id: string } }) {
                                                 className="card is-radiusless"
                                                 key={trace.id}
                                               >
+                                                {/* @ts-ignore */}
                                                 <CodeMirror
                                                   height="297px"
                                                   extensions={[jsonLanguage]}
@@ -491,6 +493,7 @@ export default function Page({ params }: { params: { id: string } }) {
                                                 className="card is-radiusless"
                                                 key={trace.id}
                                               >
+                                                {/* @ts-ignore */}
                                                 <CodeMirror
                                                   height="297px"
                                                   extensions={[jsonLanguage]}

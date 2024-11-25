@@ -2,7 +2,7 @@ import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import Script from "next/script";
 import React from "react";
 
-export const GoogleGeocodingScript: React.FC = () => {
+export const GoogleGeocodingScript= (): JSX.Element =>  {
   const {
     references: { ADDRESS_AUTO_COMPLETE },
   } = useAPIMetadata();

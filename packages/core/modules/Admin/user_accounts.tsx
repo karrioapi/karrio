@@ -8,7 +8,7 @@ export const generateMetadata = dynamicMetadata("Staff");
 const ContextProviders = bundleContexts([ModalProvider]);
 
 export default function Page(pageProps: any) {
-  const Component: React.FC = () => {
+  const Component= (): JSX.Element =>  {
     return (
       <>
         <header className="px-0 pb-5 pt-1 mb-1">

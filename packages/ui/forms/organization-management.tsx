@@ -10,7 +10,7 @@ import React, { useContext } from 'react';
 
 interface OrganizationManagementComponent { }
 
-export const OrganizationManagement: React.FC<OrganizationManagementComponent> = () => {
+export const OrganizationManagement= (): JSX.Element =>  {
   const { notify } = useContext(Notify);
   const { confirm } = useConfirmModal();
   const { sendInvites } = useInviteMember();

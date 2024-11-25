@@ -64,13 +64,13 @@ function reducer(
   }
 }
 
-export const ParcelForm: React.FC<ParcelFormComponent> = ({
+export const ParcelForm = ({
   value,
   shipment,
   children,
   prefixChilren,
   onChange,
-}) => {
+}: ParcelFormComponent): JSX.Element => {
   const {
     references: { packaging_types, package_presets },
   } = useAPIMetadata();
@@ -348,7 +348,7 @@ export const ParcelForm: React.FC<ParcelFormComponent> = ({
           ))}
         </SelectField>
       </div>
-
+      {/* @ts-ignore */}
       <TextAreaField
         name="description"
         onChange={handleChange}

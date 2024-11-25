@@ -10,7 +10,7 @@ interface LineItemInputComponent extends Omit<DropdownInputComponent, 'items' | 
   query: ReturnType<typeof useOrders>['query'];
 }
 
-export const LineItemInput: React.FC<LineItemInputComponent> = ({ onChange, onReady, query, ...props }) => {
+export const LineItemInput= ({ onChange, onReady, query, ...props }): JSX.Element =>  {
   const [lineItems, setLineItems] = useState<CommodityType[]>();
   const [items, setItems] = useState<[string, string][]>([]);
 

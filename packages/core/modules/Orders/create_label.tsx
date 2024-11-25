@@ -78,7 +78,7 @@ const ContextProviders = bundleContexts([
 ]);
 
 export default function Page(pageProps: any) {
-  const Component: React.FC = () => {
+  const Component = (): JSX.Element => {
     const loader = useLoader();
     const notifier = useNotifier();
     const searchParams = useSearchParams();
@@ -1280,6 +1280,7 @@ export default function Page(pageProps: any) {
                                     prefix={`${index + 1} - `}
                                   />
                                   <div>
+                                    {/* @ts-ignore */}
                                     <CommodityStateContext.Consumer>
                                       {({ editCommodity }) => (
                                         <button
@@ -1340,6 +1341,7 @@ export default function Page(pageProps: any) {
                           )}
 
                           <div className="is-flex is-justify-content-space-between mt-4">
+                            {/* @ts-ignore */}
                             <CommodityStateContext.Consumer>
                               {({ editCommodity }) => (
                                 <button
@@ -1619,6 +1621,7 @@ export default function Page(pageProps: any) {
                         metadata={shipment.metadata}
                         onChange={(metadata) => onChange({ metadata })}
                       >
+                        {/* @ts-ignore */}
                         <MetadataEditorContext.Consumer>
                           {({ isEditing, editMetadata }) => (
                             <>
@@ -1647,6 +1650,7 @@ export default function Page(pageProps: any) {
                   {/* Instructions section */}
                   <div className="card px-0 mt-5">
                     <div className="p-3">
+                      {/* @ts-ignore */}
                       <TextAreaField
                         rows={2}
                         label="Shipping instructions"

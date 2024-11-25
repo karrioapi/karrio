@@ -1,16 +1,13 @@
 "use client";
 import {
   TrackerModalProvider,
-  TrackerModalContext,
+  useTrackerModal,
 } from "@karrio/ui/modals/track-shipment-modal";
 import {
   TrackingPreview,
-  TrackingPreviewContext,
+  useTrackingPreview,
 } from "@karrio/core/components/tracking-preview";
-import {
-  ConfirmModal,
-  ConfirmModalContext,
-} from "@karrio/ui/modals/confirm-modal";
+import { ConfirmModal, useConfirmModal } from "@karrio/ui/modals/confirm-modal";
 import {
   formatRef,
   getURLSearchParams,
@@ -25,20 +22,20 @@ import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { useLoader } from "@karrio/ui/components/loader";
 import { Spinner } from "@karrio/ui/components/spinner";
 import { TrackingEvent } from "@karrio/types/rest/api";
-import React, { useContext, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import React, { useEffect } from "react";
 
 export const generateMetadata = dynamicMetadata("Trackers");
 
 export default function TrackersPage(pageProps: any) {
-  const Component: React.FC = () => {
+  const Component = (): JSX.Element => {
     const searchParams = useSearchParams();
     const modal = searchParams.get("modal") as string;
     const { setLoading } = useLoader();
     const mutation = useTrackerMutation();
-    const { addTracker } = useContext(TrackerModalContext);
-    const { previewTracker } = useContext(TrackingPreviewContext);
-    const { confirm: confirmDeletion } = useContext(ConfirmModalContext);
+    const { addTracker } = useTrackerModal();
+    const { previewTracker } = useTrackingPreview();
+    const { confirm: confirmDeletion } = useConfirmModal();
     const [initialized, setInitialized] = React.useState(false);
     const context = useTrackers({
       setVariablesToURL: true,

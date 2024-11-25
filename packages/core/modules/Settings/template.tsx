@@ -50,7 +50,7 @@ function reducer(
 }
 
 export default function DocumentTemplatePage(pageProps: any) {
-  const Component: React.FC = () => {
+  const Component = (): JSX.Element => {
     const loader = useLoader();
     const searchParams = useSearchParams();
     const id = searchParams.get("id") as string;
@@ -228,6 +228,7 @@ export default function DocumentTemplatePage(pageProps: any) {
               </div>
             </div>
 
+            {/* @ts-ignore */}
             <TextAreaField
               label="description"
               name="description"
@@ -274,6 +275,7 @@ export default function DocumentTemplatePage(pageProps: any) {
 
           <div className="column px-0 is-9">
             <div className="card" style={{ borderRadius: 0 }}>
+              {/* @ts-ignore */}
               <CodeMirror
                 height="80vh"
                 extensions={[html({})]}

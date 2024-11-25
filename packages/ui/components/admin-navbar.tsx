@@ -7,9 +7,7 @@ import { p } from "@karrio/lib";
 import Image from "next/image";
 import React from "react";
 
-interface NavbarComponent {}
-
-export const AdminNavbar: React.FC<NavbarComponent> = ({}) => {
+export const AdminNavbar = ({}): JSX.Element => {
   const openSidebar = (e: React.MouseEvent) => {
     e.preventDefault();
     document.querySelector(".plex-sidebar")?.classList.add("is-mobile-active");
