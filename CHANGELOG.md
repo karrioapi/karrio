@@ -1,4 +1,4 @@
-# Karrio 2024.12-rc1
+# Karrio 2024.12rc1
 
 ## Changes
 
