@@ -10,6 +10,16 @@ RUN npm run build -w apps/dashboard && \
 
 # Production image, copy all the files and run next
 FROM node:22.5.1-alpine3.19 AS runner
+
+LABEL maintainer=hello@karrio.io
+LABEL org.opencontainers.image.title="karrio dashboard"
+LABEL org.opencontainers.image.description="karrio dashboard runtime image"
+LABEL org.opencontainers.image.url="https://karrio.io"
+LABEL org.opencontainers.image.documentation="https://docs.karrio.io"
+LABEL org.opencontainers.image.source="https://github.com/karrioapi/karrio"
+LABEL org.opencontainers.image.vendor="team karrio"
+LABEL org.opencontainers.image.authors="hello@karrio.io"
+
 ARG VERSION
 WORKDIR /app
 

@@ -16,11 +16,11 @@ RUN cd /temp/app && \
 FROM python:3.11-slim AS build-image
 
 LABEL maintainer=hello@karrio.io
-LABEL org.opencontainers.image.title="karrio server"
-LABEL org.opencontainers.image.description="karrio server runtime image"
+LABEL org.opencontainers.image.title="karrio insiders"
+LABEL org.opencontainers.image.description="karrio insiders runtime image"
 LABEL org.opencontainers.image.url="https://karrio.io"
 LABEL org.opencontainers.image.documentation="https://docs.karrio.io"
-LABEL org.opencontainers.image.source="https://github.com/karrioapi/karrio-insiders"
+LABEL org.opencontainers.image.source="https://github.com/karrioapi/karrio"
 LABEL org.opencontainers.image.vendor="team karrio"
 LABEL org.opencontainers.image.authors="hello@karrio.io"
 
