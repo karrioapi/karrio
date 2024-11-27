@@ -1,3 +1,21 @@
+# Karrio 2024.12-rc1
+
+## Changes
+
+### Feat
+
+- feat(WIP): introduce new customizable dashboard with a new stack shacdn|tailwind|radix|tanstack
+- feat: Introduce advanced Karrio CLI features with API connectivity and data query
+- feat: make rate limit configurable using env vars (#589)
+
+### Fix
+
+- fix:`usps` API proxy and payment authentication (#709)
+- fix: version freeze git reference for `dockerless` install (#721)
+- fix: invalid reference useSystemConnection causing permission error (#706)
+- fix: Consolidate`fedex` duties payor definition with missing account number with live tests (#718, #697)
+- fix: issue with `shipping_date` and `shipment_date` being set to None and options getting overridden
+
 # Karrio 2024.9.15
 
 ## Changes

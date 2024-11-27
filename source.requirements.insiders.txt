@@ -119,7 +119,7 @@ oauthlib==3.2.2
 packaging==24.2
 phonenumbers==8.13.50
 pillow==10.4.0
-posthog==3.7.2
+posthog==3.7.3
 psutil==6.1.0
 psycopg2-binary==2.9.10
 py-soap==2020.3.2
@@ -142,7 +142,7 @@ rpds-py==0.21.0
 sentry-sdk==2.19.0
 six==1.16.0
 sqlparse==0.5.2
-strawberry-graphql==0.252.0
+strawberry-graphql==0.253.0
 tablib==3.7.0
 tinycss2==1.4.0
 tinyhtml5==2.0.0

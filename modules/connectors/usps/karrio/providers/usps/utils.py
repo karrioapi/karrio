@@ -1,6 +1,7 @@
 """USPS connection settings."""
 
 import re
+import typing
 import datetime
 import karrio.lib as lib
 import karrio.core as core
@@ -266,8 +267,10 @@ def parse_response(response) -> dict:
             continue  # Skip empty parts and the final boundary marker
 
         part_data = {}
-        headers, content = part.split("\n\n", 1) if "\n\n" in part else (part, "")
-        headers = headers.strip().split("\n")
+        headers_content, content = (
+            part.split("\n\n", 1) if "\n\n" in part else (part, "")
+        )
+        headers: typing.List[str] = headers_content.strip().split("\n")
 
         # Extract Content-Disposition and Content-Type
         for header in headers:
@@ -288,12 +291,12 @@ def parse_response(response) -> dict:
         if part_data.get("content_type") == "application/json":
             data[part_data["name"]] = {**lib.to_dict(content.strip())}
         elif part_data.get("filename"):
-            data[part_data["name"]] = content.strip()
+            data[part_data["name"]] = content.strip()  # type: ignore
 
     return data
 
 
-def parse_error_response(response: str) -> dict:
+def parse_error_response(response) -> dict:
     # Check if the response is JSON
     content = lib.failsafe(lambda: response.read())
     json_data = lib.failsafe(lambda: lib.to_dict(content))
