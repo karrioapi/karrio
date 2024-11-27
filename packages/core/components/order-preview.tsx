@@ -14,7 +14,9 @@ export const OrderPreviewContext = React.createContext<OrderPreviewContextType>(
   {} as OrderPreviewContextType,
 );
 
-export const OrderPreview: React.FC<OrderPreviewComponent> = ({ children }) => {
+export const OrderPreview = ({
+  children,
+}: OrderPreviewComponent): JSX.Element => {
   const { addUrlParam, removeUrlParam } = useLocation();
   const [isActive, setIsActive] = useState<boolean>(false);
   const [key, setKey] = useState<string>(`order-${Date.now()}`);

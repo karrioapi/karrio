@@ -1,6 +1,6 @@
-import React, { useContext, useState } from 'react';
-import { NotificationType } from '@karrio/types';
-import { Notify } from '../components/notifier';
+import React, { useContext, useState } from "react";
+import { NotificationType } from "@karrio/types";
+import { useNotifier } from "../components/notifier";
 
 type OperationType = {
   identifier: string;
@@ -8,18 +8,21 @@ type OperationType = {
   action?: string;
   onConfirm: () => Promise<any>;
 };
+
 type ConfirmModalContextType = {
-  confirm: (operation: OperationType) => void,
+  confirm: (operation: OperationType) => void;
 };
 
-export const ConfirmModalContext = React.createContext<ConfirmModalContextType>({} as ConfirmModalContextType);
-
-interface ConfirmModalComponent {
+interface ConfirmModalProps {
   children?: React.ReactNode;
 }
 
-export const ConfirmModal: React.FC<ConfirmModalComponent> = ({ children }) => {
-  const { notify } = useContext(Notify);
+export const ConfirmModalContext = React.createContext<ConfirmModalContextType>(
+  {} as ConfirmModalContextType,
+);
+
+export const ConfirmModal = ({ children }: ConfirmModalProps): JSX.Element => {
+  const { notify } = useNotifier();
   const [isActive, setIsActive] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [operation, setOperation] = useState<OperationType>();
@@ -28,21 +31,26 @@ export const ConfirmModal: React.FC<ConfirmModalComponent> = ({ children }) => {
     setOperation(operation);
     setIsActive(true);
   };
+
   const close = (evt?: React.MouseEvent) => {
     evt?.preventDefault();
     setIsActive(false);
     setIsLoading(false);
     setOperation(undefined);
   };
+
   const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
     setIsLoading(true);
     try {
       await operation?.onConfirm();
       notify({
-        type: NotificationType.success, message: `${operation?.label} successfully!...`
+        type: NotificationType.success,
+        message: `${operation?.label} successfully!...`,
       });
-      setTimeout(() => { close(); }, 2000);
+      setTimeout(() => {
+        close();
+      }, 2000);
     } catch (message: any) {
       notify({ type: NotificationType.error, message });
       setIsLoading(false);
@@ -61,7 +69,8 @@ export const ConfirmModal: React.FC<ConfirmModalComponent> = ({ children }) => {
           <section className="modal-card-body">
             <div className="form-floating-header p-4">
               <span className="has-text-weight-bold is-size-6">
-                {operation?.label} <span className="is-size-7">({operation?.identifier})</span>
+                {operation?.label}{" "}
+                <span className="is-size-7">({operation?.identifier})</span>
               </span>
             </div>
             <div className="p-3 my-4"></div>
@@ -76,19 +85,30 @@ export const ConfirmModal: React.FC<ConfirmModalComponent> = ({ children }) => {
               </button>
               <input
                 type="submit"
-                className={"button is-danger is-small" + `${isLoading ? " is-loading" : ""}`}
+                className={
+                  "button is-danger is-small" +
+                  `${isLoading ? " is-loading" : ""}`
+                }
                 value={operation?.action || "Delete"}
                 disabled={isLoading}
               />
             </div>
           </section>
         </form>
-        <button className="modal-close is-large has-background-dark" aria-label="close" onClick={close}></button>
+        <button
+          className="modal-close is-large has-background-dark"
+          aria-label="close"
+          onClick={close}
+        ></button>
       </div>
     </>
-  )
+  );
 };
 
 export function useConfirmModal() {
+  return useContext(ConfirmModalContext);
+}
+
+export function useConfirmModalContext() {
   return useContext(ConfirmModalContext);
 }

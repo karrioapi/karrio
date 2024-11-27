@@ -12,7 +12,7 @@ interface CarrierBadgeComponent
   background?: string;
 }
 
-export const CarrierBadge: React.FC<CarrierBadgeComponent> = ({
+export const CarrierBadge = ({
   carrier_name,
   text_color,
   background,
@@ -20,7 +20,7 @@ export const CarrierBadge: React.FC<CarrierBadgeComponent> = ({
   width,
   height,
   ...props
-}) => {
+}: CarrierBadgeComponent): JSX.Element => {
   const carrier_img = CARRIER_IMAGES[carrier_name as any] || carrier_name;
   const query = new URLSearchParams(
     JSON.parse(

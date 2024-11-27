@@ -8,7 +8,7 @@ interface AppMenuComponent extends React.InputHTMLAttributes<HTMLDivElement> {
   isViewing?: boolean;
 }
 
-export const AppMenu: React.FC<AppMenuComponent> = ({ app, isViewing }) => {
+export const AppMenu = ({ app, isViewing }: AppMenuComponent): JSX.Element => {
   const mutation = {} as any;
 
   return (

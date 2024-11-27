@@ -10,8 +10,8 @@ import {
   TrackingEventType,
 } from "@karrio/types";
 import { CarrierImage } from "@karrio/ui/components/carrier-image";
+import React, { useRef, useState, useContext } from "react";
 import { AppLink } from "@karrio/ui/components/app-link";
-import React, { useRef, useState } from "react";
 import { useLocation } from "@karrio/hooks/location";
 
 type DayEvents = { [k: string]: TrackingEventType[] };
@@ -28,9 +28,9 @@ export const TrackingPreviewContext =
     {} as TrackingPreviewContextType,
   );
 
-export const TrackingPreview: React.FC<TrackingPreviewComponent> = ({
+export const TrackingPreview = ({
   children,
-}) => {
+}: TrackingPreviewComponent): JSX.Element => {
   const link = useRef<HTMLAnchorElement>(null);
   const { addUrlParam, removeUrlParam } = useLocation();
   const [isActive, setIsActive] = useState<boolean>(false);
@@ -313,3 +313,7 @@ export const TrackingPreview: React.FC<TrackingPreviewComponent> = ({
     </>
   );
 };
+
+export function useTrackingPreview() {
+  return useContext(TrackingPreviewContext);
+}

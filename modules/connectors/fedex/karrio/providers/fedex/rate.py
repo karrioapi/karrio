@@ -102,12 +102,18 @@ def rate_request(
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
+    default_currency = lib.identity(
+        options.currency.state
+        or settings.default_currency
+        or units.CountryCurrency.map(payload.shipper.country_code).value
+        or "USD"
+    )
 
     is_intl = shipper.country_code != recipient.country_code
     request_types = lib.identity(
         settings.connection_config.rate_request_types.state
         if any(settings.connection_config.rate_request_types.state or [])
-        else ["LIST", "ACCOUNT", *([] if "currency" not in options else ["PREFERRED"])]
+        else ["LIST", "ACCOUNT", "PREFERRED"]
     )
     shipment_date = lib.to_date(options.shipment_date.state or datetime.datetime.now())
     hub_id = lib.identity(
@@ -135,7 +141,7 @@ def rate_request(
                     weight=packages.weight.value,
                     weight_unit=packages.weight_unit,
                     value_amount=options.declared_value.state or 1.0,
-                    value_currency=options.currency.state or "USD",
+                    value_currency=default_currency,
                 )
             ]
         )
@@ -178,7 +184,7 @@ def rate_request(
             ),
             serviceType=getattr(service, "value", None),
             emailNotificationDetail=None,
-            preferredCurrency=options.currency.state,
+            preferredCurrency=default_currency,
             rateRequestType=request_types,
             shipDateStamp=lib.fdate(shipment_date, "%Y-%m-%d"),
             pickupType="DROPOFF_AT_FEDEX_LOCATION",
@@ -278,9 +284,7 @@ def rate_request(
                             unitPrice=lib.identity(
                                 fedex.FixedValueType(
                                     amount=lib.to_money(item.value_amount),
-                                    currency=(
-                                        item.value_currency or options.currency.state
-                                    ),
+                                    currency=(item.value_currency or default_currency),
                                 )
                                 if item.value_amount
                                 else None
@@ -292,9 +296,7 @@ def rate_request(
                                     )
                                 ),
                                 currency=lib.identity(
-                                    item.value_currency
-                                    or options.currency.state
-                                    or "USD"
+                                    item.value_currency or default_currency
                                 ),
                             ),
                             quantity=item.quantity,

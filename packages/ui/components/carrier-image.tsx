@@ -11,7 +11,7 @@ interface CarrierImageComponent
   background?: string;
 }
 
-export const CarrierImage: React.FC<CarrierImageComponent> = ({
+export const CarrierImage = ({
   carrier_name,
   text_color,
   background,
@@ -20,7 +20,7 @@ export const CarrierImage: React.FC<CarrierImageComponent> = ({
   width,
   height,
   ...props
-}) => {
+}: CarrierImageComponent): JSX.Element => {
   const carrier_img = CARRIER_IMAGES[carrier_name as any] || carrier_name;
   const query = new URLSearchParams(
     JSON.parse(

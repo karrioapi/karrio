@@ -1,6 +1,6 @@
 FROM node:16.17.0-slim
 
-ENV workdir /app
+ENV workdir=/app
 
 RUN mkdir ${workdir}
 WORKDIR ${workdir}

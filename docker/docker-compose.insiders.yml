@@ -1,0 +1,97 @@
+services:
+  api:
+    container_name: karrio.api
+    image: ghcr.io/karrioapi/server:$KARRIO_TAG
+    restart: unless-stopped
+    ports:
+      - 5002:5002
+    depends_on:
+      - db
+      - redis
+    environment:
+      USE_HTTPS: "True"
+      DEBUG_MODE: "False"
+      DETACHED_WORKER: "True"
+      SECRET_KEY: ${SECRET_KEY}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      DATABASE_HOST: ${DATABASE_HOST:-db}
+      DATABASE_NAME: ${DATABASE_NAME:-db}
+      DATABASE_PORT: ${DATABASE_PORT:-5432}
+      DATABASE_ENGINE: ${DATABASE_ENGINE:-postgresql_psycopg2}
+      DATABASE_USERNAME: ${DATABASE_USERNAME:-postgres}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+    volumes:
+      - karrio-static:/karrio/static
+
+  worker:
+    container_name: karrio.worker
+    image: ghcr.io/karrioapi/server:$KARRIO_TAG
+    restart: unless-stopped
+    command: "/bin/bash ./worker"
+    depends_on:
+      - db
+      - redis
+      - api
+    environment:
+      DEBUG_MODE: "False"
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      DATABASE_HOST: ${DATABASE_HOST:-db}
+      DATABASE_NAME: ${DATABASE_NAME:-db}
+      DATABASE_PORT: ${DATABASE_PORT:-5432}
+      DATABASE_ENGINE: ${DATABASE_ENGINE:-postgresql_psycopg2}
+      DATABASE_USERNAME: ${DATABASE_USERNAME:-postgres}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+
+  dashboard:
+    container_name: karrio.dashboard
+    image: ghcr.io/karrioapi/dashboard:$KARRIO_TAG
+    ports:
+      - 3000:3000/tcp
+    depends_on:
+      - api
+    environment:
+      NEXTAUTH_SECRET: ${JWT_SECRET}
+      NEXT_PUBLIC_DASHBOARD_URL: ${DASHBOARD_URL}
+      NEXT_PUBLIC_KARRIO_PUBLIC_URL: ${KARRIO_PUBLIC_URL}
+
+  caddy:
+    container_name: karrio.caddy
+    image: caddy:2.6.2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - karrio-static:/var/www/karrio/static
+      - caddy-data:/data
+    depends_on:
+      - api
+      - dashboard
+
+  db:
+    container_name: karrio.db
+    image: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME:-db}
+      POSTGRES_USER: ${DATABASE_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+      PGDATA: /var/lib/postgresql/data/karrio
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  redis:
+    container_name: karrio.redis
+    image: redis
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+
+volumes:
+  karrio-static:
+  postgres-data:
+  redis-data:
+  caddy-data:

@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-
+import React, { useState } from "react";
 
 interface ModalComponent {
   trigger: JSX.Element;
@@ -20,13 +19,18 @@ export type CustomProps = {
   modalClassName?: string;
 };
 
-export const ModalContext = React.createContext<ModalContextType>({} as ModalContextType);
+export const ModalContext = React.createContext<ModalContextType>(
+  {} as ModalContextType,
+);
 
-export const ModalProvider: React.FC<ModalComponent> = ({ children }) => {
+export const ModalProvider = ({ children }: ModalComponent): JSX.Element => {
   const [isActive, setIsActive] = useState(false);
   const [key, setKey] = useState<string>(`modal-${Date.now()}`);
   const [modal, setModal] = useState<JSX.Element | undefined>();
-  const [props, setProps] = useState<CustomProps>({ addCloseButton: true, addBackground: true });
+  const [props, setProps] = useState<CustomProps>({
+    addCloseButton: true,
+    addBackground: true,
+  });
 
   const open = (modal: JSX.Element, props: CustomProps = {}) => {
     setModal(modal);
@@ -44,18 +48,29 @@ export const ModalProvider: React.FC<ModalComponent> = ({ children }) => {
       <ModalContext.Provider value={{ open, close }}>
         {children}
 
-        <div className={`modal ${props.modalClassName || ''} ${isActive ? "is-active" : ""}`} key={key}>
-          {props.addBackground && <div className="modal-background" {...(props.backgroundDismiss ? { onClick: close } : {})}></div>}
+        <div
+          className={`modal ${props.modalClassName || ""} ${isActive ? "is-active" : ""}`}
+          key={key}
+        >
+          {props.addBackground && (
+            <div
+              className="modal-background"
+              {...(props.backgroundDismiss ? { onClick: close } : {})}
+            ></div>
+          )}
 
-          <div className={`modal-card ${props.className || ''}`}>
-
+          <div className={`modal-card ${props.className || ""}`}>
             {isActive && modal}
-
           </div>
 
-          {props.addCloseButton && <button className="modal-close is-large has-background-dark" aria-label="close" onClick={close}></button>}
+          {props.addCloseButton && (
+            <button
+              className="modal-close is-large has-background-dark"
+              aria-label="close"
+              onClick={close}
+            ></button>
+          )}
         </div>
-
       </ModalContext.Provider>
     </>
   );
@@ -64,4 +79,3 @@ export const ModalProvider: React.FC<ModalComponent> = ({ children }) => {
 export function useModal() {
   return React.useContext(ModalContext);
 }
-

@@ -1,4 +1,4 @@
-"""Karrio USPS create label implementation."""
+"""Karrio USPS International create label implementation."""
 
 import karrio.schemas.usps_international.label_request as usps
 import karrio.schemas.usps_international.label_response as shipping
@@ -17,9 +17,8 @@ import karrio.providers.usps_international.units as provider_units
 def parse_shipment_response(
     _response: lib.Deserializable[typing.List[dict]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
     responses = _response.deserialize()
-
     shipment = lib.to_multi_piece_shipment(
         [
             (
@@ -28,6 +27,7 @@ def parse_shipment_response(
             )
             for _, response in enumerate(responses, start=1)
             if response.get("error") is None
+            and response.get("labelMetadata") is not None
         ]
     )
     messages: typing.List[models.Message] = sum(
@@ -50,8 +50,8 @@ def _extract_details(
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number=details.labelMetadata.internationalTrackingNumber,
-        shipment_identifier=details.labelMetadata.internationalTrackingNumber,
+        tracking_number=details.labelMetadata.trackingNumber,
+        shipment_identifier=details.labelMetadata.trackingNumber,
         label_type=label_type,
         docs=models.Documents(label=label),
         meta=dict(
@@ -101,32 +101,29 @@ def shipment_request(
                 imageType=label_type,
                 labelType="4X6LABEL",
             ),
-            toAddress=usps.AddressType(
+            toAddress=usps.ToAddressType(
                 streetAddress=recipient.address_line1,
                 secondaryAddress=recipient.address_line2,
                 city=recipient.city,
-                state=recipient.state,
-                ZIPCode=lib.to_zip5(recipient.postal_code) or "",
-                ZIPPlus4=lib.to_zip4(recipient.postal_code) or "",
-                urbanization=None,
-                firstName=recipient.person_name,
-                lastName=None,
+                postalCode=recipient.postal_code,
+                province=recipient.state_code,
+                country=recipient.country_code,
+                countryISOAlpha2Code=recipient.country_code,
+                firstName=recipient.first_name or recipient.person_name,
+                lastName=recipient.last_name or " ",
                 firm=recipient.company_name,
                 phone=recipient.phone_number,
-                email=recipient.email,
-                ignoreBadAddress=True,
-                platformUserId=None,
             ),
             fromAddress=usps.AddressType(
                 streetAddress=shipper.address_line1,
                 secondaryAddress=shipper.address_line2,
                 city=shipper.city,
-                state=shipper.state,
-                ZIPCode=lib.to_zip4(shipper.postal_code) or "",
-                ZIPPlus4=lib.to_zip5(shipper.postal_code) or "",
+                state=shipper.state_code,
+                ZIPCode=lib.to_zip5(shipper.postal_code),
+                ZIPPlus4=lib.to_zip4(shipper.postal_code),
                 urbanization=None,
-                firstName=shipper.person_name,
-                lastName=None,
+                firstName=shipper.first_name or shipper.person_name,
+                lastName=shipper.last_name or " ",
                 firm=shipper.company_name,
                 phone=shipper.phone_number,
                 email=shipper.email,
@@ -137,12 +134,14 @@ def shipment_request(
                 streetAddress=shipper.address_line1,
                 secondaryAddress=shipper.address_line2,
                 city=shipper.city,
-                state=shipper.state,
-                ZIPCode=lib.to_zip4(shipper.postal_code) or "",
-                ZIPPlus4=lib.to_zip5(shipper.postal_code) or "",
+                state=shipper.state_code,  # only US states are supported
+                ZIPCode=lib.identity(
+                    lib.to_zip4(shipper.postal_code) or shipper.postal_code
+                ),
+                ZIPPlus4=lib.to_zip4(shipper.postal_code),
                 urbanization=None,
-                firstName=shipper.person_name,
-                lastName=None,
+                firstName=shipper.first_name or shipper.person_name,
+                lastName=shipper.last_name or " ",
                 firm=shipper.company_name,
                 phone=shipper.phone_number,
                 email=shipper.email,
@@ -156,9 +155,9 @@ def shipment_request(
                 length=package.length.IN,
                 height=package.height.IN,
                 width=package.width.IN,
-                girth=package.girth,
+                girth=package.girth.value,
                 mailClass=service,
-                rateIndicator=package.options.usps_rate_indicator.state or "SP",
+                rateIndicator=package.options.usps_rate_indicator.state or "DR",
                 processingCategory=lib.identity(
                     package.options.usps_processing_category.state or "NON_MACHINABLE"
                 ),
@@ -170,7 +169,7 @@ def shipment_request(
                         streetAddress=pickup_location.address_line1,
                         secondaryAddress=pickup_location.address_line2,
                         city=pickup_location.city,
-                        state=pickup_location.state,
+                        state=pickup_location.state_code,
                         ZIPCode=lib.to_zip4(pickup_location.postal_code) or "",
                         ZIPPlus4=lib.to_zip5(pickup_location.postal_code) or "",
                         urbanization=None,
@@ -178,16 +177,17 @@ def shipment_request(
                     if package.options.hold_for_pickup_address.state is not None
                     else None
                 ),
-                packageOptions=lib.identity(
-                    usps.PackageOptionsType(
-                        packageValue=package.total_value,
-                        nonDeliveryOption=None,
-                        redirectAddress=None,
-                        generateGXEvent=None,
-                        originalPackage=None,
-                    )
-                    if (package.total_value or 0.0) > 0.0
-                    else None
+                packageOptions=usps.PackageOptionsType(
+                    packageValue=lib.identity(
+                        package.total_value
+                        or package.options.declared_value.state
+                        or customs.commodities.value_amount
+                        or 1.0
+                    ),
+                    nonDeliveryOption=None,
+                    redirectAddress=None,
+                    generateGXEvent=None,
+                    originalPackage=None,
                 ),
                 customerReference=[
                     usps.CustomerReferenceType(
@@ -208,11 +208,14 @@ def shipment_request(
             customsForm=usps.CustomsFormType(
                 contentComments=customs.content_description,
                 restrictionType=package.options.usps_restriction_type.state,
-                restrictionComments=package.options.restrictionComments.state,
+                restrictionComments=package.options.usps_restriction_comments.state,
                 AESITN=customs.options.aes.state,
                 invoiceNumber=customs.invoice,
                 licenseNumber=customs.options.license_number.state,
-                certificateNumber=customs.options.certificate_number.state,
+                certificateNumber=lib.text(
+                    customs.options.certificate_number.state,
+                    max=12,
+                ),
                 customsContentType=lib.identity(
                     provider_units.CustomsContentType.map(customs.content_type).value
                     or "OTHER"
@@ -221,7 +224,10 @@ def shipment_request(
                 exportersReference=None,
                 contents=[
                     usps.ContentType(
-                        itemDescription=item.description,
+                        itemDescription=lib.text(
+                            item.description or item.title or "Item",
+                            max=12,
+                        ),
                         itemQuantity=item.quantity,
                         itemValue=item.value_amount,
                         itemTotalValue=item.value_amount * item.quantity,
@@ -230,7 +236,7 @@ def shipment_request(
                         itemTotalWeight=item.weight * item.quantity,
                         HSTariffNumber=item.hs_code,
                         countryofOrigin=item.origin_country,
-                        itemCategory=None,
+                        itemCategory=item.category,
                         itemSubcategory=None,
                     )
                     for item in customs.commodities

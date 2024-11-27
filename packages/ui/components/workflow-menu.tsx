@@ -1,17 +1,19 @@
-import { useWorkflowMutation, WorkflowType } from '@karrio/hooks/workflows';
-import { ConfirmModalWrapper } from '../modals/form-modals';
-import { MenuComponent } from './menu';
-import { AppLink } from './app-link';
-import React from 'react';
+import { useWorkflowMutation, WorkflowType } from "@karrio/hooks/workflows";
+import { ConfirmModalWrapper } from "../modals/form-modals";
+import { MenuComponent } from "./menu";
+import { AppLink } from "./app-link";
+import React from "react";
 
-
-interface WorkflowMenuComponent extends React.InputHTMLAttributes<HTMLDivElement> {
+interface WorkflowMenuComponent
+  extends React.InputHTMLAttributes<HTMLDivElement> {
   workflow: WorkflowType;
   isViewing?: boolean;
 }
 
-
-export const WorkflowMenu: React.FC<WorkflowMenuComponent> = ({ workflow, isViewing }) => {
+export const WorkflowMenu = ({
+  workflow,
+  isViewing,
+}: WorkflowMenuComponent) => {
   const mutation = useWorkflowMutation();
 
   return (
@@ -34,10 +36,12 @@ export const WorkflowMenu: React.FC<WorkflowMenuComponent> = ({ workflow, isView
           </div>
         </AppLink>
         <ConfirmModalWrapper
-          header='Confirm workflow deletion'
-          onSubmit={() => mutation.deleteWorkflow.mutateAsync({ id: workflow.id })}
+          header="Confirm workflow deletion"
+          onSubmit={() =>
+            mutation.deleteWorkflow.mutateAsync({ id: workflow.id })
+          }
           trigger={
-            <MenuComponent.Item as='a' className={'dropdown-item'}>
+            <MenuComponent.Item as="a" className={"dropdown-item"}>
               <div className="icon-text is-size-7 has-text-grey">
                 <span className="icon">
                   <i className="fas fa-trash"></i>

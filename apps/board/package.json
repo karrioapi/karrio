@@ -1,0 +1,26 @@
+{
+  "name": "@karrio/board",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3002",
+    "dev:board": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@karrio/core": "*",
+    "@karrio/hooks": "*",
+    "@karrio/lib": "*",
+    "@karrio/types": "*",
+    "@karrio/ui": "*",
+    "@karrio/insiders": "*"
+  },
+  "devDependencies": {
+    "postcss": "^8",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.8",
+    "tsconfig": "*"
+  }
+}

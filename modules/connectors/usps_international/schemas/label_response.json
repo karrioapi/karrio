@@ -1,43 +1,49 @@
 {
   "labelMetadata": {
     "labelAddress": {
-      "streetAddress": "string",
+      "streetAddress": "R. da Quitanda, 86 - quiosque 01",
       "streetAddressAbbreviation": "string",
-      "secondaryAddress": "string",
+      "secondaryAddress": "",
       "cityAbbreviation": "string",
-      "city": "string",
+      "city": "GEORGETOWN",
       "postalCode": "string",
       "province": "string",
       "country": "string",
       "countryISOAlpha2Code": "string",
-      "firstName": "string",
+      "firstName": "John",
       "lastName": "string",
-      "firm": "string",
-      "phone": "string"
+      "firm": "Coffee Five",
+      "phone": "string",
+      "ignoreBadAddress": true
     },
-    "internationalTrackingNumber": "string",
-    "constructCode": "string",
-    "SKU": "string",
-    "postage": 0,
+    "routingInformation": "42029440",
+    "trackingNumber": "string",
+    "constructCode": "C03",
+    "SKU": "DUXR0XXXXC01450",
+    "postage": 36.12,
     "extraServices": [
       {
         "serviceID": "string",
         "serviceName": "string",
-        "price": 0
+        "name": "Insurance <= $500",
+        "price": 0.0,
+        "SKU": "DXIX0XXXXCX0100"
       }
     ],
     "internationalPriceGroup": "string",
-    "weightUOM": "lb",
-    "weight": 5,
-    "dimensionalWeight": "string",
-    "fees": [
-      {
-        "name": "string",
-        "SKU": "string",
-        "price": 0
-      }
-    ],
-    "labelBrokerID": "string"
+    "zone": "01",
+    "commitment": {
+      "name": "6 Days",
+      "scheduleDeliveryDate": "2024-12-07"
+    },
+    "weightUOM": "LB",
+    "weight": 44.1,
+    "dimensionalWeight": 13.0,
+    "fees": [],
+    "labelBrokerID": "string",
+    "bannerText": "USPS TRACKING # USPS Ship",
+    "retailDistributionCode": "01",
+    "serviceTypeCode": "361"
   },
   "labelImage": "string"
 }

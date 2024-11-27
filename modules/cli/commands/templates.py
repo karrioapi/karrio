@@ -1024,7 +1024,7 @@ import karrio.providers.{{id}}.units as provider_units
 def parse_shipment_response(
     _response: lib.Deserializable[{% if is_xml_api %}lib.Element{% else %}dict{% endif %}],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
     response = _response.deserialize()
 
     messages = error.parse_error_response(response, settings)

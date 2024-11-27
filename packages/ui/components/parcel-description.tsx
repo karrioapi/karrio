@@ -13,11 +13,11 @@ interface ParcelDescriptionComponent {
   prefix?: React.ReactNode | string;
 }
 
-export const ParcelDescription: React.FC<ParcelDescriptionComponent> = ({
+export const ParcelDescription = ({
   parcel,
   prefix,
   suffix,
-}) => {
+}: ParcelDescriptionComponent): JSX.Element => {
   const weightDescription = formatWeight(parcel);
   const dimensionDescription = formatDimension(parcel);
 

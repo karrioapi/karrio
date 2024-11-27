@@ -16,9 +16,11 @@ import React from "react";
 export const generateMetadata = dynamicMetadata("Workflow Events");
 const ContextProviders = bundleContexts([ModalProvider]);
 
-export const WorkflowEventList: React.FC<{
+export const WorkflowEventList = ({
+  defaultFilter,
+}: {
   defaultFilter?: WorkflowEventFilter;
-}> = ({ defaultFilter }) => {
+}): JSX.Element => {
   const searchParams = useSearchParams();
   const loader = useLoader();
   const {
@@ -139,7 +141,7 @@ export const WorkflowEventList: React.FC<{
 };
 
 export default function Page(pageProps: any) {
-  const Component: React.FC = () => {
+  const Component = (): JSX.Element => {
     return (
       <>
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">

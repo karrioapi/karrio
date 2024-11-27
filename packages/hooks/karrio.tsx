@@ -34,10 +34,10 @@ export const APIClientsContext = React.createContext<APIClientsContextProps>(
   {} as any,
 );
 
-export const ClientProvider: React.FC<ClientProviderProps> = ({
+export const ClientProvider = ({
   children,
   ...pageData
-}) => {
+}: ClientProviderProps): JSX.Element => {
   const { getHost, references } = useAPIMetadata();
   const {
     query: { data: session },

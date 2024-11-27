@@ -1,10 +1,12 @@
 export function bundleContexts(
   contexts: React.FC<{ children?: React.ReactNode } & any>[],
 ) {
-  const ContextProviders: React.FC<{ children?: React.ReactNode }> = ({
+  const ContextProviders = ({
     children,
     ...props
-  }) => {
+  }: {
+    children?: React.ReactNode;
+  }): JSX.Element => {
     const NestedContexts = contexts.reduce(
       (_, Ctx) => <Ctx {...props}>{_}</Ctx>,
       children,

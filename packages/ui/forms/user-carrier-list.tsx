@@ -25,7 +25,7 @@ type ConnectionUpdateType = Partial<UpdateCarrierConnectionMutationInput> & {
 };
 interface UserConnectionListView {}
 
-export const UserConnectionList: React.FC<UserConnectionListView> = () => {
+export const UserConnectionList= (): JSX.Element =>  {
   const searchParams = useSearchParams();
   const modal = searchParams.get("modal") as string;
   const { testMode } = useAppMode();

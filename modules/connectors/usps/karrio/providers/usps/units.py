@@ -5,16 +5,55 @@ import karrio.core.units as units
 class PackagingType(lib.StrEnum):
     """Carrier specific packaging type"""
 
-    PACKAGE = "PACKAGE"
+    usps_3_digit = "3D"
+    usps_3_digit_dimensional_rectangular = "3N"
+    usps_3_digit_dimensional_nonrectangular = "3R"
+    usps_5_digit = "5D"
+    usps_basic = "BA"
+    usps_mixed_ndc = "BB"
+    usps_ndc = "BM"
+    usps_cubic_pricing_tier_1 = "C1"
+    usps_cubic_pricing_tier_2 = "C2"
+    usps_cubic_pricing_tier_3 = "C3"
+    usps_cubic_pricing_tier_4 = "C4"
+    usps_cubic_pricing_tier_5 = "C5"
+    usps_cubic_parcel = "CP"
+    usps_connect_local = "CM"
+    usps_non_presorted = "NP"
+    usps_full_tray_box = "O1"
+    usps_half_tray_box = "O2"
+    usps_emm_tray_box = "O3"
+    usps_flat_tub_tray_box = "O4"
+    usps_surface_transported_pallet = "O5"
+    usps_half_pallet_box = "O7"
+    usps_oversized = "OS"
+    usps_cubic_soft_pack_tier_1 = "P5"
+    usps_cubic_soft_pack_tier_2 = "P6"
+    usps_cubic_soft_pack_tier_3 = "P7"
+    usps_cubic_soft_pack_tier_4 = "P8"
+    usps_cubic_soft_pack_tier_5 = "P9"
+    usps_cubic_soft_pack_tier_6 = "Q6"
+    usps_cubic_soft_pack_tier_7 = "Q7"
+    usps_cubic_soft_pack_tier_8 = "Q8"
+    usps_cubic_soft_pack_tier_9 = "Q9"
+    usps_cubic_soft_pack_tier_10 = "Q0"
+    usps_priority_mail_express_single_piece = "PA"
+    usps_large_flat_rate_box = "PL"
+    usps_large_flat_rate_box_apofpo = "PM"
+    usps_presorted = "PR"
+    usps_small_flat_rate_bag = "SB"
+    usps_scf_dimensional_nonrectangular = "SN"
+    usps_scf_dimensional_rectangular = "SR"
+    usps_single_piece = "SP"
 
     """ Unified Packaging type mapping """
-    envelope = PACKAGE
-    pak = PACKAGE
-    tube = PACKAGE
-    pallet = PACKAGE
-    small_box = PACKAGE
-    medium_box = PACKAGE
-    your_packaging = PACKAGE
+    envelope = usps_single_piece
+    pak = usps_single_piece
+    tube = usps_scf_dimensional_nonrectangular
+    pallet = usps_large_flat_rate_box
+    small_box = usps_single_piece
+    medium_box = usps_scf_dimensional_rectangular
+    your_packaging = usps_single_piece
 
 
 class ContentType(lib.StrEnum):
@@ -122,7 +161,7 @@ class ShippingOption(lib.Enum):
     usps_adult_signature_restricted_delivery = lib.OptionEnum("923", bool)
     usps_signature_confirmation_restricted_delivery = lib.OptionEnum("924", bool)
     usps_priority_mail_express_merchandise_insurance = lib.OptionEnum("925", bool)
-    usps_insurance_bellow_500 = lib.OptionEnum("930", float)
+    usps_insurance_below_500 = lib.OptionEnum("930", float)
     usps_insurance_above_500 = lib.OptionEnum("931", float)
     usps_insurance_restricted_delivery = lib.OptionEnum("934", bool)
     usps_registered_mail = lib.OptionEnum("940", bool)
@@ -133,33 +172,34 @@ class ShippingOption(lib.Enum):
     usps_parcel_locker_delivery = lib.OptionEnum("984", bool)
     usps_po_to_addressee_priority_mail_express_only = lib.OptionEnum("986", bool)
     usps_sunday_delivery = lib.OptionEnum("981", bool)
-    # fmt: on
 
     """ Custom Options """
-    usps_price_type = lib.OptionEnum("priceType")
     usps_facility_id = lib.OptionEnum("facilityId")
+    usps_machinable = lib.OptionEnum("machinable", bool)
     usps_hold_for_pickup = lib.OptionEnum("holdForPickup", bool)
-    usps_rate_indicator = lib.OptionEnum("rateIndicator")
     usps_processing_category = lib.OptionEnum("processingCategory")
     usps_carrier_release = lib.OptionEnum("carrierRelease", bool)
     usps_physical_signature_required = lib.OptionEnum("physicalSignatureRequired", bool)
-    usps_restriction_type = lib.OptionEnum("restrictionType")
+    usps_rate_indicator = lib.OptionEnum("rateIndicator", lib.units.create_enum("rateIndicator", ["DN", "DR", "SP"]))
+    usps_price_type = lib.OptionEnum("priceType", lib.units.create_enum("priceType", ["RETAIL", "COMMERCIAL", "CONTRACT"]))
 
     """ Unified Option type mapping """
     cash_on_delivery = usps_collect_on_delivery
     signature_confirmation = usps_signature_confirmation
     sunday_delivery = usps_sunday_delivery
     hold_at_location = usps_hold_for_pickup
+    # fmt: on
 
 
 CUSTOM_OPTIONS = [
-    ShippingOption.usps_price_type.name,
     ShippingOption.usps_facility_id.name,
+    ShippingOption.usps_machinable.name,
     ShippingOption.usps_hold_for_pickup.name,
-    ShippingOption.usps_rate_indicator.name,
     ShippingOption.usps_processing_category.name,
     ShippingOption.usps_carrier_release.name,
     ShippingOption.usps_physical_signature_required.name,
+    ShippingOption.usps_rate_indicator.name,
+    ShippingOption.usps_price_type.name,
 ]
 
 
@@ -178,9 +218,7 @@ def shipping_options_initializer(
         if lib.to_money(options["insurance"]) > 500:
             options[ShippingOption.usps_insurance_above_500.name] = options["insurance"]
         else:
-            options[ShippingOption.usps_insurance_bellow_500.name] = options[
-                "insurance"
-            ]
+            options[ShippingOption.usps_insurance_below_500.name] = options["insurance"]
 
     def items_filter(key: str) -> bool:
         return key in ShippingOption  # type: ignore
@@ -189,10 +227,10 @@ def shipping_options_initializer(
 
 
 class TrackingStatus(lib.Enum):
-    on_hold = ["on_hold"]
+    on_hold = ["on hold"]
     delivered = ["delivered"]
-    in_transit = ["in_transit"]
-    delivery_failed = ["delivery_failed"]
-    delivery_delayed = ["delivery_delayed"]
-    out_for_delivery = ["out_for_delivery"]
-    ready_for_pickup = ["ready_for_pickup"]
+    in_transit = ["in transit"]
+    delivery_failed = ["delivery failed"]
+    delivery_delayed = ["delivery delayed"]
+    out_for_delivery = ["out for delivery"]
+    ready_for_pickup = ["ready for pickup"]

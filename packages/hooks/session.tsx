@@ -30,9 +30,11 @@ export const NextSession = React.createContext<Session | null | undefined>(
   undefined,
 );
 
-const NextSessionProvider: React.FC<{ children?: React.ReactNode }> = ({
+const NextSessionProvider = ({
   children,
-}) => {
+}: {
+  children?: React.ReactNode;
+}): JSX.Element => {
   const { data: session } = useSession();
   const [sessionState, setSessionState] = React.useState<Session | null>(
     session as Session,
@@ -56,10 +58,13 @@ const NextSessionProvider: React.FC<{ children?: React.ReactNode }> = ({
   );
 };
 
-export const SessionWrapper: React.FC<{
+export const SessionWrapper = ({
+  children,
+  error,
+}: {
   error?: ServerError;
   children?: React.ReactNode;
-}> = ({ children, error }) => {
+}): JSX.Element => {
   const karrio = useKarrio();
   const router = useRouter();
   const { data: session } = useSession();

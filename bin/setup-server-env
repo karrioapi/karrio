@@ -9,11 +9,42 @@ pip install -r "${ROOT:?}/requirements.server.dev.txt"
 cd -
 
 if [[ "${HAS_INSIDERS}" == "true" && ! "$*" == *--exclude-insiders* ]]; then
-    source "${INSIDERS_DIR:?}/bin/setup-insiders"
-    pip install -r "${INSIDERS_REQUIREMENTS:?}"
+    pip install -r "${ROOT:?}/requirements.insiders.dev.txt"
+fi
+
+if [[ "${HAS_PLATFORM}" == "true" && ! "$*" == *--exclude-platform* ]]; then
+    pip install -r "${ROOT:?}/requirements.platform.dev.txt"
+fi
+
+mkdir -p $LOG_DIR
+
+echo "
+ ██╗  ██╗ █████╗ ██████╗ ██████╗ ██╗ ██████╗
+ ██║ ██╔╝██╔══██╗██╔══██╗██╔══██╗██║██╔═══██╗
+ █████╔╝ ███████║██████╔╝██████╔╝██║██║   ██║
+ ██╔═██╗ ██╔══██║██╔══██╗██╔══██╗██║██║   ██║
+ ██║  ██╗██║  ██║██║  ██║██║  ██║██║╚██████╔╝
+ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝
+"
+
+echo "Environment Variables:"
+echo "--------------------"
+echo "ROOT: ${ROOT}"
+echo "LOG_DIR: ${LOG_DIR}"
+echo "HAS_INSIDERS: ${HAS_INSIDERS}"
+echo "HAS_PLATFORM: ${HAS_PLATFORM}"
+
+echo -e "\nKey Directories:"
+echo "---------------"
+echo "Logs: ${LOG_DIR}"
+echo "Python Environment: ${VIRTUAL_ENV}"
+echo "Server Root: ${ROOT}"
+if [[ "${HAS_INSIDERS}" == "true" ]]; then
+    echo "Insiders: ${ROOT}/ee/insiders"
+fi
+if [[ "${HAS_PLATFORM}" == "true" ]]; then
+    echo "Platform: ${ROOT}/ee/platform"
 fi
 
 # run server script help
 source "bin/server"
-
-mkdir -p $LOG_DIR

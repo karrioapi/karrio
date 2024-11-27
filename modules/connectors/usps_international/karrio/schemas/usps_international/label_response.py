@@ -1,20 +1,21 @@
 from attr import s
-from typing import Optional, List
+from typing import Optional, List, Any
 from jstruct import JStruct, JList
+
+
+@s(auto_attribs=True)
+class CommitmentType:
+    name: Optional[str] = None
+    scheduleDeliveryDate: Optional[str] = None
 
 
 @s(auto_attribs=True)
 class ExtraServiceType:
     serviceID: Optional[str] = None
     serviceName: Optional[str] = None
-    price: Optional[int] = None
-
-
-@s(auto_attribs=True)
-class FeeType:
     name: Optional[str] = None
+    price: Optional[float] = None
     SKU: Optional[str] = None
-    price: Optional[int] = None
 
 
 @s(auto_attribs=True)
@@ -32,22 +33,29 @@ class LabelAddressType:
     lastName: Optional[str] = None
     firm: Optional[str] = None
     phone: Optional[str] = None
+    ignoreBadAddress: Optional[bool] = None
 
 
 @s(auto_attribs=True)
 class LabelMetadataType:
     labelAddress: Optional[LabelAddressType] = JStruct[LabelAddressType]
-    internationalTrackingNumber: Optional[str] = None
+    routingInformation: Optional[int] = None
+    trackingNumber: Optional[str] = None
     constructCode: Optional[str] = None
     SKU: Optional[str] = None
-    postage: Optional[int] = None
+    postage: Optional[float] = None
     extraServices: List[ExtraServiceType] = JList[ExtraServiceType]
     internationalPriceGroup: Optional[str] = None
+    zone: Optional[str] = None
+    commitment: Optional[CommitmentType] = JStruct[CommitmentType]
     weightUOM: Optional[str] = None
-    weight: Optional[int] = None
-    dimensionalWeight: Optional[str] = None
-    fees: List[FeeType] = JList[FeeType]
+    weight: Optional[float] = None
+    dimensionalWeight: Optional[float] = None
+    fees: List[Any] = []
     labelBrokerID: Optional[str] = None
+    bannerText: Optional[str] = None
+    retailDistributionCode: Optional[str] = None
+    serviceTypeCode: Optional[int] = None
 
 
 @s(auto_attribs=True)

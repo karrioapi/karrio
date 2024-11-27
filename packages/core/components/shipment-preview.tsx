@@ -1,6 +1,6 @@
 import { ShipmentComponent } from "@karrio/core/modules/Shipments/shipment";
-import { useLocation } from "@karrio/hooks/location";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
+import { useLocation } from "@karrio/hooks/location";
 import React, { useState } from "react";
 
 type ShipmentPreviewContextType = {
@@ -16,9 +16,9 @@ export const ShipmentPreviewContext =
     {} as ShipmentPreviewContextType,
   );
 
-export const ShipmentPreview: React.FC<ShipmentPreviewComponent> = ({
+export const ShipmentPreview = ({
   children,
-}) => {
+}: ShipmentPreviewComponent): JSX.Element => {
   const { addUrlParam, removeUrlParam } = useLocation();
   const [isActive, setIsActive] = useState<boolean>(false);
   const [key, setKey] = useState<string>(`shipment-${Date.now()}`);

@@ -50,7 +50,7 @@ export default function Page(pageProps: any) {
   }, [session, organization_invitation, token, router]);
 
   return (
-    <>
+    <React.Fragment>
       <div className="card isolated-card my-6">
         <div className="card-content has-text-centered ">
           {!query.isFetched && query.isFetching && <Spinner />}
@@ -63,7 +63,7 @@ export default function Page(pageProps: any) {
         </div>
       </div>
 
-      {query.error && (
+      {query.error ? (
         <div className="has-text-centered my-4 is-size-6">
           <span>
             Return to{" "}
@@ -72,7 +72,9 @@ export default function Page(pageProps: any) {
             </Link>
           </span>
         </div>
+      ) : (
+        <></>
       )}
-    </>
+    </React.Fragment>
   );
 }

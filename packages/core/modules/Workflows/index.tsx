@@ -11,7 +11,7 @@ export const generateMetadata = dynamicMetadata("Workflows");
 const ContextProviders = bundleContexts([ModalProvider]);
 
 export default function Page(pageProps: any) {
-  const Component: React.FC = () => {
+  const Component= (): JSX.Element =>  {
     const {
       query: { data: { workflows } = {}, ...query },
     } = useWorkflows();

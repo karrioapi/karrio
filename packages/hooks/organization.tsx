@@ -62,12 +62,10 @@ type OrganizationProviderProps = {
   metadata?: any;
 };
 
-export const OrganizationProvider: React.FC<OrganizationProviderProps> = ({
+export const OrganizationProvider = ({
   children,
   ...props
-}: {
-  children: React.ReactNode;
-} & any) => {
+}: OrganizationProviderProps): JSX.Element => {
   const karrio = useKarrio();
   const [organizations, setOrganizations] = React.useState<
     OrganizationType[] | undefined

@@ -6,7 +6,7 @@ interface PostalInputComponent extends InputFieldComponent {
   onValueChange: (value: string | null) => void;
 }
 
-export const PostalInput: React.FC<PostalInputComponent> = ({ country, onValueChange, ...props }) => {
+export const PostalInput= ({ country, onValueChange, ...props }): JSX.Element =>  {
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const [formatted, isValid] = formatPostalCode(e.target.value, country);

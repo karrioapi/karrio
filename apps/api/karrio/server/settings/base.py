@@ -404,7 +404,11 @@ PERMISSION_CLASSES = [
     "karrio.server.core.permissions.AllowEnabledAPI",
 ]
 
-
+# Rate limiting configuration
+# Set these environment variables to customize rate limits:
+# - ANON_RATE_LIMIT: Rate limit for anonymous users (default: "60/minute")
+# - USER_RATE_LIMIT: Rate limit for authenticated users (default: "600/minute")
+# - CARRIER_REQUEST_RATE_LIMIT: Rate limit for carrier requests (default: "300/minute")
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": PERMISSION_CLASSES,
     "DEFAULT_AUTHENTICATION_CLASSES": AUTHENTICATION_CLASSES,
@@ -421,9 +425,9 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.ScopedRateThrottle",
     ),
     "DEFAULT_THROTTLE_RATES": {
-        "anon": "60/minute",
-        "user": "600/minute",
-        "carrier_request": "300/minute",
+        "anon": config("ANON_RATE_LIMIT", default="60/minute"),
+        "user": config("USER_RATE_LIMIT", default="600/minute"),
+        "carrier_request": config("CARRIER_REQUEST_RATE_LIMIT", default="300/minute"),
     },
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     "EXCEPTION_HANDLER": "karrio.server.core.exceptions.custom_exception_handler",

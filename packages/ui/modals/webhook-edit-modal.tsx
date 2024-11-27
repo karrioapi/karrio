@@ -36,9 +36,11 @@ function reducer(
   }
 }
 
-export const WebhookEditModal: React.FC<{ children?: React.ReactNode }> = ({
+export const WebhookEditModal = ({
   children,
-}) => {
+}: {
+  children?: React.ReactNode;
+}): JSX.Element => {
   const mutation = useWebhookMutation();
   const { notify } = useContext(Notify);
   const { setLoading, loading } = useContext(Loading);
@@ -129,7 +131,7 @@ export const WebhookEditModal: React.FC<{ children?: React.ReactNode }> = ({
               className="is-small"
               required
             />
-
+            {/* @ts-ignore */}
             <TextAreaField
               label="Description"
               name="description"

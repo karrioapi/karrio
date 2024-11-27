@@ -1,12 +1,12 @@
 "use client";
-import React, { FormEvent, useContext, useEffect, useReducer } from "react";
-import { LoadingProvider, Loading } from "@karrio/ui/components/loader";
+import React, { FormEvent, useEffect, useReducer } from "react";
+import { LoadingProvider, useLoader } from "@karrio/ui/components/loader";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ConfirmPasswordResetMutationInput } from "@karrio/types";
 import { ButtonField } from "@karrio/ui/components/button-field";
 import { InputField } from "@karrio/ui/components/input-field";
-import { useUserMutation } from "@karrio/hooks/user";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useUserMutation } from "@karrio/hooks/user";
 import Link from "next/link";
 
 export const generateMetadata = dynamicMetadata("Password Reset");
@@ -30,14 +30,14 @@ function reducer(
   }
 }
 
-const Component: React.FC<{}> = () => {
+const Component = (): JSX.Element => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [uidb64, token] = [
     searchParams.get("uidb64") as string,
     searchParams.get("token") as string,
   ];
-  const { loading, setLoading } = useContext(Loading);
+  const { loading, setLoading } = useLoader();
   const [data, dispatch] = useReducer(
     reducer,
     DEFAULT_VALUE,

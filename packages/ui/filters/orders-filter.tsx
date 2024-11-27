@@ -13,7 +13,7 @@ interface OrdersFilterComponent {
 }
 
 
-export const OrdersFilter: React.FC<OrdersFilterComponent> = ({ context }) => {
+export const OrdersFilter= ({ context }): JSX.Element =>  {
   const [isReady, setIsReady] = React.useState(true);
   const { query, filter: variables, setFilter } = context;
   const [filters, dispatch] = useReducer((state: any, { name, checked, value }: { name: string, checked?: boolean, value?: string | boolean | object }) => {

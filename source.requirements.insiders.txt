@@ -1,0 +1,160 @@
+--extra-index-url https://karrio.gateway.scarf.sh/simple/
+asgiref==3.8.1
+attrs==24.2.0
+backoff==2.2.1
+Brotli==1.1.0
+certifi==2024.8.30
+cffi==1.17.1
+charset-normalizer==3.4.0
+click==8.1.7
+cryptography==43.0.3
+cssselect2==0.7.0
+deprecation==2.1.0
+diff-match-patch==20241021
+dj-database-url==2.3.0
+Django==4.2.16
+django-auditlog==3.0.0
+django-constance==3.1.0
+django-cors-headers==4.6.0
+django-downloadview==2.4.0
+django-email-verification==0.3.3
+django-extensions==3.2.3
+django-filter==24.3
+django-formtools==2.5.1
+django-health-check==3.18.3
+django-import-export==4.3.1
+django-oauth-toolkit==3.0.1
+django-organizations==2.5.0
+django-otp==1.5.4
+django-phonenumber-field==8.0.0
+django-picklefield==3.2
+django-redis==5.4.0
+django-two-factor-auth==1.17.0
+djangorestframework==3.15.2
+djangorestframework-simplejwt==5.3.1
+drf-api-tracking==1.8.4
+drf-spectacular==0.27.2
+fonttools==4.55.0
+graphql-core==3.2.5
+gunicorn==23.0.0
+h11==0.14.0
+hiredis==3.0.0
+huey==2.5.2
+idna==3.10
+inflection==0.5.1
+Jinja2==3.1.4
+jsonfield==3.1.0
+jsonschema==4.23.0
+jsonschema-specifications==2024.10.1
+jstruct==2021.11
+jwcrypto==1.5.6
+karrio @ file://${PWD}/modules/sdk
+karrio.allied_express @ file://${PWD}/modules/connectors/allied_express
+karrio.allied_express_local @ file://${PWD}/modules/connectors/allied_express_local
+karrio.amazon_shipping @ file://${PWD}/modules/connectors/amazon_shipping
+karrio.aramex @ file://${PWD}/modules/connectors/aramex
+karrio.asendia_us @ file://${PWD}/modules/connectors/asendia_us
+karrio.australiapost @ file://${PWD}/modules/connectors/australiapost
+karrio.boxknight @ file://${PWD}/modules/connectors/boxknight
+karrio.bpost @ file://${PWD}/modules/connectors/bpost
+karrio.canadapost @ file://${PWD}/modules/connectors/canadapost
+karrio.canpar @ file://${PWD}/modules/connectors/canpar
+karrio.chronopost @ file://${PWD}/modules/connectors/chronopost
+karrio.colissimo @ file://${PWD}/modules/connectors/colissimo
+karrio.dhl_express @ file://${PWD}/modules/connectors/dhl_express
+karrio.dhl_parcel_de @ file://${PWD}/modules/connectors/dhl_parcel_de
+karrio.dhl_poland @ file://${PWD}/modules/connectors/dhl_poland
+karrio.dhl_universal @ file://${PWD}/modules/connectors/dhl_universal
+karrio.dicom @ file://${PWD}/modules/connectors/dicom
+karrio.dpd @ file://${PWD}/modules/connectors/dpd
+karrio.dpdhl @ file://${PWD}/modules/connectors/dpdhl
+karrio.easypost @ file://${PWD}/modules/connectors/easypost
+karrio.easyship @ file://${PWD}/modules/connectors/easyship
+karrio.eshipper @ file://${PWD}/modules/connectors/eshipper
+karrio.fedex @ file://${PWD}/modules/connectors/fedex
+karrio.fedex_ws @ file://${PWD}/modules/connectors/fedex_ws
+karrio.freightcom @ file://${PWD}/modules/connectors/freightcom
+karrio.generic @ file://${PWD}/modules/connectors/generic
+karrio.geodis @ file://${PWD}/modules/connectors/geodis
+karrio.hay_post @ file://${PWD}/modules/connectors/hay_post
+karrio.laposte @ file://${PWD}/modules/connectors/laposte
+karrio.locate2u @ file://${PWD}/modules/connectors/locate2u
+karrio.nationex @ file://${PWD}/modules/connectors/nationex
+karrio.purolator @ file://${PWD}/modules/connectors/purolator
+karrio.roadie @ file://${PWD}/modules/connectors/roadie
+karrio.royalmail @ file://${PWD}/modules/connectors/royalmail
+karrio.sapient @ file://${PWD}/modules/connectors/sapient
+karrio.seko @ file://${PWD}/modules/connectors/seko
+karrio.sendle @ file://${PWD}/modules/connectors/sendle
+karrio.server @ file://${PWD}/apps/api
+karrio.server.admin @ file://${PWD}/ee/insiders/modules/admin
+karrio.server.apps @ file://${PWD}/ee/insiders/modules/apps
+karrio.server.audit @ file://${PWD}/ee/insiders/modules/audit
+karrio.server.automation @ file://${PWD}/ee/insiders/modules/automation
+karrio.server.cloud @ file://${PWD}/ee/insiders/modules/cloud
+karrio.server.core @ file://${PWD}/modules/core
+karrio.server.data @ file://${PWD}/modules/data
+karrio.server.documents @ file://${PWD}/modules/documents
+karrio.server.events @ file://${PWD}/modules/events
+karrio.server.graph @ file://${PWD}/modules/graph
+karrio.server.manager @ file://${PWD}/modules/manager
+karrio.server.orders @ file://${PWD}/modules/orders
+karrio.server.orgs @ file://${PWD}/ee/insiders/modules/orgs
+karrio.server.pricing @ file://${PWD}/modules/pricing
+karrio.server.proxy @ file://${PWD}/modules/proxy
+karrio.tge @ file://${PWD}/modules/connectors/tge
+karrio.tnt @ file://${PWD}/modules/connectors/tnt
+karrio.ups @ file://${PWD}/modules/connectors/ups
+karrio.usps @ file://${PWD}/modules/connectors/usps
+karrio.usps_international @ file://${PWD}/modules/connectors/usps_international
+karrio.usps_wt @ file://${PWD}/modules/connectors/usps_wt
+karrio.usps_wt_international @ file://${PWD}/modules/connectors/usps_wt_international
+karrio.zoom2u @ file://${PWD}/modules/connectors/zoom2u
+lxml==4.9.4
+lxml-stubs==0.5.1
+MarkupSafe==3.0.2
+monotonic==1.6
+more-itertools==10.5.0
+oauthlib==3.2.2
+packaging==24.2
+phonenumbers==8.13.50
+pillow==10.4.0
+posthog==3.7.3
+psutil==6.1.0
+psycopg2-binary==2.9.10
+py-soap==2020.3.2
+pycparser==2.22
+pydyf==0.11.0
+PyJWT==2.10.0
+PyPDF2==3.0.1
+pyphen==0.15.0
+pypng==0.20220715.0
+python-barcode==0.15.1
+python-dateutil==2.9.0.post0
+python-decouple==3.8
+pytz==2024.2
+PyYAML==6.0.2
+qrcode==7.4.2
+redis==5.2.0
+referencing==0.35.1
+requests==2.32.3
+rpds-py==0.21.0
+sentry-sdk==2.19.0
+six==1.16.0
+sqlparse==0.5.2
+strawberry-graphql==0.253.0
+tablib==3.7.0
+tinycss2==1.4.0
+tinyhtml5==2.0.0
+treepoem==3.25.0
+typing_extensions==4.12.2
+uritemplate==4.1.1
+urllib3==2.2.3
+uvicorn==0.32.1
+validators==0.34.0
+weasyprint==63.0
+webencodings==0.5.1
+whitenoise==6.8.2
+xmltodict==0.14.2
+zopfli==0.2.3.post1
+

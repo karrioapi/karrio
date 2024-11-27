@@ -1,8 +1,7 @@
 "use client";
 import { useAppMode } from "@karrio/hooks/app-mode";
-import React from "react";
 
-export const ModeIndicator: React.FC = () => {
+export const ModeIndicator = (): JSX.Element => {
   const { testMode } = useAppMode();
 
   return (

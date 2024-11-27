@@ -49,13 +49,17 @@ function reducer(
   }
 }
 
-export const ConnectionModalEditor: React.FC<
-  ModalFormProps<ConnectionModalEditorProps>
-> = ({ trigger, ...args }) => {
+export const ConnectionModalEditor = ({
+  trigger,
+  ...args
+}: ModalFormProps<ConnectionModalEditorProps>): JSX.Element => {
   const modal = useModal();
 
-  const Component: React.FC<ConnectionModalEditorProps> = (props) => {
-    const { connection: defaultValue = {}, header, onSubmit } = props;
+  const Component = ({
+    connection: defaultValue = {},
+    header,
+    onSubmit,
+  }: ConnectionModalEditorProps): JSX.Element => {
     const loader = useLoader();
     const { close } = useModal();
     const notifier = useNotifier();
@@ -144,6 +148,7 @@ export const ConnectionModalEditor: React.FC<
             />
 
             {/* description */}
+            {/* @ts-ignore */}
             <TextAreaField
               label="description"
               rows={2}
@@ -203,6 +208,7 @@ export const ConnectionModalEditor: React.FC<
                   metadata={connection.credentials}
                   onChange={(value) => dispatch({ name: "credentials", value })}
                 >
+                  {/* @ts-ignore */}
                   <MetadataEditorContext.Consumer>
                     {({ isEditing, editMetadata }) => (
                       <>
@@ -232,6 +238,7 @@ export const ConnectionModalEditor: React.FC<
             <div className="column mb-0 p-0 control">
               <label className="label is-size-7">Auth template</label>
               <div className="card is-radiusless">
+                {/* @ts-ignore */}
                 <CodeMirror
                   height="15vh"
                   extensions={[htmlLanguage]}
@@ -251,6 +258,7 @@ export const ConnectionModalEditor: React.FC<
                 <div className="column mb-0 p-0 control">
                   <label className="label is-size-7">Parameters template</label>
                   <div className="card is-radiusless">
+                    {/* @ts-ignore */}
                     <CodeMirror
                       height="15vh"
                       extensions={[htmlLanguage]}

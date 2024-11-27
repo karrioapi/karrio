@@ -28,7 +28,7 @@ function reducer(state: Partial<CreateOrganizationMutationInput> | undefined, { 
 
 export const CreateOrganizationContext = React.createContext<CreateOrganizationContextType>({} as CreateOrganizationContextType);
 
-export const CreateOrganizationModalProvider: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
+export const CreateOrganizationModalProvider= ({ children }): JSX.Element =>  {
   const { notify } = useNotifier();
   const { loading, setLoading } = useLoader();
   const mutation = useOrganizationMutation();

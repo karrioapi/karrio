@@ -1,32 +1,43 @@
-import { AddressType, CustomsType, DEFAULT_PARCEL_CONTENT, NotificationType, ParcelType, ShipmentType } from '@karrio/types';
-import { CustomsInfoForm } from '../forms/customs-info-form';
-import { useNotifier } from '../components/notifier';
-import { AddressForm } from '../forms/address-form';
-import React, { FormEvent, useEffect } from 'react';
-import { ModalFormProps, useModal } from './modal';
-import { ParcelForm } from '../forms/parcel-form';
-import { useLoader } from '../components/loader';
-import { isEqual } from '@karrio/lib';
-
+import {
+  AddressType,
+  CustomsType,
+  DEFAULT_PARCEL_CONTENT,
+  NotificationType,
+  ParcelType,
+  ShipmentType,
+} from "@karrio/types";
+import { CustomsInfoForm } from "../forms/customs-info-form";
+import { useNotifier } from "../components/notifier";
+import { AddressForm } from "../forms/address-form";
+import React, { FormEvent, useEffect } from "react";
+import { ModalFormProps, useModal } from "./modal";
+import { ParcelForm } from "../forms/parcel-form";
+import { useLoader } from "../components/loader";
+import { isEqual } from "@karrio/lib";
 
 type AddressModalEditorProps = {
   header?: string;
   shipment?: ShipmentType;
-  address: AddressType | ShipmentType['recipient'] | ShipmentType['shipper'];
+  address: AddressType | ShipmentType["recipient"] | ShipmentType["shipper"];
   onSubmit: (address: AddressType) => Promise<any>;
 };
 
-export const AddressModalEditor: React.FC<ModalFormProps<AddressModalEditorProps>> = ({ trigger, ...args }) => {
+export const AddressModalEditor = ({
+  trigger,
+  ...args
+}: ModalFormProps<AddressModalEditorProps>): JSX.Element => {
   const modal = useModal();
 
-  const FormComponent: React.FC<AddressModalEditorProps> = props => {
+  const FormComponent = (props: AddressModalEditorProps): JSX.Element => {
     const { address, shipment, header, onSubmit } = props;
     const { close } = useModal();
 
     return (
       <section className="modal-card-body modal-form">
         <div className="form-floating-header p-4">
-          <span className="has-text-weight-bold is-size-6">{header || `Edit address`}</span>
+          <span className="has-text-weight-bold is-size-6">
+            {header || `Edit address`}
+          </span>
         </div>
         <div className="p-3 my-4"></div>
 
@@ -34,14 +45,17 @@ export const AddressModalEditor: React.FC<ModalFormProps<AddressModalEditorProps
           name="template"
           value={address}
           shipment={shipment}
-          onSubmit={async (data) => { await onSubmit(data); close(); }}
+          onSubmit={async (data) => {
+            await onSubmit(data);
+            close();
+          }}
         />
       </section>
-    )
+    );
   };
 
   return React.cloneElement(trigger, {
-    onClick: () => modal.open(<FormComponent {...args} />)
+    onClick: () => modal.open(<FormComponent {...args} />),
   });
 };
 
@@ -52,10 +66,13 @@ type ParcelModalEditorProps = {
   onSubmit: (parcel: ParcelType) => Promise<any>;
 };
 
-export const ParcelModalEditor: React.FC<ModalFormProps<ParcelModalEditorProps>> = ({ trigger, ...args }) => {
+export const ParcelModalEditor = ({
+  trigger,
+  ...args
+}: ModalFormProps<ParcelModalEditorProps>): JSX.Element => {
   const modal = useModal();
 
-  const FormComponent: React.FC<ParcelModalEditorProps> = props => {
+  const FormComponent = (props: ParcelModalEditorProps): JSX.Element => {
     const { parcel: value, header, shipment, onSubmit } = props;
     const { close } = useModal();
     const notifier = useNotifier();
@@ -69,10 +86,11 @@ export const ParcelModalEditor: React.FC<ModalFormProps<ParcelModalEditorProps>>
 
         await onSubmit(parcel as ParcelType);
 
-        parcel.id && notifier.notify({
-          type: NotificationType.success,
-          message: 'Parcel successfully updated!'
-        });
+        parcel.id &&
+          notifier.notify({
+            type: NotificationType.success,
+            message: "Parcel successfully updated!",
+          });
         close();
       } catch (err: any) {
         notifier.notify({ type: NotificationType.error, message: err });
@@ -80,12 +98,16 @@ export const ParcelModalEditor: React.FC<ModalFormProps<ParcelModalEditorProps>>
       loader.setLoading(false);
     };
 
-    useEffect(() => { setParcel(value || DEFAULT_PARCEL_CONTENT); }, [value]);
+    useEffect(() => {
+      setParcel(value || DEFAULT_PARCEL_CONTENT);
+    }, [value]);
 
     return (
       <section className="modal-card-body modal-form">
         <div className="form-floating-header p-4">
-          <span className="has-text-weight-bold is-size-6">{header || `Edit parcel`}</span>
+          <span className="has-text-weight-bold is-size-6">
+            {header || `Edit parcel`}
+          </span>
         </div>
         <div className="p-3 my-4"></div>
 
@@ -97,23 +119,29 @@ export const ParcelModalEditor: React.FC<ModalFormProps<ParcelModalEditorProps>>
           >
             <div className="p-3 my-5"></div>
             <div className="form-floating-footer has-text-centered p-1">
-              <button className="button is-default m-1 is-small" type="button" onClick={close}>
+              <button
+                className="button is-default m-1 is-small"
+                type="button"
+                onClick={close}
+              >
                 <span>Cancel</span>
               </button>
-              <button className="button is-primary m-1 is-small"
+              <button
+                className="button is-primary m-1 is-small"
                 disabled={isEqual(value, parcel)}
-                type="submit">
+                type="submit"
+              >
                 <span>Save</span>
               </button>
             </div>
           </ParcelForm>
         </form>
       </section>
-    )
+    );
   };
 
   return React.cloneElement(trigger, {
-    onClick: () => modal.open(<FormComponent {...args} />)
+    onClick: () => modal.open(<FormComponent {...args} />),
   });
 };
 
@@ -124,33 +152,40 @@ type CustomsModalEditorProps = {
   onSubmit: (customs: CustomsType | null) => Promise<any>;
 };
 
-export const CustomsModalEditor: React.FC<ModalFormProps<CustomsModalEditorProps>> = ({ trigger, ...args }) => {
+export const CustomsModalEditor = ({
+  trigger,
+  ...args
+}: ModalFormProps<CustomsModalEditorProps>): JSX.Element => {
   const modal = useModal();
 
-  const FormComponent: React.FC<CustomsModalEditorProps> = props => {
+  const FormComponent = (props: CustomsModalEditorProps): JSX.Element => {
     const { customs, header, onSubmit } = props;
     const { close } = useModal();
 
     return (
       <section className="modal-card-body modal-form">
         <div className="form-floating-header p-4">
-          <span className="has-text-weight-bold is-size-6">{header || `Edit customs info`}</span>
+          <span className="has-text-weight-bold is-size-6">
+            {header || `Edit customs info`}
+          </span>
         </div>
         <div className="p-3 my-4"></div>
 
         <CustomsInfoForm
           value={customs}
-          onSubmit={async (data) => { await onSubmit(data); close(); }}
+          onSubmit={async (data) => {
+            await onSubmit(data);
+            close();
+          }}
         />
       </section>
-    )
+    );
   };
 
   return React.cloneElement(trigger, {
-    onClick: () => modal.open(<FormComponent {...args} />)
+    onClick: () => modal.open(<FormComponent {...args} />),
   });
 };
-
 
 type ConfirmModalWrapperProps = {
   header?: string;
@@ -158,10 +193,13 @@ type ConfirmModalWrapperProps = {
   onSubmit: () => Promise<any>;
 };
 
-export const ConfirmModalWrapper: React.FC<ModalFormProps<ConfirmModalWrapperProps>> = ({ trigger, ...args }) => {
+export const ConfirmModalWrapper = ({
+  trigger,
+  ...args
+}: ModalFormProps<ConfirmModalWrapperProps>): JSX.Element => {
   const modal = useModal();
 
-  const FormComponent: React.FC<ConfirmModalWrapperProps> = props => {
+  const FormComponent = (props: ConfirmModalWrapperProps): JSX.Element => {
     const { header, action, onSubmit } = props;
     const loader = useLoader();
     const { close } = useModal();
@@ -183,12 +221,13 @@ export const ConfirmModalWrapper: React.FC<ModalFormProps<ConfirmModalWrapperPro
     return (
       <section className="modal-card-body modal-form">
         <div className="form-floating-header p-4">
-          <span className="has-text-weight-bold is-size-6">{header || `Confirm action`}</span>
+          <span className="has-text-weight-bold is-size-6">
+            {header || `Confirm action`}
+          </span>
         </div>
         <div className="p-3 my-4"></div>
 
         <form className="px-1 py-2" onSubmit={handleSubmit} key={key}>
-
           <div className="buttons my=2">
             <button
               className="button is-info is-light is-small"
@@ -199,21 +238,23 @@ export const ConfirmModalWrapper: React.FC<ModalFormProps<ConfirmModalWrapperPro
             </button>
             <input
               type="submit"
-              className={"button is-danger is-small" + `${loader.loading ? " is-loading" : ""}`}
+              className={
+                "button is-danger is-small" +
+                `${loader.loading ? " is-loading" : ""}`
+              }
               value={action || "Delete"}
               disabled={loader.loading}
             />
           </div>
-
         </form>
       </section>
-    )
+    );
   };
 
   return React.cloneElement(trigger, {
     onClick: (e: React.MouseEvent) => {
       e.stopPropagation();
-      modal.open(<FormComponent {...args} />)
-    }
+      modal.open(<FormComponent {...args} />);
+    },
   });
 };

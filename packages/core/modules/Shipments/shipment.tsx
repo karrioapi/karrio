@@ -38,14 +38,17 @@ import React from "react";
 export const generateMetadata = dynamicMetadata("Shipment");
 type FileDataType = DocumentUploadData["document_files"][0];
 
-export const ShipmentComponent: React.FC<{
+export const ShipmentComponent = ({
+  shipmentId,
+  isPreview,
+}: {
   shipmentId: string;
   isPreview?: boolean;
-}> = ({ shipmentId, isPreview }) => {
+}): JSX.Element => {
   const notifier = useNotifier();
   const { setLoading } = useLoader();
-  const $fileInput = React.useRef<HTMLInputElement>();
-  const $fileSelectInput = React.useRef<HTMLSelectElement>();
+  const $fileInput = React.useRef<HTMLInputElement>(undefined);
+  const $fileSelectInput = React.useRef<HTMLSelectElement>(undefined);
   const {
     references: { carrier_capabilities = {} },
   } = useAPIMetadata();
@@ -617,6 +620,7 @@ export const ShipmentComponent: React.FC<{
             object_type={MetadataObjectTypeEnum.shipment}
             metadata={shipment.metadata}
           >
+            {/* @ts-ignore */}
             <MetadataEditorContext.Consumer>
               {({ isEditing, editMetadata }) => (
                 <>

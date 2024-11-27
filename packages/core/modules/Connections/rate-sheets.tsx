@@ -21,7 +21,7 @@ const ContextProviders = bundleContexts([
 ]);
 
 export default function ConnectionsPage(pageProps: any) {
-  const Component: React.FC = () => {
+  const Component= (): JSX.Element =>  {
     const mutation = useRateSheetMutation();
 
     return (

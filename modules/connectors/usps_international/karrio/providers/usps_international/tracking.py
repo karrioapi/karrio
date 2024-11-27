@@ -43,7 +43,14 @@ def _extract_details(
         (
             status.name
             for status in list(provider_units.TrackingStatus)
-            if getattr(details, "status", None) in status.value
+            if any(
+                _.lower() in getattr(details, "status", "").lower()
+                for _ in status.value
+            )
+            or any(
+                _.lower() in getattr(details, "statusCategory", "").lower()
+                for _ in status.value
+            )
         ),
         provider_units.TrackingStatus.in_transit.name,
     )
@@ -54,10 +61,16 @@ def _extract_details(
         tracking_number=details.trackingNumber,
         events=[
             models.TrackingEvent(
-                date=lib.fdate(event.eventTimestamp, "%Y-%m-%dT%H:%M:%SZ"),
-                description=event.name,
-                code=event.eventType,
-                time=lib.flocaltime(event.eventTimestamp, "%Y-%m-%dT%H:%M:%SZ"),
+                date=lib.fdate(
+                    event.eventTimestamp,
+                    try_formats=["%Y-%m-%dT%H:%M:%SZ", "%Y-%m-%dT%H:%M:%S"],
+                ),
+                description=event.eventType,
+                code=event.eventCode,
+                time=lib.flocaltime(
+                    event.eventTimestamp,
+                    try_formats=["%Y-%m-%dT%H:%M:%SZ", "%Y-%m-%dT%H:%M:%S"],
+                ),
                 location=lib.text(
                     event.eventCity,
                     event.eventZIP,
@@ -70,15 +83,15 @@ def _extract_details(
         ],
         estimated_delivery=lib.fdate(
             details.expectedDeliveryTimeStamp,
-            "%Y-%m-%dT%H:%M:%SZ",
+            try_formats=["%Y-%m-%dT%H:%M:%SZ", "%Y-%m-%dT%H:%M:%S"],
         ),
         delivered=status == "delivered",
         status=status,
         info=models.TrackingInfo(
             # fmt: off
             carrier_tracking_link=settings.tracking_url.format(details.trackingNumber),
-            expected_delivery=lib.fdate(details.expectedDeliveryTimeStamp, "%Y-%m-%dT%H:%M:%SZ"),
-            shipment_service=provider_units.ShippingService.map(details.serviceTypeCode).name_or_key,
+            expected_delivery=lib.fdate(details.expectedDeliveryTimeStamp, try_formats=["%Y-%m-%dT%H:%M:%SZ", "%Y-%m-%dT%H:%M:%S"]),
+            shipment_service=provider_units.ShippingService.map(details.mailClass).name_or_key,
             shipment_origin_country=details.originCountry,
             shipment_origin_postal_code=details.originZIP,
             shipment_destination_country=details.destinationCountryCode,

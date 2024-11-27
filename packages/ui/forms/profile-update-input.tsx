@@ -9,7 +9,7 @@ interface ProfileUpdateInputComponent {
   propertyKey: keyof UserType;
 }
 
-export const ProfileUpdateInput: React.FC<ProfileUpdateInputComponent> = ({ label, inputType, propertyKey }) => {
+export const ProfileUpdateInput= ({ label, inputType, propertyKey }): JSX.Element =>  {
   const mutation = useUserMutation();
   const { notify } = useContext(Notify);
   const { query: { data: { user } = {} } } = useUser();

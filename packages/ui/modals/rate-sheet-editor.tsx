@@ -68,12 +68,13 @@ function reducer(
   }
 }
 
-export const RateSheetModalEditor: React.FC<
-  ModalFormProps<RateSheetModalEditorProps>
-> = ({ trigger, ...args }) => {
+export const RateSheetModalEditor = ({
+  trigger,
+  ...args
+}: ModalFormProps<RateSheetModalEditorProps>): JSX.Element => {
   const modal = useModal();
 
-  const FormComponent: React.FC<RateSheetModalEditorProps> = (props) => {
+  const FormComponent = (props: RateSheetModalEditorProps): JSX.Element => {
     const { sheet: defaultValue, header, onSubmit } = props;
     const loader = useLoader();
     const { close } = useModal();
@@ -500,6 +501,7 @@ export const RateSheetModalEditor: React.FC<
                       className="card"
                       style={{ borderRadius: 0, overflow: "auto" }}
                     >
+                      {/* @ts-ignore */}
                       <CodeMirror
                         ref={editor}
                         height="76vh"
@@ -519,6 +521,7 @@ export const RateSheetModalEditor: React.FC<
                     </div>
 
                     <div className="card" style={{ borderRadius: 0 }}>
+                      {/* @ts-ignore */}
                       <CodeMirror
                         height="76vh"
                         extensions={[jsonLanguage]}

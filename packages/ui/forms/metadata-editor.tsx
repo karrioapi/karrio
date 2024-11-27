@@ -22,13 +22,13 @@ interface MetadataEditorInterface {
 export const MetadataEditorContext =
   React.createContext<MetadataEditorInterface>({} as MetadataEditorInterface);
 
-export const MetadataEditor: React.FC<MetadataEditorProps> = ({
+export const MetadataEditor = ({
   id,
   metadata,
   object_type,
   children,
   onChange,
-}) => {
+}: MetadataEditorProps): JSX.Element => {
   const { loading } = React.useContext(Loading);
   const [isEditing, setIsEditing] = React.useState(false);
 
@@ -40,6 +40,7 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
   return (
     <>
       <MetadataStateProvider id={id} object_type={object_type} value={metadata}>
+        {/* @ts-ignore */}
         <MetadataStateContext.Consumer>
           {(context) => (
             <>
@@ -98,21 +99,24 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
                               </>
                             )}
                             {isEditing && (
-                              <TextAreaField
-                                rows={1}
-                                placeholder="Value"
-                                defaultValue={value}
-                                className="is-small is-fullwidth"
-                                fieldClass="mb-0 p-0"
-                                style={{ minHeight: "30px" }}
-                                onChange={(e: React.ChangeEvent<any>) =>
-                                  context.updateItem(uid, {
-                                    key,
-                                    value: e.target.value,
-                                  })
-                                }
-                                required
-                              />
+                              <>
+                                {/* @ts-ignore */}
+                                <TextAreaField
+                                  rows={1}
+                                  placeholder="Value"
+                                  defaultValue={value}
+                                  className="is-small is-fullwidth"
+                                  fieldClass="mb-0 p-0"
+                                  style={{ minHeight: "30px" }}
+                                  onChange={(e: React.ChangeEvent<any>) =>
+                                    context.updateItem(uid, {
+                                      key,
+                                      value: e.target.value,
+                                    })
+                                  }
+                                  required
+                                />
+                              </>
                             )}
                           </div>
                           {isEditing && (

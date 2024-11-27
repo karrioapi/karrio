@@ -56,7 +56,10 @@
         "submissionMediaType": "string",
         "targetMediaType": "string"
       }
-    ]
+    ],
+    "bannerText": "USPS TRACKING # USPS Ship",
+    "retailDistributionCode": "01",
+    "serviceTypeCode": "346"
   },
   "returnLabelMetadata": {
     "labelAddress": {
@@ -108,7 +111,10 @@
         "submissionMediaType": "string",
         "targetMediaType": "string"
       }
-    ]
+    ],
+    "bannerText": "USPS TRACKING # USPS Ship",
+    "retailDistributionCode": "01",
+    "serviceTypeCode": "346"
   },
   "labelImage": "string",
   "receiptImage": "string",

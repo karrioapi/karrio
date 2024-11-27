@@ -13,7 +13,7 @@ interface EventsFilterComponent {
 }
 
 
-export const EventsFilter: React.FC<EventsFilterComponent> = ({ context }) => {
+export const EventsFilter= ({ context }): JSX.Element =>  {
   const [isReady, setIsReady] = React.useState(true);
   const { query, filter: variables, setFilter } = context;
   const [filters, dispatch] = useReducer((state: any, { name, checked, value }: { name: string, checked?: boolean, value?: string | boolean | object }) => {

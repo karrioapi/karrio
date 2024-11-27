@@ -22,10 +22,13 @@ export function computeBasePath(testMode: boolean) {
 // Init the APP client mode
 export const AppMode = React.createContext<AppModeType>({} as AppModeType);
 
-const AppModeProvider: React.FC<{
+const AppModeProvider = ({
+  children,
+  pathname,
+}: {
   pathname?: string;
   children?: React.ReactNode;
-}> = ({ children, pathname }) => {
+}): JSX.Element => {
   const currentPathName = usePathname();
   const { insertUrlParam } = useLocation();
 

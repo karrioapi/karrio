@@ -34,12 +34,13 @@ function reducer(
   }
 }
 
-export const UserModalEditor: React.FC<
-  ModalFormProps<UserModalEditorProps>
-> = ({ trigger, ...args }) => {
+export const UserModalEditor = ({
+  trigger,
+  ...args
+}: ModalFormProps<UserModalEditorProps>): JSX.Element => {
   const modal = useModal();
 
-  const UserFormComponent: React.FC<UserModalEditorProps> = (props) => {
+  const UserFormComponent = (props: UserModalEditorProps): JSX.Element => {
     const {
       user: defaultValue = { is_active: true },
       header,

@@ -40,10 +40,10 @@ import { GoogleGeocodingScript } from "@karrio/ui/components/google-geocoding-sc
 import { CommodityDescription } from "@karrio/ui/components/commodity-description";
 import { MessagesDescription } from "@karrio/ui/components/messages-description";
 import { AddressDescription } from "@karrio/ui/components/address-description";
-import { useSystemCarrierConnections } from "@karrio/hooks/admin/connections";
 import { ParcelDescription } from "@karrio/ui/components/parcel-description";
 import { CommoditySummary } from "@karrio/ui/components/commodity-summary";
 import { RateDescription } from "@karrio/ui/components/rate-description";
+import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { LineItemSelector } from "@karrio/ui/forms/line-item-selector";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { useDefaultTemplates } from "@karrio/hooks/default-template";
@@ -68,7 +68,6 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useOrders } from "@karrio/hooks/order";
 import { Disclosure } from "@headlessui/react";
-import moment from "moment";
 
 export const generateMetadata = dynamicMetadata("Create Label");
 const ContextProviders = bundleContexts([
@@ -77,7 +76,7 @@ const ContextProviders = bundleContexts([
 ]);
 
 export default function CreateLabelPage(pageProps: any) {
-  const Component: React.FC = () => {
+  const Component = (): JSX.Element => {
     const notifier = useNotifier();
     const { basePath } = useAppMode();
     const { references } = useAPIMetadata();
@@ -95,7 +94,7 @@ export default function CreateLabelPage(pageProps: any) {
     } = useCarrierConnections();
     const {
       query: { data: { system_connections } = {} },
-    } = useSystemCarrierConnections();
+    } = useSystemConnections();
     const {
       state: { shipment, query },
       ...mutation
@@ -764,6 +763,7 @@ export default function CreateLabelPage(pageProps: any) {
                                     )}
                                   </div>
                                 </div>
+                                {/* @ts-ignore */}
                                 <CommodityStateContext.Consumer>
                                   {({ editCommodity }) => (
                                     <button
@@ -816,6 +816,7 @@ export default function CreateLabelPage(pageProps: any) {
                         )}
 
                         <div className="is-flex is-justify-content-space-between mt-4">
+                          {/* @ts-ignore */}
                           <CommodityStateContext.Consumer>
                             {({ editCommodity }) => (
                               <button
@@ -1371,6 +1372,7 @@ export default function CreateLabelPage(pageProps: any) {
                                     prefix={`${index + 1} - `}
                                   />
                                   <div>
+                                    {/* @ts-ignore */}
                                     <CommodityStateContext.Consumer>
                                       {({ editCommodity }) => (
                                         <button
@@ -1431,6 +1433,7 @@ export default function CreateLabelPage(pageProps: any) {
                           )}
 
                           <div className="is-flex is-justify-content-space-between mt-4">
+                            {/* @ts-ignore */}
                             <CommodityStateContext.Consumer>
                               {({ editCommodity }) => (
                                 <button
@@ -1724,6 +1727,7 @@ export default function CreateLabelPage(pageProps: any) {
                         metadata={shipment.metadata}
                         onChange={(metadata) => onChange({ metadata })}
                       >
+                        {/* @ts-ignore */}
                         <MetadataEditorContext.Consumer>
                           {({ isEditing, editMetadata }) => (
                             <>
@@ -1752,6 +1756,7 @@ export default function CreateLabelPage(pageProps: any) {
                   {/* Instructions section */}
                   <div className="card px-0 mt-5">
                     <div className="p-3">
+                      {/* @ts-ignore */}
                       <TextAreaField
                         rows={2}
                         label="Shipping instructions"

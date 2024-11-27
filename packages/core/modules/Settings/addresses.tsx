@@ -7,35 +7,32 @@ import {
 } from "@karrio/lib";
 import {
   AddressEditModal,
-  AddressEditContext,
+  useAddressEditModal,
 } from "@karrio/ui/modals/address-edit-modal";
 import {
   useAddressTemplateMutation,
   useAddressTemplates,
 } from "@karrio/hooks/address";
 import { GoogleGeocodingScript } from "@karrio/ui/components/google-geocoding-script";
-import {
-  ConfirmModal,
-  ConfirmModalContext,
-} from "@karrio/ui/modals/confirm-modal";
+import { ConfirmModal, useConfirmModal } from "@karrio/ui/modals/confirm-modal";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { AppLink } from "@karrio/ui/components/app-link";
-import { Loading } from "@karrio/ui/components/loader";
-import React, { useContext, useEffect } from "react";
+import { useLoader } from "@karrio/ui/components/loader";
 import { useSearchParams } from "next/navigation";
 import { AddressType } from "@karrio/types";
+import React, { useEffect } from "react";
 
 export const generateMetadata = dynamicMetadata("Addresses");
 
 export default function AddressPage(pageProps: any) {
   const { MULTI_ORGANIZATIONS } = (pageProps as any).metadata || {};
 
-  const Component: React.FC = () => {
+  const Component = (): JSX.Element => {
     const searchParams = useSearchParams();
     const modal = searchParams.get("modal") as string;
-    const { setLoading } = useContext(Loading);
-    const { confirm } = useContext(ConfirmModalContext);
-    const { editAddress } = useContext(AddressEditContext);
+    const { setLoading } = useLoader();
+    const { confirm } = useConfirmModal();
+    const { editAddress } = useAddressEditModal();
     const { deleteAddressTemplate } = useAddressTemplateMutation();
     const [initialized, setInitialized] = React.useState(false);
     const {

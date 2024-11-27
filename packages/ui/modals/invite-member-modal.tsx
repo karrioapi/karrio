@@ -16,7 +16,7 @@ interface InviteMemberInterface {
 
 export const InviteMemberContext = React.createContext<InviteMemberInterface>({} as InviteMemberInterface);
 
-export const InviteMemberProvider: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
+export const InviteMemberProvider= ({ children }): JSX.Element =>  {
   const form = useRef<HTMLFormElement>(null);
   const { notify } = useContext(Notify);
   const mutation = useOrganizationMutation();

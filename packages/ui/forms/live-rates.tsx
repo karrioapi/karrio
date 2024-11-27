@@ -18,7 +18,7 @@ interface LiveRatesComponent {
 
 const DEFAULT_PAYMENT: Partial<PaymentType> = { paid_by: PaidByEnum.sender };
 
-export const LiveRates: React.FC<LiveRatesComponent> = ({ shipment }) => {
+export const LiveRates= ({ shipment }): JSX.Element =>  {
   const { loading } = useContext(Loading);
   const mutation = useLabelDataMutation(shipment.id);
   const [payment, setPayment] = useState<Partial<PaymentType>>(DEFAULT_PAYMENT);

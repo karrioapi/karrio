@@ -15,10 +15,13 @@ import React from "react";
 export const generateMetadata = dynamicMetadata("Workflow Event");
 hljs.registerLanguage("json", json);
 
-export const Component: React.FC<{ eventId: string; isPreview?: boolean }> = ({
+export const Component = ({
   eventId,
   isPreview,
-}) => {
+}: {
+  eventId: string;
+  isPreview?: boolean;
+}): JSX.Element => {
   const { setLoading } = useLoader();
   const entity_id = eventId;
   const {

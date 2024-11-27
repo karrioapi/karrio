@@ -25,7 +25,7 @@ type WebhookTestContextType = {
 };
 const WebhookTestModalContext = React.createContext<WebhookTestContextType>({} as WebhookTestContextType);
 
-export const WebhookTestModal: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
+export const WebhookTestModal= ({ children }): JSX.Element =>  {
   const mutation = useWebhookMutation();
   const { notify } = useContext(Notify);
   const { setLoading, loading } = useContext(Loading);

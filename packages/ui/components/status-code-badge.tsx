@@ -4,7 +4,7 @@ interface StatusCodeComponent {
   code: string | number;
 }
 
-export const StatusCode: React.FC<StatusCodeComponent> = ({ code }) => {
+export const StatusCode= ({ code }): JSX.Element =>  {
   if (`${code}`[0] == '2') {
     return <span className={`tag is-success`}>{code}</span>;
   }

@@ -10,7 +10,7 @@ import { useUser } from "@karrio/hooks/user";
 
 interface StaffManagementComponent { }
 
-export const StaffManagement: React.FC<StaffManagementComponent> = () => {
+export const StaffManagement= (): JSX.Element =>  {
   const notifier = useNotifier();
   const mutation = useUserMutation();
   const { query: { data: { user } = {} } } = useUser();

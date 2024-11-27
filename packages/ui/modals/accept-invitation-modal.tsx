@@ -17,9 +17,11 @@ export const AcceptInvitationContext =
     {} as AcceptInvitationInterface,
   );
 
-export const AcceptInvitationProvider: React.FC<{
+export const AcceptInvitationProvider = ({
+  children,
+}: {
   children?: React.ReactNode;
-}> = ({ children }) => {
+}): JSX.Element => {
   const searchParams = useSearchParams();
   const {
     query: { data: { user } = {} },

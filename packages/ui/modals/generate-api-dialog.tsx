@@ -6,7 +6,7 @@ import { useLoader } from '../components/loader';
 import { useUser } from '@karrio/hooks/user';
 
 
-export const GenerateAPIModal: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
+export const GenerateAPIModal= ({ children }): JSX.Element =>  {
   const { notify } = useContext(Notify);
   const mutation = useAPITokenMutation();
   const { loading, setLoading } = useLoader();

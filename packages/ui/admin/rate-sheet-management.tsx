@@ -4,7 +4,7 @@ import { Spinner } from "../components";
 
 interface RateSheetManagementComponent { }
 
-export const RateSheetManagement: React.FC<RateSheetManagementComponent> = () => {
+export const RateSheetManagement= (): JSX.Element =>  {
   const { query: { data: { rate_sheets } = {}, ...query } } = useRateSheets();
 
   return (

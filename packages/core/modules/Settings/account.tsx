@@ -10,7 +10,7 @@ export const generateMetadata = dynamicMetadata("Account Settings");
 export default function AccountPage(pageProps: any) {
   const { APP_NAME, MULTI_ORGANIZATIONS } = (pageProps as any).metadata || {};
 
-  const Component: React.FC = () => {
+  const Component= (): JSX.Element =>  {
     return (
       <>
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">

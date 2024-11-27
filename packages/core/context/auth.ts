@@ -9,7 +9,7 @@ import Credentials from "next-auth/providers/credentials";
 import { loadMetadata } from "./main";
 import NextAuth from "next-auth";
 import moment from "moment";
-import { cookies, headers } from "next/headers";
+import { cookies, headers, type UnsafeUnwrappedHeaders } from "next/headers";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
@@ -27,7 +27,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const { metadata } = await loadMetadata();
           const auth = Auth(metadata?.HOST || (KARRIO_API as string));
           const token = await auth.authenticate(credentials as any);
-          const testMode = headers().get("referer")?.includes("/test");
+          const testMode = (headers() as unknown as UnsafeUnwrappedHeaders).get("referer")?.includes("/test");
           const org = metadata?.MULTI_ORGANIZATIONS
             ? await auth.getCurrentOrg(token.access, orgId)
             : { id: null };
@@ -51,7 +51,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     jwt: async ({ token, user, trigger, session }: any): Promise<any> => {
       const auth = Auth(KARRIO_API as string);
-      const headersList = headers();
+      const headersList = await headers();
 
       if (user?.accessToken) {
         token.orgId = user.orgId;
@@ -60,7 +60,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.refreshToken = user.refreshToken;
         token.expiration = parseJwt(user.accessToken as string).exp;
       } else if (headersList.get("referer")) {
-        token.testMode = computeTestMode(cookies(), headers());
+        token.testMode = computeTestMode(await cookies(), await headers());
       }
 
       if (trigger === "update" && session?.orgId) {

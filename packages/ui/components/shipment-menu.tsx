@@ -21,10 +21,10 @@ interface ShipmentMenuComponent
   isViewing?: boolean;
 }
 
-export const ShipmentMenu: React.FC<ShipmentMenuComponent> = ({
+export const ShipmentMenu = ({
   shipment,
   isViewing,
-}) => {
+}: ShipmentMenuComponent): JSX.Element => {
   const router = useRouter();
   const { basePath } = useAppMode();
   const { references } = useAPIMetadata();

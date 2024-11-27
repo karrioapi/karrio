@@ -1,14 +1,19 @@
-import React, { useState, useRef } from 'react';
-
+import React, { useState, useRef } from "react";
 
 interface DropdownComponent extends React.InputHTMLAttributes<HTMLDivElement> {
-  direction?: 'is-right' | 'is-left' | 'is-center' | 'is-up';
+  direction?: "is-right" | "is-left" | "is-center" | "is-up";
   menuWrapperStyle?: React.CSSProperties;
   triggerClassName?: string;
 }
 
-
-export const Dropdown: React.FC<DropdownComponent> = ({ children, direction, menuWrapperStyle, className, triggerClassName, ...props }) => {
+export const Dropdown = ({
+  children,
+  direction,
+  menuWrapperStyle,
+  className,
+  triggerClassName,
+  ...props
+}: DropdownComponent): JSX.Element => {
   const [isActive, setIsActive] = useState(false);
   const wrapper = useRef<HTMLDivElement>(null);
   const menuWrapper = useRef<HTMLDivElement>(null);
@@ -17,46 +22,62 @@ export const Dropdown: React.FC<DropdownComponent> = ({ children, direction, men
 
   const handleOnClick = (e: React.MouseEvent) => {
     setIsActive(!isActive);
-    if (!isActive) { document.addEventListener('click', onBodyClick); }
-    else { document.removeEventListener('click', onBodyClick); }
-  };
-  const onBodyClick = (e: MouseEvent) => {
-    if (!triggerWrapper.current?.contains(e.target as Node) && !menuWrapper.current?.contains(e.target as Node)) {
-      setIsActive(false);
-      document.removeEventListener('click', onBodyClick);
+    if (!isActive) {
+      document.addEventListener("click", onBodyClick);
+    } else {
+      document.removeEventListener("click", onBodyClick);
     }
   };
-  wrapper.current?.addEventListener('close-dropdown', (_: Event) => {
+  const onBodyClick = (e: MouseEvent) => {
+    if (
+      !triggerWrapper.current?.contains(e.target as Node) &&
+      !menuWrapper.current?.contains(e.target as Node)
+    ) {
+      setIsActive(false);
+      document.removeEventListener("click", onBodyClick);
+    }
+  };
+  wrapper.current?.addEventListener("close-dropdown", (_: Event) => {
     setIsActive(false);
   });
-  wrapper.current?.addEventListener('open-dropdown', (_: Event) => {
+  wrapper.current?.addEventListener("open-dropdown", (_: Event) => {
     setIsActive(true);
   });
 
   return (
-    <div className={`dropdown ${direction || "is-right"} ${isActive ? "is-active" : ""} ${className || ""}`} {...props} ref={wrapper}>
-
-      <div className={`dropdown-trigger ${triggerClassName || ''}`} onClick={handleOnClick} ref={triggerWrapper} style={{ width: '100%' }}>
+    <div
+      className={`dropdown ${direction || "is-right"} ${isActive ? "is-active" : ""} ${className || ""}`}
+      {...props}
+      ref={wrapper}
+    >
+      <div
+        className={`dropdown-trigger ${triggerClassName || ""}`}
+        onClick={handleOnClick}
+        ref={triggerWrapper}
+        style={{ width: "100%" }}
+      >
         {React.cloneElement(trigger as any)}
       </div>
 
-      <div className="dropdown-menu" role="menu" ref={menuWrapper} style={menuWrapperStyle}>
-        {isActive && (content || []).map((child, index) => (
-          React.cloneElement(child as any, { key: index })
-        ))}
+      <div
+        className="dropdown-menu"
+        role="menu"
+        ref={menuWrapper}
+        style={menuWrapperStyle}
+      >
+        {isActive &&
+          (content || []).map((child, index) =>
+            React.cloneElement(child as any, { key: index }),
+          )}
       </div>
     </div>
   );
 };
 
 export function closeDropdown(target: EventTarget) {
-  target.dispatchEvent(
-    new CustomEvent('close-dropdown', { bubbles: true })
-  );
+  target.dispatchEvent(new CustomEvent("close-dropdown", { bubbles: true }));
 }
 
 export function openDropdown(target: EventTarget) {
-  target.dispatchEvent(
-    new CustomEvent('open-dropdown', { bubbles: true })
-  );
+  target.dispatchEvent(new CustomEvent("open-dropdown", { bubbles: true }));
 }

@@ -68,9 +68,9 @@ function reducer(
   }
 }
 
-export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({
+export const ConnectProviderModal = ({
   children,
-}) => {
+}: ConnectProviderModalComponent): JSX.Element => {
   const {
     references: {
       carriers,
@@ -580,6 +580,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({
                   metadata={payload.metadata}
                   onChange={directChange("metadata")}
                 >
+                  {/* @ts-ignore */}
                   <MetadataEditorContext.Consumer>
                     {({ isEditing, editMetadata }) => (
                       <>
@@ -640,5 +641,9 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({
 };
 
 export function useConnectCarrierModal() {
+  return useContext(ConnectProviderModalContext);
+}
+
+export function useConnectProviderModalContext() {
   return useContext(ConnectProviderModalContext);
 }

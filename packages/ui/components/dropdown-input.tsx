@@ -1,8 +1,14 @@
-import React, { useState, useRef, ChangeEvent, useEffect, useCallback } from 'react';
-import { isNone, isNoneOrEmpty } from '@karrio/lib';
+import React, {
+  useState,
+  useRef,
+  ChangeEvent,
+  useEffect,
+  useCallback,
+} from "react";
+import { isNone, isNoneOrEmpty } from "@karrio/lib";
 
-
-export interface DropdownInputComponent extends React.AllHTMLAttributes<HTMLInputElement> {
+export interface DropdownInputComponent
+  extends React.AllHTMLAttributes<HTMLInputElement> {
   label?: string;
   fieldClass?: string;
   controlClass?: string;
@@ -12,8 +18,20 @@ export interface DropdownInputComponent extends React.AllHTMLAttributes<HTMLInpu
   onValueChange: (value?: string | null) => void;
 }
 
-
-export const DropdownInput: React.FC<DropdownInputComponent> = ({ label, name, items, value, className, fieldClass, controlClass, dropdownClass, wrapperClass, required, onValueChange, ...props }) => {
+export const DropdownInput = ({
+  label,
+  name,
+  items,
+  value,
+  className,
+  fieldClass,
+  controlClass,
+  dropdownClass,
+  wrapperClass,
+  required,
+  onValueChange,
+  ...props
+}: DropdownInputComponent): JSX.Element => {
   const control = useRef<any>(null);
   const btn = useRef<HTMLInputElement>(null);
   const [key, setKey] = useState<string>(`dropdown-${Date.now()}`);
@@ -21,19 +39,25 @@ export const DropdownInput: React.FC<DropdownInputComponent> = ({ label, name, i
   const [search, setSearch] = useState<string>("");
   const [selected, setSelected] = useState<string>();
 
-  const find = useCallback((selection?: string) => {
-    if (isNoneOrEmpty(selection)) { return ["", ""]; }
-    return items?.find(([key, val]) => (
-      key.toLowerCase().trim() == selection?.toLowerCase().trim() ||
-      val.toLowerCase().trim() == selection?.toLowerCase().trim()
-    ))
-  }, [items]);
+  const find = useCallback(
+    (selection?: string) => {
+      if (isNoneOrEmpty(selection)) {
+        return ["", ""];
+      }
+      return items?.find(
+        ([key, val]) =>
+          key.toLowerCase().trim() == selection?.toLowerCase().trim() ||
+          val.toLowerCase().trim() == selection?.toLowerCase().trim(),
+      );
+    },
+    [items],
+  );
   const handleOnClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
     if (!isActive) {
       setIsActive(true);
-      document.addEventListener('click', onBodyClick);
+      document.addEventListener("click", onBodyClick);
     }
     setTimeout(() => {
       control.current.focus();
@@ -45,7 +69,7 @@ export const DropdownInput: React.FC<DropdownInputComponent> = ({ label, name, i
       setIsActive(false);
       setSearch("");
       setKey(`dropdown-${Date.now()}`);
-      document.removeEventListener('click', onBodyClick);
+      document.removeEventListener("click", onBodyClick);
     }
   };
   const onSearch = (e: ChangeEvent<any>) => {
@@ -71,29 +95,43 @@ export const DropdownInput: React.FC<DropdownInputComponent> = ({ label, name, i
 
   return (
     <div className={wrapperClass || ""}>
-      {label !== undefined && <label className="label is-capitalized" style={{ fontSize: ".8em" }}>
-        {label}
-        {required && <span className="icon is-small has-text-danger small-icon">
-          <i className="fas fa-asterisk" style={{ fontSize: ".7em" }}></i>
-        </span>}
-      </label>}
+      {label !== undefined && (
+        <label className="label is-capitalized" style={{ fontSize: ".8em" }}>
+          {label}
+          {required && (
+            <span className="icon is-small has-text-danger small-icon">
+              <i className="fas fa-asterisk" style={{ fontSize: ".7em" }}></i>
+            </span>
+          )}
+        </label>
+      )}
 
       <div className={`field ${fieldClass}`} key={key}>
-
         <div className={`control ${controlClass}`}>
-          <div className={`dropdown select is-fullwidth ${isActive ? 'is-active' : ''} ${dropdownClass}`} key={`dropdown-input-${key}`}>
+          <div
+            className={`dropdown select is-fullwidth ${isActive ? "is-active" : ""} ${dropdownClass}`}
+            key={`dropdown-input-${key}`}
+          >
             <input
               onClick={handleOnClick}
               onChange={onRefChange}
               value={selected || ""}
-              className={"dropdown-trigger input is-clickable is-fullwidth px-2" + ` ${className}` || ''}
+              className={
+                "dropdown-trigger input is-clickable is-fullwidth px-2" +
+                  ` ${className}` || ""
+              }
               aria-haspopup="true"
               readOnly
-              style={{ height: '100%' }}
+              style={{ height: "100%" }}
               {...props}
             />
             <input
-              style={{ zIndex: -1, position: "absolute", left: '20px', bottom: '0' }}
+              style={{
+                zIndex: -1,
+                position: "absolute",
+                left: "20px",
+                bottom: "0",
+              }}
               name={name}
               value={selected || ""}
               onChange={onRefChange}
@@ -101,15 +139,19 @@ export const DropdownInput: React.FC<DropdownInputComponent> = ({ label, name, i
               required={required}
             />
 
-            <div className="dropdown-menu py-0" id={`dropdown-input-${key}`} role="menu" style={{ right: 0, left: 0 }}>
+            <div
+              className="dropdown-menu py-0"
+              id={`dropdown-input-${key}`}
+              role="menu"
+              style={{ right: 0, left: 0 }}
+            >
               <div className="dropdown-content py-0">
-
                 <div className="panel-block px-1 py-1">
                   <p className="control has-icons-left">
                     <input
                       type="text"
-                      className={"input" + ` ${className}` || ''}
-                      defaultValue={search || ''}
+                      className={"input" + ` ${className}` || ""}
+                      defaultValue={search || ""}
                       onInput={onSearch}
                       ref={control}
                     />
@@ -119,37 +161,41 @@ export const DropdownInput: React.FC<DropdownInputComponent> = ({ label, name, i
                   </p>
                 </div>
 
-                {items?.length === 0 && <div className="panel-block px-1 py-1">
-                  No items found...
-                </div>}
+                {items?.length === 0 && (
+                  <div className="panel-block px-1 py-1">No items found...</div>
+                )}
 
                 <ul className="panel dropped-panel">
                   <li
                     key={`empty-${Date.now()}`}
                     tabIndex={0}
                     onClick={onSelect("")}
-                    className={`panel-block is-clickable ${key === selected ? 'is-active' : ''}`}>
-                    <span className='is-size-7'>{`---`}</span>
+                    className={`panel-block is-clickable ${key === selected ? "is-active" : ""}`}
+                  >
+                    <span className="is-size-7">{`---`}</span>
                   </li>
 
                   {(items || [])
-                    .filter(([_, val]) => search === "" || val.toLowerCase().includes(search.toLowerCase()))
+                    .filter(
+                      ([_, val]) =>
+                        search === "" ||
+                        val.toLowerCase().includes(search.toLowerCase()),
+                    )
                     .map(([key, val], index) => (
                       <li
                         key={`${key}-${Date.now()}`}
                         tabIndex={index + 1}
                         onClick={onSelect(key)}
-                        className={`panel-block is-clickable ${key === selected ? 'is-active' : ''}`}>
-                        <span className='is-size-7'>{val}</span>
+                        className={`panel-block is-clickable ${key === selected ? "is-active" : ""}`}
+                      >
+                        <span className="is-size-7">{val}</span>
                       </li>
-                    ))
-                  }
+                    ))}
                 </ul>
               </div>
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );

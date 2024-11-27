@@ -11,9 +11,9 @@ interface CustomsInfoDescriptionComponent {
   customs: CustomsType;
 }
 
-export const CustomsInfoDescription: React.FC<
-  CustomsInfoDescriptionComponent
-> = ({ customs }) => {
+export const CustomsInfoDescription = ({
+  customs,
+}: CustomsInfoDescriptionComponent): JSX.Element => {
   return (
     <>
       <p className="is-size-7 my-1 has-text-weight-semibold">

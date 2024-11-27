@@ -14,7 +14,9 @@ export const EventPreviewContext = React.createContext<EventPreviewContextType>(
   {} as EventPreviewContextType,
 );
 
-export const EventPreview: React.FC<EventPreviewComponent> = ({ children }) => {
+export const EventPreview = ({
+  children,
+}: EventPreviewComponent): JSX.Element => {
   const { addUrlParam, removeUrlParam } = useLocation();
   const [isActive, setIsActive] = useState<boolean>(false);
   const [key, setKey] = useState<string>(`event-${Date.now()}`);

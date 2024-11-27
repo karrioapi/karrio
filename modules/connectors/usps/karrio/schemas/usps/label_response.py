@@ -69,6 +69,9 @@ class LabelMetadataType:
     inductionType: Optional[InductionTypeType] = JStruct[InductionTypeType]
     labelBrokerID: Optional[str] = None
     links: List[LinkType] = JList[LinkType]
+    bannerText: Optional[str] = None
+    retailDistributionCode: Optional[str] = None
+    serviceTypeCode: Optional[int] = None
 
 
 @s(auto_attribs=True)

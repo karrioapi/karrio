@@ -25,7 +25,7 @@ class TestUSPSManifest(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/v3/scan-form",
+                f"{gateway.settings.server_url}/scan-forms/v3/scan-form",
             )
 
     def test_parse_manifest_response(self):

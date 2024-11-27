@@ -9,9 +9,9 @@ import { signOut } from "next-auth/react";
 interface CloseAccountActionComponent
   extends React.InputHTMLAttributes<HTMLDivElement> {}
 
-export const CloseAccountAction: React.FC<CloseAccountActionComponent> = ({
+export const CloseAccountAction = ({
   children,
-}) => {
+}: CloseAccountActionComponent): JSX.Element => {
   const router = useRouter();
   const mutation = useUserMutation();
   const { notify } = useContext(Notify);

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# Source environment variables
+source "bin/_env"
+
+echo 'building insiders server image...'
+docker build -t ghcr.io/karrioapi/server:$1 \
+    -f "${ROOT}/docker/insiders/Dockerfile" \
+    --no-cache \
+    "${ROOT}" \
+    "${@:2}"

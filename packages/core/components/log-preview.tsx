@@ -14,7 +14,7 @@ export const LogPreviewContext = React.createContext<LogPreviewContextType>(
   {} as LogPreviewContextType,
 );
 
-export const LogPreview: React.FC<LogPreviewComponent> = ({ children }) => {
+export const LogPreview = ({ children }: LogPreviewComponent): JSX.Element => {
   const { addUrlParam, removeUrlParam } = useLocation();
   const [isActive, setIsActive] = useState<boolean>(false);
   const [key, setKey] = useState<string>(`log-${Date.now()}`);

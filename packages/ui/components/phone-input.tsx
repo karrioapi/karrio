@@ -7,7 +7,7 @@ interface PhoneInputComponent extends InputFieldComponent {
   onValueChange: (value: string | null) => void;
 }
 
-export const PhoneInput: React.FC<PhoneInputComponent> = ({ country, onValueChange, ...props }) => {
+export const PhoneInput= ({ country, onValueChange, ...props }): JSX.Element =>  {
   const onClick = (e: React.MouseEvent<HTMLInputElement>) => e.currentTarget.select();
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();

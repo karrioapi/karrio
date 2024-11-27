@@ -15,12 +15,14 @@
     "write-heading-ids": "docusaurus write-heading-ids"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.4.0",
-    "@docusaurus/plugin-client-redirects": "^3.4.0",
-    "@docusaurus/preset-classic": "^3.4.0",
+    "@docusaurus/core": "^3.6.1",
+    "@docusaurus/plugin-client-redirects": "^3.6.1",
+    "@docusaurus/preset-classic": "^3.6.1",
+    "@docusaurus/theme-mermaid": "^3.6.1",
     "@fortawesome/fontawesome-free": "^6.4.2",
     "@heroicons/react": "^2.1.5",
     "@mdx-js/react": "^3.0.0",
+    "@xyflow/react": "^12.3.5",
     "clsx": "^1.2.1",
     "docusaurus-plugin-openapi-docs": "^4.0.0",
     "docusaurus-theme-openapi-docs": "^4.0.0",
@@ -32,11 +34,13 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "redocusaurus": "^2.0.0",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0",
     "tailwind-loader": "file:plugins/tailwind-loader"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "^3.4.0",
-    "@docusaurus/types": "^3.4.0",
+    "@docusaurus/module-type-aliases": "^3.6.1",
+    "@docusaurus/types": "^3.6.1",
     "tailwindcss": "^3.3.5"
   },
   "browserslist": {

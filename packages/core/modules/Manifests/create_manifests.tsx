@@ -7,8 +7,8 @@ import {
   formatRef,
   preventPropagation,
 } from "@karrio/lib";
-import { useSystemCarrierConnections } from "@karrio/hooks/admin/connections";
 import { CreateManifestModal } from "@karrio/ui/modals/create-manifest-modal";
+import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { CarrierImage } from "@karrio/ui/components/carrier-image";
 import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
@@ -31,7 +31,7 @@ export const generateMetadata = dynamicMetadata("Create Manifest");
 const ContextProviders = bundleContexts([ModalProvider, ConfirmModal]);
 
 export default function Page(pageProps: any) {
-  const Component: React.FC = () => {
+  const Component= (): JSX.Element =>  {
     // General context data         -----------------------------------------------------------
     //#region
 
@@ -45,7 +45,7 @@ export default function Page(pageProps: any) {
     } = useCarrierConnections();
     const {
       query: { data: { system_connections } = {} },
-    } = useSystemCarrierConnections();
+    } = useSystemConnections();
     const context = useShipments({
       status: ["purchased"] as any,
       meta_key: "manifest_required",
@@ -67,7 +67,7 @@ export default function Page(pageProps: any) {
     const getRate = (shipment: any) =>
       shipment.selected_rate ||
       (shipment?.rates || []).find(
-        (_) => _.service === shipment?.options?.preferred_service,
+        (_: any) => _.service === shipment?.options?.preferred_service,
       ) ||
       (shipment?.rates || [])[0] ||
       shipment;

@@ -10,12 +10,12 @@ interface LineItemSelectorComponent {
   order_ids?: string[];
 }
 
-export const LineItemSelector: React.FC<LineItemSelectorComponent> = ({
+export const LineItemSelector = ({
   title,
   shipment,
   order_ids,
   onChange,
-}) => {
+}: LineItemSelectorComponent): JSX.Element => {
   const { query } = useOrders({
     first: 10,
     status: ["partial", "unfulfilled"] as any,

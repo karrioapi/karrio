@@ -9,9 +9,7 @@ import React, { useRef } from "react";
 import { AppLink } from "./app-link";
 import Image from "next/image";
 
-interface ExpandedSidebarComponent {}
-
-export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
+export const ExpandedSidebar = (): JSX.Element => {
   const pathname = usePathname();
   const sidebar = useRef<HTMLDivElement>(null);
   const dismissAction = useRef<HTMLButtonElement>(null);

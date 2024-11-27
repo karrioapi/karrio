@@ -1,5 +1,6 @@
 import karrio.schemas.fedex.tracking_document_request as fedex
 import gzip
+import typing
 import datetime
 import urllib.parse
 import karrio.lib as lib
@@ -45,6 +46,10 @@ class Settings(core.Settings):
             self.config or {},
             option_type=ConnectionConfig,
         )
+
+    @property
+    def default_currency(self) -> typing.Optional[str]:
+        return lib.units.CountryCurrency.map(self.account_country_code).value
 
     @property
     def access_token(self):

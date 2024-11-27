@@ -37,9 +37,9 @@ interface ParcelEditModalComponent {
   children?: React.ReactNode;
 }
 
-export const ParcelEditModal: React.FC<ParcelEditModalComponent> = ({
+export const ParcelEditModal = ({
   children,
-}) => {
+}: ParcelEditModalComponent): JSX.Element => {
   const { notify } = useContext(Notify);
   const mutation = useParcelTemplateMutation();
   const { setLoading, loading } = useContext(Loading);
@@ -200,3 +200,7 @@ export const ParcelEditModal: React.FC<ParcelEditModalComponent> = ({
     </Notifier>
   );
 };
+
+export function useParcelEditModal() {
+  return React.useContext(ParcelEditContext);
+}

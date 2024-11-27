@@ -16,17 +16,17 @@ import {
   ShipmentPreview,
   ShipmentPreviewContext,
 } from "@karrio/core/components/shipment-preview";
-import { useSystemCarrierConnections } from "@karrio/hooks/admin/connections";
+import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { ShipmentsFilter } from "@karrio/ui/filters/shipments-filter";
+import { AddressType, RateType, ShipmentType } from "@karrio/types";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
 import { CarrierImage } from "@karrio/ui/components/carrier-image";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { AddressType, ShipmentType } from "@karrio/types";
 import { useLoader } from "@karrio/ui/components/loader";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { Spinner } from "@karrio/ui/components/spinner";
@@ -37,7 +37,7 @@ import { useSearchParams } from "next/navigation";
 export const generateMetadata = dynamicMetadata("Shipments");
 
 export default function Page(pageProps: any) {
-  const Component: React.FC = () => {
+  const Component= (): JSX.Element =>  {
     const searchParams = useSearchParams();
     const { setLoading } = useLoader();
     const { references } = useAPIMetadata();
@@ -50,7 +50,7 @@ export default function Page(pageProps: any) {
     } = useCarrierConnections();
     const {
       query: { data: { system_connections } = {} },
-    } = useSystemCarrierConnections();
+    } = useSystemConnections();
     const context = useShipments({
       status: [
         "purchased",
@@ -147,7 +147,7 @@ export default function Page(pageProps: any) {
     const getRate = (shipment: any) =>
       shipment.selected_rate ||
       (shipment?.rates || []).find(
-        (_) => _.service === shipment?.options?.preferred_service,
+        (_: RateType) => _.service === shipment?.options?.preferred_service,
       ) ||
       (shipment?.rates || [])[0] ||
       shipment;

@@ -7,7 +7,7 @@ import { url$ } from "@karrio/lib";
 export const generateMetadata = dynamicMetadata("Platform");
 
 export default function Page(pageProps: any) {
-  const Component: React.FC = () => {
+  const Component= (): JSX.Element =>  {
     const { metadata, getHost } = useAPIMetadata();
 
     return (

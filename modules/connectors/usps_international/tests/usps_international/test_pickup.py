@@ -37,7 +37,7 @@ class TestUSPSPickup(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/v3/carrier-pickup",
+                f"{gateway.settings.server_url}/pickup/v3/carrier-pickup",
             )
 
     def test_update_pickup(self):
@@ -47,7 +47,7 @@ class TestUSPSPickup(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/v3/carrier-pickup/100094XXX",
+                f"{gateway.settings.server_url}/pickup/v3/carrier-pickup/100094XXX",
             )
 
     def test_cancel_shipment(self):
@@ -57,7 +57,7 @@ class TestUSPSPickup(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/v3/carrier-pickup/100094XXX",
+                f"{gateway.settings.server_url}/pickup/v3/carrier-pickup/100094XXX",
             )
 
     def test_parse_pickup_response(self):
