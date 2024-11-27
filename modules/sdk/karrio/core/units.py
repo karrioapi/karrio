@@ -1518,6 +1518,20 @@ class ComputedAddress(models.Address):
             self.address, "company_name", None
         )
 
+    @property
+    def first_name(self) -> typing.Optional[str]:
+        if self.address.person_name is None:
+            return self.address.first_name
+
+        return self.address.person_name.split(" ")[0]
+
+    @property
+    def last_name(self) -> typing.Optional[str]:
+        if self.address.person_name is None:
+            return self.address.last_name
+
+        return self.address.person_name.split(" ")[-1]
+
     def _compute_address_line(self, join: bool = True) -> typing.Optional[str]:
         if any(
             [

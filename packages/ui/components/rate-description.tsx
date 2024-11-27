@@ -1,24 +1,70 @@
-import { formatRef, isNone } from '@karrio/lib';
-import { RateType } from '@karrio/types';
-import React from 'react';
+import { formatRef, isNone } from "@karrio/lib";
+import { RateType } from "@karrio/types";
+import React from "react";
 
 interface RateDescriptionComponent {
   rate: RateType;
 }
 
-export const RateDescription= ({ rate }): JSX.Element =>  {
+export const RateDescription = ({
+  rate,
+}: RateDescriptionComponent): JSX.Element => {
   return (
-    <div className="column px-2 py-1 is-size-7 has-text-weight-semibold text-ellipsis" style={{ maxWidth: '190px', lineHeight: '13px' }}>
-      <span className="has-text-weight-bold text-ellipsis m-0" style={{ maxWidth: '100%' }}>
-        {formatRef(((rate.meta as any)?.service_name || rate.service) as string)}
-      </span><br />
-      <span className="has-text-grey m-0 p-0 text-ellipsis" style={{ maxWidth: '100%' }}>
-        <span>{rate.total_charge} {rate.currency}</span>
-        {!isNone(rate.transit_days) && <span> - {rate.transit_days} Transit days</span>}
-      </span><br />
-      <span className="has-text-info m-0 p-0 text-ellipsis" style={{ fontSize: '0.75rem', maxWidth: '100%' }}>
+    <div className="rate-description column px-2 py-1 is-size-7">
+      <div className="rate-service has-text-weight-bold mb-1">
+        {formatRef(
+          ((rate.meta as any)?.service_name || rate.service) as string,
+        )}
+      </div>
+
+      <div className="rate-details has-text-grey">
+        <span className="rate-cost">
+          {rate.total_charge} {rate.currency}
+        </span>
+        {!isNone(rate.transit_days) && (
+          <span className="rate-transit">
+            {" "}
+            - {rate.transit_days} Transit days
+          </span>
+        )}
+      </div>
+
+      <div
+        className="rate-carrier has-text-info"
+        style={{ fontSize: "0.75rem" }}
+      >
         {rate.carrier_name}:{rate.carrier_id}
-      </span>
+      </div>
+
+      <style jsx>{`
+        .rate-description {
+          min-width: 0; /* Enable flexbox text truncation */
+          line-height: 1.2;
+        }
+
+        .rate-service,
+        .rate-details,
+        .rate-carrier {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          width: 100%;
+        }
+
+        /* Apply minimum width for larger screens */
+        @media screen and (min-width: 768px) {
+          .rate-description {
+            min-width: 190px;
+          }
+        }
+
+        /* Allow wrapping on very small screens */
+        @media screen and (max-width: 480px) {
+          .rate-details {
+            white-space: normal;
+          }
+        }
+      `}</style>
     </div>
   );
 };

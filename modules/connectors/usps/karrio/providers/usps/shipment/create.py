@@ -17,9 +17,8 @@ import karrio.providers.usps.units as provider_units
 def parse_shipment_response(
     _response: lib.Deserializable[typing.List[dict]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
     responses = _response.deserialize()
-
     shipment = lib.to_multi_piece_shipment(
         [
             (
@@ -28,6 +27,7 @@ def parse_shipment_response(
             )
             for _, response in enumerate(responses, start=1)
             if response.get("error") is None
+            and response.get("labelMetadata") is not None
         ]
     )
     messages: typing.List[models.Message] = sum(
@@ -114,12 +114,12 @@ def shipment_request(
                 streetAddress=recipient.address_line1,
                 secondaryAddress=recipient.address_line2,
                 city=recipient.city,
-                state=recipient.state,
+                state=recipient.state_code,
                 ZIPCode=lib.to_zip5(recipient.postal_code) or "",
                 ZIPPlus4=lib.to_zip4(recipient.postal_code) or "",
                 urbanization=None,
-                firstName=recipient.person_name,
-                lastName=None,
+                firstName=recipient.first_name,
+                lastName=recipient.last_name,
                 firm=recipient.company_name,
                 phone=recipient.phone_number,
                 email=recipient.email,
@@ -133,12 +133,12 @@ def shipment_request(
                 streetAddress=shipper.address_line1,
                 secondaryAddress=shipper.address_line2,
                 city=shipper.city,
-                state=shipper.state,
-                ZIPCode=lib.to_zip4(shipper.postal_code) or "",
-                ZIPPlus4=lib.to_zip5(shipper.postal_code) or "",
+                state=shipper.state_code,
+                ZIPCode=lib.to_zip5(shipper.postal_code) or "",
+                ZIPPlus4=lib.to_zip4(shipper.postal_code) or "",
                 urbanization=None,
-                firstName=shipper.person_name,
-                lastName=None,
+                firstName=shipper.first_name,
+                lastName=shipper.last_name,
                 firm=shipper.company_name,
                 phone=shipper.phone_number,
                 email=shipper.email,
@@ -152,12 +152,12 @@ def shipment_request(
                 streetAddress=shipper.address_line1,
                 secondaryAddress=shipper.address_line2r,
                 city=shipper.city,
-                state=shipper.state,
-                ZIPCode=lib.to_zip4(shipper.postal_code) or "",
-                ZIPPlus4=lib.to_zip5(shipper.postal_code) or "",
+                state=shipper.state_code,
+                ZIPCode=lib.to_zip5(shipper.postal_code) or "",
+                ZIPPlus4=lib.to_zip4(shipper.postal_code) or "",
                 urbanization=None,
-                firstName=shipper.person_name,
-                lastName=None,
+                firstName=shipper.first_name,
+                lastName=shipper.last_name,
                 firm=shipper.company_name,
                 phone=shipper.phone_number,
                 email=shipper.email,
@@ -172,12 +172,12 @@ def shipment_request(
                     streetAddress=return_address.address_line1,
                     secondaryAddress=return_address.address_line2r,
                     city=return_address.city,
-                    state=return_address.state,
-                    ZIPCode=lib.to_zip4(return_address.postal_code) or "",
-                    ZIPPlus4=lib.to_zip5(return_address.postal_code) or "",
+                    state=return_address.state_code,
+                    ZIPCode=lib.to_zip5(return_address.postal_code) or "",
+                    ZIPPlus4=lib.to_zip4(return_address.postal_code) or "",
                     urbanization=None,
-                    firstName=return_address.person_name,
-                    lastName=None,
+                    firstName=return_address.first_name,
+                    lastName=return_address.last_name,
                     firm=return_address.company_name,
                     phone=return_address.phone_number,
                     email=return_address.email,
@@ -199,7 +199,7 @@ def shipment_request(
                 width=package.width.IN,
                 girth=package.girth.value,
                 mailClass=service,
-                rateIndicator=package.options.usps_rate_indicator.state or "SP",
+                rateIndicator=package.options.usps_rate_indicator.state or "DR",
                 processingCategory=lib.identity(
                     package.options.usps_processing_category.state or "NON_MACHINABLE"
                 ),
@@ -211,9 +211,9 @@ def shipment_request(
                         streetAddress=pickup_location.address_line1,
                         secondaryAddress=pickup_location.address_line2r,
                         city=pickup_location.city,
-                        state=pickup_location.state,
-                        ZIPCode=lib.to_zip4(pickup_location.postal_code) or "",
-                        ZIPPlus4=lib.to_zip5(pickup_location.postal_code) or "",
+                        state=pickup_location.state_code,
+                        ZIPCode=lib.to_zip5(pickup_location.postal_code) or "",
+                        ZIPPlus4=lib.to_zip4(pickup_location.postal_code) or "",
                         urbanization=None,
                     )
                     if package.options.hold_for_pickup_address.state is not None
@@ -221,7 +221,11 @@ def shipment_request(
                 ),
                 packageOptions=lib.identity(
                     usps.PackageOptionsType(
-                        packageValue=package.total_value,
+                        packageValue=lib.identity(
+                            package.total_value
+                            or package.options.declared_value.state
+                            or 1.0
+                        ),
                         nonDeliveryOption=None,
                         redirectAddress=None,
                         contentType=None,
@@ -230,7 +234,7 @@ def shipment_request(
                         ancillaryServiceEndorsements=None,
                         originalPackage=None,
                     )
-                    if (package.total_value or 0.0) > 0.0
+                    if (package.total_value or package.options.declared_value.state)
                     else None
                 ),
                 customerReference=[

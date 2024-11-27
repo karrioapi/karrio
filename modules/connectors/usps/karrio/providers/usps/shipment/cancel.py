@@ -18,7 +18,7 @@ def parse_shipment_cancel_response(
         ],
         start=[],
     )
-    success = all([_["ok"] for __, _ in responses])
+    success = all([_.get("status") == "CANCELED" for __, _ in responses])
 
     confirmation = (
         models.ConfirmationDetails(

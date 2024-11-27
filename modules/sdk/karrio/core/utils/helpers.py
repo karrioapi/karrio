@@ -207,7 +207,7 @@ def process_response(
     request_id: str,
     response: Any,
     decoder: Callable,
-    on_ok: Callable[[HTTPError], str] = None,
+    on_ok: Callable[[Any], str] = None,
     trace: Callable[[Any, str], Any] = None,
 ) -> str:
     if on_ok is not None:
@@ -337,8 +337,16 @@ class Location:
 
     @property
     def as_zip5(self) -> Optional[str]:
-        if not re.match(r"/^SW\d{5}$/", self.value or ""):
-            return self.value
+        if not self.value:
+            return None
+
+        # Try to extract exactly 5 digits
+        if match := re.search(r"\d{5}", self.value):
+            return match.group(0)
+
+        # If 4 digits, pad with 0
+        if match := re.search(r"\d{4}", self.value):
+            return f"{match.group(0)}0"
 
         return None
 

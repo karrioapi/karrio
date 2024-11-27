@@ -65,7 +65,6 @@ def manifest_request(
             # fmt: on
         ),
     )
-    print(options.items())
 
     # map data to convert karrio model to usps specific type
     request = usps.ScanFormRequestType(

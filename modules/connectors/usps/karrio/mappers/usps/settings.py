@@ -11,8 +11,11 @@ class Settings(provider_utils.Settings):
     # Add carrier specific API connection properties here
     client_id: str
     client_secret: str
-    account_type: str = None
     account_number: str = None
+    account_type: provider_utils.AccountType = "EPS"  # type: ignore
+    manifest_MID: str = None
+    CRID: str = None
+    MID: str = None
 
     # generic properties
     id: str = None
