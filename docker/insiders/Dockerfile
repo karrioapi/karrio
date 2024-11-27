@@ -5,7 +5,7 @@ FROM python:3.11-slim AS compile-image
 RUN apt-get update -y && apt-get install -y gcc
 RUN python -m venv /karrio/venv
 ENV PATH="/karrio/venv/bin:$PATH"
-COPY .build /temp/app/
+COPY . /temp/app/
 RUN cd /temp/app && \
     pip install --upgrade pip && \
     pip install dumb-init && \
