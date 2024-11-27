@@ -48,7 +48,7 @@ USER karrio
 
 COPY --chown=karrio:karrio --from=compile-image /karrio/ /karrio/
 RUN mkdir -p $WORK_DIR $LOG_DIR $WORKER_DB_DIR $STATIC_ROOT_DIR
-COPY .build/api/gunicorn-cfg.py docker/insiders/entrypoint docker/insiders/worker $WORK_DIR/
+COPY apps/api/gunicorn-cfg.py docker/insiders/entrypoint docker/insiders/worker $WORK_DIR/
 
 WORKDIR $WORK_DIR
 
