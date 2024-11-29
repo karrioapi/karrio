@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # Setup environment variables
-export NEXTAUTH_URL=${NEXTAUTH_URL:=$NEXT_PUBLIC_DASHBOARD_URL}
 export AUTH_TRUST_HOST=${AUTH_TRUST_HOST:=true}
+export NEXTAUTH_URL=${NEXTAUTH_URL:=$NEXT_PUBLIC_DASHBOARD_URL}
+export NEXTAUTH_SECRET=${NEXTAUTH_SECRET:="0/zfUEetNIle3iNekk4npo4T1pLFAWOyBFgbAu0afB4="}
 
 # Start services
 set -e

@@ -1,8 +1,10 @@
 #!/bin/bash
 
+export SECRET_KEY=${SECRET_KEY:="0/zfUEetNIle3iNekk4npo4T1pLFAWOyBFgbAu0afB4="}
+
 # Setup DB and static files
 karrio migrate || exit
-karrio collectstatic --noinput 1> /dev/null || exit
+karrio collectstatic --noinput 1>/dev/null || exit
 
 # Setup Default super admin
 (echo "
@@ -14,18 +16,16 @@ if not any(get_user_model().objects.all()):
    get_user_model().objects.create_superuser(ADMIN_EMAIL, ADMIN_PASSWORD)
 " | karrio shell) || exit
 
-
 # Start services
-if [[ "$DETACHED_WORKER" == "False" ]];
-then
-	set -e # turn on bash's job control
-	trap 'kill 0' INT
+if [[ "$DETACHED_WORKER" == "False" ]]; then
+    set -e # turn on bash's job control
+    trap 'kill 0' INT
 
-	gunicorn --config gunicorn-cfg.py karrio.server.asgi -k karrio.server.workers.UvicornWorker &
-	/bin/bash ./worker &
+    gunicorn --config gunicorn-cfg.py karrio.server.asgi -k karrio.server.workers.UvicornWorker &
+    /bin/bash ./worker &
 
-	wait -n
+    wait -n
 
 else
-	gunicorn --config gunicorn-cfg.py karrio.server.asgi -k karrio.server.workers.UvicornWorker
+    gunicorn --config gunicorn-cfg.py karrio.server.asgi -k karrio.server.workers.UvicornWorker
 fi

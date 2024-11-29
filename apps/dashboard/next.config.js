@@ -14,6 +14,9 @@ const moduleExports = {
   reactStrictMode: true,
   transpilePackages: ['@karrio/core', '@karrio/hooks', '@karrio/ui', '@karrio/lib', '@karrio/types'],
   basePath: BASE_PATH,
+  experimental: {
+    missingSuspenseWithCSRBailout: false,
+  },
   sassOptions: {
     includePaths: [path.join(__dirname, 'src', 'styles')],
   },

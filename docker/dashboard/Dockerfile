@@ -23,16 +23,16 @@ LABEL org.opencontainers.image.authors="hello@karrio.io"
 ARG VERSION
 WORKDIR /app
 
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
-ENV SENTRY_IGNORE_API_RESOLUTION_ERROR 1
-ENV NEXTAUTH_SECRET "nasdlfij34l5kj5k6j5kl6lp+lsick5bi*90!mbk7rc3iy_op1r"
-ENV NEXT_PUBLIC_KARRIO_PUBLIC_URL http://locahost:5002
-ENV NEXT_PUBLIC_DASHBOARD_URL http://localhost:3000
-ENV NEXT_PUBLIC_DASHBOARD_VERSION ${VERSION}
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV SENTRY_IGNORE_API_RESOLUTION_ERROR=1
+ENV NEXT_PUBLIC_DASHBOARD_VERSION=${VERSION}
+ENV NEXT_PUBLIC_DASHBOARD_URL=http://localhost:3000
+ENV NEXT_PUBLIC_KARRIO_PUBLIC_URL=http://locahost:5002
 
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S karrio -u 1001
+USER karrio
 
 
 COPY --from=builder /app/apps/dashboard/public ./public
@@ -42,7 +42,6 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/dashboard/package.json ./package.json
 COPY --from=builder /app/docker/dashboard/entrypoint ./entrypoint
 
-USER karrio
 
 EXPOSE 3000
 
