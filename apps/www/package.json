@@ -15,10 +15,10 @@
     "write-heading-ids": "docusaurus write-heading-ids"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.6.1",
-    "@docusaurus/plugin-client-redirects": "^3.6.1",
-    "@docusaurus/preset-classic": "^3.6.1",
-    "@docusaurus/theme-mermaid": "^3.6.1",
+    "@docusaurus/core": "^3.6.3",
+    "@docusaurus/plugin-client-redirects": "^3.6.3",
+    "@docusaurus/preset-classic": "^3.6.3",
+    "@docusaurus/theme-mermaid": "^3.6.3",
     "@fortawesome/fontawesome-free": "^6.4.2",
     "@heroicons/react": "^2.1.5",
     "@mdx-js/react": "^3.0.0",
@@ -39,8 +39,8 @@
     "tailwind-loader": "file:plugins/tailwind-loader"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "^3.6.1",
-    "@docusaurus/types": "^3.6.1",
+    "@docusaurus/module-type-aliases": "^3.6.3",
+    "@docusaurus/types": "^3.6.3",
     "tailwindcss": "^3.3.5"
   },
   "browserslist": {
