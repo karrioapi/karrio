@@ -1,3 +1,21 @@
+# Karrio 2024.12rc2
+
+## Changes
+
+### Feat
+
+- feat: replace treepoem/ghostscript by zint/pyzint for barcode generation
+
+### Chore
+
+- chore: update Dockerfiles metadata
+- chore: update Dockerfiles away from deprecated env vars declaration
+- chore: handle oss install with dockerless
+
+### Fix
+
+- fix: dashboard runtime environment variables issues
+
 # Karrio 2024.12rc1
 
 ## Changes

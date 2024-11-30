@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2024.12rc1`.
+    The current version is `2024.12rc2`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2024.12rc1
+  version: 2024.12rc2
 paths:
   /:
     get:
@@ -11223,9 +11223,21 @@ components:
           type: string
         client_secret:
           type: string
-        account_type:
-          type: string
         account_number:
+          type: string
+        account_type:
+          enum:
+          - EPS
+          - PERMIT
+          - METER
+          type: string
+          x-spec-enum-id: 7efd1d6854b73018
+          description: Indicates a account_type string
+        manifest_MID:
+          type: string
+        CRID:
+          type: string
+        MID:
           type: string
       required:
       - client_id
@@ -11237,9 +11249,21 @@ components:
           type: string
         client_secret:
           type: string
-        account_type:
-          type: string
         account_number:
+          type: string
+        account_type:
+          enum:
+          - EPS
+          - PERMIT
+          - METER
+          type: string
+          x-spec-enum-id: 7efd1d6854b73018
+          description: Indicates a account_type string
+        manifest_MID:
+          type: string
+        CRID:
+          type: string
+        MID:
           type: string
       required:
       - client_id
@@ -11511,22 +11535,10 @@ tags:
     ### USPS International
     | Code         | Service Name |
     | ------------ | ------------ |
-    | usps_standard_service | USPS Standard Service |
-    | usps_parcel_select | PARCEL_SELECT |
-    | usps_parcel_select_lightweight | PARCEL_SELECT_LIGHTWEIGHT |
-    | usps_priority_mail_express | PRIORITY_MAIL_EXPRESS |
-    | usps_priority_mail | PRIORITY_MAIL |
-    | usps_first_class_package_service | FIRST-CLASS_PACKAGE_SERVICE |
-    | usps_library_mail | LIBRARY_MAIL |
-    | usps_media_mail | MEDIA_MAIL |
-    | usps_bound_printed_matter | BOUND_PRINTED_MATTER |
-    | usps_connect_local | USPS_CONNECT_LOCAL |
-    | usps_connect_mail | USPS_CONNECT_MAIL |
-    | usps_connect_next_day | USPS_CONNECT_NEXT_DAY |
-    | usps_connect_regional | USPS_CONNECT_REGIONAL |
-    | usps_connect_same_day | USPS_CONNECT_SAME_DAY |
-    | usps_ground_advantage | USPS_GROUND_ADVANTAGE |
-    | usps_retail_ground | USPS_RETAIL_GROUND |
+    | usps_first_class_package_international_service | FIRST-CLASS_PACKAGE_INTERNATIONAL_SERVICE |
+    | usps_priority_mail_international | PRIORITY_MAIL_INTERNATIONAL |
+    | usps_priority_mail_express_international | PRIORITY_MAIL_EXPRESS_INTERNATIONAL |
+    | usps_global_express_guaranteed | GLOBAL_EXPRESS_GUARANTEED |
     | usps_all | ALL |
 
     ### USPS
