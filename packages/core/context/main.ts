@@ -71,10 +71,11 @@ export async function loadMetadata() {
 export async function loadUserData(session: any, metadata?: Metadata) {
   if (!session || !metadata) return { user: null };
 
+  const API_URL = await getAPIURL(metadata);
   const { accessToken, orgId, testMode } = session;
   const { data, error } = await axios
     .post<AccountContextDataType>(
-      url$`${metadata.HOST || ""}/graphql`,
+      url$`${API_URL}/graphql`,
       { query: ACCOUNT_DATA_QUERY },
       {
         headers: {
@@ -94,7 +95,7 @@ export async function loadUserData(session: any, metadata?: Metadata) {
         error: {
           code,
           message: `
-          Server (${metadata.HOST}) unreachable.
+          Server (${API_URL}) unreachable.
           Please make sure that the API is running and reachable.
         `,
         },
@@ -109,10 +110,11 @@ export async function loadOrgData(session: any, metadata?: Metadata) {
     return { organization: null };
   }
 
+  const API_URL = await getAPIURL(metadata);
   const { accessToken, orgId, testMode } = session;
   const { data, error } = await axios
     .post<AccountContextDataType>(
-      url$`${metadata.HOST || ""}/graphql`,
+      url$`${API_URL}/graphql`,
       { query: ORG_DATA_QUERY },
       {
         headers: {
@@ -132,7 +134,7 @@ export async function loadOrgData(session: any, metadata?: Metadata) {
         error: {
           code,
           message: `
-          Server (${metadata.HOST}) unreachable.
+          Server (${API_URL}) unreachable.
           Please make sure that the API is running and reachable.
         `,
         },
@@ -142,7 +144,11 @@ export async function loadOrgData(session: any, metadata?: Metadata) {
   return { ...data, error };
 }
 
-async function getAPIURL() {
+async function getAPIURL(metadata?: Metadata) {
+  if (metadata?.HOST) {
+    return MULTI_TENANT ? metadata.HOST : KARRIO_URL;
+  }
+
   if (
     MULTI_TENANT === true &&
     !isNone(KARRIO_ADMIN_URL) &&
