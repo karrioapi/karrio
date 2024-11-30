@@ -16,7 +16,8 @@
     "@karrio/hooks": "*",
     "@karrio/lib": "*",
     "@karrio/types": "*",
-    "@karrio/ui": "*"
+    "@karrio/ui": "*",
+    "next-runtime-env": "^3.2.2"
   },
   "devDependencies": {
     "eslint": "7.32.0",

@@ -7,7 +7,7 @@ certifi==2024.8.30
 cffi==1.17.1
 charset-normalizer==3.4.0
 click==8.1.7
-cryptography==43.0.3
+cryptography==44.0.0
 cssselect2==0.7.0
 deprecation==2.1.0
 diff-match-patch==20241021
@@ -30,7 +30,7 @@ django-two-factor-auth==1.17.0
 djangorestframework==3.15.2
 djangorestframework-simplejwt==5.3.1
 drf-api-tracking==1.8.4
-drf-spectacular==0.27.2
+drf-spectacular==0.28.0
 fonttools==4.55.0
 graphql-core==3.2.5
 gunicorn==23.0.0
@@ -110,13 +110,13 @@ oauthlib==3.2.2
 packaging==24.2
 phonenumbers==8.13.50
 pillow==10.4.0
-posthog==3.7.3
+posthog==3.7.4
 psutil==6.1.0
 psycopg2-binary==2.9.10
 py-soap==2020.3.2
 pycparser==2.22
 pydyf==0.11.0
-PyJWT==2.10.0
+PyJWT==2.10.1
 PyPDF2==3.0.1
 pyphen==0.15.0
 pypng==0.20220715.0
@@ -125,6 +125,7 @@ python-dateutil==2.9.0.post0
 python-decouple==3.8
 pytz==2024.2
 PyYAML==6.0.2
+pyzint==0.1.10
 qrcode==7.4.2
 redis==5.2.0
 referencing==0.35.1
@@ -137,7 +138,6 @@ strawberry-graphql==0.253.0
 tablib==3.7.0
 tinycss2==1.4.0
 tinyhtml5==2.0.0
-treepoem==3.25.0
 typing_extensions==4.12.2
 uritemplate==4.1.1
 urllib3==2.2.3

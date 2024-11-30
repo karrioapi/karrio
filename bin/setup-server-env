@@ -8,11 +8,11 @@ cd "${ROOT}"
 pip install -r "${ROOT:?}/requirements.server.dev.txt"
 cd -
 
-if [[ "${HAS_INSIDERS}" == "true" && ! "$*" == *--exclude-insiders* ]]; then
+if [[ "${HAS_INSIDERS}" == "true" && ! "$*" == *--oss* ]]; then
     pip install -r "${ROOT:?}/requirements.insiders.dev.txt"
 fi
 
-if [[ "${HAS_PLATFORM}" == "true" && ! "$*" == *--exclude-platform* ]]; then
+if [[ "${HAS_PLATFORM}" == "true" && ! "$*" == *--oss* ]]; then
     pip install -r "${ROOT:?}/requirements.platform.dev.txt"
 fi
 

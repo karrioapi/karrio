@@ -1,5 +1,6 @@
 import { ErrorBoundary } from "@karrio/ui/components/error-boudaries";
 import { loadMetadata } from "@karrio/core/context/main";
+import { PublicEnvScript } from "next-runtime-env";
 import { ServerErrorCode } from "@karrio/lib";
 
 export default async function Layout({
@@ -12,6 +13,7 @@ export default async function Layout({
   return (
     <html lang="en">
       <head>
+        <PublicEnvScript />
         <meta charSet="utf-8" />
         <link rel="favicon" sizes="180x180" href={`/favicon.ico`} />
         <link

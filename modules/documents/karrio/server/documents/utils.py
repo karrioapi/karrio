@@ -1,11 +1,11 @@
 import io
+import PIL
+import pyzint
 import base64
-import treepoem
 from barcode import Code128
 from datetime import datetime
 from barcode.writer import ImageWriter
 import karrio.lib as lib
-
 
 datetime = datetime
 date_format = lib.fdatetime
@@ -2427,16 +2427,60 @@ def create_barcode(
 def generate_code(
     data,
     code_type: str = "code128",
-    options: dict = {},
-    format: str = "PNG",
-    quality: int = 50,
+    options: dict = None,
+    format: str = "BMP",
+    **kwargs,
 ) -> str:
-    barcode = treepoem.generate_barcode(
-        barcode_type=code_type,
-        data=data,
-        options=options,
-    )
+    """Generate a barcode using the pyzint library.
+
+    Supported formats:
+    - PNG: Portable Network Graphics format
+    - BMP: Bitmap image format
+    - SVG: Scalable Vector Graphics format
+
+    Supported barcode types:
+    - code128: Code 128 barcode (default)
+    - qr: QR Code
+    - datamatrix: Data Matrix
+    - pdf417: PDF417
+    - aztec: Aztec Code
+    - And many more supported by pyzint
+
+    Customization:
+    To customize the barcode appearance and encoding, pass options dict with:
+    - height: Height of barcode (default 50)
+    - whitespace_width: Width of whitespace border (default 0)
+    - border_width: Width of border (default 0)
+    - scale: Scale factor for barcode (default 1.0)
+    - show_text: Show human readable text (default True)
+    - font_size: Size of text (default 10)
+
+    Example:
+        options = {
+            'height': 100,
+            'scale': 2.0,
+            'show_text': False
+        }
+        barcode = generate_code('123456', code_type='code128', options=options)
+    """
+    # Get the barcode type class dynamically from pyzint
+    if options is None:
+        options = {
+            "scale": 2,
+            "show_text": False,
+            **({"eci": 17} if code_type == "datamatrix" else {}),
+            **(options or {}),
+        }
+
+    barcode_class = getattr(pyzint.Barcode, code_type.upper())
+    symbol = barcode_class(data, **options)
+
     buffer = io.BytesIO()
-    barcode.convert("1").save(buffer, format, quality=quality, optimize=True)
+    if format.upper() == "SVG":
+        buffer.write(symbol.render_svg())
+    else:
+        # Get BMP data
+        bmp_data = symbol.render_bmp()
+        buffer.write(bmp_data)
 
     return base64.b64encode(buffer.getvalue()).decode("utf-8")

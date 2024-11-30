@@ -40,7 +40,7 @@ ENV LOG_DIR=/karrio/log
 ENV WORKER_DB_DIR=/karrio/data
 ENV STATIC_ROOT_DIR=/karrio/static
 
-RUN apt-get update -y && apt-get install -y libpango1.0-0 libpangoft2-1.0-0 gcc ghostscript curl
+RUN apt-get update -y && apt-get install -y libpango1.0-0 libpangoft2-1.0-0 gcc zint curl
 
 RUN useradd -m karrio -d /karrio
 USER karrio

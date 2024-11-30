@@ -8,12 +8,6 @@ services:
     depends_on:
       - db
       - redis
-    healthcheck:
-      test: curl --fail http://api:5002/ || exit 1
-      interval: 40s
-      timeout: 30s
-      retries: 5
-      start_period: 60s
     environment:
       DEBUG_MODE: "True"
       DETACHED_WORKER: "True"
@@ -27,6 +21,12 @@ services:
       DATABASE_USERNAME: ${DATABASE_USERNAME}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
       KARRIO_HTTP_PORT: ${KARRIO_HTTP_PORT}
+    healthcheck:
+      test: curl --fail http://api:5002/ || exit 1
+      interval: 40s
+      timeout: 30s
+      retries: 5
+      start_period: 60s
 
   worker:
     container_name: karrio.worker

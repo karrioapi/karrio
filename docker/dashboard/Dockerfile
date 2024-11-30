@@ -10,6 +10,7 @@ RUN npm run build -w apps/dashboard && \
 
 # Production image, copy all the files and run next
 FROM node:22.5.1-alpine3.19 AS runner
+RUN apk add curl
 
 LABEL maintainer=hello@karrio.io
 LABEL org.opencontainers.image.title="karrio dashboard"
