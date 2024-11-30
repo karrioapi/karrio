@@ -4,7 +4,7 @@ import typing
 import base64
 import jinja2
 import weasyprint
-import django.db.models as models
+from django.db.models import Sum
 import weasyprint.text.fonts as fonts
 
 import karrio.lib as lib
@@ -18,7 +18,19 @@ import karrio.server.manager.serializers as manager_serializers
 
 FONT_CONFIG = fonts.FontConfiguration()
 PAGE_SEPARATOR = '<p style="page-break-before: always"></p>'
-STYLESHEETS = ["https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"]
+STYLESHEETS = [
+    weasyprint.CSS(url="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"),
+    weasyprint.CSS(
+        string="""
+        @page { margin: 1cm }
+        @font-face {
+            font-family: 'system';
+            src: local('Arial');
+        }
+        body { font-family: 'system', sans-serif; }
+    """
+    ),
+]
 UNITS = {
     "PAGE_SEPARATOR": PAGE_SEPARATOR,
     "CountryISO": lib.units.CountryISO.as_dict(),
@@ -66,8 +78,8 @@ class Documents:
                                 utils=utils,
                                 lib=lib,
                             )
-                            or ""
                         )
+                        or ""
                     )
                 },
                 [
@@ -94,10 +106,12 @@ class Documents:
         content = PAGE_SEPARATOR.join(rendered_pages)
 
         buffer = io.BytesIO()
-        weasyprint.HTML(string=content).write_pdf(
+        html = weasyprint.HTML(string=content, encoding="utf-8")
+        html.write_pdf(
             buffer,
             stylesheets=STYLESHEETS,
             font_config=FONT_CONFIG,
+            optimize_size=("fonts", "images"),
         )
 
         return buffer

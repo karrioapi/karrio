@@ -15,7 +15,7 @@ setup(
     license="Apache-2.0",
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[
-        "treepoem",
+        "pyzint",
         "weasyprint",
         "karrio.server.core",
         "karrio.server.graph",
