@@ -1,14 +1,47 @@
-import localFont from "next/font/local";
+import {
+  Inter,
+  JetBrains_Mono,
+  Roboto,
+  Noto_Sans,
+  Ubuntu,
+  Oxygen,
+} from "next/font/google";
 
-const geistSans = localFont({
-  src: "../fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "../fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+export const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
 });
 
-export { geistSans, geistMono };
+export const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  display: "swap",
+  variable: "--font-roboto",
+});
+
+export const noto = Noto_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-noto",
+});
+
+export const ubuntu = Ubuntu({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  display: "swap",
+  variable: "--font-ubuntu",
+});
+
+export const oxygen = Oxygen({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  display: "swap",
+  variable: "--font-oxygen",
+});
+
+export const jetbrains = JetBrains_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-jetbrains",
+});
