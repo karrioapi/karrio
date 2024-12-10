@@ -12,26 +12,45 @@ def parse_error_response(
     **kwargs,
 ) -> typing.List[models.Message]:
     responses = response if isinstance(response, list) else [response]
-    errors: list = sum(
-        [
-            (
-                response["error"]["errors"]
-                if response["error"].get("errors")
-                else [response["error"]]
-            )
-            for response in responses
-            if "error" in response
-        ],
-        start=[],
-    )
+    errors = [
+        *(
+            [response]
+            if isinstance(response, dict)
+            and isinstance(response.get("error"), dict)
+            and not any(response.get("error").get("errors") or [])
+            else []
+        ),
+        *(
+            [response]
+            if isinstance(response, dict) and isinstance(response.get("error"), str)
+            else []
+        ),
+        *(
+            response["error"]["errors"]
+            if isinstance(response, dict)
+            and isinstance(response.get("error"), dict)
+            and response.get("error").get("errors")
+            else []
+        ),
+    ]
 
     return [
         models.Message(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
-            code=error.get("code"),
-            message=error.get("message") or error.get("detail", ""),
-            details=lib.to_dict({**kwargs, "source": error.get("source")}),
+            code=lib.identity(error.get("code") or error.get("error")),
+            message=lib.identity(
+                error.get("message")
+                or error.get("detail")
+                or error.get("error_description", "")
+            ),
+            details=lib.to_dict(
+                {
+                    **kwargs,
+                    "source": error.get("source"),
+                    "error_uri": error.get("error_uri"),
+                }
+            ),
         )
         for error in errors
     ]

@@ -46,6 +46,15 @@ class TestUSPSTracking(unittest.TestCase):
             logger.debug(lib.to_dict(parsed_response))
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
+    def test_parse_auth_error_response(self):
+        with patch("karrio.mappers.usps.proxy.lib.request") as mock:
+            mock.return_value = AuthErrorResponse
+            parsed_response = (
+                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+            logger.debug(lib.to_dict(parsed_response))
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedAuthErrorResponse)
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -173,6 +182,21 @@ ParsedErrorResponse = [
     ],
 ]
 
+ParsedAuthErrorResponse = [
+    [],
+    [
+        {
+            "carrier_id": "usps",
+            "carrier_name": "usps",
+            "code": "invalid_client",
+            "message": "Client authentication failed.",
+            "details": {
+                "tracking_number": "89108749065090",
+                "error_uri": "https://datatracker.ietf.org/doc/html/rfc6749#page-45",
+            },
+        }
+    ],
+]
 
 TrackingRequest = ["89108749065090"]
 
@@ -406,5 +430,12 @@ ErrorResponse = """{
       }
     ]
   }
+}
+"""
+
+AuthErrorResponse = """{
+    "error": "invalid_client",
+    "error_description": "Client authentication failed.",
+    "error_uri": "https://datatracker.ietf.org/doc/html/rfc6749#page-45"
 }
 """

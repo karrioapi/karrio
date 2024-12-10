@@ -128,7 +128,7 @@ def oauth2_login(settings: Settings):
     messages = error.parse_error_response(response, settings)
 
     if any(messages):
-        raise errors.ShippingSDKError(messages)
+        raise errors.ParsedMessagesError(messages)
 
     expiry = datetime.datetime.now() + datetime.timedelta(
         seconds=float(response.get("expires_in", 0))
@@ -178,7 +178,7 @@ def payment_auth(settings: Settings):
     messages = error.parse_error_response(response, settings)
 
     if any(messages):
-        raise errors.ShippingSDKError(messages)
+        raise errors.ParsedMessagesError(messages)
 
     expiry = datetime.datetime.now() + datetime.timedelta(minutes=50)
 

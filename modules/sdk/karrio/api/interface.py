@@ -338,6 +338,7 @@ class Rating:
                     ),
                     [],
                 )
+                print(responses, "<<<<<<<<<< - responses")
                 messages = sum((m for _, m in responses), [])
                 return flattened_rates, messages
 
