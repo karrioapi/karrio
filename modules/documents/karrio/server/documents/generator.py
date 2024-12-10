@@ -107,12 +107,16 @@ class Documents:
 
         buffer = io.BytesIO()
         html = weasyprint.HTML(string=content, encoding="utf-8")
-        html.write_pdf(
-            buffer,
-            stylesheets=STYLESHEETS,
-            font_config=FONT_CONFIG,
-            optimize_size=("fonts", "images"),
-        )
+
+        try:
+            html.write_pdf(
+                buffer,
+                stylesheets=STYLESHEETS,
+                font_config=FONT_CONFIG,
+                optimize_size=("fonts", "images"),
+            )
+        finally:
+            html.close()
 
         return buffer
 

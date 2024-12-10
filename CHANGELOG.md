@@ -1,3 +1,17 @@
+# Karrio 2024.12rc3
+
+### Changes
+
+#### Feat
+
+- feat: improve document generation by closing pdf writer
+- feat: ensure shipping date for `sapient` is set to UTC before applying next_business_day calculation
+- feat: Add new shadcn components for karrio UI kit
+
+#### Fix
+
+- fix: oauth login error message parsing
+
 # Karrio 2024.12rc2
 
 ## Changes

@@ -119,6 +119,7 @@ def custom_exception_handler(exc, context):
         )
 
     elif isinstance(exc, Exception):
+        print(exc, "<<<<<<<<<< - exc")
         message, *_ = list(exc.args)
         return Response(
             dict(errors=lib.to_dict([Error(code=code, message=message)])),
