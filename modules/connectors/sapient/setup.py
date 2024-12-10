@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.sapient",
-    version="2024.9.11",
+    version="2024.12rc3",
     description="Karrio - SAPIENT Shipping Extension",
     long_description=long_description,
     long_description_content_type="text/markdown",

@@ -48,6 +48,11 @@ class DATEFORMAT:
         _start_hour = start_hour
         _end_hour = end_hour
 
+        # If date has no time component, set it to current time
+        if date.hour == 0 and date.minute == 0 and date.second == 0:
+            now = datetime.now()
+            date = date.replace(hour=now.hour, minute=now.minute, second=now.second)
+
         # If the given datetime is within business hours, return it
         if DATEFORMAT.is_business_hour(date):
             return date
