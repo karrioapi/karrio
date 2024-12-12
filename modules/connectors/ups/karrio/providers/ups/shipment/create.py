@@ -2,6 +2,7 @@ import karrio.schemas.ups.shipping_response as ups_response
 import karrio.schemas.ups.shipping_request as ups
 import time
 import typing
+import datetime
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
@@ -152,6 +153,13 @@ def shipment_request(
         ).value
         or provider_units.LabelType.PDF_6x4.value
     )
+    shipment_date = lib.to_next_business_datetime(
+        lib.to_date(
+            options.shipping_date.state or datetime.datetime.now(),
+            current_format="%Y-%m-%dT%H:%M",
+        ),
+        "%Y-%m-%d",
+    )
 
     request = ups.ShippingRequestType(
         ShipmentRequest=ups.ShipmentRequestType(
@@ -289,7 +297,7 @@ def shipment_request(
                     TPFCNegotiatedRatesIndicator=None,
                 ),
                 MovementReferenceNumber=None,
-                ReferenceNumber=(
+                ReferenceNumber=lib.identity(
                     ups.ReferenceNumberType(
                         Value=payload.reference,
                     )
@@ -313,11 +321,11 @@ def shipment_request(
                 USPSEndorsement=None,
                 MILabelCN22Indicator=None,
                 SubClassification=None,
-                CostCenter=(
+                CostCenter=lib.identity(
                     options.cost_center.state
                     or settings.connection_config.cost_center.state
                 ),
-                CostCenterBarcodeIndicator=(
+                CostCenterBarcodeIndicator=lib.identity(
                     "Y"
                     if (
                         options.cost_center.state
@@ -353,7 +361,7 @@ def shipment_request(
                                     MonetaryValue=str(options.cash_on_delivery.state),
                                 ),
                             )
-                            if options.cash_on_delivery.state
+                            if options.ups_cod.state
                             else None
                         ),
                         AccessPointCOD=lib.identity(
@@ -366,8 +374,16 @@ def shipment_request(
                             if options.ups_access_point_cod.state
                             else None
                         ),
-                        DeliverToAddresseeOnlyIndicator=None,
-                        DirectDeliveryOnlyIndicator=None,
+                        DeliverToAddresseeOnlyIndicator=lib.identity(
+                            "Y"
+                            if options.ups_deliver_to_addressee_only_indicator.state
+                            else None
+                        ),
+                        DirectDeliveryOnlyIndicator=lib.identity(
+                            "Y"
+                            if options.ups_direct_delivery_only_indicator.state
+                            else None
+                        ),
                         Notification=lib.identity(
                             [
                                 ups.NotificationElementType(
@@ -552,22 +568,100 @@ def shipment_request(
                             if payload.customs
                             else None
                         ),
-                        DeliveryConfirmation=None,
-                        ReturnOfDocumentIndicator=None,
-                        ImportControlIndicator=None,
+                        DeliveryConfirmation=lib.identity(
+                            ups.ShipmentServiceOptionsDeliveryConfirmationType(
+                                DCISType=options.ups_delivery_confirmation.state,
+                                DCISNumber=None,
+                            )
+                            if options.ups_delivery_confirmation.state
+                            else None
+                        ),
+                        ReturnOfDocumentIndicator=lib.identity(
+                            "Y"
+                            if options.ups_return_of_document_indicator.state
+                            else None
+                        ),
+                        ImportControlIndicator=lib.identity(
+                            "Y" if options.ups_import_control.state else None
+                        ),
                         LabelMethod=None,
-                        CommercialInvoiceRemovalIndicator=None,
-                        UPScarbonneutralIndicator=None,
-                        ExchangeForwardIndicator=None,
-                        HoldForPickupIndicator=None,
-                        DropoffAtUPSFacilityIndicator=None,
-                        LiftGateForPickupIndicator=None,
-                        LiftGateForDeliveryIndicator=None,
-                        SDLShipmentIndicator=None,
-                        EPRAReleaseCode=None,
-                        RestrictedArticles=None,
-                        InsideDelivery=None,
-                        ItemDisposal=None,
+                        CommercialInvoiceRemovalIndicator=lib.identity(
+                            "Y"
+                            if options.ups_commercial_invoice_removal_indicator.state
+                            else None
+                        ),
+                        UPScarbonneutralIndicator=lib.identity(
+                            "Y" if options.ups_carbonneutral_indicator.state else None
+                        ),
+                        ExchangeForwardIndicator=lib.identity(
+                            "Y"
+                            if options.ups_exchange_forward_indicator.state
+                            else None
+                        ),
+                        HoldForPickupIndicator=lib.identity(
+                            "Y" if options.ups_hold_for_pickup_indicator.state else None
+                        ),
+                        DropoffAtUPSFacilityIndicator=lib.identity(
+                            "Y"
+                            if options.ups_dropoff_at_ups_facility_indicator.state
+                            else None
+                        ),
+                        LiftGateForPickupIndicator=lib.identity(
+                            "Y"
+                            if options.ups_lift_gate_for_pickup_indicator.state
+                            else None
+                        ),
+                        LiftGateForDeliveryIndicator=lib.identity(
+                            "Y"
+                            if options.ups_lift_gate_for_delivery_indicator.state
+                            else None
+                        ),
+                        SDLShipmentIndicator=lib.identity(
+                            "Y" if options.ups_sdl_shipment_indicator.state else None
+                        ),
+                        EPRAReleaseCode=options.ups_epra_indicator.state,
+                        RestrictedArticles=lib.identity(
+                            ups.RestrictedArticlesType(
+                                AlcoholicBeveragesIndicator=lib.identity(
+                                    "Y"
+                                    if options.ups_alcoholic_beverages_indicator.state
+                                    else None
+                                ),
+                                DiagnosticSpecimensIndicator=lib.identity(
+                                    "Y"
+                                    if options.ups_diagnostic_specimens_indicator.state
+                                    else None
+                                ),
+                                PerishablesIndicator=lib.identity(
+                                    "Y"
+                                    if options.ups_perishables_indicator.state
+                                    else None
+                                ),
+                                PlantsIndicator=lib.identity(
+                                    "Y" if options.ups_plants_indicator.state else None
+                                ),
+                                SeedsIndicator=lib.identity(
+                                    "Y" if options.ups_seeds_indicator.state else None
+                                ),
+                                SpecialExceptionsIndicator=lib.identity(
+                                    "Y"
+                                    if (
+                                        options.ups_special_exceptions_indicator.state
+                                        or options.dangerous_goods.state
+                                    )
+                                    else None
+                                ),
+                                TobaccoIndicator=lib.identity(
+                                    "Y" if options.ups_tobacco_indicator.state else None
+                                ),
+                            )
+                            if options.ups_restricted_articles.state
+                            else None
+                        ),
+                        InsideDelivery=options.ups_inside_delivery.state,
+                        ItemDisposal=lib.identity(
+                            "Y" if options.ups_item_disposal.state else None
+                        ),
                     )
                     if any(options.items())
                     or options.email_notification.state is not False
@@ -577,7 +671,7 @@ def shipment_request(
                 MasterCartonID=None,
                 MasterCartonIndicator=None,
                 BarCodeImageIndicator=None,
-                ShipmentDate=None,
+                ShipmentDate=lib.fdate(shipment_date, "%Y%m%d"),
                 Package=[
                     ups.PackageType(
                         Description=package.description,

@@ -274,8 +274,19 @@ def rate_request(
                         SundayDeliveryIndicator=lib.identity(
                             "Y" if options.ups_sunday_delivery_indicator.state else None
                         ),
-                        AvailableServicesOption=None,
-                        AccessPointCOD=None,
+                        AvailableServicesOption=lib.identity(
+                            options.ups_available_services_option.state
+                        ),
+                        AccessPointCOD=lib.identity(
+                            ups.InvoiceLineTotalType(
+                                CurrencyCode=options.currency.state,
+                                MonetaryValue=lib.to_money(
+                                    options.ups_access_point_cod.state
+                                ),
+                            )
+                            if options.ups_access_point_cod.state
+                            else None
+                        ),
                         DeliverToAddresseeOnlyIndicator=lib.identity(
                             "Y"
                             if options.ups_deliver_to_addressee_only_indicator.state
@@ -286,8 +297,25 @@ def rate_request(
                             if options.ups_direct_delivery_only_indicator.state
                             else None
                         ),
-                        COD=None,
-                        DeliveryConfirmation=None,
+                        COD=lib.identity(
+                            ups.CodType(
+                                CODFundsCode="0",  # TODO: find reference
+                                CODAmount=ups.InvoiceLineTotalType(
+                                    CurrencyCode=options.currency.state,
+                                    MonetaryValue=str(options.cash_on_delivery.state),
+                                ),
+                            )
+                            if options.ups_cod.state
+                            else None
+                        ),
+                        DeliveryConfirmation=lib.identity(
+                            ups.ShipmentServiceOptionsDeliveryConfirmationType(
+                                DCISType=options.ups_delivery_confirmation.state,
+                                DCISNumber=None,
+                            )
+                            if options.ups_delivery_confirmation.state
+                            else None
+                        ),
                         ReturnOfDocumentIndicator=lib.identity(
                             "Y"
                             if options.ups_return_of_document_indicator.state
@@ -327,15 +355,40 @@ def rate_request(
                         ),
                         RestrictedArticles=lib.identity(
                             ups.RestrictedArticlesType(
-                                AlcoholicBeveragesIndicator=None,
-                                DiagnosticSpecimensIndicator=None,
-                                PerishablesIndicator=None,
-                                PlantsIndicator=None,
-                                SeedsIndicator=None,
-                                SpecialExceptionsIndicator="Y",
-                                TobaccoIndicator=None,
+                                AlcoholicBeveragesIndicator=lib.identity(
+                                    "Y"
+                                    if options.ups_alcoholic_beverages_indicator.state
+                                    else None
+                                ),
+                                DiagnosticSpecimensIndicator=lib.identity(
+                                    "Y"
+                                    if options.ups_diagnostic_specimens_indicator.state
+                                    else None
+                                ),
+                                PerishablesIndicator=lib.identity(
+                                    "Y"
+                                    if options.ups_perishables_indicator.state
+                                    else None
+                                ),
+                                PlantsIndicator=lib.identity(
+                                    "Y" if options.ups_plants_indicator.state else None
+                                ),
+                                SeedsIndicator=lib.identity(
+                                    "Y" if options.ups_seeds_indicator.state else None
+                                ),
+                                SpecialExceptionsIndicator=lib.identity(
+                                    "Y"
+                                    if (
+                                        options.ups_special_exceptions_indicator.state
+                                        or options.dangerous_goods.state
+                                    )
+                                    else None
+                                ),
+                                TobaccoIndicator=lib.identity(
+                                    "Y" if options.ups_tobacco_indicator.state else None
+                                ),
                             )
-                            if options.dangerous_goods.state
+                            if options.ups_restricted_articles.state
                             else None
                         ),
                         ShipperExportDeclarationIndicator=lib.identity(
@@ -350,24 +403,40 @@ def rate_request(
                         ),
                         ImportControl=None,
                         ReturnService=None,
-                        SDLShipmentIndicator=(
+                        SDLShipmentIndicator=lib.identity(
                             "Y" if options.ups_sdl_shipment_indicator.state else None
                         ),
-                        EPRAIndicator=(
+                        EPRAIndicator=lib.identity(
                             "Y" if options.ups_epra_indicator.state else None
                         ),
-                        InsideDelivery=None,
-                        ItemDisposalIndicator=None,
+                        InsideDelivery=options.ups_inside_delivery.state,
+                        ItemDisposalIndicator=lib.identity(
+                            "Y" if options.ups_item_disposal.state else None
+                        ),
                     )
                     if any(options.items())
                     else None
                 ),
                 ShipmentRatingOptions=ups.ShipmentRatingOptionsType(
-                    NegotiatedRatesIndicator="Y",
-                    FRSShipmentIndicator=None,
-                    RateChartIndicator=None,
-                    UserLevelDiscountIndicator=None,
-                    TPFCNegotiatedRatesIndicator=None,
+                    NegotiatedRatesIndicator=lib.identity(
+                        "Y"
+                        if options.ups_negotiated_rates_indicator.state is not False
+                        else None
+                    ),
+                    FRSShipmentIndicator=lib.identity(
+                        "Y" if options.ups_frs_shipment_indicator.state else None
+                    ),
+                    RateChartIndicator=lib.identity(
+                        "Y" if options.ups_rate_chart_indicator.state else None
+                    ),
+                    UserLevelDiscountIndicator=lib.identity(
+                        "Y" if options.ups_user_level_discount_indicator.state else None
+                    ),
+                    TPFCNegotiatedRatesIndicator=lib.identity(
+                        "Y"
+                        if options.ups_tpfc_negotiated_rates_indicator.state
+                        else None
+                    ),
                 ),
                 InvoiceLineTotal=ups.InvoiceLineTotalType(
                     CurrencyCode=currency,

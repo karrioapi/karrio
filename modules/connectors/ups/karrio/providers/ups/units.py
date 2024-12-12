@@ -1,3 +1,4 @@
+import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.utils as utils
 
@@ -336,12 +337,7 @@ class ShippingService(utils.StrEnum):
 
 
 class ShippingOption(utils.Enum):
-    ups_negotiated_rates_indicator = utils.OptionEnum("NegotiatedRatesIndicator", bool)
-    ups_frs_shipment_indicator = utils.OptionEnum("FRSShipmentIndicator", bool)
-    ups_rate_chart_indicator = utils.OptionEnum("RateChartIndicator", bool)
-    ups_user_level_discount_indicator = utils.OptionEnum(
-        "UserLevelDiscountIndicator", bool
-    )
+    # fmt: off
     ups_saturday_pickup_indicator = utils.OptionEnum("SaturdayPickupIndicator", bool)
     ups_saturday_delivery_indicator = utils.OptionEnum(
         "SaturdayDeliveryIndicator", bool
@@ -349,17 +345,17 @@ class ShippingOption(utils.Enum):
     ups_sunday_delivery_indicator = utils.OptionEnum("SundayDeliveryIndicator", bool)
     ups_access_point_cod = utils.OptionEnum("AccessPointCOD", float)
     ups_deliver_to_addressee_only_indicator = utils.OptionEnum(
-        "DeliverToAddresseeOnlyIndicator"
+        "DeliverToAddresseeOnlyIndicator", bool
     )
-    ups_direct_delivery_only_indicator = utils.OptionEnum("DirectDeliveryOnlyIndicator")
+    ups_direct_delivery_only_indicator = utils.OptionEnum(
+        "DirectDeliveryOnlyIndicator", bool
+    )
     ups_cod = utils.OptionEnum("COD", float)
-    ups_delivery_confirmation = utils.OptionEnum("DeliveryConfirmation")
-    ups_return_of_document_indicator = utils.OptionEnum("ReturnOfDocumentIndicator")
-    ups_carbonneutral_indicator = utils.OptionEnum("UPScarbonneutralIndicator")
+    ups_return_of_document_indicator = utils.OptionEnum("ReturnOfDocumentIndicator", bool)
+    ups_carbonneutral_indicator = utils.OptionEnum("UPScarbonneutralIndicator", bool)
     ups_certificate_of_origin_indicator = utils.OptionEnum(
         "CertificateOfOriginIndicator"
     )
-    ups_restricted_articles = utils.OptionEnum("RestrictedArticles")
     ups_shipper_export_declaration_indicator = utils.OptionEnum(
         "ShipperExportDeclarationIndicator", bool
     )
@@ -368,18 +364,58 @@ class ShippingOption(utils.Enum):
     )
     ups_import_control = utils.OptionEnum("ImportControl", bool)
     ups_return_service = utils.OptionEnum("ReturnService", bool)
-    ups_sdl_shipment_indicator = utils.OptionEnum("SDLShipmentIndicator", bool)
     ups_epra_indicator = utils.OptionEnum("EPRAIndicator", bool)
     ups_lift_gate_at_pickup_indicator = utils.OptionEnum(
         "LiftGateAtPickupIndicator", bool
     )
-    ups_hold_for_pickup_indicator = utils.OptionEnum("HoldForPickupIndicator", bool)
     ups_lift_gate_at_delivery_indicator = utils.OptionEnum(
         "LiftGateAtDeliveryIndicator", bool
     )
     ups_drop_off_at_ups_facility_indicator = utils.OptionEnum(
         "DropOffAtUPSFacilityIndicator", bool
     )
+    ups_master_carton_indicator = utils.OptionEnum("MasterCartonIndicator", bool)
+    ups_exchange_forward_indicator = utils.OptionEnum("ExchangeForwardIndicator", bool)
+    ups_hold_for_pickup_indicator = utils.OptionEnum("HoldForPickupIndicator", bool)
+    ups_dropoff_at_ups_facility_indicator = utils.OptionEnum(
+        "DropoffAtUPSFacilityIndicator", bool
+    )
+    ups_lift_gate_for_pickup_indicator = utils.OptionEnum(
+        "LiftGateForPickupIndicator", bool
+    )
+    ups_lift_gate_for_delivery_indicator = utils.OptionEnum(
+        "LiftGateForDeliveryIndicator", bool
+    )
+    ups_sdl_shipment_indicator = utils.OptionEnum("SDLShipmentIndicator", bool)
+    ups_item_disposal = utils.OptionEnum("ItemDisposal", bool)
+    ups_available_services_option = utils.OptionEnum(
+        "AvailableServicesOption",
+        units.create_enum("AvailableServicesType", ["1", "2", "3"]),
+    )
+    ups_delivery_confirmation = utils.OptionEnum(
+        "DeliveryConfirmation",
+        units.create_enum("ConfirmationType", ["1", "2"]),
+    )
+    ups_inside_delivery = utils.OptionEnum(
+        "InsideDelivery", units.create_enum("InsideDeliveryType", ["01", "02", "03"])
+    )
+
+    ups_restricted_articles = utils.OptionEnum("RestrictedArticles", bool)
+    ups_alcoholic_beverages_indicator = utils.OptionEnum("AlcoholicBeveragesIndicator", bool)
+    ups_diagnostic_specimens_indicator = utils.OptionEnum("DiagnosticSpecimensIndicator", bool)
+    ups_perishables_indicator = utils.OptionEnum("PerishablesIndicator", bool)
+    ups_plants_indicator = utils.OptionEnum("PlantsIndicator", bool)
+    ups_seeds_indicator = utils.OptionEnum("SeedsIndicator", bool)
+    ups_special_exceptions_indicator = utils.OptionEnum("SpecialExceptionsIndicator", bool)
+    ups_tobacco_indicator = utils.OptionEnum("TobaccoIndicator", bool)
+
+
+    ups_negotiated_rates_indicator = utils.OptionEnum("NegotiatedRatesIndicator", bool)
+    ups_frs_shipment_indicator = utils.OptionEnum("FRSShipmentIndicator", bool)
+    ups_rate_chart_indicator = utils.OptionEnum("RateChartIndicator", bool)
+    ups_user_level_discount_indicator = utils.OptionEnum("UserLevelDiscountIndicator", bool)
+    ups_tpfc_negotiated_rates_indicator = utils.OptionEnum("TPFCNegotiatedRatesIndicator", bool)
+
 
     """ Custom option type """
     ups_access_point_pickup = utils.OptionEnum("01", bool)
@@ -390,6 +426,7 @@ class ShippingOption(utils.Enum):
     dangerous_good = ups_restricted_articles
     hold_at_location = ups_hold_for_pickup_indicator
     saturday_delivery = ups_saturday_delivery_indicator
+    # fmt: on
 
 
 def shipping_options_initializer(
@@ -398,18 +435,31 @@ def shipping_options_initializer(
 ) -> units.Options:
     """Apply default values to the given options."""
     _options = options.copy()
-    _has_pickup_options = (
+    _has_pickup_options = lib.identity(
         "hold_at_location" in _options
         or "ups_epra_indicator" in _options
         or "ups_access_point_pickup" in _options
         or "ups_hold_for_pickup_indicator" in _options
         or "ups_lift_gate_at_pickup_indicator" in _options
     )
-    _has_delivery_options = (
+    _has_delivery_options = lib.identity(
         "ups_access_point_delivery" in _options
         or "ups_lift_gate_at_delivery_indicator" in _options
         or "ups_drop_off_at_ups_facility_indicator" in _options
         or "ups_deliver_to_addressee_only_indicator" in _options
+    )
+    _has_signature_required = lib.identity(
+        "signature_confirmation" in _options or "ups_delivery_confirmation" in _options
+    )
+    _has_dangerous_goods = lib.identity(
+        "dangerous_good" in _options
+        or "ups_alcoholic_beverages_indicator" in _options
+        or "ups_diagnostic_specimens_indicator" in _options
+        or "ups_perishables_indicator" in _options
+        or "ups_plants_indicator" in _options
+        or "ups_seeds_indicator" in _options
+        or "ups_special_exceptions_indicator" in _options
+        or "ups_tobacco_indicator" in _options
     )
 
     if package_options is not None:
@@ -421,9 +471,18 @@ def shipping_options_initializer(
     if _has_delivery_options:
         _options.update(delivery_options=True)
 
-    if "signature_required" in _options:
+    if _has_signature_required:
         _options.update(
-            delivery_options=_options.get("ups_delivery_confirmation") or "01"
+            ups_delivery_confirmation=lib.identity(
+                _options.get("ups_delivery_confirmation") or "1"
+            )
+        )
+
+    if _has_dangerous_goods and not "ups_restricted_articles" in _options:
+        _options.update(
+            ups_restricted_articles=lib.identity(
+                _options.get("ups_restricted_articles") or "Y"
+            )
         )
 
     # Define carrier option filter.
