@@ -31,7 +31,7 @@ class Settings(core.Settings):
 
     @property
     def server_url(self):
-        return "https://api.usps.com"
+        return "https://api-cat.usps.com" if self.test_mode else "https://api.usps.com"
 
     @property
     def tracking_url(self):
