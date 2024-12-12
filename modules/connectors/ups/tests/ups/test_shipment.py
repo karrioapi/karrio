@@ -104,7 +104,10 @@ package_shipment_data = {
         }
     ],
     "service": "ups_express_ca",
-    "options": {"email_notification_to": "test@mail.com"},
+    "options": {
+        "email_notification_to": "test@mail.com",
+        "signature_confirmation": True,
+    },
     "payment": {"paid_by": "sender"},
     "reference": "Your Customer Context",
 }
@@ -140,7 +143,11 @@ package_shipment_with_package_preset_data = {
     ],
     "service": "ups_express_ca",
     "payment": {"paid_by": "sender"},
-    "options": {"email_notification_to": "test@mail.com"},
+    "options": {
+        "signature_confirmation": True,
+        "ups_delivery_confirmation": "2",
+        "ups_saturday_delivery_indicator": True,
+    },
     "reference": "Your Customer Context",
     "label_type": "ZPL",
 }
@@ -263,14 +270,16 @@ ShipmentRequestJSON = {
                 "Name": "Ship To Name",
                 "Phone": {"Number": "1234567890"},
             },
+            "ShipmentDate": ANY,
             "ShipmentRatingOptions": {"NegotiatedRatesIndicator": "Y"},
             "ShipmentServiceOptions": {
+                "DeliveryConfirmation": {"DCISType": "1"},
                 "Notification": [
                     {
                         "EMail": {"EMailAddress": "test@mail.com"},
                         "NotificationCode": "8",
                     }
-                ]
+                ],
             },
             "Shipper": {
                 "Address": {
@@ -367,14 +376,11 @@ ShipmentRequestWithPresetJSON = {
                 "Name": "Ship To Name",
                 "Phone": {"Number": "1234567890"},
             },
+            "ShipmentDate": ANY,
             "ShipmentRatingOptions": {"NegotiatedRatesIndicator": "Y"},
             "ShipmentServiceOptions": {
-                "Notification": [
-                    {
-                        "EMail": {"EMailAddress": "test@mail.com"},
-                        "NotificationCode": "8",
-                    }
-                ]
+                "DeliveryConfirmation": {"DCISType": "2"},
+                "SaturdayDeliveryIndicator": "Y",
             },
             "Shipper": {
                 "Address": {
