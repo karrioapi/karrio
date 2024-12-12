@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.usps",
-    version="2024.6.8",
+    version="2024.12rc4",
     description="Karrio - USPS Shipping Extension",
     long_description=long_description,
     long_description_content_type="text/markdown",

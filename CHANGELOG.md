@@ -1,14 +1,23 @@
+# Karrio 2024.12rc4
+
+## Changes
+
+### Feat
+
+- feat: add missing shipping options mapping for `ups` carrier
+- feat: add support for `usps*` https://developer-cat.usps.com/ API
+
 # Karrio 2024.12rc3
 
-### Changes
+## Changes
 
-#### Feat
+### Feat
 
 - feat: improve document generation by closing pdf writer
 - feat: ensure shipping date for `sapient` is set to UTC before applying next_business_day calculation
 - feat: Add new shadcn components for karrio UI kit
 
-#### Fix
+### Fix
 
 - fix: oauth login error message parsing
 

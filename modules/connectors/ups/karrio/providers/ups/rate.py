@@ -423,10 +423,20 @@ def rate_request(
                         if options.ups_negotiated_rates_indicator.state is not False
                         else None
                     ),
-                    FRSShipmentIndicator=None,
-                    RateChartIndicator=None,
-                    UserLevelDiscountIndicator=None,
-                    TPFCNegotiatedRatesIndicator=None,
+                    FRSShipmentIndicator=lib.identity(
+                        "Y" if options.ups_frs_shipment_indicator.state else None
+                    ),
+                    RateChartIndicator=lib.identity(
+                        "Y" if options.ups_rate_chart_indicator.state else None
+                    ),
+                    UserLevelDiscountIndicator=lib.identity(
+                        "Y" if options.ups_user_level_discount_indicator.state else None
+                    ),
+                    TPFCNegotiatedRatesIndicator=lib.identity(
+                        "Y"
+                        if options.ups_tpfc_negotiated_rates_indicator.state
+                        else None
+                    ),
                 ),
                 InvoiceLineTotal=ups.InvoiceLineTotalType(
                     CurrencyCode=currency,
