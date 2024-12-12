@@ -1,3 +1,11 @@
+# Karrio 2024.12rc5
+
+## Changes
+
+### Fix
+
+- hotfix: `ups` delivery confirmation data mapping
+
 # Karrio 2024.12rc4
 
 ## Changes
