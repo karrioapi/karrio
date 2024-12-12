@@ -49,10 +49,16 @@ def _extract_details(
         tracking_number=details.ConsignmentNo,
         events=[
             models.TrackingEvent(
-                date=lib.fdate(event.EventDT, "%Y-%m-%dT%H:%M:%S.%f"),
+                date=lib.fdate(
+                    event.EventDT,
+                    try_formats=["%Y-%m-%dT%H:%M:%S.%f", "%Y-%m-%dT%H:%M:%S"],
+                ),
                 description=event.Description,
                 code=event.Code or event.OmniCode,
-                time=lib.flocaltime(event.EventDT, "%Y-%m-%dT%H:%M:%S.%f"),
+                time=lib.flocaltime(
+                    event.EventDT,
+                    try_formats=["%Y-%m-%dT%H:%M:%S.%f", "%Y-%m-%dT%H:%M:%S"],
+                ),
                 location=event.Location,
             )
             for event in details.Events
