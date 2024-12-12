@@ -309,9 +309,8 @@ def rate_request(
                             else None
                         ),
                         DeliveryConfirmation=lib.identity(
-                            ups.ShipmentServiceOptionsDeliveryConfirmationType(
+                            ups.DeliveryConfirmationType(
                                 DCISType=options.ups_delivery_confirmation.state,
-                                DCISNumber=None,
                             )
                             if options.ups_delivery_confirmation.state
                             else None

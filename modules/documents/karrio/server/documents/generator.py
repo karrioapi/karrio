@@ -116,7 +116,7 @@ class Documents:
                 optimize_size=("fonts", "images"),
             )
         finally:
-            html.close()
+            lib.failsafe(lambda: html.close())
 
         return buffer
 
