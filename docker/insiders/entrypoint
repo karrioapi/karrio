@@ -1,6 +1,8 @@
 #!/bin/bash
 
 export SECRET_KEY=${SECRET_KEY:="0/zfUEetNIle3iNekk4npo4T1pLFAWOyBFgbAu0afB4="}
+export ADMIN_EMAIL=${ADMIN_EMAIL:="admin@example.com"}
+export ADMIN_PASSWORD=${ADMIN_PASSWORD:="demo"}
 
 # Setup DB and static files
 karrio migrate || exit
@@ -11,8 +13,8 @@ karrio collectstatic --noinput 1>/dev/null || exit
 from decouple import config
 from django.contrib.auth import get_user_model
 if not any(get_user_model().objects.all()):
-   ADMIN_EMAIL = config('ADMIN_EMAIL')
-   ADMIN_PASSWORD = config('ADMIN_PASSWORD')
+   ADMIN_EMAIL = config('ADMIN_EMAIL', default="admin@example.com")
+   ADMIN_PASSWORD = config('ADMIN_PASSWORD', default="demo")
    get_user_model().objects.create_superuser(ADMIN_EMAIL, ADMIN_PASSWORD)
 " | karrio shell) || exit
 
