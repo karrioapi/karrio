@@ -5,6 +5,7 @@
 ### Fix
 
 - hotfix: `ups` delivery confirmation data mapping
+- hotfix: regression on document generation caused by invalid html.close on weasyprint
 
 # Karrio 2024.12rc4
 
