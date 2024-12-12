@@ -110,6 +110,7 @@ RatePayload = {
         "shipment_date": "2023-02-27",
         "negotiated_rates_indicator": True,
         "ups_available_services_option": "3",
+        "ups_delivery_confirmation": "1",
     },
 }
 
@@ -526,7 +527,10 @@ RateRequestData = {
                 "ShipperNumber": "Your Account Number",
             },
             "TaxInformationIndicator": "Y",
-            "ShipmentServiceOptions": {"AvailableServicesOption": "3"},
+            "ShipmentServiceOptions": {
+                "AvailableServicesOption": "3",
+                "DeliveryConfirmation": {"DCISType": "1"},
+            },
         },
     }
 }
