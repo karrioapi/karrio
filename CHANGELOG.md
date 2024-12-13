@@ -1,3 +1,12 @@
+# Karrio 2024.12rc6
+
+## Changes
+
+### Fix
+
+- fix: `seko` tracking event date parsing
+- fix: karrio image default user set up
+
 # Karrio 2024.12rc5
 
 ## Changes
