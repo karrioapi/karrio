@@ -13,8 +13,8 @@ karrio collectstatic --noinput 1>/dev/null || exit
 from decouple import config
 from django.contrib.auth import get_user_model
 if not any(get_user_model().objects.all()):
-   ADMIN_EMAIL = config('ADMIN_EMAIL', default="admin@example.com")
-   ADMIN_PASSWORD = config('ADMIN_PASSWORD', default="demo")
+   ADMIN_EMAIL = config('ADMIN_EMAIL', default='admin@example.com')
+   ADMIN_PASSWORD = config('ADMIN_PASSWORD', default='demo')
    get_user_model().objects.create_superuser(ADMIN_EMAIL, ADMIN_PASSWORD)
 " | karrio shell) || exit
 
