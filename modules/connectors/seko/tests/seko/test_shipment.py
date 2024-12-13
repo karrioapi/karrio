@@ -178,18 +178,18 @@ ParsedShipmentResponse = [
     {
         "carrier_id": "seko",
         "carrier_name": "seko",
-        "docs": {
-            "label": "JVBERi0xLjcKJeLjz9MKMSAwIG9iago8PAovVHlwZSAvUGFnZXMKL0NvdW50IDEKL0tpZHMgWyA0IDAgUiBdCj4+CmVuZG9iagoyIDAgb2JqCjw8Ci9Qcm9kdWNlciAoUHlQREYyKQo+PgplbmRvYmoKMyAwIG9iago8PAovVHlwZSAvQ2F0YWxvZwovUGFnZXMgMSAwIFIKPj4KZW5kb2JqCjQgMCBvYmoKPDwKL1R5cGUgL1BhZ2UKL01lZGlhQm94IFsgMCAwIDMuNiAzLjYgXQovQ29udGVudHMgNSAwIFIKL1Jlc291cmNlcyA2IDAgUgovVHJpbUJveCBbIDAgMCAzLjYgMy42IF0KL0JsZWVkQm94IFsgMCAwIDMuNiAzLjYgXQovUGFyZW50IDEgMCBSCj4+CmVuZG9iago1IDAgb2JqCjw8Ci9GaWx0ZXIgL0ZsYXRlRGVjb2RlCi9MZW5ndGggNzEKPj4Kc3RyZWFtCnjaM1QwAEJdQyBhrGemkJzLVchloGduChaGM8DChVyGCiBYlM6ln2ioZ6CQXswFkjTRswDjolSucK48dKE0rkAQBAAu7xTjCmVuZHN0cmVhbQplbmRvYmoKNiAwIG9iago8PAovRXh0R1N0YXRlIDw8Ci9hMS4wIDw8Ci9jYSAxCj4+Cj4+Ci9YT2JqZWN0IDw8Cj4+Ci9QYXR0ZXJuIDw8Cj4+Ci9TaGFkaW5nIDw8Cj4+Ci9Gb250IDcgMCBSCj4+CmVuZG9iago3IDAgb2JqCjw8Cj4+CmVuZG9iagp4cmVmCjAgOAowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMTUgMDAwMDAgbiAKMDAwMDAwMDA3NCAwMDAwMCBuIAowMDAwMDAwMTE0IDAwMDAwIG4gCjAwMDAwMDAxNjMgMDAwMDAgbiAKMDAwMDAwMDMyMCAwMDAwMCBuIAowMDAwMDAwNDYyIDAwMDAwIG4gCjAwMDAwMDA1NzUgMDAwMDAgbiAKdHJhaWxlcgo8PAovU2l6ZSA4Ci9Sb290IDMgMCBSCi9JbmZvIDIgMCBSCj4+CnN0YXJ0eHJlZgo1OTYKJSVFT0YK"
-        },
+        "docs": {"label": ANY},
         "label_type": "PDF",
         "meta": {
-            "CarrierId": 567,
-            "CarrierName": "MyChildData",
-            "ConsignmentId": 5473553,
-            "ConsignmentIds": [5473553],
-            "SiteId": 1153896,
-            "TrackingUrls": ["http://track.omniparcel.com/1153896-6994008906"],
+            "seko_carrier_id": 567,
+            "seko_site_id": 1153896,
+            "seko_carrier_type": 33,
+            "seko_carrier_name": "MyChildData",
+            "consignment_id": 5473553,
+            "consignment_ids": [5473553],
+            "tracking_urls": ["http://track.omniparcel.com/1153896-6994008906"],
             "carrier_tracking_link": "http://track.omniparcel.com/1153896-6994008906",
+            "rate_provider": "MyChildData",
         },
         "shipment_identifier": 5473553,
         "tracking_number": "6994008906",

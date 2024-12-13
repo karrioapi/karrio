@@ -1,3 +1,16 @@
+# Karrio 2024.12rc7
+
+## Changes
+
+### Feat
+
+- feat: clean up `SEKO` shipment meta to collecte delegated Carrier details
+
+### Fix
+
+- fix: document generator invalid closing statement
+
+
 # Karrio 2024.12rc6
 
 ## Changes
