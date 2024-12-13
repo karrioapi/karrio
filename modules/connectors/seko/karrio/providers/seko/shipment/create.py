@@ -53,13 +53,15 @@ def _extract_details(
         label_type=label_format,
         docs=models.Documents(label=label),
         meta=dict(
-            SiteId=details.SiteId,
             carrier_tracking_link=TrackingUrls[0],
-            TrackingUrls=TrackingUrls,
-            ConsignmentId=ConsignmentIds[0],
-            ConsignmentIds=ConsignmentIds,
-            CarrierId=details.CarrierId,
-            CarrierName=details.CarrierName,
+            seko_site_id=details.SiteId,
+            tracking_urls=TrackingUrls,
+            consignment_id=ConsignmentIds[0],
+            consignment_ids=ConsignmentIds,
+            seko_carrier_id=details.CarrierId,
+            seko_carrier_name=details.CarrierName,
+            seko_carrier_type=details.CarrierType,
+            rate_provider=details.CarrierName,
         ),
     )
 

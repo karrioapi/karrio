@@ -108,7 +108,7 @@ monotonic==1.6
 more-itertools==10.5.0
 oauthlib==3.2.2
 packaging==24.2
-phonenumbers==8.13.51
+phonenumbers==8.13.52
 pillow==11.0.0
 posthog==3.7.4
 psutil==6.1.0
@@ -134,7 +134,7 @@ rpds-py==0.22.3
 sentry-sdk==2.19.2
 six==1.17.0
 sqlparse==0.5.3
-strawberry-graphql==0.253.1
+strawberry-graphql==0.254.0
 tablib==3.7.0
 tinycss2==1.4.0
 tinyhtml5==2.0.0
