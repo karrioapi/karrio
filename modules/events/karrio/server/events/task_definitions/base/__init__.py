@@ -27,15 +27,17 @@ def background_trackers_update():
     _run()
 
 
-@db_task()
+@db_task(retries=5, retry_delay=60)
 @utils.tenant_aware
 def notify_webhooks(*args, **kwargs):
-    from karrio.server.events.task_definitions.base import webhook
+    try:
+        from karrio.server.events.task_definitions.base import webhook
 
-    utils.failsafe(
-        lambda: webhook.notify_webhook_subscribers(*args, **kwargs),
-        "An error occured during webhook notification: $error",
-    )
+        webhook.notify_webhook_subscribers(*args, **kwargs)
+
+    except Exception as e:
+        logger.error(f"An error occured during webhook notification: {e}")
+        raise e
 
 
 @db_periodic_task(crontab(hour=f"*/{DATA_ARCHIVING_SCHEDULE}"))
@@ -53,6 +55,7 @@ def periodic_data_archiving(*args, **kwargs):
             logger.error(f"An error occured during data archiving: {e}")
 
     _run()
+
 
 TASK_DEFINITIONS = [
     background_trackers_update,
