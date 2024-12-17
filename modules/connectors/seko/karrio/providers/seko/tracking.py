@@ -61,7 +61,7 @@ def _extract_details(
                 ),
                 location=event.Location,
             )
-            for event in details.Events
+            for event in reversed(details.Events)
         ],
         delivered=status == "delivered",
         status=status,

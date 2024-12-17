@@ -72,11 +72,11 @@ ParsedTrackingResponse = [
             "delivered": False,
             "events": [
                 {
-                    "code": "OP-1",
-                    "date": "2021-03-01",
-                    "description": "Tracking number allocated & order ready",
-                    "location": "SAN BERNARDINO,CA,US",
-                    "time": "21:47 PM",
+                    "code": "OP-4",
+                    "date": "2021-03-05",
+                    "description": "International transit to destination country ",
+                    "location": "CARSON, CA,US",
+                    "time": "13:53 PM",
                 },
                 {
                     "code": "OP-3",
@@ -86,11 +86,11 @@ ParsedTrackingResponse = [
                     "time": "08:56 AM",
                 },
                 {
-                    "code": "OP-4",
-                    "date": "2021-03-05",
-                    "description": "International transit to destination country ",
-                    "location": "CARSON, CA,US",
-                    "time": "13:53 PM",
+                    "code": "OP-1",
+                    "date": "2021-03-01",
+                    "description": "Tracking number allocated & order ready",
+                    "location": "SAN BERNARDINO,CA,US",
+                    "time": "21:47 PM",
                 },
             ],
             "status": "in_transit",
