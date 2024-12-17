@@ -1,3 +1,15 @@
+# Karrio 2024.12rc8
+
+## Changes
+
+### Feat
+
+- feat: Add minimal webhook back off retries
+
+### Fix
+
+- fix: seko tracking event ordering
+
 # Karrio 2024.12rc7
 
 ## Changes
