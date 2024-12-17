@@ -124,17 +124,17 @@ ParsedTrackingResponse2 = [
             "delivered": False,
             "events": [
                 {
+                    "code": "AAY",
+                    "date": "2024-10-25",
+                    "description": "Pre-advice received",
+                    "time": "11:28 AM",
+                },
+                {
                     "code": "OP-1",
                     "date": "2024-10-25",
                     "description": "Tracking number allocated & order ready",
                     "location": "LONDON,EGHAM,GB",
                     "time": "10:28 AM",
-                },
-                {
-                    "code": "AAY",
-                    "date": "2024-10-25",
-                    "description": "Pre-advice received",
-                    "time": "11:28 AM",
                 },
             ],
             "status": "in_transit",
@@ -146,17 +146,17 @@ ParsedTrackingResponse2 = [
             "delivered": False,
             "events": [
                 {
+                    "code": "AAY",
+                    "date": "2024-10-25",
+                    "description": "Pre-advice received",
+                    "time": "11:56 AM",
+                },
+                {
                     "code": "OP-1",
                     "date": "2024-10-25",
                     "description": "Tracking number allocated & order ready",
                     "location": "LONDON,EGHAM,GB",
                     "time": "10:56 AM",
-                },
-                {
-                    "code": "AAY",
-                    "date": "2024-10-25",
-                    "description": "Pre-advice received",
-                    "time": "11:56 AM",
                 },
             ],
             "status": "in_transit",
@@ -168,17 +168,17 @@ ParsedTrackingResponse2 = [
             "delivered": False,
             "events": [
                 {
+                    "code": "AAY",
+                    "date": "2024-10-25",
+                    "description": "Pre-advice received",
+                    "time": "11:57 AM",
+                },
+                {
                     "code": "OP-1",
                     "date": "2024-10-25",
                     "description": "Tracking number allocated & order ready",
                     "location": "LONDON,EGHAM,GB",
                     "time": "10:57 AM",
-                },
-                {
-                    "code": "AAY",
-                    "date": "2024-10-25",
-                    "description": "Pre-advice received",
-                    "time": "11:57 AM",
                 },
             ],
             "status": "in_transit",
@@ -190,17 +190,17 @@ ParsedTrackingResponse2 = [
             "delivered": False,
             "events": [
                 {
+                    "code": "AAY",
+                    "date": "2024-10-25",
+                    "description": "Pre-advice received",
+                    "time": "12:02 PM",
+                },
+                {
                     "code": "OP-1",
                     "date": "2024-10-25",
                     "description": "Tracking number allocated & order ready",
                     "location": "LONDON,EGHAM,GB",
                     "time": "11:02 AM",
-                },
-                {
-                    "code": "AAY",
-                    "date": "2024-10-25",
-                    "description": "Pre-advice received",
-                    "time": "12:02 PM",
                 },
             ],
             "status": "in_transit",
