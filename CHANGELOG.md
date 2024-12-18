@@ -1,3 +1,27 @@
+# Karrio 2024.12.rc9
+
+## Changes
+
+### Feat
+
+- feat: fix wording in webhooks test modal
+- feat: make seko event Omnicode take precedence over default Code
+- feat: add `REDIS_PREFIX` for redis prefix configuration
+- feat: add more testing data sample for webhook testing
+
+### Fix
+
+- fix: docker entrypoints with proper DETACHED_WORKER flag check
+- fix: easyship simple tracking support
+
+### Chore
+
+- chore: add new carrier logos
+
+### Docs
+
+- docs: `REDIS_PREFIX` env documentation
+
 # Karrio 2024.12rc8
 
 ## Changes

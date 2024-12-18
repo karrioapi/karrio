@@ -85,7 +85,7 @@ def tracking_request(
     }
     """
 
-    requests = []
+    requests: typing.List[dict] = []
 
     for tracking_number in payload.tracking_numbers:
         options = payload.options.get(tracking_number) or {}
