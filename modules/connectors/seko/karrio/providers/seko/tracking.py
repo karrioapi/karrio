@@ -54,7 +54,7 @@ def _extract_details(
                     try_formats=["%Y-%m-%dT%H:%M:%S.%f", "%Y-%m-%dT%H:%M:%S"],
                 ),
                 description=event.Description,
-                code=event.Code or event.OmniCode,
+                code=event.OmniCode or event.Code,
                 time=lib.flocaltime(
                     event.EventDT,
                     try_formats=["%Y-%m-%dT%H:%M:%S.%f", "%Y-%m-%dT%H:%M:%S"],
