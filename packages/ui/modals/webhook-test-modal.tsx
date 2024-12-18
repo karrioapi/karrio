@@ -140,7 +140,7 @@ export const WebhookTestModal = ({
                     onClick={close}
                     disabled={loading}
                   >
-                    <span>Cancel</span>
+                    <span>Dismiss</span>
                   </button>
                   <button
                     className={`button is-primary ${loading ? "is-loading" : ""} m-1 is-small`}
