@@ -71,19 +71,40 @@ def tracking_request(
     payload: models.TrackingRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    shipment_ids = list(
-        set(
-            [
-                payload.options.get("easyship_shipment_id"),
-                *(payload.options.get("shipment_ids") or []),
-            ]
+    """Send one or multiple tracking request(s) to Easyship.
+    the payload must match the following schema:
+    {
+        "tracking_numbers": ["123456789"],
+        "shipment_ids": ["ESSG10006002"],
+        "options": {
+            "123456789": {
+                "carrier": "usps",
+                "easyship_shipment_id": "trk_xxxxxxxx",  # optional
+            }
+        }
+    }
+    """
+
+    requests = []
+
+    for tracking_number in payload.tracking_numbers:
+        options = payload.options.get(tracking_number) or {}
+        shipment_id = lib.identity(
+            options.get("easyship_shipment_id")
+            or payload.options.get("easyship_shipment_id")
         )
-    )
+        should_add = lib.identity(
+            shipment_id is not None
+            and not any(_.get("easyship_shipment_id") == shipment_id for _ in requests)
+        )
 
-    if len(shipment_ids) == 0:
-        raise Exception(f"easyship_shipment_id is required for tracking request")
+        if should_add:
+            requests.append(
+                dict(
+                    tracking_number=tracking_number,
+                    shipment_id=shipment_id,
+                    carrier=options.get("carrier"),
+                )
+            )
 
-    # map data to convert karrio model to easyship specific type
-    request = shipment_ids
-
-    return lib.Serializable(request, lib.to_dict)
+    return lib.Serializable(requests, lib.to_dict)
