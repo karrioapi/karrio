@@ -51,7 +51,9 @@ def _extract_details(
         label_type=label_type,
         docs=models.Documents(label=label),
         meta=dict(
+            shipment_ids=[details.easyship_shipment_id],
             tracking_numbers=tracking_numbers,
+            carrier=ctx["rate_provider"],
             rate_provider=ctx["rate_provider"],
             easyship_courier_id=ctx["courier_id"],
             easyship_shipment_id=details.easyship_shipment_id,

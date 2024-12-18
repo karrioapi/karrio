@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.easyship",
-    version="2024.9.15",
+    version="2024.12rc9",
     description="Karrio - Easyship Shipping Extension",
     long_description=long_description,
     long_description_content_type="text/markdown",

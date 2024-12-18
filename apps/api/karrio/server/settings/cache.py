@@ -9,6 +9,7 @@ REDIS_HOST = config("REDIS_HOST", default=None)
 REDIS_PORT = config("REDIS_PORT", default=None)
 REDIS_PASSWORD = config("REDIS_PASSWORD", default=None)
 REDIS_USERNAME = config("REDIS_USERNAME", default="default")
+REDIS_PREFIX = config("REDIS_PREFIX", default="karrio")
 
 # karrio server caching setup
 if REDIS_HOST is not None:
@@ -22,7 +23,7 @@ if REDIS_HOST is not None:
             "BACKEND": "django_redis.cache.RedisCache",
             "LOCATION": REDIS_CONNECTION_URL,
             "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
-            "KEY_PREFIX": "karrio",
+            "KEY_PREFIX": REDIS_PREFIX,
         }
     }
     print(f"Redis connection initialized at: {REDIS_CONNECTION_URL}")

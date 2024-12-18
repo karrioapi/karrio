@@ -56,10 +56,10 @@ class Proxy(proxy.Proxy):
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
         responses = lib.run_asynchronously(
-            lambda easyship_shipment_id: (
-                easyship_shipment_id,
+            lambda data: (
+                data["shipment_id"],
                 lib.request(
-                    url=f"{self.settings.server_url}/2023-01/shipments/{easyship_shipment_id}",
+                    url=f"{self.settings.server_url}/2023-01/shipments/{data['shipment_id']}",
                     trace=self.trace_as("json"),
                     method="GET",
                     headers={
@@ -69,7 +69,7 @@ class Proxy(proxy.Proxy):
                     },
                 ),
             ),
-            request.serialize(),
+            [_ for _ in request.serialize() if _.get("shipment_id")],
         )
 
         return lib.Deserializable(

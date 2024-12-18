@@ -63,7 +63,7 @@ def _extract_details(
                 currency=details.currency,
             )
             for name, amount in charges
-            if amount is not None
+            if amount is not None and amount > 0
         ],
         meta=dict(
             rate_provider=courier.name_or_key,

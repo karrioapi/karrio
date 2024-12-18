@@ -19,7 +19,7 @@ if not any(get_user_model().objects.all()):
 " | karrio shell) || exit
 
 # Start services
-if [[ "$DETACHED_WORKER" == "False" ]]; then
+if [[ "${DETACHED_WORKER,,}" =~ ^(false|0|no|off)$ ]]; then
     set -e # turn on bash's job control
     trap 'kill 0' INT
 

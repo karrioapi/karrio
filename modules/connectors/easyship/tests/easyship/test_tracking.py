@@ -16,7 +16,14 @@ class TestEasyshipTracking(unittest.TestCase):
     def test_create_tracking_request(self):
         request = gateway.mapper.create_tracking_request(self.TrackingRequest)
 
-        self.assertEqual(request.serialize(), TrackingRequest)
+        self.assertListEqual(request.serialize(), TrackingRequest)
+
+    def test_create_tracking_request_with_shipment_id(self):
+        request = gateway.mapper.create_tracking_request(
+            models.TrackingRequest(**TrackingPayload2)
+        )
+
+        self.assertListEqual(request.serialize(), TrackingRequest2)
 
     def test_get_tracking(self):
         with patch("karrio.mappers.easyship.proxy.lib.request") as mock:
@@ -55,6 +62,26 @@ TrackingPayload = {
     "tracking_numbers": ["89108749065090"],
     "options": {"easyship_shipment_id": "ESSG10006002"},
 }
+
+TrackingPayload2 = {
+    "tracking_numbers": ["89108749065090", "89108749065091"],
+    "options": {
+        "carrier": "usps",
+        "easyship_shipment_id": "ESSG10006002",
+        "tracking_numbers": ["89108749065090"],
+        "89108749065090": {
+            "carrier": "usps",
+            "easyship_shipment_id": "ESSG10006002",
+            "tracking_numbers": ["89108749065090"],
+        },
+        "89108749065091": {
+            "carrier": "usps",
+            "easyship_shipment_id": "ESSG10006003",
+            "tracking_numbers": ["89108749065091"],
+        },
+    },
+}
+
 
 ParsedTrackingResponse = [
     [
@@ -102,7 +129,25 @@ ParsedErrorResponse = [
 ]
 
 
-TrackingRequest = ["ESSG10006002"]
+TrackingRequest = [
+    {
+        "shipment_id": "ESSG10006002",
+        "tracking_number": "89108749065090",
+    },
+]
+
+TrackingRequest2 = [
+    {
+        "carrier": "usps",
+        "shipment_id": "ESSG10006002",
+        "tracking_number": "89108749065090",
+    },
+    {
+        "carrier": "usps",
+        "shipment_id": "ESSG10006003",
+        "tracking_number": "89108749065091",
+    },
+]
 
 TrackingResponse = """{
   "meta": {
