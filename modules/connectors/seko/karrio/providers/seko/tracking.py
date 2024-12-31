@@ -34,11 +34,15 @@ def _extract_details(
     settings: provider_utils.Settings,
 ) -> models.TrackingDetails:
     details = lib.to_object(tracking.TrackingResponseElementType, data)
+    events = list(reversed(details.Events))
+    latest_status = lib.identity(
+        events[0].OmniCode if any(events) else getattr(details, "Status", None)
+    )
     status = next(
         (
             status.name
             for status in list(provider_units.TrackingStatus)
-            if getattr(details, "Status", None) in status.value
+            if latest_status in status.value
         ),
         provider_units.TrackingStatus.in_transit.name,
     )
@@ -61,10 +65,22 @@ def _extract_details(
                 ),
                 location=event.Location,
             )
-            for event in reversed(details.Events)
+            for event in events
         ],
         delivered=status == "delivered",
         status=status,
+        info=models.TrackingInfo(
+            carrier_tracking_link=details.Tracking,
+            expected_delivery=lib.fdate(
+                details.Delivered,
+                try_formats=["%Y-%m-%dT%H:%M:%S.%f", "%Y-%m-%dT%H:%M:%S"],
+            ),
+            shipping_date=lib.fdate(
+                details.Picked,
+                try_formats=["%Y-%m-%dT%H:%M:%S.%f", "%Y-%m-%dT%H:%M:%S"],
+            ),
+        ),
+        meta=dict(reference=details.Reference1),
     )
 
 
