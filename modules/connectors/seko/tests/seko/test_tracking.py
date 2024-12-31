@@ -1,7 +1,6 @@
 import unittest
 from unittest.mock import patch, ANY
 from .fixture import gateway
-from tests import logger
 
 import karrio
 import karrio.lib as lib
@@ -69,32 +68,87 @@ ParsedTrackingResponse = [
         {
             "carrier_id": "seko",
             "carrier_name": "seko",
-            "delivered": False,
+            "delivered": True,
             "events": [
                 {
+                    "code": "OP-72",
+                    "date": "2024-12-24",
+                    "description": "DELIVERED",
+                    "location": "NL",
+                    "time": "13:31 PM",
+                },
+                {
+                    "code": "OP-21",
+                    "date": "2024-12-24",
+                    "description": "The parcel is expected to be delivered during the day.",
+                    "location": "NL",
+                    "time": "07:37 AM",
+                },
+                {
+                    "code": "OP-50",
+                    "date": "2024-12-24",
+                    "description": "The parcel has reached the parcel center.",
+                    "location": "NL",
+                    "time": "06:13 AM",
+                },
+                {
+                    "code": "OP-50",
+                    "date": "2024-12-23",
+                    "description": "The parcel has reached the parcel center.",
+                    "location": "Essen, DE",
+                    "time": "15:29 PM",
+                },
+                {
+                    "code": "OP-79",
+                    "date": "2024-12-23",
+                    "description": "The parcel has left the parcel center.",
+                    "location": "Essen, DE",
+                    "time": "15:29 PM",
+                },
+                {
                     "code": "OP-4",
-                    "date": "2021-03-05",
+                    "date": "2024-12-23",
+                    "description": "The parcel was handed over to GLS.",
+                    "location": "Essen, DE",
+                    "time": "15:29 PM",
+                },
+                {
+                    "code": "OP-4",
+                    "date": "2024-12-17",
                     "description": "International transit to destination country ",
-                    "location": "CARSON, CA,US",
-                    "time": "13:53 PM",
+                    "location": "EGHAM, SURREY,GB",
+                    "time": "11:06 AM",
                 },
                 {
                     "code": "OP-3",
-                    "date": "2021-03-05",
+                    "date": "2024-12-17",
                     "description": "Processed through Export Hub",
-                    "location": "Carson, CA,US",
-                    "time": "08:56 AM",
+                    "location": "Egham, Surrey,GB",
+                    "time": "09:18 AM",
+                },
+                {
+                    "code": "OP-8",
+                    "date": "2024-12-13",
+                    "description": "The parcel data was entered into the GLS IT system; the parcel was not yet handed over to GLS.",
+                    "location": "GB",
+                    "time": "10:55 AM",
                 },
                 {
                     "code": "OP-1",
-                    "date": "2021-03-01",
+                    "date": "2024-12-13",
                     "description": "Tracking number allocated & order ready",
-                    "location": "SAN BERNARDINO,CA,US",
-                    "time": "21:47 PM",
+                    "location": "LONDON,EGHAM,GB",
+                    "time": "09:55 AM",
                 },
             ],
-            "status": "in_transit",
-            "tracking_number": "WFY9001843",
+            "info": {
+                "carrier_tracking_link": "http://track.omniparcel.com/999880931315",
+                "expected_delivery": "2024-12-24",
+                "shipping_date": "2024-12-24",
+            },
+            "meta": {"reference": "#N30080"},
+            "status": "delivered",
+            "tracking_number": "999880931315",
         }
     ],
     [],
@@ -139,6 +193,10 @@ ParsedTrackingResponse2 = [
             ],
             "status": "in_transit",
             "tracking_number": "DG30754101650",
+            "info": {
+                "carrier_tracking_link": "http://track.omniparcel.com/DG30754101650"
+            },
+            "meta": {},
         },
         {
             "carrier_id": "seko",
@@ -161,6 +219,10 @@ ParsedTrackingResponse2 = [
             ],
             "status": "in_transit",
             "tracking_number": "DG30754101664",
+            "info": {
+                "carrier_tracking_link": "http://track.omniparcel.com/DG30754101664"
+            },
+            "meta": {},
         },
         {
             "carrier_id": "seko",
@@ -183,6 +245,10 @@ ParsedTrackingResponse2 = [
             ],
             "status": "in_transit",
             "tracking_number": "DG30754101665",
+            "info": {
+                "carrier_tracking_link": "http://track.omniparcel.com/DG30754101665"
+            },
+            "meta": {},
         },
         {
             "carrier_id": "seko",
@@ -205,6 +271,10 @@ ParsedTrackingResponse2 = [
             ],
             "status": "in_transit",
             "tracking_number": "DG30754101666",
+            "info": {
+                "carrier_tracking_link": "http://track.omniparcel.com/DG30754101666"
+            },
+            "meta": {},
         },
     ],
     [],
@@ -214,35 +284,91 @@ TrackingRequest = ["6994008906", "6994008907"]
 
 TrackingResponse = """[
   {
-    "ConsignmentNo": "WFY9001843",
-    "Status": "International transit to destination country ",
-    "Picked": null,
-    "Delivered": null,
-    "Tracking": "http://track.omniparcel.com/1481576-WFY9001843",
-    "Reference1": "S5828797:0",
+    "ConsignmentNo": "999880931315",
+    "Status": "DELIVERED",
+    "Picked": "2024-12-24T13:31:47",
+    "Delivered": "2024-12-24T13:31:47",
+    "Tracking": "http://track.omniparcel.com/999880931315",
+    "Reference1": "#N30080",
     "Events": [
       {
-        "EventDT": "2021-03-01T21:47:50.643",
+        "EventDT": "2024-12-13T09:55:23.043",
         "Code": null,
         "OmniCode": "OP-1",
         "Description": "Tracking number allocated & order ready",
-        "Location": "SAN BERNARDINO,CA,US",
+        "Location": "LONDON,EGHAM,GB",
         "Part": 1
       },
       {
-        "EventDT": "2021-03-05T08:56:22.287",
+        "EventDT": "2024-12-13T10:55:24",
+        "Code": "0.100",
+        "OmniCode": "OP-8",
+        "Description": "The parcel data was entered into the GLS IT system; the parcel was not yet handed over to GLS.",
+        "Location": "GB",
+        "Part": 1
+      },
+      {
+        "EventDT": "2024-12-17T09:18:01.733",
         "Code": null,
         "OmniCode": "OP-3",
         "Description": "Processed through Export Hub",
-        "Location": "Carson, CA,US",
+        "Location": "Egham, Surrey,GB",
         "Part": 1
       },
       {
-        "EventDT": "2021-03-05T13:53:00.55",
+        "EventDT": "2024-12-17T11:06:29.043",
         "Code": null,
         "OmniCode": "OP-4",
         "Description": "International transit to destination country ",
-        "Location": "CARSON, CA,US",
+        "Location": "EGHAM, SURREY,GB",
+        "Part": 1
+      },
+      {
+        "EventDT": "2024-12-23T15:29:00",
+        "Code": "0.0",
+        "OmniCode": "OP-4",
+        "Description": "The parcel was handed over to GLS.",
+        "Location": "Essen, DE",
+        "Part": 1
+      },
+      {
+        "EventDT": "2024-12-23T15:29:00",
+        "Code": "1.0",
+        "OmniCode": "OP-79",
+        "Description": "The parcel has left the parcel center.",
+        "Location": "Essen, DE",
+        "Part": 1
+      },
+      {
+        "EventDT": "2024-12-23T15:29:00",
+        "Code": "2.0",
+        "OmniCode": "OP-50",
+        "Description": "The parcel has reached the parcel center.",
+        "Location": "Essen, DE",
+        "Part": 1
+      },
+      {
+        "EventDT": "2024-12-24T06:13:10",
+        "Code": "2.0",
+        "OmniCode": "OP-50",
+        "Description": "The parcel has reached the parcel center.",
+        "Location": "NL",
+        "Part": 1
+      },
+      {
+        "EventDT": "2024-12-24T07:37:54",
+        "Code": "11.0",
+        "OmniCode": "OP-21",
+        "Description": "The parcel is expected to be delivered during the day.",
+        "Location": "NL",
+        "Part": 1
+      },
+      {
+        "EventDT": "2024-12-24T13:31:47",
+        "Code": "3.0",
+        "OmniCode": "OP-72",
+        "Description": "DELIVERED",
+        "Location": "NL",
         "Part": 1
       }
     ]

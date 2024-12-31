@@ -114,10 +114,63 @@ class CustomsOption(lib.Enum):
 
 
 class TrackingStatus(lib.Enum):
-    on_hold = ["on_hold"]
-    delivered = ["delivered"]
-    in_transit = ["in_transit"]
-    delivery_failed = ["delivery_failed"]
-    delivery_delayed = ["delivery_delayed"]
-    out_for_delivery = ["out_for_delivery"]
-    ready_for_pickup = ["ready_for_pickup"]
+    on_hold = [
+        "OP-26",  # Held by carrier
+        "OP-2",  # Held at Export Hub
+        "OP-6",  # Customs held for inspection and clearance
+        "OP-49",  # Held by Delivery Courier
+        "OP-70",  # Parcel Blocked
+        "OP-87",  # Aged Parcel - High Value Unpaid
+        "OP-88",  # Held at Export Hub - Additional Payment Required
+    ]
+    delivered = [
+        "OP-71",  # Delivered in part
+        "OP-72",  # Delivered
+        "OP-73",  # Delivered to neighbour
+        "OP-74",  # Delivered - Authority to Leave / Safe Drop
+        "OP-75",  # Delivered - Parcel Collected
+        "OP-76",  # Delivered to locker/collection point
+        "OP-77",  # Delivered to alternate delivery point
+    ]
+    in_transit = [
+        "OP-18",  # In transit
+        "OP-20",  # Sub-contractor update
+        "OP-22",  # Received by Sub-contractor
+        "OP-3",  # Processed through Export Hub
+        "OP-4",  # International transit to destination country
+        "OP-47",  # Processed through Sorting Facility
+        "OP-50",  # Parcel arrived to courier processing facility
+        "OP-51",  # Parcel departed courier processing facility
+        "OP-78",  # Flight Arrived
+        "OP-79",  # InTransit
+        "OP-80",  # Reshipped
+        "OP-81",  # Flight Departed
+    ]
+    delivery_failed = [
+        "OP-24",  # Attempted Delivery - Receiver carded
+        "OP-27",  # Attempted Delivery - Customer not known at address
+        "OP-28",  # Attempted Delivery - Refused by customer
+        "OP-29",  # Return to sender
+        "OP-30",  # Non delivery
+        "OP-37",  # Attempted Delivery - No access to receivers address
+        "OP-38",  # Attempted Delivery - Customer Identification failed
+        "OP-45",  # Attempted delivery
+        "OP-55",  # Attempted Delivery - Returned to Sender
+        "OP-15",  # Parcel lost
+        "OP-17",  # Parcel Damaged
+        "OP-23",  # Invalid / Insufficient Address
+        "OP-86",  # Attempted delivery
+    ]
+    delivery_delayed = [
+        "OP-16",  # Parcel Delayed
+        "OP-13",  # Misdirected
+        "OP-35",  # Mis sorted by carrier
+    ]
+    out_for_delivery = [
+        "OP-21",  # Out for delivery
+    ]
+    ready_for_pickup = [
+        "OP-19",  # Awaiting Collection
+        "OP-25",  # Customer to collect from carrier
+        "OP-42",  # Awaiting collection
+    ]

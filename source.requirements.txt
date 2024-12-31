@@ -5,8 +5,8 @@ backoff==2.2.1
 Brotli==1.1.0
 certifi==2024.12.14
 cffi==1.17.1
-charset-normalizer==3.4.0
-click==8.1.7
+charset-normalizer==3.4.1
+click==8.1.8
 cryptography==44.0.0
 cssselect2==0.7.0
 deprecation==2.1.0
@@ -39,7 +39,7 @@ hiredis==3.1.0
 huey==2.5.2
 idna==3.10
 inflection==0.5.1
-Jinja2==3.1.4
+Jinja2==3.1.5
 jsonfield==3.1.0
 jsonschema==4.23.0
 jsonschema-specifications==2024.10.1
@@ -111,7 +111,7 @@ packaging==24.2
 phonenumbers==8.13.52
 pillow==11.0.0
 posthog==3.7.4
-psutil==6.1.0
+psutil==6.1.1
 psycopg2-binary==2.9.10
 py-soap==2020.3.2
 pycparser==2.22
@@ -134,13 +134,13 @@ rpds-py==0.22.3
 sentry-sdk==2.19.2
 six==1.17.0
 sqlparse==0.5.3
-strawberry-graphql==0.254.0
+strawberry-graphql==0.256.1
 tablib==3.7.0
 tinycss2==1.4.0
 tinyhtml5==2.0.0
 typing_extensions==4.12.2
 uritemplate==4.1.1
-urllib3==2.2.3
+urllib3==2.3.0
 uvicorn==0.34.0
 validators==0.34.0
 weasyprint==63.1

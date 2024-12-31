@@ -1,3 +1,11 @@
+# Karrio 2024.12.rc10
+
+## Changes
+
+### Fix
+
+- fix: seko tracking event parsing
+
 # Karrio 2024.12.rc9
 
 ## Changes
