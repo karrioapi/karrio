@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name="karrio.ups",
+    name="karrio_ups",
     version="2024.12",
     description="Karrio - UPS Shipping extension",
     long_description=long_description,
