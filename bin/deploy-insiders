@@ -29,7 +29,7 @@ fi
 if ! [ -z "$1" ]; then
     export KARRIO_TAG=$1
 else
-    echo "What version of Karrio Insiders would you like to install? (We default to '2024.9.15')"
+    echo "What version of Karrio Insiders would you like to install? (We default to '${KARRIO_TAG}')"
     echo "You can check available versions in your Insiders portal"
     read -r KARRIO_TAG_READ
     if [ -z "$KARRIO_TAG_READ" ]; then
