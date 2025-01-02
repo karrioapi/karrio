@@ -26,8 +26,6 @@ if [ -z "$GITHUB_TOKEN" ]; then
     export GITHUB_TOKEN
 fi
 
-echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
-
 if ! [ -z "$1" ]; then
     export KARRIO_TAG=$1
 else
@@ -141,6 +139,9 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 # enable docker without sudo
 sudo usermod -aG docker "${USER}" || true
+
+# login to docker private registry
+echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
 
 # start up the stack
 echo "Configuring Docker Compose...."
