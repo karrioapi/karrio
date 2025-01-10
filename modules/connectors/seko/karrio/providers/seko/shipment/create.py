@@ -161,7 +161,7 @@ def shipment_request(
                 Length=package.length.CM,
                 Width=package.width.CM,
                 Kg=package.weight.KG,
-                Name=package.description,
+                Name=lib.text(package.description, max=50),
                 Type=lib.identity(
                     provider_units.PackagingType.map(package.packaging_type).value
                 ),
