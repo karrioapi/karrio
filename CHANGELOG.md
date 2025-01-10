@@ -1,3 +1,11 @@
+# Karrio 2024.12.rc11
+
+## Changes
+
+### Fix
+
+- fix: seko package description truncation
+
 # Karrio 2024.12.rc10
 
 ## Changes
