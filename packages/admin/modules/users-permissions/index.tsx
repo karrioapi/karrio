@@ -3,8 +3,6 @@
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
 } from "@karrio/insiders/components/ui/card";
 import {
   Table,
@@ -45,19 +43,28 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@karrio/insiders/components/ui/dropdown-menu";
+import {
+  GetUsers_users_edges_node as User,
+} from "@karrio/types/graphql/admin/types";
 
 export default function Page() {
   const { toast } = useToast();
   const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [cursor, setCursor] = useState<string | undefined>(undefined);
   const utils = trpc.useContext();
 
   // Fetch users and permission groups
   const { data: usersData, isLoading: isLoadingUsers } =
-    trpc.admin.users.list.useQuery({});
+    trpc.admin.users.list.useQuery({
+      filter: {
+        is_active: true,
+        after: cursor,
+      },
+    });
   const { data: permissionGroupsData, isLoading: isLoadingPermissions } =
-    trpc.admin.permission_groups.list.useQuery();
+    trpc.admin.permission_groups.list.useQuery({});
   const users = usersData?.edges || [];
   const permissionGroups = permissionGroupsData?.edges || [];
 
@@ -160,9 +167,11 @@ export default function Page() {
       formData.getAll("permission_groups"),
     ) as string[];
 
+    if (!selectedUser) return;
+
     updateUser.mutate({
       data: {
-        id: selectedUser.id,
+        id: String(selectedUser.id),
         full_name: formData.get("full_name") as string,
         is_staff: formData.get("is_staff") === "on",
         is_active: formData.get("is_active") === "on",
@@ -171,11 +180,11 @@ export default function Page() {
     });
   };
 
-  const handleRemove = async (user: any) => {
+  const handleRemove = async (user: User) => {
     if (confirm("Are you sure you want to remove this user?")) {
       removeUser.mutate({
         data: {
-          id: user.id,
+          id: String(user.id),
         },
       });
     }
@@ -195,213 +204,204 @@ export default function Page() {
   }
 
   return (
-    <>
-      <div className="flex items-center justify-between space-y-2">
-        <h1 className="text-[28px] font-medium tracking-tight">
-          Administration
+    <div className="p-6">
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold tracking-tight">
+          User Management
         </h1>
-        <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
-          <DialogTrigger asChild>
-            <Button>Invite User</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Invite New User</DialogTitle>
-              <DialogDescription>
-                Send an invitation to join your organization.
-              </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleInvite} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" name="email" type="email" required />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="role">Role</Label>
-                <Select name="role" defaultValue="member">
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="member">Member</SelectItem>
-                    <SelectItem value="developer">Developer</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <DialogFooter>
-                <Button type="submit" disabled={isInviting}>
-                  {isInviting ? "Sending..." : "Send Invitation"}
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Staff</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>MEMBER</TableHead>
-                <TableHead>ROLE</TableHead>
-                <TableHead>STATUS</TableHead>
-                <TableHead>LAST LOGIN</TableHead>
-                <TableHead className="w-8" />
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {users.map(({ node: user }) => (
-                <TableRow key={user.id}>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{user.full_name}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {user.email}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {[user.is_superuser && "Super", user.is_staff && "Staff"]
-                      .filter(Boolean)
-                      .join(", ")}
-                  </TableCell>
-                  <TableCell>
-                    <span
-                      className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                        user.is_active
-                          ? "bg-green-50 text-green-700"
-                          : "bg-red-50 text-red-700"
-                      }`}
-                    >
-                      {user.is_active ? "Active" : "Inactive"}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    {user.last_login
-                      ? format(new Date(user.last_login), "PPp")
-                      : "Never"}
-                  </TableCell>
-                  <TableCell className="w-8 p-2">
-                    <div className="flex items-center gap-2">
-                      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <CardContent className="p-6">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Users</h2>
+            <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
+              <DialogTrigger asChild>
+                <Button>Invite User</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Invite New User</DialogTitle>
+                  <DialogDescription>
+                    Send an invitation to join your organization.
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleInvite} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" name="email" type="email" required />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="role">Role</Label>
+                    <Select name="role" defaultValue="member">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="member">Member</SelectItem>
+                        <SelectItem value="developer">Developer</SelectItem>
+                        <SelectItem value="admin">Admin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <DialogFooter>
+                    <Button type="submit" disabled={isInviting}>
+                      {isInviting ? "Sending..." : "Send Invitation"}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          {users.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <p className="text-sm text-muted-foreground">No users found</p>
+              <p className="text-sm text-muted-foreground">Invite a user to get started</p>
+            </div>
+          ) : (
+            <>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>MEMBER</TableHead>
+                    <TableHead>EMAIL</TableHead>
+                    <TableHead>ROLE</TableHead>
+                    <TableHead>LAST LOGIN</TableHead>
+                    <TableHead className="w-[50px]"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {users.map(({ node: user }) => (
+                    <TableRow key={user.id}>
+                      <TableCell>{user.full_name}</TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell>
+                        {user.is_staff ? "Admin" : user.is_active ? "Member" : "Inactive"}
+                      </TableCell>
+                      <TableCell>
+                        {user.last_login ? format(new Date(user.last_login), "MMM d, yyyy") : "Never"}
+                      </TableCell>
+                      <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 w-8 p-0"
-                            >
+                            <Button variant="ghost" className="h-8 w-8 p-0">
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DialogTrigger asChild>
-                              <DropdownMenuItem
-                                onClick={() => setSelectedUser(user)}
-                              >
-                                Edit user
-                              </DropdownMenuItem>
-                            </DialogTrigger>
                             <DropdownMenuItem
-                              onClick={() => handleRemove(user)}
-                              className="text-red-600"
+                              onClick={() => {
+                                setSelectedUser(user as unknown as User);
+                                setIsEditOpen(true);
+                              }}
                             >
-                              Remove user
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              className="text-destructive"
+                              onClick={() => handleRemove(user as unknown as User)}
+                            >
+                              Remove
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
 
-                        <DialogContent className="max-h-[90vh] flex flex-col">
-                          <DialogHeader>
-                            <DialogTitle>Edit User</DialogTitle>
-                            <DialogDescription>
-                              Update user information, status, and permissions.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <form
-                            onSubmit={handleUpdate}
-                            className="flex flex-col flex-1"
-                          >
-                            <div className="space-y-4 flex-1 overflow-y-auto">
-                              <div className="space-y-2">
-                                <Label htmlFor="edit_full_name">
-                                  Full Name
-                                </Label>
-                                <Input
-                                  id="edit_full_name"
-                                  name="full_name"
-                                  defaultValue={selectedUser?.full_name}
-                                  required
-                                />
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                <Checkbox
-                                  id="is_staff"
-                                  name="is_staff"
-                                  defaultChecked={selectedUser?.is_staff}
-                                />
-                                <Label htmlFor="is_staff">Staff</Label>
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                <Checkbox
-                                  id="is_active"
-                                  name="is_active"
-                                  defaultChecked={selectedUser?.is_active}
-                                />
-                                <Label htmlFor="is_active">Active</Label>
-                              </div>
-                              <div className="space-y-2">
-                                <Label>Permission Groups</Label>
-                                <div className="rounded-md border">
-                                  <div className="p-3 space-y-1.5 max-h-[160px] overflow-y-auto">
-                                    {permissionGroups.map(({ node: group }) => (
-                                      <div
-                                        key={group.id}
-                                        className="flex items-center space-x-2 py-0.5 px-1 hover:bg-gray-50 rounded"
-                                      >
-                                        <input
-                                          type="checkbox"
-                                          id={`permission-${group.id}`}
-                                          name="permission_groups"
-                                          value={group.id}
-                                          defaultChecked={selectedUser?.permissions?.includes(
-                                            group.id,
-                                          )}
-                                          className="h-4 w-4 rounded border-gray-300"
-                                        />
-                                        <label
-                                          htmlFor={`permission-${group.id}`}
-                                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                        >
-                                          {group.name}
-                                        </label>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <DialogFooter className="mt-4">
-                              <Button type="submit" disabled={isUpdating}>
-                                {isUpdating ? "Saving..." : "Save Changes"}
-                              </Button>
-                            </DialogFooter>
-                          </form>
-                        </DialogContent>
-                      </Dialog>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              {usersData?.page_info && (
+                <div className="mt-4 flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">
+                    Showing {users.length} of {usersData.page_info.count} users
+                  </p>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCursor(usersData.page_info.start_cursor || undefined)}
+                      disabled={!usersData.page_info.has_previous_page}
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCursor(usersData.page_info.end_cursor || undefined)}
+                      disabled={!usersData.page_info.has_next_page}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </CardContent>
       </Card>
-    </>
+
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit User</DialogTitle>
+            <DialogDescription>
+              Update user details and permissions.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleUpdate} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="full_name">Full Name</Label>
+              <Input
+                id="full_name"
+                name="full_name"
+                defaultValue={selectedUser?.full_name}
+                required
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="is_staff"
+                name="is_staff"
+                defaultChecked={selectedUser?.is_staff}
+              />
+              <Label htmlFor="is_staff">Admin Access</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="is_active"
+                name="is_active"
+                defaultChecked={selectedUser?.is_active}
+              />
+              <Label htmlFor="is_active">Active</Label>
+            </div>
+            <div className="space-y-2">
+              <Label>Permission Groups</Label>
+              <div className="space-y-2">
+                {permissionGroups.map(({ node: group }) => (
+                  <div key={group.id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`permission_${group.id}`}
+                      name="permission_groups"
+                      value={String(group.id)}
+                      defaultChecked={selectedUser?.permissions?.includes(String(group.id))}
+                    />
+                    <Label htmlFor={`permission_${group.id}`}>
+                      {group.name}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="submit" disabled={isUpdating}>
+                {isUpdating ? "Updating..." : "Update User"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }

@@ -1,12 +1,7 @@
 "use client";
 
 import { trpc } from "@karrio/trpc/client";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@karrio/insiders/components/ui/card";
+import { Card, CardContent } from "@karrio/insiders/components/ui/card";
 import {
   Table,
   TableBody,
@@ -25,12 +20,12 @@ import { Button } from "@karrio/insiders/components/ui/button";
 import { Switch } from "@karrio/insiders/components/ui/switch";
 import { Badge } from "@karrio/insiders/components/ui/badge";
 import { useToast } from "@karrio/insiders/hooks/use-toast";
-import { MoreVertical, Plus } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 import { useState } from "react";
 import { DeleteConfirmationDialog } from "@karrio/insiders/components/delete-confirmation-dialog";
 import { SurchargeDialog } from "@karrio/insiders/components/surcharge-dialog";
 import {
-  GetSurcharges_surcharges as Surcharge,
+  GetSurcharges_surcharges_edges_node as Surcharge,
   SurchargeTypeEnum,
 } from "@karrio/types/graphql/admin/types";
 
@@ -51,11 +46,14 @@ export default function Page() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [selectedSurcharge, setSelectedSurcharge] = useState<Surcharge | null>(
-    null,
-  );
+  const [selectedSurcharge, setSelectedSurcharge] = useState<Surcharge | null>(null);
+  const [page, setPage] = useState(1);
 
-  const { data: surcharges, isLoading } = trpc.admin.surcharges.list.useQuery();
+  const { data: surcharges, isLoading } = trpc.admin.surcharges.list.useQuery({
+    filter: {
+      page,
+    },
+  });
 
   const createSurcharge = trpc.admin.surcharges.create.useMutation({
     onSuccess: () => {
@@ -142,77 +140,112 @@ export default function Page() {
   };
 
   return (
-    <>
-      <div className="flex items-center justify-between space-y-2">
-        <h1 className="text-[28px] font-medium tracking-tight">Surcharges</h1>
-        <Button onClick={() => setIsCreateOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Surcharge
-        </Button>
+    <div className="p-6">
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold tracking-tight">
+          Surcharge Management
+        </h1>
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Manage Surcharges</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>NAME</TableHead>
-                <TableHead>TYPE</TableHead>
-                <TableHead>AMOUNT</TableHead>
-                <TableHead>STATUS</TableHead>
-                <TableHead className="w-[50px]"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {surcharges?.map((surcharge) => (
-                <TableRow key={surcharge.id}>
-                  <TableCell>{surcharge.name}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{surcharge.surcharge_type}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    {surcharge.surcharge_type === SurchargeTypeEnum.PERCENTAGE
-                      ? `${surcharge.amount}%`
-                      : `$${surcharge.amount}`}
-                  </TableCell>
-                  <TableCell>
-                    <Switch checked={surcharge.active} disabled />
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onClick={() => {
-                            setSelectedSurcharge(surcharge);
-                            setIsEditOpen(true);
-                          }}
-                        >
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-destructive"
-                          onClick={() => {
-                            setSelectedSurcharge(surcharge);
-                            setIsDeleteOpen(true);
-                          }}
-                        >
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+        <CardContent className="p-6">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Surcharges</h2>
+            <Button onClick={() => setIsCreateOpen(true)}>Add Surcharge</Button>
+          </div>
+
+          {surcharges?.edges.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <p className="text-sm text-muted-foreground">No surcharges found</p>
+              <p className="text-sm text-muted-foreground">Add a surcharge to get started</p>
+            </div>
+          ) : (
+            <>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>NAME</TableHead>
+                    <TableHead>TYPE</TableHead>
+                    <TableHead>AMOUNT</TableHead>
+                    <TableHead>STATUS</TableHead>
+                    <TableHead className="w-[50px]"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {surcharges?.edges?.map(({ node: surcharge }) => (
+                    <TableRow key={surcharge.id}>
+                      <TableCell>{surcharge.name}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{surcharge.surcharge_type}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        {surcharge.surcharge_type === SurchargeTypeEnum.PERCENTAGE
+                          ? `${surcharge.amount}%`
+                          : `$${surcharge.amount}`}
+                      </TableCell>
+                      <TableCell>
+                        <Switch checked={surcharge.active} disabled />
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedSurcharge(surcharge);
+                                setIsEditOpen(true);
+                              }}
+                            >
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              className="text-destructive"
+                              onClick={() => {
+                                setSelectedSurcharge(surcharge);
+                                setIsDeleteOpen(true);
+                              }}
+                            >
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+
+              {surcharges?.page_info && (
+                <div className="mt-4 flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">
+                    Showing {surcharges.edges.length} of {surcharges.page_info.count} surcharges
+                  </p>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setPage(page - 1)}
+                      disabled={!surcharges.page_info.has_previous_page}
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setPage(page + 1)}
+                      disabled={!surcharges.page_info.has_next_page}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </CardContent>
       </Card>
 
@@ -236,6 +269,6 @@ export default function Page() {
         title="Delete Surcharge"
         description="Are you sure you want to delete this surcharge? This action cannot be undone."
       />
-    </>
+    </div>
   );
 }

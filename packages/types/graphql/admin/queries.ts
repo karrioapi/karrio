@@ -6,17 +6,29 @@ import gql from "graphql-tag";
 //#region
 
 export const GET_SYSTEM_CONNECTIONS = gql`
-  query GetSystemConnections {
-    system_carrier_connections {
-      id
-      carrier_name
-      display_name
-      test_mode
-      active
-      capabilities
-      credentials
-      config
-      metadata
+  query GetSystemConnections($filter: CarrierFilter) {
+    system_carrier_connections(filter: $filter) {
+      edges {
+        node {
+          id
+          carrier_name
+          display_name
+          test_mode
+          active
+          capabilities
+          credentials
+          config
+          metadata
+          object_type
+        }
+        cursor
+      }
+      page_info {
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
     }
   }
 `;
@@ -33,6 +45,7 @@ export const GET_SYSTEM_CONNECTION = gql`
       credentials
       config
       metadata
+      object_type
     }
   }
 `;
@@ -54,6 +67,7 @@ export const CREATE_SYSTEM_CONNECTION = gql`
         credentials
         config
         metadata
+        object_type
       }
     }
   }
@@ -76,6 +90,7 @@ export const UPDATE_SYSTEM_CONNECTION = gql`
         credentials
         config
         metadata
+        object_type
       }
     }
   }
@@ -144,6 +159,14 @@ export const GET_USERS = gql`
           last_login
           permissions
         }
+        cursor
+      }
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
       }
     }
   }
@@ -282,20 +305,32 @@ export const GET_SURCHARGE = gql`
 `;
 
 export const GET_SURCHARGES = gql`
-  query GetSurcharges {
-    surcharges {
-      id
-      name
-      amount
-      surcharge_type
-      object_type
-      active
-      services
-      carriers
-      carrier_accounts {
-        id
-        active
-        carrier_id
+  query GetSurcharges($filter: SurchargeFilter) {
+    surcharges(filter: $filter) {
+      edges {
+        node {
+          id
+          name
+          amount
+          surcharge_type
+          object_type
+          active
+          services
+          carriers
+          carrier_accounts {
+            id
+            active
+            carrier_id
+          }
+        }
+        cursor
+      }
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
       }
     }
   }
@@ -461,6 +496,14 @@ export const GET_RATE_SHEETS = gql`
             capabilities
           }
         }
+        cursor
+      }
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
       }
     }
   }
@@ -642,6 +685,14 @@ export const GET_ACCOUNTS = gql`
             total_shipping_spend
           }
         }
+        cursor
+      }
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
       }
     }
   }
@@ -719,14 +770,22 @@ export const DELETE_ORGANIZATION_ACCOUNT = gql`
 //#region
 
 export const GET_PERMISSION_GROUPS = gql`
-  query GetPermissionGroups {
-    permission_groups {
+  query GetPermissionGroups($filter: PermissionGroupFilter) {
+    permission_groups(filter: $filter) {
       edges {
         node {
           id
           name
           permissions
         }
+        cursor
+      }
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
       }
     }
   }

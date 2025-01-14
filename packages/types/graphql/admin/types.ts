@@ -7,7 +7,7 @@
 // GraphQL query operation: GetSystemConnections
 // ====================================================
 
-export interface GetSystemConnections_system_carrier_connections {
+export interface GetSystemConnections_system_carrier_connections_edges_node {
   id: string;
   carrier_name: string;
   display_name: string;
@@ -17,10 +17,32 @@ export interface GetSystemConnections_system_carrier_connections {
   credentials: any;
   config: any | null;
   metadata: any | null;
+  object_type: string | null;
+}
+
+export interface GetSystemConnections_system_carrier_connections_edges {
+  node: GetSystemConnections_system_carrier_connections_edges_node;
+  cursor: string;
+}
+
+export interface GetSystemConnections_system_carrier_connections_page_info {
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetSystemConnections_system_carrier_connections {
+  edges: GetSystemConnections_system_carrier_connections_edges[];
+  page_info: GetSystemConnections_system_carrier_connections_page_info;
 }
 
 export interface GetSystemConnections {
-  system_carrier_connections: GetSystemConnections_system_carrier_connections[];
+  system_carrier_connections: GetSystemConnections_system_carrier_connections;
+}
+
+export interface GetSystemConnectionsVariables {
+  filter?: CarrierFilter | null;
 }
 
 
@@ -41,6 +63,7 @@ export interface GetSystemConnection_system_carrier_connection {
   credentials: any;
   config: any | null;
   metadata: any | null;
+  object_type: string | null;
 }
 
 export interface GetSystemConnection {
@@ -74,6 +97,7 @@ export interface CreateSystemConnection_create_system_carrier_connection_connect
   credentials: any;
   config: any | null;
   metadata: any | null;
+  object_type: string | null;
 }
 
 export interface CreateSystemConnection_create_system_carrier_connection {
@@ -112,6 +136,7 @@ export interface UpdateSystemConnection_update_system_carrier_connection_connect
   credentials: any;
   config: any | null;
   metadata: any | null;
+  object_type: string | null;
 }
 
 export interface UpdateSystemConnection_update_system_carrier_connection {
@@ -224,10 +249,20 @@ export interface GetUsers_users_edges_node {
 
 export interface GetUsers_users_edges {
   node: GetUsers_users_edges_node;
+  cursor: string;
+}
+
+export interface GetUsers_users_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
 }
 
 export interface GetUsers_users {
   edges: GetUsers_users_edges[];
+  page_info: GetUsers_users_page_info;
 }
 
 export interface GetUsers {
@@ -448,13 +483,13 @@ export interface GetSurchargeVariables {
 // GraphQL query operation: GetSurcharges
 // ====================================================
 
-export interface GetSurcharges_surcharges_carrier_accounts {
+export interface GetSurcharges_surcharges_edges_node_carrier_accounts {
   id: string;
   active: boolean;
   carrier_id: string;
 }
 
-export interface GetSurcharges_surcharges {
+export interface GetSurcharges_surcharges_edges_node {
   id: string;
   name: string;
   amount: number;
@@ -463,11 +498,33 @@ export interface GetSurcharges_surcharges {
   active: boolean;
   services: string[];
   carriers: string[];
-  carrier_accounts: GetSurcharges_surcharges_carrier_accounts[];
+  carrier_accounts: GetSurcharges_surcharges_edges_node_carrier_accounts[];
+}
+
+export interface GetSurcharges_surcharges_edges {
+  node: GetSurcharges_surcharges_edges_node;
+  cursor: string;
+}
+
+export interface GetSurcharges_surcharges_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetSurcharges_surcharges {
+  edges: GetSurcharges_surcharges_edges[];
+  page_info: GetSurcharges_surcharges_page_info;
 }
 
 export interface GetSurcharges {
-  surcharges: GetSurcharges_surcharges[];
+  surcharges: GetSurcharges_surcharges;
+}
+
+export interface GetSurchargesVariables {
+  filter?: SurchargeFilter | null;
 }
 
 
@@ -702,10 +759,20 @@ export interface GetRateSheets_rate_sheets_edges_node {
 
 export interface GetRateSheets_rate_sheets_edges {
   node: GetRateSheets_rate_sheets_edges_node;
+  cursor: string;
+}
+
+export interface GetRateSheets_rate_sheets_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
 }
 
 export interface GetRateSheets_rate_sheets {
   edges: GetRateSheets_rate_sheets_edges[];
+  page_info: GetRateSheets_rate_sheets_page_info;
 }
 
 export interface GetRateSheets {
@@ -972,10 +1039,20 @@ export interface GetAccounts_accounts_edges_node {
 
 export interface GetAccounts_accounts_edges {
   node: GetAccounts_accounts_edges_node;
+  cursor: string;
+}
+
+export interface GetAccounts_accounts_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
 }
 
 export interface GetAccounts_accounts {
   edges: GetAccounts_accounts_edges[];
+  page_info: GetAccounts_accounts_page_info;
 }
 
 export interface GetAccounts {
@@ -1122,14 +1199,28 @@ export interface GetPermissionGroups_permission_groups_edges_node {
 
 export interface GetPermissionGroups_permission_groups_edges {
   node: GetPermissionGroups_permission_groups_edges_node;
+  cursor: string;
+}
+
+export interface GetPermissionGroups_permission_groups_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
 }
 
 export interface GetPermissionGroups_permission_groups {
   edges: GetPermissionGroups_permission_groups_edges[];
+  page_info: GetPermissionGroups_permission_groups_page_info;
 }
 
 export interface GetPermissionGroups {
   permission_groups: GetPermissionGroups_permission_groups;
+}
+
+export interface GetPermissionGroupsVariables {
+  filter?: PermissionGroupFilter | null;
 }
 
 /* tslint:disable */
@@ -1594,6 +1685,14 @@ export enum CountryCodeEnum {
 }
 
 // null
+export interface CarrierFilter {
+  active?: boolean | null;
+  metadata_key?: string | null;
+  metadata_value?: string | null;
+  carrier_name?: string[] | null;
+}
+
+// null
 export interface CreateConnectionMutationInput {
   carrier_name: CarrierNameEnum;
   carrier_id: string;
@@ -1679,6 +1778,16 @@ export interface InstanceConfigMutationInput {
 }
 
 // null
+export interface SurchargeFilter {
+  offset?: number | null;
+  first?: number | null;
+  id?: string | null;
+  name?: string | null;
+  active?: boolean | null;
+  surcharge_type?: SurchargeTypeEnum | null;
+}
+
+// null
 export interface CreateSurchargeMutationInput {
   name: string;
   amount: number;
@@ -1721,6 +1830,7 @@ export interface CreateRateSheetMutationInput {
   carrier_name: CarrierNameEnum;
   services?: CreateServiceLevelInput[] | null;
   carriers?: string[] | null;
+  metadata?: any | null;
 }
 
 // null
@@ -1769,6 +1879,7 @@ export interface UpdateRateSheetMutationInput {
   services?: UpdateServiceLevelInput[] | null;
   carriers?: string[] | null;
   remove_missing_services?: boolean | null;
+  metadata?: any | null;
 }
 
 // null
@@ -1853,6 +1964,12 @@ export interface DisableOrganizationAccountMutationInput {
 // null
 export interface DeleteOrganizationAccountMutationInput {
   id: string;
+}
+
+// null
+export interface PermissionGroupFilter {
+  offset?: number | null;
+  first?: number | null;
 }
 
 //==============================================================

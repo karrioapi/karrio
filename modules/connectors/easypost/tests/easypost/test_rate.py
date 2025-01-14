@@ -136,7 +136,7 @@ RateRequestJSON = {
             "street1": "1 E 161st St.",
             "zip": "10451",
         },
-        "options": {},
+        "options": {"payment": {"type": "SENDER"}},
         "parcel": {"height": 2.0, "length": 9.0, "weight": 160.0, "width": 6.0},
         "reference": "order #1111",
         "to_address": {

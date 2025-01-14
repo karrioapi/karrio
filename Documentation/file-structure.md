@@ -18,7 +18,7 @@ karrio/
 
 ## Backend Modules (`/modules`)
 
-```
+```markdown
 modules/
 ├── cli/                  # Command-line interface implementation
 ├── connectors/          # Shipping carrier integration implementations
@@ -53,7 +53,7 @@ modules/
 
 ## Frontend Packages (`/packages`)
 
-```
+```markdown
 packages/
 ├── admin/               # Admin interface components
 ├── core/                # Core frontend utilities

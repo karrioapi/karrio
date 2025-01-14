@@ -1,15 +1,15 @@
 {
     "folders": [
         {
-            "name": "📦 Karrio (Root)",
+            "name": "karrio",
             "path": ".."
         },
         {
-            "name": "🔒 Karrio Insiders",
+            "name": "karrio-insiders",
             "path": "../ee/insiders"
         },
         {
-            "name": "🏢 Karrio Platform",
+            "name": "karrio-platform",
             "path": "../ee/platform"
         }
     ],

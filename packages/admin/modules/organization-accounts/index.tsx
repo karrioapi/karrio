@@ -272,7 +272,7 @@ export default function OrganizationAccounts() {
     const name = formData.get("name") as string;
     updateOrganization.mutate({
       data: {
-        id: selectedAccount.id,
+        id: String(selectedAccount.id),
         name: name,
         slug: generateSlug(name),
       },
@@ -283,7 +283,7 @@ export default function OrganizationAccounts() {
     if (!selectedAccount) return;
     disableOrganization.mutate({
       data: {
-        id: selectedAccount.id,
+        id: String(selectedAccount.id),
       },
     });
   };
@@ -292,7 +292,7 @@ export default function OrganizationAccounts() {
     if (!selectedAccount) return;
     deleteOrganization.mutate({
       data: {
-        id: selectedAccount.id,
+        id: String(selectedAccount.id),
       },
     });
   };
@@ -306,180 +306,180 @@ export default function OrganizationAccounts() {
   }
 
   return (
-    <div className="container mx-auto space-y-8 py-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-4xl font-bold tracking-tight">
-          Organization Accounts
+    <div className="p-6">
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold tracking-tight">
+          Organization Management
         </h1>
-        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-          <DialogTrigger asChild>
-            <Button>Create Organization</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Create New Organization</DialogTitle>
-              <DialogDescription>
-                Create a new organization account.
-              </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleCreate} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" name="name" required />
-              </div>
-              <DialogFooter>
-                <Button
-                  type="submit"
-                  disabled={createOrganization.status === "pending"}
-                >
-                  {createOrganization.status === "pending"
-                    ? "Creating..."
-                    : "Create"}
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
       </div>
 
-      <Card className="shadow-lg">
+      <Card>
         <CardContent className="p-6">
-          <div className="flex items-center justify-between pb-6">
-            <CardTitle className="text-2xl font-semibold">
-              Active Organizations
-            </CardTitle>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <span className="mr-2">Columns</span>
-                  <span className="w-4 h-4">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Organizations</h2>
+            <div className="flex items-center space-x-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <span className="mr-2">Columns</span>
+                    <span className="w-4 h-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {COLUMNS.map((column) => (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      checked={visibleColumns.includes(column.id)}
+                      onCheckedChange={() => toggleColumn(column.id)}
                     >
-                      <path
-                        fillRule="evenodd"
-                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {COLUMNS.map((column) => (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    checked={visibleColumns.includes(column.id)}
-                    onCheckedChange={() => toggleColumn(column.id)}
-                  >
-                    {column.label}
-                  </DropdownMenuCheckboxItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                      {column.label}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+                <DialogTrigger asChild>
+                  <Button>Create Organization</Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Create New Organization</DialogTitle>
+                    <DialogDescription>
+                      Create a new organization account.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleCreate} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Name</Label>
+                      <Input id="name" name="name" required />
+                    </div>
+                    <DialogFooter>
+                      <Button
+                        type="submit"
+                        disabled={createOrganization.status === "pending"}
+                      >
+                        {createOrganization.status === "pending"
+                          ? "Creating..."
+                          : "Create"}
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
 
-          <Table>
-            <TableHeader>
-              <TableRow>
-                {COLUMNS.filter((col) => visibleColumns.includes(col.id)).map(
-                  (column) => (
-                    <TableHead key={column.id}>{column.label}</TableHead>
-                  ),
-                )}
-                <TableHead className="w-8" />
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {currentAccounts.map((account) => (
-                <TableRow key={account.id}>
-                  {COLUMNS.filter((col) => visibleColumns.includes(col.id)).map(
-                    (column) => (
-                      <TableCell key={column.id}>
-                        {column.accessor(account)}
+          {currentAccounts.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <p className="text-sm text-muted-foreground">No organizations found</p>
+              <p className="text-sm text-muted-foreground">Create an organization to get started</p>
+            </div>
+          ) : (
+            <>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    {COLUMNS.filter((col) => visibleColumns.includes(col.id)).map(
+                      (column) => (
+                        <TableHead key={column.id}>{column.label}</TableHead>
+                      ),
+                    )}
+                    <TableHead className="w-[50px]" />
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {currentAccounts.map((account) => (
+                    <TableRow key={account.id}>
+                      {COLUMNS.filter((col) => visibleColumns.includes(col.id)).map(
+                        (column) => (
+                          <TableCell key={column.id}>
+                            {column.accessor(account)}
+                          </TableCell>
+                        ),
+                      )}
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedAccount(account);
+                                setIsEditOpen(true);
+                              }}
+                            >
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedAccount(account);
+                                setIsDisableOpen(true);
+                              }}
+                              className="text-yellow-600"
+                            >
+                              Disable
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedAccount(account);
+                                setIsDeleteOpen(true);
+                              }}
+                              className="text-destructive"
+                            >
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </TableCell>
-                    ),
-                  )}
-                  <TableCell className="w-8 p-2">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setSelectedAccount(account);
-                            setIsEditOpen(true);
-                          }}
-                        >
-                          Edit organization
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setSelectedAccount(account);
-                            setIsDisableOpen(true);
-                          }}
-                          className="text-yellow-600"
-                        >
-                          Disable organization
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setSelectedAccount(account);
-                            setIsDeleteOpen(true);
-                          }}
-                          className="text-red-600"
-                        >
-                          Delete organization
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
 
-          <div className="flex items-center justify-between space-x-2 pt-6">
-            <div className="text-sm text-gray-700">
-              Showing {startIndex + 1} to {Math.min(endIndex, totalAccounts)} of{" "}
-              {totalAccounts} organizations
-            </div>
-            <div className="flex space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-              >
-                Previous
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                }
-                disabled={currentPage === totalPages}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
+              <div className="mt-4 flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">
+                  Showing {startIndex + 1} to {Math.min(endIndex, totalAccounts)} of{" "}
+                  {totalAccounts} organizations
+                </p>
+                <div className="flex items-center space-x-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    }
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
 
