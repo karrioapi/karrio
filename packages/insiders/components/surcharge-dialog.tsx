@@ -28,7 +28,7 @@ import { Input } from "@karrio/insiders/components/ui/input";
 import { Button } from "@karrio/insiders/components/ui/button";
 import { Switch } from "@karrio/insiders/components/ui/switch";
 import {
-  GetSurcharges_surcharges as Surcharge,
+  GetSurcharges_surcharges_edges_node as Surcharge,
   SurchargeTypeEnum,
 } from "@karrio/types/graphql/admin/types";
 import { useState } from "react";

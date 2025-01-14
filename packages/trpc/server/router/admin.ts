@@ -74,6 +74,7 @@ const usersRouter = router({
             is_active: z.boolean().optional(),
             is_superuser: z.boolean().optional(),
             order_by: z.string().optional(),
+            after: z.string().optional(),
           })
           .optional(),
       }),
@@ -195,13 +196,30 @@ const configsRouter = router({
 });
 
 const surchargesRouter = router({
-  list: protectedProcedure.query(async ({ ctx }) => {
-    const client = ctx.karrio;
-    const { surcharges } = await client.admin.request<GetSurcharges>(
-      gqlstr(GET_SURCHARGES),
-    );
-    return surcharges;
-  }),
+  list: protectedProcedure
+    .input(
+      z.object({
+        filter: z
+          .object({
+            keyword: z.string().optional(),
+            active: z.boolean().optional(),
+            surcharge_type: z.string().optional(),
+            order_by: z.string().optional(),
+            page: z.number().optional(),
+          })
+          .optional(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const client = ctx.karrio;
+      const { surcharges } = await client.admin.request<GetSurcharges>(
+        gqlstr(GET_SURCHARGES),
+        {
+          filter: input.filter,
+        },
+      );
+      return surcharges;
+    }),
   get: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -498,14 +516,28 @@ const rateSheetsRouter = router({
 });
 
 const systemConnectionsRouter = router({
-  list: protectedProcedure.query(async ({ ctx }) => {
-    const client = ctx.karrio;
-    const { system_carrier_connections } =
-      await client.admin.request<GetSystemConnections>(
+  list: protectedProcedure
+    .input(
+      z.object({
+        filter: z.object({
+          active: z.boolean().optional(),
+          metadata_key: z.string().optional(),
+          metadata_value: z.string().optional(),
+          carrier_name: z.array(z.string()).optional(),
+        }).optional(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const client = ctx.karrio;
+      const { system_carrier_connections } = await client.admin.request<GetSystemConnections>(
         gqlstr(GET_SYSTEM_CONNECTIONS),
+        {
+          filter: input.filter,
+        },
       );
-    return system_carrier_connections;
-  }),
+
+      return system_carrier_connections;
+    }),
   get: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -589,7 +621,13 @@ const organizationAccountsRouter = router({
   list: protectedProcedure
     .input(
       z.object({
-        filter: z.object({}).optional(),
+        filter: z
+          .object({
+            keyword: z.string().optional(),
+            is_active: z.boolean().optional(),
+            order_by: z.string().optional(),
+          })
+          .optional(),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -676,14 +714,28 @@ const organizationAccountsRouter = router({
 });
 
 const permissionGroupsRouter = router({
-  list: protectedProcedure.query(async ({ ctx }) => {
-    const client = ctx.karrio;
-    const { permission_groups } =
-      await client.admin.request<GetPermissionGroups>(
-        gqlstr(GET_PERMISSION_GROUPS),
-      );
-    return permission_groups;
-  }),
+  list: protectedProcedure
+    .input(
+      z.object({
+        filter: z
+          .object({
+            keyword: z.string().optional(),
+            order_by: z.string().optional(),
+          })
+          .optional(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const client = ctx.karrio;
+      const { permission_groups } =
+        await client.admin.request<GetPermissionGroups>(
+          gqlstr(GET_PERMISSION_GROUPS),
+          {
+            filter: input.filter,
+          },
+        );
+      return permission_groups;
+    }),
 });
 
 export const adminRouter = router({

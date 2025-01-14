@@ -9,20 +9,32 @@ import { url$ } from "@karrio/lib";
 export const createContext = async () => {
   const session = (await auth()) as Session | any | null;
   const { metadata } = await loadMetadata();
+  const karrio = new KarrioClient({
+    basePath: url$`${(metadata?.HOST as string) || KARRIO_API}`,
+    headers: {
+      ...(session?.orgId ? { "x-org-id": session.orgId } : {}),
+      ...(session?.testMode ? { "x-test-mode": session.testMode } : {}),
+      ...(session?.accessToken
+        ? { Authorization: `Bearer ${session.accessToken}` }
+        : {}),
+    } as any,
+  })
+
+  console.log({
+    basePath: url$`${(metadata?.HOST as string) || KARRIO_API}`,
+    headers: {
+      ...(session?.orgId ? { "x-org-id": session.orgId } : {}),
+      ...(session?.testMode ? { "x-test-mode": session.testMode } : {}),
+      ...(session?.accessToken
+        ? { Authorization: `Bearer ${session.accessToken}` }
+        : {}),
+    } as any,
+  })
 
   return {
-    session: session,
+    karrio,
+    session,
     user: session?.user,
-    karrio: new KarrioClient({
-      basePath: url$`${(metadata?.HOST as string) || KARRIO_API}`,
-      headers: {
-        ...(session?.orgId ? { "x-org-id": session.orgId } : {}),
-        ...(session?.testMode ? { "x-test-mode": session.testMode } : {}),
-        ...(session?.accessToken
-          ? { Authorization: `Bearer ${session.accessToken}` }
-          : {}),
-      } as any,
-    }),
   };
 };
 

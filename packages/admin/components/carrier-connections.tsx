@@ -1,16 +1,17 @@
-"use client";
-
-import { CarrierConnectionsTable, Connection } from "@karrio/admin/components/carrier-connections-table";
-import { GetRateSheets_rate_sheets_edges_node as RateSheet } from "@karrio/types/graphql/admin/types";
-import { DeleteConfirmationDialog } from "@karrio/insiders/components/delete-confirmation-dialog";
-import { CarrierConnectionDialog } from "@karrio/insiders/components/carrier-connection-dialog";
-import { RateSheetDialog } from "@karrio/insiders/components/rate-sheet-dialog";
-import { RateSheetsTable } from "@karrio/admin/components/rate-sheets-table";
-import { Card, CardContent } from "@karrio/insiders/components/ui/card";
-import { Button } from "@karrio/insiders/components/ui/button";
-import { useToast } from "@karrio/insiders/hooks/use-toast";
 import { trpc } from "@karrio/trpc/client";
+import { Card, CardContent } from "@karrio/insiders/components/ui/card";
+import { CarrierConnectionDialog } from "@karrio/insiders/components/carrier-connection-dialog";
+import { DeleteConfirmationDialog } from "@karrio/insiders/components/delete-confirmation-dialog";
+import { useToast } from "@karrio/insiders/hooks/use-toast";
 import { useState } from "react";
+import { CarrierConnectionsTable } from "@karrio/admin/components/carrier-connections-table";
+import { GetSystemConnections_system_carrier_connections_edges_node } from "@karrio/types/graphql/admin/types";
+
+type Connection = Omit<GetSystemConnections_system_carrier_connections_edges_node, 'credentials' | 'config' | 'metadata'> & {
+  credentials: Record<string, any>;
+  config: Record<string, any>;
+  metadata: Record<string, any>;
+};
 
 export default function CarrierConnections() {
   const utils = trpc.useContext();
@@ -67,6 +68,7 @@ export default function CarrierConnections() {
         capabilities: values.capabilities,
         credentials: values.credentials || {},
         config: values.config || {},
+        metadata: values.metadata || {},
       },
     });
   };
@@ -130,8 +132,6 @@ export default function CarrierConnections() {
             />
           </CardContent>
         </Card>
-
-        <RateSheets />
       </div>
 
       <CarrierConnectionDialog
@@ -152,124 +152,6 @@ export default function CarrierConnections() {
               data: {
                 id: selectedConnection.id,
               },
-            });
-          }
-        }}
-      />
-    </div>
-  );
-}
-
-function RateSheets() {
-  const utils = trpc.useContext();
-  const { toast } = useToast();
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [selectedRateSheet, setSelectedRateSheet] = useState<RateSheet | null>(
-    null,
-  );
-
-  const { data: rateSheets, isLoading } = trpc.admin.rate_sheets.list.useQuery({
-    filter: {},
-  });
-
-  const updateRateSheet = trpc.admin.rate_sheets.update.useMutation({
-    onSuccess: () => {
-      toast({ title: "Rate sheet updated successfully" });
-      setIsEditOpen(false);
-      setSelectedRateSheet(null);
-      utils.admin.rate_sheets.list.invalidate();
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to update rate sheet",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
-  const deleteRateSheet = trpc.admin.rate_sheets.delete.useMutation({
-    onSuccess: () => {
-      toast({ title: "Rate sheet deleted successfully" });
-      setIsDeleteOpen(false);
-      setSelectedRateSheet(null);
-      utils.admin.rate_sheets.list.invalidate();
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to delete rate sheet",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
-  const handleUpdate = async (values: any) => {
-    return updateRateSheet.mutateAsync({
-      data: {
-        id: values.id,
-        name: values.name,
-        carrier_name: values.carrier_name,
-        services: values.services,
-      },
-    });
-  };
-
-  return (
-    <div>
-      <Card>
-        <CardContent className="p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Rate Sheets</h2>
-            <Button onClick={() => setIsEditOpen(true)}>Add Rate Sheet</Button>
-          </div>
-
-          <RateSheetsTable
-            rateSheets={rateSheets?.edges as { node: RateSheet }[]}
-            onEdit={(sheet) => {
-              const rateSheetWithMetadata = {
-                ...sheet,
-                metadata: sheet.metadata || {},
-              };
-              setSelectedRateSheet(rateSheetWithMetadata);
-              setIsEditOpen(true);
-            }}
-            onDelete={(sheet) => {
-              const rateSheetWithMetadata = {
-                ...sheet,
-                metadata: sheet.metadata || {},
-              };
-              setSelectedRateSheet(rateSheetWithMetadata);
-              setIsDeleteOpen(true);
-            }}
-            onCopy={(text, description) => {
-              navigator.clipboard.writeText(text);
-              toast({
-                title: "Copied to clipboard",
-                description,
-              });
-            }}
-          />
-        </CardContent>
-      </Card>
-
-      <RateSheetDialog
-        open={isEditOpen}
-        onOpenChange={setIsEditOpen}
-        selectedRateSheet={selectedRateSheet}
-        onSubmit={handleUpdate}
-      />
-
-      <DeleteConfirmationDialog
-        open={isDeleteOpen}
-        onOpenChange={setIsDeleteOpen}
-        title="Delete Rate Sheet"
-        description="Are you sure you want to delete this rate sheet? This action cannot be undone."
-        onConfirm={() => {
-          if (selectedRateSheet) {
-            deleteRateSheet.mutate({
-              data: { id: selectedRateSheet.id },
             });
           }
         }}
