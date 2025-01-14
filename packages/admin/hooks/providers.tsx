@@ -12,6 +12,7 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { useState } from "react";
+import AppModeProvider from "@karrio/hooks/app-mode";
 
 function makeQueryClient() {
   return new QueryClient({
@@ -64,7 +65,9 @@ export function Providers({
         <trpc.Provider client={trpcClient} queryClient={queryClient as any}>
           <QueryClientProvider client={queryClient}>
             <APIMetadataProvider {...(props as any)}>
-              <ErrorBoundary>{children}</ErrorBoundary>
+              <AppModeProvider>
+                <ErrorBoundary>{children}</ErrorBoundary>
+              </AppModeProvider>
             </APIMetadataProvider>
           </QueryClientProvider>
         </trpc.Provider>
