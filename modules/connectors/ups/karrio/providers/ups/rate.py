@@ -320,6 +320,7 @@ def rate_request(
                             if options.ups_cod.state
                             else None
                         ),
+                        DeliveryConfirmation=None,
                         ReturnOfDocumentIndicator=lib.identity(
                             "Y"
                             if options.ups_return_of_document_indicator.state
