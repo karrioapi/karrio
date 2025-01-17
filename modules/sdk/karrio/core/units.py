@@ -1579,14 +1579,17 @@ class ComputedDocumentFile(models.DocumentFile):
 
 
 class TrackingStatus(utils.Enum):
-    on_hold = ["on_hold"]
     pending = ["pending"]
+    on_hold = ["on_hold"]
+    cancelled = ["cancelled"]
     delivered = ["delivered"]
     in_transit = ["in_transit"]
     delivery_failed = ["delivery_failed"]
     delivery_delayed = ["delivery_delayed"]
     out_for_delivery = ["out_for_delivery"]
     ready_for_pickup = ["ready_for_pickup"]
+    return_to_sender = ["return_to_sender"]
+    unknown = ["unknown"]
 
 
 def create_enum(name, values) -> utils.Enum:

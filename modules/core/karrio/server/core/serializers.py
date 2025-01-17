@@ -23,12 +23,14 @@ class TrackerStatus(utils.Enum):
     pending = "pending"
     unknown = "unknown"
     on_hold = "on_hold"
+    cancelled = "cancelled"
     delivered = "delivered"
     in_transit = "in_transit"
     delivery_delayed = "delivery_delayed"
     out_for_delivery = "out_for_delivery"
     ready_for_pickup = "ready_for_pickup"
     delivery_failed = "delivery_failed"
+    return_to_sender = "return_to_sender"
 
 
 Serializer = serializers.Serializer
