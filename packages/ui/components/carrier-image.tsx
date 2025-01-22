@@ -1,5 +1,5 @@
-import { CARRIER_IMAGES, CarrierNameEnum } from "@karrio/types";
-import { isNoneOrEmpty, p } from "@karrio/lib";
+import { CARRIER_IMAGES, CarrierNameEnum, IMAGES } from "@karrio/types";
+import { isNoneOrEmpty, p, formatCarrierSlug, getInitials } from "@karrio/lib";
 import Image from "next/legacy/image";
 import React from "react";
 
@@ -22,18 +22,32 @@ export const CarrierImage = ({
   ...props
 }: CarrierImageComponent): JSX.Element => {
   const carrier_img = CARRIER_IMAGES[carrier_name as any] || carrier_name;
-  const query = new URLSearchParams(
-    JSON.parse(
-      JSON.stringify({
-        text_color: !!text_color ? encodeURIComponent(text_color) : undefined,
-        background: !!background ? encodeURIComponent(background) : undefined,
-      }),
-    ),
-  ).toString();
+  const has_image = IMAGES.includes(carrier_name as string);
+  const has_styling = !isNoneOrEmpty(text_color) || !isNoneOrEmpty(background);
+
+  const _name = carrier_name as string;
+  const isIcon = true;  // We always use icon format for this component
+  const carrier_label = isIcon
+    ? getInitials(_name).substring(0, 2)
+    : formatCarrierSlug(_name);
+  const svg_text_color = isNoneOrEmpty(text_color) ? "#ddd" : text_color;
+  const svg_background = isNoneOrEmpty(background) ? "#7e51e1" : background;
+  const props_str = 'viewBox="0 0 512 512"';
+  const path = `<path xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;fill:${svg_background};" d="M512,472c0,22.1-17.9,40-40,40H40c-22.1,0-40-17.9-40-40V40C0,17.9,17.9,0,40,0h432c22.1,0,40,17.9,40,40V472z"/>`;
+
+  const svg_content = `<svg ${props_str} x="0px" y="0px" xmlns="http://www.w3.org/2000/svg">
+    <g>
+      ${path}
+      <text x="50%" y="55%" alignment-baseline="middle" text-anchor="middle" fill="${svg_text_color}" font-weight="bold" font-family="arial"
+        font-size="16em" style="text-transform: uppercase; border-radius: 40px;">
+        ${carrier_label}
+      </text>
+    </g>
+  </svg>`;
 
   return (
     <div className={containerClassName || "m-1"} {...props}>
-      {isNoneOrEmpty(query) ? (
+      {has_image && !has_styling ? (
         <Image
           src={p`/carriers/${carrier_img as string}_icon.svg`}
           width={(width as number) || 60}
@@ -43,7 +57,7 @@ export const CarrierImage = ({
         />
       ) : (
         <img
-          src={p`/carriers/${carrier_img as string}_icon.svg?${query}`}
+          src={`data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg_content)}`}
           width={(width as number) || 60}
           height={(height as number) || 60}
           alt={carrier_name}
