@@ -35,7 +35,7 @@ def _extract_details(
     charges = [
         ("Shipment Charge", details.shipment_charge),
         ("Insurance", details.insurance_fee),
-        ("Other Surcharges", details.other_surcharges),
+        ("Other Surcharges", getattr(details.other_surcharges, "total_fee", 0.0)),
         ("Fuel Surcharge", details.fuel_surcharge),
         ("Additional Surcharge", details.additional_services_surcharge),
         ("Import Duty Charge", details.import_duty_charge),
