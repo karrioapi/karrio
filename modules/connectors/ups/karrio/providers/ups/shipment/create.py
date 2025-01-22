@@ -101,12 +101,14 @@ def shipment_request(
     packages = lib.to_packages(
         payload.parcels,
         provider_units.PackagePresets,
-        package_option_type=provider_units.ShippingOption,
+        shipping_options_initializer=provider_units.shipping_options_initializer,
     )
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
+        destination_country=recipient.country_code,
+        origin_country=shipper.country_code,
     )
     weight_unit, dim_unit = lib.identity(
         provider_units.COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
@@ -160,6 +162,9 @@ def shipment_request(
         ),
         "%Y-%m-%d",
     )
+
+    dc_type = options.ups_delivery_confirmation.state
+    dc_level = options.ups_delivery_confirmation_level.state
 
     request = ups.ShippingRequestType(
         ShipmentRequest=ups.ShipmentRequestType(
@@ -568,14 +573,6 @@ def shipment_request(
                             if payload.customs
                             else None
                         ),
-                        DeliveryConfirmation=lib.identity(
-                            ups.ShipmentServiceOptionsDeliveryConfirmationType(
-                                DCISType=options.ups_delivery_confirmation.state,
-                                DCISNumber=None,
-                            )
-                            if options.ups_delivery_confirmation.state
-                            else None
-                        ),
                         ReturnOfDocumentIndicator=lib.identity(
                             "Y"
                             if options.ups_return_of_document_indicator.state
@@ -662,6 +659,15 @@ def shipment_request(
                         ItemDisposal=lib.identity(
                             "Y" if options.ups_item_disposal.state else None
                         ),
+                        DeliveryConfirmation=lib.identity(
+                            ups.ShipmentServiceOptionsDeliveryConfirmationType(
+                                DCISType=dc_type,
+                            )
+                            if dc_type
+                            and dc_level
+                            == provider_units.DeliveryConfirmationLevel.SHIPMENT.value
+                            else None
+                        ),
                     )
                     if any(options.items())
                     or options.email_notification.state is not False
@@ -709,9 +715,25 @@ def shipment_request(
                             Weight=str(package.weight[weight_unit.name]),
                         ),
                         Commodity=None,
-                        PackageServiceOptions=None,
+                        PackageServiceOptions=lib.identity(
+                            ups.PackageServiceOptionsType(
+                                DeliveryConfirmation=lib.identity(
+                                    ups.PackageServiceOptionsDeliveryConfirmationType(
+                                        DCISType=dc_type,
+                                    )
+                                    if dc_type
+                                    and dc_level
+                                    == provider_units.DeliveryConfirmationLevel.PACKAGE.value
+                                    else None
+                                ),
+                            )
+                            if dc_type
+                            and dc_level
+                            == provider_units.DeliveryConfirmationLevel.PACKAGE.value
+                            else None
+                        ),
                         UPSPremier=None,
-                        ReferenceNumber=(
+                        ReferenceNumber=lib.identity(
                             ups.ReferenceNumberType(
                                 Value=package.parcel.reference_number,
                             )

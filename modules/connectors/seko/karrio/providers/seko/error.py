@@ -12,46 +12,51 @@ def parse_error_response(
     **kwargs,
 ) -> typing.List[models.Message]:
     responses = response if isinstance(response, list) else [response]
-    errors: list = sum(
-        [
-            [
-                *lib.identity(
-                    [
-                        {"code": "Error", "message": e.get("Message"), **e}
-                        for e in _.get("Errors", [])
-                    ]
-                    if any(_.get("Errors", []))
-                    else []
-                ),
-                *lib.identity(
-                    [
-                        {"code": "Error", "message": e.get("Message"), **e}
-                        for e in _.get("Error", [])
-                    ]
-                    if any(_.get("Error", []))
-                    else []
-                ),
-                *lib.identity(
-                    [
-                        {"code": "Rejected", "message": e.get("Reason"), **e}
-                        for e in _.get("Error", [])
-                    ]
-                    if any(_.get("Rejected", []))
-                    else []
-                ),
-                *lib.identity(
-                    [
-                        {"code": "ValidationError", "message": e.get("Message"), **e}
-                        for e in [_.get("ValidationErrors")]
-                    ]
-                    if _.get("ValidationErrors")
-                    else []
-                ),
-            ]
-            for _ in responses
-        ],
-        [],
-    )
+    errors: list = []
+
+    for response_item in responses:
+        if validation_errors := response_item.get("ValidationErrors"):
+            if isinstance(validation_errors, dict):
+                errors.append(
+                    {
+                        "code": "ValidationError",
+                        "message": validation_errors.get(
+                            "Message", next(iter(validation_errors.values()))
+                        ),
+                        **{
+                            k: v for k, v in validation_errors.items() if k != "Message"
+                        },
+                    }
+                )
+            else:
+                errors.append(
+                    {"code": "ValidationError", "message": str(validation_errors)}
+                )
+            break
+
+        if rejected := response_item.get("Rejected", []):
+            error = rejected[0]
+            errors.append(
+                {
+                    "code": "Rejected",
+                    "message": error.get("Reason"),
+                    **{k: v for k, v in error.items() if k != "Reason"},
+                }
+            )
+            break
+
+        if general_errors := (
+            response_item.get("Errors", []) or response_item.get("Error", [])
+        ):
+            error = general_errors[0]
+            errors.append(
+                {
+                    "code": "Error",
+                    "message": error.get("Message"),
+                    **{k: v for k, v in error.items() if k != "Message"},
+                }
+            )
+            break
 
     return [
         models.Message(
@@ -61,11 +66,7 @@ def parse_error_response(
             message=error["message"],
             details={
                 **kwargs,
-                **{
-                    k: v
-                    for k, v in error.items()
-                    if k not in ["code", "message", "Code", "Message"]
-                },
+                **{k: v for k, v in error.items() if k not in ["code", "message"]},
             },
         )
         for error in errors

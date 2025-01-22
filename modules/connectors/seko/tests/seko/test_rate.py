@@ -110,11 +110,11 @@ ParsedRateResponse = [
             "carrier_id": "seko",
             "carrier_name": "seko",
             "code": "ValidationError",
-            "message": "CountryCode is required",
             "details": {
                 "Key": "CountryCode",
                 "Property": "Destination.Address.CountryCode",
             },
+            "message": "CountryCode is required",
         }
     ],
 ]

@@ -98,7 +98,7 @@ class OptionEnum:
                     if hasattr(value, "map")
                     else self.type[value].name  # type: ignore
                 )
-                if any(value or "")
+                if value is not None and value != ""
                 else None
             )
 

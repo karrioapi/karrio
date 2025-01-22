@@ -4,6 +4,7 @@ from django.utils import timezone
 
 import karrio.lib as lib
 import karrio.server.serializers as serializers
+import karrio.server.core.utils as utils
 from karrio.server.core.gateway import Shipments, Carriers
 from karrio.server.core.serializers import (
     TrackingDetails,
@@ -125,8 +126,8 @@ class TrackingSerializer(TrackingDetails):
             changes = []
             details = response.tracking
             info = lib.to_dict(details.info or {})
-            events = (
-                lib.to_dict(details.events) if any(details.events) else instance.events
+            events = utils.process_events(
+                response_events=details.events, current_events=instance.events
             )
 
             if events != instance.events:

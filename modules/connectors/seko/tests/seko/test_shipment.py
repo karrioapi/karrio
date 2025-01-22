@@ -208,7 +208,7 @@ ParsedShipmentResponse = [
     ],
 ]
 
-ParsedCancelShipmentResponse = ParsedCancelShipmentResponse = [
+ParsedCancelShipmentResponse = [
     {
         "carrier_id": "seko",
         "carrier_name": "seko",
@@ -224,16 +224,7 @@ ParsedCancelShipmentResponse = ParsedCancelShipmentResponse = [
                 "ConsignmentId": "SSPOT014114",
             },
             "message": "Cannot be deleted. Already deleted.",
-        },
-        {
-            "carrier_id": "seko",
-            "carrier_name": "seko",
-            "code": "Error",
-            "details": {
-                "ConsignmentId": "SSPOT014115",
-            },
-            "message": "Cannot be deleted. Already in transit.",
-        },
+        }
     ],
 ]
 

@@ -92,20 +92,22 @@ export const TrackerModalProvider = ({
   };
 
   useEffect(() => {
+    if (!references?.carriers) return;
+
     const connections = [
       ...(userQuery?.user_connections || []),
       ...(systemQuery?.system_connections || []),
     ].filter(
       (c) =>
         c.active &&
-        c.carrier_name in references.carriers &&
+        c.carrier_name in references?.carriers &&
         c.carrier_name !== "generic" &&
         (c as any).enabled !== false &&
         c.capabilities.includes("tracking"),
     );
 
     setCarrierList(connections);
-  }, [userQuery?.user_connections, systemQuery?.system_connections]);
+  }, [userQuery?.user_connections, systemQuery?.system_connections, references?.carriers]);
 
   return (
     <>

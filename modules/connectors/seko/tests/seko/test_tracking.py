@@ -191,7 +191,7 @@ ParsedTrackingResponse2 = [
                     "time": "10:28 AM",
                 },
             ],
-            "status": "in_transit",
+            "status": "pending",
             "tracking_number": "DG30754101650",
             "info": {
                 "carrier_tracking_link": "http://track.omniparcel.com/DG30754101650"
@@ -217,7 +217,7 @@ ParsedTrackingResponse2 = [
                     "time": "10:56 AM",
                 },
             ],
-            "status": "in_transit",
+            "status": "pending",
             "tracking_number": "DG30754101664",
             "info": {
                 "carrier_tracking_link": "http://track.omniparcel.com/DG30754101664"
@@ -243,7 +243,7 @@ ParsedTrackingResponse2 = [
                     "time": "10:57 AM",
                 },
             ],
-            "status": "in_transit",
+            "status": "pending",
             "tracking_number": "DG30754101665",
             "info": {
                 "carrier_tracking_link": "http://track.omniparcel.com/DG30754101665"
@@ -269,7 +269,7 @@ ParsedTrackingResponse2 = [
                     "time": "11:02 AM",
                 },
             ],
-            "status": "in_transit",
+            "status": "pending",
             "tracking_number": "DG30754101666",
             "info": {
                 "carrier_tracking_link": "http://track.omniparcel.com/DG30754101666"
