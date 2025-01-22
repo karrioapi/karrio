@@ -113,6 +113,8 @@ def rate_request(
         payload.options,
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
+        destination_country=recipient.country_code,
+        origin_country=shipper.country_code,
     )
     currency = options.currency.state or settings.default_currency
     mps_packaging = lib.identity(
@@ -129,6 +131,9 @@ def rate_request(
     origin = lib.identity(
         "EU" if shipper.country_code in units.EUCountry else shipper.country_code
     )
+
+    dc_type = options.ups_delivery_confirmation.state
+    dc_level = options.ups_delivery_confirmation_level.state
 
     request = ups.RatingRequestType(
         RateRequest=ups.RateRequestType(
@@ -258,13 +263,17 @@ def rate_request(
                             ups.PackageServiceOptionsType(
                                 DeliveryConfirmation=lib.identity(
                                     ups.DeliveryConfirmationType(
-                                        DCISType=options.ups_delivery_confirmation.state,
+                                        DCISType=dc_type,
                                     )
-                                    if options.ups_delivery_confirmation.state
+                                    if dc_type
+                                    and dc_level
+                                    == provider_units.DeliveryConfirmationLevel.PACKAGE.value
                                     else None
                                 ),
                             )
-                            if options.ups_delivery_confirmation.state
+                            if dc_type
+                            and dc_level
+                            == provider_units.DeliveryConfirmationLevel.PACKAGE.value
                             else None
                         ),
                         UPSPremier=None,
@@ -320,7 +329,15 @@ def rate_request(
                             if options.ups_cod.state
                             else None
                         ),
-                        DeliveryConfirmation=None,
+                        DeliveryConfirmation=lib.identity(
+                            ups.DeliveryConfirmationType(
+                                DCISType=dc_type,
+                            )
+                            if dc_type
+                            and dc_level
+                            == provider_units.DeliveryConfirmationLevel.SHIPMENT.value
+                            else None
+                        ),
                         ReturnOfDocumentIndicator=lib.identity(
                             "Y"
                             if options.ups_return_of_document_indicator.state

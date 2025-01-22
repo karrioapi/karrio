@@ -145,7 +145,6 @@ package_shipment_with_package_preset_data = {
     "payment": {"paid_by": "sender"},
     "options": {
         "signature_confirmation": True,
-        "ups_delivery_confirmation": "2",
         "ups_saturday_delivery_indicator": True,
     },
     "reference": "Your Customer Context",
@@ -239,9 +238,7 @@ ShipmentRequestJSON = {
                 ]
             },
             "RatingMethodRequestedIndicator": "Y",
-            "ReferenceNumber": {
-                "Value": "Your Customer Context",
-            },
+            "ReferenceNumber": {"Value": "Your Customer Context"},
             "Service": {"Code": "01", "Description": "ups_next_day_air"},
             "ShipFrom": {
                 "Address": {
@@ -345,9 +342,7 @@ ShipmentRequestWithPresetJSON = {
                 ]
             },
             "RatingMethodRequestedIndicator": "Y",
-            "ReferenceNumber": {
-                "Value": "Your Customer Context",
-            },
+            "ReferenceNumber": {"Value": "Your Customer Context"},
             "Service": {"Code": "01", "Description": "ups_next_day_air"},
             "ShipFrom": {
                 "Address": {
@@ -379,7 +374,7 @@ ShipmentRequestWithPresetJSON = {
             "ShipmentDate": ANY,
             "ShipmentRatingOptions": {"NegotiatedRatesIndicator": "Y"},
             "ShipmentServiceOptions": {
-                "DeliveryConfirmation": {"DCISType": "2"},
+                "DeliveryConfirmation": {"DCISType": "1"},
                 "SaturdayDeliveryIndicator": "Y",
             },
             "Shipper": {

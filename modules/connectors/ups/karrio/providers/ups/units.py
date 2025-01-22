@@ -1,6 +1,7 @@
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.utils as utils
+import typing
 
 PRESET_DEFAULTS = dict(
     dimension_unit="IN",
@@ -396,6 +397,10 @@ class ShippingOption(utils.Enum):
         "DeliveryConfirmation",
         units.create_enum("ConfirmationType", ["1", "2"]),
     )
+    ups_delivery_confirmation_level = utils.OptionEnum(
+        "DeliveryConfirmationLevel",
+        units.create_enum("DeliveryConfirmationLevelType", ["P", "S"]),
+    )
     ups_inside_delivery = utils.OptionEnum(
         "InsideDelivery", units.create_enum("InsideDeliveryType", ["01", "02", "03"])
     )
@@ -429,9 +434,114 @@ class ShippingOption(utils.Enum):
     # fmt: on
 
 
+class DeliveryConfirmationType(utils.StrEnum):
+    signature_required = "1"  # DC-SR
+    adult_signature_required = "2"  # DC-ASR
+
+
+class DeliveryConfirmationLevel(utils.Enum):
+    PACKAGE = "P"  # Package level
+    SHIPMENT = "S"  # Shipment level
+
+    @classmethod
+    def get_level(cls, origin: str, destination: str) -> str:
+        # US50 to US50/PR -> Package level
+        if origin == "US" and destination in ["US", "PR"]:
+            return cls.PACKAGE.value
+        # US50 to CA/VI/Intl -> Shipment level
+        elif origin == "US" and destination in ["CA", "VI"]:
+            return cls.SHIPMENT.value
+        elif origin == "US":  # Intl other than CA, PR, VI
+            return cls.SHIPMENT.value
+        # CA to US50/PR/VI -> Shipment level
+        elif origin == "CA" and destination in ["US", "PR", "VI"]:
+            return cls.SHIPMENT.value
+        # CA to CA -> Package level
+        elif origin == "CA" and destination == "CA":
+            return cls.PACKAGE.value
+        # CA to Intl other than US50, PR, VI -> Shipment level
+        elif origin == "CA":
+            return cls.SHIPMENT.value
+        # PR to US50/PR -> Package level
+        elif origin == "PR" and destination in ["US", "PR"]:
+            return cls.PACKAGE.value
+        # PR to CA/VI -> Shipment level
+        elif origin == "PR" and destination in ["CA", "VI"]:
+            return cls.SHIPMENT.value
+        # PR to Intl other than US50, CA, VI -> Shipment level
+        elif origin == "PR":
+            return cls.SHIPMENT.value
+        # International-supported origin countries to any destination -> Shipment level
+        return cls.SHIPMENT.value
+
+
+class DeliveryConfirmationAvailability(utils.Enum):
+    # US50 origin
+    US_DOMESTIC = ["US", "US", ["1", "2"], "1"]  # Both available, prefer SR
+    US_PR = ["US", "PR", ["1", "2"], "1"]  # Both available, prefer SR
+    US_CA = ["US", "CA", ["1", "2"], "1"]  # Both available, prefer SR
+    US_VI = ["US", "VI", ["1", "2"], "1"]  # Both available, prefer SR
+    US_INTL = ["US", "INTL", ["1", "2"], "1"]  # Both available, prefer SR
+
+    # Canada origin
+    CA_US = ["CA", "US", ["1", "2"], "1"]  # Both available, prefer SR
+    CA_PR = ["CA", "PR", ["1", "2"], "1"]  # Both available, prefer SR
+    CA_VI = ["CA", "VI", ["1", "2"], "1"]  # Both available, prefer SR
+    CA_CA = ["CA", "CA", ["1", "2"], "2"]  # Both available, prefer ASR for domestic
+    CA_INTL = ["CA", "INTL", ["1", "2"], "1"]  # Both available, prefer SR
+
+    # Puerto Rico origin
+    PR_US = ["PR", "US", ["1", "2"], "1"]  # Both available, prefer SR
+    PR_PR = ["PR", "PR", ["1", "2"], "1"]  # Both available, prefer SR
+    PR_CA = ["PR", "CA", ["1", "2"], "1"]  # Both available, prefer SR
+    PR_VI = ["PR", "VI", ["1", "2"], "1"]  # Both available, prefer SR
+    PR_INTL = ["PR", "INTL", ["1", "2"], "1"]  # Both available, prefer SR
+
+    # International origin
+    INTL_ALL = ["INTL", "ALL", ["1", "2"], "1"]  # Both available, prefer SR
+
+    @classmethod
+    def get_available_types(cls, origin: str, destination: str) -> typing.List[str]:
+        for conf in cls:
+            origin_match = (conf.value[0] == origin) or (
+                conf.value[0] == "INTL" and origin not in ["US", "CA", "PR", "VI"]
+            )
+            dest_match = (
+                (conf.value[1] == destination)
+                or (
+                    conf.value[1] == "INTL"
+                    and destination not in ["US", "CA", "PR", "VI"]
+                )
+                or (conf.value[1] == "ALL")
+            )
+            if origin_match and dest_match:
+                return conf.value[2]
+        return ["1", "2"]  # Default to both types if no specific rule found
+
+    @classmethod
+    def get_preferred_type(cls, origin: str, destination: str) -> str:
+        for conf in cls:
+            origin_match = (conf.value[0] == origin) or (
+                conf.value[0] == "INTL" and origin not in ["US", "CA", "PR", "VI"]
+            )
+            dest_match = (
+                (conf.value[1] == destination)
+                or (
+                    conf.value[1] == "INTL"
+                    and destination not in ["US", "CA", "PR", "VI"]
+                )
+                or (conf.value[1] == "ALL")
+            )
+            if origin_match and dest_match:
+                return conf.value[3]
+        return "1"  # Default to SR if no specific rule found
+
+
 def shipping_options_initializer(
     options: dict,
     package_options: units.Options = None,
+    destination_country: str = None,
+    origin_country: str = None,
 ) -> units.Options:
     """Apply default values to the given options."""
     _options = options.copy()
@@ -471,11 +581,26 @@ def shipping_options_initializer(
     if _has_delivery_options:
         _options.update(delivery_options=True)
 
-    if _has_signature_required:
+    if _has_signature_required and origin_country and destination_country:
+        dc_type = _options.get("ups_delivery_confirmation")
+        available_types = DeliveryConfirmationAvailability.get_available_types(
+            origin_country, destination_country
+        )
+        preferred_type = DeliveryConfirmationAvailability.get_preferred_type(
+            origin_country, destination_country
+        )
+        dc_level = DeliveryConfirmationLevel.get_level(
+            origin_country, destination_country
+        )
+
+        # Validate and adjust delivery confirmation type if needed
+        if dc_type and dc_type not in available_types:
+            dc_type = preferred_type  # Use preferred type if current is not available
+        elif not dc_type and _has_signature_required:
+            dc_type = preferred_type  # Use preferred type if none specified
+
         _options.update(
-            ups_delivery_confirmation=lib.identity(
-                _options.get("ups_delivery_confirmation") or "1"
-            )
+            ups_delivery_confirmation=dc_type, ups_delivery_confirmation_level=dc_level
         )
 
     if _has_dangerous_goods and not "ups_restricted_articles" in _options:
