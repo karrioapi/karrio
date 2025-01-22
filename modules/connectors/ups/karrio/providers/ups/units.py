@@ -447,32 +447,32 @@ class DeliveryConfirmationLevel(utils.Enum):
     def get_level(cls, origin: str, destination: str) -> str:
         # US50 to US50/PR -> Package level
         if origin == "US" and destination in ["US", "PR"]:
-            return cls.PACKAGE.value
+            return cls.PACKAGE.value  # type: ignore
         # US50 to CA/VI/Intl -> Shipment level
         elif origin == "US" and destination in ["CA", "VI"]:
-            return cls.SHIPMENT.value
+            return cls.SHIPMENT.value  # type: ignore
         elif origin == "US":  # Intl other than CA, PR, VI
-            return cls.SHIPMENT.value
+            return cls.SHIPMENT.value  # type: ignore
         # CA to US50/PR/VI -> Shipment level
         elif origin == "CA" and destination in ["US", "PR", "VI"]:
-            return cls.SHIPMENT.value
+            return cls.SHIPMENT.value  # type: ignore
         # CA to CA -> Package level
         elif origin == "CA" and destination == "CA":
-            return cls.PACKAGE.value
+            return cls.PACKAGE.value  # type: ignore
         # CA to Intl other than US50, PR, VI -> Shipment level
         elif origin == "CA":
-            return cls.SHIPMENT.value
+            return cls.SHIPMENT.value  # type: ignore
         # PR to US50/PR -> Package level
         elif origin == "PR" and destination in ["US", "PR"]:
-            return cls.PACKAGE.value
+            return cls.PACKAGE.value  # type: ignore
         # PR to CA/VI -> Shipment level
         elif origin == "PR" and destination in ["CA", "VI"]:
-            return cls.SHIPMENT.value
+            return cls.SHIPMENT.value  # type: ignore
         # PR to Intl other than US50, CA, VI -> Shipment level
         elif origin == "PR":
-            return cls.SHIPMENT.value
+            return cls.SHIPMENT.value  # type: ignore
         # International-supported origin countries to any destination -> Shipment level
-        return cls.SHIPMENT.value
+        return cls.SHIPMENT.value  # type: ignore
 
 
 class DeliveryConfirmationAvailability(utils.Enum):
@@ -502,39 +502,25 @@ class DeliveryConfirmationAvailability(utils.Enum):
 
     @classmethod
     def get_available_types(cls, origin: str, destination: str) -> typing.List[str]:
-        for conf in cls:
-            origin_match = (conf.value[0] == origin) or (
-                conf.value[0] == "INTL" and origin not in ["US", "CA", "PR", "VI"]
-            )
-            dest_match = (
-                (conf.value[1] == destination)
-                or (
-                    conf.value[1] == "INTL"
-                    and destination not in ["US", "CA", "PR", "VI"]
-                )
-                or (conf.value[1] == "ALL")
-            )
-            if origin_match and dest_match:
-                return conf.value[2]
-        return ["1", "2"]  # Default to both types if no specific rule found
+        for member in cls.__members__.values():
+            if member.value[0] == origin and member.value[1] == destination:
+                return member.value[2]
+            elif member.value[0] == origin and member.value[1] == "ALL":
+                return member.value[2]
+            elif member.value[0] == "INTL" and origin not in ["US", "CA", "PR"]:
+                return member.value[2]
+        return []
 
     @classmethod
     def get_preferred_type(cls, origin: str, destination: str) -> str:
-        for conf in cls:
-            origin_match = (conf.value[0] == origin) or (
-                conf.value[0] == "INTL" and origin not in ["US", "CA", "PR", "VI"]
-            )
-            dest_match = (
-                (conf.value[1] == destination)
-                or (
-                    conf.value[1] == "INTL"
-                    and destination not in ["US", "CA", "PR", "VI"]
-                )
-                or (conf.value[1] == "ALL")
-            )
-            if origin_match and dest_match:
-                return conf.value[3]
-        return "1"  # Default to SR if no specific rule found
+        for member in cls.__members__.values():
+            if member.value[0] == origin and member.value[1] == destination:
+                return member.value[3]
+            elif member.value[0] == origin and member.value[1] == "ALL":
+                return member.value[3]
+            elif member.value[0] == "INTL" and origin not in ["US", "CA", "PR"]:
+                return member.value[3]
+        return "1"  # Default to signature required
 
 
 def shipping_options_initializer(

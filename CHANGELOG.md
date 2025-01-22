@@ -1,3 +1,22 @@
+# Karrio 2024.12
+
+## Changes
+
+### Feat
+
+- feat: consolidate ups signature data mapping with live tests
+- feat: merge new events with existing ones while tracking event updates
+- feat: trigger webhook updates when the events list changes
+- feat: reset webhook `failure_streak_count` to 0 when re-enabled
+- feat: use direct SVG rendering for generic and unknown carrier logos
+
+### Fix
+
+- fix: custom carrier service reference parsing
+- fix: easyship rate other surcharges amount parsing
+- fix: seko error response parsing
+- fix: track-shipment-modal loading issue when references haven't been resolved yet
+
 # Karrio 2024.12.rc12
 
 ## Changes

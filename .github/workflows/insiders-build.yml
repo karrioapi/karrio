@@ -71,5 +71,5 @@ jobs:
         run: |
           echo 'Build and push karrio-insiders dashboard:${{ env.tag }}...'
           echo ${{ secrets.GH_PAT }} | docker login ghcr.io -u USERNAME --password-stdin
-          KARRIO_IMAGE=ghcr.io/karrioapi/dashboard ./bin/build-dashboard-image ${{ env.tag }} &&
+          KARRIO_IMAGE=ghcr.io/karrioapi/dashboard SOURCE=https://github.com/karrioapi/karrio-insiders ./bin/build-dashboard-image ${{ env.tag }} &&
           docker push ghcr.io/karrioapi/dashboard:${{ env.tag }} || exit 1

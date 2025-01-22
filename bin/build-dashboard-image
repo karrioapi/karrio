@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
 KARRIO_IMAGE=${KARRIO_IMAGE:-"karrio/dashboard"}
-
+SOURCE=${SOURCE:-"https://github.com/karrioapi/karrio"}
 echo building image "${KARRIO_IMAGE}:$1" ...
 
 docker build -t "${KARRIO_IMAGE}:$1" \
     --build-arg VERSION=$1 \
+    --build-arg SOURCE=$SOURCE \
     -f ./docker/dashboard/Dockerfile \
     . "${@:2}"
