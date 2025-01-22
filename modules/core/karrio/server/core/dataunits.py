@@ -3,6 +3,7 @@ from django.urls import reverse
 from rest_framework.request import Request
 
 from karrio.server.conf import settings
+import karrio.lib as lib
 import karrio.core.units as units
 import karrio.references as references
 import karrio.server.providers.models as providers
@@ -101,7 +102,8 @@ def contextual_reference(request: Request = None, reduced: bool = True):
         }
         extra_services = {
             f"{c.credentials.get('custom_carrier_name') or 'generic'}": {
-                s.service_code: s.service_code for s in c.services.all()
+                s.service_code: s.service_code
+                for s in lib.identity(lib.failsafe(lambda: c.services.all()) or [])
             }
             for c in custom_carriers
         }
