@@ -116,7 +116,7 @@ def tracker_updated(
 
     if created or "created_at" in changes:
         event = EventTypes.tracker_created.value
-    elif any(field in changes for field in ["status"]):
+    elif any(field in changes for field in ["status", "events"]):
         event = EventTypes.tracker_updated.value
     else:
         return
