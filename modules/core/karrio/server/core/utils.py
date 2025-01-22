@@ -13,6 +13,7 @@ from django.utils.translation import gettext_lazy as _
 import django_email_verification.confirm as confirm
 import rest_framework_simplejwt.tokens as jwt
 
+import karrio.lib as lib
 from karrio.core.utils import DP, DF
 from karrio.server.core import datatypes, serializers
 
@@ -332,3 +333,36 @@ def get_carrier_tracking_link(carrier, tracking_number: str):
     tracking_url = getattr(carrier.gateway.settings, "tracking_url", None)
 
     return tracking_url.format(tracking_number) if tracking_url is not None else None
+
+
+def process_events(
+    response_events: typing.List[datatypes.TrackingEvent],
+    current_events: typing.List[dict],
+) -> typing.List[dict]:
+    """Merge new tracking events with existing ones, avoiding duplicates by comparing event hashes.
+    Latest events are kept at the top of the list."""
+    if not any(response_events):
+        return current_events
+
+    new_events = lib.to_dict(response_events)
+    if not any(current_events):
+        return sorted(
+            new_events,
+            key=lambda e: f"{e.get('date', '')} {e.get('time', '')}",
+            reverse=True,
+        )
+
+    # Create hash for comparison using lib.to_json
+    event_hashes = {lib.to_json(event): event for event in current_events}
+
+    for event in new_events:
+        event_hash = lib.to_json(event)
+        if event_hash not in event_hashes:
+            event_hashes[event_hash] = event
+
+    # Sort events by date and time in descending order (latest first)
+    return sorted(
+        event_hashes.values(),
+        key=lambda e: f"{e.get('date', '')} {e.get('time', '')}",
+        reverse=True,
+    )

@@ -66,7 +66,9 @@ def update_trackers(
     logger.info("> ending scheduled trackers update")
 
 
-def create_request_batches(trackers: typing.List[models.Tracking]) -> typing.List[RequestBatches]:
+def create_request_batches(
+    trackers: typing.List[models.Tracking],
+) -> typing.List[RequestBatches]:
     start = 0
     end = 10
     batches = []
@@ -128,7 +130,8 @@ def save_tracing_records(request_batches: typing.List[RequestBatches]):
         for request_batch in request_batches:
             gateway, _, __, trackers = request_batch
 
-            if not any(trackers): continue
+            if not any(trackers):
+                continue
 
             context = serializers.get_object_context(trackers[0])
             tracing.bulk_save_tracing_records(gateway.tracer, context=context)
@@ -155,7 +158,7 @@ def save_updated_trackers(
                     changes = []
                     meta = details.meta or {}
                     status = utils.compute_tracking_status(details).value
-                    events = process_events(
+                    events = utils.process_events(
                         response_events=details.events,
                         current_events=tracker.events,
                     )
@@ -222,13 +225,3 @@ def save_updated_trackers(
                     f"failed to update tracker with tracking number: {details.tracking_number}"
                 )
                 logger.error(update_error, exc_info=True)
-
-
-def process_events(
-    response_events: typing.List[TrackingEvent],
-    current_events: typing.List[dict],
-) -> typing.List[dict]:
-    if any(response_events):
-        return lib.to_dict(response_events)
-
-    return current_events
