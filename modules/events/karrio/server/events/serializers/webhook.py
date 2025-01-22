@@ -14,6 +14,12 @@ class WebhookSerializer(WebhookData):
     def update(
         self, instance: models.Webhook, validated_data: dict, **kwargs
     ) -> models.Webhook:
+        if (
+            "disabled" in validated_data
+            and validated_data["disabled"] != instance.disabled
+        ):
+            instance.failure_streak_count = 0
+
         for key, val in validated_data.items():
             setattr(instance, key, val)
 
