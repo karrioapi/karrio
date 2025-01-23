@@ -4,9 +4,9 @@ import { CarrierConnectionsTable, Connection } from "@karrio/admin/components/ca
 import { GetRateSheets_rate_sheets_edges_node as RateSheet } from "@karrio/types/graphql/admin/types";
 import { DeleteConfirmationDialog } from "@karrio/insiders/components/delete-confirmation-dialog";
 import { CarrierConnectionDialog } from "@karrio/insiders/components/carrier-connection-dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@karrio/insiders/components/ui/card";
 import { RateSheetDialog } from "@karrio/insiders/components/rate-sheet-dialog";
 import { RateSheetsTable } from "@karrio/admin/components/rate-sheets-table";
-import { Card, CardContent } from "@karrio/insiders/components/ui/card";
 import { Button } from "@karrio/insiders/components/ui/button";
 import { useToast } from "@karrio/insiders/hooks/use-toast";
 import { trpc } from "@karrio/trpc/client";
@@ -71,6 +71,22 @@ export default function CarrierConnections() {
     });
   };
 
+  const handleCopy = async (text: string, description: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast({
+        title: "Copied to clipboard",
+        description,
+      });
+    } catch (error) {
+      toast({
+        title: "Failed to copy to clipboard",
+        description: "Please copy the text manually",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="p-6">
       <div className="mb-6">
@@ -81,9 +97,14 @@ export default function CarrierConnections() {
 
       <div className="space-y-6">
         <Card>
-          <CardContent className="p-6">
+          <CardHeader>
+            <CardTitle>System Carrier Connections</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Manage system-wide carrier connections that are available to all organizations.
+            </p>
+          </CardHeader>
+          <CardContent>
             <CarrierConnectionsTable
-              title="Carrier Connections"
               onCreateNew={() => setIsEditOpen(true)}
               connections={connections?.edges?.map(edge => ({
                 ...edge.node,
@@ -120,18 +141,22 @@ export default function CarrierConnections() {
                   },
                 });
               }}
-              onCopy={(text, description) => {
-                navigator.clipboard.writeText(text);
-                toast({
-                  title: "Copied to clipboard",
-                  description,
-                });
-              }}
+              onCopy={handleCopy}
             />
           </CardContent>
         </Card>
 
-        <RateSheets />
+        <Card>
+          <CardHeader>
+            <CardTitle>Rate Sheets</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Manage carrier rate sheets and service configurations.
+            </p>
+          </CardHeader>
+          <CardContent>
+            <RateSheets />
+          </CardContent>
+        </Card>
       </div>
 
       <CarrierConnectionDialog
@@ -165,9 +190,7 @@ function RateSheets() {
   const { toast } = useToast();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [selectedRateSheet, setSelectedRateSheet] = useState<RateSheet | null>(
-    null,
-  );
+  const [selectedRateSheet, setSelectedRateSheet] = useState<RateSheet | null>(null);
 
   const { data: rateSheets, isLoading } = trpc.admin.rate_sheets.list.useQuery({
     filter: {},
@@ -216,43 +239,48 @@ function RateSheets() {
     });
   };
 
+  const handleCopy = async (text: string, description: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast({
+        title: "Copied to clipboard",
+        description,
+      });
+    } catch (error) {
+      toast({
+        title: "Failed to copy to clipboard",
+        description: "Please copy the text manually",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div>
-      <Card>
-        <CardContent className="p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Rate Sheets</h2>
-            <Button onClick={() => setIsEditOpen(true)}>Add Rate Sheet</Button>
-          </div>
+      <div className="mb-4 flex items-center justify-between">
+        <Button onClick={() => setIsEditOpen(true)}>Add Rate Sheet</Button>
+      </div>
 
-          <RateSheetsTable
-            rateSheets={rateSheets?.edges as { node: RateSheet }[]}
-            onEdit={(sheet) => {
-              const rateSheetWithMetadata = {
-                ...sheet,
-                metadata: sheet.metadata || {},
-              };
-              setSelectedRateSheet(rateSheetWithMetadata);
-              setIsEditOpen(true);
-            }}
-            onDelete={(sheet) => {
-              const rateSheetWithMetadata = {
-                ...sheet,
-                metadata: sheet.metadata || {},
-              };
-              setSelectedRateSheet(rateSheetWithMetadata);
-              setIsDeleteOpen(true);
-            }}
-            onCopy={(text, description) => {
-              navigator.clipboard.writeText(text);
-              toast({
-                title: "Copied to clipboard",
-                description,
-              });
-            }}
-          />
-        </CardContent>
-      </Card>
+      <RateSheetsTable
+        rateSheets={rateSheets?.edges as { node: RateSheet }[]}
+        onEdit={(sheet) => {
+          const rateSheetWithMetadata = {
+            ...sheet,
+            metadata: sheet.metadata || {},
+          };
+          setSelectedRateSheet(rateSheetWithMetadata);
+          setIsEditOpen(true);
+        }}
+        onDelete={(sheet) => {
+          const rateSheetWithMetadata = {
+            ...sheet,
+            metadata: sheet.metadata || {},
+          };
+          setSelectedRateSheet(rateSheetWithMetadata);
+          setIsDeleteOpen(true);
+        }}
+        onCopy={handleCopy}
+      />
 
       <RateSheetDialog
         open={isEditOpen}

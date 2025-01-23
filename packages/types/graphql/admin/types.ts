@@ -10,6 +10,7 @@
 export interface GetSystemConnections_system_carrier_connections_edges_node {
   id: string;
   carrier_name: string;
+  carrier_id: string;
   display_name: string;
   test_mode: boolean;
   active: boolean;
@@ -56,6 +57,7 @@ export interface GetSystemConnectionsVariables {
 export interface GetSystemConnection_system_carrier_connection {
   id: string;
   carrier_name: string;
+  carrier_id: string;
   display_name: string;
   test_mode: boolean;
   active: boolean;
@@ -90,6 +92,7 @@ export interface CreateSystemConnection_create_system_carrier_connection_errors 
 export interface CreateSystemConnection_create_system_carrier_connection_connection {
   id: string;
   carrier_name: string;
+  carrier_id: string;
   display_name: string;
   test_mode: boolean;
   active: boolean;
@@ -129,6 +132,7 @@ export interface UpdateSystemConnection_update_system_carrier_connection_errors 
 export interface UpdateSystemConnection_update_system_carrier_connection_connection {
   id: string;
   carrier_name: string;
+  carrier_id: string;
   display_name: string;
   test_mode: boolean;
   active: boolean;

@@ -20,17 +20,6 @@ export const createContext = async () => {
     } as any,
   })
 
-  console.log({
-    basePath: url$`${(metadata?.HOST as string) || KARRIO_API}`,
-    headers: {
-      ...(session?.orgId ? { "x-org-id": session.orgId } : {}),
-      ...(session?.testMode ? { "x-test-mode": session.testMode } : {}),
-      ...(session?.accessToken
-        ? { Authorization: `Bearer ${session.accessToken}` }
-        : {}),
-    } as any,
-  })
-
   return {
     karrio,
     session,

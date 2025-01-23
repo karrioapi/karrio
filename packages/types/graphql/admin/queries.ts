@@ -12,6 +12,7 @@ export const GET_SYSTEM_CONNECTIONS = gql`
         node {
           id
           carrier_name
+          carrier_id
           display_name
           test_mode
           active
@@ -38,6 +39,7 @@ export const GET_SYSTEM_CONNECTION = gql`
     system_carrier_connection(id: $id) {
       id
       carrier_name
+      carrier_id
       display_name
       test_mode
       active
@@ -60,6 +62,7 @@ export const CREATE_SYSTEM_CONNECTION = gql`
       connection {
         id
         carrier_name
+        carrier_id
         display_name
         test_mode
         active
@@ -83,6 +86,7 @@ export const UPDATE_SYSTEM_CONNECTION = gql`
       connection {
         id
         carrier_name
+        carrier_id
         display_name
         test_mode
         active

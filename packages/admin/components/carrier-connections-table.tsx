@@ -102,8 +102,16 @@ export function CarrierConnectionsTable({
                     height={40}
                   />
                   <div className="space-y-1">
-                    <div className="font-medium">
-                      {connection.display_name || connection.carrier_name}
+                    <div className="font-medium space-x-1">
+                      <span>{connection.carrier_id}</span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-3 w-3 p-0 hover:bg-transparent"
+                        onClick={() => onCopy(connection.carrier_id, "Carrier ID has been copied to your clipboard")}
+                      >
+                        <Copy className="h-2.5 w-2.5" />
+                      </Button>
                     </div>
                     <div className="flex items-center space-x-1 text-xs text-gray-400">
                       <span>{connection.id}</span>
@@ -111,7 +119,7 @@ export function CarrierConnectionsTable({
                         variant="ghost"
                         size="icon"
                         className="h-3 w-3 p-0 hover:bg-transparent"
-                        onClick={() => onCopy(connection.id, "Carrier ID has been copied to your clipboard")}
+                        onClick={() => onCopy(connection.id, "Connection ID has been copied to your clipboard")}
                       >
                         <Copy className="h-2.5 w-2.5" />
                       </Button>

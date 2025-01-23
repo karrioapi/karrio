@@ -71,7 +71,7 @@ export function AdminSidebar() {
               "flex items-center gap-3 rounded-md px-2 py-2 text-sm text-gray-700 hover:bg-gray-100",
               "focus-visible:bg-gray-100 focus-visible:outline-none",
               pathname === `${basePath}${item.href}` &&
-                "bg-gray-100 font-medium",
+              "bg-gray-100 font-medium",
               item.isDisabled && "pointer-events-none opacity-50",
             )}
           >
