@@ -1,1 +1,1 @@
-export { default } from "@karrio/console/modules/Auth/ForgotPassword";
+export { default } from "@karrio/console/modules/auth/forgot-password";

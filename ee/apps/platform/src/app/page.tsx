@@ -1,1 +1,1 @@
-export { default } from "@karrio/console/modules/Landing";
+export { default } from "@karrio/console/modules/landing";

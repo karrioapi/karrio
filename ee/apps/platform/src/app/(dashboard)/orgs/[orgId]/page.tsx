@@ -1,1 +1,1 @@
-export { default } from "@karrio/console/modules/Projects";
+export { default } from "@karrio/console/modules/projects";

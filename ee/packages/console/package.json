@@ -1,0 +1,44 @@
+{
+  "name": "@karrio/console",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./index.tsx",
+  "types": "./index.tsx",
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "generate:component": "turbo gen react-component",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@auth/prisma-adapter": "^2.7.4",
+    "@karrio/core": "*",
+    "@karrio/insiders": "*",
+    "@karrio/trpc": "*",
+    "@prisma/client": "^5.22.0",
+    "@react-email/components": "^0.0.30",
+    "@stripe/react-stripe-js": "^3.0.0",
+    "@stripe/stripe-js": "^5.2.0",
+    "@tanstack/react-query": "^4.36.1",
+    "@trpc/client": "^10.43.6",
+    "@trpc/next": "^10.43.6",
+    "@trpc/react-query": "^10.43.6",
+    "@trpc/server": "^10.43.6",
+    "pino-pretty": "^13.0.0",
+    "react-email": "^3.0.3",
+    "resend": "^4.0.1",
+    "stripe": "^17.4.0",
+    "superjson": "^2.2.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@karrio/eslint-config-custom": "*",
+    "@karrio/tsconfig": "*",
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.10",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
+    "prisma": "^5.22.0",
+    "tailwindcss": "^3.4.1",
+    "tailwindcss-animate": "^1.0.7"
+  }
+}

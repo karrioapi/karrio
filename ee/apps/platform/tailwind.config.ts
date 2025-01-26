@@ -5,9 +5,9 @@ const config = {
   darkMode: ["class", "[data-theme='dark']"],
   content: [
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
-    "../../platform/packages/console/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "../../platform/packages/console/modules/**/*.{js,ts,jsx,tsx,mdx}",
-    "../../platform/packages/console/layouts/**/*.{js,ts,jsx,tsx,mdx}",
+    "../../packages/console/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "../../packages/console/modules/**/*.{js,ts,jsx,tsx,mdx}",
+    "../../packages/console/layouts/**/*.{js,ts,jsx,tsx,mdx}",
     "../../../packages/insiders/components/**/*.{js,ts,jsx,tsx,mdx}",
     "../../../packages/insiders/modules/**/*.{js,ts,jsx,tsx,mdx}",
     "../../../packages/insiders/layouts/**/*.{js,ts,jsx,tsx,mdx}",

@@ -20,7 +20,7 @@
     "apps/*",
     "packages/*",
     "ee/apps/*",
-    "ee/platform/packages/*"
+    "ee/packages/*"
   ],
   "packageManager": "npm@10.8.2"
 }

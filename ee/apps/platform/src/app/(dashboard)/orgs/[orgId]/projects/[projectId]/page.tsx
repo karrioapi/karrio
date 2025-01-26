@@ -1,1 +1,1 @@
-export { default } from "@karrio/console/modules/Projects/Dashboard";
+export { default } from "@karrio/console/modules/projects/dashboard";

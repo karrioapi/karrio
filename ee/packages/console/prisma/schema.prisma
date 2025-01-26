@@ -1,0 +1,166 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider  = "postgresql"
+    url       = env("DATABASE_URL")
+    directUrl = env("DIRECT_URL")
+}
+
+model User {
+    id            String          @id @default(cuid())
+    name          String?
+    email         String          @unique
+    emailVerified DateTime?
+    image         String?
+    accounts      Account[]
+    sessions      Session[]
+    // Optional for WebAuthn support
+    Authenticator Authenticator[]
+
+    createdAt     DateTime                 @default(now())
+    updatedAt     DateTime                 @updatedAt
+    organizations OrganizationMembership[]
+    invitations   OrganizationInvitation[]
+}
+
+model Account {
+    id                String  @id @default(cuid())
+    userId            String
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String? @db.Text
+    access_token      String? @db.Text
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String? @db.Text
+    session_state     String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([provider, providerAccountId])
+}
+
+model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+    identifier String
+    token      String
+    expires    DateTime
+
+    @@unique([identifier, token])
+}
+
+// Optional for WebAuthn support
+model Authenticator {
+    credentialID         String  @unique
+    userId               String
+    providerAccountId    String
+    credentialPublicKey  String
+    counter              Int
+    credentialDeviceType String
+    credentialBackedUp   Boolean
+    transports           String?
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@id([userId, credentialID])
+}
+
+model Organization {
+    id               String                   @id @default(cuid())
+    name             String
+    stripeCustomerId String?                  @unique
+    subscription     Subscription?
+    createdAt        DateTime                 @default(now())
+    updatedAt        DateTime                 @updatedAt
+    members          OrganizationMembership[]
+    projects         Project[]
+    invitations      OrganizationInvitation[]
+}
+
+model OrganizationMembership {
+    id             String       @id @default(cuid())
+    organizationId String
+    userId         String
+    role           String // "OWNER" | "MEMBER"
+    organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([organizationId, userId])
+}
+
+enum ProjectStatus {
+    PENDING // Initial state when project is created
+    DEPLOYING // Tenant is being created
+    ACTIVE // Tenant is successfully created and operational
+    FAILED // Tenant creation failed
+    UNREACHABLE // Tenant exists but is not responding
+    DELETED // Project has been deleted
+}
+
+model Project {
+    id             String        @id @default(cuid())
+    name           String
+    organizationId String
+    tenantId       String?       @unique // Karrio tenant ID
+    tenantApiKey   String?
+    status         ProjectStatus @default(PENDING)
+    statusMessage  String? // Detailed status message
+    deploymentLogs Json? // Store deployment related logs/events
+    lastPing       DateTime? // Last successful connection to tenant
+    metadata       Json? // Additional metadata
+    createdAt      DateTime      @default(now())
+    updatedAt      DateTime      @updatedAt
+    organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
+
+model Subscription {
+    id                   String       @id @default(cuid())
+    organizationId       String       @unique
+    organization         Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    stripePriceId        String?
+    stripeSubscriptionId String?      @unique
+    status               String
+    currentPeriodEnd     DateTime?
+    createdAt            DateTime     @default(now())
+    updatedAt            DateTime     @updatedAt
+    paymentMethodId      String?
+}
+
+model OrganizationInvitation {
+    id             String       @id @default(cuid())
+    email          String
+    token          String       @unique
+    expires        DateTime
+    organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    organizationId String
+    inviter        User         @relation(fields: [inviterId], references: [id])
+    inviterId      String
+    createdAt      DateTime     @default(now())
+    updatedAt      DateTime     @updatedAt
+
+    @@index([organizationId])
+    @@index([inviterId])
+}

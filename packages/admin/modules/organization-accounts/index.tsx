@@ -369,9 +369,9 @@ export default function OrganizationAccounts() {
                     <DialogFooter>
                       <Button
                         type="submit"
-                        disabled={createOrganization.status === "pending"}
+                        disabled={createOrganization.status === "loading"}
                       >
-                        {createOrganization.status === "pending"
+                        {createOrganization.status === "loading"
                           ? "Creating..."
                           : "Create"}
                       </Button>
@@ -516,9 +516,9 @@ export default function OrganizationAccounts() {
                 <DialogFooter>
                   <Button
                     type="submit"
-                    disabled={updateOrganization.status === "pending"}
+                    disabled={updateOrganization.status === "loading"}
                   >
-                    {updateOrganization.status === "pending"
+                    {updateOrganization.status === "loading"
                       ? "Saving..."
                       : "Save Changes"}
                   </Button>
@@ -560,9 +560,9 @@ export default function OrganizationAccounts() {
                 <Button
                   variant="destructive"
                   onClick={handleDisable}
-                  disabled={disableOrganization.status === "pending"}
+                  disabled={disableOrganization.status === "loading"}
                 >
-                  {disableOrganization.status === "pending"
+                  {disableOrganization.status === "loading"
                     ? "Disabling..."
                     : "Disable Organization"}
                 </Button>
@@ -603,9 +603,9 @@ export default function OrganizationAccounts() {
                 <Button
                   variant="destructive"
                   onClick={handleDelete}
-                  disabled={deleteOrganization.status === "pending"}
+                  disabled={deleteOrganization.status === "loading"}
                 >
-                  {deleteOrganization.status === "pending"
+                  {deleteOrganization.status === "loading"
                     ? "Deleting..."
                     : "Delete Organization"}
                 </Button>

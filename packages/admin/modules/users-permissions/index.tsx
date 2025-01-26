@@ -191,9 +191,9 @@ export default function Page() {
   };
 
   // Fix mutation status checks
-  const isInviting = inviteUser.status === "pending";
-  const isUpdating = updateUser.status === "pending";
-  const isRemoving = removeUser.status === "pending";
+  const isInviting = inviteUser.status === "loading";
+  const isUpdating = updateUser.status === "loading";
+  const isRemoving = removeUser.status === "loading";
 
   if (isLoadingUsers || isLoadingPermissions) {
     return (

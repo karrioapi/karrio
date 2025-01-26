@@ -1,1 +1,1 @@
-export { default } from "@karrio/console/modules/Error/Maintenance";
+export { default } from "@karrio/console/modules/error/maintenance";

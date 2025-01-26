@@ -1,1 +1,1 @@
-export { default } from "@karrio/console/modules/Organizations/Settings";
+export { default } from "@karrio/console/modules/organizations/settings";
