@@ -1,6 +1,7 @@
 # The base image compilation
 FROM python:3.11-slim AS compile-image
 
+ARG REQUIREMENTS=./source.requirements.insiders.txt
 
 RUN apt-get update -y && apt-get install -y gcc
 RUN python -m venv /karrio/venv
@@ -9,18 +10,21 @@ COPY . /temp/app/
 RUN cd /temp/app && \
     pip install --upgrade pip && \
     pip install dumb-init && \
-    pip install -r ./source.requirements.insiders.txt
+    pip install -r ${REQUIREMENTS}
 
 
 # The runtime image
 FROM python:3.11-slim AS build-image
 
+ARG SOURCE="https://github.com/karrioapi/karrio-insiders"
+ARG EDITION="insiders"
+
 LABEL maintainer=hello@karrio.io
-LABEL org.opencontainers.image.title="karrio insiders"
-LABEL org.opencontainers.image.description="karrio insiders runtime image"
+LABEL org.opencontainers.image.title="karrio ${EDITION}"
+LABEL org.opencontainers.image.description="karrio ${EDITION} runtime image"
 LABEL org.opencontainers.image.url="https://karrio.io"
 LABEL org.opencontainers.image.documentation="https://docs.karrio.io"
-LABEL org.opencontainers.image.source="https://github.com/karrioapi/karrio-insiders"
+LABEL org.opencontainers.image.source=${SOURCE}
 LABEL org.opencontainers.image.vendor="team karrio"
 LABEL org.opencontainers.image.authors="hello@karrio.io"
 

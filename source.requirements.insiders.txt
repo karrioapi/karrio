@@ -1,6 +1,6 @@
 --extra-index-url https://karrio.gateway.scarf.sh/simple/
 asgiref==3.8.1
-attrs==24.3.0
+attrs==25.1.0
 backoff==2.2.1
 Brotli==1.1.0
 certifi==2024.12.14
@@ -34,8 +34,8 @@ djangorestframework==3.15.2
 djangorestframework_simplejwt==5.4.0
 drf-api-tracking==1.8.4
 drf-spectacular==0.28.0
-fonttools==4.55.4
-graphql-core==3.2.5
+fonttools==4.55.6
+graphql-core==3.2.6
 gunicorn==23.0.0
 h11==0.14.0
 hiredis==3.1.0
@@ -49,67 +49,67 @@ jsonschema-specifications==2024.10.1
 jstruct==2021.11
 jwcrypto==1.5.6
 karrio @ file://${PWD}/modules/sdk
-karrio.allied_express @ file://${PWD}/modules/connectors/allied_express
-karrio.allied_express_local @ file://${PWD}/modules/connectors/allied_express_local
-karrio.amazon_shipping @ file://${PWD}/modules/connectors/amazon_shipping
-karrio.aramex @ file://${PWD}/modules/connectors/aramex
-karrio.asendia_us @ file://${PWD}/modules/connectors/asendia_us
-karrio.australiapost @ file://${PWD}/modules/connectors/australiapost
-karrio.boxknight @ file://${PWD}/modules/connectors/boxknight
-karrio.bpost @ file://${PWD}/modules/connectors/bpost
-karrio.canadapost @ file://${PWD}/modules/connectors/canadapost
-karrio.canpar @ file://${PWD}/modules/connectors/canpar
-karrio.chronopost @ file://${PWD}/modules/connectors/chronopost
-karrio.colissimo @ file://${PWD}/modules/connectors/colissimo
-karrio.dhl_express @ file://${PWD}/modules/connectors/dhl_express
-karrio.dhl_parcel_de @ file://${PWD}/modules/connectors/dhl_parcel_de
-karrio.dhl_poland @ file://${PWD}/modules/connectors/dhl_poland
-karrio.dhl_universal @ file://${PWD}/modules/connectors/dhl_universal
-karrio.dicom @ file://${PWD}/modules/connectors/dicom
-karrio.dpd @ file://${PWD}/modules/connectors/dpd
-karrio.dpdhl @ file://${PWD}/modules/connectors/dpdhl
-karrio.easypost @ file://${PWD}/modules/connectors/easypost
-karrio.easyship @ file://${PWD}/modules/connectors/easyship
-karrio.eshipper @ file://${PWD}/modules/connectors/eshipper
-karrio.fedex @ file://${PWD}/modules/connectors/fedex
-karrio.fedex_ws @ file://${PWD}/modules/connectors/fedex_ws
-karrio.freightcom @ file://${PWD}/modules/connectors/freightcom
-karrio.generic @ file://${PWD}/modules/connectors/generic
-karrio.geodis @ file://${PWD}/modules/connectors/geodis
-karrio.hay_post @ file://${PWD}/modules/connectors/hay_post
-karrio.laposte @ file://${PWD}/modules/connectors/laposte
-karrio.locate2u @ file://${PWD}/modules/connectors/locate2u
-karrio.nationex @ file://${PWD}/modules/connectors/nationex
-karrio.purolator @ file://${PWD}/modules/connectors/purolator
-karrio.roadie @ file://${PWD}/modules/connectors/roadie
-karrio.royalmail @ file://${PWD}/modules/connectors/royalmail
-karrio.sapient @ file://${PWD}/modules/connectors/sapient
-karrio.seko @ file://${PWD}/modules/connectors/seko
-karrio.sendle @ file://${PWD}/modules/connectors/sendle
-karrio.server @ file://${PWD}/apps/api
-karrio.server.admin @ file://${PWD}/ee/insiders/modules/admin
-karrio.server.apps @ file://${PWD}/ee/insiders/modules/apps
-karrio.server.audit @ file://${PWD}/ee/insiders/modules/audit
-karrio.server.automation @ file://${PWD}/ee/insiders/modules/automation
-karrio.server.cloud @ file://${PWD}/ee/insiders/modules/cloud
-karrio.server.core @ file://${PWD}/modules/core
-karrio.server.data @ file://${PWD}/modules/data
-karrio.server.documents @ file://${PWD}/modules/documents
-karrio.server.events @ file://${PWD}/modules/events
-karrio.server.graph @ file://${PWD}/modules/graph
-karrio.server.manager @ file://${PWD}/modules/manager
-karrio.server.orders @ file://${PWD}/modules/orders
-karrio.server.orgs @ file://${PWD}/ee/insiders/modules/orgs
-karrio.server.pricing @ file://${PWD}/modules/pricing
-karrio.server.proxy @ file://${PWD}/modules/proxy
-karrio.tge @ file://${PWD}/modules/connectors/tge
-karrio.tnt @ file://${PWD}/modules/connectors/tnt
-karrio.ups @ file://${PWD}/modules/connectors/ups
-karrio.usps @ file://${PWD}/modules/connectors/usps
-karrio.usps_international @ file://${PWD}/modules/connectors/usps_international
-karrio.usps_wt @ file://${PWD}/modules/connectors/usps_wt
-karrio.usps_wt_international @ file://${PWD}/modules/connectors/usps_wt_international
-karrio.zoom2u @ file://${PWD}/modules/connectors/zoom2u
+karrio_allied_express @ file://${PWD}/modules/connectors/allied_express
+karrio_allied_express_local @ file://${PWD}/modules/connectors/allied_express_local
+karrio_amazon_shipping @ file://${PWD}/modules/connectors/amazon_shipping
+karrio_aramex @ file://${PWD}/modules/connectors/aramex
+karrio_asendia_us @ file://${PWD}/modules/connectors/asendia_us
+karrio_australiapost @ file://${PWD}/modules/connectors/australiapost
+karrio_boxknight @ file://${PWD}/modules/connectors/boxknight
+karrio_bpost @ file://${PWD}/modules/connectors/bpost
+karrio_canadapost @ file://${PWD}/modules/connectors/canadapost
+karrio_canpar @ file://${PWD}/modules/connectors/canpar
+karrio_chronopost @ file://${PWD}/modules/connectors/chronopost
+karrio_colissimo @ file://${PWD}/modules/connectors/colissimo
+karrio_dhl_express @ file://${PWD}/modules/connectors/dhl_express
+karrio_dhl_parcel_de @ file://${PWD}/modules/connectors/dhl_parcel_de
+karrio_dhl_poland @ file://${PWD}/modules/connectors/dhl_poland
+karrio_dhl_universal @ file://${PWD}/modules/connectors/dhl_universal
+karrio_dicom @ file://${PWD}/modules/connectors/dicom
+karrio_dpd @ file://${PWD}/modules/connectors/dpd
+karrio_dpdhl @ file://${PWD}/modules/connectors/dpdhl
+karrio_easypost @ file://${PWD}/modules/connectors/easypost
+karrio_easyship @ file://${PWD}/modules/connectors/easyship
+karrio_eshipper @ file://${PWD}/modules/connectors/eshipper
+karrio_fedex @ file://${PWD}/modules/connectors/fedex
+karrio_fedex_ws @ file://${PWD}/modules/connectors/fedex_ws
+karrio_freightcom @ file://${PWD}/modules/connectors/freightcom
+karrio_generic @ file://${PWD}/modules/connectors/generic
+karrio_geodis @ file://${PWD}/modules/connectors/geodis
+karrio_hay_post @ file://${PWD}/modules/connectors/hay_post
+karrio_laposte @ file://${PWD}/modules/connectors/laposte
+karrio_locate2u @ file://${PWD}/modules/connectors/locate2u
+karrio_nationex @ file://${PWD}/modules/connectors/nationex
+karrio_purolator @ file://${PWD}/modules/connectors/purolator
+karrio_roadie @ file://${PWD}/modules/connectors/roadie
+karrio_royalmail @ file://${PWD}/modules/connectors/royalmail
+karrio_sapient @ file://${PWD}/modules/connectors/sapient
+karrio_seko @ file://${PWD}/modules/connectors/seko
+karrio_sendle @ file://${PWD}/modules/connectors/sendle
+karrio_server @ file://${PWD}/apps/api
+karrio_server_admin @ file://${PWD}/ee/insiders/modules/admin
+karrio_server_apps @ file://${PWD}/ee/insiders/modules/apps
+karrio_server_audit @ file://${PWD}/ee/insiders/modules/audit
+karrio_server_automation @ file://${PWD}/ee/insiders/modules/automation
+karrio_server_cloud @ file://${PWD}/ee/insiders/modules/cloud
+karrio_server_core @ file://${PWD}/modules/core
+karrio_server_data @ file://${PWD}/modules/data
+karrio_server_documents @ file://${PWD}/modules/documents
+karrio_server_events @ file://${PWD}/modules/events
+karrio_server_graph @ file://${PWD}/modules/graph
+karrio_server_manager @ file://${PWD}/modules/manager
+karrio_server_orders @ file://${PWD}/modules/orders
+karrio_server_orgs @ file://${PWD}/ee/insiders/modules/orgs
+karrio_server_pricing @ file://${PWD}/modules/pricing
+karrio_server_proxy @ file://${PWD}/modules/proxy
+karrio_tge @ file://${PWD}/modules/connectors/tge
+karrio_tnt @ file://${PWD}/modules/connectors/tnt
+karrio_ups @ file://${PWD}/modules/connectors/ups
+karrio_usps @ file://${PWD}/modules/connectors/usps
+karrio_usps_international @ file://${PWD}/modules/connectors/usps_international
+karrio_usps_wt @ file://${PWD}/modules/connectors/usps_wt
+karrio_usps_wt_international @ file://${PWD}/modules/connectors/usps_wt_international
+karrio_zoom2u @ file://${PWD}/modules/connectors/zoom2u
 lxml==4.9.4
 lxml-stubs==0.5.1
 MarkupSafe==3.0.2
@@ -119,7 +119,7 @@ oauthlib==3.2.2
 packaging==24.2
 phonenumbers==8.13.53
 pillow==11.1.0
-posthog==3.9.2
+posthog==3.10.0
 psutil==6.1.1
 psycopg2-binary==2.9.10
 py-soap==2020.3.2
@@ -137,7 +137,7 @@ PyYAML==6.0.2
 pyzint==0.1.10
 qrcode==7.4.2
 redis==5.2.1
-referencing==0.36.1
+referencing==0.36.2
 requests==2.32.3
 rpds-py==0.22.3
 sentry-sdk==2.20.0
