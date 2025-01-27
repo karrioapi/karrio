@@ -138,7 +138,13 @@ export default async function LandingPage() {
                     ],
                     demo: (
                       <div className="aspect-[3/1] relative flex justify-center items-center">
-                        <CarrierNetwork />
+                        <Image
+                          src="/carrier-connection.svg"
+                          alt="Tracking API interface demo"
+                          width={1200}
+                          height={400}
+                          className="object-cover rounded-lg"
+                        />
                       </div>
                     ),
                   },

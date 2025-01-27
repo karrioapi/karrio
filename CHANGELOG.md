@@ -1,3 +1,26 @@
+# Karrio 2024.12.1
+
+## Changes
+
+### Feat
+
+- feat: setup deployment for karrio-platform
+- feat: design platform config page
+- feat: introduce optional customs field to RateRequest unified model for future support of customs declaration at rate level
+- chore: update LICENSE to clarify directories exception as more and more insiders and ee code will be added to the core repository
+- feat: Introduce PRD and Documentation folder to improve AI editors understanding of the project
+- feat(WIP): reimplementing karrio admin with new stack trpc|tailwind|shadcn
+- feat: enrich and improve GraphQL interfaces for rate sheet management
+- feat: introduce @karrio/trpc and dedicated admin packages
+- feat: add user_count to system usage stats
+- feat: Introduce Karrio platform GrapQL client
+- feat: add new components for custom apps
+
+### Fix
+
+- fix: fedex phone number parsing with trimming (#768)
+- fix: admin header design
+
 # Karrio 2024.12
 
 ## Changes
