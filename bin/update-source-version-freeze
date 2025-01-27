@@ -29,7 +29,7 @@ generate_source_requirements() {
                     subdir="ee/insiders/${subdir#../../ee/insiders/}"
                     ;;
                 "karrio-platform")
-                    subdir="ee/platform/${subdir#../../../ee/platform/}"
+                    subdir="ee/platform/${subdir#../../ee/platform/}"
                     ;;
                 "karrio")
                     # Keep the subdirectory as is

@@ -1,0 +1,29 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: platform-tests
+
+on: [push]
+
+jobs:
+  platform-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          token: ${{ secrets.GH_PAT }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 22.x
+      - name: Install
+        run: |
+          npm install -g corepack
+          mkdir -p ~/.volta/bin
+          corepack enable --install-directory ~/.volta/bin
+          npm install
+      - name: Test Build
+        run: |
+          npm run prisma:generate -w ee/apps/platform
+          npm run build -w ee/apps/platform

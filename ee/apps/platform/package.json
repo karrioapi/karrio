@@ -1,0 +1,43 @@
+{
+  "name": "@karrio/platform",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 4002",
+    "dev:cloud": "next dev --port 4002",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "check-types": "tsc --noEmit",
+    "prisma:migrate:create": "cd ../../packages/console && npx prisma migrate dev --create-only",
+    "prisma:migrate": "cd ../../packages/console && npx prisma migrate deploy",
+    "prisma:generate": "cd ../../packages/console && npx prisma generate",
+    "prisma:studio": "cd ../../packages/console && npx prisma studio",
+    "prisma:push": "cd ../../packages/console && npx prisma db push"
+  },
+  "dependencies": {
+    "@karrio/core": "*",
+    "@karrio/hooks": "*",
+    "@karrio/lib": "*",
+    "@karrio/types": "*",
+    "@karrio/ui": "*",
+    "@karrio/insiders": "*",
+    "@karrio/console": "*",
+    "tailwindcss": "^3.4.1",
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.10",
+    "tailwindcss-animate": "^1.0.7",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31"
+  },
+  "devDependencies": {
+    "@turbo/gen": "^1.12.4",
+    "@types/node": "^20.9.0",
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "eslint": "^8.53.0",
+    "eslint-config-next": "14.2.8",
+    "tsconfig": "*",
+    "typescript": "^5.2.2"
+  }
+}

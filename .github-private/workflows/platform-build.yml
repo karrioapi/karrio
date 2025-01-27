@@ -1,0 +1,103 @@
+name: platform-build
+
+on:
+  push:
+    branches: ["karrio-platform"]
+  workflow_dispatch:
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.changes.outputs.version }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            version:
+              - 'apps/api/karrio/server/VERSION'
+
+  platform-server-build:
+    needs: changes
+    if: ${{ needs.changes.outputs.version == 'true' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      version: ${{ steps.get_tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          token: ${{ secrets.GH_PAT }}
+
+      - id: get_tag
+        run: |
+          echo "tag=$(cat ./apps/api/karrio/server/VERSION)" >> "$GITHUB_OUTPUT"
+
+      - name: Build platform server image
+        run: |
+          echo 'Build and push karrio-platform server:${{ steps.get_tag.outputs.tag }}...'
+          echo ${{ secrets.GH_PAT }} | docker login ghcr.io -u USERNAME --password-stdin
+          EDITION=platform \
+          KARRIO_IMAGE=ghcr.io/karrioapi/cloud \
+          ./bin/build-insiders-image ${{ steps.get_tag.outputs.tag }} &&
+          docker push ghcr.io/karrioapi/cloud:${{ steps.get_tag.outputs.tag }} || exit 1
+
+  platform-ecr-publish:
+    needs: platform-server-build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          mask-password: true
+
+      - name: Tag and push to AWS ECR
+        run: |
+          docker pull ghcr.io/karrioapi/cloud:${{ needs.platform-server-build.outputs.version }}
+          docker tag ghcr.io/karrioapi/cloud:${{ needs.platform-server-build.outputs.version }} 563562701692.dkr.ecr.us-east-1.amazonaws.com/karrio/api:${{ needs.platform-server-build.outputs.version }}
+          docker push 563562701692.dkr.ecr.us-east-1.amazonaws.com/karrio/api:${{ needs.platform-server-build.outputs.version }}
+
+  platform-infra-deploy:
+    needs: [platform-server-build, platform-ecr-publish]
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ca-central-1
+
+      - name: Install Pulumi CLI
+        run: |
+          curl -fsSL https://get.pulumi.com | sh
+          export PATH=$PATH:$HOME/.pulumi/bin
+          echo "$HOME/.pulumi/bin" >> $GITHUB_PATH
+
+      - name: Deploy with Pulumi
+        env:
+          PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
+          PULUMI_STATE_BUCKET: ${{ secrets.PULUMI_STATE_BUCKET }}
+        run: |
+          pulumi login s3://${{ secrets.PULUMI_STATE_BUCKET }}
+          cd ee/platform/infra && pulumi up -s karrio-us --skip-preview --yes

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": [
+    "//"
+  ],
+  "tasks": {
+    "build": {
+      "env": [
+        "KARRIO_PLATFORM_API_URL",
+        "KARRIO_PLATFORM_TENANT_API_DOMAIN",
+        "KARRIO_PLATFORM_TENANT_DASHBOARD_DOMAIN",
+        "KARRIO_PLATFORM_API_KEY",
+        "DATABASE_URL",
+        "DIRECT_URL",
+        "NEXTAUTH_URL",
+        "AUTH_SECRET",
+        "GITHUB_CLIENT_ID",
+        "GITHUB_CLIENT_SECRET",
+        "STRIPE_SECRET_KEY",
+        "RESEND_API_KEY"
+      ]
+    }
+  }
+}

@@ -107,6 +107,7 @@ def shipment_request(
         presets=provider_units.PackagePresets,
         shipping_options_initializer=provider_units.shipping_options_initializer,
     )
+
     default_currency = lib.identity(
         options.currency.state
         or settings.default_currency
@@ -191,7 +192,11 @@ def shipment_request(
                 contact=fedex.ResponsiblePartyContactType(
                     personName=lib.text(shipper.contact, max=35),
                     emailAddress=shipper.email,
-                    phoneNumber=(shipper.phone_number or "000-000-0000"),
+                    phoneNumber=lib.text(
+                        shipper.phone_number or "000-000-0000",
+                        max=15,
+                        trim=True,
+                    ),
                     phoneExtension=None,
                     companyName=lib.text(shipper.company_name, max=35),
                     faxNumber=None,
@@ -215,10 +220,12 @@ def shipment_request(
                     contact=fedex.ResponsiblePartyContactType(
                         personName=lib.text(recipient.person_name, max=35),
                         emailAddress=recipient.email,
-                        phoneNumber=(
+                        phoneNumber=lib.text(
                             recipient.phone_number
                             or shipper.phone_number
-                            or "000-000-0000"
+                            or "000-000-0000",
+                            max=15,
+                            trim=True,
                         ),
                         phoneExtension=None,
                         companyName=lib.text(recipient.company_name, max=35),
@@ -254,7 +261,11 @@ def shipment_request(
                     contact=fedex.ResponsiblePartyContactType(
                         personName=lib.text(return_address.contact, max=35),
                         emailAddress=return_address.email,
-                        phoneNumber=return_address.phone_number,
+                        phoneNumber=lib.text(
+                            return_address.phone_number or "000-000-0000",
+                            max=15,
+                            trim=True,
+                        ),
                         phoneExtension=None,
                         companyName=lib.text(return_address.company_name, max=35),
                         faxNumber=None,
@@ -287,7 +298,13 @@ def shipment_request(
                             fedex.ResponsiblePartyContactType(
                                 personName=lib.text(billing_address.contact, max=35),
                                 emailAddress=billing_address.email,
-                                phoneNumber=billing_address.phone_number,
+                                phoneNumber=lib.text(
+                                    billing_address.phone_number
+                                    or shipper.phone_number
+                                    or "000-000-0000",
+                                    max=15,
+                                    trim=True,
+                                ),
                                 phoneExtension=None,
                                 companyName=lib.text(
                                     billing_address.company_name, max=35
@@ -472,7 +489,13 @@ def shipment_request(
                                                 duty_billing_address.contact, max=35
                                             ),
                                             emailAddress=duty_billing_address.email,
-                                            phoneNumber=duty_billing_address.phone_number,
+                                            phoneNumber=lib.text(
+                                                duty_billing_address.phone_number
+                                                or shipper.phone_number
+                                                or "000-000-0000",
+                                                max=15,
+                                                trim=True,
+                                            ),
                                             phoneExtension=None,
                                             companyName=lib.text(
                                                 duty_billing_address.company_name,
