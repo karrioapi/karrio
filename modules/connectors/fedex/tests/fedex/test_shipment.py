@@ -107,7 +107,7 @@ ShipmentPayload = {
     "shipper": {
         "person_name": "Input Your Information",
         "company_name": "Input Your Information",
-        "phone_number": "000-000-0000",
+        "phone_number": "+971 52 954 4379",
         "email": "Input Your Information",
         "address_line1": "Input Your Information",
         "address_line2": "Input Your Information",
@@ -420,7 +420,7 @@ ShipmentRequest = {
                 "companyName": "Input Your Information",
                 "emailAddress": "Input Your Information",
                 "personName": "Input Your Information",
-                "phoneNumber": "000-000-0000",
+                "phoneNumber": "+971529544379",
             },
         },
         "shippingChargesPayment": {
@@ -714,7 +714,7 @@ MultiPieceShipmentRequest = {
                 "companyName": "Input Your Information",
                 "emailAddress": "Input Your Information",
                 "personName": "Input Your Information",
-                "phoneNumber": "000-000-0000",
+                "phoneNumber": "+971529544379",
             },
         },
         "shippingChargesPayment": {

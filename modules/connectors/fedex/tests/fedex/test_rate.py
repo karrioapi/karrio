@@ -51,7 +51,12 @@ if __name__ == "__main__":
 
 
 RatePayload = {
-    "shipper": {"postal_code": "H3N1S4", "country_code": "CA", "state_code": "QC"},
+    "shipper": {
+        "postal_code": "H3N1S4",
+        "country_code": "CA",
+        "state_code": "QC",
+        "phone_number": "+971 52 954 4379",
+    },
     "recipient": {"city": "Lome", "country_code": "TG"},
     "parcels": [
         {

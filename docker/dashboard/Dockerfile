@@ -39,7 +39,7 @@ USER karrio
 
 
 COPY --from=builder /app/apps/dashboard/public ./public
-COPY --from=builder /app/apps/dashboard/next.config.js ./
+COPY --from=builder /app/apps/dashboard/next.config.mjs ./
 COPY --from=builder --chown=karrio:nodejs /app/apps/dashboard/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/dashboard/package.json ./package.json

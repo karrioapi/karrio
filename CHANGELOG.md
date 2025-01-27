@@ -1,3 +1,15 @@
+# Karrio 2024.12.2
+
+## Changes
+
+### Fix
+
+- fix: dashboard build issue with next.config.js
+
+### Chore
+
+- chore: add tests for fedex phone number formatting
+
 # Karrio 2024.12.1
 
 ## Changes
