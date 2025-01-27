@@ -7,15 +7,19 @@ class STRINGFORMAT:
         *values,
         join: bool = False,
         separator: str = " ",
+        trim: bool = False,
     ) -> typing.Optional[typing.Union[str, typing.List[str]]]:
         """Concatenate a set of string values into a list of string or a single joined text.
 
         :param values: a set of string values.
         :param join: indicate whether to join into a single string.
         :param separator: the text separator if joined into a single string.
+        :param trim: indicate whether to trim the string values.
         :return: a string, list of string or None.
         """
-        strings = [s for s in values if s not in ["", None]]
+        strings = [
+            "".join(s.split(" ")) if trim else s for s in values if s not in ["", None]
+        ]
 
         if len(strings) == 0:
             return None

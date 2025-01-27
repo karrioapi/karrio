@@ -107,7 +107,7 @@ ShipmentPayload = {
     "shipper": {
         "person_name": "Input Your Information",
         "company_name": "Input Your Information",
-        "phone_number": "Input Your Information",
+        "phone_number": "000-000-0000",
         "email": "Input Your Information",
         "address_line1": "Input Your Information",
         "address_line2": "Input Your Information",
@@ -119,7 +119,7 @@ ShipmentPayload = {
     "recipient": {
         "person_name": "Input Your Information",
         "company_name": "Input Your Information",
-        "phone_number": "Input Your Information",
+        "phone_number": "000-000-0000",
         "email": "Input Your Information",
         "address_line1": "Input Your Information",
         "address_line2": "Input Your Information",
@@ -131,7 +131,7 @@ ShipmentPayload = {
     "billing_address": {
         "person_name": "Input Your Information",
         "company_name": "Input Your Information",
-        "phone_number": "Input Your Information",
+        "phone_number": "000-000-0000",
         "email": "Input Your Information",
         "address_line1": "Input Your Information",
         "address_line2": "Input Your Information",
@@ -171,7 +171,7 @@ ShipmentPaidByRecipientPayload = {
     "shipper": {
         "person_name": "Input Your Information",
         "company_name": "Input Your Information",
-        "phone_number": "Input Your Information",
+        "phone_number": "000-000-0000",
         "email": "Input Your Information",
         "address_line1": "Input Your Information",
         "address_line2": "Input Your Information",
@@ -183,7 +183,7 @@ ShipmentPaidByRecipientPayload = {
     "recipient": {
         "person_name": "Recipient Information",
         "company_name": "Recipient Information",
-        "phone_number": "Recipient Information",
+        "phone_number": "000-000-0000",
         "email": "Recipient Information",
         "address_line1": "Recipient Information",
         "address_line2": "Recipient Information",
@@ -382,7 +382,7 @@ ShipmentRequest = {
                     "companyName": "Input Your Information",
                     "emailAddress": "Input Your Information",
                     "personName": "Input Your Information",
-                    "phoneNumber": "Input Your Information",
+                    "phoneNumber": "000-000-0000",
                 },
             }
         ],
@@ -420,7 +420,7 @@ ShipmentRequest = {
                 "companyName": "Input Your Information",
                 "emailAddress": "Input Your Information",
                 "personName": "Input Your Information",
-                "phoneNumber": "Input Your Information",
+                "phoneNumber": "000-000-0000",
             },
         },
         "shippingChargesPayment": {
@@ -443,7 +443,7 @@ ShipmentRequest = {
                         "companyName": "Input Your Information",
                         "emailAddress": "Input Your Information",
                         "personName": "Input Your Information",
-                        "phoneNumber": "Input Your Information",
+                        "phoneNumber": "000-000-0000",
                     },
                 }
             },
@@ -507,7 +507,7 @@ ShipmentPaidByRecipientRequest = {
                     "companyName": "Recipient Information",
                     "emailAddress": "Recipient Information",
                     "personName": "Recipient Information",
-                    "phoneNumber": "Recipient Information",
+                    "phoneNumber": "000-000-0000",
                 },
             }
         ],
@@ -545,7 +545,7 @@ ShipmentPaidByRecipientRequest = {
                 "companyName": "Input Your Information",
                 "emailAddress": "Input Your Information",
                 "personName": "Input Your Information",
-                "phoneNumber": "Input Your Information",
+                "phoneNumber": "000-000-0000",
             },
         },
         "shippingChargesPayment": {
@@ -568,7 +568,7 @@ ShipmentPaidByRecipientRequest = {
                         "companyName": "Recipient Information",
                         "emailAddress": "Recipient Information",
                         "personName": "Recipient Information",
-                        "phoneNumber": "Recipient Information",
+                        "phoneNumber": "000-000-0000",
                     },
                 }
             },
@@ -654,7 +654,7 @@ MultiPieceShipmentRequest = {
                     "companyName": "Input Your Information",
                     "emailAddress": "Input Your Information",
                     "personName": "Input Your Information",
-                    "phoneNumber": "Input Your Information",
+                    "phoneNumber": "000-000-0000",
                 },
             }
         ],
@@ -714,7 +714,7 @@ MultiPieceShipmentRequest = {
                 "companyName": "Input Your Information",
                 "emailAddress": "Input Your Information",
                 "personName": "Input Your Information",
-                "phoneNumber": "Input Your Information",
+                "phoneNumber": "000-000-0000",
             },
         },
         "shippingChargesPayment": {
@@ -737,7 +737,7 @@ MultiPieceShipmentRequest = {
                         "companyName": "Input Your Information",
                         "emailAddress": "Input Your Information",
                         "personName": "Input Your Information",
-                        "phoneNumber": "Input Your Information",
+                        "phoneNumber": "000-000-0000",
                     },
                 }
             },

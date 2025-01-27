@@ -69,6 +69,7 @@ def text(
     *values: typing.Union[str, None],
     max: int = None,
     separator: str = None,
+    trim: bool = False,
 ) -> typing.Optional[str]:
     """Returns a joined text
 
@@ -82,15 +83,20 @@ def text(
         result3 = text("string text 1", "string text 2", separator=", ")
         print(result3) # "string text 1, string text 2"
 
+        result4 = text("string text 1 ", trim=True)
+        print(result4) # "string text 1"
+
     :param values: a set of string values.
     :param join: indicate whether to join into a single string.
     :param separator: the text separator if joined into a single string.
+    :param trim: indicate whether to trim the string values.
     :return: a string, list of string or None.
     """
     _text = utils.SF.concat_str(
         *values,
         join=True,
         separator=(separator or " "),
+        trim=trim,
     )
 
     if _text is None:
