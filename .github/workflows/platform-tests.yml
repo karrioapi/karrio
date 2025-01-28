@@ -25,5 +25,6 @@ jobs:
           npm install
       - name: Test Build
         run: |
+          cp ee/apps/platform/.env.sample ee/apps/platform/.env
           npm run prisma:generate -w ee/apps/platform
           npm run build -w ee/apps/platform
