@@ -168,18 +168,43 @@ const configsRouter = router({
     .input(
       z.object({
         data: z.object({
+          // Platform Config
+          APP_NAME: z.string().optional(),
+          APP_WEBSITE: z.string().optional(),
+
+          // Email Config
           EMAIL_USE_TLS: z.boolean().optional(),
           EMAIL_HOST_USER: z.string().optional(),
           EMAIL_HOST_PASSWORD: z.string().optional(),
           EMAIL_HOST: z.string().optional(),
           EMAIL_PORT: z.number().optional(),
           EMAIL_FROM_ADDRESS: z.string().optional(),
+
+          // Address Validation Service
           GOOGLE_CLOUD_API_KEY: z.string().optional(),
           CANADAPOST_ADDRESS_COMPLETE_API_KEY: z.string().optional(),
+
+          // Data Retention
           ORDER_DATA_RETENTION: z.number().optional(),
           TRACKER_DATA_RETENTION: z.number().optional(),
           SHIPMENT_DATA_RETENTION: z.number().optional(),
           API_LOGS_DATA_RETENTION: z.number().optional(),
+
+          // System Settings
+          AUDIT_LOGGING: z.boolean().optional(),
+          ALLOW_SIGNUP: z.boolean().optional(),
+          ALLOW_ADMIN_APPROVED_SIGNUP: z.boolean().optional(),
+          ALLOW_MULTI_ACCOUNT: z.boolean().optional(),
+
+          // Feature Flags
+          ADMIN_DASHBOARD: z.boolean().optional(),
+          MULTI_ORGANIZATIONS: z.boolean().optional(),
+          ORDERS_MANAGEMENT: z.boolean().optional(),
+          APPS_MANAGEMENT: z.boolean().optional(),
+          DOCUMENTS_MANAGEMENT: z.boolean().optional(),
+          DATA_IMPORT_EXPORT: z.boolean().optional(),
+          WORKFLOW_MANAGEMENT: z.boolean().optional(),
+          PERSIST_SDK_TRACING: z.boolean().optional(),
         }),
       }),
     )

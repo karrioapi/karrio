@@ -13,7 +13,7 @@ import { Label } from "@karrio/insiders/components/ui/label";
 import { useToast } from "@karrio/insiders/hooks/use-toast";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { trpc } from "@karrio/trpc/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -22,6 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@karrio/insiders/components/ui/dialog";
+import { Pencil, Check, X, ExternalLink, Copy } from "lucide-react";
 
 type ConfigData = {
   EMAIL_USE_TLS: boolean;
@@ -40,6 +41,16 @@ type ConfigData = {
   APP_WEBSITE: string;
   ALLOW_SIGNUP: boolean;
   ALLOW_ADMIN_APPROVED_SIGNUP: boolean;
+  DOCUMENTS_MANAGEMENT: boolean;
+  DATA_IMPORT_EXPORT: boolean;
+  PERSIST_SDK_TRACING: boolean;
+  WORKFLOW_MANAGEMENT: boolean;
+  AUDIT_LOGGING: boolean;
+  ALLOW_MULTI_ACCOUNT: boolean;
+  ADMIN_DASHBOARD: boolean;
+  ORDERS_MANAGEMENT: boolean;
+  APPS_MANAGEMENT: boolean;
+  MULTI_ORGANIZATIONS: boolean;
 };
 
 type ConfigResponse = {
@@ -59,6 +70,16 @@ type ConfigResponse = {
   APP_WEBSITE: string | null;
   ALLOW_SIGNUP: boolean | null;
   ALLOW_ADMIN_APPROVED_SIGNUP: boolean | null;
+  DOCUMENTS_MANAGEMENT: boolean | null;
+  DATA_IMPORT_EXPORT: boolean | null;
+  PERSIST_SDK_TRACING: boolean | null;
+  WORKFLOW_MANAGEMENT: boolean | null;
+  AUDIT_LOGGING: boolean | null;
+  ALLOW_MULTI_ACCOUNT: boolean | null;
+  ADMIN_DASHBOARD: boolean | null;
+  ORDERS_MANAGEMENT: boolean | null;
+  APPS_MANAGEMENT: boolean | null;
+  MULTI_ORGANIZATIONS: boolean | null;
 };
 
 const defaultConfig: ConfigData = {
@@ -78,9 +99,19 @@ const defaultConfig: ConfigData = {
   APP_WEBSITE: "",
   ALLOW_SIGNUP: true,
   ALLOW_ADMIN_APPROVED_SIGNUP: false,
+  DOCUMENTS_MANAGEMENT: false,
+  DATA_IMPORT_EXPORT: false,
+  PERSIST_SDK_TRACING: false,
+  WORKFLOW_MANAGEMENT: false,
+  AUDIT_LOGGING: false,
+  ALLOW_MULTI_ACCOUNT: false,
+  ADMIN_DASHBOARD: false,
+  ORDERS_MANAGEMENT: false,
+  APPS_MANAGEMENT: false,
+  MULTI_ORGANIZATIONS: false,
 };
 
-type EditSection = 'email' | 'administration' | 'data_retention' | 'api_keys' | null;
+type EditSection = 'email' | 'administration' | 'data_retention' | 'api_keys' | 'features' | 'platform' | null;
 
 export default function PlatformDetails() {
   const { toast } = useToast();
@@ -117,43 +148,148 @@ export default function PlatformDetails() {
 
   return (
     <div className="p-6">
-      <div className="mb-6">
+      <div className="mb-8">
         <h1 className="text-2xl font-semibold tracking-tight">
           Platform Overview
         </h1>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Platform Config */}
         <Card>
-          <CardHeader>
+          <CardHeader className="space-y-2">
             <CardTitle>Platform Details</CardTitle>
             <p className="text-sm text-muted-foreground">
               Overview of your platform configuration and API endpoints.
             </p>
           </CardHeader>
           <CardContent>
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-              <div className="p-4 space-y-3">
-                <div>
-                  <Label className="text-xs text-muted-foreground">Platform Name</Label>
-                  <p className="text-sm font-medium">{metadata?.APP_NAME}</p>
+            <div className="rounded-lg border bg-card text-card-foreground shadow-sm mb-6">
+              <div className="p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label className="text-xs text-muted-foreground">Platform Name</Label>
+                    <p className="text-sm font-medium mt-1">{currentConfig.APP_NAME || metadata?.APP_NAME}</p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setEditSection('platform')}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
                 </div>
                 <div>
                   <Label className="text-xs text-muted-foreground">Platform Website</Label>
-                  <p className="text-sm font-medium">{metadata?.APP_WEBSITE}</p>
+                  <div className="flex items-center gap-2 mt-1 group">
+                    <p className="text-sm font-medium">{currentConfig.APP_WEBSITE || metadata?.APP_WEBSITE}</p>
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => {
+                          navigator.clipboard.writeText(currentConfig.APP_WEBSITE || metadata?.APP_WEBSITE || "");
+                          toast({ title: "Copied to clipboard" });
+                        }}
+                      >
+                        <Copy className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => window.open(currentConfig.APP_WEBSITE || metadata?.APP_WEBSITE, '_blank')}
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  </div>
                 </div>
+              </div>
+            </div>
+            <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+              <div className="p-6 space-y-4">
                 <div>
                   <Label className="text-xs text-muted-foreground">API Host</Label>
-                  <p className="text-sm font-medium">{metadata?.HOST}</p>
+                  <div className="flex items-center gap-2 mt-1 group">
+                    <p className="text-sm font-medium">{metadata?.HOST}</p>
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => {
+                          navigator.clipboard.writeText(metadata?.HOST || "");
+                          toast({ title: "Copied to clipboard" });
+                        }}
+                      >
+                        <Copy className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => window.open(metadata?.HOST, '_blank')}
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <Label className="text-xs text-muted-foreground">GraphQL Endpoint</Label>
-                  <p className="text-sm font-medium">{metadata?.GRAPHQL}</p>
+                  <div className="flex items-center gap-2 mt-1 group">
+                    <p className="text-sm font-medium">{metadata?.GRAPHQL}</p>
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => {
+                          navigator.clipboard.writeText(metadata?.GRAPHQL || "");
+                          toast({ title: "Copied to clipboard" });
+                        }}
+                      >
+                        <Copy className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => window.open(metadata?.GRAPHQL, '_blank')}
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <Label className="text-xs text-muted-foreground">OpenAPI Endpoint</Label>
-                  <p className="text-sm font-medium">{metadata?.OPENAPI}</p>
+                  <div className="flex items-center gap-2 mt-1 group">
+                    <p className="text-sm font-medium">{metadata?.OPENAPI}</p>
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => {
+                          navigator.clipboard.writeText(metadata?.OPENAPI || "");
+                          toast({ title: "Copied to clipboard" });
+                        }}
+                      >
+                        <Copy className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => window.open(metadata?.OPENAPI, '_blank')}
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -162,11 +298,20 @@ export default function PlatformDetails() {
 
         {/* Administration */}
         <Card>
-          <CardHeader>
-            <CardTitle>Administration</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Configure user access and platform behavior settings.
-            </p>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <div className="space-y-2">
+              <CardTitle>Administration</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Configure user access and platform behavior settings.
+              </p>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setEditSection('administration')}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
           </CardHeader>
           <CardContent>
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
@@ -176,30 +321,113 @@ export default function PlatformDetails() {
                     <Label>Allow Signup</Label>
                     <p className="text-sm text-muted-foreground">Allow user signup</p>
                   </div>
-                  <Switch checked={currentConfig.ALLOW_SIGNUP} disabled />
+                  {currentConfig.ALLOW_SIGNUP ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <X className="h-4 w-4 text-muted-foreground" />
+                  )}
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
                     <Label>Admin Approved Signup</Label>
                     <p className="text-sm text-muted-foreground">User signup requires admin approval</p>
                   </div>
-                  <Switch checked={currentConfig.ALLOW_ADMIN_APPROVED_SIGNUP} disabled />
+                  {currentConfig.ALLOW_ADMIN_APPROVED_SIGNUP ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <X className="h-4 w-4 text-muted-foreground" />
+                  )}
                 </div>
               </div>
             </div>
-            <div className="mt-4 flex justify-end">
-              <Button onClick={() => setEditSection('administration')}>Edit Administration Settings</Button>
+          </CardContent>
+        </Card>
+
+        {/* Features */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <div>
+              <CardTitle>Features</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Configure platform features and capabilities.
+              </p>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setEditSection('features')}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+              <div className="p-6 space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Documents Management</Label>
+                    <p className="text-sm text-muted-foreground">Enable documents management</p>
+                  </div>
+                  {currentConfig.DOCUMENTS_MANAGEMENT ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <X className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Data Import/Export</Label>
+                    <p className="text-sm text-muted-foreground">Enable data import/export</p>
+                  </div>
+                  {currentConfig.DATA_IMPORT_EXPORT ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <X className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Persist SDK Tracing</Label>
+                    <p className="text-sm text-muted-foreground">Persist SDK tracing</p>
+                  </div>
+                  {currentConfig.PERSIST_SDK_TRACING ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <X className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Workflow Management</Label>
+                    <p className="text-sm text-muted-foreground">Enable workflow management</p>
+                  </div>
+                  {currentConfig.WORKFLOW_MANAGEMENT ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <X className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Email Config */}
         <Card>
-          <CardHeader>
-            <CardTitle>Email Configuration</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Configure SMTP settings for sending system emails and notifications.
-            </p>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <div>
+              <CardTitle>Email Configuration</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Configure SMTP settings for sending system emails and notifications.
+              </p>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setEditSection('email')}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
           </CardHeader>
           <CardContent>
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
@@ -224,19 +452,25 @@ export default function PlatformDetails() {
                 </div>
               </div>
             </div>
-            <div className="mt-4 flex justify-end">
-              <Button onClick={() => setEditSection('email')}>Edit Email Settings</Button>
-            </div>
           </CardContent>
         </Card>
 
         {/* Data Retention */}
         <Card>
-          <CardHeader>
-            <CardTitle>Data Retention</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Set retention periods for different types of data before automatic cleanup.
-            </p>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <div>
+              <CardTitle>Data Retention</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Set retention periods for different types of data before automatic cleanup.
+              </p>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setEditSection('data_retention')}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
           </CardHeader>
           <CardContent>
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
@@ -257,19 +491,25 @@ export default function PlatformDetails() {
                 </div>
               </div>
             </div>
-            <div className="mt-4 flex justify-end">
-              <Button onClick={() => setEditSection('data_retention')}>Edit Retention Settings</Button>
-            </div>
           </CardContent>
         </Card>
 
         {/* API Keys */}
         <Card>
-          <CardHeader>
-            <CardTitle>Address Validation & Autocomplete</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Configure third-party services for address validation and autocomplete functionality.
-            </p>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <div>
+              <CardTitle>Address Validation & Autocomplete</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Configure third-party services for address validation and autocomplete functionality.
+              </p>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setEditSection('api_keys')}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
           </CardHeader>
           <CardContent>
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
@@ -287,9 +527,6 @@ export default function PlatformDetails() {
                   </p>
                 </div>
               </div>
-            </div>
-            <div className="mt-4 flex justify-end">
-              <Button onClick={() => setEditSection('api_keys')}>Edit API Keys</Button>
             </div>
           </CardContent>
         </Card>
@@ -318,14 +555,28 @@ function EditDialog({
 }) {
   const [formData, setFormData] = useState<ConfigData>(configs);
 
+  useEffect(() => {
+    setFormData(configs);
+  }, [configs, section]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const data: Partial<ConfigData> = {};
 
     switch (section) {
+      case 'platform':
+        data.APP_NAME = formData.APP_NAME;
+        data.APP_WEBSITE = formData.APP_WEBSITE;
+        break;
       case 'administration':
         data.ALLOW_SIGNUP = formData.ALLOW_SIGNUP;
         data.ALLOW_ADMIN_APPROVED_SIGNUP = formData.ALLOW_ADMIN_APPROVED_SIGNUP;
+        data.AUDIT_LOGGING = formData.AUDIT_LOGGING;
+        data.ALLOW_MULTI_ACCOUNT = formData.ALLOW_MULTI_ACCOUNT;
+        data.ADMIN_DASHBOARD = formData.ADMIN_DASHBOARD;
+        data.ORDERS_MANAGEMENT = formData.ORDERS_MANAGEMENT;
+        data.APPS_MANAGEMENT = formData.APPS_MANAGEMENT;
+        data.MULTI_ORGANIZATIONS = formData.MULTI_ORGANIZATIONS;
         break;
       case 'email':
         data.EMAIL_USE_TLS = formData.EMAIL_USE_TLS;
@@ -344,6 +595,12 @@ function EditDialog({
       case 'api_keys':
         data.GOOGLE_CLOUD_API_KEY = formData.GOOGLE_CLOUD_API_KEY;
         data.CANADAPOST_ADDRESS_COMPLETE_API_KEY = formData.CANADAPOST_ADDRESS_COMPLETE_API_KEY;
+        break;
+      case 'features':
+        data.DOCUMENTS_MANAGEMENT = formData.DOCUMENTS_MANAGEMENT;
+        data.DATA_IMPORT_EXPORT = formData.DATA_IMPORT_EXPORT;
+        data.PERSIST_SDK_TRACING = formData.PERSIST_SDK_TRACING;
+        data.WORKFLOW_MANAGEMENT = formData.WORKFLOW_MANAGEMENT;
         break;
     }
 
@@ -377,6 +634,66 @@ function EditDialog({
               <Switch
                 checked={formData.ALLOW_ADMIN_APPROVED_SIGNUP}
                 onCheckedChange={(checked) => handleChange('ALLOW_ADMIN_APPROVED_SIGNUP', checked)}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Audit Logging</Label>
+                <p className="text-sm text-muted-foreground">Enable audit logging</p>
+              </div>
+              <Switch
+                checked={formData.AUDIT_LOGGING}
+                onCheckedChange={(checked) => handleChange('AUDIT_LOGGING', checked)}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Multi Account</Label>
+                <p className="text-sm text-muted-foreground">Allow multiple accounts per user</p>
+              </div>
+              <Switch
+                checked={formData.ALLOW_MULTI_ACCOUNT}
+                onCheckedChange={(checked) => handleChange('ALLOW_MULTI_ACCOUNT', checked)}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Admin Dashboard</Label>
+                <p className="text-sm text-muted-foreground">Enable admin dashboard</p>
+              </div>
+              <Switch
+                checked={formData.ADMIN_DASHBOARD}
+                onCheckedChange={(checked) => handleChange('ADMIN_DASHBOARD', checked)}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Orders Management</Label>
+                <p className="text-sm text-muted-foreground">Enable orders management</p>
+              </div>
+              <Switch
+                checked={formData.ORDERS_MANAGEMENT}
+                onCheckedChange={(checked) => handleChange('ORDERS_MANAGEMENT', checked)}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Apps Management</Label>
+                <p className="text-sm text-muted-foreground">Enable apps management</p>
+              </div>
+              <Switch
+                checked={formData.APPS_MANAGEMENT}
+                onCheckedChange={(checked) => handleChange('APPS_MANAGEMENT', checked)}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Multi Organizations</Label>
+                <p className="text-sm text-muted-foreground">Enable multi-organization support</p>
+              </div>
+              <Switch
+                checked={formData.MULTI_ORGANIZATIONS}
+                onCheckedChange={(checked) => handleChange('MULTI_ORGANIZATIONS', checked)}
               />
             </div>
           </div>
@@ -487,7 +804,7 @@ function EditDialog({
               <Label htmlFor="GOOGLE_CLOUD_API_KEY">Google Cloud API Key</Label>
               <Input
                 id="GOOGLE_CLOUD_API_KEY"
-                type="password"
+                type="text"
                 value={formData.GOOGLE_CLOUD_API_KEY || ""}
                 onChange={(e) => handleChange("GOOGLE_CLOUD_API_KEY", e.target.value)}
               />
@@ -496,9 +813,79 @@ function EditDialog({
               <Label htmlFor="CANADAPOST_ADDRESS_COMPLETE_API_KEY">Canada Post Address Complete API Key</Label>
               <Input
                 id="CANADAPOST_ADDRESS_COMPLETE_API_KEY"
-                type="password"
+                type="text"
                 value={formData.CANADAPOST_ADDRESS_COMPLETE_API_KEY || ""}
                 onChange={(e) => handleChange("CANADAPOST_ADDRESS_COMPLETE_API_KEY", e.target.value)}
+              />
+            </div>
+          </div>
+        );
+
+      case 'features':
+        return (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Documents Management</Label>
+                <p className="text-sm text-muted-foreground">Enable documents management</p>
+              </div>
+              <Switch
+                checked={formData.DOCUMENTS_MANAGEMENT}
+                onCheckedChange={(checked) => handleChange("DOCUMENTS_MANAGEMENT", checked)}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Data Import/Export</Label>
+                <p className="text-sm text-muted-foreground">Enable data import/export</p>
+              </div>
+              <Switch
+                checked={formData.DATA_IMPORT_EXPORT}
+                onCheckedChange={(checked) => handleChange("DATA_IMPORT_EXPORT", checked)}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Persist SDK Tracing</Label>
+                <p className="text-sm text-muted-foreground">Persist SDK tracing</p>
+              </div>
+              <Switch
+                checked={formData.PERSIST_SDK_TRACING}
+                onCheckedChange={(checked) => handleChange("PERSIST_SDK_TRACING", checked)}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Workflow Management</Label>
+                <p className="text-sm text-muted-foreground">Enable workflow management</p>
+              </div>
+              <Switch
+                checked={formData.WORKFLOW_MANAGEMENT}
+                onCheckedChange={(checked) => handleChange("WORKFLOW_MANAGEMENT", checked)}
+              />
+            </div>
+          </div>
+        );
+
+      case 'platform':
+        return (
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="APP_NAME">Platform Name</Label>
+              <Input
+                id="APP_NAME"
+                placeholder="My Platform"
+                value={formData.APP_NAME || ""}
+                onChange={(e) => handleChange("APP_NAME", e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="APP_WEBSITE">Platform Website</Label>
+              <Input
+                id="APP_WEBSITE"
+                placeholder="https://example.com"
+                value={formData.APP_WEBSITE || ""}
+                onChange={(e) => handleChange("APP_WEBSITE", e.target.value)}
               />
             </div>
           </div>
@@ -514,22 +901,24 @@ function EditDialog({
     email: 'Edit Email Settings',
     data_retention: 'Edit Data Retention Settings',
     api_keys: 'Edit API Keys',
+    features: 'Edit Features',
+    platform: 'Edit Platform Details',
   };
 
   if (!section) return null;
 
   return (
     <Dialog open={!!section} onOpenChange={() => onClose()}>
-      <DialogContent>
-        <DialogHeader>
+      <DialogContent className="sm:max-w-[500px]">
+        <DialogHeader className="space-y-2">
           <DialogTitle>{titles[section]}</DialogTitle>
           <DialogDescription>
             Update your platform settings.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="mt-4">
           {renderContent()}
-          <DialogFooter className="mt-6">
+          <DialogFooter className="mt-8">
             <Button type="submit">Save Changes</Button>
           </DialogFooter>
         </form>
