@@ -62,6 +62,25 @@ import type {
   DisableOrganizationAccount,
   DeleteOrganizationAccount,
 } from "@karrio/types/graphql/admin/types";
+import { TRPCError } from "@trpc/server";
+import { CarrierNameEnum } from "@karrio/types/graphql/admin/types";
+
+interface GraphQLError {
+  field: string;
+  messages: string[];
+}
+
+function handleGraphQLErrors(errors: GraphQLError[] | null) {
+  if (errors && errors.length > 0) {
+    const errorMessage = errors
+      .map(error => `${error.field}: ${error.messages.join(", ")}`)
+      .join("\n");
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: errorMessage,
+    });
+  }
+}
 
 const usersRouter = router({
   list: protectedProcedure
@@ -549,6 +568,8 @@ const systemConnectionsRouter = router({
           metadata_key: z.string().optional(),
           metadata_value: z.string().optional(),
           carrier_name: z.array(z.string()).optional(),
+          offset: z.number().optional(),
+          first: z.number().optional(),
         }).optional(),
       })
     )
@@ -560,68 +581,85 @@ const systemConnectionsRouter = router({
           filter: input.filter,
         },
       );
-
       return system_carrier_connections;
     }),
   get: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { system_carrier_connection } =
-        await client.admin.request<GetSystemConnection>(
-          gqlstr(GET_SYSTEM_CONNECTION),
-          { id: input.id },
-        );
+      const { system_carrier_connection } = await client.admin.request<GetSystemConnection>(
+        gqlstr(GET_SYSTEM_CONNECTION),
+        { id: input.id },
+      );
       return system_carrier_connection;
     }),
   create: protectedProcedure
     .input(
       z.object({
         data: z.object({
-          carrier_name: z.string(),
-          display_name: z.string(),
-          test_mode: z.boolean().optional(),
+          carrier_name: z.nativeEnum(CarrierNameEnum),
+          carrier_id: z.string(),
+          credentials: z.record(z.any()),
           active: z.boolean().optional(),
-          capabilities: z.array(z.string()).optional(),
-          credentials: z.record(z.any()).optional(),
           config: z.record(z.any()).optional(),
           metadata: z.record(z.any()).optional(),
+          capabilities: z.array(z.string()).optional(),
         }),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { create_system_carrier_connection } =
-        await client.admin.request<CreateSystemConnection>(
-          gqlstr(CREATE_SYSTEM_CONNECTION),
-          { data: input.data },
-        );
-      return create_system_carrier_connection;
+      const { create_system_carrier_connection } = await client.admin.request<CreateSystemConnection>(
+        gqlstr(CREATE_SYSTEM_CONNECTION),
+        {
+          data: {
+            carrier_name: input.data.carrier_name,
+            carrier_id: input.data.carrier_id,
+            credentials: input.data.credentials,
+            active: input.data.active,
+            config: input.data.config || {},
+            metadata: input.data.metadata || {},
+            capabilities: input.data.capabilities || [],
+          }
+        },
+      );
+
+      handleGraphQLErrors(create_system_carrier_connection.errors);
+      return create_system_carrier_connection.connection;
     }),
   update: protectedProcedure
     .input(
       z.object({
         data: z.object({
           id: z.string(),
-          carrier_name: z.string().optional(),
-          display_name: z.string().optional(),
-          test_mode: z.boolean().optional(),
           active: z.boolean().optional(),
-          capabilities: z.array(z.string()).optional(),
+          carrier_id: z.string().optional(),
           credentials: z.record(z.any()).optional(),
           config: z.record(z.any()).optional(),
           metadata: z.record(z.any()).optional(),
+          capabilities: z.array(z.string()).optional(),
         }),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { update_system_carrier_connection } =
-        await client.admin.request<UpdateSystemConnection>(
-          gqlstr(UPDATE_SYSTEM_CONNECTION),
-          { data: input.data },
-        );
-      return update_system_carrier_connection;
+      const { update_system_carrier_connection } = await client.admin.request<UpdateSystemConnection>(
+        gqlstr(UPDATE_SYSTEM_CONNECTION),
+        {
+          data: {
+            id: input.data.id,
+            active: input.data.active,
+            carrier_id: input.data.carrier_id,
+            credentials: input.data.credentials,
+            config: input.data.config,
+            metadata: input.data.metadata,
+            capabilities: input.data.capabilities,
+          }
+        },
+      );
+
+      handleGraphQLErrors(update_system_carrier_connection.errors);
+      return update_system_carrier_connection.connection;
     }),
   delete: protectedProcedure
     .input(
@@ -633,12 +671,13 @@ const systemConnectionsRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { delete_system_carrier_connection } =
-        await client.admin.request<DeleteSystemConnection>(
-          gqlstr(DELETE_SYSTEM_CONNECTION),
-          { data: input.data },
-        );
-      return delete_system_carrier_connection;
+      const { delete_system_carrier_connection } = await client.admin.request<DeleteSystemConnection>(
+        gqlstr(DELETE_SYSTEM_CONNECTION),
+        { data: input.data },
+      );
+
+      handleGraphQLErrors(delete_system_carrier_connection.errors);
+      return { id: delete_system_carrier_connection.id };
     }),
 });
 

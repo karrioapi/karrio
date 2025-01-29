@@ -1,5 +1,3 @@
-
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -1718,10 +1716,15 @@ export enum CountryCodeEnum {
 
 // null
 export interface CarrierFilter {
+  offset?: number | null;
+  first?: number | null;
+  after?: string | null;
+  before?: string | null;
   active?: boolean | null;
   metadata_key?: string | null;
   metadata_value?: string | null;
   carrier_name?: string[] | null;
+  order_by?: string | null;
 }
 
 // null

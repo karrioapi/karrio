@@ -78,7 +78,7 @@ class AddressFilter(TemplateFilter):
 
 
 @strawberry.input
-class CarrierFilter(utils.BaseInput):
+class CarrierFilter(utils.Paginated):
     active: typing.Optional[bool] = strawberry.UNSET
     metadata_key: typing.Optional[str] = strawberry.UNSET
     metadata_value: typing.Optional[str] = strawberry.UNSET
