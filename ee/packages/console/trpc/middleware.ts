@@ -21,14 +21,14 @@ export const isAuthed = middleware(async ({ ctx, next }) => {
 export const requireRole = (roles: string[]) =>
   middleware(async ({ ctx, next, input }) => {
     const session = ctx.session as Session | null;
-    const reqInput = input as { orgId?: string; organizationId?: string };
-    const organizationId = reqInput?.orgId || reqInput?.organizationId;
+    const reqInput = input as { orgId?: string };
+    const orgId = reqInput?.orgId;
 
     if (!session?.user) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
 
-    if (!organizationId) {
+    if (!orgId) {
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: "Organization ID is required",
@@ -38,8 +38,8 @@ export const requireRole = (roles: string[]) =>
     // Get user's role in this specific organization
     const membership = await prisma.organizationMembership.findUnique({
       where: {
-        organizationId_userId: {
-          organizationId,
+        orgId_userId: {
+          orgId,
           userId: session.user.id,
         },
       },
@@ -52,17 +52,23 @@ export const requireRole = (roles: string[]) =>
       });
     }
 
-    return next();
+    return next({
+      ctx: {
+        ...ctx,
+        session,
+        user: session.user,
+      },
+    });
   });
 
-export const requireSubscription = (organizationId: string) =>
+export const requireSubscription = (orgId: string) =>
   middleware(async ({ ctx, next }) => {
     if (!ctx.session) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
 
     const org = await prisma.organization.findUnique({
-      where: { id: organizationId },
+      where: { id: orgId },
       include: { subscription: true },
     });
 

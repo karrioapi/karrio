@@ -137,7 +137,7 @@ export default function ConnectedAccounts() {
   const { data: project, isLoading: isProjectLoading } =
     trpc.projects.get.useQuery({
       id: params.projectId,
-      organizationId: params.orgId as string,
+      orgId: params.orgId as string,
     });
 
   const { data: accounts, refetch } =
@@ -247,10 +247,10 @@ export default function ConnectedAccounts() {
                             key={column.id}
                             className={
                               column.id === "volume" ||
-                              column.id === "members" ||
-                              column.id === "connected" ||
-                              column.id === "shipments" ||
-                              column.id === "trackers"
+                                column.id === "members" ||
+                                column.id === "connected" ||
+                                column.id === "shipments" ||
+                                column.id === "trackers"
                                 ? "text-right"
                                 : ""
                             }
@@ -271,10 +271,10 @@ export default function ConnectedAccounts() {
                               key={`${edge.node.id}-${column.id}`}
                               className={
                                 column.id === "volume" ||
-                                column.id === "members" ||
-                                column.id === "connected" ||
-                                column.id === "shipments" ||
-                                column.id === "trackers"
+                                  column.id === "members" ||
+                                  column.id === "connected" ||
+                                  column.id === "shipments" ||
+                                  column.id === "trackers"
                                   ? "text-right"
                                   : ""
                               }
@@ -286,18 +286,18 @@ export default function ConnectedAccounts() {
                       ))}
                       {(!paginatedAccounts ||
                         paginatedAccounts.length === 0) && (
-                        <TableRow>
-                          <TableCell
-                            colSpan={visibleColumns.length}
-                            className="h-32 text-center"
-                          >
-                            <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                              <AlertTriangle className="h-8 w-8" />
-                              <p>No connected accounts found</p>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      )}
+                          <TableRow>
+                            <TableCell
+                              colSpan={visibleColumns.length}
+                              className="h-32 text-center"
+                            >
+                              <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                                <AlertTriangle className="h-8 w-8" />
+                                <p>No connected accounts found</p>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        )}
                     </TableBody>
                   </Table>
                 </div>

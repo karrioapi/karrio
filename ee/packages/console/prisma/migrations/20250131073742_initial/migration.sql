@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "ProjectStatus" AS ENUM ('PENDING', 'DEPLOYING', 'ACTIVE', 'FAILED', 'UNREACHABLE', 'DELETED');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
@@ -78,7 +81,7 @@ CREATE TABLE "Organization" (
 -- CreateTable
 CREATE TABLE "OrganizationMembership" (
     "id" TEXT NOT NULL,
-    "organizationId" TEXT NOT NULL,
+    "orgId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "role" TEXT NOT NULL,
 
@@ -89,9 +92,14 @@ CREATE TABLE "OrganizationMembership" (
 CREATE TABLE "Project" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "organizationId" TEXT NOT NULL,
+    "orgId" TEXT NOT NULL,
     "tenantId" TEXT,
     "tenantApiKey" TEXT,
+    "status" "ProjectStatus" NOT NULL DEFAULT 'PENDING',
+    "statusMessage" TEXT,
+    "deploymentLogs" JSONB,
+    "lastPing" TIMESTAMP(3),
+    "metadata" JSONB,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -101,7 +109,7 @@ CREATE TABLE "Project" (
 -- CreateTable
 CREATE TABLE "Subscription" (
     "id" TEXT NOT NULL,
-    "organizationId" TEXT NOT NULL,
+    "orgId" TEXT NOT NULL,
     "stripePriceId" TEXT,
     "stripeSubscriptionId" TEXT,
     "status" TEXT NOT NULL,
@@ -119,7 +127,7 @@ CREATE TABLE "OrganizationInvitation" (
     "email" TEXT NOT NULL,
     "token" TEXT NOT NULL,
     "expires" TIMESTAMP(3) NOT NULL,
-    "organizationId" TEXT NOT NULL,
+    "orgId" TEXT NOT NULL,
     "inviterId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -146,13 +154,13 @@ CREATE UNIQUE INDEX "Authenticator_credentialID_key" ON "Authenticator"("credent
 CREATE UNIQUE INDEX "Organization_stripeCustomerId_key" ON "Organization"("stripeCustomerId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "OrganizationMembership_organizationId_userId_key" ON "OrganizationMembership"("organizationId", "userId");
+CREATE UNIQUE INDEX "OrganizationMembership_orgId_userId_key" ON "OrganizationMembership"("orgId", "userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Project_tenantId_key" ON "Project"("tenantId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Subscription_organizationId_key" ON "Subscription"("organizationId");
+CREATE UNIQUE INDEX "Subscription_orgId_key" ON "Subscription"("orgId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Subscription_stripeSubscriptionId_key" ON "Subscription"("stripeSubscriptionId");
@@ -161,7 +169,7 @@ CREATE UNIQUE INDEX "Subscription_stripeSubscriptionId_key" ON "Subscription"("s
 CREATE UNIQUE INDEX "OrganizationInvitation_token_key" ON "OrganizationInvitation"("token");
 
 -- CreateIndex
-CREATE INDEX "OrganizationInvitation_organizationId_idx" ON "OrganizationInvitation"("organizationId");
+CREATE INDEX "OrganizationInvitation_orgId_idx" ON "OrganizationInvitation"("orgId");
 
 -- CreateIndex
 CREATE INDEX "OrganizationInvitation_inviterId_idx" ON "OrganizationInvitation"("inviterId");
@@ -176,19 +184,19 @@ ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "Authenticator" ADD CONSTRAINT "Authenticator_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "OrganizationMembership" ADD CONSTRAINT "OrganizationMembership_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "OrganizationMembership" ADD CONSTRAINT "OrganizationMembership_orgId_fkey" FOREIGN KEY ("orgId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "OrganizationMembership" ADD CONSTRAINT "OrganizationMembership_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Project" ADD CONSTRAINT "Project_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Project" ADD CONSTRAINT "Project_orgId_fkey" FOREIGN KEY ("orgId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Subscription" ADD CONSTRAINT "Subscription_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Subscription" ADD CONSTRAINT "Subscription_orgId_fkey" FOREIGN KEY ("orgId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "OrganizationInvitation" ADD CONSTRAINT "OrganizationInvitation_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "OrganizationInvitation" ADD CONSTRAINT "OrganizationInvitation_orgId_fkey" FOREIGN KEY ("orgId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "OrganizationInvitation" ADD CONSTRAINT "OrganizationInvitation_inviterId_fkey" FOREIGN KEY ("inviterId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

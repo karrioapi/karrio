@@ -14,6 +14,8 @@ export default async function Layout({
   const { metadata } = await loadMetadata();
   const pageProps = { metadata };
 
+  console.log(metadata, "metadata");
+
   return (
     <>
       <Providers {...pageProps}>

@@ -173,7 +173,7 @@ export default function SettingsPage({
                         <Button
                           onClick={() =>
                             updateOrg.mutateAsync({
-                              organizationId: params.orgId,
+                              orgId: params.orgId,
                               name: orgName,
                             })
                           }
@@ -241,7 +241,7 @@ export default function SettingsPage({
                                 size="icon"
                                 onClick={() =>
                                   removeMember.mutateAsync({
-                                    organizationId: params.orgId,
+                                    orgId: params.orgId,
                                     userId: member.userId,
                                   })
                                 }
@@ -266,7 +266,7 @@ export default function SettingsPage({
                       <Button
                         onClick={() => {
                           inviteMember.mutateAsync({
-                            organizationId: params.orgId,
+                            orgId: params.orgId,
                             email: newMemberEmail,
                           });
                           setNewMemberEmail("");
@@ -335,7 +335,7 @@ export default function SettingsPage({
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => {
                 deleteOrganization.mutateAsync({
-                  organizationId: params.orgId,
+                  orgId: params.orgId,
                 });
                 setShowDeleteDialog(false);
               }}

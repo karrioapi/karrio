@@ -14,7 +14,7 @@ export default function Dashboard() {
   const router = useRouter();
   const orgId = params.orgId as string;
   const { data, isLoading } = trpc.projects.getAll.useQuery({
-    organizationId: orgId,
+    orgId: orgId,
   });
   const { projects, limit, count } = data || {
     projects: [],

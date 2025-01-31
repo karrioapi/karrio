@@ -5,13 +5,13 @@ import { trpc } from "@karrio/console/trpc/client";
 import { useState } from "react";
 
 interface PaymentMethodFormProps {
-  organizationId: string;
+  orgId: string;
   onSuccess: () => void;
   clientSecret: string | null;
 }
 
 export function PaymentMethodForm({
-  organizationId,
+  orgId,
   onSuccess,
   clientSecret,
 }: PaymentMethodFormProps) {
@@ -40,11 +40,9 @@ export function PaymentMethodForm({
 
     try {
       // First, create a setup intent
-      const { setupIntent: clientSecret } = await createSetupIntent.mutateAsync(
-        {
-          organizationId,
-        },
-      );
+      const { setupIntent: clientSecret } = await createSetupIntent.mutateAsync({
+        orgId,
+      });
 
       if (!clientSecret) {
         throw new Error("Failed to create setup intent");
@@ -70,7 +68,7 @@ export function PaymentMethodForm({
 
       // Update the organization's payment method
       await updatePaymentMethod.mutateAsync({
-        organizationId,
+        orgId,
         paymentMethodId: setupIntent.payment_method as string,
       });
 
