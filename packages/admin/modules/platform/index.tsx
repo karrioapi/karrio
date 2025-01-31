@@ -338,6 +338,17 @@ export default function PlatformDetails() {
                     <X className="h-4 w-4 text-muted-foreground" />
                   )}
                 </div>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Audit Logging</Label>
+                    <p className="text-sm text-muted-foreground">Enable audit logging for system activities</p>
+                  </div>
+                  {currentConfig.AUDIT_LOGGING ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <X className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </div>
               </div>
             </div>
           </CardContent>
@@ -363,6 +374,39 @@ export default function PlatformDetails() {
           <CardContent>
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
               <div className="p-6 space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Multi Account</Label>
+                    <p className="text-sm text-muted-foreground">Allow users to have multiple accounts</p>
+                  </div>
+                  {currentConfig.ALLOW_MULTI_ACCOUNT ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <X className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Admin Dashboard</Label>
+                    <p className="text-sm text-muted-foreground">Enable admin dashboard access</p>
+                  </div>
+                  {currentConfig.ADMIN_DASHBOARD ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <X className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Multi Organizations</Label>
+                    <p className="text-sm text-muted-foreground">Enable multi-organization support</p>
+                  </div>
+                  {currentConfig.MULTI_ORGANIZATIONS ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <X className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </div>
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
                     <Label>Documents Management</Label>
@@ -402,6 +446,28 @@ export default function PlatformDetails() {
                     <p className="text-sm text-muted-foreground">Enable workflow management</p>
                   </div>
                   {currentConfig.WORKFLOW_MANAGEMENT ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <X className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Orders Management</Label>
+                    <p className="text-sm text-muted-foreground">Enable orders management functionality</p>
+                  </div>
+                  {currentConfig.ORDERS_MANAGEMENT ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <X className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Apps Management</Label>
+                    <p className="text-sm text-muted-foreground">Enable apps management functionality</p>
+                  </div>
+                  {currentConfig.APPS_MANAGEMENT ? (
                     <Check className="h-4 w-4 text-green-500" />
                   ) : (
                     <X className="h-4 w-4 text-muted-foreground" />
@@ -572,11 +638,6 @@ function EditDialog({
         data.ALLOW_SIGNUP = formData.ALLOW_SIGNUP;
         data.ALLOW_ADMIN_APPROVED_SIGNUP = formData.ALLOW_ADMIN_APPROVED_SIGNUP;
         data.AUDIT_LOGGING = formData.AUDIT_LOGGING;
-        data.ALLOW_MULTI_ACCOUNT = formData.ALLOW_MULTI_ACCOUNT;
-        data.ADMIN_DASHBOARD = formData.ADMIN_DASHBOARD;
-        data.ORDERS_MANAGEMENT = formData.ORDERS_MANAGEMENT;
-        data.APPS_MANAGEMENT = formData.APPS_MANAGEMENT;
-        data.MULTI_ORGANIZATIONS = formData.MULTI_ORGANIZATIONS;
         break;
       case 'email':
         data.EMAIL_USE_TLS = formData.EMAIL_USE_TLS;
@@ -597,10 +658,15 @@ function EditDialog({
         data.CANADAPOST_ADDRESS_COMPLETE_API_KEY = formData.CANADAPOST_ADDRESS_COMPLETE_API_KEY;
         break;
       case 'features':
+        data.ALLOW_MULTI_ACCOUNT = formData.ALLOW_MULTI_ACCOUNT;
+        data.ADMIN_DASHBOARD = formData.ADMIN_DASHBOARD;
+        data.MULTI_ORGANIZATIONS = formData.MULTI_ORGANIZATIONS;
         data.DOCUMENTS_MANAGEMENT = formData.DOCUMENTS_MANAGEMENT;
         data.DATA_IMPORT_EXPORT = formData.DATA_IMPORT_EXPORT;
         data.PERSIST_SDK_TRACING = formData.PERSIST_SDK_TRACING;
         data.WORKFLOW_MANAGEMENT = formData.WORKFLOW_MANAGEMENT;
+        data.ORDERS_MANAGEMENT = formData.ORDERS_MANAGEMENT;
+        data.APPS_MANAGEMENT = formData.APPS_MANAGEMENT;
         break;
     }
 
@@ -639,61 +705,11 @@ function EditDialog({
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Audit Logging</Label>
-                <p className="text-sm text-muted-foreground">Enable audit logging</p>
+                <p className="text-sm text-muted-foreground">Enable audit logging for system activities</p>
               </div>
               <Switch
                 checked={formData.AUDIT_LOGGING}
                 onCheckedChange={(checked) => handleChange('AUDIT_LOGGING', checked)}
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Multi Account</Label>
-                <p className="text-sm text-muted-foreground">Allow multiple accounts per user</p>
-              </div>
-              <Switch
-                checked={formData.ALLOW_MULTI_ACCOUNT}
-                onCheckedChange={(checked) => handleChange('ALLOW_MULTI_ACCOUNT', checked)}
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Admin Dashboard</Label>
-                <p className="text-sm text-muted-foreground">Enable admin dashboard</p>
-              </div>
-              <Switch
-                checked={formData.ADMIN_DASHBOARD}
-                onCheckedChange={(checked) => handleChange('ADMIN_DASHBOARD', checked)}
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Orders Management</Label>
-                <p className="text-sm text-muted-foreground">Enable orders management</p>
-              </div>
-              <Switch
-                checked={formData.ORDERS_MANAGEMENT}
-                onCheckedChange={(checked) => handleChange('ORDERS_MANAGEMENT', checked)}
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Apps Management</Label>
-                <p className="text-sm text-muted-foreground">Enable apps management</p>
-              </div>
-              <Switch
-                checked={formData.APPS_MANAGEMENT}
-                onCheckedChange={(checked) => handleChange('APPS_MANAGEMENT', checked)}
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Multi Organizations</Label>
-                <p className="text-sm text-muted-foreground">Enable multi-organization support</p>
-              </div>
-              <Switch
-                checked={formData.MULTI_ORGANIZATIONS}
-                onCheckedChange={(checked) => handleChange('MULTI_ORGANIZATIONS', checked)}
               />
             </div>
           </div>
@@ -826,6 +842,36 @@ function EditDialog({
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
+                <Label>Multi Account</Label>
+                <p className="text-sm text-muted-foreground">Allow users to have multiple accounts</p>
+              </div>
+              <Switch
+                checked={formData.ALLOW_MULTI_ACCOUNT}
+                onCheckedChange={(checked) => handleChange("ALLOW_MULTI_ACCOUNT", checked)}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Admin Dashboard</Label>
+                <p className="text-sm text-muted-foreground">Enable admin dashboard access</p>
+              </div>
+              <Switch
+                checked={formData.ADMIN_DASHBOARD}
+                onCheckedChange={(checked) => handleChange("ADMIN_DASHBOARD", checked)}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Multi Organizations</Label>
+                <p className="text-sm text-muted-foreground">Enable multi-organization support</p>
+              </div>
+              <Switch
+                checked={formData.MULTI_ORGANIZATIONS}
+                onCheckedChange={(checked) => handleChange("MULTI_ORGANIZATIONS", checked)}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
                 <Label>Documents Management</Label>
                 <p className="text-sm text-muted-foreground">Enable documents management</p>
               </div>
@@ -862,6 +908,26 @@ function EditDialog({
               <Switch
                 checked={formData.WORKFLOW_MANAGEMENT}
                 onCheckedChange={(checked) => handleChange("WORKFLOW_MANAGEMENT", checked)}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Orders Management</Label>
+                <p className="text-sm text-muted-foreground">Enable orders management functionality</p>
+              </div>
+              <Switch
+                checked={formData.ORDERS_MANAGEMENT}
+                onCheckedChange={(checked) => handleChange("ORDERS_MANAGEMENT", checked)}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Apps Management</Label>
+                <p className="text-sm text-muted-foreground">Enable apps management functionality</p>
+              </div>
+              <Switch
+                checked={formData.APPS_MANAGEMENT}
+                onCheckedChange={(checked) => handleChange("APPS_MANAGEMENT", checked)}
               />
             </div>
           </div>

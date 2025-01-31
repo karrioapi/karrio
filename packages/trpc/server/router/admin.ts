@@ -70,16 +70,54 @@ interface GraphQLError {
   messages: string[];
 }
 
-function handleGraphQLErrors(errors: GraphQLError[] | null) {
-  if (errors && errors.length > 0) {
-    const errorMessage = errors
-      .map(error => `${error.field}: ${error.messages.join(", ")}`)
+function handleErrors(response: any) {
+  // If the response itself is an error (e.g. network error)
+  if (response instanceof Error) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: response.message || "A network error occurred",
+      cause: response
+    });
+  }
+
+  // Handle GraphQL response errors (from client)
+  if (response?.errors) {
+    const errorMessage = response.errors
+      .map((error: any) => {
+        if (error.message) return error.message;
+        if (error.field && error.messages) return `${error.field}: ${error.messages.join(", ")}`;
+        return JSON.stringify(error);
+      })
       .join("\n");
     throw new TRPCError({
       code: "BAD_REQUEST",
       message: errorMessage,
+      cause: response.errors
     });
   }
+
+  // Handle mutation/query specific errors (from resolvers)
+  if (response?.response?.errors) {
+    const errorMessage = response.response.errors
+      .map((error: any) => error.message || JSON.stringify(error))
+      .join("\n");
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: errorMessage,
+      cause: response.response.errors
+    });
+  }
+
+  // Handle unexpected response structure
+  if (response && typeof response === 'object' && 'message' in response) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: response.message || "An unexpected server error occurred",
+      cause: response
+    });
+  }
+
+  return response;
 }
 
 const usersRouter = router({
@@ -100,13 +138,17 @@ const usersRouter = router({
     )
     .query(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { users } = await client.admin.request<GetUsers>(
-        gqlstr(GET_USERS),
-        {
-          filter: input.filter,
-        },
-      );
-      return users;
+      try {
+        const { users } = await client.admin.request<GetUsers>(
+          gqlstr(GET_USERS),
+          {
+            filter: input.filter,
+          },
+        );
+        return users;
+      } catch (error) {
+        handleErrors(error);
+      }
     }),
   create: protectedProcedure
     .input(
@@ -123,13 +165,18 @@ const usersRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { create_user } = await client.admin.request<CreateUser>(
-        gqlstr(CREATE_USER),
-        {
-          data: input.data,
-        },
-      );
-      return create_user;
+      try {
+        const { create_user } = await client.admin.request<CreateUser>(
+          gqlstr(CREATE_USER),
+          {
+            data: input.data,
+          },
+        );
+        handleErrors(create_user);
+        return create_user.user;
+      } catch (error) {
+        handleErrors(error);
+      }
     }),
   update: protectedProcedure
     .input(
@@ -147,13 +194,18 @@ const usersRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { update_user } = await client.admin.request<UpdateUser>(
-        gqlstr(UPDATE_USER),
-        {
-          data: input.data,
-        },
-      );
-      return update_user;
+      try {
+        const { update_user } = await client.admin.request<UpdateUser>(
+          gqlstr(UPDATE_USER),
+          {
+            data: input.data,
+          },
+        );
+        handleErrors(update_user);
+        return update_user.user;
+      } catch (error) {
+        handleErrors(error);
+      }
     }),
   remove: protectedProcedure
     .input(
@@ -165,23 +217,32 @@ const usersRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { remove_user } = await client.admin.request<RemoveUser>(
-        gqlstr(REMOVE_USER),
-        {
-          data: input.data,
-        },
-      );
-      return remove_user;
+      try {
+        const { remove_user } = await client.admin.request<RemoveUser>(
+          gqlstr(REMOVE_USER),
+          {
+            data: input.data,
+          },
+        );
+        handleErrors(remove_user);
+        return { id: remove_user.id };
+      } catch (error) {
+        handleErrors(error);
+      }
     }),
 });
 
 const configsRouter = router({
   list: protectedProcedure.query(async ({ ctx }) => {
     const client = ctx.karrio;
-    const { configs } = await client.admin.request<GetConfigs>(
-      gqlstr(GET_CONFIGS),
-    );
-    return configs;
+    try {
+      const { configs } = await client.admin.request<GetConfigs>(
+        gqlstr(GET_CONFIGS),
+      );
+      return configs;
+    } catch (error) {
+      handleErrors(error);
+    }
   }),
   update: protectedProcedure
     .input(
@@ -229,13 +290,19 @@ const configsRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { update_configs } = await client.admin.request<UpdateConfigs>(
-        gqlstr(UPDATE_CONFIGS),
-        {
-          data: input.data,
-        },
-      );
-      return update_configs;
+      try {
+        const response = await client.admin.request<UpdateConfigs>(
+          gqlstr(UPDATE_CONFIGS),
+          { data: input.data },
+        );
+        if (!response || !response.update_configs) {
+          throw new Error('Invalid response from server');
+        }
+        handleErrors(response.update_configs);
+        return response.update_configs.configs;
+      } catch (error) {
+        handleErrors(error);
+      }
     }),
 });
 
@@ -256,25 +323,33 @@ const surchargesRouter = router({
     )
     .query(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { surcharges } = await client.admin.request<GetSurcharges>(
-        gqlstr(GET_SURCHARGES),
-        {
-          filter: input.filter,
-        },
-      );
-      return surcharges;
+      try {
+        const { surcharges } = await client.admin.request<GetSurcharges>(
+          gqlstr(GET_SURCHARGES),
+          {
+            filter: input.filter,
+          },
+        );
+        return surcharges;
+      } catch (error) {
+        handleErrors(error);
+      }
     }),
   get: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { surcharge } = await client.admin.request<GetSurcharge>(
-        gqlstr(GET_SURCHARGE),
-        {
-          id: input.id,
-        },
-      );
-      return surcharge;
+      try {
+        const { surcharge } = await client.admin.request<GetSurcharge>(
+          gqlstr(GET_SURCHARGE),
+          {
+            id: input.id,
+          },
+        );
+        return surcharge;
+      } catch (error) {
+        handleErrors(error);
+      }
     }),
   create: protectedProcedure
     .input(
@@ -291,13 +366,18 @@ const surchargesRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { create_surcharge } = await client.admin.request<CreateSurcharge>(
-        gqlstr(CREATE_SURCHARGE),
-        {
-          data: input.data,
-        },
-      );
-      return create_surcharge;
+      try {
+        const { create_surcharge } = await client.admin.request<CreateSurcharge>(
+          gqlstr(CREATE_SURCHARGE),
+          {
+            data: input.data,
+          },
+        );
+        handleErrors(create_surcharge);
+        return create_surcharge.surcharge;
+      } catch (error) {
+        handleErrors(error);
+      }
     }),
   update: protectedProcedure
     .input(
@@ -315,13 +395,18 @@ const surchargesRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { update_surcharge } = await client.admin.request<UpdateSurcharge>(
-        gqlstr(UPDATE_SURCHARGE),
-        {
-          data: input.data,
-        },
-      );
-      return update_surcharge;
+      try {
+        const { update_surcharge } = await client.admin.request<UpdateSurcharge>(
+          gqlstr(UPDATE_SURCHARGE),
+          {
+            data: input.data,
+          },
+        );
+        handleErrors(update_surcharge);
+        return update_surcharge.surcharge;
+      } catch (error) {
+        handleErrors(error);
+      }
     }),
   delete: protectedProcedure
     .input(
@@ -333,13 +418,18 @@ const surchargesRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { delete_surcharge } = await client.admin.request<DeleteSurcharge>(
-        gqlstr(DELETE_SURCHARGE),
-        {
-          data: input.data,
-        },
-      );
-      return delete_surcharge;
+      try {
+        const { delete_surcharge } = await client.admin.request<DeleteSurcharge>(
+          gqlstr(DELETE_SURCHARGE),
+          {
+            data: input.data,
+          },
+        );
+        handleErrors(delete_surcharge);
+        return { id: delete_surcharge.id };
+      } catch (error) {
+        handleErrors(error);
+      }
     }),
 });
 
@@ -356,25 +446,33 @@ const rateSheetsRouter = router({
     )
     .query(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { rate_sheets } = await client.admin.request<GetRateSheets>(
-        gqlstr(GET_RATE_SHEETS),
-        {
-          filter: input.filter,
-        },
-      );
-      return rate_sheets;
+      try {
+        const { rate_sheets } = await client.admin.request<GetRateSheets>(
+          gqlstr(GET_RATE_SHEETS),
+          {
+            filter: input.filter,
+          },
+        );
+        return rate_sheets;
+      } catch (error) {
+        handleErrors(error);
+      }
     }),
   get: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { rate_sheet } = await client.admin.request<GetRateSheet>(
-        gqlstr(GET_RATE_SHEET),
-        {
-          id: input.id,
-        },
-      );
-      return rate_sheet;
+      try {
+        const { rate_sheet } = await client.admin.request<GetRateSheet>(
+          gqlstr(GET_RATE_SHEET),
+          {
+            id: input.id,
+          },
+        );
+        return rate_sheet;
+      } catch (error) {
+        handleErrors(error);
+      }
     }),
   create: protectedProcedure
     .input(
@@ -383,60 +481,25 @@ const rateSheetsRouter = router({
           name: z.string(),
           carrier_name: z.string(),
           metadata: z.record(z.any()).optional(),
-          services: z
-            .array(
-              z.object({
-                service_name: z.string(),
-                service_code: z.string(),
-                carrier_service_code: z.string().optional(),
-                description: z.string().optional(),
-                active: z.boolean().optional(),
-                currency: z.string(),
-                transit_days: z.number().optional(),
-                transit_time: z.number().optional(),
-                max_width: z.number().optional(),
-                max_height: z.number().optional(),
-                max_length: z.number().optional(),
-                dimension_unit: z.string().optional(),
-                max_weight: z.number().optional(),
-                weight_unit: z.string().optional(),
-                domicile: z.boolean().optional(),
-                international: z.boolean().optional(),
-                metadata: z.record(z.any()).optional(),
-                zones: z
-                  .array(
-                    z.object({
-                      label: z.string(),
-                      rate: z.number(),
-                      min_weight: z.number().optional(),
-                      max_weight: z.number().optional(),
-                      transit_days: z.number().optional(),
-                      transit_time: z.number().optional(),
-                      radius: z.number().optional(),
-                      latitude: z.number().optional(),
-                      longitude: z.number().optional(),
-                      cities: z.array(z.string()).optional(),
-                      postal_codes: z.array(z.string()).optional(),
-                      country_codes: z.array(z.string()).optional(),
-                    }),
-                  )
-                  .optional(),
-              }),
-            )
-            .optional(),
+          services: z.array(z.any()).optional(),
           carriers: z.array(z.string()).optional(),
         }),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { create_rate_sheet } = await client.admin.request<CreateRateSheet>(
-        gqlstr(CREATE_RATE_SHEET),
-        {
-          data: input.data,
-        },
-      );
-      return create_rate_sheet;
+      try {
+        const { create_rate_sheet } = await client.admin.request<CreateRateSheet>(
+          gqlstr(CREATE_RATE_SHEET),
+          {
+            data: input.data,
+          },
+        );
+        handleErrors(create_rate_sheet);
+        return create_rate_sheet.rate_sheet;
+      } catch (error) {
+        handleErrors(error);
+      }
     }),
   update: protectedProcedure
     .input(
@@ -446,49 +509,7 @@ const rateSheetsRouter = router({
           name: z.string().optional(),
           carrier_name: z.string().optional(),
           metadata: z.record(z.any()).optional(),
-          services: z
-            .array(
-              z.object({
-                id: z.string().optional(),
-                service_name: z.string().optional(),
-                service_code: z.string().optional(),
-                carrier_service_code: z.string().optional(),
-                description: z.string().optional(),
-                active: z.boolean().optional(),
-                currency: z.string().optional(),
-                transit_days: z.number().optional(),
-                transit_time: z.number().optional(),
-                max_width: z.number().optional(),
-                max_height: z.number().optional(),
-                max_length: z.number().optional(),
-                dimension_unit: z.string().optional(),
-                max_weight: z.number().optional(),
-                weight_unit: z.string().optional(),
-                domicile: z.boolean().optional(),
-                international: z.boolean().optional(),
-                metadata: z.record(z.any()).optional(),
-                zones: z
-                  .array(
-                    z.object({
-                      id: z.string().optional(),
-                      label: z.string().optional(),
-                      rate: z.number().optional(),
-                      min_weight: z.number().optional(),
-                      max_weight: z.number().optional(),
-                      transit_days: z.number().optional(),
-                      transit_time: z.number().optional(),
-                      radius: z.number().optional(),
-                      latitude: z.number().optional(),
-                      longitude: z.number().optional(),
-                      cities: z.array(z.string()).optional(),
-                      postal_codes: z.array(z.string()).optional(),
-                      country_codes: z.array(z.string()).optional(),
-                    }),
-                  )
-                  .optional(),
-              }),
-            )
-            .optional(),
+          services: z.array(z.any()).optional(),
           carriers: z.array(z.string()).optional(),
           remove_missing_services: z.boolean().optional(),
         }),
@@ -496,13 +517,18 @@ const rateSheetsRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { update_rate_sheet } = await client.admin.request<UpdateRateSheet>(
-        gqlstr(UPDATE_RATE_SHEET),
-        {
-          data: input.data,
-        },
-      );
-      return update_rate_sheet;
+      try {
+        const { update_rate_sheet } = await client.admin.request<UpdateRateSheet>(
+          gqlstr(UPDATE_RATE_SHEET),
+          {
+            data: input.data,
+          },
+        );
+        handleErrors(update_rate_sheet);
+        return update_rate_sheet.rate_sheet;
+      } catch (error) {
+        handleErrors(error);
+      }
     }),
   update_service_zone: protectedProcedure
     .input(
@@ -530,14 +556,18 @@ const rateSheetsRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { update_service_zone } =
-        await client.admin.request<UpdateServiceZone>(
+      try {
+        const { update_service_zone } = await client.admin.request<UpdateServiceZone>(
           gqlstr(UPDATE_SERVICE_ZONE),
           {
             data: input.data,
           },
         );
-      return update_service_zone;
+        handleErrors(update_service_zone);
+        return update_service_zone.rate_sheet;
+      } catch (error) {
+        handleErrors(error);
+      }
     }),
   delete: protectedProcedure
     .input(
@@ -549,13 +579,18 @@ const rateSheetsRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { delete_rate_sheet } = await client.admin.request<DeleteRateSheet>(
-        gqlstr(DELETE_RATE_SHEET),
-        {
-          data: input.data,
-        },
-      );
-      return delete_rate_sheet;
+      try {
+        const { delete_rate_sheet } = await client.admin.request<DeleteRateSheet>(
+          gqlstr(DELETE_RATE_SHEET),
+          {
+            data: input.data,
+          },
+        );
+        handleErrors(delete_rate_sheet);
+        return { id: delete_rate_sheet.id };
+      } catch (error) {
+        handleErrors(error);
+      }
     }),
 });
 
@@ -624,7 +659,7 @@ const systemConnectionsRouter = router({
         },
       );
 
-      handleGraphQLErrors(create_system_carrier_connection.errors);
+      handleErrors(create_system_carrier_connection.errors);
       return create_system_carrier_connection.connection;
     }),
   update: protectedProcedure
@@ -658,7 +693,7 @@ const systemConnectionsRouter = router({
         },
       );
 
-      handleGraphQLErrors(update_system_carrier_connection.errors);
+      handleErrors(update_system_carrier_connection.errors);
       return update_system_carrier_connection.connection;
     }),
   delete: protectedProcedure
@@ -676,7 +711,7 @@ const systemConnectionsRouter = router({
         { data: input.data },
       );
 
-      handleGraphQLErrors(delete_system_carrier_connection.errors);
+      handleErrors(delete_system_carrier_connection.errors);
       return { id: delete_system_carrier_connection.id };
     }),
 });
@@ -696,13 +731,17 @@ const organizationAccountsRouter = router({
     )
     .query(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { accounts } = await client.admin.request<GetAccounts>(
-        gqlstr(GET_ACCOUNTS),
-        {
-          filter: input.filter,
-        },
-      );
-      return accounts;
+      try {
+        const { accounts } = await client.admin.request<GetAccounts>(
+          gqlstr(GET_ACCOUNTS),
+          {
+            filter: input.filter,
+          },
+        );
+        return accounts;
+      } catch (error) {
+        handleErrors(error);
+      }
     }),
   create: protectedProcedure
     .input(
@@ -715,12 +754,17 @@ const organizationAccountsRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { create_organization_account } =
-        await client.admin.request<CreateOrganizationAccount>(
-          gqlstr(CREATE_ORGANIZATION_ACCOUNT),
-          { data: input.data },
-        );
-      return create_organization_account;
+      try {
+        const { create_organization_account } =
+          await client.admin.request<CreateOrganizationAccount>(
+            gqlstr(CREATE_ORGANIZATION_ACCOUNT),
+            { data: input.data },
+          );
+        handleErrors(create_organization_account);
+        return create_organization_account.account;
+      } catch (error) {
+        handleErrors(error);
+      }
     }),
   update: protectedProcedure
     .input(
@@ -734,12 +778,17 @@ const organizationAccountsRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { update_organization_account } =
-        await client.admin.request<UpdateOrganizationAccount>(
-          gqlstr(UPDATE_ORGANIZATION_ACCOUNT),
-          { data: input.data },
-        );
-      return update_organization_account;
+      try {
+        const { update_organization_account } =
+          await client.admin.request<UpdateOrganizationAccount>(
+            gqlstr(UPDATE_ORGANIZATION_ACCOUNT),
+            { data: input.data },
+          );
+        handleErrors(update_organization_account);
+        return update_organization_account.account;
+      } catch (error) {
+        handleErrors(error);
+      }
     }),
   disable: protectedProcedure
     .input(
@@ -751,12 +800,17 @@ const organizationAccountsRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { disable_organization_account } =
-        await client.admin.request<DisableOrganizationAccount>(
-          gqlstr(DISABLE_ORGANIZATION_ACCOUNT),
-          { data: input.data },
-        );
-      return disable_organization_account;
+      try {
+        const { disable_organization_account } =
+          await client.admin.request<DisableOrganizationAccount>(
+            gqlstr(DISABLE_ORGANIZATION_ACCOUNT),
+            { data: input.data },
+          );
+        handleErrors(disable_organization_account);
+        return disable_organization_account.account;
+      } catch (error) {
+        handleErrors(error);
+      }
     }),
   delete: protectedProcedure
     .input(
@@ -768,12 +822,17 @@ const organizationAccountsRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { delete_organization_account } =
-        await client.admin.request<DeleteOrganizationAccount>(
-          gqlstr(DELETE_ORGANIZATION_ACCOUNT),
-          { data: input.data },
-        );
-      return delete_organization_account;
+      try {
+        const { delete_organization_account } =
+          await client.admin.request<DeleteOrganizationAccount>(
+            gqlstr(DELETE_ORGANIZATION_ACCOUNT),
+            { data: input.data },
+          );
+        handleErrors(delete_organization_account);
+        return delete_organization_account.account;
+      } catch (error) {
+        handleErrors(error);
+      }
     }),
 });
 
@@ -791,14 +850,18 @@ const permissionGroupsRouter = router({
     )
     .query(async ({ ctx, input }) => {
       const client = ctx.karrio;
-      const { permission_groups } =
-        await client.admin.request<GetPermissionGroups>(
-          gqlstr(GET_PERMISSION_GROUPS),
-          {
-            filter: input.filter,
-          },
-        );
-      return permission_groups;
+      try {
+        const { permission_groups } =
+          await client.admin.request<GetPermissionGroups>(
+            gqlstr(GET_PERMISSION_GROUPS),
+            {
+              filter: input.filter,
+            },
+          );
+        return permission_groups;
+      } catch (error) {
+        handleErrors(error);
+      }
     }),
 });
 

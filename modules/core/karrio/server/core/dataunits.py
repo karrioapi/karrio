@@ -46,12 +46,12 @@ def contextual_metadata(request: Request):
     )
     host = _host[:-1] if _host[-1] == "/" else _host
     name = lib.identity(
-        getattr(conf.settings.tenant, "name")
+        getattr(conf.settings.tenant, "name", conf.settings.APP_NAME)
         if conf.settings.MULTI_TENANTS
         else getattr(config, "APP_NAME", None) or conf.settings.APP_NAME
     )
     website = lib.identity(
-        getattr(conf.settings.tenant, "website")
+        getattr(conf.settings.tenant, "website", conf.settings.APP_WEBSITE)
         if conf.settings.MULTI_TENANTS
         else getattr(config, "APP_WEBSITE", None) or conf.settings.APP_WEBSITE
     )
