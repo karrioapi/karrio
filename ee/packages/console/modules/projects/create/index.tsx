@@ -40,7 +40,7 @@ export default function CreateProjectPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
-      createProject.mutate({ name, organizationId: orgId });
+      createProject.mutate({ name, orgId });
     }
   };
 

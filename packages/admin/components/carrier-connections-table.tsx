@@ -8,16 +8,17 @@ import {
   TableRow,
 } from "@karrio/insiders/components/ui/table";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@karrio/insiders/components/ui/dropdown-menu";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@karrio/insiders/components/ui/select";
 import { CarrierImage } from "@karrio/ui/components/carrier-image";
 import { Button } from "@karrio/insiders/components/ui/button";
 import { Switch } from "@karrio/insiders/components/ui/switch";
 import { Badge } from "@karrio/insiders/components/ui/badge";
-import { MoreVertical, Copy, ChevronLeft, ChevronRight } from "lucide-react";
+import { Copy, ChevronLeft, ChevronRight, Pencil, Trash2 } from "lucide-react";
 import { isNoneOrEmpty } from "@karrio/lib";
 
 export type Connection = GetSystemConnections_system_carrier_connections_edges_node & {
@@ -38,8 +39,10 @@ interface CarrierConnectionsTableProps {
     count: number;
     hasNext: boolean;
     page: number;
+    pageSize?: number;
   };
   onPageChange?: (page: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
 }
 
 export function CarrierConnectionsTable({
@@ -52,7 +55,14 @@ export function CarrierConnectionsTable({
   onCreateNew,
   pagination,
   onPageChange,
+  onPageSizeChange,
 }: CarrierConnectionsTableProps) {
+  // Calculate start and end indices for current page
+  const pageSize = pagination?.pageSize || 10;
+  const startIndex = pagination ? (pagination.page - 1) * pageSize : 0;
+  const endIndex = pagination ? startIndex + pageSize : connections.length;
+  const currentPageConnections = pagination ? connections.slice(startIndex, endIndex) : connections;
+
   if (connections.length === 0) {
     return (
       <div className="space-y-4">
@@ -92,15 +102,17 @@ export function CarrierConnectionsTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {connections?.map((connection) => (
+          {currentPageConnections?.map((connection) => (
             <TableRow key={connection.id}>
               <TableCell>
                 <div className="flex items-center space-x-4">
-                  <CarrierImage
-                    carrier_name={connection.carrier_name}
-                    width={40}
-                    height={40}
-                  />
+                  <div className="flex-none w-[48px] h-[48px]">
+                    <CarrierImage
+                      carrier_name={connection.carrier_name}
+                      width={48}
+                      height={48}
+                    />
+                  </div>
                   <div className="space-y-1">
                     <div className="font-medium space-x-1">
                       <span>{connection.carrier_id}</span>
@@ -134,7 +146,7 @@ export function CarrierConnectionsTable({
                       <Badge
                         key={capability}
                         variant="secondary"
-                        className="whitespace-nowrap"
+                        className="whitespace-nowrap text-[10px] px-1.5 py-0"
                       >
                         {capability}
                       </Badge>
@@ -148,24 +160,24 @@ export function CarrierConnectionsTable({
                 />
               </TableCell>
               <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => onEdit(connection)}>
-                      Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => onDelete(connection)}
-                      className="text-red-600"
-                    >
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => onEdit(connection)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-red-600 hover:text-red-600 hover:bg-red-100"
+                    onClick={() => onDelete(connection)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
           ))}
@@ -173,9 +185,29 @@ export function CarrierConnectionsTable({
       </Table>
       {pagination && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            Showing {connections.length} of {pagination.count} connections
-          </p>
+          <div className="flex items-center space-x-4">
+            <p className="text-sm text-muted-foreground">
+              Showing {startIndex + 1} to {Math.min(endIndex, connections.length)} of {connections.length} connections
+            </p>
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-muted-foreground">Items per page:</span>
+              <Select
+                value={String(pageSize)}
+                onValueChange={(value) => onPageSizeChange?.(Number(value))}
+              >
+                <SelectTrigger className="h-8 w-[70px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="5">5</SelectItem>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
           <div className="flex items-center space-x-2">
             <Button
               variant="outline"

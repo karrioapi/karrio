@@ -61,7 +61,7 @@ export default function SettingsPage({
   const utils = trpc.useUtils();
   const { data: currentProject } = trpc.projects.get.useQuery({
     id: params.projectId,
-    organizationId: params.orgId,
+    orgId: params.orgId,
   });
   const { data: tenant } = trpc.projects.tenant.get.useQuery({
     projectId: params.projectId,
@@ -69,7 +69,7 @@ export default function SettingsPage({
   const updateProject = trpc.projects.update.useMutation<{
     id: string;
     name: string;
-    organizationId: string;
+    orgId: string;
   }>({
     onSuccess: () => {
       utils.projects.get.invalidate();
@@ -156,7 +156,7 @@ export default function SettingsPage({
     onSuccess: () => {
       utils.projects.get.invalidate({
         id: params.projectId,
-        organizationId: params.orgId,
+        orgId: params.orgId,
       });
       toast({
         title: "Success",
@@ -180,7 +180,7 @@ export default function SettingsPage({
       await updateProject.mutateAsync({
         id: params.projectId,
         name: projectName,
-        organizationId: params.orgId,
+        orgId: params.orgId,
       });
     } catch (error) {
       // Error is handled by the mutation callbacks

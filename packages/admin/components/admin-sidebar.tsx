@@ -15,32 +15,33 @@ import { usePathname } from "next/navigation";
 
 const menuItems = [
   {
-    label: "Platform details",
+    label: "Platform console",
     icon: LayoutDashboard,
     href: "/admin",
   },
   {
-    label: "Carrier connections",
-    icon: Truck,
-    href: "/admin/carrier-connections",
-  },
-  {
-    label: "Users and permissions",
+    label: "Staff and permissions",
     icon: Users,
-    href: "/admin/users-permissions",
+    href: "/admin/staff",
   },
   {
-    label: "Organization accounts",
+    label: "Carriers network",
+    icon: Truck,
+    href: "/admin/carriers",
+  },
+  {
+    label: "Connected accounts",
     icon: Building2,
-    href: "/admin/organization-accounts",
+    href: "/admin/accounts",
   },
   {
-    label: "Surcharge and discounts",
+    label: "Shipping add-ons",
     icon: FileText,
-    href: "/admin/surcharges",
+    href: "/admin/addons",
+    isDisabled: true,
   },
   {
-    label: "Platform activity log",
+    label: "Activity log",
     icon: Clock,
     href: "/admin/activity",
     isDisabled: true,

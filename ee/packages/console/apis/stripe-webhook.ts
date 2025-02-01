@@ -16,24 +16,24 @@ export async function POST(req: Request) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object;
-        const organizationId = session.metadata?.organizationId || null;
+        const orgId = session.metadata?.orgId || null;
 
-        if (!organizationId) {
+        if (!orgId) {
           throw new Error("Organization ID is required");
         }
 
         // Update the organization with the stripeCustomerId
         await prisma.organization.update({
-          where: { id: organizationId },
+          where: { id: orgId },
           data: {
             stripeCustomerId: session.customer as string,
           },
         });
 
         await prisma.subscription.upsert({
-          where: { organizationId },
+          where: { orgId },
           create: {
-            organizationId,
+            orgId,
             stripeSubscriptionId: session.subscription as string,
             stripePriceId: session.metadata?.priceId,
             status: "active",

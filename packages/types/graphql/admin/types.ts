@@ -1,5 +1,3 @@
-
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -386,6 +384,8 @@ export interface RemoveUserVariables {
 // ====================================================
 
 export interface GetConfigs_configs {
+  APP_NAME: string | null;
+  APP_WEBSITE: string | null;
   EMAIL_USE_TLS: boolean | null;
   EMAIL_HOST_USER: string | null;
   EMAIL_HOST_PASSWORD: string | null;
@@ -398,6 +398,18 @@ export interface GetConfigs_configs {
   TRACKER_DATA_RETENTION: number | null;
   SHIPMENT_DATA_RETENTION: number | null;
   API_LOGS_DATA_RETENTION: number | null;
+  AUDIT_LOGGING: boolean | null;
+  ALLOW_SIGNUP: boolean | null;
+  ALLOW_ADMIN_APPROVED_SIGNUP: boolean | null;
+  ALLOW_MULTI_ACCOUNT: boolean | null;
+  ADMIN_DASHBOARD: boolean | null;
+  MULTI_ORGANIZATIONS: boolean | null;
+  ORDERS_MANAGEMENT: boolean | null;
+  APPS_MANAGEMENT: boolean | null;
+  DOCUMENTS_MANAGEMENT: boolean | null;
+  DATA_IMPORT_EXPORT: boolean | null;
+  WORKFLOW_MANAGEMENT: boolean | null;
+  PERSIST_SDK_TRACING: boolean | null;
 }
 
 export interface GetConfigs {
@@ -418,6 +430,8 @@ export interface UpdateConfigs_update_configs_errors {
 }
 
 export interface UpdateConfigs_update_configs_configs {
+  APP_NAME: string | null;
+  APP_WEBSITE: string | null;
   EMAIL_USE_TLS: boolean | null;
   EMAIL_HOST_USER: string | null;
   EMAIL_HOST_PASSWORD: string | null;
@@ -430,6 +444,18 @@ export interface UpdateConfigs_update_configs_configs {
   TRACKER_DATA_RETENTION: number | null;
   SHIPMENT_DATA_RETENTION: number | null;
   API_LOGS_DATA_RETENTION: number | null;
+  AUDIT_LOGGING: boolean | null;
+  ALLOW_SIGNUP: boolean | null;
+  ALLOW_ADMIN_APPROVED_SIGNUP: boolean | null;
+  ALLOW_MULTI_ACCOUNT: boolean | null;
+  ADMIN_DASHBOARD: boolean | null;
+  MULTI_ORGANIZATIONS: boolean | null;
+  ORDERS_MANAGEMENT: boolean | null;
+  APPS_MANAGEMENT: boolean | null;
+  DOCUMENTS_MANAGEMENT: boolean | null;
+  DATA_IMPORT_EXPORT: boolean | null;
+  WORKFLOW_MANAGEMENT: boolean | null;
+  PERSIST_SDK_TRACING: boolean | null;
 }
 
 export interface UpdateConfigs_update_configs {
@@ -1690,10 +1716,15 @@ export enum CountryCodeEnum {
 
 // null
 export interface CarrierFilter {
+  offset?: number | null;
+  first?: number | null;
+  after?: string | null;
+  before?: string | null;
   active?: boolean | null;
   metadata_key?: string | null;
   metadata_value?: string | null;
   carrier_name?: string[] | null;
+  order_by?: string | null;
 }
 
 // null
@@ -1767,6 +1798,8 @@ export interface DeleteUserMutationInput {
 
 // null
 export interface InstanceConfigMutationInput {
+  APP_NAME?: string | null;
+  APP_WEBSITE?: string | null;
   EMAIL_USE_TLS?: boolean | null;
   EMAIL_HOST_USER?: string | null;
   EMAIL_HOST_PASSWORD?: string | null;
@@ -1779,6 +1812,18 @@ export interface InstanceConfigMutationInput {
   TRACKER_DATA_RETENTION?: number | null;
   SHIPMENT_DATA_RETENTION?: number | null;
   API_LOGS_DATA_RETENTION?: number | null;
+  AUDIT_LOGGING?: boolean | null;
+  ALLOW_SIGNUP?: boolean | null;
+  ALLOW_ADMIN_APPROVED_SIGNUP?: boolean | null;
+  ALLOW_MULTI_ACCOUNT?: boolean | null;
+  ADMIN_DASHBOARD?: boolean | null;
+  MULTI_ORGANIZATIONS?: boolean | null;
+  ORDERS_MANAGEMENT?: boolean | null;
+  APPS_MANAGEMENT?: boolean | null;
+  DOCUMENTS_MANAGEMENT?: boolean | null;
+  DATA_IMPORT_EXPORT?: boolean | null;
+  WORKFLOW_MANAGEMENT?: boolean | null;
+  PERSIST_SDK_TRACING?: boolean | null;
 }
 
 // null

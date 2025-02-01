@@ -236,22 +236,46 @@ export const REMOVE_USER = gql`
 // Config Operations
 // -----------------------------------------------------------
 //#region
-
 export const GET_CONFIGS = gql`
   query GetConfigs {
     configs {
+      # Platform Config
+      APP_NAME
+      APP_WEBSITE
+
+      # Email Config
       EMAIL_USE_TLS
       EMAIL_HOST_USER
       EMAIL_HOST_PASSWORD
       EMAIL_HOST
       EMAIL_PORT
       EMAIL_FROM_ADDRESS
+
+      # Address Validation Service
       GOOGLE_CLOUD_API_KEY
       CANADAPOST_ADDRESS_COMPLETE_API_KEY
+
+      # Data Retention
       ORDER_DATA_RETENTION
       TRACKER_DATA_RETENTION
       SHIPMENT_DATA_RETENTION
       API_LOGS_DATA_RETENTION
+
+      # System Settings
+      AUDIT_LOGGING
+      ALLOW_SIGNUP
+      ALLOW_ADMIN_APPROVED_SIGNUP
+      ALLOW_MULTI_ACCOUNT
+
+      # Feature Flags
+      ADMIN_DASHBOARD
+      MULTI_ORGANIZATIONS
+      ORDERS_MANAGEMENT
+      APPS_MANAGEMENT
+      DOCUMENTS_MANAGEMENT
+      DATA_IMPORT_EXPORT
+      WORKFLOW_MANAGEMENT
+      PERSIST_SDK_TRACING
     }
   }
 `;
@@ -264,18 +288,43 @@ export const UPDATE_CONFIGS = gql`
         messages
       }
       configs {
+        # Platform Config
+        APP_NAME
+        APP_WEBSITE
+
+        # Email Config
         EMAIL_USE_TLS
         EMAIL_HOST_USER
         EMAIL_HOST_PASSWORD
         EMAIL_HOST
         EMAIL_PORT
         EMAIL_FROM_ADDRESS
+
+        # Address Validation Service
         GOOGLE_CLOUD_API_KEY
         CANADAPOST_ADDRESS_COMPLETE_API_KEY
+
+        # Data Retention
         ORDER_DATA_RETENTION
         TRACKER_DATA_RETENTION
         SHIPMENT_DATA_RETENTION
         API_LOGS_DATA_RETENTION
+
+        # System Settings
+        AUDIT_LOGGING
+        ALLOW_SIGNUP
+        ALLOW_ADMIN_APPROVED_SIGNUP
+        ALLOW_MULTI_ACCOUNT
+
+        # Feature Flags
+        ADMIN_DASHBOARD
+        MULTI_ORGANIZATIONS
+        ORDERS_MANAGEMENT
+        APPS_MANAGEMENT
+        DOCUMENTS_MANAGEMENT
+        DATA_IMPORT_EXPORT
+        WORKFLOW_MANAGEMENT
+        PERSIST_SDK_TRACING
       }
     }
   }

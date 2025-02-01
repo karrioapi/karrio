@@ -195,12 +195,8 @@ FEATURE_FLAGS = [
     ("APPS_MANAGEMENT", bool),
     ("DOCUMENTS_MANAGEMENT", bool),
     ("DATA_IMPORT_EXPORT", bool),
-    ("CUSTOM_CARRIER_DEFINITION", bool),
     ("PERSIST_SDK_TRACING", bool),
-    ("ORDER_DATA_RETENTION", int),
-    ("TRACKER_DATA_RETENTION", int),
-    ("SHIPMENT_DATA_RETENTION", int),
-    ("API_LOGS_DATA_RETENTION", int),
+    ("WORKFLOW_MANAGEMENT", bool),
     ("WORKFLOW_MANAGEMENT", bool),
 ]
 

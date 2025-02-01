@@ -1,1 +1,1 @@
-export { default } from "@karrio/admin/modules/platform-details";
+export { default } from "@karrio/admin/modules/platform";
