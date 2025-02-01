@@ -440,10 +440,10 @@ REST_FRAMEWORK = {
 # JWT config
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(
-        config("JWT_ACCESS_EXPIRY", default=30, cast=int)
+        config("JWT_ACCESS_EXPIRY", default="30", cast=int)
     ),
     "REFRESH_TOKEN_LIFETIME": timedelta(
-        config("JWT_REFRESH_EXPIRY", default=3, cast=int)
+        config("JWT_REFRESH_EXPIRY", default="3", cast=int)
     ),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
