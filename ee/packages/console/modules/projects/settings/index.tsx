@@ -51,21 +51,24 @@ const ProjectStatusBadge = ({ status }: { status: string }) => {
   );
 };
 
-export default function SettingsPage({
+export default async function SettingsPage({
   params,
 }: {
-  params: { orgId: string; projectId: string };
+  params: Promise<{ orgId: string; projectId: string }>;
 }) {
   const { toast } = useToast();
   const router = useRouter();
   const utils = trpc.useUtils();
+  const { orgId, projectId } = await params;
   const { data: currentProject } = trpc.projects.get.useQuery({
-    id: params.projectId,
-    orgId: params.orgId,
+    id: projectId,
+    orgId: orgId,
   });
+
   const { data: tenant } = trpc.projects.tenant.get.useQuery({
-    projectId: params.projectId,
+    projectId: projectId,
   });
+
   const updateProject = trpc.projects.update.useMutation<{
     id: string;
     name: string;
@@ -93,8 +96,9 @@ export default function SettingsPage({
         title: "Success",
         description: "Project deleted successfully",
       });
-      router.push(`/orgs/${params.orgId}`);
+      router.push(`/orgs/${orgId}`);
     },
+
     onError: (error) => {
       toast({
         title: "Error",
@@ -155,9 +159,10 @@ export default function SettingsPage({
   const checkTenantHealth = trpc.projects.checkTenantHealth.useMutation({
     onSuccess: () => {
       utils.projects.get.invalidate({
-        id: params.projectId,
-        orgId: params.orgId,
+        id: projectId,
+        orgId: orgId,
       });
+
       toast({
         title: "Success",
         description: "Tenant health check completed",
@@ -178,9 +183,11 @@ export default function SettingsPage({
   const handleUpdateProject = async () => {
     try {
       await updateProject.mutateAsync({
-        id: params.projectId,
+        orgId,
+        id: projectId,
         name: projectName,
-        orgId: params.orgId,
+
+
       });
     } catch (error) {
       // Error is handled by the mutation callbacks
@@ -190,11 +197,12 @@ export default function SettingsPage({
   const handleDeleteProject = async () => {
     try {
       await deleteProject.mutateAsync({
-        id: params.projectId,
+        id: projectId,
       });
     } catch (error) {
       // Error is handled by the mutation callbacks
     }
+
   };
 
   const copyToClipboard = (text: string) => {
@@ -415,9 +423,10 @@ export default function SettingsPage({
                               onClick={async () => {
                                 try {
                                   await removeApiDomain.mutateAsync({
-                                    projectId: params.projectId,
+                                    projectId: projectId,
                                     domain,
                                   });
+
                                 } catch (error: any) {
                                   toast({
                                     title: "Error",
@@ -445,9 +454,10 @@ export default function SettingsPage({
                           ).value;
                           try {
                             await addApiDomain.mutateAsync({
-                              projectId: params.projectId,
+                              projectId: projectId,
                               domain,
                             });
+
                             form.reset();
                           } catch (error: any) {
                             toast({
@@ -520,11 +530,12 @@ export default function SettingsPage({
                                   const currentDomains =
                                     tenant?.app_domains || [];
                                   await updateDashboardDomains.mutateAsync({
-                                    projectId: params.projectId,
+                                    projectId: projectId,
                                     domains: currentDomains.filter(
                                       (d: string) => d !== domain,
                                     ),
                                   });
+
                                 } catch (error: any) {
                                   toast({
                                     title: "Error",
@@ -553,9 +564,10 @@ export default function SettingsPage({
                           try {
                             const currentDomains = tenant?.app_domains || [];
                             await updateDashboardDomains.mutateAsync({
-                              projectId: params.projectId,
+                              projectId,
                               domains: [...currentDomains, domain],
                             });
+
                             form.reset();
                           } catch (error: any) {
                             toast({

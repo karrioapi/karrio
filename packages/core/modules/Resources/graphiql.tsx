@@ -9,39 +9,31 @@ import React from "react";
 
 export const generateMetadata = dynamicMetadata("GraphiQL");
 
-export default function Page(pageProps: any) {
-  const Component= (): JSX.Element =>  {
-    const { metadata } = useAPIMetadata();
-    const {
-      query: { data: session },
-    } = useSyncedSession();
+export default function Page() {
+  const { metadata } = useAPIMetadata();
+  const {
+    query: { data: session },
+  } = useSyncedSession();
 
-    const fetcher = React.useMemo(() => {
-      return createGraphiQLFetcher({
-        url: metadata?.GRAPHQL,
-        headers: {
-          ...(!!session?.orgId ? { "x-org-id": session.orgId } : {}),
-          ...(!!session?.testMode ? { "x-test-mode": session.testMode } : {}),
-          ...(!!session?.accessToken
-            ? { authorization: `Bearer ${session.accessToken}` }
-            : {}),
-        },
-      });
-    }, [session.accessToken]);
-
-    return (
-      <div
-        className="playground-wrapper"
-        style={{ position: "absolute", top: 0, left: 0, bottom: 0, right: 0 }}
-      >
-        <GraphiQL fetcher={fetcher} editorTheme="light" />
-      </div>
-    );
-  };
+  const fetcher = React.useMemo(() => {
+    return createGraphiQLFetcher({
+      url: metadata?.GRAPHQL,
+      headers: {
+        ...(!!session?.orgId ? { "x-org-id": session.orgId } : {}),
+        ...(!!session?.testMode ? { "x-test-mode": session.testMode } : {}),
+        ...(!!session?.accessToken
+          ? { authorization: `Bearer ${session.accessToken}` }
+          : {}),
+      },
+    });
+  }, [session.accessToken]);
 
   return (
-    <>
-      <Component />
-    </>
+    <div
+      className="playground-wrapper"
+      style={{ position: "absolute", top: 0, left: 0, bottom: 0, right: 0 }}
+    >
+      <GraphiQL fetcher={fetcher} editorTheme="light" />
+    </div>
   );
 }

@@ -47,7 +47,7 @@ jobs:
           npm install -g corepack
           mkdir -p ~/.volta/bin
           corepack enable --install-directory ~/.volta/bin
-          npm install
       - name: Test Build
         run: |
+          npm ci
           npm run build -w apps/dashboard

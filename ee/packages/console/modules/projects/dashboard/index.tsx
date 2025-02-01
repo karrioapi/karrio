@@ -42,25 +42,30 @@ interface DataPoint {
   failed: number;
 }
 
-export default function DashboardPage({
+export default async function DashboardPage({
   params,
 }: {
-  params: { orgId: string; projectId: string };
+  params: Promise<{ orgId: string; projectId: string }>;
 }) {
+  const { orgId, projectId } = await params;
   const utils = trpc.useContext();
   const { data: currentProject, isLoading: isProjectLoading } =
+
+
     trpc.projects.get.useQuery({
-      id: params.projectId,
-      orgId: params.orgId,
+      id: projectId,
+      orgId: orgId,
     });
+
   const { data: tenant, isLoading: isTenantLoading } =
     trpc.projects.tenant.get.useQuery(
-      { projectId: params.projectId },
+      { projectId: projectId },
       {
-        enabled: Boolean(params.projectId),
+        enabled: Boolean(projectId),
         refetchInterval: currentProject?.status !== "ACTIVE" ? 30000 : false,
       },
     );
+
   const checkTenantHealth = trpc.projects.checkTenantHealth.useMutation({
     onSuccess: () => {
       utils.projects.get.invalidate();
@@ -94,12 +99,14 @@ export default function DashboardPage({
 
   const usageStats = trpc.projects.tenant.getUsageStats.useQuery(
     {
-      projectId: params.projectId,
+      projectId: projectId,
       filter: dateFilter,
     },
+
     {
-      enabled: Boolean(params.projectId) && currentProject?.status === "ACTIVE",
+      enabled: Boolean(projectId) && currentProject?.status === "ACTIVE",
     },
+
   );
 
   React.useEffect(() => {
@@ -109,9 +116,10 @@ export default function DashboardPage({
   }, [tenant]);
 
   // Handle loading and error states
-  if (!params.projectId) {
+  if (!projectId) {
     return (
       <div className="flex flex-col items-center justify-center h-[50vh]">
+
         <h2 className="text-xl font-semibold">No Project Selected</h2>
         <p className="text-muted-foreground">
           Please select a project to view its dashboard
@@ -472,9 +480,10 @@ export default function DashboardPage({
                       <Button
                         onClick={() => {
                           retryDeployment.mutate({
-                            projectId: params.projectId,
+                            projectId: projectId,
                           });
                         }}
+
                         disabled={retryDeployment.status === "loading"}
                       >
                         {retryDeployment.status === "loading" ? (
@@ -504,9 +513,10 @@ export default function DashboardPage({
                     <Button
                       onClick={() => {
                         checkTenantHealth.mutate({
-                          projectId: params.projectId,
+                          projectId: projectId,
                         });
                       }}
+
                       disabled={checkTenantHealth.status === "loading"}
                     >
                       Check Tenant Health

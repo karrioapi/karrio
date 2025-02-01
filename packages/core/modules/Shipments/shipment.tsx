@@ -759,11 +759,12 @@ export const ShipmentComponent = ({
   );
 };
 
-export default function Page({ params }: { params: { id: string } }) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const query = await params;
   return (
     <>
       <ConfirmModal>
-        <ShipmentComponent shipmentId={params.id} />
+        <ShipmentComponent shipmentId={query.id} />
       </ConfirmModal>
     </>
   );

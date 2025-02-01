@@ -120,10 +120,12 @@ export const EventComponent = ({
   );
 };
 
-export default function EventPage({ params }: { params: { id: string } }) {
+export default async function EventPage({ params }: { params: Promise<{ id: string }> }) {
+  const query = await params;
   return (
     <>
-      <EventComponent eventId={params.id} />
+      <EventComponent eventId={query.id} />
     </>
   );
 }
+

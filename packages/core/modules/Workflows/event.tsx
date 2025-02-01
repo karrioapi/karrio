@@ -226,13 +226,15 @@ export const Component = ({
   );
 };
 
-export default function Page({ params }: { params: { id: string } }) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const query = await params;
   return (
     <>
-      <Component eventId={params.id} />
+      <Component eventId={query.id} />
     </>
   );
 }
+
 
 export function parseWorkflowEventRecordData(record: any) {
   if (!record) return null;

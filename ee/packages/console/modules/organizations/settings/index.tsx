@@ -11,9 +11,9 @@ import {
 } from "@karrio/insiders/components/ui/card";
 import { Alert, AlertDescription } from "@karrio/insiders/components/ui/alert";
 import { Button } from "@karrio/insiders/components/ui/button";
+import { UserPlus, Trash2, AlertCircle } from "lucide-react";
 import { Input } from "@karrio/insiders/components/ui/input";
 import { useToast } from "@karrio/insiders/hooks/use-toast";
-import { UserPlus, Trash2, AlertCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import {
@@ -28,21 +28,24 @@ import {
 } from "@karrio/insiders/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
 
-export default function SettingsPage({
+export default async function SettingsPage({
   params,
 }: {
-  params: { orgId: string };
+  params: Promise<{ orgId: string }>;
 }) {
   const { toast } = useToast();
   const router = useRouter();
   const utils = trpc.useContext();
   const { data: session } = useSession();
+  const { orgId } = await params;
   const { data: organization } = trpc.organizations.get.useQuery({
-    orgId: params.orgId,
+    orgId,
   });
   const { data: members } = trpc.organizations.getMembers.useQuery({
-    orgId: params.orgId,
+    orgId,
   });
+
+
   const currentUser = members?.find(
     (member) => member.user.email === session?.user?.email,
   );
@@ -172,11 +175,9 @@ export default function SettingsPage({
                         />
                         <Button
                           onClick={() =>
-                            updateOrg.mutateAsync({
-                              orgId: params.orgId,
-                              name: orgName,
-                            })
+                            updateOrg.mutateAsync({ orgId, name: orgName })
                           }
+
                           disabled={
                             !isOwner ||
                             !orgName ||
@@ -241,10 +242,11 @@ export default function SettingsPage({
                                 size="icon"
                                 onClick={() =>
                                   removeMember.mutateAsync({
-                                    orgId: params.orgId,
+                                    orgId,
                                     userId: member.userId,
                                   })
                                 }
+
                               >
                                 <Trash2 className="h-4 w-4 text-destructive" />
                               </Button>
@@ -266,11 +268,12 @@ export default function SettingsPage({
                       <Button
                         onClick={() => {
                           inviteMember.mutateAsync({
-                            orgId: params.orgId,
+                            orgId,
                             email: newMemberEmail,
                           });
                           setNewMemberEmail("");
                         }}
+
                         disabled={!isOwner || !newMemberEmail}
                         className="gap-2"
                       >
@@ -334,11 +337,10 @@ export default function SettingsPage({
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => {
-                deleteOrganization.mutateAsync({
-                  orgId: params.orgId,
-                });
+                deleteOrganization.mutateAsync({ orgId });
                 setShowDeleteDialog(false);
               }}
+
             >
               Delete
             </AlertDialogAction>

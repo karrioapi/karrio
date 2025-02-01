@@ -11,10 +11,12 @@ export const generateMetadata = dynamicMetadata("Tracking");
 
 type DayEvents = { [k: string]: TrackingEvent[] };
 
-export default async function Page({ params }: { params: Collection }) {
-  const id = params?.id as string;
+export default async function Page({ params }: { params: Promise<Collection> }) {
+  const query = await params;
+  const id = query?.id as string;
   const { metadata } = await loadMetadata();
   const client = new KarrioClient({
+
     basePath: url$`${(metadata?.HOST as string) || KARRIO_API}`,
   });
   const { data: tracker, message } = await client.trackers

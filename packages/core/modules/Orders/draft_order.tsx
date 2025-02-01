@@ -29,13 +29,15 @@ const ContextProviders = bundleContexts([
   ModalProvider,
 ]);
 
-export default function Page({ params }: { params: { id: string } }) {
-  const Component = (): JSX.Element => {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const query = await params;
+  const Component = ({ id }: { id: string }): JSX.Element => {
     const loader = useLoader();
-    const id = params.id || "new";
     const [ready, setReady] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [key, setKey] = useState<string>(`order-${Date.now()}`);
+
+
     const { order, current, isNew, DEFAULT_STATE, query, ...mutation } =
       useOrderForm({ id });
 
@@ -551,7 +553,7 @@ export default function Page({ params }: { params: { id: string } }) {
     <>
       <GoogleGeocodingScript />
       <ContextProviders>
-        <Component />
+        <Component id={query.id} />
       </ContextProviders>
     </>
   );

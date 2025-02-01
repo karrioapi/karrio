@@ -40,13 +40,14 @@ const ContextProviders = bundleContexts([ModalProvider]);
 hljs.registerLanguage("django", django);
 hljs.registerLanguage("json", json);
 
-export default function Page({ params }: { params: { id: string } }) {
-  const Component = (): JSX.Element => {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const Component = ({ id }: { id: string }): JSX.Element => {
     const loader = useLoader();
-    const id = params.id;
     const { references } = useAPIMetadata();
     const [key, setKey] = useState<string>(`workflow-${Date.now()}`);
     const {
+
+
       workflow,
       current,
       isNew,
@@ -1092,7 +1093,7 @@ export default function Page({ params }: { params: { id: string } }) {
           tabs={["Editor", "Executions"]}
           setSelectedToURL={true}
         >
-          <Component />
+          <Component id={(await params).id} />
         </TabStateProvider>
       </ContextProviders>
     </>
