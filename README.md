@@ -79,9 +79,9 @@ You can deploy a hobby instance in one line on Linux with Docker (recommended 4G
 
 ## Philosophy
 
-Karrio makes it easy to integrate with shipping carriers and improve your fulfilment processes without loosing control.
+Karrio makes it easy to integrate with shipping carriers and improve your fulfilment processes without losing control.
 
-We believe that the logistics industry can greatly benefit from a unified, open and standardized shipping APIs that gives you direct access to a network of carriers, control over customers' personal data and **compliance**.
+We believe that the logistics industry can greatly benefit from a unified, open and standardized shipping API that gives you direct access to a network of carriers, control over customers' personal data and **compliance**.
 
 ## Benefits
 
@@ -91,9 +91,9 @@ We are an open-source alternative to expensive in-house carrier integration and 
 
 ### Shipping for platforms
 
-With Karrio, you can extend your platform with native shipping capabilities. Improve merchants and customers experience on your Marketplace, eCommerce, ERP, WMS, OMS, 3PL and Logistics platform.
+With Karrio, you can extend your platform with native shipping capabilities. Improve merchants and customers' experience on your Marketplace, eCommerce, ERP, WMS, OMS, 3PL and Logistics platform.
 
-With Karrio, 3PLs and large volume shippers regain control over their shipping tech stack and processes.
+With Karrio, 3PLs and large-volume shippers regain control over their shipping tech stack and processes.
 
 ### Shipping for retailers
 
@@ -106,7 +106,7 @@ When onboarding new carriers, your IT team can meet their requirements in a week
 We <3 contributions big and small. In priority order (although everything is appreciated) with the most helpful first:
 
 -   Ask general question on [Github Discussions](https://github.com/orgs/karrioapi/discussions)
--   Submit a [feature request](https://github.com/karrioapi/karrio/issues/new?assignees=&labels=&projects=&template=feature_request.md) or [bug report](https://github.com/karrioapi/karrio/issues/new?assignees=&labels=&projects=&template=bug_report.md)
+-   Submit a [feature request](https://github.com/orgs/karrioapi/discussions)
 -   Open a PR (see our instructions on [developing Karrio locally](https://docs.karrio.io/contributing/development))
 
 ### Contributors
@@ -121,16 +121,16 @@ This project uses the [Apache v2 license](LICENSE).
 
 For more tooling to build on top of Karrio, join [Karrio Insiders](https://docs.karrio.io/insiders/) for:
 
--   carrier integration and onboarding support
 -   multi-tenancy and team collaboration
--   advanced shipping addons
--   customizable dashboard
--   billing management
+-   onboarding support
+-   advanced shipping add-ons 
+-   customizable dashboard (soon)
+-   billing management (soon)
 -   and more...
 
 ## Sponsors
 
-We are building an open and global shipping tech stack that makes shipping integration fun and accessible using open source software.
+We are building an open and global shipping tech stack that makes shipping integration fun and accessible using open-source software.
 
 Special thanks to our sponsors
 
