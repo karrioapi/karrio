@@ -93,32 +93,6 @@ class TestDHLRating(unittest.TestCase):
 
             self.assertListEqual(DP.to_dict(parsed_response), ParsedRateResponse)
 
-    def test_get_rate_invalid_destination(self):
-        ca_account_gateway = karrio.gateway["dhl_express"].create(
-            dict(
-                site_id="site_id",
-                password="password",
-                carrier_id="carrier_id",
-                account_number="123456789",
-                id="testing_id",
-                account_country_code="CA",
-            )
-        )
-        invalid_destination_request = RateRequest(
-            **{
-                **RatePayload,
-                "recipient": {**RatePayload["recipient"], "country_code": "CA"},
-            }
-        )
-        parsed_response = (
-            Rating.fetch(invalid_destination_request).from_(ca_account_gateway).parse()
-        )
-
-        self.assertListEqual(
-            DP.to_dict(parsed_response),
-            ParsedInvalidDestinationResponse,
-        )
-
     def test_get_rate_invalid_origin(self):
         us_account_gateway = karrio.gateway["dhl_express"].create(
             dict(

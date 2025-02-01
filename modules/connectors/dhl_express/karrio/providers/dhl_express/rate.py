@@ -40,7 +40,6 @@ def _extract_quote(
     ctx: typing.Dict[str, typing.Any] = {},
 ) -> models.RateDetails:
     is_document = ctx.get("is_document", False)
-    is_international = ctx.get("is_international", False)
     service = provider_units.ShippingService.map(quote.GlobalProductCode)
 
     # Filter out services that are not specific to package content
@@ -92,14 +91,6 @@ def rate_request(
         package_option_type=provider_units.ShippingOption,
     )
     is_international = payload.shipper.country_code != payload.recipient.country_code
-
-    if any(settings.account_country_code or "") and (
-        payload.shipper.country_code != settings.account_country_code
-    ):
-        raise errors.OriginNotServicedError(payload.shipper.country_code)
-
-    if not is_international and payload.shipper.country_code in ["CA"]:
-        raise errors.DestinationNotServicedError(payload.shipper.country_code)
 
     is_document = all([parcel.is_document for parcel in payload.parcels])
     is_from_EU = payload.shipper.country_code in units.EUCountry
