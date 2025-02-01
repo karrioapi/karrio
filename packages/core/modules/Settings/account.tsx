@@ -3,14 +3,14 @@ import { WorkspaceConfigForm } from "@karrio/ui/forms/workspace-config-form";
 import { CloseAccountAction } from "@karrio/ui/forms/close-account-action";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { AppLink } from "@karrio/ui/components/app-link";
 
 export const generateMetadata = dynamicMetadata("Account Settings");
 
 export default function AccountPage(pageProps: any) {
-  const { APP_NAME, MULTI_ORGANIZATIONS } = (pageProps as any).metadata || {};
-
-  const Component= (): JSX.Element =>  {
+  const Component = (): JSX.Element => {
+    const { metadata } = useAPIMetadata();
     return (
       <>
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
@@ -38,10 +38,11 @@ export default function AccountPage(pageProps: any) {
                 <span>Profile</span>
               </AppLink>
             </li>
-            {MULTI_ORGANIZATIONS && (
+            {metadata?.MULTI_ORGANIZATIONS && (
               <li className={`is-capitalized has-text-weight-semibold`}>
                 <AppLink
                   href="/settings/organization"
+
                   shallow={false}
                   prefetch={false}
                 >
@@ -91,9 +92,10 @@ export default function AccountPage(pageProps: any) {
               <p className="subtitle is-6 py-1">Close Account</p>
               <p className="is-size-7">
                 <strong>Warning:</strong> You will lose access to your{" "}
-                {APP_NAME} services
+                {metadata?.APP_NAME} services
               </p>
             </div>
+
 
             <div className="column is-5">
               <CloseAccountAction>

@@ -10078,6 +10078,12 @@
             "deprecationReason": null
           },
           {
+            "name": "cancelled",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "delivered",
             "description": null,
             "isDeprecated": false,
@@ -10109,6 +10115,12 @@
           },
           {
             "name": "delivery_failed",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "return_to_sender",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -26972,6 +26984,16 @@
               }
             },
             "defaultValue": null
+          },
+          {
+            "name": "metadata",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           }
         ],
         "interfaces": null,
@@ -27477,6 +27499,16 @@
             "type": {
               "kind": "SCALAR",
               "name": "Boolean",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "metadata",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
               "ofType": null
             },
             "defaultValue": null
@@ -32199,19 +32231,15 @@
             "name": "roles",
             "description": null,
             "type": {
-              "kind": "NON_NULL",
+              "kind": "LIST",
               "name": null,
               "ofType": {
-                "kind": "LIST",
+                "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "ENUM",
-                    "name": "UserRole",
-                    "ofType": null
-                  }
+                  "kind": "ENUM",
+                  "name": "UserRole",
+                  "ofType": null
                 }
               }
             },

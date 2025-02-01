@@ -4723,6 +4723,7 @@ export enum IncotermCodeEnum {
   CIP = "CIP",
   CPT = "CPT",
   DAF = "DAF",
+  DAP = "DAP",
   DDP = "DDP",
   DDU = "DDU",
   DEQ = "DEQ",
@@ -4973,6 +4974,7 @@ export enum LabelTypeEnum {
 }
 
 export enum TrackerStatusEnum {
+  cancelled = "cancelled",
   delivered = "delivered",
   delivery_delayed = "delivery_delayed",
   delivery_failed = "delivery_failed",
@@ -4981,6 +4983,7 @@ export enum TrackerStatusEnum {
   out_for_delivery = "out_for_delivery",
   pending = "pending",
   ready_for_pickup = "ready_for_pickup",
+  return_to_sender = "return_to_sender",
   unknown = "unknown",
 }
 
@@ -5535,6 +5538,7 @@ export interface CreateRateSheetMutationInput {
   carrier_name: CarrierNameEnum;
   services?: CreateServiceLevelInput[] | null;
   carriers?: string[] | null;
+  metadata?: any | null;
 }
 
 // null
@@ -5582,6 +5586,8 @@ export interface UpdateRateSheetMutationInput {
   name?: string | null;
   services?: UpdateServiceLevelInput[] | null;
   carriers?: string[] | null;
+  remove_missing_services?: boolean | null;
+  metadata?: any | null;
 }
 
 // null

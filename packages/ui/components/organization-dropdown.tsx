@@ -14,7 +14,7 @@ import { Loading } from "./loader";
 import { p } from "@karrio/lib";
 import Image from "next/image";
 
-export const OrganizationDropdown= (): JSX.Element =>  {
+export const OrganizationDropdown = (): JSX.Element => {
   const trigger = useRef<HTMLButtonElement>(null);
   const searchParams = useSearchParams();
   const { query } = useAPIToken();

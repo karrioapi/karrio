@@ -11,17 +11,16 @@ import { ConfirmModal, useConfirmModal } from "@karrio/ui/modals/confirm-modal";
 import { ParcelDescription } from "@karrio/ui/components/parcel-description";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { getURLSearchParams, isNoneOrEmpty } from "@karrio/lib";
-import { AppLink } from "@karrio/ui/components/app-link";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useLoader } from "@karrio/ui/components/loader";
+import { AppLink } from "@karrio/ui/components/app-link";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-
 export const generateMetadata = dynamicMetadata("Parcels");
 
 export default function ParcelsPage(pageProps: any) {
-  const { MULTI_ORGANIZATIONS } = (pageProps as any).metadata || {};
-
   const Component = (): JSX.Element => {
+    const { metadata } = useAPIMetadata();
     const searchParams = useSearchParams();
     const modal = searchParams.get("modal") as string;
     const { setLoading } = useLoader();
@@ -103,10 +102,11 @@ export default function ParcelsPage(pageProps: any) {
                 <span>Profile</span>
               </AppLink>
             </li>
-            {MULTI_ORGANIZATIONS && (
+            {metadata?.MULTI_ORGANIZATIONS && (
               <li className={`is-capitalized has-text-weight-semibold`}>
                 <AppLink
                   href="/settings/organization"
+
                   shallow={false}
                   prefetch={false}
                 >
