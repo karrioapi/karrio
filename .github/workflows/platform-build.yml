@@ -55,10 +55,10 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          token: ${{ secrets.GH_PAT }}
+      - name: Pull platform server image
+        run: |
+          echo ${{ secrets.GH_PAT }} | docker login ghcr.io -u USERNAME --password-stdin
+          docker pull ghcr.io/karrioapi/cloud:${{ needs.platform-server-build.outputs.version }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -75,7 +75,6 @@ jobs:
 
       - name: Tag and push to AWS ECR
         run: |
-          docker pull ghcr.io/karrioapi/cloud:${{ needs.platform-server-build.outputs.version }}
           docker tag ghcr.io/karrioapi/cloud:${{ needs.platform-server-build.outputs.version }} 563562701692.dkr.ecr.us-east-1.amazonaws.com/karrio/api:${{ needs.platform-server-build.outputs.version }}
           docker push 563562701692.dkr.ecr.us-east-1.amazonaws.com/karrio/api:${{ needs.platform-server-build.outputs.version }}
 
@@ -85,6 +84,9 @@ jobs:
     environment: production
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          token: ${{ secrets.GH_PAT }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -105,4 +107,4 @@ jobs:
           PULUMI_STATE_BUCKET: ${{ secrets.PULUMI_STATE_BUCKET }}
         run: |
           pulumi login s3://${{ secrets.PULUMI_STATE_BUCKET }}
-          cd ee/platform/packages/infra && pulumi up -s karrio-us --skip-preview --yes
+          cd ee/platform/packages/infra && npm install && pulumi up -s karrio-us --skip-preview --yes
