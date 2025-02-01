@@ -15,5 +15,5 @@ if [ -d "ee/insiders" ]; then
 fi
 
 if [ -d "ee/platform" ]; then
-    sed -i '' -e "s/${1}/${2}/g" ee/platform/infra/Pulumi.karrio-us.yaml
+    sed -i '' -e "s/${1}/${2}/g" ee/platform/packages/infra/Pulumi.karrio-us.yaml
 fi
