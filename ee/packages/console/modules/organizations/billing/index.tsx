@@ -67,16 +67,16 @@ export default function BillingPage({ params }: { params: { orgId: string } }) {
   const router = useRouter();
   const utils = trpc.useUtils();
   const { data: subscription } = trpc.billing.getSubscription.useQuery({
-    organizationId: params.orgId,
+    orgId: params.orgId,
   });
   const { data: billingInfo } = trpc.billing.getBillingInfo.useQuery({
-    organizationId: params.orgId,
+    orgId: params.orgId,
   });
   const { data: currentPlan } = trpc.billing.getPlan.useQuery({
-    organizationId: params.orgId,
+    orgId: params.orgId,
   });
   const { data: invoices } = trpc.billing.getInvoices.useQuery({
-    organizationId: params.orgId,
+    orgId: params.orgId,
   });
   const updateBilling = trpc.billing.updateBillingInfo.useMutation();
   const createSetupIntent = trpc.billing.createSetupIntent.useMutation();
@@ -98,7 +98,7 @@ export default function BillingPage({ params }: { params: { orgId: string } }) {
 
   const [isMounted, setIsMounted] = useState(false);
   const { data: paymentMethods } = trpc.billing.getPaymentMethods.useQuery({
-    organizationId: params.orgId,
+    orgId: params.orgId,
   });
   const setDefaultPaymentMethod =
     trpc.billing.setDefaultPaymentMethod.useMutation();
@@ -124,9 +124,17 @@ export default function BillingPage({ params }: { params: { orgId: string } }) {
   const [showPlanSelection, setShowPlanSelection] = useState(false);
   const { data: plans } = trpc.billing.getPlans.useQuery();
 
+  const refreshAllResources = () => {
+    utils.billing.getSubscription.invalidate();
+    utils.billing.getBillingInfo.invalidate();
+    utils.billing.getPlan.invalidate();
+    utils.billing.getInvoices.invalidate();
+    utils.billing.getPaymentMethods.invalidate();
+  };
+
   const createSubscription = trpc.billing.createSubscription.useMutation({
     onSuccess: () => {
-      utils.billing.getSubscription.invalidate();
+      refreshAllResources();
       setShowPlanSelection(false);
       toast({
         title: "Success",
@@ -199,7 +207,7 @@ export default function BillingPage({ params }: { params: { orgId: string } }) {
   const handleUpdateBilling = async () => {
     try {
       await updateBilling.mutateAsync({
-        organizationId: params.orgId,
+        orgId: params.orgId,
         email: billingEmail,
         address: billingAddress,
       });
@@ -220,7 +228,7 @@ export default function BillingPage({ params }: { params: { orgId: string } }) {
   const handleUpdateTaxId = async () => {
     try {
       await updateBilling.mutateAsync({
-        organizationId: params.orgId,
+        orgId: params.orgId,
         taxId: {
           type: taxIdType,
           value: taxIdNumber,
@@ -243,7 +251,7 @@ export default function BillingPage({ params }: { params: { orgId: string } }) {
   const handleAddCard = async () => {
     try {
       const setupIntent = await createSetupIntent.mutateAsync({
-        organizationId: params.orgId,
+        orgId: params.orgId,
       });
 
       setSetupIntentSecret(setupIntent.setupIntent);
@@ -260,7 +268,7 @@ export default function BillingPage({ params }: { params: { orgId: string } }) {
   const handleSetDefaultPaymentMethod = async (paymentMethodId: string) => {
     try {
       await setDefaultPaymentMethod.mutateAsync({
-        organizationId: params.orgId,
+        orgId: params.orgId,
         paymentMethodId,
       });
       toast({
@@ -280,7 +288,7 @@ export default function BillingPage({ params }: { params: { orgId: string } }) {
   const handleDeletePaymentMethod = async (paymentMethodId: string) => {
     try {
       await deletePaymentMethod.mutateAsync({
-        organizationId: params.orgId,
+        orgId: params.orgId,
         paymentMethodId,
       });
     } catch (error) {
@@ -305,7 +313,7 @@ export default function BillingPage({ params }: { params: { orgId: string } }) {
 
     try {
       await createSubscription.mutateAsync({
-        organizationId: params.orgId,
+        orgId: params.orgId,
         priceId: selectedPlan,
       });
     } catch (error: any) {
@@ -457,7 +465,7 @@ export default function BillingPage({ params }: { params: { orgId: string } }) {
                               onValueChange={async (value) => {
                                 try {
                                   await retrySubscriptionPayment.mutateAsync({
-                                    organizationId: params.orgId,
+                                    orgId: params.orgId,
                                     paymentMethodId: value,
                                   });
                                   utils.billing.getSubscription.invalidate();
@@ -573,7 +581,7 @@ export default function BillingPage({ params }: { params: { orgId: string } }) {
                           variant="outline"
                           onClick={() =>
                             reactivateSubscription.mutateAsync({
-                              organizationId: params.orgId,
+                              orgId: params.orgId,
                             })
                           }
                           disabled={reactivateSubscription.status === "loading"}
@@ -957,8 +965,9 @@ export default function BillingPage({ params }: { params: { orgId: string } }) {
 
           <Elements stripe={stripePromise}>
             <PaymentMethodForm
-              organizationId={params.orgId}
+              orgId={params.orgId}
               onSuccess={() => {
+                refreshAllResources();
                 setShowPaymentForm(false);
                 router.refresh();
               }}
@@ -1005,7 +1014,7 @@ export default function BillingPage({ params }: { params: { orgId: string } }) {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => {
                 cancelSubscription.mutateAsync({
-                  organizationId: params.orgId,
+                  orgId: params.orgId,
                 });
                 setShowCancelDialog(false);
               }}

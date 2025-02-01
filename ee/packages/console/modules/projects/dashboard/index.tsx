@@ -51,7 +51,7 @@ export default function DashboardPage({
   const { data: currentProject, isLoading: isProjectLoading } =
     trpc.projects.get.useQuery({
       id: params.projectId,
-      organizationId: params.orgId,
+      orgId: params.orgId,
     });
   const { data: tenant, isLoading: isTenantLoading } =
     trpc.projects.tenant.get.useQuery(
@@ -62,6 +62,12 @@ export default function DashboardPage({
       },
     );
   const checkTenantHealth = trpc.projects.checkTenantHealth.useMutation({
+    onSuccess: () => {
+      utils.projects.get.invalidate();
+    },
+  });
+
+  const retryDeployment = trpc.projects.retryDeployment.useMutation({
     onSuccess: () => {
       utils.projects.get.invalidate();
     },
@@ -456,13 +462,31 @@ export default function DashboardPage({
                     healthy
                   </div>
                   {currentProject?.status === "FAILED" && (
-                    <Alert variant="destructive">
-                      <AlertTriangle className="h-4 w-4" />
-                      <AlertDescription>
-                        Tenant deployment failed. Please check the logs or
-                        contact support.
-                      </AlertDescription>
-                    </Alert>
+                    <div className="space-y-4">
+                      <Alert variant="destructive">
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertDescription>
+                          Tenant deployment failed. Please contact support.
+                        </AlertDescription>
+                      </Alert>
+                      <Button
+                        onClick={() => {
+                          retryDeployment.mutate({
+                            projectId: params.projectId,
+                          });
+                        }}
+                        disabled={retryDeployment.status === "loading"}
+                      >
+                        {retryDeployment.status === "loading" ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Retrying deployment...
+                          </>
+                        ) : (
+                          <>Retry Deployment</>
+                        )}
+                      </Button>
+                    </div>
                   )}
                   {currentProject?.status === "UNREACHABLE" && (
                     <Alert variant="destructive">

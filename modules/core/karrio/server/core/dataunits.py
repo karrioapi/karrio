@@ -1,4 +1,5 @@
 import typing
+from constance import config
 from django.urls import reverse
 from rest_framework.request import Request
 
@@ -44,11 +45,21 @@ def contextual_metadata(request: Request):
         ),
     )
     host = _host[:-1] if _host[-1] == "/" else _host
+    name = lib.identity(
+        getattr(conf.settings.tenant, "name", conf.settings.APP_NAME)
+        if conf.settings.MULTI_TENANTS
+        else getattr(config, "APP_NAME", None) or conf.settings.APP_NAME
+    )
+    website = lib.identity(
+        getattr(conf.settings.tenant, "website", conf.settings.APP_WEBSITE)
+        if conf.settings.MULTI_TENANTS
+        else getattr(config, "APP_WEBSITE", None) or conf.settings.APP_WEBSITE
+    )
 
     return {
         "VERSION": conf.settings.VERSION,
-        "APP_NAME": conf.settings.APP_NAME,
-        "APP_WEBSITE": conf.settings.APP_WEBSITE,
+        "APP_NAME": name,
+        "APP_WEBSITE": website,
         "HOST": f"{host}/",
         "ADMIN": f"{host}/admin",
         "GRAPHQL": f"{host}/graphql",

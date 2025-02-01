@@ -10,8 +10,9 @@ import {
   Globe,
   Layers,
 } from "lucide-react";
-import { CarrierNetwork } from "@karrio/console/components/features-illustrations/carrier-network";
 import { FeatureShowcase } from "@karrio/console/components/feature-showcase";
+import { RoadmapSection } from "@karrio/console/components/roadmap-section";
+import { PricingSection } from "@karrio/console/components/pricing-section";
 import { CodePreview } from "@karrio/console/components/code-preview";
 import { FeatureTabs } from "@karrio/console/components/feature-tabs";
 import { CTASection } from "@karrio/console/components/cta-section";
@@ -322,219 +323,176 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* How It Works Section */}
+      {/* Use Cases Section */}
       <section className="py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,#ff48001a,transparent_70%)]" />
         <div className="absolute inset-0 bg-[conic-gradient(from_270deg_at_50%_50%,#0f082600,#5722cc0d,#79e5dd0d,#0f082600)]" />
         <div className="absolute inset-0 backdrop-blur-[100px]" />
         <div className="container mx-auto px-4 relative max-w-[95%] xl:max-w-[1280px]">
           <div className="mb-16">
-            <div className="text-[#79e5dd] mb-4">How it works</div>
+            <div className="text-[#79e5dd] mb-4">Use Cases</div>
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              Build your shipping operations with speed and flexibility
+              Tailored solutions for specialized shipping needs
             </h2>
             <p className="text-white/60 max-w-3xl">
-              Offer your users a great experience from day one with fast
-              onboarding, accurate dashboards, and useful workflows – such as
-              returns, tracking notifications, and carrier management.
+              From marketplaces to enterprise logistics, Karrio provides a customizable platform to meet the unique requirements of different business models and industries.
             </p>
           </div>
           <div className="space-y-12">
             <FeatureShowcase
-              title="Shipping Integration"
-              description="Minimize the complexity associated with building your own carrier integrations and shipping workflows."
+              title="Logistics Providers Network"
+              description="Build stronger partnerships and expand your network with our comprehensive logistics solutions designed for carriers and LSPs."
               learnMoreHref="#"
               tabs={[
                 {
-                  label: "Hosted",
-                  value: "hosted",
+                  label: "Overview",
+                  value: "overview",
                   content: (
-                    <div className="bg-black/20 aspect-video rounded-lg overflow-hidden">
-                      <Image
-                        src="/placeholder.svg"
-                        width={800}
-                        height={400}
-                        alt="Karrio hosted shipping interface"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ),
-                },
-                {
-                  label: "Embedded",
-                  value: "embedded",
-                  content: (
-                    <div className="bg-black/20 aspect-video rounded-lg overflow-hidden">
-                      <Image
-                        src="/placeholder.svg"
-                        width={800}
-                        height={400}
-                        alt="Karrio embedded shipping components"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ),
-                },
-                {
-                  label: "API",
-                  value: "api",
-                  content: (
-                    <div className="flex justify-center">
-                      <div className="bg-black/20 rounded-lg p-4 w-[800px] h-[400px] overflow-auto">
-                        <pre className="text-sm text-white/90">
-                          <code>{`// Create a new shipment
-const shipment = await karrio.shipments.create({
-  service: "fedex_ground",
-  shipper: {
-    company_name: "ACME Inc",
-    address_line1: "123 Shipping St",
-    postal_code: "V6M2V9",
-    city: "Vancouver",
-    country_code: "CA",
-  },
-  recipient: {
-    name: "John Doe",
-    address_line1: "456 Delivery Ave",
-    postal_code: "27401",
-    city: "Greensboro",
-    country_code: "US",
-  },
-  parcels: [{
-    weight: 1.5,
-    weight_unit: "KG",
-    width: 20,
-    height: 10,
-    length: 15,
-    dimension_unit: "CM"
-  }]
-});`}</code>
-                        </pre>
+                    <div className="grid lg:grid-cols-2 gap-8">
+                      <div className="space-y-6">
+                        <ul className="space-y-3">
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">API-first platform for seamless integration</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Real-time visibility and tracking capabilities</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Automated documentation and customs compliance</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Enhanced partner collaboration tools</span>
+                          </li>
+                        </ul>
+                      </div>
+                      <div className="bg-black/20 aspect-video rounded-lg overflow-hidden">
+                        <Image
+                          src="/placeholder.svg"
+                          width={800}
+                          height={400}
+                          alt="Logistics Providers illustration"
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                     </div>
                   ),
-                },
+                }
               ]}
             />
             <FeatureShowcase
-              title="Shipment Dashboard"
-              description="Add dashboard functionality to your website in minutes. Share important details such as tracking status and delivery estimates – all while supporting complex workflows such as returns and customs documentation."
+              title="Marketplace & ERP Fulfillment"
+              description="Empower your merchants with a robust network of fulfillment carriers, streamlining operations and enhancing customer satisfaction."
               learnMoreHref="#"
               tabs={[
                 {
-                  label: "Hosted",
-                  value: "hosted",
+                  label: "Overview",
+                  value: "overview",
                   content: (
-                    <div className="bg-black/20 aspect-video rounded-lg overflow-hidden">
-                      <Image
-                        src="/placeholder.svg"
-                        width={800}
-                        height={400}
-                        alt="Karrio hosted dashboard"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ),
-                },
-                {
-                  label: "Embedded",
-                  value: "embedded",
-                  content: (
-                    <div className="bg-black/20 aspect-video rounded-lg overflow-hidden">
-                      <Image
-                        src="/placeholder.svg"
-                        width={800}
-                        height={400}
-                        alt="Karrio embedded dashboard components"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ),
-                },
-                {
-                  label: "API",
-                  value: "api",
-                  content: (
-                    <div className="flex justify-center">
-                      <div className="bg-black/20 rounded-lg p-4 w-[800px] h-[400px] overflow-auto">
-                        <pre className="text-sm text-white/90">
-                          <code>{`// Fetch shipment details and tracking
-const shipment = await karrio.shipments.retrieve('shp_123');
-const tracking = await karrio.tracking.get(shipment.tracking_number);
-
-console.log(tracking.status); // "in_transit"
-console.log(tracking.estimated_delivery); // "2024-01-28"
-console.log(tracking.events); // Array of tracking events`}</code>
-                        </pre>
+                    <div className="grid lg:grid-cols-2 gap-8">
+                      <div className="space-y-6">
+                        <ul className="space-y-3">
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Multi-carrier rate shopping and automated carrier selection</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Automated label generation and tracking updates</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Seamless integration with major e-commerce platforms</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Advanced analytics and reporting for merchant insights</span>
+                          </li>
+                        </ul>
+                      </div>
+                      <div className="bg-black/20 aspect-video rounded-lg overflow-hidden">
+                        <Image
+                          src="/placeholder.svg"
+                          width={800}
+                          height={400}
+                          alt="Marketplace & OMS illustration"
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                     </div>
                   ),
-                },
+                }
               ]}
             />
             <FeatureShowcase
-              title="Carrier Account Management"
-              description="Easily manage and integrate multiple carrier accounts, streamlining your shipping operations and providing flexibility for your customers."
+              title="Enterprise Solutions"
+              description="Specialized shipping solutions for government agencies, healthcare providers, and high-value shipment handlers requiring enhanced security and compliance."
               learnMoreHref="#"
               tabs={[
                 {
-                  label: "Hosted",
-                  value: "hosted",
+                  label: "Overview",
+                  value: "overview",
                   content: (
-                    <div className="bg-black/20 aspect-video rounded-lg overflow-hidden">
-                      <Image
-                        src="/placeholder.svg"
-                        width={800}
-                        height={400}
-                        alt="Karrio hosted carrier account management"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ),
-                },
-                {
-                  label: "Embedded",
-                  value: "embedded",
-                  content: (
-                    <div className="bg-black/20 aspect-video rounded-lg overflow-hidden">
-                      <Image
-                        src="/placeholder.svg"
-                        width={800}
-                        height={400}
-                        alt="Karrio embedded carrier account components"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ),
-                },
-                {
-                  label: "API",
-                  value: "api",
-                  content: (
-                    <div className="flex justify-center">
-                      <div className="bg-black/20 rounded-lg p-4 w-[800px] h-[400px] overflow-auto">
-                        <pre className="text-sm text-white/90">
-                          <code>{`// Add a new carrier account
-const carrierAccount = await karrio.carrierAccounts.create({
-  carrier: "fedex",
-  account_number: "123456789",
-  account_country: "US",
-  test_mode: false,
-  active: true,
-  credentials: {
-    user_key: "YOUR_FEDEX_USER_KEY",
-    password: "YOUR_FEDEX_PASSWORD",
-    meter_number: "YOUR_FEDEX_METER_NUMBER",
-    account_number: "YOUR_FEDEX_ACCOUNT_NUMBER"
-  }
-});
-
-console.log(carrierAccount.id); // "ca_123456789"
-console.log(carrierAccount.status); // "active"`}</code>
-                        </pre>
+                    <div className="grid lg:grid-cols-2 gap-8">
+                      <div className="space-y-6">
+                        <ul className="space-y-3">
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Advanced security features and compliance controls</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Specialized handling for sensitive shipments</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Custom workflows and approval processes</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Dedicated support and SLA guarantees</span>
+                          </li>
+                        </ul>
+                      </div>
+                      <div className="bg-black/20 aspect-video rounded-lg overflow-hidden">
+                        <Image
+                          src="/placeholder.svg"
+                          width={800}
+                          height={400}
+                          alt="Enterprise Solutions illustration"
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                     </div>
                   ),
-                },
+                }
               ]}
             />
           </div>
@@ -709,6 +667,72 @@ shipment = karrio.shipments.create(
                   },
                 ]}
               />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Roadmap Section */}
+      <RoadmapSection />
+
+      {/* Pricing Section */}
+      <PricingSection />
+
+      {/* FAQ Section */}
+      <section className="py-24 relative">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#5722cc1a,transparent_70%)]" />
+        <div className="absolute inset-0 bg-[conic-gradient(from_270deg_at_50%_50%,#0f082600,#79e5dd0d,#0f082600)]" />
+        <div className="absolute inset-0 backdrop-blur-[100px]" />
+        <div className="container mx-auto px-4 relative max-w-[95%] xl:max-w-[1280px]">
+          <div className="text-center mb-16">
+            <div className="text-[#79e5dd] mb-4">FAQ</div>
+            <h2 className="text-3xl md:text-5xl font-bold mb-4">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-white/60 max-w-2xl mx-auto">
+              Everything you need to know about Karrio and our services.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="space-y-6">
+              <div className="bg-white/5 rounded-lg p-6 backdrop-blur-sm border border-white/10">
+                <h3 className="text-lg font-semibold mb-2">How does Karrio handle carrier integration?</h3>
+                <p className="text-white/60">
+                  Karrio provides a unified API that abstracts away the complexity of individual carrier integrations. We handle the maintenance, updates, and certification requirements for each carrier, allowing you to focus on your core business.
+                </p>
+              </div>
+              <div className="bg-white/5 rounded-lg p-6 backdrop-blur-sm border border-white/10">
+                <h3 className="text-lg font-semibold mb-2">What carriers do you support?</h3>
+                <p className="text-white/60">
+                  We support 30+ major carriers globally, including USPS, FedEx, UPS, DHL, and many regional carriers. Our platform is continuously expanding to include more carriers based on customer needs.
+                </p>
+              </div>
+              <div className="bg-white/5 rounded-lg p-6 backdrop-blur-sm border border-white/10">
+                <h3 className="text-lg font-semibold mb-2">Is Karrio suitable for small businesses?</h3>
+                <p className="text-white/60">
+                  Yes! Our platform is designed to scale with your business. Start with our free tier and upgrade as your shipping needs grow. We offer solutions for businesses of all sizes.
+                </p>
+              </div>
+            </div>
+            <div className="space-y-6">
+              <div className="bg-white/5 rounded-lg p-6 backdrop-blur-sm border border-white/10">
+                <h3 className="text-lg font-semibold mb-2">How does pricing work?</h3>
+                <p className="text-white/60">
+                  Our pricing is based on shipping volume and features needed. We offer a free tier for small businesses, a professional plan for growing companies, and custom enterprise solutions for large-scale operations.
+                </p>
+              </div>
+              <div className="bg-white/5 rounded-lg p-6 backdrop-blur-sm border border-white/10">
+                <h3 className="text-lg font-semibold mb-2">Can I use my existing carrier accounts?</h3>
+                <p className="text-white/60">
+                  Yes, you can connect your existing carrier accounts to Karrio. We provide easy-to-use tools for managing multiple carrier accounts and credentials in one place.
+                </p>
+              </div>
+              <div className="bg-white/5 rounded-lg p-6 backdrop-blur-sm border border-white/10">
+                <h3 className="text-lg font-semibold mb-2">What kind of support do you offer?</h3>
+                <p className="text-white/60">
+                  We provide different levels of support based on your plan. This includes community support, email support, priority support with faster response times, and dedicated support teams for enterprise customers.
+                </p>
+              </div>
             </div>
           </div>
         </div>

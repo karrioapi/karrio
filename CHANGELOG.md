@@ -1,3 +1,21 @@
+# Karrio 2024.12.3
+
+## Changes
+
+### Feat
+
+- feat: prevent Resize unconsequential event from causing full page crash
+- feat: remove DHL destination pre-check
+
+### Fix
+
+- fix: org creation bug and hidden organization config in insiders
+- fix: update default values caused by `constance` update
+
+### Chore
+
+- deploy: Karrio Platform build
+
 # Karrio 2024.12.2
 
 ## Changes

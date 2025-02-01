@@ -12,16 +12,16 @@ import { DocumentTemplateType, NotificationType } from "@karrio/types";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { useConfirmModal } from "@karrio/ui/modals/confirm-modal";
 import { useNotifier } from "@karrio/ui/components/notifier";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { AppLink } from "@karrio/ui/components/app-link";
 import React from "react";
 
 export const generateMetadata = dynamicMetadata("Document Templates");
 
 export default function TemplatesPage(pageProps: any) {
-  const { MULTI_ORGANIZATIONS } = (pageProps as any).metadata || {};
-
   const Component = (): JSX.Element => {
     const { notify } = useNotifier();
+    const { metadata } = useAPIMetadata();
     const mutation = useDocumentTemplateMutation();
     const { confirm: confirmDeletion } = useConfirmModal();
     const {
@@ -35,20 +35,20 @@ export default function TemplatesPage(pageProps: any) {
     };
     const toggle =
       ({ active, id }: DocumentTemplateType) =>
-      async () => {
-        try {
-          await mutation.updateDocumentTemplate.mutateAsync({
-            id,
-            active: !active,
-          });
-          notify({
-            type: NotificationType.success,
-            message: `template ${!active ? "enabled" : "disabled"}!`,
-          });
-        } catch (message: any) {
-          notify({ type: NotificationType.error, message });
-        }
-      };
+        async () => {
+          try {
+            await mutation.updateDocumentTemplate.mutateAsync({
+              id,
+              active: !active,
+            });
+            notify({
+              type: NotificationType.success,
+              message: `template ${!active ? "enabled" : "disabled"}!`,
+            });
+          } catch (message: any) {
+            notify({ type: NotificationType.error, message });
+          }
+        };
 
     return (
       <>
@@ -84,7 +84,7 @@ export default function TemplatesPage(pageProps: any) {
                 <span>Profile</span>
               </AppLink>
             </li>
-            {MULTI_ORGANIZATIONS && (
+            {metadata?.MULTI_ORGANIZATIONS && (
               <li className={`is-capitalized has-text-weight-semibold`}>
                 <AppLink
                   href="/settings/organization"

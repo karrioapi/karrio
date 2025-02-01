@@ -2095,6 +2095,7 @@ export interface SendOrganizationInvitesMutationInput {
   org_id: string;
   emails: string[];
   redirect_url: string;
+  roles?: UserRole[] | null;
 }
 
 // null

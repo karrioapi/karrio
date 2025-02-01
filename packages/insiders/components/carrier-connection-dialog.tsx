@@ -27,33 +27,39 @@ import { Switch } from "./ui/switch";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { GetSystemConnections_system_carrier_connections as BaseConnection } from "@karrio/types/graphql/admin/types";
+import { GetSystemConnections_system_carrier_connections_edges_node, CarrierNameEnum } from "@karrio/types/graphql/admin/types";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { MetadataEditor } from "./ui/metadata-editor";
+import { isEqual } from "lodash";
 
-type Connection = BaseConnection & {
+type Connection = Omit<GetSystemConnections_system_carrier_connections_edges_node, 'credentials' | 'config' | 'metadata'> & {
   credentials?: Record<string, any>;
   config?: Record<string, any>;
+  metadata?: Record<string, any>;
 };
 
 const formSchema = z.object({
-  id: z.string(),
-  carrier_name: z.string(),
-  display_name: z.string(),
-  test_mode: z.boolean(),
+  carrier_name: z.nativeEnum(CarrierNameEnum),
+  carrier_id: z.string(),
   active: z.boolean(),
   capabilities: z.array(z.string()),
-  credentials: z.record(z.any()).optional(),
-  config: z.record(z.any()).optional(),
+  credentials: z.record(z.any()).refine(
+    (credentials) => true, // Will be validated in areCredentialsValid
+    { message: "Please fill in all required fields" }
+  ),
+  config: z.record(z.any()),
+  metadata: z.record(z.any()),
 });
+
+type FormData = z.infer<typeof formSchema>;
 
 interface CarrierConnectionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   selectedConnection: Connection | null;
-  onSubmit: (values: z.infer<typeof formSchema>) => void;
+  onSubmit: (values: FormData) => void;
 }
 
 export function CarrierConnectionDialog({
@@ -65,37 +71,96 @@ export function CarrierConnectionDialog({
   const { references } = useAPIMetadata();
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [isMetadataOpen, setIsMetadataOpen] = useState(false);
+  const [initialValues, setInitialValues] = useState<FormData | null>(null);
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const defaultValues: FormData = {
+    carrier_name: "" as CarrierNameEnum,
+    carrier_id: "",
+    active: false,
+    capabilities: [],
+    credentials: {},
+    config: {},
+    metadata: {},
+  };
+
+  const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      id: "",
-      carrier_name: "",
-      display_name: "",
-      test_mode: false,
-      active: false,
-      capabilities: [],
-      credentials: {},
-      config: {},
-    },
+    defaultValues,
   });
 
-  const handleModalClose = () => {
-    setIsConfigOpen(false);
-    setIsMetadataOpen(false);
-    requestAnimationFrame(() => {
-      form.reset({
-        id: "",
-        carrier_name: "",
-        display_name: "",
-        test_mode: false,
-        active: false,
-        capabilities: [],
-        credentials: {},
-        config: {},
-      });
+  // Track form changes
+  const carrierName = form.watch("carrier_name");
+  const formState = form.formState;
+  const formValues = form.watch();
+  const isDirty = initialValues ? !isEqual(formValues, initialValues) : false;
+
+  // Check if required credentials are filled
+  const areCredentialsValid = () => {
+    const carrierName = form.getValues("carrier_name");
+    const credentials = form.getValues("credentials");
+    const fields = references?.connection_fields?.[carrierName] || {};
+
+    return Object.entries(fields).every(([key, field]) => {
+      if (field.required) {
+        const value = credentials?.[key];
+        return value !== undefined && value !== "" && value !== null;
+      }
+      return true;
     });
-    onOpenChange(false);
+  };
+
+  const isValid = formState.isValid && areCredentialsValid();
+
+  // Initialize form values
+  useEffect(() => {
+    if (!open) {
+      form.reset(defaultValues);
+      setInitialValues(null);
+      setIsConfigOpen(false);
+      setIsMetadataOpen(false);
+      return;
+    }
+
+    if (selectedConnection) {
+      const values: FormData = {
+        carrier_name: selectedConnection.carrier_name as CarrierNameEnum,
+        carrier_id: selectedConnection.carrier_id,
+        active: selectedConnection.active,
+        capabilities: selectedConnection.capabilities || [],
+        credentials: selectedConnection.credentials || {},
+        config: selectedConnection.config || {},
+        metadata: selectedConnection.metadata || {},
+      };
+      form.reset(values);
+      setInitialValues(values);
+    } else {
+      form.reset(defaultValues);
+      setInitialValues(defaultValues);
+    }
+  }, [open, selectedConnection]);
+
+  // Handle carrier change
+  useEffect(() => {
+    if (!carrierName || selectedConnection || !open) return;
+
+    const fields = references?.connection_fields?.[carrierName] || {};
+    const defaultCredentials = Object.entries(fields).reduce(
+      (acc, [key, field]) => ({
+        ...acc,
+        [key]: field.default || "",
+      }),
+      {}
+    );
+    form.setValue("credentials", defaultCredentials);
+  }, [carrierName, selectedConnection, open]);
+
+  const handleModalClose = () => {
+    // Reset form first
+    form.reset(defaultValues);
+    // Close modal in next frame
+    requestAnimationFrame(() => {
+      onOpenChange(false);
+    });
   };
 
   const formatLabel = (label: string) => {
@@ -108,46 +173,59 @@ export function CarrierConnectionDialog({
   const renderCredentialFields = () => {
     const carrierName = form.watch("carrier_name");
     const fields = references?.connection_fields?.[carrierName] || {};
+    const credentials = form.watch("credentials");
 
-    return Object.entries(fields).map(([key, field]) => (
-      <FormField
-        key={key}
-        control={form.control}
-        name={`credentials.${key}`}
-        render={({ field: formField }) => (
-          <FormItem>
-            <FormLabel>{formatLabel(field.name)}</FormLabel>
-            <FormControl>
-              {field.type === "string" && !field.enum ? (
-                <Input {...formField} />
-              ) : field.type === "string" && field.enum ? (
-                <Select
-                  onValueChange={formField.onChange}
-                  defaultValue={formField.value}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {field.enum.map((option) => (
-                      <SelectItem key={option} value={option}>
-                        {formatLabel(option)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ) : field.type === "boolean" ? (
-                <Switch
-                  checked={formField.value}
-                  onCheckedChange={formField.onChange}
-                />
-              ) : null}
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-    ));
+    return Object.entries(fields)
+      .filter(([key]) => key !== "display_name")
+      .map(([key, field]) => {
+        const fieldValue = credentials?.[key] || "";
+        return (
+          <FormField
+            key={key}
+            control={form.control}
+            name={`credentials.${key}`}
+            defaultValue={fieldValue}
+            render={({ field: formField }) => (
+              <FormItem>
+                <FormLabel>
+                  {formatLabel(field.name)}
+                  {field.required && <span className="text-destructive">*</span>}
+                </FormLabel>
+                <FormControl>
+                  {field.type === "string" && !field.enum ? (
+                    <Input {...formField} value={formField.value || ""} />
+                  ) : field.type === "string" && field.enum ? (
+                    <Select
+                      onValueChange={formField.onChange}
+                      value={formField.value || ""}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {field.enum.map((option) => (
+                          <SelectItem key={option} value={option}>
+                            {formatLabel(option)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : field.type === "boolean" ? (
+                    <div className="flex items-center gap-2">
+                      <Switch
+                        checked={formField.value || false}
+                        onCheckedChange={formField.onChange}
+                      />
+                      <span className="text-sm">{formatLabel(field.name)}</span>
+                    </div>
+                  ) : null}
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        );
+      });
   };
 
   const renderConfigFields = () => {
@@ -172,7 +250,7 @@ export function CarrierConnectionDialog({
               control={form.control}
               name={`config.${key}`}
               render={({ field: formField }) => (
-                <FormItem>
+                <FormItem className={config.type === "boolean" ? "col-span-2" : undefined}>
                   <FormLabel>{formatLabel(config.name)}</FormLabel>
                   <FormControl>
                     {config.type === "string" && !config.enum ? (
@@ -180,7 +258,7 @@ export function CarrierConnectionDialog({
                     ) : config.type === "string" && config.enum ? (
                       <Select
                         onValueChange={formField.onChange}
-                        defaultValue={formField.value}
+                        value={formField.value}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select..." />
@@ -194,10 +272,13 @@ export function CarrierConnectionDialog({
                         </SelectContent>
                       </Select>
                     ) : config.type === "boolean" ? (
-                      <Switch
-                        checked={formField.value}
-                        onCheckedChange={formField.onChange}
-                      />
+                      <div className="flex items-center gap-2">
+                        <Switch
+                          checked={formField.value}
+                          onCheckedChange={formField.onChange}
+                        />
+                        <span className="text-sm">{formatLabel(config.name)}</span>
+                      </div>
                     ) : null}
                   </FormControl>
                   <FormMessage />
@@ -341,9 +422,38 @@ export function CarrierConnectionDialog({
     );
   };
 
+  const handleSubmit = (values: FormData) => {
+    // Create base data
+    const baseData = {
+      carrier_name: values.carrier_name,
+      carrier_id: values.carrier_id,
+      active: values.active,
+      capabilities: values.capabilities,
+      credentials: values.credentials,
+      config: values.config || {},
+      metadata: values.metadata || {},
+    };
+
+    // Call onSubmit with the appropriate data
+    onSubmit(baseData);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={(open) => !open && handleModalClose()}>
-      <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0">
+    <Dialog
+      open={open}
+      onOpenChange={(value) => {
+        if (!value) {
+          handleModalClose();
+        } else {
+          onOpenChange(true);
+        }
+      }}
+    >
+      <DialogContent
+        className="max-w-2xl max-h-[90vh] flex flex-col p-0"
+        onEscapeKeyDown={() => handleModalClose()}
+        onInteractOutside={() => handleModalClose()}
+      >
         <DialogHeader className="shrink-0 p-6 border-b">
           <DialogTitle>
             {selectedConnection ? "Edit Connection" : "Add Connection"}
@@ -355,7 +465,7 @@ export function CarrierConnectionDialog({
 
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={form.handleSubmit(handleSubmit)}
             className="flex flex-col flex-1 min-h-0"
           >
             <div className="flex-1 overflow-y-auto px-6 py-4">
@@ -366,11 +476,17 @@ export function CarrierConnectionDialog({
                     name="carrier_name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Carrier</FormLabel>
+                        <FormLabel>
+                          Carrier <span className="text-destructive">*</span>
+                        </FormLabel>
                         <FormControl>
                           <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            onValueChange={(value) => {
+                              field.onChange(value as CarrierNameEnum);
+                              form.setValue("carrier_id", value.toLowerCase());
+                            }}
+                            value={field.value}
+                            disabled={!!selectedConnection}
                           >
                             <SelectTrigger>
                               <SelectValue placeholder="Select a carrier" />
@@ -394,10 +510,12 @@ export function CarrierConnectionDialog({
 
                   <FormField
                     control={form.control}
-                    name="display_name"
+                    name="carrier_id"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Display Name</FormLabel>
+                        <FormLabel>
+                          Carrier ID <span className="text-destructive">*</span>
+                        </FormLabel>
                         <FormControl>
                           <Input {...field} />
                         </FormControl>
@@ -409,23 +527,6 @@ export function CarrierConnectionDialog({
                   <div className="flex gap-4">
                     <FormField
                       control={form.control}
-                      name="test_mode"
-                      render={({ field }) => (
-                        <FormItem className="flex items-center gap-2">
-                          <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                          <FormLabel>Test Mode</FormLabel>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
                       name="active"
                       render={({ field }) => (
                         <FormItem className="flex items-center gap-2">
@@ -435,7 +536,7 @@ export function CarrierConnectionDialog({
                               onCheckedChange={field.onChange}
                             />
                           </FormControl>
-                          <FormLabel>Active</FormLabel>
+                          <FormLabel className="!m-0">Active</FormLabel>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -449,29 +550,29 @@ export function CarrierConnectionDialog({
 
                     {Object.keys(
                       references?.connection_configs?.[
-                        form.watch("carrier_name")
+                      form.watch("carrier_name")
                       ] || {},
                     ).length > 0 && (
-                      <div className="space-y-4">
-                        <button
-                          type="button"
-                          className="flex w-full items-center justify-between rounded-lg border p-4 text-left text-sm font-medium hover:bg-gray-100"
-                          onClick={() => setIsConfigOpen(!isConfigOpen)}
-                        >
-                          <span>Connection Config</span>
-                          {isConfigOpen ? (
-                            <ChevronUp className="h-4 w-4" />
-                          ) : (
-                            <ChevronDown className="h-4 w-4" />
+                        <div className="space-y-4">
+                          <button
+                            type="button"
+                            className="flex w-full items-center justify-between rounded-lg border p-4 text-left text-sm font-medium hover:bg-gray-100"
+                            onClick={() => setIsConfigOpen(!isConfigOpen)}
+                          >
+                            <span>Connection Config</span>
+                            {isConfigOpen ? (
+                              <ChevronUp className="h-4 w-4" />
+                            ) : (
+                              <ChevronDown className="h-4 w-4" />
+                            )}
+                          </button>
+                          {isConfigOpen && (
+                            <div className="space-y-4 rounded-lg border p-4">
+                              {renderConfigFields()}
+                            </div>
                           )}
-                        </button>
-                        {isConfigOpen && (
-                          <div className="space-y-4 rounded-lg border p-4">
-                            {renderConfigFields()}
-                          </div>
-                        )}
-                      </div>
-                    )}
+                        </div>
+                      )}
 
                     <div className="space-y-4">
                       <button
@@ -510,7 +611,12 @@ export function CarrierConnectionDialog({
               >
                 Cancel
               </Button>
-              <Button type="submit">Save</Button>
+              <Button
+                type="submit"
+                disabled={!isDirty || !isValid}
+              >
+                Save
+              </Button>
             </DialogFooter>
           </form>
         </Form>

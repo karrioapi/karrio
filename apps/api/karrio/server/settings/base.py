@@ -195,12 +195,8 @@ FEATURE_FLAGS = [
     ("APPS_MANAGEMENT", bool),
     ("DOCUMENTS_MANAGEMENT", bool),
     ("DATA_IMPORT_EXPORT", bool),
-    ("CUSTOM_CARRIER_DEFINITION", bool),
     ("PERSIST_SDK_TRACING", bool),
-    ("ORDER_DATA_RETENTION", int),
-    ("TRACKER_DATA_RETENTION", int),
-    ("SHIPMENT_DATA_RETENTION", int),
-    ("API_LOGS_DATA_RETENTION", int),
+    ("WORKFLOW_MANAGEMENT", bool),
     ("WORKFLOW_MANAGEMENT", bool),
 ]
 
@@ -440,10 +436,10 @@ REST_FRAMEWORK = {
 # JWT config
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(
-        config("JWT_ACCESS_EXPIRY", default=30, cast=int)
+        config("JWT_ACCESS_EXPIRY", default="30", cast=int)
     ),
     "REFRESH_TOKEN_LIFETIME": timedelta(
-        config("JWT_REFRESH_EXPIRY", default=3, cast=int)
+        config("JWT_REFRESH_EXPIRY", default="3", cast=int)
     ),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,

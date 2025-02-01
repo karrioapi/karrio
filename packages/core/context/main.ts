@@ -41,7 +41,7 @@ export async function loadMetadata() {
   // Attempt connection to the karrio API to retrieve the API metadata
   const API_URL = await getAPIURL();
 
-  logger.debug("loadMetadata", API_URL);
+  logger.debug({ action: "> loadMetadata", API_URL });
 
   const { data: metadata, error } = await axios
     .get<Metadata>(url$`${API_URL}`, {
@@ -49,6 +49,7 @@ export async function loadMetadata() {
     })
     .then((res) => ({ data: res.data, error: null }))
     .catch((e) => {
+      console.log("loadMetadata", e);
       const code = AUTH_HTTP_CODES.includes(e.response?.status)
         ? ServerErrorCode.API_AUTH_ERROR
         : ServerErrorCode.API_CONNECTION_ERROR;
@@ -161,8 +162,8 @@ async function getAPIURL(metadata?: Metadata) {
         : null;
     const APIURL = !!TENANT_ENV_KEY
       ? (tenant?.api_domains || []).find((d) =>
-          d.includes(TENANT_ENV_KEY as string),
-        )
+        d.includes(TENANT_ENV_KEY as string),
+      )
       : (tenant?.api_domains || [])[0];
 
     return (!!APIURL ? APIURL : KARRIO_URL) as string;

@@ -16,6 +16,7 @@ import {
 import { GoogleGeocodingScript } from "@karrio/ui/components/google-geocoding-script";
 import { ConfirmModal, useConfirmModal } from "@karrio/ui/modals/confirm-modal";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { useLoader } from "@karrio/ui/components/loader";
 import { useSearchParams } from "next/navigation";
@@ -25,9 +26,8 @@ import React, { useEffect } from "react";
 export const generateMetadata = dynamicMetadata("Addresses");
 
 export default function AddressPage(pageProps: any) {
-  const { MULTI_ORGANIZATIONS } = (pageProps as any).metadata || {};
-
   const Component = (): JSX.Element => {
+    const { metadata } = useAPIMetadata();
     const searchParams = useSearchParams();
     const modal = searchParams.get("modal") as string;
     const { setLoading } = useLoader();
@@ -109,7 +109,7 @@ export default function AddressPage(pageProps: any) {
                 <span>Profile</span>
               </AppLink>
             </li>
-            {MULTI_ORGANIZATIONS && (
+            {metadata?.MULTI_ORGANIZATIONS && (
               <li className={`is-capitalized has-text-weight-semibold`}>
                 <AppLink
                   href="/settings/organization"

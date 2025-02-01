@@ -3,7 +3,7 @@ asgiref==3.8.1
 attrs==25.1.0
 backoff==2.2.1
 Brotli==1.1.0
-certifi==2024.12.14
+certifi==2025.1.31
 cffi==1.17.1
 charset-normalizer==3.4.1
 click==8.1.8
@@ -22,7 +22,7 @@ django-extensions==3.2.3
 django-filter==24.3
 django-formtools==2.5.1
 django-health-check==3.18.3
-django-import-export==4.3.4
+django-import-export==4.3.5
 django-oauth-toolkit==3.0.1
 django-organizations==2.5.0
 django-otp==1.5.4
@@ -35,7 +35,7 @@ djangorestframework==3.15.2
 djangorestframework_simplejwt==5.4.0
 drf-api-tracking==1.8.4
 drf-spectacular==0.28.0
-fonttools==4.55.6
+fonttools==4.55.8
 graphql-core==3.2.6
 gunicorn==23.0.0
 h11==0.14.0
@@ -119,9 +119,9 @@ monotonic==1.6
 more-itertools==10.6.0
 oauthlib==3.2.2
 packaging==24.2
-phonenumbers==8.13.53
+phonenumbers==8.13.54
 pillow==11.1.0
-posthog==3.10.0
+posthog==3.11.0
 psutil==6.1.1
 psycopg2-binary==2.9.10
 py-soap==2020.3.2
@@ -134,7 +134,7 @@ pypng==0.20220715.0
 python-barcode==0.15.1
 python-dateutil==2.9.0.post0
 python-decouple==3.8
-pytz==2024.2
+pytz==2025.1
 PyYAML==6.0.2
 pyzint==0.1.10
 qrcode==7.4.2
@@ -154,7 +154,7 @@ uritemplate==4.1.1
 urllib3==2.3.0
 uvicorn==0.34.0
 validators==0.34.0
-weasyprint==63.1
+weasyprint==64.0
 webencodings==0.5.1
 whitenoise==6.8.2
 xmltodict==0.14.2

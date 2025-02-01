@@ -1,5 +1,7 @@
 """ Dynamic configuration editable on runtime powered by django-constance."""
+
 from decouple import config
+import karrio.server.settings.base as base
 from karrio.server.settings.email import (
     EMAIL_USE_TLS,
     EMAIL_HOST_USER,
@@ -8,9 +10,11 @@ from karrio.server.settings.email import (
     EMAIL_PORT,
     EMAIL_FROM_ADDRESS,
 )
+import importlib.util
 
 CONSTANCE_BACKEND = "constance.backends.database.DatabaseBackend"
 CONSTANCE_DATABASE_PREFIX = "constance:core:"
+
 DATA_ARCHIVING_SCHEDULE = config("DATA_ARCHIVING_SCHEDULE", default=168, cast=int)
 
 GOOGLE_CLOUD_API_KEY = config("GOOGLE_CLOUD_API_KEY", default="")
@@ -23,6 +27,107 @@ TRACKER_DATA_RETENTION = config("TRACKER_DATA_RETENTION", default=183, cast=int)
 SHIPMENT_DATA_RETENTION = config("SHIPMENT_DATA_RETENTION", default=183, cast=int)
 API_LOGS_DATA_RETENTION = config("API_LOGS_DATA_RETENTION", default=92, cast=int)
 
+# Create feature flags config only for modules that exist
+FEATURE_FLAGS_CONFIG = {
+    "AUDIT_LOGGING": (
+        (
+            base.AUDIT_LOGGING,
+            "Audit logging",
+            bool,
+        )
+        if importlib.util.find_spec("karrio.server.audit") is not None
+        else None
+    ),
+    "ALLOW_SIGNUP": (
+        base.ALLOW_SIGNUP,
+        "Allow signup",
+        bool,
+    ),
+    "ALLOW_ADMIN_APPROVED_SIGNUP": (
+        base.ALLOW_ADMIN_APPROVED_SIGNUP,
+        "Allow admin approved signup",
+        bool,
+    ),
+    "ALLOW_MULTI_ACCOUNT": (
+        base.ALLOW_MULTI_ACCOUNT,
+        "Allow multi account",
+        bool,
+    ),
+    "ADMIN_DASHBOARD": (
+        (
+            base.ADMIN_DASHBOARD,
+            "Admin dashboard",
+            bool,
+        )
+        if importlib.util.find_spec("karrio.server.admin") is not None
+        else None
+    ),
+    "MULTI_ORGANIZATIONS": (
+        (
+            base.MULTI_ORGANIZATIONS,
+            "Multi organizations",
+            bool,
+        )
+        if importlib.util.find_spec("karrio.server.orgs") is not None
+        else None
+    ),
+    "ORDERS_MANAGEMENT": (
+        (
+            base.ORDERS_MANAGEMENT,
+            "Orders management",
+            bool,
+        )
+        if importlib.util.find_spec("karrio.server.orders") is not None
+        else None
+    ),
+    "APPS_MANAGEMENT": (
+        (
+            base.APPS_MANAGEMENT,
+            "Apps management",
+            bool,
+        )
+        if importlib.util.find_spec("karrio.server.apps") is not None
+        else None
+    ),
+    "DOCUMENTS_MANAGEMENT": (
+        (
+            base.DOCUMENTS_MANAGEMENT,
+            "Documents management",
+            bool,
+        )
+        if importlib.util.find_spec("karrio.server.documents") is not None
+        else None
+    ),
+    "DATA_IMPORT_EXPORT": (
+        (
+            base.DATA_IMPORT_EXPORT,
+            "Data import export",
+            bool,
+        )
+        if importlib.util.find_spec("karrio.server.data") is not None
+        else None
+    ),
+    "WORKFLOW_MANAGEMENT": (
+        (
+            base.WORKFLOW_MANAGEMENT,
+            "Workflow management",
+            bool,
+        )
+        if importlib.util.find_spec("karrio.server.automation") is not None
+        else None
+    ),
+    "PERSIST_SDK_TRACING": (
+        base.PERSIST_SDK_TRACING,
+        "Persist SDK tracing",
+        bool,
+    ),
+}
+
+# Update fieldsets to only include existing feature flags
+FEATURE_FLAGS_FIELDSET = [k for k, v in FEATURE_FLAGS_CONFIG.items() if v is not None]
+
+
+# Filter out None values and update CONSTANCE_CONFIG
 CONSTANCE_CONFIG = {
     "EMAIL_USE_TLS": (
         EMAIL_USE_TLS,
@@ -72,6 +177,7 @@ CONSTANCE_CONFIG = {
         "API request and SDK tracing logs retention period (in days)",
         int,
     ),
+    **{k: v for k, v in FEATURE_FLAGS_CONFIG.items() if v is not None},
 }
 
 CONSTANCE_CONFIG_FIELDSETS = {
@@ -87,10 +193,11 @@ CONSTANCE_CONFIG_FIELDSETS = {
         "GOOGLE_CLOUD_API_KEY",
         "CANADAPOST_ADDRESS_COMPLETE_API_KEY",
     ),
-    "Data retention": (
+    "Data Retention": (
         "ORDER_DATA_RETENTION",
         "TRACKER_DATA_RETENTION",
         "SHIPMENT_DATA_RETENTION",
         "API_LOGS_DATA_RETENTION",
     ),
+    "Feature Flags": tuple(FEATURE_FLAGS_FIELDSET),
 }

@@ -3,16 +3,16 @@ export * from "@karrio/console/types/api";
 export interface Project {
   id: string;
   name: string;
-  organizationId: string;
+  orgId: string;
   tenantId: string | null;
   tenantApiKey: string | null;
   status:
-    | "PENDING"
-    | "DEPLOYING"
-    | "ACTIVE"
-    | "FAILED"
-    | "UNREACHABLE"
-    | "DELETED";
+  | "PENDING"
+  | "DEPLOYING"
+  | "ACTIVE"
+  | "FAILED"
+  | "UNREACHABLE"
+  | "DELETED";
   statusMessage: string | null;
   metadata: {
     deployment_started_at: string;

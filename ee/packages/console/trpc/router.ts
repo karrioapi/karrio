@@ -118,16 +118,16 @@ export const appRouter = router({
       }),
 
     update: protectedProcedure
-      .use(requireRole(["OWNER", "ADMIN"]))
       .input(
         z.object({
-          organizationId: z.string(),
+          orgId: z.string(),
           name: z.string(),
         }),
       )
+      .use(requireRole(["OWNER", "ADMIN"]))
       .mutation(({ input }) => {
         return prisma.organization.update({
-          where: { id: input.organizationId },
+          where: { id: input.orgId },
           data: { name: input.name },
         });
       }),
@@ -136,23 +136,23 @@ export const appRouter = router({
       .input(z.object({ orgId: z.string() }))
       .query(async ({ input }) => {
         return prisma.organizationMembership.findMany({
-          where: { organizationId: input.orgId },
+          where: { orgId: input.orgId },
           include: { user: true },
         });
       }),
 
     inviteMember: protectedProcedure
-      .use(requireRole(["OWNER"]))
       .input(
         z.object({
-          organizationId: z.string(),
+          orgId: z.string(),
           email: z.string().email(),
         }),
       )
+      .use(requireRole(["OWNER"]))
       .mutation(async ({ input, ctx }) => {
         const session = ctx.session as Session;
         const organization = await prisma.organization.findUnique({
-          where: { id: input.organizationId },
+          where: { id: input.orgId },
           include: { subscription: true },
         });
 
@@ -166,8 +166,8 @@ export const appRouter = router({
         // Check if user is already a member
         const existingMember = await prisma.organizationMembership.findUnique({
           where: {
-            organizationId_userId: {
-              organizationId: input.organizationId,
+            orgId_userId: {
+              orgId: input.orgId,
               userId: session.user.id,
             },
           },
@@ -191,7 +191,7 @@ export const appRouter = router({
             email: input.email,
             token,
             expires,
-            organizationId: input.organizationId,
+            orgId: input.orgId,
             inviterId: session.user.id,
           },
         });
@@ -242,7 +242,7 @@ export const appRouter = router({
         await prisma.$transaction([
           prisma.organizationMembership.create({
             data: {
-              organizationId: invitation.organizationId,
+              orgId: invitation.orgId,
               userId: session.user.id,
               role: "MEMBER",
             },
@@ -256,18 +256,18 @@ export const appRouter = router({
       }),
 
     removeMember: protectedProcedure
-      .use(requireRole(["OWNER", "ADMIN"]))
       .input(
         z.object({
-          organizationId: z.string(),
+          orgId: z.string(),
           userId: z.string(),
         }),
       )
+      .use(requireRole(["OWNER", "ADMIN"]))
       .mutation(async ({ input }) => {
         return prisma.organizationMembership.delete({
           where: {
-            organizationId_userId: {
-              organizationId: input.organizationId,
+            orgId_userId: {
+              orgId: input.orgId,
               userId: input.userId,
             },
           },
@@ -277,12 +277,12 @@ export const appRouter = router({
 
   projects: router({
     create: protectedProcedure
+      .input(z.object({ name: z.string(), orgId: z.string() }))
       .use(requireRole(["OWNER", "ADMIN"]))
-      .input(z.object({ name: z.string(), organizationId: z.string() }))
       .mutation(async ({ input, ctx }) => {
         const session = ctx.session as Session;
         const org = await prisma.organization.findUnique({
-          where: { id: input.organizationId },
+          where: { id: input.orgId },
           include: {
             subscription: true,
             projects: true,
@@ -314,7 +314,8 @@ export const appRouter = router({
         // Create project first with PENDING status
         const project = await prisma.project.create({
           data: {
-            ...input,
+            name: input.name,
+            orgId: input.orgId,
             status: "PENDING",
             statusMessage: "Project created, initializing tenant deployment",
             metadata: {
@@ -332,7 +333,7 @@ export const appRouter = router({
               schema_name: project.id,
               admin_email: session.user.email,
               domain: `${project.id}.${TENANT_API_DOMAIN!.split(":")[0]}`,
-              app_domains: [`http://${project.id}.${TENANT_DASHBOARD_DOMAIN}`],
+              app_domains: [`${project.id}.${TENANT_DASHBOARD_DOMAIN}`],
             },
           },
           "Failed to create tenant",
@@ -376,12 +377,12 @@ export const appRouter = router({
       }),
 
     get: protectedProcedure
-      .input(z.object({ id: z.string(), organizationId: z.string() }))
+      .input(z.object({ id: z.string(), orgId: z.string() }))
       .query(async ({ input }) => {
         const project = await prisma.project.findFirst({
           where: {
             id: input.id,
-            organizationId: input.organizationId,
+            orgId: input.orgId,
           },
         });
 
@@ -400,9 +401,10 @@ export const appRouter = router({
         z.object({
           id: z.string(),
           name: z.string(),
-          organizationId: z.string(),
+          orgId: z.string(),
         }),
       )
+      .use(requireRole(["OWNER", "ADMIN"]))
       .mutation(async ({ input }) => {
         return prisma.project.update({
           where: { id: input.id },
@@ -411,10 +413,10 @@ export const appRouter = router({
       }),
 
     getAll: protectedProcedure
-      .input(z.object({ organizationId: z.string() }))
+      .input(z.object({ orgId: z.string() }))
       .query(async ({ input }) => {
         const org = await prisma.organization.findUnique({
-          where: { id: input.organizationId },
+          where: { id: input.orgId },
           include: {
             subscription: true,
             projects: true,
@@ -444,8 +446,8 @@ export const appRouter = router({
       }),
 
     delete: protectedProcedure
-      .use(requireRole(["OWNER", "ADMIN"]))
       .input(z.object({ id: z.string() }))
+      .use(requireRole(["OWNER", "ADMIN"]))
       .mutation(async ({ input }) => {
         const project = await prisma.project.findUnique({
           where: { id: input.id },
@@ -743,57 +745,102 @@ export const appRouter = router({
     checkTenantHealth: protectedProcedure
       .input(z.object({ projectId: z.string() }))
       .mutation(async ({ input }) => {
+        return prisma.project.update({
+          where: { id: input.projectId },
+          data: {
+            status: "PENDING",
+            statusMessage: "Checking tenant health...",
+          },
+        });
+      }),
+
+    retryDeployment: protectedProcedure
+      .input(z.object({ projectId: z.string() }))
+      .mutation(async ({ input, ctx }) => {
+        const session = ctx.session as Session;
         const project = await prisma.project.findUnique({
           where: { id: input.projectId },
         });
 
-        if (!project?.tenantId) {
+        if (!project) {
           throw new TRPCError({
             code: "NOT_FOUND",
-            message: "Project tenant not deployed",
+            message: "Project not found",
           });
         }
 
-        try {
-          const response = await karrio<GetTenant>(
-            gqlstr(GET_TENANT),
-            { id: project.tenantId },
-            "Failed to fetch tenant details",
-          );
+        // Update project status to pending
+        await prisma.project.update({
+          where: { id: input.projectId },
+          data: {
+            status: "PENDING",
+            statusMessage: "Retrying deployment...",
+            metadata: {
+              ...(project.metadata as Record<string, any>),
+              deployment_retry_at: new Date().toISOString(),
+            },
+          },
+        });
 
-          if (response?.tenant) {
+        // Dispatch tenant creation asynchronously
+        karrio<CreateTenant>(
+          gqlstr(CREATE_TENANT),
+          {
+            input: {
+              name: project.name,
+              schema_name: project.id,
+              admin_email: session.user.email,
+              domain: `${project.id}.${TENANT_API_DOMAIN!.split(":")[0]}`,
+              app_domains: [`${project.id}.${TENANT_DASHBOARD_DOMAIN}`],
+            },
+          },
+          "Failed to create tenant",
+        )
+          .then(async (response) => {
+            if (response?.create_tenant?.tenant) {
+              await prisma.project.update({
+                where: { id: project.id },
+                data: {
+                  tenantId: response.create_tenant.tenant.id,
+                  status: "ACTIVE",
+                  statusMessage: "Tenant deployed successfully",
+                  metadata: {
+                    ...(project.metadata as Record<string, any>),
+                    deployment_completed_at: new Date().toISOString(),
+                    tenant_created_at: new Date().toISOString(),
+                  },
+                },
+              });
+            } else {
+              throw new Error("Tenant creation response is invalid");
+            }
+          })
+          .catch(async (error) => {
+            console.error("Failed to create tenant:", error.data || error);
             await prisma.project.update({
               where: { id: project.id },
               data: {
-                status: "ACTIVE",
-                lastPing: new Date(),
-                statusMessage: "Tenant is healthy",
+                status: "FAILED",
+                statusMessage: `Tenant deployment failed: ${error.message}`,
+                metadata: {
+                  ...(project.metadata as Record<string, any>),
+                  deployment_failed_at: new Date().toISOString(),
+                  error_details: error.data || error.message,
+                },
               },
             });
-            return { status: "healthy" };
-          }
-        } catch (error) {
-          await prisma.project.update({
-            where: { id: project.id },
-            data: {
-              status: "UNREACHABLE",
-              statusMessage: "Tenant is not responding",
-            },
           });
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Tenant is unreachable",
-          });
-        }
+
+        return project;
       }),
   }),
 
   billing: router({
     getSubscription: protectedProcedure
-      .input(z.object({ organizationId: z.string() }))
+      .input(z.object({ orgId: z.string() }))
       .query(async ({ input }): Promise<SubscriptionWithPayment | null> => {
         const subscription = await prisma.subscription.findUnique({
-          where: { organizationId: input.organizationId },
+          where: { orgId: input.orgId },
           include: {
             organization: true,
           },
@@ -847,13 +894,13 @@ export const appRouter = router({
     createCheckoutSession: protectedProcedure
       .input(
         z.object({
-          organizationId: z.string(),
+          orgId: z.string(),
           priceId: z.string(),
         }),
       )
       .mutation(async ({ input }) => {
         const org = await prisma.organization.findUnique({
-          where: { id: input.organizationId },
+          where: { id: input.orgId },
         });
 
         if (!org?.stripeCustomerId) {
@@ -873,18 +920,18 @@ export const appRouter = router({
               quantity: 1,
             },
           ],
-          success_url: `${process.env.NEXTAUTH_URL}/orgs/${input.organizationId}/billing?success=true`,
-          cancel_url: `${process.env.NEXTAUTH_URL}/orgs/${input.organizationId}/billing?canceled=true`,
+          success_url: `${process.env.NEXTAUTH_URL}/orgs/${input.orgId}/billing?success=true`,
+          cancel_url: `${process.env.NEXTAUTH_URL}/orgs/${input.orgId}/billing?canceled=true`,
         });
 
         return { url: session.url };
       }),
 
     getPlan: protectedProcedure
-      .input(z.object({ organizationId: z.string() }))
+      .input(z.object({ orgId: z.string() }))
       .query(async ({ input }) => {
         const subscription = await prisma.subscription.findUnique({
-          where: { organizationId: input.organizationId },
+          where: { orgId: input.orgId },
         });
 
         if (subscription?.stripePriceId) {
@@ -940,7 +987,7 @@ export const appRouter = router({
             interval: interval,
             features:
               PRODUCT_FEATURES[
-                product.metadata.tier as keyof typeof PRODUCT_FEATURES
+              product.metadata.tier as keyof typeof PRODUCT_FEATURES
               ] || [],
             description: product.description,
             maxProjects: parseInt(product.metadata.max_projects || "0"),
@@ -970,10 +1017,10 @@ export const appRouter = router({
       }),
 
     getInvoices: protectedProcedure
-      .input(z.object({ organizationId: z.string() }))
+      .input(z.object({ orgId: z.string() }))
       .query(async ({ input }) => {
         const subscription = await prisma.subscription.findUnique({
-          where: { organizationId: input.organizationId },
+          where: { orgId: input.orgId },
           include: { organization: true },
         });
 
@@ -988,10 +1035,10 @@ export const appRouter = router({
       }),
 
     createPortalSession: protectedProcedure
-      .input(z.object({ organizationId: z.string() }))
+      .input(z.object({ orgId: z.string() }))
       .mutation(async ({ input }) => {
         const org = await prisma.organization.findUnique({
-          where: { id: input.organizationId },
+          where: { id: input.orgId },
         });
 
         if (!org?.stripeCustomerId) {
@@ -1003,17 +1050,17 @@ export const appRouter = router({
 
         const session = await stripe.billingPortal.sessions.create({
           customer: org.stripeCustomerId,
-          return_url: `${process.env.NEXTAUTH_URL}/orgs/${input.organizationId}/billing`,
+          return_url: `${process.env.NEXTAUTH_URL}/orgs/${input.orgId}/billing`,
         });
 
         return { url: session.url };
       }),
 
     getBillingInfo: protectedProcedure
-      .input(z.object({ organizationId: z.string() }))
+      .input(z.object({ orgId: z.string() }))
       .query(async ({ input }) => {
         const org = await prisma.organization.findUnique({
-          where: { id: input.organizationId },
+          where: { id: input.orgId },
         });
 
         if (!org?.stripeCustomerId) {
@@ -1039,13 +1086,13 @@ export const appRouter = router({
     updatePaymentMethod: protectedProcedure
       .input(
         z.object({
-          organizationId: z.string(),
+          orgId: z.string(),
           paymentMethodId: z.string(),
         }),
       )
       .mutation(async ({ input }) => {
         const org = await prisma.organization.findUnique({
-          where: { id: input.organizationId },
+          where: { id: input.orgId },
         });
 
         if (!org?.stripeCustomerId) {
@@ -1067,7 +1114,7 @@ export const appRouter = router({
     updateBillingInfo: protectedProcedure
       .input(
         z.object({
-          organizationId: z.string(),
+          orgId: z.string(),
           email: z.string().email().optional(),
           address: z
             .object({
@@ -1089,7 +1136,7 @@ export const appRouter = router({
       )
       .mutation(async ({ input }) => {
         const org = await prisma.organization.findUnique({
-          where: { id: input.organizationId },
+          where: { id: input.orgId },
         });
 
         if (!org?.stripeCustomerId) {
@@ -1120,10 +1167,10 @@ export const appRouter = router({
       }),
 
     createSetupIntent: protectedProcedure
-      .input(z.object({ organizationId: z.string() }))
+      .input(z.object({ orgId: z.string() }))
       .mutation(async ({ input }) => {
         const org = await prisma.organization.findUnique({
-          where: { id: input.organizationId },
+          where: { id: input.orgId },
         });
 
         if (!org?.stripeCustomerId) {
@@ -1144,10 +1191,10 @@ export const appRouter = router({
       }),
 
     getPaymentMethods: protectedProcedure
-      .input(z.object({ organizationId: z.string() }))
+      .input(z.object({ orgId: z.string() }))
       .query(async ({ input }) => {
         const org = await prisma.organization.findUnique({
-          where: { id: input.organizationId },
+          where: { id: input.orgId },
         });
 
         if (!org?.stripeCustomerId) {
@@ -1168,13 +1215,13 @@ export const appRouter = router({
     setDefaultPaymentMethod: protectedProcedure
       .input(
         z.object({
-          organizationId: z.string(),
+          orgId: z.string(),
           paymentMethodId: z.string(),
         }),
       )
       .mutation(async ({ input }) => {
         const org = await prisma.organization.findUnique({
-          where: { id: input.organizationId },
+          where: { id: input.orgId },
         });
 
         if (!org?.stripeCustomerId) {
@@ -1197,13 +1244,13 @@ export const appRouter = router({
     deletePaymentMethod: protectedProcedure
       .input(
         z.object({
-          organizationId: z.string(),
+          orgId: z.string(),
           paymentMethodId: z.string(),
         }),
       )
       .mutation(async ({ input }) => {
         const org = await prisma.organization.findUnique({
-          where: { id: input.organizationId },
+          where: { id: input.orgId },
         });
 
         if (!org?.stripeCustomerId) {
@@ -1222,13 +1269,13 @@ export const appRouter = router({
     createSubscription: protectedProcedure
       .input(
         z.object({
-          organizationId: z.string(),
+          orgId: z.string(),
           priceId: z.string(),
         }),
       )
       .mutation(async ({ input }) => {
         const org = await prisma.organization.findUnique({
-          where: { id: input.organizationId },
+          where: { id: input.orgId },
           include: {
             subscription: true,
           },
@@ -1308,10 +1355,10 @@ export const appRouter = router({
           // Update subscription in database
           await prisma.subscription.upsert({
             where: {
-              organizationId: input.organizationId,
+              orgId: input.orgId,
             },
             create: {
-              organizationId: input.organizationId,
+              orgId: input.orgId,
               stripeSubscriptionId: subscription.id,
               stripePriceId: input.priceId,
               status: subscription.status,
@@ -1339,10 +1386,10 @@ export const appRouter = router({
       }),
 
     cancelSubscription: protectedProcedure
-      .input(z.object({ organizationId: z.string() }))
+      .input(z.object({ orgId: z.string() }))
       .mutation(async ({ input }) => {
         const org = await prisma.organization.findUnique({
-          where: { id: input.organizationId },
+          where: { id: input.orgId },
           include: { subscription: true },
         });
 
@@ -1364,7 +1411,7 @@ export const appRouter = router({
 
           // Update subscription in database
           await prisma.subscription.update({
-            where: { organizationId: input.organizationId },
+            where: { orgId: input.orgId },
             data: {
               status: "canceling",
             },
@@ -1380,10 +1427,10 @@ export const appRouter = router({
       }),
 
     reactivateSubscription: protectedProcedure
-      .input(z.object({ organizationId: z.string() }))
+      .input(z.object({ orgId: z.string() }))
       .mutation(async ({ input }) => {
         const org = await prisma.organization.findUnique({
-          where: { id: input.organizationId },
+          where: { id: input.orgId },
           include: { subscription: true },
         });
 
@@ -1405,7 +1452,7 @@ export const appRouter = router({
 
           // Update subscription in database
           await prisma.subscription.update({
-            where: { organizationId: input.organizationId },
+            where: { orgId: input.orgId },
             data: {
               status: "active",
             },
@@ -1421,10 +1468,10 @@ export const appRouter = router({
       }),
 
     deleteOrganization: protectedProcedure
-      .input(z.object({ organizationId: z.string() }))
+      .input(z.object({ orgId: z.string() }))
       .mutation(async ({ input }) => {
         const org = await prisma.organization.findUnique({
-          where: { id: input.organizationId },
+          where: { id: input.orgId },
           include: {
             subscription: true,
             members: true,
@@ -1455,15 +1502,15 @@ export const appRouter = router({
           await prisma.$transaction([
             // Delete subscription
             prisma.subscription.deleteMany({
-              where: { organizationId: input.organizationId },
+              where: { orgId: input.orgId },
             }),
             // Delete members
             prisma.organizationMembership.deleteMany({
-              where: { organizationId: input.organizationId },
+              where: { orgId: input.orgId },
             }),
             // Delete organization
             prisma.organization.delete({
-              where: { id: input.organizationId },
+              where: { id: input.orgId },
             }),
           ]);
 
@@ -1479,13 +1526,13 @@ export const appRouter = router({
     retrySubscriptionPayment: protectedProcedure
       .input(
         z.object({
-          organizationId: z.string(),
+          orgId: z.string(),
           paymentMethodId: z.string(),
         }),
       )
       .mutation(async ({ input }) => {
         const org = await prisma.organization.findUnique({
-          where: { id: input.organizationId },
+          where: { id: input.orgId },
           include: { subscription: true },
         });
 
@@ -1520,7 +1567,7 @@ export const appRouter = router({
 
             // Update subscription status in database
             await prisma.subscription.update({
-              where: { organizationId: input.organizationId },
+              where: { orgId: input.orgId },
               data: {
                 status: "active",
               },
