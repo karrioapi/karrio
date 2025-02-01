@@ -5,10 +5,12 @@ import { trpc } from "@karrio/console/trpc/client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-export default function InvitePage({ params }: { params: { token: string } }) {
+export default async function InvitePage({ params }: { params: Promise<{ token: string }> }) {
+  const query = await params;
   const router = useRouter();
   const { toast } = useToast();
   const acceptInvitation = trpc.organizations.acceptInvitation.useMutation({
+
     onSuccess: (org) => {
       toast({
         title: "Welcome!",
@@ -27,8 +29,9 @@ export default function InvitePage({ params }: { params: { token: string } }) {
   });
 
   useEffect(() => {
-    acceptInvitation.mutate({ token: params.token });
-  }, [params.token]);
+    acceptInvitation.mutate({ token: query.token });
+  }, [query.token]);
+
 
   return (
     <div className="flex min-h-screen items-center justify-center">

@@ -361,13 +361,15 @@ export const LogComponent = ({
   );
 };
 
-export default function LogPage({ params }: { params: { id: string } }) {
+export default async function LogPage({ params }: { params: Promise<{ id: string }> }) {
+  const query = await params;
   return (
     <>
-      <LogComponent logId={params.id} />
+      <LogComponent logId={query.id} />
     </>
   );
 }
+
 
 function parseRecordData(record: any) {
   if (!record) return null;

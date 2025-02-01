@@ -3,9 +3,9 @@ import { NextRequest } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { name: string } },
+  { params }: { params: Promise<{ name: string }> },
 ) {
-  const { name } = params;
+  const { name } = await params;
   const searchParams = request.nextUrl.searchParams;
   const isIcon = name.includes("_icon");
   const [_name, ..._] = name.replace(isIcon ? "_icon" : "_logo", "").split(".");
