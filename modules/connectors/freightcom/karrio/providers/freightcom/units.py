@@ -21,6 +21,11 @@ KARRIO_CARRIER_MAPPING = {
     "dhl_e_commerce": "dhl_express",
 }
 
+class ConnectionConfig(lib.Enum):
+    """Carrier specific connection configs"""
+    shipping_options = lib.OptionEnum("shipping_options", list)
+    shipping_services = lib.OptionEnum("shipping_services", list)
+    payment_id = lib.OptionEnum("payment_id")
 
 class PackagingType(lib.StrEnum):
     # TODO: review types

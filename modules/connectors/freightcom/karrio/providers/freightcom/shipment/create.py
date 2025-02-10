@@ -140,11 +140,11 @@ def create_shipment_request(
     #     )
     # ]
 
-    # payment_method_id = filtered_methods[0].get('id') if filtered_methods else payment_methods[0].get('id')
-    #
-    # if not payment_method_id:
-    #     raise Exception("No payment method found")
-    payment_method_id = '3PQtJaY49gIWzEVJ5DZrP8VP0vH1ZgWU'
+
+    payment_method_id = options.freightcom_payment_id or settings.connection_config.payment_id.state
+
+    if not payment_method_id:
+        raise Exception("No payment method found need to be set in config")
 
 
     request = freightcom.ShippingRequestType(

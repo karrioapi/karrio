@@ -1,8 +1,9 @@
 import base64
 from typing import Optional
 import math
+
+from karrio import lib
 from karrio.core import Settings as BaseSettings
-from karrio.lib import request
 
 
 class Settings(BaseSettings):
@@ -28,8 +29,17 @@ class Settings(BaseSettings):
     def carrier_name(self):
         return "freightcom"
 
+    @property
+    def connection_config(self) -> lib.units.Options:
+        from karrio.providers.freightcom.units import ConnectionConfig
+
+        return lib.to_connection_config(
+            self.config or {},
+            option_type=ConnectionConfig,
+        )
+
 def download_label(file_url: str) -> str:
-    return request(
+    return lib.request(
         decoder=lambda b: base64.encodebytes(b).decode("utf-8"),
         url=file_url,
     )
