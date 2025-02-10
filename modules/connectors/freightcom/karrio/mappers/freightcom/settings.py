@@ -8,8 +8,6 @@ from karrio.providers.freightcom.utils import Settings as BaseSettings
 class Settings(BaseSettings):
     """Freightcom connection settings."""
 
-    username: str
-    password: str
     api_key: str
 
     id: str = None
