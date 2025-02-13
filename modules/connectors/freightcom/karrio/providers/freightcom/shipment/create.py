@@ -122,26 +122,7 @@ def create_shipment_request(
         ),
     )
 
-    # TODO: need to know how to make this to get the payment_method ID, it's unique on each account, and not sure where this code belongs
-
-    # payment_methods_response = proxy.get_payments_methods(lib.Serializable(None))
-    # payment_methods = payment_methods_response.deserialize()
-    #
-    # # Get requested payment type or default to net_terms
-    # requested_type = (payload.payment.type
-    #                  if payload and payload.payment and payload.payment.type
-    #                  else provider_units.PaymentMethodType.map().value)
-    #
-    # # Filter payment methods by type
-    # filtered_methods = [
-    #     method for method in payment_methods
-    #     if method.get('type') == provider_units.PaymentMethodType.map(
-    #         options.freightcom_payment_method or "net_terms"
-    #     )
-    # ]
-
-
-    payment_method_id = options.freightcom_payment_id or settings.connection_config.payment_id.state
+    payment_method_id = settings.payment_method
 
     if not payment_method_id:
         raise Exception("No payment method found need to be set in config")
