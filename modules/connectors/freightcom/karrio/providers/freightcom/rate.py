@@ -10,14 +10,16 @@ import karrio.providers.freightcom.units as provider_units
 
 
 def parse_rate_response(
-    response: lib.Deserializable[dict],
+    _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-    """Parse Freightcom rate response into Karrio format"""
-    parsed_response = response.deserialize()
-    messages = error.parse_error_response(parsed_response, settings)
-    rates = [_extract_details(rate, settings) for rate in parsed_response.get("rates", [])]
+    response = _response.deserialize()
+
+    messages = error.parse_error_response(response, settings)
+    rates = [_extract_details(rate, settings) for rate in response.get("rates", [])]
+
     return rates, messages
+
 
 def _extract_details(
     data: dict,
@@ -58,11 +60,11 @@ def _extract_details(
         ),
     )
 
+
 def rate_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    """Create a Freightcom rate request from Karrio unified request"""
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels)
@@ -200,5 +202,3 @@ def rate_request(
         )
     )
     return lib.Serializable(request, lib.to_dict)
-
-

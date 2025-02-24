@@ -15,7 +15,7 @@ class Mapper(BaseMapper):
         return provider.rate_request(payload, self.settings)
 
     def create_shipment_request(self, payload: models.ShipmentRequest) -> Serializable:
-        return provider.create_shipment_request(payload, self.settings)
+        return provider.shipment_request(payload, self.settings)
 
     def create_cancel_shipment_request(
         self, payload: models.ShipmentCancelRequest

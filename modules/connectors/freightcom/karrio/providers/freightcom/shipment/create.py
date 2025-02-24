@@ -4,6 +4,7 @@ import typing
 import datetime
 import uuid
 import karrio.lib as lib
+import karrio.core.units as units
 import karrio.core.models as models
 import karrio.providers.freightcom.error as error
 import karrio.providers.freightcom.utils as provider_utils
@@ -17,14 +18,6 @@ def parse_shipment_response(
     """Parse Freightcom shipping response into Karrio format"""
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
-
-    # shipment = lib.to_multi_piece_shipment(
-    #     [
-    #         (index, _extract_details(data, data.get("shipmentId"), settings))
-    #         for index, data in enumerate(response.get("labels", []))
-    #     ]
-    # )
-    #
 
     shipment = _extract_details(response.get("shipment", {}), settings, ctx=_response.ctx) if "shipment" in response else None
     return shipment, messages
@@ -75,12 +68,10 @@ def _extract_details(
     )
 
 
-def create_shipment_request(
+def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-
-
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels)

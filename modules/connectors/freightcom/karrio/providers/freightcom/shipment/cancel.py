@@ -1,3 +1,4 @@
+
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
@@ -19,9 +20,7 @@ def parse_shipment_cancel_response(
             carrier_name=settings.carrier_name,
             operation="Cancel Shipment",
             success=success,
-        )
-        if success
-        else None
+        ) if success else None
     )
 
     return confirmation, messages
