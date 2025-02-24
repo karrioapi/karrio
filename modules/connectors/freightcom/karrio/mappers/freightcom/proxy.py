@@ -5,11 +5,11 @@ import karrio.lib as lib
 import karrio.api.proxy as proxy
 from karrio.mappers.freightcom.settings import Settings
 
+MAX_RETRIES = 10
+POLL_INTERVAL = 2  # seconds
 
 class Proxy(proxy.Proxy):
     settings: Settings
-    MAX_RETRIES = 10
-    POLL_INTERVAL = 2  # seconds
 
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
         # Step 1: Submit rate request and get quote ID
@@ -22,7 +22,7 @@ class Proxy(proxy.Proxy):
             return lib.Deserializable(response, lib.to_dict)
 
         # Step 2: Poll for rate results
-        for _ in range(self.MAX_RETRIES):
+        for _ in range(MAX_RETRIES):
             status_res = self._send_request(
                 path=f"/rate/{rate_id}",
                 method="GET"
@@ -33,7 +33,7 @@ class Proxy(proxy.Proxy):
             if status:  # Quote is complete
                 return lib.Deserializable(status_res, lib.to_dict)
 
-            time.sleep(self.POLL_INTERVAL)
+            time.sleep(POLL_INTERVAL)
 
         # If we exceed max retries
         return lib.Deserializable({
@@ -53,7 +53,7 @@ class Proxy(proxy.Proxy):
 
         # Step 2: retry because api return empty bytes if done to fast
         time.sleep(1)
-        for _ in range(self.MAX_RETRIES):
+        for _ in range(MAX_RETRIES):
 
             shipment_response = self._send_request(path=f"/shipment/{shipment_id}", method="GET")
             shipment_res = lib.failsafe(lambda :lib.to_dict(shipment_response)) or lib.decode(shipment_response)
@@ -61,7 +61,7 @@ class Proxy(proxy.Proxy):
             if shipment_res:  # is complete
                 return lib.Deserializable(shipment_res, lib.to_dict, request.ctx)
 
-            time.sleep(self.POLL_INTERVAL)
+            time.sleep(POLL_INTERVAL)
 
         # If we exceed max retries
         return lib.Deserializable({
@@ -75,7 +75,7 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(response, lib.to_dict)
 
     # TODO: not sure how this can be a dynamic unit Enum, and cached for now i hard code the id in the ship request
-    def get_payments_methods(self) -> lib.Deserializable[str]:
+    def _get_payments_methods(self) -> lib.Deserializable[str]:
         response = self._send_request(
             path="/finance/payment-methods",
             method="GET"

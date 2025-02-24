@@ -74,7 +74,7 @@ def get_payment_id(settings: Settings) -> dict:
         from karrio.mappers.freightcom.proxy import Proxy
 
         proxy = Proxy(settings)
-        response = proxy.get_payments_methods()
+        response = proxy._get_payments_methods()
         methods = response.deserialize()
 
 
