@@ -56,8 +56,8 @@ def _extract_details(
         ],
         meta=dict(
             rate_provider=courier.name_or_key,
-            service_name=service.name_or_key ,
-        ),
+            service_name=service.name_or_key
+        )
     )
 
 
@@ -93,10 +93,10 @@ def rate_request(
                     country=shipper.country_code,
                     postal_code=shipper.postal_code,
                 ),
-                residential=shipper.residential,
+                residential=shipper.residential is True,
                 contact_name=shipper.person_name if shipper.company_name else "",
                 phone_number=freightcom.PhoneNumberType(
-                    number=shipper.phone_number
+                    number=shipper.phone_number,
                 ) if shipper.phone_number else None,
                 email_addresses=lib.join(shipper.email),
             ),
@@ -110,7 +110,7 @@ def rate_request(
                     country=recipient.country_code,
                     postal_code=recipient.postal_code,
                 ),
-                residential=recipient.residential,
+                residential=recipient.residential is True,
                 contact_name=recipient.person_name,
                 phone_number=freightcom.PhoneNumberType(
                     number=recipient.phone_number
@@ -124,6 +124,7 @@ def rate_request(
                     hour=17,
                     minute=0
                 ),
+                receives_email_updates=options.email_notification.state,
                 signature_requirement="required" if options.signature_confirmation.state else "not-required"
             ),
             expected_ship_date=freightcom.ExpectedShipDateType(
@@ -195,10 +196,9 @@ def rate_request(
                     )
                 ) if options.insurance.state else None,
                 pallet_service_details=freightcom.PalletServiceDetailsType() if packaging_type == "pallet" else None,
-            )
-
+                )
             ),
-            reference_codes=[payload.reference] if payload.reference else []
+            reference_codes=[payload.reference] if any(payload.reference or "") else []
         )
     )
     return lib.Serializable(request, lib.to_dict)

@@ -29,7 +29,7 @@ def _extract_details(
     ctx: dict,
 ) -> models.ShipmentDetails:
     shipment = lib.to_object(shipping.ShipmentType, data)
-    label_type = "ZPL" if ctx["label_type"] == "ZPL" else "PDF"
+    label_type = "ZPL" if ctx.get("label_type") == "ZPL" else "PDF"
     label_url = [_.url for _ in shipment.labels if _.format == label_type.lower() and _.size == "a6" and not _.padded]
     label = provider_utils.download_label(label_url[0]) if label_url else None
     tracking_numbers = (
@@ -48,7 +48,7 @@ def _extract_details(
     )
 
     courier = provider_units.ShippingCourier.find(rate.service_id)
-
+    print(label)
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
@@ -57,6 +57,7 @@ def _extract_details(
         label_type=label_type,
         docs=models.Documents(label=label),
         meta=dict(
+
             carrier_tracking_link=shipment.tracking_url,
             tracking_numbers=tracking_numbers,
             rate_provider=courier.name_or_key,
@@ -84,6 +85,11 @@ def shipment_request(
     packaging_type = provider_units.PackagingType.map(
         packages.package_type or "small_box"
     ).value
+
+    ship_datetime = lib.to_next_business_datetime(
+        options.shipping_date.state or datetime.datetime.now(),
+        current_format="%Y-%m-%dT%H:%M",
+    )
 
     is_intl = shipper.country_code != recipient.country_code
     customs = lib.to_customs_info(
@@ -118,7 +124,6 @@ def shipment_request(
     if not payment_method_id:
         raise Exception("No payment method found need to be set in config")
 
-
     request = freightcom.ShippingRequestType(
         unique_id=str(uuid.uuid4()),
         payment_method_id=payment_method_id,
@@ -134,7 +139,7 @@ def shipment_request(
                     country=shipper.country_code,
                     postal_code=shipper.postal_code,
                 ),
-                residential=shipper.residential,
+                residential=shipper.residential is True,
                 contact_name=shipper.person_name if shipper.company_name else "",
                 phone_number=freightcom.NumberType(
                     number=shipper.phone_number
@@ -151,38 +156,27 @@ def shipment_request(
                     country=recipient.country_code,
                     postal_code=recipient.postal_code,
                 ),
-                residential=recipient.residential,
+                residential=recipient.residential is True,
                 contact_name=recipient.person_name,
                 phone_number=freightcom.NumberType(
                     number=recipient.phone_number
                 ) if recipient.phone_number else None,
                 email_addresses=[recipient.email] if recipient.email else [],
                 ready_at=freightcom.ReadyType(
-                    hour=lib.to_next_business_datetime(
-                        options.shipping_date.state or datetime.datetime.now(),
-                        current_format="%Y-%m-%dT%H:%M"
-                    ).hour,
+                    hour=ship_datetime.hour,
                     minute=0
                 ),
                 ready_until=freightcom.ReadyType(
                     hour=17,
                     minute=0
                 ),
+                receives_email_updates=options.email_notification.state,
                 signature_requirement="required" if options.signature_confirmation.state else "not-required"
             ),
             expected_ship_date=freightcom.DateType(
-                year=lib.to_next_business_datetime(
-                    options.shipping_date.state or datetime.datetime.now(),
-                    current_format="%Y-%m-%dT%H:%M"
-                ).year,
-                month=lib.to_next_business_datetime(
-                    options.shipping_date.state or datetime.datetime.now(),
-                    current_format="%Y-%m-%dT%H:%M"
-                ).month,
-                day=lib.to_next_business_datetime(
-                    options.shipping_date.state or datetime.datetime.now(),
-                    current_format="%Y-%m-%dT%H:%M"
-                ).day,
+                year=ship_datetime.year,
+                month=ship_datetime.month,
+                day=ship_datetime.day,
             ),
             packaging_type=packaging_type,
             packaging_properties=freightcom.PackagingPropertiesType(

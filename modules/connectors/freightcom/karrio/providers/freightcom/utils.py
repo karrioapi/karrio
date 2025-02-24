@@ -2,6 +2,7 @@ import base64
 from typing import Optional
 import math
 
+from karrio.lib import request
 from karrio import lib
 from karrio.core import Settings as BaseSettings
 from karrio.providers.freightcom.units import PaymentMethodType
@@ -56,7 +57,7 @@ class Settings(BaseSettings):
 
 
 def download_label(file_url: str) -> str:
-    return lib.request(
+    return request(
         decoder=lambda b: base64.encodebytes(b).decode("utf-8"),
         url=file_url,
     )

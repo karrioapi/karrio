@@ -105,8 +105,8 @@ class ShippingOption(lib.Enum):
     freightcom_payment_method = lib.OptionEnum("payment_method", str)
 
     """ Unified Option type mapping """
-    saturday_delivery = freightcom_saturday_pickup_required
-    signature_confirmation = freightcom_signature_required
+    # saturday_delivery = freightcom_saturday_pickup_required
+    # signature_confirmation = freightcom_signature_required
 
 
 
