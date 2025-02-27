@@ -8,4 +8,3 @@ twine
 wheel
 typer
 setuptools
-pycairo; platform_system == "Darwin"
