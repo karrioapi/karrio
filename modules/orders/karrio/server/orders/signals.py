@@ -97,12 +97,13 @@ def order_updated(sender, instance, *args, **kwargs):
     """
     created = kwargs.get("created", False)
     changes = kwargs.get("update_fields") or []
+    post_create = created or "created_at" in changes
 
-    if "created_at" in changes:
+    if post_create:
         duplicates = (
-            models.Order.objects.exclude(status="cancelled")
+            models.Order.access_by(instance.created_by)
+            .exclude(status="cancelled")
             .filter(
-                org=instance.link.org,
                 source=instance.source,
                 order_id=instance.order_id,
                 test_mode=instance.test_mode,
@@ -116,7 +117,7 @@ def order_updated(sender, instance, *args, **kwargs):
                 status_code=status.HTTP_409_CONFLICT,
             )
 
-    if created or "created_at" in changes:
+    if post_create:
         event = EventTypes.order_created.value
     elif "status" not in changes:
         event = EventTypes.order_updated.value

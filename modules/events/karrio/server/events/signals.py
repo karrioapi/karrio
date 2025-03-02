@@ -113,8 +113,9 @@ def tracker_updated(
     - tracker status changed (in_transit, delivered or blocked)
     """
     changes = update_fields or []
+    post_create = created or "created_at" in changes
 
-    if created or "created_at" in changes:
+    if post_create:
         event = EventTypes.tracker_created.value
     elif any(field in changes for field in ["status", "events"]):
         event = EventTypes.tracker_updated.value

@@ -23,8 +23,9 @@ def batch_operation_updated(sender, instance, *args, **kwargs):
     - Notifiy webhook subscribers of batch operation updates
     """
     changes = kwargs.get("update_fields") or []
+    post_create = "created_at" in changes
 
-    if "created_at" in changes:
+    if post_create:
         event = serializers.EventTypes.batch_queued.value
     elif instance.status == serializers.BatchOperationStatus.running.value:
         event = serializers.EventTypes.batch_running.value

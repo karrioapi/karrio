@@ -17,8 +17,9 @@ def register_all():
 @utils.disable_for_loaddata
 def document_updated(sender, instance, *args, **kwargs):
     changes = kwargs.get("update_fields") or []
+    post_create = "created_at" in changes
 
-    if "created_at" in changes:
+    if post_create:
         duplicates = models.DocumentTemplate.objects.filter(
             slug=instance.slug,
             **({"org__id": instance.link.org.id} if hasattr(instance, "link") else {})
