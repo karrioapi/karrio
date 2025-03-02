@@ -3,7 +3,23 @@
 import { Button } from "@karrio/insiders/components/ui/button";
 import Image from "next/image";
 
-export function CTASection() {
+interface CTASectionProps {
+  title: string;
+  description: string;
+  primaryButtonText: string;
+  primaryButtonHref: string;
+  secondaryButtonText?: string;
+  secondaryButtonHref?: string;
+}
+
+export function CTASection({
+  title,
+  description,
+  primaryButtonText,
+  primaryButtonHref,
+  secondaryButtonText,
+  secondaryButtonHref
+}: CTASectionProps) {
   return (
     <section className="py-24 relative">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#5722cc0d,transparent_50%)]" />
@@ -12,12 +28,10 @@ export function CTASection() {
         {/* Header */}
         <div className="text-center space-y-4">
           <h2 className="text-4xl font-bold">
-            Two hosting options, same benefits
+            {title}
           </h2>
           <p className="text-white/60 max-w-2xl mx-auto">
-            Whether you choose the cloud version or decide to host the solution
-            yourself, you will benefit from our powerful API and user-friendly
-            interface.
+            {description}
           </p>
         </div>
 
