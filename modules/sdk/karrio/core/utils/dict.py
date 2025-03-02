@@ -53,7 +53,7 @@ class DICTPARSE:
         _clear_empty = clear_empty is not False
         if isinstance(entity, str):
             entity = re.sub(",[ \t\r\n]+}", "}", entity)
-            entity = re.sub(",[ \t\r\n]+\]", "]", entity)
+            entity = re.sub(r",[ \t\r\n]+\]", "]", entity)
 
         return json.loads(
             (
