@@ -31,6 +31,17 @@ class TestOrders(TestOrderFixture):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertDictEqual(response_data, ORDER_RESPONSE)
 
+    def test_duplicate_order_creation(self):
+        # Create the first order successfully
+        response1, _ = self.create_order()
+        self.assertEqual(response1.status_code, status.HTTP_201_CREATED)
+
+        # Attempt to create another order with the same order_id/source pair
+        response2, _ = self.create_order()
+
+        # The second request should fail with a conflict error
+        self.assertEqual(response2.status_code, status.HTTP_409_CONFLICT)
+
 
 class TestOrderDetails(TestOrderFixture):
     def test_retrieve_order(self):

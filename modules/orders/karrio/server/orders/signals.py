@@ -1,4 +1,5 @@
 import logging
+from rest_framework import status
 from django.db.models import signals
 
 from karrio.server.core import utils
@@ -10,6 +11,7 @@ import karrio.server.orders.serializers as serializers
 import karrio.server.manager.models as manager
 import karrio.server.orders.models as models
 import karrio.server.events.tasks as tasks
+import karrio.server.core.exceptions as exceptions
 
 logger = logging.getLogger(__name__)
 
@@ -109,10 +111,9 @@ def order_updated(sender, instance, *args, **kwargs):
         )
 
         if duplicates > 1:
-            raise serializers.ValidationError(
-                {
-                    "order_id": f"An order with 'order_id' {instance.order_id} already exists."
-                }
+            raise exceptions.APIException(
+                detail=f"An order with 'order_id' {instance.order_id} from {instance.source} already exists.",
+                status_code=status.HTTP_409_CONFLICT,
             )
 
     if created or "created_at" in changes:
