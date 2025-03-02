@@ -71,6 +71,46 @@ source ./bin/activate-env
 
 - Apply database migrations:
 
+:::info
+
+Karrio uses SQLite by default to simplify the development setup.
+
+<details>
+<summary>If you want to use Postgres instead</summary>
+
+- Change the database config:
+
+```diff
+...
+- DATABASE_ENGINE=sqlite3
+- # DATABASE_ENGINE=postgresql_psycopg2
+- # DATABASE_USERNAME=postgres
+- # DATABASE_PASSWORD=postgres
+- # DATABASE_NAME=db
++ # DATABASE_ENGINE=sqlite3
++ DATABASE_ENGINE=postgresql_psycopg2
++ DATABASE_USERNAME=postgres
++ DATABASE_PASSWORD=postgres
++ DATABASE_NAME=db
+...
+
+```
+
+- Start the database using:
+
+```terminal title="Terminal"
+docker compose -f docker/docker-compose.yml up -d db
+```
+
+- Destroy the database using:
+
+```terminal title="Terminal"
+docker compose -f docker/docker-compose.yml down
+```
+
+</details>
+:::
+
 ```terminal title="Terminal"
 karrio migrate
 ```
@@ -102,7 +142,7 @@ karrio createsuperuser
 ## Dashboard
 
 The Karrio dashboard codebase is now in the same repository as we move towards a monorepo structure.
-You can simply setup the dashboard by following the steps below. 
+You can simply setup the dashboard by following the steps below.
 
 - Install node dependencies:
 
@@ -257,3 +297,46 @@ You can run the same helper scripts on the docker dev environment container.
 ```terminal title="Terminal"
 ./bin/docker-env
 ```
+
+```
+Help: You can pass any the following commands to the './bin/docker-env' scripts
+-----
+create     Create and setup docker dev environment.
+           ./bin/docker-env create
+
+destroy    Destroy docker dev environment.
+           ./bin/docker-env destroy
+
+on:        Start docker dev environment.
+           ./bin/docker-env on
+
+off:       Stop docker dev environment.
+           ./bin/docker-env off
+
+shell:     Start docker dev environment shell.
+           ./bin/docker-env shell
+
+exec:      Execute command in docker dev environment.
+           ./bin/docker-env exec '<command>'
+
+
+# examples:
+
+# to run server tests.
+./bin/docker-env exec './bin/run-server-tests'
+
+# to run a carrier integration tests.
+./bin/docker-env exec 'python -m unittest discover -v -f modules/connectors/dhl_express/tests'
+```
+
+:::
+
+## Troubleshooting
+
+Make sure Docker and Docker Compose work before attempting to run Karrio.
+We won't be able to assist with your Docker installation.
+
+Make sure you've read the warning about Windows 10 Home.
+Windows versions before Windows 10 are not officially supported.
+
+If you encounter other problems, see [Support](/product/resources/support).
