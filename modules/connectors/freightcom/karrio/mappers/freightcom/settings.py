@@ -1,16 +1,18 @@
 """Karrio freightcom connection settings."""
 
 import attr
-from karrio.providers.freightcom.utils import Settings as BaseSettings
+import karrio.providers.freightcom.utils as provider_utils
+from karrio.providers.freightcom.units import PaymentMethodType
 
 
 @attr.s(auto_attribs=True)
-class Settings(BaseSettings):
+class Settings(provider_utils.Settings):
     """Freightcom connection settings."""
+    #carrier specific API connection properties here
+    api_key: str
+    payment_method_type: PaymentMethodType = "net_terms"
 
-    username: str
-    password: str
-
+    # generic properties
     id: str = None
     test_mode: bool = False
     carrier_id: str = "freightcom"

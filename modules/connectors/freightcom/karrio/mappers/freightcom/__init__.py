@@ -17,5 +17,5 @@ METADATA = Metadata(
     # Data Units
     options=units.ShippingOption,
     services=units.ShippingService,
-    hub_carriers=units.CARRIER_IDS,
+    connection_configs = units.ConnectionConfig,
 )
