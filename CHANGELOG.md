@@ -1,3 +1,26 @@
+# Karrio 2024.12.4
+
+## Changes
+
+### Feat
+
+- feat: set fedex commodity values fallback to 0.0 when not provided
+- feat: Update pricing: increase Scale plan improve layout
+
+### Docs
+
+- docs: Update documentation: separate static collection step and database migration
+
+### Fix
+
+- fix: order duplicates issue happening on oss build
+- fix: dict utility parsing warning
+
+### Chore
+
+- chore: add tests for order_id duplication test
+- devx: "Remove pycairo dependency" (@ShaddyB1)
+
 # Karrio 2024.12.3
 
 ## Changes

@@ -1,4 +1,5 @@
 import logging
+from rest_framework import status
 from django.db.models import signals
 
 from karrio.server.core import utils
@@ -10,6 +11,7 @@ import karrio.server.orders.serializers as serializers
 import karrio.server.manager.models as manager
 import karrio.server.orders.models as models
 import karrio.server.events.tasks as tasks
+import karrio.server.core.exceptions as exceptions
 
 logger = logging.getLogger(__name__)
 
@@ -95,12 +97,13 @@ def order_updated(sender, instance, *args, **kwargs):
     """
     created = kwargs.get("created", False)
     changes = kwargs.get("update_fields") or []
+    post_create = created or "created_at" in changes
 
-    if "created_at" in changes:
+    if post_create:
         duplicates = (
-            models.Order.objects.exclude(status="cancelled")
+            models.Order.access_by(instance.created_by)
+            .exclude(status="cancelled")
             .filter(
-                org=instance.link.org,
                 source=instance.source,
                 order_id=instance.order_id,
                 test_mode=instance.test_mode,
@@ -109,13 +112,12 @@ def order_updated(sender, instance, *args, **kwargs):
         )
 
         if duplicates > 1:
-            raise serializers.ValidationError(
-                {
-                    "order_id": f"An order with 'order_id' {instance.order_id} already exists."
-                }
+            raise exceptions.APIException(
+                detail=f"An order with 'order_id' {instance.order_id} from {instance.source} already exists.",
+                status_code=status.HTTP_409_CONFLICT,
             )
 
-    if created or "created_at" in changes:
+    if post_create:
         event = EventTypes.order_created.value
     elif "status" not in changes:
         event = EventTypes.order_updated.value

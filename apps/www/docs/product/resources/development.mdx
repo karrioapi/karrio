@@ -43,6 +43,16 @@ They are required for the following Python packages: `weasyprint and treepoem` u
 feature for HTML to PDF document generation and barcode image rendering.
 :::
 
+:::tip Troubleshooting
+If you encounter a "Permission denied" error, you may need to make the scripts executable first:
+
+```terminal title="Terminal"
+chmod +x ./bin/*
+```
+
+This is typically only required for Unix-based systems (Linux/macOS).
+:::
+
 - Setup a Python environment with all dependencies:
 
 ```terminal title="Terminal"
@@ -59,7 +69,7 @@ or
 source ./bin/activate-env
 ```
 
-- Apply database migrations, collect static assets:
+- Apply database migrations:
 
 :::info
 
@@ -103,8 +113,19 @@ docker compose -f docker/docker-compose.yml down
 
 ```terminal title="Terminal"
 karrio migrate
+```
+
+- Collect static assets:
+
+```terminal title="Terminal"
 karrio collectstatic --noinput
 ```
+
+:::warning
+The `collectstatic` command is crucial for both development and production environments. It gathers all static files (CSS, JavaScript, images) from various apps into a single location for proper serving. Without this step, your application's styling and frontend functionality will be broken.
+
+If you encounter missing styles or JavaScript errors, make sure you've run this command.
+:::
 
 - Finally, create yourself an admin account:
 
@@ -121,7 +142,7 @@ karrio createsuperuser
 ## Dashboard
 
 The Karrio dashboard codebase is now in the same repository as we move towards a monorepo structure.
-You can simply setup the dashboard by following the steps below. 
+You can simply setup the dashboard by following the steps below.
 
 - Install node dependencies:
 

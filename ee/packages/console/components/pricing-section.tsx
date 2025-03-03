@@ -23,51 +23,51 @@ type PricingPlan = {
 };
 
 const PRICING_PLANS: Record<string, { cloud: PricingPlan; selfHosted?: PricingPlan }> = {
-  insiders: {
-    cloud: {
-      name: "Insiders",
-      description: "Advanced features included. Dedicated support team. Scale your operations.",
-      price: "$299",
-      priceDetail: "/month",
-      popular: true,
-      button: {
-        text: "Join Waitlist",
-      },
-      features: [
-        { text: "10,000 labels/trackers a month" },
-        { text: "$0.04 overage beyond" },
-        { text: "Multi-tenant & User management" },
-        { text: "Email & Slack support" },
-        { text: "Customizable dashboard", soon: true },
-        { text: "Platform Admin dashboard" },
-        { text: "Platform APIs" },
-      ],
-    },
-    selfHosted: {
-      name: "Insiders",
-      description: "Advanced features included. Dedicated support team. Scale your operations.",
-      price: "$299",
-      priceDetail: "/month",
-      popular: true,
-      button: {
-        text: "Join Now",
-      },
-      features: [
-        { text: "Unlimited labels/trackers a month" },
-        { text: "No overages" },
-        { text: "Multi-tenant & User management" },
-        { text: "Email & Slack support" },
-        { text: "Customizable dashboard", soon: true },
-        { text: "Platform Admin dashboard" },
-        { text: "Platform APIs" },
-      ],
-    },
-  },
+  // insiders: {
+  //   cloud: {
+  //     name: "Insiders",
+  //     description: "Advanced features included. Dedicated support team. Scale your operations.",
+  //     price: "$299",
+  //     priceDetail: "/month",
+  //     popular: true,
+  //     button: {
+  //       text: "Join Waitlist",
+  //     },
+  //     features: [
+  //       { text: "10,000 labels/trackers a month" },
+  //       { text: "$0.04 overage beyond" },
+  //       { text: "Multi-tenant & User management" },
+  //       { text: "Email & Slack support" },
+  //       { text: "Customizable dashboard", soon: true },
+  //       { text: "Platform Admin dashboard" },
+  //       { text: "Platform APIs" },
+  //     ],
+  //   },
+  //   selfHosted: {
+  //     name: "Insiders",
+  //     description: "Advanced features included. Dedicated support team. Scale your operations.",
+  //     price: "$299",
+  //     priceDetail: "/month",
+  //     popular: true,
+  //     button: {
+  //       text: "Join Now",
+  //     },
+  //     features: [
+  //       { text: "Unlimited labels/trackers a month" },
+  //       { text: "No overages" },
+  //       { text: "Multi-tenant & User management" },
+  //       { text: "Email & Slack support" },
+  //       { text: "Customizable dashboard", soon: true },
+  //       { text: "Platform Admin dashboard" },
+  //       { text: "Platform APIs" },
+  //     ],
+  //   },
+  // },
   scale: {
     cloud: {
       name: "Scale",
       description: "High-volume enterprise features. Premium support included. Enterprise-grade security.",
-      price: "$2,499",
+      price: "$2,999",
       priceDetail: "/month",
       button: {
         text: "Get Started",
@@ -86,7 +86,7 @@ const PRICING_PLANS: Record<string, { cloud: PricingPlan; selfHosted?: PricingPl
     selfHosted: {
       name: "Scale",
       description: "High-volume enterprise features. Premium support included. Enterprise-grade security.",
-      price: "$2,499",
+      price: "$2,999",
       priceDetail: "/month",
       button: {
         text: "Get Started",
@@ -166,6 +166,7 @@ function PricingCard({ plan, className = "" }: { plan: PricingPlan; className?: 
 }
 
 export function PricingSection() {
+  // Set default to "cloud" and remove the selector UI
   const [deploymentType, setDeploymentType] = useState<"cloud" | "self-hosted">("cloud");
 
   return (
@@ -184,6 +185,7 @@ export function PricingSection() {
           </p>
         </div>
 
+        {/* Deployment type selector commented out
         <div className="flex justify-center mb-8">
           <div className="inline-flex items-center gap-4 bg-white/5 rounded-lg p-2">
             <button
@@ -206,15 +208,16 @@ export function PricingSection() {
             </button>
           </div>
         </div>
+        */}
 
-        <div className="grid md:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 md:gap-12 justify-items-center max-w-5xl mx-auto">
           {Object.entries(PRICING_PLANS).map(([key, { cloud, selfHosted: selfHosted }]) => {
             const plan = deploymentType === "cloud" ? cloud : (selfHosted ?? cloud);
             return (
               <PricingCard
                 key={key}
                 plan={plan}
-                className={key === "premium" ? "bg-gradient-to-b from-[#5722cc]/20 to-transparent border-[#5722cc]/30" : ""}
+                className={`${key === "premium" ? "bg-gradient-to-b from-[#5722cc]/20 to-transparent border-[#5722cc]/30" : ""} max-w-md w-full`}
               />
             );
           })}

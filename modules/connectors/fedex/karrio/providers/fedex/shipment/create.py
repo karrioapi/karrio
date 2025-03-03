@@ -534,7 +534,7 @@ def shipment_request(
                             unitPrice=lib.identity(
                                 fedex.TotalDeclaredValueType(
                                     amount=lib.to_money(item.value_amount),
-                                    currency=(
+                                    currency=lib.identity(
                                         item.value_currency
                                         or packages.options.currency.state
                                         or default_currency
@@ -549,9 +549,9 @@ def shipment_request(
                             quantityUnits="PCS",
                             customsValue=fedex.CustomsValueType(
                                 amount=lib.identity(
-                                    lib.to_money(
-                                        item.value_amount or 1.0 * item.quantity
-                                    )
+                                    lib.to_money(item.value_amount * item.quantity)
+                                    if item.value_amount is not None
+                                    else 0.0
                                 ),
                                 currency=lib.identity(
                                     item.value_currency
@@ -674,7 +674,7 @@ def shipment_request(
                         amount=lib.identity(
                             lib.to_money(package.total_value)
                             or lib.to_money(packages.options.declared_value.state)
-                            or 1.0
+                            or 0.0
                         ),
                         currency=lib.identity(
                             packages.options.currency.state or default_currency

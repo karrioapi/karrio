@@ -324,7 +324,7 @@ ShipmentRequest = {
             "commodities": [
                 {
                     "countryOfManufacture": "US",
-                    "customsValue": {"amount": 1.0, "currency": "USD"},
+                    "customsValue": {"amount": 0.0, "currency": "USD"},
                     "description": "test",
                     "harmonizedCode": "00339BB",
                     "name": "test",
@@ -388,7 +388,7 @@ ShipmentRequest = {
         ],
         "requestedPackageLineItems": [
             {
-                "declaredValue": {"amount": 1.0, "currency": "USD"},
+                "declaredValue": {"amount": 0.0, "currency": "USD"},
                 "dimensions": {
                     "height": 12.0,
                     "length": 12.0,
@@ -513,7 +513,7 @@ ShipmentPaidByRecipientRequest = {
         ],
         "requestedPackageLineItems": [
             {
-                "declaredValue": {"amount": 1.0, "currency": "USD"},
+                "declaredValue": {"amount": 0.0, "currency": "USD"},
                 "dimensions": {
                     "height": 12.0,
                     "length": 12.0,
@@ -596,7 +596,7 @@ MultiPieceShipmentRequest = {
             "commodities": [
                 {
                     "countryOfManufacture": "US",
-                    "customsValue": {"amount": 1.0, "currency": "USD"},
+                    "customsValue": {"amount": 0.0, "currency": "USD"},
                     "description": "test",
                     "harmonizedCode": "00339BB",
                     "name": "test",
@@ -660,7 +660,7 @@ MultiPieceShipmentRequest = {
         ],
         "requestedPackageLineItems": [
             {
-                "declaredValue": {"amount": 1.0, "currency": "USD"},
+                "declaredValue": {"amount": 0.0, "currency": "USD"},
                 "dimensions": {
                     "height": 12.0,
                     "length": 12.0,
@@ -676,7 +676,7 @@ MultiPieceShipmentRequest = {
                 "weight": {"units": "LB", "value": 1.0},
             },
             {
-                "declaredValue": {"amount": 1.0, "currency": "USD"},
+                "declaredValue": {"amount": 0.0, "currency": "USD"},
                 "dimensions": {
                     "height": 11.0,
                     "length": 11.0,

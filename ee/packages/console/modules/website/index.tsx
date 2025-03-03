@@ -1,14 +1,11 @@
 import {
+  ArrowRight,
   ChevronRight,
-  Github,
-  Box,
   Code,
-  Bell,
-  Grid,
-  BarChart3,
-  Settings,
   Globe,
   Layers,
+  Bell,
+  Settings,
 } from "lucide-react";
 import { FeatureShowcase } from "@karrio/console/components/feature-showcase";
 import { RoadmapSection } from "@karrio/console/components/roadmap-section";
@@ -25,64 +22,7 @@ export default async function LandingPage() {
   const session = await auth();
 
   return (
-    <div className="min-h-screen bg-[#0f0826] text-white">
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-gradient-to-r from-[#0f0826] via-[#1a103d] to-[#0f0826] backdrop-blur-sm">
-        <div className="container mx-auto px-4 max-w-[95%] xl:max-w-[1280px]">
-          <nav className="h-16 flex items-center justify-between">
-            <div className="flex items-center space-x-8">
-              <Link href="/" className="flex items-center space-x-2">
-                <Image
-                  src="/logo.svg"
-                  alt="Karrio Logo"
-                  width={100}
-                  height={30}
-                />
-              </Link>
-              <div className="hidden md:flex space-x-8">
-                <Link
-                  href="https://docs.karrio.io"
-                  className="text-white/80 hover:text-white transition-colors"
-                >
-                  Docs
-                </Link>
-                <Link
-                  href="https://karrio.io/blog"
-                  className="text-white/80 hover:text-white transition-colors"
-                >
-                  Blog
-                </Link>
-                <Link
-                  href="https://docs.karrio.io/carriers/"
-                  className="text-white/80 hover:text-white transition-colors"
-                >
-                  Carriers
-                </Link>
-                <Link
-                  href="https://docs.karrio.io/insiders"
-                  className="text-white/80 hover:text-white transition-colors"
-                >
-                  Insiders
-                </Link>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Link
-                href="https://github.com/karrioapi"
-                className="text-white/80 hover:text-white"
-              >
-                <Github className="h-6 w-6" />
-              </Link>
-              <Button className="bg-[#5722cc] hover:bg-[#5722cc]/90">
-                <Link href={session?.user ? "/orgs" : "/signin"}>
-                  {session?.user ? "Dashboard" : "Sign In"}
-                </Link>
-              </Button>
-            </div>
-          </nav>
-        </div>
-      </header>
-
+    <>
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-24 pb-16">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,#5722cc1a,transparent_50%),radial-gradient(circle_at_bottom_left,#79e5dd1a,transparent_50%)]" />
@@ -106,7 +46,7 @@ export default async function LandingPage() {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button size="lg" className="bg-[#5722cc] hover:bg-[#5722cc]/90">
-                Get Started Free
+                <Link href="/signin">Get Started Free</Link>
                 <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
               <Button
@@ -114,7 +54,7 @@ export default async function LandingPage() {
                 variant="outline"
                 className="border-[#79e5dd] text-[#79e5dd] hover:bg-[#79e5dd]/10"
               >
-                Explore the Platform
+                <Link href="https://docs.karrio.io">Explore the Platform</Link>
               </Button>
             </div>
           </div>
@@ -265,7 +205,7 @@ export default async function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
             <div className="space-y-3">
               <div className="w-10 h-10 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center">
-                <Box className="w-5 h-5 text-[#79e5dd]" />
+                <ArrowRight className="w-5 h-5 text-[#79e5dd]" />
               </div>
               <h3 className="text-lg font-semibold">Launch in days</h3>
               <p className="text-sm text-white/60 leading-relaxed">
@@ -276,7 +216,7 @@ export default async function LandingPage() {
             </div>
             <div className="space-y-3">
               <div className="w-10 h-10 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center">
-                <BarChart3 className="w-5 h-5 text-[#79e5dd]" />
+                <ArrowRight className="w-5 h-5 text-[#79e5dd]" />
               </div>
               <h3 className="text-lg font-semibold">
                 Manage shipping at scale
@@ -340,156 +280,123 @@ export default async function LandingPage() {
           </div>
           <div className="space-y-12">
             <FeatureShowcase
-              title="Logistics Providers Network"
+              title="Scale Your Logistics Network"
               description="Build stronger partnerships and expand your network with our comprehensive logistics solutions designed for carriers and LSPs."
-              learnMoreHref="#"
+              learnMoreHref="/use-cases/logistics-providers"
               tabs={[
                 {
                   label: "Overview",
                   value: "overview",
                   content: (
-                    <div className="grid lg:grid-cols-2 gap-8">
-                      <div className="space-y-6">
-                        <ul className="space-y-3">
-                          <li className="flex items-start gap-3">
-                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
-                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
-                            </div>
-                            <span className="text-white/80">API-first platform for seamless integration</span>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
-                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
-                            </div>
-                            <span className="text-white/80">Real-time visibility and tracking capabilities</span>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
-                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
-                            </div>
-                            <span className="text-white/80">Automated documentation and customs compliance</span>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
-                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
-                            </div>
-                            <span className="text-white/80">Enhanced partner collaboration tools</span>
-                          </li>
-                        </ul>
-                      </div>
-                      <div className="bg-black/20 aspect-video rounded-lg overflow-hidden">
-                        <Image
-                          src="/placeholder.svg"
-                          width={800}
-                          height={400}
-                          alt="Logistics Providers illustration"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
+                    <div>
+                      <ul className="space-y-3">
+                        <li className="flex items-start gap-3">
+                          <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                            <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                          </div>
+                          <span className="text-white/80">Expand your carrier network through a single integration</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                            <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                          </div>
+                          <span className="text-white/80">Streamline cross-border shipping with automated documentation</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                            <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                          </div>
+                          <span className="text-white/80">Enhance operational efficiency with real-time tracking and visibility</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                            <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                          </div>
+                          <span className="text-white/80">Improve partner collaboration with advanced integration tools</span>
+                        </li>
+                      </ul>
                     </div>
                   ),
                 }
               ]}
             />
             <FeatureShowcase
-              title="Marketplace & ERP Fulfillment"
+              title="Embed Shipping Into Your Platform"
               description="Empower your merchants with a robust network of fulfillment carriers, streamlining operations and enhancing customer satisfaction."
-              learnMoreHref="#"
+              learnMoreHref="/use-cases/platforms"
               tabs={[
                 {
                   label: "Overview",
                   value: "overview",
                   content: (
-                    <div className="grid lg:grid-cols-2 gap-8">
-                      <div className="space-y-6">
-                        <ul className="space-y-3">
-                          <li className="flex items-start gap-3">
-                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
-                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
-                            </div>
-                            <span className="text-white/80">Multi-carrier rate shopping and automated carrier selection</span>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
-                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
-                            </div>
-                            <span className="text-white/80">Automated label generation and tracking updates</span>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
-                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
-                            </div>
-                            <span className="text-white/80">Seamless integration with major e-commerce platforms</span>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
-                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
-                            </div>
-                            <span className="text-white/80">Advanced analytics and reporting for merchant insights</span>
-                          </li>
-                        </ul>
-                      </div>
-                      <div className="bg-black/20 aspect-video rounded-lg overflow-hidden">
-                        <Image
-                          src="/placeholder.svg"
-                          width={800}
-                          height={400}
-                          alt="Marketplace & OMS illustration"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
+                    <div>
+                      <ul className="space-y-3">
+                        <li className="flex items-start gap-3">
+                          <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                            <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                          </div>
+                          <span className="text-white/80">Embedded shipping capabilities for marketplaces and platforms</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                            <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                          </div>
+                          <span className="text-white/80">Offer multi-carrier shipping options with automated best-rate selection</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                            <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                          </div>
+                          <span className="text-white/80">White-labeled shipping portal with your branding</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                            <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                          </div>
+                          <span className="text-white/80">Comprehensive analytics and reporting for merchant insights</span>
+                        </li>
+                      </ul>
                     </div>
                   ),
                 }
               ]}
             />
             <FeatureShowcase
-              title="Enterprise Solutions"
+              title="Enterprise-Grade Shipping Solutions"
               description="Specialized shipping solutions for government agencies, healthcare providers, and high-value shipment handlers requiring enhanced security and compliance."
-              learnMoreHref="#"
+              learnMoreHref="/use-cases/enterprise-solutions"
               tabs={[
                 {
                   label: "Overview",
                   value: "overview",
                   content: (
-                    <div className="grid lg:grid-cols-2 gap-8">
-                      <div className="space-y-6">
-                        <ul className="space-y-3">
-                          <li className="flex items-start gap-3">
-                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
-                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
-                            </div>
-                            <span className="text-white/80">Advanced security features and compliance controls</span>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
-                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
-                            </div>
-                            <span className="text-white/80">Specialized handling for sensitive shipments</span>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
-                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
-                            </div>
-                            <span className="text-white/80">Custom workflows and approval processes</span>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
-                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
-                            </div>
-                            <span className="text-white/80">Dedicated support and SLA guarantees</span>
-                          </li>
-                        </ul>
-                      </div>
-                      <div className="bg-black/20 aspect-video rounded-lg overflow-hidden">
-                        <Image
-                          src="/placeholder.svg"
-                          width={800}
-                          height={400}
-                          alt="Enterprise Solutions illustration"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
+                    <div>
+                      <ul className="space-y-3">
+                        <li className="flex items-start gap-3">
+                          <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                            <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                          </div>
+                          <span className="text-white/80">Enterprise-grade security with advanced compliance controls</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                            <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                          </div>
+                          <span className="text-white/80">Specialized workflows for sensitive and high-value shipments</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                            <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                          </div>
+                          <span className="text-white/80">Configurable approval processes and role-based permissions</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                            <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                          </div>
+                          <span className="text-white/80">Priority support with dedicated account management</span>
+                        </li>
+                      </ul>
                     </div>
                   ),
                 }
@@ -536,7 +443,7 @@ export default async function LandingPage() {
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center">
-                    <Box className="w-6 h-6 text-[#79e5dd]" />
+                    <ArrowRight className="w-6 h-6 text-[#79e5dd]" />
                   </div>
                 </div>
                 <div>
@@ -552,7 +459,7 @@ export default async function LandingPage() {
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center">
-                    <Bell className="w-6 h-6 text-[#79e5dd]" />
+                    <ArrowRight className="w-6 h-6 text-[#79e5dd]" />
                   </div>
                 </div>
                 <div>
@@ -568,7 +475,7 @@ export default async function LandingPage() {
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center">
-                    <Grid className="w-6 h-6 text-[#79e5dd]" />
+                    <ArrowRight className="w-6 h-6 text-[#79e5dd]" />
                   </div>
                 </div>
                 <div>
@@ -739,110 +646,14 @@ shipment = karrio.shipments.create(
       </section>
 
       {/* CTA Section */}
-      <CTASection />
-
-      {/* Footer */}
-      <footer className="border-t border-white/10 py-12">
-        <div className="container mx-auto px-4 max-w-[95%] xl:max-w-[1140px]">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
-            <div className="col-span-2 md:col-span-1">
-              <Link href="/" className="flex items-center space-x-2">
-                <Image
-                  src="/logo.svg"
-                  alt="Karrio Logo"
-                  width={132}
-                  height={32}
-                />
-              </Link>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">Product</h4>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="#" className="text-white/60 hover:text-white">
-                    Features
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-white/60 hover:text-white">
-                    Documentation
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-white/60 hover:text-white">
-                    API Reference
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">Company</h4>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="#" className="text-white/60 hover:text-white">
-                    About
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-white/60 hover:text-white">
-                    Blog
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-white/60 hover:text-white">
-                    Careers
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">Resources</h4>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="#" className="text-white/60 hover:text-white">
-                    Community
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-white/60 hover:text-white">
-                    Contact
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-white/60 hover:text-white">
-                    Privacy Policy
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">Legal</h4>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="#" className="text-white/60 hover:text-white">
-                    Terms
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-white/60 hover:text-white">
-                    Privacy
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-white/60 hover:text-white">
-                    Cookies
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="mt-12 pt-8 border-t border-white/10 text-center text-white/60">
-            <p>
-              &copy; {new Date().getFullYear()} Karrio. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
-    </div>
+      <CTASection
+        title="Ready to Transform Your Shipping Operations?"
+        description="Join thousands of businesses that trust Karrio to power their shipping infrastructure."
+        primaryButtonText="Get Started"
+        primaryButtonHref="/signin"
+        secondaryButtonText="Contact Sales"
+        secondaryButtonHref="https://karrio.io/contact"
+      />
+    </>
   );
 }

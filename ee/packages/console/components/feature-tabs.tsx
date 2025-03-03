@@ -85,7 +85,7 @@ export function FeatureTabs({ tabs }: FeatureTabsProps) {
 
                   <div className="bg-white/5 rounded-lg p-6 sm:p-8 overflow-hidden">
                     <div className="w-[95%] mx-auto">
-                      <div className="relative w-full aspect-[5/4]">
+                      <div className="relative w-full aspect-[5/4] overflow-visible">
                         {tab.demo}
                       </div>
                     </div>
@@ -103,7 +103,7 @@ export function FeatureTabs({ tabs }: FeatureTabsProps) {
     <div className="w-full mx-auto bg-gradient-to-br from-[#1a103d]/80 to-[#0f0826]/90 backdrop-blur-sm rounded-xl border border-white/10">
       <Tabs defaultValue={tabs[0].value} className="w-full">
         <div className="p-2 sm:p-3 md:p-4">
-          <TabsList className="w-full flex pt-2 pb-4 justify-between border-b border-white/10 bg-transparent h-12 overflow-x-auto scrollbar-none">
+          <TabsList className="w-full flex pt-2 pb-4 justify-between border-b border-white/10 bg-transparent min-h-12 h-auto overflow-x-auto overflow-y-visible scrollbar-none">
             {tabs.map((tab) => (
               <TabsTrigger
                 key={tab.value}
@@ -160,7 +160,7 @@ export function FeatureTabs({ tabs }: FeatureTabsProps) {
               </div>
               <div className="bg-white/5 rounded-lg p-8 lg:p-10">
                 <div className="mx-auto w-[85%]">
-                  <div className="relative w-full h-full">{tab.demo}</div>
+                  <div className="relative w-full h-full overflow-visible">{tab.demo}</div>
                 </div>
               </div>
             </div>
