@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# Create new python virtual environment
+source "bin/create-new-env"
+
+# Clone the EE repo
+git submodule update --init --recursive
+
+# Install dependencies
+source "bin/setup-server-env"
+
+# Copy the server env to the ee env
+cp "${ROOT}/ee/platform/.env.dev" "${ROOT}/ee/apps/platform/.env"
+cp "${ROOT}/ee/platform/.env.dev" "${ROOT}/ee/packages/console/.env"
+
+# Generate database schema types
+cd "${ROOT}/"
+npm run prisma:generate -w ee/apps/platform
+cd -
+

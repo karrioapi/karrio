@@ -16,6 +16,11 @@ if [[ "${HAS_PLATFORM}" == "true" && ! "$*" == *--oss* ]]; then
     pip install -r "${ROOT:?}/requirements.platform.dev.txt"
 fi
 
+# Install node dependencies
+cd "${ROOT}"
+npm install
+cd -
+
 mkdir -p $LOG_DIR
 
 echo "
