@@ -410,7 +410,7 @@ export default async function LandingPage() {
       <section className="py-24 relative overflow-x-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#5722cc1a,transparent_70%)]" />
         <div className="absolute inset-0 bg-[conic-gradient(from_0deg_at_50%_50%,#0f082600,#79e5dd0d,#0f082600)]" />
-        <div className="container mx-auto px-4 md:px-6 max-w-[90%] sm:max-w-[95%] xl:max-w-[1280px] relative">
+        <div className="container mx-auto px-4 max-w-[95%] xl:max-w-[1280px] relative">
           <div className="text-center mb-12">
             <div className="text-[#79e5dd] mb-4 text-center">Developer-first design</div>
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
