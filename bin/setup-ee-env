@@ -1,20 +1,34 @@
 #!/usr/bin/env bash
 
+# Pass all arguments to the sourced scripts
+source "bin/_env" "$@"
+
+log_section "Creating Python Virtual Environment"
 # Create new python virtual environment
-source "bin/create-new-env"
+source "bin/create-new-env" "$@"
 
+log_section "Initializing Git Submodules"
 # Clone the EE repo
-git submodule update --init --recursive
+minimal_log "Updating git submodules"
+run_command "git submodule update --init --recursive" "Failed to update git submodules" "Updating git submodules..."
 
+log_section "Installing Dependencies"
 # Install dependencies
-source "bin/setup-server-env"
+minimal_log "Setting up server environment"
+source "bin/setup-server-env" "$@"
 
+log_section "Configuring Environment Files"
 # Copy the server env to the ee env
-cp "${ROOT}/ee/platform/.env.dev" "${ROOT}/ee/apps/platform/.env"
-cp "${ROOT}/ee/platform/.env.dev" "${ROOT}/ee/packages/console/.env"
+minimal_log "Copying environment files for platform"
+run_command "cp \"${ROOT}/ee/platform/.env.dev\" \"${ROOT}/ee/apps/platform/.env\"" "Failed to copy platform environment file" "Copying platform environment file..."
+run_command "cp \"${ROOT}/ee/platform/.env.dev\" \"${ROOT}/ee/packages/console/.env\"" "Failed to copy console environment file" "Copying console environment file..."
 
+log_section "Generating Database Schema Types"
 # Generate database schema types
+minimal_log "Generating database schema types"
 cd "${ROOT}/"
-npm run prisma:generate -w ee/apps/platform
+run_command "npm run prisma:generate -w ee/apps/platform" "Failed to generate database schema types" "Generating database schema types..."
 cd -
 
+# Show completion message regardless of verbose mode
+echo -e "\033[0;32mEE environment setup completed successfully\033[0m"

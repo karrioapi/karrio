@@ -15,10 +15,10 @@ setup(
     license="Apache-2.0",
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[
-        "karrio.server.core",
-        "karrio.server.graph",
-        "karrio.server.manager",
-        "karrio.server.events",
+        "karrio_server_core",
+        "karrio_server_graph",
+        "karrio_server_manager",
+        "karrio_server_events",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

@@ -1,26 +1,36 @@
 #!/usr/bin/env bash
 
 # Source environment variables
-source "bin/_env"
+source "bin/_env" "$@"
+
+# Only show detailed env preparation steps in verbose mode
+if [[ "$VERBOSE" == "true" ]]; then
+    echo 'prepare env directory ...'
+fi
 
 # prepare virtual environment directory
-echo 'prepare env directory ...'
 deactivate >/dev/null 2>&1
 mkdir -p "${ROOT:?}/$ENV_DIR"
 
 [[ -d "${ROOT:?}/$ENV_DIR/$BASE_DIR" ]] && rm -rf "${ROOT:?}/$ENV_DIR/$BASE_DIR"
 
 # create virtual environment
-echo "creating $BASE_DIR env ..."
+minimal_log "Creating Python environment"
 python3 -m venv "${ROOT:?}/$ENV_DIR/$BASE_DIR"
 
-echo "activating $BASE_DIR env ..."
+if [[ "$VERBOSE" == "true" ]]; then
+    echo "activating $BASE_DIR env ..."
+fi
+
 source "${ROOT:?}/$ENV_DIR/$BASE_DIR/bin/activate"
 
 # install requirements
-echo "installing base requirements ..."
-pip install pip --upgrade
+if [[ "$VERBOSE" == "true" ]]; then
+    echo "installing base requirements ..."
+fi
+
+run_command "pip install pip --upgrade" "Failed to upgrade pip" "Upgrading pip..." || exit $?
 
 if [[ "$*" != *--empty* ]]; then
-    pip install -r "${ROOT}/requirements.dev.txt"
+    run_pip_install "${ROOT}/requirements.dev.txt" "Failed to install development requirements" || exit $?
 fi
