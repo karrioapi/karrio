@@ -1,5 +1,123 @@
 #!/usr/bin/env bash
 
+# Default verbose to false
+VERBOSE=false
+
+# Parse command line arguments for verbose flag
+for arg in "$@"; do
+    case $arg in
+    -v | --verbose)
+        VERBOSE=true
+        ;;
+    esac
+done
+
+# Logging utilities
+log_info() {
+    # Only show info messages in verbose mode
+    if [[ "$VERBOSE" == "true" ]]; then
+        echo -e "\033[0;34m[INFO]\033[0m $1"
+    fi
+}
+
+log_success() {
+    # Only show success messages in verbose mode
+    if [[ "$VERBOSE" == "true" ]]; then
+        echo -e "\033[0;32m[SUCCESS]\033[0m $1"
+    fi
+}
+
+log_warning() {
+    echo -e "\033[0;33m[WARNING]\033[0m $1"
+}
+
+log_error() {
+    echo -e "\033[0;31m[ERROR]\033[0m $1"
+}
+
+log_section() {
+    echo "" # Empty line before section
+    echo -e "\033[38;5;27m┃\033[0m \033[1;38;5;27m$1\033[0m"
+}
+
+# Clean minimalist logger for important user-facing messages
+minimal_log() {
+    echo -e "→ $1"
+}
+
+# Spinner function to show activity
+spinner() {
+    local pid=$1
+    local delay=0.1
+    local spinstr='|/-\'
+    local message="${2:-Running...}"
+    local i=0
+    echo -n "$message "
+
+    while ps -p $pid >/dev/null 2>&1; do
+        local temp=${spinstr#?}
+        printf "\r$message %c " "${spinstr}"
+        local spinstr=$temp${spinstr%"$temp"}
+        sleep $delay
+        ((i = i + 1))
+    done
+
+    printf "\r\033[K" # Clear the line
+}
+
+# Command execution helpers
+run_command() {
+    local cmd="$1"
+    local error_msg="${2:-Command failed}"
+    local spinner_msg="${3:-Running...}"
+    local result=0
+
+    if [[ "$VERBOSE" == "true" ]]; then
+        eval "$cmd"
+        result=$?
+    else
+        # Disable job control notifications
+        set +m
+
+        # Create temp file for exit code
+        local exit_code_file=$(mktemp)
+
+        # Run the command in background with exit code capture
+        (
+            eval "$cmd" >/dev/null 2>&1
+            echo $? >"$exit_code_file"
+        ) &
+        local cmd_pid=$!
+
+        # Display a spinner while the command runs
+        spinner $cmd_pid "$spinner_msg"
+
+        # Get the exit code and clean up
+        wait $cmd_pid 2>/dev/null
+        result=$(cat "$exit_code_file")
+        rm -f "$exit_code_file"
+
+        # Re-enable job control
+        set -m
+    fi
+
+    if [[ $result -ne 0 ]]; then
+        log_error "$error_msg"
+        return $result
+    fi
+
+    return 0
+}
+
+run_pip_install() {
+    local requirements_file="$1"
+    local error_msg="${2:-Failed to install requirements}"
+    local package_name=$(basename $requirements_file .txt)
+
+    run_command "pip install -r $requirements_file" "$error_msg" "Installing ${package_name} packages..."
+    return $?
+}
+
 # Python virtual environment helpers
 ROOT="$(pwd)"
 BASE_DIR="${ROOT##*/}"
@@ -28,12 +146,14 @@ cross=$'\u274c'
 check=$'\u2714'
 
 clean_build_files() {
+    log_info "Cleaning build files in $1"
     find $1 -type d -name dist -prune -exec rm -rf '{}' \; || true
     find $1 -type d -name build -prune -exec rm -rf '{}' \; || true
     # find $1 -type d -name "*.egg-info" -prune -exec rm -rf '{}' \; || true
 }
 
 backup_wheels() {
+    log_info "Backing up wheel files from $1"
     if [[ "$*" != *--ee* ]]; then
         find "${1}/dist" -name \*.whl -prune -exec mv '{}' "${DIST}" \;
     else

@@ -2,6 +2,7 @@ import { UseCasesDropdown } from "@karrio/console/components/use-cases-dropdown"
 import { Button } from "@karrio/insiders/components/ui/button";
 import { auth } from "@karrio/console/apis/auth";
 import { Github } from "lucide-react";
+import { MobileMenu } from "@karrio/console/components/mobile-menu";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -16,19 +17,22 @@ export async function WebsiteLayout({
     <div className="min-h-screen bg-[#0f0826] text-white overflow-x-hidden">
       {/* Header */}
       <header className="py-6 border-b border-white/10">
-        <div className="container mx-auto px-4 max-w-[95%] xl:max-w-[1280px]">
+        <div className="container mx-auto px-0 sm:px-4 md:px-6 max-w-[95%] xl:max-w-[1280px]">
           <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-12">
+            <div className="flex items-center space-x-0">
+              <MobileMenu />
+
               <Link href="/" className="flex items-center">
                 <Image
                   src="/logo.svg"
                   alt="Karrio Logo"
                   width={120}
                   height={30}
+                  style={{ height: 'auto' }}
                   priority
                 />
               </Link>
-              <div className="hidden md:flex space-x-8">
+              <div className="hidden md:flex space-x-8 ml-12">
                 <Link
                   href="https://docs.karrio.io"
                   className="text-white/80 hover:text-white transition-colors"

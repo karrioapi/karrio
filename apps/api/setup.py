@@ -40,7 +40,7 @@ setup(
         "requests",
         "posthog",
         "python-decouple",
-        "karrio.server.core",
+        "karrio_server_core",
         "sentry-sdk",
         "whitenoise",
     ],

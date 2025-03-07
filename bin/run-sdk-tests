@@ -1,10 +1,30 @@
 #!/usr/bin/env bash
 
-source "bin/activate-env"
+source "bin/activate-env" "$@"
 
-echo "running sdk tests with python unittest"
-python -m unittest discover -v -f modules/sdk/tests || exit 1;
+log_section "Running SDK Tests"
+# Get all test directories
 packages=$(find modules/connectors -type d -name "tests" -exec dirname '{}' \;)
+
+# Run SDK tests
+minimal_log "Running SDK tests"
+if [[ "$VERBOSE" == "true" ]]; then
+    run_command "python -m unittest discover -v -f modules/sdk/tests" "SDK tests failed" "Running SDK tests with verbose output..." || exit 1
+else
+    run_command "python -m unittest discover -f modules/sdk/tests" "SDK tests failed" "Running SDK tests..." || exit 1
+fi
+
+# Run connector tests
+log_section "Running Connector Tests"
 for module in ${packages}; do
-    python -m unittest discover -v -f ${module}/tests || exit $?;
+    module_name=$(basename $module)
+    minimal_log "Testing ${module_name} connector"
+    if [[ "$VERBOSE" == "true" ]]; then
+        run_command "python -m unittest discover -v -f ${module}/tests" "Tests for ${module} failed" "Running ${module_name} tests with verbose output..." || exit $?
+    else
+        run_command "python -m unittest discover -f ${module}/tests" "Tests for ${module} failed" "Running ${module_name} tests..." || exit $?
+    fi
 done
+
+# Show completion message regardless of verbose mode
+echo -e "\033[0;32mAll tests completed successfully\033[0m"

@@ -15,7 +15,7 @@ setup(
     license="Apache-2.0",
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[
-        "karrio.server.core",
+        "karrio_server_core",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
