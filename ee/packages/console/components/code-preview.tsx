@@ -20,7 +20,7 @@ interface CodePreviewProps {
 export function CodePreview({ languages }: CodePreviewProps) {
   return (
     <Tabs defaultValue={languages[0].value} className="w-full">
-      <div className="p-4 pb-0">
+      <div className="pl-1 pr-4 pb-0 pt-4">
         <TabsList className="bg-[#2C2252] h-8 w-auto inline-flex rounded-md p-1">
           {languages.map((lang) => (
             <TabsTrigger
@@ -39,7 +39,7 @@ export function CodePreview({ languages }: CodePreviewProps) {
           value={lang.value}
           className="space-y-0 mt-0"
         >
-          <div className="p-2 pt-6">
+          <div className="pl-1 pr-2 pt-6">
             <div className="rounded bg-[#080718]">
               <pre className="text-sm text-white/90 scrollbar-none p-4 overflow-x-auto touch-auto">
                 <code className="language-javascript">{lang.code}</code>
@@ -48,7 +48,7 @@ export function CodePreview({ languages }: CodePreviewProps) {
           </div>
 
           {lang.response && (
-            <div className="p-2 pt-2">
+            <div className="pl-1 pr-2 pt-2">
               <div className="bg-[#080718] px-4 py-2 text-xs text-white/60 flex items-center justify-between rounded-t">
                 <div>Response</div>
                 <div className="text-[#79e5dd] bg-[#79e5dd]/20 px-2 py-0.5 rounded text-xs">HTTP 200</div>
