@@ -9,13 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@karrio/admin": "*",
     "@karrio/core": "*",
     "@karrio/hooks": "*",
+    "@karrio/insiders": "*",
     "@karrio/lib": "*",
     "@karrio/types": "*",
     "@karrio/ui": "*",
-    "@karrio/insiders": "*",
-    "@karrio/admin": "*"
+    "next-runtime-env": "^3.2.2"
   },
   "devDependencies": {
     "eslint": "7.32.0",

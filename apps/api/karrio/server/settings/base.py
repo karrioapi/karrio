@@ -465,7 +465,7 @@ SIMPLE_JWT = {
 OIDC_RSA_PRIVATE_KEY = config("OIDC_RSA_PRIVATE_KEY", default="").replace("\\n", "\n")
 OAUTH2_PROVIDER_APPLICATION_MODEL = "oauth2_provider.Application"
 OAUTH2_PROVIDER = {
-    "PKCE_REQUIRED": False,
+    "PKCE_REQUIRED": True,
     "OIDC_ENABLED": True,
     "OIDC_RSA_PRIVATE_KEY": OIDC_RSA_PRIVATE_KEY,
     "SCOPES": {
