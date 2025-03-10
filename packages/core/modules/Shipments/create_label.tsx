@@ -439,14 +439,14 @@ export default function CreateLabelPage(pageProps: any) {
 
                     {Object.values(shipment?.return_address || []).length ===
                       0 && (
-                      <div className="notification is-default p-2 is-size-7">
-                        <span>
-                          Use this to specify an origin address different from
-                          the shipper address above. <br />
-                          This address will be used for pickup and return.
-                        </span>
-                      </div>
-                    )}
+                        <div className="notification is-default p-2 is-size-7">
+                          <span>
+                            Use this to specify an origin address different from
+                            the shipper address above. <br />
+                            This address will be used for pickup and return.
+                          </span>
+                        </div>
+                      )}
                   </div>
 
                   {/* Billing address section */}
@@ -552,50 +552,50 @@ export default function CreateLabelPage(pageProps: any) {
 
                   {(shipment?.billing_address ||
                     shipment.payment?.paid_by === PaidByEnum.third_party) && (
-                    <>
-                      <div className="p-3">
-                        <header className="is-flex is-justify-content-space-between">
-                          <label
-                            className="label is-capitalized"
-                            style={{ fontSize: "0.8em" }}
-                          >
-                            Billing address
-                          </label>
-                          <div className="is-vcentered">
-                            <AddressModalEditor
-                              shipment={shipment}
-                              address={
-                                shipment.billing_address || ({} as AddressType)
-                              }
-                              onSubmit={(address) =>
-                                onChange({ billing_address: address })
-                              }
-                              trigger={
-                                <button
-                                  className="button is-small is-info is-text is-inverted p-1"
-                                  disabled={query.isFetching}
-                                >
-                                  Edit billing address
-                                </button>
-                              }
+                      <>
+                        <div className="p-3">
+                          <header className="is-flex is-justify-content-space-between">
+                            <label
+                              className="label is-capitalized"
+                              style={{ fontSize: "0.8em" }}
+                            >
+                              Billing address
+                            </label>
+                            <div className="is-vcentered">
+                              <AddressModalEditor
+                                shipment={shipment}
+                                address={
+                                  shipment.billing_address || ({} as AddressType)
+                                }
+                                onSubmit={(address) =>
+                                  onChange({ billing_address: address })
+                                }
+                                trigger={
+                                  <button
+                                    className="button is-small is-info is-text is-inverted p-1"
+                                    disabled={query.isFetching}
+                                  >
+                                    Edit billing address
+                                  </button>
+                                }
+                              />
+                            </div>
+                          </header>
+
+                          {shipment?.billing_address && (
+                            <AddressDescription
+                              address={shipment!.billing_address as any}
                             />
-                          </div>
-                        </header>
+                          )}
 
-                        {shipment?.billing_address && (
-                          <AddressDescription
-                            address={shipment!.billing_address as any}
-                          />
-                        )}
-
-                        {isNone(shipment?.billing_address) && (
-                          <div className="notification is-default p-2 is-size-7">
-                            Add shipment billing address. (optional)
-                          </div>
-                        )}
-                      </div>
-                    </>
-                  )}
+                          {isNone(shipment?.billing_address) && (
+                            <div className="notification is-default p-2 is-size-7">
+                              Add shipment billing address. (optional)
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    )}
                 </div>
 
                 {/* Parcel & Items section */}
@@ -742,12 +742,12 @@ export default function CreateLabelPage(pageProps: any) {
                                         }}
                                         {...(getParent(item.parent_id)
                                           ? {
-                                              max: getAvailableQuantity(
-                                                shipment,
-                                                item,
-                                                item_index,
-                                              ),
-                                            }
+                                            max: getAvailableQuantity(
+                                              shipment,
+                                              item,
+                                              item_index,
+                                            ),
+                                          }
                                           : {})}
                                       />
                                     </p>
@@ -1217,53 +1217,53 @@ export default function CreateLabelPage(pageProps: any) {
                                         <React.Fragment key={option}>
                                           {references!.options[carrier][option]
                                             ?.type === "boolean" && (
-                                            <>
-                                              <CheckBoxField
-                                                name={option}
-                                                fieldClass="column mb-0 is-6 pl-0 pr-2 py-4"
-                                                defaultChecked={
-                                                  shipment.options?.[option]
-                                                }
-                                                onChange={(e) =>
-                                                  onChange({
-                                                    options: {
-                                                      ...shipment.options,
-                                                      [option]:
-                                                        e.target.checked ||
-                                                        null,
-                                                    },
-                                                  })
-                                                }
-                                              >
-                                                <span>{formatRef(option)}</span>
-                                              </CheckBoxField>
-                                            </>
-                                          )}
+                                              <>
+                                                <CheckBoxField
+                                                  name={option}
+                                                  fieldClass="column mb-0 is-6 pl-0 pr-2 py-4"
+                                                  defaultChecked={
+                                                    shipment.options?.[option]
+                                                  }
+                                                  onChange={(e) =>
+                                                    onChange({
+                                                      options: {
+                                                        ...shipment.options,
+                                                        [option]:
+                                                          e.target.checked ||
+                                                          null,
+                                                      },
+                                                    })
+                                                  }
+                                                >
+                                                  <span>{formatRef(option)}</span>
+                                                </CheckBoxField>
+                                              </>
+                                            )}
 
                                           {references!.options[carrier][option]
                                             ?.type === "string" && (
-                                            <>
-                                              <InputField
-                                                name={option}
-                                                label={formatRef(option)}
-                                                placeholder={formatRef(option)}
-                                                className="is-small"
-                                                fieldClass="mb-0 p-0"
-                                                wrapperClass="column is-6 pl-0 pr-2 py-1"
-                                                defaultValue={
-                                                  shipment.options[option]
-                                                }
-                                                onChange={(e) =>
-                                                  onChange({
-                                                    options: {
-                                                      ...shipment.options,
-                                                      [option]: e.target.value,
-                                                    },
-                                                  })
-                                                }
-                                              />
-                                            </>
-                                          )}
+                                              <>
+                                                <InputField
+                                                  name={option}
+                                                  label={formatRef(option)}
+                                                  placeholder={formatRef(option)}
+                                                  className="is-small"
+                                                  fieldClass="mb-0 p-0"
+                                                  wrapperClass="column is-6 pl-0 pr-2 py-1"
+                                                  defaultValue={
+                                                    shipment.options[option]
+                                                  }
+                                                  onChange={(e) =>
+                                                    onChange({
+                                                      options: {
+                                                        ...shipment.options,
+                                                        [option]: e.target.value,
+                                                      },
+                                                    })
+                                                  }
+                                                />
+                                              </>
+                                            )}
                                         </React.Fragment>
                                       ))}
                                     </div>
@@ -1406,7 +1406,7 @@ export default function CreateLabelPage(pageProps: any) {
                                       disabled={
                                         query.isFetching ||
                                         shipment.customs!.commodities.length ===
-                                          1
+                                        1
                                       }
                                       onClick={() =>
                                         mutation.removeCommodity(
@@ -1427,11 +1427,11 @@ export default function CreateLabelPage(pageProps: any) {
 
                           {(shipment.customs!.commodities || []).length ===
                             0 && (
-                            <div className="notification is-warning is-light my-2 py-2 px-4 is-size-7">
-                              You need provide commodity items for customs
-                              purpose. (required)
-                            </div>
-                          )}
+                              <div className="notification is-warning is-light my-2 py-2 px-4 is-size-7">
+                                You need provide commodity items for customs
+                                purpose. (required)
+                              </div>
+                            )}
 
                           <div className="is-flex is-justify-content-space-between mt-4">
                             {/* @ts-ignore */}
@@ -1469,64 +1469,64 @@ export default function CreateLabelPage(pageProps: any) {
                           {/* Duty Billing address section */}
                           {(shipment.customs!.duty_billing_address ||
                             shipment.customs!.duty?.paid_by ===
-                              PaidByEnum.third_party) && (
-                            <>
-                              <hr className="my-1" style={{ height: "1px" }} />
+                            PaidByEnum.third_party) && (
+                              <>
+                                <hr className="my-1" style={{ height: "1px" }} />
 
-                              <div className="py-3">
-                                <header className="is-flex is-justify-content-space-between">
-                                  <label
-                                    className="label is-capitalized"
-                                    style={{ fontSize: "0.8em" }}
-                                  >
-                                    Billing address
-                                  </label>
-                                  <div className="is-vcentered">
-                                    <AddressModalEditor
+                                <div className="py-3">
+                                  <header className="is-flex is-justify-content-space-between">
+                                    <label
+                                      className="label is-capitalized"
+                                      style={{ fontSize: "0.8em" }}
+                                    >
+                                      Billing address
+                                    </label>
+                                    <div className="is-vcentered">
+                                      <AddressModalEditor
+                                        address={
+                                          shipment.customs
+                                            ?.duty_billing_address ||
+                                          ({} as AddressType)
+                                        }
+                                        onSubmit={(address) =>
+                                          mutation.updateShipment({
+                                            customs: {
+                                              ...shipment!.customs,
+                                              duty_billing_address: address,
+                                            } as any,
+                                          })
+                                        }
+                                        trigger={
+                                          <button
+                                            className="button is-small is-info is-text is-inverted p-1"
+                                            disabled={query.isFetching}
+                                          >
+                                            Edit duty billing address
+                                          </button>
+                                        }
+                                      />
+                                    </div>
+                                  </header>
+
+                                  {shipment!.customs!.duty_billing_address && (
+                                    <AddressDescription
                                       address={
-                                        shipment.customs
-                                          ?.duty_billing_address ||
-                                        ({} as AddressType)
-                                      }
-                                      onSubmit={(address) =>
-                                        mutation.updateShipment({
-                                          customs: {
-                                            ...shipment!.customs,
-                                            duty_billing_address: address,
-                                          } as any,
-                                        })
-                                      }
-                                      trigger={
-                                        <button
-                                          className="button is-small is-info is-text is-inverted p-1"
-                                          disabled={query.isFetching}
-                                        >
-                                          Edit duty billing address
-                                        </button>
+                                        shipment!.customs!
+                                          .duty_billing_address as any
                                       }
                                     />
-                                  </div>
-                                </header>
+                                  )}
 
-                                {shipment!.customs!.duty_billing_address && (
-                                  <AddressDescription
-                                    address={
-                                      shipment!.customs!
-                                        .duty_billing_address as any
-                                    }
-                                  />
-                                )}
-
-                                {isNone(
-                                  shipment!.customs!.duty_billing_address,
-                                ) && (
-                                  <div className="notification is-default p-2 is-size-7">
-                                    Add customs duty billing address. (optional)
-                                  </div>
-                                )}
-                              </div>
-                            </>
-                          )}
+                                  {isNone(
+                                    shipment!.customs!.duty_billing_address,
+                                  ) && (
+                                      <div className="notification is-default p-2 is-size-7">
+                                        Add customs duty billing address. (optional)
+                                      </div>
+                                    )}
+                                </div>
+                              </>
+                            )}
                         </>
                       )}
 

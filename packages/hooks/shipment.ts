@@ -151,11 +151,11 @@ export function useShipmentMutation(id?: string) {
       handleFailure(
         id !== undefined && id !== "new"
           ? karrio.shipments
-              .rates({ id, shipmentRateData: data as any })
-              .then(({ data: { rates, messages } }) => ({ rates, messages }))
+            .rates({ id, shipmentRateData: data as any })
+            .then(({ data: { rates, messages } }) => ({ rates, messages }))
           : karrio.proxy
-              .fetchRates({ rateRequest: data as any })
-              .then(({ data: { rates, messages } }) => ({ rates, messages })),
+            .fetchRates({ rateRequest: data as any })
+            .then(({ data: { rates, messages } }) => ({ rates, messages })),
       ),
     { onSuccess: invalidateCache, onError },
   );
@@ -164,14 +164,14 @@ export function useShipmentMutation(id?: string) {
       handleFailure(
         id !== undefined && id !== "new"
           ? karrio.shipments
-              .purchase({
-                id,
-                shipmentPurchaseData: { selected_rate_id } as any,
-              })
-              .then(({ data }) => data)
+            .purchase({
+              id,
+              shipmentPurchaseData: { selected_rate_id } as any,
+            })
+            .then(({ data }) => data)
           : karrio.shipments
-              .create({ shipmentData: shipment as any })
-              .then(({ data }) => data),
+            .create({ shipmentData: shipment as any })
+            .then(({ data }) => data),
       ),
     { onSuccess: invalidateCache, onError },
   );
@@ -191,6 +191,7 @@ export function useShipmentMutation(id?: string) {
   );
   const duplicateShipment = useMutation(
     (data: ShipmentType) => {
+      const { shipment_date, shipping_date, ...options } = data.options || {};
       const shipmentData = {
         shipper: data.shipper,
         recipient: data.recipient,
@@ -204,19 +205,19 @@ export function useShipmentMutation(id?: string) {
         ),
         ...(data.customs
           ? {
-              customs: {
-                ...data.customs,
-                commodities: (data.customs.commodities || []).map(
-                  ({ id, ...commodity }: any) => commodity,
-                ),
-              },
-            }
+            customs: {
+              ...data.customs,
+              commodities: (data.customs.commodities || []).map(
+                ({ id, ...commodity }: any) => commodity,
+              ),
+            },
+          }
           : {}),
-        options: data.options,
         payment: data.payment,
         metadata: data.metadata,
         reference: data.reference,
         label_type: data.label_type,
+        options,
       } as any;
       console.log("> shipment duplicate data", shipmentData);
       return handleFailure(
