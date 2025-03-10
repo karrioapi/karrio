@@ -1,23 +1,23 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackingNumberInfoType:
-    trackingNumber: Optional[str] = None
-    carrierCode: Optional[str] = None
-    trackingNumberUniqueId: Optional[str] = None
+    trackingNumber: typing.Optional[str] = None
+    carrierCode: typing.Optional[str] = None
+    trackingNumberUniqueId: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackingInfoType:
-    shipDateBegin: Optional[str] = None
-    shipDateEnd: Optional[str] = None
-    trackingNumberInfo: Optional[TrackingNumberInfoType] = JStruct[TrackingNumberInfoType]
+    shipDateBegin: typing.Optional[str] = None
+    shipDateEnd: typing.Optional[str] = None
+    trackingNumberInfo: typing.Optional[TrackingNumberInfoType] = jstruct.JStruct[TrackingNumberInfoType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackingRequestType:
-    includeDetailedScans: Optional[bool] = None
-    trackingInfo: List[TrackingInfoType] = JList[TrackingInfoType]
+    includeDetailedScans: typing.Optional[bool] = None
+    trackingInfo: typing.Optional[typing.List[TrackingInfoType]] = jstruct.JList[TrackingInfoType]

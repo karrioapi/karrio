@@ -1,69 +1,69 @@
-from attr import s
-from typing import Optional, List, Any
-from jstruct import JList, JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ReferenceType:
-    ReferenceType: Optional[str] = None
-    ReferenceValue: Optional[str] = None
+    ReferenceType: typing.Optional[str] = None
+    ReferenceValue: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ReferencesType:
-    Reference: List[ReferenceType] = JList[ReferenceType]
+    Reference: typing.Optional[typing.List[ReferenceType]] = jstruct.JList[ReferenceType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class HeaderType:
-    MessageVersion: Optional[str] = None
-    MessageIdentifier: Optional[str] = None
-    CreateTimestamp: Optional[str] = None
-    DocumentType: Optional[str] = None
-    Environment: Optional[str] = None
-    SourceSystemCode: Optional[str] = None
-    MessageSender: Optional[str] = None
-    MessageReceiver: Optional[str] = None
-    ResponseStatus: Any = None
-    References: Optional[ReferencesType] = JStruct[ReferencesType]
+    MessageVersion: typing.Optional[str] = None
+    MessageIdentifier: typing.Optional[str] = None
+    CreateTimestamp: typing.Optional[str] = None
+    DocumentType: typing.Optional[str] = None
+    Environment: typing.Optional[str] = None
+    SourceSystemCode: typing.Optional[str] = None
+    MessageSender: typing.Optional[str] = None
+    MessageReceiver: typing.Optional[str] = None
+    ResponseStatus: typing.Any = None
+    References: typing.Optional[ReferencesType] = jstruct.JStruct[ReferencesType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class BaseAmountType:
-    Currency: Optional[str] = None
-    Value: Optional[str] = None
+    Currency: typing.Optional[str] = None
+    Value: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TransitTimeType:
-    UOM: Optional[str] = None
-    Value: Optional[int] = None
+    UOM: typing.Optional[str] = None
+    Value: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ResponseType:
-    BaseAmount: Optional[BaseAmountType] = JStruct[BaseAmountType]
-    GSTAmount: Optional[BaseAmountType] = JStruct[BaseAmountType]
-    TotalChargeAmount: Optional[BaseAmountType] = JStruct[BaseAmountType]
-    TotalSurcharges: Optional[BaseAmountType] = JStruct[BaseAmountType]
-    FreightCharge: Optional[BaseAmountType] = JStruct[BaseAmountType]
-    TollExtraServiceCharge: Optional[BaseAmountType] = JStruct[BaseAmountType]
-    TotalFees: Optional[BaseAmountType] = JStruct[BaseAmountType]
-    EnquiryID: Optional[int] = None
-    TransitTime: Optional[TransitTimeType] = JStruct[TransitTimeType]
+    BaseAmount: typing.Optional[BaseAmountType] = jstruct.JStruct[BaseAmountType]
+    GSTAmount: typing.Optional[BaseAmountType] = jstruct.JStruct[BaseAmountType]
+    TotalChargeAmount: typing.Optional[BaseAmountType] = jstruct.JStruct[BaseAmountType]
+    TotalSurcharges: typing.Optional[BaseAmountType] = jstruct.JStruct[BaseAmountType]
+    FreightCharge: typing.Optional[BaseAmountType] = jstruct.JStruct[BaseAmountType]
+    TollExtraServiceCharge: typing.Optional[BaseAmountType] = jstruct.JStruct[BaseAmountType]
+    TotalFees: typing.Optional[BaseAmountType] = jstruct.JStruct[BaseAmountType]
+    EnquiryID: typing.Optional[int] = None
+    TransitTime: typing.Optional[TransitTimeType] = jstruct.JStruct[TransitTimeType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RateEnquiryType:
-    Response: Optional[ResponseType] = JStruct[ResponseType]
+    Response: typing.Optional[ResponseType] = jstruct.JStruct[ResponseType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TollMessageType:
-    Header: Optional[HeaderType] = JStruct[HeaderType]
-    RateEnquiry: Optional[RateEnquiryType] = JStruct[RateEnquiryType]
+    Header: typing.Optional[HeaderType] = jstruct.JStruct[HeaderType]
+    RateEnquiry: typing.Optional[RateEnquiryType] = jstruct.JStruct[RateEnquiryType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RateResponseType:
-    TollMessage: Optional[TollMessageType] = JStruct[TollMessageType]
+    TollMessage: typing.Optional[TollMessageType] = jstruct.JStruct[TollMessageType]

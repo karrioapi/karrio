@@ -1,31 +1,31 @@
-from attr import s
-from typing import List, Optional
-from jstruct import JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AccountAddressOfRecordType:
-    streetLines: List[str] = []
-    urbanizationCode: Optional[str] = None
-    city: Optional[str] = None
-    stateOrProvinceCode: Optional[str] = None
-    postalCode: Optional[int] = None
-    countryCode: Optional[str] = None
-    residential: Optional[bool] = None
-    addressClassification: Optional[str] = None
+    streetLines: typing.Optional[typing.List[str]] = None
+    urbanizationCode: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    stateOrProvinceCode: typing.Optional[str] = None
+    postalCode: typing.Optional[int] = None
+    countryCode: typing.Optional[str] = None
+    residential: typing.Optional[bool] = None
+    addressClassification: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AssociatedAccountNumberType:
-    value: Optional[str] = None
+    value: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CancelPickupRequestType:
-    associatedAccountNumber: Optional[AssociatedAccountNumberType] = JStruct[AssociatedAccountNumberType]
-    pickupConfirmationCode: Optional[int] = None
-    remarks: Optional[str] = None
-    carrierCode: Optional[str] = None
-    accountAddressOfRecord: Optional[AccountAddressOfRecordType] = JStruct[AccountAddressOfRecordType]
-    scheduledDate: Optional[str] = None
-    location: Optional[str] = None
+    associatedAccountNumber: typing.Optional[AssociatedAccountNumberType] = jstruct.JStruct[AssociatedAccountNumberType]
+    pickupConfirmationCode: typing.Optional[int] = None
+    remarks: typing.Optional[str] = None
+    carrierCode: typing.Optional[str] = None
+    accountAddressOfRecord: typing.Optional[AccountAddressOfRecordType] = jstruct.JStruct[AccountAddressOfRecordType]
+    scheduledDate: typing.Optional[str] = None
+    location: typing.Optional[str] = None

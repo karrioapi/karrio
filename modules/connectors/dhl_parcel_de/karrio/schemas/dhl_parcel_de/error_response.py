@@ -1,10 +1,11 @@
-from attr import s
-from typing import Optional
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ErrorResponseType:
-    title: Optional[str] = None
-    statusCode: Optional[int] = None
-    instance: Optional[str] = None
-    detail: Optional[str] = None
+    title: typing.Optional[str] = None
+    statusCode: typing.Optional[int] = None
+    instance: typing.Optional[str] = None
+    detail: typing.Optional[str] = None

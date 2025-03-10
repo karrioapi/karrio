@@ -1,350 +1,350 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JList, JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PackageIdentifierType:
-    type: Optional[str] = None
-    value: Optional[str] = None
-    trackingNumberUniqueId: Optional[str] = None
+    type: typing.Optional[str] = None
+    value: typing.Optional[str] = None
+    trackingNumberUniqueId: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AdditionalTrackingInfoType:
-    hasAssociatedShipments: Optional[bool] = None
-    nickname: Optional[str] = None
-    packageIdentifiers: List[PackageIdentifierType] = JList[PackageIdentifierType]
-    shipmentNotes: Optional[str] = None
+    hasAssociatedShipments: typing.Optional[bool] = None
+    nickname: typing.Optional[str] = None
+    packageIdentifiers: typing.Optional[typing.List[PackageIdentifierType]] = jstruct.JList[PackageIdentifierType]
+    shipmentNotes: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AvailableImageType:
-    size: Optional[str] = None
-    type: Optional[str] = None
+    size: typing.Optional[str] = None
+    type: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ReasonDetailType:
-    description: Optional[str] = None
-    type: Optional[str] = None
+    description: typing.Optional[str] = None
+    type: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ConsolidationDetailType:
-    timeStamp: Optional[str] = None
-    consolidationID: Optional[int] = None
-    reasonDetail: Optional[ReasonDetailType] = JStruct[ReasonDetailType]
-    packageCount: Optional[int] = None
-    eventType: Optional[str] = None
+    timeStamp: typing.Optional[str] = None
+    consolidationID: typing.Optional[int] = None
+    reasonDetail: typing.Optional[ReasonDetailType] = jstruct.JStruct[ReasonDetailType]
+    packageCount: typing.Optional[int] = None
+    eventType: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class EstimatedDeliveryTimeWindowWindowType:
-    begins: Optional[str] = None
-    ends: Optional[str] = None
+    begins: typing.Optional[str] = None
+    ends: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class EstimatedDeliveryTimeWindowElementType:
-    description: Optional[str] = None
-    window: Optional[EstimatedDeliveryTimeWindowWindowType] = JStruct[EstimatedDeliveryTimeWindowWindowType]
-    type: Optional[str] = None
+    description: typing.Optional[str] = None
+    window: typing.Optional[EstimatedDeliveryTimeWindowWindowType] = jstruct.JStruct[EstimatedDeliveryTimeWindowWindowType]
+    type: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RequestedAppointmentDetailType:
-    date: Optional[str] = None
-    window: List[EstimatedDeliveryTimeWindowElementType] = JList[EstimatedDeliveryTimeWindowElementType]
+    date: typing.Optional[str] = None
+    window: typing.Optional[typing.List[EstimatedDeliveryTimeWindowElementType]] = jstruct.JList[EstimatedDeliveryTimeWindowElementType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CustomDeliveryOptionType:
-    requestedAppointmentDetail: Optional[RequestedAppointmentDetailType] = JStruct[RequestedAppointmentDetailType]
-    description: Optional[str] = None
-    type: Optional[str] = None
-    status: Optional[str] = None
+    requestedAppointmentDetail: typing.Optional[RequestedAppointmentDetailType] = jstruct.JStruct[RequestedAppointmentDetailType]
+    description: typing.Optional[str] = None
+    type: typing.Optional[str] = None
+    status: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DateAndTimeType:
-    dateTime: Optional[str] = None
-    type: Optional[str] = None
+    dateTime: typing.Optional[str] = None
+    type: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class LastUpdatedDestinationAddressType:
-    addressClassification: Optional[str] = None
-    residential: Optional[bool] = None
-    streetLines: List[str] = []
-    city: Optional[str] = None
-    urbanizationCode: Optional[str] = None
-    stateOrProvinceCode: Optional[str] = None
-    postalCode: Optional[int] = None
-    countryCode: Optional[str] = None
-    countryName: Optional[str] = None
+    addressClassification: typing.Optional[str] = None
+    residential: typing.Optional[bool] = None
+    streetLines: typing.Optional[typing.List[str]] = None
+    city: typing.Optional[str] = None
+    urbanizationCode: typing.Optional[str] = None
+    stateOrProvinceCode: typing.Optional[str] = None
+    postalCode: typing.Optional[int] = None
+    countryCode: typing.Optional[str] = None
+    countryName: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DeliveryOptionEligibilityDetailType:
-    option: Optional[str] = None
-    eligibility: Optional[str] = None
+    option: typing.Optional[str] = None
+    eligibility: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DeliveryDetailsType:
-    receivedByName: Optional[str] = None
-    destinationServiceArea: Optional[str] = None
-    destinationServiceAreaDescription: Optional[str] = None
-    locationDescription: Optional[str] = None
-    actualDeliveryAddress: Optional[LastUpdatedDestinationAddressType] = JStruct[LastUpdatedDestinationAddressType]
-    deliveryToday: Optional[bool] = None
-    locationType: Optional[str] = None
-    signedByName: Optional[str] = None
-    officeOrderDeliveryMethod: Optional[str] = None
-    deliveryAttempts: Optional[int] = None
-    deliveryOptionEligibilityDetails: List[DeliveryOptionEligibilityDetailType] = JList[DeliveryOptionEligibilityDetailType]
+    receivedByName: typing.Optional[str] = None
+    destinationServiceArea: typing.Optional[str] = None
+    destinationServiceAreaDescription: typing.Optional[str] = None
+    locationDescription: typing.Optional[str] = None
+    actualDeliveryAddress: typing.Optional[LastUpdatedDestinationAddressType] = jstruct.JStruct[LastUpdatedDestinationAddressType]
+    deliveryToday: typing.Optional[bool] = None
+    locationType: typing.Optional[str] = None
+    signedByName: typing.Optional[str] = None
+    officeOrderDeliveryMethod: typing.Optional[str] = None
+    deliveryAttempts: typing.Optional[int] = None
+    deliveryOptionEligibilityDetails: typing.Optional[typing.List[DeliveryOptionEligibilityDetailType]] = jstruct.JList[DeliveryOptionEligibilityDetailType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ContactType:
-    personName: Optional[str] = None
-    phoneNumber: Optional[int] = None
-    companyName: Optional[str] = None
+    personName: typing.Optional[str] = None
+    phoneNumber: typing.Optional[int] = None
+    companyName: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RecipientInformationType:
-    contact: Optional[ContactType] = JStruct[ContactType]
-    address: Optional[LastUpdatedDestinationAddressType] = JStruct[LastUpdatedDestinationAddressType]
+    contact: typing.Optional[ContactType] = jstruct.JStruct[ContactType]
+    address: typing.Optional[LastUpdatedDestinationAddressType] = jstruct.JStruct[LastUpdatedDestinationAddressType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class LocationType:
-    locationId: Optional[str] = None
-    locationContactAndAddress: Optional[RecipientInformationType] = JStruct[RecipientInformationType]
-    locationType: Optional[str] = None
+    locationId: typing.Optional[str] = None
+    locationContactAndAddress: typing.Optional[RecipientInformationType] = jstruct.JStruct[RecipientInformationType]
+    locationType: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DistanceToDestinationType:
-    units: Optional[str] = None
-    value: Optional[float] = None
+    units: typing.Optional[str] = None
+    value: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ParameterListType:
-    value: Optional[str] = None
-    key: Optional[str] = None
+    value: typing.Optional[str] = None
+    key: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ErrorType:
-    code: Optional[str] = None
-    parameterList: List[ParameterListType] = JList[ParameterListType]
-    message: Optional[str] = None
+    code: typing.Optional[str] = None
+    parameterList: typing.Optional[typing.List[ParameterListType]] = jstruct.JList[ParameterListType]
+    message: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class InformationNoteType:
-    code: Optional[str] = None
-    description: Optional[str] = None
+    code: typing.Optional[str] = None
+    description: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AncillaryDetailType:
-    reason: Optional[int] = None
-    reasonDescription: Optional[str] = None
-    action: Optional[str] = None
-    actionDescription: Optional[str] = None
+    reason: typing.Optional[int] = None
+    reasonDescription: typing.Optional[str] = None
+    action: typing.Optional[str] = None
+    actionDescription: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DelayDetailType:
-    type: Optional[str] = None
-    subType: Optional[str] = None
-    status: Optional[str] = None
+    type: typing.Optional[str] = None
+    subType: typing.Optional[str] = None
+    status: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class LatestStatusDetailType:
-    scanLocation: Optional[LastUpdatedDestinationAddressType] = JStruct[LastUpdatedDestinationAddressType]
-    code: Optional[str] = None
-    derivedCode: Optional[str] = None
-    ancillaryDetails: List[AncillaryDetailType] = JList[AncillaryDetailType]
-    statusByLocale: Optional[str] = None
-    description: Optional[str] = None
-    delayDetail: Optional[DelayDetailType] = JStruct[DelayDetailType]
+    scanLocation: typing.Optional[LastUpdatedDestinationAddressType] = jstruct.JStruct[LastUpdatedDestinationAddressType]
+    code: typing.Optional[str] = None
+    derivedCode: typing.Optional[str] = None
+    ancillaryDetails: typing.Optional[typing.List[AncillaryDetailType]] = jstruct.JList[AncillaryDetailType]
+    statusByLocale: typing.Optional[str] = None
+    description: typing.Optional[str] = None
+    delayDetail: typing.Optional[DelayDetailType] = jstruct.JStruct[DelayDetailType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DeclaredValueType:
-    currency: Optional[str] = None
-    value: Optional[float] = None
+    currency: typing.Optional[str] = None
+    value: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DimensionType:
-    length: Optional[int] = None
-    width: Optional[int] = None
-    height: Optional[int] = None
-    units: Optional[str] = None
+    length: typing.Optional[int] = None
+    width: typing.Optional[int] = None
+    height: typing.Optional[int] = None
+    units: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class WeightType:
-    unit: Optional[str] = None
-    value: Optional[str] = None
+    unit: typing.Optional[str] = None
+    value: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class WeightAndDimensionsType:
-    weight: List[WeightType] = JList[WeightType]
-    dimensions: List[DimensionType] = JList[DimensionType]
+    weight: typing.Optional[typing.List[WeightType]] = jstruct.JList[WeightType]
+    dimensions: typing.Optional[typing.List[DimensionType]] = jstruct.JList[DimensionType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PackageDetailsType:
-    physicalPackagingType: Optional[str] = None
-    sequenceNumber: Optional[int] = None
-    undeliveredCount: Optional[int] = None
-    packagingDescription: Optional[ReasonDetailType] = JStruct[ReasonDetailType]
-    count: Optional[int] = None
-    weightAndDimensions: Optional[WeightAndDimensionsType] = JStruct[WeightAndDimensionsType]
-    packageContent: List[str] = []
-    contentPieceCount: Optional[int] = None
-    declaredValue: Optional[DeclaredValueType] = JStruct[DeclaredValueType]
+    physicalPackagingType: typing.Optional[str] = None
+    sequenceNumber: typing.Optional[int] = None
+    undeliveredCount: typing.Optional[int] = None
+    packagingDescription: typing.Optional[ReasonDetailType] = jstruct.JStruct[ReasonDetailType]
+    count: typing.Optional[int] = None
+    weightAndDimensions: typing.Optional[WeightAndDimensionsType] = jstruct.JStruct[WeightAndDimensionsType]
+    packageContent: typing.Optional[typing.List[str]] = None
+    contentPieceCount: typing.Optional[int] = None
+    declaredValue: typing.Optional[DeclaredValueType] = jstruct.JStruct[DeclaredValueType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PieceCountType:
-    count: Optional[int] = None
-    description: Optional[str] = None
-    type: Optional[str] = None
+    count: typing.Optional[int] = None
+    description: typing.Optional[str] = None
+    type: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ReturnDetailType:
-    authorizationName: Optional[str] = None
-    reasonDetail: List[ReasonDetailType] = JList[ReasonDetailType]
+    authorizationName: typing.Optional[str] = None
+    reasonDetail: typing.Optional[typing.List[ReasonDetailType]] = jstruct.JList[ReasonDetailType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ScanEventType:
-    date: Optional[str] = None
-    derivedStatus: Optional[str] = None
-    scanLocation: Optional[LastUpdatedDestinationAddressType] = JStruct[LastUpdatedDestinationAddressType]
-    locationId: Optional[str] = None
-    locationType: Optional[str] = None
-    exceptionDescription: Optional[str] = None
-    eventDescription: Optional[str] = None
-    eventType: Optional[str] = None
-    derivedStatusCode: Optional[str] = None
-    exceptionCode: Optional[str] = None
-    delayDetail: Optional[DelayDetailType] = JStruct[DelayDetailType]
+    date: typing.Optional[str] = None
+    derivedStatus: typing.Optional[str] = None
+    scanLocation: typing.Optional[LastUpdatedDestinationAddressType] = jstruct.JStruct[LastUpdatedDestinationAddressType]
+    locationId: typing.Optional[str] = None
+    locationType: typing.Optional[str] = None
+    exceptionDescription: typing.Optional[str] = None
+    eventDescription: typing.Optional[str] = None
+    eventType: typing.Optional[str] = None
+    derivedStatusCode: typing.Optional[str] = None
+    exceptionCode: typing.Optional[str] = None
+    delayDetail: typing.Optional[DelayDetailType] = jstruct.JStruct[DelayDetailType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ServiceCommitMessageType:
-    message: Optional[str] = None
-    type: Optional[str] = None
+    message: typing.Optional[str] = None
+    type: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ServiceDetailType:
-    description: Optional[str] = None
-    shortDescription: Optional[str] = None
-    type: Optional[str] = None
+    description: typing.Optional[str] = None
+    shortDescription: typing.Optional[str] = None
+    type: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ContentType:
-    itemNumber: Optional[str] = None
-    receivedQuantity: Optional[int] = None
-    description: Optional[str] = None
-    partNumber: Optional[str] = None
+    itemNumber: typing.Optional[str] = None
+    receivedQuantity: typing.Optional[int] = None
+    description: typing.Optional[str] = None
+    partNumber: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class SplitShipmentType:
-    pieceCount: Optional[int] = None
-    statusDescription: Optional[str] = None
-    timestamp: Optional[str] = None
-    statusCode: Optional[str] = None
+    pieceCount: typing.Optional[int] = None
+    statusDescription: typing.Optional[str] = None
+    timestamp: typing.Optional[str] = None
+    statusCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentDetailsType:
-    contents: List[ContentType] = JList[ContentType]
-    beforePossessionStatus: Optional[bool] = None
-    weight: List[WeightType] = JList[WeightType]
-    contentPieceCount: Optional[int] = None
-    splitShipments: List[SplitShipmentType] = JList[SplitShipmentType]
+    contents: typing.Optional[typing.List[ContentType]] = jstruct.JList[ContentType]
+    beforePossessionStatus: typing.Optional[bool] = None
+    weight: typing.Optional[typing.List[WeightType]] = jstruct.JList[WeightType]
+    contentPieceCount: typing.Optional[int] = None
+    splitShipments: typing.Optional[typing.List[SplitShipmentType]] = jstruct.JList[SplitShipmentType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class SpecialHandlingType:
-    description: Optional[str] = None
-    type: Optional[str] = None
-    paymentType: Optional[str] = None
+    description: typing.Optional[str] = None
+    type: typing.Optional[str] = None
+    paymentType: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackingNumberInfoType:
-    trackingNumber: Optional[str] = None
-    carrierCode: Optional[str] = None
-    trackingNumberUniqueId: Optional[str] = None
+    trackingNumber: typing.Optional[str] = None
+    carrierCode: typing.Optional[str] = None
+    trackingNumberUniqueId: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackResultType:
-    trackingNumberInfo: Optional[TrackingNumberInfoType] = JStruct[TrackingNumberInfoType]
-    additionalTrackingInfo: Optional[AdditionalTrackingInfoType] = JStruct[AdditionalTrackingInfoType]
-    distanceToDestination: Optional[DistanceToDestinationType] = JStruct[DistanceToDestinationType]
-    consolidationDetail: List[ConsolidationDetailType] = JList[ConsolidationDetailType]
-    meterNumber: Optional[int] = None
-    returnDetail: Optional[ReturnDetailType] = JStruct[ReturnDetailType]
-    serviceDetail: Optional[ServiceDetailType] = JStruct[ServiceDetailType]
-    destinationLocation: Optional[LocationType] = JStruct[LocationType]
-    latestStatusDetail: Optional[LatestStatusDetailType] = JStruct[LatestStatusDetailType]
-    serviceCommitMessage: Optional[ServiceCommitMessageType] = JStruct[ServiceCommitMessageType]
-    informationNotes: List[InformationNoteType] = JList[InformationNoteType]
-    error: Optional[ErrorType] = JStruct[ErrorType]
-    specialHandlings: List[SpecialHandlingType] = JList[SpecialHandlingType]
-    availableImages: List[AvailableImageType] = JList[AvailableImageType]
-    deliveryDetails: Optional[DeliveryDetailsType] = JStruct[DeliveryDetailsType]
-    scanEvents: List[ScanEventType] = JList[ScanEventType]
-    dateAndTimes: List[DateAndTimeType] = JList[DateAndTimeType]
-    packageDetails: Optional[PackageDetailsType] = JStruct[PackageDetailsType]
-    goodsClassificationCode: Optional[str] = None
-    holdAtLocation: Optional[LocationType] = JStruct[LocationType]
-    customDeliveryOptions: List[CustomDeliveryOptionType] = JList[CustomDeliveryOptionType]
-    estimatedDeliveryTimeWindow: Optional[EstimatedDeliveryTimeWindowElementType] = JStruct[EstimatedDeliveryTimeWindowElementType]
-    pieceCounts: List[PieceCountType] = JList[PieceCountType]
-    originLocation: Optional[LocationType] = JStruct[LocationType]
-    recipientInformation: Optional[RecipientInformationType] = JStruct[RecipientInformationType]
-    standardTransitTimeWindow: Optional[EstimatedDeliveryTimeWindowElementType] = JStruct[EstimatedDeliveryTimeWindowElementType]
-    shipmentDetails: Optional[ShipmentDetailsType] = JStruct[ShipmentDetailsType]
-    reasonDetail: Optional[ReasonDetailType] = JStruct[ReasonDetailType]
-    availableNotifications: List[str] = []
-    shipperInformation: Optional[RecipientInformationType] = JStruct[RecipientInformationType]
-    lastUpdatedDestinationAddress: Optional[LastUpdatedDestinationAddressType] = JStruct[LastUpdatedDestinationAddressType]
+    trackingNumberInfo: typing.Optional[TrackingNumberInfoType] = jstruct.JStruct[TrackingNumberInfoType]
+    additionalTrackingInfo: typing.Optional[AdditionalTrackingInfoType] = jstruct.JStruct[AdditionalTrackingInfoType]
+    distanceToDestination: typing.Optional[DistanceToDestinationType] = jstruct.JStruct[DistanceToDestinationType]
+    consolidationDetail: typing.Optional[typing.List[ConsolidationDetailType]] = jstruct.JList[ConsolidationDetailType]
+    meterNumber: typing.Optional[int] = None
+    returnDetail: typing.Optional[ReturnDetailType] = jstruct.JStruct[ReturnDetailType]
+    serviceDetail: typing.Optional[ServiceDetailType] = jstruct.JStruct[ServiceDetailType]
+    destinationLocation: typing.Optional[LocationType] = jstruct.JStruct[LocationType]
+    latestStatusDetail: typing.Optional[LatestStatusDetailType] = jstruct.JStruct[LatestStatusDetailType]
+    serviceCommitMessage: typing.Optional[ServiceCommitMessageType] = jstruct.JStruct[ServiceCommitMessageType]
+    informationNotes: typing.Optional[typing.List[InformationNoteType]] = jstruct.JList[InformationNoteType]
+    error: typing.Optional[ErrorType] = jstruct.JStruct[ErrorType]
+    specialHandlings: typing.Optional[typing.List[SpecialHandlingType]] = jstruct.JList[SpecialHandlingType]
+    availableImages: typing.Optional[typing.List[AvailableImageType]] = jstruct.JList[AvailableImageType]
+    deliveryDetails: typing.Optional[DeliveryDetailsType] = jstruct.JStruct[DeliveryDetailsType]
+    scanEvents: typing.Optional[typing.List[ScanEventType]] = jstruct.JList[ScanEventType]
+    dateAndTimes: typing.Optional[typing.List[DateAndTimeType]] = jstruct.JList[DateAndTimeType]
+    packageDetails: typing.Optional[PackageDetailsType] = jstruct.JStruct[PackageDetailsType]
+    goodsClassificationCode: typing.Optional[str] = None
+    holdAtLocation: typing.Optional[LocationType] = jstruct.JStruct[LocationType]
+    customDeliveryOptions: typing.Optional[typing.List[CustomDeliveryOptionType]] = jstruct.JList[CustomDeliveryOptionType]
+    estimatedDeliveryTimeWindow: typing.Optional[EstimatedDeliveryTimeWindowElementType] = jstruct.JStruct[EstimatedDeliveryTimeWindowElementType]
+    pieceCounts: typing.Optional[typing.List[PieceCountType]] = jstruct.JList[PieceCountType]
+    originLocation: typing.Optional[LocationType] = jstruct.JStruct[LocationType]
+    recipientInformation: typing.Optional[RecipientInformationType] = jstruct.JStruct[RecipientInformationType]
+    standardTransitTimeWindow: typing.Optional[EstimatedDeliveryTimeWindowElementType] = jstruct.JStruct[EstimatedDeliveryTimeWindowElementType]
+    shipmentDetails: typing.Optional[ShipmentDetailsType] = jstruct.JStruct[ShipmentDetailsType]
+    reasonDetail: typing.Optional[ReasonDetailType] = jstruct.JStruct[ReasonDetailType]
+    availableNotifications: typing.Optional[typing.List[str]] = None
+    shipperInformation: typing.Optional[RecipientInformationType] = jstruct.JStruct[RecipientInformationType]
+    lastUpdatedDestinationAddress: typing.Optional[LastUpdatedDestinationAddressType] = jstruct.JStruct[LastUpdatedDestinationAddressType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CompleteTrackResultType:
-    trackingNumber: Optional[str] = None
-    trackResults: List[TrackResultType] = JList[TrackResultType]
+    trackingNumber: typing.Optional[str] = None
+    trackResults: typing.Optional[typing.List[TrackResultType]] = jstruct.JList[TrackResultType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class OutputType:
-    completeTrackResults: List[CompleteTrackResultType] = JList[CompleteTrackResultType]
-    alerts: Optional[str] = None
+    completeTrackResults: typing.Optional[typing.List[CompleteTrackResultType]] = jstruct.JList[CompleteTrackResultType]
+    alerts: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackingResponseType:
-    transactionId: Optional[str] = None
-    customerTransactionId: Optional[str] = None
-    output: Optional[OutputType] = JStruct[OutputType]
+    transactionId: typing.Optional[str] = None
+    customerTransactionId: typing.Optional[str] = None
+    output: typing.Optional[OutputType] = jstruct.JStruct[OutputType]

@@ -1,20 +1,19 @@
+#!/bin/bash
 SCHEMAS=./schemas
 LIB_MODULES=./karrio/schemas/allied_express
 find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
 touch "${LIB_MODULES}/__init__.py"
 
-quicktype () {
+generate_schema() {
     echo "Generating $1..."
-    docker run -it --rm --name quicktype -v $PWD:/app -e SCHEMAS=/app/schemas -e LIB_MODULES=/app/karrio/schemas/allied_express \
-    karrio/tools /quicktype/script/quicktype --no-uuids --no-date-times --no-enums --src-lang json --lang jstruct \
-    --no-nice-property-names --all-properties-optional --type-as-suffix $@
+    "${ROOT}/bin/cli" codegen generate "$1" "$2" --no-nice-property-names
 }
 
-quicktype --src="${SCHEMAS}/label_request.json" --out="${LIB_MODULES}/label_request.py"
-quicktype --src="${SCHEMAS}/label_response.json" --out="${LIB_MODULES}/label_response.py"
-quicktype --src="${SCHEMAS}/rate_request.json" --out="${LIB_MODULES}/rate_request.py"
-quicktype --src="${SCHEMAS}/rate_response.json" --out="${LIB_MODULES}/rate_response.py"
-quicktype --src="${SCHEMAS}/tracking_request.json" --out="${LIB_MODULES}/tracking_request.py"
-quicktype --src="${SCHEMAS}/tracking_response.json" --out="${LIB_MODULES}/tracking_response.py"
-quicktype --src="${SCHEMAS}/void_request.json" --out="${LIB_MODULES}/void_request.py"
-quicktype --src="${SCHEMAS}/void_response.json" --out="${LIB_MODULES}/void_response.py"
+generate_schema "${SCHEMAS}/label_request.json" "${LIB_MODULES}/label_request.py"
+generate_schema "${SCHEMAS}/label_response.json" "${LIB_MODULES}/label_response.py"
+generate_schema "${SCHEMAS}/rate_request.json" "${LIB_MODULES}/rate_request.py"
+generate_schema "${SCHEMAS}/rate_response.json" "${LIB_MODULES}/rate_response.py"
+generate_schema "${SCHEMAS}/tracking_request.json" "${LIB_MODULES}/tracking_request.py"
+generate_schema "${SCHEMAS}/tracking_response.json" "${LIB_MODULES}/tracking_response.py"
+generate_schema "${SCHEMAS}/void_request.json" "${LIB_MODULES}/void_request.py"
+generate_schema "${SCHEMAS}/void_response.json" "${LIB_MODULES}/void_response.py"

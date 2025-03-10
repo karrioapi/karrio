@@ -1,69 +1,69 @@
-from attr import s
-from typing import Optional, Any, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Contact:
-    name: Optional[str] = None
-    phone: Optional[str] = None
-    email: Optional[str] = None
+    name: typing.Optional[str] = None
+    phone: typing.Optional[str] = None
+    email: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CustomFields:
-    custom1: Optional[str] = None
-    custom2: Optional[str] = None
-    custom3: Optional[str] = None
+    custom1: typing.Optional[str] = None
+    custom2: typing.Optional[str] = None
+    custom3: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Line:
-    barcode: Optional[int] = None
-    description: Optional[str] = None
-    currentLocation: Optional[str] = None
-    serviceId: Optional[int] = None
-    productVariantId: Optional[int] = None
-    quantity: Optional[int] = None
+    barcode: typing.Optional[int] = None
+    description: typing.Optional[str] = None
+    currentLocation: typing.Optional[str] = None
+    serviceId: typing.Optional[int] = None
+    productVariantId: typing.Optional[int] = None
+    quantity: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Load:
-    quantity: Optional[int] = None
-    volume: Optional[int] = None
-    weight: Optional[int] = None
-    length: Optional[int] = None
-    width: Optional[int] = None
-    height: Optional[int] = None
+    quantity: typing.Optional[int] = None
+    volume: typing.Optional[int] = None
+    weight: typing.Optional[int] = None
+    length: typing.Optional[int] = None
+    width: typing.Optional[int] = None
+    height: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Location:
-    latitude: Optional[float] = None
-    longitude: Optional[float] = None
+    latitude: typing.Optional[float] = None
+    longitude: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShippingRequest:
-    contact: Optional[Contact] = JStruct[Contact]
-    name: Optional[str] = None
-    address: Optional[str] = None
-    location: Optional[Location] = JStruct[Location]
-    type: Any = None
-    appointmentTime: Optional[str] = None
-    timeWindowStart: Any = None
-    timeWindowEnd: Any = None
-    brandId: Any = None
-    durationMinutes: Optional[int] = None
-    notes: Optional[str] = None
-    tripDate: Optional[str] = None
-    customFields: Optional[CustomFields] = JStruct[CustomFields]
-    assignedTeamMemberId: Optional[str] = None
-    source: Any = None
-    sourceReference: Any = None
-    load: Optional[Load] = JStruct[Load]
-    customerId: Optional[int] = None
-    runNumber: Optional[int] = None
-    teamRegionId: Optional[int] = None
-    driverInstructions: Any = None
-    lines: List[Line] = JList[Line]
+    contact: typing.Optional[Contact] = jstruct.JStruct[Contact]
+    name: typing.Optional[str] = None
+    address: typing.Optional[str] = None
+    location: typing.Optional[Location] = jstruct.JStruct[Location]
+    type: typing.Any = None
+    appointmentTime: typing.Optional[str] = None
+    timeWindowStart: typing.Any = None
+    timeWindowEnd: typing.Any = None
+    brandId: typing.Any = None
+    durationMinutes: typing.Optional[int] = None
+    notes: typing.Optional[str] = None
+    tripDate: typing.Optional[str] = None
+    customFields: typing.Optional[CustomFields] = jstruct.JStruct[CustomFields]
+    assignedTeamMemberId: typing.Optional[str] = None
+    source: typing.Any = None
+    sourceReference: typing.Any = None
+    load: typing.Optional[Load] = jstruct.JStruct[Load]
+    customerId: typing.Optional[int] = None
+    runNumber: typing.Optional[int] = None
+    teamRegionId: typing.Optional[int] = None
+    driverInstructions: typing.Any = None
+    lines: typing.Optional[typing.List[Line]] = jstruct.JList[Line]

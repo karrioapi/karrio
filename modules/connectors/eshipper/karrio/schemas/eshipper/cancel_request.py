@@ -1,15 +1,15 @@
-from attr import s
-from typing import Optional
-from jstruct import JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class OrderType:
-    trackingId: Optional[str] = None
-    orderId: Optional[str] = None
-    message: Optional[str] = None
+    trackingId: typing.Optional[str] = None
+    orderId: typing.Optional[str] = None
+    message: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CancelRequestType:
-    order: Optional[OrderType] = JStruct[OrderType]
+    order: typing.Optional[OrderType] = jstruct.JStruct[OrderType]

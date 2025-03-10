@@ -1,13 +1,14 @@
-from attr import s
-from typing import Optional
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Error:
-    returnCode: Optional[int] = None
-    returnMessage: Optional[str] = None
-    lang: Optional[str] = None
-    scope: Optional[str] = None
-    idShip: Optional[str] = None
-    code: Optional[str] = None
-    message: Optional[str] = None
+    returnCode: typing.Optional[int] = None
+    returnMessage: typing.Optional[str] = None
+    lang: typing.Optional[str] = None
+    scope: typing.Optional[str] = None
+    idShip: typing.Optional[str] = None
+    code: typing.Optional[str] = None
+    message: typing.Optional[str] = None

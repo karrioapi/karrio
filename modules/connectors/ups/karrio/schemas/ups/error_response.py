@@ -1,19 +1,19 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JList, JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ErrorType:
-    code: Optional[int] = None
-    message: Optional[str] = None
+    code: typing.Optional[int] = None
+    message: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ResponseType:
-    errors: List[ErrorType] = JList[ErrorType]
+    errors: typing.Optional[typing.List[ErrorType]] = jstruct.JList[ErrorType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ErrorResponseType:
-    response: Optional[ResponseType] = JStruct[ResponseType]
+    response: typing.Optional[ResponseType] = jstruct.JStruct[ResponseType]

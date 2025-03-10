@@ -1,30 +1,30 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JList, JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackingMilestoneEventType:
-    eventCode: Optional[str] = None
-    eventDescription: Optional[str] = None
-    eventLocation: Optional[str] = None
-    eventOn: Optional[str] = None
+    eventCode: typing.Optional[str] = None
+    eventDescription: typing.Optional[str] = None
+    eventLocation: typing.Optional[str] = None
+    eventOn: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DatumType:
-    trackingNumberVendor: Optional[str] = None
-    customerReferenceNumber: Optional[str] = None
-    trackingMilestoneEvents: List[TrackingMilestoneEventType] = JList[TrackingMilestoneEventType]
+    trackingNumberVendor: typing.Optional[str] = None
+    customerReferenceNumber: typing.Optional[str] = None
+    trackingMilestoneEvents: typing.Optional[typing.List[TrackingMilestoneEventType]] = jstruct.JList[TrackingMilestoneEventType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ResponseStatusType:
-    responseStatusCode: Optional[int] = None
-    responseStatusMessage: Optional[str] = None
+    responseStatusCode: typing.Optional[int] = None
+    responseStatusMessage: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackingResponseType:
-    data: List[DatumType] = JList[DatumType]
-    responseStatus: Optional[ResponseStatusType] = JStruct[ResponseStatusType]
+    data: typing.Optional[typing.List[DatumType]] = jstruct.JList[DatumType]
+    responseStatus: typing.Optional[ResponseStatusType] = jstruct.JStruct[ResponseStatusType]

@@ -1,15 +1,15 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class OrderType:
-    trackingId: Optional[str] = None
-    orderId: Optional[str] = None
-    message: Optional[str] = None
+    trackingId: typing.Optional[str] = None
+    orderId: typing.Optional[str] = None
+    message: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CancelResponseType:
-    order: List[OrderType] = JList[OrderType]
+    order: typing.Optional[typing.List[OrderType]] = jstruct.JList[OrderType]

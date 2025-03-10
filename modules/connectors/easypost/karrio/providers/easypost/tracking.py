@@ -35,6 +35,7 @@ def _extract_details(
 ) -> models.TrackingDetails:
     tracker = lib.to_object(easypost.Tracker, data)
     expected_delivery = lib.fdate(tracker.est_delivery_date, "%Y-%m-%dT%H:%M:%SZ")
+    events: typing.List[dict] = data.get("tracking_details", [])
 
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,
@@ -42,21 +43,21 @@ def _extract_details(
         tracking_number=tracker.tracking_code,
         events=[
             models.TrackingEvent(
-                date=lib.fdate(event.datetime, "%Y-%m-%dT%H:%M:%SZ"),
-                description=event.message or "",
-                code=event.status,
-                time=lib.flocaltime(event.datetime, "%Y-%m-%dT%H:%M:%SZ"),
+                date=lib.fdate(event.get("datetime"), "%Y-%m-%dT%H:%M:%SZ"),
+                description=event.get("message") or "",
+                code=event.get("status"),
+                time=lib.flocaltime(event.get("datetime"), "%Y-%m-%dT%H:%M:%SZ"),
                 location=lib.join(
-                    event.tracking_location.city,
-                    event.tracking_location.state,
-                    event.tracking_location.zip,
-                    event.tracking_location.country,
+                    event.get("tracking_location", {}).get("city"),
+                    event.get("tracking_location", {}).get("state"),
+                    event.get("tracking_location", {}).get("zip"),
+                    event.get("tracking_location", {}).get("country"),
                     join=True,
                     separator=", ",
                 ),
             )
-            for event in tracker.tracking_details
-            if event.datetime is not None
+            for event in events
+            if event.get("datetime") is not None
         ],
         delivered=(tracker.status == "delivered"),
         estimated_delivery=expected_delivery,

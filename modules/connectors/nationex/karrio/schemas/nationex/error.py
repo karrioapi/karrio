@@ -1,8 +1,9 @@
-from attr import s
-from typing import Optional
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ErrorType:
-    code: Optional[int] = None
-    message: Optional[str] = None
+    code: typing.Optional[int] = None
+    message: typing.Optional[str] = None

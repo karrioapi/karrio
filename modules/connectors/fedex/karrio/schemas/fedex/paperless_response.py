@@ -1,21 +1,21 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class MetaType:
-    documentType: Optional[str] = None
-    docId: Optional[str] = None
-    folderId: List[str] = []
+    documentType: typing.Optional[str] = None
+    docId: typing.Optional[str] = None
+    folderId: typing.Optional[typing.List[str]] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class OutputType:
-    meta: Optional[MetaType] = JStruct[MetaType]
+    meta: typing.Optional[MetaType] = jstruct.JStruct[MetaType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PaperlessResponseType:
-    output: Optional[OutputType] = JStruct[OutputType]
-    customerTransactionId: Optional[str] = None
+    output: typing.Optional[OutputType] = jstruct.JStruct[OutputType]
+    customerTransactionId: typing.Optional[str] = None

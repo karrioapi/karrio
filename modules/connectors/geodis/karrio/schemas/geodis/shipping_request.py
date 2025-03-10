@@ -1,166 +1,166 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ContreRemboursementType:
-    quantite: Optional[float] = None
-    codeUnite: Optional[str] = None
+    quantite: typing.Optional[float] = None
+    codeUnite: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DestinataireType:
-    nom: Optional[str] = None
-    adresse1: Optional[str] = None
-    adresse2: Optional[str] = None
-    codePostal: Optional[int] = None
-    ville: Optional[str] = None
-    codePays: Optional[str] = None
-    nomContact: Optional[str] = None
-    email: Optional[str] = None
-    telFixe: Optional[str] = None
-    indTelMobile: Optional[int] = None
-    telMobile: Optional[str] = None
-    codePorte: Optional[int] = None
-    codeTiers: Optional[str] = None
-    noEntrepositaireAgree: Optional[str] = None
-    particulier: Optional[bool] = None
+    nom: typing.Optional[str] = None
+    adresse1: typing.Optional[str] = None
+    adresse2: typing.Optional[str] = None
+    codePostal: typing.Optional[int] = None
+    ville: typing.Optional[str] = None
+    codePays: typing.Optional[str] = None
+    nomContact: typing.Optional[str] = None
+    email: typing.Optional[str] = None
+    telFixe: typing.Optional[str] = None
+    indTelMobile: typing.Optional[int] = None
+    telMobile: typing.Optional[str] = None
+    codePorte: typing.Optional[int] = None
+    codeTiers: typing.Optional[str] = None
+    noEntrepositaireAgree: typing.Optional[str] = None
+    particulier: typing.Optional[bool] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PieceJointeType:
-    nom: Optional[str] = None
-    type: Optional[str] = None
-    contenu: Optional[str] = None
+    nom: typing.Optional[str] = None
+    type: typing.Optional[str] = None
+    contenu: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ListFactureType:
-    noFacture: Optional[str] = None
-    montantFacture: Optional[ContreRemboursementType] = JStruct[ContreRemboursementType]
-    dateFacture: Optional[str] = None
-    pieceJointe: Optional[PieceJointeType] = JStruct[PieceJointeType]
+    noFacture: typing.Optional[str] = None
+    montantFacture: typing.Optional[ContreRemboursementType] = jstruct.JStruct[ContreRemboursementType]
+    dateFacture: typing.Optional[str] = None
+    pieceJointe: typing.Optional[PieceJointeType] = jstruct.JStruct[PieceJointeType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class InformationDouaneType:
-    poidsNetTotal: Optional[float] = None
-    eoriExpediteur: Optional[str] = None
-    eoriDestinataire: Optional[str] = None
-    emailExpediteurDouane: Optional[str] = None
-    indTelExpediteurDouane: Optional[str] = None
-    telExpediteurDouane: Optional[str] = None
-    mandatRepresentation: Optional[bool] = None
-    listFactures: List[ListFactureType] = JList[ListFactureType]
+    poidsNetTotal: typing.Optional[float] = None
+    eoriExpediteur: typing.Optional[str] = None
+    eoriDestinataire: typing.Optional[str] = None
+    emailExpediteurDouane: typing.Optional[str] = None
+    indTelExpediteurDouane: typing.Optional[str] = None
+    telExpediteurDouane: typing.Optional[str] = None
+    mandatRepresentation: typing.Optional[bool] = None
+    listFactures: typing.Optional[typing.List[ListFactureType]] = jstruct.JList[ListFactureType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ListDocumentsEnvoiType:
-    visibiliteDestinataire: Optional[bool] = None
-    pieceJointe: Optional[PieceJointeType] = JStruct[PieceJointeType]
+    visibiliteDestinataire: typing.Optional[bool] = None
+    pieceJointe: typing.Optional[PieceJointeType] = jstruct.JStruct[PieceJointeType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ListMatieresDangereusType:
-    noONU: Optional[str] = None
-    groupeEmballage: Optional[str] = None
-    classeADR: Optional[str] = None
-    codeTypeEmballage: Optional[str] = None
-    nbEmballages: Optional[int] = None
-    nomTechnique: Optional[str] = None
-    codeQuantite: Optional[str] = None
-    poidsVolume: Optional[float] = None
-    dangerEnv: Optional[bool] = None
+    noONU: typing.Optional[str] = None
+    groupeEmballage: typing.Optional[str] = None
+    classeADR: typing.Optional[str] = None
+    codeTypeEmballage: typing.Optional[str] = None
+    nbEmballages: typing.Optional[int] = None
+    nomTechnique: typing.Optional[str] = None
+    codeQuantite: typing.Optional[str] = None
+    poidsVolume: typing.Optional[float] = None
+    dangerEnv: typing.Optional[bool] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ListUmgType:
-    palette: Optional[bool] = None
-    paletteConsignee: Optional[bool] = None
-    quantite: Optional[int] = None
-    poids: Optional[float] = None
-    volume: Optional[float] = None
-    longueurUnitaire: Optional[float] = None
-    largeurUnitaire: Optional[float] = None
-    hauteurUnitaire: Optional[float] = None
-    referenceColis: Optional[str] = None
+    palette: typing.Optional[bool] = None
+    paletteConsignee: typing.Optional[bool] = None
+    quantite: typing.Optional[int] = None
+    poids: typing.Optional[float] = None
+    volume: typing.Optional[float] = None
+    longueurUnitaire: typing.Optional[float] = None
+    largeurUnitaire: typing.Optional[float] = None
+    hauteurUnitaire: typing.Optional[float] = None
+    referenceColis: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ListVinsSpiritueuxType:
-    regimeFiscal: Optional[str] = None
-    nbCols: Optional[int] = None
-    contenance: Optional[float] = None
-    volumeEnDroits: Optional[float] = None
-    noTitreMvtRefAdmin: Optional[str] = None
-    dureeTransport: Optional[float] = None
+    regimeFiscal: typing.Optional[str] = None
+    nbCols: typing.Optional[int] = None
+    contenance: typing.Optional[float] = None
+    volumeEnDroits: typing.Optional[float] = None
+    noTitreMvtRefAdmin: typing.Optional[str] = None
+    dureeTransport: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ListEnvoisType:
-    noRecepisse: Optional[str] = None
-    noSuivi: Optional[str] = None
-    horsSite: Optional[bool] = None
-    codeSa: Optional[str] = None
-    codeClient: Optional[int] = None
-    codeProduit: Optional[str] = None
-    reference1: Optional[str] = None
-    reference2: Optional[str] = None
-    expediteur: Optional[DestinataireType] = JStruct[DestinataireType]
-    dateDepartEnlevement: Optional[str] = None
-    instructionEnlevement: Optional[str] = None
-    destinataire: Optional[DestinataireType] = JStruct[DestinataireType]
-    listUmgs: List[ListUmgType] = JList[ListUmgType]
-    natureEnvoi: Optional[str] = None
-    poidsTotal: Optional[float] = None
-    volumeTotal: Optional[float] = None
-    largerTotal: Optional[float] = None
-    hauteurTotal: Optional[float] = None
-    longueurTotal: Optional[float] = None
-    uniteTaxation: Optional[ContreRemboursementType] = JStruct[ContreRemboursementType]
-    animauxPlumes: Optional[bool] = None
-    optionLivraison: Optional[str] = None
-    codeSaBureauRestant: Optional[str] = None
-    idPointRelais: Optional[str] = None
-    dateLivraison: Optional[str] = None
-    heureLivraison: Optional[str] = None
-    instructionLivraison: Optional[str] = None
-    natureMarchandise: Optional[str] = None
-    valeurDeclaree: Optional[ContreRemboursementType] = JStruct[ContreRemboursementType]
-    contreRemboursement: Optional[ContreRemboursementType] = JStruct[ContreRemboursementType]
-    codeIncotermConditionLivraison: Optional[str] = None
-    typeTva: Optional[str] = None
-    sadLivToph: Optional[bool] = None
-    sadSwap: Optional[bool] = None
-    sadLivEtage: Optional[bool] = None
-    sadMiseLieuUtil: Optional[bool] = None
-    sadDepotage: Optional[bool] = None
-    etage: Optional[int] = None
-    emailNotificationDestinataire: Optional[str] = None
-    smsNotificationDestinataire: Optional[str] = None
-    emailNotificationExpediteur: Optional[str] = None
-    emailConfirmationEnlevement: Optional[str] = None
-    emailPriseEnChargeEnlevement: Optional[str] = None
-    poidsQteLimiteeMD: Optional[float] = None
-    dangerEnvQteLimiteeMD: Optional[bool] = None
-    nbColisQteExcepteeMD: Optional[int] = None
-    dangerEnvQteExcepteeMD: Optional[bool] = None
-    listMatieresDangereuses: List[ListMatieresDangereusType] = JList[ListMatieresDangereusType]
-    listVinsSpiritueux: List[ListVinsSpiritueuxType] = JList[ListVinsSpiritueuxType]
-    nosUmsAEtiqueter: Optional[str] = None
-    listDocumentsEnvoi: List[ListDocumentsEnvoiType] = JList[ListDocumentsEnvoiType]
-    informationDouane: Optional[InformationDouaneType] = JStruct[InformationDouaneType]
+    noRecepisse: typing.Optional[str] = None
+    noSuivi: typing.Optional[str] = None
+    horsSite: typing.Optional[bool] = None
+    codeSa: typing.Optional[str] = None
+    codeClient: typing.Optional[int] = None
+    codeProduit: typing.Optional[str] = None
+    reference1: typing.Optional[str] = None
+    reference2: typing.Optional[str] = None
+    expediteur: typing.Optional[DestinataireType] = jstruct.JStruct[DestinataireType]
+    dateDepartEnlevement: typing.Optional[str] = None
+    instructionEnlevement: typing.Optional[str] = None
+    destinataire: typing.Optional[DestinataireType] = jstruct.JStruct[DestinataireType]
+    listUmgs: typing.Optional[typing.List[ListUmgType]] = jstruct.JList[ListUmgType]
+    natureEnvoi: typing.Optional[str] = None
+    poidsTotal: typing.Optional[float] = None
+    volumeTotal: typing.Optional[float] = None
+    largerTotal: typing.Optional[float] = None
+    hauteurTotal: typing.Optional[float] = None
+    longueurTotal: typing.Optional[float] = None
+    uniteTaxation: typing.Optional[ContreRemboursementType] = jstruct.JStruct[ContreRemboursementType]
+    animauxPlumes: typing.Optional[bool] = None
+    optionLivraison: typing.Optional[str] = None
+    codeSaBureauRestant: typing.Optional[str] = None
+    idPointRelais: typing.Optional[str] = None
+    dateLivraison: typing.Optional[str] = None
+    heureLivraison: typing.Optional[str] = None
+    instructionLivraison: typing.Optional[str] = None
+    natureMarchandise: typing.Optional[str] = None
+    valeurDeclaree: typing.Optional[ContreRemboursementType] = jstruct.JStruct[ContreRemboursementType]
+    contreRemboursement: typing.Optional[ContreRemboursementType] = jstruct.JStruct[ContreRemboursementType]
+    codeIncotermConditionLivraison: typing.Optional[str] = None
+    typeTva: typing.Optional[str] = None
+    sadLivToph: typing.Optional[bool] = None
+    sadSwap: typing.Optional[bool] = None
+    sadLivEtage: typing.Optional[bool] = None
+    sadMiseLieuUtil: typing.Optional[bool] = None
+    sadDepotage: typing.Optional[bool] = None
+    etage: typing.Optional[int] = None
+    emailNotificationDestinataire: typing.Optional[str] = None
+    smsNotificationDestinataire: typing.Optional[str] = None
+    emailNotificationExpediteur: typing.Optional[str] = None
+    emailConfirmationEnlevement: typing.Optional[str] = None
+    emailPriseEnChargeEnlevement: typing.Optional[str] = None
+    poidsQteLimiteeMD: typing.Optional[float] = None
+    dangerEnvQteLimiteeMD: typing.Optional[bool] = None
+    nbColisQteExcepteeMD: typing.Optional[int] = None
+    dangerEnvQteExcepteeMD: typing.Optional[bool] = None
+    listMatieresDangereuses: typing.Optional[typing.List[ListMatieresDangereusType]] = jstruct.JList[ListMatieresDangereusType]
+    listVinsSpiritueux: typing.Optional[typing.List[ListVinsSpiritueuxType]] = jstruct.JList[ListVinsSpiritueuxType]
+    nosUmsAEtiqueter: typing.Optional[str] = None
+    listDocumentsEnvoi: typing.Optional[typing.List[ListDocumentsEnvoiType]] = jstruct.JList[ListDocumentsEnvoiType]
+    informationDouane: typing.Optional[InformationDouaneType] = jstruct.JStruct[InformationDouaneType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShippingRequestType:
-    modificationParReference1: Optional[bool] = None
-    impressionEtiquette: Optional[bool] = None
-    typeImpressionEtiquette: Optional[str] = None
-    formatEtiquette: Optional[str] = None
-    validationEnvoi: Optional[bool] = None
-    suppressionSiEchecValidation: Optional[bool] = None
-    impressionBordereau: Optional[bool] = None
-    impressionRecapitulatif: Optional[bool] = None
-    listEnvois: List[ListEnvoisType] = JList[ListEnvoisType]
+    modificationParReference1: typing.Optional[bool] = None
+    impressionEtiquette: typing.Optional[bool] = None
+    typeImpressionEtiquette: typing.Optional[str] = None
+    formatEtiquette: typing.Optional[str] = None
+    validationEnvoi: typing.Optional[bool] = None
+    suppressionSiEchecValidation: typing.Optional[bool] = None
+    impressionBordereau: typing.Optional[bool] = None
+    impressionRecapitulatif: typing.Optional[bool] = None
+    listEnvois: typing.Optional[typing.List[ListEnvoisType]] = jstruct.JList[ListEnvoisType]

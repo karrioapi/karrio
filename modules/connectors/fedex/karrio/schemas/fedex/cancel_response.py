@@ -1,25 +1,25 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JList, JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AlertType:
-    code: Optional[str] = None
-    alertType: Optional[str] = None
-    message: Optional[str] = None
+    code: typing.Optional[str] = None
+    alertType: typing.Optional[str] = None
+    message: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class OutputType:
-    cancelledShipment: Optional[bool] = None
-    cancelledHistory: Optional[bool] = None
-    successMessage: Optional[str] = None
-    alerts: List[AlertType] = JList[AlertType]
+    cancelledShipment: typing.Optional[bool] = None
+    cancelledHistory: typing.Optional[bool] = None
+    successMessage: typing.Optional[str] = None
+    alerts: typing.Optional[typing.List[AlertType]] = jstruct.JList[AlertType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CancelResponseType:
-    transactionId: Optional[str] = None
-    customerTransactionId: Optional[str] = None
-    output: Optional[OutputType] = JStruct[OutputType]
+    transactionId: typing.Optional[str] = None
+    customerTransactionId: typing.Optional[str] = None
+    output: typing.Optional[OutputType] = jstruct.JStruct[OutputType]

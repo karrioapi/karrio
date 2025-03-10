@@ -1,31 +1,31 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class SizeOptions:
-    length: Optional[float] = None
-    width: Optional[float] = None
-    height: Optional[float] = None
-    unit: Optional[str] = None
+    length: typing.Optional[float] = None
+    width: typing.Optional[float] = None
+    height: typing.Optional[float] = None
+    unit: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class WeightOptions:
-    weight: Optional[float] = None
-    unit: Optional[str] = None
+    weight: typing.Optional[float] = None
+    unit: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Package:
-    refNumber: Optional[int] = None
-    weightOptions: Optional[WeightOptions] = JStruct[WeightOptions]
-    sizeOptions: Optional[SizeOptions] = JStruct[SizeOptions]
+    refNumber: typing.Optional[int] = None
+    weightOptions: typing.Optional[WeightOptions] = jstruct.JStruct[WeightOptions]
+    sizeOptions: typing.Optional[SizeOptions] = jstruct.JStruct[SizeOptions]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RateRequest:
-    postalCode: Optional[str] = None
-    originPostalCode: Optional[str] = None
-    packages: List[Package] = JList[Package]
+    postalCode: typing.Optional[str] = None
+    originPostalCode: typing.Optional[str] = None
+    packages: typing.Optional[typing.List[Package]] = jstruct.JList[Package]

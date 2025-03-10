@@ -1,41 +1,41 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JList, JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AvailableType:
-    QuoteId: Optional[str] = None
-    CarrierId: Optional[int] = None
-    CarrierName: Optional[str] = None
-    DeliveryType: Optional[str] = None
-    Cost: Optional[float] = None
-    ServiceStandard: Optional[str] = None
-    Comments: Optional[str] = None
-    Route: Optional[str] = None
-    IsRuralDelivery: Optional[bool] = None
-    IsSaturdayDelivery: Optional[bool] = None
-    IsFreightForward: Optional[bool] = None
-    CarrierServiceType: Optional[str] = None
+    QuoteId: typing.Optional[str] = None
+    CarrierId: typing.Optional[int] = None
+    CarrierName: typing.Optional[str] = None
+    DeliveryType: typing.Optional[str] = None
+    Cost: typing.Optional[float] = None
+    ServiceStandard: typing.Optional[str] = None
+    Comments: typing.Optional[str] = None
+    Route: typing.Optional[str] = None
+    IsRuralDelivery: typing.Optional[bool] = None
+    IsSaturdayDelivery: typing.Optional[bool] = None
+    IsFreightForward: typing.Optional[bool] = None
+    CarrierServiceType: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RejectedType:
-    CarrierName: Optional[str] = None
-    DeliveryType: Optional[str] = None
-    Reason: Optional[str] = None
+    CarrierName: typing.Optional[str] = None
+    DeliveryType: typing.Optional[str] = None
+    Reason: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ValidationErrorsType:
-    Property: Optional[str] = None
-    Message: Optional[str] = None
-    Key: Optional[str] = None
-    Value: Optional[str] = None
+    Property: typing.Optional[str] = None
+    Message: typing.Optional[str] = None
+    Key: typing.Optional[str] = None
+    Value: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RatingResponseType:
-    Available: List[AvailableType] = JList[AvailableType]
-    Rejected: List[RejectedType] = JList[RejectedType]
-    ValidationErrors: Optional[ValidationErrorsType] = JStruct[ValidationErrorsType]
+    Available: typing.Optional[typing.List[AvailableType]] = jstruct.JList[AvailableType]
+    Rejected: typing.Optional[typing.List[RejectedType]] = jstruct.JList[RejectedType]
+    ValidationErrors: typing.Optional[ValidationErrorsType] = jstruct.JStruct[ValidationErrorsType]

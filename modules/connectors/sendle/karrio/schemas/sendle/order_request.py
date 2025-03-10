@@ -1,76 +1,81 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DimensionsType:
-    units: Optional[str] = None
-    height: Optional[float] = None
-    width: Optional[float] = None
-    length: Optional[float] = None
+    units: typing.Optional[str] = None
+    height: typing.Optional[float] = None
+    width: typing.Optional[float] = None
+    length: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
+class MetadataType:
+    pass
+
+
+@attr.s(auto_attribs=True)
 class ParcelContentType:
-    description: Optional[str] = None
-    value: Optional[int] = None
-    currency: Optional[str] = None
-    quantity: Optional[int] = None
-    country_of_origin: Optional[str] = None
-    hs_code: Optional[int] = None
+    description: typing.Optional[str] = None
+    value: typing.Optional[int] = None
+    currency: typing.Optional[str] = None
+    quantity: typing.Optional[int] = None
+    country_of_origin: typing.Optional[str] = None
+    hs_code: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AddressType:
-    country: Optional[str] = None
-    address_line1: Optional[str] = None
-    address_line2: Optional[str] = None
-    suburb: Optional[str] = None
-    postcode: Optional[int] = None
-    state_name: Optional[str] = None
+    country: typing.Optional[str] = None
+    address_line1: typing.Optional[str] = None
+    address_line2: typing.Optional[str] = None
+    suburb: typing.Optional[str] = None
+    postcode: typing.Optional[int] = None
+    state_name: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ContactType:
-    name: Optional[str] = None
-    email: Optional[str] = None
-    phone: Optional[str] = None
-    company: Optional[str] = None
+    name: typing.Optional[str] = None
+    email: typing.Optional[str] = None
+    phone: typing.Optional[str] = None
+    company: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TaxIDSType:
-    ioss: Optional[str] = None
+    ioss: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ReceiverType:
-    address: Optional[AddressType] = JStruct[AddressType]
-    contact: Optional[ContactType] = JStruct[ContactType]
-    instructions: Optional[str] = None
-    tax_ids: Optional[TaxIDSType] = JStruct[TaxIDSType]
+    address: typing.Optional[AddressType] = jstruct.JStruct[AddressType]
+    contact: typing.Optional[ContactType] = jstruct.JStruct[ContactType]
+    instructions: typing.Optional[str] = None
+    tax_ids: typing.Optional[TaxIDSType] = jstruct.JStruct[TaxIDSType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class VolumeType:
-    units: Optional[str] = None
-    value: Optional[float] = None
+    units: typing.Optional[str] = None
+    value: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class OrderRequestType:
-    sender: Optional[ReceiverType] = JStruct[ReceiverType]
-    receiver: Optional[ReceiverType] = JStruct[ReceiverType]
-    description: Optional[str] = None
-    customer_reference: Optional[str] = None
-    product_code: Optional[str] = None
-    first_mile_option: Optional[str] = None
-    pickup_date: Optional[str] = None
-    weight: Optional[VolumeType] = JStruct[VolumeType]
-    volume: Optional[VolumeType] = JStruct[VolumeType]
-    dimensions: Optional[DimensionsType] = JStruct[DimensionsType]
-    metadata: Optional[dict] = {}
-    hide_pickup_address: Optional[bool] = None
-    parcel_contents: List[ParcelContentType] = JList[ParcelContentType]
-    contents_type: Optional[str] = None
+    sender: typing.Optional[ReceiverType] = jstruct.JStruct[ReceiverType]
+    receiver: typing.Optional[ReceiverType] = jstruct.JStruct[ReceiverType]
+    description: typing.Optional[str] = None
+    customer_reference: typing.Optional[str] = None
+    product_code: typing.Optional[str] = None
+    first_mile_option: typing.Optional[str] = None
+    pickup_date: typing.Optional[str] = None
+    weight: typing.Optional[VolumeType] = jstruct.JStruct[VolumeType]
+    volume: typing.Optional[VolumeType] = jstruct.JStruct[VolumeType]
+    dimensions: typing.Optional[DimensionsType] = jstruct.JStruct[DimensionsType]
+    metadata: typing.Optional[MetadataType] = jstruct.JStruct[MetadataType]
+    hide_pickup_address: typing.Optional[bool] = None
+    parcel_contents: typing.Optional[typing.List[ParcelContentType]] = jstruct.JList[ParcelContentType]
+    contents_type: typing.Optional[str] = None

@@ -1,48 +1,48 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ItemType:
-    dangerous: Optional[bool] = None
-    height: Optional[int] = None
-    itemCount: Optional[int] = None
-    length: Optional[int] = None
-    volume: Optional[float] = None
-    weight: Optional[int] = None
-    width: Optional[int] = None
+    dangerous: typing.Optional[bool] = None
+    height: typing.Optional[int] = None
+    itemCount: typing.Optional[int] = None
+    length: typing.Optional[int] = None
+    volume: typing.Optional[float] = None
+    weight: typing.Optional[int] = None
+    width: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class GeographicAddressType:
-    address1: Optional[str] = None
-    address2: Optional[str] = None
-    country: Optional[str] = None
-    postCode: Optional[int] = None
-    state: Optional[str] = None
-    suburb: Optional[str] = None
+    address1: typing.Optional[str] = None
+    address2: typing.Optional[str] = None
+    country: typing.Optional[str] = None
+    postCode: typing.Optional[int] = None
+    state: typing.Optional[str] = None
+    suburb: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class JobStopsType:
-    companyName: Optional[str] = None
-    contact: Optional[str] = None
-    emailAddress: Optional[str] = None
-    geographicAddress: Optional[GeographicAddressType] = JStruct[GeographicAddressType]
-    phoneNumber: Optional[str] = None
+    companyName: typing.Optional[str] = None
+    contact: typing.Optional[str] = None
+    emailAddress: typing.Optional[str] = None
+    geographicAddress: typing.Optional[GeographicAddressType] = jstruct.JStruct[GeographicAddressType]
+    phoneNumber: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RateRequestType:
-    bookedBy: Optional[str] = None
-    account: Optional[str] = None
-    instructions: Optional[str] = None
-    itemCount: Optional[int] = None
-    items: List[ItemType] = JList[ItemType]
-    jobStopsP: Optional[JobStopsType] = JStruct[JobStopsType]
-    jobStopsD: Optional[JobStopsType] = JStruct[JobStopsType]
-    referenceNumbers: List[str] = []
-    serviceLevel: Optional[str] = None
-    volume: Optional[float] = None
-    weight: Optional[int] = None
+    bookedBy: typing.Optional[str] = None
+    account: typing.Optional[str] = None
+    instructions: typing.Optional[str] = None
+    itemCount: typing.Optional[int] = None
+    items: typing.Optional[typing.List[ItemType]] = jstruct.JList[ItemType]
+    jobStopsP: typing.Optional[JobStopsType] = jstruct.JStruct[JobStopsType]
+    jobStopsD: typing.Optional[JobStopsType] = jstruct.JStruct[JobStopsType]
+    referenceNumbers: typing.Optional[typing.List[str]] = None
+    serviceLevel: typing.Optional[str] = None
+    volume: typing.Optional[float] = None
+    weight: typing.Optional[int] = None

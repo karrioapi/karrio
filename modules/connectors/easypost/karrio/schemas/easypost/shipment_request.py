@@ -1,79 +1,79 @@
-from attr import s
-from typing import Optional, List, Any
-from jstruct import JList, JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Address:
-    mode: Optional[str] = None
-    street1: Optional[str] = None
-    street2: Optional[str] = None
-    city: Optional[str] = None
-    state: Optional[str] = None
-    zip: Optional[int] = None
-    country: Optional[str] = None
-    residential: Optional[bool] = None
-    carrier_facility: Optional[str] = None
-    name: Optional[str] = None
-    company: Optional[str] = None
-    phone: Optional[str] = None
-    email: Optional[str] = None
-    federal_tax_id: Optional[str] = None
-    state_tax_id: Optional[str] = None
+    mode: typing.Optional[str] = None
+    street1: typing.Optional[str] = None
+    street2: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    state: typing.Optional[str] = None
+    zip: typing.Optional[int] = None
+    country: typing.Optional[str] = None
+    residential: typing.Optional[bool] = None
+    carrier_facility: typing.Optional[str] = None
+    name: typing.Optional[str] = None
+    company: typing.Optional[str] = None
+    phone: typing.Optional[str] = None
+    email: typing.Optional[str] = None
+    federal_tax_id: typing.Optional[str] = None
+    state_tax_id: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CustomsItem:
-    description: Optional[str] = None
-    hs_tariff_number: Optional[int] = None
-    origin_country: Optional[str] = None
-    quantity: Optional[int] = None
-    value: Optional[float] = None
-    weight: Optional[float] = None
-    code: Optional[str] = None
-    manufacturer: Optional[str] = None
-    currency: Optional[str] = None
-    eccn: Optional[str] = None
-    printed_commodity_identifier: Optional[str] = None
+    description: typing.Optional[str] = None
+    hs_tariff_number: typing.Optional[int] = None
+    origin_country: typing.Optional[str] = None
+    quantity: typing.Optional[int] = None
+    value: typing.Optional[float] = None
+    weight: typing.Optional[float] = None
+    code: typing.Optional[str] = None
+    manufacturer: typing.Optional[str] = None
+    currency: typing.Optional[str] = None
+    eccn: typing.Optional[str] = None
+    printed_commodity_identifier: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CustomsInfo:
-    contents_explanation: Optional[str] = None
-    contents_type: Optional[str] = None
-    customs_certify: Optional[bool] = None
-    customs_signer: Optional[str] = None
-    eel_pfc: Optional[str] = None
-    non_delivery_option: Optional[str] = None
-    restriction_comments: Optional[str] = None
-    restriction_type: Optional[str] = None
-    declaration: Optional[str] = None
-    customs_items: List[CustomsItem] = JList[CustomsItem]
+    contents_explanation: typing.Optional[str] = None
+    contents_type: typing.Optional[str] = None
+    customs_certify: typing.Optional[bool] = None
+    customs_signer: typing.Optional[str] = None
+    eel_pfc: typing.Optional[str] = None
+    non_delivery_option: typing.Optional[str] = None
+    restriction_comments: typing.Optional[str] = None
+    restriction_type: typing.Optional[str] = None
+    declaration: typing.Optional[str] = None
+    customs_items: typing.Optional[typing.List[CustomsItem]] = jstruct.JList[CustomsItem]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Parcel:
-    length: Optional[float] = None
-    width: Optional[float] = None
-    height: Optional[float] = None
-    predefined_package: Optional[str] = None
-    weight: Optional[float] = None
+    length: typing.Optional[float] = None
+    width: typing.Optional[float] = None
+    height: typing.Optional[float] = None
+    predefined_package: typing.Optional[str] = None
+    weight: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Shipment:
-    reference: Optional[str] = None
-    is_return: Optional[bool] = None
-    to_address: Optional[Address] = JStruct[Address]
-    from_address: Optional[Address] = JStruct[Address]
-    return_address: Optional[Address] = JStruct[Address]
-    buyer_address: Optional[Address] = JStruct[Address]
-    parcel: Optional[Parcel] = JStruct[Parcel]
-    customs_info: Optional[CustomsInfo] = JStruct[CustomsInfo]
-    options: Any = None
-    carrier_accounts: List[str] = []
+    reference: typing.Optional[str] = None
+    is_return: typing.Optional[bool] = None
+    to_address: typing.Optional[Address] = jstruct.JStruct[Address]
+    from_address: typing.Optional[Address] = jstruct.JStruct[Address]
+    return_address: typing.Optional[Address] = jstruct.JStruct[Address]
+    buyer_address: typing.Optional[Address] = jstruct.JStruct[Address]
+    parcel: typing.Optional[Parcel] = jstruct.JStruct[Parcel]
+    customs_info: typing.Optional[CustomsInfo] = jstruct.JStruct[CustomsInfo]
+    options: typing.Any = None
+    carrier_accounts: typing.Optional[typing.List[str]] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentRequest:
-    shipment: Optional[Shipment] = JStruct[Shipment]
+    shipment: typing.Optional[Shipment] = jstruct.JStruct[Shipment]

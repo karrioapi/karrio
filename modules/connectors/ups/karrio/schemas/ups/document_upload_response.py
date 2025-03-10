@@ -1,37 +1,37 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class FormsHistoryDocumentIDType:
-    DocumentID: Optional[str] = None
+    DocumentID: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ResponseStatusType:
-    Code: Optional[int] = None
-    Description: Optional[str] = None
+    Code: typing.Optional[int] = None
+    Description: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TransactionReferenceType:
-    CustomerContext: Optional[str] = None
+    CustomerContext: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ResponseType:
-    ResponseStatus: Optional[ResponseStatusType] = JStruct[ResponseStatusType]
-    Alert: List[ResponseStatusType] = JList[ResponseStatusType]
-    TransactionReference: Optional[TransactionReferenceType] = JStruct[TransactionReferenceType]
+    ResponseStatus: typing.Optional[ResponseStatusType] = jstruct.JStruct[ResponseStatusType]
+    Alert: typing.Optional[typing.List[ResponseStatusType]] = jstruct.JList[ResponseStatusType]
+    TransactionReference: typing.Optional[TransactionReferenceType] = jstruct.JStruct[TransactionReferenceType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class UploadResponseType:
-    Response: Optional[ResponseType] = JStruct[ResponseType]
-    FormsHistoryDocumentID: List[FormsHistoryDocumentIDType] = JList[FormsHistoryDocumentIDType]
+    Response: typing.Optional[ResponseType] = jstruct.JStruct[ResponseType]
+    FormsHistoryDocumentID: typing.Optional[typing.List[FormsHistoryDocumentIDType]] = jstruct.JList[FormsHistoryDocumentIDType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DocumentUploadResponseType:
-    UploadResponse: Optional[UploadResponseType] = JStruct[UploadResponseType]
+    UploadResponse: typing.Optional[UploadResponseType] = jstruct.JStruct[UploadResponseType]

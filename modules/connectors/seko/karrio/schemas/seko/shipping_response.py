@@ -1,79 +1,79 @@
-from attr import s
-from typing import Optional, Any, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CommodityChangeType:
-    OriginalDescription: Optional[str] = None
-    SuitableDescription: Optional[str] = None
-    OriginalHSCode: Any = None
-    SuitableHsCode: Optional[int] = None
+    OriginalDescription: typing.Optional[str] = None
+    SuitableDescription: typing.Optional[str] = None
+    OriginalHSCode: typing.Any = None
+    SuitableHsCode: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ItemType:
-    PartNo: Optional[int] = None
-    TrackingNo: Optional[str] = None
-    Barcode: Optional[str] = None
-    InternalBarcode: Optional[str] = None
-    Charge: Optional[float] = None
-    ChargeFAF: Optional[float] = None
-    ChargeRural: Optional[float] = None
-    ChargeSatDel: Optional[float] = None
-    ChargeInsurance: Optional[float] = None
-    IsTrackPack: Optional[bool] = None
-    BarcodeText: Optional[str] = None
-    TrackingBarcode: Optional[str] = None
-    TrackingBarcode2: Optional[str] = None
+    PartNo: typing.Optional[int] = None
+    TrackingNo: typing.Optional[str] = None
+    Barcode: typing.Optional[str] = None
+    InternalBarcode: typing.Optional[str] = None
+    Charge: typing.Optional[float] = None
+    ChargeFAF: typing.Optional[float] = None
+    ChargeRural: typing.Optional[float] = None
+    ChargeSatDel: typing.Optional[float] = None
+    ChargeInsurance: typing.Optional[float] = None
+    IsTrackPack: typing.Optional[bool] = None
+    BarcodeText: typing.Optional[str] = None
+    TrackingBarcode: typing.Optional[str] = None
+    TrackingBarcode2: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class OutputFilesType:
-    LABELPDF100X150: List[str] = []
+    LABELPDF100X150: typing.Optional[typing.List[str]] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ConsignmentType:
-    Connote: Optional[str] = None
-    TrackingUrl: Optional[str] = None
-    Cost: Optional[float] = None
-    CarrierType: Optional[int] = None
-    IsSaturdayDelivery: Optional[bool] = None
-    IsRural: Optional[bool] = None
-    IsOvernight: Optional[bool] = None
-    HasTrackPaks: Optional[bool] = None
-    ConsignmentId: Optional[int] = None
-    OutputFiles: Optional[OutputFilesType] = JStruct[OutputFilesType]
-    Items: List[ItemType] = JList[ItemType]
+    Connote: typing.Optional[str] = None
+    TrackingUrl: typing.Optional[str] = None
+    Cost: typing.Optional[float] = None
+    CarrierType: typing.Optional[int] = None
+    IsSaturdayDelivery: typing.Optional[bool] = None
+    IsRural: typing.Optional[bool] = None
+    IsOvernight: typing.Optional[bool] = None
+    HasTrackPaks: typing.Optional[bool] = None
+    ConsignmentId: typing.Optional[int] = None
+    OutputFiles: typing.Optional[OutputFilesType] = jstruct.JStruct[OutputFilesType]
+    Items: typing.Optional[typing.List[ItemType]] = jstruct.JList[ItemType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ErrorType:
-    Property: Optional[str] = None
-    Message: Optional[str] = None
-    Key: Optional[str] = None
-    Value: Optional[str] = None
+    Property: typing.Optional[str] = None
+    Message: typing.Optional[str] = None
+    Key: typing.Optional[str] = None
+    Value: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShippingResponseType:
-    CarrierId: Optional[int] = None
-    CarrierName: Optional[str] = None
-    IsFreightForward: Optional[bool] = None
-    IsOvernight: Optional[bool] = None
-    IsSaturdayDelivery: Optional[bool] = None
-    IsRural: Optional[bool] = None
-    HasTrackPaks: Optional[bool] = None
-    Message: Optional[str] = None
-    Errors: List[ErrorType] = JList[ErrorType]
-    SiteId: Optional[int] = None
-    Consignments: List[ConsignmentType] = JList[ConsignmentType]
-    DestinationPort: Optional[str] = None
-    Downloads: List[Any] = []
-    CommodityChanges: List[CommodityChangeType] = JList[CommodityChangeType]
-    CarrierType: Optional[int] = None
-    AlertPath: Any = None
-    Notifications: List[Any] = []
-    InvoiceResponse: Optional[str] = None
-    LogoPath: Optional[str] = None
+    CarrierId: typing.Optional[int] = None
+    CarrierName: typing.Optional[str] = None
+    IsFreightForward: typing.Optional[bool] = None
+    IsOvernight: typing.Optional[bool] = None
+    IsSaturdayDelivery: typing.Optional[bool] = None
+    IsRural: typing.Optional[bool] = None
+    HasTrackPaks: typing.Optional[bool] = None
+    Message: typing.Optional[str] = None
+    Errors: typing.Optional[typing.List[ErrorType]] = jstruct.JList[ErrorType]
+    SiteId: typing.Optional[int] = None
+    Consignments: typing.Optional[typing.List[ConsignmentType]] = jstruct.JList[ConsignmentType]
+    DestinationPort: typing.Optional[str] = None
+    Downloads: typing.Optional[typing.List[typing.Any]] = None
+    CommodityChanges: typing.Optional[typing.List[CommodityChangeType]] = jstruct.JList[CommodityChangeType]
+    CarrierType: typing.Optional[int] = None
+    AlertPath: typing.Any = None
+    Notifications: typing.Optional[typing.List[typing.Any]] = None
+    InvoiceResponse: typing.Optional[str] = None
+    LogoPath: typing.Optional[str] = None

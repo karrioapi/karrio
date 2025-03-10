@@ -1,102 +1,102 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AccountType:
-    typeCode: Optional[str] = None
-    number: Optional[int] = None
+    typeCode: typing.Optional[str] = None
+    number: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ContactInformationType:
-    email: Optional[str] = None
-    phone: Optional[str] = None
-    mobilePhone: Optional[str] = None
-    companyName: Optional[str] = None
-    fullName: Optional[str] = None
+    email: typing.Optional[str] = None
+    phone: typing.Optional[str] = None
+    mobilePhone: typing.Optional[str] = None
+    companyName: typing.Optional[str] = None
+    fullName: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PostalAddressType:
-    postalCode: Optional[int] = None
-    cityName: Optional[str] = None
-    countryCode: Optional[str] = None
-    provinceCode: Optional[str] = None
-    addressLine1: Optional[str] = None
-    addressLine2: Optional[str] = None
-    addressLine3: Optional[str] = None
-    countyName: Optional[str] = None
+    postalCode: typing.Optional[int] = None
+    cityName: typing.Optional[str] = None
+    countryCode: typing.Optional[str] = None
+    provinceCode: typing.Optional[str] = None
+    addressLine1: typing.Optional[str] = None
+    addressLine2: typing.Optional[str] = None
+    addressLine3: typing.Optional[str] = None
+    countyName: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DetailsType:
-    postalAddress: Optional[PostalAddressType] = JStruct[PostalAddressType]
-    contactInformation: Optional[ContactInformationType] = JStruct[ContactInformationType]
+    postalAddress: typing.Optional[PostalAddressType] = jstruct.JStruct[PostalAddressType]
+    contactInformation: typing.Optional[ContactInformationType] = jstruct.JStruct[ContactInformationType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CustomerDetailsType:
-    shipperDetails: Optional[DetailsType] = JStruct[DetailsType]
-    receiverDetails: Optional[DetailsType] = JStruct[DetailsType]
-    bookingRequestorDetails: Optional[DetailsType] = JStruct[DetailsType]
-    pickupDetails: Optional[DetailsType] = JStruct[DetailsType]
+    shipperDetails: typing.Optional[DetailsType] = jstruct.JStruct[DetailsType]
+    receiverDetails: typing.Optional[DetailsType] = jstruct.JStruct[DetailsType]
+    bookingRequestorDetails: typing.Optional[DetailsType] = jstruct.JStruct[DetailsType]
+    pickupDetails: typing.Optional[DetailsType] = jstruct.JStruct[DetailsType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DimensionsType:
-    length: Optional[int] = None
-    width: Optional[int] = None
-    height: Optional[int] = None
+    length: typing.Optional[int] = None
+    width: typing.Optional[int] = None
+    height: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PackageType:
-    typeCode: Optional[str] = None
-    weight: Optional[float] = None
-    dimensions: Optional[DimensionsType] = JStruct[DimensionsType]
+    typeCode: typing.Optional[str] = None
+    weight: typing.Optional[float] = None
+    dimensions: typing.Optional[DimensionsType] = jstruct.JStruct[DimensionsType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ValueAddedServiceType:
-    serviceCode: Optional[str] = None
-    localServiceCode: Optional[str] = None
-    value: Optional[int] = None
-    currency: Optional[str] = None
-    method: Optional[str] = None
+    serviceCode: typing.Optional[str] = None
+    localServiceCode: typing.Optional[str] = None
+    value: typing.Optional[int] = None
+    currency: typing.Optional[str] = None
+    method: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentDetailType:
-    productCode: Optional[str] = None
-    localProductCode: Optional[str] = None
-    accounts: List[AccountType] = JList[AccountType]
-    valueAddedServices: List[ValueAddedServiceType] = JList[ValueAddedServiceType]
-    isCustomsDeclarable: Optional[bool] = None
-    declaredValue: Optional[int] = None
-    declaredValueCurrency: Optional[str] = None
-    unitOfMeasurement: Optional[str] = None
-    shipmentTrackingNumber: Optional[int] = None
-    packages: List[PackageType] = JList[PackageType]
+    productCode: typing.Optional[str] = None
+    localProductCode: typing.Optional[str] = None
+    accounts: typing.Optional[typing.List[AccountType]] = jstruct.JList[AccountType]
+    valueAddedServices: typing.Optional[typing.List[ValueAddedServiceType]] = jstruct.JList[ValueAddedServiceType]
+    isCustomsDeclarable: typing.Optional[bool] = None
+    declaredValue: typing.Optional[int] = None
+    declaredValueCurrency: typing.Optional[str] = None
+    unitOfMeasurement: typing.Optional[str] = None
+    shipmentTrackingNumber: typing.Optional[int] = None
+    packages: typing.Optional[typing.List[PackageType]] = jstruct.JList[PackageType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class SpecialInstructionType:
-    value: Optional[str] = None
-    typeCode: Optional[str] = None
+    value: typing.Optional[str] = None
+    typeCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PickupUpdateType:
-    dispatchConfirmationNumber: Optional[str] = None
-    originalShipperAccountNumber: Optional[int] = None
-    plannedPickupDateAndTime: Optional[str] = None
-    closeTime: Optional[str] = None
-    location: Optional[str] = None
-    locationType: Optional[str] = None
-    accounts: List[AccountType] = JList[AccountType]
-    specialInstructions: List[SpecialInstructionType] = JList[SpecialInstructionType]
-    remark: Optional[str] = None
-    customerDetails: Optional[CustomerDetailsType] = JStruct[CustomerDetailsType]
-    shipmentDetails: List[ShipmentDetailType] = JList[ShipmentDetailType]
+    dispatchConfirmationNumber: typing.Optional[str] = None
+    originalShipperAccountNumber: typing.Optional[int] = None
+    plannedPickupDateAndTime: typing.Optional[str] = None
+    closeTime: typing.Optional[str] = None
+    location: typing.Optional[str] = None
+    locationType: typing.Optional[str] = None
+    accounts: typing.Optional[typing.List[AccountType]] = jstruct.JList[AccountType]
+    specialInstructions: typing.Optional[typing.List[SpecialInstructionType]] = jstruct.JList[SpecialInstructionType]
+    remark: typing.Optional[str] = None
+    customerDetails: typing.Optional[CustomerDetailsType] = jstruct.JStruct[CustomerDetailsType]
+    shipmentDetails: typing.Optional[typing.List[ShipmentDetailType]] = jstruct.JList[ShipmentDetailType]

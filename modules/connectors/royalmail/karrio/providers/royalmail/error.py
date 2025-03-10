@@ -1,11 +1,11 @@
 from typing import List
-from karrio.schemas.royalmail.error import ErrorResponse
-from karrio.core.models import Message
+from karrio.schemas.royalmail.errors import Errors
 from karrio.providers.royalmail import Settings
+from karrio.core.models import Message
 
 
 def parse_error_response(response: List[dict], settings: Settings) -> List[Message]:
-    errors = [ErrorResponse(**e) for e in response]
+    errors = [Errors(**e) for e in response]
 
     return [
         Message(

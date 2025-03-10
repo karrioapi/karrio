@@ -1,84 +1,84 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CommitmentType:
-    name: Optional[str] = None
-    scheduleDeliveryDate: Optional[str] = None
+    name: typing.Optional[str] = None
+    scheduleDeliveryDate: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ExtraServiceType:
-    name: Optional[str] = None
-    SKU: Optional[str] = None
-    price: Optional[int] = None
+    name: typing.Optional[str] = None
+    SKU: typing.Optional[str] = None
+    price: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
-class InductionTypeType:
+@attr.s(auto_attribs=True)
+class InductionTypeObjectType:
     pass
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class LabelAddressType:
-    streetAddress: Optional[str] = None
-    streetAddressAbbreviation: Optional[str] = None
-    secondaryAddress: Optional[str] = None
-    cityAbbreviation: Optional[str] = None
-    city: Optional[str] = None
-    state: Optional[str] = None
-    ZIPCode: Optional[str] = None
-    ZIPPlus4: Optional[str] = None
-    urbanization: Optional[str] = None
-    firstName: Optional[str] = None
-    lastName: Optional[str] = None
-    firm: Optional[str] = None
-    phone: Optional[str] = None
-    email: Optional[str] = None
-    ignoreBadAddress: Optional[bool] = None
+    streetAddress: typing.Optional[str] = None
+    streetAddressAbbreviation: typing.Optional[str] = None
+    secondaryAddress: typing.Optional[str] = None
+    cityAbbreviation: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    state: typing.Optional[str] = None
+    ZIPCode: typing.Optional[str] = None
+    ZIPPlus4: typing.Optional[str] = None
+    urbanization: typing.Optional[str] = None
+    firstName: typing.Optional[str] = None
+    lastName: typing.Optional[str] = None
+    firm: typing.Optional[str] = None
+    phone: typing.Optional[str] = None
+    email: typing.Optional[str] = None
+    ignoreBadAddress: typing.Optional[bool] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class LinkType:
-    rel: List[str] = []
-    title: Optional[str] = None
-    href: Optional[str] = None
-    method: Optional[str] = None
-    submissionMediaType: Optional[str] = None
-    targetMediaType: Optional[str] = None
+    rel: typing.Optional[typing.List[str]] = None
+    title: typing.Optional[str] = None
+    href: typing.Optional[str] = None
+    method: typing.Optional[str] = None
+    submissionMediaType: typing.Optional[str] = None
+    targetMediaType: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class LabelMetadataType:
-    labelAddress: Optional[LabelAddressType] = JStruct[LabelAddressType]
-    routingInformation: Optional[str] = None
-    trackingNumber: Optional[str] = None
-    constructCode: Optional[str] = None
-    SKU: Optional[str] = None
-    postage: Optional[int] = None
-    extraServices: List[ExtraServiceType] = JList[ExtraServiceType]
-    zone: Optional[str] = None
-    commitment: Optional[CommitmentType] = JStruct[CommitmentType]
-    weightUOM: Optional[str] = None
-    weight: Optional[int] = None
-    dimensionalWeight: Optional[int] = None
-    fees: List[ExtraServiceType] = JList[ExtraServiceType]
-    permitHolderName: Optional[str] = None
-    inductionType: Optional[InductionTypeType] = JStruct[InductionTypeType]
-    labelBrokerID: Optional[str] = None
-    links: List[LinkType] = JList[LinkType]
-    bannerText: Optional[str] = None
-    retailDistributionCode: Optional[str] = None
-    serviceTypeCode: Optional[int] = None
+    labelAddress: typing.Optional[LabelAddressType] = jstruct.JStruct[LabelAddressType]
+    routingInformation: typing.Optional[str] = None
+    trackingNumber: typing.Optional[str] = None
+    constructCode: typing.Optional[str] = None
+    SKU: typing.Optional[str] = None
+    postage: typing.Optional[int] = None
+    extraServices: typing.Optional[typing.List[ExtraServiceType]] = jstruct.JList[ExtraServiceType]
+    zone: typing.Optional[str] = None
+    commitment: typing.Optional[CommitmentType] = jstruct.JStruct[CommitmentType]
+    weightUOM: typing.Optional[str] = None
+    weight: typing.Optional[int] = None
+    dimensionalWeight: typing.Optional[int] = None
+    fees: typing.Optional[typing.List[ExtraServiceType]] = jstruct.JList[ExtraServiceType]
+    permitHolderName: typing.Optional[str] = None
+    inductionType: typing.Optional[InductionTypeObjectType] = jstruct.JStruct[InductionTypeObjectType]
+    labelBrokerID: typing.Optional[str] = None
+    links: typing.Optional[typing.List[LinkType]] = jstruct.JList[LinkType]
+    bannerText: typing.Optional[str] = None
+    retailDistributionCode: typing.Optional[str] = None
+    serviceTypeCode: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class LabelResponseType:
-    labelMetadata: Optional[LabelMetadataType] = JStruct[LabelMetadataType]
-    returnLabelMetadata: Optional[LabelMetadataType] = JStruct[LabelMetadataType]
-    labelImage: Optional[str] = None
-    receiptImage: Optional[str] = None
-    returnLabelImage: Optional[str] = None
-    returnReceiptImage: Optional[str] = None
+    labelMetadata: typing.Optional[LabelMetadataType] = jstruct.JStruct[LabelMetadataType]
+    returnLabelMetadata: typing.Optional[LabelMetadataType] = jstruct.JStruct[LabelMetadataType]
+    labelImage: typing.Optional[str] = None
+    receiptImage: typing.Optional[str] = None
+    returnLabelImage: typing.Optional[str] = None
+    returnReceiptImage: typing.Optional[str] = None

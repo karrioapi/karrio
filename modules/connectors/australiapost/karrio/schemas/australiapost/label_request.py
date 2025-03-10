@@ -1,37 +1,37 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class GroupType:
-    group: Optional[str] = None
-    layout: Optional[str] = None
-    branded: Optional[bool] = None
-    left_offset: Optional[int] = None
-    top_offset: Optional[int] = None
+    group: typing.Optional[str] = None
+    layout: typing.Optional[str] = None
+    branded: typing.Optional[bool] = None
+    left_offset: typing.Optional[int] = None
+    top_offset: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PreferenceType:
-    type: Optional[str] = None
-    format: Optional[str] = None
-    groups: List[GroupType] = JList[GroupType]
+    type: typing.Optional[str] = None
+    format: typing.Optional[str] = None
+    groups: typing.Optional[typing.List[GroupType]] = jstruct.JList[GroupType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ItemType:
-    item_id: Optional[str] = None
+    item_id: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentType:
-    shipment_id: Optional[str] = None
-    items: List[ItemType] = JList[ItemType]
+    shipment_id: typing.Optional[str] = None
+    items: typing.Optional[typing.List[ItemType]] = jstruct.JList[ItemType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class LabelRequestType:
-    wait_for_label_url: Optional[bool] = None
-    preferences: List[PreferenceType] = JList[PreferenceType]
-    shipments: List[ShipmentType] = JList[ShipmentType]
+    wait_for_label_url: typing.Optional[bool] = None
+    preferences: typing.Optional[typing.List[PreferenceType]] = jstruct.JList[PreferenceType]
+    shipments: typing.Optional[typing.List[ShipmentType]] = jstruct.JList[ShipmentType]

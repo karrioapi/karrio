@@ -1,7 +1,8 @@
-from attr import s
-from typing import Optional
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CancelRequestType:
-    id: Optional[int] = None
+    id: typing.Optional[int] = None

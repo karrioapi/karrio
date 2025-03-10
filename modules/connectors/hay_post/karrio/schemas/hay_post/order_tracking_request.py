@@ -1,7 +1,8 @@
-from attr import s
-from typing import Optional
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class OrderTrackingRequestType:
-    trackingnumber: Optional[int] = None
+    trackingnumber: typing.Optional[int] = None

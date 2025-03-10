@@ -1,381 +1,381 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CustomerClassificationType:
-    Code: Optional[str] = None
-    Description: Optional[str] = None
+    Code: typing.Optional[str] = None
+    Description: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TransactionReferenceType:
-    CustomerContext: Optional[str] = None
-    TransactionIdentifier: Optional[str] = None
+    CustomerContext: typing.Optional[str] = None
+    TransactionIdentifier: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RequestType:
-    RequestOption: Optional[str] = None
-    SubVersion: Optional[str] = None
-    TransactionReference: Optional[TransactionReferenceType] = JStruct[TransactionReferenceType]
+    RequestOption: typing.Optional[str] = None
+    SubVersion: typing.Optional[str] = None
+    TransactionReference: typing.Optional[TransactionReferenceType] = jstruct.JStruct[TransactionReferenceType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AlternateDeliveryAddressAddressType:
-    AddressLine: Optional[str] = None
-    City: Optional[str] = None
-    StateProvinceCode: Optional[str] = None
-    PostalCode: Optional[int] = None
-    CountryCode: Optional[str] = None
-    ResidentialAddressIndicator: Optional[str] = None
-    POBoxIndicator: Optional[str] = None
+    AddressLine: typing.Optional[str] = None
+    City: typing.Optional[str] = None
+    StateProvinceCode: typing.Optional[str] = None
+    PostalCode: typing.Optional[int] = None
+    CountryCode: typing.Optional[str] = None
+    ResidentialAddressIndicator: typing.Optional[str] = None
+    POBoxIndicator: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AlternateDeliveryAddressType:
-    Name: Optional[str] = None
-    Address: Optional[AlternateDeliveryAddressAddressType] = JStruct[AlternateDeliveryAddressAddressType]
+    Name: typing.Optional[str] = None
+    Address: typing.Optional[AlternateDeliveryAddressAddressType] = jstruct.JStruct[AlternateDeliveryAddressAddressType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PickupType:
-    Date: Optional[str] = None
-    Time: Optional[str] = None
+    Date: typing.Optional[str] = None
+    Time: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DeliveryTimeInformationType:
-    PackageBillType: Optional[str] = None
-    Pickup: Optional[PickupType] = JStruct[PickupType]
-    ReturnContractServices: List[CustomerClassificationType] = JList[CustomerClassificationType]
-    MasterCartonIndicator: Optional[str] = None
-    WWEShipmentIndicator: Optional[str] = None
+    PackageBillType: typing.Optional[str] = None
+    Pickup: typing.Optional[PickupType] = jstruct.JStruct[PickupType]
+    ReturnContractServices: typing.Optional[typing.List[CustomerClassificationType]] = jstruct.JList[CustomerClassificationType]
+    MasterCartonIndicator: typing.Optional[str] = None
+    WWEShipmentIndicator: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class FRSPaymentInformationAddressType:
-    PostalCode: Optional[int] = None
-    CountryCode: Optional[str] = None
+    PostalCode: typing.Optional[int] = None
+    CountryCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class FRSPaymentInformationType:
-    Type: Optional[CustomerClassificationType] = JStruct[CustomerClassificationType]
-    AccountNumber: Optional[str] = None
-    Address: Optional[FRSPaymentInformationAddressType] = JStruct[FRSPaymentInformationAddressType]
+    Type: typing.Optional[CustomerClassificationType] = jstruct.JStruct[CustomerClassificationType]
+    AccountNumber: typing.Optional[str] = None
+    Address: typing.Optional[FRSPaymentInformationAddressType] = jstruct.JStruct[FRSPaymentInformationAddressType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AdjustedHeightType:
-    Value: Optional[int] = None
-    UnitOfMeasurement: Optional[CustomerClassificationType] = JStruct[CustomerClassificationType]
+    Value: typing.Optional[int] = None
+    UnitOfMeasurement: typing.Optional[CustomerClassificationType] = jstruct.JStruct[CustomerClassificationType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DimensionsType:
-    UnitOfMeasurement: Optional[CustomerClassificationType] = JStruct[CustomerClassificationType]
-    Length: Optional[int] = None
-    Width: Optional[int] = None
-    Height: Optional[int] = None
+    UnitOfMeasurement: typing.Optional[CustomerClassificationType] = jstruct.JStruct[CustomerClassificationType]
+    Length: typing.Optional[int] = None
+    Width: typing.Optional[int] = None
+    Height: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class HandlingUnitsType:
-    Quantity: Optional[int] = None
-    Type: Optional[CustomerClassificationType] = JStruct[CustomerClassificationType]
-    Dimensions: Optional[DimensionsType] = JStruct[DimensionsType]
+    Quantity: typing.Optional[int] = None
+    Type: typing.Optional[CustomerClassificationType] = jstruct.JStruct[CustomerClassificationType]
+    Dimensions: typing.Optional[DimensionsType] = jstruct.JStruct[DimensionsType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class FreightDensityInfoType:
-    AdjustedHeightIndicator: Optional[str] = None
-    AdjustedHeight: Optional[AdjustedHeightType] = JStruct[AdjustedHeightType]
-    HandlingUnits: Optional[HandlingUnitsType] = JStruct[HandlingUnitsType]
+    AdjustedHeightIndicator: typing.Optional[str] = None
+    AdjustedHeight: typing.Optional[AdjustedHeightType] = jstruct.JStruct[AdjustedHeightType]
+    HandlingUnits: typing.Optional[HandlingUnitsType] = jstruct.JStruct[HandlingUnitsType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class FreightShipmentInformationType:
-    FreightDensityInfo: Optional[FreightDensityInfoType] = JStruct[FreightDensityInfoType]
-    DensityEligibleIndicator: Optional[str] = None
+    FreightDensityInfo: typing.Optional[FreightDensityInfoType] = jstruct.JStruct[FreightDensityInfoType]
+    DensityEligibleIndicator: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class InvoiceLineTotalType:
-    CurrencyCode: Optional[str] = None
-    MonetaryValue: Optional[int] = None
+    CurrencyCode: typing.Optional[str] = None
+    MonetaryValue: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class NmfcType:
-    PrimeCode: Optional[str] = None
-    SubCode: Optional[str] = None
+    PrimeCode: typing.Optional[str] = None
+    SubCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CommodityType:
-    FreightClass: Optional[str] = None
-    NMFC: Optional[NmfcType] = JStruct[NmfcType]
+    FreightClass: typing.Optional[str] = None
+    NMFC: typing.Optional[NmfcType] = jstruct.JStruct[NmfcType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class WeightType:
-    UnitOfMeasurement: Optional[CustomerClassificationType] = JStruct[CustomerClassificationType]
-    Weight: Optional[int] = None
+    UnitOfMeasurement: typing.Optional[CustomerClassificationType] = jstruct.JStruct[CustomerClassificationType]
+    Weight: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CodType:
-    CODFundsCode: Optional[int] = None
-    CODAmount: Optional[InvoiceLineTotalType] = JStruct[InvoiceLineTotalType]
+    CODFundsCode: typing.Optional[int] = None
+    CODAmount: typing.Optional[InvoiceLineTotalType] = jstruct.JStruct[InvoiceLineTotalType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DeliveryConfirmationType:
-    DCISType: Optional[int] = None
+    DCISType: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DryIceType:
-    RegulationSet: Optional[str] = None
-    DryIceWeight: Optional[WeightType] = JStruct[WeightType]
-    MedicalUseIndicator: Optional[str] = None
-    AuditRequired: Optional[str] = None
+    RegulationSet: typing.Optional[str] = None
+    DryIceWeight: typing.Optional[WeightType] = jstruct.JStruct[WeightType]
+    MedicalUseIndicator: typing.Optional[str] = None
+    AuditRequired: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class HazMatChemicalRecordType:
-    ChemicalRecordIdentifier: Optional[str] = None
-    ClassDivisionNumber: Optional[str] = None
-    IDNumber: Optional[str] = None
-    TransportationMode: Optional[str] = None
-    RegulationSet: Optional[str] = None
-    EmergencyPhone: Optional[str] = None
-    EmergencyContact: Optional[str] = None
-    ReportableQuantity: Optional[str] = None
-    SubRiskClass: Optional[str] = None
-    PackagingGroupType: Optional[str] = None
-    PackagingInstructionCode: Optional[str] = None
-    Quantity: Optional[str] = None
-    UOM: Optional[str] = None
-    ProperShippingName: Optional[str] = None
-    TechnicalName: Optional[str] = None
-    AdditionalDescription: Optional[str] = None
-    PackagingType: Optional[str] = None
-    HazardLabelRequired: Optional[str] = None
-    PackagingTypeQuantity: Optional[str] = None
-    CommodityRegulatedLevelCode: Optional[str] = None
-    TransportCategory: Optional[str] = None
-    TunnelRestrictionCode: Optional[str] = None
+    ChemicalRecordIdentifier: typing.Optional[str] = None
+    ClassDivisionNumber: typing.Optional[str] = None
+    IDNumber: typing.Optional[str] = None
+    TransportationMode: typing.Optional[str] = None
+    RegulationSet: typing.Optional[str] = None
+    EmergencyPhone: typing.Optional[str] = None
+    EmergencyContact: typing.Optional[str] = None
+    ReportableQuantity: typing.Optional[str] = None
+    SubRiskClass: typing.Optional[str] = None
+    PackagingGroupType: typing.Optional[str] = None
+    PackagingInstructionCode: typing.Optional[str] = None
+    Quantity: typing.Optional[str] = None
+    UOM: typing.Optional[str] = None
+    ProperShippingName: typing.Optional[str] = None
+    TechnicalName: typing.Optional[str] = None
+    AdditionalDescription: typing.Optional[str] = None
+    PackagingType: typing.Optional[str] = None
+    HazardLabelRequired: typing.Optional[str] = None
+    PackagingTypeQuantity: typing.Optional[str] = None
+    CommodityRegulatedLevelCode: typing.Optional[str] = None
+    TransportCategory: typing.Optional[str] = None
+    TunnelRestrictionCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class HazMatType:
-    PackageIdentifier: Optional[str] = None
-    QValue: Optional[str] = None
-    OverPackedIndicator: Optional[str] = None
-    AllPackedInOneIndicator: Optional[str] = None
-    HazMatChemicalRecord: Optional[HazMatChemicalRecordType] = JStruct[HazMatChemicalRecordType]
+    PackageIdentifier: typing.Optional[str] = None
+    QValue: typing.Optional[str] = None
+    OverPackedIndicator: typing.Optional[str] = None
+    AllPackedInOneIndicator: typing.Optional[str] = None
+    HazMatChemicalRecord: typing.Optional[HazMatChemicalRecordType] = jstruct.JStruct[HazMatChemicalRecordType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PackageServiceOptionsType:
-    DeliveryConfirmation: Optional[DeliveryConfirmationType] = JStruct[DeliveryConfirmationType]
-    AccessPointCOD: Optional[InvoiceLineTotalType] = JStruct[InvoiceLineTotalType]
-    COD: Optional[CodType] = JStruct[CodType]
-    DeclaredValue: Optional[InvoiceLineTotalType] = JStruct[InvoiceLineTotalType]
-    ShipperDeclaredValue: Optional[InvoiceLineTotalType] = JStruct[InvoiceLineTotalType]
-    ShipperReleaseIndicator: Optional[str] = None
-    ProactiveIndicator: Optional[str] = None
-    RefrigerationIndicator: Optional[str] = None
-    UPSPremiumCareIndicator: Optional[str] = None
-    HazMat: Optional[HazMatType] = JStruct[HazMatType]
-    DryIce: Optional[DryIceType] = JStruct[DryIceType]
+    DeliveryConfirmation: typing.Optional[DeliveryConfirmationType] = jstruct.JStruct[DeliveryConfirmationType]
+    AccessPointCOD: typing.Optional[InvoiceLineTotalType] = jstruct.JStruct[InvoiceLineTotalType]
+    COD: typing.Optional[CodType] = jstruct.JStruct[CodType]
+    DeclaredValue: typing.Optional[InvoiceLineTotalType] = jstruct.JStruct[InvoiceLineTotalType]
+    ShipperDeclaredValue: typing.Optional[InvoiceLineTotalType] = jstruct.JStruct[InvoiceLineTotalType]
+    ShipperReleaseIndicator: typing.Optional[str] = None
+    ProactiveIndicator: typing.Optional[str] = None
+    RefrigerationIndicator: typing.Optional[str] = None
+    UPSPremiumCareIndicator: typing.Optional[str] = None
+    HazMat: typing.Optional[HazMatType] = jstruct.JStruct[HazMatType]
+    DryIce: typing.Optional[DryIceType] = jstruct.JStruct[DryIceType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class UPSPremierType:
-    Category: Optional[str] = None
+    Category: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PackageType:
-    PackagingType: Optional[CustomerClassificationType] = JStruct[CustomerClassificationType]
-    Dimensions: Optional[DimensionsType] = JStruct[DimensionsType]
-    DimWeight: Optional[WeightType] = JStruct[WeightType]
-    PackageWeight: Optional[WeightType] = JStruct[WeightType]
-    Commodity: Optional[CommodityType] = JStruct[CommodityType]
-    LargePackageIndicator: Optional[str] = None
-    PackageServiceOptions: Optional[PackageServiceOptionsType] = JStruct[PackageServiceOptionsType]
-    AdditionalHandlingIndicator: Optional[str] = None
-    UPSPremier: Optional[UPSPremierType] = JStruct[UPSPremierType]
-    OversizeIndicator: Optional[str] = None
-    MinimumBillableWeightIndicator: Optional[str] = None
+    PackagingType: typing.Optional[CustomerClassificationType] = jstruct.JStruct[CustomerClassificationType]
+    Dimensions: typing.Optional[DimensionsType] = jstruct.JStruct[DimensionsType]
+    DimWeight: typing.Optional[WeightType] = jstruct.JStruct[WeightType]
+    PackageWeight: typing.Optional[WeightType] = jstruct.JStruct[WeightType]
+    Commodity: typing.Optional[CommodityType] = jstruct.JStruct[CommodityType]
+    LargePackageIndicator: typing.Optional[str] = None
+    PackageServiceOptions: typing.Optional[PackageServiceOptionsType] = jstruct.JStruct[PackageServiceOptionsType]
+    AdditionalHandlingIndicator: typing.Optional[str] = None
+    UPSPremier: typing.Optional[UPSPremierType] = jstruct.JStruct[UPSPremierType]
+    OversizeIndicator: typing.Optional[str] = None
+    MinimumBillableWeightIndicator: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class BillReceiverAddressType:
-    PostalCode: Optional[int] = None
+    PostalCode: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class BillReceiverType:
-    AccountNumber: Optional[str] = None
-    Address: Optional[BillReceiverAddressType] = JStruct[BillReceiverAddressType]
+    AccountNumber: typing.Optional[str] = None
+    Address: typing.Optional[BillReceiverAddressType] = jstruct.JStruct[BillReceiverAddressType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class BillShipperType:
-    AccountNumber: Optional[str] = None
+    AccountNumber: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class BillThirdPartyType:
-    AccountNumber: Optional[str] = None
-    Address: Optional[FRSPaymentInformationAddressType] = JStruct[FRSPaymentInformationAddressType]
+    AccountNumber: typing.Optional[str] = None
+    Address: typing.Optional[FRSPaymentInformationAddressType] = jstruct.JStruct[FRSPaymentInformationAddressType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentChargeType:
-    Type: Optional[str] = None
-    BillShipper: Optional[BillShipperType] = JStruct[BillShipperType]
-    BillReceiver: Optional[BillReceiverType] = JStruct[BillReceiverType]
-    BillThirdParty: Optional[BillThirdPartyType] = JStruct[BillThirdPartyType]
-    ConsigneeBilledIndicator: Optional[str] = None
+    Type: typing.Optional[str] = None
+    BillShipper: typing.Optional[BillShipperType] = jstruct.JStruct[BillShipperType]
+    BillReceiver: typing.Optional[BillReceiverType] = jstruct.JStruct[BillReceiverType]
+    BillThirdParty: typing.Optional[BillThirdPartyType] = jstruct.JStruct[BillThirdPartyType]
+    ConsigneeBilledIndicator: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PaymentDetailsType:
-    ShipmentCharge: Optional[ShipmentChargeType] = JStruct[ShipmentChargeType]
-    SplitDutyVATIndicator: Optional[str] = None
+    ShipmentCharge: typing.Optional[ShipmentChargeType] = jstruct.JStruct[ShipmentChargeType]
+    SplitDutyVATIndicator: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PromotionalDiscountInformationType:
-    PromoCode: Optional[str] = None
-    PromoAliasCode: Optional[str] = None
+    PromoCode: typing.Optional[str] = None
+    PromoAliasCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipFromAddressType:
-    AddressLine: Optional[str] = None
-    City: Optional[str] = None
-    StateProvinceCode: Optional[str] = None
-    PostalCode: Optional[int] = None
-    CountryCode: Optional[str] = None
+    AddressLine: typing.Optional[str] = None
+    City: typing.Optional[str] = None
+    StateProvinceCode: typing.Optional[str] = None
+    PostalCode: typing.Optional[int] = None
+    CountryCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipType:
-    Name: Optional[str] = None
-    AttentionName: Optional[str] = None
-    Address: Optional[ShipFromAddressType] = JStruct[ShipFromAddressType]
-    ShipperNumber: Optional[str] = None
+    Name: typing.Optional[str] = None
+    AttentionName: typing.Optional[str] = None
+    Address: typing.Optional[ShipFromAddressType] = jstruct.JStruct[ShipFromAddressType]
+    ShipperNumber: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipToType:
-    Name: Optional[str] = None
-    AttentionName: Optional[str] = None
-    Address: Optional[AlternateDeliveryAddressAddressType] = JStruct[AlternateDeliveryAddressAddressType]
+    Name: typing.Optional[str] = None
+    AttentionName: typing.Optional[str] = None
+    Address: typing.Optional[AlternateDeliveryAddressAddressType] = jstruct.JStruct[AlternateDeliveryAddressAddressType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentRatingOptionsType:
-    NegotiatedRatesIndicator: Optional[str] = None
-    FRSShipmentIndicator: Optional[str] = None
-    RateChartIndicator: Optional[str] = None
-    UserLevelDiscountIndicator: Optional[str] = None
-    TPFCNegotiatedRatesIndicator: Optional[str] = None
+    NegotiatedRatesIndicator: typing.Optional[str] = None
+    FRSShipmentIndicator: typing.Optional[str] = None
+    RateChartIndicator: typing.Optional[str] = None
+    UserLevelDiscountIndicator: typing.Optional[str] = None
+    TPFCNegotiatedRatesIndicator: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DeliveryOptionsType:
-    LiftGateAtDeliveryIndicator: Optional[str] = None
-    DropOffAtUPSFacilityIndicator: Optional[str] = None
+    LiftGateAtDeliveryIndicator: typing.Optional[str] = None
+    DropOffAtUPSFacilityIndicator: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PickupOptionsType:
-    LiftGateAtPickupIndicator: Optional[str] = None
-    HoldForPickupIndicator: Optional[str] = None
+    LiftGateAtPickupIndicator: typing.Optional[str] = None
+    HoldForPickupIndicator: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RestrictedArticlesType:
-    AlcoholicBeveragesIndicator: Optional[str] = None
-    DiagnosticSpecimensIndicator: Optional[str] = None
-    PerishablesIndicator: Optional[str] = None
-    PlantsIndicator: Optional[str] = None
-    SeedsIndicator: Optional[str] = None
-    SpecialExceptionsIndicator: Optional[str] = None
-    TobaccoIndicator: Optional[str] = None
-    ECigarettesIndicator: Optional[str] = None
-    HempCBDIndicator: Optional[str] = None
+    AlcoholicBeveragesIndicator: typing.Optional[str] = None
+    DiagnosticSpecimensIndicator: typing.Optional[str] = None
+    PerishablesIndicator: typing.Optional[str] = None
+    PlantsIndicator: typing.Optional[str] = None
+    SeedsIndicator: typing.Optional[str] = None
+    SpecialExceptionsIndicator: typing.Optional[str] = None
+    TobaccoIndicator: typing.Optional[str] = None
+    ECigarettesIndicator: typing.Optional[str] = None
+    HempCBDIndicator: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentServiceOptionsType:
-    SaturdayPickupIndicator: Optional[str] = None
-    SaturdayDeliveryIndicator: Optional[str] = None
-    SundayDeliveryIndicator: Optional[str] = None
-    AvailableServicesOption: Optional[str] = None
-    AccessPointCOD: Optional[InvoiceLineTotalType] = JStruct[InvoiceLineTotalType]
-    DeliverToAddresseeOnlyIndicator: Optional[str] = None
-    DirectDeliveryOnlyIndicator: Optional[str] = None
-    COD: Optional[CodType] = JStruct[CodType]
-    DeliveryConfirmation: Optional[DeliveryConfirmationType] = JStruct[DeliveryConfirmationType]
-    ReturnOfDocumentIndicator: Optional[str] = None
-    UPScarbonneutralIndicator: Optional[str] = None
-    CertificateOfOriginIndicator: Optional[str] = None
-    PickupOptions: Optional[PickupOptionsType] = JStruct[PickupOptionsType]
-    DeliveryOptions: Optional[DeliveryOptionsType] = JStruct[DeliveryOptionsType]
-    RestrictedArticles: Optional[RestrictedArticlesType] = JStruct[RestrictedArticlesType]
-    ShipperExportDeclarationIndicator: Optional[str] = None
-    CommercialInvoiceRemovalIndicator: Optional[str] = None
-    ImportControl: Optional[CustomerClassificationType] = JStruct[CustomerClassificationType]
-    ReturnService: Optional[CustomerClassificationType] = JStruct[CustomerClassificationType]
-    SDLShipmentIndicator: Optional[str] = None
-    EPRAIndicator: Optional[str] = None
-    InsideDelivery: Optional[str] = None
-    ItemDisposalIndicator: Optional[str] = None
+    SaturdayPickupIndicator: typing.Optional[str] = None
+    SaturdayDeliveryIndicator: typing.Optional[str] = None
+    SundayDeliveryIndicator: typing.Optional[str] = None
+    AvailableServicesOption: typing.Optional[str] = None
+    AccessPointCOD: typing.Optional[InvoiceLineTotalType] = jstruct.JStruct[InvoiceLineTotalType]
+    DeliverToAddresseeOnlyIndicator: typing.Optional[str] = None
+    DirectDeliveryOnlyIndicator: typing.Optional[str] = None
+    COD: typing.Optional[CodType] = jstruct.JStruct[CodType]
+    DeliveryConfirmation: typing.Optional[DeliveryConfirmationType] = jstruct.JStruct[DeliveryConfirmationType]
+    ReturnOfDocumentIndicator: typing.Optional[str] = None
+    UPScarbonneutralIndicator: typing.Optional[str] = None
+    CertificateOfOriginIndicator: typing.Optional[str] = None
+    PickupOptions: typing.Optional[PickupOptionsType] = jstruct.JStruct[PickupOptionsType]
+    DeliveryOptions: typing.Optional[DeliveryOptionsType] = jstruct.JStruct[DeliveryOptionsType]
+    RestrictedArticles: typing.Optional[RestrictedArticlesType] = jstruct.JStruct[RestrictedArticlesType]
+    ShipperExportDeclarationIndicator: typing.Optional[str] = None
+    CommercialInvoiceRemovalIndicator: typing.Optional[str] = None
+    ImportControl: typing.Optional[CustomerClassificationType] = jstruct.JStruct[CustomerClassificationType]
+    ReturnService: typing.Optional[CustomerClassificationType] = jstruct.JStruct[CustomerClassificationType]
+    SDLShipmentIndicator: typing.Optional[str] = None
+    EPRAIndicator: typing.Optional[str] = None
+    InsideDelivery: typing.Optional[str] = None
+    ItemDisposalIndicator: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentType:
-    OriginRecordTransactionTimestamp: Optional[str] = None
-    Shipper: Optional[ShipType] = JStruct[ShipType]
-    ShipTo: Optional[ShipToType] = JStruct[ShipToType]
-    ShipFrom: Optional[ShipType] = JStruct[ShipType]
-    AlternateDeliveryAddress: Optional[AlternateDeliveryAddressType] = JStruct[AlternateDeliveryAddressType]
-    ShipmentIndicatorType: List[CustomerClassificationType] = JList[CustomerClassificationType]
-    PaymentDetails: Optional[PaymentDetailsType] = JStruct[PaymentDetailsType]
-    FRSPaymentInformation: Optional[FRSPaymentInformationType] = JStruct[FRSPaymentInformationType]
-    FreightShipmentInformation: Optional[FreightShipmentInformationType] = JStruct[FreightShipmentInformationType]
-    GoodsNotInFreeCirculationIndicator: Optional[str] = None
-    Service: Optional[CustomerClassificationType] = JStruct[CustomerClassificationType]
-    NumOfPieces: Optional[int] = None
-    ShipmentTotalWeight: Optional[WeightType] = JStruct[WeightType]
-    DocumentsOnlyIndicator: Optional[str] = None
-    Package: List[PackageType] = JList[PackageType]
-    ShipmentServiceOptions: Optional[ShipmentServiceOptionsType] = JStruct[ShipmentServiceOptionsType]
-    ShipmentRatingOptions: Optional[ShipmentRatingOptionsType] = JStruct[ShipmentRatingOptionsType]
-    InvoiceLineTotal: Optional[InvoiceLineTotalType] = JStruct[InvoiceLineTotalType]
-    RatingMethodRequestedIndicator: Optional[str] = None
-    TaxInformationIndicator: Optional[str] = None
-    PromotionalDiscountInformation: Optional[PromotionalDiscountInformationType] = JStruct[PromotionalDiscountInformationType]
-    DeliveryTimeInformation: Optional[DeliveryTimeInformationType] = JStruct[DeliveryTimeInformationType]
+    OriginRecordTransactionTimestamp: typing.Optional[str] = None
+    Shipper: typing.Optional[ShipType] = jstruct.JStruct[ShipType]
+    ShipTo: typing.Optional[ShipToType] = jstruct.JStruct[ShipToType]
+    ShipFrom: typing.Optional[ShipType] = jstruct.JStruct[ShipType]
+    AlternateDeliveryAddress: typing.Optional[AlternateDeliveryAddressType] = jstruct.JStruct[AlternateDeliveryAddressType]
+    ShipmentIndicatorType: typing.Optional[typing.List[CustomerClassificationType]] = jstruct.JList[CustomerClassificationType]
+    PaymentDetails: typing.Optional[PaymentDetailsType] = jstruct.JStruct[PaymentDetailsType]
+    FRSPaymentInformation: typing.Optional[FRSPaymentInformationType] = jstruct.JStruct[FRSPaymentInformationType]
+    FreightShipmentInformation: typing.Optional[FreightShipmentInformationType] = jstruct.JStruct[FreightShipmentInformationType]
+    GoodsNotInFreeCirculationIndicator: typing.Optional[str] = None
+    Service: typing.Optional[CustomerClassificationType] = jstruct.JStruct[CustomerClassificationType]
+    NumOfPieces: typing.Optional[int] = None
+    ShipmentTotalWeight: typing.Optional[WeightType] = jstruct.JStruct[WeightType]
+    DocumentsOnlyIndicator: typing.Optional[str] = None
+    Package: typing.Optional[typing.List[PackageType]] = jstruct.JList[PackageType]
+    ShipmentServiceOptions: typing.Optional[ShipmentServiceOptionsType] = jstruct.JStruct[ShipmentServiceOptionsType]
+    ShipmentRatingOptions: typing.Optional[ShipmentRatingOptionsType] = jstruct.JStruct[ShipmentRatingOptionsType]
+    InvoiceLineTotal: typing.Optional[InvoiceLineTotalType] = jstruct.JStruct[InvoiceLineTotalType]
+    RatingMethodRequestedIndicator: typing.Optional[str] = None
+    TaxInformationIndicator: typing.Optional[str] = None
+    PromotionalDiscountInformation: typing.Optional[PromotionalDiscountInformationType] = jstruct.JStruct[PromotionalDiscountInformationType]
+    DeliveryTimeInformation: typing.Optional[DeliveryTimeInformationType] = jstruct.JStruct[DeliveryTimeInformationType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RateRequestType:
-    Request: Optional[RequestType] = JStruct[RequestType]
-    PickupType: Optional[CustomerClassificationType] = JStruct[CustomerClassificationType]
-    CustomerClassification: Optional[CustomerClassificationType] = JStruct[CustomerClassificationType]
-    Shipment: Optional[ShipmentType] = JStruct[ShipmentType]
+    Request: typing.Optional[RequestType] = jstruct.JStruct[RequestType]
+    PickupType: typing.Optional[CustomerClassificationType] = jstruct.JStruct[CustomerClassificationType]
+    CustomerClassification: typing.Optional[CustomerClassificationType] = jstruct.JStruct[CustomerClassificationType]
+    Shipment: typing.Optional[ShipmentType] = jstruct.JStruct[ShipmentType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RatingRequestType:
-    RateRequest: Optional[RateRequestType] = JStruct[RateRequestType]
+    RateRequest: typing.Optional[RateRequestType] = jstruct.JStruct[RateRequestType]

@@ -1,10 +1,11 @@
-from attr import s
-from typing import Optional
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AuthResponseType:
-    accessToken: Optional[str] = None
-    expDate: Optional[int] = None
-    refreshToken: Optional[str] = None
-    navigation: Optional[int] = None
+    accessToken: typing.Optional[str] = None
+    expDate: typing.Optional[int] = None
+    refreshToken: typing.Optional[str] = None
+    navigation: typing.Optional[int] = None

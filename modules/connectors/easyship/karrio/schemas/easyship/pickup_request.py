@@ -1,12 +1,13 @@
-from attr import s
-from typing import Optional, List
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PickupRequestType:
-    courier_id: Optional[str] = None
-    easyship_shipment_ids: List[str] = []
-    selected_date: Optional[str] = None
-    selected_from_time: Optional[str] = None
-    selected_to_time: Optional[str] = None
-    time_slot_id: Optional[str] = None
+    courier_id: typing.Optional[str] = None
+    easyship_shipment_ids: typing.Optional[typing.List[str]] = None
+    selected_date: typing.Optional[str] = None
+    selected_from_time: typing.Optional[str] = None
+    selected_to_time: typing.Optional[str] = None
+    time_slot_id: typing.Optional[str] = None

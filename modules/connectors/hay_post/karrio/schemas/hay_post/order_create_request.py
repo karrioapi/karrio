@@ -1,36 +1,36 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ReceiverInfoType:
-    companyName: Optional[str] = None
-    firstName: Optional[str] = None
-    lastName: Optional[str] = None
-    phoneNumber: Optional[str] = None
-    email: Optional[str] = None
+    companyName: typing.Optional[str] = None
+    firstName: typing.Optional[str] = None
+    lastName: typing.Optional[str] = None
+    phoneNumber: typing.Optional[str] = None
+    email: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class NAddressType:
-    countryId: Optional[int] = None
-    provinceStateId: Optional[int] = None
-    cityVillage: Optional[str] = None
-    street: Optional[str] = None
-    building: Optional[int] = None
-    apartment: Optional[int] = None
-    postalCode: Optional[str] = None
-    receiverInfo: Optional[ReceiverInfoType] = JStruct[ReceiverInfoType]
+    countryId: typing.Optional[int] = None
+    provinceStateId: typing.Optional[int] = None
+    cityVillage: typing.Optional[str] = None
+    street: typing.Optional[str] = None
+    building: typing.Optional[int] = None
+    apartment: typing.Optional[int] = None
+    postalCode: typing.Optional[str] = None
+    receiverInfo: typing.Optional[ReceiverInfoType] = jstruct.JStruct[ReceiverInfoType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class OrderCreateRequestType:
-    customerId: Optional[int] = None
-    serviceCategoryDirectionId: Optional[int] = None
-    weight: Optional[int] = None
-    comment: Optional[str] = None
-    returnRegisteredAddress: Optional[bool] = None
-    destinationAddress: Optional[NAddressType] = JStruct[NAddressType]
-    returnAddress: Optional[NAddressType] = JStruct[NAddressType]
-    additionalServices: List[int] = []
+    customerId: typing.Optional[int] = None
+    serviceCategoryDirectionId: typing.Optional[int] = None
+    weight: typing.Optional[int] = None
+    comment: typing.Optional[str] = None
+    returnRegisteredAddress: typing.Optional[bool] = None
+    destinationAddress: typing.Optional[NAddressType] = jstruct.JStruct[NAddressType]
+    returnAddress: typing.Optional[NAddressType] = jstruct.JStruct[NAddressType]
+    additionalServices: typing.Optional[typing.List[int]] = None

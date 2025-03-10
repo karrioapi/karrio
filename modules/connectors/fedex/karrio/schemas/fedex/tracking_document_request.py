@@ -1,30 +1,30 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackDocumentDetailType:
-    documentType: Optional[str] = None
-    documentFormat: Optional[str] = None
+    documentType: typing.Optional[str] = None
+    documentFormat: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackingNumberInfoType:
-    trackingNumber: Optional[str] = None
-    carrierCode: Optional[str] = None
-    trackingNumberUniqueId: Optional[str] = None
+    trackingNumber: typing.Optional[str] = None
+    carrierCode: typing.Optional[str] = None
+    trackingNumberUniqueId: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackDocumentSpecificationType:
-    trackingNumberInfo: Optional[TrackingNumberInfoType] = JStruct[TrackingNumberInfoType]
-    shipDateBegin: Optional[str] = None
-    shipDateEnd: Optional[str] = None
-    accountNumber: Optional[str] = None
+    trackingNumberInfo: typing.Optional[TrackingNumberInfoType] = jstruct.JStruct[TrackingNumberInfoType]
+    shipDateBegin: typing.Optional[str] = None
+    shipDateEnd: typing.Optional[str] = None
+    accountNumber: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackingDocumentRequestType:
-    trackDocumentDetail: Optional[TrackDocumentDetailType] = JStruct[TrackDocumentDetailType]
-    trackDocumentSpecification: List[TrackDocumentSpecificationType] = JList[TrackDocumentSpecificationType]
+    trackDocumentDetail: typing.Optional[TrackDocumentDetailType] = jstruct.JStruct[TrackDocumentDetailType]
+    trackDocumentSpecification: typing.Optional[typing.List[TrackDocumentSpecificationType]] = jstruct.JList[TrackDocumentSpecificationType]

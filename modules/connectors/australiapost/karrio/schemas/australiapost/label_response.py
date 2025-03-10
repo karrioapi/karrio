@@ -1,31 +1,31 @@
-from attr import s
-from typing import Optional, Any, List
-from jstruct import JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ItemType:
-    item_id: Optional[str] = None
+    item_id: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentType:
-    shipment_id: Optional[str] = None
-    options: List[Any] = []
-    items: List[ItemType] = JList[ItemType]
+    shipment_id: typing.Optional[str] = None
+    options: typing.Optional[typing.List[typing.Any]] = None
+    items: typing.Optional[typing.List[ItemType]] = jstruct.JList[ItemType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class LabelType:
-    request_id: Optional[str] = None
-    url: Optional[str] = None
-    status: Optional[str] = None
-    request_date: Optional[str] = None
-    url_creation_date: Optional[str] = None
-    shipments: List[ShipmentType] = JList[ShipmentType]
-    shipment_ids: List[str] = []
+    request_id: typing.Optional[str] = None
+    url: typing.Optional[str] = None
+    status: typing.Optional[str] = None
+    request_date: typing.Optional[str] = None
+    url_creation_date: typing.Optional[str] = None
+    shipments: typing.Optional[typing.List[ShipmentType]] = jstruct.JList[ShipmentType]
+    shipment_ids: typing.Optional[typing.List[str]] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class LabelResponseType:
-    labels: List[LabelType] = JList[LabelType]
+    labels: typing.Optional[typing.List[LabelType]] = jstruct.JList[LabelType]

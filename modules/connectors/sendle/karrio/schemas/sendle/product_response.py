@@ -1,79 +1,79 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class BaseType:
-    amount: Optional[float] = None
-    currency: Optional[str] = None
+    amount: typing.Optional[float] = None
+    currency: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class QuoteType:
-    gross: Optional[BaseType] = JStruct[BaseType]
-    net: Optional[BaseType] = JStruct[BaseType]
-    tax: Optional[BaseType] = JStruct[BaseType]
+    gross: typing.Optional[BaseType] = jstruct.JStruct[BaseType]
+    net: typing.Optional[BaseType] = jstruct.JStruct[BaseType]
+    tax: typing.Optional[BaseType] = jstruct.JStruct[BaseType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CoverType:
-    price: Optional[QuoteType] = JStruct[QuoteType]
+    price: typing.Optional[QuoteType] = jstruct.JStruct[QuoteType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class EtaType:
-    days_range: List[int] = []
-    date_range: List[str] = []
-    for_send_date: Optional[str] = None
+    days_range: typing.Optional[typing.List[int]] = None
+    date_range: typing.Optional[typing.List[str]] = None
+    for_send_date: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PriceBreakdownType:
-    base: Optional[BaseType] = JStruct[BaseType]
-    discount: Optional[BaseType] = JStruct[BaseType]
-    cover: Optional[BaseType] = JStruct[BaseType]
-    fuel_surcharge: Optional[BaseType] = JStruct[BaseType]
-    base_tax: Optional[BaseType] = JStruct[BaseType]
-    discount_tax: Optional[BaseType] = JStruct[BaseType]
-    cover_tax: Optional[BaseType] = JStruct[BaseType]
-    fuel_surcharge_tax: Optional[BaseType] = JStruct[BaseType]
+    base: typing.Optional[BaseType] = jstruct.JStruct[BaseType]
+    discount: typing.Optional[BaseType] = jstruct.JStruct[BaseType]
+    cover: typing.Optional[BaseType] = jstruct.JStruct[BaseType]
+    fuel_surcharge: typing.Optional[BaseType] = jstruct.JStruct[BaseType]
+    base_tax: typing.Optional[BaseType] = jstruct.JStruct[BaseType]
+    discount_tax: typing.Optional[BaseType] = jstruct.JStruct[BaseType]
+    cover_tax: typing.Optional[BaseType] = jstruct.JStruct[BaseType]
+    fuel_surcharge_tax: typing.Optional[BaseType] = jstruct.JStruct[BaseType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ProductType:
-    code: Optional[str] = None
-    name: Optional[str] = None
-    first_mile_option: Optional[str] = None
-    service: Optional[str] = None
+    code: typing.Optional[str] = None
+    name: typing.Optional[str] = None
+    first_mile_option: typing.Optional[str] = None
+    service: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RouteType:
-    type: Optional[str] = None
-    description: Optional[str] = None
+    type: typing.Optional[str] = None
+    description: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class GstType:
-    amount: Optional[float] = None
-    currency: Optional[str] = None
-    rate: Optional[float] = None
+    amount: typing.Optional[float] = None
+    currency: typing.Optional[str] = None
+    rate: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TaxBreakdownType:
-    gst: Optional[GstType] = JStruct[GstType]
+    gst: typing.Optional[GstType] = jstruct.JStruct[GstType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ProductResponseElementType:
-    quote: Optional[QuoteType] = JStruct[QuoteType]
-    price_breakdown: Optional[PriceBreakdownType] = JStruct[PriceBreakdownType]
-    tax_breakdown: Optional[TaxBreakdownType] = JStruct[TaxBreakdownType]
-    plan: Optional[str] = None
-    eta: Optional[EtaType] = JStruct[EtaType]
-    route: Optional[RouteType] = JStruct[RouteType]
-    allowed_packaging: Optional[str] = None
-    product: Optional[ProductType] = JStruct[ProductType]
-    cover: Optional[CoverType] = JStruct[CoverType]
+    quote: typing.Optional[QuoteType] = jstruct.JStruct[QuoteType]
+    price_breakdown: typing.Optional[PriceBreakdownType] = jstruct.JStruct[PriceBreakdownType]
+    tax_breakdown: typing.Optional[TaxBreakdownType] = jstruct.JStruct[TaxBreakdownType]
+    plan: typing.Optional[str] = None
+    eta: typing.Optional[EtaType] = jstruct.JStruct[EtaType]
+    route: typing.Optional[RouteType] = jstruct.JStruct[RouteType]
+    allowed_packaging: typing.Optional[str] = None
+    product: typing.Optional[ProductType] = jstruct.JStruct[ProductType]
+    cover: typing.Optional[CoverType] = jstruct.JStruct[CoverType]

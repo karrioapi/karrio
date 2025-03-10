@@ -1,181 +1,181 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CodAddressType:
-    company: Optional[str] = None
-    name: Optional[str] = None
-    addressLine1: Optional[str] = None
-    city: Optional[str] = None
-    province: Optional[str] = None
-    country: Optional[str] = None
-    zip: Optional[str] = None
+    company: typing.Optional[str] = None
+    name: typing.Optional[str] = None
+    addressLine1: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    province: typing.Optional[str] = None
+    country: typing.Optional[str] = None
+    zip: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CodType:
-    codAddress: Optional[CodAddressType] = JStruct[CodAddressType]
-    paymentType: Optional[str] = None
+    codAddress: typing.Optional[CodAddressType] = jstruct.JStruct[CodAddressType]
+    paymentType: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class BillingAddressType:
-    company: Optional[str] = None
-    attention: Optional[str] = None
-    address1: Optional[str] = None
-    address2: Optional[str] = None
-    city: Optional[str] = None
-    province: Optional[str] = None
-    country: Optional[str] = None
-    zip: Optional[str] = None
-    email: Optional[str] = None
-    phone: Optional[str] = None
+    company: typing.Optional[str] = None
+    attention: typing.Optional[str] = None
+    address1: typing.Optional[str] = None
+    address2: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    province: typing.Optional[str] = None
+    country: typing.Optional[str] = None
+    zip: typing.Optional[str] = None
+    email: typing.Optional[str] = None
+    phone: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ContactType:
-    contactCompany: Optional[str] = None
-    contactName: Optional[str] = None
-    phone: Optional[str] = None
-    brokerName: Optional[str] = None
-    brokerTaxId: Optional[str] = None
-    recipientTaxId: Optional[str] = None
+    contactCompany: typing.Optional[str] = None
+    contactName: typing.Optional[str] = None
+    phone: typing.Optional[str] = None
+    brokerName: typing.Optional[str] = None
+    brokerTaxId: typing.Optional[str] = None
+    recipientTaxId: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DutiesTaxesType:
-    dutiable: Optional[bool] = None
-    billTo: Optional[str] = None
-    accountNumber: Optional[str] = None
-    sedNumber: Optional[str] = None
+    dutiable: typing.Optional[bool] = None
+    billTo: typing.Optional[str] = None
+    accountNumber: typing.Optional[str] = None
+    sedNumber: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ItemType:
-    hsnCode: Optional[str] = None
-    description: Optional[str] = None
-    originCountry: Optional[str] = None
-    quantity: Optional[int] = None
-    unitPrice: Optional[int] = None
-    skuCode: Optional[str] = None
+    hsnCode: typing.Optional[str] = None
+    description: typing.Optional[str] = None
+    originCountry: typing.Optional[str] = None
+    quantity: typing.Optional[int] = None
+    unitPrice: typing.Optional[int] = None
+    skuCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ItemsType:
-    item: List[ItemType] = JList[ItemType]
-    currency: Optional[str] = None
+    item: typing.Optional[typing.List[ItemType]] = jstruct.JList[ItemType]
+    currency: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CustomsInformationType:
-    contact: Optional[ContactType] = JStruct[ContactType]
-    items: Optional[ItemsType] = JStruct[ItemsType]
-    dutiesTaxes: Optional[DutiesTaxesType] = JStruct[DutiesTaxesType]
-    billingAddress: Optional[BillingAddressType] = JStruct[BillingAddressType]
-    remarks: Optional[str] = None
+    contact: typing.Optional[ContactType] = jstruct.JStruct[ContactType]
+    items: typing.Optional[ItemsType] = jstruct.JStruct[ItemsType]
+    dutiesTaxes: typing.Optional[DutiesTaxesType] = jstruct.JStruct[DutiesTaxesType]
+    billingAddress: typing.Optional[BillingAddressType] = jstruct.JStruct[BillingAddressType]
+    remarks: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PackageType:
-    height: Optional[int] = None
-    length: Optional[int] = None
-    width: Optional[int] = None
-    dimensionUnit: Optional[str] = None
-    weight: Optional[int] = None
-    weightUnit: Optional[str] = None
-    type: Optional[str] = None
-    freightClass: Optional[str] = None
-    nmfcCode: Optional[str] = None
-    insuranceAmount: Optional[int] = None
-    codAmount: Optional[int] = None
-    description: Optional[str] = None
-    harmonizedCode: Optional[str] = None
-    skuCode: Optional[str] = None
+    height: typing.Optional[int] = None
+    length: typing.Optional[int] = None
+    width: typing.Optional[int] = None
+    dimensionUnit: typing.Optional[str] = None
+    weight: typing.Optional[int] = None
+    weightUnit: typing.Optional[str] = None
+    type: typing.Optional[str] = None
+    freightClass: typing.Optional[str] = None
+    nmfcCode: typing.Optional[str] = None
+    insuranceAmount: typing.Optional[int] = None
+    codAmount: typing.Optional[int] = None
+    description: typing.Optional[str] = None
+    harmonizedCode: typing.Optional[str] = None
+    skuCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PackagesType:
-    type: Optional[str] = None
-    packages: List[PackageType] = JList[PackageType]
+    type: typing.Optional[str] = None
+    packages: typing.Optional[typing.List[PackageType]] = jstruct.JList[PackageType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TimeType:
-    hour: Optional[int] = None
-    minute: Optional[int] = None
-    second: Optional[int] = None
-    nano: Optional[int] = None
+    hour: typing.Optional[int] = None
+    minute: typing.Optional[int] = None
+    second: typing.Optional[int] = None
+    nano: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PickupType:
-    contactName: Optional[str] = None
-    phoneNumber: Optional[str] = None
-    pickupDate: Optional[str] = None
-    pickupTime: Optional[TimeType] = JStruct[TimeType]
-    closingTime: Optional[TimeType] = JStruct[TimeType]
-    palletPickupTime: Optional[TimeType] = JStruct[TimeType]
-    palletClosingTime: Optional[TimeType] = JStruct[TimeType]
-    palletDeliveryClosingTime: Optional[TimeType] = JStruct[TimeType]
-    location: Optional[str] = None
-    instructions: Optional[str] = None
+    contactName: typing.Optional[str] = None
+    phoneNumber: typing.Optional[str] = None
+    pickupDate: typing.Optional[str] = None
+    pickupTime: typing.Optional[TimeType] = jstruct.JStruct[TimeType]
+    closingTime: typing.Optional[TimeType] = jstruct.JStruct[TimeType]
+    palletPickupTime: typing.Optional[TimeType] = jstruct.JStruct[TimeType]
+    palletClosingTime: typing.Optional[TimeType] = jstruct.JStruct[TimeType]
+    palletDeliveryClosingTime: typing.Optional[TimeType] = jstruct.JStruct[TimeType]
+    location: typing.Optional[str] = None
+    instructions: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class FromType:
-    attention: Optional[str] = None
-    company: Optional[str] = None
-    address1: Optional[str] = None
-    address2: Optional[str] = None
-    city: Optional[str] = None
-    province: Optional[str] = None
-    country: Optional[str] = None
-    zip: Optional[str] = None
-    email: Optional[str] = None
-    phone: Optional[str] = None
-    instructions: Optional[str] = None
-    residential: Optional[bool] = None
-    tailgateRequired: Optional[bool] = None
-    confirmDelivery: Optional[bool] = None
-    notifyRecipient: Optional[bool] = None
+    attention: typing.Optional[str] = None
+    company: typing.Optional[str] = None
+    address1: typing.Optional[str] = None
+    address2: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    province: typing.Optional[str] = None
+    country: typing.Optional[str] = None
+    zip: typing.Optional[str] = None
+    email: typing.Optional[str] = None
+    phone: typing.Optional[str] = None
+    instructions: typing.Optional[str] = None
+    residential: typing.Optional[bool] = None
+    tailgateRequired: typing.Optional[bool] = None
+    confirmDelivery: typing.Optional[bool] = None
+    notifyRecipient: typing.Optional[bool] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ThirdPartyBillingType:
-    carrier: Optional[int] = None
-    country: Optional[int] = None
-    billToAccountNumber: Optional[str] = None
-    billToPostalCode: Optional[str] = None
+    carrier: typing.Optional[int] = None
+    country: typing.Optional[int] = None
+    billToAccountNumber: typing.Optional[str] = None
+    billToPostalCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RateRequestType:
-    scheduledShipDate: Optional[str] = None
-    raterequestfrom: Optional[FromType] = JStruct[FromType]
-    to: Optional[FromType] = JStruct[FromType]
-    packagingUnit: Optional[str] = None
-    packages: Optional[PackagesType] = JStruct[PackagesType]
-    reference1: Optional[str] = None
-    reference2: Optional[str] = None
-    reference3: Optional[str] = None
-    transactionId: Optional[str] = None
-    signatureRequired: Optional[str] = None
-    insuranceType: Optional[str] = None
-    dangerousGoodsType: Optional[str] = None
-    pickup: Optional[PickupType] = JStruct[PickupType]
-    customsInformation: Optional[CustomsInformationType] = JStruct[CustomsInformationType]
-    customsInBondFreight: Optional[bool] = None
-    cod: Optional[CodType] = JStruct[CodType]
-    isSaturdayService: Optional[bool] = None
-    holdForPickupRequired: Optional[bool] = None
-    specialEquipment: Optional[bool] = None
-    insideDelivery: Optional[bool] = None
-    deliveryAppointment: Optional[bool] = None
-    insidePickup: Optional[bool] = None
-    saturdayPickupRequired: Optional[bool] = None
-    stackable: Optional[bool] = None
-    serviceId: Optional[int] = None
-    thirdPartyBilling: Optional[ThirdPartyBillingType] = JStruct[ThirdPartyBillingType]
-    commodityType: Optional[str] = None
+    scheduledShipDate: typing.Optional[str] = None
+    raterequestfrom: typing.Optional[FromType] = jstruct.JStruct[FromType]
+    to: typing.Optional[FromType] = jstruct.JStruct[FromType]
+    packagingUnit: typing.Optional[str] = None
+    packages: typing.Optional[PackagesType] = jstruct.JStruct[PackagesType]
+    reference1: typing.Optional[str] = None
+    reference2: typing.Optional[str] = None
+    reference3: typing.Optional[str] = None
+    transactionId: typing.Optional[str] = None
+    signatureRequired: typing.Optional[str] = None
+    insuranceType: typing.Optional[str] = None
+    dangerousGoodsType: typing.Optional[str] = None
+    pickup: typing.Optional[PickupType] = jstruct.JStruct[PickupType]
+    customsInformation: typing.Optional[CustomsInformationType] = jstruct.JStruct[CustomsInformationType]
+    customsInBondFreight: typing.Optional[bool] = None
+    cod: typing.Optional[CodType] = jstruct.JStruct[CodType]
+    isSaturdayService: typing.Optional[bool] = None
+    holdForPickupRequired: typing.Optional[bool] = None
+    specialEquipment: typing.Optional[bool] = None
+    insideDelivery: typing.Optional[bool] = None
+    deliveryAppointment: typing.Optional[bool] = None
+    insidePickup: typing.Optional[bool] = None
+    saturdayPickupRequired: typing.Optional[bool] = None
+    stackable: typing.Optional[bool] = None
+    serviceId: typing.Optional[int] = None
+    thirdPartyBilling: typing.Optional[ThirdPartyBillingType] = jstruct.JStruct[ThirdPartyBillingType]
+    commodityType: typing.Optional[str] = None

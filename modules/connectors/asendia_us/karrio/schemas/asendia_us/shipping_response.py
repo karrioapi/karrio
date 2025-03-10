@@ -1,37 +1,37 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JList, JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class LabelType:
-    name: Optional[str] = None
-    type: Optional[str] = None
-    content: Optional[str] = None
+    name: typing.Optional[str] = None
+    type: typing.Optional[str] = None
+    content: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PackageLabelType:
-    packageId: Optional[str] = None
-    trackingNumber: Optional[str] = None
-    labels: List[LabelType] = JList[LabelType]
+    packageId: typing.Optional[str] = None
+    trackingNumber: typing.Optional[str] = None
+    labels: typing.Optional[typing.List[LabelType]] = jstruct.JList[LabelType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ResponseStatusType:
-    responseStatusCode: Optional[str] = None
-    responseStatusMessage: Optional[str] = None
+    responseStatusCode: typing.Optional[str] = None
+    responseStatusMessage: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShippingRateType:
-    productCode: Optional[str] = None
-    rate: Optional[int] = None
-    currencyType: Optional[str] = None
+    productCode: typing.Optional[str] = None
+    rate: typing.Optional[int] = None
+    currencyType: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShippingResponseType:
-    shippingRates: List[ShippingRateType] = JList[ShippingRateType]
-    packageLabel: Optional[PackageLabelType] = JStruct[PackageLabelType]
-    responseStatus: Optional[ResponseStatusType] = JStruct[ResponseStatusType]
+    shippingRates: typing.Optional[typing.List[ShippingRateType]] = jstruct.JList[ShippingRateType]
+    packageLabel: typing.Optional[PackageLabelType] = jstruct.JStruct[PackageLabelType]
+    responseStatus: typing.Optional[ResponseStatusType] = jstruct.JStruct[ResponseStatusType]

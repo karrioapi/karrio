@@ -1,30 +1,30 @@
-from attr import s
-from typing import Optional
-from jstruct import JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DropoffType:
-    ContactName: Optional[str] = None
-    Email: Optional[str] = None
-    Phone: Optional[str] = None
-    UnitNumber: Optional[str] = None
-    StreetNumber: Optional[int] = None
-    Street: Optional[str] = None
-    Suburb: Optional[str] = None
-    State: Optional[str] = None
-    Postcode: Optional[int] = None
-    Country: Optional[str] = None
-    Notes: Optional[str] = None
+    ContactName: typing.Optional[str] = None
+    Email: typing.Optional[str] = None
+    Phone: typing.Optional[str] = None
+    UnitNumber: typing.Optional[str] = None
+    StreetNumber: typing.Optional[int] = None
+    Street: typing.Optional[str] = None
+    Suburb: typing.Optional[str] = None
+    State: typing.Optional[str] = None
+    Postcode: typing.Optional[int] = None
+    Country: typing.Optional[str] = None
+    Notes: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RateRequestType:
-    PurchaseOrderNumber: Optional[str] = None
-    PackageDescription: Optional[str] = None
-    DeliverySpeed: Optional[str] = None
-    ReadyDateTime: Optional[str] = None
-    VehicleType: Optional[str] = None
-    PackageType: Optional[str] = None
-    Pickup: Optional[DropoffType] = JStruct[DropoffType]
-    Dropoff: Optional[DropoffType] = JStruct[DropoffType]
+    PurchaseOrderNumber: typing.Optional[str] = None
+    PackageDescription: typing.Optional[str] = None
+    DeliverySpeed: typing.Optional[str] = None
+    ReadyDateTime: typing.Optional[str] = None
+    VehicleType: typing.Optional[str] = None
+    PackageType: typing.Optional[str] = None
+    Pickup: typing.Optional[DropoffType] = jstruct.JStruct[DropoffType]
+    Dropoff: typing.Optional[DropoffType] = jstruct.JStruct[DropoffType]

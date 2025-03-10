@@ -1,8 +1,9 @@
-from attr import s
-from typing import Optional
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CancelResponseType:
-    responseStatusCode: Optional[int] = None
-    responseStatusMessage: Optional[str] = None
+    responseStatusCode: typing.Optional[int] = None
+    responseStatusMessage: typing.Optional[str] = None

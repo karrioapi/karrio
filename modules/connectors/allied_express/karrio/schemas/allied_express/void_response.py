@@ -1,27 +1,27 @@
-from attr import s
-from typing import Optional
-from jstruct import JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Ns1CancelDispatchJobResponseType:
-    xmlnsns1: Optional[str] = None
-    result: Optional[int] = None
+    xmlnsns1: typing.Optional[str] = None
+    result: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class SoapenvBodyType:
-    ns1cancelDispatchJobResponse: Optional[Ns1CancelDispatchJobResponseType] = JStruct[Ns1CancelDispatchJobResponseType]
+    ns1cancelDispatchJobResponse: typing.Optional[Ns1CancelDispatchJobResponseType] = jstruct.JStruct[Ns1CancelDispatchJobResponseType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class SoapenvEnvelopeType:
-    xmlnssoapenv: Optional[str] = None
-    xmlnsxsd: Optional[str] = None
-    xmlnsxsi: Optional[str] = None
-    soapenvBody: Optional[SoapenvBodyType] = JStruct[SoapenvBodyType]
+    xmlnssoapenv: typing.Optional[str] = None
+    xmlnsxsd: typing.Optional[str] = None
+    xmlnsxsi: typing.Optional[str] = None
+    soapenvBody: typing.Optional[SoapenvBodyType] = jstruct.JStruct[SoapenvBodyType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class VoidResponseType:
-    soapenvEnvelope: Optional[SoapenvEnvelopeType] = JStruct[SoapenvEnvelopeType]
+    soapenvEnvelope: typing.Optional[SoapenvEnvelopeType] = jstruct.JStruct[SoapenvEnvelopeType]

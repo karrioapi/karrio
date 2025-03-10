@@ -1,20 +1,21 @@
-from attr import s
-from typing import Optional, List
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RateRequestType:
-    originZIPCode: Optional[str] = None
-    foreignPostalCode: Optional[str] = None
-    destinationCountryCode: Optional[str] = None
-    weight: Optional[int] = None
-    mailingDate: Optional[str] = None
-    length: Optional[int] = None
-    width: Optional[int] = None
-    height: Optional[int] = None
-    priceType: Optional[str] = None
-    mailClass: Optional[str] = None
-    accountType: Optional[str] = None
-    accountNumber: Optional[str] = None
-    itemValue: Optional[int] = None
-    extraServices: List[int] = []
+    originZIPCode: typing.Optional[str] = None
+    foreignPostalCode: typing.Optional[str] = None
+    destinationCountryCode: typing.Optional[str] = None
+    weight: typing.Optional[int] = None
+    mailingDate: typing.Optional[str] = None
+    length: typing.Optional[int] = None
+    width: typing.Optional[int] = None
+    height: typing.Optional[int] = None
+    priceType: typing.Optional[str] = None
+    mailClass: typing.Optional[str] = None
+    accountType: typing.Optional[str] = None
+    accountNumber: typing.Optional[str] = None
+    itemValue: typing.Optional[int] = None
+    extraServices: typing.Optional[typing.List[int]] = None

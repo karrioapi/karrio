@@ -1,10 +1,16 @@
-from attr import s
-from typing import Optional, Any
-from jstruct import JDict
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
+class ModelStateType:
+    getQuoteRequestPickupSuburb: typing.Optional[typing.List[str]] = None
+    getQuoteRequestPickupPostcode: typing.Optional[typing.List[str]] = None
+
+
+@attr.s(auto_attribs=True)
 class ErrorResponseType:
-    errorcode: Optional[str] = None
-    message: Optional[str] = None
-    modelState: Optional[dict] = JDict[str, Any]
+    errorcode: typing.Optional[str] = None
+    message: typing.Optional[str] = None
+    modelState: typing.Optional[ModelStateType] = jstruct.JStruct[ModelStateType]

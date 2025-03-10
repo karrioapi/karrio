@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 
+# Get the project root
+export ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
 # Activate python env
-source "bin/activate-env" > /dev/null 2>&1
+source "${ROOT}/bin/activate-env" >/dev/null 2>&1
 
-# Activate python virtual environment
-source "${ROOT}/bin/activate-env" || exit 1
+# Add bin to PATH for easy CLI access
+export PATH="${ROOT}/bin:${PATH}"
 
+# Go to specified directory and run generate script
 cd "$1" && ./generate && cd -

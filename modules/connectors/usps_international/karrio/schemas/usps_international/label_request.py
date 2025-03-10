@@ -1,150 +1,150 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ContentType:
-    itemDescription: Optional[str] = None
-    itemQuantity: Optional[int] = None
-    itemValue: Optional[int] = None
-    itemTotalValue: Optional[int] = None
-    weightUOM: Optional[str] = None
-    itemWeight: Optional[float] = None
-    itemTotalWeight: Optional[float] = None
-    HSTariffNumber: Optional[str] = None
-    countryofOrigin: Optional[str] = None
-    itemCategory: Optional[str] = None
-    itemSubcategory: Optional[str] = None
+    itemDescription: typing.Optional[str] = None
+    itemQuantity: typing.Optional[int] = None
+    itemValue: typing.Optional[int] = None
+    itemTotalValue: typing.Optional[int] = None
+    weightUOM: typing.Optional[str] = None
+    itemWeight: typing.Optional[float] = None
+    itemTotalWeight: typing.Optional[float] = None
+    HSTariffNumber: typing.Optional[str] = None
+    countryofOrigin: typing.Optional[str] = None
+    itemCategory: typing.Optional[str] = None
+    itemSubcategory: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ContactType:
-    phone: Optional[str] = None
-    fax: Optional[str] = None
-    email: Optional[str] = None
+    phone: typing.Optional[str] = None
+    fax: typing.Optional[str] = None
+    email: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PortersReferenceType:
-    referenceType: Optional[str] = None
-    reference: Optional[str] = None
-    contact: Optional[ContactType] = JStruct[ContactType]
+    referenceType: typing.Optional[str] = None
+    reference: typing.Optional[str] = None
+    contact: typing.Optional[ContactType] = jstruct.JStruct[ContactType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CustomsFormType:
-    contentComments: Optional[str] = None
-    restrictionType: Optional[str] = None
-    restrictionComments: Optional[str] = None
-    AESITN: Optional[str] = None
-    invoiceNumber: Optional[str] = None
-    licenseNumber: Optional[str] = None
-    certificateNumber: Optional[str] = None
-    customsContentType: Optional[str] = None
-    importersReference: Optional[PortersReferenceType] = JStruct[PortersReferenceType]
-    exportersReference: Optional[PortersReferenceType] = JStruct[PortersReferenceType]
-    contents: List[ContentType] = JList[ContentType]
+    contentComments: typing.Optional[str] = None
+    restrictionType: typing.Optional[str] = None
+    restrictionComments: typing.Optional[str] = None
+    AESITN: typing.Optional[str] = None
+    invoiceNumber: typing.Optional[str] = None
+    licenseNumber: typing.Optional[str] = None
+    certificateNumber: typing.Optional[str] = None
+    customsContentType: typing.Optional[str] = None
+    importersReference: typing.Optional[PortersReferenceType] = jstruct.JStruct[PortersReferenceType]
+    exportersReference: typing.Optional[PortersReferenceType] = jstruct.JStruct[PortersReferenceType]
+    contents: typing.Optional[typing.List[ContentType]] = jstruct.JList[ContentType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AddressType:
-    streetAddress: Optional[str] = None
-    secondaryAddress: Optional[str] = None
-    city: Optional[str] = None
-    state: Optional[str] = None
-    ZIPCode: Optional[str] = None
-    ZIPPlus4: Optional[str] = None
-    urbanization: Optional[str] = None
-    firstName: Optional[str] = None
-    lastName: Optional[str] = None
-    firm: Optional[str] = None
-    phone: Optional[str] = None
-    email: Optional[str] = None
-    ignoreBadAddress: Optional[bool] = None
-    platformUserId: Optional[str] = None
+    streetAddress: typing.Optional[str] = None
+    secondaryAddress: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    state: typing.Optional[str] = None
+    ZIPCode: typing.Optional[str] = None
+    ZIPPlus4: typing.Optional[str] = None
+    urbanization: typing.Optional[str] = None
+    firstName: typing.Optional[str] = None
+    lastName: typing.Optional[str] = None
+    firm: typing.Optional[str] = None
+    phone: typing.Optional[str] = None
+    email: typing.Optional[str] = None
+    ignoreBadAddress: typing.Optional[bool] = None
+    platformUserId: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ImageInfoType:
-    imageType: Optional[str] = None
-    labelType: Optional[str] = None
-    holdForManifest: Optional[bool] = None
+    imageType: typing.Optional[str] = None
+    labelType: typing.Optional[str] = None
+    holdForManifest: typing.Optional[bool] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CustomerReferenceType:
-    referenceNumber: Optional[str] = None
+    referenceNumber: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DestinationEntryFacilityAddressType:
-    streetAddress: Optional[str] = None
-    secondaryAddress: Optional[str] = None
-    city: Optional[str] = None
-    state: Optional[str] = None
-    ZIPCode: Optional[str] = None
-    ZIPPlus4: Optional[str] = None
-    urbanization: Optional[str] = None
+    streetAddress: typing.Optional[str] = None
+    secondaryAddress: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    state: typing.Optional[str] = None
+    ZIPCode: typing.Optional[str] = None
+    ZIPPlus4: typing.Optional[str] = None
+    urbanization: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class OriginalPackageType:
-    originalTrackingNumber: Optional[str] = None
-    originalConstructCode: Optional[str] = None
+    originalTrackingNumber: typing.Optional[str] = None
+    originalConstructCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PackageOptionsType:
-    packageValue: Optional[int] = None
-    nonDeliveryOption: Optional[str] = None
-    redirectAddress: Optional[AddressType] = JStruct[AddressType]
-    originalPackage: Optional[OriginalPackageType] = JStruct[OriginalPackageType]
-    generateGXEvent: Optional[bool] = None
+    packageValue: typing.Optional[int] = None
+    nonDeliveryOption: typing.Optional[str] = None
+    redirectAddress: typing.Optional[AddressType] = jstruct.JStruct[AddressType]
+    originalPackage: typing.Optional[OriginalPackageType] = jstruct.JStruct[OriginalPackageType]
+    generateGXEvent: typing.Optional[bool] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PackageDescriptionType:
-    weightUOM: Optional[str] = None
-    weight: Optional[int] = None
-    dimensionsUOM: Optional[str] = None
-    length: Optional[int] = None
-    height: Optional[int] = None
-    width: Optional[int] = None
-    girth: Optional[int] = None
-    destinationEntryFacilityAddress: Optional[DestinationEntryFacilityAddressType] = JStruct[DestinationEntryFacilityAddressType]
-    mailClass: Optional[str] = None
-    rateIndicator: Optional[str] = None
-    diameter: Optional[int] = None
-    shape: Optional[str] = None
-    processingCategory: Optional[str] = None
-    destinationEntryFacilityType: Optional[str] = None
-    mailingDate: Optional[str] = None
-    packageOptions: Optional[PackageOptionsType] = JStruct[PackageOptionsType]
-    customerReference: List[CustomerReferenceType] = JList[CustomerReferenceType]
-    extraServices: List[int] = []
+    weightUOM: typing.Optional[str] = None
+    weight: typing.Optional[int] = None
+    dimensionsUOM: typing.Optional[str] = None
+    length: typing.Optional[int] = None
+    height: typing.Optional[int] = None
+    width: typing.Optional[int] = None
+    girth: typing.Optional[int] = None
+    destinationEntryFacilityAddress: typing.Optional[DestinationEntryFacilityAddressType] = jstruct.JStruct[DestinationEntryFacilityAddressType]
+    mailClass: typing.Optional[str] = None
+    rateIndicator: typing.Optional[str] = None
+    diameter: typing.Optional[int] = None
+    shape: typing.Optional[str] = None
+    processingCategory: typing.Optional[str] = None
+    destinationEntryFacilityType: typing.Optional[str] = None
+    mailingDate: typing.Optional[str] = None
+    packageOptions: typing.Optional[PackageOptionsType] = jstruct.JStruct[PackageOptionsType]
+    customerReference: typing.Optional[typing.List[CustomerReferenceType]] = jstruct.JList[CustomerReferenceType]
+    extraServices: typing.Optional[typing.List[int]] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ToAddressType:
-    streetAddress: Optional[str] = None
-    secondaryAddress: Optional[str] = None
-    city: Optional[str] = None
-    postalCode: Optional[str] = None
-    province: Optional[str] = None
-    country: Optional[str] = None
-    countryISOAlpha2Code: Optional[str] = None
-    firstName: Optional[str] = None
-    lastName: Optional[str] = None
-    firm: Optional[str] = None
-    phone: Optional[str] = None
+    streetAddress: typing.Optional[str] = None
+    secondaryAddress: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    postalCode: typing.Optional[str] = None
+    province: typing.Optional[str] = None
+    country: typing.Optional[str] = None
+    countryISOAlpha2Code: typing.Optional[str] = None
+    firstName: typing.Optional[str] = None
+    lastName: typing.Optional[str] = None
+    firm: typing.Optional[str] = None
+    phone: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class LabelRequestType:
-    imageInfo: Optional[ImageInfoType] = JStruct[ImageInfoType]
-    toAddress: Optional[ToAddressType] = JStruct[ToAddressType]
-    fromAddress: Optional[AddressType] = JStruct[AddressType]
-    senderAddress: Optional[AddressType] = JStruct[AddressType]
-    packageDescription: Optional[PackageDescriptionType] = JStruct[PackageDescriptionType]
-    customsForm: Optional[CustomsFormType] = JStruct[CustomsFormType]
+    imageInfo: typing.Optional[ImageInfoType] = jstruct.JStruct[ImageInfoType]
+    toAddress: typing.Optional[ToAddressType] = jstruct.JStruct[ToAddressType]
+    fromAddress: typing.Optional[AddressType] = jstruct.JStruct[AddressType]
+    senderAddress: typing.Optional[AddressType] = jstruct.JStruct[AddressType]
+    packageDescription: typing.Optional[PackageDescriptionType] = jstruct.JStruct[PackageDescriptionType]
+    customsForm: typing.Optional[CustomsFormType] = jstruct.JStruct[CustomsFormType]

@@ -1,8 +1,9 @@
-from attr import s
-from typing import Optional
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class VoidRequestType:
-    shipmentno: Optional[int] = None
-    postalcode: Optional[int] = None
+    shipmentno: typing.Optional[int] = None
+    postalcode: typing.Optional[int] = None

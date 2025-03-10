@@ -1,91 +1,91 @@
-from attr import s
-from typing import Optional, Any, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DestinataireType:
-    nom: Optional[str] = None
-    adresse1: Optional[str] = None
-    adresse2: Optional[str] = None
-    codePostal: Optional[int] = None
-    ville: Optional[str] = None
-    codePays: Optional[str] = None
-    email: Optional[str] = None
-    telFixe: Optional[str] = None
-    indTelMobile: Optional[int] = None
-    telMobile: Optional[str] = None
-    nomContact: Optional[str] = None
-    codePorte: Optional[int] = None
-    codeTiers: Any = None
-    noEntrepositaireAgree: Any = None
-    particulier: Any = None
+    nom: typing.Optional[str] = None
+    adresse1: typing.Optional[str] = None
+    adresse2: typing.Optional[str] = None
+    codePostal: typing.Optional[int] = None
+    ville: typing.Optional[str] = None
+    codePays: typing.Optional[str] = None
+    email: typing.Optional[str] = None
+    telFixe: typing.Optional[str] = None
+    indTelMobile: typing.Optional[int] = None
+    telMobile: typing.Optional[str] = None
+    nomContact: typing.Optional[str] = None
+    codePorte: typing.Optional[int] = None
+    codeTiers: typing.Any = None
+    noEntrepositaireAgree: typing.Any = None
+    particulier: typing.Any = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DocEtiquetteType:
-    nom: Optional[str] = None
-    type: Optional[str] = None
-    contenu: Optional[str] = None
+    nom: typing.Optional[str] = None
+    type: typing.Optional[str] = None
+    contenu: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ListRetoursUMType:
-    numeroUM: Optional[int] = None
-    typeUM: Optional[str] = None
-    referenceUM: Optional[str] = None
-    cabGeodisUM: Optional[str] = None
-    cabGeodisEuropeUM: Optional[str] = None
+    numeroUM: typing.Optional[int] = None
+    typeUM: typing.Optional[str] = None
+    referenceUM: typing.Optional[str] = None
+    cabGeodisUM: typing.Optional[str] = None
+    cabGeodisEuropeUM: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ListRetoursEnvoisType:
-    index: Optional[int] = None
-    horsSite: Optional[bool] = None
-    codeSa: Optional[str] = None
-    codeClient: Optional[int] = None
-    codeProduit: Optional[str] = None
-    reference1: Optional[str] = None
-    reference2: Optional[str] = None
-    dateDepartEnlevement: Optional[str] = None
-    destinataire: Optional[DestinataireType] = JStruct[DestinataireType]
-    noRecepisse: Optional[int] = None
-    noSuivi: Optional[str] = None
-    urlSuiviDestinataire: Optional[str] = None
-    listRetoursUM: List[ListRetoursUMType] = JList[ListRetoursUMType]
-    docEtiquette: Optional[DocEtiquetteType] = JStruct[DocEtiquetteType]
-    docBordereau: Any = None
-    docRecapitulatif: Any = None
-    msgErreurEnregistrement: Any = None
-    msgErreurValidation: Any = None
-    msgErreurSuppression: Any = None
-    msgErreurEtiquette: Any = None
-    msgErreurBordereau: Any = None
-    msgErreurRecapitulatif: Any = None
+    index: typing.Optional[int] = None
+    horsSite: typing.Optional[bool] = None
+    codeSa: typing.Optional[str] = None
+    codeClient: typing.Optional[int] = None
+    codeProduit: typing.Optional[str] = None
+    reference1: typing.Optional[str] = None
+    reference2: typing.Optional[str] = None
+    dateDepartEnlevement: typing.Optional[str] = None
+    destinataire: typing.Optional[DestinataireType] = jstruct.JStruct[DestinataireType]
+    noRecepisse: typing.Optional[int] = None
+    noSuivi: typing.Optional[str] = None
+    urlSuiviDestinataire: typing.Optional[str] = None
+    listRetoursUM: typing.Optional[typing.List[ListRetoursUMType]] = jstruct.JList[ListRetoursUMType]
+    docEtiquette: typing.Optional[DocEtiquetteType] = jstruct.JStruct[DocEtiquetteType]
+    docBordereau: typing.Any = None
+    docRecapitulatif: typing.Any = None
+    msgErreurEnregistrement: typing.Any = None
+    msgErreurValidation: typing.Any = None
+    msgErreurSuppression: typing.Any = None
+    msgErreurEtiquette: typing.Any = None
+    msgErreurBordereau: typing.Any = None
+    msgErreurRecapitulatif: typing.Any = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ContenuType:
-    msgErreur: Any = None
-    nbEnvoisATraiter: Optional[int] = None
-    nbEnvoisEnregistres: Optional[int] = None
-    nbEnvoisValides: Optional[int] = None
-    nbEnvoisEtiquetes: Optional[int] = None
-    nbEnvoisSupprimes: Optional[int] = None
-    nbAnomaliesSuppression: Optional[int] = None
-    nbAnomaliesEtiquette: Optional[int] = None
-    nbAnomaliesBordereau: Optional[int] = None
-    nbAnomaliesRecapitulatif: Optional[int] = None
-    docBordereau: Any = None
-    docRecapitulatif: Any = None
-    msgErreurBordereau: Any = None
-    msgErreurRecapitulatif: Any = None
-    listRetoursEnvois: List[ListRetoursEnvoisType] = JList[ListRetoursEnvoisType]
+    msgErreur: typing.Any = None
+    nbEnvoisATraiter: typing.Optional[int] = None
+    nbEnvoisEnregistres: typing.Optional[int] = None
+    nbEnvoisValides: typing.Optional[int] = None
+    nbEnvoisEtiquetes: typing.Optional[int] = None
+    nbEnvoisSupprimes: typing.Optional[int] = None
+    nbAnomaliesSuppression: typing.Optional[int] = None
+    nbAnomaliesEtiquette: typing.Optional[int] = None
+    nbAnomaliesBordereau: typing.Optional[int] = None
+    nbAnomaliesRecapitulatif: typing.Optional[int] = None
+    docBordereau: typing.Any = None
+    docRecapitulatif: typing.Any = None
+    msgErreurBordereau: typing.Any = None
+    msgErreurRecapitulatif: typing.Any = None
+    listRetoursEnvois: typing.Optional[typing.List[ListRetoursEnvoisType]] = jstruct.JList[ListRetoursEnvoisType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShippingResponseType:
-    ok: Optional[bool] = None
-    codeErreur: Any = None
-    texteErreur: Any = None
-    contenu: Optional[ContenuType] = JStruct[ContenuType]
+    ok: typing.Optional[bool] = None
+    codeErreur: typing.Any = None
+    texteErreur: typing.Any = None
+    contenu: typing.Optional[ContenuType] = jstruct.JStruct[ContenuType]

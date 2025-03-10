@@ -1,113 +1,113 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JList, JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class EventServiceAreaType:
-    code: Optional[str] = None
-    description: Optional[str] = None
+    code: typing.Optional[str] = None
+    description: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class EventType:
-    date: Optional[str] = None
-    time: Optional[str] = None
-    GMTOffset: Optional[str] = None
-    typeCode: Optional[str] = None
-    description: Optional[str] = None
-    serviceArea: List[EventServiceAreaType] = JList[EventServiceAreaType]
-    signedBy: Optional[str] = None
+    date: typing.Optional[str] = None
+    time: typing.Optional[str] = None
+    GMTOffset: typing.Optional[str] = None
+    typeCode: typing.Optional[str] = None
+    description: typing.Optional[str] = None
+    serviceArea: typing.Optional[typing.List[EventServiceAreaType]] = jstruct.JList[EventServiceAreaType]
+    signedBy: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DimensionsType:
-    length: Optional[int] = None
-    width: Optional[int] = None
-    height: Optional[int] = None
+    length: typing.Optional[int] = None
+    width: typing.Optional[int] = None
+    height: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipperReferenceType:
-    value: Optional[str] = None
-    typeCode: Optional[str] = None
+    value: typing.Optional[str] = None
+    typeCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PieceType:
-    number: Optional[int] = None
-    typeCode: Optional[str] = None
-    shipmentTrackingNumber: Optional[str] = None
-    trackingNumber: Optional[str] = None
-    description: Optional[str] = None
-    weight: Optional[float] = None
-    dimensionalWeight: Optional[float] = None
-    actualWeight: Optional[float] = None
-    dimensions: Optional[DimensionsType] = JStruct[DimensionsType]
-    actualDimensions: Optional[DimensionsType] = JStruct[DimensionsType]
-    unitOfMeasurements: Optional[str] = None
-    shipperReferences: List[ShipperReferenceType] = JList[ShipperReferenceType]
-    events: List[EventType] = JList[EventType]
+    number: typing.Optional[int] = None
+    typeCode: typing.Optional[str] = None
+    shipmentTrackingNumber: typing.Optional[str] = None
+    trackingNumber: typing.Optional[str] = None
+    description: typing.Optional[str] = None
+    weight: typing.Optional[float] = None
+    dimensionalWeight: typing.Optional[float] = None
+    actualWeight: typing.Optional[float] = None
+    dimensions: typing.Optional[DimensionsType] = jstruct.JStruct[DimensionsType]
+    actualDimensions: typing.Optional[DimensionsType] = jstruct.JStruct[DimensionsType]
+    unitOfMeasurements: typing.Optional[str] = None
+    shipperReferences: typing.Optional[typing.List[ShipperReferenceType]] = jstruct.JList[ShipperReferenceType]
+    events: typing.Optional[typing.List[EventType]] = jstruct.JList[EventType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PostalAddressType:
-    cityName: Optional[str] = None
-    countyName: Optional[str] = None
-    postalCode: Optional[str] = None
-    provinceCode: Optional[str] = None
-    countryCode: Optional[str] = None
+    cityName: typing.Optional[str] = None
+    countyName: typing.Optional[str] = None
+    postalCode: typing.Optional[str] = None
+    provinceCode: typing.Optional[str] = None
+    countryCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ReceiverDetailsServiceAreaType:
-    code: Optional[str] = None
-    description: Optional[str] = None
-    facilityCode: Optional[str] = None
-    inboundSortCode: Optional[str] = None
+    code: typing.Optional[str] = None
+    description: typing.Optional[str] = None
+    facilityCode: typing.Optional[str] = None
+    inboundSortCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ReceiverDetailsType:
-    name: Optional[str] = None
-    postalAddress: Optional[PostalAddressType] = JStruct[PostalAddressType]
-    serviceArea: List[ReceiverDetailsServiceAreaType] = JList[ReceiverDetailsServiceAreaType]
+    name: typing.Optional[str] = None
+    postalAddress: typing.Optional[PostalAddressType] = jstruct.JStruct[PostalAddressType]
+    serviceArea: typing.Optional[typing.List[ReceiverDetailsServiceAreaType]] = jstruct.JList[ReceiverDetailsServiceAreaType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipperDetailsServiceAreaType:
-    code: Optional[str] = None
-    description: Optional[str] = None
-    outboundSortCode: Optional[str] = None
+    code: typing.Optional[str] = None
+    description: typing.Optional[str] = None
+    outboundSortCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipperDetailsType:
-    name: Optional[str] = None
-    postalAddress: Optional[PostalAddressType] = JStruct[PostalAddressType]
-    serviceArea: List[ShipperDetailsServiceAreaType] = JList[ShipperDetailsServiceAreaType]
+    name: typing.Optional[str] = None
+    postalAddress: typing.Optional[PostalAddressType] = jstruct.JStruct[PostalAddressType]
+    serviceArea: typing.Optional[typing.List[ShipperDetailsServiceAreaType]] = jstruct.JList[ShipperDetailsServiceAreaType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentType:
-    shipmentTrackingNumber: Optional[int] = None
-    status: Optional[str] = None
-    shipmentTimestamp: Optional[str] = None
-    productCode: Optional[str] = None
-    description: Optional[str] = None
-    shipperDetails: Optional[ShipperDetailsType] = JStruct[ShipperDetailsType]
-    receiverDetails: Optional[ReceiverDetailsType] = JStruct[ReceiverDetailsType]
-    totalWeight: Optional[int] = None
-    unitOfMeasurements: Optional[str] = None
-    shipperReferences: List[ShipperReferenceType] = JList[ShipperReferenceType]
-    events: List[EventType] = JList[EventType]
-    numberOfPieces: Optional[int] = None
-    pieces: List[PieceType] = JList[PieceType]
-    estimatedDeliveryDate: Optional[str] = None
-    childrenShipmentIdentificationNumbers: List[int] = []
-    controlledAccessDataCodes: List[str] = []
+    shipmentTrackingNumber: typing.Optional[int] = None
+    status: typing.Optional[str] = None
+    shipmentTimestamp: typing.Optional[str] = None
+    productCode: typing.Optional[str] = None
+    description: typing.Optional[str] = None
+    shipperDetails: typing.Optional[ShipperDetailsType] = jstruct.JStruct[ShipperDetailsType]
+    receiverDetails: typing.Optional[ReceiverDetailsType] = jstruct.JStruct[ReceiverDetailsType]
+    totalWeight: typing.Optional[int] = None
+    unitOfMeasurements: typing.Optional[str] = None
+    shipperReferences: typing.Optional[typing.List[ShipperReferenceType]] = jstruct.JList[ShipperReferenceType]
+    events: typing.Optional[typing.List[EventType]] = jstruct.JList[EventType]
+    numberOfPieces: typing.Optional[int] = None
+    pieces: typing.Optional[typing.List[PieceType]] = jstruct.JList[PieceType]
+    estimatedDeliveryDate: typing.Optional[str] = None
+    childrenShipmentIdentificationNumbers: typing.Optional[typing.List[int]] = None
+    controlledAccessDataCodes: typing.Optional[typing.List[str]] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackingResponseType:
-    shipments: List[ShipmentType] = JList[ShipmentType]
+    shipments: typing.Optional[typing.List[ShipmentType]] = jstruct.JList[ShipmentType]

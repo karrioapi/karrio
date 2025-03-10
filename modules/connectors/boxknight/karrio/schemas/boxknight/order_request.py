@@ -1,57 +1,57 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Address:
-    street: Optional[str] = None
-    unit: Optional[str] = None
-    city: Optional[str] = None
-    province: Optional[str] = None
-    country: Optional[str] = None
-    postalCode: Optional[str] = None
-    isBusinessAddress: Optional[bool] = None
+    street: typing.Optional[str] = None
+    unit: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    province: typing.Optional[str] = None
+    country: typing.Optional[str] = None
+    postalCode: typing.Optional[str] = None
+    isBusinessAddress: typing.Optional[bool] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class SizeOptions:
-    length: Optional[float] = None
-    width: Optional[float] = None
-    height: Optional[float] = None
-    unit: Optional[str] = None
+    length: typing.Optional[float] = None
+    width: typing.Optional[float] = None
+    height: typing.Optional[float] = None
+    unit: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class WeightOptions:
-    weight: Optional[float] = None
-    unit: Optional[str] = None
+    weight: typing.Optional[float] = None
+    unit: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Package:
-    refNumber: Optional[int] = None
-    weightOptions: Optional[WeightOptions] = JStruct[WeightOptions]
-    sizeOptions: Optional[SizeOptions] = JStruct[SizeOptions]
+    refNumber: typing.Optional[int] = None
+    weightOptions: typing.Optional[WeightOptions] = jstruct.JStruct[WeightOptions]
+    sizeOptions: typing.Optional[SizeOptions] = jstruct.JStruct[SizeOptions]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Recipient:
-    name: Optional[str] = None
-    phone: Optional[str] = None
-    notes: Optional[str] = None
-    email: Optional[str] = None
+    name: typing.Optional[str] = None
+    phone: typing.Optional[str] = None
+    notes: typing.Optional[str] = None
+    email: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class OrderRequest:
-    recipient: Optional[Recipient] = JStruct[Recipient]
-    recipientAddress: Optional[Address] = JStruct[Address]
-    originAddress: Optional[Address] = JStruct[Address]
-    packageCount: Optional[int] = None
-    service: Optional[str] = None
-    notes: Optional[str] = None
-    refNumber: Optional[str] = None
-    merchantDisplayName: Optional[str] = None
-    signatureRequired: Optional[bool] = None
-    packages: List[Package] = JList[Package]
+    recipient: typing.Optional[Recipient] = jstruct.JStruct[Recipient]
+    recipientAddress: typing.Optional[Address] = jstruct.JStruct[Address]
+    originAddress: typing.Optional[Address] = jstruct.JStruct[Address]
+    packageCount: typing.Optional[int] = None
+    service: typing.Optional[str] = None
+    notes: typing.Optional[str] = None
+    refNumber: typing.Optional[str] = None
+    merchantDisplayName: typing.Optional[str] = None
+    signatureRequired: typing.Optional[bool] = None
+    packages: typing.Optional[typing.List[Package]] = jstruct.JList[Package]

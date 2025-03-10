@@ -1,22 +1,22 @@
-from attr import s
-from typing import Optional, Any
-from jstruct import JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CourierType:
-    id: Optional[int] = None
-    name: Optional[str] = None
-    phone: Optional[str] = None
+    id: typing.Optional[int] = None
+    name: typing.Optional[str] = None
+    phone: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackingResponseType:
-    reference: Optional[str] = None
-    status: Optional[str] = None
-    statusChangeDateTime: Optional[str] = None
-    purchaseOrderNumber: Optional[str] = None
-    trackinglink: Optional[str] = None
-    proofOfDeliveryPhotoUrl: Any = None
-    signatureUrl: Any = None
-    courier: Optional[CourierType] = JStruct[CourierType]
+    reference: typing.Optional[str] = None
+    status: typing.Optional[str] = None
+    statusChangeDateTime: typing.Optional[str] = None
+    purchaseOrderNumber: typing.Optional[str] = None
+    trackinglink: typing.Optional[str] = None
+    proofOfDeliveryPhotoUrl: typing.Any = None
+    signatureUrl: typing.Any = None
+    courier: typing.Optional[CourierType] = jstruct.JStruct[CourierType]

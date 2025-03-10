@@ -2,6 +2,7 @@ import typer
 import commands.sdk as sdk
 import commands.docs as docs
 import commands.login as login
+import commands.codegen as codegen
 import resources.shipments as shipments
 import resources.orders as orders
 import resources.trackers as trackers
@@ -42,6 +43,12 @@ app.add_typer(
     sdk.app,
     name="sdk",
     help="SDK-related commands.",
+)
+
+app.add_typer(
+    codegen.app,
+    name="codegen",
+    help="Code generation utilities.",
 )
 
 if __name__ == "__main__":

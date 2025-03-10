@@ -1,7 +1,8 @@
-from attr import s
-from typing import List
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PickupResponseType:
-    dispatchConfirmationNumbers: List[str] = []
+    dispatchConfirmationNumbers: typing.Optional[typing.List[str]] = None

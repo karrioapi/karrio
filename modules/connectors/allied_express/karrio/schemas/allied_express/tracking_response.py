@@ -1,33 +1,33 @@
-from attr import s
-from typing import Optional
-from jstruct import JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class StatusBarcodesListType:
-    consignmentNote: Optional[str] = None
-    depotLocation: Optional[str] = None
-    scannedBarcode: Optional[str] = None
-    scannedStatus: Optional[str] = None
-    scannnedTimestamp: Optional[str] = None
+    consignmentNote: typing.Optional[str] = None
+    depotLocation: typing.Optional[str] = None
+    scannedBarcode: typing.Optional[str] = None
+    scannedStatus: typing.Optional[str] = None
+    scannnedTimestamp: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ResultType:
-    statusBarcodesList: Optional[StatusBarcodesListType] = JStruct[StatusBarcodesListType]
+    statusBarcodesList: typing.Optional[StatusBarcodesListType] = jstruct.JStruct[StatusBarcodesListType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Ns1GetShipmentsStatusResponseType:
-    xmlnsns1: Optional[str] = None
-    result: Optional[ResultType] = JStruct[ResultType]
+    xmlnsns1: typing.Optional[str] = None
+    result: typing.Optional[ResultType] = jstruct.JStruct[ResultType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class SoapenvBodyType:
-    ns1getShipmentsStatusResponse: Optional[Ns1GetShipmentsStatusResponseType] = JStruct[Ns1GetShipmentsStatusResponseType]
+    ns1getShipmentsStatusResponse: typing.Optional[Ns1GetShipmentsStatusResponseType] = jstruct.JStruct[Ns1GetShipmentsStatusResponseType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackingResponseType:
-    soapenvBody: Optional[SoapenvBodyType] = JStruct[SoapenvBodyType]
+    soapenvBody: typing.Optional[SoapenvBodyType] = jstruct.JStruct[SoapenvBodyType]

@@ -1,281 +1,281 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JList, JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AccountType:
-    typeCode: Optional[str] = None
-    number: Optional[str] = None
+    typeCode: typing.Optional[str] = None
+    number: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AdditionalChargeType:
-    value: Optional[float] = None
-    caption: Optional[str] = None
-    typeCode: Optional[str] = None
+    value: typing.Optional[float] = None
+    caption: typing.Optional[str] = None
+    typeCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CustomerReferenceType:
-    value: Optional[str] = None
-    typeCode: Optional[str] = None
+    value: typing.Optional[str] = None
+    typeCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DeclarationNoteType:
-    value: Optional[str] = None
+    value: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ExporterType:
-    id: Optional[int] = None
-    code: Optional[str] = None
+    id: typing.Optional[int] = None
+    code: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class IndicativeCustomsValuesType:
-    importCustomsDutyValue: Optional[float] = None
-    importTaxesValue: Optional[float] = None
+    importCustomsDutyValue: typing.Optional[float] = None
+    importTaxesValue: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class InvoiceType:
-    number: Optional[str] = None
-    date: Optional[str] = None
-    instructions: List[str] = []
-    totalNetWeight: Optional[float] = None
-    totalGrossWeight: Optional[float] = None
-    customerReferences: List[CustomerReferenceType] = JList[CustomerReferenceType]
-    termsOfPayment: Optional[str] = None
-    indicativeCustomsValues: Optional[IndicativeCustomsValuesType] = JStruct[IndicativeCustomsValuesType]
-    customerDataTextEntries: List[str] = []
+    number: typing.Optional[str] = None
+    date: typing.Optional[str] = None
+    instructions: typing.Optional[typing.List[str]] = None
+    totalNetWeight: typing.Optional[float] = None
+    totalGrossWeight: typing.Optional[float] = None
+    customerReferences: typing.Optional[typing.List[CustomerReferenceType]] = jstruct.JList[CustomerReferenceType]
+    termsOfPayment: typing.Optional[str] = None
+    indicativeCustomsValues: typing.Optional[IndicativeCustomsValuesType] = jstruct.JStruct[IndicativeCustomsValuesType]
+    customerDataTextEntries: typing.Optional[typing.List[str]] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class QuantityType:
-    value: Optional[int] = None
-    unitOfMeasurement: Optional[str] = None
+    value: typing.Optional[int] = None
+    unitOfMeasurement: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class WeightType:
-    netValue: Optional[float] = None
-    grossValue: Optional[float] = None
+    netValue: typing.Optional[float] = None
+    grossValue: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class LineItemType:
-    number: Optional[int] = None
-    description: Optional[str] = None
-    price: Optional[float] = None
-    quantity: Optional[QuantityType] = JStruct[QuantityType]
-    commodityCodes: List[CustomerReferenceType] = JList[CustomerReferenceType]
-    exportReasonType: Optional[str] = None
-    manufacturerCountry: Optional[str] = None
-    exportControlClassificationNumber: Optional[str] = None
-    weight: Optional[WeightType] = JStruct[WeightType]
-    isTaxesPaid: Optional[bool] = None
-    additionalInformation: List[str] = []
-    customerReferences: List[CustomerReferenceType] = JList[CustomerReferenceType]
-    customsDocuments: List[CustomerReferenceType] = JList[CustomerReferenceType]
+    number: typing.Optional[int] = None
+    description: typing.Optional[str] = None
+    price: typing.Optional[float] = None
+    quantity: typing.Optional[QuantityType] = jstruct.JStruct[QuantityType]
+    commodityCodes: typing.Optional[typing.List[CustomerReferenceType]] = jstruct.JList[CustomerReferenceType]
+    exportReasonType: typing.Optional[str] = None
+    manufacturerCountry: typing.Optional[str] = None
+    exportControlClassificationNumber: typing.Optional[str] = None
+    weight: typing.Optional[WeightType] = jstruct.JStruct[WeightType]
+    isTaxesPaid: typing.Optional[bool] = None
+    additionalInformation: typing.Optional[typing.List[str]] = None
+    customerReferences: typing.Optional[typing.List[CustomerReferenceType]] = jstruct.JList[CustomerReferenceType]
+    customsDocuments: typing.Optional[typing.List[CustomerReferenceType]] = jstruct.JList[CustomerReferenceType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ExportDeclarationType:
-    lineItems: List[LineItemType] = JList[LineItemType]
-    invoice: Optional[InvoiceType] = JStruct[InvoiceType]
-    remarks: List[DeclarationNoteType] = JList[DeclarationNoteType]
-    additionalCharges: List[AdditionalChargeType] = JList[AdditionalChargeType]
-    destinationPortName: Optional[str] = None
-    placeOfIncoterm: Optional[str] = None
-    payerVATNumber: Optional[str] = None
-    recipientReference: Optional[str] = None
-    exporter: Optional[ExporterType] = JStruct[ExporterType]
-    packageMarks: Optional[str] = None
-    declarationNotes: List[DeclarationNoteType] = JList[DeclarationNoteType]
-    exportReference: Optional[str] = None
-    exportReason: Optional[str] = None
-    exportReasonType: Optional[str] = None
-    licenses: List[CustomerReferenceType] = JList[CustomerReferenceType]
-    shipmentType: Optional[str] = None
-    customsDocuments: List[CustomerReferenceType] = JList[CustomerReferenceType]
+    lineItems: typing.Optional[typing.List[LineItemType]] = jstruct.JList[LineItemType]
+    invoice: typing.Optional[InvoiceType] = jstruct.JStruct[InvoiceType]
+    remarks: typing.Optional[typing.List[DeclarationNoteType]] = jstruct.JList[DeclarationNoteType]
+    additionalCharges: typing.Optional[typing.List[AdditionalChargeType]] = jstruct.JList[AdditionalChargeType]
+    destinationPortName: typing.Optional[str] = None
+    placeOfIncoterm: typing.Optional[str] = None
+    payerVATNumber: typing.Optional[str] = None
+    recipientReference: typing.Optional[str] = None
+    exporter: typing.Optional[ExporterType] = jstruct.JStruct[ExporterType]
+    packageMarks: typing.Optional[str] = None
+    declarationNotes: typing.Optional[typing.List[DeclarationNoteType]] = jstruct.JList[DeclarationNoteType]
+    exportReference: typing.Optional[str] = None
+    exportReason: typing.Optional[str] = None
+    exportReasonType: typing.Optional[str] = None
+    licenses: typing.Optional[typing.List[CustomerReferenceType]] = jstruct.JList[CustomerReferenceType]
+    shipmentType: typing.Optional[str] = None
+    customsDocuments: typing.Optional[typing.List[CustomerReferenceType]] = jstruct.JList[CustomerReferenceType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DimensionsType:
-    length: Optional[int] = None
-    width: Optional[int] = None
-    height: Optional[int] = None
+    length: typing.Optional[int] = None
+    width: typing.Optional[int] = None
+    height: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PackageType:
-    typeCode: Optional[str] = None
-    weight: Optional[float] = None
-    dimensions: Optional[DimensionsType] = JStruct[DimensionsType]
-    customerReferences: List[CustomerReferenceType] = JList[CustomerReferenceType]
-    description: Optional[str] = None
-    labelDescription: Optional[str] = None
+    typeCode: typing.Optional[str] = None
+    weight: typing.Optional[float] = None
+    dimensions: typing.Optional[DimensionsType] = jstruct.JStruct[DimensionsType]
+    customerReferences: typing.Optional[typing.List[CustomerReferenceType]] = jstruct.JList[CustomerReferenceType]
+    description: typing.Optional[str] = None
+    labelDescription: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ContentType:
-    packages: List[PackageType] = JList[PackageType]
-    isCustomsDeclarable: Optional[bool] = None
-    declaredValue: Optional[float] = None
-    declaredValueCurrency: Optional[str] = None
-    exportDeclaration: Optional[ExportDeclarationType] = JStruct[ExportDeclarationType]
-    description: Optional[str] = None
-    USFilingTypeValue: Optional[int] = None
-    incoterm: Optional[str] = None
-    unitOfMeasurement: Optional[str] = None
+    packages: typing.Optional[typing.List[PackageType]] = jstruct.JList[PackageType]
+    isCustomsDeclarable: typing.Optional[bool] = None
+    declaredValue: typing.Optional[float] = None
+    declaredValueCurrency: typing.Optional[str] = None
+    exportDeclaration: typing.Optional[ExportDeclarationType] = jstruct.JStruct[ExportDeclarationType]
+    description: typing.Optional[str] = None
+    USFilingTypeValue: typing.Optional[int] = None
+    incoterm: typing.Optional[str] = None
+    unitOfMeasurement: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ContactInformationType:
-    phone: Optional[str] = None
-    mobilePhone: Optional[str] = None
-    companyName: Optional[str] = None
-    fullName: Optional[str] = None
-    email: Optional[str] = None
+    phone: typing.Optional[str] = None
+    mobilePhone: typing.Optional[str] = None
+    companyName: typing.Optional[str] = None
+    fullName: typing.Optional[str] = None
+    email: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PostalAddressType:
-    cityName: Optional[str] = None
-    countryCode: Optional[str] = None
-    postalCode: Optional[str] = None
-    addressLine1: Optional[str] = None
-    addressLine2: Optional[str] = None
-    countyName: Optional[str] = None
-    addressLine3: Optional[str] = None
-    countryName: Optional[str] = None
-    provinceCode: Optional[str] = None
+    cityName: typing.Optional[str] = None
+    countryCode: typing.Optional[str] = None
+    postalCode: typing.Optional[str] = None
+    addressLine1: typing.Optional[str] = None
+    addressLine2: typing.Optional[str] = None
+    countyName: typing.Optional[str] = None
+    addressLine3: typing.Optional[str] = None
+    countryName: typing.Optional[str] = None
+    provinceCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RegistrationNumberType:
-    issuerCountryCode: Optional[str] = None
-    number: Optional[str] = None
-    typeCode: Optional[str] = None
+    issuerCountryCode: typing.Optional[str] = None
+    number: typing.Optional[str] = None
+    typeCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class BuyerDetailsClassType:
-    postalAddress: Optional[PostalAddressType] = JStruct[PostalAddressType]
-    contactInformation: Optional[ContactInformationType] = JStruct[ContactInformationType]
-    registrationNumbers: List[RegistrationNumberType] = JList[RegistrationNumberType]
-    typeCode: Optional[str] = None
+    postalAddress: typing.Optional[PostalAddressType] = jstruct.JStruct[PostalAddressType]
+    contactInformation: typing.Optional[ContactInformationType] = jstruct.JStruct[ContactInformationType]
+    registrationNumbers: typing.Optional[typing.List[RegistrationNumberType]] = jstruct.JList[RegistrationNumberType]
+    typeCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class BankDetailType:
-    name: Optional[str] = None
-    settlementLocalCurrency: Optional[str] = None
-    settlementForeignCurrency: Optional[str] = None
+    name: typing.Optional[str] = None
+    settlementLocalCurrency: typing.Optional[str] = None
+    settlementForeignCurrency: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ReceiverDetailsClassType:
-    postalAddress: Optional[PostalAddressType] = JStruct[PostalAddressType]
-    contactInformation: Optional[ContactInformationType] = JStruct[ContactInformationType]
-    registrationNumbers: List[RegistrationNumberType] = JList[RegistrationNumberType]
-    bankDetails: List[BankDetailType] = JList[BankDetailType]
-    typeCode: Optional[str] = None
+    postalAddress: typing.Optional[PostalAddressType] = jstruct.JStruct[PostalAddressType]
+    contactInformation: typing.Optional[ContactInformationType] = jstruct.JStruct[ContactInformationType]
+    registrationNumbers: typing.Optional[typing.List[RegistrationNumberType]] = jstruct.JList[RegistrationNumberType]
+    bankDetails: typing.Optional[typing.List[BankDetailType]] = jstruct.JList[BankDetailType]
+    typeCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CustomerDetailsType:
-    shipperDetails: Optional[ReceiverDetailsClassType] = JStruct[ReceiverDetailsClassType]
-    receiverDetails: Optional[ReceiverDetailsClassType] = JStruct[ReceiverDetailsClassType]
-    buyerDetails: Optional[BuyerDetailsClassType] = JStruct[BuyerDetailsClassType]
-    importerDetails: Optional[BuyerDetailsClassType] = JStruct[BuyerDetailsClassType]
-    exporterDetails: Optional[BuyerDetailsClassType] = JStruct[BuyerDetailsClassType]
-    sellerDetails: Optional[BuyerDetailsClassType] = JStruct[BuyerDetailsClassType]
+    shipperDetails: typing.Optional[ReceiverDetailsClassType] = jstruct.JStruct[ReceiverDetailsClassType]
+    receiverDetails: typing.Optional[ReceiverDetailsClassType] = jstruct.JStruct[ReceiverDetailsClassType]
+    buyerDetails: typing.Optional[BuyerDetailsClassType] = jstruct.JStruct[BuyerDetailsClassType]
+    importerDetails: typing.Optional[BuyerDetailsClassType] = jstruct.JStruct[BuyerDetailsClassType]
+    exporterDetails: typing.Optional[BuyerDetailsClassType] = jstruct.JStruct[BuyerDetailsClassType]
+    sellerDetails: typing.Optional[BuyerDetailsClassType] = jstruct.JStruct[BuyerDetailsClassType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DocumentImageType:
-    typeCode: Optional[str] = None
-    imageFormat: Optional[str] = None
-    content: Optional[str] = None
+    typeCode: typing.Optional[str] = None
+    imageFormat: typing.Optional[str] = None
+    content: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class EstimatedDeliveryDateType:
-    isRequested: Optional[bool] = None
-    typeCode: Optional[str] = None
+    isRequested: typing.Optional[bool] = None
+    typeCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ImageOptionType:
-    typeCode: Optional[str] = None
-    templateName: Optional[str] = None
-    isRequested: Optional[bool] = None
-    invoiceType: Optional[str] = None
-    languageCode: Optional[str] = None
-    languageCountryCode: Optional[str] = None
-    hideAccountNumber: Optional[bool] = None
-    numberOfCopies: Optional[int] = None
-    renderDHLLogo: Optional[bool] = None
-    fitLabelsToA4: Optional[bool] = None
-    encodingFormat: Optional[str] = None
+    typeCode: typing.Optional[str] = None
+    templateName: typing.Optional[str] = None
+    isRequested: typing.Optional[bool] = None
+    invoiceType: typing.Optional[str] = None
+    languageCode: typing.Optional[str] = None
+    languageCountryCode: typing.Optional[str] = None
+    hideAccountNumber: typing.Optional[bool] = None
+    numberOfCopies: typing.Optional[int] = None
+    renderDHLLogo: typing.Optional[bool] = None
+    fitLabelsToA4: typing.Optional[bool] = None
+    encodingFormat: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class OutputImagePropertiesType:
-    printerDPI: Optional[int] = None
-    encodingFormat: Optional[str] = None
-    imageOptions: List[ImageOptionType] = JList[ImageOptionType]
-    splitTransportAndWaybillDocLabels: Optional[bool] = None
-    allDocumentsInOneImage: Optional[bool] = None
-    splitDocumentsByPages: Optional[bool] = None
-    splitInvoiceAndReceipt: Optional[bool] = None
-    receiptAndLabelsInOneImage: Optional[bool] = None
+    printerDPI: typing.Optional[int] = None
+    encodingFormat: typing.Optional[str] = None
+    imageOptions: typing.Optional[typing.List[ImageOptionType]] = jstruct.JList[ImageOptionType]
+    splitTransportAndWaybillDocLabels: typing.Optional[bool] = None
+    allDocumentsInOneImage: typing.Optional[bool] = None
+    splitDocumentsByPages: typing.Optional[bool] = None
+    splitInvoiceAndReceipt: typing.Optional[bool] = None
+    receiptAndLabelsInOneImage: typing.Optional[bool] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PickupType:
-    isRequested: Optional[bool] = None
-    closeTime: Optional[str] = None
-    location: Optional[str] = None
-    specialInstructions: List[CustomerReferenceType] = JList[CustomerReferenceType]
+    isRequested: typing.Optional[bool] = None
+    closeTime: typing.Optional[str] = None
+    location: typing.Optional[str] = None
+    specialInstructions: typing.Optional[typing.List[CustomerReferenceType]] = jstruct.JList[CustomerReferenceType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentNotificationType:
-    typeCode: Optional[str] = None
-    receiverId: Optional[str] = None
-    languageCode: Optional[str] = None
-    languageCountryCode: Optional[str] = None
-    bespokeMessage: Optional[str] = None
+    typeCode: typing.Optional[str] = None
+    receiverId: typing.Optional[str] = None
+    languageCode: typing.Optional[str] = None
+    languageCountryCode: typing.Optional[str] = None
+    bespokeMessage: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ValueAddedServiceType:
-    serviceCode: Optional[str] = None
-    value: Optional[int] = None
-    currency: Optional[str] = None
-    method: Optional[str] = None
+    serviceCode: typing.Optional[str] = None
+    value: typing.Optional[int] = None
+    currency: typing.Optional[str] = None
+    method: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShippingRequestType:
-    plannedShippingDateAndTime: Optional[str] = None
-    pickup: Optional[PickupType] = JStruct[PickupType]
-    productCode: Optional[str] = None
-    localProductCode: Optional[str] = None
-    getRateEstimates: Optional[bool] = None
-    accounts: List[AccountType] = JList[AccountType]
-    valueAddedServices: List[ValueAddedServiceType] = JList[ValueAddedServiceType]
-    outputImageProperties: Optional[OutputImagePropertiesType] = JStruct[OutputImagePropertiesType]
-    customerDetails: Optional[CustomerDetailsType] = JStruct[CustomerDetailsType]
-    content: Optional[ContentType] = JStruct[ContentType]
-    shipmentNotification: List[ShipmentNotificationType] = JList[ShipmentNotificationType]
-    getTransliteratedResponse: Optional[bool] = None
-    estimatedDeliveryDate: Optional[EstimatedDeliveryDateType] = JStruct[EstimatedDeliveryDateType]
-    getAdditionalInformation: List[EstimatedDeliveryDateType] = JList[EstimatedDeliveryDateType]
-    customerReferences: List[CustomerReferenceType] = JList[CustomerReferenceType]
-    documentImages: List[DocumentImageType] = JList[DocumentImageType]
-    identifiers: List[CustomerReferenceType] = JList[CustomerReferenceType]
+    plannedShippingDateAndTime: typing.Optional[str] = None
+    pickup: typing.Optional[PickupType] = jstruct.JStruct[PickupType]
+    productCode: typing.Optional[str] = None
+    localProductCode: typing.Optional[str] = None
+    getRateEstimates: typing.Optional[bool] = None
+    accounts: typing.Optional[typing.List[AccountType]] = jstruct.JList[AccountType]
+    valueAddedServices: typing.Optional[typing.List[ValueAddedServiceType]] = jstruct.JList[ValueAddedServiceType]
+    outputImageProperties: typing.Optional[OutputImagePropertiesType] = jstruct.JStruct[OutputImagePropertiesType]
+    customerDetails: typing.Optional[CustomerDetailsType] = jstruct.JStruct[CustomerDetailsType]
+    content: typing.Optional[ContentType] = jstruct.JStruct[ContentType]
+    shipmentNotification: typing.Optional[typing.List[ShipmentNotificationType]] = jstruct.JList[ShipmentNotificationType]
+    getTransliteratedResponse: typing.Optional[bool] = None
+    estimatedDeliveryDate: typing.Optional[EstimatedDeliveryDateType] = jstruct.JStruct[EstimatedDeliveryDateType]
+    getAdditionalInformation: typing.Optional[typing.List[EstimatedDeliveryDateType]] = jstruct.JList[EstimatedDeliveryDateType]
+    customerReferences: typing.Optional[typing.List[CustomerReferenceType]] = jstruct.JList[CustomerReferenceType]
+    documentImages: typing.Optional[typing.List[DocumentImageType]] = jstruct.JList[DocumentImageType]
+    identifiers: typing.Optional[typing.List[CustomerReferenceType]] = jstruct.JList[CustomerReferenceType]
