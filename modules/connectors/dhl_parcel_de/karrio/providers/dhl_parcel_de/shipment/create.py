@@ -83,7 +83,9 @@ def shipment_request(
         option_type=provider_units.CustomsOption,
     )
     doc_format, print_format = provider_units.LabelType.map(
-        payload.label_type or "PDF"
+        settings.connection_config.label_type.state or
+        payload.label_type or
+        "PDF"
     ).value
 
     request = dhl_parcel_de.ShippingRequestType(

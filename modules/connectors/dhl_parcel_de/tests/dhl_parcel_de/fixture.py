@@ -8,5 +8,8 @@ gateway = karrio.gateway["dhl_parcel_de"].create(
         customer_number="33333333330102",
         tracking_consumer_key="consumer_key",
         tracking_consumer_secret="consumer_secret",
+        config={
+            "label_type": "ZPL2_910_300_700_oz",
+        },
     )
 )

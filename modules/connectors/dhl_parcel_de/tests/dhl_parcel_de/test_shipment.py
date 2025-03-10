@@ -40,7 +40,7 @@ class TestDPDHLGermanyShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/v2/orders?docFormat=PDF&printFormat=A4&combine=true",
+                f"{gateway.settings.server_url}/v2/orders?docFormat=ZPL2&printFormat=910-300-700-oz&combine=true",
             )
 
     def test_cancel_shipment(self):

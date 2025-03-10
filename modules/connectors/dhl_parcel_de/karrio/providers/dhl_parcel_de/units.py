@@ -50,7 +50,7 @@ class LabelType(lib.Enum):
     PDF_A4 = ("PDF", "A4")
     ZPL2_A4 = ("ZPL2", "A4")
     PDF_910_300_700 = ("PDF", "910-300-700")
-    ZPL2_910_300_700 = ("PDF", "910-300-700")
+    ZPL2_910_300_700 = ("ZPL2", "910-300-700")
     PDF_910_300_700_oz = ("PDF", "910-300-700-oz")
     ZPL2_910_300_700_oz = ("ZPL2", "910-300-700-oz")
     PDF_910_300_710 = ("PDF", "910-300-710")
@@ -81,8 +81,14 @@ class ConnectionConfig(lib.Enum):
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
     language = lib.OptionEnum(
-        "language", lib.units.create_enum("Language", ["de", "en"])
+        "language",
+        lib.units.create_enum("Language", ["de", "en"]),
     )
+    label_type = lib.OptionEnum(
+        "label_type",
+        lib.units.create_enum("LabelType", [_.name for _ in LabelType]),  # type: ignore
+    )
+
 
 
 class ShippingService(lib.Enum):
