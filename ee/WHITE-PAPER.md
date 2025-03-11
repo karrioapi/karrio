@@ -28,11 +28,11 @@ This white paper outlines our journey, the gaps we're addressing in the market, 
   <img alt="Karrio Dashboard" src="../screenshots/scraf.sh-2024.png" width="800" style="max-width: 100%;" />
 </p>
 
-Karrio has demonstrated remarkable growth and adoption since its inception:
+Karrio demonstrated remarkable growth and adoption last year:
 
 ### API Transaction Milestone
 
-We've surpassed **1 million live API transactions** across our core services:
+We've surpassed **1 million live API combined transactions** across our core services:
 
 - Label generation
 - Package tracking
@@ -41,7 +41,7 @@ We've surpassed **1 million live API transactions** across our core services:
 ### Open Source Community Adoption
 
 - **10,000~** OSS downloads
-- Growing community of developers and logistics professionals
+- A growing community of developers and logistics professionals network around the project
 
 These metrics validate our approach and confirm the market need for a modern, developer-first shipping infrastructure. However, our growth has also highlighted challenges that have limited our ability to serve all customer needs at scale.
 
@@ -85,20 +85,20 @@ Karrio Platform represents the next evolution in shipping infrastructure, offeri
 
 Unlike traditional shipping solutions, Karrio offers:
 
-1. **True Multi-Carrier Flexibility**: We're carrier-agnostic, allowing you to use your preferred shipping providers without lock-in
+1. **True Multi-Carrier Flexibility**: A programmable shipping API, allowing you to use your preferred shipping providers without lock-in
 2. **Developer-First Approach**: Modern APIs, and tooling designed for engineers
-3. **Composable Architecture**: Extend and customize Karrio to meet your specific logistics needs
+3. **Composable Architecture**: Extend your platform and customize your usage of Karrio to meet your specific logistics needs
 4. **Transparent Pricing**: Predictable costs without the hidden fees common in shipping platforms
 5. **Open Core Foundation**: Benefit from our open-source roots while gaining enterprise stability
 
 ### Building an Open Logistics Network
 
-Our vision extends beyond shipping APIs to create an ecosystem that connects all aspects of logistics:
+Our vision extends beyond shipping APIs to create an ecosystem that connects all aspects of digitized logistics:
 
 - **Unified Carrier Network**: Access global and regional carriers through a single integration
 - **Developer Tooling**: SDKs, plugins, and integrations that accelerate shipping implementation
 - **Partner Ecosystem**: Technology and service providers that extend Karrio's capabilities
-- **Data Insights**: Analytics and optimization tools to improve shipping performance
+- **Data Insights**: Analytics and optimization tools to improve shipping visibility and performance
 
 ---
 
@@ -125,25 +125,18 @@ Karrio Platform customers gain more than just software—they join a partnership
 
 ## Roadmap: Building the Future of Logistics Infrastructure
 
-### Q3-Q4 2024: Expanding Carrier Network
-
-- Grow from 30+ to **100+ carrier integrations** globally
-- Enhanced carrier connection dashboard with real-time status monitoring
-- Improved carrier onboarding tools and documentation
-
 ### Q1 2025: Logistics Automation Platform
 
 - Shipping rules engine for automated carrier selection
-- Workflow automation tools for complex fulfillment processes
 - Batch processing capabilities for high-volume operations
 - Advanced webhooks and event system for real-time logistics
 
 ### Q2-Q3 2025: Developer Experience Enhancement
 
 - Comprehensive developer portal with interactive documentation
-- Enhanced SDKs in multiple programming languages
 - Integration templates for common e-commerce platforms
 - Extended API capabilities for specialized shipping scenarios
+- Continuous carrier integrations for you or your merchants
 
 ### Q4 2025 and Beyond: Monetization and Analytics
 
@@ -213,4 +206,4 @@ The future of logistics is open, flexible, and developer-friendly. With Karrio P
 
 Whether you're a logistics provider looking to enhance your carrier network, a platform aiming to embed shipping functionality, or an enterprise seeking to streamline shipping operations, Karrio provides the infrastructure you need to succeed.
 
-Contact us today to learn how Karrio Platform can power your shipping innovation.
+Contact us today to learn how **Karrio Platform** can power your shipping innovation.
