@@ -1,31 +1,31 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class SourceType:
-    parameter: Optional[str] = None
-    example: Optional[str] = None
+    parameter: typing.Optional[str] = None
+    example: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ErrorElementType:
-    status: Optional[str] = None
-    code: Optional[str] = None
-    title: Optional[str] = None
-    detail: Optional[str] = None
-    source: Optional[SourceType] = JStruct[SourceType]
+    status: typing.Optional[str] = None
+    code: typing.Optional[str] = None
+    title: typing.Optional[str] = None
+    detail: typing.Optional[str] = None
+    source: typing.Optional[SourceType] = jstruct.JStruct[SourceType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ErrorResponseErrorType:
-    code: Optional[str] = None
-    message: Optional[str] = None
-    errors: List[ErrorElementType] = JList[ErrorElementType]
+    code: typing.Optional[str] = None
+    message: typing.Optional[str] = None
+    errors: typing.Optional[typing.List[ErrorElementType]] = jstruct.JList[ErrorElementType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ErrorResponseType:
-    apiVersion: Optional[str] = None
-    error: Optional[ErrorResponseErrorType] = JStruct[ErrorResponseErrorType]
+    apiVersion: typing.Optional[str] = None
+    error: typing.Optional[ErrorResponseErrorType] = jstruct.JStruct[ErrorResponseErrorType]

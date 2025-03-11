@@ -1,24 +1,24 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AccountType:
-    typeCode: Optional[str] = None
-    number: Optional[int] = None
+    typeCode: typing.Optional[str] = None
+    number: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DocumentImageType:
-    typeCode: Optional[str] = None
-    imageFormat: Optional[str] = None
-    content: Optional[str] = None
+    typeCode: typing.Optional[str] = None
+    imageFormat: typing.Optional[str] = None
+    content: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class UploadRequestType:
-    originalPlannedShippingDate: Optional[str] = None
-    accounts: List[AccountType] = JList[AccountType]
-    productCode: Optional[str] = None
-    documentImages: List[DocumentImageType] = JList[DocumentImageType]
+    originalPlannedShippingDate: typing.Optional[str] = None
+    accounts: typing.Optional[typing.List[AccountType]] = jstruct.JList[AccountType]
+    productCode: typing.Optional[str] = None
+    documentImages: typing.Optional[typing.List[DocumentImageType]] = jstruct.JList[DocumentImageType]

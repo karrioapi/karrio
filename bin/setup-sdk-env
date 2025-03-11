@@ -5,4 +5,4 @@ source "bin/create-new-env"
 
 # Install requirements
 cd "${ROOT}" &&
-pip install -r "${ROOT:?}/requirements.sdk.dev.txt"
+    pip install -r "${ROOT:?}/requirements.sdk.dev.txt"

@@ -12,6 +12,7 @@
     "@rollup/plugin-json": "^6.0.1",
     "eslint": "^8.48.0",
     "prettier": "^3.0.3",
+    "quicktype": "^23.0.171",
     "tsconfig": "*",
     "turbo": "^2.3.3"
   },

@@ -1,8 +1,9 @@
-from attr import s
-from typing import Optional, List
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ManifestRequestType:
-    courier_account_id: Optional[str] = None
-    shipment_ids: List[str] = []
+    courier_account_id: typing.Optional[str] = None
+    shipment_ids: typing.Optional[typing.List[str]] = None

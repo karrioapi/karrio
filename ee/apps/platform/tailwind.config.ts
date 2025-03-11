@@ -93,6 +93,10 @@ const config = {
     },
   },
   plugins: [require("tailwindcss-animate")],
+  safelist: [
+    'touch-auto',
+    'overscroll-x-contain',
+  ],
 } satisfies Config;
 
 export default config;

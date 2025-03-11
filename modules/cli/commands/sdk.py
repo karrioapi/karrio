@@ -367,36 +367,6 @@ def add_features(
     ),
     is_xml_api: typing.Optional[bool] = typer.Option(False, prompt="Is XML API?"),
 ):
-    if not carrier_slug:
-        print("No carrier slug provided")
-        raise typer.Abort()
-
-    typer.confirm(
-        f'Bootstrap features for: "{display_name}" extension with id "{carrier_slug}"',
-        abort=True,
-    )
-
-    _add_features(
-        carrier_slug.lower(),
-        display_name,
-        features,
-        is_xml_api,
-    )
-
-
-@app.command()
-def create_tree(
-    module: str = typer.Option(..., prompt=True),
-    class_name: str = typer.Option(..., prompt=True),
-    module_alias: str = typer.Option("", prompt=False),
-):
-    if not module or not class_name:
-        print("module and class_name are required")
-        raise typer.Abort()
-
-    output = utils.instantiate_class_from_module(
-        module,
-        class_name,
-        module_alias=module_alias,
-    )
-    typer.echo(output)
+    features = features.split(",")
+    features = [feature.strip() for feature in features]
+    _add_features(carrier_slug, display_name, ",".join(features), is_xml_api)

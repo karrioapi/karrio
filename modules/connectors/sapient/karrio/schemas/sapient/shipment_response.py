@@ -1,24 +1,24 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CarrierDetailsType:
-    UniqueId: Optional[str] = None
+    UniqueId: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PackageType:
-    CarrierDetails: Optional[CarrierDetailsType] = JStruct[CarrierDetailsType]
-    ShipmentId: Optional[str] = None
-    PackageOccurrence: Optional[int] = None
-    TrackingNumber: Optional[str] = None
-    CarrierTrackingUrl: Optional[str] = None
+    CarrierDetails: typing.Optional[CarrierDetailsType] = jstruct.JStruct[CarrierDetailsType]
+    ShipmentId: typing.Optional[str] = None
+    PackageOccurrence: typing.Optional[int] = None
+    TrackingNumber: typing.Optional[str] = None
+    CarrierTrackingUrl: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentResponseType:
-    Labels: Optional[str] = None
-    LabelFormat: Optional[str] = None
-    Packages: List[PackageType] = JList[PackageType]
+    Labels: typing.Optional[str] = None
+    LabelFormat: typing.Optional[str] = None
+    Packages: typing.Optional[typing.List[PackageType]] = jstruct.JList[PackageType]

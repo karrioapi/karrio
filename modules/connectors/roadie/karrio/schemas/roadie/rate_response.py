@@ -1,9 +1,10 @@
-from attr import s
-from typing import Optional
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RateResponse:
-    price: Optional[float] = None
-    size: Optional[str] = None
-    estimated_distance: Optional[float] = None
+    price: typing.Optional[float] = None
+    size: typing.Optional[str] = None
+    estimated_distance: typing.Optional[float] = None

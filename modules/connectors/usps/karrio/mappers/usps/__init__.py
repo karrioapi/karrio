@@ -8,6 +8,7 @@ import karrio.providers.usps.utils as utils
 
 
 METADATA = Metadata(
+    status="production-ready",
     id="usps",
     label="USPS",
     # Integrations

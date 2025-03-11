@@ -1,15 +1,15 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Error:
-    code: Optional[str] = None
-    message: Optional[str] = None
-    details: Optional[str] = None
+    code: typing.Optional[str] = None
+    message: typing.Optional[str] = None
+    details: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ErrorResponse:
-    errors: List[Error] = JList[Error]
+    errors: typing.Optional[typing.List[Error]] = jstruct.JList[Error]

@@ -88,5 +88,50 @@
 
 .scrollbar-none::-webkit-scrollbar {
     display: none;
-    /* Chrome, Safari and Opera */
+    /* Chrome, Safari, and Opera */
+}
+
+/* Mobile code container styles - update to match original design with hidden scrollbars */
+.mobile-code-container {
+    @apply w-full overflow-visible;
+}
+
+.mobile-code-container pre {
+    @apply overflow-x-auto overscroll-x-contain touch-auto scrollbar-none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.mobile-code-container pre code {
+    @apply inline-block min-w-full;
+}
+
+@media (max-width: 640px) {
+    .mobile-code-container pre {
+        @apply overflow-y-auto scrollbar-none;
+    }
+}
+
+/* Custom TabsContent styling for code examples */
+[data-orientation="horizontal"]>[role="tabpanel"] {
+    @apply mt-4 space-y-4;
+}
+
+/* Improved touch scrolling for code examples */
+.overflow-auto.touch-auto {
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    overscroll-behavior-y: contain;
+}
+
+/* Custom colors for code sections */
+.code-tabs {
+    background-color: #17142D;
+}
+
+.code-section {
+    background-color: transparent;
+}
+
+.response-section {
+    background-color: #0F0C24;
 }

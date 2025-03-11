@@ -7,6 +7,7 @@ import karrio.providers.australiapost.units as units
 
 
 METADATA = Metadata(
+    status="beta",
     id="australiapost",
     label="Australia Post",
     # Integrations

@@ -1,16 +1,16 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentType:
-    shipment_id: Optional[str] = None
+    shipment_id: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ManifestRequestType:
-    order_reference: Optional[str] = None
-    payment_method: Optional[str] = None
-    consignor: Optional[str] = None
-    shipments: List[ShipmentType] = JList[ShipmentType]
+    order_reference: typing.Optional[str] = None
+    payment_method: typing.Optional[str] = None
+    consignor: typing.Optional[str] = None
+    shipments: typing.Optional[typing.List[ShipmentType]] = jstruct.JList[ShipmentType]

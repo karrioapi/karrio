@@ -46,6 +46,7 @@ References = openapi.OpenApiResponse(
                 "payment_types": {},
                 "carrier_capabilities": {},
                 "service_levels": {},
+                "integration_status": {},
             },
         )
     ],

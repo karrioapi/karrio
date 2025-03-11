@@ -189,6 +189,9 @@ def collect_references() -> dict:
             for key, mapper in PROVIDERS_DATA.items()
             if mapper.get("service_levels") is not None
         },
+        "integration_status": {
+            carrier_name: metadata.status for carrier_name, metadata in PROVIDERS.items()
+        },
     }
 
     return REFERENCES

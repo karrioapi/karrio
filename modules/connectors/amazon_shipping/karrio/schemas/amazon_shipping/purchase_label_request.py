@@ -1,15 +1,15 @@
-from attr import s
-from typing import Optional
-from jstruct import JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class LabelSpecification:
-    labelFormat: Optional[str] = None
-    labelStockSize: Optional[str] = None
+    labelFormat: typing.Optional[str] = None
+    labelStockSize: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PurchaseLabelRequest:
-    labelSpecification: Optional[LabelSpecification] = JStruct[LabelSpecification]
-    rateId: Optional[str] = None
+    labelSpecification: typing.Optional[LabelSpecification] = jstruct.JStruct[LabelSpecification]
+    rateId: typing.Optional[str] = None

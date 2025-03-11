@@ -1,177 +1,177 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AccessPointInformationType:
-    pickupByDate: Optional[int] = None
+    pickupByDate: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AddressType:
-    addressLine1: Optional[str] = None
-    addressLine2: Optional[str] = None
-    addressLine3: Optional[str] = None
-    city: Optional[str] = None
-    stateProvince: Optional[str] = None
-    countryCode: Optional[str] = None
-    postalCode: Optional[str] = None
-    country: Optional[str] = None
+    addressLine1: typing.Optional[str] = None
+    addressLine2: typing.Optional[str] = None
+    addressLine3: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    stateProvince: typing.Optional[str] = None
+    countryCode: typing.Optional[str] = None
+    postalCode: typing.Optional[str] = None
+    country: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class LocationType:
-    address: Optional[AddressType] = JStruct[AddressType]
-    slic: Optional[str] = None
+    address: typing.Optional[AddressType] = jstruct.JStruct[AddressType]
+    slic: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class StatusType:
-    type: Optional[str] = None
-    description: Optional[str] = None
-    code: Optional[str] = None
-    statusCode: Optional[str] = None
-    simplifiedTextDescription: Optional[str] = None
+    type: typing.Optional[str] = None
+    description: typing.Optional[str] = None
+    code: typing.Optional[str] = None
+    statusCode: typing.Optional[str] = None
+    simplifiedTextDescription: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ActivityType:
-    location: Optional[LocationType] = JStruct[LocationType]
-    status: Optional[StatusType] = JStruct[StatusType]
-    date: Optional[int] = None
-    time: Optional[int] = None
+    location: typing.Optional[LocationType] = jstruct.JStruct[LocationType]
+    status: typing.Optional[StatusType] = jstruct.JStruct[StatusType]
+    date: typing.Optional[int] = None
+    time: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class NumberType:
-    number: Optional[str] = None
-    type: Optional[str] = None
+    number: typing.Optional[str] = None
+    type: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DeliveryDateType:
-    type: Optional[str] = None
-    date: Optional[int] = None
+    type: typing.Optional[str] = None
+    date: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DeliveryPhotoType:
-    isNonPostalCodeCountry: Optional[bool] = None
-    photo: Optional[str] = None
-    photoCaptureInd: Optional[str] = None
-    photoDispositionCode: Optional[str] = None
+    isNonPostalCodeCountry: typing.Optional[bool] = None
+    photo: typing.Optional[str] = None
+    photoCaptureInd: typing.Optional[str] = None
+    photoDispositionCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class SignatureType:
-    image: Optional[str] = None
+    image: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DeliveryInformationType:
-    location: Optional[str] = None
-    receivedBy: Optional[int] = None
-    signature: Optional[SignatureType] = JStruct[SignatureType]
-    deliveryPhoto: Optional[DeliveryPhotoType] = JStruct[DeliveryPhotoType]
+    location: typing.Optional[str] = None
+    receivedBy: typing.Optional[int] = None
+    signature: typing.Optional[SignatureType] = jstruct.JStruct[SignatureType]
+    deliveryPhoto: typing.Optional[DeliveryPhotoType] = jstruct.JStruct[DeliveryPhotoType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DeliveryTimeType:
-    type: Optional[str] = None
-    endTime: Optional[int] = None
-    startTime: Optional[int] = None
+    type: typing.Optional[str] = None
+    endTime: typing.Optional[int] = None
+    startTime: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class SubMilestoneType:
-    category: Optional[str] = None
+    category: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class MilestoneType:
-    category: Optional[str] = None
-    code: Optional[str] = None
-    current: Optional[bool] = None
-    description: Optional[str] = None
-    linkedActivity: Optional[str] = None
-    state: Optional[str] = None
-    subMilestone: Optional[SubMilestoneType] = JStruct[SubMilestoneType]
+    category: typing.Optional[str] = None
+    code: typing.Optional[str] = None
+    current: typing.Optional[bool] = None
+    description: typing.Optional[str] = None
+    linkedActivity: typing.Optional[str] = None
+    state: typing.Optional[str] = None
+    subMilestone: typing.Optional[SubMilestoneType] = jstruct.JStruct[SubMilestoneType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PackageAddressType:
-    address: Optional[AddressType] = JStruct[AddressType]
-    attentionName: Optional[str] = None
-    name: Optional[str] = None
-    type: Optional[str] = None
+    address: typing.Optional[AddressType] = jstruct.JStruct[AddressType]
+    attentionName: typing.Optional[str] = None
+    name: typing.Optional[str] = None
+    type: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PaymentInformationType:
-    amount: Optional[str] = None
-    currency: Optional[str] = None
-    id: Optional[str] = None
-    paid: Optional[bool] = None
-    paymentMethod: Optional[str] = None
-    type: Optional[str] = None
+    amount: typing.Optional[str] = None
+    currency: typing.Optional[str] = None
+    id: typing.Optional[str] = None
+    paid: typing.Optional[bool] = None
+    paymentMethod: typing.Optional[str] = None
+    type: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ServiceType:
-    code: Optional[str] = None
-    description: Optional[str] = None
+    code: typing.Optional[str] = None
+    description: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class WeightType:
-    unitOfMeasurement: Optional[str] = None
-    weight: Optional[str] = None
+    unitOfMeasurement: typing.Optional[str] = None
+    weight: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PackageType:
-    accessPointInformation: Optional[AccessPointInformationType] = JStruct[AccessPointInformationType]
-    trackingNumber: Optional[str] = None
-    activity: List[ActivityType] = JList[ActivityType]
-    additionalAttributes: List[str] = []
-    additionalServices: List[str] = []
-    alternateTrackingNumber: List[NumberType] = JList[NumberType]
-    currentStatus: Optional[StatusType] = JStruct[StatusType]
-    deliveryDate: List[DeliveryDateType] = JList[DeliveryDateType]
-    deliveryInformation: Optional[DeliveryInformationType] = JStruct[DeliveryInformationType]
-    deliveryTime: Optional[DeliveryTimeType] = JStruct[DeliveryTimeType]
-    milestones: List[MilestoneType] = JList[MilestoneType]
-    packageAddress: List[PackageAddressType] = JList[PackageAddressType]
-    packageCount: Optional[int] = None
-    paymentInformation: Optional[PaymentInformationType] = JStruct[PaymentInformationType]
-    referenceNumber: List[NumberType] = JList[NumberType]
-    service: Optional[ServiceType] = JStruct[ServiceType]
-    statusCode: Optional[str] = None
-    statusDescription: Optional[str] = None
-    suppressionIndicators: List[str] = []
-    weight: Optional[WeightType] = JStruct[WeightType]
+    accessPointInformation: typing.Optional[AccessPointInformationType] = jstruct.JStruct[AccessPointInformationType]
+    trackingNumber: typing.Optional[str] = None
+    activity: typing.Optional[typing.List[ActivityType]] = jstruct.JList[ActivityType]
+    additionalAttributes: typing.Optional[typing.List[str]] = None
+    additionalServices: typing.Optional[typing.List[str]] = None
+    alternateTrackingNumber: typing.Optional[typing.List[NumberType]] = jstruct.JList[NumberType]
+    currentStatus: typing.Optional[StatusType] = jstruct.JStruct[StatusType]
+    deliveryDate: typing.Optional[typing.List[DeliveryDateType]] = jstruct.JList[DeliveryDateType]
+    deliveryInformation: typing.Optional[DeliveryInformationType] = jstruct.JStruct[DeliveryInformationType]
+    deliveryTime: typing.Optional[DeliveryTimeType] = jstruct.JStruct[DeliveryTimeType]
+    milestones: typing.Optional[typing.List[MilestoneType]] = jstruct.JList[MilestoneType]
+    packageAddress: typing.Optional[typing.List[PackageAddressType]] = jstruct.JList[PackageAddressType]
+    packageCount: typing.Optional[int] = None
+    paymentInformation: typing.Optional[PaymentInformationType] = jstruct.JStruct[PaymentInformationType]
+    referenceNumber: typing.Optional[typing.List[NumberType]] = jstruct.JList[NumberType]
+    service: typing.Optional[ServiceType] = jstruct.JStruct[ServiceType]
+    statusCode: typing.Optional[str] = None
+    statusDescription: typing.Optional[str] = None
+    suppressionIndicators: typing.Optional[typing.List[str]] = None
+    weight: typing.Optional[WeightType] = jstruct.JStruct[WeightType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class WarningType:
-    code: Optional[int] = None
-    message: Optional[str] = None
+    code: typing.Optional[int] = None
+    message: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentType:
-    inquiryNumber: Optional[str] = None
-    package: List[PackageType] = JList[PackageType]
-    userRelation: List[str] = []
-    warnings: List[WarningType] = JList[WarningType]
+    inquiryNumber: typing.Optional[str] = None
+    package: typing.Optional[typing.List[PackageType]] = jstruct.JList[PackageType]
+    userRelation: typing.Optional[typing.List[str]] = None
+    warnings: typing.Optional[typing.List[WarningType]] = jstruct.JList[WarningType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackResponseType:
-    shipment: List[ShipmentType] = JList[ShipmentType]
+    shipment: typing.Optional[typing.List[ShipmentType]] = jstruct.JList[ShipmentType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackingResponseType:
-    trackResponse: Optional[TrackResponseType] = JStruct[TrackResponseType]
+    trackResponse: typing.Optional[TrackResponseType] = jstruct.JStruct[TrackResponseType]

@@ -1,8 +1,9 @@
-from attr import s
-from typing import Optional
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PickupResponseType:
-    CollectionOrderId: Optional[str] = None
-    CollectionDate: Optional[str] = None
+    CollectionOrderId: typing.Optional[str] = None
+    CollectionDate: typing.Optional[str] = None

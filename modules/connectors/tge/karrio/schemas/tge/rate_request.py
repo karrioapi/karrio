@@ -1,122 +1,122 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class HeaderType:
-    MessageVersion: Optional[str] = None
-    MessageIdentifier: Optional[str] = None
-    CreateTimestamp: Optional[str] = None
-    DocumentType: Optional[str] = None
-    Environment: Optional[str] = None
-    SourceSystemCode: Optional[str] = None
-    MessageSender: Optional[str] = None
-    MessageReceiver: Optional[str] = None
+    MessageVersion: typing.Optional[str] = None
+    MessageIdentifier: typing.Optional[str] = None
+    CreateTimestamp: typing.Optional[str] = None
+    DocumentType: typing.Optional[str] = None
+    Environment: typing.Optional[str] = None
+    SourceSystemCode: typing.Optional[str] = None
+    MessageSender: typing.Optional[str] = None
+    MessageReceiver: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class BillToPartyType:
-    AccountCode: Optional[int] = None
+    AccountCode: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PhysicalAddressType:
-    Suburb: Optional[str] = None
-    StateCode: Optional[str] = None
-    PostalCode: Optional[int] = None
-    CountryCode: Optional[str] = None
+    Suburb: typing.Optional[str] = None
+    StateCode: typing.Optional[str] = None
+    PostalCode: typing.Optional[int] = None
+    CountryCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ConsignPartyType:
-    PhysicalAddress: Optional[PhysicalAddressType] = JStruct[PhysicalAddressType]
+    PhysicalAddress: typing.Optional[PhysicalAddressType] = jstruct.JStruct[PhysicalAddressType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ExtraServicesAmountType:
-    Currency: Optional[str] = None
-    Value: Optional[float] = None
+    Currency: typing.Optional[str] = None
+    Value: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentFinancialsType:
-    ExtraServicesAmount: Optional[ExtraServicesAmountType] = JStruct[ExtraServicesAmountType]
+    ExtraServicesAmount: typing.Optional[ExtraServicesAmountType] = jstruct.JStruct[ExtraServicesAmountType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentFlagsType:
-    ExtraServiceFlag: Optional[bool] = None
+    ExtraServiceFlag: typing.Optional[bool] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CommodityType:
-    CommodityCode: Optional[str] = None
-    CommodityDescription: Optional[str] = None
+    CommodityCode: typing.Optional[str] = None
+    CommodityDescription: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DimensionsType:
-    Width: Optional[int] = None
-    Length: Optional[int] = None
-    Height: Optional[int] = None
-    Volume: Optional[float] = None
-    Weight: Optional[float] = None
+    Width: typing.Optional[int] = None
+    Length: typing.Optional[int] = None
+    Height: typing.Optional[int] = None
+    Volume: typing.Optional[str] = None
+    Weight: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentItemTotalsType:
-    ShipmentItemCount: Optional[int] = None
+    ShipmentItemCount: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentItemType:
-    Commodity: Optional[CommodityType] = JStruct[CommodityType]
-    ShipmentItemTotals: Optional[ShipmentItemTotalsType] = JStruct[ShipmentItemTotalsType]
-    Dimensions: Optional[DimensionsType] = JStruct[DimensionsType]
+    Commodity: typing.Optional[CommodityType] = jstruct.JStruct[CommodityType]
+    ShipmentItemTotals: typing.Optional[ShipmentItemTotalsType] = jstruct.JStruct[ShipmentItemTotalsType]
+    Dimensions: typing.Optional[DimensionsType] = jstruct.JStruct[DimensionsType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentItemsType:
-    ShipmentItem: List[ShipmentItemType] = JList[ShipmentItemType]
+    ShipmentItem: typing.Optional[typing.List[ShipmentItemType]] = jstruct.JList[ShipmentItemType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentServiceType:
-    ServiceCode: Optional[str] = None
-    ShipmentProductCode: Optional[str] = None
+    ServiceCode: typing.Optional[str] = None
+    ShipmentProductCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class SystemFieldsType:
-    PickupDateTime: Optional[str] = None
+    PickupDateTime: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RequestType:
-    BusinessID: Optional[str] = None
-    SystemFields: Optional[SystemFieldsType] = JStruct[SystemFieldsType]
-    ShipmentService: Optional[ShipmentServiceType] = JStruct[ShipmentServiceType]
-    ShipmentFlags: Optional[ShipmentFlagsType] = JStruct[ShipmentFlagsType]
-    ShipmentFinancials: Optional[ShipmentFinancialsType] = JStruct[ShipmentFinancialsType]
-    FreightMode: Optional[str] = None
-    BillToParty: Optional[BillToPartyType] = JStruct[BillToPartyType]
-    ConsignorParty: Optional[ConsignPartyType] = JStruct[ConsignPartyType]
-    ConsigneeParty: Optional[ConsignPartyType] = JStruct[ConsignPartyType]
-    ShipmentItems: Optional[ShipmentItemsType] = JStruct[ShipmentItemsType]
+    BusinessID: typing.Optional[str] = None
+    SystemFields: typing.Optional[SystemFieldsType] = jstruct.JStruct[SystemFieldsType]
+    ShipmentService: typing.Optional[ShipmentServiceType] = jstruct.JStruct[ShipmentServiceType]
+    ShipmentFlags: typing.Optional[ShipmentFlagsType] = jstruct.JStruct[ShipmentFlagsType]
+    ShipmentFinancials: typing.Optional[ShipmentFinancialsType] = jstruct.JStruct[ShipmentFinancialsType]
+    FreightMode: typing.Optional[str] = None
+    BillToParty: typing.Optional[BillToPartyType] = jstruct.JStruct[BillToPartyType]
+    ConsignorParty: typing.Optional[ConsignPartyType] = jstruct.JStruct[ConsignPartyType]
+    ConsigneeParty: typing.Optional[ConsignPartyType] = jstruct.JStruct[ConsignPartyType]
+    ShipmentItems: typing.Optional[ShipmentItemsType] = jstruct.JStruct[ShipmentItemsType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RateEnquiryType:
-    Request: Optional[RequestType] = JStruct[RequestType]
+    Request: typing.Optional[RequestType] = jstruct.JStruct[RequestType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TollMessageType:
-    Header: Optional[HeaderType] = JStruct[HeaderType]
-    RateEnquiry: Optional[RateEnquiryType] = JStruct[RateEnquiryType]
+    Header: typing.Optional[HeaderType] = jstruct.JStruct[HeaderType]
+    RateEnquiry: typing.Optional[RateEnquiryType] = jstruct.JStruct[RateEnquiryType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RateRequestType:
-    TollMessage: Optional[TollMessageType] = JStruct[TollMessageType]
+    TollMessage: typing.Optional[TollMessageType] = jstruct.JStruct[TollMessageType]

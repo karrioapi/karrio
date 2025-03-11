@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run Tests
         run: |
-          ./bin/setup-sdk-env &&
+          ./bin/setup-sdk-env -v &&
           ./bin/run-sdk-typecheck &&
           ./bin/run-sdk-tests
 
@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run Tests
         run: |
-          ./bin/setup-server-env &&
+          ./bin/setup-server-env -v &&
           ./bin/migrate &&
           ./bin/run-server-tests
 

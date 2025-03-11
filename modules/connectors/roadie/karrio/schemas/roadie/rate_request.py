@@ -1,41 +1,41 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DeliverBetween:
-    start: Optional[str] = None
-    end: Optional[str] = None
+    start: typing.Optional[str] = None
+    end: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Address:
-    street1: Optional[str] = None
-    city: Optional[str] = None
-    state: Optional[str] = None
-    zip: Optional[int] = None
+    street1: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    state: typing.Optional[str] = None
+    zip: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Location:
-    address: Optional[Address] = JStruct[Address]
+    address: typing.Optional[Address] = jstruct.JStruct[Address]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Item:
-    length: Optional[float] = None
-    width: Optional[float] = None
-    height: Optional[float] = None
-    weight: Optional[float] = None
-    quantity: Optional[int] = None
-    value: Optional[float] = None
+    length: typing.Optional[float] = None
+    width: typing.Optional[float] = None
+    height: typing.Optional[float] = None
+    weight: typing.Optional[float] = None
+    quantity: typing.Optional[int] = None
+    value: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RateRequest:
-    items: List[Item] = JList[Item]
-    pickup_location: Optional[Location] = JStruct[Location]
-    delivery_location: Optional[Location] = JStruct[Location]
-    pickup_after: Optional[str] = None
-    deliver_between: Optional[DeliverBetween] = JStruct[DeliverBetween]
+    items: typing.Optional[typing.List[Item]] = jstruct.JList[Item]
+    pickup_location: typing.Optional[Location] = jstruct.JStruct[Location]
+    delivery_location: typing.Optional[Location] = jstruct.JStruct[Location]
+    pickup_after: typing.Optional[str] = None
+    deliver_between: typing.Optional[DeliverBetween] = jstruct.JStruct[DeliverBetween]

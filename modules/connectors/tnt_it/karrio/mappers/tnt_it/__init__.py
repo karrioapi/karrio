@@ -8,6 +8,7 @@ import karrio.providers.tnt_it.utils as utils
 
 
 METADATA = Metadata(
+    status="beta",
     id="tnt_it",
     label="TNT Connect Italy",
     # Integrations

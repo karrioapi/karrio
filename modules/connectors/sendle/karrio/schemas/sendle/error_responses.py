@@ -1,9 +1,15 @@
-from attr import s
-from typing import Any, Union, Optional
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
+class MessagesClassType:
+    pass
+
+
+@attr.s(auto_attribs=True)
 class ErrorResponseType:
-    messages: Union[dict, Any, str] = None
-    error: Optional[str] = None
-    error_description: Optional[str] = None
+    messages: typing.Optional[typing.Union[MessagesClassType, str]] = None
+    error: typing.Optional[str] = None
+    error_description: typing.Optional[str] = None

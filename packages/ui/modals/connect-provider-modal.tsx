@@ -28,7 +28,7 @@ import { CountryInput } from "../forms/country-input";
 import { useAppMode } from "@karrio/hooks/app-mode";
 import { Disclosure } from "@headlessui/react";
 import { Loading } from "../components/loader";
-import { CheckBoxField } from "../components";
+import { CheckBoxField, IntegrationStatusBadge } from "../components";
 import { useLocation } from "@karrio/hooks/location";
 
 type CarrierNameType = CarrierNameEnum | NoneEnum;
@@ -78,6 +78,7 @@ export const ConnectProviderModal = ({
       connection_fields,
       service_names,
       option_names,
+      integration_status,
     },
   } = useAPIMetadata();
   const { testMode } = useAppMode();
@@ -105,7 +106,7 @@ export const ConnectProviderModal = ({
     const connection = operation.connection || DEFAULT_STATE();
     const connection_carrier: CarrierNameType =
       connection.carrier_name === NoneEnum.none ||
-      Object.values(CarrierNameEnum).includes(connection.carrier_name as any)
+        Object.values(CarrierNameEnum).includes(connection.carrier_name as any)
         ? (connection.carrier_name as CarrierNameEnum)
         : CarrierNameEnum.generic;
     setCarrierName(connection_carrier);
@@ -275,7 +276,14 @@ export const ConnectProviderModal = ({
 
             {carrier_name !== NoneEnum.none && !!connection_configs && (
               <>
-                <hr />
+                {/* Integration status */}
+                <div className="mt-2 mb-0">
+                  <p className="flex items-center gap-2 is-size-7 has-text-weight-bold has-text-grey">
+                    Integration status: <IntegrationStatusBadge status={integration_status?.[carrier_name as any] || 'in-development'} showPrefix={false} />
+                  </p>
+                </div>
+
+                <hr className="mt-2 mb-4" />
 
                 {field("display_name") && (
                   <InputField
@@ -494,77 +502,77 @@ export const ConnectProviderModal = ({
 
                             {"brand_color" in
                               connection_configs[carrier_name.toString()] && (
-                              <InputField
-                                value={payload.config?.brand_color || ""}
-                                type="color"
-                                name="brand_color"
-                                label="Brand color"
-                                onChange={handleNestedChange("config")}
-                                wrapperClass="column is-6 pt-1"
-                                fieldClass="mb-0"
-                                className="is-small is-fullwidth"
-                              />
-                            )}
+                                <InputField
+                                  value={payload.config?.brand_color || ""}
+                                  type="color"
+                                  name="brand_color"
+                                  label="Brand color"
+                                  onChange={handleNestedChange("config")}
+                                  wrapperClass="column is-6 pt-1"
+                                  fieldClass="mb-0"
+                                  className="is-small is-fullwidth"
+                                />
+                              )}
 
                             {"text_color" in
                               connection_configs[carrier_name.toString()] && (
-                              <InputField
-                                value={payload.config?.text_color || ""}
-                                type="color"
-                                name="text_color"
-                                label="Text color"
-                                onChange={handleNestedChange("config")}
-                                wrapperClass="column is-6 pt-1"
-                                fieldClass="mb-0"
-                                className="is-small is-fullwidth"
-                              />
-                            )}
+                                <InputField
+                                  value={payload.config?.text_color || ""}
+                                  type="color"
+                                  name="text_color"
+                                  label="Text color"
+                                  onChange={handleNestedChange("config")}
+                                  wrapperClass="column is-6 pt-1"
+                                  fieldClass="mb-0"
+                                  className="is-small is-fullwidth"
+                                />
+                              )}
 
                             {"shipping_services" in
                               connection_configs[carrier_name.toString()] && (
-                              <SelectField
-                                defaultValue={payload.config?.shipping_services}
-                                name="shipping_services"
-                                label="Preferred shipping services"
-                                className="is-small is-multiple is-fullwidth"
-                                wrapperClass="column is-12 pt-1"
-                                fieldClass="mb-0"
-                                onChange={handleNestedChange("config")}
-                                size={6}
-                                multiple
-                              >
-                                {Object.entries(
-                                  service_names[carrier_name.toString()] || {},
-                                ).map(([_, __]) => (
-                                  <option key={_} value={_}>
-                                    {__}
-                                  </option>
-                                ))}
-                              </SelectField>
-                            )}
+                                <SelectField
+                                  defaultValue={payload.config?.shipping_services}
+                                  name="shipping_services"
+                                  label="Preferred shipping services"
+                                  className="is-small is-multiple is-fullwidth"
+                                  wrapperClass="column is-12 pt-1"
+                                  fieldClass="mb-0"
+                                  onChange={handleNestedChange("config")}
+                                  size={6}
+                                  multiple
+                                >
+                                  {Object.entries(
+                                    service_names[carrier_name.toString()] || {},
+                                  ).map(([_, __]) => (
+                                    <option key={_} value={_}>
+                                      {__}
+                                    </option>
+                                  ))}
+                                </SelectField>
+                              )}
 
                             {"shipping_options" in
                               connection_configs[carrier_name.toString()] && (
-                              <SelectField
-                                defaultValue={payload.config?.shipping_options}
-                                name="shipping_options"
-                                label={`Enable carrier specific shipping options`}
-                                className="is-small is-multiple is-fullwidth"
-                                wrapperClass="column is-12 pt-1"
-                                fieldClass="mb-0"
-                                onChange={handleNestedChange("config")}
-                                size={6}
-                                multiple
-                              >
-                                {Object.entries(
-                                  option_names[carrier_name.toString()] || {},
-                                ).map(([_, __]) => (
-                                  <option key={_} value={_}>
-                                    {__}
-                                  </option>
-                                ))}
-                              </SelectField>
-                            )}
+                                <SelectField
+                                  defaultValue={payload.config?.shipping_options}
+                                  name="shipping_options"
+                                  label={`Enable carrier specific shipping options`}
+                                  className="is-small is-multiple is-fullwidth"
+                                  wrapperClass="column is-12 pt-1"
+                                  fieldClass="mb-0"
+                                  onChange={handleNestedChange("config")}
+                                  size={6}
+                                  multiple
+                                >
+                                  {Object.entries(
+                                    option_names[carrier_name.toString()] || {},
+                                  ).map(([_, __]) => (
+                                    <option key={_} value={_}>
+                                      {__}
+                                    </option>
+                                  ))}
+                                </SelectField>
+                              )}
                           </Disclosure.Panel>
                         </div>
                       )}

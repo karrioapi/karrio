@@ -6,7 +6,6 @@ from karrio.core.models import (
     TrackingRequest,
     Message,
 )
-import karrio.lib as lib
 from karrio.providers.royalmail.utils import Settings
 from karrio.providers.royalmail.error import parse_error_response
 import karrio.lib as lib
@@ -19,7 +18,7 @@ def parse_tracking_response(
     response = _response.deserialize()
     errors = [e for e in response if "mailPieces" not in e]
     details = [
-        _extract_detail(lib.to_object(MailPieces, d["mailPieces"]), settings)
+        _extract_detail(d["mailPieces"], settings)
         for d in response
         if "mailPieces" in d
     ]
@@ -27,12 +26,14 @@ def parse_tracking_response(
     return details, parse_error_response(errors, settings)
 
 
-def _extract_detail(detail: MailPieces, settings: Settings) -> TrackingDetails:
+def _extract_detail(data: dict, settings: Settings) -> TrackingDetails:
+    detail = lib.to_object(MailPieces, data)
+
     return TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=detail.mailPieceId,
-        delivered=("Delivered" in detail.summary.get("lastEventName")),
+        delivered=("Delivered" in detail.summary.lastEventName),
         events=[
             TrackingEvent(
                 date=lib.fdate(event.eventDateTime, "%Y-%m-%dT%H:%M:%S%z"),
@@ -43,7 +44,7 @@ def _extract_detail(detail: MailPieces, settings: Settings) -> TrackingDetails:
             )
             for event in detail.events
         ],
-        estimated_delivery=lib.fdate(detail.estimatedDelivery.get("date"), "%Y-%m-%d"),
+        estimated_delivery=lib.fdate(detail.estimatedDelivery.date, "%Y-%m-%d"),
     )
 
 

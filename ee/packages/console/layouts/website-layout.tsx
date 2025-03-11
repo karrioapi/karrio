@@ -1,4 +1,5 @@
-import { UseCasesDropdown } from "@karrio/console/components/use-cases-dropdown";
+import { PlatformSubnav } from "@karrio/console/components/platform-subnav";
+import { MobileMenu } from "@karrio/console/components/mobile-menu";
 import { Button } from "@karrio/insiders/components/ui/button";
 import { auth } from "@karrio/console/apis/auth";
 import { Github } from "lucide-react";
@@ -16,19 +17,22 @@ export async function WebsiteLayout({
     <div className="min-h-screen bg-[#0f0826] text-white overflow-x-hidden">
       {/* Header */}
       <header className="py-6 border-b border-white/10">
-        <div className="container mx-auto px-4 max-w-[95%] xl:max-w-[1280px]">
+        <div className="container mx-auto px-0 sm:px-4 md:px-6 max-w-[95%] xl:max-w-[1280px]">
           <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-12">
-              <Link href="/" className="flex items-center">
+            <div className="flex items-center space-x-0">
+              <MobileMenu />
+
+              <Link href="/" className="flex items-center mr-4">
                 <Image
                   src="/logo.svg"
                   alt="Karrio Logo"
                   width={120}
                   height={30}
+                  style={{ height: 'auto' }}
                   priority
                 />
               </Link>
-              <div className="hidden md:flex space-x-8">
+              <div className="hidden md:flex space-x-6 ml-12 pl-4">
                 <Link
                   href="https://docs.karrio.io"
                   className="text-white/80 hover:text-white transition-colors"
@@ -47,9 +51,8 @@ export async function WebsiteLayout({
                 >
                   Carriers
                 </Link>
-                <UseCasesDropdown />
                 <Link
-                  href="https://docs.karrio.io/platform"
+                  href="/"
                   className="text-white/80 hover:text-white transition-colors"
                 >
                   Platform
@@ -72,6 +75,9 @@ export async function WebsiteLayout({
           </div>
         </div>
       </header>
+
+      {/* Platform Subnav */}
+      <PlatformSubnav />
 
       {/* Main Content */}
       <main>

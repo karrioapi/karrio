@@ -3,19 +3,17 @@ LIB_MODULES=./karrio/schemas/sendle
 find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
 touch "${LIB_MODULES}/__init__.py"
 
-quicktype () {
+generate_schema() {
     echo "Generating $1..."
-    docker run -it --rm --name quicktype -v $PWD:/app -e SCHEMAS=/app/schemas -e LIB_MODULES=/app/karrio/schemas/sendle \
-    karrio/tools /quicktype/script/quicktype --no-uuids --no-date-times --no-enums --src-lang json --lang jstruct \
-    --all-properties-optional --type-as-suffix $@
+    "${ROOT}/bin/cli" codegen generate "$1" "$2"
 }
 
-quicktype --src="${SCHEMAS}/cancel_request.json" --out="${LIB_MODULES}/cancel_request.py"
-quicktype --src="${SCHEMAS}/cancel_response.json" --out="${LIB_MODULES}/cancel_response.py"
-quicktype --src="${SCHEMAS}/error_responses.json" --out="${LIB_MODULES}/error_responses.py"
-quicktype --src="${SCHEMAS}/order_request.json" --out="${LIB_MODULES}/order_request.py"
-quicktype --src="${SCHEMAS}/order_response.json" --out="${LIB_MODULES}/order_response.py"
-quicktype --src="${SCHEMAS}/product_request.json" --out="${LIB_MODULES}/product_request.py"
-quicktype --src="${SCHEMAS}/product_response.json" --out="${LIB_MODULES}/product_response.py"
-quicktype --src="${SCHEMAS}/tracking_request.json" --out="${LIB_MODULES}/tracking_request.py"
-quicktype --src="${SCHEMAS}/tracking_response.json" --out="${LIB_MODULES}/tracking_response.py"
+generate_schema "${SCHEMAS}/cancel_request.json" "${LIB_MODULES}/cancel_request.py"
+generate_schema "${SCHEMAS}/cancel_response.json" "${LIB_MODULES}/cancel_response.py"
+generate_schema "${SCHEMAS}/error_responses.json" "${LIB_MODULES}/error_responses.py"
+generate_schema "${SCHEMAS}/order_request.json" "${LIB_MODULES}/order_request.py"
+generate_schema "${SCHEMAS}/order_response.json" "${LIB_MODULES}/order_response.py"
+generate_schema "${SCHEMAS}/product_request.json" "${LIB_MODULES}/product_request.py"
+generate_schema "${SCHEMAS}/product_response.json" "${LIB_MODULES}/product_response.py"
+generate_schema "${SCHEMAS}/tracking_request.json" "${LIB_MODULES}/tracking_request.py"
+generate_schema "${SCHEMAS}/tracking_response.json" "${LIB_MODULES}/tracking_response.py"

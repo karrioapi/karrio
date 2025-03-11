@@ -14,7 +14,7 @@ setup(
     author_email="hello@karrio.io",
     license="Apache-2.0",
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
-    install_requires=["karrio.server.core"],
+    install_requires=["karrio_server_core"],
     classifiers=[
         "Programming Language :: Python :: 3",
     ],

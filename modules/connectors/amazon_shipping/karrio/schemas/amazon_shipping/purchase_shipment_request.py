@@ -1,78 +1,78 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Dimensions:
-    height: Optional[float] = None
-    length: Optional[float] = None
-    unit: Optional[str] = None
-    width: Optional[float] = None
+    height: typing.Optional[float] = None
+    length: typing.Optional[float] = None
+    unit: typing.Optional[str] = None
+    width: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Value:
-    unit: Optional[str] = None
-    value: Optional[float] = None
+    unit: typing.Optional[str] = None
+    value: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Unit:
-    value: Optional[str] = None
+    value: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class UnitWeight:
-    unit: Optional[Unit] = JStruct[Unit]
-    value: Optional[Unit] = JStruct[Unit]
+    unit: typing.Optional[Unit] = jstruct.JStruct[Unit]
+    value: typing.Optional[Unit] = jstruct.JStruct[Unit]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Item:
-    quantity: Optional[float] = None
-    title: Optional[str] = None
-    unitPrice: Optional[Value] = JStruct[Value]
-    unitWeight: Optional[UnitWeight] = JStruct[UnitWeight]
+    quantity: typing.Optional[float] = None
+    title: typing.Optional[str] = None
+    unitPrice: typing.Optional[Value] = jstruct.JStruct[Value]
+    unitWeight: typing.Optional[UnitWeight] = jstruct.JStruct[UnitWeight]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Container:
-    containerReferenceId: Optional[str] = None
-    dimensions: Optional[Dimensions] = JStruct[Dimensions]
-    items: List[Item] = JList[Item]
-    value: Optional[Value] = JStruct[Value]
-    weight: Optional[Value] = JStruct[Value]
-    containerType: Optional[str] = None
+    containerReferenceId: typing.Optional[str] = None
+    dimensions: typing.Optional[Dimensions] = jstruct.JStruct[Dimensions]
+    items: typing.Optional[typing.List[Item]] = jstruct.JList[Item]
+    value: typing.Optional[Value] = jstruct.JStruct[Value]
+    weight: typing.Optional[Value] = jstruct.JStruct[Value]
+    containerType: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class LabelSpecification:
-    labelFormat: Optional[str] = None
-    labelStockSize: Optional[str] = None
+    labelFormat: typing.Optional[str] = None
+    labelStockSize: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Ship:
-    addressLine1: Optional[str] = None
-    city: Optional[str] = None
-    countryCode: Optional[str] = None
-    name: Optional[str] = None
-    postalCode: Optional[str] = None
-    stateOrRegion: Optional[str] = None
-    addressLine2: Optional[str] = None
-    addressLine3: Optional[str] = None
-    email: Optional[str] = None
-    copyEmails: List[str] = []
-    phoneNumber: Optional[str] = None
+    addressLine1: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    countryCode: typing.Optional[str] = None
+    name: typing.Optional[str] = None
+    postalCode: typing.Optional[str] = None
+    stateOrRegion: typing.Optional[str] = None
+    addressLine2: typing.Optional[str] = None
+    addressLine3: typing.Optional[str] = None
+    email: typing.Optional[str] = None
+    copyEmails: typing.Optional[typing.List[str]] = None
+    phoneNumber: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PurchaseShipmentRequest:
-    clientReferenceId: Optional[str] = None
-    containers: List[Container] = JList[Container]
-    labelSpecification: Optional[LabelSpecification] = JStruct[LabelSpecification]
-    serviceType: Optional[str] = None
-    shipFrom: Optional[Ship] = JStruct[Ship]
-    shipTo: Optional[Ship] = JStruct[Ship]
-    shipDate: Optional[str] = None
+    clientReferenceId: typing.Optional[str] = None
+    containers: typing.Optional[typing.List[Container]] = jstruct.JList[Container]
+    labelSpecification: typing.Optional[LabelSpecification] = jstruct.JStruct[LabelSpecification]
+    serviceType: typing.Optional[str] = None
+    shipFrom: typing.Optional[Ship] = jstruct.JStruct[Ship]
+    shipTo: typing.Optional[Ship] = jstruct.JStruct[Ship]
+    shipDate: typing.Optional[str] = None

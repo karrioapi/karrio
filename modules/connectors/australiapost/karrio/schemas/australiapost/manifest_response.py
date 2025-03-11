@@ -1,94 +1,94 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShippingMethodsType:
-    the_3_h03: Optional[int] = None
+    the_3_h03: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackingSummaryType:
-    sealed: Optional[int] = None
+    sealed: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class OrderSummaryType:
-    total_cost: Optional[float] = None
-    total_cost_ex_gst: Optional[float] = None
-    total_gst: Optional[float] = None
-    status: Optional[str] = None
-    tracking_summary: Optional[TrackingSummaryType] = JStruct[TrackingSummaryType]
-    number_of_shipments: Optional[int] = None
-    number_of_items: Optional[int] = None
-    dangerous_goods_included: Optional[bool] = None
-    total_weight: Optional[float] = None
-    shipping_methods: Optional[ShippingMethodsType] = JStruct[ShippingMethodsType]
+    total_cost: typing.Optional[float] = None
+    total_cost_ex_gst: typing.Optional[float] = None
+    total_gst: typing.Optional[float] = None
+    status: typing.Optional[str] = None
+    tracking_summary: typing.Optional[TrackingSummaryType] = jstruct.JStruct[TrackingSummaryType]
+    number_of_shipments: typing.Optional[int] = None
+    number_of_items: typing.Optional[int] = None
+    dangerous_goods_included: typing.Optional[bool] = None
+    total_weight: typing.Optional[float] = None
+    shipping_methods: typing.Optional[ShippingMethodsType] = jstruct.JStruct[ShippingMethodsType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ItemSummaryType:
-    total_cost: Optional[float] = None
-    total_cost_ex_gst: Optional[float] = None
-    total_gst: Optional[float] = None
-    status: Optional[str] = None
+    total_cost: typing.Optional[float] = None
+    total_cost_ex_gst: typing.Optional[float] = None
+    total_gst: typing.Optional[float] = None
+    status: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackingDetailsType:
-    article_id: Optional[str] = None
-    consignment_id: Optional[str] = None
-    barcode_id: Optional[str] = None
+    article_id: typing.Optional[str] = None
+    consignment_id: typing.Optional[str] = None
+    barcode_id: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ItemType:
-    weight: Optional[float] = None
-    authority_to_leave: Optional[bool] = None
-    safe_drop_enabled: Optional[bool] = None
-    allow_partial_delivery: Optional[bool] = None
-    item_id: Optional[str] = None
-    item_reference: Optional[str] = None
-    tracking_details: Optional[TrackingDetailsType] = JStruct[TrackingDetailsType]
-    product_id: Optional[str] = None
-    item_summary: Optional[ItemSummaryType] = JStruct[ItemSummaryType]
+    weight: typing.Optional[float] = None
+    authority_to_leave: typing.Optional[bool] = None
+    safe_drop_enabled: typing.Optional[bool] = None
+    allow_partial_delivery: typing.Optional[bool] = None
+    item_id: typing.Optional[str] = None
+    item_reference: typing.Optional[str] = None
+    tracking_details: typing.Optional[TrackingDetailsType] = jstruct.JStruct[TrackingDetailsType]
+    product_id: typing.Optional[str] = None
+    item_summary: typing.Optional[ItemSummaryType] = jstruct.JStruct[ItemSummaryType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentSummaryType:
-    total_cost: Optional[float] = None
-    total_cost_ex_gst: Optional[float] = None
-    fuel_surcharge: Optional[float] = None
-    total_gst: Optional[float] = None
-    status: Optional[str] = None
-    tracking_summary: Optional[TrackingSummaryType] = JStruct[TrackingSummaryType]
-    number_of_items: Optional[int] = None
+    total_cost: typing.Optional[float] = None
+    total_cost_ex_gst: typing.Optional[float] = None
+    fuel_surcharge: typing.Optional[float] = None
+    total_gst: typing.Optional[float] = None
+    status: typing.Optional[str] = None
+    tracking_summary: typing.Optional[TrackingSummaryType] = jstruct.JStruct[TrackingSummaryType]
+    number_of_items: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentType:
-    shipment_id: Optional[str] = None
-    shipment_reference: Optional[str] = None
-    shipment_creation_date: Optional[str] = None
-    email_tracking_enabled: Optional[bool] = None
-    items: List[ItemType] = JList[ItemType]
-    shipment_summary: Optional[ShipmentSummaryType] = JStruct[ShipmentSummaryType]
-    movement_type: Optional[str] = None
-    charge_to_account: Optional[str] = None
-    shipment_modified_date: Optional[str] = None
+    shipment_id: typing.Optional[str] = None
+    shipment_reference: typing.Optional[str] = None
+    shipment_creation_date: typing.Optional[str] = None
+    email_tracking_enabled: typing.Optional[bool] = None
+    items: typing.Optional[typing.List[ItemType]] = jstruct.JList[ItemType]
+    shipment_summary: typing.Optional[ShipmentSummaryType] = jstruct.JStruct[ShipmentSummaryType]
+    movement_type: typing.Optional[str] = None
+    charge_to_account: typing.Optional[str] = None
+    shipment_modified_date: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class OrderType:
-    order_id: Optional[str] = None
-    order_reference: Optional[str] = None
-    order_creation_date: Optional[str] = None
-    order_summary: Optional[OrderSummaryType] = JStruct[OrderSummaryType]
-    shipments: List[ShipmentType] = JList[ShipmentType]
-    payment_method: Optional[str] = None
+    order_id: typing.Optional[str] = None
+    order_reference: typing.Optional[str] = None
+    order_creation_date: typing.Optional[str] = None
+    order_summary: typing.Optional[OrderSummaryType] = jstruct.JStruct[OrderSummaryType]
+    shipments: typing.Optional[typing.List[ShipmentType]] = jstruct.JList[ShipmentType]
+    payment_method: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ManifestResponseType:
-    order: Optional[OrderType] = JStruct[OrderType]
+    order: typing.Optional[OrderType] = jstruct.JStruct[OrderType]

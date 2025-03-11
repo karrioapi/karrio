@@ -1,19 +1,19 @@
-from attr import s
-from typing import Optional
-from jstruct import JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class MetaType:
-    request_id: Optional[str] = None
+    request_id: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class SuccessType:
-    message: Optional[str] = None
+    message: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentCancelResponseType:
-    meta: Optional[MetaType] = JStruct[MetaType]
-    success: Optional[SuccessType] = JStruct[SuccessType]
+    meta: typing.Optional[MetaType] = jstruct.JStruct[MetaType]
+    success: typing.Optional[SuccessType] = jstruct.JStruct[SuccessType]

@@ -1,9 +1,10 @@
-from attr import s
-from typing import Optional
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PickupRequestType:
-    SlotReservationId: Optional[str] = None
-    SlotDate: Optional[str] = None
-    BringMyLabel: Optional[bool] = None
+    SlotReservationId: typing.Optional[str] = None
+    SlotDate: typing.Optional[str] = None
+    BringMyLabel: typing.Optional[bool] = None

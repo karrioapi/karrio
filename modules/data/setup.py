@@ -15,9 +15,9 @@ setup(
     license="Apache-2.0",
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
     install_requires=[
-        "karrio.server.core",
-        "karrio.server.events",
-        "karrio.server.manager",
+        "karrio_server_core",
+        "karrio_server_events",
+        "karrio_server_manager",
         "django-import-export",
     ],
     classifiers=[

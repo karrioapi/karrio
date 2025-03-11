@@ -1,10 +1,11 @@
-from attr import s
-from typing import Optional
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShippingResponseType:
-    reference: Optional[str] = None
-    price: Optional[float] = None
-    trackinglink: Optional[str] = None
-    trackingCode: Optional[str] = None
+    reference: typing.Optional[str] = None
+    price: typing.Optional[float] = None
+    trackinglink: typing.Optional[str] = None
+    trackingCode: typing.Optional[str] = None

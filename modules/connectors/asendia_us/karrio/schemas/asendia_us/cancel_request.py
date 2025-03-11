@@ -1,9 +1,10 @@
-from attr import s
-from typing import Optional
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CancelRequestType:
-    accountNumber: Optional[str] = None
-    subAccountNumber: Optional[str] = None
-    packageID: Optional[str] = None
+    accountNumber: typing.Optional[str] = None
+    subAccountNumber: typing.Optional[str] = None
+    packageID: typing.Optional[str] = None

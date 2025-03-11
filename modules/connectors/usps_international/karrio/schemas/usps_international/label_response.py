@@ -1,64 +1,64 @@
-from attr import s
-from typing import Optional, List, Any
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CommitmentType:
-    name: Optional[str] = None
-    scheduleDeliveryDate: Optional[str] = None
+    name: typing.Optional[str] = None
+    scheduleDeliveryDate: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ExtraServiceType:
-    serviceID: Optional[str] = None
-    serviceName: Optional[str] = None
-    name: Optional[str] = None
-    price: Optional[float] = None
-    SKU: Optional[str] = None
+    serviceID: typing.Optional[str] = None
+    serviceName: typing.Optional[str] = None
+    name: typing.Optional[str] = None
+    price: typing.Optional[float] = None
+    SKU: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class LabelAddressType:
-    streetAddress: Optional[str] = None
-    streetAddressAbbreviation: Optional[str] = None
-    secondaryAddress: Optional[str] = None
-    cityAbbreviation: Optional[str] = None
-    city: Optional[str] = None
-    postalCode: Optional[str] = None
-    province: Optional[str] = None
-    country: Optional[str] = None
-    countryISOAlpha2Code: Optional[str] = None
-    firstName: Optional[str] = None
-    lastName: Optional[str] = None
-    firm: Optional[str] = None
-    phone: Optional[str] = None
-    ignoreBadAddress: Optional[bool] = None
+    streetAddress: typing.Optional[str] = None
+    streetAddressAbbreviation: typing.Optional[str] = None
+    secondaryAddress: typing.Optional[str] = None
+    cityAbbreviation: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    postalCode: typing.Optional[str] = None
+    province: typing.Optional[str] = None
+    country: typing.Optional[str] = None
+    countryISOAlpha2Code: typing.Optional[str] = None
+    firstName: typing.Optional[str] = None
+    lastName: typing.Optional[str] = None
+    firm: typing.Optional[str] = None
+    phone: typing.Optional[str] = None
+    ignoreBadAddress: typing.Optional[bool] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class LabelMetadataType:
-    labelAddress: Optional[LabelAddressType] = JStruct[LabelAddressType]
-    routingInformation: Optional[int] = None
-    trackingNumber: Optional[str] = None
-    constructCode: Optional[str] = None
-    SKU: Optional[str] = None
-    postage: Optional[float] = None
-    extraServices: List[ExtraServiceType] = JList[ExtraServiceType]
-    internationalPriceGroup: Optional[str] = None
-    zone: Optional[str] = None
-    commitment: Optional[CommitmentType] = JStruct[CommitmentType]
-    weightUOM: Optional[str] = None
-    weight: Optional[float] = None
-    dimensionalWeight: Optional[float] = None
-    fees: List[Any] = []
-    labelBrokerID: Optional[str] = None
-    bannerText: Optional[str] = None
-    retailDistributionCode: Optional[str] = None
-    serviceTypeCode: Optional[int] = None
+    labelAddress: typing.Optional[LabelAddressType] = jstruct.JStruct[LabelAddressType]
+    routingInformation: typing.Optional[int] = None
+    trackingNumber: typing.Optional[str] = None
+    constructCode: typing.Optional[str] = None
+    SKU: typing.Optional[str] = None
+    postage: typing.Optional[float] = None
+    extraServices: typing.Optional[typing.List[ExtraServiceType]] = jstruct.JList[ExtraServiceType]
+    internationalPriceGroup: typing.Optional[str] = None
+    zone: typing.Optional[str] = None
+    commitment: typing.Optional[CommitmentType] = jstruct.JStruct[CommitmentType]
+    weightUOM: typing.Optional[str] = None
+    weight: typing.Optional[float] = None
+    dimensionalWeight: typing.Optional[float] = None
+    fees: typing.Optional[typing.List[typing.Any]] = None
+    labelBrokerID: typing.Optional[str] = None
+    bannerText: typing.Optional[str] = None
+    retailDistributionCode: typing.Optional[str] = None
+    serviceTypeCode: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class LabelResponseType:
-    labelMetadata: Optional[LabelMetadataType] = JStruct[LabelMetadataType]
-    labelImage: Optional[str] = None
+    labelMetadata: typing.Optional[LabelMetadataType] = jstruct.JStruct[LabelMetadataType]
+    labelImage: typing.Optional[str] = None

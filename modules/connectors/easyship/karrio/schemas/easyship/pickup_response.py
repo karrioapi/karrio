@@ -1,85 +1,85 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class MetaType:
-    available_balance: Optional[int] = None
-    easyship_shipment_ids: List[str] = []
-    request_id: Optional[str] = None
+    available_balance: typing.Optional[int] = None
+    easyship_shipment_ids: typing.Optional[typing.List[str]] = None
+    request_id: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DefaultForType:
-    billing: Optional[bool] = None
-    pickup: Optional[bool] = None
-    default_for_return: Optional[bool] = None
-    sender: Optional[bool] = None
+    billing: typing.Optional[bool] = None
+    pickup: typing.Optional[bool] = None
+    default_for_return: typing.Optional[bool] = None
+    sender: typing.Optional[bool] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class HkDistrictType:
-    area: Optional[str] = None
-    district: Optional[str] = None
-    id: Optional[int] = None
-    zone: Optional[str] = None
+    area: typing.Optional[str] = None
+    district: typing.Optional[str] = None
+    id: typing.Optional[int] = None
+    zone: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ComparisonType:
-    changes: Optional[str] = None
-    post: Optional[str] = None
-    pre: Optional[str] = None
+    changes: typing.Optional[str] = None
+    post: typing.Optional[str] = None
+    pre: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ValidationType:
-    detail: Optional[str] = None
-    status: Optional[str] = None
-    comparison: Optional[ComparisonType] = JStruct[ComparisonType]
+    detail: typing.Optional[str] = None
+    status: typing.Optional[str] = None
+    comparison: typing.Optional[ComparisonType] = jstruct.JStruct[ComparisonType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AddressType:
-    city: Optional[str] = None
-    company_name: Optional[str] = None
-    contact_email: Optional[str] = None
-    contact_name: Optional[str] = None
-    contact_phone: Optional[str] = None
-    country_alpha2: Optional[str] = None
-    default_for: Optional[DefaultForType] = JStruct[DefaultForType]
-    hk_district: Optional[HkDistrictType] = JStruct[HkDistrictType]
-    id: Optional[str] = None
-    line_1: Optional[str] = None
-    line_2: Optional[str] = None
-    postal_code: Optional[str] = None
-    state: Optional[str] = None
-    validation: Optional[ValidationType] = JStruct[ValidationType]
+    city: typing.Optional[str] = None
+    company_name: typing.Optional[str] = None
+    contact_email: typing.Optional[str] = None
+    contact_name: typing.Optional[str] = None
+    contact_phone: typing.Optional[str] = None
+    country_alpha2: typing.Optional[str] = None
+    default_for: typing.Optional[DefaultForType] = jstruct.JStruct[DefaultForType]
+    hk_district: typing.Optional[HkDistrictType] = jstruct.JStruct[HkDistrictType]
+    id: typing.Optional[str] = None
+    line_1: typing.Optional[str] = None
+    line_2: typing.Optional[str] = None
+    postal_code: typing.Optional[str] = None
+    state: typing.Optional[str] = None
+    validation: typing.Optional[ValidationType] = jstruct.JStruct[ValidationType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CourierType:
-    id: Optional[str] = None
-    name: Optional[str] = None
+    id: typing.Optional[str] = None
+    name: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PickupType:
-    address: Optional[AddressType] = JStruct[AddressType]
-    courier: Optional[CourierType] = JStruct[CourierType]
-    easyship_pickup_id: Optional[str] = None
-    pickup_fee: Optional[int] = None
-    pickup_reference_number: Optional[str] = None
-    pickup_state: Optional[str] = None
-    provider_name: Optional[str] = None
-    selected_from_time: Optional[str] = None
-    selected_to_time: Optional[str] = None
-    shipments_count: Optional[int] = None
-    total_actual_weight: Optional[float] = None
+    address: typing.Optional[AddressType] = jstruct.JStruct[AddressType]
+    courier: typing.Optional[CourierType] = jstruct.JStruct[CourierType]
+    easyship_pickup_id: typing.Optional[str] = None
+    pickup_fee: typing.Optional[int] = None
+    pickup_reference_number: typing.Optional[str] = None
+    pickup_state: typing.Optional[str] = None
+    provider_name: typing.Optional[str] = None
+    selected_from_time: typing.Optional[str] = None
+    selected_to_time: typing.Optional[str] = None
+    shipments_count: typing.Optional[int] = None
+    total_actual_weight: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PickupResponseType:
-    meta: Optional[MetaType] = JStruct[MetaType]
-    pickup: Optional[PickupType] = JStruct[PickupType]
+    meta: typing.Optional[MetaType] = jstruct.JStruct[MetaType]
+    pickup: typing.Optional[PickupType] = jstruct.JStruct[PickupType]

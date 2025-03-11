@@ -1,33 +1,33 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TransactionReferenceType:
-    CustomerContext: Optional[str] = None
+    CustomerContext: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RequestType:
-    TransactionReference: Optional[TransactionReferenceType] = JStruct[TransactionReferenceType]
+    TransactionReference: typing.Optional[TransactionReferenceType] = jstruct.JStruct[TransactionReferenceType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class UserCreatedFormType:
-    UserCreatedFormFileName: Optional[str] = None
-    UserCreatedFormFileFormat: Optional[str] = None
-    UserCreatedFormDocumentType: Optional[str] = None
-    UserCreatedFormFile: Optional[str] = None
+    UserCreatedFormFileName: typing.Optional[str] = None
+    UserCreatedFormFileFormat: typing.Optional[str] = None
+    UserCreatedFormDocumentType: typing.Optional[str] = None
+    UserCreatedFormFile: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class UploadRequestType:
-    Request: Optional[RequestType] = JStruct[RequestType]
-    ShipperNumber: Optional[str] = None
-    UserCreatedForm: List[UserCreatedFormType] = JList[UserCreatedFormType]
+    Request: typing.Optional[RequestType] = jstruct.JStruct[RequestType]
+    ShipperNumber: typing.Optional[str] = None
+    UserCreatedForm: typing.Optional[typing.List[UserCreatedFormType]] = jstruct.JList[UserCreatedFormType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DocumentUploadRequestType:
-    UploadRequest: Optional[UploadRequestType] = JStruct[UploadRequestType]
+    UploadRequest: typing.Optional[UploadRequestType] = jstruct.JStruct[UploadRequestType]

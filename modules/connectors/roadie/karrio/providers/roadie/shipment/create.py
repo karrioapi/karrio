@@ -137,7 +137,7 @@ def shipment_request(
             roadie.Options(
                 signature_required=options.roadie_signature_required.state,
                 notifications_enabled=options.roadie_notifications_enabled.state,
-                over_21_required=options.roadie_over_21_required.state,
+                over_21__required=options.roadie_over_21_required.state,
                 extra_compensation=options.roadie_extra_compensation.state,
                 trailer_required=options.roadie_trailer_required.state,
             )
@@ -154,4 +154,11 @@ def shipment_request(
         ),
     )
 
-    return lib.Serializable(request, lib.to_dict)
+    return lib.Serializable(
+        request,
+        lambda _: lib.to_dict(
+            lib
+            .to_json(_)
+            .replace("over_21__required", "over_21_required")
+        ),
+    )

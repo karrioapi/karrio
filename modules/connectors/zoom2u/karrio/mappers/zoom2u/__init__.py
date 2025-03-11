@@ -7,6 +7,7 @@ import karrio.providers.zoom2u.units as units
 
 
 METADATA = Metadata(
+    status="beta",
     id="zoom2u",
     label="Zoom2u",
     # Integrations

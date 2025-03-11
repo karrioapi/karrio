@@ -1,14 +1,14 @@
-from attr import s
-from typing import Optional
-from jstruct import JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Rate:
-    id: Optional[str] = None
+    id: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentPurchase:
-    insurance: Optional[float] = None
-    rate: Optional[Rate] = JStruct[Rate]
+    insurance: typing.Optional[float] = None
+    rate: typing.Optional[Rate] = jstruct.JStruct[Rate]

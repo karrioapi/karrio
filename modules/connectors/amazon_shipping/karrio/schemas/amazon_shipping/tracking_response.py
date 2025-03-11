@@ -1,31 +1,31 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Location:
-    city: Optional[str] = None
-    countryCode: Optional[str] = None
-    stateOrRegion: Optional[str] = None
-    postalCode: Optional[int] = None
+    city: typing.Optional[str] = None
+    countryCode: typing.Optional[str] = None
+    stateOrRegion: typing.Optional[str] = None
+    postalCode: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class EventHistory:
-    eventCode: Optional[str] = None
-    location: Optional[Location] = JStruct[Location]
-    eventTime: Optional[str] = None
+    eventCode: typing.Optional[str] = None
+    location: typing.Optional[Location] = jstruct.JStruct[Location]
+    eventTime: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Summary:
-    status: Optional[str] = None
+    status: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackingResponse:
-    trackingId: Optional[str] = None
-    eventHistory: List[EventHistory] = JList[EventHistory]
-    promisedDeliveryDate: Optional[str] = None
-    summary: Optional[Summary] = JStruct[Summary]
+    trackingId: typing.Optional[str] = None
+    eventHistory: typing.Optional[typing.List[EventHistory]] = jstruct.JList[EventHistory]
+    promisedDeliveryDate: typing.Optional[str] = None
+    summary: typing.Optional[Summary] = jstruct.JStruct[Summary]

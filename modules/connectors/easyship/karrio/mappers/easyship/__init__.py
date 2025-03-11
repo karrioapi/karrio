@@ -8,6 +8,7 @@ import karrio.providers.easyship.utils as utils
 
 
 METADATA = Metadata(
+    status="production-ready",
     id="easyship",
     label="Easyship",
     # Integrations

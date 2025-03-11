@@ -1,10 +1,11 @@
-from attr import s
-from typing import Optional, List
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PickupUpdateResponseType:
-    dispatchConfirmationNumber: Optional[str] = None
-    readyByTime: Optional[str] = None
-    nextPickupDate: Optional[str] = None
-    warnings: List[str] = []
+    dispatchConfirmationNumber: typing.Optional[str] = None
+    readyByTime: typing.Optional[str] = None
+    nextPickupDate: typing.Optional[str] = None
+    warnings: typing.Optional[typing.List[str]] = None

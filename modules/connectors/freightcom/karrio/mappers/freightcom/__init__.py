@@ -7,6 +7,7 @@ import karrio.providers.freightcom.units as units
 
 
 METADATA = Metadata(
+    status="deprecated",
     id="freightcom",
     label="Freightcom",
     is_hub=True,

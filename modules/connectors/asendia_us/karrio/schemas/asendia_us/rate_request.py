@@ -1,18 +1,19 @@
-from attr import s
-from typing import Optional
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RateRequestType:
-    accountNumber: Optional[str] = None
-    subAccountNumber: Optional[str] = None
-    processingLocation: Optional[str] = None
-    recipientPostalCode: Optional[str] = None
-    recipientCountryCode: Optional[str] = None
-    totalPackageWeight: Optional[float] = None
-    weightUnit: Optional[str] = None
-    dimLength: Optional[float] = None
-    dimWidth: Optional[float] = None
-    dimHeight: Optional[float] = None
-    dimUnit: Optional[str] = None
-    productCode: Optional[str] = None
+    accountNumber: typing.Optional[str] = None
+    subAccountNumber: typing.Optional[str] = None
+    processingLocation: typing.Optional[str] = None
+    recipientPostalCode: typing.Optional[str] = None
+    recipientCountryCode: typing.Optional[str] = None
+    totalPackageWeight: typing.Optional[float] = None
+    weightUnit: typing.Optional[str] = None
+    dimLength: typing.Optional[float] = None
+    dimWidth: typing.Optional[float] = None
+    dimHeight: typing.Optional[float] = None
+    dimUnit: typing.Optional[str] = None
+    productCode: typing.Optional[str] = None

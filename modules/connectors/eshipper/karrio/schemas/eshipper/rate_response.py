@@ -1,37 +1,37 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class SurchargeType:
-    name: Optional[str] = None
-    amount: Optional[int] = None
+    name: typing.Optional[str] = None
+    amount: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class QuoteType:
-    carrierName: Optional[str] = None
-    serviceId: Optional[int] = None
-    serviceName: Optional[str] = None
-    deliveryCarrier: Optional[str] = None
-    modeTransport: Optional[str] = None
-    transitDays: Optional[str] = None
-    baseCharge: Optional[int] = None
-    fuelSurcharge: Optional[int] = None
-    fuelSurchargePercentage: Optional[int] = None
-    carbonNeutralFees: Optional[int] = None
-    surcharges: List[SurchargeType] = JList[SurchargeType]
-    totalCharge: Optional[int] = None
-    processingFees: Optional[int] = None
-    taxes: List[SurchargeType] = JList[SurchargeType]
-    totalChargedAmount: Optional[int] = None
-    currency: Optional[str] = None
+    carrierName: typing.Optional[str] = None
+    serviceId: typing.Optional[int] = None
+    serviceName: typing.Optional[str] = None
+    deliveryCarrier: typing.Optional[str] = None
+    modeTransport: typing.Optional[str] = None
+    transitDays: typing.Optional[str] = None
+    baseCharge: typing.Optional[int] = None
+    fuelSurcharge: typing.Optional[int] = None
+    fuelSurchargePercentage: typing.Optional[int] = None
+    carbonNeutralFees: typing.Optional[int] = None
+    surcharges: typing.Optional[typing.List[SurchargeType]] = jstruct.JList[SurchargeType]
+    totalCharge: typing.Optional[int] = None
+    processingFees: typing.Optional[int] = None
+    taxes: typing.Optional[typing.List[SurchargeType]] = jstruct.JList[SurchargeType]
+    totalChargedAmount: typing.Optional[int] = None
+    currency: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RateResponseType:
-    uuid: Optional[str] = None
-    quotes: List[QuoteType] = JList[QuoteType]
-    warnings: List[str] = []
-    errors: List[str] = []
+    uuid: typing.Optional[str] = None
+    quotes: typing.Optional[typing.List[QuoteType]] = jstruct.JList[QuoteType]
+    warnings: typing.Optional[typing.List[str]] = None
+    errors: typing.Optional[typing.List[str]] = None

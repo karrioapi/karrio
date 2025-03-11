@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2024.12.4`.
+    The current version is `2024.12.5`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2024.12.4
+  version: 2024.12.5
 paths:
   /:
     get:
@@ -119,12 +119,7 @@ paths:
                     APPS_MANAGEMENT: true
                     DOCUMENTS_MANAGEMENT: true
                     DATA_IMPORT_EXPORT: true
-                    CUSTOM_CARRIER_DEFINITION: true
                     PERSIST_SDK_TRACING: true
-                    ORDER_DATA_RETENTION: true
-                    TRACKER_DATA_RETENTION: true
-                    SHIPMENT_DATA_RETENTION: true
-                    API_LOGS_DATA_RETENTION: true
                     WORKFLOW_MANAGEMENT: true
           description: ''
   /api/token:
@@ -2921,12 +2916,7 @@ paths:
                     APPS_MANAGEMENT: true
                     DOCUMENTS_MANAGEMENT: true
                     DATA_IMPORT_EXPORT: true
-                    CUSTOM_CARRIER_DEFINITION: true
                     PERSIST_SDK_TRACING: true
-                    ORDER_DATA_RETENTION: true
-                    TRACKER_DATA_RETENTION: true
-                    SHIPMENT_DATA_RETENTION: true
-                    API_LOGS_DATA_RETENTION: true
                     WORKFLOW_MANAGEMENT: true
                     ADDRESS_AUTO_COMPLETE: {}
                     countries: {}
@@ -2945,6 +2935,7 @@ paths:
                     payment_types: {}
                     carrier_capabilities: {}
                     service_levels: {}
+                    integration_status: {}
           description: ''
   /v1/shipments:
     get:
@@ -3417,8 +3408,8 @@ paths:
         schema:
           type: string
         description: 'Valid tracker status. <br/>Values: `pending`, `unknown`, `on_hold`,
-          `delivered`, `in_transit`, `delivery_delayed`, `out_for_delivery`, `ready_for_pickup`,
-          `delivery_failed`'
+          `cancelled`, `delivered`, `in_transit`, `delivery_delayed`, `out_for_delivery`,
+          `ready_for_pickup`, `delivery_failed`, `return_to_sender`'
       - in: query
         name: tracking_number
         schema:
@@ -6110,6 +6101,7 @@ components:
           - CIF
           - CIP
           - CPT
+          - DAP
           - DAF
           - DDP
           - DDU
@@ -6121,7 +6113,7 @@ components:
           - FOB
           - null
           type: string
-          x-spec-enum-id: 544ac66d62cbdedb
+          x-spec-enum-id: 12d4fc0ac6f1cd2c
           nullable: true
           description: The customs 'term of trade' also known as 'incoterm'
         invoice:
@@ -6202,6 +6194,7 @@ components:
           - CIF
           - CIP
           - CPT
+          - DAP
           - DAF
           - DDP
           - DDU
@@ -6213,7 +6206,7 @@ components:
           - FOB
           - null
           type: string
-          x-spec-enum-id: 544ac66d62cbdedb
+          x-spec-enum-id: 12d4fc0ac6f1cd2c
           nullable: true
           description: The customs 'term of trade' also known as 'incoterm'
         invoice:
@@ -6271,6 +6264,10 @@ components:
           additionalProperties: {}
           default: {}
           description: The template data
+        options:
+          type: object
+          additionalProperties: {}
+          description: The template rendering options
     DocumentDetails:
       type: object
       properties:
@@ -6334,6 +6331,10 @@ components:
           type: object
           additionalProperties: {}
           description: The template metadata
+        options:
+          type: object
+          additionalProperties: {}
+          description: The template rendering options
         related_object:
           enum:
           - shipment
@@ -6377,6 +6378,10 @@ components:
           type: object
           additionalProperties: {}
           description: The template metadata
+        options:
+          type: object
+          additionalProperties: {}
+          description: The template rendering options
         related_object:
           enum:
           - shipment
@@ -8289,6 +8294,10 @@ components:
           type: object
           additionalProperties: {}
           description: The template metadata
+        options:
+          type: object
+          additionalProperties: {}
+          description: The template rendering options
         related_object:
           enum:
           - shipment
@@ -10064,14 +10073,16 @@ components:
           - pending
           - unknown
           - on_hold
+          - cancelled
           - delivered
           - in_transit
           - delivery_delayed
           - out_for_delivery
           - ready_for_pickup
           - delivery_failed
+          - return_to_sender
           type: string
-          x-spec-enum-id: 979a07e5fd2a5042
+          x-spec-enum-id: b774dd996160d59f
           default: pending
           description: The current tracking status
         estimated_delivery:
@@ -10390,14 +10401,16 @@ components:
           - pending
           - unknown
           - on_hold
+          - cancelled
           - delivered
           - in_transit
           - delivery_delayed
           - out_for_delivery
           - ready_for_pickup
           - delivery_failed
+          - return_to_sender
           type: string
-          x-spec-enum-id: 979a07e5fd2a5042
+          x-spec-enum-id: b774dd996160d59f
           default: pending
           description: The current tracking status
         estimated_delivery:
@@ -11106,7 +11119,7 @@ components:
           type: string
         shipping_account_id:
           type: string
-        carrier_code:
+        sapient_carrier_code:
           enum:
           - DX
           - EVRI
@@ -11115,7 +11128,7 @@ components:
           - YODEL
           type: string
           x-spec-enum-id: 24b797aea0df4a45
-          description: Indicates a carrier_code string
+          description: Indicates a sapient_carrier_code string
       required:
       - client_id
       - client_secret
@@ -11205,9 +11218,21 @@ components:
           type: string
         client_secret:
           type: string
-        account_type:
-          type: string
         account_number:
+          type: string
+        account_type:
+          enum:
+          - EPS
+          - PERMIT
+          - METER
+          type: string
+          x-spec-enum-id: 7efd1d6854b73018
+          description: Indicates a account_type string
+        manifest_MID:
+          type: string
+        CRID:
+          type: string
+        MID:
           type: string
       required:
       - client_id
@@ -11219,9 +11244,21 @@ components:
           type: string
         client_secret:
           type: string
-        account_type:
-          type: string
         account_number:
+          type: string
+        account_type:
+          enum:
+          - EPS
+          - PERMIT
+          - METER
+          type: string
+          x-spec-enum-id: 7efd1d6854b73018
+          description: Indicates a account_type string
+        manifest_MID:
+          type: string
+        CRID:
+          type: string
+        MID:
           type: string
       required:
       - client_id
@@ -11493,22 +11530,10 @@ tags:
     ### USPS International
     | Code         | Service Name |
     | ------------ | ------------ |
-    | usps_standard_service | USPS Standard Service |
-    | usps_parcel_select | PARCEL_SELECT |
-    | usps_parcel_select_lightweight | PARCEL_SELECT_LIGHTWEIGHT |
-    | usps_priority_mail_express | PRIORITY_MAIL_EXPRESS |
-    | usps_priority_mail | PRIORITY_MAIL |
-    | usps_first_class_package_service | FIRST-CLASS_PACKAGE_SERVICE |
-    | usps_library_mail | LIBRARY_MAIL |
-    | usps_media_mail | MEDIA_MAIL |
-    | usps_bound_printed_matter | BOUND_PRINTED_MATTER |
-    | usps_connect_local | USPS_CONNECT_LOCAL |
-    | usps_connect_mail | USPS_CONNECT_MAIL |
-    | usps_connect_next_day | USPS_CONNECT_NEXT_DAY |
-    | usps_connect_regional | USPS_CONNECT_REGIONAL |
-    | usps_connect_same_day | USPS_CONNECT_SAME_DAY |
-    | usps_ground_advantage | USPS_GROUND_ADVANTAGE |
-    | usps_retail_ground | USPS_RETAIL_GROUND |
+    | usps_first_class_package_international_service | FIRST-CLASS_PACKAGE_INTERNATIONAL_SERVICE |
+    | usps_priority_mail_international | PRIORITY_MAIL_INTERNATIONAL |
+    | usps_priority_mail_express_international | PRIORITY_MAIL_EXPRESS_INTERNATIONAL |
+    | usps_global_express_guaranteed | GLOBAL_EXPRESS_GUARANTEED |
     | usps_all | ALL |
 
     ### USPS

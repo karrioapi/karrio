@@ -1,6 +1,7 @@
 CARRIER_DETAILS_SAMPLE = """{
   "carrier_name": "dhl_express",
   "display_name": "DHL Express",
+  "integration_status": "production-ready",
   "connection_fields": {
     "site_id": {
       "name": "site_id",

@@ -1,11 +1,12 @@
-from attr import s
-from typing import Optional
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RateResponseElementType:
-    deliverySpeed: Optional[str] = None
-    price: Optional[int] = None
-    deliveredBy: Optional[str] = None
-    earliestPickupEta: Optional[str] = None
-    earliestDropEta: Optional[str] = None
+    deliverySpeed: typing.Optional[str] = None
+    price: typing.Optional[int] = None
+    deliveredBy: typing.Optional[str] = None
+    earliestPickupEta: typing.Optional[str] = None
+    earliestDropEta: typing.Optional[str] = None

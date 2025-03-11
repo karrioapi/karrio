@@ -1,79 +1,79 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackingLocation:
-    object: Optional[str] = None
-    city: Optional[str] = None
-    state: Optional[str] = None
-    country: Optional[str] = None
-    zip: Optional[str] = None
+    object: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    state: typing.Optional[str] = None
+    country: typing.Optional[str] = None
+    zip: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CarrierDetail:
-    object: Optional[str] = None
-    service: Optional[str] = None
-    container_type: Optional[str] = None
-    est_delivery_date_local: Optional[str] = None
-    est_delivery_time_local: Optional[str] = None
-    origin_location: Optional[str] = None
-    origin_tracking_location: Optional[TrackingLocation] = JStruct[TrackingLocation]
-    destination_location: Optional[str] = None
-    destination_tracking_location: Optional[str] = None
-    guaranteed_delivery_date: Optional[str] = None
-    alternate_identifier: Optional[str] = None
-    initial_delivery_attempt: Optional[str] = None
+    object: typing.Optional[str] = None
+    service: typing.Optional[str] = None
+    container_type: typing.Optional[str] = None
+    est_delivery_date_local: typing.Optional[str] = None
+    est_delivery_time_local: typing.Optional[str] = None
+    origin_location: typing.Optional[str] = None
+    origin_tracking_location: typing.Optional[TrackingLocation] = jstruct.JStruct[TrackingLocation]
+    destination_location: typing.Optional[str] = None
+    destination_tracking_location: typing.Optional[str] = None
+    guaranteed_delivery_date: typing.Optional[str] = None
+    alternate_identifier: typing.Optional[str] = None
+    initial_delivery_attempt: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Fee:
-    object: Optional[str] = None
-    type: Optional[str] = None
-    amount: Optional[str] = None
-    charged: Optional[bool] = None
-    refunded: Optional[bool] = None
+    object: typing.Optional[str] = None
+    type: typing.Optional[str] = None
+    amount: typing.Optional[str] = None
+    charged: typing.Optional[bool] = None
+    refunded: typing.Optional[bool] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackingDetail:
-    object: Optional[str] = None
-    message: Optional[str] = None
-    description: Optional[str] = None
-    status: Optional[str] = None
-    status_detail: Optional[str] = None
-    datetime: Optional[str] = None
-    source: Optional[str] = None
-    carrier_code: Optional[str] = None
-    tracking_location: Optional[TrackingLocation] = JStruct[TrackingLocation]
+    object: typing.Optional[str] = None
+    message: typing.Optional[str] = None
+    description: typing.Optional[str] = None
+    status: typing.Optional[str] = None
+    status_detail: typing.Optional[str] = None
+    tracking_detail_datetime: typing.Optional[str] = None
+    source: typing.Optional[str] = None
+    carrier_code: typing.Optional[str] = None
+    tracking_location: typing.Optional[TrackingLocation] = jstruct.JStruct[TrackingLocation]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Tracker:
-    id: Optional[str] = None
-    object: Optional[str] = None
-    mode: Optional[str] = None
-    tracking_code: Optional[str] = None
-    status: Optional[str] = None
-    status_detail: Optional[str] = None
-    created_at: Optional[str] = None
-    updated_at: Optional[str] = None
-    signed_by: Optional[str] = None
-    weight: Optional[str] = None
-    est_delivery_date: Optional[str] = None
-    shipment_id: Optional[str] = None
-    carrier: Optional[str] = None
-    tracking_details: List[TrackingDetail] = JList[TrackingDetail]
-    carrier_detail: Optional[CarrierDetail] = JStruct[CarrierDetail]
-    finalized: Optional[bool] = None
-    is_return: Optional[bool] = None
-    public_url: Optional[str] = None
-    fees: List[Fee] = JList[Fee]
+    id: typing.Optional[str] = None
+    object: typing.Optional[str] = None
+    mode: typing.Optional[str] = None
+    tracking_code: typing.Optional[str] = None
+    status: typing.Optional[str] = None
+    status_detail: typing.Optional[str] = None
+    created_at: typing.Optional[str] = None
+    updated_at: typing.Optional[str] = None
+    signed_by: typing.Optional[str] = None
+    weight: typing.Optional[str] = None
+    est_delivery_date: typing.Optional[str] = None
+    shipment_id: typing.Optional[str] = None
+    carrier: typing.Optional[str] = None
+    tracking_details: typing.Optional[typing.List[TrackingDetail]] = jstruct.JList[TrackingDetail]
+    carrier_detail: typing.Optional[CarrierDetail] = jstruct.JStruct[CarrierDetail]
+    finalized: typing.Optional[bool] = None
+    is_return: typing.Optional[bool] = None
+    public_url: typing.Optional[str] = None
+    fees: typing.Optional[typing.List[Fee]] = jstruct.JList[Fee]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackersResponse:
-    trackers: List[Tracker] = JList[Tracker]
-    has_more: Optional[bool] = None
+    trackers: typing.Optional[typing.List[Tracker]] = jstruct.JList[Tracker]
+    has_more: typing.Optional[bool] = None

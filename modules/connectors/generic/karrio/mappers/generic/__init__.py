@@ -9,6 +9,7 @@ from karrio.providers.generic import units
 DEFAULT_SERVICES = units.DEFAULT_SERVICES
 
 METADATA = Metadata(
+    status="production-ready",
     id="generic",
     label="Custom Carrier",
     # Integrations

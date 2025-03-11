@@ -1,17 +1,17 @@
-from attr import s
-from typing import Optional
-from jstruct import JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AccountNumberType:
-    value: Optional[str] = None
+    value: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CancelRequestType:
-    accountNumber: Optional[AccountNumberType] = JStruct[AccountNumberType]
-    emailShipment: Optional[bool] = None
-    senderCountryCode: Optional[str] = None
-    deletionControl: Optional[str] = None
-    trackingNumber: Optional[str] = None
+    accountNumber: typing.Optional[AccountNumberType] = jstruct.JStruct[AccountNumberType]
+    emailShipment: typing.Optional[bool] = None
+    senderCountryCode: typing.Optional[str] = None
+    deletionControl: typing.Optional[str] = None
+    trackingNumber: typing.Optional[str] = None

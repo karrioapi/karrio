@@ -1,9 +1,10 @@
-from attr import s
-from typing import Optional, List
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackingRequestType:
-    includePublished: Optional[bool] = None
-    pageable: Optional[str] = None
-    trackingNumbers: List[str] = []
+    includePublished: typing.Optional[bool] = None
+    pageable: typing.Optional[str] = None
+    trackingNumbers: typing.Optional[typing.List[str]] = None

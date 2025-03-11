@@ -1,11 +1,12 @@
-from attr import s
-from typing import Optional
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AuthRequestType:
-    username: Optional[str] = None
-    password: Optional[str] = None
-    customerType: Optional[int] = None
-    deviceId: Optional[str] = None
-    fcmToken: Optional[str] = None
+    username: typing.Optional[str] = None
+    password: typing.Optional[str] = None
+    customerType: typing.Optional[int] = None
+    deviceId: typing.Optional[str] = None
+    fcmToken: typing.Optional[str] = None

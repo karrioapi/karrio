@@ -1,165 +1,165 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ConsigneeType:
-    name1: Optional[str] = None
-    name2: Optional[str] = None
-    name3: Optional[str] = None
-    dispatchingInformation: Optional[str] = None
-    addressStreet: Optional[str] = None
-    addressHouse: Optional[str] = None
-    additionalAddressInformation1: Optional[str] = None
-    additionalAddressInformation2: Optional[str] = None
-    postalCode: Optional[str] = None
-    city: Optional[str] = None
-    state: Optional[str] = None
-    country: Optional[str] = None
-    contactName: Optional[str] = None
-    phone: Optional[str] = None
-    email: Optional[str] = None
-    name: Optional[str] = None
-    lockerID: Optional[int] = None
-    postNumber: Optional[int] = None
-    retailID: Optional[int] = None
-    poBoxID: Optional[int] = None
+    name1: typing.Optional[str] = None
+    name2: typing.Optional[str] = None
+    name3: typing.Optional[str] = None
+    dispatchingInformation: typing.Optional[str] = None
+    addressStreet: typing.Optional[str] = None
+    addressHouse: typing.Optional[str] = None
+    additionalAddressInformation1: typing.Optional[str] = None
+    additionalAddressInformation2: typing.Optional[str] = None
+    postalCode: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    state: typing.Optional[str] = None
+    country: typing.Optional[str] = None
+    contactName: typing.Optional[str] = None
+    phone: typing.Optional[str] = None
+    email: typing.Optional[str] = None
+    name: typing.Optional[str] = None
+    lockerID: typing.Optional[int] = None
+    postNumber: typing.Optional[int] = None
+    retailID: typing.Optional[int] = None
+    poBoxID: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PostalChargesType:
-    currency: Optional[str] = None
-    value: Optional[float] = None
+    currency: typing.Optional[str] = None
+    value: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class WeightType:
-    uom: Optional[str] = None
-    value: Optional[float] = None
+    uom: typing.Optional[str] = None
+    value: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ItemType:
-    itemDescription: Optional[str] = None
-    countryOfOrigin: Optional[str] = None
-    hsCode: Optional[int] = None
-    packagedQuantity: Optional[int] = None
-    itemValue: Optional[PostalChargesType] = JStruct[PostalChargesType]
-    itemWeight: Optional[WeightType] = JStruct[WeightType]
+    itemDescription: typing.Optional[str] = None
+    countryOfOrigin: typing.Optional[str] = None
+    hsCode: typing.Optional[int] = None
+    packagedQuantity: typing.Optional[int] = None
+    itemValue: typing.Optional[PostalChargesType] = jstruct.JStruct[PostalChargesType]
+    itemWeight: typing.Optional[WeightType] = jstruct.JStruct[WeightType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CustomsType:
-    invoiceNo: Optional[int] = None
-    exportType: Optional[str] = None
-    exportDescription: Optional[str] = None
-    shippingConditions: Optional[str] = None
-    permitNo: Optional[int] = None
-    attestationNo: Optional[int] = None
-    hasElectronicExportNotification: Optional[bool] = None
-    MRN: Optional[int] = None
-    postalCharges: Optional[PostalChargesType] = JStruct[PostalChargesType]
-    officeOfOrigin: Optional[str] = None
-    shipperCustomsRef: Optional[int] = None
-    consigneeCustomsRef: Optional[int] = None
-    items: List[ItemType] = JList[ItemType]
+    invoiceNo: typing.Optional[int] = None
+    exportType: typing.Optional[str] = None
+    exportDescription: typing.Optional[str] = None
+    shippingConditions: typing.Optional[str] = None
+    permitNo: typing.Optional[int] = None
+    attestationNo: typing.Optional[int] = None
+    hasElectronicExportNotification: typing.Optional[bool] = None
+    MRN: typing.Optional[int] = None
+    postalCharges: typing.Optional[PostalChargesType] = jstruct.JStruct[PostalChargesType]
+    officeOfOrigin: typing.Optional[str] = None
+    shipperCustomsRef: typing.Optional[int] = None
+    consigneeCustomsRef: typing.Optional[int] = None
+    items: typing.Optional[typing.List[ItemType]] = jstruct.JList[ItemType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DimType:
-    uom: Optional[str] = None
-    height: Optional[int] = None
-    length: Optional[int] = None
-    width: Optional[int] = None
+    uom: typing.Optional[str] = None
+    height: typing.Optional[int] = None
+    length: typing.Optional[int] = None
+    width: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DetailsType:
-    dim: Optional[DimType] = JStruct[DimType]
-    weight: Optional[WeightType] = JStruct[WeightType]
+    dim: typing.Optional[DimType] = jstruct.JStruct[DimType]
+    weight: typing.Optional[WeightType] = jstruct.JStruct[WeightType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CashOnDeliveryType:
-    currency: Optional[str] = None
-    value: Optional[float] = None
-    accountHolder: Optional[str] = None
-    bankName: Optional[str] = None
-    iban: Optional[str] = None
-    bic: Optional[str] = None
-    accountReference: Optional[str] = None
-    transferNote1: Optional[str] = None
-    transferNote2: Optional[str] = None
+    currency: typing.Optional[str] = None
+    value: typing.Optional[float] = None
+    accountHolder: typing.Optional[str] = None
+    bankName: typing.Optional[str] = None
+    iban: typing.Optional[str] = None
+    bic: typing.Optional[str] = None
+    accountReference: typing.Optional[str] = None
+    transferNote1: typing.Optional[str] = None
+    transferNote2: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DhlRetoureType:
-    billingNumber: Optional[str] = None
-    refNo: Optional[str] = None
-    returnAddress: Optional[ConsigneeType] = JStruct[ConsigneeType]
+    billingNumber: typing.Optional[str] = None
+    refNo: typing.Optional[str] = None
+    returnAddress: typing.Optional[ConsigneeType] = jstruct.JStruct[ConsigneeType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class IdentCheckType:
-    firstName: Optional[str] = None
-    lastName: Optional[str] = None
-    dateOfBirth: Optional[str] = None
-    minimumAge: Optional[str] = None
+    firstName: typing.Optional[str] = None
+    lastName: typing.Optional[str] = None
+    dateOfBirth: typing.Optional[str] = None
+    minimumAge: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ServicesType:
-    preferredNeighbour: Optional[str] = None
-    preferredLocation: Optional[str] = None
-    visualCheckOfAge: Optional[str] = None
-    namedPersonOnly: Optional[bool] = None
-    identCheck: Optional[IdentCheckType] = JStruct[IdentCheckType]
-    signedForByRecipient: Optional[bool] = None
-    endorsement: Optional[str] = None
-    preferredDay: Optional[str] = None
-    noNeighbourDelivery: Optional[bool] = None
-    additionalInsurance: Optional[PostalChargesType] = JStruct[PostalChargesType]
-    bulkyGoods: Optional[bool] = None
-    cashOnDelivery: Optional[CashOnDeliveryType] = JStruct[CashOnDeliveryType]
-    individualSenderRequirement: Optional[str] = None
-    premium: Optional[bool] = None
-    closestDropPoint: Optional[bool] = None
-    parcelOutletRouting: Optional[str] = None
-    dhlRetoure: Optional[DhlRetoureType] = JStruct[DhlRetoureType]
-    postalDeliveryDutyPaid: Optional[bool] = None
+    preferredNeighbour: typing.Optional[str] = None
+    preferredLocation: typing.Optional[str] = None
+    visualCheckOfAge: typing.Optional[str] = None
+    namedPersonOnly: typing.Optional[bool] = None
+    identCheck: typing.Optional[IdentCheckType] = jstruct.JStruct[IdentCheckType]
+    signedForByRecipient: typing.Optional[bool] = None
+    endorsement: typing.Optional[str] = None
+    preferredDay: typing.Optional[str] = None
+    noNeighbourDelivery: typing.Optional[bool] = None
+    additionalInsurance: typing.Optional[PostalChargesType] = jstruct.JStruct[PostalChargesType]
+    bulkyGoods: typing.Optional[bool] = None
+    cashOnDelivery: typing.Optional[CashOnDeliveryType] = jstruct.JStruct[CashOnDeliveryType]
+    individualSenderRequirement: typing.Optional[str] = None
+    premium: typing.Optional[bool] = None
+    closestDropPoint: typing.Optional[bool] = None
+    parcelOutletRouting: typing.Optional[str] = None
+    dhlRetoure: typing.Optional[DhlRetoureType] = jstruct.JStruct[DhlRetoureType]
+    postalDeliveryDutyPaid: typing.Optional[bool] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipperType:
-    name1: Optional[str] = None
-    name2: Optional[str] = None
-    name3: Optional[str] = None
-    addressStreet: Optional[str] = None
-    addressHouse: Optional[str] = None
-    postalCode: Optional[int] = None
-    city: Optional[str] = None
-    country: Optional[str] = None
-    contactName: Optional[str] = None
-    email: Optional[str] = None
+    name1: typing.Optional[str] = None
+    name2: typing.Optional[str] = None
+    name3: typing.Optional[str] = None
+    addressStreet: typing.Optional[str] = None
+    addressHouse: typing.Optional[str] = None
+    postalCode: typing.Optional[int] = None
+    city: typing.Optional[str] = None
+    country: typing.Optional[str] = None
+    contactName: typing.Optional[str] = None
+    email: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentType:
-    product: Optional[str] = None
-    billingNumber: Optional[str] = None
-    refNo: Optional[str] = None
-    costCenter: Optional[str] = None
-    creationSoftware: Optional[str] = None
-    shipDate: Optional[str] = None
-    shipper: Optional[ShipperType] = JStruct[ShipperType]
-    consignee: Optional[ConsigneeType] = JStruct[ConsigneeType]
-    details: Optional[DetailsType] = JStruct[DetailsType]
-    services: Optional[ServicesType] = JStruct[ServicesType]
-    customs: Optional[CustomsType] = JStruct[CustomsType]
+    product: typing.Optional[str] = None
+    billingNumber: typing.Optional[str] = None
+    refNo: typing.Optional[str] = None
+    costCenter: typing.Optional[str] = None
+    creationSoftware: typing.Optional[str] = None
+    shipDate: typing.Optional[str] = None
+    shipper: typing.Optional[ShipperType] = jstruct.JStruct[ShipperType]
+    consignee: typing.Optional[ConsigneeType] = jstruct.JStruct[ConsigneeType]
+    details: typing.Optional[DetailsType] = jstruct.JStruct[DetailsType]
+    services: typing.Optional[ServicesType] = jstruct.JStruct[ServicesType]
+    customs: typing.Optional[CustomsType] = jstruct.JStruct[CustomsType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShippingRequestType:
-    profile: Optional[str] = None
-    shipments: List[ShipmentType] = JList[ShipmentType]
+    profile: typing.Optional[str] = None
+    shipments: typing.Optional[typing.List[ShipmentType]] = jstruct.JList[ShipmentType]

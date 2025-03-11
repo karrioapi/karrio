@@ -1,24 +1,24 @@
-from attr import s
-from typing import Optional, Any, List
-from jstruct import JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class EventType:
-    EventDT: Optional[str] = None
-    Code: Any = None
-    OmniCode: Optional[str] = None
-    Description: Optional[str] = None
-    Location: Optional[str] = None
-    Part: Optional[int] = None
+    EventDT: typing.Optional[str] = None
+    Code: typing.Any = None
+    OmniCode: typing.Optional[str] = None
+    Description: typing.Optional[str] = None
+    Location: typing.Optional[str] = None
+    Part: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackingResponseElementType:
-    ConsignmentNo: Optional[str] = None
-    Status: Optional[str] = None
-    Picked: Any = None
-    Delivered: Any = None
-    Tracking: Optional[str] = None
-    Reference1: Optional[str] = None
-    Events: List[EventType] = JList[EventType]
+    ConsignmentNo: typing.Optional[str] = None
+    Status: typing.Optional[str] = None
+    Picked: typing.Any = None
+    Delivered: typing.Any = None
+    Tracking: typing.Optional[str] = None
+    Reference1: typing.Optional[str] = None
+    Events: typing.Optional[typing.List[EventType]] = jstruct.JList[EventType]

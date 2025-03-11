@@ -1,8 +1,9 @@
-from attr import s
-from typing import Optional
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PickupCancelRequestType:
-    requestorName: Optional[str] = None
-    reason: Optional[str] = None
+    requestorName: typing.Optional[str] = None
+    reason: typing.Optional[str] = None

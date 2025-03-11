@@ -117,10 +117,10 @@ def rate_request(
                     package.packaging_type
                 ).value,
                 product_ids=[_.value for _ in services],
-                features=(
-                    australiapost.FeaturesType(
-                        TRANSIT_COVER=australiapost.TransitCoverType(
-                            attributes=australiapost.AttributesType(
+                features=lib.identity(
+                    dict(
+                        TRANSIT_COVER=dict(
+                            attributes=dict(
                                 cover_amount=package.options.australiapost_transit_cover.state,
                             ),
                         )

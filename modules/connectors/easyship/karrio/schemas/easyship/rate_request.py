@@ -1,100 +1,100 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CourierSelectionType:
-    apply_shipping_rules: Optional[bool] = None
-    show_courier_logo_url: Optional[bool] = None
+    apply_shipping_rules: typing.Optional[bool] = None
+    show_courier_logo_url: typing.Optional[bool] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ComparisonType:
-    changes: Optional[str] = None
-    post: Optional[str] = None
-    pre: Optional[str] = None
+    changes: typing.Optional[str] = None
+    post: typing.Optional[str] = None
+    pre: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ValidationType:
-    detail: Optional[str] = None
-    status: Optional[str] = None
-    comparison: Optional[ComparisonType] = JStruct[ComparisonType]
+    detail: typing.Optional[str] = None
+    status: typing.Optional[str] = None
+    comparison: typing.Optional[ComparisonType] = jstruct.JStruct[ComparisonType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class NAddressType:
-    country_alpha2: Optional[str] = None
-    city: Optional[str] = None
-    company_name: Optional[str] = None
-    contact_email: Optional[str] = None
-    contact_name: Optional[str] = None
-    contact_phone: Optional[str] = None
-    line_1: Optional[str] = None
-    line_2: Optional[str] = None
-    postal_code: Optional[str] = None
-    state: Optional[str] = None
-    validation: Optional[ValidationType] = JStruct[ValidationType]
+    country_alpha2: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    company_name: typing.Optional[str] = None
+    contact_email: typing.Optional[str] = None
+    contact_name: typing.Optional[str] = None
+    contact_phone: typing.Optional[str] = None
+    line_1: typing.Optional[str] = None
+    line_2: typing.Optional[str] = None
+    postal_code: typing.Optional[str] = None
+    state: typing.Optional[str] = None
+    validation: typing.Optional[ValidationType] = jstruct.JStruct[ValidationType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class InsuranceType:
-    insured_amount: Optional[float] = None
-    insured_currency: Optional[str] = None
-    is_insured: Optional[bool] = None
+    insured_amount: typing.Optional[float] = None
+    insured_currency: typing.Optional[str] = None
+    is_insured: typing.Optional[bool] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class BoxType:
-    height: Optional[int] = None
-    length: Optional[int] = None
-    width: Optional[int] = None
-    slug: Optional[str] = None
+    height: typing.Optional[int] = None
+    length: typing.Optional[int] = None
+    width: typing.Optional[int] = None
+    slug: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ItemType:
-    contains_battery_pi966: Optional[bool] = None
-    contains_battery_pi967: Optional[bool] = None
-    contains_liquids: Optional[bool] = None
-    declared_currency: Optional[str] = None
-    dimensions: Optional[BoxType] = JStruct[BoxType]
-    origin_country_alpha2: Optional[str] = None
-    quantity: Optional[int] = None
-    actual_weight: Optional[int] = None
-    category: Optional[str] = None
-    declared_customs_value: Optional[int] = None
-    description: Optional[str] = None
-    sku: Optional[str] = None
-    hs_code: Optional[str] = None
+    contains_battery_pi966: typing.Optional[bool] = None
+    contains_battery_pi967: typing.Optional[bool] = None
+    contains_liquids: typing.Optional[bool] = None
+    declared_currency: typing.Optional[str] = None
+    dimensions: typing.Optional[BoxType] = jstruct.JStruct[BoxType]
+    origin_country_alpha2: typing.Optional[str] = None
+    quantity: typing.Optional[int] = None
+    actual_weight: typing.Optional[int] = None
+    category: typing.Optional[str] = None
+    declared_customs_value: typing.Optional[int] = None
+    description: typing.Optional[str] = None
+    sku: typing.Optional[str] = None
+    hs_code: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ParcelType:
-    box: Optional[BoxType] = JStruct[BoxType]
-    items: List[ItemType] = JList[ItemType]
-    total_actual_weight: Optional[int] = None
+    box: typing.Optional[BoxType] = jstruct.JStruct[BoxType]
+    items: typing.Optional[typing.List[ItemType]] = jstruct.JList[ItemType]
+    total_actual_weight: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class UnitsType:
-    dimensions: Optional[str] = None
-    weight: Optional[str] = None
+    dimensions: typing.Optional[str] = None
+    weight: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShippingSettingsType:
-    output_currency: Optional[str] = None
-    units: Optional[UnitsType] = JStruct[UnitsType]
+    output_currency: typing.Optional[str] = None
+    units: typing.Optional[UnitsType] = jstruct.JStruct[UnitsType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RateRequestType:
-    courier_selection: Optional[CourierSelectionType] = JStruct[CourierSelectionType]
-    destination_address: Optional[NAddressType] = JStruct[NAddressType]
-    incoterms: Optional[str] = None
-    insurance: Optional[InsuranceType] = JStruct[InsuranceType]
-    origin_address: Optional[NAddressType] = JStruct[NAddressType]
-    parcels: List[ParcelType] = JList[ParcelType]
-    shipping_settings: Optional[ShippingSettingsType] = JStruct[ShippingSettingsType]
+    courier_selection: typing.Optional[CourierSelectionType] = jstruct.JStruct[CourierSelectionType]
+    destination_address: typing.Optional[NAddressType] = jstruct.JStruct[NAddressType]
+    incoterms: typing.Optional[str] = None
+    insurance: typing.Optional[InsuranceType] = jstruct.JStruct[InsuranceType]
+    origin_address: typing.Optional[NAddressType] = jstruct.JStruct[NAddressType]
+    parcels: typing.Optional[typing.List[ParcelType]] = jstruct.JList[ParcelType]
+    shipping_settings: typing.Optional[ShippingSettingsType] = jstruct.JStruct[ShippingSettingsType]

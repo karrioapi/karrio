@@ -83,7 +83,9 @@ def shipment_request(
         option_type=provider_units.CustomsOption,
     )
     doc_format, print_format = provider_units.LabelType.map(
-        payload.label_type or "PDF"
+        settings.connection_config.label_type.state or
+        payload.label_type or
+        "PDF"
     ).value
 
     request = dhl_parcel_de.ShippingRequestType(
@@ -99,11 +101,11 @@ def shipment_request(
                     package.options.shipment_date.state or datetime.datetime.now()
                 ),
                 shipper=dhl_parcel_de.ShipperType(
-                    name1=shipper.company_name or shipper.person_name or "N/A",
-                    name2=shipper.person_name,
+                    name1=shipper.company_name or shipper.person_name,
+                    name2=(shipper.person_name if shipper.company_name else None),
                     name3=None,
-                    addressStreet=shipper.street_name,
-                    addressHouse=shipper.street_number,
+                    addressStreet=shipper.address_line1,
+                    addressHouse=shipper.street_number or shipper.address_line2,
                     postalCode=shipper.postal_code,
                     city=shipper.city,
                     country=units.CountryCode.map(shipper.country_code).value_or_key,
@@ -111,12 +113,12 @@ def shipment_request(
                     email=shipper.email,
                 ),
                 consignee=dhl_parcel_de.ConsigneeType(
-                    name1=recipient.company_name or recipient.person_name or "N/A",
-                    name2=recipient.person_name,
+                    name1=recipient.company_name or recipient.person_name,
+                    name2=(recipient.person_name if recipient.company_name else None),
                     name3=None,
                     dispatchingInformation=None,
-                    addressStreet=recipient.street_name,
-                    addressHouse=recipient.street_number,
+                    addressStreet=recipient.address_line1,
+                    addressHouse=recipient.street_number or recipient.address_line2,
                     additionalAddressInformation1=None,
                     additionalAddressInformation2=None,
                     postalCode=recipient.postal_code,
@@ -198,7 +200,7 @@ def shipment_request(
                         attestationNo=customs.options.attestation_number.state,
                         hasElectronicExportNotification=customs.options.electronic_export_notification.state,
                         MRN=customs.options.mrn.state,
-                        postalCharges=(
+                        postalCharges=lib.identity(
                             dhl_parcel_de.PostalChargesType(
                                 currency=(
                                     package.options.currency.state

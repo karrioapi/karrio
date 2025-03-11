@@ -1,37 +1,37 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class BilledWeight:
-    value: Optional[float] = None
-    unit: Optional[str] = None
+    value: typing.Optional[float] = None
+    unit: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Window:
-    start: Optional[str] = None
-    end: Optional[str] = None
+    start: typing.Optional[str] = None
+    end: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Promise:
-    deliveryWindow: Optional[Window] = JStruct[Window]
-    receiveWindow: Optional[Window] = JStruct[Window]
+    deliveryWindow: typing.Optional[Window] = jstruct.JStruct[Window]
+    receiveWindow: typing.Optional[Window] = jstruct.JStruct[Window]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class EligibleRate:
-    billedWeight: Optional[BilledWeight] = JStruct[BilledWeight]
-    totalCharge: Optional[BilledWeight] = JStruct[BilledWeight]
-    serviceType: Optional[str] = None
-    promise: Optional[Promise] = JStruct[Promise]
-    rateId: Optional[str] = None
-    expirationTime: Optional[str] = None
+    billedWeight: typing.Optional[BilledWeight] = jstruct.JStruct[BilledWeight]
+    totalCharge: typing.Optional[BilledWeight] = jstruct.JStruct[BilledWeight]
+    serviceType: typing.Optional[str] = None
+    promise: typing.Optional[Promise] = jstruct.JStruct[Promise]
+    rateId: typing.Optional[str] = None
+    expirationTime: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CreateShipmentResponse:
-    shipmentId: Optional[str] = None
-    eligibleRates: List[EligibleRate] = JList[EligibleRate]
+    shipmentId: typing.Optional[str] = None
+    eligibleRates: typing.Optional[typing.List[EligibleRate]] = jstruct.JList[EligibleRate]

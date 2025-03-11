@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 
+# Set ROOT if not already set
+if [ -z "${ROOT}" ]; then
+    export ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+fi
+
 # Activate python env
-source "bin/activate-env" > /dev/null 2>&1
+source "${ROOT}/bin/activate-env" >/dev/null 2>&1
 
 # Run karrio cli
 python "${ROOT}/modules/cli" "${@}"

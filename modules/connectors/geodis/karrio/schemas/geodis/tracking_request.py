@@ -1,8 +1,9 @@
-from attr import s
-from typing import Optional
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackingRequestType:
-    noSuivi: Optional[str] = None
-    refUniExp: Optional[str] = None
+    noSuivi: typing.Optional[str] = None
+    refUniExp: typing.Optional[str] = None

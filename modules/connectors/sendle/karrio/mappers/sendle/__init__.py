@@ -7,6 +7,7 @@ import karrio.providers.sendle.units as units
 
 
 METADATA = Metadata(
+    status="production-ready",
     id="sendle",
     label="Sendle",
     is_hub=False,

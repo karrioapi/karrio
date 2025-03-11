@@ -7,6 +7,7 @@ import karrio.providers.tnt.units as units
 
 
 METADATA = Metadata(
+    status="beta",
     id="tnt",
     label="TNT",
     # Integrations

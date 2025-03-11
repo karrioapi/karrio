@@ -6,6 +6,7 @@ from karrio.mappers.canpar.settings import Settings
 
 
 METADATA = Metadata(
+    status="beta",
     id="canpar",
     label="Canpar",
 

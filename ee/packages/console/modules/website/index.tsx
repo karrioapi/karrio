@@ -14,13 +14,10 @@ import { CodePreview } from "@karrio/console/components/code-preview";
 import { FeatureTabs } from "@karrio/console/components/feature-tabs";
 import { CTASection } from "@karrio/console/components/cta-section";
 import { Button } from "@karrio/insiders/components/ui/button";
-import { auth } from "@karrio/console/apis/auth";
 import Image from "next/image";
 import Link from "next/link";
 
 export default async function LandingPage() {
-  const session = await auth();
-
   return (
     <>
       {/* Hero Section */}
@@ -407,13 +404,12 @@ export default async function LandingPage() {
       </section>
 
       {/* Developers Section */}
-      <section className="py-24 relative">
+      <section className="py-24 relative overflow-x-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#5722cc1a,transparent_70%)]" />
         <div className="absolute inset-0 bg-[conic-gradient(from_0deg_at_50%_50%,#0f082600,#79e5dd0d,#0f082600)]" />
-        <div className="absolute inset-0 backdrop-blur-[100px]" />
-        <div className="container mx-auto px-4 relative max-w-[95%] xl:max-w-[1280px]">
-          <div className="text-center mb-8">
-            <div className="text-[#79e5dd] mb-4">Developer-first design</div>
+        <div className="container mx-auto px-4 max-w-[95%] xl:max-w-[1280px] relative">
+          <div className="text-center mb-12">
+            <div className="text-[#79e5dd] mb-4 text-center">Developer-first design</div>
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
               A unified platform with modern APIs
             </h2>
@@ -422,8 +418,10 @@ export default async function LandingPage() {
               of carrier integrations.
             </p>
           </div>
-          <div className="grid lg:grid-cols-2 gap-12 mt-16">
-            <div className="space-y-12">
+
+          <div className="grid lg:grid-cols-[1fr,1.5fr] gap-12 mt-16">
+            {/* Features Column */}
+            <div className="space-y-8">
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center">
@@ -440,6 +438,7 @@ export default async function LandingPage() {
                   </p>
                 </div>
               </div>
+
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center">
@@ -456,10 +455,11 @@ export default async function LandingPage() {
                   </p>
                 </div>
               </div>
+
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center">
-                    <ArrowRight className="w-6 h-6 text-[#79e5dd]" />
+                    <Bell className="w-6 h-6 text-[#79e5dd]" />
                   </div>
                 </div>
                 <div>
@@ -472,21 +472,25 @@ export default async function LandingPage() {
                   </p>
                 </div>
               </div>
+
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center">
-                    <ArrowRight className="w-6 h-6 text-[#79e5dd]" />
+                    <Globe className="w-6 h-6 text-[#79e5dd]" />
                   </div>
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-2">Multi-carrier support</h3>
+                  <h3 className="font-semibold mb-2">
+                    Multi-carrier support
+                  </h3>
                   <p className="text-white/60">
                     Connect with 30+ carriers through a single integration
                     point.
                   </p>
                 </div>
               </div>
-              <div className="flex flex-col sm:flex-row items-start gap-4">
+
+              <div className="flex flex-col sm:flex-row items-start gap-4 pt-4">
                 <Button
                   variant="outline"
                   className="bg-[#79e5dd] text-[#1f1834] hover:bg-[#79e5dd]/90"
@@ -501,7 +505,9 @@ export default async function LandingPage() {
                 </Button>
               </div>
             </div>
-            <div className="lg:mt-0 mt-8">
+
+            {/* Code Example Column */}
+            <div className="overflow-hidden p-0">
               <CodePreview
                 languages={[
                   {
@@ -536,7 +542,7 @@ const shipment = await karrio.shipments.create({
   "label_url": "https://api.karrio.io/v1/labels/shp_f8f8f8f8",
   "tracking_url": "https://track.karrio.io/shp_f8f8f8f8",
   "created_at": "2024-01-01T00:00:00Z"
-}`,
+}`
                   },
                   {
                     label: "Python",
@@ -546,23 +552,23 @@ from karrio import Karrio
 
 karrio = Karrio('sk_test_123456789')
 
-shipment = karrio.shipments.create(
-    service="usps_priority",
-    shipper={
+shipment = karrio.shipments.create({
+    "service": "usps_priority",
+    "shipper": {
         "postal_code": "V6M2V9",
         "country_code": "CA",
     },
-    recipient={
+    "recipient": {
         "postal_code": "27401",
         "country_code": "US",
     },
-    parcels=[{
+    "parcels": [{
         "weight": 1,
         "width": 10,
         "height": 10,
         "length": 10,
     }]
-)`,
+})`,
                     response: `{
   "id": "shp_f8f8f8f8f8f8f8f8",
   "status": "created",
@@ -570,8 +576,8 @@ shipment = karrio.shipments.create(
   "label_url": "https://api.karrio.io/v1/labels/shp_f8f8f8f8",
   "tracking_url": "https://track.karrio.io/shp_f8f8f8f8",
   "created_at": "2024-01-01T00:00:00Z"
-}`,
-                  },
+}`
+                  }
                 ]}
               />
             </div>

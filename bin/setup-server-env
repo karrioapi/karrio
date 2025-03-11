@@ -1,21 +1,39 @@
 #!/usr/bin/env bash
 
-# Create new python virtual environment
-source "bin/create-new-env"
+# Pass all arguments to the sourced scripts
+source "bin/_env" "$@"
 
+log_section "Creating Python Virtual Environment"
+# Create new python virtual environment
+source "bin/create-new-env" "$@"
+
+log_section "Installing Requirements"
 # Install requirements
 cd "${ROOT}"
-pip install -r "${ROOT:?}/requirements.server.dev.txt"
+minimal_log "Installing server development requirements"
+run_pip_install "${ROOT:?}/requirements.server.dev.txt" "Failed to install server development requirements" || exit $?
 cd -
 
 if [[ "${HAS_INSIDERS}" == "true" && ! "$*" == *--oss* ]]; then
-    pip install -r "${ROOT:?}/requirements.insiders.dev.txt"
+    minimal_log "Installing insiders development requirements"
+    run_pip_install "${ROOT:?}/requirements.insiders.dev.txt" "Failed to install insiders development requirements" || exit $?
 fi
 
 if [[ "${HAS_PLATFORM}" == "true" && ! "$*" == *--oss* ]]; then
-    pip install -r "${ROOT:?}/requirements.platform.dev.txt"
+    minimal_log "Installing platform development requirements"
+    run_pip_install "${ROOT:?}/requirements.platform.dev.txt" "Failed to install platform development requirements" || exit $?
 fi
 
+log_section "Installing Node Dependencies"
+# Install node dependencies
+cd "${ROOT}"
+minimal_log "Cleaning node_modules directories"
+run_command "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +" "Failed to clean node_modules" "Cleaning node_modules directories..."
+minimal_log "Installing npm dependencies"
+run_command "npm install" "Failed to install npm dependencies" "Installing npm dependencies..."
+cd -
+
+minimal_log "Creating log directory"
 mkdir -p $LOG_DIR
 
 echo "
@@ -27,24 +45,28 @@ echo "
  ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝
 "
 
-echo "Environment Variables:"
-echo "--------------------"
-echo "ROOT: ${ROOT}"
-echo "LOG_DIR: ${LOG_DIR}"
-echo "HAS_INSIDERS: ${HAS_INSIDERS}"
-echo "HAS_PLATFORM: ${HAS_PLATFORM}"
+if [[ "$VERBOSE" == "true" ]]; then
+    log_section "Environment Summary"
+    echo "Environment Variables:"
+    echo "--------------------"
+    echo "ROOT: ${ROOT}"
+    echo "LOG_DIR: ${LOG_DIR}"
+    echo "HAS_INSIDERS: ${HAS_INSIDERS}"
+    echo "HAS_PLATFORM: ${HAS_PLATFORM}"
 
-echo -e "\nKey Directories:"
-echo "---------------"
-echo "Logs: ${LOG_DIR}"
-echo "Python Environment: ${VIRTUAL_ENV}"
-echo "Server Root: ${ROOT}"
-if [[ "${HAS_INSIDERS}" == "true" ]]; then
-    echo "Insiders: ${ROOT}/ee/insiders"
-fi
-if [[ "${HAS_PLATFORM}" == "true" ]]; then
-    echo "Platform: ${ROOT}/ee/platform"
+    echo -e "\nKey Directories:"
+    echo "---------------"
+    echo "Logs: ${LOG_DIR}"
+    echo "Python Environment: ${VIRTUAL_ENV}"
+    echo "Server Root: ${ROOT}"
+    if [[ "${HAS_INSIDERS}" == "true" ]]; then
+        echo "Insiders: ${ROOT}/ee/insiders"
+    fi
+    if [[ "${HAS_PLATFORM}" == "true" ]]; then
+        echo "Platform: ${ROOT}/ee/platform"
+    fi
 fi
 
+log_section "Running Server Script Help"
 # run server script help
 source "bin/server"

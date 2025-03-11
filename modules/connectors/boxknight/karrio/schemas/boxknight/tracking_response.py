@@ -1,53 +1,53 @@
-from attr import s
-from typing import Optional
-from jstruct import JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Location:
-    lat: Optional[float] = None
-    lng: Optional[float] = None
+    lat: typing.Optional[float] = None
+    lng: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Address:
-    number: Optional[int] = None
-    street: Optional[str] = None
-    city: Optional[str] = None
-    province: Optional[str] = None
-    country: Optional[str] = None
-    postalCode: Optional[str] = None
-    sublocality: Optional[str] = None
-    location: Optional[Location] = JStruct[Location]
+    number: typing.Optional[int] = None
+    street: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    province: typing.Optional[str] = None
+    country: typing.Optional[str] = None
+    postalCode: typing.Optional[str] = None
+    sublocality: typing.Optional[str] = None
+    location: typing.Optional[Location] = jstruct.JStruct[Location]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Recipient:
-    name: Optional[str] = None
-    phone: Optional[str] = None
-    notes: Optional[str] = None
-    email: Optional[str] = None
+    name: typing.Optional[str] = None
+    phone: typing.Optional[str] = None
+    notes: typing.Optional[str] = None
+    email: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackingResponse:
-    id: Optional[str] = None
-    createdAt: Optional[str] = None
-    createdBy: Optional[str] = None
-    merchantId: Optional[str] = None
-    orderStatus: Optional[str] = None
-    scanningRequired: Optional[bool] = None
-    validAddress: Optional[bool] = None
-    labelUrl: Optional[str] = None
-    pdfLabelUrl: Optional[str] = None
-    recipient: Optional[Recipient] = JStruct[Recipient]
-    recipientAddress: Optional[Address] = JStruct[Address]
-    originAddress: Optional[Address] = JStruct[Address]
-    packageCount: Optional[int] = None
-    signatureRequired: Optional[bool] = None
-    service: Optional[str] = None
-    notes: Optional[str] = None
-    refNumber: Optional[str] = None
-    completeAfter: Optional[int] = None
-    completeBefore: Optional[int] = None
-    merchantDisplayName: Optional[str] = None
+    id: typing.Optional[str] = None
+    createdAt: typing.Optional[str] = None
+    createdBy: typing.Optional[str] = None
+    merchantId: typing.Optional[str] = None
+    orderStatus: typing.Optional[str] = None
+    scanningRequired: typing.Optional[bool] = None
+    validAddress: typing.Optional[bool] = None
+    labelUrl: typing.Optional[str] = None
+    pdfLabelUrl: typing.Optional[str] = None
+    recipient: typing.Optional[Recipient] = jstruct.JStruct[Recipient]
+    recipientAddress: typing.Optional[Address] = jstruct.JStruct[Address]
+    originAddress: typing.Optional[Address] = jstruct.JStruct[Address]
+    packageCount: typing.Optional[int] = None
+    signatureRequired: typing.Optional[bool] = None
+    service: typing.Optional[str] = None
+    notes: typing.Optional[str] = None
+    refNumber: typing.Optional[str] = None
+    completeAfter: typing.Optional[int] = None
+    completeBefore: typing.Optional[int] = None
+    merchantDisplayName: typing.Optional[str] = None

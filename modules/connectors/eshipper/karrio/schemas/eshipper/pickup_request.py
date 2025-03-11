@@ -1,25 +1,25 @@
-from attr import s
-from typing import Optional
-from jstruct import JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TimeType:
-    hour: Optional[int] = None
-    minute: Optional[int] = None
-    second: Optional[int] = None
-    nano: Optional[int] = None
+    hour: typing.Optional[int] = None
+    minute: typing.Optional[int] = None
+    second: typing.Optional[int] = None
+    nano: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PickupRequestType:
-    contactName: Optional[str] = None
-    phoneNumber: Optional[str] = None
-    pickupDate: Optional[str] = None
-    pickupTime: Optional[TimeType] = JStruct[TimeType]
-    closingTime: Optional[TimeType] = JStruct[TimeType]
-    palletPickupTime: Optional[TimeType] = JStruct[TimeType]
-    palletClosingTime: Optional[TimeType] = JStruct[TimeType]
-    palletDeliveryClosingTime: Optional[TimeType] = JStruct[TimeType]
-    location: Optional[str] = None
-    instructions: Optional[str] = None
+    contactName: typing.Optional[str] = None
+    phoneNumber: typing.Optional[str] = None
+    pickupDate: typing.Optional[str] = None
+    pickupTime: typing.Optional[TimeType] = jstruct.JStruct[TimeType]
+    closingTime: typing.Optional[TimeType] = jstruct.JStruct[TimeType]
+    palletPickupTime: typing.Optional[TimeType] = jstruct.JStruct[TimeType]
+    palletClosingTime: typing.Optional[TimeType] = jstruct.JStruct[TimeType]
+    palletDeliveryClosingTime: typing.Optional[TimeType] = jstruct.JStruct[TimeType]
+    location: typing.Optional[str] = None
+    instructions: typing.Optional[str] = None

@@ -1485,7 +1485,6 @@ class ComputedAddress(models.Address):
                 join=True,
             ),
         )
-        return self.address.address_line1.replace(self.street_number, "").strip()
 
     @property
     def tax_id(self) -> typing.Optional[str]:

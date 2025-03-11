@@ -1,21 +1,21 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class FieldErrorType:
-    objectName: Optional[str] = None
-    field: Optional[str] = None
-    message: Optional[str] = None
+    objectName: typing.Optional[str] = None
+    field: typing.Optional[str] = None
+    message: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ErrorResponseType:
-    status: Optional[int] = None
-    title: Optional[str] = None
-    type: Optional[str] = None
-    message: Optional[str] = None
-    code: Optional[str] = None
-    fieldErrors: List[FieldErrorType] = JList[FieldErrorType]
-    thirdPartyMessage: Optional[str] = None
+    status: typing.Optional[int] = None
+    title: typing.Optional[str] = None
+    type: typing.Optional[str] = None
+    message: typing.Optional[str] = None
+    code: typing.Optional[str] = None
+    fieldErrors: typing.Optional[typing.List[FieldErrorType]] = jstruct.JList[FieldErrorType]
+    thirdPartyMessage: typing.Optional[str] = None

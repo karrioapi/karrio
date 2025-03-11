@@ -8,6 +8,7 @@ import karrio.providers.laposte.units as units
 
 
 METADATA = Metadata(
+    status="production-ready",
     id="laposte",
     label="La Poste",
     # Integrations

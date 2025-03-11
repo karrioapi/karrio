@@ -1,58 +1,58 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PackageType:
-    packageType: Optional[str] = None
-    packageCount: Optional[int] = None
+    packageType: typing.Optional[str] = None
+    packageCount: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AddressType:
-    streetAddress: Optional[str] = None
-    streetAddressAbbreviation: Optional[str] = None
-    secondaryAddress: Optional[str] = None
-    cityAbbreviation: Optional[str] = None
-    city: Optional[str] = None
-    state: Optional[str] = None
-    ZIPCode: Optional[str] = None
-    ZIPPlus4: Optional[str] = None
-    urbanization: Optional[str] = None
+    streetAddress: typing.Optional[str] = None
+    streetAddressAbbreviation: typing.Optional[str] = None
+    secondaryAddress: typing.Optional[str] = None
+    cityAbbreviation: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    state: typing.Optional[str] = None
+    ZIPCode: typing.Optional[str] = None
+    ZIPPlus4: typing.Optional[str] = None
+    urbanization: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ContactType:
-    email: Optional[str] = None
+    email: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PickupAddressType:
-    firstName: Optional[str] = None
-    lastName: Optional[str] = None
-    firm: Optional[str] = None
-    address: Optional[AddressType] = JStruct[AddressType]
-    contact: List[ContactType] = JList[ContactType]
+    firstName: typing.Optional[str] = None
+    lastName: typing.Optional[str] = None
+    firm: typing.Optional[str] = None
+    address: typing.Optional[AddressType] = jstruct.JStruct[AddressType]
+    contact: typing.Optional[typing.List[ContactType]] = jstruct.JList[ContactType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PickupLocationType:
-    packageLocation: Optional[str] = None
-    specialInstructions: Optional[str] = None
+    packageLocation: typing.Optional[str] = None
+    specialInstructions: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CarrierPickupRequestType:
-    pickupDate: Optional[str] = None
-    pickupAddress: Optional[PickupAddressType] = JStruct[PickupAddressType]
-    packages: List[PackageType] = JList[PackageType]
-    estimatedWeight: Optional[int] = None
-    pickupLocation: Optional[PickupLocationType] = JStruct[PickupLocationType]
+    pickupDate: typing.Optional[str] = None
+    pickupAddress: typing.Optional[PickupAddressType] = jstruct.JStruct[PickupAddressType]
+    packages: typing.Optional[typing.List[PackageType]] = jstruct.JList[PackageType]
+    estimatedWeight: typing.Optional[int] = None
+    pickupLocation: typing.Optional[PickupLocationType] = jstruct.JStruct[PickupLocationType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PickupUpdateResponseType:
-    confirmationNumber: Optional[str] = None
-    pickupDate: Optional[str] = None
-    carrierPickupRequest: Optional[CarrierPickupRequestType] = JStruct[CarrierPickupRequestType]
+    confirmationNumber: typing.Optional[str] = None
+    pickupDate: typing.Optional[str] = None
+    carrierPickupRequest: typing.Optional[CarrierPickupRequestType] = jstruct.JStruct[CarrierPickupRequestType]

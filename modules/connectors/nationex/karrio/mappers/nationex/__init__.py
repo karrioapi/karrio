@@ -8,6 +8,7 @@ import karrio.providers.nationex.units as units
 
 
 METADATA = Metadata(
+    status="beta",
     id="nationex",
     label="Nationex",
     # Integrations

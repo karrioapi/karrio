@@ -1,114 +1,114 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JList, JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ChargeType:
-    charge: Optional[str] = None
-    amount: Optional[str] = None
-    adjustmentReasons: Optional[str] = None
+    charge: typing.Optional[str] = None
+    amount: typing.Optional[str] = None
+    adjustmentReasons: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class InvoiceType:
-    invoiceNumber: Optional[str] = None
-    charges: List[ChargeType] = JList[ChargeType]
-    total: Optional[int] = None
+    invoiceNumber: typing.Optional[str] = None
+    charges: typing.Optional[typing.List[ChargeType]] = jstruct.JList[ChargeType]
+    total: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class BillingType:
-    invoices: List[InvoiceType] = JList[InvoiceType]
+    invoices: typing.Optional[typing.List[InvoiceType]] = jstruct.JList[InvoiceType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CarrierType:
-    carrierName: Optional[str] = None
-    serviceName: Optional[str] = None
-    carrierLogoPath: Optional[str] = None
+    carrierName: typing.Optional[str] = None
+    serviceName: typing.Optional[str] = None
+    carrierLogoPath: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CustomsInvoiceType:
-    type: Optional[str] = None
-    data: Optional[str] = None
+    type: typing.Optional[str] = None
+    data: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class LabelDataType:
-    label: List[CustomsInvoiceType] = JList[CustomsInvoiceType]
+    label: typing.Optional[typing.List[CustomsInvoiceType]] = jstruct.JList[CustomsInvoiceType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class OrderType:
-    trackingId: Optional[str] = None
-    id: Optional[str] = None
-    message: Optional[str] = None
+    trackingId: typing.Optional[str] = None
+    id: typing.Optional[str] = None
+    message: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PackageType:
-    trackingNumber: Optional[str] = None
+    trackingNumber: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PickupType:
-    confirmationNumber: Optional[str] = None
+    confirmationNumber: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class SurchargeType:
-    name: Optional[str] = None
-    amount: Optional[int] = None
+    name: typing.Optional[str] = None
+    amount: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class QuoteType:
-    carrierName: Optional[str] = None
-    serviceId: Optional[int] = None
-    serviceName: Optional[str] = None
-    deliveryCarrier: Optional[str] = None
-    modeTransport: Optional[str] = None
-    transitDays: Optional[str] = None
-    baseCharge: Optional[int] = None
-    fuelSurcharge: Optional[int] = None
-    fuelSurchargePercentage: Optional[int] = None
-    carbonNeutralFees: Optional[int] = None
-    surcharges: List[SurchargeType] = JList[SurchargeType]
-    totalCharge: Optional[int] = None
-    processingFees: Optional[int] = None
-    taxes: List[SurchargeType] = JList[SurchargeType]
-    totalChargedAmount: Optional[int] = None
-    currency: Optional[str] = None
-    carrierLogo: Optional[str] = None
-    id: Optional[str] = None
+    carrierName: typing.Optional[str] = None
+    serviceId: typing.Optional[int] = None
+    serviceName: typing.Optional[str] = None
+    deliveryCarrier: typing.Optional[str] = None
+    modeTransport: typing.Optional[str] = None
+    transitDays: typing.Optional[str] = None
+    baseCharge: typing.Optional[int] = None
+    fuelSurcharge: typing.Optional[int] = None
+    fuelSurchargePercentage: typing.Optional[int] = None
+    carbonNeutralFees: typing.Optional[int] = None
+    surcharges: typing.Optional[typing.List[SurchargeType]] = jstruct.JList[SurchargeType]
+    totalCharge: typing.Optional[int] = None
+    processingFees: typing.Optional[int] = None
+    taxes: typing.Optional[typing.List[SurchargeType]] = jstruct.JList[SurchargeType]
+    totalChargedAmount: typing.Optional[int] = None
+    currency: typing.Optional[str] = None
+    carrierLogo: typing.Optional[str] = None
+    id: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ReferenceType:
-    code: Optional[str] = None
-    name: Optional[str] = None
+    code: typing.Optional[str] = None
+    name: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShippingResponseType:
-    order: Optional[OrderType] = JStruct[OrderType]
-    carrier: Optional[CarrierType] = JStruct[CarrierType]
-    reference: Optional[ReferenceType] = JStruct[ReferenceType]
-    reference2: Optional[ReferenceType] = JStruct[ReferenceType]
-    reference3: Optional[ReferenceType] = JStruct[ReferenceType]
-    transactionId: Optional[str] = None
-    billingReference: Optional[str] = None
-    packages: List[PackageType] = JList[PackageType]
-    trackingUrl: Optional[str] = None
-    brandedTrackingUrl: Optional[str] = None
-    trackingNumber: Optional[str] = None
-    labelData: Optional[LabelDataType] = JStruct[LabelDataType]
-    customsInvoice: Optional[CustomsInvoiceType] = JStruct[CustomsInvoiceType]
-    pickup: Optional[PickupType] = JStruct[PickupType]
-    packingSlip: Optional[str] = None
-    quote: Optional[QuoteType] = JStruct[QuoteType]
-    billing: Optional[BillingType] = JStruct[BillingType]
-    returnShipment: Optional[str] = None
-    message: Optional[str] = None
+    order: typing.Optional[OrderType] = jstruct.JStruct[OrderType]
+    carrier: typing.Optional[CarrierType] = jstruct.JStruct[CarrierType]
+    reference: typing.Optional[ReferenceType] = jstruct.JStruct[ReferenceType]
+    reference2: typing.Optional[ReferenceType] = jstruct.JStruct[ReferenceType]
+    reference3: typing.Optional[ReferenceType] = jstruct.JStruct[ReferenceType]
+    transactionId: typing.Optional[str] = None
+    billingReference: typing.Optional[str] = None
+    packages: typing.Optional[typing.List[PackageType]] = jstruct.JList[PackageType]
+    trackingUrl: typing.Optional[str] = None
+    brandedTrackingUrl: typing.Optional[str] = None
+    trackingNumber: typing.Optional[str] = None
+    labelData: typing.Optional[LabelDataType] = jstruct.JStruct[LabelDataType]
+    customsInvoice: typing.Optional[CustomsInvoiceType] = jstruct.JStruct[CustomsInvoiceType]
+    pickup: typing.Optional[PickupType] = jstruct.JStruct[PickupType]
+    packingSlip: typing.Optional[str] = None
+    quote: typing.Optional[QuoteType] = jstruct.JStruct[QuoteType]
+    billing: typing.Optional[BillingType] = jstruct.JStruct[BillingType]
+    returnShipment: typing.Optional[str] = None
+    message: typing.Optional[str] = None

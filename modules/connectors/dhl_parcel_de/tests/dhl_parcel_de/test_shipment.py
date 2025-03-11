@@ -40,7 +40,7 @@ class TestDPDHLGermanyShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/v2/orders?docFormat=PDF&printFormat=A4&combine=true",
+                f"{gateway.settings.server_url}/v2/orders?docFormat=ZPL2&printFormat=910-300-700-oz&combine=true",
             )
 
     def test_cancel_shipment(self):
@@ -232,7 +232,7 @@ ShipmentRequest = {
             "billingNumber": "33333333330102",
             "consignee": {
                 "addressHouse": "20",
-                "addressStreet": "Kurt-Schumacher-Str.",
+                "addressStreet": "Kurt-Schumacher-Str. 20",
                 "city": "Bonn",
                 "country": "DEU",
                 "email": "maria@musterfrau.de",
@@ -250,7 +250,7 @@ ShipmentRequest = {
             "shipDate": ANY,
             "shipper": {
                 "addressHouse": "10",
-                "addressStreet": "Sträßchensweg",
+                "addressStreet": "Sträßchensweg 10",
                 "city": "Bonn",
                 "country": "DEU",
                 "email": "max@mustermann.de",
@@ -268,7 +268,7 @@ IntlShipmentRequest = {
             "billingNumber": "33333333330102",
             "consignee": {
                 "addressHouse": "10",
-                "addressStreet": "Downing Street",
+                "addressStreet": "10 Downing Street",
                 "city": "London",
                 "country": "GBR",
                 "email": "joe@black.uk",
@@ -302,7 +302,7 @@ IntlShipmentRequest = {
             "shipDate": ANY,
             "shipper": {
                 "addressHouse": "10",
-                "addressStreet": "Sträßchensweg",
+                "addressStreet": "Sträßchensweg 10",
                 "city": "Bonn",
                 "country": "DEU",
                 "email": "max@mustermann.de",

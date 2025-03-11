@@ -1,58 +1,58 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class WarningType:
-    warningCode: Optional[str] = None
-    warningDescription: Optional[str] = None
+    warningCode: typing.Optional[str] = None
+    warningDescription: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ExtraServiceType:
-    extraService: Optional[int] = None
-    name: Optional[str] = None
-    priceType: Optional[str] = None
-    price: Optional[float] = None
-    warnings: List[WarningType] = JList[WarningType]
-    SKU: Optional[str] = None
+    extraService: typing.Optional[int] = None
+    name: typing.Optional[str] = None
+    priceType: typing.Optional[str] = None
+    price: typing.Optional[float] = None
+    warnings: typing.Optional[typing.List[WarningType]] = jstruct.JList[WarningType]
+    SKU: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class FeeType:
-    name: Optional[str] = None
-    SKU: Optional[str] = None
-    price: Optional[float] = None
+    name: typing.Optional[str] = None
+    SKU: typing.Optional[str] = None
+    price: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RateType:
-    description: Optional[str] = None
-    priceType: Optional[str] = None
-    price: Optional[float] = None
-    weight: Optional[float] = None
-    dimWeight: Optional[float] = None
-    fees: List[FeeType] = JList[FeeType]
-    startDate: Optional[str] = None
-    endDate: Optional[str] = None
-    mailClass: Optional[str] = None
-    zone: Optional[str] = None
-    productName: Optional[str] = None
-    productDefinition: Optional[str] = None
-    processingCategory: Optional[str] = None
-    rateIndicator: Optional[str] = None
-    destinationEntryFacilityType: Optional[str] = None
-    SKU: Optional[str] = None
+    description: typing.Optional[str] = None
+    priceType: typing.Optional[str] = None
+    price: typing.Optional[float] = None
+    weight: typing.Optional[float] = None
+    dimWeight: typing.Optional[float] = None
+    fees: typing.Optional[typing.List[FeeType]] = jstruct.JList[FeeType]
+    startDate: typing.Optional[str] = None
+    endDate: typing.Optional[str] = None
+    mailClass: typing.Optional[str] = None
+    zone: typing.Optional[str] = None
+    productName: typing.Optional[str] = None
+    productDefinition: typing.Optional[str] = None
+    processingCategory: typing.Optional[str] = None
+    rateIndicator: typing.Optional[str] = None
+    destinationEntryFacilityType: typing.Optional[str] = None
+    SKU: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RateOptionType:
-    totalBasePrice: Optional[float] = None
-    rates: List[RateType] = JList[RateType]
-    extraServices: List[ExtraServiceType] = JList[ExtraServiceType]
+    totalBasePrice: typing.Optional[float] = None
+    rates: typing.Optional[typing.List[RateType]] = jstruct.JList[RateType]
+    extraServices: typing.Optional[typing.List[ExtraServiceType]] = jstruct.JList[ExtraServiceType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RateResponseType:
-    rateOptions: List[RateOptionType] = JList[RateOptionType]
+    rateOptions: typing.Optional[typing.List[RateOptionType]] = jstruct.JList[RateOptionType]

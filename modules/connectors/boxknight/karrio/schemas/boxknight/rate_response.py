@@ -1,19 +1,19 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Rate:
-    price: Optional[int] = None
-    service: Optional[str] = None
-    name: Optional[str] = None
-    description: Optional[str] = None
-    estimateDay: Optional[str] = None
-    estimateFrom: Optional[str] = None
-    estimateTo: Optional[str] = None
+    price: typing.Optional[int] = None
+    service: typing.Optional[str] = None
+    name: typing.Optional[str] = None
+    description: typing.Optional[str] = None
+    estimateDay: typing.Optional[str] = None
+    estimateFrom: typing.Optional[str] = None
+    estimateTo: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RateResponse:
-    rates: List[Rate] = JList[Rate]
+    rates: typing.Optional[typing.List[Rate]] = jstruct.JList[Rate]

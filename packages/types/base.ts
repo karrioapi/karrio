@@ -81,7 +81,7 @@ export type LabelTemplateType = any;
 export type DocumentTemplateType =
   graph.get_document_template_document_template;
 
-export interface WebhookType extends graph.get_webhooks_webhooks_edges_node {}
+export interface WebhookType extends graph.get_webhooks_webhooks_edges_node { }
 
 export type TenantType = {
   schema_name: string;
@@ -215,8 +215,8 @@ export class RequestError extends Error {
     ...params: any[]
   ) {
     super(...params);
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, RequestError);
+    if ((Error as any).captureStackTrace) {
+      (Error as any).captureStackTrace(this, RequestError);
     }
   }
 }
@@ -225,7 +225,7 @@ export class ErrorType {
   constructor(
     public field: string,
     public messages: string[],
-  ) {}
+  ) { }
 }
 
 export const HTTP_STATUS_CODES = [
@@ -347,6 +347,7 @@ export interface References {
       enum?: string[];
     }>
   >;
+  integration_status: Collection<string>;
 }
 
 export type SessionType<T = {}> = T & {

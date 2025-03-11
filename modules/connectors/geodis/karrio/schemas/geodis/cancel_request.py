@@ -1,9 +1,10 @@
-from attr import s
-from typing import List
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CancelRequestType:
-    listNosRecepisses: List[str] = []
-    listNosSuivis: List[str] = []
-    listReferences: List[str] = []
+    listNosRecepisses: typing.Optional[typing.List[str]] = None
+    listNosSuivis: typing.Optional[typing.List[str]] = None
+    listReferences: typing.Optional[typing.List[str]] = None

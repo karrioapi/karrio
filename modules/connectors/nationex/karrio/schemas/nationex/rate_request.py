@@ -1,40 +1,40 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AccessoryType:
-    InsuranceAmount: Optional[float] = None
-    FrozenProtection: Optional[bool] = None
-    DangerousGoods: Optional[bool] = None
-    SNR: Optional[bool] = None
+    InsuranceAmount: typing.Optional[float] = None
+    FrozenProtection: typing.Optional[bool] = None
+    DangerousGoods: typing.Optional[bool] = None
+    SNR: typing.Optional[bool] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DimensionsType:
-    Height: Optional[float] = None
-    Length: Optional[float] = None
-    Width: Optional[float] = None
-    Cubing: Optional[float] = None
+    Height: typing.Optional[float] = None
+    Length: typing.Optional[float] = None
+    Width: typing.Optional[float] = None
+    Cubing: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ParcelType:
-    NCV: Optional[bool] = None
-    Weight: Optional[float] = None
-    Dimensions: Optional[DimensionsType] = JStruct[DimensionsType]
+    NCV: typing.Optional[bool] = None
+    Weight: typing.Optional[float] = None
+    Dimensions: typing.Optional[DimensionsType] = jstruct.JStruct[DimensionsType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RateRequestType:
-    CustomerId: Optional[int] = None
-    ExpeditionDate: Optional[str] = None
-    ShipmentType: Optional[str] = None
-    SourcePostalCode: Optional[str] = None
-    DestinationPostalCode: Optional[str] = None
-    TotalWeight: Optional[float] = None
-    TotalParcels: Optional[int] = None
-    UnitsOfMeasurement: Optional[str] = None
-    Accessory: Optional[AccessoryType] = JStruct[AccessoryType]
-    Parcels: List[ParcelType] = JList[ParcelType]
+    CustomerId: typing.Optional[int] = None
+    ExpeditionDate: typing.Optional[str] = None
+    ShipmentType: typing.Optional[str] = None
+    SourcePostalCode: typing.Optional[str] = None
+    DestinationPostalCode: typing.Optional[str] = None
+    TotalWeight: typing.Optional[float] = None
+    TotalParcels: typing.Optional[int] = None
+    UnitsOfMeasurement: typing.Optional[str] = None
+    Accessory: typing.Optional[AccessoryType] = jstruct.JStruct[AccessoryType]
+    Parcels: typing.Optional[typing.List[ParcelType]] = jstruct.JList[ParcelType]

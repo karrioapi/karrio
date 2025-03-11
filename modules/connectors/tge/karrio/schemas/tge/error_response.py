@@ -1,47 +1,48 @@
-from attr import s
-from typing import Optional, List, Any
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ErrorNumberType:
-    Value: Optional[str] = None
+    Value: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ErrorMessageType:
-    ErrorMessage: Optional[str] = None
-    ErrorNumber: Optional[ErrorNumberType] = JStruct[ErrorNumberType]
+    ErrorMessage: typing.Optional[str] = None
+    ErrorNumber: typing.Optional[ErrorNumberType] = jstruct.JStruct[ErrorNumberType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ErrorMessagesType:
-    ErrorMessage: List[ErrorMessageType] = JList[ErrorMessageType]
+    ErrorMessage: typing.Optional[typing.List[ErrorMessageType]] = jstruct.JList[ErrorMessageType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class HeaderType:
-    ApplicationID: Any = None
-    AsynchronousMessageFlag: Any = None
-    CreateTimestamp: Optional[str] = None
-    DocumentType: Optional[str] = None
-    Environment: Optional[str] = None
-    MessageIdentifier: Optional[str] = None
-    MessageReceiver: Any = None
-    MessageSender: Optional[str] = None
-    MessageVersion: Optional[str] = None
-    References: Any = None
-    SourceSystemCode: Optional[str] = None
+    ApplicationID: typing.Any = None
+    AsynchronousMessageFlag: typing.Any = None
+    CreateTimestamp: typing.Optional[str] = None
+    DocumentType: typing.Optional[str] = None
+    Environment: typing.Optional[str] = None
+    MessageIdentifier: typing.Optional[str] = None
+    MessageReceiver: typing.Any = None
+    MessageSender: typing.Optional[str] = None
+    MessageVersion: typing.Optional[str] = None
+    References: typing.Any = None
+    SourceSystemCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TollMessageType:
-    ErrorMessages: Optional[ErrorMessagesType] = JStruct[ErrorMessagesType]
-    Header: Optional[HeaderType] = JStruct[HeaderType]
+    ErrorMessages: typing.Optional[ErrorMessagesType] = jstruct.JStruct[ErrorMessagesType]
+    Header: typing.Optional[HeaderType] = jstruct.JStruct[HeaderType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ErrorResponseType:
-    TollMessage: Optional[TollMessageType] = JStruct[TollMessageType]
-    ExceptionMessage: Optional[str] = None
-    message: Optional[str] = None
+    TollMessage: typing.Optional[TollMessageType] = jstruct.JStruct[TollMessageType]
+    Exception: typing.Optional[str] = None
+    ExceptionMessage: typing.Optional[str] = None
+    message: typing.Optional[str] = None

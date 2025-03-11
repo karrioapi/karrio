@@ -1,64 +1,64 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AccessoryType:
-    InsuranceAmount: Optional[float] = None
-    FrozenProtection: Optional[bool] = None
-    DangerousGoods: Optional[bool] = None
-    SNR: Optional[bool] = None
+    InsuranceAmount: typing.Optional[float] = None
+    FrozenProtection: typing.Optional[bool] = None
+    DangerousGoods: typing.Optional[bool] = None
+    SNR: typing.Optional[bool] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DestinationType:
-    Contact: Optional[str] = None
-    AccountNumber: Optional[str] = None
-    AccountName: Optional[str] = None
-    Address1: Optional[str] = None
-    Address2: Optional[str] = None
-    PostalCode: Optional[str] = None
-    City: Optional[str] = None
-    ProvinceState: Optional[str] = None
-    Phone: Optional[str] = None
-    SmsNotification: Optional[bool] = None
-    EmailNotification: Optional[bool] = None
-    NoCivic: Optional[int] = None
-    Suite: Optional[int] = None
-    StreetName: Optional[str] = None
-    Email: Optional[str] = None
+    Contact: typing.Optional[str] = None
+    AccountNumber: typing.Optional[str] = None
+    AccountName: typing.Optional[str] = None
+    Address1: typing.Optional[str] = None
+    Address2: typing.Optional[str] = None
+    PostalCode: typing.Optional[str] = None
+    City: typing.Optional[str] = None
+    ProvinceState: typing.Optional[str] = None
+    Phone: typing.Optional[str] = None
+    SmsNotification: typing.Optional[bool] = None
+    EmailNotification: typing.Optional[bool] = None
+    NoCivic: typing.Optional[int] = None
+    Suite: typing.Optional[int] = None
+    StreetName: typing.Optional[str] = None
+    Email: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DimensionsType:
-    Height: Optional[float] = None
-    Length: Optional[int] = None
-    Width: Optional[int] = None
-    Cubing: Optional[float] = None
+    Height: typing.Optional[float] = None
+    Length: typing.Optional[int] = None
+    Width: typing.Optional[int] = None
+    Cubing: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ParcelType:
-    NCV: Optional[bool] = None
-    Weight: Optional[float] = None
-    Dimensions: Optional[DimensionsType] = JStruct[DimensionsType]
+    NCV: typing.Optional[bool] = None
+    Weight: typing.Optional[float] = None
+    Dimensions: typing.Optional[DimensionsType] = jstruct.JStruct[DimensionsType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentRequestType:
-    CustomerId: Optional[int] = None
-    ShipmentId: Optional[int] = None
-    ExpeditionDate: Optional[str] = None
-    ShipmentType: Optional[str] = None
-    TotalParcels: Optional[int] = None
-    TotalWeight: Optional[float] = None
-    ReferenceNumber: Optional[str] = None
-    CustomBarcode: Optional[str] = None
-    Note: Optional[str] = None
-    BillingAccount: Optional[int] = None
-    Sender: Optional[DestinationType] = JStruct[DestinationType]
-    Destination: Optional[DestinationType] = JStruct[DestinationType]
-    Accessory: Optional[AccessoryType] = JStruct[AccessoryType]
-    Parcels: List[ParcelType] = JList[ParcelType]
-    UnitsOfMeasurement: Optional[str] = None
+    CustomerId: typing.Optional[int] = None
+    ShipmentId: typing.Optional[int] = None
+    ExpeditionDate: typing.Optional[str] = None
+    ShipmentType: typing.Optional[str] = None
+    TotalParcels: typing.Optional[int] = None
+    TotalWeight: typing.Optional[float] = None
+    ReferenceNumber: typing.Optional[str] = None
+    CustomBarcode: typing.Optional[str] = None
+    Note: typing.Optional[str] = None
+    BillingAccount: typing.Optional[int] = None
+    Sender: typing.Optional[DestinationType] = jstruct.JStruct[DestinationType]
+    Destination: typing.Optional[DestinationType] = jstruct.JStruct[DestinationType]
+    Accessory: typing.Optional[AccessoryType] = jstruct.JStruct[AccessoryType]
+    Parcels: typing.Optional[typing.List[ParcelType]] = jstruct.JList[ParcelType]
+    UnitsOfMeasurement: typing.Optional[str] = None

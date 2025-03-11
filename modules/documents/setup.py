@@ -17,9 +17,9 @@ setup(
     install_requires=[
         "pyzint",
         "weasyprint",
-        "karrio.server.core",
-        "karrio.server.graph",
-        "karrio.server.manager",
+        "karrio_server_core",
+        "karrio_server_graph",
+        "karrio_server_manager",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

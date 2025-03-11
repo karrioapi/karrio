@@ -1,47 +1,47 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Dimensions:
-    height: Optional[float] = None
-    length: Optional[float] = None
-    unit: Optional[str] = None
-    width: Optional[float] = None
+    height: typing.Optional[float] = None
+    length: typing.Optional[float] = None
+    unit: typing.Optional[str] = None
+    width: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Weight:
-    unit: Optional[str] = None
-    value: Optional[float] = None
+    unit: typing.Optional[str] = None
+    value: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ContainerSpecification:
-    dimensions: Optional[Dimensions] = JStruct[Dimensions]
-    weight: Optional[Weight] = JStruct[Weight]
+    dimensions: typing.Optional[Dimensions] = jstruct.JStruct[Dimensions]
+    weight: typing.Optional[Weight] = jstruct.JStruct[Weight]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class Ship:
-    addressLine1: Optional[str] = None
-    city: Optional[str] = None
-    countryCode: Optional[str] = None
-    name: Optional[str] = None
-    postalCode: Optional[str] = None
-    stateOrRegion: Optional[str] = None
-    addressLine2: Optional[str] = None
-    addressLine3: Optional[str] = None
-    email: Optional[str] = None
-    copyEmails: List[str] = []
-    phoneNumber: Optional[str] = None
+    addressLine1: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    countryCode: typing.Optional[str] = None
+    name: typing.Optional[str] = None
+    postalCode: typing.Optional[str] = None
+    stateOrRegion: typing.Optional[str] = None
+    addressLine2: typing.Optional[str] = None
+    addressLine3: typing.Optional[str] = None
+    email: typing.Optional[str] = None
+    copyEmails: typing.Optional[typing.List[str]] = None
+    phoneNumber: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RateRequest:
-    containerSpecifications: List[ContainerSpecification] = JList[ContainerSpecification]
-    serviceTypes: List[str] = []
-    shipFrom: Optional[Ship] = JStruct[Ship]
-    shipTo: Optional[Ship] = JStruct[Ship]
-    shipDate: Optional[str] = None
+    containerSpecifications: typing.Optional[typing.List[ContainerSpecification]] = jstruct.JList[ContainerSpecification]
+    serviceTypes: typing.Optional[typing.List[str]] = None
+    shipFrom: typing.Optional[Ship] = jstruct.JStruct[Ship]
+    shipTo: typing.Optional[Ship] = jstruct.JStruct[Ship]
+    shipDate: typing.Optional[str] = None

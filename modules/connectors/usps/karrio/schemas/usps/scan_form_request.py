@@ -1,36 +1,36 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class FromAddressType:
-    ignoreBadAddress: Optional[bool] = None
-    streetAddress: Optional[str] = None
-    secondaryAddress: Optional[str] = None
-    city: Optional[str] = None
-    state: Optional[str] = None
-    ZIPCode: Optional[str] = None
-    ZIPPlus4: Optional[str] = None
-    urbanization: Optional[str] = None
-    firstName: Optional[str] = None
-    lastName: Optional[str] = None
-    firm: Optional[str] = None
+    ignoreBadAddress: typing.Optional[bool] = None
+    streetAddress: typing.Optional[str] = None
+    secondaryAddress: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    state: typing.Optional[str] = None
+    ZIPCode: typing.Optional[str] = None
+    ZIPPlus4: typing.Optional[str] = None
+    urbanization: typing.Optional[str] = None
+    firstName: typing.Optional[str] = None
+    lastName: typing.Optional[str] = None
+    firm: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShipmentType:
-    trackingNumbers: List[str] = []
+    trackingNumbers: typing.Optional[typing.List[str]] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ScanFormRequestType:
-    form: Optional[int] = None
-    imageType: Optional[str] = None
-    labelType: Optional[str] = None
-    mailingDate: Optional[str] = None
-    overwriteMailingDate: Optional[bool] = None
-    entryFacilityZIPCode: Optional[int] = None
-    destinationEntryFacilityType: Optional[str] = None
-    shipment: Optional[ShipmentType] = JStruct[ShipmentType]
-    fromAddress: Optional[FromAddressType] = JStruct[FromAddressType]
+    form: typing.Optional[int] = None
+    imageType: typing.Optional[str] = None
+    labelType: typing.Optional[str] = None
+    mailingDate: typing.Optional[str] = None
+    overwriteMailingDate: typing.Optional[bool] = None
+    entryFacilityZIPCode: typing.Optional[int] = None
+    destinationEntryFacilityType: typing.Optional[str] = None
+    shipment: typing.Optional[ShipmentType] = jstruct.JStruct[ShipmentType]
+    fromAddress: typing.Optional[FromAddressType] = jstruct.JStruct[FromAddressType]

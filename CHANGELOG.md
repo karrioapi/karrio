@@ -1,3 +1,27 @@
+# karrio 2024.12.5
+
+## Changes
+
+### Feat
+
+- feat: add integration_status to connectors metadata
+- feat: introduce codegen cli to replace old quicktype script
+- feat: make dhl_parcel_de label_type configurable
+- feat(WIP): app template
+
+### Fix
+
+- fix: remove shipping dates options from shipment during duplicate
+- fix: update dhl_parcel_de address data mapping based on feedback and API specs
+
+### Chore
+
+- chore: clean up left-over package named normalization
+- chore: improve alignment of code preview
+- chore: fix responsiveness across the platform website
+- chore: update script for ee dev setup
+
+
 # Karrio 2024.12.4
 
 ## Changes

@@ -1,108 +1,108 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ItemType:
-    HarmonizedCode: Optional[str] = None
-    Description: Optional[str] = None
-    ClassOrDivision: Optional[str] = None
-    UNorIDNo: Optional[str] = None
-    PackingGroup: Optional[str] = None
-    SubsidaryRisk: Optional[str] = None
-    Packing: Optional[str] = None
-    PackingInstr: Optional[str] = None
-    Authorization: Optional[str] = None
+    HarmonizedCode: typing.Optional[str] = None
+    Description: typing.Optional[str] = None
+    ClassOrDivision: typing.Optional[str] = None
+    UNorIDNo: typing.Optional[str] = None
+    PackingGroup: typing.Optional[str] = None
+    SubsidaryRisk: typing.Optional[str] = None
+    Packing: typing.Optional[str] = None
+    PackingInstr: typing.Optional[str] = None
+    Authorization: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CommodityType:
-    Description: Optional[str] = None
-    HarmonizedCode: Optional[str] = None
-    Units: Optional[int] = None
-    UnitValue: Optional[int] = None
-    UnitKg: Optional[float] = None
-    Currency: Optional[str] = None
-    Country: Optional[str] = None
-    IsDG: Optional[bool] = None
-    itemSKU: Optional[str] = None
-    DangerousGoodsItem: Optional[ItemType] = JStruct[ItemType]
+    Description: typing.Optional[str] = None
+    HarmonizedCode: typing.Optional[str] = None
+    Units: typing.Optional[int] = None
+    UnitValue: typing.Optional[int] = None
+    UnitKg: typing.Optional[float] = None
+    Currency: typing.Optional[str] = None
+    Country: typing.Optional[str] = None
+    IsDG: typing.Optional[bool] = None
+    itemSKU: typing.Optional[str] = None
+    DangerousGoodsItem: typing.Optional[ItemType] = jstruct.JStruct[ItemType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DangerousGoodsType:
-    AdditionalHandlingInfo: Optional[str] = None
-    HazchemCode: Optional[str] = None
-    IsRadioActive: Optional[bool] = None
-    CargoAircraftOnly: Optional[bool] = None
-    IsDGLQ: Optional[bool] = None
-    TotalQuantity: Optional[int] = None
-    TotalKg: Optional[float] = None
-    SignOffName: Optional[str] = None
-    SignOffRole: Optional[str] = None
-    LineItems: List[ItemType] = JList[ItemType]
+    AdditionalHandlingInfo: typing.Optional[str] = None
+    HazchemCode: typing.Optional[str] = None
+    IsRadioActive: typing.Optional[bool] = None
+    CargoAircraftOnly: typing.Optional[bool] = None
+    IsDGLQ: typing.Optional[bool] = None
+    TotalQuantity: typing.Optional[int] = None
+    TotalKg: typing.Optional[float] = None
+    SignOffName: typing.Optional[str] = None
+    SignOffRole: typing.Optional[str] = None
+    LineItems: typing.Optional[typing.List[ItemType]] = jstruct.JList[ItemType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AddressType:
-    BuildingName: Optional[str] = None
-    StreetAddress: Optional[str] = None
-    Suburb: Optional[str] = None
-    City: Optional[str] = None
-    PostCode: Optional[int] = None
-    CountryCode: Optional[str] = None
+    BuildingName: typing.Optional[str] = None
+    StreetAddress: typing.Optional[str] = None
+    Suburb: typing.Optional[str] = None
+    City: typing.Optional[str] = None
+    PostCode: typing.Optional[int] = None
+    CountryCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DestinationType:
-    Id: Optional[int] = None
-    Name: Optional[str] = None
-    Address: Optional[AddressType] = JStruct[AddressType]
-    ContactPerson: Optional[str] = None
-    PhoneNumber: Optional[str] = None
-    Email: Optional[str] = None
-    DeliveryInstructions: Optional[str] = None
-    RecipientTaxId: Optional[int] = None
-    SendTrackingEmail: Optional[bool] = None
+    Id: typing.Optional[int] = None
+    Name: typing.Optional[str] = None
+    Address: typing.Optional[AddressType] = jstruct.JStruct[AddressType]
+    ContactPerson: typing.Optional[str] = None
+    PhoneNumber: typing.Optional[str] = None
+    Email: typing.Optional[str] = None
+    DeliveryInstructions: typing.Optional[str] = None
+    RecipientTaxId: typing.Optional[int] = None
+    SendTrackingEmail: typing.Optional[bool] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PackageType:
-    Height: Optional[float] = None
-    Length: Optional[float] = None
-    Width: Optional[float] = None
-    Kg: Optional[float] = None
-    Name: Optional[str] = None
-    Type: Optional[str] = None
-    OverLabelBarcode: Optional[str] = None
+    Height: typing.Optional[float] = None
+    Length: typing.Optional[float] = None
+    Width: typing.Optional[float] = None
+    Kg: typing.Optional[float] = None
+    Name: typing.Optional[str] = None
+    Type: typing.Optional[str] = None
+    OverLabelBarcode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TaxIDType:
-    IdType: Optional[str] = None
-    IdNumber: Optional[str] = None
+    IdType: typing.Optional[str] = None
+    IdNumber: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShippingRequestType:
-    DeliveryReference: Optional[str] = None
-    Reference2: Optional[str] = None
-    Reference3: Optional[str] = None
-    Origin: Optional[DestinationType] = JStruct[DestinationType]
-    Destination: Optional[DestinationType] = JStruct[DestinationType]
-    DangerousGoods: Optional[DangerousGoodsType] = JStruct[DangerousGoodsType]
-    Commodities: List[CommodityType] = JList[CommodityType]
-    Packages: List[PackageType] = JList[PackageType]
-    issignaturerequired: Optional[bool] = None
-    DutiesAndTaxesByReceiver: Optional[bool] = None
-    PrintToPrinter: Optional[bool] = None
-    IncludeLineDetails: Optional[bool] = None
-    Carrier: Optional[str] = None
-    Service: Optional[str] = None
-    CostCentreName: Optional[str] = None
-    CodValue: Optional[float] = None
-    TaxCollected: Optional[bool] = None
-    AmountCollected: Optional[float] = None
-    TaxIds: List[TaxIDType] = JList[TaxIDType]
-    Outputs: List[str] = []
+    DeliveryReference: typing.Optional[str] = None
+    Reference2: typing.Optional[str] = None
+    Reference3: typing.Optional[str] = None
+    Origin: typing.Optional[DestinationType] = jstruct.JStruct[DestinationType]
+    Destination: typing.Optional[DestinationType] = jstruct.JStruct[DestinationType]
+    DangerousGoods: typing.Optional[DangerousGoodsType] = jstruct.JStruct[DangerousGoodsType]
+    Commodities: typing.Optional[typing.List[CommodityType]] = jstruct.JList[CommodityType]
+    Packages: typing.Optional[typing.List[PackageType]] = jstruct.JList[PackageType]
+    issignaturerequired: typing.Optional[bool] = None
+    DutiesAndTaxesByReceiver: typing.Optional[bool] = None
+    PrintToPrinter: typing.Optional[bool] = None
+    IncludeLineDetails: typing.Optional[bool] = None
+    Carrier: typing.Optional[str] = None
+    Service: typing.Optional[str] = None
+    CostCentreName: typing.Optional[str] = None
+    CodValue: typing.Optional[float] = None
+    TaxCollected: typing.Optional[bool] = None
+    AmountCollected: typing.Optional[float] = None
+    TaxIds: typing.Optional[typing.List[TaxIDType]] = jstruct.JList[TaxIDType]
+    Outputs: typing.Optional[typing.List[str]] = None

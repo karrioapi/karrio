@@ -1,106 +1,106 @@
-from attr import s
-from typing import List, Optional
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AccountAddressOfRecordType:
-    streetLines: List[str] = []
-    city: Optional[str] = None
-    stateOrProvinceCode: Optional[str] = None
-    postalCode: Optional[int] = None
-    countryCode: Optional[str] = None
-    residential: Optional[bool] = None
-    addressClassification: Optional[str] = None
-    urbanizationCode: Optional[str] = None
+    streetLines: typing.Optional[typing.List[str]] = None
+    city: typing.Optional[str] = None
+    stateOrProvinceCode: typing.Optional[str] = None
+    postalCode: typing.Optional[int] = None
+    countryCode: typing.Optional[str] = None
+    residential: typing.Optional[bool] = None
+    addressClassification: typing.Optional[str] = None
+    urbanizationCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AccountNumberType:
-    value: Optional[str] = None
+    value: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DimensionsType:
-    length: Optional[int] = None
-    width: Optional[int] = None
-    height: Optional[int] = None
-    units: Optional[str] = None
+    length: typing.Optional[int] = None
+    width: typing.Optional[int] = None
+    height: typing.Optional[int] = None
+    units: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ExpressFreightDetailType:
-    truckType: Optional[str] = None
-    service: Optional[str] = None
-    trailerLength: Optional[str] = None
-    bookingNumber: Optional[str] = None
-    dimensions: Optional[DimensionsType] = JStruct[DimensionsType]
+    truckType: typing.Optional[str] = None
+    service: typing.Optional[str] = None
+    trailerLength: typing.Optional[str] = None
+    bookingNumber: typing.Optional[str] = None
+    dimensions: typing.Optional[DimensionsType] = jstruct.JStruct[DimensionsType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ContactType:
-    companyName: Optional[str] = None
-    personName: Optional[str] = None
-    phoneNumber: Optional[str] = None
-    phoneExtension: Optional[str] = None
+    companyName: typing.Optional[str] = None
+    personName: typing.Optional[str] = None
+    phoneNumber: typing.Optional[str] = None
+    phoneExtension: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PickupLocationType:
-    contact: Optional[ContactType] = JStruct[ContactType]
-    address: Optional[AccountAddressOfRecordType] = JStruct[AccountAddressOfRecordType]
-    accountNumber: Optional[AccountNumberType] = JStruct[AccountNumberType]
-    deliveryInstructions: Optional[str] = None
+    contact: typing.Optional[ContactType] = jstruct.JStruct[ContactType]
+    address: typing.Optional[AccountAddressOfRecordType] = jstruct.JStruct[AccountAddressOfRecordType]
+    accountNumber: typing.Optional[AccountNumberType] = jstruct.JStruct[AccountNumberType]
+    deliveryInstructions: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class OriginDetailType:
-    pickupAddressType: Optional[str] = None
-    pickupLocation: Optional[PickupLocationType] = JStruct[PickupLocationType]
-    readyDateTimestamp: Optional[str] = None
-    customerCloseTime: Optional[str] = None
-    pickupDateType: Optional[str] = None
-    packageLocation: Optional[str] = None
-    buildingPart: Optional[str] = None
-    buildingPartDescription: Optional[int] = None
-    earlyPickup: Optional[bool] = None
-    suppliesRequested: Optional[str] = None
-    geographicalPostalCode: Optional[str] = None
+    pickupAddressType: typing.Optional[str] = None
+    pickupLocation: typing.Optional[PickupLocationType] = jstruct.JStruct[PickupLocationType]
+    readyDateTimestamp: typing.Optional[str] = None
+    customerCloseTime: typing.Optional[str] = None
+    pickupDateType: typing.Optional[str] = None
+    packageLocation: typing.Optional[str] = None
+    buildingPart: typing.Optional[str] = None
+    buildingPartDescription: typing.Optional[int] = None
+    earlyPickup: typing.Optional[bool] = None
+    suppliesRequested: typing.Optional[str] = None
+    geographicalPostalCode: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class EmailDetailType:
-    address: Optional[str] = None
-    locale: Optional[str] = None
+    address: typing.Optional[str] = None
+    locale: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PickupNotificationDetailType:
-    emailDetails: List[EmailDetailType] = JList[EmailDetailType]
-    format: Optional[str] = None
-    userMessage: Optional[str] = None
+    emailDetails: typing.Optional[typing.List[EmailDetailType]] = jstruct.JList[EmailDetailType]
+    format: typing.Optional[str] = None
+    userMessage: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TotalWeightType:
-    units: Optional[str] = None
-    value: Optional[int] = None
+    units: typing.Optional[str] = None
+    value: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PickupRequestType:
-    associatedAccountNumber: Optional[AccountNumberType] = JStruct[AccountNumberType]
-    originDetail: Optional[OriginDetailType] = JStruct[OriginDetailType]
-    associatedAccountNumberType: Optional[str] = None
-    totalWeight: Optional[TotalWeightType] = JStruct[TotalWeightType]
-    packageCount: Optional[int] = None
-    carrierCode: Optional[str] = None
-    accountAddressOfRecord: Optional[AccountAddressOfRecordType] = JStruct[AccountAddressOfRecordType]
-    remarks: Optional[str] = None
-    countryRelationships: Optional[str] = None
-    pickupType: Optional[str] = None
-    trackingNumber: Optional[str] = None
-    commodityDescription: Optional[str] = None
-    expressFreightDetail: Optional[ExpressFreightDetailType] = JStruct[ExpressFreightDetailType]
-    oversizePackageCount: Optional[int] = None
-    pickupNotificationDetail: Optional[PickupNotificationDetailType] = JStruct[PickupNotificationDetailType]
+    associatedAccountNumber: typing.Optional[AccountNumberType] = jstruct.JStruct[AccountNumberType]
+    originDetail: typing.Optional[OriginDetailType] = jstruct.JStruct[OriginDetailType]
+    associatedAccountNumberType: typing.Optional[str] = None
+    totalWeight: typing.Optional[TotalWeightType] = jstruct.JStruct[TotalWeightType]
+    packageCount: typing.Optional[int] = None
+    carrierCode: typing.Optional[str] = None
+    accountAddressOfRecord: typing.Optional[AccountAddressOfRecordType] = jstruct.JStruct[AccountAddressOfRecordType]
+    remarks: typing.Optional[str] = None
+    countryRelationships: typing.Optional[str] = None
+    pickupType: typing.Optional[str] = None
+    trackingNumber: typing.Optional[str] = None
+    commodityDescription: typing.Optional[str] = None
+    expressFreightDetail: typing.Optional[ExpressFreightDetailType] = jstruct.JStruct[ExpressFreightDetailType]
+    oversizePackageCount: typing.Optional[int] = None
+    pickupNotificationDetail: typing.Optional[PickupNotificationDetailType] = jstruct.JStruct[PickupNotificationDetailType]

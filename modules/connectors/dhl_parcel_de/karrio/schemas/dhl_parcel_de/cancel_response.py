@@ -1,36 +1,36 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class LabelType:
-    url: Optional[str] = None
-    format: Optional[str] = None
+    url: typing.Optional[str] = None
+    format: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class SstatusType:
-    title: Optional[str] = None
-    status: Optional[int] = None
+    title: typing.Optional[str] = None
+    status: typing.Optional[int] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ItemType:
-    shipmentNo: Optional[int] = None
-    sstatus: Optional[SstatusType] = JStruct[SstatusType]
-    label: Optional[LabelType] = JStruct[LabelType]
+    shipmentNo: typing.Optional[int] = None
+    sstatus: typing.Optional[SstatusType] = jstruct.JStruct[SstatusType]
+    label: typing.Optional[LabelType] = jstruct.JStruct[LabelType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class StatusType:
-    title: Optional[str] = None
-    statusCode: Optional[int] = None
-    instance: Optional[str] = None
-    detail: Optional[str] = None
+    title: typing.Optional[str] = None
+    statusCode: typing.Optional[int] = None
+    instance: typing.Optional[str] = None
+    detail: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class CancelResponseType:
-    status: Optional[StatusType] = JStruct[StatusType]
-    items: List[ItemType] = JList[ItemType]
+    status: typing.Optional[StatusType] = jstruct.JStruct[StatusType]
+    items: typing.Optional[typing.List[ItemType]] = jstruct.JList[ItemType]

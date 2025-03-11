@@ -8,6 +8,7 @@ import karrio.providers.hay_post.units as units
 
 
 METADATA = Metadata(
+    status="beta",
     id="hay_post",
     label="HayPost",
 

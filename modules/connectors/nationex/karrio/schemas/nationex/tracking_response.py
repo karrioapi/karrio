@@ -1,117 +1,117 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JStruct, JList
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class AccessoryType:
-    InsuranceAmount: Optional[int] = None
-    FrozenProtection: Optional[bool] = None
-    DangerousGoods: Optional[bool] = None
-    SNR: Optional[bool] = None
+    InsuranceAmount: typing.Optional[int] = None
+    FrozenProtection: typing.Optional[bool] = None
+    DangerousGoods: typing.Optional[bool] = None
+    SNR: typing.Optional[bool] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DestinationType:
-    Contact: Optional[str] = None
-    AccountNumber: Optional[str] = None
-    AccountName: Optional[str] = None
-    Address1: Optional[str] = None
-    Address2: Optional[str] = None
-    PostalCode: Optional[str] = None
-    City: Optional[str] = None
-    ProvinceState: Optional[str] = None
-    Phone: Optional[str] = None
-    SmsNotification: Optional[bool] = None
-    EmailNotification: Optional[bool] = None
-    NoCivic: Optional[int] = None
-    Suite: Optional[int] = None
-    StreetName: Optional[str] = None
-    Email: Optional[str] = None
+    Contact: typing.Optional[str] = None
+    AccountNumber: typing.Optional[str] = None
+    AccountName: typing.Optional[str] = None
+    Address1: typing.Optional[str] = None
+    Address2: typing.Optional[str] = None
+    PostalCode: typing.Optional[str] = None
+    City: typing.Optional[str] = None
+    ProvinceState: typing.Optional[str] = None
+    Phone: typing.Optional[str] = None
+    SmsNotification: typing.Optional[bool] = None
+    EmailNotification: typing.Optional[bool] = None
+    NoCivic: typing.Optional[int] = None
+    Suite: typing.Optional[int] = None
+    StreetName: typing.Optional[str] = None
+    Email: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class DimensionsType:
-    Height: Optional[float] = None
-    Length: Optional[int] = None
-    Width: Optional[int] = None
-    Cubing: Optional[float] = None
+    Height: typing.Optional[float] = None
+    Length: typing.Optional[int] = None
+    Width: typing.Optional[int] = None
+    Cubing: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class GeocodingType:
-    Longitude: Optional[float] = None
-    Latitude: Optional[float] = None
+    Longitude: typing.Optional[float] = None
+    Latitude: typing.Optional[float] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class HistoryType:
-    ParcelHistoryId: Optional[int] = None
-    ProcessedDate: Optional[str] = None
-    ExceptionId: Optional[int] = None
-    CityDepot: Optional[str] = None
-    DescriptionFr: Optional[str] = None
-    DescriptionEn: Optional[str] = None
-    PhotoId: Optional[int] = None
-    SignatureId: Optional[int] = None
-    Geocoding: Optional[GeocodingType] = JStruct[GeocodingType]
+    ParcelHistoryId: typing.Optional[int] = None
+    ProcessedDate: typing.Optional[str] = None
+    ExceptionId: typing.Optional[int] = None
+    CityDepot: typing.Optional[str] = None
+    DescriptionFr: typing.Optional[str] = None
+    DescriptionEn: typing.Optional[str] = None
+    PhotoId: typing.Optional[int] = None
+    SignatureId: typing.Optional[int] = None
+    Geocoding: typing.Optional[GeocodingType] = jstruct.JStruct[GeocodingType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ParcelType:
-    ParcelId: Optional[int] = None
-    ParcelNumber: Optional[int] = None
-    ReferenceNumber: Optional[str] = None
-    NCV: Optional[bool] = None
-    Weight: Optional[int] = None
-    Status: Optional[str] = None
-    StatusDescriptionEn: Optional[str] = None
-    StatusDescriptionFr: Optional[str] = None
-    EstimatedDeliveryDate: Optional[str] = None
-    EstimatedDeliveryTime: Optional[str] = None
-    EstimatedDeliveryTimeFr: Optional[str] = None
-    EstimatedDeliveryTimeEn: Optional[str] = None
-    EstimatedPercentageBeforeDelivery: Optional[int] = None
-    Dimensions: Optional[DimensionsType] = JStruct[DimensionsType]
-    History: List[HistoryType] = JList[HistoryType]
+    ParcelId: typing.Optional[int] = None
+    ParcelNumber: typing.Optional[int] = None
+    ReferenceNumber: typing.Optional[str] = None
+    NCV: typing.Optional[bool] = None
+    Weight: typing.Optional[int] = None
+    Status: typing.Optional[str] = None
+    StatusDescriptionEn: typing.Optional[str] = None
+    StatusDescriptionFr: typing.Optional[str] = None
+    EstimatedDeliveryDate: typing.Optional[str] = None
+    EstimatedDeliveryTime: typing.Optional[str] = None
+    EstimatedDeliveryTimeFr: typing.Optional[str] = None
+    EstimatedDeliveryTimeEn: typing.Optional[str] = None
+    EstimatedPercentageBeforeDelivery: typing.Optional[int] = None
+    Dimensions: typing.Optional[DimensionsType] = jstruct.JStruct[DimensionsType]
+    History: typing.Optional[typing.List[HistoryType]] = jstruct.JList[HistoryType]
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class PhotoType:
-    Id: Optional[int] = None
-    Data: Optional[str] = None
+    Id: typing.Optional[int] = None
+    Data: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class StatusHistoryType:
-    ShipmentStatus: Optional[str] = None
-    ShipmentStatusFr: Optional[str] = None
-    ShipmentStatusEn: Optional[str] = None
-    StatusDate: Optional[str] = None
-    LastLocation: Optional[str] = None
+    ShipmentStatus: typing.Optional[str] = None
+    ShipmentStatusFr: typing.Optional[str] = None
+    ShipmentStatusEn: typing.Optional[str] = None
+    StatusDate: typing.Optional[str] = None
+    LastLocation: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class TrackingResponseType:
-    CustomerId: Optional[int] = None
-    ShipmentId: Optional[int] = None
-    ExpeditionDate: Optional[str] = None
-    TotalParcels: Optional[int] = None
-    TotalWeight: Optional[float] = None
-    ShipmentStatus: Optional[str] = None
-    ShipmentStatusFr: Optional[str] = None
-    ShipmentStatusEn: Optional[str] = None
-    StatusHistories: List[StatusHistoryType] = JList[StatusHistoryType]
-    ShipmentType: Optional[str] = None
-    ReferenceNumber: Optional[str] = None
-    Note: Optional[str] = None
-    BillingAccount: Optional[int] = None
-    Sender: Optional[DestinationType] = JStruct[DestinationType]
-    Destination: Optional[DestinationType] = JStruct[DestinationType]
-    Accessory: Optional[AccessoryType] = JStruct[AccessoryType]
-    Parcels: List[ParcelType] = JList[ParcelType]
-    ConsolId: Optional[int] = None
-    IsInvoiced: Optional[bool] = None
-    IsScanned: Optional[bool] = None
-    IsConsolidated: Optional[bool] = None
-    Photos: List[PhotoType] = JList[PhotoType]
+    CustomerId: typing.Optional[int] = None
+    ShipmentId: typing.Optional[int] = None
+    ExpeditionDate: typing.Optional[str] = None
+    TotalParcels: typing.Optional[int] = None
+    TotalWeight: typing.Optional[float] = None
+    ShipmentStatus: typing.Optional[str] = None
+    ShipmentStatusFr: typing.Optional[str] = None
+    ShipmentStatusEn: typing.Optional[str] = None
+    StatusHistories: typing.Optional[typing.List[StatusHistoryType]] = jstruct.JList[StatusHistoryType]
+    ShipmentType: typing.Optional[str] = None
+    ReferenceNumber: typing.Optional[str] = None
+    Note: typing.Optional[str] = None
+    BillingAccount: typing.Optional[int] = None
+    Sender: typing.Optional[DestinationType] = jstruct.JStruct[DestinationType]
+    Destination: typing.Optional[DestinationType] = jstruct.JStruct[DestinationType]
+    Accessory: typing.Optional[AccessoryType] = jstruct.JStruct[AccessoryType]
+    Parcels: typing.Optional[typing.List[ParcelType]] = jstruct.JList[ParcelType]
+    ConsolId: typing.Optional[int] = None
+    IsInvoiced: typing.Optional[bool] = None
+    IsScanned: typing.Optional[bool] = None
+    IsConsolidated: typing.Optional[bool] = None
+    Photos: typing.Optional[typing.List[PhotoType]] = jstruct.JList[PhotoType]

@@ -1,22 +1,22 @@
-from attr import s
-from typing import Optional, List
-from jstruct import JList, JStruct
+import attr
+import jstruct
+import typing
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ResponseStatusType:
-    responseStatusCode: Optional[str] = None
-    responseStatusMessage: Optional[str] = None
+    responseStatusCode: typing.Optional[str] = None
+    responseStatusMessage: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class ShippingRateType:
-    productCode: Optional[str] = None
-    rate: Optional[float] = None
-    currencyType: Optional[str] = None
+    productCode: typing.Optional[str] = None
+    rate: typing.Optional[float] = None
+    currencyType: typing.Optional[str] = None
 
 
-@s(auto_attribs=True)
+@attr.s(auto_attribs=True)
 class RateResponseType:
-    shippingRates: List[ShippingRateType] = JList[ShippingRateType]
-    responseStatus: Optional[ResponseStatusType] = JStruct[ResponseStatusType]
+    shippingRates: typing.Optional[typing.List[ShippingRateType]] = jstruct.JList[ShippingRateType]
+    responseStatus: typing.Optional[ResponseStatusType] = jstruct.JStruct[ResponseStatusType]

@@ -7,6 +7,7 @@ from karrio.providers.chronopost import units
 
 
 METADATA = Metadata(
+    status="beta",
     id="chronopost",
     label="Chronopost",
     # Integrations

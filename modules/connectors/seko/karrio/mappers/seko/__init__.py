@@ -8,6 +8,7 @@ import karrio.providers.seko.utils as utils
 
 
 METADATA = Metadata(
+    status="production-ready",
     id="seko",
     label="SEKO Logistics",
     # Integrations

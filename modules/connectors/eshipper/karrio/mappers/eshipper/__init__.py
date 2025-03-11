@@ -7,6 +7,7 @@ import karrio.providers.eshipper.units as units
 
 
 METADATA = Metadata(
+    status="production-ready",
     id="eshipper",
     label="eShipper",
     # Integrations
