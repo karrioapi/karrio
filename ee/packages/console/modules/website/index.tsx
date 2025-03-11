@@ -14,13 +14,10 @@ import { CodePreview } from "@karrio/console/components/code-preview";
 import { FeatureTabs } from "@karrio/console/components/feature-tabs";
 import { CTASection } from "@karrio/console/components/cta-section";
 import { Button } from "@karrio/insiders/components/ui/button";
-import { auth } from "@karrio/console/apis/auth";
 import Image from "next/image";
 import Link from "next/link";
 
 export default async function LandingPage() {
-  const session = await auth();
-
   return (
     <>
       {/* Hero Section */}

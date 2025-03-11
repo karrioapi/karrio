@@ -1,8 +1,8 @@
-import { UseCasesDropdown } from "@karrio/console/components/use-cases-dropdown";
+import { PlatformSubnav } from "@karrio/console/components/platform-subnav";
+import { MobileMenu } from "@karrio/console/components/mobile-menu";
 import { Button } from "@karrio/insiders/components/ui/button";
 import { auth } from "@karrio/console/apis/auth";
 import { Github } from "lucide-react";
-import { MobileMenu } from "@karrio/console/components/mobile-menu";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -22,7 +22,7 @@ export async function WebsiteLayout({
             <div className="flex items-center space-x-0">
               <MobileMenu />
 
-              <Link href="/" className="flex items-center">
+              <Link href="/" className="flex items-center mr-4">
                 <Image
                   src="/logo.svg"
                   alt="Karrio Logo"
@@ -32,7 +32,7 @@ export async function WebsiteLayout({
                   priority
                 />
               </Link>
-              <div className="hidden md:flex space-x-8 ml-12">
+              <div className="hidden md:flex space-x-6 ml-12 pl-4">
                 <Link
                   href="https://docs.karrio.io"
                   className="text-white/80 hover:text-white transition-colors"
@@ -51,9 +51,8 @@ export async function WebsiteLayout({
                 >
                   Carriers
                 </Link>
-                <UseCasesDropdown />
                 <Link
-                  href="https://docs.karrio.io/platform"
+                  href="/"
                   className="text-white/80 hover:text-white transition-colors"
                 >
                   Platform
@@ -76,6 +75,9 @@ export async function WebsiteLayout({
           </div>
         </div>
       </header>
+
+      {/* Platform Subnav */}
+      <PlatformSubnav />
 
       {/* Main Content */}
       <main>
