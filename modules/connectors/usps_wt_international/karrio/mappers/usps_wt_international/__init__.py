@@ -7,6 +7,7 @@ import karrio.providers.usps_wt_international.units as units
 
 
 METADATA = Metadata(
+    status="deprecated",
     id="usps_wt_international",
     label="USPS Web Tools International",
     # Integrations

@@ -8,6 +8,7 @@ import karrio.providers.sapient.utils as utils
 
 
 METADATA = Metadata(
+    status="production-ready",
     id="sapient",
     label="SAPIENT",
     # Integrations

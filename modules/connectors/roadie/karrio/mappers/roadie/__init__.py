@@ -7,6 +7,7 @@ import karrio.providers.roadie.units as units
 
 
 METADATA = Metadata(
+    status="beta",
     id="roadie",
     label="Roadie",
     # Integrations

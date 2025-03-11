@@ -7,6 +7,7 @@ from karrio.mappers.royalmail.settings import Settings
 
 
 METADATA = Metadata(
+    status="beta",
     id="royalmail",
     label="Royal Mail",
 

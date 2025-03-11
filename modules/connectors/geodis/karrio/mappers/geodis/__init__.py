@@ -7,6 +7,7 @@ import karrio.providers.geodis.units as units
 
 
 METADATA = Metadata(
+    status="beta",
     id="geodis",
     label="GEODIS",
     # Integrations

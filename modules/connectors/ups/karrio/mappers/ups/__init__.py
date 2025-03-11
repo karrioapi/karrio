@@ -7,6 +7,7 @@ import karrio.providers.ups.units as units
 
 
 METADATA = Metadata(
+    status="beta",
     id="ups",
     label="UPS",
     # Integrations

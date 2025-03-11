@@ -8,6 +8,7 @@ from karrio.mappers.aramex.settings import Settings
 
 
 METADATA = Metadata(
+    status="beta",
     id="aramex",
     label="Aramex",
     # Integrations

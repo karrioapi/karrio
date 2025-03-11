@@ -7,6 +7,7 @@ import karrio.providers.bpost.units as units
 
 
 METADATA = Metadata(
+    status="beta",
     id="bpost",
     label="Belgian Post",
     # Integrations

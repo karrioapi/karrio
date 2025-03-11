@@ -7,6 +7,7 @@ import karrio.providers.locate2u.units as units
 
 
 METADATA = Metadata(
+    status="beta",
     id="locate2u",
     label="Locate2u",
     # Integrations

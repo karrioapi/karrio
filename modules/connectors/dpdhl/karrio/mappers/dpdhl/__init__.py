@@ -7,6 +7,7 @@ import karrio.providers.dpdhl.units as units
 
 
 METADATA = Metadata(
+    status="deprecated",
     id="dpdhl",
     label="Deutsche Post DHL",
     # Integrations

@@ -7,6 +7,7 @@ import karrio.providers.dpd.units as units
 
 
 METADATA = Metadata(
+    status="beta",
     id="dpd",
     label="DPD",
     # Integrations

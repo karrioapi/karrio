@@ -7,6 +7,7 @@ import karrio.providers.boxknight.units as units
 
 
 METADATA = Metadata(
+    status="beta",
     id="boxknight",
     label="BoxKnight",
     # Integrations

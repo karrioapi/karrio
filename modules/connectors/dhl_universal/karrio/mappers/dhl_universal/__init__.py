@@ -6,6 +6,7 @@ from karrio.mappers.dhl_universal.settings import Settings
 
 
 METADATA = Metadata(
+    status="production-ready",
     id="dhl_universal",
     label="DHL Universal",
 

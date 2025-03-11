@@ -8,6 +8,7 @@ import karrio.providers.asendia_us.utils as utils
 
 
 METADATA = Metadata(
+    status="beta",
     id="asendia_us",
     label="Asendia US",
     # Integrations

@@ -59,6 +59,14 @@ class CarrierDetails(serializers.Serializer):
     display_name = serializers.CharField(
         help_text="The carrier verbose name.",
     )
+    integration_status = serializers.ChoiceField(
+        choices=[
+            ("in-development", "In Development"),
+            ("beta", "Beta"),
+            ("production-ready", "Production Ready"),
+        ],
+        help_text="The carrier integration status.",
+    )
     capabilities = serializers.StringListField(
         default=[],
         help_text="""The carrier supported and enabled capabilities.""",
@@ -71,7 +79,6 @@ class CarrierDetails(serializers.Serializer):
         default={},
         help_text="The carrier connection config.",
     )
-
 
 class CarrierSettings(serializers.Serializer):
     id = serializers.CharField(required=True, help_text="A unique address identifier")

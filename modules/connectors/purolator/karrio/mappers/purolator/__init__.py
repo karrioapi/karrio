@@ -7,6 +7,7 @@ import karrio.providers.purolator.units as units
 
 
 METADATA = Metadata(
+    status="production-ready",
     id="purolator",
     label="Purolator",
     # Integrations

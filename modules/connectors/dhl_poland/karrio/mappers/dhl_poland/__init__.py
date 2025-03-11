@@ -7,6 +7,7 @@ from karrio.providers.dhl_poland import units
 
 
 METADATA = Metadata(
+    status="production-ready",
     id="dhl_poland",
     label="DHL Parcel Poland",
     # Integrations

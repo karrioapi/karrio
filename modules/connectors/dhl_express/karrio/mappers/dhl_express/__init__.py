@@ -7,6 +7,7 @@ import karrio.providers.dhl_express.units as units
 
 
 METADATA = Metadata(
+    status="production-ready",
     id="dhl_express",
     label="DHL Express",
     # Integrations

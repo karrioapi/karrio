@@ -7,6 +7,7 @@ import karrio.providers.canadapost.units as units
 
 
 METADATA = Metadata(
+    status="production-ready",
     id="canadapost",
     label="Canada Post",
     # Integrations

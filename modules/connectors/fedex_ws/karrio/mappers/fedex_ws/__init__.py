@@ -7,6 +7,7 @@ import karrio.providers.fedex_ws.units as units
 
 
 METADATA = Metadata(
+    status="deprecated",
     id="fedex_ws",
     label="FedEx Web Service",
     # Integrations

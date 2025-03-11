@@ -7,6 +7,7 @@ import karrio.providers.colissimo.units as units
 
 
 METADATA = Metadata(
+    status="beta",
     id="colissimo",
     label="Colissimo",
     # Integrations

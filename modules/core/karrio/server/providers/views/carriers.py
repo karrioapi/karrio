@@ -1,6 +1,7 @@
 import io
 import base64
 import logging
+import re
 from django.http import JsonResponse
 from django.urls import path, re_path
 from rest_framework import status, views
@@ -50,6 +51,7 @@ class CarrierList(views.APIView):
                 connection_fields=references["connection_fields"].get(carrier_name, {}),
                 capabilities=references["carrier_capabilities"].get(carrier_name, {}),
                 config_fields=references["connection_configs"].get(carrier_name, {}),
+                integration_status=references["integration_status"].get(carrier_name, {}),
             )
             for carrier_name, display_name in references["carriers"].items()
         ]

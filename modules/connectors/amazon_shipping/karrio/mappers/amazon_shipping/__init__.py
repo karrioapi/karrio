@@ -7,6 +7,7 @@ import karrio.providers.amazon_shipping.units as units
 
 
 METADATA = Metadata(
+    status="beta",
     id="amazon_shipping",
     label="AmazonShipping",
     # Integrations

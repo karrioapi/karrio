@@ -8,6 +8,7 @@ import karrio.providers.allied_express_local.utils as utils
 
 
 METADATA = Metadata(
+    status="beta",
     id="allied_express_local",
     label="Allied Express Local",
     # Integrations

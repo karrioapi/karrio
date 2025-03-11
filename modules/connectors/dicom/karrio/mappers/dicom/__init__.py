@@ -6,6 +6,7 @@ from karrio.mappers.dicom.settings import Settings
 
 
 METADATA = Metadata(
+    status="beta",
     id="dicom",
     label="Dicom",
 

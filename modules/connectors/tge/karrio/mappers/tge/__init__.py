@@ -7,6 +7,7 @@ import karrio.providers.tge.units as units
 
 
 METADATA = Metadata(
+    status="beta",
     id="tge",
     label="TGE",
     # Integrations

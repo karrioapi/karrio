@@ -35,6 +35,7 @@ class Metadata:
     is_hub: Optional[bool] = False
     has_intl_accounts: Optional[bool] = False
     hub_carriers: Optional[Dict[str, str]] = None
+    status: Optional[str] = "beta"
 
     def __getitem__(self, item):
         return getattr(self, item)

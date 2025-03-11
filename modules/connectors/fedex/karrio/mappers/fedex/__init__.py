@@ -7,6 +7,7 @@ import karrio.providers.fedex.units as units
 
 
 METADATA = Metadata(
+    status="production-ready",
     id="fedex",
     label="FedEx",
     # Integrations

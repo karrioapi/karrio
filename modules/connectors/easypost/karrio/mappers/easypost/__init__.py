@@ -7,6 +7,7 @@ import karrio.providers.easypost.units as units
 
 
 METADATA = Metadata(
+    status="production-ready",
     id="easypost",
     label="EasyPost",
     is_hub=True,
