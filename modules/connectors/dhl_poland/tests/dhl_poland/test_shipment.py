@@ -149,7 +149,7 @@ interantional_shipment_data = {
     "customs": {
         "duty": {"paid_by": "sender", "declared_value": "100.0"},
         "commodities": [{"weight": "10", "title": "test"}],
-        "options": {"nip_number": "5218487281"},
+        "options": {"nip_number": "5218487281-nip", "eori_number": "5218487281-eori"},
     },
 }
 
@@ -353,8 +353,8 @@ InternationalShipmentRequestXML = f"""<soap-env:Envelope xmlns:soap-env="http://
                     <firstName>N/A</firstName>
                     <secondaryName>N/A</secondaryName>
                     <costsOfShipment>100.0</costsOfShipment>
-                    <nipNr>5218487281</nipNr>
-                    <eoriNr>5218487281</eoriNr>
+                    <nipNr>5218487281-nip</nipNr>
+                    <eoriNr>5218487281-eori</eoriNr>
                     <categoryOfItem>9</categoryOfItem>
                     <countryOfOrigin>PL</countryOfOrigin>
                     <grossWeight>0.45</grossWeight>
