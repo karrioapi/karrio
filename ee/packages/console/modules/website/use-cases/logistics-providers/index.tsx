@@ -1,10 +1,5 @@
-import {
-  Network,
-  Settings,
-  Globe,
-  Plug,
-} from "lucide-react";
-import { FeatureTabs } from "@karrio/console/components/feature-tabs";
+import { FeatureShowcase } from "@karrio/console/components/feature-showcase";
+import { BookDemoButton } from "@karrio/console/components/book-demo-button";
 import { CTASection } from "@karrio/console/components/cta-section";
 import { Button } from "@karrio/insiders/components/ui/button";
 import Image from "next/image";
@@ -37,11 +32,9 @@ export default async function Page() {
             {/* CTA Buttons */}
             <div className="flex justify-center space-x-4">
               <Button size="lg" className="bg-[#5722cc] hover:bg-[#5722cc]/90">
-                <Link href="/signup">Get Started</Link>
+                <Link href="/#pricing">Get Started</Link>
               </Button>
-              <Button variant="outline" size="lg">
-                <Link href="https://calendly.com/karrio/demo">Schedule a Demo</Link>
-              </Button>
+              <BookDemoButton variant="outline" className="border-white/20 hover:bg-white/10" />
             </div>
           </div>
         </div>
@@ -103,102 +96,149 @@ export default async function Page() {
               </p>
             </div>
 
-            {/* Feature Tabs */}
-            <div className="mb-20">
-              <FeatureTabs
+            {/* Feature Showcases */}
+            <div className="space-y-12">
+              <FeatureShowcase
+                title="Access a Global Carrier Ecosystem"
+                description="Leverage out-of-the-box integrations with domestic and international carriers. No need to reinvent the wheel—your team can focus on innovating, not building carrier connections."
+                learnMoreHref=""
                 tabs={[
                   {
-                    label: "Network of Carriers",
-                    value: "carriers",
-                    icon: <Network />,
-                    title: "Access a Global Carrier Ecosystem",
-                    description: "Leverage out-of-the-box integrations with domestic and international carriers. No need to reinvent the wheel—your team can focus on innovating, not building carrier connections.",
-                    features: [
-                      "Pre-built integrations with major carriers",
-                      "Continuous updates as carrier APIs evolve",
-                      "Global coverage across multiple regions"
-                    ],
-                    demo: (
-                      <div className="bg-black/20 aspect-video rounded-lg overflow-hidden">
-                        <Image
-                          src="/placeholder.svg"
-                          width={800}
-                          height={400}
-                          alt="Network of Carriers illustration"
-                          className="w-full h-full object-cover"
-                        />
+                    label: "Overview",
+                    value: "overview",
+                    content: (
+                      <div>
+                        <ul className="space-y-3">
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Pre-built integrations with major carriers</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Continuous updates as carrier APIs evolve</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Global coverage across multiple regions</span>
+                          </li>
+                        </ul>
                       </div>
-                    )
-                  },
+                    ),
+                  }
+                ]}
+              />
+
+              <FeatureShowcase
+                title="Quickly Customize Shipping Flows"
+                description="Fine-tune shipping flows for each client. Configure service levels, packaging options, and shipping rules through a single platform."
+                learnMoreHref=""
+                tabs={[
                   {
-                    label: "Configurable Connections",
-                    value: "connections",
-                    icon: <Settings />,
-                    title: "Quickly Customize Shipping Flows",
-                    description: "Fine-tune shipping flows for each client. Configure service levels, packaging options, and shipping rules through a single platform.",
-                    features: [
-                      "Client-specific shipping rules and workflows",
-                      "Custom service level management",
-                      "Flexible packaging and label customization"
-                    ],
-                    demo: (
-                      <div className="bg-black/20 aspect-video rounded-lg overflow-hidden">
-                        <Image
-                          src="/placeholder.svg"
-                          width={800}
-                          height={400}
-                          alt="Configurable Connections illustration"
-                          className="w-full h-full object-cover"
-                        />
+                    label: "Overview",
+                    value: "overview",
+                    content: (
+                      <div>
+                        <ul className="space-y-3">
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Client-specific shipping rules and workflows</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Custom service level management</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Flexible packaging and label customization</span>
+                          </li>
+                        </ul>
                       </div>
-                    )
-                  },
+                    ),
+                  }
+                ]}
+              />
+
+              <FeatureShowcase
+                title="Plug Into Your Existing Stack"
+                description="Seamlessly integrate Karrio into your existing operational stack and let us handle the intricate carrier complexities. Save thousands of development hours and costly maintenance overhead."
+                learnMoreHref=""
+                tabs={[
                   {
-                    label: "Augment Solutions",
-                    value: "augment",
-                    icon: <Plug />,
-                    title: "Plug Into Your Existing Stack",
-                    description: "Seamlessly integrate Karrio into your existing operational stack and let us handle the intricate carrier complexities. Save thousands of development hours and costly maintenance overhead.",
-                    features: [
-                      "Flexible API integration with your systems",
-                      "Reduce development and maintenance costs",
-                      "Focus on your core business capabilities"
-                    ],
-                    demo: (
-                      <div className="bg-black/20 aspect-video rounded-lg overflow-hidden">
-                        <Image
-                          src="/placeholder.svg"
-                          width={800}
-                          height={400}
-                          alt="Augment Solutions illustration"
-                          className="w-full h-full object-cover"
-                        />
+                    label: "Overview",
+                    value: "overview",
+                    content: (
+                      <div>
+                        <ul className="space-y-3">
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Flexible API integration with your systems</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Reduce development and maintenance costs</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Focus on your core business capabilities</span>
+                          </li>
+                        </ul>
                       </div>
-                    )
-                  },
+                    ),
+                  }
+                ]}
+              />
+
+              <FeatureShowcase
+                title="Open-Source Solution with Full Support"
+                description="As an open-source solution, Karrio seamlessly integrates with proprietary systems and offers complete extensibility. When you need specialized carriers or custom workflows, our team provides full carrier onboarding and advanced integration services."
+                learnMoreHref=""
+                tabs={[
                   {
-                    label: "Open Ecosystem",
-                    value: "ecosystem",
-                    icon: <Globe />,
-                    title: "Open-Source Solution with Full Support",
-                    description: "As an open-source solution, Karrio seamlessly integrates with proprietary systems and offers complete extensibility. When you need specialized carriers or custom workflows, our team provides full carrier onboarding and advanced integration services.",
-                    features: [
-                      "Open-source codebase for complete control",
-                      "Expert services for custom integrations",
-                      "Dedicated support for specialized workflows"
-                    ],
-                    demo: (
-                      <div className="bg-black/20 aspect-video rounded-lg overflow-hidden">
-                        <Image
-                          src="/placeholder.svg"
-                          width={800}
-                          height={400}
-                          alt="Open Ecosystem illustration"
-                          className="w-full h-full object-cover"
-                        />
+                    label: "Overview",
+                    value: "overview",
+                    content: (
+                      <div>
+                        <ul className="space-y-3">
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Open-source codebase for complete control</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Expert services for custom integrations</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Dedicated support for specialized workflows</span>
+                          </li>
+                        </ul>
                       </div>
-                    )
-                  },
+                    ),
+                  }
                 ]}
               />
             </div>
@@ -221,13 +261,117 @@ export default async function Page() {
 
             {/* Workflow Diagram */}
             <div className="bg-white/5 backdrop-blur-sm rounded-lg p-8 border border-white/10 max-w-4xl mx-auto">
-              <Image
-                src="/placeholder.svg"
-                width={1000}
-                height={400}
-                alt="LSP Workflow Diagram"
-                className="w-full h-auto"
-              />
+              <div className="relative rounded-lg overflow-hidden bg-black/40" style={{ aspectRatio: '16/9' }}>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <svg width="100%" height="100%" viewBox="0 0 1200 675" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+                    {/* Clean Background with Minimal Gradient */}
+                    <rect width="1200" height="675" fill="#080215" />
+
+                    {/* Simple Large Gradient Shapes - Keeping these but simplified */}
+                    <circle cx="300" cy="337" r="300" fill="url(#purpleGlowLSP)" opacity="0.12" />
+                    <circle cx="900" cy="337" r="300" fill="url(#tealGlowLSP)" opacity="0.1" />
+
+                    {/* LSP System Section (Left) */}
+                    <g>
+                      <rect x="120" y="232" width="230" height="210" rx="12" stroke="#5722cc" strokeWidth="2" fill="rgba(87, 34, 204, 0.1)" />
+                      <text x="235" y="200" fill="white" fontSize="22" fontWeight="bold" textAnchor="middle">Logistics Service Provider</text>
+
+                      {/* LSP Components */}
+                      <rect x="150" y="262" width="170" height="45" rx="6" stroke="#30D9B7" strokeWidth="1.5" fill="rgba(48, 217, 183, 0.05)" />
+                      <text x="235" y="290" fill="white" fontSize="16" textAnchor="middle">Order Management</text>
+
+                      <rect x="150" y="317" width="170" height="45" rx="6" stroke="#30D9B7" strokeWidth="1.5" fill="rgba(48, 217, 183, 0.05)" />
+                      <text x="235" y="345" fill="white" fontSize="16" textAnchor="middle">TMS</text>
+
+                      <rect x="150" y="372" width="170" height="45" rx="6" stroke="#30D9B7" strokeWidth="1.5" fill="rgba(48, 217, 183, 0.05)" />
+                      <text x="235" y="400" fill="white" fontSize="16" textAnchor="middle">Customer Portal</text>
+                    </g>
+
+                    {/* Karrio Platform Section (Middle) */}
+                    <g>
+                      <rect x="480" y="182" width="250" height="310" rx="12" stroke="#5722cc" strokeWidth="2" fill="rgba(87, 34, 204, 0.15)" />
+                      <text x="605" y="150" fill="white" fontSize="22" fontWeight="bold" textAnchor="middle">Karrio Platform</text>
+
+                      {/* Platform Components */}
+                      <rect x="510" y="212" width="190" height="50" rx="6" stroke="#30D9B7" strokeWidth="1.5" fill="rgba(48, 217, 183, 0.1)" />
+                      <text x="605" y="243" fill="white" fontSize="16" textAnchor="middle">API Management</text>
+
+                      <rect x="510" y="277" width="190" height="50" rx="6" stroke="#30D9B7" strokeWidth="1.5" fill="rgba(48, 217, 183, 0.1)" />
+                      <text x="605" y="308" fill="white" fontSize="16" textAnchor="middle">Carrier Integrations</text>
+
+                      <rect x="510" y="342" width="190" height="50" rx="6" stroke="#30D9B7" strokeWidth="1.5" fill="rgba(48, 217, 183, 0.1)" />
+                      <text x="605" y="373" fill="white" fontSize="16" textAnchor="middle">Routing Optimization</text>
+
+                      <rect x="510" y="407" width="190" height="50" rx="6" stroke="#30D9B7" strokeWidth="1.5" fill="rgba(48, 217, 183, 0.1)" />
+                      <text x="605" y="438" fill="white" fontSize="16" textAnchor="middle">Real-time Tracking</text>
+                    </g>
+
+                    {/* Multiple Carriers Section (Right) */}
+                    <g>
+                      {/* First Mile */}
+                      <rect x="850" y="187" width="220" height="80" rx="10" stroke="#5722cc" strokeWidth="2" fill="rgba(87, 34, 204, 0.1)" />
+                      <text x="960" y="222" fill="white" fontSize="18" fontWeight="600" textAnchor="middle">First Mile Carriers</text>
+                      <text x="960" y="247" fill="white" fontSize="13" opacity="0.7" textAnchor="middle">Collection & Transportation</text>
+
+                      {/* Freight Forwarders */}
+                      <rect x="850" y="287" width="220" height="80" rx="10" stroke="#5722cc" strokeWidth="2" fill="rgba(87, 34, 204, 0.1)" />
+                      <text x="960" y="322" fill="white" fontSize="18" fontWeight="600" textAnchor="middle">Freight Forwarders</text>
+                      <text x="960" y="347" fill="white" fontSize="13" opacity="0.7" textAnchor="middle">International Shipping</text>
+
+                      {/* Last Mile */}
+                      <rect x="850" y="387" width="220" height="80" rx="10" stroke="#5722cc" strokeWidth="2" fill="rgba(87, 34, 204, 0.1)" />
+                      <text x="960" y="422" fill="white" fontSize="18" fontWeight="600" textAnchor="middle">Last Mile Carriers</text>
+                      <text x="960" y="447" fill="white" fontSize="13" opacity="0.7" textAnchor="middle">Final Delivery</text>
+
+                      {/* Parcel Carriers */}
+                      <rect x="900" y="487" width="190" height="40" rx="10" stroke="#5722cc" strokeWidth="1.5" stroke-dasharray="4 2" fill="rgba(87, 34, 204, 0.05)" />
+                      <text x="995" y="512" fill="white" fontSize="16" fontWeight="normal" textAnchor="middle">Parcel Networks</text>
+                      <path d="M800 467 L870 487" stroke="#30D9B7" strokeWidth="1.5" stroke-dasharray="3 2" />
+                    </g>
+
+                    {/* Data Flow Arrows - Main Flows */}
+                    {/* LSP to Karrio Platform */}
+                    <path d="M350 280 C400 280, 430 280, 480 280" stroke="#5722cc" strokeWidth="2.5" />
+                    <path d="M472 275 L480 280 L472 285" fill="none" stroke="#5722cc" strokeWidth="2.5" />
+
+                    <path d="M350 335 C400 335, 430 335, 480 335" stroke="#5722cc" strokeWidth="2.5" />
+                    <path d="M472 330 L480 335 L472 340" fill="none" stroke="#5722cc" strokeWidth="2.5" />
+
+                    <path d="M350 390 C400 390, 430 390, 480 390" stroke="#5722cc" strokeWidth="2.5" />
+                    <path d="M472 385 L480 390 L472 395" fill="none" stroke="#5722cc" strokeWidth="2.5" />
+
+                    {/* Karrio to Carriers */}
+                    <path d="M730 227 H850" stroke="#30D9B7" strokeWidth="2.5" />
+                    <path d="M842 222 L850 227 L842 232" fill="none" stroke="#30D9B7" strokeWidth="2.5" />
+
+                    <path d="M730 327 H850" stroke="#30D9B7" strokeWidth="2.5" />
+                    <path d="M842 322 L850 327 L842 332" fill="none" stroke="#30D9B7" strokeWidth="2.5" />
+
+                    <path d="M730 427 H850" stroke="#30D9B7" strokeWidth="2.5" />
+                    <path d="M842 422 L850 427 L842 432" fill="none" stroke="#30D9B7" strokeWidth="2.5" />
+
+                    {/* Return Data Flow - Keeping these as they're important for the flow */}
+                    <path d="M850 260 C800 260, 770 260, 730 260" stroke="#30D9B7" strokeWidth="1.5" stroke-dasharray="5,3" />
+                    <path d="M738 265 L730 260 L738 255" fill="none" stroke="#30D9B7" strokeWidth="1.5" />
+
+                    <path d="M480 370 C430 370, 400 370, 350 370" stroke="#5722cc" strokeWidth="1.5" stroke-dasharray="5,3" />
+                    <path d="M358 375 L350 370 L358 365" fill="none" stroke="#5722cc" strokeWidth="1.5" />
+
+                    {/* Enhanced Gradients Definitions - Simplified */}
+                    <defs>
+                      <radialGradient id="purpleGlowLSP" cx="0.5" cy="0.5" r="0.5" fx="0.5" fy="0.5">
+                        <stop offset="0%" stopColor="#5722cc" stopOpacity="0.3" />
+                        <stop offset="100%" stopColor="#5722cc" stopOpacity="0" />
+                      </radialGradient>
+
+                      <radialGradient id="tealGlowLSP" cx="0.5" cy="0.5" r="0.5" fx="0.5" fy="0.5">
+                        <stop offset="0%" stopColor="#30D9B7" stopOpacity="0.3" />
+                        <stop offset="100%" stopColor="#30D9B7" stopOpacity="0" />
+                      </radialGradient>
+                    </defs>
+                  </svg>
+                </div>
+              </div>
               <div className="mt-8 text-center text-white/80">
                 <p className="text-lg font-medium mb-2">Your LSP System {'->'} Karrio Platform {'->'} Multiple Carriers</p>
                 <p>Streamline your shipping operations by connecting your existing systems to multiple carriers through a single integration.</p>
@@ -291,10 +435,6 @@ export default async function Page() {
         <CTASection
           title="Ready to Transform Your Logistics Services?"
           description="Start offering more carrier options and optimized shipping flows to your clients."
-          primaryButtonText="Get Started"
-          primaryButtonHref="/signup"
-          secondaryButtonText="Schedule a Demo"
-          secondaryButtonHref="https://calendly.com/karrio/demo"
         />
       </div>
     </>

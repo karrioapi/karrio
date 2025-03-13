@@ -6,6 +6,8 @@ import {
   Layers,
   Bell,
   Settings,
+  Scale,
+  Maximize2,
 } from "lucide-react";
 import { FeatureShowcase } from "@karrio/console/components/feature-showcase";
 import { RoadmapSection } from "@karrio/console/components/roadmap-section";
@@ -14,6 +16,7 @@ import { CodePreview } from "@karrio/console/components/code-preview";
 import { FeatureTabs } from "@karrio/console/components/feature-tabs";
 import { CTASection } from "@karrio/console/components/cta-section";
 import { Button } from "@karrio/insiders/components/ui/button";
+import { BookDemoButton } from "@karrio/console/components/book-demo-button";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -37,21 +40,18 @@ export default async function LandingPage() {
               Modern Logistics, Redefined.
             </h1>
             <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
-              Empowering engineers, retailers, and logistics providers with
-              cutting-edge shipping tools. Karrio is your platform for smarter
+              Empowering engineers, logistics providers, and enterprises with
+              a modern shipping infrastructure. Karrio is your platform for smarter
               integrations, streamlined operations, and scalable logistics.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" className="bg-[#5722cc] hover:bg-[#5722cc]/90">
-                <Link href="/signin">Get Started Free</Link>
-                <ChevronRight className="ml-2 h-4 w-4" />
-              </Button>
+              <BookDemoButton />
               <Button
                 size="lg"
                 variant="outline"
                 className="border-[#79e5dd] text-[#79e5dd] hover:bg-[#79e5dd]/10"
               >
-                <Link href="https://docs.karrio.io">Explore the Platform</Link>
+                <Link href="https://docs.karrio.io">Deploy Open Source</Link>
               </Button>
             </div>
           </div>
@@ -102,8 +102,8 @@ export default async function LandingPage() {
                     demo: (
                       <div className="aspect-[3/1] relative flex justify-center items-center">
                         <Image
-                          src="/placeholder.svg"
-                          alt="Shipping API interface demo"
+                          src="/carrier-integration-illustration.svg"
+                          alt="Shipping integration illustration"
                           width={1200}
                           height={400}
                           className="object-cover rounded-lg"
@@ -113,22 +113,22 @@ export default async function LandingPage() {
                   },
                   {
                     icon: <Bell className="h-5 w-5" />,
-                    label: "Real-time Tracking",
-                    value: "real-time-tracking",
+                    label: "Real-time Visibility",
+                    value: "real-time-visibility",
                     title: "End-to-end data visibility",
                     description:
-                      "Stay informed with comprehensive tracking capabilities and automated updates for all your shipments across carriers.",
+                      "Stay informed with comprehensive data visibility and automated updates for all your shipments across carriers.",
                     features: [
                       "Unified tracking API for all carriers",
                       "Automated background tracking updates",
                       "Real-time webhook notifications",
-                      "Detailed tracking event history",
+                      "Detailed event and API logs",
                     ],
                     demo: (
                       <div className="aspect-[3/1] relative flex justify-center items-center">
                         <Image
-                          src="/placeholder.svg"
-                          alt="Tracking API interface demo"
+                          src="/live-data-illustration.svg"
+                          alt="Live data visibility illustration"
                           width={1200}
                           height={400}
                           className="object-cover rounded-lg"
@@ -152,8 +152,8 @@ export default async function LandingPage() {
                     demo: (
                       <div className="aspect-[3/1] relative flex justify-center items-center">
                         <Image
-                          src="/placeholder.svg"
-                          alt="Document Generation interface demo"
+                          src="/document-generation-illustration.svg"
+                          alt="Document Generation illustration"
                           width={1200}
                           height={400}
                           className="object-cover rounded-lg"
@@ -177,8 +177,8 @@ export default async function LandingPage() {
                     demo: (
                       <div className="aspect-[3/1] relative flex justify-center items-center">
                         <Image
-                          src="/placeholder.svg"
-                          alt="Logistics Automation interface demo"
+                          src="/automation-illustration.svg"
+                          alt="Logistics Automation illustration"
                           width={1200}
                           height={400}
                           className="object-cover rounded-lg"
@@ -213,7 +213,7 @@ export default async function LandingPage() {
             </div>
             <div className="space-y-3">
               <div className="w-10 h-10 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center">
-                <ArrowRight className="w-5 h-5 text-[#79e5dd]" />
+                <Maximize2 className="w-5 h-5 text-[#79e5dd]" />
               </div>
               <h3 className="text-lg font-semibold">
                 Manage shipping at scale
@@ -654,11 +654,7 @@ shipment = karrio.shipments.create({
       {/* CTA Section */}
       <CTASection
         title="Ready to Transform Your Shipping Operations?"
-        description="Join thousands of businesses that trust Karrio to power their shipping infrastructure."
-        primaryButtonText="Get Started"
-        primaryButtonHref="/signin"
-        secondaryButtonText="Contact Sales"
-        secondaryButtonHref="https://karrio.io/contact"
+        description="Join hundreds of businesses that trust Karrio to power their shipping infrastructure."
       />
     </>
   );

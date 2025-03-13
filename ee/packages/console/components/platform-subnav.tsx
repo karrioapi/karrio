@@ -11,9 +11,10 @@ export function PlatformSubnav() {
 
   const navItems = [
     { label: "Overview", href: "/" },
-    { label: "Providers", href: "/use-cases/logistics-providers" },
+    { label: "LSPs", href: "/use-cases/logistics-providers" },
     { label: "Platforms", href: "/use-cases/platforms" },
     { label: "Enterprises", href: "/use-cases/enterprise-solutions" },
+    { label: "Pricing", href: "/#pricing" },
     { label: "Docs", href: "https://docs.karrio.io" },
   ];
 

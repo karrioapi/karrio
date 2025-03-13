@@ -22,7 +22,7 @@ export async function WebsiteLayout({
             <div className="flex items-center space-x-0">
               <MobileMenu />
 
-              <Link href="/" className="flex items-center mr-4">
+              <Link href="https://karrio.io" className="flex items-center mr-4">
                 <Image
                   src="/logo.svg"
                   alt="Karrio Logo"
@@ -67,8 +67,8 @@ export async function WebsiteLayout({
                 <Github className="h-6 w-6" />
               </Link>
               <Button className="bg-[#5722cc] hover:bg-[#5722cc]/90">
-                <Link href={session ? "/orgs" : "/signin"}>
-                  {session ? "Dashboard" : "Sign In"}
+                <Link href={session ? "/orgs" : "/#pricing"}>
+                  {session ? "Dashboard" : "Get Started"}
                 </Link>
               </Button>
             </div>
@@ -104,7 +104,7 @@ export async function WebsiteLayout({
               <ul className="space-y-2">
                 <li>
                   <Link
-                    href="/pricing"
+                    href="/#pricing"
                     className="text-white/60 hover:text-white text-sm"
                   >
                     Pricing

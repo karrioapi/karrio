@@ -1,14 +1,11 @@
 import {
-  Code,
-  Route,
-  BarChart2,
-  Layers,
   Shield,
   Network,
   Boxes,
   Building,
 } from "lucide-react";
-import { FeatureTabs } from "@karrio/console/components/feature-tabs";
+import { FeatureShowcase } from "@karrio/console/components/feature-showcase";
+import { BookDemoButton } from "@karrio/console/components/book-demo-button";
 import { CTASection } from "@karrio/console/components/cta-section";
 import { Button } from "@karrio/insiders/components/ui/button";
 import Image from "next/image";
@@ -43,9 +40,7 @@ export default async function Page() {
               <Button size="lg" className="bg-[#5722cc] hover:bg-[#5722cc]/90">
                 <Link href="/enterprise-contact">Contact Sales</Link>
               </Button>
-              <Button variant="outline" size="lg">
-                <Link href="https://calendly.com/karrio/enterprise-demo">Schedule a Demo</Link>
-              </Button>
+              <BookDemoButton variant="outline" className="border-white/20 hover:bg-white/10" />
             </div>
           </div>
         </div>
@@ -106,102 +101,151 @@ export default async function Page() {
               </p>
             </div>
 
-            <FeatureTabs
-              tabs={[
-                {
-                  label: "Unified API",
-                  value: "unified-api",
-                  icon: <Code />,
-                  title: "Single Integration, Multiple Carriers",
-                  description: "Connect to our unified API once and unlock access to all major global carriers. Eliminate the complexity of managing multiple carrier systems and APIs.",
-                  features: [
-                    "One integration for 100+ carrier connections",
-                    "Reduced development time and resources",
-                    "Simplified carrier onboarding process"
-                  ],
-                  demo: (
-                    <div className="bg-black/20 aspect-video rounded-lg overflow-hidden">
-                      <Image
-                        src="/placeholder.svg"
-                        width={800}
-                        height={400}
-                        alt="Unified API illustration"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )
-                },
-                {
-                  label: "Smart Routing",
-                  value: "smart-routing",
-                  icon: <Route />,
-                  title: "Intelligent Shipping Optimization",
-                  description: "Automatically select the optimal carrier and service based on your business rules, package characteristics, and delivery requirements.",
-                  features: [
-                    "Rule-based carrier selection",
-                    "Cost and delivery time optimization",
-                    "Automated routing decisions"
-                  ],
-                  demo: (
-                    <div className="bg-black/20 aspect-video rounded-lg overflow-hidden">
-                      <Image
-                        src="/placeholder.svg"
-                        width={800}
-                        height={400}
-                        alt="Smart Routing illustration"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )
-                },
-                {
-                  label: "Built for Scale",
-                  value: "scale",
-                  icon: <BarChart2 />,
-                  title: "Enterprise-Grade Performance",
-                  description: "Handle millions of shipments with a platform designed for high-volume operations. Our architecture delivers consistent performance even during peak periods.",
-                  features: [
-                    "High-throughput shipment processing",
-                    "Horizontal scaling capability",
-                    "Reliable performance at enterprise scale"
-                  ],
-                  demo: (
-                    <div className="bg-black/20 aspect-video rounded-lg overflow-hidden">
-                      <Image
-                        src="/placeholder.svg"
-                        width={800}
-                        height={400}
-                        alt="Built for Scale illustration"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )
-                },
-                {
-                  label: "White-Label Ready",
-                  value: "white-label",
-                  icon: <Layers />,
-                  title: "Customizable to Your Brand",
-                  description: "Deliver a seamless, branded experience to your customers. Our white-label solution allows you to maintain brand consistency across every touchpoint.",
-                  features: [
-                    "Brand-consistent shipping portal",
-                    "Customizable tracking interfaces",
-                    "Branded notification emails"
-                  ],
-                  demo: (
-                    <div className="bg-black/20 aspect-video rounded-lg overflow-hidden">
-                      <Image
-                        src="/placeholder.svg"
-                        width={800}
-                        height={400}
-                        alt="White-Label Ready illustration"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )
-                },
-              ]}
-            />
+            <div className="space-y-12">
+              <FeatureShowcase
+                title="Single Integration, Multiple Carriers"
+                description="Connect to our unified API once and unlock access to all major global carriers. Eliminate the complexity of managing multiple carrier systems and APIs."
+                learnMoreHref=""
+                tabs={[
+                  {
+                    label: "Overview",
+                    value: "overview",
+                    content: (
+                      <div>
+                        <ul className="space-y-3">
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">One integration for 100+ carrier connections</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Reduced development time and resources</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Simplified carrier onboarding process</span>
+                          </li>
+                        </ul>
+                      </div>
+                    ),
+                  }
+                ]}
+              />
+
+              <FeatureShowcase
+                title="Intelligent Shipping Optimization"
+                description="Automatically select the optimal carrier and service based on your business rules, package characteristics, and delivery requirements."
+                learnMoreHref=""
+                tabs={[
+                  {
+                    label: "Overview",
+                    value: "overview",
+                    content: (
+                      <div>
+                        <ul className="space-y-3">
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Rule-based carrier selection</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Cost and delivery time optimization</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Automated routing decisions</span>
+                          </li>
+                        </ul>
+                      </div>
+                    ),
+                  }
+                ]}
+              />
+
+              <FeatureShowcase
+                title="Enterprise-Grade Performance"
+                description="Handle millions of shipments with a platform designed for high-volume operations. Our architecture delivers consistent performance even during peak periods."
+                learnMoreHref=""
+                tabs={[
+                  {
+                    label: "Overview",
+                    value: "overview",
+                    content: (
+                      <div>
+                        <ul className="space-y-3">
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">High-throughput shipment processing</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Horizontal scaling capability</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Reliable performance at enterprise scale</span>
+                          </li>
+                        </ul>
+                      </div>
+                    ),
+                  }
+                ]}
+              />
+
+              <FeatureShowcase
+                title="Customizable to Your Brand"
+                description="Deliver a seamless, branded experience to your customers. Our white-label solution allows you to maintain brand consistency across every touchpoint."
+                learnMoreHref=""
+                tabs={[
+                  {
+                    label: "Overview",
+                    value: "overview",
+                    content: (
+                      <div>
+                        <ul className="space-y-3">
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Brand-consistent shipping portal</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Customizable tracking interfaces</span>
+                          </li>
+                          <li className="flex items-start gap-3">
+                            <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
+                            </div>
+                            <span className="text-white/80">Branded notification emails</span>
+                          </li>
+                        </ul>
+                      </div>
+                    ),
+                  }
+                ]}
+              />
+            </div>
           </div>
         </section>
 
@@ -217,14 +261,100 @@ export default async function Page() {
             </div>
 
             <div className="bg-white/5 rounded-xl p-8 backdrop-blur-sm border border-white/10 max-w-4xl mx-auto">
-              <div className="relative rounded-lg overflow-hidden aspect-video">
-                <Image
-                  src="/placeholder.svg"
-                  width={1200}
-                  height={675}
-                  alt="Enterprise Workflow Diagram"
-                  className="w-full h-full object-cover"
-                />
+              <div className="relative rounded-lg overflow-hidden aspect-video bg-black/40">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <svg width="100%" height="100%" viewBox="0 0 1200 675" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    {/* Clean Background */}
+                    <rect width="1200" height="675" fill="#080215" />
+
+                    {/* Enterprise Systems Section */}
+                    <g>
+                      <rect x="100" y="200" width="250" height="275" rx="15" stroke="#5722cc" strokeWidth="2" fill="rgba(87, 34, 204, 0.1)" />
+                      <text x="225" y="170" fill="white" fontSize="24" fontWeight="bold" textAnchor="middle">Enterprise Systems</text>
+
+                      {/* Enterprise System Components */}
+                      <rect x="130" y="230" width="190" height="50" rx="8" stroke="#30D9B7" strokeWidth="1.5" fill="rgba(48, 217, 183, 0.05)" />
+                      <text x="225" y="262" fill="white" fontSize="16" textAnchor="middle">ERP System</text>
+
+                      <rect x="130" y="300" width="190" height="50" rx="8" stroke="#30D9B7" strokeWidth="1.5" fill="rgba(48, 217, 183, 0.05)" />
+                      <text x="225" y="332" fill="white" fontSize="16" textAnchor="middle">WMS</text>
+
+                      <rect x="130" y="370" width="190" height="50" rx="8" stroke="#30D9B7" strokeWidth="1.5" fill="rgba(48, 217, 183, 0.05)" />
+                      <text x="225" y="402" fill="white" fontSize="16" textAnchor="middle">Order Management</text>
+                    </g>
+
+                    {/* Karrio Platform Section */}
+                    <g>
+                      <rect x="475" y="150" width="250" height="375" rx="15" stroke="#5722cc" strokeWidth="2" fill="rgba(87, 34, 204, 0.15)" />
+                      <text x="600" y="120" fill="white" fontSize="24" fontWeight="bold" textAnchor="middle">Karrio Platform</text>
+
+                      {/* Security Layer */}
+                      <rect x="475" y="150" width="250" height="60" rx="15" stroke="#5722cc" strokeWidth="0" fill="rgba(87, 34, 204, 0.3)" />
+                      <text x="600" y="185" fill="white" fontSize="16" textAnchor="middle">Security & Compliance Layer</text>
+                      <circle cx="510" y="180" r="10" fill="#30D9B7" fillOpacity="0.6" />
+                      <path d="M505 180 L510 185 L515 175" stroke="white" strokeWidth="2" />
+                      <circle cx="690" y="180" r="10" fill="#30D9B7" fillOpacity="0.6" />
+                      <path d="M685 180 L690 185 L695 175" stroke="white" strokeWidth="2" />
+
+                      {/* Platform Components */}
+                      <rect x="505" y="230" width="190" height="50" rx="8" stroke="#30D9B7" strokeWidth="1.5" fill="rgba(48, 217, 183, 0.1)" />
+                      <text x="600" y="262" fill="white" fontSize="16" textAnchor="middle">API Gateway</text>
+
+                      <rect x="505" y="300" width="190" height="50" rx="8" stroke="#30D9B7" strokeWidth="1.5" fill="rgba(48, 217, 183, 0.1)" />
+                      <text x="600" y="332" fill="white" fontSize="16" textAnchor="middle">Carrier Integrations</text>
+
+                      <rect x="505" y="370" width="190" height="50" rx="8" stroke="#30D9B7" strokeWidth="1.5" fill="rgba(48, 217, 183, 0.1)" />
+                      <text x="600" y="402" fill="white" fontSize="16" textAnchor="middle">Rate Management</text>
+
+                      <rect x="505" y="440" width="190" height="50" rx="8" stroke="#30D9B7" strokeWidth="1.5" fill="rgba(48, 217, 183, 0.1)" />
+                      <text x="600" y="472" fill="white" fontSize="16" textAnchor="middle">Analytics Engine</text>
+                    </g>
+
+                    {/* Supply Chain Network Section */}
+                    <g>
+                      <rect x="850" y="200" width="250" height="275" rx="15" stroke="#5722cc" strokeWidth="2" fill="rgba(87, 34, 204, 0.1)" />
+                      <text x="975" y="170" fill="white" fontSize="24" fontWeight="bold" textAnchor="middle">Supply Chain Network</text>
+
+                      {/* Supply Chain Components */}
+                      <rect x="880" y="230" width="190" height="50" rx="8" stroke="#30D9B7" strokeWidth="1.5" fill="rgba(48, 217, 183, 0.05)" />
+                      <text x="975" y="262" fill="white" fontSize="16" textAnchor="middle">Carrier APIs</text>
+
+                      <rect x="880" y="300" width="190" height="50" rx="8" stroke="#30D9B7" strokeWidth="1.5" fill="rgba(48, 217, 183, 0.05)" />
+                      <text x="975" y="332" fill="white" fontSize="16" textAnchor="middle">Fulfillment Centers</text>
+
+                      <rect x="880" y="370" width="190" height="50" rx="8" stroke="#30D9B7" strokeWidth="1.5" fill="rgba(48, 217, 183, 0.05)" />
+                      <text x="975" y="402" fill="white" fontSize="16" textAnchor="middle">Last-Mile Delivery</text>
+                    </g>
+
+                    {/* Data Flow Arrows */}
+                    {/* Enterprise to Karrio */}
+                    <path d="M350 270 C400 270, 425 270, 475 270" stroke="#5722cc" strokeWidth="3" strokeDasharray="none" />
+                    <path d="M465 265 L475 270 L465 275" fill="none" stroke="#5722cc" strokeWidth="3" />
+
+                    <path d="M350 330 C400 330, 425 330, 475 330" stroke="#5722cc" strokeWidth="3" strokeDasharray="none" />
+                    <path d="M465 325 L475 330 L465 335" fill="none" stroke="#5722cc" strokeWidth="3" />
+
+                    <path d="M350 390 C400 390, 425 390, 475 390" stroke="#5722cc" strokeWidth="3" strokeDasharray="none" />
+                    <path d="M465 385 L475 390 L465 395" fill="none" stroke="#5722cc" strokeWidth="3" />
+
+                    {/* Karrio to Supply Chain */}
+                    <path d="M725 270 C775 270, 800 270, 850 270" stroke="#30D9B7" strokeWidth="3" strokeDasharray="none" />
+                    <path d="M840 265 L850 270 L840 275" fill="none" stroke="#30D9B7" strokeWidth="3" />
+
+                    <path d="M725 330 C775 330, 800 330, 850 330" stroke="#30D9B7" strokeWidth="3" strokeDasharray="none" />
+                    <path d="M840 325 L850 330 L840 335" fill="none" stroke="#30D9B7" strokeWidth="3" />
+
+                    <path d="M725 390 C775 390, 800 390, 850 390" stroke="#30D9B7" strokeWidth="3" strokeDasharray="none" />
+                    <path d="M840 385 L850 390 L840 395" fill="none" stroke="#30D9B7" strokeWidth="3" />
+
+                    {/* Return Data Flow */}
+                    <path d="M850 310 C800 310, 775 310, 725 310" stroke="#30D9B7" strokeWidth="1.5" strokeDasharray="5,5" />
+                    <path d="M735 315 L725 310 L735 305" fill="none" stroke="#30D9B7" strokeWidth="1.5" />
+
+                    <path d="M475 310 C425 310, 400 310, 350 310" stroke="#5722cc" strokeWidth="1.5" strokeDasharray="5,5" />
+                    <path d="M360 315 L350 310 L360 305" fill="none" stroke="#5722cc" strokeWidth="1.5" />
+                  </svg>
+                </div>
               </div>
               <div className="mt-8 text-center text-white/80">
                 <p className="text-lg font-medium mb-2">Enterprise System {'->'} Karrio Platform {'->'} Supply Chain Network</p>
@@ -283,10 +413,6 @@ export default async function Page() {
         <CTASection
           title="Ready to secure your logistics infrastructure?"
           description="Join leading enterprises who trust Karrio for their most sensitive shipping operations."
-          primaryButtonText="Get Started"
-          primaryButtonHref="/signin"
-          secondaryButtonText="Contact Sales"
-          secondaryButtonHref="#"
         />
       </div>
     </>

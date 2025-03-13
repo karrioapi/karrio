@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",
+    "@calcom/embed-react": "^1.5.2",
     "@karrio/core": "*",
     "@karrio/insiders": "*",
     "@karrio/trpc": "*",

@@ -3,6 +3,7 @@
 import { Button } from "@karrio/insiders/components/ui/button";
 import { Check } from "lucide-react";
 import { useState } from "react";
+import Link from "next/link";
 
 type PricingFeature = {
   text: string;
@@ -15,10 +16,13 @@ type PricingPlan = {
   price: string | "Contact us";
   priceDetail?: string;
   popular?: boolean;
+  limitedSpots?: boolean;
   features: PricingFeature[];
   button: {
     text: string;
     variant?: "default" | "outline";
+    href?: string;
+    target?: string;
   };
 };
 
@@ -69,9 +73,12 @@ const PRICING_PLANS: Record<string, { cloud: PricingPlan; selfHosted?: PricingPl
       description: "High-volume enterprise features. Premium support included. Enterprise-grade security.",
       price: "$2,999",
       priceDetail: "/month",
+      limitedSpots: true,
       button: {
         text: "Get Started",
         variant: "outline",
+        href: "https://share.hsforms.com/1xRE12oYoRFWUR8LvOW2Eqwcvwq2",
+        target: "_blank"
       },
       features: [
         { text: "100,000 labels/trackers a month" },
@@ -88,9 +95,12 @@ const PRICING_PLANS: Record<string, { cloud: PricingPlan; selfHosted?: PricingPl
       description: "High-volume enterprise features. Premium support included. Enterprise-grade security.",
       price: "$2,999",
       priceDetail: "/month",
+      limitedSpots: true,
       button: {
         text: "Get Started",
         variant: "outline",
+        href: "https://share.hsforms.com/1xRE12oYoRFWUR8LvOW2Eqwcvwq2",
+        target: "_blank"
       },
       features: [
         { text: "Unlimited labels/trackers a month" },
@@ -134,6 +144,11 @@ function PricingCard({ plan, className = "" }: { plan: PricingPlan; className?: 
           Most Popular
         </div>
       )}
+      {plan.limitedSpots && (
+        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#5722cc] text-white text-sm px-3 py-1 rounded-full">
+          Limited Spots
+        </div>
+      )}
       <div className="min-h-[220px]">
         <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
         <div className="text-3xl font-bold mb-4">
@@ -141,12 +156,24 @@ function PricingCard({ plan, className = "" }: { plan: PricingPlan; className?: 
           {plan.priceDetail && <span className="text-lg font-normal text-white/60">{plan.priceDetail}</span>}
         </div>
         <p className="text-base text-white/60 mb-6">{plan.description}</p>
-        <Button
-          variant={plan.button.variant}
-          className={`w-full mb-8 ${plan.button.variant === undefined ? 'bg-[#5722cc] hover:bg-[#5722cc]/90' : ''}`}
-        >
-          {plan.button.text}
-        </Button>
+        {plan.button.href ? (
+          <Button
+            variant={plan.button.variant}
+            className={`w-full mb-8 ${plan.button.variant === undefined ? 'bg-[#5722cc] hover:bg-[#5722cc]/90' : ''}`}
+            asChild
+          >
+            <Link href={plan.button.href} target={plan.button.target}>
+              {plan.button.text}
+            </Link>
+          </Button>
+        ) : (
+          <Button
+            variant={plan.button.variant}
+            className={`w-full mb-8 ${plan.button.variant === undefined ? 'bg-[#5722cc] hover:bg-[#5722cc]/90' : ''}`}
+          >
+            {plan.button.text}
+          </Button>
+        )}
       </div>
       <ul className="space-y-4 flex-grow border-t border-white/10 pt-4">
         {plan.features.map((feature, index) => (
@@ -170,7 +197,7 @@ export function PricingSection() {
   const [deploymentType, setDeploymentType] = useState<"cloud" | "self-hosted">("cloud");
 
   return (
-    <section className="py-24 relative">
+    <section id="pricing" className="py-24 relative">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,#5722cc1a,transparent_70%)]" />
       <div className="absolute inset-0 bg-[conic-gradient(from_180deg_at_50%_50%,#0f082600,#79e5dd0d,#0f082600)]" />
       <div className="absolute inset-0 backdrop-blur-[100px]" />

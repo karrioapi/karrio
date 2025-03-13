@@ -36,16 +36,18 @@ export function FeatureShowcase({
             <div className="mb-4">
               {tabs[0].content}
             </div>
-            <Button
-              variant="link"
-              className="text-[#79e5dd] p-0 h-auto font-semibold self-start"
-              asChild
-            >
-              <a href={learnMoreHref}>
-                Learn more
-                <ChevronRight className="ml-1 h-4 w-4" />
-              </a>
-            </Button>
+            {learnMoreHref && (
+              <Button
+                variant="link"
+                className="text-[#79e5dd] p-0 h-auto font-semibold self-start"
+                asChild
+              >
+                <a href={learnMoreHref}>
+                  Learn more
+                  <ChevronRight className="ml-1 h-4 w-4" />
+                </a>
+              </Button>
+            )}
           </div>
         </div>
       </CardContent>
