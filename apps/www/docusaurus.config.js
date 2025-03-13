@@ -92,7 +92,7 @@ const config = {
             from: '/self-hosting/oss',
           },
           {
-            to: '/product/self-hosting/insiders',
+            to: '/product/self-hosting/pla',
             from: '/self-hosting/enterprise',
           },
           {
@@ -201,9 +201,9 @@ const config = {
             label: 'Carriers',
           },
           {
-            to: '/insiders',
+            href: 'https://platform.karrio.io',
             position: 'left',
-            label: 'Insiders',
+            label: 'Platform',
           },
           {
             href: 'https://karrio.io',
@@ -229,15 +229,11 @@ const config = {
               },
               {
                 label: 'Carriers',
-                to: '/carriers',
+                href: 'https://docs.karrio.io/carriers/',
               },
               {
                 label: 'Product',
-                to: '/product',
-              },
-              {
-                label: 'API Reference',
-                href: '/reference/openapi',
+                href: 'https://docs.karrio.io/product',
               },
             ],
           },
@@ -256,14 +252,10 @@ const config = {
                 label: 'Discord',
                 href: 'https://discordapp.com/invite/karrio',
               },
-              {
-                label: 'Twitter',
-                href: 'https://twitter.com/karrio',
-              },
             ],
           },
           {
-            title: 'More',
+            title: 'Company',
             items: [
               {
                 label: 'GitHub',
@@ -271,7 +263,11 @@ const config = {
               },
               {
                 label: 'Blog',
-                href: 'https://karrio.io/blog',
+                href: 'https://www.karrio.io/blog',
+              },
+              {
+                label: 'API Reference',
+                href: '/reference/openapi',
               },
             ],
           },
@@ -279,12 +275,8 @@ const config = {
             title: 'Get Started',
             items: [
               {
-                label: 'FAQ',
-                href: 'https://karrio.io/get-started#FAQ',
-              },
-              {
-                label: 'Insiders',
-                to: '/insiders',
+                label: 'Platform',
+                href: 'https://platform.karrio.io'
               },
               {
                 label: 'Download',
@@ -296,8 +288,11 @@ const config = {
         logo: {
           alt: 'Karrio Inc.',
           src: 'img/logo-inverted.svg',
+          href: 'https://www.karrio.io',
+          width: 180,
+          height: 'auto',
         },
-        copyright: `Copyright © ${new Date().getFullYear()} karrio Inc.`,
+        copyright: `Copyright © ${new Date().getFullYear()} karrio Inc. - the modern shipping infrastructure for global commerce`,
       },
       tableOfContents: {
         minHeadingLevel: 2,
