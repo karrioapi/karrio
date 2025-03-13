@@ -81,7 +81,7 @@ const PRICING_PLANS: Record<string, { cloud: PricingPlan; selfHosted?: PricingPl
         target: "_blank"
       },
       features: [
-        { text: "100,000 labels/trackers a month" },
+        { text: "120,000 labels/trackers a month" },
         { text: "$0.02 overage beyond" },
         { text: "One-on-one developer calls" },
         { text: "Up to 5 new carrier integrations/month" },
