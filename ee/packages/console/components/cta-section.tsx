@@ -32,27 +32,29 @@ export function CTASection({
         {/* Cards */}
         <div className="grid md:grid-cols-2 gap-6">
           {/* Karrio OSS Card */}
-          <div className="bg-white/5 rounded-xl p-8 space-y-8">
-            <div className="space-y-4">
-              <Image src="/icon.svg" alt="Karrio Icon" width={40} height={40} />
-              <h3 className="text-2xl font-semibold">Karrio Open Source</h3>
-              <p className="text-white/60">
-                The optimal solution for small projects.
-              </p>
+          <div className="bg-white/5 rounded-xl overflow-hidden p-2">
+            <div className="p-2 space-y-6">
+              <div className="space-y-4">
+                <Image src="/icon.svg" alt="Karrio Icon" width={40} height={40} />
+                <h3 className="text-2xl font-semibold">Karrio Open Source</h3>
+                <p className="text-white/60">
+                  The optimal solution for small projects.
+                </p>
+              </div>
+
+              <Button variant="outline" size="lg" className="w-full sm:w-auto" asChild>
+                <Link href="https://docs.karrio.io/product/self-hosting">
+                  Deploy Open Source
+                </Link>
+              </Button>
             </div>
 
-            <Button variant="outline" size="lg" className="w-full sm:w-auto" asChild>
-              <Link href="https://docs.karrio.io/product/self-hosting">
-                Deploy Open Source
-              </Link>
-            </Button>
-
-            <div className="aspect-video relative rounded-lg overflow-hidden bg-black/40 flex items-center justify-center">
+            <div className="aspect-video relative overflow-hidden bg-black/40 flex items-center justify-center">
               <div className="absolute w-full h-full">
-                <div className="absolute top-1/2 left-1/4 w-32 h-32 md:w-44 md:h-44 rounded-full bg-[#30D9B7]/30 blur-xl"></div>
-                <div className="absolute top-1/3 right-1/4 w-28 h-28 md:w-40 md:h-40 rounded-full bg-[#5722cc]/30 blur-xl"></div>
+                <div className="absolute top-1/2 left-1/4 w-24 h-24 md:w-36 md:h-36 rounded-full bg-[#30D9B7]/30 blur-xl"></div>
+                <div className="absolute top-1/3 right-1/4 w-20 h-20 md:w-32 md:h-32 rounded-full bg-[#5722cc]/30 blur-xl"></div>
                 <div className="absolute w-full h-full flex items-center justify-center">
-                  <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg width="180" height="180" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="100" cy="100" r="80" stroke="#30D9B7" strokeWidth="4" />
                     <path d="M60 100C60 77.9086 77.9086 60 100 60C122.091 60 140 77.9086 140 100C140 122.091 122.091 140 100 140" stroke="#5722cc" strokeWidth="4" />
                     <circle cx="100" cy="100" r="20" fill="#30D9B7" fillOpacity="0.3" />
@@ -63,33 +65,35 @@ export function CTASection({
           </div>
 
           {/* Karrio Platform Card */}
-          <div className="bg-[#0f0826] rounded-xl p-8 space-y-8 border border-white/10">
-            <div className="space-y-4">
-              <Image src="/icon.svg" alt="Karrio Icon" width={40} height={40} />
-              <h3 className="text-2xl font-semibold">Karrio Platform</h3>
-              <p className="text-white/60">
-                The optimal solution for teams with control and flexibility.
-              </p>
+          <div className="bg-[#0f0826] rounded-xl overflow-hidden border border-white/10 p-2">
+            <div className="p-2 space-y-6">
+              <div className="space-y-4">
+                <Image src="/icon.svg" alt="Karrio Icon" width={40} height={40} />
+                <h3 className="text-2xl font-semibold">Karrio Platform</h3>
+                <p className="text-white/60">
+                  The optimal solution for teams with control and flexibility.
+                </p>
+              </div>
+
+              <BookDemoButton
+                size="lg"
+                className="w-full sm:w-auto bg-[#5722cc] hover:bg-[#5722cc]/90"
+              />
             </div>
 
-            <BookDemoButton
-              size="lg"
-              className="w-full sm:w-auto bg-[#5722cc] hover:bg-[#5722cc]/90"
-            />
-
-            <div className="aspect-video relative rounded-lg overflow-hidden bg-black/40 flex items-center justify-center">
+            <div className="aspect-video relative overflow-hidden bg-black/40 flex items-center justify-center">
               <div className="absolute w-full h-full">
-                <div className="absolute top-1/3 left-1/3 w-36 h-36 md:w-48 md:h-48 rounded-full bg-[#5722cc]/30 blur-xl"></div>
-                <div className="absolute top-1/2 right-1/4 w-32 h-32 md:w-44 md:h-44 rounded-full bg-[#30D9B7]/30 blur-xl"></div>
+                <div className="absolute top-1/3 left-1/3 w-28 h-28 md:w-40 md:h-40 rounded-full bg-[#5722cc]/30 blur-xl"></div>
+                <div className="absolute top-1/2 right-1/4 w-24 h-24 md:w-36 md:h-36 rounded-full bg-[#30D9B7]/30 blur-xl"></div>
                 <div className="absolute w-full h-full flex items-center justify-center">
-                  <svg width="220" height="220" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg width="180" height="180" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
                     {/* OSS Core Foundation (similar to OSS illustration) */}
                     <circle cx="100" cy="100" r="35" stroke="#30D9B7" strokeWidth="2" fill="rgba(48, 217, 183, 0.05)" />
                     <path d="M80 100C80 89.0589 89.0589 80 100 80C110.941 80 120 89.0589 120 100C120 110.941 110.941 120 100 120"
                       stroke="#5722cc" strokeWidth="2" />
 
                     {/* Platform Expansion Elements */}
-                    <circle cx="100" cy="100" r="60" stroke="#5722cc" strokeWidth="1.5" stroke-dasharray="4 3" />
+                    <circle cx="100" cy="100" r="60" stroke="#5722cc" strokeWidth="1.5" strokeDasharray="4 3" />
 
                     {/* Reduced Modular Components (3 instead of 5) */}
                     <rect x="50" y="75" width="25" height="25" rx="5" stroke="#30D9B7" strokeWidth="2" fill="rgba(48, 217, 183, 0.1)" />
@@ -102,7 +106,7 @@ export function CTASection({
                     <path d="M110 120L112 145" stroke="#5722cc" strokeWidth="1.5" />
 
                     {/* Outer ring showing ecosystem expansion */}
-                    <circle cx="100" cy="100" r="85" stroke="url(#platformGradient)" strokeWidth="2" stroke-dasharray="1 2" />
+                    <circle cx="100" cy="100" r="85" stroke="url(#platformGradient)" strokeWidth="2" strokeDasharray="1 2" />
 
                     {/* Reduced Accent elements - only one in the center */}
                     <circle cx="100" cy="100" r="12" fill="#5722cc" fillOpacity="0.3" />

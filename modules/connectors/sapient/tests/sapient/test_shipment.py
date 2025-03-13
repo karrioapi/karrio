@@ -295,6 +295,7 @@ ShipmentRequest = {
             "Town": "Leatherhead",
         },
         "Reference1": "OrderRef56",
+        "EoriNumber": "GB213456789000",
         "VatNumber": "GB123456789",
         "ShippingAccountId": "shipping_account_id",
     },

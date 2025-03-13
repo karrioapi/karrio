@@ -126,7 +126,7 @@ export function RoadmapSection() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,#5722cc1a,transparent_70%)]" />
       <div className="absolute inset-0 bg-[conic-gradient(from_90deg_at_50%_50%,#0f082600,#79e5dd0d,#0f082600)]" />
       <div className="absolute inset-0 backdrop-blur-[100px]" />
-      <div className="container mx-auto px-4 relative max-w-[95%] xl:max-w-[1280px]">
+      <div className="container mx-auto px-2 relative max-w-[95%] xl:max-w-[1280px]">
         <div className="text-center mb-16">
           <div className="text-[#79e5dd] mb-4">Product Roadmap</div>
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
@@ -172,7 +172,7 @@ export function RoadmapSection() {
 
           <div className="lg:col-span-2 h-fit">
             {selectedItem && (
-              <div className="bg-white/5 rounded-lg p-8 backdrop-blur-sm border border-white/10">
+              <div className="bg-white/5 rounded-lg p-4 backdrop-blur-sm border border-white/10">
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
                     <div className={`px-3 py-1 rounded-full text-sm ${selectedItem.status === "in_progress"
