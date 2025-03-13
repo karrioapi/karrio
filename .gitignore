@@ -130,6 +130,10 @@ apps/api/karrio/server/staticfiles/*
 packages/karriojs/api/generated
 !docker/.env
 
+plugins/*
+!plugins/README.md
+
+
 # Meta-repo private directories
 meta/private/
 
