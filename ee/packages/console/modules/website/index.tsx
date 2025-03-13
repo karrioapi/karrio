@@ -32,7 +32,7 @@ export default async function LandingPage() {
               <span className="rounded-full bg-[#ff4800] px-1.5 py-0.5 text-xs font-medium text-white mr-2">
                 New
               </span>
-              Karrio v2.0 is now live
+              Karrio platform launching April 1st
             </div>
             <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-white via-[#79e5dd] to-[#ff4800] bg-clip-text text-transparent pb-2">
               Modern Logistics, Redefined.

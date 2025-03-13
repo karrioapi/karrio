@@ -5,10 +5,10 @@ import {
   Building,
 } from "lucide-react";
 import { FeatureShowcase } from "@karrio/console/components/feature-showcase";
-import { BookDemoButton } from "@karrio/console/components/book-demo-button";
 import { CTASection } from "@karrio/console/components/cta-section";
 import { Button } from "@karrio/insiders/components/ui/button";
 import Link from "next/link";
+import { BookDemoButton } from "@karrio/console/components/book-demo-button";
 
 export default async function Page() {
   return (
@@ -35,11 +35,14 @@ export default async function Page() {
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex justify-center space-x-4">
-              <Button size="lg" className="bg-[#5722cc] hover:bg-[#5722cc]/90">
-                <Link href="/enterprise-contact">Contact Sales</Link>
-              </Button>
-              <BookDemoButton variant="outline" className="border-white/20 hover:bg-white/10" />
+            <div className="flex justify-center">
+              <BookDemoButton
+                size="lg"
+                className="bg-[#5722cc] hover:bg-[#5722cc]/90"
+                calLink="karrio/enterprise"
+              >
+                Contact Sales
+              </BookDemoButton>
             </div>
           </div>
         </div>

@@ -3,17 +3,22 @@
 import { Button } from "@karrio/insiders/components/ui/button";
 import { useEffect } from "react";
 import { getCalApi } from "@calcom/embed-react";
+import { ReactNode } from "react";
 
 interface BookDemoButtonProps {
   size?: "default" | "sm" | "lg" | "icon";
   variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
   className?: string;
+  children?: ReactNode;
+  calLink?: string;
 }
 
 export function BookDemoButton({
   size = "lg",
   variant = "default",
   className = "bg-[#5722cc] hover:bg-[#5722cc]/90",
+  children = "Book a demo",
+  calLink = "karrio/demo"
 }: BookDemoButtonProps) {
   useEffect(() => {
     (async function () {
@@ -28,10 +33,10 @@ export function BookDemoButton({
       variant={variant}
       className={className}
       data-cal-namespace="demo"
-      data-cal-link="karrio/demo"
+      data-cal-link={calLink}
       data-cal-config='{"layout":"month_view","theme":"dark"}'
     >
-      Book a demo
+      {children}
     </Button>
   );
 }
