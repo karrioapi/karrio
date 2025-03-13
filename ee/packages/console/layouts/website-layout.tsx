@@ -2,7 +2,7 @@ import { PlatformSubnav } from "@karrio/console/components/platform-subnav";
 import { MobileMenu } from "@karrio/console/components/mobile-menu";
 import { Button } from "@karrio/insiders/components/ui/button";
 import { auth } from "@karrio/console/apis/auth";
-import { Github } from "lucide-react";
+import { Github, Linkedin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -87,47 +87,7 @@ export async function WebsiteLayout({
       {/* Footer */}
       <footer className="border-t border-white/10 py-12">
         <div className="container mx-auto px-4 max-w-[95%] xl:max-w-[1280px]">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
-            <div className="col-span-2 md:col-span-1">
-              <Image
-                src="/logo.svg"
-                alt="Karrio Logo"
-                width={120}
-                height={30}
-              />
-              <p className="mt-4 text-white/60 text-sm">
-                The modern shipping infrastructure for global commerce.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-medium mb-4">Product</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="/#pricing"
-                    className="text-white/60 hover:text-white text-sm"
-                  >
-                    Pricing
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/enterprise"
-                    className="text-white/60 hover:text-white text-sm"
-                  >
-                    Enterprise
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/partners"
-                    className="text-white/60 hover:text-white text-sm"
-                  >
-                    Partners
-                  </Link>
-                </li>
-              </ul>
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div>
               <h3 className="font-medium mb-4">Resources</h3>
               <ul className="space-y-2">
@@ -136,23 +96,52 @@ export async function WebsiteLayout({
                     href="https://docs.karrio.io"
                     className="text-white/60 hover:text-white text-sm"
                   >
-                    Documentation
+                    Docs
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/blog"
+                    href="https://docs.karrio.io/carriers/"
                     className="text-white/60 hover:text-white text-sm"
                   >
-                    Blog
+                    Carriers
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="https://github.com/karrioapi"
+                    href="https://docs.karrio.io/product"
                     className="text-white/60 hover:text-white text-sm"
                   >
-                    GitHub
+                    Product
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-medium mb-4">Community</h3>
+              <ul className="space-y-2">
+                <li>
+                  <Link
+                    href="https://www.karrio.io/launch-week-x"
+                    className="text-white/60 hover:text-white text-sm"
+                  >
+                    Launch week X
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="https://github.com/orgs/karrioapi/discussions"
+                    className="text-white/60 hover:text-white text-sm"
+                  >
+                    Discussions
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="https://discord.com/invite/gS88uE7sEx"
+                    className="text-white/60 hover:text-white text-sm"
+                  >
+                    Discord
                   </Link>
                 </li>
               </ul>
@@ -162,74 +151,83 @@ export async function WebsiteLayout({
               <ul className="space-y-2">
                 <li>
                   <Link
-                    href="/about"
+                    href="https://www.karrio.io/blog"
                     className="text-white/60 hover:text-white text-sm"
                   >
-                    About
+                    Blog
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/contact"
+                    href="https://github.com/karrioapi/"
                     className="text-white/60 hover:text-white text-sm"
                   >
-                    Contact
+                    GitHub
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/careers"
+                    href="https://docs.karrio.io/reference/openapi"
                     className="text-white/60 hover:text-white text-sm"
                   >
-                    Careers
+                    API Reference
                   </Link>
                 </li>
               </ul>
             </div>
             <div>
-              <h3 className="font-medium mb-4">Legal</h3>
+              <h3 className="font-medium mb-4">Get Started</h3>
               <ul className="space-y-2">
                 <li>
                   <Link
-                    href="/privacy"
+                    href="https://platform.karrio.io"
                     className="text-white/60 hover:text-white text-sm"
                   >
-                    Privacy
+                    Platform
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/terms"
+                    href="https://docs.karrio.io/product/self-hosting"
                     className="text-white/60 hover:text-white text-sm"
                   >
-                    Terms
+                    Download
                   </Link>
                 </li>
               </ul>
             </div>
           </div>
           <div className="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-white/60 text-sm">
-              © {new Date().getFullYear()} Karrio, Inc. All rights reserved.
-            </p>
+            <div className="flex flex-col items-start">
+              <Link href="https://karrio.io" className="flex items-center">
+                <Image
+                  src="/logo.svg"
+                  alt="Karrio Logo"
+                  width={100}
+                  height={25}
+                  style={{ height: 'auto' }}
+                  priority
+                />
+              </Link>
+              <p className="text-white/60 text-sm mt-2">
+                The modern shipping infrastructure for global commerce
+              </p>
+              <p className="text-white/60 text-sm mt-4">
+                Copyright © {new Date().getFullYear()} karrio Inc.
+              </p>
+            </div>
             <div className="mt-4 md:mt-0 flex space-x-6">
               <Link
-                href="https://twitter.com/karrioapi"
-                className="text-white/60 hover:text-white"
-              >
-                Twitter
-              </Link>
-              <Link
                 href="https://linkedin.com/company/karrioapi"
-                className="text-white/60 hover:text-white"
+                className="text-white/60 hover:text-white flex items-center gap-1"
               >
-                LinkedIn
+                <Linkedin className="h-5 w-5" />
               </Link>
               <Link
                 href="https://github.com/karrioapi"
-                className="text-white/60 hover:text-white"
+                className="text-white/60 hover:text-white flex items-center gap-1"
               >
-                GitHub
+                <Github className="h-5 w-5" />
               </Link>
             </div>
           </div>
