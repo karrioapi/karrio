@@ -1,4 +1,12 @@
-# karrio 2024.12.5
+# Karrio 2024.12.6
+
+## Changes
+
+### Fix
+
+- fix: fix incorrect nip number (@DarkSwoop)
+
+# Karrio 2024.12.5
 
 ## Changes
 

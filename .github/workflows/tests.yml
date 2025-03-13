@@ -32,7 +32,7 @@ jobs:
         run: |
           ./bin/setup-server-env -v &&
           ./bin/migrate &&
-          ./bin/run-server-tests
+          ./bin/run-server-tests -v
 
   dashbaord-ci:
     runs-on: ubuntu-latest

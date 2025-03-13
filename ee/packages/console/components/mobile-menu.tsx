@@ -46,7 +46,7 @@ export function MobileMenu() {
 
             <SheetClose asChild>
               <Link
-                href="https://docs.karrio.io/platform"
+                href="/"
                 className="text-white/80 hover:text-white transition-colors px-6 py-3"
               >
                 Platform

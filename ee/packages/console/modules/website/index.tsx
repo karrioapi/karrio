@@ -1,22 +1,20 @@
 import {
   ArrowRight,
-  ChevronRight,
   Code,
   Globe,
   Layers,
   Bell,
   Settings,
-  Scale,
   Maximize2,
 } from "lucide-react";
 import { FeatureShowcase } from "@karrio/console/components/feature-showcase";
+import { BookDemoButton } from "@karrio/console/components/book-demo-button";
 import { RoadmapSection } from "@karrio/console/components/roadmap-section";
 import { PricingSection } from "@karrio/console/components/pricing-section";
 import { CodePreview } from "@karrio/console/components/code-preview";
 import { FeatureTabs } from "@karrio/console/components/feature-tabs";
 import { CTASection } from "@karrio/console/components/cta-section";
 import { Button } from "@karrio/insiders/components/ui/button";
-import { BookDemoButton } from "@karrio/console/components/book-demo-button";
 import Image from "next/image";
 import Link from "next/link";
 

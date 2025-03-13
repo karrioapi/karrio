@@ -2,7 +2,6 @@ import { FeatureShowcase } from "@karrio/console/components/feature-showcase";
 import { BookDemoButton } from "@karrio/console/components/book-demo-button";
 import { CTASection } from "@karrio/console/components/cta-section";
 import { Button } from "@karrio/insiders/components/ui/button";
-import Image from "next/image";
 import Link from "next/link";
 
 export default async function Page() {
@@ -56,24 +55,24 @@ export default async function Page() {
             {/* Challenges Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* Challenge 1 */}
-              <div className="bg-white/5 backdrop-blur-sm rounded-lg p-8 border border-white/10">
-                <h3 className="text-xl font-semibold mb-4">Carrier Integration Complexity</h3>
+              <div className="bg-white/5 backdrop-blur-sm rounded-lg p-4 md:p-6 border border-white/10">
+                <h3 className="text-xl font-semibold mb-3 md:mb-4">Carrier Integration Complexity</h3>
                 <p className="text-white/80">
                   Maintaining direct integrations with multiple carriers requires significant development resources and ongoing maintenance.
                 </p>
               </div>
 
               {/* Challenge 2 */}
-              <div className="bg-white/5 backdrop-blur-sm rounded-lg p-8 border border-white/10">
-                <h3 className="text-xl font-semibold mb-4">Client-Specific Requirements</h3>
+              <div className="bg-white/5 backdrop-blur-sm rounded-lg p-4 md:p-6 border border-white/10">
+                <h3 className="text-xl font-semibold mb-3 md:mb-4">Client-Specific Requirements</h3>
                 <p className="text-white/80">
                   Each client has unique shipping needs, requiring customized workflows and carrier selections that are difficult to scale.
                 </p>
               </div>
 
               {/* Challenge 3 */}
-              <div className="bg-white/5 backdrop-blur-sm rounded-lg p-8 border border-white/10">
-                <h3 className="text-xl font-semibold mb-4">Technology Stack Limitations</h3>
+              <div className="bg-white/5 backdrop-blur-sm rounded-lg p-4 md:p-6 border border-white/10">
+                <h3 className="text-xl font-semibold mb-3 md:mb-4">Technology Stack Limitations</h3>
                 <p className="text-white/80">
                   Legacy systems often struggle to adapt to changing carrier APIs and new shipping requirements.
                 </p>
@@ -260,7 +259,7 @@ export default async function Page() {
             </div>
 
             {/* Workflow Diagram */}
-            <div className="bg-white/5 backdrop-blur-sm rounded-lg p-8 border border-white/10 max-w-4xl mx-auto">
+            <div className="bg-white/5 backdrop-blur-sm rounded-lg p-2 border border-white/10 max-w-4xl mx-auto">
               <div className="relative rounded-lg overflow-hidden bg-black/40" style={{ aspectRatio: '16/9' }}>
                 <div className="absolute inset-0 flex items-center justify-center">
                   <svg width="100%" height="100%" viewBox="0 0 1200 675" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
@@ -372,7 +371,7 @@ export default async function Page() {
                   </svg>
                 </div>
               </div>
-              <div className="mt-8 text-center text-white/80">
+              <div className="mt-6 md:mt-8 text-center text-white/80 p-2">
                 <p className="text-lg font-medium mb-2">Your LSP System {'->'} Karrio Platform {'->'} Multiple Carriers</p>
                 <p>Streamline your shipping operations by connecting your existing systems to multiple carriers through a single integration.</p>
               </div>
@@ -397,32 +396,32 @@ export default async function Page() {
             {/* Outcomes Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {/* Outcome 1 */}
-              <div className="bg-white/5 backdrop-blur-sm rounded-lg p-8 border border-white/10">
-                <h3 className="text-xl font-semibold mb-4">40% Reduction in Integration Costs</h3>
+              <div className="bg-white/5 backdrop-blur-sm rounded-lg p-4 md:p-6 border border-white/10">
+                <h3 className="text-xl font-semibold mb-3 md:mb-4">40% Reduction in Integration Costs</h3>
                 <p className="text-white/80">
                   Eliminate the need for custom carrier integrations and ongoing maintenance, significantly reducing your development costs.
                 </p>
               </div>
 
               {/* Outcome 2 */}
-              <div className="bg-white/5 backdrop-blur-sm rounded-lg p-8 border border-white/10">
-                <h3 className="text-xl font-semibold mb-4">60% Faster Onboarding</h3>
+              <div className="bg-white/5 backdrop-blur-sm rounded-lg p-4 md:p-6 border border-white/10">
+                <h3 className="text-xl font-semibold mb-3 md:mb-4">60% Faster Onboarding</h3>
                 <p className="text-white/80">
                   Rapidly onboard new clients with pre-built carrier integrations and customizable workflows, reducing time-to-value.
                 </p>
               </div>
 
               {/* Outcome 3 */}
-              <div className="bg-white/5 backdrop-blur-sm rounded-lg p-8 border border-white/10">
-                <h3 className="text-xl font-semibold mb-4">25% Improved Operational Efficiency</h3>
+              <div className="bg-white/5 backdrop-blur-sm rounded-lg p-4 md:p-6 border border-white/10">
+                <h3 className="text-xl font-semibold mb-3 md:mb-4">25% Improved Operational Efficiency</h3>
                 <p className="text-white/80">
                   Streamline shipping operations with automated processes and reduced manual intervention, boosting overall productivity.
                 </p>
               </div>
 
               {/* Outcome 4 */}
-              <div className="bg-white/5 backdrop-blur-sm rounded-lg p-8 border border-white/10">
-                <h3 className="text-xl font-semibold mb-4">Enhanced Service Offering</h3>
+              <div className="bg-white/5 backdrop-blur-sm rounded-lg p-4 md:p-6 border border-white/10">
+                <h3 className="text-xl font-semibold mb-3 md:mb-4">Enhanced Service Offering</h3>
                 <p className="text-white/80">
                   Provide clients with more carrier options and service levels, strengthening your competitive advantage in the market.
                 </p>

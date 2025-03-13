@@ -11,7 +11,6 @@ import { FeatureShowcase } from "@karrio/console/components/feature-showcase";
 import { BookDemoButton } from "@karrio/console/components/book-demo-button";
 import { CTASection } from "@karrio/console/components/cta-section";
 import { Button } from "@karrio/insiders/components/ui/button";
-import Image from "next/image";
 import Link from "next/link";
 
 export default async function Page() {
@@ -60,31 +59,31 @@ export default async function Page() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white/5 rounded-xl p-8 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
-                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-6">
+              <div className="bg-white/5 rounded-xl p-4 md:p-6 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
+                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-4 md:mb-6">
                   <PanelLeft className="w-6 h-6 text-[#79e5dd]" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Seamless End-to-End Experience</h3>
+                <h3 className="text-xl font-semibold mb-2 md:mb-3">Seamless End-to-End Experience</h3>
                 <p className="text-white/70">
                   Your users expect streamlined shipping workflows without stepping out of your platform.
                 </p>
               </div>
 
-              <div className="bg-white/5 rounded-xl p-8 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
-                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-6">
+              <div className="bg-white/5 rounded-xl p-4 md:p-6 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
+                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-4 md:mb-6">
                   <DollarSign className="w-6 h-6 text-[#79e5dd]" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Scalable Monetization</h3>
+                <h3 className="text-xl font-semibold mb-2 md:mb-3">Scalable Monetization</h3>
                 <p className="text-white/70">
                   Monetize shipping as a value-added service—without heavy engineering overhead.
                 </p>
               </div>
 
-              <div className="bg-white/5 rounded-xl p-8 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
-                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-6">
+              <div className="bg-white/5 rounded-xl p-4 md:p-6 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
+                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-4 md:mb-6">
                   <Globe className="w-6 h-6 text-[#79e5dd]" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Global Carrier Footprint</h3>
+                <h3 className="text-xl font-semibold mb-2 md:mb-3">Global Carrier Footprint</h3>
                 <p className="text-white/70">
                   Onboard your user base's preferred carriers, from local couriers to global freight.
                 </p>
@@ -263,7 +262,7 @@ export default async function Page() {
               </p>
             </div>
 
-            <div className="bg-white/5 rounded-xl p-8 backdrop-blur-sm border border-white/10 max-w-4xl mx-auto">
+            <div className="bg-white/5 rounded-xl p-2 backdrop-blur-sm border border-white/10 max-w-4xl mx-auto">
               <div className="relative rounded-lg overflow-hidden aspect-video bg-black/40">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <svg width="100%" height="100%" viewBox="0 0 1200 675" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
@@ -369,7 +368,7 @@ export default async function Page() {
                   </svg>
                 </div>
               </div>
-              <div className="mt-8 text-center text-white/80">
+              <div className="mt-6 md:mt-8 text-center text-white/80 p-2">
                 <p className="text-lg font-medium mb-2">Your Platform {'->'} Karrio API {'->'} Multiple Carriers</p>
                 <p>Provide comprehensive shipping capabilities to your users with minimal development effort.</p>
               </div>
@@ -389,31 +388,31 @@ export default async function Page() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white/5 rounded-xl p-8 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
-                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-6">
+              <div className="bg-white/5 rounded-xl p-4 md:p-6 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
+                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-4 md:mb-6">
                   <Box className="w-6 h-6 text-[#79e5dd]" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Accelerated Product Roadmap</h3>
+                <h3 className="text-xl font-semibold mb-2 md:mb-3">Accelerated Product Roadmap</h3>
                 <p className="text-white/70">
                   Launch integrated shipping features faster, without complex development cycles.
                 </p>
               </div>
 
-              <div className="bg-white/5 rounded-xl p-8 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
-                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-6">
+              <div className="bg-white/5 rounded-xl p-4 md:p-6 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
+                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-4 md:mb-6">
                   <DollarSign className="w-6 h-6 text-[#79e5dd]" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Increased Revenue Streams</h3>
+                <h3 className="text-xl font-semibold mb-2 md:mb-3">Increased Revenue Streams</h3>
                 <p className="text-white/70">
                   Offer shipping as a built-in service, capturing additional transaction-based revenue.
                 </p>
               </div>
 
-              <div className="bg-white/5 rounded-xl p-8 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
-                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-6">
+              <div className="bg-white/5 rounded-xl p-4 md:p-6 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
+                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-4 md:mb-6">
                   <Users className="w-6 h-6 text-[#79e5dd]" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Better User Retention</h3>
+                <h3 className="text-xl font-semibold mb-2 md:mb-3">Better User Retention</h3>
                 <p className="text-white/70">
                   Keep users on your platform with an all-in-one solution for order, fulfillment, and delivery.
                 </p>
@@ -434,7 +433,7 @@ export default async function Page() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white/5 rounded-xl p-8 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
+              <div className="bg-white/5 rounded-xl p-6 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
                 <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-6">
                   <Truck className="w-6 h-6 text-[#79e5dd]" />
                 </div>
@@ -444,7 +443,7 @@ export default async function Page() {
                 </p>
               </div>
 
-              <div className="bg-white/5 rounded-xl p-8 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
+              <div className="bg-white/5 rounded-xl p-6 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
                 <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-6">
                   <Code className="w-6 h-6 text-[#79e5dd]" />
                 </div>
@@ -454,7 +453,7 @@ export default async function Page() {
                 </p>
               </div>
 
-              <div className="bg-white/5 rounded-xl p-8 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
+              <div className="bg-white/5 rounded-xl p-6 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
                 <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-6">
                   <Users className="w-6 h-6 text-[#79e5dd]" />
                 </div>

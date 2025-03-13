@@ -1228,7 +1228,7 @@ class CustomsOption(utils.Enum):
     aes = utils.OptionEnum("aes")
     ioss = utils.OptionEnum("ioss")
     eel_pfc = utils.OptionEnum("eel_pfc")
-    nip_number = utils.OptionEnum("eori_number")
+    nip_number = utils.OptionEnum("nip_number")
     eori_number = utils.OptionEnum("eori_number")
     license_number = utils.OptionEnum("license_number")
     certificate_number = utils.OptionEnum("certificate_number")

@@ -8,7 +8,6 @@ import { FeatureShowcase } from "@karrio/console/components/feature-showcase";
 import { BookDemoButton } from "@karrio/console/components/book-demo-button";
 import { CTASection } from "@karrio/console/components/cta-section";
 import { Button } from "@karrio/insiders/components/ui/button";
-import Image from "next/image";
 import Link from "next/link";
 
 export default async function Page() {
@@ -57,31 +56,31 @@ export default async function Page() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white/5 rounded-xl p-8 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
-                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-6">
+              <div className="bg-white/5 rounded-xl p-4 md:p-6 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
+                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-4 md:mb-6">
                   <Shield className="w-6 h-6 text-[#79e5dd]" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Stringent Regulatory Standards</h3>
+                <h3 className="text-xl font-semibold mb-2 md:mb-3">Stringent Regulatory Standards</h3>
                 <p className="text-white/70">
                   Industries like healthcare or high-value freight rely on secure, compliant shipping processes.
                 </p>
               </div>
 
-              <div className="bg-white/5 rounded-xl p-8 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
-                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-6">
+              <div className="bg-white/5 rounded-xl p-4 md:p-6 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
+                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-4 md:mb-6">
                   <Network className="w-6 h-6 text-[#79e5dd]" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Tailored Workflows & Branding</h3>
+                <h3 className="text-xl font-semibold mb-2 md:mb-3">Tailored Workflows & Branding</h3>
                 <p className="text-white/70">
                   Standard out-of-the-box solutions rarely meet unique enterprise processes or brand requirements.
                 </p>
               </div>
 
-              <div className="bg-white/5 rounded-xl p-8 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
-                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-6">
+              <div className="bg-white/5 rounded-xl p-4 md:p-6 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
+                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-4 md:mb-6">
                   <Boxes className="w-6 h-6 text-[#79e5dd]" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Complex System Integrations</h3>
+                <h3 className="text-xl font-semibold mb-2 md:mb-3">Complex System Integrations</h3>
                 <p className="text-white/70">
                   Must seamlessly fit into existing ERP, WMS, or other enterprise software.
                 </p>
@@ -260,7 +259,7 @@ export default async function Page() {
               </p>
             </div>
 
-            <div className="bg-white/5 rounded-xl p-8 backdrop-blur-sm border border-white/10 max-w-4xl mx-auto">
+            <div className="bg-white/5 rounded-xl p-2 md:p-6 backdrop-blur-sm border border-white/10 max-w-4xl mx-auto">
               <div className="relative rounded-lg overflow-hidden aspect-video bg-black/40">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <svg width="100%" height="100%" viewBox="0 0 1200 675" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -356,7 +355,7 @@ export default async function Page() {
                   </svg>
                 </div>
               </div>
-              <div className="mt-8 text-center text-white/80">
+              <div className="mt-6 md:mt-8 text-center text-white/80 p-2">
                 <p className="text-lg font-medium mb-2">Enterprise System {'->'} Karrio Platform {'->'} Supply Chain Network</p>
                 <p>Unify and optimize your shipping logistics within your existing enterprise architecture.</p>
               </div>
@@ -376,31 +375,31 @@ export default async function Page() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white/5 rounded-xl p-8 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
-                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-6">
+              <div className="bg-white/5 rounded-xl p-4 md:p-6 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
+                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-4 md:mb-6">
                   <Shield className="w-6 h-6 text-[#79e5dd]" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Enhanced Security & Compliance</h3>
+                <h3 className="text-xl font-semibold mb-2 md:mb-3">Enhanced Security & Compliance</h3>
                 <p className="text-white/70">
                   Maintain full control over data hosting and meet strict industry requirements.
                 </p>
               </div>
 
-              <div className="bg-white/5 rounded-xl p-8 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
-                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-6">
+              <div className="bg-white/5 rounded-xl p-4 md:p-6 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
+                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-4 md:mb-6">
                   <Boxes className="w-6 h-6 text-[#79e5dd]" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Seamless Integration</h3>
+                <h3 className="text-xl font-semibold mb-2 md:mb-3">Seamless Integration</h3>
                 <p className="text-white/70">
                   Connect Karrio to internal systems for real-time visibility and automation.
                 </p>
               </div>
 
-              <div className="bg-white/5 rounded-xl p-8 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
-                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-6">
+              <div className="bg-white/5 rounded-xl p-4 md:p-6 backdrop-blur-sm border border-white/10 hover:border-[#79e5dd]/30 transition-all">
+                <div className="w-12 h-12 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center mb-4 md:mb-6">
                   <Building className="w-6 h-6 text-[#79e5dd]" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Brand Consistency</h3>
+                <h3 className="text-xl font-semibold mb-2 md:mb-3">Brand Consistency</h3>
                 <p className="text-white/70">
                   Present a shipping experience fully aligned with your corporate identity.
                 </p>
