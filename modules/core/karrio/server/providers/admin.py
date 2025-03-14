@@ -14,10 +14,10 @@ import karrio.server.core.dataunits as dataunits
 import karrio.server.providers.models as providers
 
 User = get_user_model()
-references = dataunits.contextual_reference(reduced=False)
 
 
 def model_admin(ext: str, carrierProxy):
+    references = dataunits.contextual_reference(reduced=False)
     class_name = carrierProxy.__name__
     connection_fields = references["connection_fields"].get(ext) or {}
     connection_configs = references["connection_configs"].get(ext) or {}
