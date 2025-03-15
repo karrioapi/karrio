@@ -1,0 +1,414 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* Import Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Only show Docusaurus navbar on docs pages */
+.navbar {
+  display: none !important;
+}
+
+/* Only show navbar on docs pages */
+[class*="docs-"] .navbar {
+  display: flex !important;
+}
+
+/* You can override the default Infima variables here. */
+:root {
+  /* Primary color: Purple (#5722cc) from theme.scss */
+  --ifm-color-primary: #5722cc;
+  --ifm-color-primary-dark: #4f1eb7;
+  --ifm-color-primary-darker: #4a1db0;
+  --ifm-color-primary-darkest: #3d1791;
+  --ifm-color-primary-light: #6232d6;
+  --ifm-color-primary-lighter: #7942e0;
+  --ifm-color-primary-lightest: #9066e5;
+
+  /* Secondary color: Teal (#79e5dd) from theme.scss */
+  --ifm-color-secondary: #79e5dd;
+  --ifm-color-secondary-dark: #58dfd5;
+  --ifm-color-secondary-darker: #47dcD0;
+  --ifm-color-secondary-darkest: #1fc6b9;
+  --ifm-color-secondary-light: #9aebe5;
+  --ifm-color-secondary-lighter: #abefea;
+  --ifm-color-secondary-lightest: #ddf9f7;
+
+  /* Accent color: Orange (#ff4800) from theme.scss */
+  --ifm-color-accent: #ff4800;
+  --ifm-color-accent-dark: #e64000;
+  --ifm-color-accent-darker: #cc3800;
+  --ifm-color-accent-darkest: #a62e00;
+  --ifm-color-accent-light: #ff5c1a;
+  --ifm-color-accent-lighter: #ff6933;
+  --ifm-color-accent-lightest: #ff845c;
+
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+
+  --ifm-background-color: #ffffff;
+  --ifm-background-surface-color: #f7f7f7;
+  --ifm-navbar-background-color: #ffffff;
+}
+
+/* Update dark mode colors to match the platform theme */
+[data-theme='dark'] {
+  /* Primary colors from platform */
+  --ifm-color-primary: #9f57ff;
+  --ifm-color-primary-dark: #8a42e0;
+  --ifm-color-primary-darker: #7d37d6;
+  --ifm-color-primary-darkest: #651fb8;
+  --ifm-color-primary-light: #b577ff;
+  --ifm-color-primary-lighter: #ca96ff;
+  --ifm-color-primary-lightest: #e5c6ff;
+
+  /* Secondary colors for accents */
+  --ifm-color-secondary: #9f57ff;
+  --ifm-color-secondary-dark: #8a42e0;
+  --ifm-color-secondary-darker: #7d37d6;
+  --ifm-color-secondary-darkest: #651fb8;
+  --ifm-color-secondary-light: #b577ff;
+  --ifm-color-secondary-lighter: #ca96ff;
+  --ifm-color-secondary-lightest: #e5c6ff;
+
+  /* Background and surface colors */
+  --ifm-background-color: #1f1834;
+  --ifm-background-surface-color: #231d40;
+  --ifm-navbar-background-color: #231d40;
+  --ifm-footer-background-color: #231d40;
+
+  /* Text colors */
+  --ifm-heading-color: #ffffff;
+  --ifm-font-color-base: rgba(255, 255, 255, 0.9);
+  --ifm-menu-color: rgba(255, 255, 255, 0.7);
+
+  /* Code blocks */
+  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.1);
+  --ifm-code-background: #2a2144;
+
+  /* Borders */
+  --ifm-toc-border-color: #2e2e2e;
+  --ifm-hr-border-color: #2e2e2e;
+}
+
+/* Customize Tailwind classes for Docusaurus compatibility */
+#tailwind-selector {
+  /* Add any additional Tailwind customizations here */
+}
+
+.get-started-button {
+  background-color: var(--ifm-color-primary);
+  color: white !important;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+}
+
+.get-started-button:hover {
+  background-color: var(--ifm-color-primary-dark);
+  text-decoration: none;
+}
+
+/* Button accent style */
+.button--accent {
+  --ifm-button-background-color: var(--ifm-color-accent);
+  --ifm-button-border-color: var(--ifm-color-accent);
+}
+
+/* Doc navigation similar to cal.com */
+.docs-sidebar {
+  padding-bottom: 2.5rem;
+}
+
+.menu__list {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.menu__list-item {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.menu__link {
+  font-weight: 500;
+  color: var(--ifm-color-gray-700);
+}
+
+[data-theme='dark'] .menu__link {
+  color: rgba(255, 255, 255, 0.7);
+  /* Match platform muted-foreground */
+}
+
+.menu__link:hover {
+  color: var(--ifm-color-primary);
+}
+
+[data-theme='dark'] .menu__link:hover {
+  color: var(--ifm-color-primary);
+}
+
+.menu__link--active {
+  font-weight: 700;
+  color: var(--ifm-color-primary);
+}
+
+[data-theme='dark'] .menu__link--active {
+  color: var(--ifm-color-primary);
+}
+
+.theme-doc-sidebar-item-category-level-1>.menu__link {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.theme-doc-sidebar-item-link-level-1>.menu__link {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.theme-doc-sidebar-item-category-level-2>.menu__link,
+.theme-doc-sidebar-item-link-level-2>.menu__link {
+  font-size: 0.875rem;
+}
+
+/* Platform page specific styles */
+.platform-page [data-theme='dark'] {
+  --ifm-color-primary: #9f57ff;
+  --ifm-heading-color: #ffffff;
+  background-color: #1f1834;
+}
+
+/* Custom scrollbar to match platform */
+[data-theme='dark'] ::-webkit-scrollbar-track {
+  background: #231d40;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb {
+  background: #3c3264;
+  border-radius: 5px;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb:hover {
+  background: #4c4174;
+}
+
+/* Document cards - remove excess padding */
+.card {
+  margin: 1rem 0;
+}
+
+/* Platform page specific styles */
+.platform-page .navbar,
+.platform-page .footer {
+  --ifm-navbar-background-color: #231d40;
+  --ifm-footer-background-color: #231d40;
+  background-color: var(--ifm-navbar-background-color);
+}
+
+.platform-page {
+  background-color: #231d40;
+}
+
+/* Custom scrollbar for dark mode */
+[data-theme='dark'] {
+  scrollbar-width: thin;
+  scrollbar-color: #3c3264 #231d40;
+}
+
+[data-theme='dark']::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+[data-theme='dark']::-webkit-scrollbar-track {
+  background: #231d40;
+}
+
+[data-theme='dark']::-webkit-scrollbar-thumb {
+  background-color: #3c3264;
+  border-radius: 4px;
+  border: 2px solid #231d40;
+}
+
+[data-theme='dark']::-webkit-scrollbar-thumb:hover {
+  background-color: #4c4174;
+}
+
+/* Buttons */
+.button.button--primary {
+  background-color: var(--ifm-color-primary);
+  border-color: var(--ifm-color-primary);
+}
+
+.button.button--primary:hover {
+  background-color: var(--ifm-color-primary-dark);
+  border-color: var(--ifm-color-primary-dark);
+}
+
+.button.button--secondary {
+  background-color: var(--ifm-color-secondary);
+  border-color: var(--ifm-color-secondary);
+  color: #121212;
+}
+
+.button.button--secondary:hover {
+  background-color: var(--ifm-color-secondary-dark);
+  border-color: var(--ifm-color-secondary-dark);
+  color: #121212;
+}
+
+.button.button--accent {
+  background-color: var(--ifm-color-accent);
+  border-color: var(--ifm-color-accent);
+  color: white;
+}
+
+.button.button--accent:hover {
+  background-color: var(--ifm-color-accent-dark);
+  border-color: var(--ifm-color-accent-dark);
+}
+
+/* Custom typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+}
+
+/* Navigation */
+.navbar__link--active {
+  font-weight: 600;
+  color: var(--ifm-color-primary);
+}
+
+/* Sidebar */
+.menu__link--active {
+  font-weight: 600;
+}
+
+/* GitHub icon in header */
+.header-github-link:hover {
+  opacity: 0.6;
+}
+
+.header-github-link::before {
+  content: '';
+  width: 24px;
+  height: 24px;
+  display: flex;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'/%3E%3C/svg%3E") no-repeat;
+}
+
+[data-theme='dark'] .header-github-link::before {
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='white' d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'/%3E%3C/svg%3E") no-repeat;
+}
+
+/* Dark mode specific button styles */
+[data-theme='dark'] .button.button--primary {
+  background-color: #9f57ff;
+  border-color: #9f57ff;
+  color: #ffffff;
+}
+
+[data-theme='dark'] .button.button--primary:hover {
+  background-color: #8a42e0;
+  border-color: #8a42e0;
+}
+
+[data-theme='dark'] .button.button--secondary {
+  background-color: #231d40;
+  border-color: #3c3264;
+  color: #ffffff;
+}
+
+[data-theme='dark'] .button.button--secondary:hover {
+  background-color: #2a2144;
+  border-color: #4c4174;
+}
+
+/* Dark mode menu and navigation */
+[data-theme='dark'] .menu__link {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+[data-theme='dark'] .menu__link:hover {
+  color: #9f57ff;
+}
+
+[data-theme='dark'] .menu__link--active {
+  color: #9f57ff;
+}
+
+[data-theme='dark'] .navbar__link {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+[data-theme='dark'] .navbar__link:hover,
+[data-theme='dark'] .navbar__link--active {
+  color: #9f57ff;
+}
+
+/* Ensure background colors are properly applied */
+[data-theme='dark'] .main-wrapper,
+[data-theme='dark'] body,
+[data-theme='dark'] html {
+  background-color: #1f1834;
+}
+
+[data-theme='dark'] .docusaurus-highlight-code-line {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme='dark'] .navbar {
+  background-color: #231d40;
+}
+
+[data-theme='dark'] .footer {
+  background-color: #231d40;
+}
+
+/* Override any Docusaurus default styles that might conflict */
+[data-theme='dark'] .navbar-sidebar {
+  background-color: #1f1834;
+}
+
+[data-theme='dark'] .theme-doc-sidebar-container {
+  background-color: #1f1834;
+}
+
+[data-theme='dark'] .table-of-contents {
+  background-color: #1f1834;
+}
+
+[data-theme='dark'] div[class^='docPage'] {
+  background-color: #1f1834;
+}
+
+[data-theme='dark'] .docs-wrapper {
+  background-color: #1f1834;
+}
+
+[data-theme='dark'] article {
+  background-color: #1f1834;
+}
+
+/* Additional platform styles for consistency */
+[data-theme='dark'] .main-wrapper main {
+  background-color: #1f1834;
+}
+
+/* Fix card backgrounds in dark mode */
+[data-theme='dark'] .card {
+  background-color: #231d40;
+}
