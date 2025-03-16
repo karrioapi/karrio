@@ -9,11 +9,14 @@
     "generate:component": "turbo gen react-component",
     "check-types": "tsc --noEmit"
   },
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",
     "@calcom/embed-react": "^1.5.2",
     "@karrio/core": "*",
-    "@karrio/insiders": "*",
     "@karrio/trpc": "*",
     "@prisma/client": "^5.22.0",
     "@react-email/components": "^0.0.30",

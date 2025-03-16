@@ -2,19 +2,19 @@
 import {
   ConnectProviderModal,
   useConnectProviderModalContext,
-} from "@karrio/ui/modals/connect-provider-modal";
+} from "@karrio/ui/core/modals/connect-provider-modal";
 import {
   useCarrierConnectionMutation,
   useCarrierConnections,
 } from "@karrio/hooks/user-connection";
-import { LabelTemplateEditModalProvider } from "@karrio/ui/modals/label-template-edit-modal";
-import { UserConnectionList } from "@karrio/ui/forms/user-carrier-list";
+import { LabelTemplateEditModalProvider } from "@karrio/ui/core/modals/label-template-edit-modal";
+import { UserConnectionList } from "@karrio/ui/core/forms/user-carrier-list";
 import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
-import { AppLink } from "@karrio/ui/components/app-link";
-import { useLoader } from "@karrio/ui/components/loader";
-import { ModalProvider } from "@karrio/ui/modals/modal";
+import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
+import { AppLink } from "@karrio/ui/core/components/app-link";
+import { useLoader } from "@karrio/ui/core/components/loader";
+import { ModalProvider } from "@karrio/ui/core/modals/modal";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { useSearchParams } from "next/navigation";
 import { useContext, useEffect } from "react";

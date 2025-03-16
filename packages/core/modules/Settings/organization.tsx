@@ -1,10 +1,10 @@
 "use client";
-import { OrganizationManagement } from "@karrio/ui/forms/organization-management";
-import { InviteMemberProvider } from "@karrio/ui/modals/invite-member-modal";
+import { OrganizationManagement } from "@karrio/ui/core/forms/organization-management";
+import { InviteMemberProvider } from "@karrio/ui/core/modals/invite-member-modal";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
+import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { AppLink } from "@karrio/ui/components/app-link";
+import { AppLink } from "@karrio/ui/core/components/app-link";
 
 export const generateMetadata = dynamicMetadata("Organization Settings");
 

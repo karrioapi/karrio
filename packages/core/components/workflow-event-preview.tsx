@@ -1,4 +1,4 @@
-import { ModalFormProps, useModal } from "@karrio/ui/modals/modal";
+import { ModalFormProps, useModal } from "@karrio/ui/core/modals/modal";
 import { Component } from "@karrio/core/modules/Workflows/event";
 import React from "react";
 

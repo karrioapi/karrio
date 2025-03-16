@@ -1,4 +1,4 @@
-import { ExpandedSidebar } from "@karrio/ui/components/expanded-sidebar";
+import { ExpandedSidebar } from "@karrio/ui/core/components/expanded-sidebar";
 import { KARRIO_PUBLIC_URL, MULTI_TENANT } from "@karrio/lib";
 import { Providers } from "@karrio/hooks/providers";
 import { auth } from "@karrio/core/context/auth";

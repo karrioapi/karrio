@@ -1,6 +1,6 @@
 "use client";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { FieldInfo } from "@karrio/ui/components/field-info";
+import { FieldInfo } from "@karrio/ui/core/components/field-info";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useSearchParams } from "next/navigation";
 import { getCookie, isNone } from "@karrio/lib";

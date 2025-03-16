@@ -5,12 +5,12 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@karrio/insiders/components/ui/card";
-import { Switch } from "@karrio/insiders/components/ui/switch";
-import { Input } from "@karrio/insiders/components/ui/input";
-import { Button } from "@karrio/insiders/components/ui/button";
-import { Label } from "@karrio/insiders/components/ui/label";
-import { useToast } from "@karrio/insiders/hooks/use-toast";
+} from "@karrio/ui/components/ui/card";
+import { Switch } from "@karrio/ui/components/ui/switch";
+import { Input } from "@karrio/ui/components/ui/input";
+import { Button } from "@karrio/ui/components/ui/button";
+import { Label } from "@karrio/ui/components/ui/label";
+import { useToast } from "@karrio/ui/hooks/use-toast";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { trpc } from "@karrio/trpc/client";
 import { useState, useEffect } from "react";
@@ -21,7 +21,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@karrio/insiders/components/ui/dialog";
+} from "@karrio/ui/components/ui/dialog";
 import { Pencil, Check, X, ExternalLink, Copy } from "lucide-react";
 
 type ConfigData = {

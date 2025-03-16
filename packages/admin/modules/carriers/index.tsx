@@ -2,15 +2,15 @@
 
 import { CarrierConnectionsTable, Connection } from "@karrio/admin/components/carrier-connections-table";
 import { GetRateSheets_rate_sheets_edges_node as RateSheet } from "@karrio/types/graphql/admin/types";
-import { DeleteConfirmationDialog } from "@karrio/insiders/components/delete-confirmation-dialog";
-import { CarrierConnectionDialog } from "@karrio/insiders/components/carrier-connection-dialog";
-import { Card, CardContent, CardHeader, CardTitle } from "@karrio/insiders/components/ui/card";
-import { RateSheetDialog } from "@karrio/insiders/components/rate-sheet-dialog";
+import { DeleteConfirmationDialog } from "@karrio/ui/components/delete-confirmation-dialog";
+import { CarrierConnectionDialog } from "@karrio/ui/components/carrier-connection-dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@karrio/ui/components/ui/card";
+import { RateSheetDialog } from "@karrio/ui/components/rate-sheet-dialog";
 import { RateSheetsTable } from "@karrio/admin/components/rate-sheets-table";
 import { CarrierNameEnum } from "@karrio/types/graphql/admin/types";
-import { Button } from "@karrio/insiders/components/ui/button";
-import { Input } from "@karrio/insiders/components/ui/input";
-import { useToast } from "@karrio/insiders/hooks/use-toast";
+import { Button } from "@karrio/ui/components/ui/button";
+import { Input } from "@karrio/ui/components/ui/input";
+import { useToast } from "@karrio/ui/hooks/use-toast";
 import { Plus, Search, X, Filter } from "lucide-react";
 import { trpc } from "@karrio/trpc/client";
 import { Loader2 } from "lucide-react";
@@ -20,7 +20,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-} from "@karrio/insiders/components/ui/select";
+} from "@karrio/ui/components/ui/select";
 
 export default function CarrierNetwork() {
   return (

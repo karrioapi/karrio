@@ -5,8 +5,8 @@ import {
   TabsList,
   TabsTrigger,
   TabsContent,
-} from "@karrio/insiders/components/ui/tabs";
-import { cn } from "@karrio/insiders/lib/utils";
+} from "@karrio/ui/components/ui/tabs";
+import { cn } from "@karrio/ui/lib/utils";
 
 interface CodePreviewProps {
   languages: {

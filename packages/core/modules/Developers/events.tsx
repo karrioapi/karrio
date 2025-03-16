@@ -9,10 +9,10 @@ import {
   EventPreviewContext,
 } from "@karrio/core/components/event-preview";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { EventsFilter } from "@karrio/ui/filters/events-filter";
-import { AppLink } from "@karrio/ui/components/app-link";
-import { useLoader } from "@karrio/ui/components/loader";
-import { Spinner } from "@karrio/ui/components/spinner";
+import { EventsFilter } from "@karrio/ui/core/filters/events-filter";
+import { AppLink } from "@karrio/ui/core/components/app-link";
+import { useLoader } from "@karrio/ui/core/components/loader";
+import { Spinner } from "@karrio/ui/core/components/spinner";
 import React, { useContext, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useEvents } from "@karrio/hooks/event";
@@ -20,7 +20,7 @@ import { useEvents } from "@karrio/hooks/event";
 export const generateMetadata = dynamicMetadata("Events");
 
 export default function EventsPage(pageProps: any) {
-  const Component= (): JSX.Element =>  {
+  const Component = (): JSX.Element => {
     const context = useEvents();
     const searchParams = useSearchParams();
     const { setLoading } = useLoader();

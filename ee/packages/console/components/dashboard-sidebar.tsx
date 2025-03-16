@@ -19,7 +19,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@karrio/insiders/components/ui/sidebar";
+} from "@karrio/ui/components/ui/sidebar";
 import { NavProjects } from "@karrio/console/components/nav-projects";
 import { OrgSwitcher } from "@karrio/console/components/org-switcher";
 import { NavMain } from "@karrio/console/components/nav-main";

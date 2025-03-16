@@ -14,13 +14,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@karrio/insiders/components/ui/dropdown-menu";
+} from "@karrio/ui/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@karrio/insiders/components/ui/sidebar";
+} from "@karrio/ui/components/ui/sidebar";
 
 export function OrgSwitcher({ selectedOrgId }: { selectedOrgId?: string }) {
   const { isMobile } = useSidebar();

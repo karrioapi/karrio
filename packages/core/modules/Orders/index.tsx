@@ -15,23 +15,23 @@ import {
   OrderPreview,
   OrderPreviewContext,
 } from "@karrio/core/components/order-preview";
-import { GoogleGeocodingScript } from "@karrio/ui/components/google-geocoding-script";
+import { GoogleGeocodingScript } from "@karrio/ui/core/components/google-geocoding-script";
 import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { AddressType, RateType, ShipmentType } from "@karrio/types";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { CarrierImage } from "@karrio/ui/components/carrier-image";
+import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import React, { ChangeEvent, useContext, useEffect } from "react";
-import { StatusBadge } from "@karrio/ui/components/status-badge";
-import { OrdersFilter } from "@karrio/ui/filters/orders-filter";
-import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
-import { OrderMenu } from "@karrio/ui/components/order-menu";
+import { StatusBadge } from "@karrio/ui/core/components/status-badge";
+import { OrdersFilter } from "@karrio/ui/core/filters/orders-filter";
+import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
+import { OrderMenu } from "@karrio/ui/core/components/order-menu";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { useLoader } from "@karrio/ui/components/loader";
-import { AppLink } from "@karrio/ui/components/app-link";
-import { ModalProvider } from "@karrio/ui/modals/modal";
-import { Spinner } from "@karrio/ui/components/spinner";
+import { useLoader } from "@karrio/ui/core/components/loader";
+import { AppLink } from "@karrio/ui/core/components/app-link";
+import { ModalProvider } from "@karrio/ui/core/modals/modal";
+import { Spinner } from "@karrio/ui/core/components/spinner";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { useSearchParams } from "next/navigation";
 import { useOrders } from "@karrio/hooks/order";
@@ -44,7 +44,7 @@ const ContextProviders = bundleContexts([
 ]);
 
 export default function OrdersPage(pageProps: any) {
-  const Component= (): JSX.Element =>  {
+  const Component = (): JSX.Element => {
     const { setLoading } = useLoader();
     const searchParams = useSearchParams();
     const { references } = useAPIMetadata();
@@ -519,19 +519,19 @@ export default function OrdersPage(pageProps: any) {
                           <p className="is-size-7 has-text-weight-bold has-text-grey text-ellipsis">
                             {((items: number): any =>
                               `${items} item${items === 1 ? "" : "s"}`)(
-                              order.line_items.reduce(
-                                (acc, item) =>
-                                  acc + (item.quantity as number) || 1,
-                                0,
-                              ),
-                            )}
+                                order.line_items.reduce(
+                                  (acc, item) =>
+                                    acc + (item.quantity as number) || 1,
+                                  0,
+                                ),
+                              )}
                           </p>
                           <p className="is-size-7 has-text-grey text-ellipsis">
                             {order.line_items.length > 1
                               ? "(Multiple)"
                               : order.line_items[0].title ||
-                                order.line_items[0].description ||
-                                order.line_items[0].sku}
+                              order.line_items[0].description ||
+                              order.line_items[0].sku}
                           </p>
                         </div>
                       </td>
@@ -574,7 +574,7 @@ export default function OrdersPage(pageProps: any) {
                             (acc, item) =>
                               acc +
                               (item.quantity as number) *
-                                (item.value_amount as number),
+                              (item.value_amount as number),
                             0,
                           )}
                           {` `}

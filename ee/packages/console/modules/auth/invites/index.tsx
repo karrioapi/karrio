@@ -1,6 +1,6 @@
 "use client";
 
-import { useToast } from "@karrio/insiders/hooks/use-toast";
+import { useToast } from "@karrio/ui/hooks/use-toast";
 import { trpc } from "@karrio/console/trpc/client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";

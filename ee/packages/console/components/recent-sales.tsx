@@ -2,7 +2,7 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@karrio/insiders/components/ui/avatar";
+} from "@karrio/ui/components/ui/avatar";
 
 export function RecentSales() {
   return (

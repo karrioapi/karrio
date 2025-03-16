@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 import { FeatureShowcase } from "@karrio/console/components/feature-showcase";
 import { CTASection } from "@karrio/console/components/cta-section";
-import { Button } from "@karrio/insiders/components/ui/button";
+import { Button } from "@karrio/ui/components/ui/button";
 import Link from "next/link";
 import { BookDemoButton } from "@karrio/console/components/book-demo-button";
 

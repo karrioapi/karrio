@@ -2,8 +2,8 @@
 
 import {
   Card, CardContent
-} from "@karrio/insiders/components/ui/card";
-import { Button } from "@karrio/insiders/components/ui/button";
+} from "@karrio/ui/components/ui/card";
+import { Button } from "@karrio/ui/components/ui/button";
 import { ChevronRight } from "lucide-react";
 
 interface FeatureShowcaseProps {

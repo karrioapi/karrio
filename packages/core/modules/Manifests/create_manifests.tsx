@@ -7,31 +7,31 @@ import {
   formatRef,
   preventPropagation,
 } from "@karrio/lib";
-import { CreateManifestModal } from "@karrio/ui/modals/create-manifest-modal";
+import { CreateManifestModal } from "@karrio/ui/core/modals/create-manifest-modal";
 import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
-import { CarrierImage } from "@karrio/ui/components/carrier-image";
-import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
+import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
+import { ShipmentMenu } from "@karrio/ui/core/components/shipment-menu";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { StatusBadge } from "@karrio/ui/components/status-badge";
-import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
+import { StatusBadge } from "@karrio/ui/core/components/status-badge";
+import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { AddressType, ShipmentType } from "@karrio/types";
-import { useLoader } from "@karrio/ui/components/loader";
-import { AppLink } from "@karrio/ui/components/app-link";
-import { ModalProvider } from "@karrio/ui/modals/modal";
+import { useLoader } from "@karrio/ui/core/components/loader";
+import { AppLink } from "@karrio/ui/core/components/app-link";
+import { ModalProvider } from "@karrio/ui/core/modals/modal";
 import { useShipments } from "@karrio/hooks/shipment";
 import { ManifestData } from "@karrio/types/rest/api";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { useSearchParams } from "next/navigation";
-import { Spinner } from "@karrio/ui/components";
+import { Spinner } from "@karrio/ui/core/components";
 import React from "react";
 
 export const generateMetadata = dynamicMetadata("Create Manifest");
 const ContextProviders = bundleContexts([ModalProvider, ConfirmModal]);
 
 export default function Page(pageProps: any) {
-  const Component= (): JSX.Element =>  {
+  const Component = (): JSX.Element => {
     // General context data         -----------------------------------------------------------
     //#region
 
