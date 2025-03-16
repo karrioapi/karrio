@@ -23,8 +23,5 @@
     "ee/apps/*",
     "ee/packages/*"
   ],
-  "packageManager": "npm@10.8.2",
-  "dependencies": {
-    "@calcom/embed-react": "^1.5.2"
-  }
+  "packageManager": "npm@10.8.2"
 }
