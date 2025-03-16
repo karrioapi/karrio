@@ -5,14 +5,14 @@ import { CalendarIcon } from "@radix-ui/react-icons";
 import { addDays, format } from "date-fns";
 import { DateRange } from "react-day-picker";
 
-import { cn } from "@karrio/insiders/lib/utils";
-import { Button } from "@karrio/insiders/components/ui/button";
-import { Calendar } from "@karrio/insiders/components/ui/calendar";
+import { cn } from "@karrio/ui/lib/utils";
+import { Button } from "@karrio/ui/components/ui/button";
+import { Calendar } from "@karrio/ui/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@karrio/insiders/components/ui/popover";
+} from "@karrio/ui/components/ui/popover";
 
 export function CalendarDateRangePicker({
   className,

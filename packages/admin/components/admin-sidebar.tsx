@@ -9,9 +9,9 @@ import {
   Truck,
   Users,
 } from "lucide-react";
-import { cn } from "@karrio/insiders/lib/utils";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { cn } from "@karrio/ui/lib/utils";
+import Link from "next/link";
 
 const menuItems = [
   {

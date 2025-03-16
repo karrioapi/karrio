@@ -9,12 +9,12 @@ import {
   LogPreview,
   LogPreviewContext,
 } from "@karrio/core/components/log-preview";
-import { StatusCode } from "@karrio/ui/components/status-code-badge";
+import { StatusCode } from "@karrio/ui/core/components/status-code-badge";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { LogsFilter } from "@karrio/ui/filters/logs-filter";
-import { useLoader } from "@karrio/ui/components/loader";
-import { AppLink } from "@karrio/ui/components/app-link";
-import { Spinner } from "@karrio/ui/components/spinner";
+import { LogsFilter } from "@karrio/ui/core/filters/logs-filter";
+import { useLoader } from "@karrio/ui/core/components/loader";
+import { AppLink } from "@karrio/ui/core/components/app-link";
+import { Spinner } from "@karrio/ui/core/components/spinner";
 import React, { useContext, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useLogs } from "@karrio/hooks/log";
@@ -22,7 +22,7 @@ import { useLogs } from "@karrio/hooks/log";
 export const generateMetadata = dynamicMetadata("API Logs");
 
 export default function LogsPage(pageProps: any) {
-  const Component= (): JSX.Element =>  {
+  const Component = (): JSX.Element => {
     const searchParams = useSearchParams();
     const modal = searchParams.get("modal");
     const { setLoading } = useLoader();

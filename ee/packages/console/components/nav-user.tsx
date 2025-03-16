@@ -5,7 +5,7 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@karrio/insiders/components/ui/avatar";
+} from "@karrio/ui/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,13 +14,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@karrio/insiders/components/ui/dropdown-menu";
+} from "@karrio/ui/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@karrio/insiders/components/ui/sidebar";
+} from "@karrio/ui/components/ui/sidebar";
 import { User } from "@karrio/console/prisma/client";
 import { signOut } from "next-auth/react";
 

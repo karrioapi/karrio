@@ -4,10 +4,10 @@ import {
   register_user_register_user_errors,
 } from "@karrio/types";
 import React, { FormEvent, useEffect, useReducer, useState } from "react";
-import { LoadingProvider, useLoader } from "@karrio/ui/components/loader";
+import { LoadingProvider, useLoader } from "@karrio/ui/core/components/loader";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { ButtonField } from "@karrio/ui/components/button-field";
-import { InputField } from "@karrio/ui/components/input-field";
+import { ButtonField } from "@karrio/ui/core/components/button-field";
+import { InputField } from "@karrio/ui/core/components/input-field";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useUserMutation } from "@karrio/hooks/user";
 import { isNone, isNoneOrEmpty } from "@karrio/lib";

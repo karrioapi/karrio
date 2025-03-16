@@ -37,37 +37,74 @@ export async function requireAuthentication(session: Session | null) {
   }
 }
 
-export async function loadMetadata() {
-  // Attempt connection to the karrio API to retrieve the API metadata
-  const API_URL = await getAPIURL();
+// Cached version of loadMetadata to prevent multiple requests during build
+export const loadMetadata = unstable_cache(
+  async () => {
+    // Detect if we're in a build environment
+    const IS_BUILD = process.env.NODE_ENV === 'production' && process.env.NEXT_PHASE === 'phase-production-build';
 
-  logger.debug({ action: "> loadMetadata", API_URL });
-
-  const { data: metadata, error } = await axios
-    .get<Metadata>(url$`${API_URL}`, {
-      headers: { "Content-Type": "application/json" },
-    })
-    .then((res) => ({ data: res.data, error: null }))
-    .catch((e) => {
-      console.log("loadMetadata", e);
-      const code = AUTH_HTTP_CODES.includes(e.response?.status)
-        ? ServerErrorCode.API_AUTH_ERROR
-        : ServerErrorCode.API_CONNECTION_ERROR;
-
+    // Return mock data during build to avoid actual API calls
+    if (IS_BUILD) {
+      logger.debug({ action: "> loadMetadata", message: "Using mock data during build" });
       return {
-        data: null,
-        error: {
-          code,
-          message: `
-          Server (${API_URL}) unreachable.
-          Please make sure that the API is running and reachable.
-        `,
+        metadata: {
+          HOST: "http://mock-api-for-build",
+          VERSION: "build-version",
+          "APP_NAME": "Karrio",
+          "APP_WEBSITE": "https://karrio.io",
+          "ADMIN": "http://localhost:5002/admin",
+          "GRAPHQL": "http://localhost:5002/graphql",
+          "OPENAPI": "http://localhost:5002/openapi",
+          "AUDIT_LOGGING": true,
+          "ALLOW_SIGNUP": true,
+          "ALLOW_ADMIN_APPROVED_SIGNUP": false,
+          "ALLOW_MULTI_ACCOUNT": true,
+          "ADMIN_DASHBOARD": true,
+          "MULTI_ORGANIZATIONS": true,
+          "ORDERS_MANAGEMENT": true,
+          "APPS_MANAGEMENT": true,
+          "DOCUMENTS_MANAGEMENT": true,
+          "DATA_IMPORT_EXPORT": false,
+          "PERSIST_SDK_TRACING": true,
+          "WORKFLOW_MANAGEMENT": true
         },
+        error: null
       };
-    });
+    }
 
-  return { metadata, error };
-}
+    // Attempt connection to the karrio API to retrieve the API metadata
+    const API_URL = await getAPIURL();
+
+    logger.debug({ action: "> loadMetadata", API_URL });
+
+    const { data: metadata, error } = await axios
+      .get<Metadata>(url$`${API_URL}`, {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => ({ data: res.data, error: null }))
+      .catch((e) => {
+        console.log("loadMetadata", e);
+        const code = AUTH_HTTP_CODES.includes(e.response?.status)
+          ? ServerErrorCode.API_AUTH_ERROR
+          : ServerErrorCode.API_CONNECTION_ERROR;
+
+        return {
+          data: null,
+          error: {
+            code,
+            message: `
+            Server (${API_URL}) unreachable.
+            Please make sure that the API is running and reachable.
+          `,
+          },
+        };
+      });
+
+    return { metadata, error };
+  },
+  ["metadata"],
+  { revalidate: 60, tags: ["metadata"] } // Cache for 60 seconds
+);
 
 export async function loadUserData(session: any, metadata?: Metadata) {
   if (!session || !metadata) return { user: null };

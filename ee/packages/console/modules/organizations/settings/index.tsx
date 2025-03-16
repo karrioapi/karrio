@@ -8,12 +8,12 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-} from "@karrio/insiders/components/ui/card";
-import { Alert, AlertDescription } from "@karrio/insiders/components/ui/alert";
-import { Button } from "@karrio/insiders/components/ui/button";
+} from "@karrio/ui/components/ui/card";
+import { Alert, AlertDescription } from "@karrio/ui/components/ui/alert";
+import { Button } from "@karrio/ui/components/ui/button";
 import { UserPlus, Trash2, AlertCircle } from "lucide-react";
-import { Input } from "@karrio/insiders/components/ui/input";
-import { useToast } from "@karrio/insiders/hooks/use-toast";
+import { Input } from "@karrio/ui/components/ui/input";
+import { useToast } from "@karrio/ui/hooks/use-toast";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import {
@@ -25,7 +25,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@karrio/insiders/components/ui/alert-dialog";
+} from "@karrio/ui/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
 
 export default async function SettingsPage({

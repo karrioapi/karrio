@@ -6,18 +6,18 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@karrio/insiders/components/ui/table";
+} from "@karrio/ui/components/ui/table";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@karrio/insiders/components/ui/select";
-import { CarrierImage } from "@karrio/ui/components/carrier-image";
-import { Button } from "@karrio/insiders/components/ui/button";
-import { Switch } from "@karrio/insiders/components/ui/switch";
-import { Badge } from "@karrio/insiders/components/ui/badge";
+} from "@karrio/ui/components/ui/select";
+import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
+import { Button } from "@karrio/ui/components/ui/button";
+import { Switch } from "@karrio/ui/components/ui/switch";
+import { Badge } from "@karrio/ui/components/ui/badge";
 import { Copy, ChevronLeft, ChevronRight, Pencil, Trash2 } from "lucide-react";
 import { isNoneOrEmpty } from "@karrio/lib";
 

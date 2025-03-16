@@ -1,12 +1,12 @@
 "use client";
 import { failsafe, formatDateTimeLong, isNone, jsonify } from "@karrio/lib";
-import { Tabs, TabStateProvider } from "@karrio/ui/components/tabs";
-import { CopiableLink } from "@karrio/ui/components/copiable-link";
+import { Tabs, TabStateProvider } from "@karrio/ui/core/components/tabs";
+import { CopiableLink } from "@karrio/ui/core/components/copiable-link";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { StatusBadge } from "@karrio/ui/components/status-badge";
+import { StatusBadge } from "@karrio/ui/core/components/status-badge";
 import { useWorkflowEvent } from "@karrio/hooks/workflow-events";
-import { useLoader } from "@karrio/ui/components/loader";
-import { AppLink } from "@karrio/ui/components/app-link";
+import { useLoader } from "@karrio/ui/core/components/loader";
+import { AppLink } from "@karrio/ui/core/components/app-link";
 import json from "highlight.js/lib/languages/json";
 import hljs from "highlight.js";
 import moment from "moment";
@@ -202,8 +202,8 @@ export const Component = ({
                                     parseWorkflowEventRecordData(
                                       trace.record.output || trace.record,
                                     ) ||
-                                      trace.record.url ||
-                                      "",
+                                    trace.record.url ||
+                                    "",
                                     {
                                       language: trace.record?.format || "json",
                                     },

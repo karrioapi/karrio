@@ -2,21 +2,21 @@
 import {
   WebhookTestModal,
   useTestWebhookModal,
-} from "@karrio/ui/modals/webhook-test-modal";
+} from "@karrio/ui/core/modals/webhook-test-modal";
 import {
   WebhookEditModal,
   useWebhookModal,
-} from "@karrio/ui/modals/webhook-edit-modal";
+} from "@karrio/ui/core/modals/webhook-edit-modal";
 import {
   ConfirmModal,
   useConfirmModalContext,
-} from "@karrio/ui/modals/confirm-modal";
+} from "@karrio/ui/core/modals/confirm-modal";
 import { useWebhookMutation, useWebhooks } from "@karrio/hooks/webhook";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { NotificationType, WebhookType } from "@karrio/types";
-import { useNotifier } from "@karrio/ui/components/notifier";
+import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { formatDateTime, isNoneOrEmpty } from "@karrio/lib";
-import { AppLink } from "@karrio/ui/components/app-link";
+import { AppLink } from "@karrio/ui/core/components/app-link";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import React from "react";
@@ -40,17 +40,17 @@ export default function WebhooksPage(pageProps: any) {
     };
     const toggle =
       ({ disabled, id }: WebhookType) =>
-      async () => {
-        try {
-          await mutation.updateWebhook.mutateAsync({ id, disabled: !disabled });
-          notify({
-            type: NotificationType.success,
-            message: `webhook ${!disabled ? "activated" : "deactivated"}!`,
-          });
-        } catch (message: any) {
-          notify({ type: NotificationType.error, message });
-        }
-      };
+        async () => {
+          try {
+            await mutation.updateWebhook.mutateAsync({ id, disabled: !disabled });
+            notify({
+              type: NotificationType.success,
+              message: `webhook ${!disabled ? "activated" : "deactivated"}!`,
+            });
+          } catch (message: any) {
+            notify({ type: NotificationType.error, message });
+          }
+        };
 
     useEffect(() => {
       if (query.isFetched && !initialized && !isNoneOrEmpty(modal)) {

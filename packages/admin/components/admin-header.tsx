@@ -1,7 +1,7 @@
 "use client";
 
-import { Switch } from "@karrio/insiders/components/ui/switch";
-import { Input } from "@karrio/insiders/components/ui/input";
+import { Switch } from "@karrio/ui/components/ui/switch";
+import { Input } from "@karrio/ui/components/ui/input";
 import { useAppMode } from "@karrio/hooks/app-mode";
 import { DASHBOARD_VERSION, p } from "@karrio/lib";
 import { Search } from "lucide-react";

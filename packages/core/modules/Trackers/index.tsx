@@ -2,12 +2,12 @@
 import {
   TrackerModalProvider,
   useTrackerModal,
-} from "@karrio/ui/modals/track-shipment-modal";
+} from "@karrio/ui/core/modals/track-shipment-modal";
 import {
   TrackingPreview,
   useTrackingPreview,
 } from "@karrio/core/components/tracking-preview";
-import { ConfirmModal, useConfirmModal } from "@karrio/ui/modals/confirm-modal";
+import { ConfirmModal, useConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
 import {
   formatRef,
   getURLSearchParams,
@@ -15,12 +15,12 @@ import {
   isNoneOrEmpty,
 } from "@karrio/lib";
 import { useTrackerMutation, useTrackers } from "@karrio/hooks/tracker";
-import { TrackersFilter } from "@karrio/ui/filters/trackers-filter";
-import { CarrierImage } from "@karrio/ui/components/carrier-image";
+import { TrackersFilter } from "@karrio/ui/core/filters/trackers-filter";
+import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { StatusBadge } from "@karrio/ui/components/status-badge";
-import { useLoader } from "@karrio/ui/components/loader";
-import { Spinner } from "@karrio/ui/components/spinner";
+import { StatusBadge } from "@karrio/ui/core/components/status-badge";
+import { useLoader } from "@karrio/ui/core/components/loader";
+import { Spinner } from "@karrio/ui/core/components/spinner";
 import { TrackingEvent } from "@karrio/types/rest/api";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
@@ -231,9 +231,9 @@ export default function TrackersPage(pageProps: any) {
                             <span className="text-ellipsis">
                               {formatRef(
                                 tracker.info?.shipment_service ||
-                                  tracker.shipment?.meta?.service_name ||
-                                  tracker.shipment?.service ||
-                                  `SERVICE UNKNOWN`,
+                                tracker.shipment?.meta?.service_name ||
+                                tracker.shipment?.service ||
+                                `SERVICE UNKNOWN`,
                               )}
                             </span>
                           </div>
@@ -252,15 +252,15 @@ export default function TrackersPage(pageProps: any) {
                             isNoneOrEmpty(tracker?.events)
                               ? ""
                               : formatEventDescription(
-                                  (tracker?.events as TrackingEvent[])[0],
-                                )
+                                (tracker?.events as TrackingEvent[])[0],
+                              )
                           }
                         >
                           {isNoneOrEmpty(tracker?.events)
                             ? ""
                             : formatEventDescription(
-                                (tracker?.events as TrackingEvent[])[0],
-                              )}
+                              (tracker?.events as TrackingEvent[])[0],
+                            )}
                         </span>
                       </td>
                       <td className="date is-vcentered has-text-right">
@@ -268,8 +268,8 @@ export default function TrackersPage(pageProps: any) {
                           {isNoneOrEmpty(tracker?.events)
                             ? ""
                             : formatEventDate(
-                                (tracker?.events as TrackingEvent[])[0],
-                              )}
+                              (tracker?.events as TrackingEvent[])[0],
+                            )}
                         </p>
                       </td>
                       <td className="action is-vcentered p-1">

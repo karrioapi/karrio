@@ -8,17 +8,17 @@ import {
 import {
   AddressEditModal,
   useAddressEditModal,
-} from "@karrio/ui/modals/address-edit-modal";
+} from "@karrio/ui/core/modals/address-edit-modal";
 import {
   useAddressTemplateMutation,
   useAddressTemplates,
 } from "@karrio/hooks/address";
-import { GoogleGeocodingScript } from "@karrio/ui/components/google-geocoding-script";
-import { ConfirmModal, useConfirmModal } from "@karrio/ui/modals/confirm-modal";
+import { GoogleGeocodingScript } from "@karrio/ui/core/components/google-geocoding-script";
+import { ConfirmModal, useConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { AppLink } from "@karrio/ui/components/app-link";
-import { useLoader } from "@karrio/ui/components/loader";
+import { AppLink } from "@karrio/ui/core/components/app-link";
+import { useLoader } from "@karrio/ui/core/components/loader";
 import { useSearchParams } from "next/navigation";
 import { AddressType } from "@karrio/types";
 import React, { useEffect } from "react";

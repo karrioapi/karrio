@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@karrio/insiders/lib/utils";
+import { cn } from "@karrio/ui/lib/utils";
 
 interface PricingToggleProps {
     value: "cloud" | "self-hosted";
