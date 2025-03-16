@@ -1,0 +1,219 @@
+# Upgrade
+
+This guide will help you set up a self-hosted instance of Karrio, giving you complete control over your shipping API infrastructure.
+
+## Why Self-Host?
+
+Self-hosting Karrio offers several advantages:
+
+- **Data Control**: Keep all your shipping data within your own infrastructure
+- **Customization**: Modify the platform to suit your specific needs
+- **Integration**: Seamlessly integrate with your existing systems
+- **Cost**: Potentially reduce costs for high-volume shipping operations
+- **Compliance**: Meet specific regulatory or security requirements
+
+## Deployment Options
+
+### Docker Compose (Recommended for Small to Medium Deployments)
+
+The easiest way to self-host Karrio is using Docker Compose.
+
+#### Prerequisites
+
+- Docker and Docker Compose installed
+- 2GB+ RAM, 2+ CPU cores
+- 20GB+ storage
+
+#### Steps
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/karrioapi/karrio.git
+cd karrio
+```
+
+2. Create a `.env` file with your configuration:
+
+```bash
+# Database settings
+DB_ENGINE=django.db.backends.postgresql
+DB_NAME=karrio
+DB_USER=postgres
+DB_PASSWORD=your_secure_password
+DB_HOST=db
+DB_PORT=5432
+
+# API settings
+SECRET_KEY=your_secure_secret_key
+ALLOWED_HOSTS=your-domain.com,localhost
+```
+
+3. Start the services:
+
+```bash
+docker-compose up -d
+```
+
+4. Access your Karrio instance at `http://localhost:8000` or your configured domain.
+
+### Kubernetes (Recommended for Large Deployments)
+
+For production environments with high availability requirements, we recommend using Kubernetes.
+
+#### Prerequisites
+
+- Kubernetes cluster
+- Helm installed
+- Persistent storage provisioner
+
+#### Steps
+
+1. Add the Karrio Helm repository:
+
+```bash
+helm repo add karrio https://charts.karrio.io
+helm repo update
+```
+
+2. Create a `values.yaml` file with your configuration:
+
+```yaml
+# values.yaml
+api:
+  replicas: 2
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
+
+database:
+  persistence:
+    size: 20Gi
+  password: your_secure_password
+
+redis:
+  persistence:
+    size: 5Gi
+
+ingress:
+  enabled: true
+  hosts:
+    - host: karrio.your-domain.com
+      paths:
+        - path: /
+```
+
+3. Install the Karrio chart:
+
+```bash
+helm install karrio karrio/karrio -f values.yaml
+```
+
+## Configuration
+
+### Environment Variables
+
+Karrio can be configured using environment variables. Here are the most important ones:
+
+| Variable | Description | Default |
+| -------- | ----------- | ------- |
+| `SECRET_KEY` | Django secret key for security | Random string |
+| `DEBUG` | Enable debug mode | `False` |
+| `ALLOWED_HOSTS` | Comma-separated list of allowed hosts | `localhost` |
+| `DB_ENGINE` | Database engine | `django.db.backends.postgresql` |
+| `DB_NAME` | Database name | `karrio` |
+| `DB_USER` | Database user | `postgres` |
+| `DB_PASSWORD` | Database password | - |
+| `DB_HOST` | Database host | `localhost` |
+| `DB_PORT` | Database port | `5432` |
+| `REDIS_URL` | Redis URL | `redis://localhost:6379/0` |
+
+### Carrier Credentials
+
+To use shipping carriers, you'll need to configure their credentials:
+
+```bash
+# USPS
+USPS_USERNAME=your_usps_username
+USPS_PASSWORD=your_usps_password
+
+# DHL
+DHL_SITE_ID=your_dhl_site_id
+DHL_PASSWORD=your_dhl_password
+
+# UPS
+UPS_USERNAME=your_ups_username
+UPS_PASSWORD=your_ups_password
+UPS_ACCESS_LICENSE=your_ups_access_license
+```
+
+## Maintenance
+
+### Backups
+
+It's important to regularly back up your Karrio data:
+
+```bash
+# Backup PostgreSQL database
+docker-compose exec db pg_dump -U postgres karrio > karrio_backup_$(date +%Y%m%d).sql
+
+# Backup configuration
+cp .env .env.backup.$(date +%Y%m%d)
+```
+
+### Updates
+
+To update your Karrio instance:
+
+```bash
+# Pull the latest changes
+git pull
+
+# Rebuild and restart containers
+docker-compose down
+docker-compose build
+docker-compose up -d
+
+# Run migrations
+docker-compose exec api python manage.py migrate
+```
+
+## Troubleshooting
+
+### Common Issues
+
+#### Database Connection Errors
+
+If you encounter database connection issues:
+
+```bash
+# Check if the database container is running
+docker-compose ps
+
+# Check database logs
+docker-compose logs db
+```
+
+#### API Not Responding
+
+If the API is not responding:
+
+```bash
+# Check API logs
+docker-compose logs api
+
+# Restart the API service
+docker-compose restart api
+```
+
+## Support
+
+If you need help with your self-hosted Karrio instance:
+
+- Check our [GitHub Issues](https://github.com/karrioapi/karrio/issues)
+- Join our [Community Forum](https://community.karrio.io)
+- Consider our [Enterprise Support Plans](https://karrio.io/enterprise) for priority assistance
