@@ -1,7 +1,7 @@
 "use client";
 
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@karrio/insiders/components/ui/sheet";
-import { Button } from "@karrio/insiders/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@karrio/ui/components/ui/sheet";
+import { Button } from "@karrio/ui/components/ui/button";
 import { Menu } from "lucide-react";
 import Link from "next/link";
 

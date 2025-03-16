@@ -26,41 +26,41 @@ import {
   AddressModalEditor,
   CustomsModalEditor,
   ParcelModalEditor,
-} from "@karrio/ui/modals/form-modals";
+} from "@karrio/ui/core/modals/form-modals";
 import {
   CommodityEditModalProvider,
   CommodityStateContext,
-} from "@karrio/ui/modals/commodity-edit-modal";
+} from "@karrio/ui/core/modals/commodity-edit-modal";
 import {
   MetadataEditor,
   MetadataEditorContext,
-} from "@karrio/ui/forms/metadata-editor";
-import { CustomsInfoDescription } from "@karrio/ui/components/customs-info-description";
-import { GoogleGeocodingScript } from "@karrio/ui/components/google-geocoding-script";
-import { CommodityDescription } from "@karrio/ui/components/commodity-description";
-import { MessagesDescription } from "@karrio/ui/components/messages-description";
-import { AddressDescription } from "@karrio/ui/components/address-description";
-import { ParcelDescription } from "@karrio/ui/components/parcel-description";
-import { CommoditySummary } from "@karrio/ui/components/commodity-summary";
-import { RateDescription } from "@karrio/ui/components/rate-description";
+} from "@karrio/ui/core/forms/metadata-editor";
+import { CustomsInfoDescription } from "@karrio/ui/core/components/customs-info-description";
+import { GoogleGeocodingScript } from "@karrio/ui/core/components/google-geocoding-script";
+import { CommodityDescription } from "@karrio/ui/core/components/commodity-description";
+import { MessagesDescription } from "@karrio/ui/core/components/messages-description";
+import { AddressDescription } from "@karrio/ui/core/components/address-description";
+import { ParcelDescription } from "@karrio/ui/core/components/parcel-description";
+import { CommoditySummary } from "@karrio/ui/core/components/commodity-summary";
+import { RateDescription } from "@karrio/ui/core/components/rate-description";
 import { useSystemConnections } from "@karrio/hooks/system-connection";
-import { LineItemSelector } from "@karrio/ui/forms/line-item-selector";
+import { LineItemSelector } from "@karrio/ui/core/forms/line-item-selector";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { useDefaultTemplates } from "@karrio/hooks/default-template";
-import { CheckBoxField } from "@karrio/ui/components/checkbox-field";
-import { TextAreaField } from "@karrio/ui/components/textarea-field";
+import { CheckBoxField } from "@karrio/ui/core/components/checkbox-field";
+import { TextAreaField } from "@karrio/ui/core/components/textarea-field";
 import { useWorkspaceConfig } from "@karrio/hooks/workspace-config";
 import { useConnections } from "@karrio/hooks/carrier-connections";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { CarrierImage } from "@karrio/ui/components/carrier-image";
-import { ButtonField } from "@karrio/ui/components/button-field";
-import { SelectField } from "@karrio/ui/components/select-field";
+import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
+import { ButtonField } from "@karrio/ui/core/components/button-field";
+import { SelectField } from "@karrio/ui/core/components/select-field";
 import { useLabelDataMutation } from "@karrio/hooks/label-data";
-import { InputField } from "@karrio/ui/components/input-field";
-import { useNotifier } from "@karrio/ui/components/notifier";
+import { InputField } from "@karrio/ui/core/components/input-field";
+import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { ModalProvider } from "@karrio/ui/modals/modal";
-import { Spinner } from "@karrio/ui/components/spinner";
+import { ModalProvider } from "@karrio/ui/core/modals/modal";
+import { Spinner } from "@karrio/ui/core/components/spinner";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { useLocation } from "@karrio/hooks/location";
 import { useAppMode } from "@karrio/hooks/app-mode";

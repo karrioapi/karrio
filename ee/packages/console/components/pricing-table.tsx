@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Button } from "@karrio/insiders/components/ui/button";
+import { Button } from "@karrio/ui/components/ui/button";
 import { CheckIcon } from "@radix-ui/react-icons";
 
 interface PricingTableProps {
@@ -39,13 +39,12 @@ export function PricingTable({
 
   return (
     <div
-      className={`grid gap-8 max-w-[1200px] mx-auto ${
-        plans.length === 1
+      className={`grid gap-8 max-w-[1200px] mx-auto ${plans.length === 1
           ? "md:grid-cols-1 max-w-md"
           : plans.length === 2
             ? "md:grid-cols-2 max-w-2xl"
             : "md:grid-cols-3"
-      }`}
+        }`}
     >
       {plans.map((plan) => {
         const isRecommended = plan.metadata.recommended === "true";
@@ -57,11 +56,10 @@ export function PricingTable({
         return (
           <div
             key={plan.id}
-            className={`relative rounded-2xl p-8 bg-white/5 border transition-all hover:border-[#5722cc]/50 ${
-              isRecommended
+            className={`relative rounded-2xl p-8 bg-white/5 border transition-all hover:border-[#5722cc]/50 ${isRecommended
                 ? "border-[#5722cc] shadow-lg shadow-[#5722cc]/20"
                 : "border-white/10"
-            }`}
+              }`}
           >
             {isRecommended && (
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#5722cc] text-white px-6 py-1.5 rounded-full text-sm font-medium">
@@ -138,11 +136,10 @@ export function PricingTable({
             <Button
               onClick={() => onSelectPlan(plan.id)}
               disabled={isLoading}
-              className={`w-full h-11 text-sm font-medium transition-all ${
-                isRecommended
+              className={`w-full h-11 text-sm font-medium transition-all ${isRecommended
                   ? "bg-[#5722cc] hover:bg-[#5722cc]/90 shadow-md hover:shadow-lg"
                   : "hover:bg-white/10"
-              }`}
+                }`}
               variant={isRecommended ? "default" : "outline"}
             >
               {isLoading

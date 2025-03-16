@@ -14,7 +14,6 @@ const nextConfig = {
     "@karrio/lib",
     "@karrio/types",
     "@karrio/trpc",
-    "@karrio/insiders",
     "@karrio/admin",
   ],
   sentry: {

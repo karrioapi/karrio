@@ -1,7 +1,7 @@
-import { ExpandedSidebar } from "@karrio/ui/components/expanded-sidebar";
+import { ExpandedSidebar } from "@karrio/ui/core/components/expanded-sidebar";
 import { KARRIO_PUBLIC_URL, MULTI_TENANT } from "@karrio/lib";
-import { Notifier } from "@karrio/ui/components/notifier";
-import { Navbar } from "@karrio/ui/components/navbar";
+import { Notifier } from "@karrio/ui/core/components/notifier";
+import { Navbar } from "@karrio/ui/core/components/navbar";
 import { Providers } from "@karrio/hooks/providers";
 import { auth } from "@karrio/core/context/auth";
 import { Metadata } from "@karrio/types";

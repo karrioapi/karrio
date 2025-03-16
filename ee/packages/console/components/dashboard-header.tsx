@@ -1,5 +1,5 @@
-import { SidebarTrigger } from "@karrio/insiders/components/ui/sidebar";
-import { Separator } from "@karrio/insiders/components/ui/separator";
+import { SidebarTrigger } from "@karrio/ui/components/ui/sidebar";
+import { Separator } from "@karrio/ui/components/ui/separator";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -7,7 +7,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@karrio/insiders/components/ui/breadcrumb";
+} from "@karrio/ui/components/ui/breadcrumb";
 
 interface DashboardHeaderProps {
   title: string;

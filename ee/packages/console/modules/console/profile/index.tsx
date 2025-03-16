@@ -1,15 +1,15 @@
 "use client";
 
-import { Button } from "@karrio/insiders/components/ui/button";
+import { Button } from "@karrio/ui/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@karrio/insiders/components/ui/card";
-import { Input } from "@karrio/insiders/components/ui/input";
-import { Label } from "@karrio/insiders/components/ui/label";
+} from "@karrio/ui/components/ui/card";
+import { Input } from "@karrio/ui/components/ui/input";
+import { Label } from "@karrio/ui/components/ui/label";
 
 export default function ProfilePage() {
   return (

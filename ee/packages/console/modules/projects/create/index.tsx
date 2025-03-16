@@ -6,10 +6,10 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@karrio/insiders/components/ui/card";
-import { Button } from "@karrio/insiders/components/ui/button";
-import { Input } from "@karrio/insiders/components/ui/input";
-import { useToast } from "@karrio/insiders/hooks/use-toast";
+} from "@karrio/ui/components/ui/card";
+import { Button } from "@karrio/ui/components/ui/button";
+import { Input } from "@karrio/ui/components/ui/input";
+import { useToast } from "@karrio/ui/hooks/use-toast";
 import { useRouter, useParams } from "next/navigation";
 import { trpc } from "@karrio/console/trpc/client";
 import { useState } from "react";

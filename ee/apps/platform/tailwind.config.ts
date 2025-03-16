@@ -8,9 +8,9 @@ const config = {
     "../../packages/console/components/**/*.{js,ts,jsx,tsx,mdx}",
     "../../packages/console/modules/**/*.{js,ts,jsx,tsx,mdx}",
     "../../packages/console/layouts/**/*.{js,ts,jsx,tsx,mdx}",
-    "../../../packages/insiders/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "../../../packages/insiders/modules/**/*.{js,ts,jsx,tsx,mdx}",
-    "../../../packages/insiders/layouts/**/*.{js,ts,jsx,tsx,mdx}",
+    "../../../packages/ui/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "../../../packages/ui/modules/**/*.{js,ts,jsx,tsx,mdx}",
+    "../../../packages/ui/layouts/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     container: {

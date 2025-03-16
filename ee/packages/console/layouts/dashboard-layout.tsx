@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 import {
   SidebarInset,
   SidebarProvider,
-} from "@karrio/insiders/components/ui/sidebar";
+} from "@karrio/ui/components/ui/sidebar";
 import { prisma } from "@karrio/console/prisma/client";
 
 export default async function DashboardLayout({

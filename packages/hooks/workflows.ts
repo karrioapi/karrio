@@ -47,8 +47,8 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useWorkflowConnectionMutation } from "./workflow-connections";
 import { useWorkflowActionMutation } from "./workflow-actions";
-import { useNotifier } from "@karrio/ui/components/notifier";
-import { useLoader } from "@karrio/ui/components/loader";
+import { useNotifier } from "@karrio/ui/core/components/notifier";
+import { useLoader } from "@karrio/ui/core/components/loader";
 import { useRouter } from "next/navigation";
 import { NotificationType } from "@karrio/types";
 import { useAppMode } from "./app-mode";
@@ -89,11 +89,11 @@ export function useWorkflows({
       return isNoneOrEmpty(options[key as keyof WorkflowFilter])
         ? acc
         : {
-            ...acc,
-            [key]: ["offset", "first"].includes(key)
-              ? parseInt((options as any)[key])
-              : options[key as keyof WorkflowFilter],
-          };
+          ...acc,
+          [key]: ["offset", "first"].includes(key)
+            ? parseInt((options as any)[key])
+            : options[key as keyof WorkflowFilter],
+        };
     }, PAGINATION);
 
     if (setVariablesToURL) insertUrlParam(params);
@@ -372,16 +372,16 @@ export function useWorkflowForm({ id }: { id?: string } = {}) {
   };
   const updateAction =
     (index: number, action_id?: string | null) =>
-    async (data: PartialWorkflowActionMutationInput, change?: ChangeType) => {
-      const update = {
-        actions: workflow.actions.map(({ ...action }, idx) =>
-          action.id === action_id || idx === index
-            ? { ...action, ...data }
-            : action,
-        ),
+      async (data: PartialWorkflowActionMutationInput, change?: ChangeType) => {
+        const update = {
+          actions: workflow.actions.map(({ ...action }, idx) =>
+            action.id === action_id || idx === index
+              ? { ...action, ...data }
+              : action,
+          ),
+        };
+        updateWorkflow(update as any, change);
       };
-      updateWorkflow(update as any, change);
-    };
   const deleteAction =
     (index: number, action_id?: string | null) => async () => {
       const action = workflow.actions.find((_, idx) => idx === index);
@@ -403,45 +403,45 @@ export function useWorkflowForm({ id }: { id?: string } = {}) {
     };
   const createActionConnection =
     (index: number, action_id?: string | null) =>
-    async (
-      data: PartialWorkflowConnectionMutationInput,
-      change?: ChangeType,
-    ) => {
-      const action = workflow.actions.find(
-        (_, idx) => idx === index || _.id === action_id,
-      );
-      updateAction(index, action_id)({ ...action, connection: data }, change);
-    };
+      async (
+        data: PartialWorkflowConnectionMutationInput,
+        change?: ChangeType,
+      ) => {
+        const action = workflow.actions.find(
+          (_, idx) => idx === index || _.id === action_id,
+        );
+        updateAction(index, action_id)({ ...action, connection: data }, change);
+      };
   const updateActionConnection =
     (index: number, action_id?: string | null) =>
-    async (
-      data: PartialWorkflowConnectionMutationInput,
-      change?: ChangeType,
-    ) => {
-      const action = workflow.actions.find(
-        (_, idx) => idx === index || _.id === action_id,
-      );
-      updateAction(index, action_id)(
-        { ...action, connection: { ...(action?.connection || {}), ...data } },
-        change,
-      );
-    };
+      async (
+        data: PartialWorkflowConnectionMutationInput,
+        change?: ChangeType,
+      ) => {
+        const action = workflow.actions.find(
+          (_, idx) => idx === index || _.id === action_id,
+        );
+        updateAction(index, action_id)(
+          { ...action, connection: { ...(action?.connection || {}), ...data } },
+          change,
+        );
+      };
   const deleteActionConnection =
     (index: number, action_id?: string | null, connection_id?: string | null) =>
-    async () => {
-      if (!isLocalDraft(workflow.id) && !!connection_id) {
-        await connectionMutation.deleteWorkflowConnection.mutateAsync({
-          id: connection_id as string,
-        });
-      }
-      const action = workflow.actions.find(
-        (_, idx) => idx === index || _.id === action_id,
-      );
-      updateAction(index, action_id)(
-        { ...action, connection: null },
-        { deleted: !!connection_id },
-      );
-    };
+      async () => {
+        if (!isLocalDraft(workflow.id) && !!connection_id) {
+          await connectionMutation.deleteWorkflowConnection.mutateAsync({
+            id: connection_id as string,
+          });
+        }
+        const action = workflow.actions.find(
+          (_, idx) => idx === index || _.id === action_id,
+        );
+        updateAction(index, action_id)(
+          { ...action, connection: null },
+          { deleted: !!connection_id },
+        );
+      };
 
   // requests
   const save = async () => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { LogOut, User } from "lucide-react";
-import { Button } from "@karrio/insiders/components/ui/button";
+import { Button } from "@karrio/ui/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,7 +9,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@karrio/insiders/components/ui/dropdown-menu";
+} from "@karrio/ui/components/ui/dropdown-menu";
 import Link from "next/link";
 
 export function UserNav() {

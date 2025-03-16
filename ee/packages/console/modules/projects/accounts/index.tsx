@@ -9,9 +9,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@karrio/insiders/components/ui/table";
-import { Badge } from "@karrio/insiders/components/ui/badge";
-import { Alert, AlertDescription } from "@karrio/insiders/components/ui/alert";
+} from "@karrio/ui/components/ui/table";
+import { Badge } from "@karrio/ui/components/ui/badge";
+import { Alert, AlertDescription } from "@karrio/ui/components/ui/alert";
 import { DashboardHeader } from "@karrio/console/components/dashboard-header";
 import { AlertTriangle, Settings2, Search, RefreshCw } from "lucide-react";
 import moment from "moment";
@@ -20,17 +20,17 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@karrio/insiders/components/ui/card";
+} from "@karrio/ui/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@karrio/insiders/components/ui/dropdown-menu";
-import { Button } from "@karrio/insiders/components/ui/button";
-import { Input } from "@karrio/insiders/components/ui/input";
+} from "@karrio/ui/components/ui/dropdown-menu";
+import { Button } from "@karrio/ui/components/ui/button";
+import { Input } from "@karrio/ui/components/ui/input";
 import { useState } from "react";
-import { Pagination } from "@karrio/insiders/components/ui/pagination";
+import { Pagination } from "@karrio/ui/components/ui/pagination";
 
 interface Column {
   id: string;

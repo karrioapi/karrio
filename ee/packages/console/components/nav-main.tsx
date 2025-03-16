@@ -6,7 +6,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@karrio/insiders/components/ui/sidebar";
+} from "@karrio/ui/components/ui/sidebar";
 import { useParams } from "next/navigation";
 
 export function NavMain({

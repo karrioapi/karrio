@@ -9,8 +9,8 @@ import {
   FileIcon,
   PlusIcon,
 } from "lucide-react";
-import { Button } from "@karrio/insiders/components/ui/button";
-import { useToast } from "@karrio/insiders/hooks/use-toast";
+import { Button } from "@karrio/ui/components/ui/button";
+import { useToast } from "@karrio/ui/hooks/use-toast";
 import { trpc } from "@karrio/console/trpc/client";
 import {
   Card,
@@ -18,10 +18,10 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-} from "@karrio/insiders/components/ui/card";
-import { Input } from "@karrio/insiders/components/ui/input";
+} from "@karrio/ui/components/ui/card";
+import { Input } from "@karrio/ui/components/ui/input";
 import { Elements } from "@stripe/react-stripe-js";
-import { cn } from "@karrio/insiders/lib/utils";
+import { cn } from "@karrio/ui/lib/utils";
 import { loadStripe } from "@stripe/stripe-js";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -32,11 +32,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "@karrio/insiders/components/ui/dialog";
+} from "@karrio/ui/components/ui/dialog";
 import {
   RadioGroup,
   RadioGroupItem,
-} from "@karrio/insiders/components/ui/radio-group";
+} from "@karrio/ui/components/ui/radio-group";
 import { CreditCard } from "lucide-react";
 import {
   AlertDialog,
@@ -47,7 +47,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@karrio/insiders/components/ui/alert-dialog";
+} from "@karrio/ui/components/ui/alert-dialog";
 import { PlanSelection } from "@karrio/console/components/plan-selection";
 
 const formatCurrency = (amount: number, currency: string) => {
@@ -62,7 +62,7 @@ const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
 );
 
-export default async function BillingPagePage({ params }: { params: Promise<{ orgId: string }>}){
+export default async function BillingPagePage({ params }: { params: Promise<{ orgId: string }> }) {
   const query = await params;
   const { toast } = useToast();
   const router = useRouter();

@@ -6,7 +6,15 @@ export const BASE_PATH = (env("NEXT_PUBLIC_BASE_PATH") || "/").replace(
   "/",
 );
 export const TEST_BASE_PATH = (BASE_PATH + "/test").replace("//", "/");
-export const KARRIO_PUBLIC_URL = env("NEXT_PUBLIC_KARRIO_PUBLIC_URL");
+
+// Detect if we're in a build environment
+const IS_BUILD = process.env.NODE_ENV === 'production' && process.env.NEXT_PHASE === 'phase-production-build';
+
+// Use a mock URL during build or the configured URL during runtime
+export const KARRIO_PUBLIC_URL = IS_BUILD
+  ? 'http://mock-api-for-build'
+  : env("NEXT_PUBLIC_KARRIO_PUBLIC_URL");
+
 export const MULTI_TENANT = Boolean(env("NEXT_PUBLIC_MULTI_TENANT"));
 export const DASHBOARD_URL = env("NEXT_PUBLIC_DASHBOARD_URL");
 export const DASHBOARD_VERSION = env("NEXT_PUBLIC_DASHBOARD_VERSION");

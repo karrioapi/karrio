@@ -1,5 +1,5 @@
 import { ShipmentComponent } from "@karrio/core/modules/Shipments/shipment";
-import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
+import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
 import { useLocation } from "@karrio/hooks/location";
 import React, { useState } from "react";
 

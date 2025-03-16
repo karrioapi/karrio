@@ -10,7 +10,6 @@ const nextConfig = {
         "@karrio/ui",
         "@karrio/lib",
         "@karrio/types",
-        "@karrio/insiders",
         "@karrio/console"
     ],
     sentry: {
