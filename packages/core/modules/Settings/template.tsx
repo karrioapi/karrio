@@ -16,15 +16,15 @@ import {
   useDocumentTemplate,
   useDocumentTemplateMutation,
 } from "@karrio/hooks/document-template";
-import { TextAreaField } from "@karrio/ui/components/textarea-field";
+import { TextAreaField } from "@karrio/ui/core/components/textarea-field";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
 import React, { useEffect, useReducer, useState } from "react";
-import { InputField } from "@karrio/ui/components/input-field";
+import { InputField } from "@karrio/ui/core/components/input-field";
 import { DEFAULT_DOCUMENT_TEMPLATE } from "@karrio/lib/sample";
-import { useNotifier } from "@karrio/ui/components/notifier";
+import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { useLoader } from "@karrio/ui/components/loader";
-import { AppLink } from "@karrio/ui/components/app-link";
+import { useLoader } from "@karrio/ui/core/components/loader";
+import { AppLink } from "@karrio/ui/core/components/app-link";
 import { useLocation } from "@karrio/hooks/location";
 import CodeMirror from "@uiw/react-codemirror";
 import { html } from "@codemirror/lang-html";

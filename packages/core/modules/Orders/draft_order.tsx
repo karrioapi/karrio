@@ -2,25 +2,25 @@
 import {
   CommodityEditModalProvider,
   CommodityStateContext,
-} from "@karrio/ui/modals/commodity-edit-modal";
+} from "@karrio/ui/core/modals/commodity-edit-modal";
 import {
   MetadataEditor,
   MetadataEditorContext,
-} from "@karrio/ui/forms/metadata-editor";
-import { GoogleGeocodingScript } from "@karrio/ui/components/google-geocoding-script";
-import { CommodityDescription } from "@karrio/ui/components/commodity-description";
-import { AddressDescription } from "@karrio/ui/components/address-description";
+} from "@karrio/ui/core/forms/metadata-editor";
+import { GoogleGeocodingScript } from "@karrio/ui/core/components/google-geocoding-script";
+import { CommodityDescription } from "@karrio/ui/core/components/commodity-description";
+import { AddressDescription } from "@karrio/ui/core/components/address-description";
 import { formatRef, isEqual, isNone, isNoneOrEmpty } from "@karrio/lib";
 import { MetadataObjectTypeEnum, PaidByEnum } from "@karrio/types";
-import { AddressModalEditor } from "@karrio/ui/modals/form-modals";
+import { AddressModalEditor } from "@karrio/ui/core/modals/form-modals";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { InputField } from "@karrio/ui/components/input-field";
-import { useLoader } from "@karrio/ui/components/loader";
-import { ModalProvider } from "@karrio/ui/modals/modal";
+import { InputField } from "@karrio/ui/core/components/input-field";
+import { useLoader } from "@karrio/ui/core/components/loader";
+import { ModalProvider } from "@karrio/ui/core/modals/modal";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { useOrderForm } from "@karrio/hooks/order";
 import React, { useEffect, useState } from "react";
-import { Spinner } from "@karrio/ui/components";
+import { Spinner } from "@karrio/ui/core/components";
 import { AddressType } from "@karrio/types";
 
 export const generateMetadata = dynamicMetadata("Drfat Order");
@@ -398,9 +398,9 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                                 (_, { quantity, value_amount }) =>
                                   _ +
                                   (isNone(quantity) ? 1 : (quantity as any)) *
-                                    (isNone(value_amount)
-                                      ? 1.0
-                                      : (value_amount as any)),
+                                  (isNone(value_amount)
+                                    ? 1.0
+                                    : (value_amount as any)),
                                 0.0,
                               )}{" "}
                               {(order.line_items || [])[0]?.value_currency}
@@ -415,7 +415,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                                 (_, { quantity, weight }) =>
                                   _ +
                                   (isNone(quantity) ? 1 : (quantity as any)) *
-                                    (isNone(weight) ? 1.0 : (weight as any)),
+                                  (isNone(weight) ? 1.0 : (weight as any)),
                                 0.0,
                               )}{" "}
                               {(order.line_items || [])[0]?.weight_unit}
@@ -493,17 +493,17 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
                       {Object.values(order.billing_address || {}).length >
                         0 && (
-                        <AddressDescription
-                          address={order.billing_address as AddressType}
-                        />
-                      )}
+                          <AddressDescription
+                            address={order.billing_address as AddressType}
+                          />
+                        )}
 
                       {Object.values(order.billing_address || {}).length ===
                         0 && (
-                        <div className="notification my-2 py-2 px-4 is-size-7">
-                          Same as shipping address.
-                        </div>
-                      )}
+                          <div className="notification my-2 py-2 px-4 is-size-7">
+                            Same as shipping address.
+                          </div>
+                        )}
                     </div>
                   </div>
 

@@ -14,7 +14,7 @@ import { PricingSection } from "@karrio/console/components/pricing-section";
 import { CodePreview } from "@karrio/console/components/code-preview";
 import { FeatureTabs } from "@karrio/console/components/feature-tabs";
 import { CTASection } from "@karrio/console/components/cta-section";
-import { Button } from "@karrio/insiders/components/ui/button";
+import { Button } from "@karrio/ui/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 

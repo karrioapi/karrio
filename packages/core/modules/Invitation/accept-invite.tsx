@@ -1,7 +1,7 @@
 "use client";
 import { useOrganizationInvitation } from "@karrio/hooks/organization";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { Spinner } from "@karrio/ui/components/spinner";
+import { Spinner } from "@karrio/ui/core/components/spinner";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import React, { useEffect } from "react";

@@ -1,7 +1,7 @@
 "use client";
 
 import { trpc } from "@karrio/trpc/client";
-import { Card, CardContent } from "@karrio/insiders/components/ui/card";
+import { Card, CardContent } from "@karrio/ui/components/ui/card";
 import {
   Table,
   TableBody,
@@ -9,21 +9,21 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@karrio/insiders/components/ui/table";
+} from "@karrio/ui/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@karrio/insiders/components/ui/dropdown-menu";
-import { Button } from "@karrio/insiders/components/ui/button";
-import { Switch } from "@karrio/insiders/components/ui/switch";
-import { Badge } from "@karrio/insiders/components/ui/badge";
-import { useToast } from "@karrio/insiders/hooks/use-toast";
+} from "@karrio/ui/components/ui/dropdown-menu";
+import { Button } from "@karrio/ui/components/ui/button";
+import { Switch } from "@karrio/ui/components/ui/switch";
+import { Badge } from "@karrio/ui/components/ui/badge";
+import { useToast } from "@karrio/ui/hooks/use-toast";
 import { MoreVertical } from "lucide-react";
 import { useState } from "react";
-import { DeleteConfirmationDialog } from "@karrio/insiders/components/delete-confirmation-dialog";
-import { SurchargeDialog } from "@karrio/insiders/components/surcharge-dialog";
+import { DeleteConfirmationDialog } from "@karrio/ui/components/delete-confirmation-dialog";
+import { SurchargeDialog } from "@karrio/ui/components/surcharge-dialog";
 import {
   GetSurcharges_surcharges_edges_node as Surcharge,
   SurchargeTypeEnum,

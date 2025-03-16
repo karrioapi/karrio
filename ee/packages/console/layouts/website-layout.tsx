@@ -1,6 +1,6 @@
 import { PlatformSubnav } from "@karrio/console/components/platform-subnav";
 import { MobileMenu } from "@karrio/console/components/mobile-menu";
-import { Button } from "@karrio/insiders/components/ui/button";
+import { Button } from "@karrio/ui/components/ui/button";
 import { auth } from "@karrio/console/apis/auth";
 import { Github, Linkedin } from "lucide-react";
 import Image from "next/image";

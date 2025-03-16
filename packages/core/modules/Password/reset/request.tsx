@@ -1,7 +1,7 @@
 "use client";
-import { LoadingProvider, useLoader } from "@karrio/ui/components/loader";
+import { LoadingProvider, useLoader } from "@karrio/ui/core/components/loader";
 import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { ButtonField } from "@karrio/ui/components/button-field";
+import { ButtonField } from "@karrio/ui/core/components/button-field";
 import { useUserMutation } from "@karrio/hooks/user";
 import { useRouter } from "next/navigation";
 import React, { FormEvent, useRef } from "react";

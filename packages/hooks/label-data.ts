@@ -27,8 +27,8 @@ import {
   PaidByEnum,
 } from "@karrio/types";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useNotifier } from "@karrio/ui/components/notifier";
-import { useLoader } from "@karrio/ui/components/loader";
+import { useNotifier } from "@karrio/ui/core/components/notifier";
+import { useLoader } from "@karrio/ui/core/components/loader";
 import { useShipmentMutation } from "./shipment";
 import { useAppMode } from "./app-mode";
 import { useKarrio } from "./karrio";
@@ -90,8 +90,8 @@ export function useLabelData(id: string, initialData?: ShipmentType) {
       const response = await (id === "new"
         ? Promise.resolve({ shipment })
         : karrio.graphql.request<get_shipment_data>(gqlstr(GET_SHIPMENT_DATA), {
-            variables: { id },
-          }));
+          variables: { id },
+        }));
 
       return response;
     },
@@ -147,17 +147,17 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
     return (
       (!isNone(changes.shipper) &&
         state.shipment.shipper.address_line1 !==
-          changes.shipper.address_line1) ||
+        changes.shipper.address_line1) ||
       (!isNone(changes.shipper) &&
         state.shipment.shipper.country_code !== changes.shipper.country_code) ||
       (!isNone(changes.shipper) &&
         state.shipment.shipper.city !== changes.shipper.city) ||
       (!isNone(changes.recipient) &&
         state.shipment.recipient.address_line1 !==
-          changes.recipient.address_line1) ||
+        changes.recipient.address_line1) ||
       (!isNone(changes.recipient) &&
         state.shipment.recipient.country_code !==
-          changes.recipient.country_code) ||
+        changes.recipient.country_code) ||
       (!isNone(changes.recipient) &&
         state.shipment.recipient.city !== changes.recipient.city)
     );
@@ -377,93 +377,93 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
   };
   const updateParcel =
     (parcel_index: number, parcel_id?: string) =>
-    async (data: ParcelType, change?: ChangeType) => {
-      if (
-        parcelHasRateUpdateChanges(state.shipment.parcels[parcel_index], data)
-      ) {
-        setUpdateRate(true);
-      }
+      async (data: ParcelType, change?: ChangeType) => {
+        if (
+          parcelHasRateUpdateChanges(state.shipment.parcels[parcel_index], data)
+        ) {
+          setUpdateRate(true);
+        }
 
-      const update = {
-        parcels: state.shipment.parcels.map((parcel, index) =>
-          (!!parcel.id && parcel.id === parcel_id) || index === parcel_index
-            ? data
-            : parcel,
-        ),
+        const update = {
+          parcels: state.shipment.parcels.map((parcel, index) =>
+            (!!parcel.id && parcel.id === parcel_id) || index === parcel_index
+              ? data
+              : parcel,
+          ),
+        };
+        updateShipment(update as any, change);
       };
-      updateShipment(update as any, change);
-    };
   const addItems =
     (parcel_index: number, parcel_id?: string) =>
-    async (items: CommodityType[]) => {
-      const ts = Date.now();
-      const parcel = (
-        !!parcel_id
-          ? state.shipment.parcels.find(({ id }) => id === parcel_id)
-          : state.shipment.parcels[parcel_index]
-      ) as ParcelType;
-      const indexes = new Set(
-        (state.shipment.parcels[parcel_index].items || []).map(
-          (item, index) =>
-            item.parent_id || item.sku || item.hs_code || item.id || `${index}`,
-        ),
-      );
-      const item_collection: Collection<CommodityType & { quantity: number }> =
-        items.reduce(
-          (acc, item, index) => ({
-            ...acc,
-            [item.parent_id ||
-            item.sku ||
-            item.hs_code ||
-            item.id ||
-            `${ts}${index}`]: item,
-          }),
-          {},
+      async (items: CommodityType[]) => {
+        const ts = Date.now();
+        const parcel = (
+          !!parcel_id
+            ? state.shipment.parcels.find(({ id }) => id === parcel_id)
+            : state.shipment.parcels[parcel_index]
+        ) as ParcelType;
+        const indexes = new Set(
+          (state.shipment.parcels[parcel_index].items || []).map(
+            (item, index) =>
+              item.parent_id || item.sku || item.hs_code || item.id || `${index}`,
+          ),
         );
-      const update = {
-        ...parcel,
-        items: [
-          ...(parcel.items || []).map((item, index) => {
-            const _ref =
-              item.parent_id || item.sku || item.hs_code || `${index}`;
-            return _ref && Object.keys(item_collection).includes(_ref)
-              ? {
+        const item_collection: Collection<CommodityType & { quantity: number }> =
+          items.reduce(
+            (acc, item, index) => ({
+              ...acc,
+              [item.parent_id ||
+                item.sku ||
+                item.hs_code ||
+                item.id ||
+                `${ts}${index}`]: item,
+            }),
+            {},
+          );
+        const update = {
+          ...parcel,
+          items: [
+            ...(parcel.items || []).map((item, index) => {
+              const _ref =
+                item.parent_id || item.sku || item.hs_code || `${index}`;
+              return _ref && Object.keys(item_collection).includes(_ref)
+                ? {
                   ...item,
                   quantity:
                     toNumber(item.quantity || 0) +
                     item_collection[_ref].quantity,
                 }
-              : item;
-          }),
-          ...items.filter(
-            (item, index) =>
-              !indexes.has(
-                item.parent_id || item.sku || item.hs_code || `${ts}${index}`,
-              ),
-          ),
-        ],
-      };
+                : item;
+            }),
+            ...items.filter(
+              (item, index) =>
+                !indexes.has(
+                  item.parent_id || item.sku || item.hs_code || `${ts}${index}`,
+                ),
+            ),
+          ],
+        };
 
-      updateParcel(parcel_index, parcel_id)(update, { created: true });
-    };
+        updateParcel(parcel_index, parcel_id)(update, { created: true });
+      };
   const updateItem =
     (parcel_index: number, item_index: number, parcel_id?: string) =>
-    async ({ id, ...data }: CommodityType) => {
-      const parcel = (
-        !!parcel_id
-          ? state.shipment.parcels.find(({ id }) => id === parcel_id)
-          : state.shipment.parcels[parcel_index]
-      ) as ParcelType;
+      async ({ id, ...data }: CommodityType) => {
+        const parcel = (
+          !!parcel_id
+            ? state.shipment.parcels.find(({ id }) => id === parcel_id)
+            : state.shipment.parcels[parcel_index]
+        ) as ParcelType;
 
-      const update = {
-        ...parcel,
-        items: parcel.items.map((item, index) =>
-          index !== item_index ? item : { ...item, ...data },
-        ),
+        const update = {
+          ...parcel,
+          items: parcel.items.map((item, index) =>
+            index !== item_index ? item : { ...item, ...data },
+          ),
+        };
+
+        updateParcel(parcel_index, parcel_id)(update);
       };
-
-      updateParcel(parcel_index, parcel_id)(update);
-    };
   const removeParcel =
     (parcel_index: number, parcel_id?: string) => async () => {
       const update = {
@@ -481,58 +481,58 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
     };
   const removeItem =
     (parcel_index: number, item_index: number, item_id?: string) =>
-    async () => {
-      let change = {
-        deleted: true,
-        forcelocalUpdate: false,
-        manuallyUpdated: false,
-      };
-      let queue = () => Promise.resolve();
-      const parcel = state.shipment.parcels[parcel_index];
-      const update = {
-        ...parcel,
-        items: parcel.items.filter(({ id }, index) =>
-          !!item_id ? id !== item_id : index !== item_index,
-        ),
-      };
+      async () => {
+        let change = {
+          deleted: true,
+          forcelocalUpdate: false,
+          manuallyUpdated: false,
+        };
+        let queue = () => Promise.resolve();
+        const parcel = state.shipment.parcels[parcel_index];
+        const update = {
+          ...parcel,
+          items: parcel.items.filter(({ id }, index) =>
+            !!item_id ? id !== item_id : index !== item_index,
+          ),
+        };
 
-      // If shipment is persisted on the server
-      if (!isLocalDraft(state.shipment.id) && !!item_id) {
-        const item = parcel.items.find(
-          ({ id }) => id === item_id,
-        ) as CommodityType;
-        const commodity = (state.shipment.customs?.commodities || []).find(
-          (cdt) =>
-            !!cdt.id &&
-            commodityMatch(item, state.shipment.customs?.commodities),
-        );
-        // send a request to remove item/commodity
-        await mutation.discardCommodity.mutateAsync({ id: item!.id });
-        if (
-          !!commodity?.id &&
-          (state.shipment.customs?.commodities || []).length > 1
-        ) {
-          Object.assign(change, {
-            forcelocalUpdate: true,
-            manuallyUpdated: true,
-          });
-          queue = () =>
-            removeCommodity(-1, state.shipment.customs?.id)(commodity.id);
+        // If shipment is persisted on the server
+        if (!isLocalDraft(state.shipment.id) && !!item_id) {
+          const item = parcel.items.find(
+            ({ id }) => id === item_id,
+          ) as CommodityType;
+          const commodity = (state.shipment.customs?.commodities || []).find(
+            (cdt) =>
+              !!cdt.id &&
+              commodityMatch(item, state.shipment.customs?.commodities),
+          );
+          // send a request to remove item/commodity
+          await mutation.discardCommodity.mutateAsync({ id: item!.id });
+          if (
+            !!commodity?.id &&
+            (state.shipment.customs?.commodities || []).length > 1
+          ) {
+            Object.assign(change, {
+              forcelocalUpdate: true,
+              manuallyUpdated: true,
+            });
+            queue = () =>
+              removeCommodity(-1, state.shipment.customs?.id)(commodity.id);
+          }
         }
-      }
 
-      updateParcel(parcel_index)(update, change);
-      queue();
-    };
+        updateParcel(parcel_index)(update, change);
+        queue();
+      };
   const updateCustoms =
     (customs_id?: string) =>
-    async (data: CustomsType | null, change?: ChangeType) => {
-      if (!isLocalDraft(state.shipment.id) && !!customs_id && data === null) {
-        await mutation.discardCustoms.mutateAsync({ id: customs_id as string });
-      }
+      async (data: CustomsType | null, change?: ChangeType) => {
+        if (!isLocalDraft(state.shipment.id) && !!customs_id && data === null) {
+          await mutation.discardCustoms.mutateAsync({ id: customs_id as string });
+        }
 
-      updateShipment({ customs: data }, change);
-    };
+        updateShipment({ customs: data }, change);
+      };
   const addCommodities = async (
     items: CommodityType[],
     customs_id?: string,
@@ -552,17 +552,17 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
   };
   const updateCommodity =
     (cdt_index: number, customs_id?: string) =>
-    async ({ id, ...data }: CommodityType, change?: ChangeType) => {
-      change = change || { forcelocalUpdate: !customs_id };
-      const update = {
-        ...(state.shipment.customs as CustomsType),
-        commodities: (state.shipment.customs?.commodities || []).map(
-          (item, index) => (index !== cdt_index ? item : { ...item, ...data }),
-        ),
-      };
+      async ({ id, ...data }: CommodityType, change?: ChangeType) => {
+        change = change || { forcelocalUpdate: !customs_id };
+        const update = {
+          ...(state.shipment.customs as CustomsType),
+          commodities: (state.shipment.customs?.commodities || []).map(
+            (item, index) => (index !== cdt_index ? item : { ...item, ...data }),
+          ),
+        };
 
-      updateCustoms(state.shipment.customs?.id)(update, change);
-    };
+        updateCustoms(state.shipment.customs?.id)(update, change);
+      };
   const removeCommodity =
     (cdt_index: number, customs_id?: string) => async (cdt_id?: string) => {
       const change = { deleted: true, forcelocalUpdate: !customs_id };

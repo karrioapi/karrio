@@ -1,8 +1,8 @@
-import { AdminSidebar } from "@karrio/ui/components/admin-sidebar";
-import { AdminNavbar } from "@karrio/ui/components/admin-navbar";
+import { AdminSidebar } from "@karrio/ui/core/components/admin-sidebar";
+import { AdminNavbar } from "@karrio/ui/core/components/admin-navbar";
 import { KARRIO_PUBLIC_URL, MULTI_TENANT } from "@karrio/lib";
-import { Notifier } from "@karrio/ui/components/notifier";
-import { AppLink } from "@karrio/ui/components/app-link";
+import { Notifier } from "@karrio/ui/core/components/notifier";
+import { AppLink } from "@karrio/ui/core/components/app-link";
 import { Providers } from "@karrio/hooks/providers";
 import { auth } from "@karrio/core/context/auth";
 import { redirect } from "next/navigation";

@@ -12,7 +12,6 @@
     "@karrio/admin": "*",
     "@karrio/core": "*",
     "@karrio/hooks": "*",
-    "@karrio/insiders": "*",
     "@karrio/lib": "*",
     "@karrio/types": "*",
     "@karrio/ui": "*",

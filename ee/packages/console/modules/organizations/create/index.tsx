@@ -2,15 +2,15 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Button } from "@karrio/insiders/components/ui/button";
-import { Input } from "@karrio/insiders/components/ui/input";
+import { Button } from "@karrio/ui/components/ui/button";
+import { Input } from "@karrio/ui/components/ui/input";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@karrio/insiders/components/ui/card";
+} from "@karrio/ui/components/ui/card";
 import { trpc } from "@karrio/console/trpc/client";
 
 export default function CreateOrganizationPage() {

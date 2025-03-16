@@ -6,7 +6,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@karrio/insiders/components/ui/card";
+} from "@karrio/ui/components/ui/card";
 import {
   Table,
   TableBody,
@@ -14,21 +14,21 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@karrio/insiders/components/ui/table";
+} from "@karrio/ui/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuCheckboxItem,
   DropdownMenuTrigger,
-} from "@karrio/insiders/components/ui/dropdown-menu";
-import { Button } from "@karrio/insiders/components/ui/button";
-import { Input } from "@karrio/insiders/components/ui/input";
-import { Label } from "@karrio/insiders/components/ui/label";
-import { useToast } from "@karrio/insiders/hooks/use-toast";
-import { useState } from "react";
+} from "@karrio/ui/components/ui/dropdown-menu";
 import { GetAccounts_accounts_edges_node as Account } from "@karrio/types/graphql/admin/types";
+import { Button } from "@karrio/ui/components/ui/button";
+import { Input } from "@karrio/ui/components/ui/input";
+import { Label } from "@karrio/ui/components/ui/label";
+import { useToast } from "@karrio/ui/hooks/use-toast";
 import { MoreHorizontal } from "lucide-react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -37,7 +37,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@karrio/insiders/components/ui/dialog";
+} from "@karrio/ui/components/ui/dialog";
 
 type Column = {
   id: string;
