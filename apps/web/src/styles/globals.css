@@ -1,0 +1,634 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Dashboard light theme variables */
+    --background: 0 0% 100%;
+    --foreground: 224 71.4% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 71.4% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71.4% 4.1%;
+    --primary: 259 71% 47%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 176 67% 69%;
+    --secondary-foreground: 252 24% 20%;
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 8.9% 46.1%;
+    --accent: 220 14.3% 95.9%;
+    --accent-foreground: 220.9 39.3% 11%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 262.1 83.3% 57.8%;
+    --radius: 0.3rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+
+    /* Documentation sidebar variables */
+    --sidebar-bg: #ffffff;
+    --sidebar-text: #333333;
+    --sidebar-border: #e5e7eb;
+  }
+
+  .dark,
+  [data-theme='dark'] {
+    /* Platform dark theme variables */
+    --background: 248 28% 16%;
+    --foreground: 0 0% 100%;
+    --card: 252 24% 20%;
+    --card-foreground: 0 0% 100%;
+    --popover: 252 24% 20%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 264 72% 47%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 176 67% 69%;
+    --secondary-foreground: 252 24% 20%;
+    --muted: 252 16% 26%;
+    --muted-foreground: 0 0% 70%;
+    --accent: 16 100% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 252 16% 26%;
+    --input: 252 16% 26%;
+    --ring: 264 72% 47%;
+    --radius: 0.5rem;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+
+    /* Documentation sidebar variables in dark mode */
+    --sidebar-bg: #0a0a0c;
+    --sidebar-text: #e5e7eb;
+    --sidebar-border: #27272a;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+  }
+
+  pre,
+  code {
+    font-family: var(--font-mono);
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  /* Default dark mode for platform */
+  .dark body {
+    background-color: #0f0826;
+    color: white;
+  }
+}
+
+/**
+ * SIDEBAR STYLING
+ * Critical mobile and desktop styles
+ * This needs to be high in the cascade to ensure it overrides other styles
+ */
+
+/* Sidebar styling for both desktop and mobile */
+.sidebar {
+  background-color: var(--sidebar-bg) !important;
+  color: var(--sidebar-text) !important;
+  border-color: var(--sidebar-border) !important;
+}
+
+/* Handle mobile-specific sidebar states */
+.sidebar[data-state="open"] {
+  background-color: var(--sidebar-bg) !important;
+}
+
+/* Apply to all children of the sidebar */
+.sidebar>*,
+.sidebar [role="dialog"],
+.sidebar div[data-state="open"] {
+  background-color: var(--sidebar-bg) !important;
+}
+
+/* Target the mobile dialog and any backdrop */
+[role="dialog"].sidebar,
+[role="dialog"] .sidebar,
+[role="dialog"] {
+  background-color: var(--sidebar-bg) !important;
+}
+
+/* Target any fixed or absolute positioned elements */
+.fixed .sidebar,
+.fixed.sidebar,
+.absolute .sidebar,
+.absolute.sidebar {
+  background-color: var(--sidebar-bg) !important;
+}
+
+/* Target the data-radix-portal-root with direct descendent elements */
+[data-radix-portal-root]>* {
+  background-color: var(--sidebar-bg) !important;
+}
+
+/* Target the mobile overlay/drawer directly */
+[data-state="open"][role="dialog"] {
+  background-color: var(--sidebar-bg) !important;
+}
+
+/* Sidebar content elements */
+.sidebar-header,
+.sidebar-content,
+.sidebar-footer,
+.sidebar-menu,
+.sidebar-group-content {
+  background-color: var(--sidebar-bg) !important;
+}
+
+/* Color of the dialog backdrop */
+[data-radix-popper-content-wrapper] {
+  background-color: var(--sidebar-bg) !important;
+}
+
+/* Specific dark mode overrides for sidebar */
+.dark .sidebar,
+.dark [role="dialog"].sidebar,
+.dark [role="dialog"] .sidebar,
+.dark [data-state="open"][role="dialog"] {
+  background-color: var(--sidebar-bg) !important;
+  color: var(--sidebar-text) !important;
+  border-color: var(--sidebar-border) !important;
+}
+
+/* Extra specificity for dark mode */
+.dark [data-radix-portal-root]>*,
+.dark [data-radix-portal-root]>*>*,
+.dark [data-radix-portal-root] [role="dialog"] {
+  background-color: var(--sidebar-bg) !important;
+}
+
+/* Force sidebar background in mobile view media query */
+@media (max-width: 767px) {
+
+  [data-radix-portal-root]>[role="dialog"],
+  [data-radix-portal-root] [data-state="open"],
+  [role="dialog"].sidebar,
+  [data-state="open"][role="dialog"],
+  [role="dialog"] {
+    background-color: var(--sidebar-bg) !important;
+  }
+}
+
+/*
+  DOCUMENTATION DARK MODE STYLING
+  ------------------------------
+  A simplified, standardized approach to dark mode
+  All selectors use the same specificity pattern
+*/
+
+/* Base styles for dark mode documentation pages */
+.dark .docs-page,
+.docs-dark .docs-page,
+[data-theme='dark'] .docs-page {
+  --docs-bg: #0d0d0d;
+  --docs-text: #ffffff;
+  --docs-border: #2b2b2b;
+  --docs-card-bg: #161616;
+  --docs-card-hover: #262626;
+  --docs-muted-text: #d4d4d8;
+  --docs-accent: #c084fc;
+  --docs-accent-hover: #d8b4fe;
+
+  background-color: var(--docs-bg);
+  color: var(--docs-text);
+}
+
+/* Main container and sidebar */
+.dark .docs-page .docs-container,
+.docs-dark .docs-page .docs-container,
+[data-theme='dark'] .docs-page .docs-container,
+.dark .docs-page .sidebar,
+.docs-dark .docs-page .sidebar,
+[data-theme='dark'] .docs-page .sidebar {
+  background-color: var(--docs-bg);
+  border-color: var(--docs-border);
+}
+
+/* Main content area */
+.dark .docs-page .docs-content,
+.docs-dark .docs-page .docs-content,
+[data-theme='dark'] .docs-page .docs-content {
+  background-color: var(--docs-bg);
+  padding: 16px;
+  padding-top: 0;
+}
+
+/* TOC styles */
+.dark .docs-page .toc-heading,
+.docs-dark .docs-page .toc-heading,
+[data-theme='dark'] .docs-page .toc-heading {
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.dark .docs-page .toc-item,
+.docs-dark .docs-page .toc-item,
+[data-theme='dark'] .docs-page .toc-item {
+  color: var(--docs-muted-text);
+}
+
+.dark .docs-page .toc-item:hover,
+.docs-dark .docs-page .toc-item:hover,
+[data-theme='dark'] .docs-page .toc-item:hover {
+  color: var(--docs-accent);
+}
+
+.dark .docs-page .toc-item.active,
+.docs-dark .docs-page .toc-item.active,
+[data-theme='dark'] .docs-page .toc-item.active {
+  color: rgb(192, 132, 252) !important;
+  /* purple-400 */
+  font-weight: 500 !important;
+}
+
+/* Feature Cards (specific styling) */
+.dark .docs-page a.group .relative.flex.flex-col.h-full,
+.docs-dark .docs-page a.group .relative.flex.flex-col.h-full,
+[data-theme='dark'] .docs-page a.group .relative.flex.flex-col.h-full {
+  background-color: var(--docs-card-bg);
+  border-color: var(--docs-border);
+}
+
+.dark .docs-page a.group:hover .relative.flex.flex-col.h-full,
+.docs-dark .docs-page a.group:hover .relative.flex.flex-col.h-full,
+[data-theme='dark'] .docs-page a.group:hover .relative.flex.flex-col.h-full {
+  background-color: var(--docs-card-hover);
+  border-color: #404040;
+}
+
+/* Card icons */
+.dark .docs-page a.group .rounded-full,
+.docs-dark .docs-page a.group .rounded-full,
+[data-theme='dark'] .docs-page a.group .rounded-full {
+  background-color: var(--docs-card-hover);
+  color: var(--docs-text);
+}
+
+.dark .docs-page a.group:hover .rounded-full,
+.docs-dark .docs-page a.group:hover .rounded-full,
+[data-theme='dark'] .docs-page a.group:hover .rounded-full {
+  background-color: #404040;
+}
+
+/* Text colors in cards */
+.dark .docs-page a.group h3,
+.docs-dark .docs-page a.group h3,
+[data-theme='dark'] .docs-page a.group h3 {
+  color: var(--docs-text);
+}
+
+.dark .docs-page a.group p,
+.docs-dark .docs-page a.group p,
+[data-theme='dark'] .docs-page a.group p {
+  color: var(--docs-muted-text);
+}
+
+/* Gradient banner/hero styles */
+.dark .docs-page div[style*="background-image"],
+.docs-dark .docs-page div[style*="background-image"],
+[data-theme='dark'] .docs-page div[style*="background-image"],
+.dark .docs-page .rounded-lg[style*="background-image"],
+.docs-dark .docs-page .rounded-lg[style*="background-image"],
+[data-theme='dark'] .docs-page .rounded-lg[style*="background-image"] {
+  background-image: linear-gradient(to bottom right, #5722cc, #47a3ff) !important;
+  border: none;
+}
+
+/* Text within the hero/banner */
+.dark .docs-page div[style*="background"] h1,
+.docs-dark .docs-page div[style*="background"] h1,
+[data-theme='dark'] .docs-page div[style*="background"] h1,
+.dark .docs-page div[style*="background"] p,
+.docs-dark .docs-page div[style*="background"] p,
+[data-theme='dark'] .docs-page div[style*="background"] p {
+  color: white !important;
+}
+
+/* Ensure any element inside the gradient banner has transparent background */
+.dark .docs-page div[style*="background"] *,
+.docs-dark .docs-page div[style*="background"] *,
+[data-theme='dark'] .docs-page div[style*="background"] * {
+  background-color: transparent;
+}
+
+/* Make headings white in dark mode */
+.dark .docs-page h1,
+.dark .docs-page h2,
+.dark .docs-page h3,
+.dark .docs-page h4,
+.dark .docs-page h5,
+.dark .docs-page h6,
+.docs-dark .docs-page h1,
+.docs-dark .docs-page h2,
+.docs-dark .docs-page h3,
+.docs-dark .docs-page h4,
+.docs-dark .docs-page h5,
+.docs-dark .docs-page h6,
+[data-theme='dark'] .docs-page h1,
+[data-theme='dark'] .docs-page h2,
+[data-theme='dark'] .docs-page h3,
+[data-theme='dark'] .docs-page h4,
+[data-theme='dark'] .docs-page h5,
+[data-theme='dark'] .docs-page h6 {
+  color: var(--docs-text);
+}
+
+/* Additional styles for the rest of the page can be added below */
+
+/* Direct targeting of feature cards - more specific for FeatureCards from the component */
+.dark .docs-page a.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg,
+.docs-dark .docs-page a.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg,
+[data-theme='dark'] .docs-page a.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg {
+  background-color: var(--docs-card-bg) !important;
+  border-color: var(--docs-border) !important;
+  color: var(--docs-text) !important;
+}
+
+/* Hover state for feature cards */
+.dark .docs-page a.no-underline:hover div.relative.flex.flex-col.h-full.items-start.rounded-lg,
+.docs-dark .docs-page a.no-underline:hover div.relative.flex.flex-col.h-full.items-start.rounded-lg,
+[data-theme='dark'] .docs-page a.no-underline:hover div.relative.flex.flex-col.h-full.items-start.rounded-lg {
+  background-color: var(--docs-card-hover) !important;
+  border-color: #404040 !important;
+}
+
+/* Card icons styling with higher specificity */
+.dark .docs-page a.no-underline div.flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full,
+.docs-dark .docs-page a.no-underline div.flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full,
+[data-theme='dark'] .docs-page a.no-underline div.flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full {
+  background-color: var(--docs-card-hover) !important;
+  color: var(--docs-text) !important;
+}
+
+/* Card icons hover state */
+.dark .docs-page a.no-underline:hover div.flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full,
+.docs-dark .docs-page a.no-underline:hover div.flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full,
+[data-theme='dark'] .docs-page a.no-underline:hover div.flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full {
+  background-color: #404040 !important;
+}
+
+/* Ensure the purple gradient banner maintains its styling in dark mode */
+.dark .docs-page div.rounded-lg[style*="linear-gradient"],
+.docs-dark .docs-page div.rounded-lg[style*="linear-gradient"],
+[data-theme='dark'] .docs-page div.rounded-lg[style*="linear-gradient"] {
+  background: linear-gradient(to bottom right, #5722cc, #47a3ff) !important;
+  border: none !important;
+}
+
+/* Also target the exact style from the rendered page */
+.dark .docs-page div.rounded-lg[style*="background: linear-gradient"],
+.docs-dark .docs-page div.rounded-lg[style*="background: linear-gradient"],
+[data-theme='dark'] .docs-page div.rounded-lg[style*="background: linear-gradient"] {
+  background: linear-gradient(to bottom right, #5722cc, #47a3ff) !important;
+  border: none !important;
+}
+
+/* Very specific targeting for the intro banner */
+.dark .docs-page>div>div>div>div.rounded-lg,
+.docs-dark .docs-page>div>div>div>div.rounded-lg,
+[data-theme='dark'] .docs-page>div>div>div>div.rounded-lg {
+  background: linear-gradient(to bottom right, #5722cc, #47a3ff) !important;
+  border: none !important;
+}
+
+/* Additional specific banner styles - very specifically for the intro page banner */
+.dark .docs-page .bg-gradient-to-br,
+.docs-dark .docs-page .bg-gradient-to-br,
+[data-theme='dark'] .docs-page .bg-gradient-to-br {
+  background: linear-gradient(to bottom right, #5722cc, #47a3ff) !important;
+}
+
+/* Target any element with background style attribute containing gradient */
+.dark .docs-page div[style*="background:"],
+.docs-dark .docs-page div[style*="background:"],
+[data-theme='dark'] .docs-page div[style*="background:"] {
+  background: inherit !important;
+}
+
+/* Very specific selector for the purple banner */
+.dark .docs-page div.rounded-lg[style*="background:"],
+.docs-dark .docs-page div.rounded-lg[style*="background:"],
+[data-theme='dark'] .docs-page div.rounded-lg[style*="background:"] {
+  background: linear-gradient(to bottom right, #5722cc, #47a3ff) !important;
+}
+
+/* For the dark box in the banner with the product name */
+.dark .docs-page div[style*="background:#000"],
+.docs-dark .docs-page div[style*="background:#000"],
+[data-theme='dark'] .docs-page div[style*="background:#000"] {
+  background-color: #000 !important;
+  color: white !important;
+}
+
+/* Direct targeting of FeatureCard component */
+.dark .docs-page .group.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg,
+.docs-dark .docs-page .group.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg,
+[data-theme='dark'] .docs-page .group.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg {
+  background-color: var(--docs-card-bg) !important;
+  border-color: var(--docs-border) !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Card hover state */
+.dark .docs-page .group.no-underline:hover div.relative.flex.flex-col.h-full.items-start.rounded-lg,
+.docs-dark .docs-page .group.no-underline:hover div.relative.flex.flex-col.h-full.items-start.rounded-lg,
+[data-theme='dark'] .docs-page .group.no-underline:hover div.relative.flex.flex-col.h-full.items-start.rounded-lg,
+.dark .docs-page .group.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg.group-hover\:bg-gray-50,
+.docs-dark .docs-page .group.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg.group-hover\:bg-gray-50,
+[data-theme='dark'] .docs-page .group.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg.group-hover\:bg-gray-50 {
+  background-color: var(--docs-card-hover) !important;
+  border-color: #404040 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Target card icon container */
+.dark .docs-page .card-icon,
+.docs-dark .docs-page .card-icon,
+[data-theme='dark'] .docs-page .card-icon,
+.dark .docs-page .flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full,
+.docs-dark .docs-page .flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full,
+[data-theme='dark'] .docs-page .flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full {
+  background-color: var(--docs-card-hover) !important;
+  color: var(--docs-text) !important;
+}
+
+/* Card icon hover state */
+.dark .docs-page .group:hover .card-icon,
+.docs-dark .docs-page .group:hover .card-icon,
+[data-theme='dark'] .docs-page .group:hover .card-icon,
+.dark .docs-page .group:hover .flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full,
+.docs-dark .docs-page .group:hover .flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full,
+[data-theme='dark'] .docs-page .group:hover .flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full {
+  background-color: #404040 !important;
+}
+
+/* Target by card container class directly */
+.dark .docs-page .card-container,
+.docs-dark .docs-page .card-container,
+[data-theme='dark'] .docs-page .card-container {
+  background-color: var(--docs-card-bg) !important;
+  border-color: var(--docs-border) !important;
+}
+
+.dark .docs-page .group:hover .card-container,
+.docs-dark .docs-page .group:hover .card-container,
+[data-theme='dark'] .docs-page .group:hover .card-container {
+  background-color: var(--docs-card-hover) !important;
+  border-color: #404040 !important;
+}
+
+/* Footer styling in dark mode */
+.dark .docs-page footer,
+.docs-dark .docs-page footer,
+[data-theme='dark'] .docs-page footer {
+  background-color: var(--docs-bg) !important;
+  border-color: var(--docs-border) !important;
+  color: var(--docs-text) !important;
+}
+
+.dark .docs-page footer a,
+.docs-dark .docs-page footer a,
+[data-theme='dark'] .docs-page footer a {
+  color: #9ca3af !important;
+  /* gray-400 */
+}
+
+.dark .docs-page footer a:hover,
+.docs-dark .docs-page footer a:hover,
+[data-theme='dark'] .docs-page footer a:hover {
+  color: white !important;
+}
+
+.dark .docs-page footer .text-gray-500,
+.docs-dark .docs-page footer .text-gray-500,
+[data-theme='dark'] .docs-page footer .text-gray-500 {
+  color: #9ca3af !important;
+  /* gray-400 */
+}
+
+/* Override any lingering background-color or text-color classes */
+.dark .docs-page .dark\:bg-neutral-900,
+.docs-dark .docs-page .dark\:bg-neutral-900,
+[data-theme='dark'] .docs-page .dark\:bg-neutral-900 {
+  background-color: var(--docs-card-bg) !important;
+}
+
+.dark .docs-page .dark\:bg-neutral-800,
+.docs-dark .docs-page .dark\:bg-neutral-800,
+[data-theme='dark'] .docs-page .dark\:bg-neutral-800 {
+  background-color: var(--docs-card-hover) !important;
+}
+
+.dark .docs-page .dark\:border-neutral-800,
+.docs-dark .docs-page .dark\:border-neutral-800,
+[data-theme='dark'] .docs-page .dark\:border-neutral-800 {
+  border-color: var(--docs-border) !important;
+}
+
+.dark .docs-page .dark\:text-white,
+.docs-dark .docs-page .dark\:text-white,
+[data-theme='dark'] .docs-page .dark\:text-white {
+  color: var(--docs-text) !important;
+}
+
+.dark .docs-page .dark\:text-neutral-300,
+.docs-dark .docs-page .dark\:text-neutral-300,
+[data-theme='dark'] .docs-page .dark\:text-neutral-300 {
+  color: var(--docs-muted-text) !important;
+}
+
+/* Extremely specific targeting for the feature cards to overcome utility class specificity */
+.dark .docs-page .group.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg.p-6.dark\:bg-neutral-900,
+.docs-dark .docs-page .group.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg.p-6.dark\:bg-neutral-900,
+[data-theme='dark'] .docs-page .group.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg.p-6.dark\:bg-neutral-900 {
+  background-color: var(--docs-card-bg) !important;
+  border-color: var(--docs-border) !important;
+}
+
+/* Force dark mode colors onto cards by directly targeting the actual component structure */
+.dark .docs-page .group .card-container,
+.docs-dark .docs-page .group .card-container,
+[data-theme='dark'] .docs-page .group .card-container {
+  background-color: var(--docs-card-bg) !important;
+  border-color: var(--docs-border) !important;
+}
+
+/* Override Tailwind's dark mode utility classes */
+.dark .docs-page .dark\:bg-neutral-900,
+.docs-dark .docs-page .dark\:bg-neutral-900,
+[data-theme='dark'] .docs-page .dark\:bg-neutral-900 {
+  background-color: var(--docs-card-bg) !important;
+}
+
+.dark .docs-page .dark\:group-hover\:bg-neutral-800,
+.docs-dark .docs-page .dark\:group-hover\:bg-neutral-800,
+[data-theme='dark'] .docs-page .dark\:group-hover\:bg-neutral-800,
+.dark .docs-page .group:hover .dark\:bg-neutral-900,
+.docs-dark .docs-page .group:hover .dark\:bg-neutral-900,
+[data-theme='dark'] .docs-page .group:hover .dark\:bg-neutral-900 {
+  background-color: var(--docs-card-hover) !important;
+}
+
+/* More aggressive footer styling */
+.dark .docs-page footer.w-full,
+.docs-dark .docs-page footer.w-full,
+[data-theme='dark'] .docs-page footer.w-full {
+  background-color: transparent !important;
+  border-color: var(--docs-border) !important;
+}
+
+/* Target the nested border and background utility classes directly */
+.dark .docs-page footer.dark\:bg-neutral-950,
+.docs-dark .docs-page footer.dark\:bg-neutral-950,
+[data-theme='dark'] .docs-page footer.dark\:bg-neutral-950 {
+  background-color: transparent !important;
+}
+
+.dark .docs-page footer.dark\:border-neutral-800,
+.docs-dark .docs-page footer.dark\:border-neutral-800,
+[data-theme='dark'] .docs-page footer.dark\:border-neutral-800 {
+  border-color: var(--docs-border) !important;
+}
+
+/* Fix for the nested card container */
+.dark .docs-page .group div.rounded-lg,
+.docs-dark .docs-page .group div.rounded-lg,
+[data-theme='dark'] .docs-page .group div.rounded-lg {
+  background-color: var(--docs-card-bg);
+  border-color: var(--docs-border);
+}
+
+.dark .docs-page .group:hover div.rounded-lg,
+.docs-dark .docs-page .group:hover div.rounded-lg,
+[data-theme='dark'] .docs-page .group:hover div.rounded-lg {
+  background-color: var(--docs-card-hover);
+  border-color: #404040;
+}

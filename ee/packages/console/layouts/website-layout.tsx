@@ -22,7 +22,7 @@ export async function WebsiteLayout({
             <div className="flex items-center space-x-0">
               <MobileMenu />
 
-              <Link href="https://karrio.io" className="flex items-center mr-4">
+              <Link href="/" className="flex items-center mr-4">
                 <Image
                   src="/logo.svg"
                   alt="Karrio Logo"
