@@ -1,8 +1,6 @@
 from jinja2 import Template
 
-
 EMPTY_FILE_TEMPLATE = Template("")
-
 
 MODELS_TEMPLATE = Template(
     """
@@ -268,9 +266,11 @@ METADATA = Metadata(
     Settings=Settings,
     # Data Units
     is_hub=False,
-    # options=units.ShippingOption,
-    # services=units.ShippingService,
-    # connection_configs=utils.ConnectionConfig,
+    options=units.ShippingOption,
+    package_presets=units.PackagePresets,
+    packaging_types=units.PackagingType,
+    services=units.ShippingService,
+    connection_configs=units.ConnectionConfig,
 )
 
 """
@@ -755,6 +755,33 @@ class PackagingType(lib.StrEnum):
     small_box = PACKAGE
     medium_box = PACKAGE
     your_packaging = PACKAGE
+
+
+class PackagePresets(lib.Enum):
+    """ Carrier specific package presets """
+    small_box = {
+        "weight": 1.0,
+        "width": 10.0,
+        "height": 10.0,
+        "length": 10.0,
+    }
+    medium_box = {
+        "weight": 5.0,
+        "width": 20.0,
+        "height": 20.0,
+        "length": 20.0,
+    }
+    your_packaging = {}
+
+
+class ConnectionConfig(lib.Enum):
+    """ Carrier specific connection config """
+    production = {
+        "server_url": "https://api.{{id}}.com",
+    }
+    test = {
+        "server_url": "https://api.test.{{id}}.com",
+    }
 
 
 class ShippingService(lib.StrEnum):
@@ -1356,7 +1383,6 @@ def pickup_update_request(
 
 """
 )
-
 
 TEST_IMPORTS_TEMPLATE = Template(
     """{% if "rating" in features %}
