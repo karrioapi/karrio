@@ -159,15 +159,16 @@ The CLI provides the following commands:
 
 #### Carrier Management
 
--   `kcli carrier create-carrier <name> <display_name>` - Create a new carrier integration
--   `kcli carrier create-carrier-interactive` - Create a new carrier integration with interactive prompts
+-   `kcli carrier create-carrier` - Create a new carrier integration (prompts if arguments missing)
+-   `kcli carrier create-carrier --carrier-name=NAME --display-name="Display Name"` - Create with explicit arguments
+-   `kcli carrier create-carrier-interactive` - Always use interactive prompts
 -   `kcli carrier troubleshoot [carrier_name]` - Diagnose issues with carrier integrations
 -   `kcli carrier start-docs` - Start the documentation server for carrier integrations
 
 #### Plugin Management
 
 -   `kcli plugin create-plugin` - Create a new plugin in the plugins directory (with prompts)
--   `kcli plugin create-plugin-interactive` - Create a new plugin with interactive prompts
+-   `kcli plugin create-plugin-interactive` - Create a new plugin with fully interactive workflow
 
 #### SDK and Development
 

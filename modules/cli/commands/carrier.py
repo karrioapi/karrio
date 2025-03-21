@@ -102,13 +102,26 @@ def ensure_directory_structure():
 
 @app.command()
 def create_carrier(
-    carrier_name: str=typer.Argument(..., help="The slug name for the carrier (e.g., fedex_custom)"),
-    display_name: str=typer.Argument(..., help="The display name for the carrier (e.g., \"FedEx Custom\")"),
+    carrier_name: str=typer.Option(None, help="The slug name for the carrier (e.g., fedex_custom)"),
+    display_name: str=typer.Option(None, help="The display name for the carrier (e.g., \"FedEx Custom\")"),
     dry_run: bool=typer.Option(False, "--dry-run", help="Run in dry-run mode without making changes"),
     no_prompt: bool=typer.Option(False, "--no-prompt", help="Skip interactive prompts and use default values")
 ):
     """Create a new carrier integration with the specified name and display name."""
     ensure_directory_structure()
+    
+    # If arguments are not provided and prompts are allowed, request them interactively
+    if carrier_name is None and not no_prompt:
+        carrier_name = typer.prompt("Enter the carrier slug (e.g., fedex_custom)")
+    elif carrier_name is None:
+        typer.echo("Error: carrier_name is required when --no-prompt is used")
+        sys.exit(1)
+        
+    if display_name is None and not no_prompt:
+        display_name = typer.prompt("Enter the display name (e.g., \"FedEx Custom\")")
+    elif display_name is None:
+        typer.echo("Error: display_name is required when --no-prompt is used")
+        sys.exit(1)
     
     if not dry_run:
         # Run the carrier creation script
