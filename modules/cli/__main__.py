@@ -1,13 +1,7 @@
 import typer
-import commands.sdk as sdk
-import commands.docs as docs
-import commands.login as login
-import commands.codegen as codegen
-import commands.carrier as carrier
-import commands.plugin as plugin
-import resources.shipments as shipments
-import resources.orders as orders
-import resources.trackers as trackers
+from . import commands
+from .commands import sdk, docs, login, codegen, carrier, plugin
+from .resources import shipments, orders, trackers
 
 app = typer.Typer()
 

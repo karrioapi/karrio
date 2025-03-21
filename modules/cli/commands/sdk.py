@@ -4,8 +4,8 @@ import typer
 import string
 import pathlib
 from rich.progress import Progress, SpinnerColumn, TextColumn
-import commands.templates as templates
-import utils
+from . import templates
+from .. import utils
 import typing
 import datetime
 
@@ -334,15 +334,15 @@ app = typer.Typer()
 
 @app.command()
 def add_extension(
-    carrier_slug: str = typer.Option(..., prompt=True),
-    display_name: str = typer.Option(..., prompt=True),
-    features: typing.Optional[str] = typer.Option(
+    carrier_slug: str=typer.Option(..., prompt=True),
+    display_name: str=typer.Option(..., prompt=True),
+    features: typing.Optional[str]=typer.Option(
         ", ".join(utils.DEFAULT_FEATURES), prompt=True
     ),
-    version: typing.Optional[str] = typer.Option(
+    version: typing.Optional[str]=typer.Option(
         f"{datetime.datetime.now().strftime('%Y.%-m')}", prompt=True
     ),
-    is_xml_api: typing.Optional[bool] = typer.Option(False, prompt="Is XML API?"),
+    is_xml_api: typing.Optional[bool]=typer.Option(False, prompt="Is XML API?"),
 ):
     typer.confirm(
         f'Generate new carrier: "{display_name}" extension with id "{carrier_slug}" and features [{features}]',
@@ -360,12 +360,12 @@ def add_extension(
 
 @app.command()
 def add_features(
-    carrier_slug: str = typer.Option(..., prompt=True),
-    display_name: str = typer.Option(..., prompt=True),
-    features: typing.Optional[str] = typer.Option(
+    carrier_slug: str=typer.Option(..., prompt=True),
+    display_name: str=typer.Option(..., prompt=True),
+    features: typing.Optional[str]=typer.Option(
         ", ".join(utils.DEFAULT_FEATURES), prompt=True
     ),
-    is_xml_api: typing.Optional[bool] = typer.Option(False, prompt="Is XML API?"),
+    is_xml_api: typing.Optional[bool]=typer.Option(False, prompt="Is XML API?"),
 ):
     features = features.split(",")
     features = [feature.strip() for feature in features]

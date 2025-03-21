@@ -6,7 +6,7 @@ from typing import Optional, Dict, Any
 from pathlib import Path
 
 # Import shared utilities
-from commands.carrier import find_karrio_root
+from .carrier import find_karrio_root
 
 app = typer.Typer(help="Plugin management commands")
 

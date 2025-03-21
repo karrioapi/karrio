@@ -102,26 +102,28 @@ def ensure_directory_structure():
 
 @app.command()
 def create_carrier(
-    carrier_name: str=typer.Option(None, help="The slug name for the carrier (e.g., fedex_custom)"),
-    display_name: str=typer.Option(None, help="The display name for the carrier (e.g., \"FedEx Custom\")"),
+    carrier_name: str=typer.Option(None, prompt=True, help="The slug name for the carrier (e.g., fedex_custom)"),
+    display_name: str=typer.Option(None, prompt=True, help="The display name for the carrier (e.g., \"FedEx Custom\")"),
     dry_run: bool=typer.Option(False, "--dry-run", help="Run in dry-run mode without making changes"),
     no_prompt: bool=typer.Option(False, "--no-prompt", help="Skip interactive prompts and use default values")
 ):
     """Create a new carrier integration with the specified name and display name."""
     ensure_directory_structure()
     
-    # If arguments are not provided and prompts are allowed, request them interactively
-    if carrier_name is None and not no_prompt:
-        carrier_name = typer.prompt("Enter the carrier slug (e.g., fedex_custom)")
-    elif carrier_name is None:
-        typer.echo("Error: carrier_name is required when --no-prompt is used")
+    # If no_prompt is true, ensure required parameters are provided
+    if no_prompt and (carrier_name is None or display_name is None):
+        typer.echo("Error: carrier_name and display_name are required when --no-prompt is used")
         sys.exit(1)
-        
-    if display_name is None and not no_prompt:
-        display_name = typer.prompt("Enter the display name (e.g., \"FedEx Custom\")")
-    elif display_name is None:
-        typer.echo("Error: display_name is required when --no-prompt is used")
-        sys.exit(1)
+    
+    # First use the official add_extension command
+    add_extension(
+        carrier_slug=carrier_name,
+        display_name=display_name,
+        features="tracking,rating,shipping",
+        version="2024.3",
+        is_xml=False,
+        no_prompt=no_prompt
+    )
     
     if not dry_run:
         # Run the carrier creation script
@@ -153,11 +155,16 @@ def create_carrier_interactive():
 
 @app.command()
 def troubleshoot(
-    carrier_name: Optional[str]=typer.Argument(None, help="The name of the carrier to troubleshoot"),
+    carrier_name: Optional[str]=typer.Option(None, prompt=True, help="The name of the carrier to troubleshoot"),
     no_prompt: bool=typer.Option(False, "--no-prompt", help="Skip interactive prompts and use default values")
 ):
     """Diagnose common issues with carrier integrations."""
     ensure_directory_structure()
+    
+    # If no_prompt is true and carrier_name is required
+    if no_prompt and carrier_name is None:
+        typer.echo("Error: carrier_name is required when --no-prompt is used")
+        sys.exit(1)
     
     args = []
     if carrier_name:
@@ -178,3 +185,158 @@ def start_docs(
     if no_prompt:
         args.append("--no-prompt")
     run_script("start-docs.sh", args) 
+
+
+@app.command()
+def run_tests(
+    verbose: bool=typer.Option(True, "--verbose", "-v", help="Run tests in verbose mode"),
+    coverage: bool=typer.Option(False, "--coverage", "-c", help="Run tests with coverage"),
+    no_prompt: bool=typer.Option(False, "--no-prompt", help="Skip interactive prompts and use default values")
+):
+    """Run tests for carrier integrations."""
+    ensure_directory_structure()
+    
+    args = []
+    if verbose:
+        args.append("--verbose")
+    if coverage:
+        args.append("--coverage")
+    if no_prompt:
+        args.append("--no-prompt")
+    run_script("run-all-tests.sh", args)
+
+
+@app.command()
+def generate_api(
+    no_prompt: bool=typer.Option(False, "--no-prompt", help="Skip interactive prompts and use default values")
+):
+    """Generate API code from JSON schemas."""
+    ensure_directory_structure()
+    
+    args = []
+    if no_prompt:
+        args.append("--no-prompt")
+    
+    # Run the generate script in each carrier directory
+    karrio_root = find_karrio_root()
+    plugins_path = karrio_root / "plugins"
+    for carrier_dir in plugins_path.glob("*"):
+        if (carrier_dir / "generate").exists():
+            typer.echo(f"Generating API code for {carrier_dir.name}...")
+            subprocess.run(["./generate"], cwd=str(carrier_dir), check=True)
+
+
+@app.command()
+def migrate_structure(
+    carrier_name: str=typer.Option(None, prompt=True, help="Name of the carrier to migrate"),
+    dry_run: bool=typer.Option(False, "--dry-run", help="Show what would be done without making changes"),
+    no_prompt: bool=typer.Option(False, "--no-prompt", help="Skip interactive prompts and use default values")
+):
+    """Migrate a carrier to the new structure."""
+    ensure_directory_structure()
+    
+    # If no_prompt is true, ensure required parameters are provided
+    if no_prompt and carrier_name is None:
+        typer.echo("Error: carrier_name is required when --no-prompt is used")
+        sys.exit(1)
+    
+    args = [carrier_name]
+    if dry_run:
+        args.append("--dry-run")
+    if no_prompt:
+        args.append("--no-prompt")
+    run_script("migrate-carrier.sh", args)
+
+
+@app.command()
+def add_extension(
+    carrier_slug: str=typer.Option(None, prompt=True, help="Karrio unique carrier_name"),
+    display_name: str=typer.Option(None, prompt=True, help="Carrier label used throughout the app"),
+    features: str=typer.Option(
+        "tracking,rating,shipping",
+        help="The carrier features to integrate (comma-separated)"
+    ),
+    version: str=typer.Option("2024.3", "--version", "-v", help="Extension initial version"),
+    is_xml: bool=typer.Option(
+        False,
+        "--xml/--json",
+        "-x/-j",
+        help="Specify whether the carrier API data format is XML"
+    ),
+    no_prompt: bool=typer.Option(
+        False,
+        "--no-prompt",
+        help="Skip interactive prompts and use default values"
+    )
+):
+    """Add a new carrier extension following Karrio's official format."""
+    ensure_directory_structure()
+    
+    karrio_root = find_karrio_root()
+    connectors_path = karrio_root / "modules" / "connectors"
+    
+    # Find a suitable template carrier
+    template_carrier = None
+    preferred_carriers = ["ups", "fedex", "dhl"]
+    
+    # First try preferred carriers
+    for carrier in preferred_carriers:
+        if (connectors_path / carrier).exists():
+            template_carrier = carrier
+            break
+    
+    # If no preferred carrier found, use the first available non-test carrier
+    if not template_carrier:
+        for carrier_dir in connectors_path.glob("*"):
+            if carrier_dir.is_dir() and not carrier_dir.name.startswith("test"):
+                template_carrier = carrier_dir.name
+                break
+    
+    if not template_carrier:
+        typer.echo("Error: No template carrier found in modules/connectors/")
+        sys.exit(1)
+    
+    typer.echo(f"Using {template_carrier} as template for new carrier...")
+    
+    # Copy template carrier structure
+    source_carrier = connectors_path / template_carrier
+    new_carrier = connectors_path / carrier_slug
+    
+    # Copy template carrier files
+    if source_carrier.exists() and not new_carrier.exists():
+        shutil.copytree(str(source_carrier), str(new_carrier), dirs_exist_ok=True)
+        
+        # Update package name in setup.py
+        setup_py = new_carrier / "setup.py"
+        if setup_py.exists():
+            with open(setup_py, "r") as f:
+                content = f.read()
+            content = content.replace(f"karrio.{template_carrier}", f"karrio.{carrier_slug}")
+            content = content.replace(f"karrio-{template_carrier}", f"karrio-{carrier_slug}")
+            content = content.replace(template_carrier.title(), carrier_slug.title())
+            with open(setup_py, "w") as f:
+                f.write(content)
+        
+        # Update package structure
+        old_provider = new_carrier / "karrio" / "providers" / template_carrier
+        new_provider = new_carrier / "karrio" / "providers" / carrier_slug
+        if old_provider.exists():
+            old_provider.rename(new_provider)
+        
+        # Update imports in Python files
+        for py_file in new_carrier.rglob("*.py"):
+            if py_file.is_file():
+                with open(py_file, "r") as f:
+                    content = f.read()
+                content = content.replace(f"karrio.{template_carrier}", f"karrio.{carrier_slug}")
+                content = content.replace(f"providers.{template_carrier}", f"providers.{carrier_slug}")
+                with open(py_file, "w") as f:
+                    f.write(content)
+        
+        typer.echo(f"Successfully created carrier extension: {display_name} ({carrier_slug})")
+        typer.echo(f"Carrier created at: {new_carrier}")
+        typer.echo("\nNext steps:")
+        typer.echo("1. Update the carrier's API configuration in settings.py")
+        typer.echo("2. Customize the API endpoints in the provider files")
+        typer.echo("3. Update the JSON schema files to match your carrier's API")
+        typer.echo("4. Run ./generate to update the generated code") 

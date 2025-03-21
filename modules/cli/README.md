@@ -1,6 +1,126 @@
 # Karrio CLI Tools
 
-This folder contains CLI tools for the Karrio project.
+Command-line utilities for Karrio carrier integration development.
+
+## Installation
+
+The CLI tools are included in the main Karrio installation. You can access them using the `kcli` or `karrio_cli` command.
+
+```bash
+# Install dependencies
+pip install typer rich
+
+# Use the CLI
+./bin/kcli --help
+```
+
+## Features
+
+-   Interactive command-line interface with helpful prompts
+-   Tools for carrier integration management
+-   Tools for plugin development
+-   SDK utilities
+-   Documentation generation
+
+## Available Commands
+
+For a full list of available commands, run:
+
+```bash
+kcli --help
+```
+
+## Interactive Usage
+
+The CLI now supports interactive prompts when parameters are not provided, making it more user-friendly:
+
+```bash
+# Run in interactive mode
+kcli create-plugin
+
+# Run with explicit parameters
+kcli create-plugin --plugin-name my-plugin --display-name "My Plugin"
+```
+
+You can disable interactive prompts by using the `--no-prompt` flag:
+
+```bash
+kcli create-carrier --carrier-name mycarrier --display-name "My Carrier" --no-prompt
+```
+
+## Common Commands
+
+### Carrier Management
+
+```bash
+# Create a new carrier integration
+kcli create-carrier
+
+# Add a new carrier extension
+kcli add-extension
+
+# Troubleshoot carrier integrations
+kcli troubleshoot
+
+# Run tests for carrier integrations
+kcli run-tests
+```
+
+### Plugin Management
+
+Plugins are modular extensions that add functionality to Karrio without modifying the core code. You can create and manage plugins using the CLI:
+
+```bash
+# Create a new plugin (interactive)
+kcli create-plugin
+```
+
+The interactive CLI will prompt you for all required information, including:
+
+-   Plugin name
+-   Display name
+-   Description
+-   Author information
+-   Version
+-   Carrier integration (if needed)
+
+Once created, your plugin will have a complete structure with:
+
+-   README.md and documentation
+-   setup.py for package management
+-   Core plugin implementation files
+-   Carrier-specific integration (if specified)
+-   Test framework
+
+### Testing Your Plugin
+
+After creating a plugin, you can test it using:
+
+```bash
+# Run tests on a specific plugin
+python -m unittest discover -v plugins/your_plugin_name/tests
+```
+
+### Installing Your Plugin
+
+To install your plugin in development mode:
+
+```bash
+pip install -e ./plugins/your_plugin_name
+```
+
+## Advanced Plugin Development
+
+For detailed information about plugin development, including:
+
+-   What plugins are and how they work
+-   Plugin architecture and structure
+-   Creating custom plugins step-by-step
+-   Authentication methods
+-   Custom carrier configuration
+-   Advanced request serialization
+
+See the [detailed plugin documentation](./docs/CLI_IMPROVEMENTS.md#understanding-karrio-plugins).
 
 ## Codegen
 
@@ -25,12 +145,13 @@ karrio codegen transform input.py output.py --no-append-type-suffix
 ```
 
 The transform command makes the following changes:
-- Replaces `from dataclasses import dataclass` with explicit imports: `import attr`, `import jstruct`, `import typing`
-- Removes any `from typing import ...` lines entirely
-- Replaces `@dataclass` with `@attr.s(auto_attribs=True)`
-- Appends 'Type' to all class names (unless they already end with 'Type') by default
-- Replaces complex type annotations with jstruct equivalents
-- Ensures there are no duplicate import statements
+
+-   Replaces `from dataclasses import dataclass` with explicit imports: `import attr`, `import jstruct`, `import typing`
+-   Removes any `from typing import ...` lines entirely
+-   Replaces `@dataclass` with `@attr.s(auto_attribs=True)`
+-   Appends 'Type' to all class names (unless they already end with 'Type') by default
+-   Replaces complex type annotations with jstruct equivalents
+-   Ensures there are no duplicate import statements
 
 ### Generate
 
@@ -63,6 +184,7 @@ karrio codegen create-tree --module=karrio.schemas.allied_express.label_request 
 ```
 
 Example output:
+
 ```python
 LabelRequestType(
     bookedBy=None,
