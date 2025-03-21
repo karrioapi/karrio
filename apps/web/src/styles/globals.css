@@ -2,9 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Add custom variant for platform theme that makes all dark: utilities work
+ * This allows both .dark and [data-theme='platform'] to use dark: utilities
+ */
+@custom-variant dark (&:where(.dark, [data-theme='dark'], [data-theme='platform'], .dark *, [data-theme='dark'] *, [data-theme='platform'] *));
+
+.dark .dark\:platform-shared,
+[data-theme="dark"] .dark\:platform-shared,
+[data-theme="platform"] .dark\:platform-shared {
+  @apply block;
+}
+
+.dark\:platform-shared {
+  @apply hidden;
+}
+
 @layer base {
+
+  /* Base theme definitions */
   :root {
-    /* Dashboard light theme variables */
+    /* Light theme (default) variables */
     --background: 0 0% 100%;
     --foreground: 224 71.4% 4.1%;
     --card: 0 0% 100%;
@@ -31,15 +49,61 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
 
-    /* Documentation sidebar variables */
+    /* Documentation sidebar variables - light theme */
     --sidebar-bg: #ffffff;
     --sidebar-text: #333333;
     --sidebar-border: #e5e7eb;
   }
 
+  /* Dark theme variables */
   .dark,
-  [data-theme='dark'] {
-    /* Platform dark theme variables */
+  [data-theme="dark"] {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 6.2%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 6.2%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 267 78% 72%;
+    /* Purple shade */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 262 100% 82%;
+    /* Light purple */
+    --secondary-foreground: 0 0% 6.2%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 70%;
+    --accent: 268 75% 65%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 16%;
+    --input: 0 0% 16%;
+    --ring: 267 78% 72%;
+    --radius: 0.5rem;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+
+    /* Documentation sidebar variables in dark mode */
+    --sidebar-bg: #0a0a0c;
+    --sidebar-text: #e5e7eb;
+    --sidebar-border: #27272a;
+
+    /* Docs specific variables */
+    --docs-bg: #0d0d0d;
+    --docs-text: #ffffff;
+    --docs-border: #2b2b2b;
+    --docs-card-bg: #161616;
+    --docs-card-hover: #262626;
+    --docs-muted-text: #d4d4d8;
+    --docs-accent: #c084fc;
+    --docs-accent-hover: #d8b4fe;
+  }
+
+  /* Platform theme variables (alternate dark theme) */
+  [data-theme="platform"] {
     --background: 248 28% 16%;
     --foreground: 0 0% 100%;
     --card: 252 24% 20%;
@@ -66,12 +130,13 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
 
-    /* Documentation sidebar variables in dark mode */
+    /* Documentation sidebar variables */
     --sidebar-bg: #0a0a0c;
     --sidebar-text: #e5e7eb;
     --sidebar-border: #27272a;
   }
 
+  /* Typography elements */
   h1,
   h2,
   h3,
@@ -97,8 +162,8 @@
     color: hsl(var(--foreground));
   }
 
-  /* Default dark mode for platform */
-  .dark body {
+  /* Specific background overrides for each theme */
+  [data-theme="platform"] body {
     background-color: #0f0826;
     color: white;
   }
@@ -237,7 +302,6 @@
 .docs-dark .docs-page .docs-content,
 [data-theme='dark'] .docs-page .docs-content {
   background-color: var(--docs-bg);
-  padding: 16px;
   padding-top: 0;
 }
 
