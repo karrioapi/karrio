@@ -1,7 +1,5 @@
 "use client"
 
-import type { Heading } from 'nextra'
-import type { FC } from 'react'
 import clsx from 'clsx'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
@@ -16,6 +14,8 @@ export const TOC: React.FC<TOCProps> = ({ toc: propsToc }) => {
   const headingElementsRef = useRef<{ id: string; top: number }[]>([])
   const [extractedToc, setExtractedToc] = useState<TOCProps['toc']>([])
   const pathname = usePathname()
+  const tocRef = useRef<HTMLDivElement>(null)
+  const [tocHeight, setTocHeight] = useState<string>('calc(100vh - 8rem)')
 
   // Extract headings from the document if no TOC data is provided
   useEffect(() => {
@@ -58,6 +58,39 @@ export const TOC: React.FC<TOCProps> = ({ toc: propsToc }) => {
     const timer = setTimeout(extractHeadings, 100);
     return () => clearTimeout(timer);
   }, [propsToc, pathname]); // Re-extract when pathname changes
+
+  // Adjust TOC height to prevent overlap with footer
+  useEffect(() => {
+    if (!tocRef.current) return;
+
+    const footer = document.querySelector('footer');
+    if (!footer) return;
+
+    const handleScroll = () => {
+      const footerRect = footer.getBoundingClientRect();
+      const tocRect = tocRef.current?.getBoundingClientRect();
+
+      if (!tocRect) return;
+
+      // If footer is entering viewport
+      if (footerRect.top < window.innerHeight) {
+        // Calculate how much of the footer is visible
+        const footerVisibleHeight = window.innerHeight - footerRect.top;
+        // Adjust TOC height to avoid overlapping with footer
+        setTocHeight(`calc(100vh - 8rem - ${footerVisibleHeight}px)`);
+      } else {
+        // Reset to default height when footer is not visible
+        setTocHeight('calc(100vh - 8rem)');
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Initial check
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const toc = extractedToc;
 
@@ -102,7 +135,7 @@ export const TOC: React.FC<TOCProps> = ({ toc: propsToc }) => {
 
   if (toc.length === 0) {
     return (
-      <div className="sticky top-16 max-h-[calc(100vh-4rem)] pl-6">
+      <div className="sticky top-16 max-h-[calc(100vh-4rem)] pl-6" ref={tocRef}>
         <div className="mb-4 text-sm font-medium text-gray-900 dark:text-white toc-heading">On This Page</div>
         <div className="text-sm text-gray-500 dark:text-gray-400">No headings found</div>
       </div>
@@ -110,9 +143,9 @@ export const TOC: React.FC<TOCProps> = ({ toc: propsToc }) => {
   }
 
   return (
-    <div className="sticky top-16 max-h-[calc(100vh-4rem)] w-full pl-6">
+    <div className="sticky top-16 max-h-[calc(100vh-4rem)] w-full pl-6" ref={tocRef}>
       <div className="mb-4 text-sm font-medium text-gray-900 dark:text-white toc-heading">On This Page</div>
-      <ScrollArea className="h-[calc(100vh-8rem)]">
+      <ScrollArea className="pr-4" style={{ height: tocHeight }}>
         <ul className="space-y-2">
           {toc.map(heading => {
             const paddingLeft = heading.level === 2 ? 0 : (heading.level - 2) * 16

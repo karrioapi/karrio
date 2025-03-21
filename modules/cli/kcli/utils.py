@@ -4,7 +4,7 @@ import typer
 import requests
 import importlib
 import karrio.lib as lib
-import commands.login as login
+import kcli.commands.login as login
 from rich.syntax import Syntax
 from rich.console import Console
 

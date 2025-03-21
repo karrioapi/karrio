@@ -60,8 +60,8 @@ export const Header: FC<HeaderProps> = ({ pageMap }) => {
   return (
     <header className={`flex h-12 w-full shrink-0 items-center gap-1 transition-[width,height] ease-linear border-b border-gray-200 bg-white ${mounted && theme === 'dark' ? '!bg-neutral-950 !border-neutral-800' : ''}`}>
       <div className="flex items-center gap-1 px-1.5 w-full">
-        <SidebarTrigger className={`-ml-0.5 ${mounted && theme === 'dark' ? '!text-gray-300' : 'text-gray-600'}`} />
-        <Separator orientation="vertical" className={`mx-1 h-3.5 text-gray-300 ${mounted && theme === 'dark' ? '!text-gray-700' : ''}`} />
+        <SidebarTrigger className={`-ml-0.5 md:hidden ${mounted && theme === 'dark' ? '!text-gray-300' : 'text-gray-600'}`} />
+        <Separator orientation="vertical" className={`mx-1 h-3.5 text-gray-300 md:hidden ${mounted && theme === 'dark' ? '!text-gray-700' : ''}`} />
         <Breadcrumb>
           <BreadcrumbList className="flex-wrap">
             {breadcrumbItems.length > 0 ? (
