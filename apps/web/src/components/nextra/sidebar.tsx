@@ -193,7 +193,7 @@ export const Sidebar: FC<{ pageMap: PageMapItem[] }> = ({ pageMap }) => {
   }
 
   return (
-    <ShadcnSidebar className="sidebar border-r border-gray-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 w-72 shrink-0">
+    <ShadcnSidebar className="sidebar border-r border-gray-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 shrink-0">
       <SidebarHeader className="px-6 py-3">
         <SidebarMenu>
           <SidebarMenuItem>
