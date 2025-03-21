@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en"
-      data-theme="dark"
+      data-theme="platform"
       suppressHydrationWarning
       className={`${inter.variable} ${jetbrains.variable} ${noto.variable} ${ubuntu.variable} ${oxygen.variable}`}>
       <body className="min-h-screen font-sans antialiased">

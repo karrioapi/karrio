@@ -1,11 +1,11 @@
 import typer
-import commands.sdk as sdk
-import commands.docs as docs
-import commands.login as login
-import commands.codegen as codegen
-import resources.shipments as shipments
-import resources.orders as orders
-import resources.trackers as trackers
+import kcli.commands.sdk as sdk
+import kcli.commands.docs as docs
+import kcli.commands.login as login
+import kcli.commands.codegen as codegen
+import kcli.resources.shipments as shipments
+import kcli.resources.orders as orders
+import kcli.resources.trackers as trackers
 
 app = typer.Typer()
 

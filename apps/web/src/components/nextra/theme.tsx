@@ -22,27 +22,37 @@ export const NextraTheme: FC<{
       disableTransitionOnChange
       themes={['light', 'dark']}
     >
-      <div className="flex min-h-screen w-full docs-container dark:bg-neutral-950 dark:text-white">
+      <div className="flex min-h-screen w-full docs-container overflow-hidden dark:bg-neutral-950 dark:text-white">
         <SidebarProvider>
           <Sidebar pageMap={pageMap} />
 
-          <SidebarInset className="flex-1 overflow-hidden">
-            <Header pageMap={pageMap} />
+          <SidebarInset className="flex-1 flex flex-col overflow-hidden">
+            {/* Fixed header - responsive width */}
+            <div className="fixed top-0 z-40 w-full md:w-[calc(100%-16rem)] bg-white dark:bg-neutral-950 border-b border-gray-200 dark:border-neutral-800">
+              <Header pageMap={pageMap} />
+            </div>
 
-            <div className="flex flex-col gap-4 p-4 pt-0 docs-content dark:bg-neutral-950 w-full overflow-auto">
-              <div className="w-full max-w-full py-8 px-4 md:px-6 lg:px-8">
-                <div className="flex flex-col xl:flex-row xl:gap-10">
-                  <div className="flex-1 mx-auto min-w-0 max-w-full prose prose-h1:text-2xl prose-h1:font-semibold prose-h1:mb-6 prose-h2:text-xl prose-h2:font-semibold prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-lg prose-h3:font-medium prose-h3:mt-8 prose-h3:mb-3 prose-p:text-sm prose-p:leading-6 prose-li:text-sm prose-li:leading-6 dark:prose-invert prose-headings:tracking-tight prose-a:text-purple-600 dark:prose-a:text-purple-400 prose-a:no-underline hover:prose-a:text-purple-700 dark:hover:prose-a:text-purple-300 prose-img:rounded-lg prose-code:text-gray-800 dark:prose-code:text-gray-200 prose-pre:bg-gray-50 dark:prose-pre:bg-neutral-900 prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-neutral-800 prose-pre:rounded-lg docs-prose">
-                    {children}
-                  </div>
+            {/* Main content with padding to account for fixed header */}
+            <div className="flex-1 overflow-auto pt-12 w-full">
+              <div className="flex flex-col gap-4 md:p-4 md:pt-0 docs-content dark:bg-neutral-950 w-full overflow-hidden">
+                <div className="w-full lg:py-8 px-4 md:px-6 lg:px-8 overflow-hidden">
+                  <div className="flex flex-col xl:flex-row xl:gap-10 overflow-hidden">
+                    {/* Main content */}
+                    <div className="flex-1 mx-auto min-w-0 w-full overflow-hidden prose prose-h1:text-2xl prose-h1:font-semibold prose-h1:mb-6 prose-h2:text-xl prose-h2:font-semibold prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-lg prose-h3:font-medium prose-h3:mt-8 prose-h3:mb-3 prose-p:text-sm prose-p:leading-6 prose-li:text-sm prose-li:leading-6 dark:prose-invert prose-headings:tracking-tight prose-a:text-purple-600 dark:prose-a:text-purple-400 prose-a:no-underline hover:prose-a:text-purple-700 dark:hover:prose-a:text-purple-300 prose-img:rounded-lg prose-img:max-w-full prose-code:text-gray-800 dark:prose-code:text-gray-200 prose-pre:bg-gray-50 dark:prose-pre:bg-neutral-900 prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-neutral-800 prose-pre:rounded-lg prose-pre:overflow-x-auto docs-prose">
+                      {children}
+                    </div>
 
-                  <div className="hidden xl:block xl:w-72 xl:flex-none">
-                    <TOC toc={[]} />
+                    {/* Fixed TOC - only on xl screens */}
+                    <div className="hidden xl:block xl:w-72">
+                      <div className="fixed top-12 right-8 w-64 z-30 max-h-[calc(100vh-3rem)] overflow-auto pt-6">
+                        <TOC toc={[]} />
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <Footer />
+                <Footer />
+              </div>
             </div>
           </SidebarInset>
         </SidebarProvider>

@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export const SiteHeader = () => {
   return (
-    <header className="py-6 border-b dark:border-white/10 border-border/30 dark:bg-transparent bg-background/95 backdrop-blur-sm dark:backdrop-blur-none shadow-sm dark:shadow-none">
+    <header className="py-6 border-b dark:border-white/10 border-border/30 dark:bg-[#0f0826] bg-background/95 backdrop-blur-sm dark:backdrop-blur-none shadow-sm dark:shadow-none">
       <div className="container mx-auto px-0 sm:px-4 md:px-6 max-w-[95%] xl:max-w-[1280px]">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-0">
