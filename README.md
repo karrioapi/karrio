@@ -123,7 +123,7 @@ For more tooling to build on top of Karrio, join [Karrio Insiders](https://docs.
 
 -   multi-tenancy and team collaboration
 -   onboarding support
--   advanced shipping add-ons 
+-   advanced shipping add-ons
 -   customizable dashboard (soon)
 -   billing management (soon)
 -   and more...
@@ -140,3 +140,47 @@ Special thanks to our sponsors
 ### Become a sponsor
 
 <a href="https://github.com/sponsors/karrioapi" target="_blank"><img alt="New Sponsor" src="screenshots/become-a-sponsor.png" /></a>
+
+## Command Line Interface (CLI)
+
+Karrio comes with a powerful command-line interface (CLI) that enables you to perform various tasks:
+
+### Installation
+
+To make the `kcli` command available globally:
+
+```bash
+sudo ./bin/setup-kcli.sh
+```
+
+### Available Commands
+
+The CLI provides the following commands:
+
+#### Carrier Management
+
+-   `kcli carrier create-carrier <name> <display_name>` - Create a new carrier integration
+-   `kcli carrier troubleshoot [carrier_name]` - Diagnose issues with carrier integrations
+-   `kcli carrier start-docs` - Start the documentation server for carrier integrations
+
+#### Plugin Management
+
+-   `kcli plugin create-plugin` - Create a new plugin in the plugins directory
+
+#### SDK and Development
+
+-   `kcli sdk add-extension` - Add a new carrier extension
+-   `kcli codegen` - Code generation utilities
+
+#### Karrio API Access
+
+-   `kcli login` - Configure connection to a Karrio instance
+-   `kcli shipments` - Manage shipments
+-   `kcli orders` - Manage orders
+-   `kcli trackers` - Manage trackers
+
+For more information about a specific command, use:
+
+```bash
+kcli <command> --help
+```
