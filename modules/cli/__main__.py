@@ -3,6 +3,8 @@ import commands.sdk as sdk
 import commands.docs as docs
 import commands.login as login
 import commands.codegen as codegen
+import commands.carrier as carrier
+import commands.plugin as plugin
 import resources.shipments as shipments
 import resources.orders as orders
 import resources.trackers as trackers
@@ -49,6 +51,19 @@ app.add_typer(
     codegen.app,
     name="codegen",
     help="Code generation utilities.",
+)
+
+# Add our new carrier and plugin commands
+app.add_typer(
+    carrier.app,
+    name="carrier",
+    help="Carrier integration management commands.",
+)
+
+app.add_typer(
+    plugin.app,
+    name="plugin",
+    help="Plugin management commands.",
 )
 
 if __name__ == "__main__":
