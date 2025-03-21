@@ -263,3 +263,24 @@ def execute(settings: Dict[str, Any], data: Dict[str, Any]) -> Dict[str, Any]:
     typer.echo(f"2. Add tests in {plugin_dir}/tests/")
     typer.echo(f"3. Install your plugin with: pip install -e {plugin_dir}")
     typer.echo("4. Use your plugin in your Karrio application") 
+
+
+@app.command()
+def create_plugin_interactive():
+    """Create a new plugin interactively with prompts for all required information."""
+    plugin_name = typer.prompt("Enter the plugin name (e.g., address_validator)")
+    display_name = typer.prompt("Enter the display name (e.g., \"Address Validator\")")
+    description = typer.prompt("Enter a brief description of what the plugin does")
+    author = typer.prompt("Enter the plugin author name")
+    version = typer.prompt("Enter the initial plugin version", default="0.1.0")
+    carrier_integration = typer.prompt("Enter a carrier to integrate with (leave empty if not carrier-specific)", default="")
+    
+    # Call the main create_plugin function with the gathered inputs
+    create_plugin(
+        plugin_name=plugin_name,
+        display_name=display_name,
+        description=description,
+        author=author,
+        version=version,
+        carrier_integration=carrier_integration if carrier_integration else None
+    ) 

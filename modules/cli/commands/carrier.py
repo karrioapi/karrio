@@ -119,6 +119,26 @@ def create_carrier(
 
 
 @app.command()
+def create_carrier_interactive():
+    """Create a new carrier integration interactively with prompts for all required information."""
+    ensure_directory_structure()
+    
+    # Prompt for carrier slug
+    carrier_name = typer.prompt("Enter the carrier slug (e.g., fedex_custom)")
+    
+    # Prompt for display name
+    display_name = typer.prompt("Enter the display name (e.g., \"FedEx Custom\")")
+    
+    # Confirm creation
+    if typer.confirm(f"Create carrier integration for '{display_name}' with slug '{carrier_name}'?"):
+        # Run the carrier creation script
+        args = [carrier_name, display_name]
+        run_script("create-carrier.sh", args)
+    else:
+        typer.echo("Carrier creation cancelled.")
+
+
+@app.command()
 def troubleshoot(
     carrier_name: Optional[str]=typer.Argument(None, help="The name of the carrier to troubleshoot"),
     no_prompt: bool=typer.Option(False, "--no-prompt", help="Skip interactive prompts and use default values")
