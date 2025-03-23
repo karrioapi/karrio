@@ -119,7 +119,12 @@ paths:
                     APPS_MANAGEMENT: true
                     DOCUMENTS_MANAGEMENT: true
                     DATA_IMPORT_EXPORT: true
+                    CUSTOM_CARRIER_DEFINITION: true
                     PERSIST_SDK_TRACING: true
+                    ORDER_DATA_RETENTION: true
+                    TRACKER_DATA_RETENTION: true
+                    SHIPMENT_DATA_RETENTION: true
+                    API_LOGS_DATA_RETENTION: true
                     WORKFLOW_MANAGEMENT: true
           description: ''
   /api/token:
@@ -206,7 +211,7 @@ paths:
           description: ''
   /v1/addresses:
     get:
-      operationId: $list
+      operationId: listAddresses
       description: Retrieve all addresses.
       summary: List all addresses
       tags:
@@ -237,7 +242,7 @@ paths:
           description: ''
       x-operationId: listAddresses
     post:
-      operationId: $create
+      operationId: createAddress
       description: Create a new address.
       summary: Create an address
       tags:
@@ -275,7 +280,7 @@ paths:
       x-operationId: createAddress
   /v1/addresses/{id}:
     get:
-      operationId: $retrieve
+      operationId: retrieveAddress
       description: Retrieve an address.
       summary: Retrieve an address
       parameters:
@@ -312,7 +317,7 @@ paths:
           description: ''
       x-operationId: retrieveAddress
     patch:
-      operationId: $update
+      operationId: updateAddress
       description: update an address.
       summary: Update an address
       parameters:
@@ -366,7 +371,7 @@ paths:
           description: ''
       x-operationId: updateAddress
     delete:
-      operationId: $discard
+      operationId: discardAddress
       description: Discard an address.
       summary: Discard an address
       parameters:
@@ -484,7 +489,7 @@ paths:
           description: ''
   /v1/batches/operations:
     get:
-      operationId: '&&&&$list'
+      operationId: listBatchOperations
       description: Retrieve all batch operations. `Beta`
       summary: List all batch operations
       tags:
@@ -516,7 +521,7 @@ paths:
       x-operationId: listBatchOperations
   /v1/batches/operations/{id}:
     get:
-      operationId: '&&&&$retrieve'
+      operationId: retrieveBatchOperation
       description: Retrieve a batch operation. `Beta`
       summary: Retrieve a batch operation
       parameters:
@@ -665,7 +670,7 @@ paths:
           description: ''
   /v1/carriers:
     get:
-      operationId: '&&list'
+      operationId: listCarriers
       description: Returns the list of configured carriers
       summary: List all carriers
       tags:
@@ -683,7 +688,6 @@ paths:
                   value:
                   - carrier_name: dhl_express
                     display_name: DHL Express
-                    integration_status: production-ready
                     connection_fields:
                       site_id:
                         name: site_id
@@ -735,7 +739,7 @@ paths:
       x-operationId: listCarriers
   /v1/carriers/{carrier_name}/services:
     get:
-      operationId: '&&get_services'
+      operationId: getServices
       description: Retrieve a carrier's services
       summary: Get carrier services
       parameters:
@@ -804,7 +808,7 @@ paths:
       x-operationId: getServices
   /v1/connections:
     get:
-      operationId: '&&&list'
+      operationId: listCarrierConnections
       description: Retrieve all carrier connections
       summary: List carrier connections
       parameters:
@@ -858,7 +862,7 @@ paths:
           description: ''
       x-operationId: listCarrierConnections
     post:
-      operationId: '&&&add'
+      operationId: addCarrierConnection
       description: Add a new carrier connection.
       summary: Add a carrier connection
       tags:
@@ -902,7 +906,7 @@ paths:
       x-operationId: addCarrierConnection
   /v1/connections/{id}:
     get:
-      operationId: '&&&retrieve'
+      operationId: retrieveCarrierConnection
       description: Retrieve carrier connection.
       summary: Retrieve a connection
       parameters:
@@ -939,7 +943,7 @@ paths:
           description: ''
       x-operationId: retrieveCarrierConnection
     patch:
-      operationId: '&&&update'
+      operationId: updateCarrierConnection
       description: Update a carrier connection.
       summary: Update a connection
       parameters:
@@ -987,7 +991,7 @@ paths:
           description: ''
       x-operationId: updateCarrierConnection
     delete:
-      operationId: '&&&remove'
+      operationId: removeCarrierConnection
       description: Remove a carrier connection.
       summary: Remove a carrier connection
       parameters:
@@ -1076,7 +1080,7 @@ paths:
           description: ''
   /v1/documents/templates:
     get:
-      operationId: '&&&&$$list'
+      operationId: listDocumentTemplates
       description: Retrieve all templates.
       summary: List all templates
       tags:
@@ -1107,7 +1111,7 @@ paths:
           description: ''
       x-operationId: listDocumentTemplates
     post:
-      operationId: '&&&&$$create'
+      operationId: createDocumentTemplate
       description: Create a new template.
       summary: Create a template
       tags:
@@ -1145,7 +1149,7 @@ paths:
       x-operationId: createDocumentTemplate
   /v1/documents/templates/{id}:
     get:
-      operationId: '&&&&$$retrieve'
+      operationId: retrieveDocumentTemplate
       description: Retrieve a template.
       summary: Retrieve a template
       parameters:
@@ -1182,7 +1186,7 @@ paths:
           description: ''
       x-operationId: retrieveDocumentTemplate
     patch:
-      operationId: '&&&&$$update'
+      operationId: updateDocumentTemplate
       description: update a template.
       summary: Update a template
       parameters:
@@ -1230,7 +1234,7 @@ paths:
           description: ''
       x-operationId: updateDocumentTemplate
     delete:
-      operationId: '&&&&$$discard'
+      operationId: discardDocumentTemplate
       description: Delete a template.
       summary: Delete a template
       parameters:
@@ -1399,7 +1403,7 @@ paths:
           description: ''
   /v1/manifests:
     get:
-      operationId: $$$$&&list
+      operationId: listManifests
       description: Retrieve all manifests.
       summary: List manifests
       parameters:
@@ -1453,7 +1457,7 @@ paths:
           description: ''
       x-operationId: listManifests
     post:
-      operationId: $$$$&&create
+      operationId: createManifest
       description: Create a manifest for one or many shipments with labels already
         purchased.
       summary: Create a manifest
@@ -1498,7 +1502,7 @@ paths:
       x-operationId: createManifest
   /v1/manifests/{id}:
     get:
-      operationId: $$$$&&retrieve
+      operationId: retrieveManifest
       description: Retrieve a shipping manifest.
       summary: Retrieve a manifest
       parameters:
@@ -1536,7 +1540,7 @@ paths:
       x-operationId: retrieveManifest
   /v1/orders:
     get:
-      operationId: '&&&&list'
+      operationId: listOrders
       description: Retrieve all orders.
       summary: List all orders
       tags:
@@ -1567,7 +1571,7 @@ paths:
           description: ''
       x-operationId: listOrders
     post:
-      operationId: '&&&&create'
+      operationId: createOrder
       description: Create a new order object.
       summary: Create an order
       tags:
@@ -1605,7 +1609,7 @@ paths:
       x-operationId: createOrder
   /v1/orders/{id}:
     get:
-      operationId: '&&&&retrieve'
+      operationId: retrieveOrder
       description: Retrieve an order.
       summary: Retrieve an order
       parameters:
@@ -1642,7 +1646,7 @@ paths:
           description: ''
       x-operationId: retrieveOrder
     put:
-      operationId: '&&&&update'
+      operationId: updateOrder
       description: |-
         This operation allows for updating properties of an order including `options` and `metadata`.
         It is not for editing the line items of an order.
@@ -1698,7 +1702,7 @@ paths:
           description: ''
       x-operationId: updateOrder
     delete:
-      operationId: '&&&&dismiss'
+      operationId: dismissOrder
       description: Dismiss an order from fulfillment.
       summary: Dismiss an order
       parameters:
@@ -1743,7 +1747,7 @@ paths:
       x-operationId: dismissOrder
   /v1/orders/{id}/cancel:
     post:
-      operationId: '&&&&cancel'
+      operationId: cancelOrder
       description: Cancel an order.
       summary: Cancel an order
       parameters:
@@ -1787,7 +1791,7 @@ paths:
       x-operationId: cancelOrder
   /v1/parcels:
     get:
-      operationId: $$$list
+      operationId: listParcels
       description: Retrieve all stored parcels.
       summary: List all parcels
       tags:
@@ -1818,7 +1822,7 @@ paths:
           description: ''
       x-operationId: listParcels
     post:
-      operationId: $$$create
+      operationId: createParcel
       description: Create a new parcel.
       summary: Create a parcel
       tags:
@@ -1856,7 +1860,7 @@ paths:
       x-operationId: createParcel
   /v1/parcels/{id}:
     get:
-      operationId: $$$retrieve
+      operationId: retrieveParcel
       description: Retrieve a parcel.
       summary: Retrieve a parcel
       parameters:
@@ -1893,7 +1897,7 @@ paths:
           description: ''
       x-operationId: retrieveParcel
     patch:
-      operationId: $$$update
+      operationId: updateParcel
       description: modify an existing parcel's details.
       summary: Update a parcel
       parameters:
@@ -1947,7 +1951,7 @@ paths:
           description: ''
       x-operationId: updateParcel
     delete:
-      operationId: $$$discard
+      operationId: discardParcel
       description: Remove a parcel.
       summary: Remove a parcel
       parameters:
@@ -1991,7 +1995,7 @@ paths:
       x-operationId: discardParcel
   /v1/pickups:
     get:
-      operationId: $$$$list
+      operationId: listPickups
       description: Retrieve all scheduled pickups.
       summary: List shipment pickups
       tags:
@@ -2023,7 +2027,7 @@ paths:
       x-operationId: listPickups
   /v1/pickups/{carrier_name}/schedule:
     post:
-      operationId: $$$$schedule
+      operationId: schedulePickup
       description: Schedule a pickup for one or many shipments with labels already
         purchased.
       summary: Schedule a pickup
@@ -2074,7 +2078,7 @@ paths:
       x-operationId: schedulePickup
   /v1/pickups/{id}:
     get:
-      operationId: $$$$retrieve
+      operationId: retrievePickup
       description: Retrieve a scheduled pickup.
       summary: Retrieve a pickup
       parameters:
@@ -2111,7 +2115,7 @@ paths:
           description: ''
       x-operationId: retrievePickup
     post:
-      operationId: $$$$update
+      operationId: updatePickup
       description: Modify a pickup for one or many shipments with labels already purchased.
       summary: Update a pickup
       parameters:
@@ -2167,7 +2171,7 @@ paths:
       x-operationId: updatePickup
   /v1/pickups/{id}/cancel:
     post:
-      operationId: $$$$cancel
+      operationId: cancelPickup
       description: Cancel a pickup of one or more shipments.
       summary: Cancel a pickup
       parameters:
@@ -2222,7 +2226,7 @@ paths:
       x-operationId: cancelPickup
   /v1/proxy/manifest:
     post:
-      operationId: '@@@$generate_manifest'
+      operationId: generateManifest
       description: |2
 
         Some carriers require shipment manifests to be created for pickups and dropoff.
@@ -2269,7 +2273,7 @@ paths:
       x-operationId: generateManifest
   /v1/proxy/pickups/{carrier_name}:
     post:
-      operationId: '@schedule_pickup'
+      operationId: pickupSchedule
       description: Schedule one or many parcels pickup
       summary: Schedule a pickup
       parameters:
@@ -2365,7 +2369,7 @@ paths:
       x-operationId: pickupSchedule
   /v1/proxy/pickups/{carrier_name}/cancel:
     post:
-      operationId: '@cancel_pickup'
+      operationId: pickupCancel
       description: Cancel a pickup previously scheduled
       summary: Cancel a pickup
       parameters:
@@ -2461,7 +2465,7 @@ paths:
       x-operationId: pickupCancel
   /v1/proxy/pickups/{carrier_name}/update:
     post:
-      operationId: '@update_pickup'
+      operationId: pickupUpdate
       description: Modify a scheduled pickup
       summary: Update a pickup
       parameters:
@@ -2557,7 +2561,7 @@ paths:
       x-operationId: pickupUpdate
   /v1/proxy/rates:
     post:
-      operationId: '@@fetch_rates'
+      operationId: fetchRates
       description: |2
 
         The Shipping process begins by fetching rates for your shipment.
@@ -2604,7 +2608,7 @@ paths:
       x-operationId: fetchRates
   /v1/proxy/shipping:
     post:
-      operationId: '@@@buy_label'
+      operationId: buyLabel
       description: |-
         Once the shipping rates are retrieved, provide the required info to
         submit the shipment by specifying your preferred rate.
@@ -2650,7 +2654,7 @@ paths:
       x-operationId: buyLabel
   /v1/proxy/shipping/{carrier_name}/cancel:
     post:
-      operationId: '@@@void_label'
+      operationId: voidLabel
       description: Cancel a shipment and the label previously created
       summary: Void a shipment label
       parameters:
@@ -2740,7 +2744,7 @@ paths:
       x-operationId: voidLabel
   /v1/proxy/tracking:
     post:
-      operationId: '@@@@get_tracking'
+      operationId: getTracking
       description: You can track a shipment by specifying the carrier and the shipment
         tracking number.
       summary: Get tracking details
@@ -2790,7 +2794,7 @@ paths:
       x-operationId: getTracking
   /v1/proxy/tracking/{carrier_name}/{tracking_number}:
     get:
-      operationId: '@@@@track_shipment'
+      operationId: trackShipment
       description: You can track a shipment by specifying the carrier and the shipment
         tracking number.
       summary: Track a shipment
@@ -2917,7 +2921,12 @@ paths:
                     APPS_MANAGEMENT: true
                     DOCUMENTS_MANAGEMENT: true
                     DATA_IMPORT_EXPORT: true
+                    CUSTOM_CARRIER_DEFINITION: true
                     PERSIST_SDK_TRACING: true
+                    ORDER_DATA_RETENTION: true
+                    TRACKER_DATA_RETENTION: true
+                    SHIPMENT_DATA_RETENTION: true
+                    API_LOGS_DATA_RETENTION: true
                     WORKFLOW_MANAGEMENT: true
                     ADDRESS_AUTO_COMPLETE: {}
                     countries: {}
@@ -2936,11 +2945,10 @@ paths:
                     payment_types: {}
                     carrier_capabilities: {}
                     service_levels: {}
-                    integration_status: {}
           description: ''
   /v1/shipments:
     get:
-      operationId: $$$$$list
+      operationId: listShipments
       description: Retrieve all shipments.
       summary: List all shipments
       parameters:
@@ -3057,7 +3065,7 @@ paths:
           description: ''
       x-operationId: listShipments
     post:
-      operationId: $$$$$create
+      operationId: createShipment
       description: Create a new shipment instance.
       summary: Create a shipment
       tags:
@@ -3101,7 +3109,7 @@ paths:
       x-operationId: createShipment
   /v1/shipments/{id}:
     get:
-      operationId: $$$$$retrieve
+      operationId: retrieveShipment
       description: Retrieve a shipment.
       summary: Retrieve a shipment
       parameters:
@@ -3138,7 +3146,7 @@ paths:
           description: ''
       x-operationId: retrieveShipment
     put:
-      operationId: $$$$$update
+      operationId: updateShipment
       description: |-
         This operation allows for updating properties of a shipment including `label_type`, `reference`, `payment`, `options` and `metadata`.
         It is not for editing the parcels of a shipment.
@@ -3201,7 +3209,7 @@ paths:
       x-operationId: updateShipment
   /v1/shipments/{id}/cancel:
     post:
-      operationId: $$$$$cancel
+      operationId: cancelShipment
       description: Void a shipment with the associated label.
       summary: Cancel a shipment
       parameters:
@@ -3378,7 +3386,7 @@ paths:
           description: ''
   /v1/trackers:
     get:
-      operationId: $$$$$$list
+      operationId: listTrackers
       description: Retrieve all shipment trackers.
       summary: List all package trackers
       parameters:
@@ -3409,8 +3417,8 @@ paths:
         schema:
           type: string
         description: 'Valid tracker status. <br/>Values: `pending`, `unknown`, `on_hold`,
-          `cancelled`, `delivered`, `in_transit`, `delivery_delayed`, `out_for_delivery`,
-          `ready_for_pickup`, `delivery_failed`, `return_to_sender`'
+          `delivered`, `in_transit`, `delivery_delayed`, `out_for_delivery`, `ready_for_pickup`,
+          `delivery_failed`'
       - in: query
         name: tracking_number
         schema:
@@ -3443,7 +3451,7 @@ paths:
           description: ''
       x-operationId: listTrackers
     post:
-      operationId: $$$$$$add
+      operationId: addTracker
       description: |-
         This API creates or retrieves (if existent) a tracking status object containing the
         details and events of a shipping in progress.
@@ -3501,7 +3509,7 @@ paths:
       x-operationId: addTracker
   /v1/trackers/{carrier_name}/{tracking_number}:
     get:
-      operationId: $$$$$$create
+      operationId: createTracker
       description: |-
         This API creates or retrieves (if existent) a tracking status object containing the
         details and events of a shipping in progress.
@@ -3603,7 +3611,7 @@ paths:
       x-operationId: createTracker
   /v1/trackers/{id_or_tracking_number}:
     get:
-      operationId: $$$$$$retrieve
+      operationId: retrieveTracker
       description: Retrieve a package tracker
       summary: Retrieves a package tracker
       parameters:
@@ -3641,7 +3649,7 @@ paths:
           description: ''
       x-operationId: retrieveTracker
     put:
-      operationId: $$$$$$update
+      operationId: updateTracker
       description: Mixin to log requests
       summary: Update tracker data
       parameters:
@@ -3695,7 +3703,7 @@ paths:
           description: ''
       x-operationId: updateTracker
     delete:
-      operationId: $$$$$$remove
+      operationId: removeTracker
       description: Discard a package tracker.
       summary: Discard a package tracker
       parameters:
@@ -3733,7 +3741,7 @@ paths:
       x-operationId: removeTracker
   /v1/webhooks:
     get:
-      operationId: $$$$$$$list
+      operationId: listWebhooks
       description: Retrieve all webhooks.
       summary: List all webhooks
       tags:
@@ -3764,7 +3772,7 @@ paths:
           description: ''
       x-operationId: listWebhooks
     post:
-      operationId: $$$$$$$create
+      operationId: createWebhook
       description: Create a new webhook.
       summary: Create a webhook
       tags:
@@ -3802,7 +3810,7 @@ paths:
       x-operationId: createWebhook
   /v1/webhooks/{id}:
     get:
-      operationId: $$$$$$$retrieve
+      operationId: retrieveWebhook
       description: Retrieve a webhook.
       summary: Retrieve a webhook
       parameters:
@@ -3839,7 +3847,7 @@ paths:
           description: ''
       x-operationId: retrieveWebhook
     patch:
-      operationId: $$$$$$$update
+      operationId: updateWebhook
       description: update a webhook.
       summary: Update a webhook
       parameters:
@@ -3887,7 +3895,7 @@ paths:
           description: ''
       x-operationId: updateWebhook
     delete:
-      operationId: $$$$$$$remove
+      operationId: removeWebhook
       description: Remove a webhook.
       summary: Remove a webhook
       parameters:
@@ -3925,7 +3933,7 @@ paths:
       x-operationId: removeWebhook
   /v1/webhooks/{id}/test:
     post:
-      operationId: $$$$$$$test
+      operationId: testWebhook
       description: test a webhook.
       summary: Test a webhook
       parameters:
@@ -5053,14 +5061,6 @@ components:
         display_name:
           type: string
           description: The carrier verbose name.
-        integration_status:
-          enum:
-          - in-development
-          - beta
-          - production-ready
-          type: string
-          x-spec-enum-id: 12bd7dd6ff9a3b05
-          description: The carrier integration status.
         capabilities:
           type: array
           items:
@@ -5080,7 +5080,6 @@ components:
       required:
       - carrier_name
       - display_name
-      - integration_status
     Charge:
       type: object
       properties:
@@ -10083,16 +10082,14 @@ components:
           - pending
           - unknown
           - on_hold
-          - cancelled
           - delivered
           - in_transit
           - delivery_delayed
           - out_for_delivery
           - ready_for_pickup
           - delivery_failed
-          - return_to_sender
           type: string
-          x-spec-enum-id: b774dd996160d59f
+          x-spec-enum-id: 979a07e5fd2a5042
           default: pending
           description: The current tracking status
         estimated_delivery:
@@ -10411,16 +10408,14 @@ components:
           - pending
           - unknown
           - on_hold
-          - cancelled
           - delivered
           - in_transit
           - delivery_delayed
           - out_for_delivery
           - ready_for_pickup
           - delivery_failed
-          - return_to_sender
           type: string
-          x-spec-enum-id: b774dd996160d59f
+          x-spec-enum-id: 979a07e5fd2a5042
           default: pending
           description: The current tracking status
         estimated_delivery:

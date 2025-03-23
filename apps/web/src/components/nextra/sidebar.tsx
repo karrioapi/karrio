@@ -1,54 +1,31 @@
 'use client'
 
+import { Search, X, Monitor, FileText, GitFork, Database, ArrowUpCircle, Container, BookOpen, Zap, Home, Code, Github } from 'lucide-react'
+import { Button } from '@karrio/ui/components/ui/button'
+import { normalizePages } from 'nextra/normalize-pages'
+import { Input } from '@karrio/ui/components/ui/input'
+import { useState, useRef, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import type { PageMapItem } from 'nextra'
-import { normalizePages } from 'nextra/normalize-pages'
+import { useTheme } from 'next-themes'
 import type { FC } from 'react'
 import Link from 'next/link'
 import clsx from 'clsx'
-import { useState, useRef, useEffect } from 'react'
-import { Input } from '@karrio/ui/components/ui/input'
-import { Button } from '@karrio/ui/components/ui/button'
-import { useTheme } from 'next-themes'
-import {
-  Monitor,
-  Settings,
-  Zap,
-  Code,
-  Boxes,
-  Combine,
-  FileText,
-  HelpCircle,
-  File,
-  Sun,
-  Moon,
-  Search,
-  X,
-  Home,
-  Github,
-  LifeBuoy,
-  ServerCog,
-  ChevronRight
-} from 'lucide-react'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@karrio/ui/components/ui/collapsible'
 
-// Import shadcn sidebar components (assumed to be available in the UI library)
+// Import shadcn sidebar components
 import {
   Sidebar as ShadcnSidebar,
   SidebarContent,
-  SidebarFooter,
+  SidebarHeader,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
+  SidebarFooter,
 } from '@karrio/ui/components/ui/sidebar'
 
 export const Sidebar: FC<{ pageMap: PageMapItem[] }> = ({ pageMap }) => {
   const pathname = usePathname()
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({})
   const [searchQuery, setSearchQuery] = useState('')
   const searchRef = useRef<HTMLDivElement>(null)
   const { theme, setTheme } = useTheme()
@@ -56,9 +33,8 @@ export const Sidebar: FC<{ pageMap: PageMapItem[] }> = ({ pageMap }) => {
 
   // After mounting, we can show the theme toggle
   useEffect(() => {
-    setMounted(true);
-    // No need for emergency style anymore as it's properly handled in global.css
-  }, [mounted]);
+    setMounted(true)
+  }, [])
 
   const { docsDirectories } = normalizePages({
     list: pageMap,
@@ -69,203 +45,154 @@ export const Sidebar: FC<{ pageMap: PageMapItem[] }> = ({ pageMap }) => {
   const docsEntry = docsDirectories.find(item => item.name === 'docs')
   const docsChildren = docsEntry?.children || []
 
-  // Icons for sidebar items using Lucide
-  const getIcon = (title: string) => {
-    switch (title.toLowerCase()) {
+  // Get the current active section based on the first segment after /docs/
+  const activeSegment = pathname.split('/').filter(Boolean)[1] || ''
+  const activeSection = docsChildren.find(item => item.name === activeSegment)
+  const activeSectionChildren = activeSection?.children || []
+
+  // Get icon for a specific page
+  const getIcon = (name: string) => {
+    switch (name.toLowerCase()) {
       case 'introduction':
         return <Monitor className="h-4 w-4" />
-      case 'setup':
-        return <Settings className="h-4 w-4" />
+      case 'local development':
+        return <FileText className="h-4 w-4" />
+      case 'oss contribution':
+        return <GitFork className="h-4 w-4" />
+      case 'installation':
+        return <FileText className="h-4 w-4" />
+      case 'database migrations':
+        return <Database className="h-4 w-4" />
+      case 'upgrade':
+        return <ArrowUpCircle className="h-4 w-4" />
+      case 'docker':
+        return <Container className="h-4 w-4" />
+      case 'guides':
+        return <BookOpen className="h-4 w-4" />
       case 'quickstart':
         return <Zap className="h-4 w-4" />
-      case 'api development':
-      case 'api reference':
-      case 'api':
-        return <Code className="h-4 w-4" />
-      case 'atoms':
-        return <Boxes className="h-4 w-4" />
-      case 'hooks':
-        return <Combine className="h-4 w-4" />
-      case 'guides':
-      case 'getting started':
-        return <FileText className="h-4 w-4" />
-      case 'faq':
-        return <HelpCircle className="h-4 w-4" />
-      case 'developing':
-        return <Code className="h-4 w-4" />
-      case 'platform':
-        return <ServerCog className="h-4 w-4" />
-      case 'self hosting':
-        return <ServerCog className="h-4 w-4" />
-      case 'open source contribution':
-        return <Github className="h-4 w-4" />
       default:
-        return <File className="h-4 w-4" />
+        return <FileText className="h-4 w-4" />
     }
   }
 
-  const toggleSection = (route: string) => {
-    setOpenSections(prev => ({
-      ...prev,
-      [route]: !prev[route]
-    }))
-  }
-
-  const renderItem = (item: any, depth = 0) => {
-    const route = item.route || ('href' in item ? (item.href as string) : '')
-    const isActive = pathname === route
-    const isParentActive = pathname.startsWith(route) && route !== '/'
-    const { title } = item
-    const isOpen = openSections[route] || isParentActive
-
-    // Filter out items that don't match the search query
-    if (searchQuery && !title.toLowerCase().includes(searchQuery.toLowerCase())) {
-      if (!('children' in item) || !item.children.some((child: any) =>
-        child.title.toLowerCase().includes(searchQuery.toLowerCase()))) {
-        return null
-      }
-    }
-
-    // For separator type items (Section headers)
+  // Group pages by their section
+  const groupedPages = activeSectionChildren.reduce((acc: any, item: any) => {
     if (item.type === 'separator') {
-      return (
-        <SidebarGroup key={title}>
-          <SidebarGroupLabel key={title}>{title}</SidebarGroupLabel>
-          {item.children && (
-            <SidebarMenu>
-              {item.children.map((child: any) => renderItem(child, depth + 1))}
-            </SidebarMenu>
-          )}
-        </SidebarGroup>
-      )
-    }
-
-    if ('children' in item) {
-      return (
-        <SidebarMenu key={route || title} className="px-2">
-          <Collapsible
-            open={isOpen}
-            onOpenChange={() => toggleSection(route)}
-          >
-            <CollapsibleTrigger className="w-full">
-              <SidebarMenuButton tooltip={title}>
-                {depth === 0 && getIcon(title)}
-                <span>{title}</span>
-                <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-              </SidebarMenuButton>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <SidebarGroup>
-                {item.children.map((child: any) => renderItem(child, depth + 1))}
-              </SidebarGroup>
-            </CollapsibleContent>
-          </Collapsible>
-        </SidebarMenu>
-      )
-    }
-
-    return (
-      <li key={route} className="px-2">
-        <Link
-          href={route}
-          className={clsx(
-            "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors sidebar-item relative",
-            isActive
-              ? "text-purple-600 dark:text-purple-400 before:absolute before:left-0 before:top-1 before:bottom-1 before:w-0.5 before:bg-purple-600 dark:before:bg-purple-400 before:rounded-full font-medium"
-              : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-neutral-800"
-          )}
-        >
-          {depth === 1 && getIcon(title)}
-          <span>{title}</span>
-        </Link>
-      </li>
-    )
-  }
-
-  // Function to organize the docs by sections
-  const renderDocsContent = () => {
-    return docsChildren.map((item: any) => {
-      if (item.type === 'separator') {
-        return renderItem(item, 0);
+      acc[item.name] = {
+        title: item.title,
+        pages: []
       }
-      return renderItem(item, 0);
-    });
-  }
+    } else if (item.type === 'page') {
+      const lastSeparator = [...activeSectionChildren].reverse().find(
+        (s: any) => s.type === 'separator' && activeSectionChildren.indexOf(s) < activeSectionChildren.indexOf(item)
+      )
+      if (lastSeparator) {
+        if (!acc[lastSeparator.name]) {
+          acc[lastSeparator.name] = {
+            title: lastSeparator.title,
+            pages: []
+          }
+        }
+        acc[lastSeparator.name].pages.push(item)
+      }
+    }
+    return acc
+  }, {})
 
   return (
     <ShadcnSidebar className="sidebar border-r border-gray-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 shrink-0">
-      <SidebarHeader className="px-6 py-3">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <div className="flex items-center justify-between w-full">
-              <Link href="/docs" className="flex items-center">
-                {mounted && (theme === 'dark' ? (
-                  <img src="/logo-light.svg" alt="Karrio" className="h-6 w-auto" />
-                ) : (
-                  <img src="/logo.svg" alt="Karrio" className="h-6 w-auto" />
-                ))}
-              </Link>
+      <SidebarHeader className="px-5 py-4">
+        {/* Desktop Header */}
+        <div className="hidden md:block">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <div className="flex items-center justify-between w-full">
+                <Link href="/docs" className="flex items-center">
+                  {mounted && (theme === 'dark' ? (
+                    <img src="/karrio-docs-light.svg" alt="Karrio Docs" className="h-5 w-auto" />
+                  ) : (
+                    <img src="/karrio-docs.svg" alt="Karrio Docs" className="h-5 w-auto" />
+                  ))}
+                </Link>
+              </div>
+            </SidebarMenuItem>
+          </SidebarMenu>
 
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-full p-1.5 text-gray-500 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-neutral-800"
-                onClick={() => {
-                  const newTheme = theme === 'dark' ? 'light' : 'dark';
-                  setTheme(newTheme);
-                  // Force immediate application of the theme classes to ensure consistent styling
-                  if (newTheme === 'dark') {
-                    document.documentElement.classList.add('dark');
-                    document.body.classList.add('dark');
-                    document.documentElement.classList.add('docs-dark');
-                    document.body.classList.add('docs-dark');
-                  } else {
-                    document.documentElement.classList.remove('dark');
-                    document.body.classList.remove('dark');
-                    document.documentElement.classList.remove('docs-dark');
-                    document.body.classList.remove('docs-dark');
-                  }
-                }}
-                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-              >
-                {mounted && (theme === 'dark' ? (
-                  <Sun className="h-4 w-4" />
-                ) : (
-                  <Moon className="h-4 w-4" />
-                ))}
-                <span className="sr-only">Toggle theme</span>
-              </Button>
+          <div className="mt-6" ref={searchRef}>
+            <div className="flex items-center rounded-md border px-2 py-1 search-box border-gray-200 dark:border-neutral-800 bg-white dark:bg-neutral-900">
+              <Search className="h-3.5 w-3.5 text-gray-500 dark:text-gray-400" />
+              <Input
+                type="text"
+                placeholder="Search docs..."
+                className="h-6 w-full border-0 bg-transparent px-2 py-0.5 text-sm outline-none focus-visible:ring-0"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              {searchQuery && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-4 w-4 text-gray-500 dark:text-gray-400"
+                  onClick={() => setSearchQuery('')}
+                >
+                  <X className="h-3.5 w-3.5" />
+                  <span className="sr-only">Clear search</span>
+                </Button>
+              )}
             </div>
-          </SidebarMenuItem>
-        </SidebarMenu>
+          </div>
+        </div>
 
-        <div className="mt-2" ref={searchRef}>
-          <div className="flex items-center rounded-md border px-2 py-1 search-box border-gray-200 dark:border-neutral-800 bg-white dark:bg-neutral-900">
-            <Search className="h-3.5 w-3.5 text-gray-500 dark:text-gray-400" />
-            <Input
-              type="text"
-              placeholder="Search docs..."
-              className="h-6 w-full border-0 bg-transparent px-2 py-0.5 text-sm outline-none focus-visible:ring-0"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            {searchQuery && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-4 w-4 text-gray-500 dark:text-gray-400"
-                onClick={() => setSearchQuery('')}
-              >
-                <X className="h-3.5 w-3.5" />
-                <span className="sr-only">Clear search</span>
-              </Button>
-            )}
+        {/* Mobile Navigation */}
+        <div className="md:hidden">
+          <div className="space-y-1">
+            {docsChildren.map((section) => (
+              section.type === 'separator' && (
+                <Link
+                  key={section.name}
+                  href={`/docs/${section.name}`}
+                  className={clsx(
+                    "flex items-center gap-2 py-1.5 text-sm font-semibold transition-colors",
+                    pathname.startsWith(`/docs/${section.name}`)
+                      ? "text-purple-600 dark:text-purple-400"
+                      : "text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
+                  )}
+                >
+                  <BookOpen className="h-3.5 w-3.5" />
+                  <span>{section.title}</span>
+                </Link>
+              )
+            ))}
           </div>
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2">
-        {renderDocsContent()}
+      <SidebarContent className="px-4 py-6">
+        {Object.entries(groupedPages).map(([key, section]: [string, any]) => (
+          <div key={key} className="mt-4 first:mt-0">
+            <h4 className="px-2 mb-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
+              {section.title}
+            </h4>
+            <div className="space-y-1 pl-2">
+              {section.pages.map((page: any) => (
+                <Link
+                  key={page.route}
+                  href={page.route}
+                  className={clsx(
+                    "flex items-center gap-2 px-2 py-1.5 text-sm transition-colors relative",
+                    pathname === page.route
+                      ? "text-purple-600 dark:text-purple-400 before:absolute before:left-0 before:top-1 before:bottom-1 before:w-0.5 before:bg-purple-600 dark:before:bg-purple-400 before:rounded-full font-medium"
+                      : "text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
+                  )}
+                >
+                  {getIcon(page.title)}
+                  <span>{page.title}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        ))}
       </SidebarContent>
 
       <SidebarFooter className="border-t py-3 px-2 border-gray-200 dark:border-neutral-800">
@@ -288,20 +215,6 @@ export const Sidebar: FC<{ pageMap: PageMapItem[] }> = ({ pageMap }) => {
                 >
                   <FileText className="h-3.5 w-3.5" />
                   <span>Blog</span>
-                </Link>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <Link
-                  href="/docs/api"
-                  className={clsx(
-                    "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm sidebar-item relative",
-                    pathname === "/docs/api"
-                      ? "text-purple-600 dark:text-purple-400 before:absolute before:left-0 before:top-1 before:bottom-1 before:w-0.5 before:bg-purple-600 dark:before:bg-purple-400 before:rounded-full font-medium"
-                      : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-neutral-800"
-                  )}
-                >
-                  <Code className="h-3.5 w-3.5" />
-                  <span>API Reference</span>
                 </Link>
               </SidebarMenuItem>
               <SidebarMenuItem>

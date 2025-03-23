@@ -1,20 +1,29 @@
 import { getPostsByTag, getTags } from '@/lib/get-posts';
 import { PostCard } from '@/components/blog/post-card';
 import { notFound } from 'next/navigation';
+import { Metadata } from 'next';
 
 export async function generateStaticParams() {
   const tags = await getTags();
   return tags.map(tag => ({ tag }));
 }
 
-export async function generateMetadata({ params }: { params: { tag: string } }) {
+export async function generateMetadata({ params }: { params: { tag: string } }): Promise<Metadata> {
   return {
     title: `Posts tagged with ${params.tag} - Karrio Blog`
   };
 }
 
-export default async function TagPage({ params }: { params: { tag: string } }) {
-  const { tag } = params;
+type SegmentParams = { [key: string]: string | string[] | undefined };
+
+interface PageProps {
+  params?: Promise<SegmentParams>;
+  searchParams?: Promise<any>;
+}
+
+export default async function TagPage({ params }: PageProps) {
+  const resolvedParams = await params;
+  const tag = resolvedParams?.tag as string;
   const posts = await getPostsByTag(tag);
 
   if (!posts.length) {

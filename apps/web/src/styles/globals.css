@@ -53,6 +53,10 @@
     --sidebar-bg: #ffffff;
     --sidebar-text: #333333;
     --sidebar-border: #e5e7eb;
+
+    /* New CSS variable definitions for code highlighting */
+    --code-bg: #f8f9fc;
+    --code-fg: #1f2937;
   }
 
   /* Dark theme variables */
@@ -100,6 +104,10 @@
     --docs-muted-text: #d4d4d8;
     --docs-accent: #c084fc;
     --docs-accent-hover: #d8b4fe;
+
+    /* Dark mode CSS variable overrides */
+    --code-bg: #0d1117;
+    --code-fg: #e1e4e8;
   }
 
   /* Platform theme variables (alternate dark theme) */
@@ -695,4 +703,36 @@
 [data-theme='dark'] .docs-page .group:hover div.rounded-lg {
   background-color: var(--docs-card-hover);
   border-color: #404040;
+}
+
+/* Style for highlighted lines in code blocks */
+.highlighted-line {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  display: block;
+  margin: 0 -0.5rem;
+  padding: 0 0.5rem;
+  border-left: 2px solid rgba(255, 255, 255, 0.4);
+}
+
+/* Add styling for light theme highlighted line */
+.light .highlighted-line {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  border-left: 2px solid rgba(0, 0, 0, 0.2);
+}
+
+/* Override nextra pre styling to prevent double wrapping */
+.nextra-code-block>div>pre {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Remove any pre tag added by Nextra automatically */
+pre[data-word-wrap],
+pre[data-copy] {
+  all: unset !important;
+  display: block !important;
 }

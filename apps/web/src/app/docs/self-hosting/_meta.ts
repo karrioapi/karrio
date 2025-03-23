@@ -1,5 +1,9 @@
 export default {
-  "installation": {
+  "getting-started": {
+    title: 'Getting Started',
+    type: 'separator',
+  },
+  "index": {
     title: 'Installation',
     type: 'page'
   },

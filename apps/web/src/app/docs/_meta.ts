@@ -1,6 +1,6 @@
 export default {
   "developing": {
-    title: 'Getting Started',
+    title: 'Developing',
     type: 'separator'
   },
   "self-hosting": {
@@ -9,6 +9,10 @@ export default {
   },
   "platform": {
     title: 'Platform',
+    type: 'separator'
+  },
+  "api-reference": {
+    title: 'API Reference',
     type: 'separator'
   }
 }

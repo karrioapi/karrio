@@ -4,8 +4,8 @@ import type { FC } from 'react'
 
 export const Footer: FC = () => {
   return (
-    <footer className="w-full border-t border-gray-200 bg-white px-6 py-8 dark:border-neutral-800 dark:bg-transparent">
-      <div className="mx-auto max-w-5xl">
+    <footer className="w-full border-t border-gray-200 bg-white px-8 py-8 dark:border-neutral-800 dark:bg-transparent">
+      <div className="mx-auto max-w-[95%] xl:max-w-[1280px]">
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
           <div className="flex items-center space-x-5">
             <a href="https://github.com/karrioapi/karrio" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors">

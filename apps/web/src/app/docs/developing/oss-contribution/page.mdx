@@ -1,134 +1,104 @@
-# Local Development
+---
+title: Introduction
+date: 2024-03-20
+description: Learn how to integrate Karrio into your e-commerce platform to automate your shipping operations
+author: Karrio Team
+image: /placeholder.svg
+tags: [tutorial, shipping, integration, automation]
+sidebarTitle: OSS Contribution
+---
 
-This section provides information for developers who want to contribute to Karrio or build custom integrations.
+# Introduction
+Karrio is a modern shipping infrastructure that simplifies shipping operations for e-commerce businesses of all sizes. In this tutorial, we'll walk through the basic steps to integrate Karrio into your existing e-commerce platform.
 
-## Architecture Overview
+## What is Karrio?
 
-Karrio is built with a microservices architecture, consisting of several components:
+Karrio is an open-source multi-carrier shipping API that allows you to connect with multiple shipping carriers through a single, unified API. Instead of integrating with each carrier separately, you can use Karrio to:
 
-- **API Server**: Django REST Framework application that provides the core API
-- **Web Dashboard**: React application for the user interface
-- **Worker**: Celery workers for background tasks
-- **Database**: PostgreSQL for data storage
-- **Cache**: Redis for caching and as a message broker
+- Get shipping rates from multiple carriers
+- Create shipping labels
+- Track shipments
+- Validate addresses
+- And much more!
 
-```mermaid
-graph TD
-    A[Client] -->|API Requests| B[API Server]
-    C[Web Dashboard] -->|API Requests| B
-    B -->|Database Queries| D[PostgreSQL]
-    B -->|Cache Operations| E[Redis]
-    B -->|Queue Tasks| F[Celery Workers]
-    F -->|Process Tasks| B
-    F -->|Database Queries| D
-    F -->|Cache Operations| E
-```
+## Setting up Karrio
 
-## Development Environment
+### Installation
 
-For detailed instructions on setting up your development environment, see the [Local Development](/docs/local-development) guide.
-
-## Code Organization
-
-The Karrio codebase is organized as follows:
-
-- **`/api`**: Django REST Framework API
-  - **`/api/core`**: Core models and utilities
-  - **`/api/carriers`**: Carrier-specific integrations
-  - **`/api/endpoints`**: API endpoints
-- **`/web`**: React web dashboard
-  - **`/web/src/components`**: Reusable UI components
-  - **`/web/src/pages`**: Page components
-  - **`/web/src/services`**: API client services
-- **`/worker`**: Celery worker tasks
-- **`/docs`**: Documentation
-
-## Adding a New Carrier
-
-One of the most common contributions is adding support for a new shipping carrier. Here's a high-level overview of the process:
-
-1. Create a new carrier module in `/api/carriers/`
-2. Implement the required interfaces:
-   - `CarrierInterface`: Base interface for all carriers
-   - `ShippingInterface`: For shipping operations
-   - `TrackingInterface`: For tracking operations
-   - `RateInterface`: For rate calculation
-3. Add carrier-specific settings to the configuration
-4. Add tests for the new carrier
-5. Update documentation
-
-For a detailed guide, see [Adding a New Carrier](/docs/developing/adding-a-carrier).
-
-## API Development
-
-When developing against the Karrio API, you should follow these best practices:
-
-- Use versioned endpoints (e.g., `/v2/shipments`)
-- Implement proper error handling
-- Follow RESTful principles
-- Write comprehensive tests
-- Document all changes
-
-For more information, see the [API Development Guide](/docs/api-development).
-
-## Testing
-
-Karrio uses a comprehensive testing strategy:
-
-- **Unit Tests**: Test individual functions and methods
-- **Integration Tests**: Test interactions between components
-- **End-to-End Tests**: Test complete workflows
-
-To run tests:
+The easiest way to get started with Karrio is through our Docker installation:
 
 ```bash
-# Run all tests
-docker-compose exec api python manage.py test
-
-# Run specific tests
-docker-compose exec api python manage.py test api.carriers.tests.test_usps
+docker run -p 8000:8000 -d karrio/karrio
 ```
 
-## Documentation
+For more advanced configurations, including self-hosting options, check out our [self-hosting documentation](/docs/self-hosting).
 
-Documentation is a crucial part of the development process. When making changes:
+### API Integration
 
-- Update the relevant documentation files
-- Add examples for new features
-- Update API reference for endpoint changes
-- Add diagrams for complex workflows
+Once Karrio is running, you can integrate it with your application using our REST API or one of our client libraries:
 
-## Continuous Integration
+```javascript
+// Example using the JavaScript client
+import { Karrio } from '@karrio/client';
 
-Karrio uses GitHub Actions for continuous integration:
+const karrio = new Karrio({
+  apiKey: 'your_api_key',
+  server: 'http://localhost:8000'
+});
 
-- **Linting**: Checks code style and formatting
-- **Testing**: Runs the test suite
-- **Building**: Builds Docker images
-- **Deployment**: Deploys to staging environments
+// Get shipping rates
+const rates = await karrio.rating.fetch({
+  shipper: {
+    postal_code: '12345',
+    country_code: 'US'
+  },
+  recipient: {
+    postal_code: '54321',
+    country_code: 'US'
+  },
+  parcels: [{
+    weight: 1.0,
+    weight_unit: 'LB'
+  }]
+});
+```
 
-All pull requests must pass CI checks before being merged.
+## Next Steps
 
-## Release Process
+Now that you have Karrio up and running, explore the following resources:
 
-Karrio follows a semantic versioning approach:
+1. [API Documentation](/docs/api) - Learn about all available API endpoints
+2. [Carrier Integrations](/docs/carriers) - See which carriers are supported
+3. [Community Forum](https://community.karrio.io) - Get help from the community
 
-- **Major Versions**: Breaking changes
-- **Minor Versions**: New features, non-breaking changes
-- **Patch Versions**: Bug fixes
+Stay tuned for more tutorials on advanced Karrio configurations and use cases!
 
-The release process involves:
+> [!NOTE]
+>
+> Useful information that users should know, even when skimming content.
 
-1. Creating a release branch
-2. Running comprehensive tests
-3. Building release artifacts
-4. Updating documentation
-5. Publishing the release
+> [!TIP]
+>
+> Helpful advice for doing things better or more easily.
 
-## Getting Help
+> [!IMPORTANT]
+>
+> Key information users need to know to achieve their goal.
 
-If you need help with development:
+> [!WARNING]
+>
+> Urgent info that needs immediate user attention to avoid problems.
 
-- Check the [GitHub Issues](https://github.com/karrioapi/karrio/issues)
-- Join the [Community Forum](https://community.karrio.io)
-- Review the [Contributing Guidelines](/docs/open-source-contribution/introduction-os)
+> [!CAUTION]
+>
+> Advises about risks or negative outcomes of certain actions.
+
+
+```js {1,4-5}
+import { useState } from 'react'
+
+function Counter() {
+  const [count, setCount] = useState(0)
+  return <button onClick={() => setCount(count + 1)}>{count}</button>
+}
+```
