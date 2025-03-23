@@ -3,14 +3,8 @@ import path from "path";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
-// Create a simpler configuration that can be serialized
-const withNextra = nextra({
-  defaultShowCopyCode: true,
-  codeHighlight: true,
-})
-
-// Combine Next.js config with Nextra config
-export default withNextra({
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   basePath: BASE_PATH,
   reactStrictMode: true,
   transpilePackages: [
@@ -26,10 +20,16 @@ export default withNextra({
   },
 
   // Configure pageExtensions to include md and mdx
-  pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
+  pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
+}
 
-  // Add custom webpack configuration if needed
-  webpack: (config) => {
-    return config;
-  }
+// Create a simpler configuration that can be serialized
+const withNextra = nextra({
+  contentDirBasePath: '/blog',
+  defaultShowCopyCode: false,
+  // Disable nextra's built-in syntax highlighting since we're using our custom component
+  codeHighlight: false
 })
+
+// Combine Next.js config with Nextra config
+export default withNextra(nextConfig)

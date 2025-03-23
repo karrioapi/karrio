@@ -27,9 +27,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       data-theme="platform"
       suppressHydrationWarning
       className={`${inter.variable} ${jetbrains.variable} ${noto.variable} ${ubuntu.variable} ${oxygen.variable}`}>
-      <body className="min-h-screen font-sans antialiased">
+      <body className="font-sans antialiased">
         <RootProvider>
-          <div className="min-h-screen bg-[#0f0826] text-white overflow-x-hidden">
+          <div className="flex flex-col min-h-screen bg-[#0f0826] text-white">
             {/* Header */}
             <SiteHeader />
 
@@ -37,7 +37,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <PlatformSubnav />
 
             {/* Main Content */}
-            <main>
+            <main className="flex-1">
               {children}
             </main>
 

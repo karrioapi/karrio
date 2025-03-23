@@ -11,7 +11,9 @@ import type { PageMapItem } from 'nextra'
 export const NextraTheme: FC<{
   children: ReactNode
   pageMap: PageMapItem[]
-}> = ({ children, pageMap }) => {
+  hideSidebar?: boolean
+  hideTOC?: boolean
+}> = ({ children, pageMap, hideSidebar = false, hideTOC = false }) => {
   return (
     <ThemeProvider
       attribute="class"
@@ -24,30 +26,37 @@ export const NextraTheme: FC<{
     >
       <div className="flex min-h-screen w-full docs-container overflow-hidden dark:bg-neutral-950 dark:text-white">
         <SidebarProvider>
-          <Sidebar pageMap={pageMap} />
+          {/* Show sidebar on mobile or when hideSidebar is false */}
+          <div className={`${hideSidebar ? 'md:hidden' : ''}`}>
+            <Sidebar pageMap={pageMap} />
+          </div>
 
-          <SidebarInset className="flex-1 flex flex-col overflow-hidden">
+          <SidebarInset className={`flex-1 flex flex-col overflow-hidden ${hideSidebar ? 'md:ml-0' : ''}`}>
             {/* Fixed header - responsive width */}
-            <div className="fixed top-0 z-40 w-full md:w-[calc(100%-16rem)] bg-white dark:bg-neutral-950 border-b border-gray-200 dark:border-neutral-800">
+            <div className="fixed top-0 z-40 w-full md:w-[calc(100%-16rem)] bg-white dark:bg-neutral-950">
               <Header pageMap={pageMap} />
             </div>
 
             {/* Main content with padding to account for fixed header */}
-            <div className="flex-1 overflow-auto pt-12 w-full">
-              <div className="flex flex-col gap-4 md:p-4 md:pt-0 docs-content dark:bg-neutral-950 w-full overflow-hidden">
-                <div className="w-full lg:py-8 px-4 md:px-6 lg:px-8 overflow-hidden">
-                  <div className="flex flex-col xl:flex-row xl:gap-10 overflow-hidden">
+            <div className="flex-1 overflow-y-auto pt-12 w-full">
+              <div className="flex flex-col gap-4 docs-content dark:bg-neutral-950 w-full">
+                <div className="w-full lg:px-8 px-4">
+                  <div className="flex flex-col xl:flex-row xl:gap-10">
                     {/* Main content */}
-                    <div className="flex-1 mx-auto min-w-0 w-full overflow-hidden prose prose-h1:text-2xl prose-h1:font-semibold prose-h1:mb-6 prose-h2:text-xl prose-h2:font-semibold prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-lg prose-h3:font-medium prose-h3:mt-8 prose-h3:mb-3 prose-p:text-sm prose-p:leading-6 prose-li:text-sm prose-li:leading-6 dark:prose-invert prose-headings:tracking-tight prose-a:text-purple-600 dark:prose-a:text-purple-400 prose-a:no-underline hover:prose-a:text-purple-700 dark:hover:prose-a:text-purple-300 prose-img:rounded-lg prose-img:max-w-full prose-code:text-gray-800 dark:prose-code:text-gray-200 prose-pre:bg-gray-50 dark:prose-pre:bg-neutral-900 prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-neutral-800 prose-pre:rounded-lg prose-pre:overflow-x-auto docs-prose">
+                    <div className="flex-1 mx-auto min-w-0 w-full max-w-4xl prose prose-h1:text-2xl prose-h1:font-semibold prose-h1:mb-6 prose-h2:text-xl prose-h2:font-semibold prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-lg prose-h3:font-medium prose-h3:mt-8 prose-h3:mb-3 prose-p:text-sm prose-p:leading-6 prose-li:text-sm prose-li:leading-6 dark:prose-invert prose-headings:tracking-tight prose-a:text-purple-600 dark:prose-a:text-purple-400 prose-a:no-underline hover:prose-a:text-purple-700 dark:hover:prose-a:text-purple-300 prose-img:rounded-lg prose-img:max-w-full prose-code:text-gray-800 dark:prose-code:text-gray-200 prose-pre:bg-gray-50 dark:prose-pre:bg-neutral-900 prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-neutral-800 prose-pre:rounded-lg prose-pre:overflow-x-auto docs-prose">
                       {children}
                     </div>
 
                     {/* Fixed TOC - only on xl screens */}
-                    <div className="hidden xl:block xl:w-72">
-                      <div className="fixed top-12 right-8 w-64 z-30 max-h-[calc(100vh-3rem)] overflow-auto pt-6">
-                        <TOC toc={[]} />
+                    {!hideTOC && (
+                      <div className="hidden xl:block xl:w-72 relative">
+                        <div className="fixed w-72">
+                          <div className="pt-10 pb-18">
+                            <TOC toc={[]} />
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
 

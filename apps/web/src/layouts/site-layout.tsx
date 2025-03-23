@@ -19,14 +19,16 @@ export default function WebsiteLayout({
       data-theme="light"
       suppressHydrationWarning
       className={`${inter.variable} ${jetbrains.variable} ${noto.variable} ${ubuntu.variable} ${oxygen.variable}`}>
-      <body className="min-h-screen font-sans antialiased">
+      <body className="font-sans antialiased">
         <RootProvider defaultTheme="light">
-          <div className="min-h-screen overflow-x-hidden">
+          <div className="flex flex-col min-h-screen">
             {/* Header */}
             <SiteHeader />
 
             {/* Main Content */}
-            <main>{children}</main>
+            <main className="flex-1">
+              {children}
+            </main>
 
             {/* Footer */}
             <SiteFooter />

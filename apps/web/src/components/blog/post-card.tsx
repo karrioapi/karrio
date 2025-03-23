@@ -13,7 +13,7 @@ export function PostCard({ post }: { post: Post }) {
       <Link href={post.route}>
         <div className="mb-4 overflow-hidden rounded-lg">
           {image ? (
-            <div className="relative aspect-video w-full overflow-hidden">
+            <div className="relative aspect-[16/6] w-full overflow-hidden">
               <Image
                 src={image}
                 alt={title}
@@ -23,7 +23,7 @@ export function PostCard({ post }: { post: Post }) {
               />
             </div>
           ) : (
-            <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-primary/10 to-secondary/10 dark:from-[#5722cc]/20 dark:to-purple-900/30" />
+            <div className="relative aspect-[16/6] w-full overflow-hidden bg-gradient-to-br from-primary/10 to-secondary/10 dark:from-[#5722cc]/20 dark:to-purple-900/30" />
           )}
         </div>
         <div>

@@ -1,5 +1,9 @@
 export default {
-  "introduction": {
+  "getting-started": {
+    title: 'Getting Started',
+    type: 'separator',
+  },
+  "index": {
     title: 'Introduction',
     type: 'page'
   },
@@ -7,8 +11,12 @@ export default {
     title: 'Local Development',
     type: 'page'
   },
-  "oss-contribution": {
+  "contributing": {
     title: 'OSS Contribution',
+    type: 'separator',
+  },
+  "oss-contribution": {
+    title: 'Introduction',
     type: 'page'
   }
 }
