@@ -3,6 +3,8 @@ import Link from "next/link";
 import { Button } from "@karrio/ui/components/ui/button";
 import { CTASection } from "@/components/cta-section";
 import { HowItWorksSection } from "@/components/how-it-works-section";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export default function Home() {
   return (
@@ -129,10 +131,10 @@ export default function Home() {
       {/* Solution Section */}
       <section className="py-16 md:py-24 bg-gray-50">
         <div className="container mx-auto px-4 max-w-[95%] xl:max-w-[1280px]">
-          <h2 className="text-lg text-gray-500 text-center mb-4">The solution</h2>
-          <h3 className="text-3xl md:text-4xl font-bold text-center mb-12">Headless shipping platform</h3>
+          <h2 className="text-base md:text-lg text-gray-500 text-center mb-4">The solution</h2>
+          <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-12">Headless shipping platform</h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
             <div>
               <Image
                 src="/unified-api-illustration.png"
@@ -143,52 +145,34 @@ export default function Home() {
               />
             </div>
             <div>
-              <h4 className="text-2xl font-semibold mb-4">Universal shipping API</h4>
-              <p className="text-gray-600 mb-4">
-                Feeling the pain or struggling with shipping API integrations? Stop reinventing the
-                wheel and add your carrier accounts on Karrio to start processing shipping transactions.
-              </p>
-            </div>
-          </div>
+              <div className="space-y-8">
+                <div>
+                  <h4 className="text-xl md:text-2xl font-semibold mb-4">Universal shipping API</h4>
+                  <p className="text-gray-600">
+                    Feeling the pain or struggling with shipping API integrations? Stop reinventing the
+                    wheel and add your carrier accounts on Karrio to start processing shipping transactions.
+                  </p>
+                </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center mb-16">
-            <div className="order-2 md:order-1">
-              <h4 className="text-2xl font-semibold mb-4">Out-of-the-box shipping system</h4>
-              <p className="text-gray-600 mb-4">
-                Karrio's shipping solution offers an API for engineers and a flexible user interface
-                for back-office fulfillment operations. With our composable architecture, you can
-                add carrier extensions and extend Karrio's functionalities.
-              </p>
-            </div>
-            <div className="order-1 md:order-2">
-              <Image
-                src="/unified-api-illustration.png"
-                alt="Out-of-the-box shipping system illustration"
-                width={500}
-                height={400}
-                className="w-full h-auto"
-              />
-            </div>
-          </div>
+                <div>
+                  <h4 className="text-xl md:text-2xl font-semibold mb-4">Out-of-the-box shipping system</h4>
+                  <p className="text-gray-600">
+                    Karrio's shipping solution offers an API for engineers and a flexible user interface
+                    for back-office fulfillment operations. With our composable architecture, you can
+                    add carrier extensions and extend Karrio's functionalities.
+                  </p>
+                </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-            <div>
-              <Image
-                src="/unified-api-illustration.png"
-                alt="More control and security illustration"
-                width={500}
-                height={400}
-                className="w-full h-auto"
-              />
-            </div>
-            <div>
-              <h4 className="text-2xl font-semibold mb-4">More control and security</h4>
-              <p className="text-gray-600 mb-4">
-                Our open source solution gives you an alternative to the build-or-buy dilemma.
-                With Karrio's transparency, you can regain control and visibility over logistics
-                processes and shipping spending. All while achieving carrier, data and security
-                compliance.
-              </p>
+                <div>
+                  <h4 className="text-xl md:text-2xl font-semibold mb-4">More control and security</h4>
+                  <p className="text-gray-600">
+                    Our open source solution gives you an alternative to the build-or-buy dilemma.
+                    With Karrio's transparency, you can regain control and visibility over logistics
+                    processes and shipping spending. All while achieving carrier, data and security
+                    compliance.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -212,7 +196,7 @@ export default function Home() {
                 memorable shipping experiences and powerful extensions through
                 WebHooks, REST and GraphQL API.
               </p>
-              <Button className="bg-white text-[#231d48] hover:bg-white/90">
+              <Button className="bg-primary text-white hover:bg-primary/90">
                 <Link href="https://docs.karrio.io">Read Docs</Link>
               </Button>
             </div>
@@ -225,9 +209,18 @@ export default function Home() {
                   <div className="h-3 w-3 rounded-full bg-green-500"></div>
                 </div>
               </div>
-              <pre className="text-sm text-gray-300 overflow-x-auto">
-                <code>
-                  {`curl \\
+              <SyntaxHighlighter
+                language="bash"
+                style={vscDarkPlus}
+                customStyle={{
+                  background: 'transparent',
+                  padding: 0,
+                  margin: 0,
+                  fontSize: '0.875rem',
+                }}
+                wrapLongLines={true}
+              >
+                {`curl \\
   -X POST \\
   -H "Authorization: Token API_KEY" \\
   https://api.karrio.io/v1/proxy/rates \\
@@ -253,8 +246,7 @@ export default function Home() {
     }],
     "carrier_ids": ["canadapost"]
   }'`}
-                </code>
-              </pre>
+              </SyntaxHighlighter>
             </div>
           </div>
         </div>

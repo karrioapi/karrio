@@ -42,7 +42,7 @@ export const HowItWorksSection = () => {
   ];
 
   return (
-    <section className="py-20 md:py-28 bg-gradient-to-b from-white to-gray-50 dark:from-[#0f0826] dark:to-[#0a051b]">
+    <section className="py-12 md:py-28 bg-gradient-to-b from-white to-gray-50 dark:from-[#0f0826] dark:to-[#0a051b]">
       <div className="container mx-auto px-4 max-w-[95%] xl:max-w-[1280px]">
         <div className="text-center mb-16">
           <h2 className="text-sm uppercase tracking-wider text-primary font-medium mb-4">How it works</h2>
@@ -106,7 +106,7 @@ export const HowItWorksSection = () => {
 
           {/* Image display column */}
           <div className="md:col-span-3 relative">
-            <div className="aspect-[4/3] w-full h-full relative flex items-center justify-center">
+            <div className="min-h-[300px] md:aspect-[4/3] w-full relative flex items-center justify-center">
               {/* Background decorative elements */}
               <div className="absolute inset-0 w-full h-full overflow-hidden rounded-lg">
                 <div className="absolute -top-16 -right-16 w-64 h-64 bg-primary/3 dark:bg-primary/5 rounded-full blur-3xl"></div>
@@ -114,14 +114,14 @@ export const HowItWorksSection = () => {
               </div>
 
               {/* Card container */}
-              <div className="relative z-10 w-full max-w-xl mx-auto h-full">
+              <div className="relative z-10 w-full max-w-xl mx-auto">
                 {mounted && steps.map((step) => (
                   <div
                     key={step.number}
-                    className={`absolute inset-0 transition-all duration-300 ease-in-out
-                      ${selectedStep === step.number
-                        ? 'opacity-100 translate-y-0 z-10'
-                        : 'opacity-0 translate-y-8 -z-10'}`}
+                    className={`transition-all duration-300 ease-in-out ${selectedStep === step.number
+                      ? 'opacity-100 translate-y-0 relative'
+                      : 'opacity-0 translate-y-8 absolute inset-0'
+                      }`}
                   >
                     <div className="bg-[#f2f4f7] dark:bg-[#131033] rounded-lg overflow-hidden border-0 p-6 md:p-8">
                       <div className="rounded-lg overflow-hidden">

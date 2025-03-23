@@ -491,15 +491,17 @@ export default async function LandingPage() {
               <div className="flex flex-col sm:flex-row items-start gap-4 pt-4">
                 <Button
                   variant="outline"
-                  className="bg-[#79e5dd] text-[#1f1834] hover:bg-[#79e5dd]/90"
+                  className="bg-[#79e5dd] text-white hover:bg-[#79e5dd]/90"
+                  asChild
                 >
-                  Read the docs
+                  <Link href="/docs">Read the docs</Link>
                 </Button>
                 <Button
                   variant="outline"
                   className="border-white/20 hover:bg-white/10"
+                  asChild
                 >
-                  Get your API key
+                  <Link href="/platform#pricing">Get your API key</Link>
                 </Button>
               </div>
             </div>

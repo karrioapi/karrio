@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export const SiteHeader = () => {
   return (
-    <header className="py-6 border-b dark:border-white/10 border-border/30 dark:bg-[#0f0826] bg-background/95 backdrop-blur-sm dark:backdrop-blur-none shadow-sm dark:shadow-none">
+    <header className="sticky top-0 z-50 py-6 border-b border-border/30 bg-background/95 dark:border-white/10 dark:bg-[#0f0826] backdrop-blur-sm dark:backdrop-blur-none shadow-sm dark:shadow-none">
       <div className="container mx-auto px-0 sm:px-4 md:px-6 max-w-[95%] xl:max-w-[1280px]">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-0">
@@ -37,25 +37,25 @@ export const SiteHeader = () => {
             <div className="hidden md:flex space-x-6 ml-12 pl-4">
               <Link
                 href="/docs"
-                className="dark:text-white/80 dark:hover:text-white text-foreground/80 hover:text-foreground transition-colors font-medium"
+                className="dark:text-white/80 dark:hover:text-white text-foreground/80 hover:text-foreground transition-colors font-semibold"
               >
                 Docs
               </Link>
               <Link
                 href="/blog"
-                className="dark:text-white/80 dark:hover:text-white text-foreground/80 hover:text-foreground transition-colors font-medium"
+                className="dark:text-white/80 dark:hover:text-white text-foreground/80 hover:text-foreground transition-colors font-semibold"
               >
                 Blog
               </Link>
               <Link
                 href="/carriers"
-                className="dark:text-white/80 dark:hover:text-white text-foreground/80 hover:text-foreground transition-colors font-medium"
+                className="dark:text-white/80 dark:hover:text-white text-foreground/80 hover:text-foreground transition-colors font-semibold"
               >
                 Carriers
               </Link>
               <Link
                 href="/platform"
-                className="dark:text-white/80 dark:hover:text-white text-foreground/80 hover:text-foreground transition-colors font-medium"
+                className="dark:text-white/80 dark:hover:text-white text-foreground/80 hover:text-foreground transition-colors font-semibold"
               >
                 Platform
               </Link>
