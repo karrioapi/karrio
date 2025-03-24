@@ -21,9 +21,13 @@ KARRIO_CARRIER_MAPPING = {
     "dhl_e_commerce": "dhl_express",
 }
 
+class PaymentMethodType(lib.StrEnum):
+    net_terms = "net-terms"
+    credit_card = "credit-card"
 
 class ConnectionConfig(lib.Enum):
     """Carrier specific connection configs"""
+    payment_method_type = lib.OptionEnum("payment_method_type", PaymentMethodType)
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
 
@@ -55,9 +59,6 @@ class PackagingType(lib.StrEnum):
     your_packaging = freightcom_package
 
 
-class PaymentMethodType(lib.StrEnum):
-    net_terms = "net-terms"
-    credit_card = "credit-card"
 
 class PaymentType(lib.StrEnum):  # TODO:: retrieve the complete list of payment types
     sender = "shipper"

@@ -74,7 +74,6 @@ class Proxy(proxy.Proxy):
 
         return lib.Deserializable(response, lib.to_dict)
 
-    # TODO: not sure how this can be a dynamic unit Enum, and cached for now i hard code the id in the ship request
     def _get_payments_methods(self) -> lib.Deserializable[str]:
         response = self._send_request(
             path="/finance/payment-methods",

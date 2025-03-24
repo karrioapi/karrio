@@ -5,14 +5,12 @@ import math
 from karrio.lib import request
 from karrio import lib
 from karrio.core import Settings as BaseSettings
-from karrio.providers.freightcom.units import PaymentMethodType
 
 
 class Settings(BaseSettings):
     """Freightcom connection settings."""
 
     api_key: str
-    payment_method_type: PaymentMethodType = PaymentMethodType.net_terms
 
 
     account_country_code: str = None
@@ -42,7 +40,11 @@ class Settings(BaseSettings):
 
     @property
     def payment_method(self):
-        cache_key = f"payment|{self.carrier_name}|{self.payment_method_type}|{self.api_key}"
+
+        if not self.connection_config.payment_method_type.state:
+            raise Exception(f"Payment method type not set")
+
+        cache_key = f"payment|{self.carrier_name}|{self.connection_config.payment_method_type.state}|{self.api_key}"
 
         payment = self.connection_cache.get(cache_key) or {}
         payment_id = payment.get("id")
@@ -77,14 +79,17 @@ def get_payment_id(settings: Settings) -> dict:
         response = proxy._get_payments_methods()
         methods = response.deserialize()
 
+        selected_method = next((
+            method for method in methods
+            if settings.connection_config.payment_method_type.type.map(
+            method.get('type')).name == settings.connection_config.payment_method_type.state
+        ), None)
+
+
+        if not selected_method:
+            raise Exception(f"Payment method {settings.connection_config.payment_method_type.stat} not found in API")
+
+        return selected_method
 
     except Exception as e:
         raise
-
-
-    for method in methods:
-        if PaymentMethodType.map(method.get('type')).name == settings.payment_method_type:
-            return method
-
-    else:
-        raise Exception(f"Payment method {settings.payment_method_type} not found")
