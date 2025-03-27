@@ -11,7 +11,9 @@ cached_payment_method_id = {
 gateway = karrio.gateway["freightcom"].create(
     dict(
         api_key="api_key",
-        payment_method_type="net_terms"
+        config=dict(
+            payment_method_type="net_terms"
+        )
     ),
     cache=lib.Cache(**cached_payment_method_id),
 )

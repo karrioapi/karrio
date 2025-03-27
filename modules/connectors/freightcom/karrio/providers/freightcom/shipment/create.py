@@ -48,7 +48,6 @@ def _extract_details(
     )
 
     courier = provider_units.ShippingCourier.find(rate.service_id)
-    print(label)
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
@@ -64,7 +63,6 @@ def _extract_details(
             service_name=service.name_or_key,
             freightcom_service_id=rate.service_id,
             freightcom_unique_id=shipment.unique_id,
-
         )
     )
 
