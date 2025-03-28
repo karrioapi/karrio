@@ -1,0 +1,101 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Chit Chats Tracking Response",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the shipment"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["incomplete", "unpaid", "ready", "received", "transit", "delivered"],
+      "description": "Current status of the shipment"
+    },
+    "carrier": {
+      "type": "string",
+      "description": "The carrier handling the shipment"
+    },
+    "carrier_tracking_code": {
+      "type": ["string", "null"],
+      "description": "The carrier's tracking code"
+    },
+    "tracking_url": {
+      "type": "string",
+      "description": "URL to track the shipment"
+    },
+    "tracking_events": {
+      "type": "array",
+      "description": "Events in the shipment tracking history",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Type of tracking event"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the tracking event"
+          },
+          "subtitle": {
+            "type": ["string", "null"],
+            "description": "Subtitle of the tracking event"
+          },
+          "location_description": {
+            "type": ["string", "null"],
+            "description": "Location description for the tracking event"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Date and time of the tracking event (ISO 8601)"
+          },
+          "status": {
+            "type": ["string", "null"],
+            "description": "Status of the tracking event"
+          }
+        },
+        "required": ["type", "title", "created_at"]
+      }
+    },
+    "to_name": {
+      "type": "string",
+      "description": "Recipient name"
+    },
+    "to_address_1": {
+      "type": "string",
+      "description": "Recipient address line 1"
+    },
+    "to_address_2": {
+      "type": ["string", "null"],
+      "description": "Recipient address line 2"
+    },
+    "to_city": {
+      "type": "string",
+      "description": "Recipient city"
+    },
+    "to_province_code": {
+      "type": "string",
+      "description": "Recipient state/province code"
+    },
+    "to_postal_code": {
+      "type": "string",
+      "description": "Recipient postal/zip code"
+    },
+    "to_country_code": {
+      "type": "string",
+      "description": "Recipient country code (ISO 2-letter)"
+    },
+    "created_at": {
+      "type": "string",
+      "description": "Creation date and time (ISO 8601)"
+    }
+  },
+  "required": [
+    "id",
+    "status",
+    "tracking_url",
+    "tracking_events",
+    "created_at"
+  ]
+} 

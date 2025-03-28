@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Chit Chats Tracking Request",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string",
+      "description": "Chit Chats client ID"
+    },
+    "shipment_id": {
+      "type": "string",
+      "description": "Chit Chats shipment ID to track"
+    }
+  },
+  "required": ["client_id", "shipment_id"]
+} 

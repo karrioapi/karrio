@@ -1,0 +1,143 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Chit Chats Rate Request",
+  "description": "For rating, use the same structure as the shipment request but with a minimal set of required fields",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Recipient name"
+    },
+    "address_1": {
+      "type": "string",
+      "description": "Recipient address line 1"
+    },
+    "address_2": {
+      "type": ["string", "null"],
+      "description": "Recipient address line 2"
+    },
+    "city": {
+      "type": "string",
+      "description": "Recipient city"
+    },
+    "province_code": {
+      "type": "string",
+      "description": "Recipient state/province code"
+    },
+    "postal_code": {
+      "type": "string",
+      "description": "Recipient postal/zip code"
+    },
+    "country_code": {
+      "type": "string",
+      "description": "Recipient country code (ISO 2-letter)"
+    },
+    "phone": {
+      "type": ["string", "null"],
+      "description": "Recipient phone number"
+    },
+    "package_contents": {
+      "type": "string",
+      "enum": ["merchandise", "documents", "gift", "returned_goods", "sample"],
+      "description": "Contents of the package"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the package contents"
+    },
+    "value": {
+      "type": "string",
+      "description": "Value of the package contents"
+    },
+    "value_currency": {
+      "type": "string",
+      "description": "Currency code for the value"
+    },
+    "package_type": {
+      "type": "string",
+      "enum": ["envelope", "thick_envelope", "parcel"],
+      "description": "Type of package"
+    },
+    "weight": {
+      "type": "number",
+      "description": "Weight of the package"
+    },
+    "weight_unit": {
+      "type": "string",
+      "enum": ["g", "oz", "kg", "lb"],
+      "description": "Unit of weight measurement"
+    },
+    "size_x": {
+      "type": "number",
+      "description": "Length/X dimension of the package"
+    },
+    "size_y": {
+      "type": "number",
+      "description": "Width/Y dimension of the package"
+    },
+    "size_z": {
+      "type": "number",
+      "description": "Height/Z dimension of the package"
+    },
+    "size_unit": {
+      "type": "string",
+      "enum": ["cm", "in", "mm"],
+      "description": "Unit of dimension measurement"
+    },
+    "postage_type": {
+      "type": "string",
+      "description": "The postage type to query rates for (use 'unknown' to get all available rates)"
+    },
+    "ship_date": {
+      "type": "string",
+      "description": "Date the shipment is expected to be shipped (YYYY-MM-DD or 'today')"
+    },
+    "insurance_requested": {
+      "type": "boolean",
+      "description": "Whether insurance is requested"
+    },
+    "signature_requested": {
+      "type": "boolean",
+      "description": "Whether signature is requested"
+    },
+    "return_name": {
+      "type": ["string", "null"],
+      "description": "Return address name"
+    },
+    "return_address_1": {
+      "type": ["string", "null"],
+      "description": "Return address line 1"
+    },
+    "return_city": {
+      "type": ["string", "null"],
+      "description": "Return address city"
+    },
+    "return_province_code": {
+      "type": ["string", "null"],
+      "description": "Return address state/province code"
+    },
+    "return_postal_code": {
+      "type": ["string", "null"],
+      "description": "Return address postal/zip code"
+    },
+    "return_country_code": {
+      "type": ["string", "null"],
+      "description": "Return address country code (ISO 2-letter)"
+    }
+  },
+  "required": [
+    "name",
+    "address_1",
+    "city",
+    "province_code",
+    "postal_code",
+    "country_code",
+    "package_type",
+    "weight",
+    "weight_unit",
+    "size_x",
+    "size_y",
+    "size_z",
+    "size_unit"
+  ]
+} 

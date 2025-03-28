@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Chit Chats Add to Batch Request",
+  "type": "object",
+  "properties": {
+    "batch_id": {
+      "type": "integer",
+      "description": "The ID of the batch to add shipments to"
+    },
+    "shipment_ids": {
+      "type": "array",
+      "description": "List of shipment IDs to add to the batch",
+      "items": {
+        "type": "string",
+        "description": "Shipment ID"
+      }
+    }
+  },
+  "required": [
+    "batch_id",
+    "shipment_ids"
+  ]
+} 

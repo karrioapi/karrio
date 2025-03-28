@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Chit Chats Error Response",
+  "type": "object",
+  "properties": {
+    "error": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "Error message"
+            },
+            "code": {
+              "type": ["string", "number"],
+              "description": "Error code"
+            },
+            "details": {
+              "type": "object",
+              "description": "Additional error details"
+            }
+          },
+          "required": ["message"]
+        },
+        {
+          "type": "string",
+          "description": "Simple error message"
+        }
+      ]
+    },
+    "errors": {
+      "type": "array",
+      "description": "List of errors",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": ["string", "number"],
+            "description": "Error code"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message"
+          },
+          "field": {
+            "type": "string",
+            "description": "Field that caused the error"
+          }
+        },
+        "required": ["message"]
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "required": ["error"]
+    },
+    {
+      "required": ["errors"]
+    }
+  ]
+} 

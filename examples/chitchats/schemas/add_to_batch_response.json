@@ -1,0 +1,84 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Chit Chats Add to Batch Response",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "Whether the operation was successful",
+          "enum": [true]
+        },
+        "message": {
+          "type": "string",
+          "description": "Success message"
+        },
+        "shipment_ids": {
+          "type": "array",
+          "description": "List of successfully added shipment IDs",
+          "items": {
+            "type": "string",
+            "description": "Shipment ID"
+          }
+        },
+        "batch_id": {
+          "type": "string",
+          "description": "ID of the batch that shipments were added to"
+        }
+      },
+      "required": [
+        "success",
+        "shipment_ids",
+        "batch_id"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "Whether the operation was successful",
+          "enum": [false]
+        },
+        "message": {
+          "type": "string",
+          "description": "Error message"
+        },
+        "shipment_ids": {
+          "type": "array",
+          "description": "List of shipment IDs that failed to be added",
+          "items": {
+            "type": "string",
+            "description": "Shipment ID"
+          }
+        },
+        "errors": {
+          "type": "array",
+          "description": "List of errors encountered during the operation",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "Error code"
+              },
+              "message": {
+                "type": "string",
+                "description": "Error message"
+              },
+              "shipment_id": {
+                "type": "string",
+                "description": "ID of the shipment that failed to be added"
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "success",
+        "message"
+      ]
+    }
+  ]
+} 

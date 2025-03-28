@@ -1,0 +1,182 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Chit Chats Rate Response",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "shipment": {
+          "type": "object",
+          "properties": {
+            "rates": {
+              "type": "array",
+              "description": "Available rates for the shipment",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "postage_type": {
+                    "type": "string",
+                    "description": "Type of postage"
+                  },
+                  "postage_carrier_type": {
+                    "type": "string",
+                    "description": "Carrier type for the postage"
+                  },
+                  "postage_description": {
+                    "type": "string",
+                    "description": "Description of the postage type"
+                  },
+                  "signature_confirmation_description": {
+                    "type": ["string", "null"],
+                    "description": "Description of signature confirmation"
+                  },
+                  "delivery_duties_paid_description": {
+                    "type": ["string", "null"],
+                    "description": "Description of delivery duties paid"
+                  },
+                  "delivery_time_description": {
+                    "type": "string",
+                    "description": "Description of estimated delivery time"
+                  },
+                  "tracking_type_description": {
+                    "type": "string",
+                    "description": "Description of tracking type"
+                  },
+                  "is_insured": {
+                    "type": "boolean",
+                    "description": "Whether the rate includes insurance"
+                  },
+                  "purchase_amount": {
+                    "type": "string",
+                    "description": "Purchase amount for the rate"
+                  },
+                  "provincial_tax": {
+                    "type": ["string", "null"],
+                    "description": "Provincial tax amount"
+                  },
+                  "provincial_tax_label": {
+                    "type": ["string", "null"],
+                    "description": "Provincial tax label"
+                  },
+                  "federal_tax": {
+                    "type": ["string", "null"],
+                    "description": "Federal tax amount"
+                  },
+                  "federal_tax_label": {
+                    "type": ["string", "null"],
+                    "description": "Federal tax label"
+                  },
+                  "postage_fee": {
+                    "type": "string",
+                    "description": "Postage fee"
+                  },
+                  "insurance_fee": {
+                    "type": ["string", "null"],
+                    "description": "Insurance fee"
+                  },
+                  "delivery_fee": {
+                    "type": ["string", "null"],
+                    "description": "Delivery fee"
+                  },
+                  "payment_amount": {
+                    "type": "string",
+                    "description": "Total payment amount"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "description": "Currency code"
+                  }
+                },
+                "required": ["postage_type", "postage_description", "postage_fee"]
+              }
+            }
+          },
+          "required": ["rates"]
+        }
+      },
+      "required": ["shipment"]
+    },
+    {
+      "type": "array",
+      "description": "Array of rate options",
+      "items": {
+        "type": "object",
+        "properties": {
+          "postage_type": {
+            "type": "string",
+            "description": "Type of postage"
+          },
+          "postage_carrier_type": {
+            "type": "string",
+            "description": "Carrier type for the postage"
+          },
+          "postage_description": {
+            "type": "string",
+            "description": "Description of the postage type"
+          },
+          "signature_confirmation_description": {
+            "type": ["string", "null"],
+            "description": "Description of signature confirmation"
+          },
+          "delivery_duties_paid_description": {
+            "type": ["string", "null"],
+            "description": "Description of delivery duties paid"
+          },
+          "delivery_time_description": {
+            "type": "string",
+            "description": "Description of estimated delivery time"
+          },
+          "tracking_type_description": {
+            "type": "string",
+            "description": "Description of tracking type"
+          },
+          "is_insured": {
+            "type": "boolean",
+            "description": "Whether the rate includes insurance"
+          },
+          "purchase_amount": {
+            "type": "string",
+            "description": "Purchase amount for the rate"
+          },
+          "provincial_tax": {
+            "type": ["string", "null"],
+            "description": "Provincial tax amount"
+          },
+          "provincial_tax_label": {
+            "type": ["string", "null"],
+            "description": "Provincial tax label"
+          },
+          "federal_tax": {
+            "type": ["string", "null"],
+            "description": "Federal tax amount"
+          },
+          "federal_tax_label": {
+            "type": ["string", "null"],
+            "description": "Federal tax label"
+          },
+          "postage_fee": {
+            "type": "string",
+            "description": "Postage fee"
+          },
+          "insurance_fee": {
+            "type": ["string", "null"],
+            "description": "Insurance fee"
+          },
+          "delivery_fee": {
+            "type": ["string", "null"],
+            "description": "Delivery fee"
+          },
+          "payment_amount": {
+            "type": "string",
+            "description": "Total payment amount"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code"
+          }
+        },
+        "required": ["postage_type", "postage_description", "postage_fee"]
+      }
+    }
+  ]
+} 

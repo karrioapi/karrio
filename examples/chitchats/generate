@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Generate Python types from JSON schema
+echo "Generating Python types from schemas..."
+
+# Create the schemas directory if it doesn't exist
+mkdir -p schemas
+
+# Generate Python types for all schemas (run from the root of the chitchats module)
+# This uses jstruct to convert JSON schemas to Python classes
+python -m jstruct --no-validate schemas/shipment_request.json > karrio/schemas/chitchats/shipment_request.py
+python -m jstruct --no-validate schemas/shipment_response.json > karrio/schemas/chitchats/shipment_response.py
+python -m jstruct --no-validate schemas/rate_request.json > karrio/schemas/chitchats/rate_request.py
+python -m jstruct --no-validate schemas/rate_response.json > karrio/schemas/chitchats/rate_response.py
+python -m jstruct --no-validate schemas/batch_request.json > karrio/schemas/chitchats/batch_request.py
+python -m jstruct --no-validate schemas/batch_response.json > karrio/schemas/chitchats/batch_response.py
+python -m jstruct --no-validate schemas/add_to_batch_request.json > karrio/schemas/chitchats/add_to_batch_request.py
+python -m jstruct --no-validate schemas/add_to_batch_response.json > karrio/schemas/chitchats/add_to_batch_response.py
+python -m jstruct --no-validate schemas/error_response.json > karrio/schemas/chitchats/error_response.py
+python -m jstruct --no-validate schemas/tracking_request.json > karrio/schemas/chitchats/tracking_request.py
+python -m jstruct --no-validate schemas/tracking_response.json > karrio/schemas/chitchats/tracking_response.py
+
+echo "Python types generation complete!"
