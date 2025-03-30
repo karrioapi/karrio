@@ -409,14 +409,15 @@ export const OrderComponent = ({
   );
 };
 
-export default function Page({
+export default async function Page({
   params,
 }: {
-  params: { id: string };
-}): JSX.Element {
+  params: Promise<{ id: string }>;
+}) {
+  const resolvedParams = await params;
   return (
     <>
-      <OrderComponent orderId={params.id} />
+      <OrderComponent orderId={resolvedParams.id} />
     </>
   );
 }

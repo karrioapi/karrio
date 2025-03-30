@@ -5,25 +5,21 @@ import { Metadata } from 'next';
 
 export async function generateStaticParams() {
   const tags = await getTags();
-  return tags.map(tag => ({ tag }));
+  return tags.map(tag => ({
+    params: Promise.resolve({ tag })
+  }));
 }
 
-export async function generateMetadata({ params }: { params: { tag: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ tag: string }> }): Promise<Metadata> {
+  const resolvedParams = await params;
   return {
-    title: `Posts tagged with ${params.tag} - Karrio Blog`
+    title: `Posts tagged with ${resolvedParams.tag} - Karrio Blog`
   };
 }
 
-type SegmentParams = { [key: string]: string | string[] | undefined };
-
-interface PageProps {
-  params?: Promise<SegmentParams>;
-  searchParams?: Promise<any>;
-}
-
-export default async function TagPage({ params }: PageProps) {
+export default async function TagPage({ params }: { params: Promise<{ tag: string }> }) {
   const resolvedParams = await params;
-  const tag = resolvedParams?.tag as string;
+  const tag = resolvedParams.tag;
   const posts = await getPostsByTag(tag);
 
   if (!posts.length) {

@@ -77,7 +77,7 @@ const ContextProviders = bundleContexts([
   ModalProvider,
 ]);
 
-export default function Page(pageProps: any) {
+export default function Page() {
   const Component = (): JSX.Element => {
     const loader = useLoader();
     const notifier = useNotifier();

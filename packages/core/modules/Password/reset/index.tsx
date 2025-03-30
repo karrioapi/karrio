@@ -153,7 +153,7 @@ const Component = (): JSX.Element => {
   );
 };
 
-export default function Page(pageProps: any) {
+export default function Page() {
   return (
     <>
       <LoadingProvider>

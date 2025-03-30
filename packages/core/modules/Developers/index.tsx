@@ -17,7 +17,7 @@ import moment from "moment";
 
 export const generateMetadata = dynamicMetadata("API Keys");
 
-export default function ApiPage(pageProps: any) {
+export default function ApiPage() {
   const { references } = useAPIMetadata();
 
   const Component = (): JSX.Element => {

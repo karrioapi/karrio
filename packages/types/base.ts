@@ -516,6 +516,6 @@ export const DEFAULT_CUSTOMS_CONTENT: Partial<CustomsType> = {
 };
 
 export type PageProps = {
-  params: { id: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ id: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 };

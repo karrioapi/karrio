@@ -16,7 +16,7 @@ const ContextProviders = bundleContexts([
   LabelTemplateEditModalProvider,
 ]);
 
-export default function Page(pageProps: any) {
+export default function Page() {
   const Component = (): JSX.Element => {
     return (
       <>

@@ -30,7 +30,7 @@ import React from "react";
 export const generateMetadata = dynamicMetadata("Create Manifest");
 const ContextProviders = bundleContexts([ModalProvider, ConfirmModal]);
 
-export default function Page(pageProps: any) {
+export default function Page() {
   const Component = (): JSX.Element => {
     // General context data         -----------------------------------------------------------
     //#region
