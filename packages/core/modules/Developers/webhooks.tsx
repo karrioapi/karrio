@@ -23,7 +23,7 @@ import React from "react";
 
 export const generateMetadata = dynamicMetadata("Webhooks");
 
-export default function WebhooksPage(pageProps: any) {
+export default function WebhooksPage() {
   const Component = (): JSX.Element => {
     const searchParams = useSearchParams();
     const modal = searchParams.get("modal");

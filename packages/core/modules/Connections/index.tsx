@@ -17,7 +17,7 @@ import { useLoader } from "@karrio/ui/core/components/loader";
 import { ModalProvider } from "@karrio/ui/core/modals/modal";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { useSearchParams } from "next/navigation";
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 
 export const generateMetadata = dynamicMetadata("Carrier Connections");
 const ContextProviders = bundleContexts([
@@ -27,7 +27,15 @@ const ContextProviders = bundleContexts([
   LabelTemplateEditModalProvider,
 ]);
 
-export default function ConnectionsPage(pageProps: any) {
+export default async function ConnectionsPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const resolvedParams = await params;
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const Component = (): JSX.Element => {
     const searchParams = useSearchParams();
     const modal = searchParams.get("modal");

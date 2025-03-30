@@ -5,7 +5,7 @@ import React from "react";
 
 export const generateMetadata = dynamicMetadata("Password Reset Complete");
 
-export default function Page(pageProps: any) {
+export default function Page() {
   return (
     <>
       <div className="card isolated-card my-6">
