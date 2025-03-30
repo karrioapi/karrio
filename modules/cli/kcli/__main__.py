@@ -1,7 +1,11 @@
 import typer
-from . import commands
-from .commands import sdk, docs, login, codegen, carrier, plugin
-from .resources import shipments, orders, trackers
+import kcli.commands.sdk as sdk
+import kcli.commands.docs as docs
+import kcli.commands.login as login
+import kcli.commands.codegen as codegen
+import kcli.resources.shipments as shipments
+import kcli.resources.orders as orders
+import kcli.resources.trackers as trackers
 
 app = typer.Typer()
 
@@ -45,19 +49,6 @@ app.add_typer(
     codegen.app,
     name="codegen",
     help="Code generation utilities.",
-)
-
-# Add our new carrier and plugin commands
-app.add_typer(
-    carrier.app,
-    name="carrier",
-    help="Carrier integration management commands.",
-)
-
-app.add_typer(
-    plugin.app,
-    name="plugin",
-    help="Plugin management commands.",
 )
 
 if __name__ == "__main__":
