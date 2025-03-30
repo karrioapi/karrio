@@ -10,7 +10,7 @@ import Link from "next/link";
 
 export const generateMetadata = dynamicMetadata("Accept Invitation");
 
-export default function Page(pageProps: any) {
+export default function Page() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();

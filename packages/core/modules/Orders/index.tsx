@@ -43,7 +43,7 @@ const ContextProviders = bundleContexts([
   ModalProvider,
 ]);
 
-export default function OrdersPage(pageProps: any) {
+export default function OrdersPage() {
   const Component = (): JSX.Element => {
     const { setLoading } = useLoader();
     const searchParams = useSearchParams();

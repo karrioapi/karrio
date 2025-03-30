@@ -8,6 +8,9 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@codemirror/lang-html": "^6.4.9",
+    "@codemirror/lang-json": "^6.0.1",
+    "@codemirror/lang-xml": "^6.0.1",
     "@hookform/resolvers": "^3.9.1",
     "@karrio/hooks": "*",
     "@karrio/lib": "*",
@@ -34,9 +37,11 @@
     "@radix-ui/react-toast": "^1.2.2",
     "@radix-ui/react-tooltip": "^1.1.4",
     "@tanstack/react-table": "^8.20.5",
+    "@uiw/react-codemirror": "^4.23.10",
     "chart.js": "^4.4.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "codemirror": "^6.0.1",
     "date-fns": "^3.6.0",
     "highlight.js": "^11.2.0",
     "lucide-react": "^0.439.0",

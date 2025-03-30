@@ -20,7 +20,7 @@ const ContextProviders = bundleContexts([
   RateSheetEditModalProvider,
 ]);
 
-export default function ConnectionsPage(pageProps: any) {
+export default function ConnectionsPage() {
   const Component = (): JSX.Element => {
     const mutation = useRateSheetMutation();
 
