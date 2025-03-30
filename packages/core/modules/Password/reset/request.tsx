@@ -10,7 +10,7 @@ import Link from "next/link";
 
 export const generateMetadata = dynamicMetadata("Password Reset");
 
-export default function Page(pageProps: any) {
+export default function Page() {
   const Component = (): JSX.Element => {
     const router = useRouter();
     const email = useRef<HTMLInputElement>(null);

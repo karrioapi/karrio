@@ -78,7 +78,7 @@ import React from "react";
 export const generateMetadata = dynamicMetadata("Create labels");
 const ContextProviders = bundleContexts([ModalProvider]);
 
-export default function Page(pageProps: any) {
+export default function Page() {
   const Component = (): JSX.Element => {
     // General context data         -----------------------------------------------------------
     //#region

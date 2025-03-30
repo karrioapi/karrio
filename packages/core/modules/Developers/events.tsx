@@ -19,7 +19,7 @@ import { useEvents } from "@karrio/hooks/event";
 
 export const generateMetadata = dynamicMetadata("Events");
 
-export default function EventsPage(pageProps: any) {
+export default function EventsPage() {
   const Component = (): JSX.Element => {
     const context = useEvents();
     const searchParams = useSearchParams();
