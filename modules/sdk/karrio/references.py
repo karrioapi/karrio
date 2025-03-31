@@ -84,7 +84,7 @@ def collect_references() -> dict:
         if mapper.get("services") is not None
     }
     options = {
-        key: {c.name: dict(code=c.value.code, type=parse_type(c.value.type)) for c in list(mapper["options"])}  # type: ignore
+        key: {c.name: dict(code=c.value.code, type=parse_type(c.value.type), default=c.value.default) for c in list(mapper["options"])}  # type: ignore
         for key, mapper in PROVIDERS_DATA.items()
         if mapper.get("options") is not None
     }
@@ -96,6 +96,7 @@ def collect_references() -> dict:
                     code=c.value.code,
                     required=False,
                     type=parse_type(c.value.type),
+                    default=c.value.default,
                     enum=lib.identity(
                         None
                         if "enum" not in str(c.value.type).lower()
