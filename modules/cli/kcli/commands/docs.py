@@ -3,8 +3,8 @@ import inspect
 import karrio.core.utils as utils
 import karrio.references as references
 
-import kcli.utils as cli_utils
-import kcli.commands.templates as templates
+import kcli.common.utils as cli_utils
+import kcli.common.templates as templates
 
 docs = typer.Typer()
 
