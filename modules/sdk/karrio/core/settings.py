@@ -3,6 +3,7 @@
 import abc
 import attr
 import typing
+import functools
 
 
 @attr.s(auto_attribs=True)
@@ -15,6 +16,7 @@ class Settings(abc.ABC):
     metadata: dict = {}
     config: dict = {}
     id: str = None
+    tracer = None  # Will be set during Gateway initialization
 
     @property
     def carrier_name(self) -> typing.Optional[str]:
@@ -27,6 +29,25 @@ class Settings(abc.ABC):
     @property
     def tracking_url(self) -> typing.Optional[str]:
         return None
+
+    def trace(self, *args, **kwargs):
+        if self.tracer is None:
+            import karrio.lib as lib
+            self.tracer = lib.Tracer()
+
+        return self.tracer.with_metadata(
+            dict(
+                connection=dict(
+                    id=self.id,
+                    test_mode=self.test_mode,
+                    carrier_id=self.carrier_id,
+                    carrier_name=self.carrier_name,
+                )
+            )
+        )(*args, **kwargs)
+
+    def trace_as(self, format: str):
+        return functools.partial(self.trace, format=format)
 
     @property
     def connection_config(self):

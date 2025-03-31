@@ -13,22 +13,12 @@ class Proxy(abc.ABC):
     """Unified Shipping API Proxy (Interface)"""
 
     settings: settings.Settings
-    tracer: lib.Tracer = attr.field(factory=lib.Tracer)
 
     def trace(self, *args, **kwargs):
-        return self.tracer.with_metadata(
-            dict(
-                connection=dict(
-                    id=self.settings.id,
-                    test_mode=self.settings.test_mode,
-                    carrier_id=self.settings.carrier_id,
-                    carrier_name=self.settings.carrier_name,
-                )
-            )
-        )(*args, **kwargs)
+        return self.settings.trace(*args, **kwargs)
 
     def trace_as(self, format: str):
-        return functools.partial(self.trace, format=format)
+        return self.settings.trace_as(format)
 
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
         """Send one or many request(s) to get shipment rates from a carrier webservice
