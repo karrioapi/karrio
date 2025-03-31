@@ -1,9 +1,11 @@
-# django-constance==3.1.0
+# Server dev dependencies
 django-debug-toolbar
-Django==4.2.16
+
+# Karrio dev packages
+-e ./modules/sdk
+-e ./modules/cli
 
 # Carrier Extentions modules
--e ./modules/sdk
 -e ./modules/connectors/allied_express
 -e ./modules/connectors/allied_express_local
 -e ./modules/connectors/amazon_shipping

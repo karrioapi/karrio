@@ -1,5 +1,8 @@
-# Carrier Extentions packages
+# Karrio Tools packages
 -e ./modules/sdk
+-e ./modules/cli
+
+# Carrier Extentions packages
 -e ./modules/connectors/allied_express
 -e ./modules/connectors/allied_express_local
 -e ./modules/connectors/amazon_shipping
