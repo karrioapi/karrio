@@ -77,15 +77,36 @@ class EnumWrapper:
 
 @attr.s(auto_attribs=True)
 class OptionEnum:
+    """An option enumeration class for handling typed options.
+
+    Attributes:
+        code: The option code or identifier
+        type: The type converter function or enum type
+        state: The current state value
+        default: The default value to use when none is provided
+    """
     code: str
     type: typing.Union[typing.Callable, MetaEnum] = str
     state: typing.Any = None
+    default: typing.Any = None
 
     def __getitem__(self, type: typing.Callable = None) -> "OptionEnum":
-        return OptionEnum("", type or self.type, self.state)
+        return OptionEnum("", type or self.type, self.state, self.default)
 
     def __call__(self, value: typing.Any = None) -> "OptionEnum":
+        """Create a new OptionEnum instance with the specified value.
+
+        Args:
+            value: The value to set. If None and default is provided, default will be used.
+
+        Returns:
+            A new OptionEnum instance with the appropriate state.
+        """
         state = self.state
+
+        # if value is None and default is provided, use default
+        if value is None and self.default is not None:
+            value = self.default
 
         # if type is bool we have an option defined as Flag.
         if self.type is bool:
@@ -105,70 +126,124 @@ class OptionEnum:
         else:
             state = self.type(value) if value is not None else None
 
-        return OptionEnum(self.code, self.type, state)
+        return OptionEnum(self.code, self.type, state, self.default)
 
 
 @attr.s(auto_attribs=True)
 class Spec:
+    """A specification class for handling typed values with computation logic.
+
+    Attributes:
+        key: The specification key or identifier
+        type: The type of the specification value
+        compute: The computation function to apply
+        value: The current value
+        default: The default value to use when none is provided
+    """
     key: str
     type: typing.Type
     compute: typing.Callable
     value: typing.Any = None
+    default: typing.Any = None
 
     def apply(self, *args, **kwargs):
+        """Apply the computation function to the arguments."""
         return self.compute(*args, **kwargs)
 
     """Spec initialization modes"""
 
     @staticmethod
-    def asFlag(key: str) -> "Spec":
+    def asFlag(key: str, default: typing.Optional[bool] = None) -> "Spec":
         """A Spec defined as "Flag" means that when it is specified in the payload,
         a boolean flag will be returned as value.
+
+        Args:
+            key: The specification key
+            default: Default value to use when none is provided
+
+        Returns:
+            A Spec instance configured as a flag
         """
 
         def compute(value: typing.Optional[bool]) -> bool:
+            # Use default if value is None
+            if value is None and default is not None:
+                value = default
             return value is not False
 
-        return Spec(key, bool, compute)
+        return Spec(key, bool, compute, default=default)
 
     @staticmethod
-    def asKey(key: str) -> "Spec":
+    def asKey(key: str, default: typing.Optional[bool] = None) -> "Spec":
         """A Spec defined as "Key" means that when it is specified in a payload and not flagged as False,
         the spec code will be returned as value.
+
+        Args:
+            key: The specification key
+            default: Default value to use when none is provided
+
+        Returns:
+            A Spec instance configured to return its key
         """
 
         def compute(value: typing.Optional[bool]) -> str:
+            # Use default if value is None
+            if value is None and default is not None:
+                value = default
             return key if (value is not False) else None
 
-        return Spec(key, bool, compute)
+        return Spec(key, bool, compute, default=default)
 
     @staticmethod
-    def asValue(key: str, type: typing.Type = str) -> "Spec":
+    def asValue(key: str, type: typing.Type = str, default: typing.Any = None) -> "Spec":
         """A Spec defined as "typing.Type" means that when it is specified in a payload,
         the value passed by the user will be returned.
+
+        Args:
+            key: The specification key
+            type: The type to convert the value to
+            default: Default value to use when none is provided
+
+        Returns:
+            A Spec instance configured to return the typed value
         """
 
         def compute(value: typing.Optional[type]) -> type:  # type: ignore
+            # Use default if value is None
+            if value is None and default is not None:
+                value = default
             return type(value) if value is not None else None
 
-        return Spec(key, type, compute)
+        return Spec(key, type, compute, default=default)
 
     @staticmethod
-    def asKeyVal(key: str, type: typing.Type = str) -> "Spec":
+    def asKeyVal(key: str, type: typing.Type = str, default: typing.Any = None) -> "Spec":
         """A Spec defined as "Value" means that when it is specified in a payload,
         the a new spec defined as type is returned.
+
+        Args:
+            key: The specification key
+            type: The type to convert the value to
+            default: Default value to use when none is provided
+
+        Returns:
+            A Spec instance configured to return a new Spec with the typed value
         """
 
         def compute_inner_spec(value: typing.Optional[type]) -> Spec:  # type: ignore
+            # Use default if value is None
+            if value is None and default is not None:
+                value = default
+
             computed_value = (
                 getattr(value, "value", None)
                 if hasattr(value, "value")
                 else (type(value) if value is not None else None)
             )
 
-            return Spec(key, type, lambda *_: computed_value, computed_value)
+            return Spec(key, type, lambda *_: computed_value, computed_value, default=default)
 
-        return Spec(key, type, compute_inner_spec)
+        return Spec(key, type, compute_inner_spec, default=default)
 
 
 class svcEnum(str):
