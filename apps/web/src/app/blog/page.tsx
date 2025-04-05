@@ -18,21 +18,6 @@ export default async function BlogPage() {
         <h2 className="text-3xl font-bold mb-3 dark:text-white">The Latest Karrio News</h2>
       </div>
 
-      {tags.length > 0 && (
-        <div className="mb-10">
-          <h2 className="text-xl font-semibold mb-3 dark:text-white">Browse by tag</h2>
-          <div className="flex flex-wrap gap-2">
-            {tags.map(tag => (
-              <Link key={tag} href={`/blog/tags/${tag}`}>
-                <Badge variant="outline" className="hover:bg-primary/10 dark:bg-[#2d1d51] dark:border-[#3a2466] dark:text-white/80 dark:hover:bg-[#3a2466]">
-                  {tag}
-                </Badge>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-
       <div className="space-y-10">
         {posts.length > 0 ? (
           posts.map(post => (

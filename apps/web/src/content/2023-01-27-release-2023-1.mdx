@@ -1,0 +1,65 @@
+---
+title: "Karrio Release 2023.1"
+date: "2023-01-27"
+description: "Here's our latest release. Check out what we've been working on over the last quarter of 2022!"
+author: "Karrio Team"
+image: /blog/release-2023-1.jpg
+tags: ["release", "update", "features", "API"]
+category: "OSS"
+---
+
+![Karrio Release 2023.1](/blog/release-2023-1.jpg)
+
+Here's our latest release. Check out what we've been working on over the last quarter of 2022!
+
+## Draft Shipment
+
+Users can now start a shipment, save it, move on to something else and come back later to finalize their shipment, all without losing their progress and data.
+
+## SDK record tracing logs
+
+A couple of releases ago, at the community's request, we enabled karrio to capture tracing logs. These logs are API requests made to carriers by the Karrio SDK. With this release, we have linked the tracing records to the API logs on the dashboard so that you can see not only what you sent to Karrio' API but also what Karrio sent to the carrier APIs.
+
+## Manual shipment status update
+
+Regular status updates are an essential part of the shipping/delivery experience. We have added the ability for users to move shipment' statuses to the subsequent phases manually. This feature is only for shipments that do not have automated trackers.
+
+## New to OSS build Order API, Document generation API, Custom Carrier, and more...
+
+We are excited to announce a couple of new features are now available in our open-source edition. Included in our latest release are the following:
+
+- Orders module (read-only orders fulfilment API)
+- Generic carrier (Register carriers without APIs on karrio to become their API - manage rate sheets, design labels...)
+- Data module (Batch APIs for data imports and batch creation + data export API)
+- Documents module (Document generation API + templating system to generate branded shipping documentation)
+- Document generation use cases: UCC128 labels, Packing slips, branded commercial invoices... anything you need :)
+
+## Toggle document templates on/off
+
+Karrio document generation is a module we're adding to the open-source bundle. With this new release, we have added the possibility to toggle your document templates on or off. Only active templates will appear next to your shipments and orders for document generation.
+
+## preferred_service options for orders and shipments
+
+As mentioned above, Orders API is now available in the open-source bundle. This new addition supports a "preferred_service" option for orders and shipments. Once added, the dashboard will highlight the preferred service in the list of rates. "preferred_service" helps the operations teams identify the preferred shipping methods and reduce mistakes.
+
+## Broader database support (not just Postgres)
+
+With a growing community with a wide array of use-case scenarios, ease of deployment is an important asset that we continue to improve on. With this release, we've increased our range of compatible databases. Karrio is no longer limited to Postgres; you can now use SQLite, MySQL or Oracle.
+
+## Simplified dev setup with scripts and SQLite by default (not just docker)
+
+In addition to our broader database support, you no longer need docker to spin up Karrio. SQLite is now the default option for dev setup; you still can use docker if that is what you prefer. But now, when you clone karrio locally, you can get a demo up and running without docker as a requirement.
+
+## Live data refresh on the Trackers Page
+
+As we've mentioned earlier status updates are an essential part of the shipping/delivery experience. If you have a pressing shipment with a sensitive deadline, you need to know its location at all times. We've got an update for you! The tracker page has been updated to refresh every 15 minutes to display the latest data automatically.
+
+## Data retention configuration
+
+We are introducing a set of configurations for admin users to keep your database free of old data. You can set up shipment retention for 3, 6, or 12 months. That means Karrio will clean up your old shipments database, API logs, SDK tracing, etc.
+
+## To learn more:
+
+- Follow karrio on Github
+- Ask us anything at hello@karrio.io
+- Report any issues on our public repository
