@@ -1,0 +1,53 @@
+---
+title: "Karrio automation"
+date: "2024-03-02"
+description: "We have set the foundations for advanced logistics operation automation. Learn more about Karrio built-in workflow engine for no-code integration and our vision beyond shipping integration."
+author: "Karrio Team"
+image: /blog/automation.jpg
+tags: ["automation", "workflow", "logistics", "integration"]
+category: "Launch Week"
+---
+
+![Karrio Automation](/blog/automation.jpg)
+
+Hi there, as promised, in this post, we will share more about our understanding of the space and what we are building to add extra value to Karrio as a platform.
+
+## Shipping integration vs Logistics automation
+
+The foundation of Karrio is geared towards making it simple to integrate with and connect to a network of shipping carriers in order to add shipping functionalities straight into your apps and commerce platforms. This is enabled by Karrio's universal shipping API that unifies and standardize shipping data under a single open API. Additionally, thanks to our open source development model, you can add custom carriers and extend the platform for your custom needs. All of this falls under the umbrella of Shipping integration.
+
+Speaking and consulting with 100s of users and prospects, we have learned more about their use cases and needs. So we came to the realization that there is an opportunity to provide additional value on top of Karrio with what we call Logistics automation.
+
+Whereas Karrio core offers a set of low-level APIs to modernize and speed up carrier integration, Logistics automation consists of features and tolls that you can use to orchestrate together these APIs through scripting and chaining events from other systems in order to automate and optimize your back-office operations.
+
+## Karrio built-in workflow (Beta)
+
+We introduced Karrio workflow in our previous soft release 2023.9. It is still in beta and we are incrementally improving it to reach a point where anyone can have a rich no-code built-in experience within Karrio. You will be able to use it to integrate Karrio into your existing Logistics operation tech stack more easily.
+
+![Karrio Workflow Editor](/blog/automation_first.png)
+
+The capabilities of Karrio workflow make it possible to create a chain of actions consisting of API requests and data transformation right in your dashboard without writing a single line of code. These capabilities are more than enough for you to leverage webhooks and APIs offered by most all platforms at this point to sync data across multiple systems with the goal of automating your logistics operations.
+
+The workflow feature is built on Karrio's existing infrastructure and therefore benefits from our logs and tracing capabilities. This comes not only handy for debugging when you are creating your workflows for the first time but also for auditing and retracing any issues during live runtime operations.
+
+The workflow data mapping uses the same Jinja2 templating engine to allow data transformation between API calls and output formatting.
+
+![Karrio Workflow Execution](/blog/automation_second.png)
+
+If you are a user of Karrio commercial edition. Let us know if you interesting in helping with Beta testing and designing the workflow.
+
+## Shipping Rules (Soon)
+
+This is a common feature that you can find on platforms like ShipStation and similar. For those who are not familiar with it, shipping rules are a more guided way of setting up fulfillment rules for incoming orders and shipments. You can define the criteria for the selection of your preferred carrier service and even label generation without any human intervention. Common criteria are item quantities, total weight and dimensions, shipping destinations and more.
+
+With Shipping rules, you can set something like: For every international shipment under a certain weight and declared value amount, select the fastest between UPS Worldwide Express or FedEx International Priority shipping service.
+
+## What is next?
+
+We have one last post where we share more about contributing and building on top of Karrio. That said, I also recommend subscribing to our newsletter or keeping an eye out on our discussion forum on GitHub for an upcoming announcement.
+
+## To learn more:
+
+- Follow Karrio on Github
+- Ask us anything at hello@karrio.io
+- Report any issues on our public repository
