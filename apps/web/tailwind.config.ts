@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: ['class', '[data-theme="platform"]'],
+  darkMode: ["class", '[data-theme="dark"]'],
   content: [
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
     "../../packages/ui/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -98,13 +98,19 @@ const config: Config = {
     'touch-auto',
     'overscroll-x-contain',
     'docs-dark',
-    'bg-[#0f0826]',
-    '[data-theme="platform"] *',
-    '[data-theme="platform"]',
+    'docs-card',
+    'bg-white',
+    'text-purple-600',
+    'dark:text-purple-400',
+    'group-hover:border-purple-400',
+    'dark:group-hover:border-purple-600',
     '[data-theme="dark"] *',
     '[data-theme="dark"]',
     'dark',
-    'dark-mode-selector'
+    'dark-mode-selector',
+    '!text-white',
+    'bg-gradient-to-br',
+    'text-white'
   ],
   plugins: [
     require("tailwindcss-animate"),

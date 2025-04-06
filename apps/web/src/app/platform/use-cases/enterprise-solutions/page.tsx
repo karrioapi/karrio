@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 import { FeatureShowcase } from "@karrio/console/components/feature-showcase";
 import { BookDemoButton } from "@karrio/console/components/book-demo-button";
-import { CTASection } from "@karrio/console/components/cta-section";
+import { CTASection } from "@/components/cta-section";
 
 export default async function Page() {
   return (

@@ -16,7 +16,7 @@ export function BlogMobileMenu() {
                         <span className="sr-only">Toggle menu</span>
                     </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="dark:bg-[#0f0826] bg-background/95 backdrop-blur-sm dark:backdrop-blur-none dark:text-white text-foreground dark:border-white/10 border-border/30 shadow-md dark:shadow-none w-[250px] p-0 pt-6">
+                <SheetContent side="left" className="bg-background backdrop-blur-sm dark:backdrop-blur-none dark:text-white text-foreground dark:border-white/10 border-border/30 shadow-md dark:shadow-none w-[250px] p-0 pt-6">
                     <div className="px-6 py-4 border-b border-border/30 dark:border-white/10">
                         <h2 className="text-lg font-semibold dark:text-white text-foreground">Blog Menu</h2>
                     </div>
