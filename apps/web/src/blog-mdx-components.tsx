@@ -2,8 +2,11 @@ import { useMDXComponents as nextUseMDXComponents } from 'nextra/mdx-components'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { CodeBlockClient } from '@/components/blog/code-block-client'
+import { BackButton } from '@/components/blog/back-button'
+import { Badge } from '@karrio/ui/components/ui/badge'
 import { withGitHubAlert } from 'nextra/components'
 import { Callout } from 'nextra/components/callout'
+import { formatDate } from '@/lib/utils'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
@@ -25,15 +28,28 @@ const Blockquote = withGitHubAlert(
   ({ type, ...props }) => {
     // This transforms GitHub alerts into Callout components with GitHub-like styling
     const alertType = mapAlertTypeToCalloutType(type);
-    const alertColors = {
-      info: 'bg-blue-50 dark:bg-blue-950 border-blue-300 dark:border-blue-700',
-      default: 'bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-700',
-      warning: 'bg-yellow-50 dark:bg-yellow-950 border-yellow-300 dark:border-yellow-700',
-      error: 'bg-red-50 dark:bg-red-950 border-red-300 dark:border-red-700'
-    };
 
     return (
-      <div className={`my-4 rounded-lg border ${alertColors[alertType]} p-3`}>
+      <div
+        className="my-4 rounded-lg border p-3 nextra-callout"
+        data-type={type}
+        style={{
+          backgroundColor: type === 'note' || type === 'tip'
+            ? 'var(--callout-info-bg)'
+            : type === 'warning'
+              ? 'var(--callout-warning-bg)'
+              : type === 'caution'
+                ? 'var(--callout-error-bg)'
+                : 'var(--callout-bg)',
+          borderColor: type === 'note' || type === 'tip'
+            ? 'var(--callout-info-border)'
+            : type === 'warning'
+              ? 'var(--callout-warning-border)'
+              : type === 'caution'
+                ? 'var(--callout-error-border)'
+                : 'var(--callout-border)'
+        }}
+      >
         <Callout type={alertType} {...props} />
       </div>
     );
@@ -41,7 +57,11 @@ const Blockquote = withGitHubAlert(
   // This is your regular blockquote component for non-alert blockquotes with GitHub-like styling
   (props) => (
     <blockquote
-      className="my-4 border-l-4 border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-2.5 text-gray-700 dark:text-gray-300"
+      className="my-4 border-l-4 px-4 py-2.5 nextra-callout"
+      style={{
+        backgroundColor: 'var(--callout-bg)',
+        borderColor: 'var(--callout-border)'
+      }}
       {...props}
     />
   )
@@ -109,9 +129,13 @@ const CustomCodeBlock = ({
       : '';
 
   return (
-    <div className="nextra-code-block not-prose">
+    <div className="nextra-code-block not-prose border rounded-md overflow-hidden" style={{ borderColor: 'var(--code-border)' }}>
       {filename && (
-        <div className="border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 px-3 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 rounded-t-md">
+        <div className="border-b px-3 py-1 text-xs font-medium rounded-t-md" style={{
+          borderColor: 'var(--code-border)',
+          backgroundColor: 'var(--code-header-bg)',
+          color: 'var(--code-header-fg)'
+        }}>
           {filename}
         </div>
       )}
@@ -156,22 +180,91 @@ const CustomCodeBlock = ({
 }
 
 const BlogWrapper = ({ children, toc, metadata }) => {
+  const { title, date, description, tags, author, image, category } = metadata || {};
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="prose prose-lg dark:prose-invert mx-auto max-w-4xl">
-        {metadata?.title && (
-          <h1 className="text-4xl font-bold mb-4">{metadata.title}</h1>
+      <BackButton className="mb-6" />
+
+      <div className="mx-auto max-w-4xl">
+        {/* Featured Image */}
+        {image && (
+          <div className="mb-8 overflow-hidden rounded-xl">
+            <div className="relative aspect-[21/9] w-full">
+              <Image
+                src={image}
+                alt={title || 'Blog post featured image'}
+                className="object-cover"
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 800px"
+              />
+            </div>
+          </div>
         )}
-        {metadata?.date && (
-          <p className="text-gray-500 mb-8">
-            {new Date(metadata.date).toLocaleDateString()}
-          </p>
+
+        {/* Category/Tag badge - if available */}
+        {category && (
+          <div className="mb-3">
+            <Badge variant="secondary" className="text-xs font-medium uppercase tracking-wider">
+              {category}
+            </Badge>
+          </div>
         )}
-        {children}
+
+        {/* Title */}
+        {title && (
+          <h1 className="text-4xl font-bold mb-4 text-foreground">{title}</h1>
+        )}
+
+        {/* Meta information row */}
+        <div className="flex flex-wrap items-center gap-3 mb-8 text-sm text-muted-foreground">
+          {date && (
+            <time dateTime={date} className="flex items-center">
+              {formatDate(date)}
+            </time>
+          )}
+
+          {author && (
+            <>
+              <span className="text-muted-foreground/60">•</span>
+              <span className="font-medium">{author}</span>
+            </>
+          )}
+
+          {tags && tags.length > 0 && (
+            <>
+              <span className="text-muted-foreground/60">•</span>
+              <div className="flex flex-wrap gap-2">
+                {tags.map(tag => (
+                  <Badge key={tag} variant="outline" className="hover:bg-primary/10 dark:hover:bg-primary/20">
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Main content */}
+        <div className="prose prose-lg dark:prose-invert mx-auto max-w-none">
+          {children}
+        </div>
       </div>
     </div>
   )
 }
+
+// Create an enhanced Callout component that enforces proper styling
+const EnhancedCallout = ({ type, children, ...props }) => {
+  return (
+    <div className={`nextra-callout`} data-type={type || 'default'}>
+      <Callout type={type} {...props}>
+        {children}
+      </Callout>
+    </div>
+  );
+};
 
 export function useMDXComponents() {
   const components = nextUseMDXComponents({
@@ -216,7 +309,15 @@ export function useMDXComponents() {
       // For inline code (no language specified)
       if (!className || !className.startsWith('language-')) {
         return (
-          <code className="bg-gray-100 dark:bg-gray-800 rounded px-1 py-0.5 font-mono text-sm" {...props}>
+          <code
+            className="rounded px-1 py-0.5 font-mono text-sm border"
+            style={{
+              backgroundColor: 'var(--code-bg)',
+              color: 'var(--code-fg)',
+              borderColor: 'var(--code-border)'
+            }}
+            {...props}
+          >
             {children}
           </code>
         )
@@ -234,8 +335,8 @@ export function useMDXComponents() {
       )
     },
 
-    // Custom components
-    Callout,
+    // Custom components with proper styling
+    Callout: EnhancedCallout,
     a: CustomLink,
     img: (props) => (
       <Image

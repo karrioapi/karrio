@@ -11,6 +11,8 @@ import { useTheme } from 'next-themes'
 import { type FC } from 'react'
 import Link from 'next/link'
 import clsx from 'clsx'
+import { DocSearchWrapper } from '@/components/search/docsearch-component'
+import { ThemeToggle } from '../blog/theme-toggle'
 
 export interface HeaderProps {
   pageMap: PageMapItem[]
@@ -20,7 +22,6 @@ export const Header: FC<HeaderProps> = ({ pageMap }) => {
   const pathname = usePathname()
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
-  const [showSearch, setShowSearch] = useState(false)
 
   // After mounting, we can check theme
   useEffect(() => {
@@ -38,8 +39,13 @@ export const Header: FC<HeaderProps> = ({ pageMap }) => {
   const topLevelSections = docsEntry?.children || []
 
   return (
-    <header className={`flex h-14 w-full md:px-8 px-2 shrink-0 items-center border-b border-gray-200 bg-white ${mounted && theme === 'dark' ? '!bg-neutral-950 !border-neutral-800' : ''}`}>
+    <header className={`flex h-14 w-full md:px-8 px-2 shrink-0 items-center border-b border-gray-200 bg-background ${mounted && theme === 'dark' ? '!border-neutral-800' : ''}`}>
       <div className="mx-auto h-full w-full max-w-[95%] xl:max-w-[1280px]">
+        {/* Hidden DocSearch wrapper for blog pages */}
+        <div className="hidden">
+          <DocSearchWrapper buttonText="Search blog..." />
+        </div>
+
         {/* Mobile Header */}
         <div className="flex h-full items-center justify-between md:hidden">
           <Link href="/docs" className="flex items-center">
@@ -51,11 +57,19 @@ export const Header: FC<HeaderProps> = ({ pageMap }) => {
           </Link>
 
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full p-1.5 text-gray-500 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-neutral-800"
-              onClick={() => setShowSearch(!showSearch)}
+              className="rounded-full p-1.5 text-foreground/80 hover:text-foreground hover:bg-muted dark:text-white/80 dark:hover:text-white dark:hover:bg-[#1a103a]"
+              onClick={() => {
+                // Find a DocSearch button in the DOM and trigger a click on it
+                const docSearchButton = document.querySelector('.DocSearch-Button') as HTMLButtonElement;
+                if (docSearchButton) {
+                  docSearchButton.click();
+                }
+              }}
+              aria-label="Search blog"
             >
               <Search className="h-5 w-5" />
             </Button>
@@ -87,22 +101,21 @@ export const Header: FC<HeaderProps> = ({ pageMap }) => {
 
           <div className="flex-1" />
 
+          <ThemeToggle />
           <Button
             variant="ghost"
             size="icon"
-            className="rounded-full p-1.5 text-gray-500 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-neutral-800"
+            className="rounded-full p-1.5 text-foreground/80 hover:text-foreground hover:bg-muted dark:text-white/80 dark:hover:text-white dark:hover:bg-[#1a103a]"
             onClick={() => {
-              const newTheme = theme === 'dark' ? 'light' : 'dark';
-              setTheme(newTheme);
+              // Find a DocSearch button in the DOM and trigger a click on it
+              const docSearchButton = document.querySelector('.DocSearch-Button') as HTMLButtonElement;
+              if (docSearchButton) {
+                docSearchButton.click();
+              }
             }}
-            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            aria-label="Search blog"
           >
-            {mounted && (theme === 'dark' ? (
-              <Sun className="h-4 w-4" />
-            ) : (
-              <Moon className="h-4 w-4" />
-            ))}
-            <span className="sr-only">Toggle theme</span>
+            <Search className="h-5 w-5" />
           </Button>
         </div>
       </div>

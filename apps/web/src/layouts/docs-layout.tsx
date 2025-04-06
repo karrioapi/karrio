@@ -26,7 +26,7 @@ export default async function DocsLayout({ children }: { children: ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning
       className={`${inter.variable} ${jetbrains.variable} ${noto.variable} ${ubuntu.variable} ${oxygen.variable} h-full scroll-smooth`}>
-      <body className="docs-page" style={{ margin: 0 }}>
+      <body className="docs-page bg-background" style={{ margin: 0 }}>
         <NextraTheme pageMap={pageMap}>
           {children}
         </NextraTheme>

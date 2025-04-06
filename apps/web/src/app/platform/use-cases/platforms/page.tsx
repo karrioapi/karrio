@@ -9,8 +9,8 @@ import {
 } from "lucide-react";
 import { FeatureShowcase } from "@karrio/console/components/feature-showcase";
 import { BookDemoButton } from "@karrio/console/components/book-demo-button";
-import { CTASection } from "@karrio/console/components/cta-section";
 import { Button } from "@karrio/ui/components/ui/button";
+import { CTASection } from "@/components/cta-section";
 import Link from "next/link";
 
 export default async function Page() {

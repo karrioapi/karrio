@@ -8,7 +8,7 @@ import {
 import { Toaster } from "@karrio/ui/components/ui/toaster";
 import { SiteHeader } from "@/components/site-header";
 import { Footer } from "@/components/nextra/footer";
-import { ThemeProvider } from "next-themes";
+import RootProvider from "@/hooks/root-provider";
 import type { Metadata } from 'next';
 import "@/styles/globals.css";
 
@@ -31,11 +31,10 @@ export default function BlogLayout({
     <html lang="en" suppressHydrationWarning
       className={`${inter.variable} ${jetbrains.variable} ${noto.variable} ${ubuntu.variable} ${oxygen.variable} h-full scroll-smooth`}>
       <body className="blog-page" style={{ margin: 0 }}>
-        <ThemeProvider
-          attribute="class"
+        <RootProvider
           defaultTheme="system"
-          enableSystem
           disableTransitionOnChange
+          sectionKey="content"
         >
           <div className="min-h-screen bg-background antialiased">
             <SiteHeader />
@@ -47,7 +46,7 @@ export default function BlogLayout({
             <Footer />
           </div>
           <Toaster />
-        </ThemeProvider>
+        </RootProvider>
       </body>
     </html>
   );
