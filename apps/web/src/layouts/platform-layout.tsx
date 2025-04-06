@@ -24,12 +24,16 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en"
-      data-theme="platform"
       suppressHydrationWarning
       className={`${inter.variable} ${jetbrains.variable} ${noto.variable} ${ubuntu.variable} ${oxygen.variable}`}>
       <body className="font-sans antialiased">
-        <RootProvider>
-          <div className="flex flex-col min-h-screen bg-[#0f0826] text-white">
+        <RootProvider
+          defaultTheme="dark"
+          forcedTheme="dark"
+          disableTransitionOnChange
+          sectionKey="platform"
+        >
+          <div className="flex flex-col min-h-screen bg-background dark:text-white">
             {/* Header */}
             <SiteHeader />
 

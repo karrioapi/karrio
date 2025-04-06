@@ -1,9 +1,7 @@
 'use client'
 
-import { Search, X, Monitor, FileText, GitFork, Database, ArrowUpCircle, Container, BookOpen, Zap, Home, Code, Github } from 'lucide-react'
-import { Button } from '@karrio/ui/components/ui/button'
+import { Monitor, FileText, GitFork, Database, ArrowUpCircle, Container, BookOpen, Zap, Home, Github } from 'lucide-react'
 import { normalizePages } from 'nextra/normalize-pages'
-import { Input } from '@karrio/ui/components/ui/input'
 import { useState, useRef, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import type { PageMapItem } from 'nextra'
@@ -26,15 +24,13 @@ import {
 
 export const Sidebar: FC<{ pageMap: PageMapItem[] }> = ({ pageMap }) => {
   const pathname = usePathname()
-  const [searchQuery, setSearchQuery] = useState('')
-  const searchRef = useRef<HTMLDivElement>(null)
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
-  // After mounting, we can show the theme toggle
+  // After mounting, initialize component
   useEffect(() => {
     setMounted(true)
-  }, [])
+  }, []);
 
   const { docsDirectories } = normalizePages({
     list: pageMap,
@@ -101,7 +97,7 @@ export const Sidebar: FC<{ pageMap: PageMapItem[] }> = ({ pageMap }) => {
   }, {})
 
   return (
-    <ShadcnSidebar className="sidebar border-r border-gray-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 shrink-0">
+    <ShadcnSidebar className="sidebar border-r border-gray-200 dark:border-neutral-800 bg-background shrink-0">
       <SidebarHeader className="px-5 py-4">
         {/* Desktop Header */}
         <div className="hidden md:block">
@@ -118,30 +114,6 @@ export const Sidebar: FC<{ pageMap: PageMapItem[] }> = ({ pageMap }) => {
               </div>
             </SidebarMenuItem>
           </SidebarMenu>
-
-          <div className="mt-6" ref={searchRef}>
-            <div className="flex items-center rounded-md border px-2 py-1 search-box border-gray-200 dark:border-neutral-800 bg-white dark:bg-neutral-900">
-              <Search className="h-3.5 w-3.5 text-gray-500 dark:text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Search docs..."
-                className="h-6 w-full border-0 bg-transparent px-2 py-0.5 text-sm outline-none focus-visible:ring-0"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              {searchQuery && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-4 w-4 text-gray-500 dark:text-gray-400"
-                  onClick={() => setSearchQuery('')}
-                >
-                  <X className="h-3.5 w-3.5" />
-                  <span className="sr-only">Clear search</span>
-                </Button>
-              )}
-            </div>
-          </div>
         </div>
 
         {/* Mobile Navigation */}
@@ -202,7 +174,7 @@ export const Sidebar: FC<{ pageMap: PageMapItem[] }> = ({ pageMap }) => {
               <SidebarMenuItem>
                 <Link
                   href="/"
-                  className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-neutral-800 sidebar-item relative"
+                  className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-muted sidebar-item relative"
                 >
                   <Home className="h-3.5 w-3.5" />
                   <span>Website</span>
@@ -211,7 +183,7 @@ export const Sidebar: FC<{ pageMap: PageMapItem[] }> = ({ pageMap }) => {
               <SidebarMenuItem>
                 <Link
                   href="/blog"
-                  className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-neutral-800 sidebar-item relative"
+                  className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-muted sidebar-item relative"
                 >
                   <FileText className="h-3.5 w-3.5" />
                   <span>Blog</span>
@@ -222,7 +194,7 @@ export const Sidebar: FC<{ pageMap: PageMapItem[] }> = ({ pageMap }) => {
                   href="https://github.com/karrioapi/karrio"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-neutral-800 sidebar-item relative"
+                  className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-muted sidebar-item relative"
                 >
                   <Github className="h-3.5 w-3.5" />
                   <span>GitHub</span>
