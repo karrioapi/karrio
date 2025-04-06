@@ -1,9 +1,9 @@
 "use client";
 
 import { Button } from "@karrio/ui/components/ui/button";
+import { BookDemoButton } from "./book-demo-button";
 import Image from "next/image";
 import Link from "next/link";
-import { BookDemoButton } from "./book-demo-button";
 
 interface CTASectionProps {
   title: string;
@@ -15,7 +15,7 @@ export function CTASection({
   description,
 }: CTASectionProps) {
   return (
-    <section className="py-24 relative">
+    <section className="py-24 relative bg-[#0f0826] text-white">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--primary-color-50),transparent_50%)]" style={{
         '--primary-color-50': 'hsla(var(--primary) / 0.05)',
       } as React.CSSProperties} />
@@ -25,10 +25,10 @@ export function CTASection({
       <div className="container mx-auto px-4 relative max-w-[95%] xl:max-w-[1280px] space-y-12">
         {/* Header */}
         <div className="text-center space-y-4">
-          <h2 className="text-4xl font-bold">
+          <h2 className="text-4xl font-bold text-white">
             {title}
           </h2>
-          <p className="dark:text-white/60 text-foreground/60 max-w-2xl mx-auto">
+          <p className="text-white/60 max-w-2xl mx-auto">
             {description}
           </p>
         </div>
@@ -36,20 +36,20 @@ export function CTASection({
         {/* Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
           {/* Karrio OSS Card */}
-          <div className="dark:bg-[#1A1630] bg-gray-50 rounded-xl overflow-hidden border dark:border-white/5 border-gray-200/70 text-foreground dark:text-white shadow-md relative group min-h-[380px] flex flex-col">
+          <div className="bg-[#1A1630] rounded-xl overflow-hidden border border-white/5 text-white shadow-md relative group min-h-[380px] flex flex-col">
             <div className="p-6 md:p-8 space-y-5 md:space-y-6 relative z-10 w-full md:max-w-[75%] flex-1">
-              <div className="w-12 md:w-14 h-12 md:h-14 flex items-center justify-center rounded-xl bg-[#30D9B7]/10 dark:bg-white/10">
+              <div className="w-12 md:w-14 h-12 md:h-14 flex items-center justify-center rounded-xl bg-white/10">
                 <Image src="/icon.svg" alt="Karrio Icon" width={28} height={28} className="w-7 h-7 md:w-8 md:h-8" />
               </div>
 
               <div className="space-y-3">
                 <h3 className="text-xl md:text-2xl font-semibold">Karrio Open Source</h3>
-                <p className="dark:text-white/60 text-gray-600">
+                <p className="text-white/60">
                   The optimal solution for small projects.
                 </p>
               </div>
 
-              <Button variant="outline" size="lg" className="mt-2 dark:border-white/20 dark:text-white border-primary/40 text-primary hover:bg-primary/5 dark:hover:bg-white/10" asChild>
+              <Button size="lg" className="mt-2 bg-transparent border border-white/20 text-white hover:bg-white/10" asChild>
                 <Link href="https://docs.karrio.io/product/self-hosting">
                   Deploy Open Source
                 </Link>
@@ -59,11 +59,11 @@ export function CTASection({
             {/* Background illustration */}
             <div className="absolute right-0 bottom-0 w-[45%] md:w-[50%] h-[70%] md:h-[80%] overflow-hidden pointer-events-none">
               <div className="relative w-full h-full flex items-center justify-center">
-                <div className="absolute top-1/4 left-1/4 w-16 md:w-24 h-16 md:h-24 rounded-full bg-[#30D9B7]/20 dark:bg-[#30D9B7]/30 blur-xl"></div>
-                <div className="absolute bottom-1/4 right-1/4 w-14 md:w-20 h-14 md:h-20 rounded-full bg-[#5722cc]/20 dark:bg-[#5722cc]/30 blur-xl"></div>
+                <div className="absolute top-1/4 left-1/4 w-16 md:w-24 h-16 md:h-24 rounded-full bg-[#30D9B7]/30 blur-xl"></div>
+                <div className="absolute bottom-1/4 right-1/4 w-14 md:w-20 h-14 md:h-20 rounded-full bg-[#5722cc]/30 blur-xl"></div>
                 <svg className="w-40 md:w-52 h-40 md:h-52" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="100" cy="100" r="80" stroke="var(--color-circle, #30D9B7)" strokeWidth="3" className="dark:opacity-100 opacity-70" style={{ "--color-circle": "#30D9B7" } as React.CSSProperties} />
-                  <path d="M60 100C60 77.9086 77.9086 60 100 60C122.091 60 140 77.9086 140 100C140 122.091 122.091 140 100 140" stroke="var(--color-path, #5722cc)" strokeWidth="3" className="dark:opacity-100 opacity-70" style={{ "--color-path": "#5722cc" } as React.CSSProperties} />
+                  <circle cx="100" cy="100" r="80" stroke="var(--color-circle, #30D9B7)" strokeWidth="3" style={{ "--color-circle": "#30D9B7" } as React.CSSProperties} />
+                  <path d="M60 100C60 77.9086 77.9086 60 100 60C122.091 60 140 77.9086 140 100C140 122.091 122.091 140 100 140" stroke="var(--color-path, #5722cc)" strokeWidth="3" style={{ "--color-path": "#5722cc" } as React.CSSProperties} />
                   <circle cx="100" cy="100" r="20" fill="var(--color-inner, #30D9B7)" fillOpacity="0.3" style={{ "--color-inner": "#30D9B7" } as React.CSSProperties} />
                 </svg>
               </div>

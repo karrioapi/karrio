@@ -5,10 +5,16 @@ import { ThemeProvider } from "next-themes";
 
 export default function RootProvider({
   children,
-  defaultTheme = "system"
+  defaultTheme = "system",
+  forcedTheme,
+  disableTransitionOnChange = false,
+  sectionKey = "app"
 }: {
   children: React.ReactNode;
   defaultTheme?: "light" | "dark" | "system";
+  forcedTheme?: "light" | "dark";
+  disableTransitionOnChange?: boolean;
+  sectionKey?: string;
 }) {
   return (
     <>
@@ -16,7 +22,9 @@ export default function RootProvider({
         attribute="class"
         defaultTheme={defaultTheme}
         enableSystem={defaultTheme === "system"}
-        forcedTheme={defaultTheme === "light" ? "light" : undefined}
+        forcedTheme={forcedTheme}
+        disableTransitionOnChange={disableTransitionOnChange}
+        storageKey={`theme-${sectionKey}`}
       >
         {children}
         <Analytics />

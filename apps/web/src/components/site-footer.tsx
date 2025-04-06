@@ -118,9 +118,9 @@ export const SiteFooter = () => {
         </div>
         <div className="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center">
           <div className="flex flex-col items-start">
-            <Link href="https://karrio.io" className="flex items-center">
+            <Link href="/" className="flex items-center">
               <Image
-                src="/logo.svg"
+                src="/logo-light.svg"
                 alt="Karrio Logo"
                 width={100}
                 height={25}

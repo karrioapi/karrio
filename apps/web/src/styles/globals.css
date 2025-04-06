@@ -1,21 +1,287 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import '@docsearch/css';
 
 /*
- * Add custom variant for platform theme that makes all dark: utilities work
- * This allows both .dark and [data-theme='platform'] to use dark: utilities
+ * Add custom variant for dark theme that makes all dark: utilities work
+ * This allows both .dark and [data-theme='dark'] to use dark: utilities
  */
-@custom-variant dark (&:where(.dark, [data-theme='dark'], [data-theme='platform'], .dark *, [data-theme='dark'] *, [data-theme='platform'] *));
+@custom-variant dark (&:where(.dark, [data-theme='dark'], .dark *, [data-theme='dark'] *));
 
-.dark .dark\:platform-shared,
-[data-theme="dark"] .dark\:platform-shared,
-[data-theme="platform"] .dark\:platform-shared {
+/* Apply dark utilities to elements with data-theme="dark" attribute */
+html[data-theme="dark"] * {
+  color-scheme: dark;
+}
+
+.dark .dark\:shared,
+[data-theme="dark"] .dark\:shared {
   @apply block;
 }
 
-.dark\:platform-shared {
+.dark\:shared {
   @apply hidden;
+}
+
+/* DocSearch custom styles */
+:root {
+  --docsearch-primary-color: hsl(var(--primary));
+  --docsearch-text-color: hsl(var(--foreground));
+  --docsearch-spacing: 12px;
+  --docsearch-icon-stroke-width: 1.5;
+  --docsearch-highlight-color: var(--docsearch-primary-color);
+  --docsearch-muted-color: hsl(var(--muted-foreground));
+  --docsearch-container-background: rgba(0, 0, 0, 0.5);
+
+  /* Modal */
+  --docsearch-modal-width: 560px;
+  --docsearch-modal-height: 600px;
+  --docsearch-modal-background: hsl(var(--background));
+  --docsearch-modal-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.1), 0 12px 24px -6px rgba(0, 0, 0, 0.15);
+
+  /* Search box */
+  --docsearch-searchbox-height: 48px;
+  --docsearch-searchbox-background: hsl(var(--muted));
+  --docsearch-searchbox-focus-background: hsl(var(--muted));
+  --docsearch-searchbox-shadow: 0 0 0 2px var(--docsearch-primary-color);
+
+  /* Hit */
+  --docsearch-hit-height: 56px;
+  --docsearch-hit-color: hsl(var(--foreground));
+  --docsearch-hit-active-color: hsl(var(--background));
+  --docsearch-hit-background: hsl(var(--background));
+  --docsearch-hit-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  /* Footer */
+  --docsearch-footer-height: 44px;
+  --docsearch-footer-background: hsl(var(--background));
+  --docsearch-footer-shadow: 0 -1px 0 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode overrides */
+.dark {
+  --docsearch-text-color: hsl(var(--foreground));
+  --docsearch-container-background: rgba(0, 0, 0, 0.5);
+  --docsearch-modal-background: hsl(var(--background));
+  --docsearch-modal-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);
+  --docsearch-searchbox-background: hsl(var(--muted));
+  --docsearch-searchbox-focus-background: hsl(var(--muted));
+  --docsearch-hit-color: hsl(var(--foreground));
+  --docsearch-hit-shadow: none;
+  --docsearch-hit-background: hsl(var(--background));
+  --docsearch-footer-background: hsl(var(--background));
+  --docsearch-footer-shadow: 0 -1px 0 0 rgba(255, 255, 255, 0.1);
+  --docsearch-logo-color: hsl(var(--muted-foreground));
+  --docsearch-muted-color: hsl(var(--muted-foreground));
+}
+
+/* DocSearch Button styles - adapt to the main UI */
+.DocSearch-Button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0.5rem 0.8rem;
+  cursor: pointer;
+  background-color: hsl(var(--muted));
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+  width: 100%;
+  height: 2.25rem;
+  /* Match Karrio UI height */
+}
+
+.DocSearch-Button:hover,
+.DocSearch-Button:focus {
+  background-color: hsl(var(--accent));
+  border-color: hsl(var(--accent-foreground) / 20%);
+  outline: none;
+}
+
+.DocSearch-Button-Container {
+  display: flex;
+  align-items: center;
+}
+
+.DocSearch-Search-Icon {
+  width: 1rem;
+  height: 1rem;
+  color: hsl(var(--muted-foreground));
+  margin-right: 0.5rem;
+  stroke-width: 1.5;
+}
+
+.DocSearch-Button-Placeholder {
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+  font-family: var(--font-sans);
+}
+
+.DocSearch-Button-Keys {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.DocSearch-Button-Key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 4px;
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  background-color: hsl(var(--background));
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.25rem;
+}
+
+/* Modal */
+.DocSearch-Container {
+  z-index: 100;
+}
+
+.DocSearch-Modal {
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+}
+
+.DocSearch-SearchBar {
+  padding: var(--docsearch-spacing);
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.DocSearch-Form {
+  display: flex;
+  align-items: center;
+  background-color: var(--docsearch-searchbox-background);
+  border-radius: var(--radius);
+}
+
+.DocSearch-Input {
+  width: 100%;
+  padding: 0 calc(var(--docsearch-spacing) * 1.5);
+  font-size: 1rem;
+  background-color: transparent;
+  color: var(--docsearch-text-color);
+  outline: none;
+  appearance: none;
+  border: none;
+}
+
+.DocSearch-Reset {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 var(--docsearch-spacing);
+  color: var(--docsearch-muted-color);
+}
+
+/* Results */
+.DocSearch-Dropdown {
+  max-height: calc(var(--docsearch-modal-height) - var(--docsearch-searchbox-height) - var(--docsearch-footer-height));
+  overflow-y: auto;
+  padding: var(--docsearch-spacing);
+}
+
+.DocSearch-Hit-source {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--docsearch-muted-color);
+  margin-top: var(--docsearch-spacing);
+  margin-bottom: calc(var(--docsearch-spacing) / 2);
+}
+
+.DocSearch-Hit {
+  position: relative;
+  border-radius: var(--radius);
+  padding: 0;
+  margin-bottom: 4px;
+}
+
+.DocSearch-Hit a {
+  display: block;
+  padding: calc(var(--docsearch-spacing) / 2) var(--docsearch-spacing);
+  text-decoration: none;
+  background-color: var(--docsearch-hit-background);
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+}
+
+.DocSearch-Hit[aria-selected="true"] a {
+  background-color: hsl(var(--accent));
+}
+
+.DocSearch-Hit-title {
+  font-size: 0.875rem;
+  color: var(--docsearch-hit-color);
+}
+
+.DocSearch-Hit-path {
+  font-size: 0.75rem;
+  color: var(--docsearch-muted-color);
+  margin-top: 2px;
+}
+
+.DocSearch-Hit[aria-selected="true"] .DocSearch-Hit-title {
+  color: hsl(var(--accent-foreground));
+}
+
+.DocSearch-Hit[aria-selected="true"] .DocSearch-Hit-path {
+  color: hsl(var(--accent-foreground));
+  opacity: 0.8;
+}
+
+/* Footer */
+.DocSearch-Footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: var(--docsearch-footer-height);
+  padding: 0 var(--docsearch-spacing);
+  background-color: var(--docsearch-footer-background);
+  border-top: 1px solid hsl(var(--border));
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+
+.DocSearch-Commands {
+  display: flex;
+  align-items: center;
+  gap: var(--docsearch-spacing);
+}
+
+.DocSearch-Commands-Key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 4px;
+  font-size: 0.75rem;
+  color: var(--docsearch-muted-color);
+  background-color: var(--docsearch-modal-background);
+  border: 1px solid var(--docsearch-muted-color);
+  border-radius: 0.25rem;
+}
+
+.DocSearch-Label {
+  font-size: 0.75rem;
+  color: var(--docsearch-muted-color);
+}
+
+.DocSearch-Logo a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--docsearch-logo-color);
+  font-size: 0.75rem;
+}
+
+.DocSearch-Logo svg {
+  margin-left: 0.5rem;
+  color: var(--docsearch-muted-color);
 }
 
 @layer base {
@@ -57,62 +323,36 @@
     /* New CSS variable definitions for code highlighting */
     --code-bg: #f8f9fc;
     --code-fg: #1f2937;
+    --code-border: #e5e7eb;
+    --code-header-bg: #f3f4f6;
+    --code-header-fg: #374151;
+
+    /* Card variables for documentation (light mode) */
+    --doc-card-bg: white;
+    --doc-card-hover-bg: white;
+    --doc-card-border: #e5e7eb;
+    --doc-card-hover-border: #d1d5db;
+
+    /* Alert/callout variables (light mode) */
+    --callout-bg: #f9fafb;
+    --callout-border: #e5e7eb;
+    --callout-text: #1f2937;
+    --callout-info-bg: #f0f7ff;
+    --callout-info-border: #bfdbfe;
+    --callout-info-text: #1e40af;
+    --callout-warning-bg: #fffbeb;
+    --callout-warning-border: #fef3c7;
+    --callout-warning-text: #92400e;
+    --callout-error-bg: #fef2f2;
+    --callout-error-border: #fee2e2;
+    --callout-error-text: #b91c1c;
   }
 
   /* Dark theme variables */
   .dark,
   [data-theme="dark"] {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 6.2%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 6.2%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 267 78% 72%;
-    /* Purple shade */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 262 100% 82%;
-    /* Light purple */
-    --secondary-foreground: 0 0% 6.2%;
-    --muted: 0 0% 10%;
-    --muted-foreground: 0 0% 70%;
-    --accent: 268 75% 65%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 16%;
-    --input: 0 0% 16%;
-    --ring: 267 78% 72%;
-    --radius: 0.5rem;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-
-    /* Documentation sidebar variables in dark mode */
-    --sidebar-bg: #0a0a0c;
-    --sidebar-text: #e5e7eb;
-    --sidebar-border: #27272a;
-
-    /* Docs specific variables */
-    --docs-bg: #0d0d0d;
-    --docs-text: #ffffff;
-    --docs-border: #2b2b2b;
-    --docs-card-bg: #161616;
-    --docs-card-hover: #262626;
-    --docs-muted-text: #d4d4d8;
-    --docs-accent: #c084fc;
-    --docs-accent-hover: #d8b4fe;
-
-    /* Dark mode CSS variable overrides */
-    --code-bg: #0d1117;
-    --code-fg: #e1e4e8;
-  }
-
-  /* Platform theme variables (alternate dark theme) */
-  [data-theme="platform"] {
-    --background: 248 28% 16%;
+    --background: 262 69% 9%;
+    /* Equivalent to #0f0826 */
     --foreground: 0 0% 100%;
     --card: 252 24% 20%;
     --card-foreground: 0 0% 100%;
@@ -123,7 +363,8 @@
     --secondary: 176 67% 69%;
     --secondary-foreground: 252 24% 20%;
     --muted: 252 16% 26%;
-    --muted-foreground: 0 0% 70%;
+    --muted-foreground: 0 0% 90%;
+    /* Improved from 70% to 90% for better contrast */
     --accent: 16 100% 50%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
@@ -138,10 +379,38 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
 
-    /* Documentation sidebar variables */
-    --sidebar-bg: #0a0a0c;
-    --sidebar-text: #e5e7eb;
+    /* Documentation sidebar variables in dark mode */
+    --sidebar-bg: hsl(var(--background));
+    /* Use the theme variable instead of hard-coded color */
+    --sidebar-text: #f3f4f6;
     --sidebar-border: #27272a;
+
+    /* Dark mode CSS variable overrides */
+    --code-bg: #0f0c24;
+    --code-fg: #e2e8f0;
+    --code-border: #27272a;
+    --code-header-bg: #1e1e2e;
+    --code-header-fg: #e2e8f0;
+
+    /* Card variables for documentation */
+    --doc-card-bg: #1e1e1e;
+    --doc-card-hover-bg: #2a2a2a;
+    --doc-card-border: #2e2e2e;
+    --doc-card-hover-border: #3e3e3e;
+
+    /* Alert/callout variables */
+    --callout-bg: rgba(18, 13, 48, 0.6);
+    --callout-border: #332f4d;
+    --callout-text: #f3f4f6;
+    --callout-info-bg: rgba(15, 23, 42, 0.3);
+    --callout-info-border: #334d97;
+    --callout-info-text: #a5c8ff;
+    --callout-warning-bg: rgba(26, 19, 3, 0.3);
+    --callout-warning-border: #7c6519;
+    --callout-warning-text: #fde047;
+    --callout-error-bg: rgba(42, 13, 13, 0.3);
+    --callout-error-border: #8f3a3a;
+    --callout-error-text: #fca5a5;
   }
 
   /* Typography elements */
@@ -170,10 +439,90 @@
     color: hsl(var(--foreground));
   }
 
-  /* Specific background overrides for each theme */
-  [data-theme="platform"] body {
-    background-color: #0f0826;
-    color: white;
+  /* Specific background overrides for dark theme */
+  .dark body,
+  [data-theme="dark"] body,
+  .dark main,
+  [data-theme="dark"] main {
+    color: hsl(var(--foreground));
+  }
+
+  /* Make container inherit parent background */
+  .container {
+    background-color: transparent;
+  }
+
+  /* Blog specific dark mode styling - ensure consistent background and text contrast */
+  .dark .prose,
+  [data-theme="dark"] .prose,
+  .dark .prose-lg,
+  [data-theme="dark"] .prose-lg {
+    background-color: hsl(var(--background));
+    color: #f3f4f6;
+    /* Improved contrast for body text */
+  }
+
+  /* Improve contrast for prose elements in dark mode */
+  .dark .prose p,
+  [data-theme="dark"] .prose p,
+  .dark .prose-lg p,
+  [data-theme="dark"] .prose-lg p,
+  .dark .prose li,
+  [data-theme="dark"] .prose li,
+  .dark .prose-lg li,
+  [data-theme="dark"] .prose-lg li {
+    color: #f3f4f6;
+    /* Light gray with better contrast */
+  }
+
+  /* Ensure headings have strong contrast */
+  .dark .prose h1,
+  .dark .prose h2,
+  .dark .prose h3,
+  .dark .prose h4,
+  .dark .prose h5,
+  .dark .prose h6,
+  [data-theme="dark"] .prose h1,
+  [data-theme="dark"] .prose h2,
+  [data-theme="dark"] .prose h3,
+  [data-theme="dark"] .prose h4,
+  [data-theme="dark"] .prose h5,
+  [data-theme="dark"] .prose h6 {
+    color: #ffffff;
+  }
+
+  /* Ensure links have good visibility and contrast */
+  .dark .prose a,
+  [data-theme="dark"] .prose a {
+    color: #a78bfa;
+    /* Purple that matches the brand */
+    text-decoration-color: #a78bfa;
+  }
+
+  .dark .prose a:hover,
+  [data-theme="dark"] .prose a:hover {
+    color: #c4b5fd;
+    /* Lighter purple on hover */
+    text-decoration-color: #c4b5fd;
+  }
+
+  /* Style for code and pre-formatted text */
+  .dark .prose code,
+  [data-theme="dark"] .prose code {
+    color: #e2e8f0;
+    background-color: #0f0c24;
+  }
+
+  /* Fix contrast for other text elements */
+  .dark .prose strong,
+  [data-theme="dark"] .prose strong {
+    color: #ffffff;
+  }
+
+  .dark .prose blockquote,
+  [data-theme="dark"] .prose blockquote {
+    color: #d1d5db;
+    border-left-color: #4b5563;
   }
 }
 
@@ -271,443 +620,175 @@
 }
 
 /*
-  DOCUMENTATION DARK MODE STYLING
+  DOCUMENTATION STYLING
   ------------------------------
-  A simplified, standardized approach to dark mode
-  All selectors use the same specificity pattern
+  Uses the main dark theme variables for consistency
 */
 
-/* Base styles for dark mode documentation pages */
-.dark .docs-page,
-.docs-dark .docs-page,
-[data-theme='dark'] .docs-page {
-  --docs-bg: #0d0d0d;
-  --docs-text: #ffffff;
-  --docs-border: #2b2b2b;
-  --docs-card-bg: #161616;
-  --docs-card-hover: #262626;
-  --docs-muted-text: #d4d4d8;
-  --docs-accent: #c084fc;
-  --docs-accent-hover: #d8b4fe;
+/* Base styles for documentation pages */
+.docs-page {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
 
-  background-color: var(--docs-bg);
-  color: var(--docs-text);
+/* Specific dark mode override for docs pages */
+.dark .docs-page,
+[data-theme="dark"] .docs-page {
+  background-color: hsl(var(--background));
 }
 
 /* Main container and sidebar */
+.docs-page .docs-container,
+.docs-page .sidebar {
+  background-color: hsl(var(--background));
+  border-color: hsl(var(--border));
+}
+
+/* Dark mode specific overrides for docs container and sidebar */
 .dark .docs-page .docs-container,
-.docs-dark .docs-page .docs-container,
-[data-theme='dark'] .docs-page .docs-container,
 .dark .docs-page .sidebar,
-.docs-dark .docs-page .sidebar,
-[data-theme='dark'] .docs-page .sidebar {
-  background-color: var(--docs-bg);
-  border-color: var(--docs-border);
+[data-theme="dark"] .docs-page .docs-container,
+[data-theme="dark"] .docs-page .sidebar {
+  background-color: hsl(var(--background));
+  border-color: hsl(var(--border));
 }
 
 /* Main content area */
-.dark .docs-page .docs-content,
-.docs-dark .docs-page .docs-content,
-[data-theme='dark'] .docs-page .docs-content {
-  background-color: var(--docs-bg);
+.docs-page .docs-content {
+  background-color: hsl(var(--background));
   padding-top: 0;
 }
 
+/* Dark mode specific override for content area */
+.dark .docs-page .docs-content,
+[data-theme="dark"] .docs-page .docs-content {
+  background-color: hsl(var(--background));
+}
+
 /* TOC styles */
-.dark .docs-page .toc-heading,
-.docs-dark .docs-page .toc-heading,
-[data-theme='dark'] .docs-page .toc-heading {
-  color: white !important;
-  font-weight: 600 !important;
+.docs-page .toc-heading {
+  color: hsl(var(--foreground));
+  font-weight: 600;
 }
 
-.dark .docs-page .toc-item,
-.docs-dark .docs-page .toc-item,
-[data-theme='dark'] .docs-page .toc-item {
-  color: var(--docs-muted-text);
+.docs-page .toc-item {
+  color: hsl(var(--muted-foreground));
 }
 
-.dark .docs-page .toc-item:hover,
-.docs-dark .docs-page .toc-item:hover,
-[data-theme='dark'] .docs-page .toc-item:hover {
-  color: var(--docs-accent);
+.docs-page .toc-item:hover {
+  color: hsl(var(--primary));
 }
 
-.dark .docs-page .toc-item.active,
-.docs-dark .docs-page .toc-item.active,
-[data-theme='dark'] .docs-page .toc-item.active {
-  color: rgb(192, 132, 252) !important;
-  /* purple-400 */
-  font-weight: 500 !important;
+.docs-page .toc-item.active {
+  color: hsl(var(--primary));
+  font-weight: 500;
 }
 
-/* Feature Cards (specific styling) */
-.dark .docs-page a.group .relative.flex.flex-col.h-full,
-.docs-dark .docs-page a.group .relative.flex.flex-col.h-full,
-[data-theme='dark'] .docs-page a.group .relative.flex.flex-col.h-full {
-  background-color: var(--docs-card-bg);
-  border-color: var(--docs-border);
+/* Feature Cards styling */
+.docs-page a.group .relative.flex.flex-col.h-full {
+  background-color: hsl(var(--card));
+  border-color: hsl(var(--border));
 }
 
-.dark .docs-page a.group:hover .relative.flex.flex-col.h-full,
-.docs-dark .docs-page a.group:hover .relative.flex.flex-col.h-full,
-[data-theme='dark'] .docs-page a.group:hover .relative.flex.flex-col.h-full {
-  background-color: var(--docs-card-hover);
-  border-color: #404040;
+.docs-page a.group:hover .relative.flex.flex-col.h-full {
+  background-color: hsl(var(--muted));
+  border-color: hsl(var(--accent));
 }
 
 /* Card icons */
-.dark .docs-page a.group .rounded-full,
-.docs-dark .docs-page a.group .rounded-full,
-[data-theme='dark'] .docs-page a.group .rounded-full {
-  background-color: var(--docs-card-hover);
-  color: var(--docs-text);
+.docs-page a.group .rounded-full {
+  background-color: hsl(var(--muted));
+  color: hsl(var(--foreground));
 }
 
-.dark .docs-page a.group:hover .rounded-full,
-.docs-dark .docs-page a.group:hover .rounded-full,
-[data-theme='dark'] .docs-page a.group:hover .rounded-full {
-  background-color: #404040;
+.docs-page a.group:hover .rounded-full {
+  background-color: hsl(var(--accent));
 }
 
 /* Text colors in cards */
-.dark .docs-page a.group h3,
-.docs-dark .docs-page a.group h3,
-[data-theme='dark'] .docs-page a.group h3 {
-  color: var(--docs-text);
+.docs-page a.group h3 {
+  color: hsl(var(--foreground));
 }
 
-.dark .docs-page a.group p,
-.docs-dark .docs-page a.group p,
-[data-theme='dark'] .docs-page a.group p {
-  color: var(--docs-muted-text);
+.docs-page a.group p {
+  color: hsl(var(--muted-foreground));
 }
 
 /* Gradient banner/hero styles */
-.dark .docs-page div[style*="background-image"],
-.docs-dark .docs-page div[style*="background-image"],
-[data-theme='dark'] .docs-page div[style*="background-image"],
-.dark .docs-page .rounded-lg[style*="background-image"],
-.docs-dark .docs-page .rounded-lg[style*="background-image"],
-[data-theme='dark'] .docs-page .rounded-lg[style*="background-image"] {
-  background-image: linear-gradient(to bottom right, #5722cc, #47a3ff) !important;
+.docs-page div[style*="background-image"],
+.docs-page .rounded-lg[style*="background-image"],
+.docs-page .bg-gradient-to-br {
+  background-image: linear-gradient(to bottom right, #5722cc, #47a3ff);
   border: none;
 }
 
 /* Text within the hero/banner */
-.dark .docs-page div[style*="background"] h1,
-.docs-dark .docs-page div[style*="background"] h1,
-[data-theme='dark'] .docs-page div[style*="background"] h1,
-.dark .docs-page div[style*="background"] p,
-.docs-dark .docs-page div[style*="background"] p,
-[data-theme='dark'] .docs-page div[style*="background"] p {
+.docs-page div[style*="background"] h1,
+.docs-page div[style*="background"] p,
+.docs-page .bg-gradient-to-br h1,
+.docs-page .bg-gradient-to-br p {
   color: white !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 /* Ensure any element inside the gradient banner has transparent background */
-.dark .docs-page div[style*="background"] *,
-.docs-dark .docs-page div[style*="background"] *,
-[data-theme='dark'] .docs-page div[style*="background"] * {
+.docs-page div[style*="background"] *,
+.docs-page .bg-gradient-to-br * {
   background-color: transparent;
 }
 
-/* Make headings white in dark mode */
-.dark .docs-page h1,
-.dark .docs-page h2,
-.dark .docs-page h3,
-.dark .docs-page h4,
-.dark .docs-page h5,
-.dark .docs-page h6,
-.docs-dark .docs-page h1,
-.docs-dark .docs-page h2,
-.docs-dark .docs-page h3,
-.docs-dark .docs-page h4,
-.docs-dark .docs-page h5,
-.docs-dark .docs-page h6,
-[data-theme='dark'] .docs-page h1,
-[data-theme='dark'] .docs-page h2,
-[data-theme='dark'] .docs-page h3,
-[data-theme='dark'] .docs-page h4,
-[data-theme='dark'] .docs-page h5,
-[data-theme='dark'] .docs-page h6 {
-  color: var(--docs-text);
+/* Headings */
+.docs-page h1,
+.docs-page h2,
+.docs-page h3,
+.docs-page h4,
+.docs-page h5,
+.docs-page h6 {
+  color: hsl(var(--foreground));
 }
 
-/* Additional styles for the rest of the page can be added below */
-
-/* Direct targeting of feature cards - more specific for FeatureCards from the component */
-.dark .docs-page a.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg,
-.docs-dark .docs-page a.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg,
-[data-theme='dark'] .docs-page a.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg {
-  background-color: var(--docs-card-bg) !important;
-  border-color: var(--docs-border) !important;
-  color: var(--docs-text) !important;
+/* Feature cards component styling */
+.docs-page a.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg {
+  background-color: hsl(var(--card));
+  border-color: hsl(var(--border));
+  color: hsl(var(--foreground));
 }
 
-/* Hover state for feature cards */
-.dark .docs-page a.no-underline:hover div.relative.flex.flex-col.h-full.items-start.rounded-lg,
-.docs-dark .docs-page a.no-underline:hover div.relative.flex.flex-col.h-full.items-start.rounded-lg,
-[data-theme='dark'] .docs-page a.no-underline:hover div.relative.flex.flex-col.h-full.items-start.rounded-lg {
-  background-color: var(--docs-card-hover) !important;
-  border-color: #404040 !important;
+/* Feature cards hover state */
+.docs-page a.no-underline:hover div.relative.flex.flex-col.h-full.items-start.rounded-lg {
+  background-color: hsl(var(--muted));
+  border-color: hsl(var(--accent));
 }
 
-/* Card icons styling with higher specificity */
-.dark .docs-page a.no-underline div.flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full,
-.docs-dark .docs-page a.no-underline div.flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full,
-[data-theme='dark'] .docs-page a.no-underline div.flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full {
-  background-color: var(--docs-card-hover) !important;
-  color: var(--docs-text) !important;
+/* Card icons specific styling */
+.docs-page a.no-underline div.flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full {
+  background-color: hsl(var(--muted));
+  color: hsl(var(--foreground));
 }
 
 /* Card icons hover state */
-.dark .docs-page a.no-underline:hover div.flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full,
-.docs-dark .docs-page a.no-underline:hover div.flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full,
-[data-theme='dark'] .docs-page a.no-underline:hover div.flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full {
-  background-color: #404040 !important;
+.docs-page a.no-underline:hover div.flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full {
+  background-color: hsl(var(--accent));
 }
 
-/* Ensure the purple gradient banner maintains its styling in dark mode */
-.dark .docs-page div.rounded-lg[style*="linear-gradient"],
-.docs-dark .docs-page div.rounded-lg[style*="linear-gradient"],
-[data-theme='dark'] .docs-page div.rounded-lg[style*="linear-gradient"] {
-  background: linear-gradient(to bottom right, #5722cc, #47a3ff) !important;
-  border: none !important;
+/* Footer styling */
+.docs-page footer {
+  background-color: hsl(var(--background));
+  border-color: hsl(var(--border));
+  color: hsl(var(--foreground));
 }
 
-/* Also target the exact style from the rendered page */
-.dark .docs-page div.rounded-lg[style*="background: linear-gradient"],
-.docs-dark .docs-page div.rounded-lg[style*="background: linear-gradient"],
-[data-theme='dark'] .docs-page div.rounded-lg[style*="background: linear-gradient"] {
-  background: linear-gradient(to bottom right, #5722cc, #47a3ff) !important;
-  border: none !important;
+.docs-page footer a {
+  color: hsl(var(--muted-foreground));
 }
 
-/* Very specific targeting for the intro banner */
-.dark .docs-page>div>div>div>div.rounded-lg,
-.docs-dark .docs-page>div>div>div>div.rounded-lg,
-[data-theme='dark'] .docs-page>div>div>div>div.rounded-lg {
-  background: linear-gradient(to bottom right, #5722cc, #47a3ff) !important;
-  border: none !important;
-}
-
-/* Additional specific banner styles - very specifically for the intro page banner */
-.dark .docs-page .bg-gradient-to-br,
-.docs-dark .docs-page .bg-gradient-to-br,
-[data-theme='dark'] .docs-page .bg-gradient-to-br {
-  background: linear-gradient(to bottom right, #5722cc, #47a3ff) !important;
-}
-
-/* Target any element with background style attribute containing gradient */
-.dark .docs-page div[style*="background:"],
-.docs-dark .docs-page div[style*="background:"],
-[data-theme='dark'] .docs-page div[style*="background:"] {
-  background: inherit !important;
-}
-
-/* Very specific selector for the purple banner */
-.dark .docs-page div.rounded-lg[style*="background:"],
-.docs-dark .docs-page div.rounded-lg[style*="background:"],
-[data-theme='dark'] .docs-page div.rounded-lg[style*="background:"] {
-  background: linear-gradient(to bottom right, #5722cc, #47a3ff) !important;
-}
-
-/* For the dark box in the banner with the product name */
-.dark .docs-page div[style*="background:#000"],
-.docs-dark .docs-page div[style*="background:#000"],
-[data-theme='dark'] .docs-page div[style*="background:#000"] {
-  background-color: #000 !important;
-  color: white !important;
-}
-
-/* Direct targeting of FeatureCard component */
-.dark .docs-page .group.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg,
-.docs-dark .docs-page .group.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg,
-[data-theme='dark'] .docs-page .group.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg {
-  background-color: var(--docs-card-bg) !important;
-  border-color: var(--docs-border) !important;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
-}
-
-/* Card hover state */
-.dark .docs-page .group.no-underline:hover div.relative.flex.flex-col.h-full.items-start.rounded-lg,
-.docs-dark .docs-page .group.no-underline:hover div.relative.flex.flex-col.h-full.items-start.rounded-lg,
-[data-theme='dark'] .docs-page .group.no-underline:hover div.relative.flex.flex-col.h-full.items-start.rounded-lg,
-.dark .docs-page .group.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg.group-hover\:bg-gray-50,
-.docs-dark .docs-page .group.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg.group-hover\:bg-gray-50,
-[data-theme='dark'] .docs-page .group.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg.group-hover\:bg-gray-50 {
-  background-color: var(--docs-card-hover) !important;
-  border-color: #404040 !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
-}
-
-/* Target card icon container */
-.dark .docs-page .card-icon,
-.docs-dark .docs-page .card-icon,
-[data-theme='dark'] .docs-page .card-icon,
-.dark .docs-page .flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full,
-.docs-dark .docs-page .flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full,
-[data-theme='dark'] .docs-page .flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full {
-  background-color: var(--docs-card-hover) !important;
-  color: var(--docs-text) !important;
-}
-
-/* Card icon hover state */
-.dark .docs-page .group:hover .card-icon,
-.docs-dark .docs-page .group:hover .card-icon,
-[data-theme='dark'] .docs-page .group:hover .card-icon,
-.dark .docs-page .group:hover .flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full,
-.docs-dark .docs-page .group:hover .flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full,
-[data-theme='dark'] .docs-page .group:hover .flex.h-12.w-12.shrink-0.items-center.justify-center.rounded-full {
-  background-color: #404040 !important;
-}
-
-/* Target by card container class directly */
-.dark .docs-page .card-container,
-.docs-dark .docs-page .card-container,
-[data-theme='dark'] .docs-page .card-container {
-  background-color: var(--docs-card-bg) !important;
-  border-color: var(--docs-border) !important;
-}
-
-.dark .docs-page .group:hover .card-container,
-.docs-dark .docs-page .group:hover .card-container,
-[data-theme='dark'] .docs-page .group:hover .card-container {
-  background-color: var(--docs-card-hover) !important;
-  border-color: #404040 !important;
-}
-
-/* Footer styling in dark mode */
-.dark .docs-page footer,
-.docs-dark .docs-page footer,
-[data-theme='dark'] .docs-page footer {
-  background-color: var(--docs-bg) !important;
-  border-color: var(--docs-border) !important;
-  color: var(--docs-text) !important;
-}
-
-.dark .docs-page footer a,
-.docs-dark .docs-page footer a,
-[data-theme='dark'] .docs-page footer a {
-  color: #9ca3af !important;
-  /* gray-400 */
-}
-
-.dark .docs-page footer a:hover,
-.docs-dark .docs-page footer a:hover,
-[data-theme='dark'] .docs-page footer a:hover {
-  color: white !important;
-}
-
-.dark .docs-page footer .text-gray-500,
-.docs-dark .docs-page footer .text-gray-500,
-[data-theme='dark'] .docs-page footer .text-gray-500 {
-  color: #9ca3af !important;
-  /* gray-400 */
-}
-
-/* Override any lingering background-color or text-color classes */
-.dark .docs-page .dark\:bg-neutral-900,
-.docs-dark .docs-page .dark\:bg-neutral-900,
-[data-theme='dark'] .docs-page .dark\:bg-neutral-900 {
-  background-color: var(--docs-card-bg) !important;
-}
-
-.dark .docs-page .dark\:bg-neutral-800,
-.docs-dark .docs-page .dark\:bg-neutral-800,
-[data-theme='dark'] .docs-page .dark\:bg-neutral-800 {
-  background-color: var(--docs-card-hover) !important;
-}
-
-.dark .docs-page .dark\:border-neutral-800,
-.docs-dark .docs-page .dark\:border-neutral-800,
-[data-theme='dark'] .docs-page .dark\:border-neutral-800 {
-  border-color: var(--docs-border) !important;
-}
-
-.dark .docs-page .dark\:text-white,
-.docs-dark .docs-page .dark\:text-white,
-[data-theme='dark'] .docs-page .dark\:text-white {
-  color: var(--docs-text) !important;
-}
-
-.dark .docs-page .dark\:text-neutral-300,
-.docs-dark .docs-page .dark\:text-neutral-300,
-[data-theme='dark'] .docs-page .dark\:text-neutral-300 {
-  color: var(--docs-muted-text) !important;
-}
-
-/* Extremely specific targeting for the feature cards to overcome utility class specificity */
-.dark .docs-page .group.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg.p-6.dark\:bg-neutral-900,
-.docs-dark .docs-page .group.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg.p-6.dark\:bg-neutral-900,
-[data-theme='dark'] .docs-page .group.no-underline div.relative.flex.flex-col.h-full.items-start.rounded-lg.p-6.dark\:bg-neutral-900 {
-  background-color: var(--docs-card-bg) !important;
-  border-color: var(--docs-border) !important;
-}
-
-/* Force dark mode colors onto cards by directly targeting the actual component structure */
-.dark .docs-page .group .card-container,
-.docs-dark .docs-page .group .card-container,
-[data-theme='dark'] .docs-page .group .card-container {
-  background-color: var(--docs-card-bg) !important;
-  border-color: var(--docs-border) !important;
-}
-
-/* Override Tailwind's dark mode utility classes */
-.dark .docs-page .dark\:bg-neutral-900,
-.docs-dark .docs-page .dark\:bg-neutral-900,
-[data-theme='dark'] .docs-page .dark\:bg-neutral-900 {
-  background-color: var(--docs-card-bg) !important;
-}
-
-.dark .docs-page .dark\:group-hover\:bg-neutral-800,
-.docs-dark .docs-page .dark\:group-hover\:bg-neutral-800,
-[data-theme='dark'] .docs-page .dark\:group-hover\:bg-neutral-800,
-.dark .docs-page .group:hover .dark\:bg-neutral-900,
-.docs-dark .docs-page .group:hover .dark\:bg-neutral-900,
-[data-theme='dark'] .docs-page .group:hover .dark\:bg-neutral-900 {
-  background-color: var(--docs-card-hover) !important;
-}
-
-/* More aggressive footer styling */
-.dark .docs-page footer.w-full,
-.docs-dark .docs-page footer.w-full,
-[data-theme='dark'] .docs-page footer.w-full {
-  background-color: transparent !important;
-  border-color: var(--docs-border) !important;
-}
-
-/* Target the nested border and background utility classes directly */
-.dark .docs-page footer.dark\:bg-neutral-950,
-.docs-dark .docs-page footer.dark\:bg-neutral-950,
-[data-theme='dark'] .docs-page footer.dark\:bg-neutral-950 {
-  background-color: transparent !important;
-}
-
-.dark .docs-page footer.dark\:border-neutral-800,
-.docs-dark .docs-page footer.dark\:border-neutral-800,
-[data-theme='dark'] .docs-page footer.dark\:border-neutral-800 {
-  border-color: var(--docs-border) !important;
-}
-
-/* Fix for the nested card container */
-.dark .docs-page .group div.rounded-lg,
-.docs-dark .docs-page .group div.rounded-lg,
-[data-theme='dark'] .docs-page .group div.rounded-lg {
-  background-color: var(--docs-card-bg);
-  border-color: var(--docs-border);
-}
-
-.dark .docs-page .group:hover div.rounded-lg,
-.docs-dark .docs-page .group:hover div.rounded-lg,
-[data-theme='dark'] .docs-page .group:hover div.rounded-lg {
-  background-color: var(--docs-card-hover);
-  border-color: #404040;
+.docs-page footer a:hover {
+  color: hsl(var(--foreground));
 }
 
 /* Style for highlighted lines in code blocks */
 .highlighted-line {
-  background-color: rgba(255, 255, 255, 0.1) !important;
+  background-color: rgba(255, 255, 255, 0.1);
   display: block;
   margin: 0 -0.5rem;
   padding: 0 0.5rem;
@@ -716,8 +797,54 @@
 
 /* Add styling for light theme highlighted line */
 .light .highlighted-line {
-  background-color: rgba(0, 0, 0, 0.05) !important;
+  background-color: rgba(0, 0, 0, 0.05);
   border-left: 2px solid rgba(0, 0, 0, 0.2);
+}
+
+/* Code block styling improvements */
+.dark pre,
+.dark code,
+[data-theme="dark"] pre,
+[data-theme="dark"] code {
+  background-color: #0f0c24 !important;
+  color: #e1e4e8 !important;
+  border-color: #27272a !important;
+}
+
+/* Ensure inline code styling is consistent across blog and docs */
+.dark .prose code:not([class*="language-"]),
+[data-theme="dark"] .prose code:not([class*="language-"]),
+.dark .prose-lg code:not([class*="language-"]),
+[data-theme="dark"] .prose-lg code:not([class*="language-"]) {
+  background-color: rgba(15, 12, 36, 0.5);
+  color: #e2e8f0;
+  padding: 0.2em 0.4em;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  font-size: 0.875em;
+}
+
+/* Inline code in dark mode */
+.dark p code,
+.dark li code,
+.dark h1 code,
+.dark h2 code,
+.dark h3 code,
+.dark h4 code,
+.dark h5 code,
+.dark h6 code,
+[data-theme="dark"] p code,
+[data-theme="dark"] li code,
+[data-theme="dark"] h1 code,
+[data-theme="dark"] h2 code,
+[data-theme="dark"] h3 code,
+[data-theme="dark"] h4 code,
+[data-theme="dark"] h5 code,
+[data-theme="dark"] h6 code {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #e2e8f0 !important;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
 }
 
 /* Override nextra pre styling to prevent double wrapping */
@@ -730,9 +857,263 @@
   box-shadow: none !important;
 }
 
+/* Force dark theme for code blocks */
+.dark .nextra-code-block>div>pre,
+[data-theme="dark"] .nextra-code-block>div>pre {
+  background-color: #0f0c24 !important;
+}
+
 /* Remove any pre tag added by Nextra automatically */
 pre[data-word-wrap],
 pre[data-copy] {
   all: unset !important;
   display: block !important;
+}
+
+/* Documentation card styling */
+.docs-card {
+  background-color: var(--doc-card-bg);
+  border-color: var(--doc-card-border);
+  transition: all 0.2s ease-in-out;
+}
+
+.docs-card:hover,
+.group:hover .docs-card {
+  border-color: var(--doc-card-hover-border);
+}
+
+/* Dark mode specific hover effect */
+.dark .group:hover .docs-card,
+[data-theme="dark"] .group:hover .docs-card {
+  background-color: var(--doc-card-hover-bg);
+}
+
+/* Ensure the docs-card text colors are correct */
+.docs-card .text-gray-900 {
+  color: #111827;
+}
+
+.docs-card .text-gray-500 {
+  color: #6b7280;
+}
+
+.dark .docs-card .text-gray-900,
+[data-theme="dark"] .docs-card .text-gray-900 {
+  color: white;
+}
+
+.dark .docs-card .text-gray-500,
+[data-theme="dark"] .docs-card .text-gray-500 {
+  color: #d1d5db;
+}
+
+/* Fix docs card background in dark mode if needed */
+.dark .docs-card,
+[data-theme="dark"] .docs-card {
+  background-color: var(--doc-card-bg);
+  border-color: var(--doc-card-border);
+}
+
+/* Fix SVG icon colors */
+.dark .docs-card svg,
+[data-theme="dark"] .docs-card svg {
+  color: #a78bfa;
+}
+
+/* Callout component styling */
+.nextra-callout {
+  color: var(--callout-text) !important;
+}
+
+.nextra-callout[data-type="info"],
+.nextra-callout[data-type="note"],
+.nextra-callout[data-type="tip"] {
+  color: var(--callout-info-text) !important;
+}
+
+.nextra-callout[data-type="warning"] {
+  color: var(--callout-warning-text) !important;
+}
+
+.nextra-callout[data-type="error"],
+.nextra-callout[data-type="caution"] {
+  color: var(--callout-error-text) !important;
+}
+
+/* Light mode specific overrides to ensure visibility */
+.nextra-callout p,
+.nextra-callout span,
+.nextra-callout strong,
+.nextra-callout a,
+.nextra-callout div p,
+.nextra-callout div span,
+.nextra-callout div strong,
+.nextra-callout div a {
+  color: inherit !important;
+}
+
+/* Regular blockquotes in light mode */
+blockquote.nextra-callout,
+blockquote.nextra-callout p,
+blockquote.nextra-callout * {
+  color: var(--callout-text) !important;
+}
+
+/* Dark mode blockquotes */
+.dark blockquote.nextra-callout,
+.dark blockquote.nextra-callout p,
+.dark blockquote.nextra-callout *,
+[data-theme="dark"] blockquote.nextra-callout,
+[data-theme="dark"] blockquote.nextra-callout p,
+[data-theme="dark"] blockquote.nextra-callout * {
+  color: var(--callout-text) !important;
+}
+
+/* Hero section specific styles */
+.relative.w-full.h-96.bg-gradient-to-br h1,
+.relative.w-full.h-96.bg-gradient-to-br p {
+  color: white !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Fix callout text colors explicitly */
+/* Note/Info callout */
+.nextra-callout[data-type="info"] h1,
+.nextra-callout[data-type="info"] h2,
+.nextra-callout[data-type="info"] h3,
+.nextra-callout[data-type="info"] h4,
+.nextra-callout[data-type="info"] h5,
+.nextra-callout[data-type="info"] h6,
+.nextra-callout[data-type="info"] p,
+.nextra-callout[data-type="info"] span,
+.nextra-callout[data-type="info"] a,
+.nextra-callout[data-type="info"] strong,
+.nextra-callout[data-type="info"] em,
+.nextra-callout[data-type="info"] li,
+.nextra-callout[data-type="note"] h1,
+.nextra-callout[data-type="note"] h2,
+.nextra-callout[data-type="note"] h3,
+.nextra-callout[data-type="note"] h4,
+.nextra-callout[data-type="note"] h5,
+.nextra-callout[data-type="note"] h6,
+.nextra-callout[data-type="note"] p,
+.nextra-callout[data-type="note"] span,
+.nextra-callout[data-type="note"] a,
+.nextra-callout[data-type="note"] strong,
+.nextra-callout[data-type="note"] em,
+.nextra-callout[data-type="note"] li,
+.nextra-callout[data-type="tip"] h1,
+.nextra-callout[data-type="tip"] h2,
+.nextra-callout[data-type="tip"] h3,
+.nextra-callout[data-type="tip"] h4,
+.nextra-callout[data-type="tip"] h5,
+.nextra-callout[data-type="tip"] h6,
+.nextra-callout[data-type="tip"] p,
+.nextra-callout[data-type="tip"] span,
+.nextra-callout[data-type="tip"] a,
+.nextra-callout[data-type="tip"] strong,
+.nextra-callout[data-type="tip"] em,
+.nextra-callout[data-type="tip"] li {
+  color: var(--callout-info-text) !important;
+}
+
+/* Warning callout */
+.nextra-callout[data-type="warning"] h1,
+.nextra-callout[data-type="warning"] h2,
+.nextra-callout[data-type="warning"] h3,
+.nextra-callout[data-type="warning"] h4,
+.nextra-callout[data-type="warning"] h5,
+.nextra-callout[data-type="warning"] h6,
+.nextra-callout[data-type="warning"] p,
+.nextra-callout[data-type="warning"] span,
+.nextra-callout[data-type="warning"] a,
+.nextra-callout[data-type="warning"] strong,
+.nextra-callout[data-type="warning"] em,
+.nextra-callout[data-type="warning"] li {
+  color: var(--callout-warning-text) !important;
+}
+
+/* Error/Caution callout */
+.nextra-callout[data-type="error"] h1,
+.nextra-callout[data-type="error"] h2,
+.nextra-callout[data-type="error"] h3,
+.nextra-callout[data-type="error"] h4,
+.nextra-callout[data-type="error"] h5,
+.nextra-callout[data-type="error"] h6,
+.nextra-callout[data-type="error"] p,
+.nextra-callout[data-type="error"] span,
+.nextra-callout[data-type="error"] a,
+.nextra-callout[data-type="error"] strong,
+.nextra-callout[data-type="error"] em,
+.nextra-callout[data-type="error"] li,
+.nextra-callout[data-type="caution"] h1,
+.nextra-callout[data-type="caution"] h2,
+.nextra-callout[data-type="caution"] h3,
+.nextra-callout[data-type="caution"] h4,
+.nextra-callout[data-type="caution"] h5,
+.nextra-callout[data-type="caution"] h6,
+.nextra-callout[data-type="caution"] p,
+.nextra-callout[data-type="caution"] span,
+.nextra-callout[data-type="caution"] a,
+.nextra-callout[data-type="caution"] strong,
+.nextra-callout[data-type="caution"] em,
+.nextra-callout[data-type="caution"] li {
+  color: var(--callout-error-text) !important;
+}
+
+/* Default callout */
+.nextra-callout:not([data-type="info"]):not([data-type="note"]):not([data-type="tip"]):not([data-type="warning"]):not([data-type="error"]):not([data-type="caution"]) h1,
+.nextra-callout:not([data-type="info"]):not([data-type="note"]):not([data-type="tip"]):not([data-type="warning"]):not([data-type="error"]):not([data-type="caution"]) h2,
+.nextra-callout:not([data-type="info"]):not([data-type="note"]):not([data-type="tip"]):not([data-type="warning"]):not([data-type="error"]):not([data-type="caution"]) h3,
+.nextra-callout:not([data-type="info"]):not([data-type="note"]):not([data-type="tip"]):not([data-type="warning"]):not([data-type="error"]):not([data-type="caution"]) h4,
+.nextra-callout:not([data-type="info"]):not([data-type="note"]):not([data-type="tip"]):not([data-type="warning"]):not([data-type="error"]):not([data-type="caution"]) h5,
+.nextra-callout:not([data-type="info"]):not([data-type="note"]):not([data-type="tip"]):not([data-type="warning"]):not([data-type="error"]):not([data-type="caution"]) h6,
+.nextra-callout:not([data-type="info"]):not([data-type="note"]):not([data-type="tip"]):not([data-type="warning"]):not([data-type="error"]):not([data-type="caution"]) p,
+.nextra-callout:not([data-type="info"]):not([data-type="note"]):not([data-type="tip"]):not([data-type="warning"]):not([data-type="error"]):not([data-type="caution"]) span,
+.nextra-callout:not([data-type="info"]):not([data-type="note"]):not([data-type="tip"]):not([data-type="warning"]):not([data-type="error"]):not([data-type="caution"]) a,
+.nextra-callout:not([data-type="info"]):not([data-type="note"]):not([data-type="tip"]):not([data-type="warning"]):not([data-type="error"]):not([data-type="caution"]) strong,
+.nextra-callout:not([data-type="info"]):not([data-type="note"]):not([data-type="tip"]):not([data-type="warning"]):not([data-type="error"]):not([data-type="caution"]) em,
+.nextra-callout:not([data-type="info"]):not([data-type="note"]):not([data-type="tip"]):not([data-type="warning"]):not([data-type="error"]):not([data-type="caution"]) li {
+  color: var(--callout-text) !important;
+}
+
+/* Ensure direct text in callout divs is also properly colored */
+div.nextra-callout[data-type="info"],
+div.nextra-callout[data-type="note"],
+div.nextra-callout[data-type="tip"] {
+  color: var(--callout-info-text) !important;
+}
+
+div.nextra-callout[data-type="warning"] {
+  color: var(--callout-warning-text) !important;
+}
+
+div.nextra-callout[data-type="error"],
+div.nextra-callout[data-type="caution"] {
+  color: var(--callout-error-text) !important;
+}
+
+div.nextra-callout:not([data-type="info"]):not([data-type="note"]):not([data-type="tip"]):not([data-type="warning"]):not([data-type="error"]):not([data-type="caution"]) {
+  color: var(--callout-text) !important;
+}
+
+/* Ensure consistent text coloring in dark mode */
+.dark .text-gray-400,
+.dark .text-gray-500,
+.dark .text-gray-600,
+[data-theme="dark"] .text-gray-400,
+[data-theme="dark"] .text-gray-500,
+[data-theme="dark"] .text-gray-600 {
+  color: #a1a1aa !important;
+  /* Improved gray with better contrast */
+}
+
+.dark .text-gray-700,
+.dark .text-gray-800,
+.dark .text-gray-900,
+[data-theme="dark"] .text-gray-700,
+[data-theme="dark"] .text-gray-800,
+[data-theme="dark"] .text-gray-900 {
+  color: #f3f4f6 !important;
+  /* Light gray with good contrast */
 }
