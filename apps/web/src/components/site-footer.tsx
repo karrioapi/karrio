@@ -41,7 +41,7 @@ export const SiteFooter = () => {
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="https://www.karrio.io/launch-week-x"
+                  href="/launch-week-x"
                   className="text-white/60 hover:text-white text-sm"
                 >
                   Launch week X
@@ -70,7 +70,7 @@ export const SiteFooter = () => {
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="https://www.karrio.io/blog"
+                  href="/blog"
                   className="text-white/60 hover:text-white text-sm"
                 >
                   Blog
@@ -78,7 +78,7 @@ export const SiteFooter = () => {
               </li>
               <li>
                 <Link
-                  href="https://github.com/karrioapi/"
+                  href="https://github.com/karrioapi/karrio"
                   className="text-white/60 hover:text-white text-sm"
                 >
                   GitHub
@@ -99,7 +99,7 @@ export const SiteFooter = () => {
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="https://platform.karrio.io"
+                  href="/platform"
                   className="text-white/60 hover:text-white text-sm"
                 >
                   Platform
