@@ -8,7 +8,7 @@
         <style>
             /* Gradient for background */
             .bg-rect {
-            fill: #ffffff;
+            fill: url(#bgGradient);
             }
             .shape1 {
             fill: #ff4800; /* First path fill */
@@ -19,10 +19,16 @@
             stroke: none;
             }
             .circle-shape {
-            fill: #5722cc; /* Circle fill */
+            fill: #ffffff; /* Circle fill */
             stroke: none;
             }
         </style>
+
+        <!-- Gradient definition -->
+        <linearGradient id="bgGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#292043" />
+            <stop offset="100%" stop-color="#1f1834" />
+        </linearGradient>
     </defs>
 
     <!-- Background square with equal padding and gradient -->

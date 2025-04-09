@@ -86,7 +86,7 @@ export const SiteFooter = () => {
               </li>
               <li>
                 <Link
-                  href="https://docs.karrio.io/reference/openapi"
+                  href="/docs/api-reference"
                   className="text-white/60 hover:text-white text-sm"
                 >
                   API Reference
@@ -107,7 +107,7 @@ export const SiteFooter = () => {
               </li>
               <li>
                 <Link
-                  href="https://docs.karrio.io/product/self-hosting"
+                  href="/docs/self-hosting"
                   className="text-white/60 hover:text-white text-sm"
                 >
                   Download

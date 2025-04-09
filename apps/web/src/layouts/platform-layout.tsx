@@ -15,9 +15,9 @@ export const metadata: Metadata = {
   title: "Karrio Platform",
   description: "Karrio Platform",
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
+    icon: "/favicon-dark.ico",
+    shortcut: "/favicon-dark-16x16.png",
+    apple: "/apple-touch-dark-icon.png",
   },
 };
 
