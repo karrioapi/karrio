@@ -183,10 +183,10 @@ const BlogWrapper = ({ children, toc, metadata }) => {
   const { title, date, description, tags, author, image, category } = metadata || {};
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <BackButton className="mb-6" />
+    <div className="py-8">
+      <BackButton className="mb-4" />
 
-      <div className="mx-auto max-w-4xl">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-0 max-w-6xl bg-background dark:bg-inherit">
         {/* Featured Image */}
         {image && (
           <div className="mb-8 overflow-hidden rounded-xl">

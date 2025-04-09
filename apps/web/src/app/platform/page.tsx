@@ -26,7 +26,7 @@ export default async function LandingPage() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,#5722cc1a,transparent_50%),radial-gradient(circle_at_bottom_left,#79e5dd1a,transparent_50%)]" />
         <div className="absolute inset-0 bg-[conic-gradient(from_90deg_at_50%_50%,#0f082600,#5722cc0d,#79e5dd0d,#ff48000d,#0f082600)]" />
         <div className="absolute inset-0 backdrop-blur-[100px]" />
-        <div className="container mx-auto px-4 relative max-w-[95%] xl:max-w-[1280px]">
+        <div className="container mx-auto relative px-4 sm:px-6 lg:px-2 max-w-6xl">
           <div className="text-center space-y-8">
             <div className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-sm backdrop-blur-sm">
               <span className="rounded-full bg-[#ff4800] px-1.5 py-0.5 text-xs font-medium text-white mr-2">
@@ -196,7 +196,7 @@ export default async function LandingPage() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#5722cc0d,transparent_50%)]" />
         <div className="absolute inset-0 bg-[conic-gradient(from_180deg_at_50%_50%,#0f082600,#79e5dd0d,#0f082600)]" />
         <div className="absolute inset-0 backdrop-blur-[100px]" />
-        <div className="container mx-auto px-4 relative max-w-[95%] xl:max-w-[1280px]">
+        <div className="container mx-auto relative px-4 sm:px-6 lg:px-2 max-w-6xl">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
             <div className="space-y-3">
               <div className="w-10 h-10 rounded-lg bg-[#79e5dd]/10 flex items-center justify-center">
@@ -263,7 +263,7 @@ export default async function LandingPage() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,#ff48001a,transparent_70%)]" />
         <div className="absolute inset-0 bg-[conic-gradient(from_270deg_at_50%_50%,#0f082600,#5722cc0d,#79e5dd0d,#0f082600)]" />
         <div className="absolute inset-0 backdrop-blur-[100px]" />
-        <div className="container mx-auto px-4 relative max-w-[95%] xl:max-w-[1280px]">
+        <div className="container mx-auto relative px-4 sm:px-6 lg:px-2 max-w-6xl">
           <div className="mb-16">
             <div className="text-[#79e5dd] mb-4">Use Cases</div>
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
@@ -405,7 +405,7 @@ export default async function LandingPage() {
       <section className="py-24 relative overflow-x-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#5722cc1a,transparent_70%)]" />
         <div className="absolute inset-0 bg-[conic-gradient(from_0deg_at_50%_50%,#0f082600,#79e5dd0d,#0f082600)]" />
-        <div className="container mx-auto px-4 max-w-[95%] xl:max-w-[1280px] relative">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-0 max-w-6xl relative">
           <div className="text-center mb-12">
             <div className="text-[#79e5dd] mb-4 text-center">Developer-first design</div>
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
@@ -596,7 +596,7 @@ shipment = karrio.shipments.create({
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#5722cc1a,transparent_70%)]" />
         <div className="absolute inset-0 bg-[conic-gradient(from_270deg_at_50%_50%,#0f082600,#79e5dd0d,#0f082600)]" />
         <div className="absolute inset-0 backdrop-blur-[100px]" />
-        <div className="container mx-auto px-4 relative max-w-[95%] xl:max-w-[1280px]">
+        <div className="container mx-auto relative px-4 sm:px-6 lg:px-2 max-w-6xl">
           <div className="text-center mb-16">
             <div className="text-[#79e5dd] mb-4">FAQ</div>
             <h2 className="text-3xl md:text-5xl font-bold mb-4">

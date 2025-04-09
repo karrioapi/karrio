@@ -41,7 +41,7 @@ export default function LaunchWeek() {
     <div className="bg-white text-foreground">
       {/* Hero Section */}
       <section className="py-16 md:py-20">
-        <div className="container mx-auto px-4 max-w-[95%] xl:max-w-[1280px] text-center">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-0 max-w-6xl text-center">
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-12">
             Karrio Launch Week
           </h1>
@@ -63,7 +63,7 @@ export default function LaunchWeek() {
 
       {/* Articles Section */}
       <section className="pb-16 md:pb-24">
-        <div className="container mx-auto px-4 max-w-[95%] xl:max-w-[1280px]">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-0 max-w-6xl">
           <div className="flex flex-col space-y-10">
             {launchWeekArticles.map((article, index) => (
               <div key={index} className="flex flex-col md:flex-row border border-gray-100 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
