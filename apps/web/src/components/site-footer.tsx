@@ -5,11 +5,19 @@ import Link from "next/link";
 export const SiteFooter = () => {
   return (
     <footer className="bg-[#0f0826] text-white border-t border-white/10 py-12">
-      <div className="container mx-auto px-4 max-w-[95%] xl:max-w-[1280px]">
+      <div className="container mx-auto relative px-4 sm:px-6 lg:px-2 max-w-6xl">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div>
             <h3 className="font-medium mb-4">Resources</h3>
             <ul className="space-y-2">
+              <li>
+                <Link
+                  href="/blog"
+                  className="text-white/60 hover:text-white text-sm"
+                >
+                  Blog
+                </Link>
+              </li>
               <li>
                 <Link
                   href="/docs"
@@ -20,18 +28,10 @@ export const SiteFooter = () => {
               </li>
               <li>
                 <Link
-                  href="/docs/carriers"
+                  href="/docs/api-reference"
                   className="text-white/60 hover:text-white text-sm"
                 >
-                  Carriers
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/docs/product"
-                  className="text-white/60 hover:text-white text-sm"
-                >
-                  Product
+                  API Reference
                 </Link>
               </li>
             </ul>
@@ -70,10 +70,18 @@ export const SiteFooter = () => {
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="/blog"
+                  href="/terms-of-service"
                   className="text-white/60 hover:text-white text-sm"
                 >
-                  Blog
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/privacy-policy"
+                  className="text-white/60 hover:text-white text-sm"
+                >
+                  Privacy Policy
                 </Link>
               </li>
               <li>
@@ -82,14 +90,6 @@ export const SiteFooter = () => {
                   className="text-white/60 hover:text-white text-sm"
                 >
                   GitHub
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/docs/api-reference"
-                  className="text-white/60 hover:text-white text-sm"
-                >
-                  API Reference
                 </Link>
               </li>
             </ul>

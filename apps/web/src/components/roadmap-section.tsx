@@ -126,7 +126,7 @@ export function RoadmapSection() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,#5722cc1a,transparent_70%)]" />
       <div className="absolute inset-0 bg-[conic-gradient(from_90deg_at_50%_50%,#0f082600,#79e5dd0d,#0f082600)]" />
       <div className="absolute inset-0 backdrop-blur-[100px]" />
-      <div className="container mx-auto px-2 relative max-w-[95%] xl:max-w-[1280px]">
+      <div className="container mx-auto px-2 relative max-w-6xl">
         <div className="text-center mb-16">
           <div className="text-[#79e5dd] mb-4">Product Roadmap</div>
           <h2 className="text-3xl md:text-5xl font-bold mb-4">

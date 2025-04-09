@@ -43,7 +43,7 @@ export const HowItWorksSection = () => {
 
   return (
     <section className="py-12 md:py-28 bg-gradient-to-b from-white to-gray-50 dark:from-[#0f0826] dark:to-[#0a051b]">
-      <div className="container mx-auto px-4 max-w-[95%] xl:max-w-[1280px]">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-0 max-w-6xl">
         <div className="text-center mb-16">
           <h2 className="text-sm uppercase tracking-wider text-primary font-medium mb-4">How it works</h2>
           <h3 className="text-3xl md:text-5xl font-bold mb-8">Effortless shipping integration</h3>

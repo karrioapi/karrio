@@ -5,8 +5,8 @@ import { Github, Linkedin } from "lucide-react"
 
 export const Footer: FC = () => {
   return (
-    <footer className="w-full border-t border-border bg-background px-8 py-8 dark:border-white/10">
-      <div className="mx-auto max-w-[95%] xl:max-w-[1280px]">
+    <footer className="w-full border-t border-border bg-background px-0 py-6 dark:border-white/10">
+      <div className="mx-auto relative px-4 sm:px-6 lg:px-2 max-w-6xl">
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
           <div className="flex items-center space-x-5">
             <a
