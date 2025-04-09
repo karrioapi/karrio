@@ -16,7 +16,7 @@ export default async function Page() {
         {/* Hero Section */}
         <div className="relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,#5722cc20,transparent_50%)]" />
-          <div className="container mx-auto px-4 pt-8 pb-20 text-center max-w-[95%] xl:max-w-[1280px] relative">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-0 max-w-6xl pt-8 pb-20 text-center relative">
             {/* Tag line */}
             <div className="inline-block bg-white/5 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
               <span className="text-[#79e5dd] font-medium">Enterprise Solutions</span>
@@ -48,7 +48,7 @@ export default async function Page() {
         {/* Key Challenges Section */}
         <section className="py-20 relative">
           <div className="absolute inset-0 bg-[conic-gradient(from_180deg_at_50%_50%,#0f082600,#79e5dd0d,#0f082600)]" />
-          <div className="container mx-auto px-4 relative max-w-[95%] xl:max-w-[1280px]">
+          <div className="container mx-auto relative px-4 sm:px-6 lg:px-2 max-w-6xl">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Key Challenges</h2>
               <p className="text-xl text-white/80 max-w-2xl mx-auto">
@@ -93,7 +93,7 @@ export default async function Page() {
         {/* Platform Solution Section */}
         <section className="py-20 relative">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,#5722cc0d,transparent_50%)]" />
-          <div className="container mx-auto px-4 relative max-w-[95%] xl:max-w-[1280px]">
+          <div className="container mx-auto relative px-4 sm:px-6 lg:px-2 max-w-6xl">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Karrio Platform Solution</h2>
               <p className="text-xl text-white/80 max-w-2xl mx-auto">
@@ -252,7 +252,7 @@ export default async function Page() {
         {/* Example Workflow Section */}
         <section className="py-20 relative">
           <div className="absolute inset-0 bg-[conic-gradient(from_180deg_at_50%_50%,#0f082600,#79e5dd0d,#0f082600)]" />
-          <div className="container mx-auto px-4 relative max-w-[95%] xl:max-w-[1280px]">
+          <div className="container mx-auto relative px-4 sm:px-6 lg:px-2 max-w-6xl">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Example Workflow</h2>
               <p className="text-xl text-white/80 max-w-2xl mx-auto">
@@ -367,7 +367,7 @@ export default async function Page() {
         {/* Business Outcomes Section */}
         <section className="py-20 relative">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#5722cc0d,transparent_50%)]" />
-          <div className="container mx-auto px-4 relative max-w-[95%] xl:max-w-[1280px]">
+          <div className="container mx-auto relative px-4 sm:px-6 lg:px-2 max-w-6xl">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Business Outcomes</h2>
               <p className="text-xl text-white/80 max-w-2xl mx-auto">

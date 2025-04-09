@@ -53,7 +53,7 @@ const ApiHeader: FC<ApiHeaderProps> = ({ logo = "/karrio-docs.svg", darkLogo = "
       {/* Desktop Header */}
       <div className="hidden md:flex h-full items-center w-full pr-4">
         {/* Logo section - fixed width matching sidebar */}
-        <div className="w-64 px-5 py-4 flex items-center h-full">
+        <div className="w-64 pr-4 pl-12 py-4 flex items-center h-full">
           <Link href="/docs" className="flex items-center">
             {mounted && (theme === 'dark' ? (
               <img src={darkLogo} alt="Karrio Docs" className="h-5 w-auto" />
@@ -64,7 +64,7 @@ const ApiHeader: FC<ApiHeaderProps> = ({ logo = "/karrio-docs.svg", darkLogo = "
         </div>
 
         {/* Navigation section - starts after sidebar width */}
-        <nav className="flex h-full items-center gap-6 px-8">
+        <nav className="flex h-full items-center gap-6 px-12">
           {topLevelSections.map((section) => (
             section.type === 'separator' && (
               <Link

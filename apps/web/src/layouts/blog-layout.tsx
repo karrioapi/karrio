@@ -7,7 +7,7 @@ import {
 } from "@karrio/ui/fonts/font";
 import { Toaster } from "@karrio/ui/components/ui/toaster";
 import { SiteHeader } from "@/components/site-header";
-import { Footer } from "@/components/nextra/footer";
+import { SiteFooter } from "@/components/site-footer";
 import RootProvider from "@/hooks/root-provider";
 import type { Metadata } from 'next';
 import "@/styles/globals.css";
@@ -39,11 +39,11 @@ export default function BlogLayout({
           <div className="min-h-screen bg-background antialiased">
             <SiteHeader />
 
-            <div className="container mx-auto max-w-7xl px-4 py-10">
+            <div className="container mx-auto relative px-4 sm:px-6 lg:px-2 max-w-6xl">
               <main className="flex-1 mx-auto max-w-3xl">{children}</main>
             </div>
 
-            <Footer />
+            <SiteFooter />
           </div>
           <Toaster />
         </RootProvider>

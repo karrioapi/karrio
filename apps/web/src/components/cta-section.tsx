@@ -22,7 +22,7 @@ export function CTASection({
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,var(--secondary-color-50),transparent_50%)]" style={{
         '--secondary-color-50': 'hsla(var(--secondary) / 0.05)',
       } as React.CSSProperties} />
-      <div className="container mx-auto px-4 relative max-w-[95%] xl:max-w-[1280px] space-y-12">
+      <div className="container relative mx-auto px-4 sm:px-6 lg:px-0 max-w-6xl space-y-12">
         {/* Header */}
         <div className="text-center space-y-4">
           <h2 className="text-4xl font-bold text-white">

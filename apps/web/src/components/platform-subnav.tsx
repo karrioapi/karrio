@@ -38,7 +38,7 @@ export function PlatformSubnav() {
 
   return (
     <div className="bg-[#150d34] border-b border-white/10">
-      <div className="container mx-auto px-4 md:px-6 max-w-[95%] xl:max-w-[1280px]">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-0 max-w-6xl">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-3 gap-y-2">
           <div className="font-bold text-lg text-white tracking-wide flex items-center">
             <div className="relative mr-2 flex items-center">

@@ -39,8 +39,8 @@ export const Header: FC<HeaderProps> = ({ pageMap }) => {
   const topLevelSections = docsEntry?.children || []
 
   return (
-    <header className={`flex h-14 w-full md:px-8 px-2 shrink-0 items-center border-b border-gray-200 bg-background ${mounted && theme === 'dark' ? '!border-neutral-800' : ''}`}>
-      <div className="mx-auto h-full w-full max-w-[95%] xl:max-w-[1280px]">
+    <header className={`flex h-14 w-full px-0 shrink-0 items-center border-b border-gray-200 bg-background ${mounted && theme === 'dark' ? '!border-neutral-800' : ''}`}>
+      <div className="h-full w-full mx-auto relative px-4 sm:px-6 lg:px-2 max-w-6xl">
         {/* Hidden DocSearch wrapper for blog pages */}
         <div className="hidden">
           <DocSearchWrapper buttonText="Search blog..." />
