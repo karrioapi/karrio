@@ -197,7 +197,7 @@ export default function Home() {
                 WebHooks, REST and GraphQL API.
               </p>
               <Button className="bg-primary text-white hover:bg-primary/90">
-                <Link href="https://docs.karrio.io">Read Docs</Link>
+                <Link href="/">Read Docs</Link>
               </Button>
             </div>
 

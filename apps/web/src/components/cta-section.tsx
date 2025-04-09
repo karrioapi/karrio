@@ -50,7 +50,7 @@ export function CTASection({
               </div>
 
               <Button size="lg" className="mt-2 bg-transparent border border-white/20 text-white hover:bg-white/10" asChild>
-                <Link href="https://docs.karrio.io/product/self-hosting">
+                <Link href="/docs/self-hosting">
                   Deploy Open Source
                 </Link>
               </Button>
@@ -74,7 +74,7 @@ export function CTASection({
           <div className="bg-[#0f0826] rounded-xl overflow-hidden border border-white/10 text-white shadow-md relative group min-h-[380px] flex flex-col">
             <div className="p-6 md:p-8 space-y-5 md:space-y-6 relative z-10 w-full md:max-w-[75%] flex-1">
               <div className="w-12 md:w-14 h-12 md:h-14 flex items-center justify-center rounded-xl bg-[#5722cc]/30">
-                <Image src="/icon.svg" alt="Karrio Icon" width={28} height={28} className="w-7 h-7 md:w-8 md:h-8" />
+                <Image src="/icon-light.svg" alt="Karrio Icon" width={28} height={28} className="w-7 h-7 md:w-8 md:h-8" />
               </div>
 
               <div className="space-y-3">
