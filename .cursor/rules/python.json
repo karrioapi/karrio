@@ -1,0 +1,24 @@
+{
+  "name": "Karrio Python Rules",
+  "description": "Rules specific to Python files in the Karrio monorepo, particularly for modules and connectors",
+  "match": "**/*.py",
+  "rules": [
+    "Follow PEP 8 style guidelines for Python code.",
+    "Use type hints for function parameters and return values using Python's typing module.",
+    "Document functions and classes with clear docstrings following the existing pattern.",
+    "Use proper exception handling with specific exception types; avoid bare except clauses.",
+    "Maintain consistent error handling patterns across the codebase.",
+    "Follow RESTful API design principles for API endpoints.",
+    "Use descriptive variable and function names that clearly indicate their purpose.",
+    "Keep functions focused on a single responsibility following SOLID principles.",
+    "Ensure new code has appropriate test coverage.",
+    "Follow existing patterns for dependency injection and configuration management.",
+    "Maintain backward compatibility for public APIs when making changes.",
+    "When working with modules, follow the established submodule pattern and respect module boundaries.",
+    "Understand the dependencies between modules and avoid creating circular dependencies.",
+    "For carrier connectors, follow the established interface patterns to maintain consistency across integrations.",
+    "Prefer composition over inheritance where appropriate.",
+    "Use Python 3.8+ features appropriately, including walrus operator, dataclasses, and improved typing.",
+    "For Django code, follow Django's best practices for models, views, and ORM usage."
+  ]
+}

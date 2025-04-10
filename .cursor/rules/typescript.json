@@ -1,0 +1,26 @@
+{
+  "name": "Karrio TypeScript Rules",
+  "description": "Rules specific to TypeScript files in the Karrio monorepo",
+  "match": "**/*.{ts,tsx}",
+  "rules": [
+    "Follow TypeScript best practices with strict type checking.",
+    "Use proper type annotations and avoid using 'any' type when possible.",
+    "Prefer interfaces over types for object definitions.",
+    "Use explicit return types for functions, especially public APIs.",
+    "Prefer functional components with hooks in React code.",
+    "Use functional, declarative programming patterns.",
+    "For Next.js components, follow Next.js app router patterns where applicable.",
+    "Use named exports instead of default exports where possible.",
+    "Use async/await for asynchronous operations instead of Promises with then/catch.",
+    "Maintain consistent error handling patterns across the codebase.",
+    "Use destructuring for props in React components.",
+    "Follow the project's existing component structure and naming conventions.",
+    "Use descriptive variable names with auxiliary verbs (e.g., isLoading, hasError).",
+    "Use Tailwind classes according to the project's established pattern.",
+    "Implement proper error boundaries for React components.",
+    "For state management, follow the existing patterns in the codebase.",
+    "Minimize the use of any third-party state management solutions unless already established in the project.",
+    "Place static content and interfaces at the end of files.",
+    "Write reusable, testable utility functions."
+  ]
+}
