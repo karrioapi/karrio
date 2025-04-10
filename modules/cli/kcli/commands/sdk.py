@@ -4,7 +4,7 @@ import typer
 import string
 import pathlib
 from rich.progress import Progress, SpinnerColumn, TextColumn
-import kcli.common.templates as templates
+import kcli.templates as templates
 import kcli.common.utils as utils
 import typing
 import datetime
@@ -72,16 +72,135 @@ def _add_extension(
             else templates.JSON_GENERATE_TEMPLATE
         ).stream(**context).dump(f"{root_dir}/generate")
 
-        # schema files
-        (
-            templates.XML_SCHEMA_TEMPLATE
-            if is_xml_api
-            else templates.JSON_SCHEMA_TEMPLATE
-        ).stream(**context).dump(
-            f"{schemas_dir}/error_response.{'xsd' if is_xml_api else 'json'}"
-        )
+        # schema files - create error response schema for all carriers
+        if is_xml_api:
+            templates.XML_SCHEMA_ERROR_TEMPLATE.stream(**context).dump(
+                f"{schemas_dir}/error_response.xsd"
+            )
+        else:
+            templates.JSON_SCHEMA_ERROR_TEMPLATE.stream(**context).dump(
+                f"{schemas_dir}/error_response.json"
+            )
+
         templates.EMPTY_FILE_TEMPLATE.stream(**context).dump(
             f"{schema_datatypes_dir}/__init__.py"
+        )
+
+        # Generate schema files for selected features
+        if "rating" in features:
+            if is_xml_api:
+                templates.XML_SCHEMA_RATE_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/rate_request.xsd"
+                )
+                templates.XML_SCHEMA_RATE_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/rate_response.xsd"
+                )
+            else:
+                templates.JSON_SCHEMA_RATE_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/rate_request.json"
+                )
+                templates.JSON_SCHEMA_RATE_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/rate_response.json"
+                )
+
+        if "tracking" in features:
+            if is_xml_api:
+                templates.XML_SCHEMA_TRACKING_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/tracking_request.xsd"
+                )
+                templates.XML_SCHEMA_TRACKING_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/tracking_response.xsd"
+                )
+            else:
+                templates.JSON_SCHEMA_TRACKING_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/tracking_request.json"
+                )
+                templates.JSON_SCHEMA_TRACKING_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/tracking_response.json"
+                )
+
+        if "shipping" in features:
+            if is_xml_api:
+                templates.XML_SCHEMA_SHIPMENT_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/shipment_request.xsd"
+                )
+                templates.XML_SCHEMA_SHIPMENT_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/shipment_response.xsd"
+                )
+                templates.XML_SCHEMA_SHIPMENT_CANCEL_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/shipment_cancel_request.xsd"
+                )
+                templates.XML_SCHEMA_SHIPMENT_CANCEL_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/shipment_cancel_response.xsd"
+                )
+            else:
+                templates.JSON_SCHEMA_SHIPMENT_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/shipment_request.json"
+                )
+                templates.JSON_SCHEMA_SHIPMENT_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/shipment_response.json"
+                )
+                templates.JSON_SCHEMA_SHIPMENT_CANCEL_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/shipment_cancel_request.json"
+                )
+                templates.JSON_SCHEMA_SHIPMENT_CANCEL_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/shipment_cancel_response.json"
+                )
+
+        if "pickup" in features:
+            if is_xml_api:
+                templates.XML_SCHEMA_PICKUP_CREATE_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_create_request.xsd"
+                )
+                templates.XML_SCHEMA_PICKUP_CREATE_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_create_response.xsd"
+                )
+                templates.XML_SCHEMA_PICKUP_UPDATE_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_update_request.xsd"
+                )
+                templates.XML_SCHEMA_PICKUP_UPDATE_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_update_response.xsd"
+                )
+                templates.XML_SCHEMA_PICKUP_CANCEL_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_cancel_request.xsd"
+                )
+                templates.XML_SCHEMA_PICKUP_CANCEL_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_cancel_response.xsd"
+                )
+            else:
+                templates.JSON_SCHEMA_PICKUP_CREATE_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_create_request.json"
+                )
+                templates.JSON_SCHEMA_PICKUP_CREATE_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_create_response.json"
+                )
+                templates.JSON_SCHEMA_PICKUP_UPDATE_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_update_request.json"
+                )
+                templates.JSON_SCHEMA_PICKUP_UPDATE_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_update_response.json"
+                )
+                templates.JSON_SCHEMA_PICKUP_CANCEL_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_cancel_request.json"
+                )
+                templates.JSON_SCHEMA_PICKUP_CANCEL_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_cancel_response.json"
+                )
+
+        if "address" in features:
+            if is_xml_api:
+                templates.XML_SCHEMA_ADDRESS_VALIDATION_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/address_validation_request.xsd"
+                )
+                templates.XML_SCHEMA_ADDRESS_VALIDATION_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/address_validation_response.xsd"
+                )
+            else:
+                templates.JSON_SCHEMA_ADDRESS_VALIDATION_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/address_validation_request.json"
+                )
+                templates.JSON_SCHEMA_ADDRESS_VALIDATION_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/address_validation_response.json"
         )
 
         # tests files
@@ -122,6 +241,118 @@ def _add_extension(
         templates.PROVIDER_IMPORTS_TEMPLATE.stream(**context).dump(
             f"{providers_dir}/__init__.py"
         )
+
+        if "address" in features:
+            templates.TEST_ADDRESS_TEMPLATE.stream(**context).dump(
+                f"{tests_dir}/test_address.py"
+            )
+
+            templates.PROVIDER_ADDRESS_TEMPLATE.stream(**context).dump(
+                f"{providers_dir}/address.py"
+            )
+
+        if "rating" in features:
+            templates.TEST_RATE_TEMPLATE.stream(**context).dump(
+                f"{tests_dir}/test_rate.py"
+            )
+
+            templates.PROVIDER_RATE_TEMPLATE.stream(**context).dump(
+                f"{providers_dir}/rate.py"
+            )
+
+        if "tracking" in features:
+            templates.TEST_TRACKING_TEMPLATE.stream(**context).dump(
+                f"{tests_dir}/test_tracking.py"
+            )
+
+            templates.PROVIDER_TRACKING_TEMPLATE.stream(**context).dump(
+                f"{providers_dir}/tracking.py"
+            )
+
+        if "document" in features:
+            templates.TEST_DOCUMENT_UPLOAD_TEMPLATE.stream(**context).dump(
+                f"{tests_dir}/test_document.py"
+            )
+
+            templates.PROVIDER_DOCUMENT_UPLOAD_TEMPLATE.stream(**context).dump(
+                f"{providers_dir}/document.py"
+            )
+
+        if "manifest" in features:
+            templates.TEST_MANIFEST_TEMPLATE.stream(**context).dump(
+                f"{tests_dir}/test_manifest.py"
+            )
+
+            templates.PROVIDER_MANIFEST_TEMPLATE.stream(**context).dump(
+                f"{providers_dir}/manifest.py"
+            )
+
+        if "shipping" in features:
+            templates.TEST_SHIPMENT_TEMPLATE.stream(**context).dump(
+                f"{tests_dir}/test_shipment.py"
+            )
+
+            os.makedirs(f"{providers_dir}/shipment", exist_ok=True)
+            templates.PROVIDER_SHIPMENT_CANCEL_TEMPLATE.stream(**context).dump(
+                f"{providers_dir}/shipment/cancel.py"
+            )
+            templates.PROVIDER_SHIPMENT_CREATE_TEMPLATE.stream(**context).dump(
+                f"{providers_dir}/shipment/create.py"
+            )
+            templates.PROVIDER_SHIPMENT_IMPORTS_TEMPLATE.stream(**context).dump(
+                f"{providers_dir}/shipment/__init__.py"
+            )
+
+        if "pickup" in features:
+            templates.TEST_PICKUP_TEMPLATE.stream(**context).dump(
+                f"{tests_dir}/test_pickup.py"
+            )
+
+            os.makedirs(f"{providers_dir}/pickup", exist_ok=True)
+            templates.PROVIDER_PICKUP_CANCEL_TEMPLATE.stream(**context).dump(
+                f"{providers_dir}/pickup/cancel.py"
+            )
+            templates.PROVIDER_PICKUP_CREATE_TEMPLATE.stream(**context).dump(
+                f"{providers_dir}/pickup/create.py"
+            )
+            templates.PROVIDER_PICKUP_UPDATE_TEMPLATE.stream(**context).dump(
+                f"{providers_dir}/pickup/update.py"
+            )
+            templates.PROVIDER_PICKUP_IMPORTS_TEMPLATE.stream(**context).dump(
+                f"{providers_dir}/pickup/__init__.py"
+            )
+
+        if "manifest" in features:
+            if is_xml_api:
+                templates.XML_SCHEMA_MANIFEST_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/manifest_request.xsd"
+                )
+                templates.XML_SCHEMA_MANIFEST_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/manifest_response.xsd"
+                )
+            else:
+                templates.JSON_SCHEMA_MANIFEST_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/manifest_request.json"
+                )
+                templates.JSON_SCHEMA_MANIFEST_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/manifest_response.json"
+                )
+
+        if "document" in features:
+            if is_xml_api:
+                templates.XML_SCHEMA_DOCUMENT_UPLOAD_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/document_upload_request.xsd"
+                )
+                templates.XML_SCHEMA_DOCUMENT_UPLOAD_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/document_upload_response.xsd"
+                )
+            else:
+                templates.JSON_SCHEMA_DOCUMENT_UPLOAD_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/document_upload_request.json"
+                )
+                templates.JSON_SCHEMA_DOCUMENT_UPLOAD_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/document_upload_response.json"
+                )
 
         if "address" in features:
             templates.TEST_ADDRESS_TEMPLATE.stream(**context).dump(
@@ -252,6 +483,149 @@ def _add_features(
         os.makedirs(providers_dir, exist_ok=True)
         os.makedirs(schema_datatypes_dir, exist_ok=True)
         time.sleep(1)
+
+        # Add schema files for features
+        if is_xml_api:
+            templates.XML_SCHEMA_ERROR_TEMPLATE.stream(**context).dump(
+                f"{schemas_dir}/error_response.xsd"
+            )
+        else:
+            templates.JSON_SCHEMA_ERROR_TEMPLATE.stream(**context).dump(
+                f"{schemas_dir}/error_response.json"
+            )
+
+        # Generate schema files for selected features
+        if "rating" in features:
+            if is_xml_api:
+                templates.XML_SCHEMA_RATE_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/rate_request.xsd"
+                )
+                templates.XML_SCHEMA_RATE_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/rate_response.xsd"
+                )
+            else:
+                templates.JSON_SCHEMA_RATE_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/rate_request.json"
+                )
+                templates.JSON_SCHEMA_RATE_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/rate_response.json"
+                )
+
+        if "tracking" in features:
+            if is_xml_api:
+                templates.XML_SCHEMA_TRACKING_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/tracking_request.xsd"
+                )
+                templates.XML_SCHEMA_TRACKING_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/tracking_response.xsd"
+                )
+            else:
+                templates.JSON_SCHEMA_TRACKING_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/tracking_request.json"
+                )
+                templates.JSON_SCHEMA_TRACKING_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/tracking_response.json"
+                )
+
+        if "shipping" in features:
+            if is_xml_api:
+                templates.XML_SCHEMA_SHIPMENT_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/shipment_request.xsd"
+                )
+                templates.XML_SCHEMA_SHIPMENT_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/shipment_response.xsd"
+                )
+                templates.XML_SCHEMA_SHIPMENT_CANCEL_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/shipment_cancel_request.xsd"
+                )
+                templates.XML_SCHEMA_SHIPMENT_CANCEL_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/shipment_cancel_response.xsd"
+                )
+            else:
+                templates.JSON_SCHEMA_SHIPMENT_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/shipment_request.json"
+                )
+                templates.JSON_SCHEMA_SHIPMENT_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/shipment_response.json"
+                )
+                templates.JSON_SCHEMA_SHIPMENT_CANCEL_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/shipment_cancel_request.json"
+                )
+                templates.JSON_SCHEMA_SHIPMENT_CANCEL_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/shipment_cancel_response.json"
+                )
+
+        if "pickup" in features:
+            if is_xml_api:
+                templates.XML_SCHEMA_PICKUP_CREATE_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_create_request.xsd"
+                )
+                templates.XML_SCHEMA_PICKUP_CREATE_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_create_response.xsd"
+                )
+                templates.XML_SCHEMA_PICKUP_UPDATE_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_update_request.xsd"
+                )
+                templates.XML_SCHEMA_PICKUP_UPDATE_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_update_response.xsd"
+                )
+                templates.XML_SCHEMA_PICKUP_CANCEL_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_cancel_request.xsd"
+                )
+                templates.XML_SCHEMA_PICKUP_CANCEL_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_cancel_response.xsd"
+                )
+            else:
+                templates.JSON_SCHEMA_PICKUP_CREATE_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_create_request.json"
+                )
+                templates.JSON_SCHEMA_PICKUP_CREATE_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_create_response.json"
+                )
+                templates.JSON_SCHEMA_PICKUP_UPDATE_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_update_request.json"
+                )
+                templates.JSON_SCHEMA_PICKUP_UPDATE_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_update_response.json"
+                )
+                templates.JSON_SCHEMA_PICKUP_CANCEL_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_cancel_request.json"
+                )
+                templates.JSON_SCHEMA_PICKUP_CANCEL_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/pickup_cancel_response.json"
+                )
+
+        if "manifest" in features:
+            if is_xml_api:
+                templates.XML_SCHEMA_MANIFEST_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/manifest_request.xsd"
+                )
+                templates.XML_SCHEMA_MANIFEST_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/manifest_response.xsd"
+                )
+            else:
+                templates.JSON_SCHEMA_MANIFEST_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/manifest_request.json"
+                )
+                templates.JSON_SCHEMA_MANIFEST_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/manifest_response.json"
+                )
+
+        if "document" in features:
+            if is_xml_api:
+                templates.XML_SCHEMA_DOCUMENT_UPLOAD_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/document_upload_request.xsd"
+                )
+                templates.XML_SCHEMA_DOCUMENT_UPLOAD_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/document_upload_response.xsd"
+                )
+            else:
+                templates.JSON_SCHEMA_DOCUMENT_UPLOAD_REQUEST_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/document_upload_request.json"
+                )
+                templates.JSON_SCHEMA_DOCUMENT_UPLOAD_RESPONSE_TEMPLATE.stream(**context).dump(
+                    f"{schemas_dir}/document_upload_response.json"
+                )
 
         if "address" in features:
             templates.TEST_ADDRESS_TEMPLATE.stream(**context).dump(
