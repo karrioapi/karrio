@@ -1,0 +1,29 @@
+{
+  "name": "Karrio Next.js Rules",
+  "description": "Rules specific to Next.js applications in the Karrio monorepo",
+  "match": "apps/{dashboard,web,www}/**/*.{tsx,ts}",
+  "rules": [
+    "Follow Next.js App Router best practices for routing and data fetching.",
+    "Use server components where appropriate to reduce client-side JavaScript.",
+    "Implement proper error boundaries and loading states for all async operations.",
+    "Follow the established pattern for API calls and data fetching.",
+    "Use Next.js Image component for optimized image loading.",
+    "Implement proper SEO practices using Next.js metadata API.",
+    "Follow the project's established component structure for pages and layouts.",
+    "Use the shared UI components from the packages/ui directory when possible.",
+    "Implement responsive designs using Tailwind CSS with a mobile-first approach.",
+    "Follow accessibility best practices for all UI components.",
+    "Minimize 'use client' directives, using them only when necessary for Web API access.",
+    "Prefer server-side data fetching over client-side fetching where appropriate.",
+    "Use error.tsx and global-error.tsx for graceful error handling.",
+    "Implement proper dynamic loading for non-critical components.",
+    "Follow React best practices for memoization and performance optimization.",
+    "Keep components focused and maintainable.",
+    "Implement proper form validation using established patterns.",
+    "Optimize for Core Web Vitals metrics (LCP, CLS, FID)."
+  ],
+  "files": [
+    "@file:apps/dashboard/package.json",
+    "@file:apps/web/package.json"
+  ]
+}
