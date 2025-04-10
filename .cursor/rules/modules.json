@@ -1,0 +1,22 @@
+{
+    "name": "Karrio Modules Rules",
+    "description": "Rules specific to the Python modules in the Karrio monorepo",
+    "match": "modules/**/*.py",
+    "rules": [
+        "Karrio uses a modular architecture where core functionality is divided into focused Python modules.",
+        "Each module should have a clear single responsibility and well-defined interfaces.",
+        "Follow the existing module structure and organization patterns.",
+        "Use relative imports within the same module and absolute imports across different modules.",
+        "Implement proper error handling and propagation between modules.",
+        "Keep modules loosely coupled to facilitate testing and maintainability.",
+        "Ensure each module has appropriate unit tests covering core functionality.",
+        "Follow the factory pattern for service creation where applicable.",
+        "Use dependency injection to manage module dependencies.",
+        "Document module interfaces thoroughly with clear usage examples.",
+        "Maintain backward compatibility when making changes to module interfaces.",
+        "Avoid circular dependencies between modules.",
+        "Implement clean module boundaries with well-defined public APIs.",
+        "Use descriptive, domain-specific naming for module components.",
+        "Follow the established error handling patterns for each module type."
+    ]
+}

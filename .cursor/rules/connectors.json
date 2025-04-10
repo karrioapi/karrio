@@ -1,0 +1,22 @@
+{
+    "name": "Karrio Connectors Rules",
+    "description": "Rules specific to carrier integration connectors in the Karrio monorepo",
+    "match": "modules/connectors/**/*.py",
+    "rules": [
+        "Karrio connectors implement shipping carrier integrations following a consistent pattern.",
+        "Each connector should implement the established interface for its carrier type.",
+        "Maintain a clear separation between carrier-specific logic and the common integration patterns.",
+        "Follow the established error handling and retry patterns for API integrations.",
+        "Implement proper logging for debugging and tracing carrier API interactions.",
+        "Use appropriate data validation for both request and response data.",
+        "Handle carrier API rate limits and implement backoff strategies where needed.",
+        "Document carrier-specific requirements and quirks in code comments.",
+        "Follow the existing patterns for credential management and security.",
+        "Implement comprehensive error mapping from carrier-specific errors to Karrio's standardized errors.",
+        "Use HTTP client libraries consistently within connectors following established patterns.",
+        "Ensure proper handling of carrier API versioning.",
+        "Follow established testing patterns for carrier integrations, including mock responses.",
+        "Implement proper request/response caching strategies where appropriate.",
+        "Keep carrier-specific code isolated within the connector boundary."
+    ]
+}
