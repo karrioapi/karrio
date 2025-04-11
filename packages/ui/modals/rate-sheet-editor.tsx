@@ -476,7 +476,6 @@ export const RateSheetModalEditor = ({
                                           type="text"
                                           inputMode="numeric"
                                           className="is-small no-spinner"
-                                          placeholder="e.g. 10.00"
                                         />
                                       </td>
                                     </tr>
@@ -490,7 +489,6 @@ export const RateSheetModalEditor = ({
                                           type="text"
                                           inputMode="numeric"
                                           className="is-small no-spinner"
-                                          placeholder="e.g. 0.5"
                                         />
                                       </td>
                                     </tr>
@@ -504,7 +502,6 @@ export const RateSheetModalEditor = ({
                                           type="text"
                                           inputMode="numeric"
                                           className="is-small no-spinner"
-                                          placeholder="e.g. 5.0"
                                         />
                                       </td>
                                     </tr>
@@ -518,7 +515,6 @@ export const RateSheetModalEditor = ({
                                           type="text"
                                           inputMode="numeric"
                                           className="is-small no-spinner"
-                                          placeholder="e.g. 3"
                                         />
                                       </td>
                                     </tr>
@@ -530,7 +526,6 @@ export const RateSheetModalEditor = ({
                                           onChange={updateZone(editingZone.serviceIndex, editingZone.zoneIndex)}
                                           value={sheet.services?.[editingZone.serviceIndex]?.zones?.[editingZone.zoneIndex]?.cities || ""}
                                           className="is-small"
-                                          placeholder="e.g. New York, Chicago (comma separated)"
                                         />
                                       </td>
                                     </tr>
@@ -542,7 +537,6 @@ export const RateSheetModalEditor = ({
                                           onChange={updateZone(editingZone.serviceIndex, editingZone.zoneIndex)}
                                           value={sheet.services?.[editingZone.serviceIndex]?.zones?.[editingZone.zoneIndex]?.postal_codes || ""}
                                           className="is-small"
-                                          placeholder="e.g. 10001, 60601 (comma separated)"
                                         />
                                       </td>
                                     </tr>
@@ -554,7 +548,6 @@ export const RateSheetModalEditor = ({
                                           onChange={updateZone(editingZone.serviceIndex, editingZone.zoneIndex)}
                                           value={sheet.services?.[editingZone.serviceIndex]?.zones?.[editingZone.zoneIndex]?.country_codes || ""}
                                           className="is-small"
-                                          placeholder="e.g. US, CA (comma separated)"
                                         />
                                       </td>
                                     </tr>
@@ -727,7 +720,6 @@ export const RateSheetModalEditor = ({
                                           onChange={updateSercice(editingServiceIndex)}
                                           value={sheet.services?.[editingServiceIndex]?.service_name || ""}
                                           className="is-small"
-                                          placeholder="e.g. Standard Service"
                                         />
                                       </td>
                                     </tr>
@@ -739,7 +731,6 @@ export const RateSheetModalEditor = ({
                                           onChange={updateSercice(editingServiceIndex)}
                                           value={sheet.services?.[editingServiceIndex]?.service_code || ""}
                                           className="is-small"
-                                          placeholder="e.g. standard_service"
                                         />
                                       </td>
                                     </tr>
