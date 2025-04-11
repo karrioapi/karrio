@@ -411,6 +411,40 @@ export const RateSheetModalEditor = ({
                             )}
                           </tbody>
                         </table>
+                        
+                        {/* Add Zone button */}
+                        {(sheet.services || []).length > 0 && (
+                          <div className="has-text-centered p-3">
+                            <button
+                              type="button"
+                              className="button is-small is-primary is-light"
+                              onClick={() => {
+                                const newServices = [...(sheet.services || [])];
+                                const zonesCount = Math.max(...newServices.map(svc => svc.zones.length));
+                                
+                                // Add a new zone to each service
+                                newServices.forEach(service => {
+                                  if (!service.zones[zonesCount]) {
+                                    service.zones[zonesCount] = { 
+                                      rate: service.zones[zonesCount - 1]?.rate || 10.0 
+                                    };
+                                  }
+                                });
+                                
+                                dispatch({ name: "services", value: newServices });
+                                editor.current!.view?.dispatch({
+                                  changes: {
+                                    from: 0,
+                                    to: editor.current!.view!.state.doc.length,
+                                    insert: JSON.stringify(newServices, null, 2),
+                                  },
+                                });
+                              }}
+                            >
+                              Add Zone
+                            </button>
+                          </div>
+                        )}
                       </div>
                       
                       {/* Zone edit modal */}
