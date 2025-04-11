@@ -3,6 +3,8 @@ import sys
 import typer
 import importlib
 from typing import Optional, List, Set
+import logging
+import os
 
 app = typer.Typer()
 
@@ -210,12 +212,15 @@ def generate(
     python_version: str = typer.Option("3.7", help="Python version to target"),
     just_types: bool = typer.Option(True, help="Generate just the type definitions without serialization code"),
     append_type_suffix: bool = typer.Option(True, help="Append 'Type' to class names"),
-    nice_property_names: bool = typer.Option(True, help="Use nice property names"),
+    nice_property_names: bool = typer.Option(False, help="Use nice property names"),
 ):
     """
     Generate Python code with jstruct from a JSON schema file using quicktype.
     """
     import subprocess
+
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    logger = logging.getLogger(__name__)
 
     # Build quicktype command
     cmd = [
@@ -227,6 +232,7 @@ def generate(
         "--src-lang", "json",
         "--lang", "python",
         "--all-properties-optional",
+        "--no-nice-property-names",
         f"--python-version", python_version,
         "--src", input_file
     ]
@@ -234,13 +240,14 @@ def generate(
     if just_types:
         cmd.append("--just-types")
 
-    if not nice_property_names:
-        cmd.append("--no-nice-property-names")
+    if nice_property_names:
+        cmd.remove("--no-nice-property-names")
 
     # Run quicktype to generate Python code with dataclasses
     result = subprocess.run(cmd, capture_output=True, text=True)
 
     if result.returncode != 0:
+        logger.error(f"Error generating code for {os.path.basename(input_file)}: {result.stderr}")
         print(f"Error running quicktype: {result.stderr}", file=sys.stderr)
         sys.exit(1)
 
@@ -251,8 +258,10 @@ def generate(
     if output_file:
         with open(output_file, "w") as f:
             f.write(transformed)
+        logger.info(f"Generated {os.path.basename(output_file)} from {os.path.basename(input_file)}")
     else:
         print(transformed)
+        logger.info(f"Generated code from {os.path.basename(input_file)} to stdout")
 
 def instantiate_tree(cls, indent=0, alias=""):
     tree = f"{alias}{cls.__name__}(\n"

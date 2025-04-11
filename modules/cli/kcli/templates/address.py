@@ -27,60 +27,15 @@ import karrio.providers.{{id}}.units as provider_units
 def parse_address_validation_response(
     _response: lib.Deserializable[{% if is_xml_api %}lib.Element{% else %}dict{% endif %}],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.AddressValidationDetails], typing.List[models.Message]]:
+) -> typing.Tuple[models.AddressValidationDetails, typing.List[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
 
-    # Convert the carrier data to a proper object for easy attribute access
-    {% if is_xml_api %}
-    # For XML APIs, convert Element to proper response object
-    validation_response = lib.to_object({{id}}_res.AddressValidationResponse, response)
-
-    # Extract validation results
-    is_valid = validation_response.valid_address == "true" if hasattr(validation_response, 'valid_address') else False
-
-    normalized_address = None
-    if hasattr(validation_response, 'normalized_address'):
-        address = validation_response.normalized_address
-        normalized_address = {
-            "address_line1": address.street if hasattr(address, 'street') else "",
-            "city": address.city_name if hasattr(address, 'city_name') else "",
-            "postal_code": address.postcode if hasattr(address, 'postcode') else "",
-            "country_code": address.country_code if hasattr(address, 'country_code') else "",
-            "state_code": address.province_code if hasattr(address, 'province_code') else "",
-        }
-    {% else %}
-    # For JSON APIs, convert dict to proper response object
-    validation_response = lib.to_object({{id}}_res.AddressValidationResponseType, response)
-
-    # Extract validation results
-    validation_result = validation_response.validationResult if hasattr(validation_response, 'validationResult') else None
-    is_valid = validation_result.isValid if validation_result and hasattr(validation_result, 'isValid') else False
-
-    normalized_address = None
-    if validation_result and hasattr(validation_result, 'normalizedAddress'):
-        address = validation_result.normalizedAddress
-        normalized_address = {
-            "address_line1": address.streetAddress if hasattr(address, 'streetAddress') else "",
-            "city": address.cityLocality if hasattr(address, 'cityLocality') else "",
-            "postal_code": address.postalCode if hasattr(address, 'postalCode') else "",
-            "country_code": address.countryCode if hasattr(address, 'countryCode') else "",
-            "state_code": address.stateProvince if hasattr(address, 'stateProvince') else "",
-        }
-    {% endif %}
-
-    validation_details = []
-
-    # Create validation details object
-    if normalized_address:
-        validation_details.append(
-            models.AddressValidationDetails(
-                carrier_id=settings.carrier_id,
-                carrier_name=settings.carrier_name,
-                is_valid=is_valid,
-                normalized_address=models.Address(**normalized_address),
-            )
-        )
+    validation_details = models.AddressValidationDetails(
+        carrier_id=settings.carrier_id,
+        carrier_name=settings.carrier_name,
+        success=True,
+    )
 
     return validation_details, messages
 
@@ -110,15 +65,13 @@ def address_validation_request(
         province_code=address.state_code,
     )
     {% else %}
-    # For JSON API request
+    # For JSON API request - Using camelCase attribute names to match schema definition
     request = {{id}}_req.AddressValidationRequestType(
-        addressValidation={
-            "streetAddress": address.address_line1,
-            "cityLocality": address.city,
-            "postalCode": address.postal_code,
-            "countryCode": address.country_code,
-            "stateProvince": address.state_code,
-        }
+        streetAddress=address.address_line1,
+        cityLocality=address.city,
+        postalCode=address.postal_code,
+        countryCode=address.country_code,
+        stateProvince=address.state_code,
     )
     {% endif %}
 
@@ -128,34 +81,30 @@ def address_validation_request(
 
 JSON_SCHEMA_ADDRESS_VALIDATION_REQUEST_TEMPLATE = Template('''
 {
-  "addressValidation": {
-    "streetAddress": "123 Main St",
-    "cityLocality": "City Name",
-    "postalCode": "12345",
-    "countryCode": "US",
-    "stateProvince": "CA"
-  }
+  "streetAddress": "123 Main St",
+  "cityLocality": "City Name",
+  "postalCode": "12345",
+  "countryCode": "US",
+  "stateProvince": "CA"
 }
 ''')
 
 JSON_SCHEMA_ADDRESS_VALIDATION_RESPONSE_TEMPLATE = Template('''
 {
-  "validationResult": {
-    "isValid": true,
-    "normalizedAddress": {
-      "streetAddress": "123 Main St",
-      "cityLocality": "City Name",
-      "postalCode": "12345",
-      "countryCode": "US",
-      "stateProvince": "CA"
-    },
-    "validationMessages": [
-      {
-        "message": "Address is valid",
-        "code": "SUCCESS"
-      }
-    ]
-  }
+  "isValid": true,
+  "normalizedAddress": {
+    "streetAddress": "123 Main St",
+    "cityLocality": "City Name",
+    "postalCode": "12345",
+    "countryCode": "US",
+    "stateProvince": "CA"
+  },
+  "validationMessages": [
+    {
+      "message": "Address is valid",
+      "code": "SUCCESS"
+    }
+  ]
 }
 ''')
 
@@ -227,24 +176,16 @@ logger = logging.getLogger(__name__)
 class Test{{compact_name}}Address(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.AddressValidationRequest = models.AddressValidationRequest(
-            address={
-                "address_line1": "123 Main St",
-                "city": "City Name",
-                "postal_code": "12345",
-                "country_code": "US",
-                "state_code": "CA",
-            }
-        )
+        self.AddressValidationRequest = models.AddressValidationRequest(**AddressValidationPayload)
 
     def test_create_address_validation_request(self):
         request = gateway.mapper.create_address_validation_request(self.AddressValidationRequest)
-        self.assertEqual(request.serialize(), AddressValidationRequest)
+        self.assertEqual(lib.to_dict(request.serialize()), AddressValidationRequest)
 
     def test_validate_address(self):
         with patch("karrio.mappers.{{id}}.proxy.lib.request") as mock:
-            mock.return_value = "{}"
-            karrio.Address.create(self.AddressValidationRequest).from_(gateway)
+            mock.return_value = {% if is_xml_api %}"<r></r>"{% else %}"{}"{% endif %}
+            karrio.Address.validate(self.AddressValidationRequest).from_(gateway)
             self.assertEqual(
                 mock.call_args[1]["url"],
                 f"{gateway.settings.server_url}/address/validate"
@@ -254,30 +195,36 @@ class Test{{compact_name}}Address(unittest.TestCase):
         with patch("karrio.mappers.{{id}}.proxy.lib.request") as mock:
             mock.return_value = AddressValidationResponse
             parsed_response = (
-                karrio.Address.create(self.AddressValidationRequest)
+                karrio.Address.validate(self.AddressValidationRequest)
                 .from_(gateway)
                 .parse()
             )
-            self.assertIsNotNone(parsed_response[0])
-            self.assertEqual(len(parsed_response[1]), 0)
-            self.assertEqual(parsed_response[0][0].carrier_name, "{{id}}")
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedAddressValidationResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.{{id}}.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
             parsed_response = (
-                karrio.Address.create(self.AddressValidationRequest)
+                karrio.Address.validate(self.AddressValidationRequest)
                 .from_(gateway)
                 .parse()
             )
-            self.assertEqual(len(parsed_response[0]), 0)
-            self.assertEqual(len(parsed_response[1]), 1)
-            self.assertEqual(parsed_response[1][0].code, "address_error")
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
 if __name__ == "__main__":
     unittest.main()
 
+
+AddressValidationPayload = {
+    "address": {
+        "address_line1": "123 Main St",
+        "city": "City Name",
+        "postal_code": "12345",
+        "country_code": "US",
+        "state_code": "CA",
+    }
+}
 
 AddressValidationRequest = {% if is_xml_api %}"""<?xml version="1.0"?>
 <address-validation-request>
@@ -286,15 +233,13 @@ AddressValidationRequest = {% if is_xml_api %}"""<?xml version="1.0"?>
     <postcode>12345</postcode>
     <country_code>US</country_code>
     <province_code>CA</province_code>
-</address-validation-request>"""{% else %}"""{
-  "addressValidation": {
-    "streetAddress": "123 Main St",
-    "cityLocality": "City Name",
-    "postalCode": "12345",
-    "countryCode": "US",
-    "stateProvince": "CA"
-  }
-}"""{% endif %}
+</address-validation-request>"""{% else %}{
+  "streetAddress": "123 Main St",
+  "cityLocality": "City Name",
+  "postalCode": "12345",
+  "countryCode": "US",
+  "stateProvince": "CA"
+}{% endif %}
 
 AddressValidationResponse = {% if is_xml_api %}"""<?xml version="1.0"?>
 <address-validation-response>
@@ -307,22 +252,20 @@ AddressValidationResponse = {% if is_xml_api %}"""<?xml version="1.0"?>
         <province_code>CA</province_code>
     </normalized_address>
 </address-validation-response>"""{% else %}"""{
-  "validationResult": {
-    "isValid": true,
-    "normalizedAddress": {
-      "streetAddress": "123 MAIN ST",
-      "cityLocality": "CITY NAME",
-      "postalCode": "12345",
-      "countryCode": "US",
-      "stateProvince": "CA"
-    },
-    "validationMessages": [
-      {
-        "message": "Address is valid",
-        "code": "SUCCESS"
-      }
-    ]
-  }
+  "isValid": true,
+  "normalizedAddress": {
+    "streetAddress": "123 MAIN ST",
+    "cityLocality": "CITY NAME",
+    "postalCode": "12345",
+    "countryCode": "US",
+    "stateProvince": "CA"
+  },
+  "validationMessages": [
+    {
+      "message": "Address is valid",
+      "code": "SUCCESS"
+    }
+  ]
 }"""{% endif %}
 
 ErrorResponse = {% if is_xml_api %}"""<?xml version="1.0"?>
@@ -338,4 +281,28 @@ ErrorResponse = {% if is_xml_api %}"""<?xml version="1.0"?>
     "message": "Unable to validate address",
     "details": "Invalid address information provided"
   }
-}"""{% endif %}''')
+}"""{% endif %}
+
+ParsedAddressValidationResponse = [
+    {
+        "carrier_id": "{{id}}",
+        "carrier_name": "{{id}}",
+        "success": True
+    },
+    []
+]
+
+ParsedErrorResponse = [
+    None,
+    [
+        {
+            "carrier_id": "{{id}}",
+            "carrier_name": "{{id}}",
+            "code": "address_error",
+            "message": "Unable to validate address",
+            "details": {
+                "details": "Invalid address information provided"
+            }
+        }
+    ]
+]''')
