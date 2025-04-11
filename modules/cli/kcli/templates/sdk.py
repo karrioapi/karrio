@@ -202,6 +202,11 @@ class Mapper(mapper.Mapper):
         self, payload: models.DocumentUploadRequest
     ) -> lib.Serializable[str]:
         return provider.document_upload_request(payload, self.settings)
+    {% endif %}{% if "address" in features %}
+    def create_address_validation_request(
+        self, payload: models.AddressValidationRequest
+    ) -> lib.Serializable:
+        return provider.address_validation_request(payload, self.settings)
     {% endif %}{% if "manifest" in features %}
     def create_manifest_request(
         self, payload: models.ManifestRequest
@@ -253,6 +258,11 @@ class Mapper(mapper.Mapper):
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[models.ManifestDetails, typing.List[models.Message]]:
         return provider.parse_manifest_response(response, self.settings)
+    {% endif %}{% if "address" in features %}
+    def parse_address_validation_response(
+        self, response: lib.Deserializable[str]
+    ) -> typing.Tuple[typing.List[models.AddressValidationDetails], typing.List[models.Message]]:
+        return provider.parse_address_validation_response(response, self.settings)
     {% endif %}
 
 '''
@@ -285,12 +295,12 @@ class Proxy(proxy.Proxy):
         #     method="POST",
         #     headers={
         #         "Content-Type": {% if is_xml_api %}"application/xml"{% else %}"application/json"{% endif %},
-        #         "Authorization": f"Bearer {self.settings.api_key}"
+        #         {% if is_xml_api %}"Authorization": f"Basic {self.settings.authorization}"{% else %}"Authorization": f"Bearer {self.settings.api_key}"{% endif %}
         #     },
         # )
 
         # DEVELOPMENT ONLY: Remove this stub response and uncomment the API call above when implementing the real carrier API
-        {% if is_xml_api %}response = RateResponse{% else %}response = lib.to_json(RateResponse){% endif %}
+        {% if is_xml_api %}response = '<r></r>'{% else %}response = lib.to_json({}){% endif %}
 
         return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
     {% endif %}{% if "shipping" in features %}
@@ -305,12 +315,12 @@ class Proxy(proxy.Proxy):
         #     method="POST",
         #     headers={
         #         "Content-Type": {% if is_xml_api %}"application/xml"{% else %}"application/json"{% endif %},
-        #         "Authorization": f"Bearer {self.settings.api_key}"
+        #         {% if is_xml_api %}"Authorization": f"Basic {self.settings.authorization}"{% else %}"Authorization": f"Bearer {self.settings.api_key}"{% endif %}
         #     },
         # )
 
         # DEVELOPMENT ONLY: Remove this stub response and uncomment the API call above when implementing the real carrier API
-        {% if is_xml_api %}response = ShipmentResponse{% else %}response = lib.to_json(ShipmentResponse){% endif %}
+        {% if is_xml_api %}response = '<r></r>'{% else %}response = lib.to_json({}){% endif %}
 
         return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
     {% endif %}{% if "shipping" in features %}
@@ -325,12 +335,12 @@ class Proxy(proxy.Proxy):
         #     method="POST",
         #     headers={
         #         "Content-Type": {% if is_xml_api %}"application/xml"{% else %}"application/json"{% endif %},
-        #         "Authorization": f"Bearer {self.settings.api_key}"
+        #         {% if is_xml_api %}"Authorization": f"Basic {self.settings.authorization}"{% else %}"Authorization": f"Bearer {self.settings.api_key}"{% endif %}
         #     },
         # )
 
         # DEVELOPMENT ONLY: Remove this stub response and uncomment the API call above when implementing the real carrier API
-        {% if is_xml_api %}response = ShipmentCancelResponse{% else %}response = lib.to_json(ShipmentCancelResponse){% endif %}
+        {% if is_xml_api %}response = '<r></r>'{% else %}response = lib.to_json({}){% endif %}
 
         return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
     {% endif %}{% if "tracking" in features %}
@@ -345,12 +355,12 @@ class Proxy(proxy.Proxy):
         #     method="POST",
         #     headers={
         #         "Content-Type": {% if is_xml_api %}"application/xml"{% else %}"application/json"{% endif %},
-        #         "Authorization": f"Bearer {self.settings.api_key}"
+        #         {% if is_xml_api %}"Authorization": f"Basic {self.settings.authorization}"{% else %}"Authorization": f"Bearer {self.settings.api_key}"{% endif %}
         #     },
         # )
 
         # DEVELOPMENT ONLY: Remove this stub response and uncomment the API call above when implementing the real carrier API
-        {% if is_xml_api %}response = TrackingResponse{% else %}response = lib.to_json(TrackingResponse){% endif %}
+        {% if is_xml_api %}response = '<r></r>'{% else %}response = lib.to_json({}){% endif %}
 
         return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
     {% endif %}{% if "pickup" in features %}
@@ -365,12 +375,12 @@ class Proxy(proxy.Proxy):
         #     method="POST",
         #     headers={
         #         "Content-Type": {% if is_xml_api %}"application/xml"{% else %}"application/json"{% endif %},
-        #         "Authorization": f"Bearer {self.settings.api_key}"
+        #         {% if is_xml_api %}"Authorization": f"Basic {self.settings.authorization}"{% else %}"Authorization": f"Bearer {self.settings.api_key}"{% endif %}
         #     },
         # )
 
         # DEVELOPMENT ONLY: Remove this stub response and uncomment the API call above when implementing the real carrier API
-        {% if is_xml_api %}response = PickupResponse{% else %}response = lib.to_json(PickupResponse){% endif %}
+        {% if is_xml_api %}response = '<r></r>'{% else %}response = lib.to_json({}){% endif %}
 
         return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
     {% endif %}{% if "pickup" in features %}
@@ -385,12 +395,12 @@ class Proxy(proxy.Proxy):
         #     method="POST",
         #     headers={
         #         "Content-Type": {% if is_xml_api %}"application/xml"{% else %}"application/json"{% endif %},
-        #         "Authorization": f"Bearer {self.settings.api_key}"
+        #         {% if is_xml_api %}"Authorization": f"Basic {self.settings.authorization}"{% else %}"Authorization": f"Bearer {self.settings.api_key}"{% endif %}
         #     },
         # )
 
         # DEVELOPMENT ONLY: Remove this stub response and uncomment the API call above when implementing the real carrier API
-        {% if is_xml_api %}response = PickupUpdateResponse{% else %}response = lib.to_json(PickupUpdateResponse){% endif %}
+        {% if is_xml_api %}response = '<r></r>'{% else %}response = lib.to_json({}){% endif %}
 
         return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
     {% endif %}{% if "pickup" in features %}
@@ -405,12 +415,12 @@ class Proxy(proxy.Proxy):
         #     method="POST",
         #     headers={
         #         "Content-Type": {% if is_xml_api %}"application/xml"{% else %}"application/json"{% endif %},
-        #         "Authorization": f"Bearer {self.settings.api_key}"
+        #         {% if is_xml_api %}"Authorization": f"Basic {self.settings.authorization}"{% else %}"Authorization": f"Bearer {self.settings.api_key}"{% endif %}
         #     },
         # )
 
         # During development, use stub response from schema examples
-        {% if is_xml_api %}response = PickupCancelResponse{% else %}response = lib.to_json(PickupCancelResponse){% endif %}
+        {% if is_xml_api %}response = '<r></r>'{% else %}response = lib.to_json({}){% endif %}
 
         return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
     {% endif %}{% if "address" in features %}
@@ -425,12 +435,12 @@ class Proxy(proxy.Proxy):
         #     method="POST",
         #     headers={
         #         "Content-Type": {% if is_xml_api %}"application/xml"{% else %}"application/json"{% endif %},
-        #         "Authorization": f"Bearer {self.settings.api_key}"
+        #         {% if is_xml_api %}"Authorization": f"Basic {self.settings.authorization}"{% else %}"Authorization": f"Bearer {self.settings.api_key}"{% endif %}
         #     },
         # )
 
         # During development, use stub response from schema examples
-        {% if is_xml_api %}response = AddressValidationResponse{% else %}response = lib.to_json(AddressValidationResponse){% endif %}
+        {% if is_xml_api %}response = '<r></r>'{% else %}response = lib.to_json({}){% endif %}
 
         return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
     {% endif %}{% if "document" in features %}
@@ -445,12 +455,12 @@ class Proxy(proxy.Proxy):
         #     method="POST",
         #     headers={
         #         "Content-Type": {% if is_xml_api %}"application/xml"{% else %}"application/json"{% endif %},
-        #         "Authorization": f"Bearer {self.settings.api_key}"
+        #         {% if is_xml_api %}"Authorization": f"Basic {self.settings.authorization}"{% else %}"Authorization": f"Bearer {self.settings.api_key}"{% endif %}
         #     },
         # )
 
         # During development, use stub response from schema examples
-        {% if is_xml_api %}response = DocumentUploadResponse{% else %}response = lib.to_json(DocumentUploadResponse){% endif %}
+        {% if is_xml_api %}response = '<r></r>'{% else %}response = lib.to_json({}){% endif %}
 
         return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
     {% endif %}{% if "manifest" in features %}
@@ -465,12 +475,12 @@ class Proxy(proxy.Proxy):
         #     method="POST",
         #     headers={
         #         "Content-Type": {% if is_xml_api %}"application/xml"{% else %}"application/json"{% endif %},
-        #         "Authorization": f"Bearer {self.settings.api_key}"
+        #         {% if is_xml_api %}"Authorization": f"Basic {self.settings.authorization}"{% else %}"Authorization": f"Bearer {self.settings.api_key}"{% endif %}
         #     },
         # )
 
         # During development, use stub response from schema examples
-        {% if is_xml_api %}response = ManifestResponse{% else %}response = lib.to_json(ManifestResponse){% endif %}
+        {% if is_xml_api %}response = '<r></r>'{% else %}response = lib.to_json({}){% endif %}
 
         return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
     {% endif %}
@@ -488,9 +498,10 @@ class Settings(provider_utils.Settings):
     """{{name}} connection settings."""
 
     # Add carrier specific API connection properties here
-    # username: str
-    # passowrd: str
-    # account_number: str = None
+    {% if is_xml_api %}username: str
+    password: str
+    account_number: str = None{% else %}api_key: str
+    account_number: str = None{% endif %}
 
     # generic properties
     id: str = None
@@ -506,13 +517,16 @@ class Settings(provider_utils.Settings):
 PROVIDER_IMPORTS_TEMPLATE = Template(
     '''"""Karrio {{name}} provider imports."""
 from karrio.providers.{{id}}.utils import Settings{% if "rating" in features %}
-from karrio.providers.{{id}}.rate import parse_rate_response, rate_request
+from karrio.providers.{{id}}.rate import (
+    parse_rate_response,
+    rate_request,
+){% endif %}{% if "shipping" in features %}
 from karrio.providers.{{id}}.shipment import (
     parse_shipment_cancel_response,
     parse_shipment_response,
     shipment_cancel_request,
     shipment_request,
-)
+){% endif %}{% if "pickup" in features %}
 from karrio.providers.{{id}}.pickup import (
     parse_pickup_cancel_response,
     parse_pickup_update_response,
@@ -520,19 +534,19 @@ from karrio.providers.{{id}}.pickup import (
     pickup_update_request,
     pickup_cancel_request,
     pickup_request,
-)
+){% endif %}{% if "tracking" in features %}
 from karrio.providers.{{id}}.tracking import (
     parse_tracking_response,
     tracking_request,
-)
+){% endif %}{% if "address" in features %}
 from karrio.providers.{{id}}.address import (
     parse_address_validation_response,
     address_validation_request,
-)
+){% endif %}{% if "document" in features %}
 from karrio.providers.{{id}}.document import (
     parse_document_upload_response,
     document_upload_request,
-)
+){% endif %}{% if "manifest" in features %}
 from karrio.providers.{{id}}.manifest import (
     parse_manifest_response,
     manifest_request,
@@ -645,9 +659,10 @@ class Settings(core.Settings):
     """{{name}} connection settings."""
 
     # Add carrier specific api connection properties here
-    # username: str
-    # password: str
-    # account_number: str = None
+    {% if is_xml_api %}username: str
+    password: str
+    account_number: str = None{% else %}api_key: str
+    account_number: str = None{% endif %}
 
     @property
     def carrier_name(self):
@@ -666,11 +681,10 @@ class Settings(core.Settings):
     # def tracking_url(self):
     #     return "https://www.carrier.com/tracking?tracking-id={}"
 
-    # """uncomment the following code block to implement the Basic auth."""
-    # @property
-    # def authorization(self):
-    #     pair = "%s:%s" % (self.username, self.password)
-    #     return base64.b64encode(pair.encode("utf-8")).decode("ascii")
+    {% if is_xml_api %}@property
+    def authorization(self):
+        pair = "%s:%s" % (self.username, self.password)
+        return base64.b64encode(pair.encode("utf-8")).decode("ascii"){% endif %}
 
     @property
     def connection_config(self) -> lib.units.Options:
@@ -741,64 +755,37 @@ class ConnectionConfig(lib.Enum):
 TEST_FIXTURE_TEMPLATE = Template(
     '''"""{{name}} carrier tests fixtures."""
 
-import attr
-from karrio.core.models import Message
-from karrio.mappers.{{id}}.settings import Settings
+import karrio
 
 
-@attr.s(auto_attribs=True)
-class Fixture:
-    settings = Settings(
+gateway = karrio.gateway["{{id}}"].create(
+    dict(
         id="123456789",
         test_mode=True,
         carrier_id="{{id}}",
         account_number="123456789",
-        api_key="TEST_API_KEY",
-        username="username",
-        password="password",
+        {% if is_xml_api %}username="username",
+        password="password",{% else %}api_key="TEST_API_KEY",{% endif %}
     )
-
-    error_response = {
-        "errors": [
-            {
-                "code": "ERROR_CODE",
-                "message": "Error message description",
-                "details": "Additional error details"
-            }
-        ]
-    }
-
-    success_message = Message(
-        carrier_id=settings.carrier_id,
-        carrier_name=settings.carrier_name,
-        code="SUCCESS",
-        message="Operation completed successfully"
-    )
-
-    error_message = Message(
-        carrier_id=settings.carrier_id,
-        carrier_name=settings.carrier_name,
-        code="ERROR_CODE",
-        message="Error message description"
-    )
+)
 '''
 )
 
 TEST_IMPORTS_TEMPLATE = Template(
     """{% if "rating" in features %}
-from .test_rate import *{% endif %}{% if "pickup" in features %}
-from .test_pickup import *{% endif %}{% if "address" in features %}
-from .test_address import *{% endif %}{% if "tracking" in features %}
-from .test_tracking import *{% endif %}{% if "shipping" in features %}
-from .test_shipment import *{% endif %}{% if "document" in features %}
-from .test_document import *{% endif %}{% if "manifest" in features %}
-from .test_manifest import *
+from {{id}}.test_rate import *{% endif %}{% if "pickup" in features %}
+from {{id}}.test_pickup import *{% endif %}{% if "address" in features %}
+from {{id}}.test_address import *{% endif %}{% if "tracking" in features %}
+from {{id}}.test_tracking import *{% endif %}{% if "shipping" in features %}
+from {{id}}.test_shipment import *{% endif %}{% if "document" in features %}
+from {{id}}.test_document import *{% endif %}{% if "manifest" in features %}
+from {{id}}.test_manifest import *
 {% endif %}
 """
 )
 
 TEST_PROVIDER_IMPORTS_TEMPLATE = Template(
-    """from .fixture import Fixture
+    """from .fixture import gateway
 """
 )
 
