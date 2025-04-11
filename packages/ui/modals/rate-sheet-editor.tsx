@@ -82,6 +82,7 @@ export const RateSheetModalEditor = ({
     const { loading } = useLoader();
     const editor = React.useRef<ReactCodeMirrorRef>(null);
     const [editingServiceIndex, setEditingServiceIndex] = React.useState<number | null>(null);
+    const [editingZone, setEditingZone] = React.useState<{ serviceIndex: number; zoneIndex: number } | null>(null);
     const {
       references: { service_levels },
     } = useAPIMetadata();
@@ -166,6 +167,41 @@ export const RateSheetModalEditor = ({
     
     const closeServiceEdit = () => {
       setEditingServiceIndex(null);
+    };
+
+    const handleZoneCellClick = (serviceIndex: number, zoneIndex: number) => {
+      setEditingZone({ serviceIndex, zoneIndex });
+    };
+    
+    const closeZoneEdit = () => {
+      setEditingZone(null);
+    };
+    
+    const updateZone = (serviceIndex: number, zoneIndex: number) => (event: React.ChangeEvent<any>) => {
+      const target = event.target;
+      const name: string = target.name;
+      let value = target.type === "checkbox" ? target.checked : target.value;
+      
+      const newServices = [...(sheet.services || [])];
+      const service = newServices[serviceIndex];
+      
+      if (!service.zones[zoneIndex]) {
+        service.zones[zoneIndex] = { rate: 0 };
+      }
+      
+      service.zones[zoneIndex] = {
+        ...service.zones[zoneIndex],
+        [name]: value
+      };
+      
+      editor.current!.view?.dispatch({
+        changes: {
+          from: 0,
+          to: editor.current!.view!.state.doc.length,
+          insert: JSON.stringify(newServices, null, 2),
+        },
+      });
+      dispatch({ name: "services", value: newServices });
     };
 
     return (
@@ -360,7 +396,9 @@ export const RateSheetModalEditor = ({
                                               style={{
                                                 width: "100px",
                                                 minWidth: "100px",
+                                                cursor: "pointer"
                                               }}
+                                              onClick={() => handleZoneCellClick(key, idx)}
                                             >
                                               {service.zones[idx]?.rate || ""}
                                             </td>
@@ -374,6 +412,139 @@ export const RateSheetModalEditor = ({
                           </tbody>
                         </table>
                       </div>
+                      
+                      {/* Zone edit modal */}
+                      {editingZone !== null && (
+                        <div className="modal is-active">
+                          <div className="modal-background" onClick={closeZoneEdit}></div>
+                          <div className="modal-card" style={{ maxWidth: "800px", width: "100%" }}>
+                            <header className="modal-card-head">
+                              <p className="modal-card-title">
+                                Edit Zone {editingZone.zoneIndex} - {sheet.services?.[editingZone.serviceIndex]?.service_name}
+                              </p>
+                              <button 
+                                className="delete" 
+                                aria-label="close" 
+                                onClick={closeZoneEdit}
+                              ></button>
+                            </header>
+                            <section className="modal-card-body">
+                              <div className="table-container">
+                                <table className="table is-bordered is-narrow">
+                                  <tbody>
+                                    <tr>
+                                      <td className="is-size-7" width="200px">Rate</td>
+                                      <td className="p-0">
+                                        <InputField
+                                          name="rate"
+                                          onChange={updateZone(editingZone.serviceIndex, editingZone.zoneIndex)}
+                                          value={sheet.services?.[editingZone.serviceIndex]?.zones?.[editingZone.zoneIndex]?.rate || ""}
+                                          type="text"
+                                          inputMode="numeric"
+                                          className="is-small no-spinner"
+                                          placeholder="e.g. 10.00"
+                                        />
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="is-size-7">Min Weight</td>
+                                      <td className="p-0">
+                                        <InputField
+                                          name="min_weight"
+                                          onChange={updateZone(editingZone.serviceIndex, editingZone.zoneIndex)}
+                                          value={sheet.services?.[editingZone.serviceIndex]?.zones?.[editingZone.zoneIndex]?.min_weight || ""}
+                                          type="text"
+                                          inputMode="numeric"
+                                          className="is-small no-spinner"
+                                          placeholder="e.g. 0.5"
+                                        />
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="is-size-7">Max Weight</td>
+                                      <td className="p-0">
+                                        <InputField
+                                          name="max_weight"
+                                          onChange={updateZone(editingZone.serviceIndex, editingZone.zoneIndex)}
+                                          value={sheet.services?.[editingZone.serviceIndex]?.zones?.[editingZone.zoneIndex]?.max_weight || ""}
+                                          type="text"
+                                          inputMode="numeric"
+                                          className="is-small no-spinner"
+                                          placeholder="e.g. 5.0"
+                                        />
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="is-size-7">Transit Days</td>
+                                      <td className="p-0">
+                                        <InputField
+                                          name="transit_days"
+                                          onChange={updateZone(editingZone.serviceIndex, editingZone.zoneIndex)}
+                                          value={sheet.services?.[editingZone.serviceIndex]?.zones?.[editingZone.zoneIndex]?.transit_days || ""}
+                                          type="text"
+                                          inputMode="numeric"
+                                          className="is-small no-spinner"
+                                          placeholder="e.g. 3"
+                                        />
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="is-size-7">Cities</td>
+                                      <td className="p-0">
+                                        <InputField
+                                          name="cities"
+                                          onChange={updateZone(editingZone.serviceIndex, editingZone.zoneIndex)}
+                                          value={sheet.services?.[editingZone.serviceIndex]?.zones?.[editingZone.zoneIndex]?.cities || ""}
+                                          className="is-small"
+                                          placeholder="e.g. New York, Chicago (comma separated)"
+                                        />
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="is-size-7">Postal Codes</td>
+                                      <td className="p-0">
+                                        <InputField
+                                          name="postal_codes"
+                                          onChange={updateZone(editingZone.serviceIndex, editingZone.zoneIndex)}
+                                          value={sheet.services?.[editingZone.serviceIndex]?.zones?.[editingZone.zoneIndex]?.postal_codes || ""}
+                                          className="is-small"
+                                          placeholder="e.g. 10001, 60601 (comma separated)"
+                                        />
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="is-size-7">Country Codes</td>
+                                      <td className="p-0">
+                                        <InputField
+                                          name="country_codes"
+                                          onChange={updateZone(editingZone.serviceIndex, editingZone.zoneIndex)}
+                                          value={sheet.services?.[editingZone.serviceIndex]?.zones?.[editingZone.zoneIndex]?.country_codes || ""}
+                                          className="is-small"
+                                          placeholder="e.g. US, CA (comma separated)"
+                                        />
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </section>
+                            <footer className="modal-card-foot">
+                              <button 
+                                className="button is-success is-small" 
+                                onClick={closeZoneEdit}
+                              >
+                                Save changes
+                              </button>
+                              <button 
+                                className="button is-small" 
+                                onClick={closeZoneEdit}
+                              >
+                                Cancel
+                              </button>
+                            </footer>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div
