@@ -333,6 +333,52 @@ ManifestResponse = {% if is_xml_api %}"""<?xml version="1.0"?>
   "manifest": "JVBERi0xLjcKCjEgMCBvYmogICUgZW50cnkgcG9pbnQKPDwKICAvVHlwZSAvQ2F0YWxvZwogIC9QYWdlcyAyIDAgUgo+PgplbmRvYmoKCjIgMCBvYmoKPDwKICAvVHlwZSAvUGFnZXMKICAvTWVkaWFCb3ggWyAwIDAgMjAwIDIwMCBdCiAgL0NvdW50IDEKICAvS2lkcyBbIDMgMCBSIF0KPj4KZW5kb2JqCgozIDAgb2JqCjw8CiAgL1R5cGUgL1BhZ2UKICAvUGFyZW50IDIgMCBSCiAgL1Jlc291cmNlcyA8PAogICAgL0ZvbnQgPDwKICAgICAgL0YxIDQgMCBSIAogICAgPj4KICA+PgogIC9Db250ZW50cyA1IDAgUgo+PgplbmRvYmoKCjQgMCBvYmoKPDwKICAvVHlwZSAvRm9udAogIC9TdWJ0eXBlIC9UeXBlMQogIC9CYXNlRm9udCAvVGltZXMtUm9tYW4KPj4KZW5kb2JqCgo1IDAgb2JqICAlIHBhZ2UgY29udGVudAo8PAogIC9MZW5ndGggNDQKPj4Kc3RyZWFtCkJUCjcwIDUwIFRECi9GMSAxMiBUZgooSGVsbG8sIHdvcmxkISkgVGoKRVQKZW5kc3RyZWFtCmVuZG9iagoKeHJlZgowIDYKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDEwIDAwMDAwIG4gCjAwMDAwMDAwNzkgMDAwMDAgbiAKMDAwMDAwMDE3MyAwMDAwMCBuIAowMDAwMDAwMzAxIDAwMDAwIG4gCjAwMDAwMDAzODAgMDAwMDAgbiAKdHJhaWxlcgo8PAogIC9TaXplIDYKICAvUm9vdCAxIDAgUgo+PgpzdGFydHhyZWYKNDkyCiUlRU9G"
 }"""{% endif %}
 
+ManifestRequest = {% if is_xml_api %}"""<?xml version="1.0"?>
+<manifest-request>
+  <shipment-identifiers>
+    <shipment-identifier>SHIP123456</shipment-identifier>
+    <shipment-identifier>SHIP789012</shipment-identifier>
+  </shipment-identifiers>
+  <address>
+    <address-line1>123 Main Street</address-line1>
+    <city>Los Angeles</city>
+    <postal-code>90001</postal-code>
+    <country-code>US</country-code>
+    <state-code>CA</state-code>
+    <person-name>John Doe</person-name>
+    <company-name>Test Company</company-name>
+    <phone-number>555-123-4567</phone-number>
+    <email>john.doe@example.com</email>
+  </address>
+  <reference>REF123</reference>
+  <options>
+    <option>
+      <key>close_date</key>
+      <value>2023-07-01</value>
+    </option>
+  </options>
+</manifest-request>"""{% else %}"""{
+  "shipmentIdentifiers": [
+    "SHIP123456",
+    "SHIP789012"
+  ],
+  "address": {
+    "addressLine1": "123 Main Street",
+    "city": "Los Angeles",
+    "postalCode": "90001",
+    "countryCode": "US",
+    "stateCode": "CA",
+    "personName": "John Doe",
+    "companyName": "Test Company",
+    "phoneNumber": "555-123-4567",
+    "email": "john.doe@example.com"
+  },
+  "reference": "REF123",
+  "options": {
+    "close_date": "2023-07-01"
+  }
+}"""{% endif %}
+
 ErrorResponse = {% if is_xml_api %}"""<?xml version="1.0"?>
 <error-response>
     <e>

@@ -638,189 +638,122 @@ TEST_PICKUP_TEMPLATE = Template('''"""{{name}} carrier pickup tests."""
 
 import unittest
 import karrio
+import karrio.lib as lib
 import karrio.core.models as models
 from unittest.mock import patch
-from .fixture import Fixture
+from .fixture import gateway
 
 
 class TestPickup(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.fixture = Fixture()
-        self.address = models.Address(
-            address_line1="123 Test Street",
-            city="Test City",
-            postal_code="12345",
-            country_code="US",
-            state_code="CA",
-            person_name="Test Person",
-            company_name="Test Company",
-            phone_number="1234567890",
-            email="test@example.com"
-        )
+        self.PickupRequest = models.PickupRequest(**PickupPayload)
 
     def test_create_pickup_request(self):
-        with patch('karrio.mappers.{{id}}.proxy.lib.request') as mock:
-            mock.return_value = "{}"
-
-            request = models.PickupRequest(
-                address=self.address,
-                pickup_date="2024-01-01",
-                ready_time="09:00",
-                closing_time="17:00"
-            )
-            pickup = karrio.Pickup.schedule(request).from_(self.fixture.gateway)
-
-            mock.assert_called_once()
-            self.assertIsNotNone(pickup)
+        request = gateway.mapper.create_pickup_request(self.PickupRequest)
+        self.assertEqual(lib.to_dict(request.serialize()), PickupRequest)
 
     def test_schedule_pickup(self):
-        with patch('karrio.mappers.{{id}}.proxy.lib.request') as mock:
-            mock.return_value = "{}"
-
-            request = models.PickupRequest(
-                address=self.address,
-                pickup_date="2024-01-01",
-                ready_time="09:00",
-                closing_time="17:00"
-            )
-            karrio.Pickup.schedule(request).from_(self.fixture.gateway)
-
+        with patch("karrio.mappers.{{id}}.proxy.lib.request") as mock:
+            mock.return_value = {% if is_xml_api %}"<r></r>"{% else %}"{}"{% endif %}
+            karrio.Pickup.schedule(self.PickupRequest).from_(gateway)
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{self.fixture.gateway.settings.server_url}/pickups"
+                f"{gateway.settings.server_url}/pickups"
+            )
+
+    def test_update_pickup(self):
+        with patch("karrio.mappers.{{id}}.proxy.lib.request") as mock:
+            mock.return_value = {% if is_xml_api %}"<r></r>"{% else %}"{}"{% endif %}
+            karrio.Pickup.update(self.PickupRequest).from_(gateway)
+            self.assertEqual(
+                mock.call_args[1]["url"],
+                f"{gateway.settings.server_url}/pickups/123/update"
+            )
+
+    def test_cancel_pickup(self):
+        with patch("karrio.mappers.{{id}}.proxy.lib.request") as mock:
+            mock.return_value = {% if is_xml_api %}"<r></r>"{% else %}"{}"{% endif %}
+            karrio.Pickup.cancel(self.PickupRequest).from_(gateway)
+            self.assertEqual(
+                mock.call_args[1]["url"],
+                f"{gateway.settings.server_url}/pickups/123/cancel"
             )
 
     def test_parse_pickup_response(self):
-        with patch('karrio.mappers.{{id}}.proxy.lib.request') as mock:
+        with patch("karrio.mappers.{{id}}.proxy.lib.request") as mock:
             mock.return_value = PickupResponse
-
-            request = models.PickupRequest(
-                address=self.address,
-                pickup_date="2024-01-01",
-                ready_time="09:00",
-                closing_time="17:00"
+            parsed_response = (
+                karrio.Pickup.schedule(self.PickupRequest)
+                .from_(gateway)
+                .parse()
             )
-            response = karrio.Pickup.schedule(request).from_(self.fixture.gateway).parse()
-
-            mock.assert_called_once()
-            self.assertIsNotNone(response[0])
-            self.assertEqual(len(response[1]), 0)
-            self.assertEqual(response[0].confirmation_number, "PICKUP123")
-
-    def test_create_pickup_update_request(self):
-        with patch('karrio.mappers.{{id}}.proxy.lib.request') as mock:
-            mock.return_value = "{}"
-
-            request = models.PickupUpdateRequest(
-                confirmation_number="PICKUP123",
-                address=self.address,
-                pickup_date="2024-01-02",
-                ready_time="10:00",
-                closing_time="18:00"
-            )
-            update = karrio.Pickup.update(request).from_(self.fixture.gateway)
-
-            mock.assert_called_once()
-            self.assertIsNotNone(update)
-
-    def test_update_pickup(self):
-        with patch('karrio.mappers.{{id}}.proxy.lib.request') as mock:
-            mock.return_value = "{}"
-
-            request = models.PickupUpdateRequest(
-                confirmation_number="PICKUP123",
-                address=self.address,
-                pickup_date="2024-01-02",
-                ready_time="10:00",
-                closing_time="18:00"
-            )
-            karrio.Pickup.update(request).from_(self.fixture.gateway)
-
-            self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{self.fixture.gateway.settings.server_url}/pickups/PICKUP123"
-            )
-
-    def test_parse_pickup_update_response(self):
-        with patch('karrio.mappers.{{id}}.proxy.lib.request') as mock:
-            mock.return_value = PickupUpdateResponse
-
-            request = models.PickupUpdateRequest(
-                confirmation_number="PICKUP123",
-                address=self.address,
-                pickup_date="2024-01-02",
-                ready_time="10:00",
-                closing_time="18:00"
-            )
-            response = karrio.Pickup.update(request).from_(self.fixture.gateway).parse()
-
-            mock.assert_called_once()
-            self.assertIsNotNone(response[0])
-            self.assertEqual(len(response[1]), 0)
-            self.assertEqual(response[0].confirmation_number, "PICKUP123")
-
-    def test_create_pickup_cancel_request(self):
-        with patch('karrio.mappers.{{id}}.proxy.lib.request') as mock:
-            mock.return_value = "{}"
-
-            request = models.PickupCancelRequest(
-                confirmation_number="PICKUP123"
-            )
-            cancel = karrio.Pickup.cancel(request).from_(self.fixture.gateway)
-
-            mock.assert_called_once()
-            self.assertIsNotNone(cancel)
-
-    def test_cancel_pickup(self):
-        with patch('karrio.mappers.{{id}}.proxy.lib.request') as mock:
-            mock.return_value = "{}"
-
-            request = models.PickupCancelRequest(
-                confirmation_number="PICKUP123"
-            )
-            karrio.Pickup.cancel(request).from_(self.fixture.gateway)
-
-            self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{self.fixture.gateway.settings.server_url}/pickups/PICKUP123/cancel"
-            )
-
-    def test_parse_pickup_cancel_response(self):
-        with patch('karrio.mappers.{{id}}.proxy.lib.request') as mock:
-            mock.return_value = PickupCancelResponse
-
-            request = models.PickupCancelRequest(
-                confirmation_number="PICKUP123"
-            )
-            response = karrio.Pickup.cancel(request).from_(self.fixture.gateway).parse()
-
-            mock.assert_called_once()
-            self.assertIsNotNone(response[0])
-            self.assertEqual(len(response[1]), 0)
-            self.assertTrue(response[0].success)
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedPickupResponse)
 
     def test_parse_error_response(self):
-        with patch('karrio.mappers.{{id}}.proxy.lib.request') as mock:
+        with patch("karrio.mappers.{{id}}.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
-
-            request = models.PickupRequest(
-                address=self.address,
-                pickup_date="2024-01-01",
-                ready_time="09:00",
-                closing_time="17:00"
+            parsed_response = (
+                karrio.Pickup.schedule(self.PickupRequest)
+                .from_(gateway)
+                .parse()
             )
-            response = karrio.Pickup.schedule(request).from_(self.fixture.gateway).parse()
-
-            mock.assert_called_once()
-            self.assertIsNone(response[0])
-            self.assertEqual(len(response[1]), 1)
-            self.assertEqual(response[1][0].code, "pickup_error")
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
 if __name__ == "__main__":
     unittest.main()
 
+
+PickupPayload = {
+    "address": {
+        "address_line1": "123 Test Street",
+        "city": "Test City",
+        "postal_code": "12345",
+        "country_code": "US",
+        "state_code": "CA",
+        "person_name": "Test Person",
+        "company_name": "Test Company",
+        "phone_number": "1234567890",
+        "email": "test@example.com"
+    },
+    "pickup_date": "2024-01-01",
+    "ready_time": "09:00",
+    "closing_time": "17:00",
+    "confirmation_number": "123"
+}
+
+PickupRequest = {% if is_xml_api %}{
+    "address": {
+        "address_line1": "123 Test Street",
+        "city": "Test City",
+        "postal_code": "12345",
+        "country_code": "US",
+        "state_code": "CA",
+        "person_name": "Test Person",
+        "company_name": "Test Company",
+        "phone_number": "1234567890",
+        "email": "test@example.com"
+    },
+    "pickup_date": "2024-01-01",
+    "ready_time": "09:00",
+    "closing_time": "17:00"
+}{% else %}{
+    "address": {
+        "addressLine1": "123 Test Street",
+        "city": "Test City",
+        "postalCode": "12345",
+        "countryCode": "US",
+        "stateCode": "CA",
+        "personName": "Test Person",
+        "companyName": "Test Company",
+        "phoneNumber": "1234567890",
+        "email": "test@example.com"
+    },
+    "pickupDate": "2024-01-01",
+    "readyTime": "09:00",
+    "closingTime": "17:00"
+}{% endif %}
 
 PickupResponse = {% if is_xml_api %}"""<?xml version="1.0"?>
 <pickup-response>
@@ -863,11 +796,11 @@ PickupCancelResponse = {% if is_xml_api %}"""<?xml version="1.0"?>
 
 ErrorResponse = {% if is_xml_api %}"""<?xml version="1.0"?>
 <error-response>
-    <error>
+    <e>
         <code>pickup_error</code>
         <message>Unable to schedule pickup</message>
         <details>Invalid pickup date provided</details>
-    </error>
+    </e>
 </error-response>"""{% else %}"""{
   "error": {
     "code": "pickup_error",
@@ -875,5 +808,32 @@ ErrorResponse = {% if is_xml_api %}"""<?xml version="1.0"?>
     "details": "Invalid pickup date provided"
   }
 }"""{% endif %}
+
+ParsedPickupResponse = [
+    {
+        "carrier_id": "{{id}}",
+        "carrier_name": "{{id}}",
+        "confirmation_number": "PICKUP123",
+        "pickup_date": "2024-01-01",
+        "ready_time": "09:00",
+        "closing_time": "17:00",
+    },
+    []
+]
+
+ParsedErrorResponse = [
+    None,
+    [
+        {
+            "carrier_id": "{{id}}",
+            "carrier_name": "{{id}}",
+            "code": "pickup_error",
+            "message": "Unable to schedule pickup",
+            "details": {
+                "details": "Invalid pickup date provided"
+            }
+        }
+    ]
+]
 '''
 )

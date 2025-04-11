@@ -620,51 +620,16 @@ logger = logging.getLogger(__name__)
 class Test{{compact_name}}Shipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.ShipmentRequest = models.ShipmentRequest(
-            shipper=models.Address(
-                address_line1="123 Test Street",
-                city="Test City",
-                postal_code="12345",
-                country_code="US",
-                state_code="CA",
-                person_name="Test Person",
-                company_name="Test Company",
-                phone_number="1234567890",
-                email="test@example.com"
-            ),
-            recipient=models.Address(
-                address_line1="123 Test Street",
-                city="Test City",
-                postal_code="12345",
-                country_code="US",
-                state_code="CA",
-                person_name="Test Person",
-                company_name="Test Company",
-                phone_number="1234567890",
-                email="test@example.com"
-            ),
-            parcels=[models.Parcel(
-                weight=10.0,
-                width=10.0,
-                height=10.0,
-                length=10.0,
-                weight_unit="KG",
-                dimension_unit="CM",
-                packaging_type="BOX"
-            )],
-            service="express"
-        )
-        self.ShipmentCancelRequest = models.ShipmentCancelRequest(
-            shipment_identifier="SHIP123456"
-        )
+        self.ShipmentRequest = models.ShipmentRequest(**ShipmentPayload)
+        self.ShipmentCancelRequest = models.ShipmentCancelRequest(**ShipmentCancelPayload)
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
-        self.assertEqual(request.serialize(), ShipmentRequest)
+        self.assertEqual(lib.to_dict(request.serialize()), ShipmentRequest)
 
     def test_create_shipment(self):
         with patch("karrio.mappers.{{id}}.proxy.lib.request") as mock:
-            mock.return_value = "{}"
+            mock.return_value = {% if is_xml_api %}"<r></r>"{% else %}"{}"{% endif %}
             karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
             self.assertEqual(
                 mock.call_args[1]["url"],
@@ -679,17 +644,15 @@ class Test{{compact_name}}Shipment(unittest.TestCase):
                 .from_(gateway)
                 .parse()
             )
-            self.assertIsNotNone(parsed_response[0])
-            self.assertEqual(len(parsed_response[1]), 0)
-            self.assertEqual(parsed_response[0].tracking_number, "1Z999999999999999")
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_create_shipment_cancel_request(self):
         request = gateway.mapper.create_shipment_cancel_request(self.ShipmentCancelRequest)
-        self.assertEqual(request.serialize(), ShipmentCancelRequest)
+        self.assertEqual(lib.to_dict(request.serialize()), ShipmentCancelRequest)
 
     def test_cancel_shipment(self):
         with patch("karrio.mappers.{{id}}.proxy.lib.request") as mock:
-            mock.return_value = "{}"
+            mock.return_value = {% if is_xml_api %}"<r></r>"{% else %}"{}"{% endif %}
             karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
             self.assertEqual(
                 mock.call_args[1]["url"],
@@ -704,9 +667,7 @@ class Test{{compact_name}}Shipment(unittest.TestCase):
                 .from_(gateway)
                 .parse()
             )
-            self.assertIsNotNone(parsed_response[0])
-            self.assertEqual(len(parsed_response[1]), 0)
-            self.assertTrue(parsed_response[0].success)
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentCancelResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.{{id}}.proxy.lib.request") as mock:
@@ -716,36 +677,149 @@ class Test{{compact_name}}Shipment(unittest.TestCase):
                 .from_(gateway)
                 .parse()
             )
-            self.assertIsNone(parsed_response[0])
-            self.assertEqual(len(parsed_response[1]), 1)
-            self.assertEqual(parsed_response[1][0].code, "shipment_error")
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
 if __name__ == "__main__":
     unittest.main()
 
 
+ShipmentPayload = {
+    "shipper": {
+        "address_line1": "123 Test Street",
+        "city": "Test City",
+        "postal_code": "12345",
+        "country_code": "US",
+        "state_code": "CA",
+        "person_name": "Test Person",
+        "company_name": "Test Company",
+        "phone_number": "1234567890",
+        "email": "test@example.com"
+    },
+    "recipient": {
+        "address_line1": "123 Test Street",
+        "city": "Test City",
+        "postal_code": "12345",
+        "country_code": "US",
+        "state_code": "CA",
+        "person_name": "Test Person",
+        "company_name": "Test Company",
+        "phone_number": "1234567890",
+        "email": "test@example.com"
+    },
+    "parcels": [{
+        "weight": 10.0,
+        "width": 10.0,
+        "height": 10.0,
+        "length": 10.0,
+        "weight_unit": "KG",
+        "dimension_unit": "CM",
+        "packaging_type": "BOX"
+    }],
+    "service": "express"
+}
+
+ShipmentCancelPayload = {
+    "shipment_identifier": "SHIP123456"
+}
+
+ShipmentRequest = {% if is_xml_api %}{
+    "shipper": {
+        "address_line1": "123 Test Street",
+        "city": "Test City",
+        "postal_code": "12345",
+        "country_code": "US",
+        "state_code": "CA",
+        "person_name": "Test Person",
+        "company_name": "Test Company",
+        "phone_number": "1234567890",
+        "email": "test@example.com"
+    },
+    "recipient": {
+        "address_line1": "123 Test Street",
+        "city": "Test City",
+        "postal_code": "12345",
+        "country_code": "US",
+        "state_code": "CA",
+        "person_name": "Test Person",
+        "company_name": "Test Company",
+        "phone_number": "1234567890",
+        "email": "test@example.com"
+    },
+    "packages": [
+        {
+            "weight": 10.0,
+            "weight_unit": "KG",
+            "length": 10.0,
+            "width": 10.0,
+            "height": 10.0,
+            "dimension_unit": "CM",
+            "packaging_type": "BOX"
+        }
+    ],
+    "service_code": "express",
+    "label_format": "PDF"
+}{% else %}{
+    "shipper": {
+        "addressLine1": "123 Test Street",
+        "city": "Test City",
+        "postalCode": "12345",
+        "countryCode": "US",
+        "stateCode": "CA",
+        "personName": "Test Person",
+        "companyName": "Test Company",
+        "phoneNumber": "1234567890",
+        "email": "test@example.com"
+    },
+    "recipient": {
+        "addressLine1": "123 Test Street",
+        "city": "Test City",
+        "postalCode": "12345",
+        "countryCode": "US",
+        "stateCode": "CA",
+        "personName": "Test Person",
+        "companyName": "Test Company",
+        "phoneNumber": "1234567890",
+        "email": "test@example.com"
+    },
+    "packages": [
+        {
+            "weight": 10.0,
+            "weightUnit": "KG",
+            "length": 10.0,
+            "width": 10.0,
+            "height": 10.0,
+            "dimensionUnit": "CM",
+            "packagingType": "BOX"
+        }
+    ],
+    "serviceCode": "express",
+    "labelFormat": "PDF"
+}{% endif %}
+
+ShipmentCancelRequest = {% if is_xml_api %}{
+    "shipment_identifier": "SHIP123456"
+}{% else %}{
+    "shipmentIdentifier": "SHIP123456"
+}{% endif %}
+
 ShipmentResponse = {% if is_xml_api %}"""<?xml version="1.0"?>
 <shipment-response>
     <tracking-number>1Z999999999999999</tracking-number>
-    <shipment-identifier>SHIP123456</shipment-identifier>
-    <label-type>PDF</label-type>
-    <label>JVBERi0xLjcKCjEgMCBvYmogICUgZW50cnkgcG9pbnQKPDwKICAvVHlwZSAvQ2F0YWxvZwogIC9QYWdlcyAyIDAgUgo+PgplbmRvYmoKCjIgMCBvYmoKPDwKICAvVHlwZSAvUGFnZXMKICAvTWVkaWFCb3ggWyAwIDAgMjAwIDIwMCBdCiAgL0NvdW50IDEKICAvS2lkcyBbIDMgMCBSIF0KPj4KZW5kb2JqCgozIDAgb2JqCjw8CiAgL1R5cGUgL1BhZ2UKICAvUGFyZW50IDIgMCBSCiAgL1Jlc291cmNlcyA8PAogICAgL0ZvbnQgPDwKICAgICAgL0YxIDQgMCBSIAogICAgPj4KICA+PgogIC9Db250ZW50cyA1IDAgUgo+PgplbmRvYmoKCjQgMCBvYmoKPDwKICAvVHlwZSAvRm9udAogIC9TdWJ0eXBlIC9UeXBlMQogIC9CYXNlRm9udCAvVGltZXMtUm9tYW4KPj4KZW5kb2JqCgo1IDAgb2JqICAlIHBhZ2UgY29udGVudAo8PAogIC9MZW5ndGggNDQKPj4Kc3RyZWFtCkJUCjcwIDUwIFRECi9GMSAxMiBUZgooSGVsbG8sIHdvcmxkISkgVGoKRVQKZW5kc3RyZWFtCmVuZG9iagoKeHJlZgowIDYKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDEwIDAwMDAwIG4gCjAwMDAwMDAwNzkgMDAwMDAgbiAKMDAwMDAwMDE3MyAwMDAwMCBuIAowMDAwMDAwMzAxIDAwMDAwIG4gCjAwMDAwMDAzODAgMDAwMDAgbiAKdHJhaWxlcgo8PAogIC9TaXplIDYKICAvUm9vdCAxIDAgUgo+PgpzdGFydHhyZWYKNDkyCiUlRU9G</label>
-    <documents>
-        <invoice>JVBERi0xLjcKCjEgMCBvYmogICUgZW50cnkgcG9pbnQKPDwKICAvVHlwZSAvQ2F0YWxvZwogIC9QYWdlcyAyIDAgUgo+PgplbmRvYmoKCjIgMCBvYmoKPDwKICAvVHlwZSAvUGFnZXMKICAvTWVkaWFCb3ggWyAwIDAgMjAwIDIwMCBdCiAgL0NvdW50IDEKICAvS2lkcyBbIDMgMCBSIF0KPj4KZW5kb2JqCgozIDAgb2JqCjw8CiAgL1R5cGUgL1BhZ2UKICAvUGFyZW50IDIgMCBSCiAgL1Jlc291cmNlcyA8PAogICAgL0ZvbnQgPDwKICAgICAgL0YxIDQgMCBSIAogICAgPj4KICA+PgogIC9Db250ZW50cyA1IDAgUgo+PgplbmRvYmoKCjQgMCBvYmoKPDwKICAvVHlwZSAvRm9udAogIC9TdWJ0eXBlIC9UeXBlMQogIC9CYXNlRm9udCAvVGltZXMtUm9tYW4KPj4KZW5kb2JqCgo1IDAgb2JqICAlIHBhZ2UgY29udGVudAo8PAogIC9MZW5ndGggNDQKPj4Kc3RyZWFtCkJUCjcwIDUwIFRECi9GMSAxMiBUZgooSGVsbG8sIHdvcmxkISkgVGoKRVQKZW5kc3RyZWFtCmVuZG9iagoKeHJlZgowIDYKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDEwIDAwMDAwIG4gCjAwMDAwMDAwNzkgMDAwMDAgbiAKMDAwMDAwMDE3MyAwMDAwMCBuIAowMDAwMDAwMzAxIDAwMDAwIG4gCjAwMDAwMDAzODAgMDAwMDAgbiAKdHJhaWxlcgo8PAogIC9TaXplIDYKICAvUm9vdCAxIDAgUgo+PgpzdGFydHhyZWYKNDkyCiUlRU9G</invoice>
-    </documents>
-    <meta>
-        <service-code>express</service-code>
-    </meta>
+    <shipment-id>SHIP123456</shipment-id>
+    <label-format>PDF</label-format>
+    <label-image>base64_encoded_label_data</label-image>
+    <invoice-image>base64_encoded_invoice_data</invoice-image>
+    <service-code>express</service-code>
 </shipment-response>"""{% else %}"""{
-  "trackingNumber": "1Z999999999999999",
-  "shipmentIdentifier": "SHIP123456",
-  "labelType": "PDF",
-  "label": "JVBERi0xLjcKCjEgMCBvYmogICUgZW50cnkgcG9pbnQKPDwKICAvVHlwZSAvQ2F0YWxvZwogIC9QYWdlcyAyIDAgUgo+PgplbmRvYmoKCjIgMCBvYmoKPDwKICAvVHlwZSAvUGFnZXMKICAvTWVkaWFCb3ggWyAwIDAgMjAwIDIwMCBdCiAgL0NvdW50IDEKICAvS2lkcyBbIDMgMCBSIF0KPj4KZW5kb2JqCgozIDAgb2JqCjw8CiAgL1R5cGUgL1BhZ2UKICAvUGFyZW50IDIgMCBSCiAgL1Jlc291cmNlcyA8PAogICAgL0ZvbnQgPDwKICAgICAgL0YxIDQgMCBSIAogICAgPj4KICA+PgogIC9Db250ZW50cyA1IDAgUgo+PgplbmRvYmoKCjQgMCBvYmoKPDwKICAvVHlwZSAvRm9udAogIC9TdWJ0eXBlIC9UeXBlMQogIC9CYXNlRm9udCAvVGltZXMtUm9tYW4KPj4KZW5kb2JqCgo1IDAgb2JqICAlIHBhZ2UgY29udGVudAo8PAogIC9MZW5ndGggNDQKPj4Kc3RyZWFtCkJUCjcwIDUwIFRECi9GMSAxMiBUZgooSGVsbG8sIHdvcmxkISkgVGoKRVQKZW5kc3RyZWFtCmVuZG9iagoKeHJlZgowIDYKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDEwIDAwMDAwIG4gCjAwMDAwMDAwNzkgMDAwMDAgbiAKMDAwMDAwMDE3MyAwMDAwMCBuIAowMDAwMDAwMzAxIDAwMDAwIG4gCjAwMDAwMDAzODAgMDAwMDAgbiAKdHJhaWxlcgo8PAogIC9TaXplIDYKICAvUm9vdCAxIDAgUgo+PgpzdGFydHhyZWYKNDkyCiUlRU9G",
-  "documents": {
-    "invoice": "JVBERi0xLjcKCjEgMCBvYmogICUgZW50cnkgcG9pbnQKPDwKICAvVHlwZSAvQ2F0YWxvZwogIC9QYWdlcyAyIDAgUgo+PgplbmRvYmoKCjIgMCBvYmoKPDwKICAvVHlwZSAvUGFnZXMKICAvTWVkaWFCb3ggWyAwIDAgMjAwIDIwMCBdCiAgL0NvdW50IDEKICAvS2lkcyBbIDMgMCBSIF0KPj4KZW5kb2JqCgozIDAgb2JqCjw8CiAgL1R5cGUgL1BhZ2UKICAvUGFyZW50IDIgMCBSCiAgL1Jlc291cmNlcyA8PAogICAgL0ZvbnQgPDwKICAgICAgL0YxIDQgMCBSIAogICAgPj4KICA+PgogIC9Db250ZW50cyA1IDAgUgo+PgplbmRvYmoKCjQgMCBvYmoKPDwKICAvVHlwZSAvRm9udAogIC9TdWJ0eXBlIC9UeXBlMQogIC9CYXNlRm9udCAvVGltZXMtUm9tYW4KPj4KZW5kb2JqCgo1IDAgb2JqICAlIHBhZ2UgY29udGVudAo8PAogIC9MZW5ndGggNDQKPj4Kc3RyZWFtCkJUCjcwIDUwIFRECi9GMSAxMiBUZgooSGVsbG8sIHdvcmxkISkgVGoKRVQKZW5kc3RyZWFtCmVuZG9iagoKeHJlZgowIDYKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDEwIDAwMDAwIG4gCjAwMDAwMDAwNzkgMDAwMDAgbiAKMDAwMDAwMDE3MyAwMDAwMCBuIAowMDAwMDAwMzAxIDAwMDAwIG4gCjAwMDAwMDAzODAgMDAwMDAgbiAKdHJhaWxlcgo8PAogIC9TaXplIDYKICAvUm9vdCAxIDAgUgo+PgpzdGFydHhyZWYKNDkyCiUlRU9G</invoice>
-  },
-  "meta": {
+  "shipment": {
+    "trackingNumber": "1Z999999999999999",
+    "shipmentId": "SHIP123456",
+    "labelData": {
+      "format": "PDF",
+      "image": "base64_encoded_label_data"
+    },
+    "invoiceImage": "base64_encoded_invoice_data",
     "serviceCode": "express"
   }
 }"""{% endif %}
@@ -764,15 +838,55 @@ ErrorResponse = {% if is_xml_api %}"""<?xml version="1.0"?>
     <e>
         <code>shipment_error</code>
         <message>Unable to create shipment</message>
-        <details>Invalid service provided</details>
+        <details>Invalid shipment information provided</details>
     </e>
 </error-response>"""{% else %}"""{
   "error": {
     "code": "shipment_error",
     "message": "Unable to create shipment",
-    "details": "Invalid service provided"
+    "details": "Invalid shipment information provided"
   }
-}"""{% endif %}"""
-</test_shipment_template>
-'''
-)
+}"""{% endif %}
+
+ParsedShipmentResponse = [
+    {
+        "carrier_id": "{{id}}",
+        "carrier_name": "{{id}}",
+        "tracking_number": "1Z999999999999999",
+        "shipment_identifier": "SHIP123456",
+        "label_type": "PDF",
+        "docs": {
+            "label": "base64_encoded_label_data",
+            "invoice": "base64_encoded_invoice_data"
+        },
+        "meta": {
+            "service_code": "express"
+        }
+    },
+    []
+]
+
+ParsedShipmentCancelResponse = [
+    {
+        "carrier_id": "{{id}}",
+        "carrier_name": "{{id}}",
+        "success": True,
+        "operation": "Cancel Shipment"
+    },
+    []
+]
+
+ParsedErrorResponse = [
+    {},
+    [
+        {
+            "carrier_id": "{{id}}",
+            "carrier_name": "{{id}}",
+            "code": "shipment_error",
+            "message": "Unable to create shipment",
+            "details": {
+                "details": "Invalid shipment information provided"
+            }
+        }
+    ]
+]''')
