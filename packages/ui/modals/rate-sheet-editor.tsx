@@ -81,6 +81,7 @@ export const RateSheetModalEditor = ({
     const notifier = useNotifier();
     const { loading } = useLoader();
     const editor = React.useRef<ReactCodeMirrorRef>(null);
+    const [editingServiceIndex, setEditingServiceIndex] = React.useState<number | null>(null);
     const {
       references: { service_levels },
     } = useAPIMetadata();
@@ -157,6 +158,14 @@ export const RateSheetModalEditor = ({
         notifier.notify({ type: NotificationType.error, message });
       }
       loader.setLoading(false);
+    };
+
+    const handleServiceRowClick = (idx: number) => {
+      setEditingServiceIndex(idx);
+    };
+    
+    const closeServiceEdit = () => {
+      setEditingServiceIndex(null);
     };
 
     return (
@@ -376,7 +385,7 @@ export const RateSheetModalEditor = ({
                       }}
                     >
                       <div className="table-container">
-                        <table className="table is-bordered is-striped is-narrow">
+                        <table className="table is-bordered is-striped is-narrow is-hoverable">
                           <tbody>
                             <tr>
                               <td className="is-size-7">Service name</td>
@@ -392,116 +401,503 @@ export const RateSheetModalEditor = ({
                             </tr>
 
                             {(sheet.services || []).map((service, idx) => (
-                              <tr key={`service-${idx}-${new Date()}`}>
+                              <tr 
+                                key={`service-${idx}-${new Date()}`}
+                                onClick={() => handleServiceRowClick(idx)}
+                                style={{ cursor: 'pointer' }}
+                                className={idx === editingServiceIndex ? "is-selected" : ""}
+                              >
                                 <td className="is-size-7 p-0">
-                                  <InputField
-                                    name="service_name"
-                                    onChange={updateSercice(idx)}
-                                    value={service.service_name || ""}
-                                    className="is-small"
-                                  />
-                                </td>
-                                <td className="is-size-7 p-0">
-                                  <InputField
-                                    name="service_code"
-                                    onChange={updateSercice(idx)}
-                                    value={service.service_code || ""}
-                                    className="is-small"
-                                  />
-                                </td>
-                                <td className="is-size-7 p-0 is-vcentered">
-                                  <CheckBoxField
-                                    name="domicile"
-                                    onChange={updateSercice(idx)}
-                                    defaultChecked={
-                                      service?.domicile as boolean
-                                    }
-                                    fieldClass="has-text-centered"
-                                  />
-                                </td>
-                                <td className="is-size-7 p-0 is-vcentered">
-                                  <CheckBoxField
-                                    name="international"
-                                    onChange={updateSercice(idx)}
-                                    defaultChecked={
-                                      service?.international as boolean
-                                    }
-                                    fieldClass="has-text-centered"
-                                  />
+                                  <div className="input is-small">
+                                    {service.service_name || ""}
+                                  </div>
                                 </td>
                                 <td className="is-size-7 p-0">
-                                  <InputField
-                                    name="transit_days"
-                                    onChange={updateSercice(idx)}
-                                    value={service.transit_days || ""}
-                                    type="number"
-                                    step={1}
-                                    min={0}
-                                    className="is-small"
-                                  />
+                                  <div className="input is-small">
+                                    {service.service_code || ""}
+                                  </div>
+                                </td>
+                                <td className="is-size-7 p-0 is-vcentered has-text-centered">
+                                  {service?.domicile ? "✓" : ""}
+                                </td>
+                                <td className="is-size-7 p-0 is-vcentered has-text-centered">
+                                  {service?.international ? "✓" : ""}
                                 </td>
                                 <td className="is-size-7 p-0">
-                                  <InputField
-                                    name="transit_time"
-                                    onChange={updateSercice(idx)}
-                                    value={service.transit_time || ""}
-                                    type="number"
-                                    step={0.1}
-                                    className="is-small"
-                                  />
+                                  <div className="input is-small">
+                                    {service.transit_days || ""}
+                                  </div>
                                 </td>
                                 <td className="is-size-7 p-0">
-                                  <InputField
-                                    name="max_weight"
-                                    onChange={updateSercice(idx)}
-                                    value={service.max_weight || ""}
-                                    type="number"
-                                    step={0.1}
-                                    className="is-small"
-                                  />
+                                  <div className="input is-small">
+                                    {service.transit_time || ""}
+                                  </div>
                                 </td>
                                 <td className="is-size-7 p-0">
-                                  <InputField
-                                    name="max_length"
-                                    onChange={updateSercice(idx)}
-                                    value={service.max_length || ""}
-                                    type="number"
-                                    step={0.1}
-                                    className="is-small"
-                                  />
+                                  <div className="input is-small">
+                                    {service.max_weight || ""}
+                                  </div>
                                 </td>
                                 <td className="is-size-7 p-0">
-                                  <InputField
-                                    name="max_width"
-                                    onChange={updateSercice(idx)}
-                                    value={service.max_width || ""}
-                                    type="number"
-                                    step={0.1}
-                                    className="is-small"
-                                  />
+                                  <div className="input is-small">
+                                    {service.max_length || ""}
+                                  </div>
                                 </td>
                                 <td className="is-size-7 p-0">
-                                  <InputField
-                                    name="max_length"
-                                    onChange={updateSercice(idx)}
-                                    value={service.max_length || ""}
-                                    type="number"
-                                    step={0.1}
-                                    className="is-small"
-                                  />
+                                  <div className="input is-small">
+                                    {service.max_width || ""}
+                                  </div>
+                                </td>
+                                <td className="is-size-7 p-0">
+                                  <div className="input is-small">
+                                    {service.max_height || ""}
+                                  </div>
                                 </td>
                               </tr>
                             ))}
+                            {(sheet.services || []).length > 0 && (
+                              <tr>
+                                <td colSpan={10} className="has-text-centered">
+                                  <button
+                                    type="button"
+                                    className="button is-small is-primary is-light"
+                                    onClick={() => {
+                                      const newServices = [...(sheet.services || [])];
+                                      const lastService = newServices[newServices.length - 1] || (DEFAULT_STATE.services?.[0] || {
+                                        currency: "USD",
+                                        service_code: "standard_service",
+                                        service_name: "Standard Service",
+                                        transit_days: 1,
+                                        weight_unit: "KG",
+                                        dimension_unit: "CM",
+                                        zones: [{ rate: 10.0 }],
+                                      });
+                                      newServices.push({
+                                        ...lastService,
+                                        service_name: `Service ${newServices.length + 1}`,
+                                        service_code: `service_${newServices.length + 1}`,
+                                        zones: lastService.zones.map(z => ({ ...z })),
+                                      });
+                                      dispatch({ name: "services", value: newServices });
+                                      editor.current!.view?.dispatch({
+                                        changes: {
+                                          from: 0,
+                                          to: editor.current!.view!.state.doc.length,
+                                          insert: JSON.stringify(newServices, null, 2),
+                                        },
+                                      });
+                                    }}
+                                  >
+                                    Add Service
+                                  </button>
+                                </td>
+                              </tr>
+                            )}
                           </tbody>
                         </table>
                       </div>
+                      
+                      {/* Service edit modal */}
+                      {editingServiceIndex !== null && (
+                        <div className="modal is-active">
+                          <div className="modal-background" onClick={closeServiceEdit}></div>
+                          <div className="modal-card" style={{ maxWidth: "800px", width: "100%" }}>
+                            <header className="modal-card-head">
+                              <p className="modal-card-title">Edit Service {sheet.services?.[editingServiceIndex]?.service_name}</p>
+                              <button 
+                                className="delete" 
+                                aria-label="close" 
+                                onClick={closeServiceEdit}
+                              ></button>
+                            </header>
+                            <section className="modal-card-body">
+                              <div className="table-container">
+                                <table className="table is-bordered is-narrow">
+                                  <tbody>
+                                    <tr>
+                                      <td className="is-size-7" width="200px">Service name</td>
+                                      <td className="p-0">
+                                        <InputField
+                                          name="service_name"
+                                          onChange={updateSercice(editingServiceIndex)}
+                                          value={sheet.services?.[editingServiceIndex]?.service_name || ""}
+                                          className="is-small"
+                                          placeholder="e.g. Standard Service"
+                                        />
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="is-size-7">Service code</td>
+                                      <td className="p-0">
+                                        <InputField
+                                          name="service_code"
+                                          onChange={updateSercice(editingServiceIndex)}
+                                          value={sheet.services?.[editingServiceIndex]?.service_code || ""}
+                                          className="is-small"
+                                          placeholder="e.g. standard_service"
+                                        />
+                                        <p className="help is-size-7">friendly-tag, e.g. standard-service</p>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="is-size-7">Transit days</td>
+                                      <td className="p-0">
+                                        <InputField
+                                          name="transit_days"
+                                          onChange={updateSercice(editingServiceIndex)}
+                                          value={sheet.services?.[editingServiceIndex]?.transit_days || ""}
+                                          type="text"
+                                          inputMode="numeric"
+                                          className="is-small no-spinner"
+                                        />
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="is-size-7">Transit time</td>
+                                      <td className="p-0">
+                                        <InputField
+                                          name="transit_time"
+                                          onChange={updateSercice(editingServiceIndex)}
+                                          value={sheet.services?.[editingServiceIndex]?.transit_time || ""}
+                                          type="text"
+                                          inputMode="numeric"
+                                          className="is-small no-spinner"
+                                        />
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="is-size-7">Max weight</td>
+                                      <td className="p-0">
+                                        <InputField
+                                          name="max_weight"
+                                          onChange={updateSercice(editingServiceIndex)}
+                                          value={sheet.services?.[editingServiceIndex]?.max_weight || ""}
+                                          type="text"
+                                          inputMode="numeric"
+                                          className="is-small no-spinner"
+                                        />
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="is-size-7">Max length</td>
+                                      <td className="p-0">
+                                        <InputField
+                                          name="max_length"
+                                          onChange={updateSercice(editingServiceIndex)}
+                                          value={sheet.services?.[editingServiceIndex]?.max_length || ""}
+                                          type="text"
+                                          inputMode="numeric"
+                                          className="is-small no-spinner"
+                                        />
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="is-size-7">Max width</td>
+                                      <td className="p-0">
+                                        <InputField
+                                          name="max_width"
+                                          onChange={updateSercice(editingServiceIndex)}
+                                          value={sheet.services?.[editingServiceIndex]?.max_width || ""}
+                                          type="text"
+                                          inputMode="numeric"
+                                          className="is-small no-spinner"
+                                        />
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="is-size-7">Max height</td>
+                                      <td className="p-0">
+                                        <InputField
+                                          name="max_height"
+                                          onChange={updateSercice(editingServiceIndex)}
+                                          value={sheet.services?.[editingServiceIndex]?.max_height || ""}
+                                          type="text"
+                                          inputMode="numeric"
+                                          className="is-small no-spinner"
+                                        />
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="is-size-7">National</td>
+                                      <td className="p-0 is-vcentered">
+                                        <CheckBoxField
+                                          name="domicile"
+                                          onChange={updateSercice(editingServiceIndex)}
+                                          defaultChecked={sheet.services?.[editingServiceIndex]?.domicile as boolean}
+                                          fieldClass="has-text-centered"
+                                        />
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="is-size-7">International</td>
+                                      <td className="p-0 is-vcentered">
+                                        <CheckBoxField
+                                          name="international"
+                                          onChange={updateSercice(editingServiceIndex)}
+                                          defaultChecked={sheet.services?.[editingServiceIndex]?.international as boolean}
+                                          fieldClass="has-text-centered"
+                                        />
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </section>
+                            <footer className="modal-card-foot">
+                              <button 
+                                className="button is-success is-small" 
+                                onClick={closeServiceEdit}
+                              >
+                                Save changes
+                              </button>
+                              <button 
+                                className="button is-small" 
+                                onClick={closeServiceEdit}
+                              >
+                                Cancel
+                              </button>
+                              {editingServiceIndex > 0 && (
+                                <button
+                                  className="button is-danger is-light is-small ml-auto"
+                                  onClick={() => {
+                                    const newServices = [...(sheet.services || [])];
+                                    newServices.splice(editingServiceIndex, 1);
+                                    dispatch({ name: "services", value: newServices });
+                                    editor.current!.view?.dispatch({
+                                      changes: {
+                                        from: 0,
+                                        to: editor.current!.view!.state.doc.length,
+                                        insert: JSON.stringify(newServices, null, 2),
+                                      },
+                                    });
+                                    closeServiceEdit();
+                                  }}
+                                >
+                                  Remove Service
+                                </button>
+                              )}
+                            </footer>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div
                       className="card"
                       style={{ borderRadius: 0, overflow: "auto" }}
                     >
-                      {/* @ts-ignore */}
+                      <div className="p-4">
+                        <h3 className="title is-6 mb-4">Improved Service Editor (Comparison)</h3>
+                        <table className="table is-fullwidth">
+                          <tbody>
+                            {(sheet.services || []).map((service, idx) => (
+                              <React.Fragment key={`improved-service-${idx}`}>
+                                <tr>
+                                  <td colSpan={2} className="has-text-weight-bold">
+                                    Service {idx + 1}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td className="is-size-7" width="30%">Service name</td>
+                                  <td>
+                                    <InputField
+                                      name="service_name"
+                                      onChange={updateSercice(idx)}
+                                      value={service.service_name || ""}
+                                      className="is-small"
+                                      placeholder="e.g. Standard Service"
+                                    />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td className="is-size-7">Service code</td>
+                                  <td>
+                                    <InputField
+                                      name="service_code"
+                                      onChange={updateSercice(idx)}
+                                      value={service.service_code || ""}
+                                      className="is-small"
+                                      placeholder="e.g. standard_service"
+                                    />
+                                    <p className="help is-size-7">friendly-tag, e.g. standard-service</p>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td className="is-size-7">Transit days</td>
+                                  <td>
+                                    <InputField
+                                      name="transit_days"
+                                      onChange={updateSercice(idx)}
+                                      value={service.transit_days || ""}
+                                      type="text"
+                                      inputMode="numeric"
+                                      className="is-small no-spinner"
+                                    />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td className="is-size-7">Transit time</td>
+                                  <td>
+                                    <InputField
+                                      name="transit_time"
+                                      onChange={updateSercice(idx)}
+                                      value={service.transit_time || ""}
+                                      type="text"
+                                      inputMode="numeric"
+                                      className="is-small no-spinner"
+                                    />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td className="is-size-7">Max weight</td>
+                                  <td>
+                                    <InputField
+                                      name="max_weight"
+                                      onChange={updateSercice(idx)}
+                                      value={service.max_weight || ""}
+                                      type="text"
+                                      inputMode="numeric"
+                                      className="is-small no-spinner"
+                                    />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td className="is-size-7">Max length</td>
+                                  <td>
+                                    <InputField
+                                      name="max_length"
+                                      onChange={updateSercice(idx)}
+                                      value={service.max_length || ""}
+                                      type="text"
+                                      inputMode="numeric"
+                                      className="is-small no-spinner"
+                                    />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td className="is-size-7">Max width</td>
+                                  <td>
+                                    <InputField
+                                      name="max_width"
+                                      onChange={updateSercice(idx)}
+                                      value={service.max_width || ""}
+                                      type="text"
+                                      inputMode="numeric"
+                                      className="is-small no-spinner"
+                                    />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td className="is-size-7">Max height</td>
+                                  <td>
+                                    <InputField
+                                      name="max_height"
+                                      onChange={updateSercice(idx)}
+                                      value={service.max_height || ""}
+                                      type="text"
+                                      inputMode="numeric"
+                                      className="is-small no-spinner"
+                                    />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td className="is-size-7">Domestic/International</td>
+                                  <td>
+                                    <div className="field is-grouped">
+                                      <div className="control mr-4">
+                                        <label className="checkbox">
+                                          <CheckBoxField
+                                            name="domicile"
+                                            onChange={updateSercice(idx)}
+                                            defaultChecked={service?.domicile as boolean}
+                                          />
+                                          <span className="ml-2 is-size-7">National</span>
+                                        </label>
+                                      </div>
+                                      <div className="control">
+                                        <label className="checkbox">
+                                          <CheckBoxField
+                                            name="international"
+                                            onChange={updateSercice(idx)}
+                                            defaultChecked={service?.international as boolean}
+                                          />
+                                          <span className="ml-2 is-size-7">International</span>
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </td>
+                                </tr>
+                                {idx > 0 && (
+                                  <tr>
+                                    <td></td>
+                                    <td className="has-text-right">
+                                      <button
+                                        type="button"
+                                        className="button is-small is-danger is-light"
+                                        onClick={() => {
+                                          const newServices = [...(sheet.services || [])];
+                                          newServices.splice(idx, 1);
+                                          dispatch({ name: "services", value: newServices });
+                                          editor.current!.view?.dispatch({
+                                            changes: {
+                                              from: 0,
+                                              to: editor.current!.view!.state.doc.length,
+                                              insert: JSON.stringify(newServices, null, 2),
+                                            },
+                                          });
+                                        }}
+                                      >
+                                        Remove Service
+                                      </button>
+                                    </td>
+                                  </tr>
+                                )}
+                                <tr>
+                                  <td colSpan={2} style={{ height: "30px" }}></td>
+                                </tr>
+                              </React.Fragment>
+                            ))}
+                            <tr>
+                              <td colSpan={2} className="has-text-centered">
+                                <button
+                                  type="button"
+                                  className="button is-small is-primary is-light"
+                                  onClick={() => {
+                                    const newServices = [...(sheet.services || [])];
+                                    const lastService = newServices[newServices.length - 1] || (DEFAULT_STATE.services?.[0] || {
+                                      currency: "USD",
+                                      service_code: "standard_service",
+                                      service_name: "Standard Service",
+                                      transit_days: 1,
+                                      weight_unit: "KG",
+                                      dimension_unit: "CM",
+                                      zones: [{ rate: 10.0 }],
+                                    });
+                                    newServices.push({
+                                      ...lastService,
+                                      service_name: `Service ${newServices.length + 1}`,
+                                      service_code: `service_${newServices.length + 1}`,
+                                      zones: lastService.zones.map(z => ({ ...z })),
+                                    });
+                                    dispatch({ name: "services", value: newServices });
+                                    editor.current!.view?.dispatch({
+                                      changes: {
+                                        from: 0,
+                                        to: editor.current!.view!.state.doc.length,
+                                        insert: JSON.stringify(newServices, null, 2),
+                                      },
+                                    });
+                                  }}
+                                >
+                                  Add Service
+                                </button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      
+                      {/* Original CodeMirror editor */}
                       <CodeMirror
                         ref={editor}
                         height="76vh"
