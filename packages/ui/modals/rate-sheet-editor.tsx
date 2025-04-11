@@ -707,7 +707,6 @@ export const RateSheetModalEditor = ({
                                           className="is-small"
                                           placeholder="e.g. standard_service"
                                         />
-                                        <p className="help is-size-7">friendly-tag, e.g. standard-service</p>
                                       </td>
                                     </tr>
                                     <tr>
