@@ -9,7 +9,6 @@ import {
 } from "@karrio/lib";
 import { Tabs, TabStateProvider } from "@karrio/ui/core/components/tabs";
 import { StatusCode } from "@karrio/ui/core/components/status-code-badge";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { CopiableLink } from "@karrio/ui/core/components/copiable-link";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { AppLink } from "@karrio/ui/core/components/app-link";
@@ -19,7 +18,6 @@ import hljs from "highlight.js";
 import moment from "moment";
 import React from "react";
 
-export const generateMetadata = dynamicMetadata("API Log");
 hljs.registerLanguage("json", json);
 
 export const LogComponent = ({

@@ -10,7 +10,6 @@ import {
 import { LabelTemplateEditModalProvider } from "@karrio/ui/core/modals/label-template-edit-modal";
 import { UserConnectionList } from "@karrio/ui/core/forms/user-carrier-list";
 import { useSystemConnections } from "@karrio/hooks/system-connection";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
 import { AppLink } from "@karrio/ui/core/components/app-link";
 import { useLoader } from "@karrio/ui/core/components/loader";
@@ -19,7 +18,6 @@ import { bundleContexts } from "@karrio/hooks/utils";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
-export const generateMetadata = dynamicMetadata("Carrier Connections");
 const ContextProviders = bundleContexts([
   ModalProvider,
   ConfirmModal,

@@ -5,7 +5,6 @@ import {
 } from "@karrio/types";
 import React, { FormEvent, useEffect, useReducer, useState } from "react";
 import { LoadingProvider, useLoader } from "@karrio/ui/core/components/loader";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ButtonField } from "@karrio/ui/core/components/button-field";
 import { InputField } from "@karrio/ui/core/components/input-field";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -13,8 +12,6 @@ import { useUserMutation } from "@karrio/hooks/user";
 import { isNone, isNoneOrEmpty } from "@karrio/lib";
 import { p } from "@karrio/lib";
 import Link from "next/link";
-
-export const generateMetadata = dynamicMetadata("Sign Up");
 
 const DEFAULT_VALUE: Partial<RegisterUserMutationInput> = {
   email: "",

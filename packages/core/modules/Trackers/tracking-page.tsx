@@ -1,13 +1,11 @@
 import { TrackingEvent, TrackingStatus } from "@karrio/types/rest/api";
 import { formatDayDate, isNone, KARRIO_API, url$ } from "@karrio/lib";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { Collection, KarrioClient } from "@karrio/types";
 import { loadMetadata } from "@karrio/core/context/main";
 import Link from "next/link";
 import React from "react";
 
-export const generateMetadata = dynamicMetadata("Tracking");
 
 type DayEvents = { [k: string]: TrackingEvent[] };
 

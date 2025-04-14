@@ -1,6 +1,5 @@
 "use client";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { AppLink } from "@karrio/ui/core/components/app-link";
 import { SelectField } from "@karrio/ui/core/components";
 import { useAppMode } from "@karrio/hooks/app-mode";
@@ -10,7 +9,6 @@ import { useRouter } from "next/navigation";
 import { p } from "@karrio/lib";
 import moment from "moment";
 
-export const generateMetadata = dynamicMetadata("Home");
 
 export default function Page() {
   const router = useRouter();

@@ -20,7 +20,6 @@ import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { AddressType, RateType, ShipmentType } from "@karrio/types";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import React, { ChangeEvent, useContext, useEffect } from "react";
 import { StatusBadge } from "@karrio/ui/core/components/status-badge";
@@ -36,7 +35,6 @@ import { bundleContexts } from "@karrio/hooks/utils";
 import { useSearchParams } from "next/navigation";
 import { useOrders } from "@karrio/hooks/order";
 
-export const generateMetadata = dynamicMetadata("Orders");
 const ContextProviders = bundleContexts([
   OrderPreview,
   ConfirmModal,

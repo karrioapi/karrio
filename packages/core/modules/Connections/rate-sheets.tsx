@@ -3,7 +3,6 @@ import { LabelTemplateEditModalProvider } from "@karrio/ui/core/modals/label-tem
 import { RateSheetEditModalProvider } from "@karrio/ui/core/modals/rate-sheet-edit-modal";
 import { ConnectProviderModal } from "@karrio/ui/core/modals/connect-provider-modal";
 import { RateSheetModalEditor } from "@karrio/ui/core/modals/rate-sheet-editor";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { RateSheetList } from "@karrio/ui/core/forms/rate-sheet-list";
 import { useRateSheetMutation } from "@karrio/hooks/rate-sheet";
 import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
@@ -11,7 +10,6 @@ import { AppLink } from "@karrio/ui/core/components/app-link";
 import { ModalProvider } from "@karrio/ui/core/modals/modal";
 import { bundleContexts } from "@karrio/hooks/utils";
 
-export const generateMetadata = dynamicMetadata("Rate Sheets");
 const ContextProviders = bundleContexts([
   ModalProvider,
   ConfirmModal,

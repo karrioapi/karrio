@@ -8,7 +8,6 @@ import {
   EventPreview,
   EventPreviewContext,
 } from "@karrio/core/components/event-preview";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { EventsFilter } from "@karrio/ui/core/filters/events-filter";
 import { AppLink } from "@karrio/ui/core/components/app-link";
 import { useLoader } from "@karrio/ui/core/components/loader";
@@ -17,7 +16,6 @@ import React, { useContext, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useEvents } from "@karrio/hooks/event";
 
-export const generateMetadata = dynamicMetadata("Events");
 
 export default function EventsPage() {
   const Component = (): JSX.Element => {

@@ -1,7 +1,6 @@
 "use client";
 import { WorkflowPreviewModal } from "@karrio/core/components/workflow-event-preview";
 import { formatDateTimeLong, getURLSearchParams } from "@karrio/lib";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { useWorkflowEvents } from "@karrio/hooks/workflow-events";
 import { StatusBadge } from "@karrio/ui/core/components/status-badge";
 import { WorkflowEventFilter } from "@karrio/types/graphql/ee";
@@ -13,7 +12,6 @@ import { useSearchParams } from "next/navigation";
 import { Spinner } from "@karrio/ui/core/components";
 import React from "react";
 
-export const generateMetadata = dynamicMetadata("Workflow Events");
 const ContextProviders = bundleContexts([ModalProvider]);
 
 export const WorkflowEventList = ({

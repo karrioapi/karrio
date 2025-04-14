@@ -13,7 +13,6 @@ import { AddressDescription } from "@karrio/ui/core/components/address-descripti
 import { formatRef, isEqual, isNone, isNoneOrEmpty } from "@karrio/lib";
 import { MetadataObjectTypeEnum, PaidByEnum } from "@karrio/types";
 import { AddressModalEditor } from "@karrio/ui/core/modals/form-modals";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { InputField } from "@karrio/ui/core/components/input-field";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { ModalProvider } from "@karrio/ui/core/modals/modal";
@@ -23,7 +22,6 @@ import React, { useEffect, useState } from "react";
 import { Spinner } from "@karrio/ui/core/components";
 import { AddressType } from "@karrio/types";
 
-export const generateMetadata = dynamicMetadata("Drfat Order");
 const ContextProviders = bundleContexts([
   CommodityEditModalProvider,
   ModalProvider,
