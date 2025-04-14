@@ -21,18 +21,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Switch } from "./ui/switch";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { GetSystemConnections_system_carrier_connections_edges_node, CarrierNameEnum } from "@karrio/types/graphql/admin/types";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { useState, useEffect } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { MetadataEditor } from "./ui/metadata-editor";
-import { isEqual } from "lodash";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { isEqual } from "@karrio/lib";
+import { Button } from "./ui/button";
+import { Switch } from "./ui/switch";
+import { Input } from "./ui/input";
+import * as z from "zod";
+
 
 type Connection = Omit<GetSystemConnections_system_carrier_connections_edges_node, 'credentials' | 'config' | 'metadata'> & {
   credentials?: Record<string, any>;
@@ -346,7 +347,7 @@ export function CarrierConnectionDialog({
                                 field.onChange([...values, value]);
                               } else {
                                 field.onChange(
-                                  values.filter((v) => v !== value),
+                                  values.filter((v: string) => v !== value),
                                 );
                               }
                             }}
@@ -390,13 +391,13 @@ export function CarrierConnectionDialog({
                             type="checkbox"
                             id={`option-${value}`}
                             checked={(field.value || []).includes(value)}
-                            onChange={(e) => {
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                               const values = field.value || [];
                               if (e.target.checked) {
                                 field.onChange([...values, value]);
                               } else {
                                 field.onChange(
-                                  values.filter((v) => v !== value),
+                                  values.filter((v: string) => v !== value),
                                 );
                               }
                             }}

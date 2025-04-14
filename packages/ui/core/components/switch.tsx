@@ -1,27 +1,37 @@
-import * as headlessui from "@headlessui/react";
+import { Switch as ShadcnSwitch } from "@karrio/ui/components/ui/switch";
 import React from "react";
 
-interface SwitchProps extends headlessui.SwitchProps<any> {
+interface SwitchProps {
+  checked?: boolean;
+  onChange?: (checked: boolean) => void;
+  className?: string;
   iconClassName?: string;
+  disabled?: boolean;
 }
 
 export const Switch = ({
   className,
   iconClassName,
+  checked,
+  onChange,
+  disabled,
   ...props
 }: SwitchProps): JSX.Element => {
   return (
-    <headlessui.Switch
-      className={`button ${className || "is-white is-large"}`}
-      {...props}
-    >
+    <div className={`button ${className || "is-white is-large"}`}>
+      <ShadcnSwitch
+        checked={checked}
+        onCheckedChange={onChange}
+        disabled={disabled}
+        {...props}
+      />
       <span
-        className={`icon ${props.checked ? "has-text-success" : "has-text-grey"} ${iconClassName || "is-medium"}`}
+        className={`icon ${checked ? "has-text-success" : "has-text-grey"} ${iconClassName || "is-medium"}`}
       >
         <i
-          className={`fas fa-${props.checked ? "toggle-on" : "toggle-off"} fa-lg`}
+          className={`fas fa-${checked ? "toggle-on" : "toggle-off"} fa-lg`}
         ></i>
       </span>
-    </headlessui.Switch>
+    </div>
   );
 };

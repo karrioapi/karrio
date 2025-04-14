@@ -1,4 +1,9 @@
-import { Menu, MenuItemProps } from "@headlessui/react";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem
+} from "@karrio/ui/components/ui/dropdown-menu";
 import React from "react";
 
 interface MenuProps {
@@ -8,31 +13,19 @@ interface MenuProps {
 
 const Wrapper = ({ trigger, children }: MenuProps): JSX.Element => {
   return (
-    <>
-      <Menu>
-        {({ open }) => (
-          <div
-            className={`dropdown is-right ${open ? "is-active" : ""}`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Menu.Button as="div" className={`dropdown-trigger`}>
-              {trigger}
-            </Menu.Button>
-
-            <div role="menu" className="dropdown-menu">
-              <Menu.Items className={"dropdown-content is-menu"}>
-                {children}
-              </Menu.Items>
-            </div>
-          </div>
-        )}
-      </Menu>
-    </>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        {trigger}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="dropdown-content is-menu">
+        {children}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
-const Item = ({ children, ...props }: MenuItemProps<any>): JSX.Element => (
-  <Menu.Item {...props}>{children}</Menu.Item>
+const Item = ({ children, ...props }: React.ComponentProps<typeof DropdownMenuItem>): JSX.Element => (
+  <DropdownMenuItem {...props}>{children}</DropdownMenuItem>
 );
 
 export const MenuComponent = {
