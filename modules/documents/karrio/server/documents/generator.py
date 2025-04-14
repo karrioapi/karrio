@@ -142,7 +142,7 @@ class Documents:
                 dict(
                     shipment=manager_serializers.Shipment(shipment).data,
                     line_items=get_shipment_item_contexts(shipment),
-                    carrier=get_carrier_context(carrier.settings),
+                    carrier=get_carrier_context(carrier),
                     orders=orders_serializers.Order(
                         get_shipment_order_contexts(shipment),
                         many=True,
@@ -177,7 +177,7 @@ def get_shipments_context(shipment_ids: str) -> typing.List[dict]:
         dict(
             shipment=manager_serializers.Shipment(shipment).data,
             line_items=get_shipment_item_contexts(shipment),
-            carrier=get_carrier_context(shipment.selected_rate_carrier.settings),
+            carrier=get_carrier_context(shipment.selected_rate_carrier),
             orders=orders_serializers.Order(
                 get_shipment_order_contexts(shipment), many=True
             ).data,
