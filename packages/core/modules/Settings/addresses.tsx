@@ -15,7 +15,6 @@ import {
 } from "@karrio/hooks/address";
 import { GoogleGeocodingScript } from "@karrio/ui/core/components/google-geocoding-script";
 import { ConfirmModal, useConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { AppLink } from "@karrio/ui/core/components/app-link";
 import { useLoader } from "@karrio/ui/core/components/loader";
@@ -23,7 +22,6 @@ import { useSearchParams } from "next/navigation";
 import { AddressType } from "@karrio/types";
 import React, { useEffect } from "react";
 
-export const generateMetadata = dynamicMetadata("Addresses");
 
 export default function AddressPage(pageProps: any) {
   const Component = (): JSX.Element => {

@@ -1,4 +1,3 @@
-export {
-  default,
-  generateMetadata,
-} from "@karrio/core/modules/Password/reset/request";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
+export { default } from "@karrio/core/modules/Password/reset/request";
+export const generateMetadata = dynamicMetadata("Password Reset");

@@ -12,7 +12,6 @@ import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { ShipmentMenu } from "@karrio/ui/core/components/shipment-menu";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { StatusBadge } from "@karrio/ui/core/components/status-badge";
 import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
@@ -27,7 +26,6 @@ import { useSearchParams } from "next/navigation";
 import { Spinner } from "@karrio/ui/core/components";
 import React from "react";
 
-export const generateMetadata = dynamicMetadata("Create Manifest");
 const ContextProviders = bundleContexts([ModalProvider, ConfirmModal]);
 
 export default function Page() {

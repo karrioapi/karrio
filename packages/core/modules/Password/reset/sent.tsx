@@ -1,9 +1,7 @@
 "use client";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import Link from "next/link";
 import React from "react";
 
-export const generateMetadata = dynamicMetadata("Password Reset Sent");
 
 export default function Page(pageProps: any) {
   return (

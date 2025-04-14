@@ -1,7 +1,6 @@
 "use client";
 import React, { FormEvent, useEffect, useReducer } from "react";
 import { LoadingProvider, useLoader } from "@karrio/ui/core/components/loader";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ConfirmPasswordResetMutationInput } from "@karrio/types";
 import { ButtonField } from "@karrio/ui/core/components/button-field";
 import { InputField } from "@karrio/ui/core/components/input-field";
@@ -9,7 +8,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useUserMutation } from "@karrio/hooks/user";
 import Link from "next/link";
 
-export const generateMetadata = dynamicMetadata("Password Reset");
 
 const DEFAULT_VALUE: Partial<ConfirmPasswordResetMutationInput> = {
   new_password1: "",

@@ -1,1 +1,3 @@
-export { default, generateMetadata } from "@karrio/core/modules/Orders/order";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
+export { default } from "@karrio/core/modules/Orders/order";
+export const generateMetadata = dynamicMetadata("Orders");

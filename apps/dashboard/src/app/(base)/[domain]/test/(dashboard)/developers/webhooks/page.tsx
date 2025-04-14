@@ -1,4 +1,3 @@
-export {
-  default,
-  generateMetadata,
-} from "@karrio/core/modules/Developers/webhooks";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
+export { default } from "@karrio/core/modules/Developers/webhooks";
+export const generateMetadata = dynamicMetadata("Webhooks");

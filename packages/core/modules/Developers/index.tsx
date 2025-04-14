@@ -1,5 +1,4 @@
 "use client";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { CopiableLink } from "@karrio/ui/core/components/copiable-link";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { AppLink } from "@karrio/ui/core/components/app-link";
@@ -15,7 +14,6 @@ import {
 } from "recharts";
 import moment from "moment";
 
-export const generateMetadata = dynamicMetadata("API Keys");
 
 export default function ApiPage() {
   const { references } = useAPIMetadata();

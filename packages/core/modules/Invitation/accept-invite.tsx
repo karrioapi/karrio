@@ -1,6 +1,5 @@
 "use client";
 import { useOrganizationInvitation } from "@karrio/hooks/organization";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { Spinner } from "@karrio/ui/core/components/spinner";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -8,7 +7,6 @@ import React, { useEffect } from "react";
 import { isNone } from "@karrio/lib";
 import Link from "next/link";
 
-export const generateMetadata = dynamicMetadata("Accept Invitation");
 
 export default function Page() {
   const { data: session } = useSession();
