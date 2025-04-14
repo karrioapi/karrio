@@ -9,14 +9,12 @@ import {
 } from "@karrio/ui/core/modals/confirm-modal";
 import { TemplateDescription } from "@karrio/ui/core/components/template-description";
 import { DocumentTemplateType, NotificationType } from "@karrio/types";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { useConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { AppLink } from "@karrio/ui/core/components/app-link";
 import React from "react";
 
-export const generateMetadata = dynamicMetadata("Document Templates");
 
 export default function TemplatesPage(pageProps: any) {
   const Component = (): JSX.Element => {

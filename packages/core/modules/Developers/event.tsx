@@ -1,6 +1,5 @@
 "use client";
 import { formatDateTimeLong, isNone, notEmptyJSON } from "@karrio/lib";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { CopiableLink } from "@karrio/ui/core/components/copiable-link";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { AppLink } from "@karrio/ui/core/components/app-link";
@@ -9,7 +8,6 @@ import React, { useEffect, useState } from "react";
 import { useEvent } from "@karrio/hooks/event";
 import hljs from "highlight.js";
 
-export const generateMetadata = dynamicMetadata("Event");
 hljs.registerLanguage("json", json);
 
 export const EventComponent = ({

@@ -26,7 +26,7 @@
     "bulma": "^0.9.4",
     "cm6-graphql": "^0.2.0",
     "core-js": "^3.34.0",
-    "graphiql": "^3.8.3",
+    "graphiql": "^2.4.7",
     "graphql": "^16.8.1",
     "graphql-tag": "^2.12.6",
     "graphql-ws": "^5.14.2",
@@ -63,6 +63,7 @@
     "@types/react-dom": "^18.2.15",
     "@types/request-ip": "^0.0.37",
     "eslint-config-next": "15.0.3",
+    "string-replace-loader": "^3.1.0",
     "typescript": "^5.7.2"
   }
 }

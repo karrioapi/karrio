@@ -12,7 +12,6 @@ import {
 import { CommodityDescription } from "@karrio/ui/core/components/commodity-description";
 import { AddressDescription } from "@karrio/ui/core/components/address-description";
 import { StatusCode } from "@karrio/ui/core/components/status-code-badge";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { CopiableLink } from "@karrio/ui/core/components/copiable-link";
 import { StatusBadge } from "@karrio/ui/core/components/status-badge";
 import { OrderMenu } from "@karrio/ui/core/components/order-menu";
@@ -25,7 +24,6 @@ import { useOrder } from "@karrio/hooks/order";
 import { useLogs } from "@karrio/hooks/log";
 import React from "react";
 
-export const generateMetadata = dynamicMetadata("Orders");
 
 type OrderComponentProps = {
   orderId: string;

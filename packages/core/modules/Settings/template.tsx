@@ -17,7 +17,6 @@ import {
   useDocumentTemplateMutation,
 } from "@karrio/hooks/document-template";
 import { TextAreaField } from "@karrio/ui/core/components/textarea-field";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import React, { useEffect, useReducer, useState } from "react";
 import { InputField } from "@karrio/ui/core/components/input-field";
 import { DEFAULT_DOCUMENT_TEMPLATE } from "@karrio/lib/sample";
@@ -25,12 +24,10 @@ import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { AppLink } from "@karrio/ui/core/components/app-link";
-import { useLocation } from "@karrio/hooks/location";
+import { useSearchParams } from "next/navigation";
 import CodeMirror from "@uiw/react-codemirror";
 import { html } from "@codemirror/lang-html";
-import { useSearchParams } from "next/navigation";
 
-export const generateMetadata = dynamicMetadata("Document Template");
 type stateValue = string | boolean | string[] | Partial<TemplateType>;
 const DEFAULT_STATE = {
   related_object: "order",

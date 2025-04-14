@@ -1,12 +1,10 @@
 "use client";
 import { OrganizationManagement } from "@karrio/ui/core/forms/organization-management";
 import { InviteMemberProvider } from "@karrio/ui/core/modals/invite-member-modal";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { AppLink } from "@karrio/ui/core/components/app-link";
 
-export const generateMetadata = dynamicMetadata("Organization Settings");
 
 export default function AccountPage(pageProps: any) {
   const Component = (): JSX.Element => {

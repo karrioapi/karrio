@@ -1,5 +1,4 @@
 "use client";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { FieldInfo } from "@karrio/ui/core/components/field-info";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useSearchParams } from "next/navigation";
@@ -10,7 +9,6 @@ import { p } from "@karrio/lib";
 import Link from "next/link";
 import React from "react";
 
-export const generateMetadata = dynamicMetadata("Sign In");
 
 export default function Page(pageProps: any) {
   const { metadata } = useAPIMetadata();

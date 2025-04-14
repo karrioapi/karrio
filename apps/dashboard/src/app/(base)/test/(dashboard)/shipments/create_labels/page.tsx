@@ -1,4 +1,2 @@
-export {
-  default,
-  generateMetadata,
-} from "@karrio/core/modules/Labels/create_labels";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
+export { default } from "@karrio/core/modules/Labels/create_labels";

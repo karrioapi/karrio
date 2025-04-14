@@ -17,7 +17,6 @@ import { CustomsType, NotificationType, ParcelType } from "@karrio/types";
 import { StatusCode } from "@karrio/ui/core/components/status-code-badge";
 import { CopiableLink } from "@karrio/ui/core/components/copiable-link";
 import { CarrierBadge } from "@karrio/ui/core/components/carrier-badge";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ShipmentMenu } from "@karrio/ui/core/components/shipment-menu";
 import { SelectField } from "@karrio/ui/core/components/select-field";
 import { StatusBadge } from "@karrio/ui/core/components/status-badge";
@@ -35,7 +34,6 @@ import { useEvents } from "@karrio/hooks/event";
 import { useLogs } from "@karrio/hooks/log";
 import React from "react";
 
-export const generateMetadata = dynamicMetadata("Shipment");
 type FileDataType = DocumentUploadData["document_files"][0];
 
 export const ShipmentComponent = ({

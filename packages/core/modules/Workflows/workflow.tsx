@@ -12,7 +12,6 @@ import { TextAreaField } from "@karrio/ui/core/components/textarea-field";
 import { TabStateProvider, Tabs } from "@karrio/ui/core/components/tabs";
 import { WorkflowActionType } from "@karrio/hooks/workflow-actions";
 import { ConfirmModalWrapper } from "@karrio/ui/core/modals/form-modals";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { isEqual, isNone, isNoneOrEmpty, url$ } from "@karrio/lib";
 import { CopiableLink } from "@karrio/ui/core/components/copiable-link";
 import { InputField } from "@karrio/ui/core/components/input-field";
@@ -35,7 +34,6 @@ import React, { useState } from "react";
 import hljs from "highlight.js";
 import moment from "moment";
 
-export const generateMetadata = dynamicMetadata("Workflow");
 const ContextProviders = bundleContexts([ModalProvider]);
 hljs.registerLanguage("django", django);
 hljs.registerLanguage("json", json);

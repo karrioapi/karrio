@@ -58,7 +58,6 @@ import { useBatchShipmentForm } from "@karrio/hooks/bulk-shipments";
 import { useWorkspaceConfig } from "@karrio/hooks/workspace-config";
 import { useConnections } from "@karrio/hooks/carrier-connections";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { closeDropdown } from "@karrio/ui/core/components/dropdown";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
@@ -75,7 +74,6 @@ import { useOrders } from "@karrio/hooks/order";
 import Image from "next/legacy/image";
 import React from "react";
 
-export const generateMetadata = dynamicMetadata("Create labels");
 const ContextProviders = bundleContexts([ModalProvider]);
 
 export default function Page() {

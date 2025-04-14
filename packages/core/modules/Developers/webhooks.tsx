@@ -12,7 +12,6 @@ import {
   useConfirmModalContext,
 } from "@karrio/ui/core/modals/confirm-modal";
 import { useWebhookMutation, useWebhooks } from "@karrio/hooks/webhook";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { NotificationType, WebhookType } from "@karrio/types";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { formatDateTime, isNoneOrEmpty } from "@karrio/lib";
@@ -21,7 +20,6 @@ import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import React from "react";
 
-export const generateMetadata = dynamicMetadata("Webhooks");
 
 export default function WebhooksPage() {
   const Component = (): JSX.Element => {
