@@ -67,7 +67,7 @@ import { useAppMode } from "@karrio/hooks/app-mode";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useOrders } from "@karrio/hooks/order";
-import { Disclosure } from "@headlessui/react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@karrio/ui/components/ui/collapsible";
 import moment from "moment";
 
 const ContextProviders = bundleContexts([
@@ -1073,108 +1073,69 @@ export default function Page() {
                   {/* CARRIER OPTIONS SECTION */}
                   {Object.keys(carrierOptions).length > 0 && (
                     <div className="card mb-4 px-3 mx-2">
-                      {/* @ts-ignore */}
-                      <Disclosure>
-                        {({ open }) => (
-                          <div className="block">
-                            <Disclosure.Button
-                              as="div"
-                              style={{ boxShadow: "none" }}
-                              className="is-flex is-justify-content-space-between is-clickable py-2"
-                            >
-                              <div className="has-text-grey has-text-weight-semibold is-size-7 pt-1">
-                                CARRIER SPECIFIC OPTIONS
-                              </div>
-                              <span className="icon is-small m-1">
-                                {open ? (
-                                  <i className="fas fa-chevron-up"></i>
-                                ) : (
-                                  <i className="fas fa-chevron-down"></i>
-                                )}
-                              </span>
-                            </Disclosure.Button>
-                            <Disclosure.Panel
-                              className="is-flat m-0 px-0"
-                              style={{ maxHeight: "40vh" }}
-                            >
-                              {Object.entries(carrierOptions).map(
-                                ([carrier, options]) => (
-                                  <React.Fragment key={carrier}>
-                                    <label
-                                      className="label is-capitalized"
-                                      style={{ fontSize: "0.8em" }}
-                                    >
-                                      {references!.carriers[carrier]}
-                                    </label>
-                                    <hr
-                                      className="my-1"
-                                      style={{ height: "1px" }}
-                                    />
-
-                                    <div className="columns is-multiline m-0 p-0">
-                                      {options.map((option, index) => (
-                                        <React.Fragment key={option}>
-                                          {references!.options[carrier][option]
-                                            ?.type === "boolean" && (
-                                              <>
-                                                <CheckBoxField
-                                                  name={option}
-                                                  fieldClass="column mb-0 is-6 pl-0 pr-2 py-4"
-                                                  defaultChecked={
-                                                    shipment.options?.[option]
-                                                  }
-                                                  onChange={(e) =>
-                                                    onChange({
-                                                      options: {
-                                                        ...shipment.options,
-                                                        [option]:
-                                                          e.target.checked ||
-                                                          null,
-                                                      },
-                                                    })
-                                                  }
-                                                >
-                                                  <span>{formatRef(option)}</span>
-                                                </CheckBoxField>
-                                              </>
-                                            )}
-
-                                          {references!.options[carrier][option]
-                                            ?.type === "string" && (
-                                              <>
-                                                <InputField
-                                                  name={option}
-                                                  label={formatRef(option)}
-                                                  placeholder={formatRef(option)}
-                                                  className="is-small"
-                                                  fieldClass="mb-0 p-0"
-                                                  wrapperClass="column is-6 pl-0 pr-2 py-1"
-                                                  defaultValue={
-                                                    shipment.options[option]
-                                                  }
-                                                  onChange={(e) =>
-                                                    onChange({
-                                                      options: {
-                                                        ...shipment.options,
-                                                        [option]: e.target.value,
-                                                      },
-                                                    })
-                                                  }
-                                                />
-                                              </>
-                                            )}
-                                        </React.Fragment>
-                                      ))}
-                                    </div>
-
-                                    <div className="p-2"></div>
-                                  </React.Fragment>
-                                ),
-                              )}
-                            </Disclosure.Panel>
+                      <Collapsible>
+                        <CollapsibleTrigger
+                          asChild
+                        >
+                          <div className="is-flex is-justify-content-space-between is-clickable" style={{ boxShadow: "none" }}>
+                            <div className="has-text-grey has-text-weight-semibold is-size-7 pt-1">
+                              CARRIER SPECIFIC OPTIONS
+                            </div>
+                            <span className="icon is-small m-1">
+                              <i className="fas fa-chevron-down"></i>
+                            </span>
                           </div>
-                        )}
-                      </Disclosure>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent
+                          className="is-flat m-0 px-0"
+                          style={{ maxHeight: "40vh" }}
+                        >
+                          {Object.entries(carrierOptions).map(
+                            ([carrier, options]) => (
+                              <React.Fragment key={carrier}>
+                                <label
+                                  className="label is-capitalized"
+                                  style={{ fontSize: "0.8em" }}
+                                >
+                                  {references.carriers[carrier]}
+                                </label>
+                                <hr className="my-1" style={{ height: "1px" }} />
+
+                                {Object.entries(options).map(
+                                  ([name, option]) => (
+                                    <CheckBoxField
+                                      key={`${carrier}.${name}`}
+                                      name={`options.${carrier}.${name}`}
+                                      fieldClass="mb-0 px-1"
+                                      labelClass="px-2"
+                                      checked={
+                                        (shipment.options as any)?.[
+                                        carrier
+                                        ]?.[name] || false
+                                      }
+                                      onChange={(e: any) =>
+                                        onChange({
+                                          options: {
+                                            ...(shipment.options || {}),
+                                            [carrier]: {
+                                              ...(shipment.options as any)?.[
+                                              carrier
+                                              ],
+                                              [name]: e.target.checked,
+                                            },
+                                          },
+                                        })
+                                      }
+                                    >
+                                      <span>{option}</span>
+                                    </CheckBoxField>
+                                  ),
+                                )}
+                              </React.Fragment>
+                            ),
+                          )}
+                        </CollapsibleContent>
+                      </Collapsible>
                     </div>
                   )}
 

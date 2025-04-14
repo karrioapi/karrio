@@ -2,7 +2,13 @@ import { useAddressTemplates } from "@karrio/hooks/address";
 import React, { ChangeEvent, RefObject } from "react";
 import { formatAddress, isNone } from "@karrio/lib";
 import { InputFieldComponent } from "./input-field";
-import { Combobox } from "@headlessui/react";
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxPopover,
+  ComboboxList,
+  ComboboxOption
+} from "@karrio/ui/components/ui/combobox";
 import { AddressType } from "@karrio/types";
 
 interface NameInputComponent extends InputFieldComponent {
@@ -40,20 +46,23 @@ export const NameInput = ({
     setFilter,
   } = useAddressTemplates();
   const [query, setQuery] = React.useState<string>((value as string) || "");
+  const [open, setOpen] = React.useState(false);
 
-  const setSeltected = (e: AddressType | ChangeEvent<any>) => {
-    if (e.hasOwnProperty("address_line1")) {
-      setQuery((e as any).address_line1);
-      onValueChange(e as AddressType, true);
-    } else {
-      (e as any).preventDefault();
-      setQuery((e as any).target.value);
-      setFilter({ ...filter, keyword: (e as any).target.value });
-      onValueChange(
-        { person_name: (e as any).target.value } as Partial<AddressType>,
-        false,
-      );
-    }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    setQuery(e.target.value);
+    setFilter({ ...filter, keyword: e.target.value });
+    onValueChange(
+      { person_name: e.target.value } as Partial<AddressType>,
+      false,
+    );
+    setOpen(true);
+  };
+
+  const handleSelect = (address: AddressType) => {
+    setQuery(address.address_line1 as string);
+    onValueChange(address, true);
+    setOpen(false);
   };
 
   return (
@@ -74,53 +83,41 @@ export const NameInput = ({
           {addonLeft && addonLeft}
 
           <div className={`control ${controlClass}`}>
-            <Combobox value={query} onChange={setSeltected as any}>
-              {({ open }) => (
-                <div
-                  className={`dropdown is-flex ${open && (address_templates?.edges || []).length > 0 ? "is-active" : ""}`}
-                >
-                  <Combobox.Input
-                    onChange={setSeltected}
-                    className={`dropdown-trigger input ${className || ""}`}
-                    {...(isNone(ref) ? { ref } : {})}
-                    {...props}
-                    autoComplete="off"
-                    data-lpignore="true"
-                    type="search"
-                    displayValue={(_) => (_ as any).person_name || query}
-                  />
+            <Combobox open={open && !disableSuggestion && (address_templates?.edges || []).length > 0} onOpenChange={setOpen}>
+              <div className={`dropdown is-flex ${open && !disableSuggestion && (address_templates?.edges || []).length > 0 ? "is-active" : ""}`}>
+                <ComboboxInput
+                  {...props}
+                  value={query}
+                  className={`dropdown-trigger input ${className || ""}`}
+                  {...(isNone(ref) ? { ref } : {})}
+                  autoComplete="off"
+                  data-lpignore="true"
+                  type="search"
+                  onChange={handleChange}
+                />
 
-                  {!disableSuggestion && (
-                    <>
-                      <div
-                        className="dropdown-menu"
-                        id="dropdown-menu"
-                        role="menu"
-                        style={{ width: "calc(100%)", maxHeight: "40vh" }}
-                      >
-                        <Combobox.Options className={"dropdown-content"}>
-                          {(address_templates?.edges || []).map(
-                            ({ node: template }) => (
-                              <Combobox.Option
-                                as="a"
-                                href="#"
-                                key={template.id}
-                                className={"dropdown-item is-clickable"}
-                                value={template.address}
-                              >
-                                <span className="is-size-7 has-text-dark-grey has-text-weight-bold">
-                                  {template.label} -{" "}
-                                  {formatAddress(template?.address as any)}
-                                </span>
-                              </Combobox.Option>
-                            ),
-                          )}
-                        </Combobox.Options>
-                      </div>
-                    </>
-                  )}
-                </div>
-              )}
+                {!disableSuggestion && (
+                  <ComboboxPopover className="dropdown-menu">
+                    <ComboboxList className="dropdown-content">
+                      {(address_templates?.edges || []).map(
+                        ({ node: template }) => (
+                          <ComboboxOption
+                            key={template.id}
+                            value={template.id}
+                            className="dropdown-item is-clickable"
+                            onClick={() => handleSelect(template.address as AddressType)}
+                          >
+                            <span className="is-size-7 has-text-dark-grey has-text-weight-bold">
+                              {template.label} -{" "}
+                              {formatAddress(template?.address as any)}
+                            </span>
+                          </ComboboxOption>
+                        ),
+                      )}
+                    </ComboboxList>
+                  </ComboboxPopover>
+                )}
+              </div>
             </Combobox>
           </div>
 

@@ -64,7 +64,8 @@ import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { AppLink } from "@karrio/ui/core/components/app-link";
 import { ModalProvider } from "@karrio/ui/core/modals/modal";
-import { Dialog, Disclosure } from "@headlessui/react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@karrio/ui/components/ui/dialog";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@karrio/ui/components/ui/collapsible";
 import { useShipments } from "@karrio/hooks/shipment";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { useLocation } from "@karrio/hooks/location";
@@ -677,13 +678,11 @@ export default function Page() {
 
             {/* Label editor */}
             <>
-              <Dialog
-                as="div"
-                open={isOpen}
-                onClose={onClose}
-                className={`modal side-modal ${isOpen ? "is-active" : ""}`}
-              >
-                <Dialog.Panel className="modal-card side-modal-body">
+              <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+                <DialogContent className="modal-card side-modal-body">
+                  <DialogHeader>
+                    <DialogTitle className="sr-only">Shipment Details</DialogTitle>
+                  </DialogHeader>
                   <section className="modal-card-body has-background-white p-2">
                     {retrieveShipment(
                       batch.shipments || [],
@@ -1792,165 +1791,159 @@ export default function Page() {
                                     {Object.keys(carrierOptions).length > 0 && (
                                       <div className="card mb-4 px-3 mx-2">
                                         {/* @ts-ignore */}
-                                        <Disclosure>
-                                          {({ open }) => (
-                                            <div className="block">
-                                              <Disclosure.Button
-                                                as="div"
-                                                style={{ boxShadow: "none" }}
-                                                className="is-flex is-justify-content-space-between is-clickable py-2"
-                                              >
-                                                <div className="has-text-grey has-text-weight-semibold is-size-7 pt-1">
-                                                  CARRIER SPECIFIC OPTIONS
-                                                </div>
-                                                <span className="icon is-small m-1">
-                                                  {open ? (
-                                                    <i className="fas fa-chevron-up"></i>
-                                                  ) : (
-                                                    <i className="fas fa-chevron-down"></i>
-                                                  )}
-                                                </span>
-                                              </Disclosure.Button>
-                                              <Disclosure.Panel
-                                                className="is-flat m-0 px-0"
-                                                style={{ maxHeight: "40vh" }}
-                                              >
-                                                {Object.entries(
-                                                  carrierOptions,
-                                                ).map(([carrier, options]) => (
-                                                  <React.Fragment key={carrier}>
-                                                    <label
-                                                      className="label is-capitalized"
-                                                      style={{
-                                                        fontSize: "0.8em",
-                                                      }}
-                                                    >
-                                                      {
-                                                        references!.carriers[
-                                                        carrier
-                                                        ]
-                                                      }
-                                                    </label>
-                                                    <hr
-                                                      className="my-1"
-                                                      style={{ height: "1px" }}
-                                                    />
-
-                                                    <div className="is-flex is-flex-wrap-wrap m-0 p-0">
-                                                      {options.map(
-                                                        (option, index) => (
-                                                          <React.Fragment
-                                                            key={option}
-                                                          >
-                                                            {references!
-                                                              .options[carrier][
-                                                              option
-                                                            ]?.type ===
-                                                              "boolean" && (
-                                                                <div
-                                                                  style={{
-                                                                    minWidth:
-                                                                      "225px",
-                                                                  }}
-                                                                >
-                                                                  <CheckBoxField
-                                                                    name={option}
-                                                                    fieldClass="mb-0 p-1"
-                                                                    defaultChecked={
-                                                                      shipment
-                                                                        .options?.[
-                                                                      option
-                                                                      ]
-                                                                    }
-                                                                    onChange={(
-                                                                      e,
-                                                                    ) =>
-                                                                      onChange(
-                                                                        shipment_index,
-                                                                        shipment,
-                                                                        {
-                                                                          options:
-                                                                          {
-                                                                            ...shipment.options,
-                                                                            [option]:
-                                                                              e
-                                                                                .target
-                                                                                .checked ||
-                                                                              null,
-                                                                          },
-                                                                        },
-                                                                      )
-                                                                    }
-                                                                  >
-                                                                    <span>
-                                                                      {formatRef(
-                                                                        option,
-                                                                      )}
-                                                                    </span>
-                                                                  </CheckBoxField>
-                                                                </div>
-                                                              )}
-
-                                                            {references!
-                                                              .options[carrier][
-                                                              option
-                                                            ]?.type ===
-                                                              "string" && (
-                                                                <>
-                                                                  <InputField
-                                                                    name={option}
-                                                                    style={{
-                                                                      minWidth:
-                                                                        "225px",
-                                                                    }}
-                                                                    label={formatRef(
-                                                                      option,
-                                                                    )}
-                                                                    placeholder={formatRef(
-                                                                      option,
-                                                                    )}
-                                                                    className="is-small"
-                                                                    wrapperClass="pl-0 pr-2 py-1"
-                                                                    fieldClass="column mb-0 is-6 p-0"
-                                                                    defaultValue={
-                                                                      shipment
-                                                                        .options[
-                                                                      option
-                                                                      ]
-                                                                    }
-                                                                    onChange={(
-                                                                      e,
-                                                                    ) =>
-                                                                      onChange(
-                                                                        shipment_index,
-                                                                        shipment,
-                                                                        {
-                                                                          options:
-                                                                          {
-                                                                            ...shipment.options,
-                                                                            [option]:
-                                                                              e
-                                                                                .target
-                                                                                .value,
-                                                                          },
-                                                                        },
-                                                                      )
-                                                                    }
-                                                                  />
-                                                                </>
-                                                              )}
-                                                          </React.Fragment>
-                                                        ),
-                                                      )}
-                                                    </div>
-
-                                                    <div className="p-2"></div>
-                                                  </React.Fragment>
-                                                ))}
-                                              </Disclosure.Panel>
+                                        <Collapsible>
+                                          <CollapsibleTrigger
+                                            asChild
+                                            className="button is-fullwidth is-small is-ellipsis px-1"
+                                            style={{ justifyContent: "space-between" }}
+                                          >
+                                            <div>
+                                              <span className="icon mr-1">
+                                                <i className="fas fa-caret-right"></i>
+                                              </span>
+                                              <span>
+                                                CARRIER SPECIFIC OPTIONS
+                                              </span>
                                             </div>
-                                          )}
-                                        </Disclosure>
+                                          </CollapsibleTrigger>
+                                          <CollapsibleContent
+                                            className="is-flat m-0 px-0"
+                                            style={{ maxHeight: "40vh" }}
+                                          >
+                                            {Object.entries(
+                                              carrierOptions,
+                                            ).map(([carrier, options]) => (
+                                              <React.Fragment key={carrier}>
+                                                <label
+                                                  className="label is-capitalized"
+                                                  style={{
+                                                    fontSize: "0.8em",
+                                                  }}
+                                                >
+                                                  {
+                                                    references!.carriers[
+                                                    carrier
+                                                    ]
+                                                  }
+                                                </label>
+                                                <hr
+                                                  className="my-1"
+                                                  style={{ height: "1px" }}
+                                                />
+
+                                                <div className="is-flex is-flex-wrap-wrap m-0 p-0">
+                                                  {options.map(
+                                                    (option, index) => (
+                                                      <React.Fragment
+                                                        key={option}
+                                                      >
+                                                        {references!
+                                                          .options[carrier][
+                                                          option
+                                                        ]?.type ===
+                                                          "boolean" && (
+                                                            <div
+                                                              style={{
+                                                                minWidth:
+                                                                  "225px",
+                                                              }}
+                                                            >
+                                                              <CheckBoxField
+                                                                name={option}
+                                                                fieldClass="mb-0 p-1"
+                                                                defaultChecked={
+                                                                  shipment
+                                                                    .options?.[
+                                                                  option
+                                                                  ]
+                                                                }
+                                                                onChange={(
+                                                                  e,
+                                                                ) =>
+                                                                  onChange(
+                                                                    shipment_index,
+                                                                    shipment,
+                                                                    {
+                                                                      options:
+                                                                      {
+                                                                        ...shipment.options,
+                                                                        [option]:
+                                                                          e
+                                                                            .target
+                                                                            .checked ||
+                                                                          null,
+                                                                      },
+                                                                    },
+                                                                  )
+                                                                }
+                                                              >
+                                                                <span>
+                                                                  {formatRef(
+                                                                    option,
+                                                                  )}
+                                                                </span>
+                                                              </CheckBoxField>
+                                                            </div>
+                                                          )}
+
+                                                        {references!
+                                                          .options[carrier][
+                                                          option
+                                                        ]?.type ===
+                                                          "string" && (
+                                                            <>
+                                                              <InputField
+                                                                name={option}
+                                                                style={{
+                                                                  minWidth:
+                                                                    "225px",
+                                                                }}
+                                                                label={formatRef(
+                                                                  option,
+                                                                )}
+                                                                placeholder={formatRef(
+                                                                  option,
+                                                                )}
+                                                                className="is-small"
+                                                                wrapperClass="pl-0 pr-2 py-1"
+                                                                fieldClass="column mb-0 is-6 p-0"
+                                                                defaultValue={
+                                                                  shipment
+                                                                    .options[
+                                                                  option
+                                                                  ]
+                                                                }
+                                                                onChange={(
+                                                                  e,
+                                                                ) =>
+                                                                  onChange(
+                                                                    shipment_index,
+                                                                    shipment,
+                                                                    {
+                                                                      options:
+                                                                      {
+                                                                        ...shipment.options,
+                                                                        [option]:
+                                                                          e
+                                                                            .target
+                                                                            .value,
+                                                                      },
+                                                                    },
+                                                                  )
+                                                                }
+                                                              />
+                                                            </>
+                                                          )}
+                                                      </React.Fragment>
+                                                    ),
+                                                  )}
+                                                </div>
+
+                                                <div className="p-2"></div>
+                                              </React.Fragment>
+                                            ))}
+                                          </CollapsibleContent>
+                                        </Collapsible>
                                       </div>
                                     )}
 
@@ -2478,7 +2471,7 @@ export default function Page() {
                       },
                     )}
                   </section>
-                </Dialog.Panel>
+                </DialogContent>
               </Dialog>
             </>
           </>
