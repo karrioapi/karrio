@@ -26,7 +26,7 @@ import { MetadataObjectTypeEnum } from "@karrio/types";
 import { InputField } from "../components/input-field";
 import { CountryInput } from "../forms/country-input";
 import { useAppMode } from "@karrio/hooks/app-mode";
-import { Disclosure } from "@headlessui/react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@karrio/ui/components/ui/collapsible";
 import { Loading } from "../components/loader";
 import { CheckBoxField, IntegrationStatusBadge } from "../components";
 import { useLocation } from "@karrio/hooks/location";
@@ -411,172 +411,163 @@ export const ConnectProviderModal = ({
 
                 {carrier_name.toString() in (connection_configs || {}) && (
                   <div className="mt-4">
-                    {/* @ts-ignore */}
-                    <Disclosure>
-                      {({ open }) => (
-                        <div className="block">
-                          <Disclosure.Button
-                            as="div"
-                            style={{ boxShadow: "none" }}
-                            className="is-flex is-justify-content-space-between is-clickable px-0 mb-2"
-                          >
-                            <h2 className="title is-6 my-3">
-                              Connection Config
-                            </h2>
-                            <span className="icon is-small m-2 mt-3">
-                              {open ? (
-                                <i className="fas fa-chevron-up"></i>
-                              ) : (
-                                <i className="fas fa-chevron-down"></i>
-                              )}
-                            </span>
-                          </Disclosure.Button>
-                          <Disclosure.Panel className="card is-flat columns is-multiline m-0 py-2">
-                            {Object.entries(
-                              connection_configs[carrier_name.toString()],
-                            )
-                              .filter(
-                                ([property, _]) =>
-                                  ![
-                                    "brand_color",
-                                    "text_color",
-                                    "shipping_services",
-                                    "shipping_options",
-                                  ].includes(property),
-                              )
-                              .map(([property, field]) => (
-                                <React.Fragment key={property}>
-                                  {field.type === "string" && !field.enum && (
-                                    <InputField
-                                      value={payload.config?.[property] || ""}
-                                      name={property}
-                                      label={formatRef(
-                                        field.name,
-                                      ).toLowerCase()}
-                                      onChange={handleNestedChange("config")}
-                                      wrapperClass="column is-6 pt-1"
-                                      fieldClass="mb-0"
-                                      className="is-small is-fullwidth"
-                                    />
-                                  )}
-
-                                  {field.type === "string" && field.enum && (
-                                    <SelectField
-                                      value={payload.config?.[property]}
-                                      name={property}
-                                      label={formatRef(
-                                        field.name,
-                                      ).toLowerCase()}
-                                      onChange={handleNestedChange("config")}
-                                      className="is-small is-fullwidth"
-                                      wrapperClass="column is-6 pt-1"
-                                      fieldClass="mb-0"
-                                    >
-                                      {!field.required && (
-                                        <option value="none"></option>
-                                      )}
-
-                                      {field.enum.map((option) => (
-                                        <option key={option} value={option}>
-                                          {option}
-                                        </option>
-                                      ))}
-                                    </SelectField>
-                                  )}
-
-                                  {field.type === "boolean" && (
-                                    <CheckBoxField
-                                      fieldClass="column is-6 mb-0"
-                                      labelClass="has-text-weight-bold"
-                                      checked={payload.config?.[property]}
-                                      name={property}
-                                      onChange={handleNestedChange("config")}
-                                    >
-                                      <span style={{ fontSize: "0.8em" }}>
-                                        {formatRef(field.name).toLowerCase()}
-                                      </span>
-                                    </CheckBoxField>
-                                  )}
-                                </React.Fragment>
-                              ))}
-
-                            {"brand_color" in
-                              connection_configs[carrier_name.toString()] && (
-                                <InputField
-                                  value={payload.config?.brand_color || ""}
-                                  type="color"
-                                  name="brand_color"
-                                  label="Brand color"
-                                  onChange={handleNestedChange("config")}
-                                  wrapperClass="column is-6 pt-1"
-                                  fieldClass="mb-0"
-                                  className="is-small is-fullwidth"
-                                />
-                              )}
-
-                            {"text_color" in
-                              connection_configs[carrier_name.toString()] && (
-                                <InputField
-                                  value={payload.config?.text_color || ""}
-                                  type="color"
-                                  name="text_color"
-                                  label="Text color"
-                                  onChange={handleNestedChange("config")}
-                                  wrapperClass="column is-6 pt-1"
-                                  fieldClass="mb-0"
-                                  className="is-small is-fullwidth"
-                                />
-                              )}
-
-                            {"shipping_services" in
-                              connection_configs[carrier_name.toString()] && (
-                                <SelectField
-                                  defaultValue={payload.config?.shipping_services}
-                                  name="shipping_services"
-                                  label="Preferred shipping services"
-                                  className="is-small is-multiple is-fullwidth"
-                                  wrapperClass="column is-12 pt-1"
-                                  fieldClass="mb-0"
-                                  onChange={handleNestedChange("config")}
-                                  size={6}
-                                  multiple
-                                >
-                                  {Object.entries(
-                                    service_names[carrier_name.toString()] || {},
-                                  ).map(([_, __]) => (
-                                    <option key={_} value={_}>
-                                      {__}
-                                    </option>
-                                  ))}
-                                </SelectField>
-                              )}
-
-                            {"shipping_options" in
-                              connection_configs[carrier_name.toString()] && (
-                                <SelectField
-                                  defaultValue={payload.config?.shipping_options}
-                                  name="shipping_options"
-                                  label={`Enable carrier specific shipping options`}
-                                  className="is-small is-multiple is-fullwidth"
-                                  wrapperClass="column is-12 pt-1"
-                                  fieldClass="mb-0"
-                                  onChange={handleNestedChange("config")}
-                                  size={6}
-                                  multiple
-                                >
-                                  {Object.entries(
-                                    option_names[carrier_name.toString()] || {},
-                                  ).map(([_, __]) => (
-                                    <option key={_} value={_}>
-                                      {__}
-                                    </option>
-                                  ))}
-                                </SelectField>
-                              )}
-                          </Disclosure.Panel>
+                    <Collapsible>
+                      <CollapsibleTrigger
+                        asChild
+                      >
+                        <div className="is-flex is-justify-content-space-between is-clickable px-0 mb-2">
+                          <h2 className="title is-6 my-3">
+                            Connection Config
+                          </h2>
+                          <span className="icon is-small m-2 mt-3">
+                            <i className="fas fa-chevron-down"></i>
+                          </span>
                         </div>
-                      )}
-                    </Disclosure>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="card is-flat columns is-multiline m-0 py-2">
+                        {Object.entries(
+                          connection_configs[carrier_name.toString()],
+                        )
+                          .filter(
+                            ([property, _]) =>
+                              ![
+                                "brand_color",
+                                "text_color",
+                                "shipping_services",
+                                "shipping_options",
+                              ].includes(property),
+                          )
+                          .map(([property, field]) => (
+                            <React.Fragment key={property}>
+                              {field.type === "string" && !field.enum && (
+                                <InputField
+                                  value={payload.config?.[property] || ""}
+                                  name={property}
+                                  label={formatRef(
+                                    field.name,
+                                  ).toLowerCase()}
+                                  onChange={handleNestedChange("config")}
+                                  wrapperClass="column is-6 pt-1"
+                                  fieldClass="mb-0"
+                                  className="is-small is-fullwidth"
+                                />
+                              )}
+
+                              {field.type === "string" && field.enum && (
+                                <SelectField
+                                  value={payload.config?.[property]}
+                                  name={property}
+                                  label={formatRef(
+                                    field.name,
+                                  ).toLowerCase()}
+                                  onChange={handleNestedChange("config")}
+                                  className="is-small is-fullwidth"
+                                  wrapperClass="column is-6 pt-1"
+                                  fieldClass="mb-0"
+                                >
+                                  {!field.required && (
+                                    <option value="none"></option>
+                                  )}
+
+                                  {field.enum.map((option) => (
+                                    <option key={option} value={option}>
+                                      {option}
+                                    </option>
+                                  ))}
+                                </SelectField>
+                              )}
+
+                              {field.type === "boolean" && (
+                                <CheckBoxField
+                                  fieldClass="column is-6 mb-0"
+                                  labelClass="has-text-weight-bold"
+                                  checked={payload.config?.[property]}
+                                  name={property}
+                                  onChange={handleNestedChange("config")}
+                                >
+                                  <span style={{ fontSize: "0.8em" }}>
+                                    {formatRef(field.name).toLowerCase()}
+                                  </span>
+                                </CheckBoxField>
+                              )}
+                            </React.Fragment>
+                          ))}
+
+                        {"brand_color" in
+                          connection_configs[carrier_name.toString()] && (
+                            <InputField
+                              value={payload.config?.brand_color || ""}
+                              type="color"
+                              name="brand_color"
+                              label="Brand color"
+                              onChange={handleNestedChange("config")}
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
+                              className="is-small is-fullwidth"
+                            />
+                          )}
+
+                        {"text_color" in
+                          connection_configs[carrier_name.toString()] && (
+                            <InputField
+                              value={payload.config?.text_color || ""}
+                              type="color"
+                              name="text_color"
+                              label="Text color"
+                              onChange={handleNestedChange("config")}
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
+                              className="is-small is-fullwidth"
+                            />
+                          )}
+
+                        {"shipping_services" in
+                          connection_configs[carrier_name.toString()] && (
+                            <SelectField
+                              defaultValue={payload.config?.shipping_services}
+                              name="shipping_services"
+                              label="Preferred shipping services"
+                              className="is-small is-multiple is-fullwidth"
+                              wrapperClass="column is-12 pt-1"
+                              fieldClass="mb-0"
+                              onChange={handleNestedChange("config")}
+                              size={6}
+                              multiple
+                            >
+                              {Object.entries(
+                                service_names[carrier_name.toString()] || {},
+                              ).map(([_, __]) => (
+                                <option key={_} value={_}>
+                                  {__}
+                                </option>
+                              ))}
+                            </SelectField>
+                          )}
+
+                        {"shipping_options" in
+                          connection_configs[carrier_name.toString()] && (
+                            <SelectField
+                              defaultValue={payload.config?.shipping_options}
+                              name="shipping_options"
+                              label={`Enable carrier specific shipping options`}
+                              className="is-small is-multiple is-fullwidth"
+                              wrapperClass="column is-12 pt-1"
+                              fieldClass="mb-0"
+                              onChange={handleNestedChange("config")}
+                              size={6}
+                              multiple
+                            >
+                              {Object.entries(
+                                option_names[carrier_name.toString()] || {},
+                              ).map(([_, __]) => (
+                                <option key={_} value={_}>
+                                  {__}
+                                </option>
+                              ))}
+                            </SelectField>
+                          )}
+                      </CollapsibleContent>
+                    </Collapsible>
                   </div>
                 )}
 

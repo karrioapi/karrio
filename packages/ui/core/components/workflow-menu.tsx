@@ -41,7 +41,7 @@ export const WorkflowMenu = ({
             mutation.deleteWorkflow.mutateAsync({ id: workflow.id })
           }
           trigger={
-            <MenuComponent.Item as="a" className={"dropdown-item"}>
+            <MenuComponent.Item className={"dropdown-item"}>
               <div className="icon-text is-size-7 has-text-grey">
                 <span className="icon">
                   <i className="fas fa-trash"></i>

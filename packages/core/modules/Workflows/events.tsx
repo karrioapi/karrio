@@ -1,8 +1,9 @@
 "use client";
+
 import { WorkflowPreviewModal } from "@karrio/core/components/workflow-event-preview";
+import { StatusBadge } from "@karrio/ui/core/components/status-badge";
 import { formatDateTimeLong, getURLSearchParams } from "@karrio/lib";
 import { useWorkflowEvents } from "@karrio/hooks/workflow-events";
-import { StatusBadge } from "@karrio/ui/core/components/status-badge";
 import { WorkflowEventFilter } from "@karrio/types/graphql/ee";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { AppLink } from "@karrio/ui/core/components/app-link";

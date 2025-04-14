@@ -7,7 +7,7 @@ import { AddressForm } from "../forms/address-form";
 import { ModalFormProps, useModal } from "./modal";
 import { NotificationType } from "@karrio/types";
 import { useLoader } from "../components/loader";
-import { Disclosure } from "@headlessui/react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@karrio/ui/components/ui/collapsible";
 import { isEqual } from "@karrio/lib";
 import React from "react";
 
@@ -114,17 +114,21 @@ export const CreateManifestModal = ({
             </div>
 
             {/* Address section */}
-            <Disclosure as="div" className="card px-0 my-3">
-              <Disclosure.Button as="header" className="p-3 is-clickable">
-                <header className="is-flex is-justify-content-space-between">
-                  <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
-                    ADDRESS
-                  </span>
-                </header>
+            <Collapsible className="card px-0 my-3">
+              <CollapsibleTrigger
+                asChild
+              >
+                <div className="p-3 is-clickable">
+                  <header className="is-flex is-justify-content-space-between">
+                    <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
+                      ADDRESS
+                    </span>
+                  </header>
 
-                <AddressDescription address={manifest.address as any} />
-              </Disclosure.Button>
-              <Disclosure.Panel>
+                  <AddressDescription address={manifest.address as any} />
+                </div>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
                 <hr className="my-1" style={{ height: "1px" }} />
 
                 <div className="p-3">
@@ -137,8 +141,8 @@ export const CreateManifestModal = ({
                     }}
                   />
                 </div>
-              </Disclosure.Panel>
-            </Disclosure>
+              </CollapsibleContent>
+            </Collapsible>
 
             {/* Reference section */}
             <InputField
