@@ -2,12 +2,10 @@
 import { ProfileUpdateInput } from "@karrio/ui/core/forms/profile-update-input";
 import { PasswordManagement } from "@karrio/ui/core/forms/password-management";
 import { EmailManagement } from "@karrio/ui/core/forms/email-management";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
 import { AppLink } from "@karrio/ui/core/components/app-link";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 
-export const generateMetadata = dynamicMetadata("Profile Settings");
 
 export default function AccountPage(pageProps: any) {
   const Component = (): JSX.Element => {

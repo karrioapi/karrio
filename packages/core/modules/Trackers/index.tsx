@@ -17,7 +17,6 @@ import {
 import { useTrackerMutation, useTrackers } from "@karrio/hooks/tracker";
 import { TrackersFilter } from "@karrio/ui/core/filters/trackers-filter";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { StatusBadge } from "@karrio/ui/core/components/status-badge";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { Spinner } from "@karrio/ui/core/components/spinner";
@@ -25,7 +24,6 @@ import { TrackingEvent } from "@karrio/types/rest/api";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
 
-export const generateMetadata = dynamicMetadata("Trackers");
 
 export default function TrackersPage(pageProps: any) {
   const Component = (): JSX.Element => {

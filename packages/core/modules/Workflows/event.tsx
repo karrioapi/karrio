@@ -2,7 +2,6 @@
 import { failsafe, formatDateTimeLong, isNone, jsonify } from "@karrio/lib";
 import { Tabs, TabStateProvider } from "@karrio/ui/core/components/tabs";
 import { CopiableLink } from "@karrio/ui/core/components/copiable-link";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { StatusBadge } from "@karrio/ui/core/components/status-badge";
 import { useWorkflowEvent } from "@karrio/hooks/workflow-events";
 import { useLoader } from "@karrio/ui/core/components/loader";
@@ -12,7 +11,6 @@ import hljs from "highlight.js";
 import moment from "moment";
 import React from "react";
 
-export const generateMetadata = dynamicMetadata("Workflow Event");
 hljs.registerLanguage("json", json);
 
 export const Component = ({

@@ -51,7 +51,6 @@ import { CheckBoxField } from "@karrio/ui/core/components/checkbox-field";
 import { TextAreaField } from "@karrio/ui/core/components/textarea-field";
 import { useWorkspaceConfig } from "@karrio/hooks/workspace-config";
 import { useConnections } from "@karrio/hooks/carrier-connections";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { ButtonField } from "@karrio/ui/core/components/button-field";
 import { SelectField } from "@karrio/ui/core/components/select-field";
@@ -69,7 +68,6 @@ import { useSearchParams } from "next/navigation";
 import { useOrders } from "@karrio/hooks/order";
 import { Disclosure } from "@headlessui/react";
 
-export const generateMetadata = dynamicMetadata("Create Label");
 const ContextProviders = bundleContexts([
   CommodityEditModalProvider,
   ModalProvider,

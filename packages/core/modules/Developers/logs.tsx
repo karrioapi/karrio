@@ -10,7 +10,6 @@ import {
   LogPreviewContext,
 } from "@karrio/core/components/log-preview";
 import { StatusCode } from "@karrio/ui/core/components/status-code-badge";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { LogsFilter } from "@karrio/ui/core/filters/logs-filter";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { AppLink } from "@karrio/ui/core/components/app-link";
@@ -19,7 +18,6 @@ import React, { useContext, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useLogs } from "@karrio/hooks/log";
 
-export const generateMetadata = dynamicMetadata("API Logs");
 
 export default function LogsPage() {
   const Component = (): JSX.Element => {

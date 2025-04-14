@@ -1,12 +1,10 @@
 "use client";
 import { WorkspaceConfigForm } from "@karrio/ui/core/forms/workspace-config-form";
 import { CloseAccountAction } from "@karrio/ui/core/forms/close-account-action";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { AppLink } from "@karrio/ui/core/components/app-link";
 
-export const generateMetadata = dynamicMetadata("Account Settings");
 
 export default function AccountPage(pageProps: any) {
   const Component = (): JSX.Element => {

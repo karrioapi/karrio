@@ -1,6 +1,5 @@
 "use client";
 import { LoadingProvider, useLoader } from "@karrio/ui/core/components/loader";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ButtonField } from "@karrio/ui/core/components/button-field";
 import { useUserMutation } from "@karrio/hooks/user";
 import { useRouter } from "next/navigation";
@@ -8,7 +7,6 @@ import React, { FormEvent, useRef } from "react";
 import { p, isNone } from "@karrio/lib";
 import Link from "next/link";
 
-export const generateMetadata = dynamicMetadata("Password Reset");
 
 export default function Page() {
   const Component = (): JSX.Element => {
