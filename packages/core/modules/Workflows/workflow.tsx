@@ -6,28 +6,28 @@ import {
   AutomationEventStatus,
   AutomationTriggerType,
 } from "@karrio/types/graphql/ee";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@karrio/ui/components/ui/collapsible";
 import { ConnectionModalEditor } from "@karrio/ui/core/modals/workflow-connection-edit-modal";
 import { ActionModalEditor } from "@karrio/ui/core/modals/workflow-action-edit-modal";
 import { TextAreaField } from "@karrio/ui/core/components/textarea-field";
 import { TabStateProvider, Tabs } from "@karrio/ui/core/components/tabs";
-import { WorkflowActionType } from "@karrio/hooks/workflow-actions";
 import { ConfirmModalWrapper } from "@karrio/ui/core/modals/form-modals";
-import { isEqual, isNone, isNoneOrEmpty, url$ } from "@karrio/lib";
 import { CopiableLink } from "@karrio/ui/core/components/copiable-link";
+import { WorkflowActionType } from "@karrio/hooks/workflow-actions";
 import { InputField } from "@karrio/ui/core/components/input-field";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { useWorkflowForm } from "@karrio/hooks/workflows";
+import { isEqual, isNone, isNoneOrEmpty, url$ } from "@karrio/lib";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { AppLink } from "@karrio/ui/core/components/app-link";
 import { ModalProvider } from "@karrio/ui/core/modals/modal";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { useWorkflowForm } from "@karrio/hooks/workflows";
+import { SelectField } from "@karrio/ui/core/components";
 import django from "highlight.js/lib/languages/django";
 import { parseWorkflowEventRecordData } from "./event";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { jsonLanguage } from "@codemirror/lang-json";
 import { htmlLanguage } from "@codemirror/lang-html";
-import { SelectField } from "@karrio/ui/core/components";
 import json from "highlight.js/lib/languages/json";
-import { Disclosure } from "@headlessui/react";
 import CodeMirror from "@uiw/react-codemirror";
 import { WorkflowEventList } from "./events";
 import React, { useState } from "react";
@@ -44,8 +44,6 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     const { references } = useAPIMetadata();
     const [key, setKey] = useState<string>(`workflow-${Date.now()}`);
     const {
-
-
       workflow,
       current,
       isNew,
@@ -158,15 +156,14 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                       style={{ height: "79vh", overflowY: "auto" }}
                     >
                       {/* Trigger section */}
-                      <Disclosure
-                        as="div"
+                      <Collapsible
                         className="card px-0"
                         defaultOpen={true}
                         style={{ maxWidth: "600px", margin: "auto" }}
                       >
-                        <Disclosure.Button
-                          as="header"
-                          className="p-3 is-flex is-justify-content-space-between is-clickable"
+                        <CollapsibleTrigger
+                          asChild
+                          className="p-3 is-flex is-justify-content-space-between is-clickable w-full"
                         >
                           <div className="is-title is-size-6 is-vcentered my-2">
                             <span className="has-text-weight-bold">
@@ -176,8 +173,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                               How the workflow is tiggered
                             </p>
                           </div>
-                        </Disclosure.Button>
-                        <Disclosure.Panel>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
                           <hr className="my-1" style={{ height: "1px" }} />
 
                           <div className="p-3">
@@ -308,8 +305,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                             }
                             readOnly
                           />
-                        </Disclosure.Panel>
-                      </Disclosure>
+                        </CollapsibleContent>
+                      </Collapsible>
 
                       <NextIndicator />
 
@@ -319,61 +316,62 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                         workflow.action_nodes as ActionNodeInput[],
                       ).map(([action, node], index) => (
                         <React.Fragment key={index}>
-                          <Disclosure
-                            as="div"
+                          <Collapsible
                             className="card px-0"
                             style={{ maxWidth: "600px", margin: "auto" }}
                           >
-                            <Disclosure.Button
-                              as="header"
-                              className="p-3 is-flex is-justify-content-space-between is-clickable"
+                            <CollapsibleTrigger
+                              asChild
+                              className="p-3 is-flex is-justify-content-space-between is-clickable w-full"
                             >
-                              <div className="is-title is-size-6 is-vcentered my-2">
-                                <span className="has-text-weight-bold">
-                                  Action
-                                </span>
-                                <p className="is-size-7 has-text-weight-semibold has-text-grey my-1">
-                                  {action.name || "An action to perform"}
-                                </p>
-                              </div>
                               <div>
-                                <ActionModalEditor
-                                  action={action}
-                                  onSubmit={mutation.updateAction(
-                                    index,
-                                    action?.id,
-                                  )}
-                                  trigger={
-                                    <button
-                                      type="button"
-                                      className="button is-white"
-                                    >
-                                      <span className="icon">
-                                        <i className="fas fa-pen"></i>
-                                      </span>
-                                    </button>
-                                  }
-                                />
-                                <ConfirmModalWrapper
-                                  onSubmit={mutation.deleteAction(
-                                    index,
-                                    action?.id,
-                                  )}
-                                  trigger={
-                                    <button
-                                      type="button"
-                                      className="button is-white"
-                                      disabled={index == 0}
-                                    >
-                                      <span className="icon">
-                                        <i className="fas fa-trash"></i>
-                                      </span>
-                                    </button>
-                                  }
-                                />
+                                <div className="is-title is-size-6 is-vcentered my-2">
+                                  <span className="has-text-weight-bold">
+                                    Action
+                                  </span>
+                                  <p className="is-size-7 has-text-weight-semibold has-text-grey my-1">
+                                    {action.name || "An action to perform"}
+                                  </p>
+                                </div>
+                                <div>
+                                  <ActionModalEditor
+                                    action={action}
+                                    onSubmit={mutation.updateAction(
+                                      index,
+                                      action?.id,
+                                    )}
+                                    trigger={
+                                      <button
+                                        type="button"
+                                        className="button is-white"
+                                      >
+                                        <span className="icon">
+                                          <i className="fas fa-pen"></i>
+                                        </span>
+                                      </button>
+                                    }
+                                  />
+                                  <ConfirmModalWrapper
+                                    onSubmit={mutation.deleteAction(
+                                      index,
+                                      action?.id,
+                                    )}
+                                    trigger={
+                                      <button
+                                        type="button"
+                                        className="button is-white"
+                                        disabled={index == 0}
+                                      >
+                                        <span className="icon">
+                                          <i className="fas fa-trash"></i>
+                                        </span>
+                                      </button>
+                                    }
+                                  />
+                                </div>
                               </div>
-                            </Disclosure.Button>
-                            <Disclosure.Panel>
+                            </CollapsibleTrigger>
+                            <CollapsibleContent>
                               <hr className="my-1" style={{ height: "1px" }} />
 
                               <TabStateProvider
@@ -778,71 +776,72 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                                         )}
                                     </div>
 
-                                    <Disclosure
-                                      as="div"
+                                    <Collapsible
                                       className="card px-0 m-2"
                                       style={{
                                         maxWidth: "600px",
                                         margin: "auto",
                                       }}
                                     >
-                                      <Disclosure.Button
-                                        as="header"
-                                        className="p-3 is-flex is-justify-content-space-between is-clickable"
+                                      <CollapsibleTrigger
+                                        asChild
+                                        className="p-3 is-flex is-justify-content-space-between is-clickable w-full"
                                       >
-                                        <div className="is-title is-size-6 is-vcentered my-2">
-                                          <span className="has-text-weight-bold">
-                                            Connection
-                                          </span>
-                                          <p className="is-size-7 has-text-weight-semibold has-text-grey my-1">
-                                            {action.connection?.name ||
-                                              "A connection for the action"}
-                                          </p>
-                                        </div>
                                         <div>
-                                          <ConnectionModalEditor
-                                            connection={
-                                              action.connection ||
-                                              ({ auth_type: "basic" } as any)
-                                            }
-                                            onSubmit={mutation.updateActionConnection(
-                                              index,
-                                              action?.id,
-                                            )}
-                                            trigger={
-                                              <button
-                                                type="button"
-                                                className="button is-white"
-                                              >
-                                                <span className="icon">
-                                                  <i
-                                                    className={`fas fa-${!!action.connection ? "pen" : "plus"}`}
-                                                  ></i>
-                                                </span>
-                                              </button>
-                                            }
-                                          />
-                                          <ConfirmModalWrapper
-                                            onSubmit={mutation.deleteActionConnection(
-                                              index,
-                                              action?.id,
-                                              action.connection?.id,
-                                            )}
-                                            trigger={
-                                              <button
-                                                type="button"
-                                                className="button is-white"
-                                                disabled={!action.connection}
-                                              >
-                                                <span className="icon">
-                                                  <i className="fas fa-trash"></i>
-                                                </span>
-                                              </button>
-                                            }
-                                          />
+                                          <div className="is-title is-size-6 is-vcentered my-2">
+                                            <span className="has-text-weight-bold">
+                                              Connection
+                                            </span>
+                                            <p className="is-size-7 has-text-weight-semibold has-text-grey my-1">
+                                              {action.connection?.name ||
+                                                "A connection for the action"}
+                                            </p>
+                                          </div>
+                                          <div>
+                                            <ConnectionModalEditor
+                                              connection={
+                                                action.connection ||
+                                                ({ auth_type: "basic" } as any)
+                                              }
+                                              onSubmit={mutation.updateActionConnection(
+                                                index,
+                                                action?.id,
+                                              )}
+                                              trigger={
+                                                <button
+                                                  type="button"
+                                                  className="button is-white"
+                                                >
+                                                  <span className="icon">
+                                                    <i
+                                                      className={`fas fa-${!!action.connection ? "pen" : "plus"}`}
+                                                    ></i>
+                                                  </span>
+                                                </button>
+                                              }
+                                            />
+                                            <ConfirmModalWrapper
+                                              onSubmit={mutation.deleteActionConnection(
+                                                index,
+                                                action?.id,
+                                                action.connection?.id,
+                                              )}
+                                              trigger={
+                                                <button
+                                                  type="button"
+                                                  className="button is-white"
+                                                  disabled={!action.connection}
+                                                >
+                                                  <span className="icon">
+                                                    <i className="fas fa-trash"></i>
+                                                  </span>
+                                                </button>
+                                              }
+                                            />
+                                          </div>
                                         </div>
-                                      </Disclosure.Button>
-                                      <Disclosure.Panel>
+                                      </CollapsibleTrigger>
+                                      <CollapsibleContent>
                                         <hr
                                           className="my-1"
                                           style={{ height: "1px" }}
@@ -1031,13 +1030,13 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                                               )}
                                           </div>
                                         )}
-                                      </Disclosure.Panel>
-                                    </Disclosure>
+                                      </CollapsibleContent>
+                                    </Collapsible>
                                   </div>
                                 </Tabs>
                               </TabStateProvider>
-                            </Disclosure.Panel>
-                          </Disclosure>
+                            </CollapsibleContent>
+                          </Collapsible>
 
                           <NextIndicator />
                         </React.Fragment>
