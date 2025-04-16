@@ -390,14 +390,14 @@ export default function OrdersPage() {
                     {selection.length > 0 && (
                       <td className="p-1 is-vcentered" colSpan={8}>
                         <div className="buttons has-addons ">
-                          <AppLink
+                          {/* <AppLink
                             className={`button is-small is-default px-3 ${unfulfilledSelection(selection) ? "" : "is-static"}`}
                             href={`/orders/create_labels?order_ids=${selection.join(",")}`}
                           >
                             <span className="has-text-weight-semibold">
                               Create labels
                             </span>
-                          </AppLink>
+                          </AppLink> */}
                           <a
                             href={url$`${references.HOST}/documents/orders/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?orders=${selection.join(",")}`}
                             className={`button is-small is-default px-3 ${compatibleTypeSelection(selection) ? "" : "is-static"}`}
