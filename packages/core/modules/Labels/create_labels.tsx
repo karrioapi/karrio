@@ -1,33 +1,33 @@
 "use client";
 import {
-  AddressType,
-  CURRENCY_OPTIONS,
-  CommodityType,
-  CustomsType,
   DEFAULT_CUSTOMS_CONTENT,
   MetadataObjectTypeEnum,
+  CURRENCY_OPTIONS,
   NotificationType,
-  OrderType,
-  PaidByEnum,
+  CommodityType,
   ShipmentType,
+  AddressType,
+  CustomsType,
+  PaidByEnum,
+  OrderType,
 } from "@karrio/types";
 import {
-  createShipmentFromOrders,
   formatAddressLocationShort,
-  formatRef,
-  formatWeight,
+  createShipmentFromOrders,
   getShipmentCommodities,
-  isNone,
   isNoneOrEmpty,
+  formatWeight,
+  formatRef,
+  isNone,
   p,
 } from "@karrio/lib";
 import {
   CheckBoxField,
-  Dropdown,
-  InputField,
-  SelectField,
-  Spinner,
   TextAreaField,
+  SelectField,
+  InputField,
+  Dropdown,
+  Spinner,
 } from "@karrio/ui/core/components";
 import {
   CommodityEditModalProvider,
@@ -39,33 +39,33 @@ import {
   ParcelModalEditor,
 } from "@karrio/ui/core/modals/form-modals";
 import {
-  MetadataEditor,
   MetadataEditorContext,
+  MetadataEditor,
 } from "@karrio/ui/core/forms/metadata-editor";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@karrio/ui/components/ui/collapsible";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@karrio/ui/components/ui/dialog";
 import { CustomsInfoDescription } from "@karrio/ui/core/components/customs-info-description";
 import { GoogleGeocodingScript } from "@karrio/ui/core/components/google-geocoding-script";
 import { CommodityDescription } from "@karrio/ui/core/components/commodity-description";
 import { MessagesDescription } from "@karrio/ui/core/components/messages-description";
 import { AddressDescription } from "@karrio/ui/core/components/address-description";
-import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { ParcelDescription } from "@karrio/ui/core/components/parcel-description";
 import { CommoditySummary } from "@karrio/ui/core/components/commodity-summary";
 import { RateDescription } from "@karrio/ui/core/components/rate-description";
 import { LineItemSelector } from "@karrio/ui/core/forms/line-item-selector";
+import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
+import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { useDefaultTemplates } from "@karrio/hooks/default-template";
 import { useBatchShipmentForm } from "@karrio/hooks/bulk-shipments";
 import { useWorkspaceConfig } from "@karrio/hooks/workspace-config";
-import { useConnections } from "@karrio/hooks/carrier-connections";
-import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { closeDropdown } from "@karrio/ui/core/components/dropdown";
+import { useConnections } from "@karrio/hooks/carrier-connections";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { AppLink } from "@karrio/ui/core/components/app-link";
 import { ModalProvider } from "@karrio/ui/core/modals/modal";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@karrio/ui/components/ui/dialog";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@karrio/ui/components/ui/collapsible";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useShipments } from "@karrio/hooks/shipment";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { useLocation } from "@karrio/hooks/location";

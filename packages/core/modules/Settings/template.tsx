@@ -17,13 +17,13 @@ import {
   useDocumentTemplateMutation,
 } from "@karrio/hooks/document-template";
 import { TextAreaField } from "@karrio/ui/core/components/textarea-field";
-import React, { useEffect, useReducer, useState } from "react";
 import { InputField } from "@karrio/ui/core/components/input-field";
-import { DEFAULT_DOCUMENT_TEMPLATE } from "@karrio/lib/sample";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { DEFAULT_DOCUMENT_TEMPLATE } from "@karrio/lib/sample";
+import React, { useEffect, useReducer, useState } from "react";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { AppLink } from "@karrio/ui/core/components/app-link";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useSearchParams } from "next/navigation";
 import CodeMirror from "@uiw/react-codemirror";
 import { html } from "@codemirror/lang-html";
