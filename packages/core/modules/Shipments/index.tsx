@@ -318,14 +318,14 @@ export default function Page(pageProps: any) {
                     {selection.length > 0 && (
                       <td className="p-1 is-vcentered" colSpan={6}>
                         <div className="buttons has-addons">
-                          <AppLink
+                          {/* <AppLink
                             className={`button is-small is-default px-3 ${draftSelection(selection) ? "" : "is-static"}`}
                             href={`/shipments/create_labels?shipment_ids=${selection.join(",")}`}
                           >
                             <span className="has-text-weight-semibold">
                               Create labels
                             </span>
-                          </AppLink>
+                          </AppLink> */}
                           <a
                             href={url$`${references.HOST}/documents/shipments/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?shipments=${selection.join(",")}`}
                             className={`button is-small is-default px-3 ${compatibleTypeSelection(selection) ? "" : "is-static"}`}
