@@ -28,3 +28,21 @@ jobs:
           cp ee/apps/platform/.env.sample ee/apps/platform/.env
           npm run prisma:generate -w ee/apps/platform
           npm run build -w ee/apps/platform
+
+  web-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 22.x
+      - name: Install
+        run: |
+          npm install -g corepack
+          mkdir -p ~/.volta/bin
+          corepack enable --install-directory ~/.volta/bin
+      - name: Test Build
+        run: |
+          npm ci
+          npm run build -w apps/web
