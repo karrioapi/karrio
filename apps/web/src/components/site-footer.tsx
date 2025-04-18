@@ -113,6 +113,14 @@ export const SiteFooter = () => {
                   Download
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/changelog"
+                  className="text-white/60 hover:text-white text-sm"
+                >
+                  Changelog
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
