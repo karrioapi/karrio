@@ -347,10 +347,10 @@ export default async function Page() {
                     <path d="M842 422 L850 427 L842 432" fill="none" stroke="#30D9B7" strokeWidth="2.5" />
 
                     {/* Return Data Flow */}
-                    <path d="M850 260 C800 260, 770 260, 730 260" stroke="#30D9B7" strokeWidth="1.5" stroke-dasharray="5,3" />
+                    <path d="M850 260 C800 260, 770 260, 730 260" stroke="#30D9B7" strokeWidth="1.5" strokeDasharray="5,3" />
                     <path d="M738 265 L730 260 L738 255" fill="none" stroke="#30D9B7" strokeWidth="1.5" />
 
-                    <path d="M480 370 C430 370, 400 370, 350 370" stroke="#5722cc" strokeWidth="1.5" stroke-dasharray="5,3" />
+                    <path d="M480 370 C430 370, 400 370, 350 370" stroke="#5722cc" strokeWidth="1.5" strokeDasharray="5,3" />
                     <path d="M358 375 L350 370 L358 365" fill="none" stroke="#5722cc" strokeWidth="1.5" />
 
                     {/* Enhanced Gradients Definitions */}
