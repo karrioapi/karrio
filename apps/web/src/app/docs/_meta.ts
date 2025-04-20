@@ -11,6 +11,10 @@ export default {
     title: 'Platform',
     type: 'separator'
   },
+  "carriers": {
+    title: 'Carriers',
+    type: 'separator'
+  },
   "api-reference": {
     title: 'API Reference',
     type: 'separator'

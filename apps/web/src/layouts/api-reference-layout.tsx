@@ -14,9 +14,18 @@ export const metadata: Metadata = {
   title: "Karrio API Reference",
   description: "API Reference for Karrio - the modern shipping infrastructure",
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
+    icon: [
+      { url: "/favicon.ico", media: "(prefers-color-scheme: light)" },
+      { url: "/favicon-dark.ico", media: "(prefers-color-scheme: dark)" }
+    ],
+    shortcut: [
+      { url: "/favicon-16x16.png", media: "(prefers-color-scheme: light)" },
+      { url: "/favicon-dark-16x16.png", media: "(prefers-color-scheme: dark)" }
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", media: "(prefers-color-scheme: light)" },
+      { url: "/apple-touch-dark-icon.png", media: "(prefers-color-scheme: dark)" }
+    ],
   },
 };
 

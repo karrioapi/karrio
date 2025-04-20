@@ -15,9 +15,18 @@ export const metadata: Metadata = {
   title: "Karrio Platform",
   description: "Karrio Platform",
   icons: {
-    icon: "/favicon-dark.ico",
-    shortcut: "/favicon-dark-16x16.png",
-    apple: "/apple-touch-dark-icon.png",
+    icon: [
+      { url: "/favicon.ico", media: "(prefers-color-scheme: light)" },
+      { url: "/favicon-dark.ico", media: "(prefers-color-scheme: dark)" }
+    ],
+    shortcut: [
+      { url: "/favicon-16x16.png", media: "(prefers-color-scheme: light)" },
+      { url: "/favicon-dark-16x16.png", media: "(prefers-color-scheme: dark)" }
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", media: "(prefers-color-scheme: light)" },
+      { url: "/apple-touch-dark-icon.png", media: "(prefers-color-scheme: dark)" }
+    ],
   },
 };
 

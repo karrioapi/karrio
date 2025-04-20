@@ -20,4 +20,7 @@ METADATA = Metadata(
     options=units.ShippingOption,
     connection_configs=units.ConnectionConfig,
     has_intl_accounts=True,
+    # New fields
+    website="https://www.fedex.com",
+    description="FedEx Corporation is an American multinational conglomerate holding company which focuses on transportation, e-commerce and business services.",
 )

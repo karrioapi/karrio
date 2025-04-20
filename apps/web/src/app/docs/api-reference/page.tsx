@@ -28,7 +28,7 @@ export default function ApiReferencePage() {
   }, []);
 
   return (
-    <div className="w-full h-full bg-white dark:bg-neutral-950">
+    <div className="w-full h-full bg-background dark:bg-neutral-950">
       <elements-api
         apiDescriptionUrl="/openapi.yml"
         router="hash"

@@ -1,16 +1,5 @@
 'use client'
 
-import { Monitor, FileText, GitFork, Database, ArrowUpCircle, Container, BookOpen, Zap, Home, Github } from 'lucide-react'
-import { normalizePages } from 'nextra/normalize-pages'
-import { useState, useRef, useEffect } from 'react'
-import { usePathname } from 'next/navigation'
-import type { PageMapItem } from 'nextra'
-import { useTheme } from 'next-themes'
-import type { FC } from 'react'
-import Link from 'next/link'
-import clsx from 'clsx'
-
-// Import shadcn sidebar components
 import {
   Sidebar as ShadcnSidebar,
   SidebarContent,
@@ -21,6 +10,23 @@ import {
   SidebarMenuItem,
   SidebarFooter,
 } from '@karrio/ui/components/ui/sidebar'
+import { Monitor, FileText, GitFork, Database, ArrowUpCircle, Container, BookOpen, Zap, Home, Github } from 'lucide-react'
+import { normalizePages } from 'nextra/normalize-pages'
+import { usePathname } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import type { PageMapItem } from 'nextra'
+import { useTheme } from 'next-themes'
+import type { FC } from 'react'
+import Link from 'next/link'
+import clsx from 'clsx'
+
+// Define interface for carrier integration
+interface CarrierIntegration {
+  id: string
+  display_name: string
+  integration_status: 'production' | 'beta' | 'alpha' | 'deprecated'
+  capabilities: string[]
+}
 
 export const Sidebar: FC<{ pageMap: PageMapItem[] }> = ({ pageMap }) => {
   const pathname = usePathname()
@@ -96,6 +102,34 @@ export const Sidebar: FC<{ pageMap: PageMapItem[] }> = ({ pageMap }) => {
     return acc
   }, {})
 
+  // Fetch carrier items if we're on a carrier page
+  const fetchCarrierItems = async () => {
+    try {
+      const response = await fetch('/carrier-integrations.json');
+      const data = await response.json();
+      // Transform data to match the interface
+      return data.map((item: any) => ({
+        id: item.id,
+        display_name: item.display_name,
+        integration_status: item.integration_status,
+        capabilities: item.capabilities || []
+      }));
+    } catch (error) {
+      console.error('Error fetching carrier data:', error);
+      return [];
+    }
+  };
+
+  // State for carrier integrations
+  const [carrierIntegrations, setCarrierIntegrations] = useState<CarrierIntegration[]>([]);
+
+  // Load carrier data when on carrier pages
+  useEffect(() => {
+    if (pathname.includes('/docs/carriers')) {
+      fetchCarrierItems().then(data => setCarrierIntegrations(data));
+    }
+  }, [pathname]);
+
   return (
     <ShadcnSidebar className="sidebar border-r border-gray-200 dark:border-neutral-800 bg-background shrink-0">
       <SidebarHeader className="px-5 py-4">
@@ -162,6 +196,26 @@ export const Sidebar: FC<{ pageMap: PageMapItem[] }> = ({ pageMap }) => {
                   <span>{page.title}</span>
                 </Link>
               ))}
+
+              {/* Show carrier integrations list if on carriers page and this is the carrier section */}
+              {pathname.includes('/docs/carriers') && (
+                <>
+                  {carrierIntegrations.map((integration: CarrierIntegration) => (
+                    <Link
+                      key={integration.id}
+                      href={`/docs/carriers/${integration.id}`}
+                      className={clsx(
+                        "flex items-center gap-2 px-2 py-1 text-xs transition-colors relative",
+                        pathname === `/docs/carriers/${integration.id}`
+                          ? "text-purple-600 dark:text-purple-400 before:absolute before:left-0 before:top-1 before:bottom-1 before:w-0.5 before:bg-purple-600 dark:before:bg-purple-400 before:rounded-full font-medium"
+                          : "text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
+                      )}
+                    >
+                      <span>{integration.display_name}</span>
+                    </Link>
+                  ))}
+                </>
+              )}
             </div>
           </div>
         ))}
