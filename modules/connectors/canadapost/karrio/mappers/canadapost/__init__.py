@@ -19,4 +19,8 @@ METADATA = Metadata(
     package_presets=units.PackagePresets,
     services=units.ServiceType,
     connection_configs=units.ConnectionConfig,
+    # New fields
+    website="https://www.canadapost-postescanada.ca/cpc/en/home.page",
+    documentation="https://www.canadapost-postescanada.ca/information/app/drc/home",
+    description="Mailing and shipping for Personal and Business.",
 )

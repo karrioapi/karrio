@@ -21,4 +21,7 @@ METADATA = Metadata(
     package_presets=units.PackagePresets,
     connection_configs=units.ConnectionConfig,
     has_intl_accounts=True,
+    # New fields
+    website="https://www.tnt.com",
+    description="TNT is an international courier delivery services company with headquarters in the Netherlands.",
 )

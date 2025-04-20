@@ -24,6 +24,10 @@ elif [[ "$*" == *gen:openapi* ]]; then
     cd "${ROOT:?}"
     curl http://localhost:5002/shipping-openapi -o "${ROOT:?}/schemas/openapi.yml"
     cd -
+elif [[ "$*" == *gen:ref* ]]; then
+    cd "${ROOT:?}"
+    curl http://localhost:5002/v1/carriers >"${ROOT:?}/apps/web/public/carrier-integrations.json"
+    cd -
 elif [[ "$*" == *gen:ts:cli* ]]; then
     cd "${ROOT:?}"
     docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \

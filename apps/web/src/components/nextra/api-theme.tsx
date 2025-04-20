@@ -38,7 +38,7 @@ const ApiHeader: FC<ApiHeaderProps> = ({ logo = "/karrio-docs.svg", darkLogo = "
   const topLevelSections = docsEntry?.children || []
 
   return (
-    <header className={`flex h-14 w-full shrink-0 items-center border-b border-gray-200 bg-white ${mounted && theme === 'dark' ? '!bg-neutral-950 !border-neutral-800' : ''}`}>
+    <header className={`flex h-14 w-full shrink-0 items-center border-b border-gray-200 bg-background ${mounted && theme === 'dark' ? '!bg-neutral-950 !border-neutral-800' : ''}`}>
       {/* Mobile Header */}
       <div className="flex h-full items-center justify-between px-4 md:hidden w-full">
         <Link href="/docs" className="flex items-center">
@@ -124,7 +124,7 @@ export const ApiTheme: FC<{
       <div className="flex min-h-screen w-full docs-container overflow-hidden dark:bg-neutral-950 dark:text-white">
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Fixed header - full width */}
-          <div className="fixed top-0 z-40 w-full bg-white dark:bg-neutral-950">
+          <div className="fixed top-0 z-40 w-full bg-background dark:bg-neutral-950">
             <ApiHeader logo={logo} darkLogo={darkLogo} pageMap={pageMap} />
           </div>
 

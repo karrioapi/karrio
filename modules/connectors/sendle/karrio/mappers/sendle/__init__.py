@@ -19,4 +19,8 @@ METADATA = Metadata(
     options=units.ShippingOption,
     services=units.ShippingService,
     has_intl_accounts=True,
+    # New fields
+    website="https://www.sendle.com",
+    documentation="https://www.sendle.com/developers",
+    description="Sendle is a registered B Corp and 100% carbon neutral shipping carrier for small businesses, offering affordable package delivery services in Australia and the United States.",
 )
