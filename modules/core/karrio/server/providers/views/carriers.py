@@ -43,20 +43,59 @@ class CarrierList(views.APIView):
     )
     def get(self, request: Request):
         """Returns the list of configured carriers"""
-        references = dataunits.contextual_reference()
+        references = dataunits.contextual_reference(reduced=False)
         carriers = [
-            dict(
-                carrier_name=carrier_name,
-                display_name=display_name,
-                connection_fields=references["connection_fields"].get(carrier_name, {}),
-                capabilities=references["carrier_capabilities"].get(carrier_name, {}),
-                config_fields=references["connection_configs"].get(carrier_name, {}),
-                integration_status=references["integration_status"].get(carrier_name, {}),
+            dataunits.get_carrier_details(
+                carrier_name,
+                contextual_reference=references,
             )
-            for carrier_name, display_name in references["carriers"].items()
+            for carrier_name in references["carriers"].keys()
         ]
 
         return Response(carriers, status=status.HTTP_200_OK)
+
+
+class CarrierDetails(api.APIView):
+    permission_classes = []
+
+    @openapi.extend_schema(
+        auth=[],
+        tags=["Carriers"],
+        operation_id=f"{ENDPOINT_ID}get_details",
+        extensions={"x-operationId": "getDetails"},
+        summary="Get carrier details",
+        parameters=[
+            openapi.OpenApiParameter(
+                "carrier_name",
+                location=openapi.OpenApiParameter.PATH,
+                type=openapi.OpenApiTypes.STR,
+                description=(
+                    "The unique carrier slug. <br/>"
+                    f"Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
+                ),
+            )
+        ],
+        responses={
+            200: serializers.CarrierDetails(),
+            404: serializers.ErrorResponse(),
+            500: serializers.ErrorResponse(),
+        },
+    )
+    def get(self, request: Request, carrier_name: str):
+        """
+        Retrieve a carrier's details
+        """
+        references = dataunits.contextual_reference(reduced=False)
+
+        if carrier_name not in references["carriers"]:
+            raise Exception(f"Unknown carrier: {carrier_name}")
+
+        carrier_details = dataunits.get_carrier_details(
+            carrier_name,
+            contextual_reference=references,
+        )
+
+        return Response(carrier_details, status=status.HTTP_200_OK)
 
 
 class CarrierServices(api.APIView):
@@ -103,6 +142,52 @@ class CarrierServices(api.APIView):
         services = references["services"].get(carrier_name, {})
 
         return Response(services, status=status.HTTP_200_OK)
+
+
+class CarrierOptions(api.APIView):
+    permission_classes = []
+
+    @openapi.extend_schema(
+        auth=[],
+        tags=["Carriers"],
+        operation_id=f"{ENDPOINT_ID}get_options",
+        extensions={"x-operationId": "getOptions"},
+        summary="Get carrier options",
+        parameters=[
+            openapi.OpenApiParameter(
+                "carrier_name",
+                location=openapi.OpenApiParameter.PATH,
+                type=openapi.OpenApiTypes.STR,
+                description=(
+                    "The unique carrier slug. <br/>"
+                    f"Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
+                ),
+            )
+        ],
+        responses={
+            200: openapi.OpenApiTypes.OBJECT,
+            404: serializers.ErrorResponse(),
+            500: serializers.ErrorResponse(),
+        },
+        examples=[
+            openapi.OpenApiExample(
+                name="Carrier Options",
+                value=lib.to_dict(samples.CARRIER_OPTIONS_SAMPLE),
+            )
+        ],
+    )
+    def get(self, request: Request, carrier_name: str):
+        """
+        Retrieve a carrier's options
+        """
+        references = dataunits.contextual_reference()
+
+        if carrier_name not in references["carriers"]:
+            raise Exception(f"Unknown carrier: {carrier_name}")
+
+        options = references["options"].get(carrier_name, {})
+
+        return Response(options, status=status.HTTP_200_OK)
 
 
 class CarrierLabelPreview(VirtualDownloadView):
@@ -172,16 +257,10 @@ class CarrierLabelPreview(VirtualDownloadView):
 
 
 urlpatterns = [
-    path(
-        "carriers",
-        CarrierList.as_view(),
-        name="carrier-list",
-    ),
-    path(
-        "carriers/<str:carrier_name>/services",
-        CarrierServices.as_view(),
-        name="carrier-services",
-    ),
+    path("carriers", CarrierList.as_view(), name="carrier-list"),
+    path("carriers/<str:carrier_name>", CarrierDetails.as_view(), name="carrier-details"),
+    path("carriers/<str:carrier_name>/services", CarrierServices.as_view(), name="carrier-services"),
+    path("carriers/<str:carrier_name>/options", CarrierOptions.as_view(), name="carrier-options"),
     re_path(
         r"^carriers/(?P<pk>\w+)/label.(?P<format>[a-z0-9]+)",
         CarrierLabelPreview.as_view(),

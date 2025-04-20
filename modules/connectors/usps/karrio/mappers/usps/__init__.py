@@ -20,4 +20,8 @@ METADATA = Metadata(
     options=units.ShippingOption,
     services=units.ShippingService,
     connection_configs=utils.ConnectionConfig,
+    # New fields
+    website="https://www.usps.com",
+    documentation="https://www.usps.com/business/web-tools-apis",
+    description="The United States Postal Service is an independent agency of the executive branch of the United States federal government responsible for providing postal service in the United States.",
 )

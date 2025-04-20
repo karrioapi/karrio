@@ -21,4 +21,8 @@ METADATA = Metadata(
     # packaging_types=units.PackagingType,
     # services=units.Serives,
     has_intl_accounts=True,
+    # New fields
+    website="https://www.aramex.com/ae/en",
+    documentation="https://www.aramex.com/us/en/developers-solution-center/aramex-apis",
+    description="Aramex is the leading global logistics provider.",
 )

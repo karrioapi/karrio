@@ -38,7 +38,7 @@ export default function LaunchWeek() {
   ];
 
   return (
-    <div className="bg-white text-foreground">
+    <div className="bg-background text-foreground">
       {/* Hero Section */}
       <section className="py-16 md:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-0 max-w-6xl text-center">
