@@ -19,4 +19,8 @@ METADATA = Metadata(
     options=units.ShippingOption,
     packaging_types=units.PackagingType,
     service_levels=units.DEFAULT_SERVICES,
+    # New fields
+    website="https://dhl24.com.pl/en",
+    documentation="https://dhl24.com.pl/en/webapi2/doc.html",
+    description="Global Logistics and International Shipping Poland.",
 )

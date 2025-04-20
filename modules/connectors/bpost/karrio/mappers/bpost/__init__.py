@@ -19,4 +19,8 @@ METADATA = Metadata(
     services=units.ShippingService,
     service_levels=units.DEFAULT_SERVICES,
     connection_configs=units.ConnectionConfig,
+    # New fields
+    website="https://bpostgroup.com/",
+    documentation="https://bpost.freshdesk.com/support/solutions/articles/4000037653-where-can-i-find-the-bpack-integration-manual-examples-and-xsd-s-",
+    description="The Belgian company responsible for the delivery of national and international mail.",
 )

@@ -17,4 +17,8 @@ METADATA = Metadata(
     # Data Units
     services=units.ShippingService,
     options=units.ShippingOption,
+    # New fields
+    website="https://www.chronopost.fr/en",
+    documentation="https://www.chrono-api.fr/docs/api/",
+    description="Provides express shipping and delivery service both domestically and internationally.",
 )

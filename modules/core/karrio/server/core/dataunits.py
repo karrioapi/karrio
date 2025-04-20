@@ -4,15 +4,15 @@ from django.urls import reverse
 from rest_framework.request import Request
 
 import karrio.lib as lib
-import karrio.server.conf as conf
+import karrio.references as ref
 import karrio.core.units as units
-import karrio.references as references
+import karrio.server.conf as conf
 
 
-PACKAGE_MAPPERS = references.collect_providers_data()
+PACKAGE_MAPPERS = ref.collect_providers_data()
 
 REFERENCE_MODELS = {
-    **references.collect_references(),
+    **ref.collect_references(),
     "customs_content_type": {c.name: c.value for c in list(units.CustomsContentType)},
     "incoterms": {c.name: c.value for c in list(units.Incoterm)},
 }
@@ -77,7 +77,7 @@ def contextual_reference(request: Request = None, reduced: bool = True):
     import karrio.server.core.middleware as middleware
 
     request = request or middleware.SessionContext.get_current_request()
-    is_authenticated = (
+    is_authenticated = lib.identity(
         request.user.is_authenticated if hasattr(request, "user") else False
     )
     references = {
@@ -142,3 +142,13 @@ def contextual_reference(request: Request = None, reduced: bool = True):
         _get_generic_carriers()
 
     return references
+
+
+def get_carrier_details(
+    carrier_name: str,
+    contextual_reference: dict = None,
+) -> dict:
+    return ref.get_carrier_details(
+        carrier_name,
+        contextual_reference=contextual_reference or contextual_reference(),
+    )

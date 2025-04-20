@@ -33,7 +33,7 @@ def import_extensions() -> typing.Dict[str, metadata.Metadata]:
     }
 
     PROVIDERS = {
-        carrier_name: module.METADATA for carrier_name, module in modules.items()
+        carrier_name: module.METADATA for carrier_name, module in sorted(modules.items(), key=lambda x: x[0])
     }
 
     return PROVIDERS
@@ -227,3 +227,24 @@ def parse_type(_type: type) -> str:
         return "object"
 
     return str(_type)
+
+
+def get_carrier_details(carrier_name: str, contextual_reference: dict = None) -> dict:
+    metadata = collect_providers_data().get(carrier_name, {})
+    references = contextual_reference or collect_references()
+
+    return dict(
+        id=metadata.get("id", ""),
+        carrier_name=carrier_name,
+        display_name=metadata.get("label", ""),
+        integration_status=metadata.get("status", ""),
+        website=metadata.get("website", ""),
+        description=metadata.get("description", ""),
+        documentation=metadata.get("documentation", ""),
+        capabilities=references["carrier_capabilities"].get(carrier_name, {}),
+        connection_fields=references["connection_fields"].get(carrier_name, {}),
+        config_fields=references["connection_configs"].get(carrier_name, {}),
+        shipping_services=references["services"].get(carrier_name, {}),
+        shipping_options=references["options"].get(carrier_name, {}),
+        readme=metadata.get("readme", ""),
+    )

@@ -21,4 +21,8 @@ METADATA = Metadata(
     services=units.ShippingService,
     connection_configs=units.ConnectionConfig,
     has_intl_accounts=True,
+    # New fields
+    website="https://www.dhl.com/ca-en/home/express.html",
+    documentation="https://developer.dhl.com/api-reference/dhl-express-xml",
+    description="When your shipment needs to be there fast, choose the International Specialists for quick, reliable expedited shipments to and from more than 220 countries and territories.",
 )

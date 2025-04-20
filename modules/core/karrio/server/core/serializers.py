@@ -79,6 +79,14 @@ class CarrierDetails(serializers.Serializer):
         default={},
         help_text="The carrier connection config.",
     )
+    shipping_services = serializers.PlainDictField(
+        default={},
+        help_text="The carrier shipping services.",
+    )
+    shipping_options = serializers.PlainDictField(
+        default={},
+        help_text="The carrier shipping options.",
+    )
 
 class CarrierSettings(serializers.Serializer):
     id = serializers.CharField(required=True, help_text="A unique address identifier")
