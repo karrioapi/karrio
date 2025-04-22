@@ -38,7 +38,7 @@ export const SiteHeader = () => {
 
   return (
     <header className="sticky top-0 z-50 py-4 border-b border-border/30 bg-background backdrop-blur-sm dark:border-white/10 dark:backdrop-blur-none shadow-sm dark:shadow-none">
-      <div className="container mx-auto relative px-4 sm:px-6 lg:px-2 max-w-6xl bg-background dark:bg-inherit">
+      <div className="container mx-auto relative px-4 sm:px-6 lg:px-0 max-w-6xl bg-background dark:bg-inherit">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-0">
             <MobileMenu isBlogPage={isBlogPage} />
