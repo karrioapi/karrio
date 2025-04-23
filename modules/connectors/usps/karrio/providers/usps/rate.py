@@ -53,12 +53,16 @@ def _extract_details(
     price_type = ctx.get("price_type")
     rate_indicator = ctx.get("rate_indicator")
     charges = [
-        *[(_.description, lib.to_money(_.price)) for _ in details.rates],
-        *[
-            (_.name, lib.to_money(_.price))
-            for _ in details.extraServices
-            if lib.to_money(_.price) > 0 and _.priceType == price_type
-        ],
+        (
+            _.description,
+            lib.to_money(_.price),
+            [
+                (extra.name, lib.to_money(extra.price))
+                for extra in details.extraServices
+                if lib.to_money(extra.price) > 0 and extra.priceType == price_type
+            ]
+        )
+        for _ in details.rates
     ]
 
     # Skip rate if rate indicator or rate indicator exclusion matches
@@ -78,7 +82,7 @@ def _extract_details(
         currency="USD",
         extra_charges=[
             models.ChargeDetails(name=name, currency="USD", amount=amount)
-            for name, amount in charges
+            for name, amount in charges[0][2] # extra charges
             if amount > 0
         ],
         meta=dict(
