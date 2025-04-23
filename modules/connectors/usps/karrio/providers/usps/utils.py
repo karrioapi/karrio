@@ -311,3 +311,9 @@ def parse_error_response(response) -> dict:
             message=response.strip(),
         )
     )
+
+def parse_phone_number(number: str) -> typing.Optional[str]:
+    if number is None:
+        return None
+
+    return number.replace(" ", "").replace("-", "").replace("+", "")[-10:]
