@@ -51,13 +51,14 @@ elif [[ "$*" == *build:js* ]]; then
     cd -
     karrio collectstatic --noinput >/dev/null 2>&1
 else
-    echo "Help: You can pass any the following commands to the server"
+    echo "Help: You can pass any of the following commands to the server"
     echo "-----"
-    echo "gen:ee - Generate GraphQL ee schema"
-    echo "gen:graph - Generate GraphQL schema"
-    echo "gen:admin - Generate Admin GraphQL schema"
-    echo "gen:platform - Generate Platform GraphQL schema"
-    echo "gen:openapi - Generate OpenAPI schema"
-    echo "gen:ts:cli - Generate Typescript fetch client"
-    echo "build:js - Build Browser Javascript client"
+    echo "gen:ee        - Generate GraphQL enterprise edition schema from localhost:5002/graphql/"
+    echo "gen:graph     - Generate standard GraphQL schema from localhost:5002/graphql/"
+    echo "gen:admin     - Generate Admin GraphQL schema from localhost:5002/admin/graphql/"
+    echo "gen:platform  - Generate Platform GraphQL schema from 0.0.0.0:5002/admin/graphql/"
+    echo "gen:openapi   - Generate OpenAPI schema from localhost:5002/shipping-openapi"
+    echo "gen:ref       - Generate carrier integrations reference file from localhost:5002/v1/carriers"
+    echo "gen:ts:cli    - Generate TypeScript fetch client from OpenAPI schema using docker"
+    echo "build:js      - Build Browser JavaScript client (runs gen:ts:cli, installs dependencies, builds with gulp)"
 fi
