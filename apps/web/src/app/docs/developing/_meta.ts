@@ -12,11 +12,35 @@ export default {
     type: 'page'
   },
   "contributing": {
-    title: 'OSS Contribution',
+    title: 'OSS contribution',
     type: 'separator',
   },
   "oss-contribution": {
     title: 'Introduction',
     type: 'page'
-  }
+  },
+  "pull-requests": {
+    title: 'Pull requests',
+    type: 'page'
+  },
+  "contributors-guide": {
+    title: 'Contributors Guide',
+    type: 'page'
+  },
+  "guides": {
+    title: 'Guides',
+    type: 'separator',
+  },
+  "carrier-integration": {
+    title: 'Carrier Integration',
+    type: 'page',
+  },
+  "address-validation": {
+    title: 'Address Validation',
+    type: 'page'
+  },
+  "email-setup": {
+    title: 'Email',
+    type: 'page'
+  },
 }
