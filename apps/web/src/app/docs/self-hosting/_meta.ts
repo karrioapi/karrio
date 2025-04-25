@@ -18,5 +18,33 @@ export default {
   "docker": {
     title: 'Docker',
     type: 'page'
+  },
+  "deployments": {
+    title: 'Deployments',
+    type: 'separator',
+  },
+  "aws": {
+    title: 'AWS',
+    type: 'page'
+  },
+  "gcp": {
+    title: 'GCP',
+    type: 'page'
+  },
+  "digital-ocean": {
+    title: 'Digital Ocean',
+    type: 'page'
+  },
+  "guides": {
+    title: 'Guides',
+    type: 'separator',
+  },
+  "white-labeling": {
+    title: 'White Labeling',
+    type: 'page'
+  },
+  "custom-builds": {
+    title: 'Custom Builds',
+    type: 'page'
   }
 }
