@@ -123,9 +123,11 @@ const CustomCodeBlock = ({
 
   // Convert children to string for highlighting
   const codeString = typeof children === 'string'
-    ? children
+    ? children.trim()
     : (children && typeof children === 'object' && 'props' in children && children.props.children)
-      ? children.props.children
+      ? typeof children.props.children === 'string'
+        ? children.props.children.trim()
+        : children.props.children
       : '';
 
   return (
@@ -172,7 +174,7 @@ const CustomCodeBlock = ({
           }}
           {...props}
         >
-          {codeString}
+          {codeString.trim()}
         </SyntaxHighlighter>
       </CodeBlockClient>
     </div>
@@ -302,7 +304,7 @@ export function useMDXComponents() {
         if (firstLine.startsWith('// ') || firstLine.startsWith('/* ') || firstLine.startsWith('# ')) {
           filename = firstLine.replace(/^(\/\/|\/\*|#)\s+/, '').trim()
           // Remove the first line from the code if it's a filename comment
-          children = children.split('\n').slice(1).join('\n')
+          children = children.split('\n').slice(1).join('\n').trim()
         }
       }
 
