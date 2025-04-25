@@ -136,6 +136,13 @@ export const RateSheetModalEditor = ({
         value = Array.from(target.selectedOptions).map((o: any) => o.value);
       }
 
+      // Parse numeric fields to correct data types
+      if (name === "transit_days") {
+        value = value === "" ? null : parseInt(value, 10);
+      } else if (["transit_time", "max_weight", "max_length", "max_width", "max_height", "min_weight"].includes(name)) {
+        value = value === "" ? null : parseFloat(value);
+      }
+
       const newValue = (sheet.services || []).map((service, key) =>
         key === idx ? { ...service, [name]: value } : service,
       );
@@ -181,6 +188,13 @@ export const RateSheetModalEditor = ({
       const target = event.target;
       const name: string = target.name;
       let value = target.type === "checkbox" ? target.checked : target.value;
+      
+      // Parse numeric fields to correct data types
+      if (name === "transit_days") {
+        value = value === "" ? null : parseInt(value, 10);
+      } else if (["transit_time", "min_weight", "max_weight", "rate"].includes(name)) {
+        value = value === "" ? null : parseFloat(value);
+      }
       
       const newServices = [...(sheet.services || [])];
       const service = newServices[serviceIndex];
@@ -425,8 +439,9 @@ export const RateSheetModalEditor = ({
                                 // Add a new zone to each service
                                 newServices.forEach(service => {
                                   if (!service.zones[zonesCount]) {
+                                    // Create an empty zone with just the rate property
                                     service.zones[zonesCount] = { 
-                                      rate: service.zones[zonesCount - 1]?.rate || 10.0 
+                                      rate: 10.0 
                                     };
                                   }
                                 });
@@ -670,12 +685,27 @@ export const RateSheetModalEditor = ({
                                         dimension_unit: "CM",
                                         zones: [{ rate: 10.0 }],
                                       });
+                                      
+                                      // Create a new service with only basic properties
                                       newServices.push({
-                                        ...lastService,
+                                        // Only copy essential properties for consistency
+                                        currency: lastService.currency,
+                                        weight_unit: lastService.weight_unit,
+                                        dimension_unit: lastService.dimension_unit,
+                                        
+                                        // Set unique identifiers
                                         service_name: `Service ${newServices.length + 1}`,
                                         service_code: `service_${newServices.length + 1}`,
-                                        zones: lastService.zones.map(z => ({ ...z })),
+                                        
+                                        // Create simple empty zones based on the first zone structure
+                                        zones: lastService.zones.length > 0 
+                                          ? lastService.zones.map(() => ({ rate: 10.0 }))
+                                          : [{ rate: 10.0 }],
+                                          
+                                        // Default values (not copied from previous service)
+                                        transit_days: 1,
                                       });
+                                      
                                       dispatch({ name: "services", value: newServices });
                                       editor.current!.view?.dispatch({
                                         changes: {
