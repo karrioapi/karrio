@@ -123,6 +123,13 @@ kcli codegen generate "${SCHEMAS}/document_upload_response.json" "${LIB_MODULES}
 """
 )
 
+MAPPER_IMPORTS_TEMPLATE = Template(
+    """from karrio.mappers.{{id}}.mapper import Mapper
+from karrio.mappers.{{id}}.proxy import Proxy
+from karrio.mappers.{{id}}.settings import Settings
+"""
+)
+
 MAPPER_METADATA_TEMPLATE = Template(
     """from karrio.core.metadata import Metadata
 
@@ -145,6 +152,37 @@ METADATA = Metadata(
     # options=units.ShippingOption,
     # services=units.ShippingService,
     connection_configs=utils.ConnectionConfig,
+)
+
+"""
+)
+
+PLUGIN_METADATA_TEMPLATE = Template(
+    """from karrio.core.metadata import PluginMetadata
+
+from karrio.mappers.{{id}}.mapper import Mapper
+from karrio.mappers.{{id}}.proxy import Proxy
+from karrio.mappers.{{id}}.settings import Settings
+import karrio.providers.{{id}}.units as units
+import karrio.providers.{{id}}.utils as utils
+
+
+METADATA = PluginMetadata(
+    id="{{id}}",
+    label="{{name}}",
+    description="{{name}} shipping integration for Karrio",
+    # Integrations
+    Mapper=Mapper,
+    Proxy=Proxy,
+    Settings=Settings,
+    # Data Units
+    is_hub=False,
+    # options=units.ShippingOption,
+    # services=units.ShippingService,
+    connection_configs=utils.ConnectionConfig,
+    # Extra info
+    website="",
+    documentation="",
 )
 
 """
@@ -824,4 +862,43 @@ JSON_SCHEMA_ERROR_TEMPLATE = Template(
   }
 }
 """
+)
+
+VALIDATOR_IMPORTS_TEMPLATE = Template(
+    """from karrio.validators.{{id}}.validator import Validator
+"""
+)
+
+VALIDATOR_TEMPLATE = Template('''"""{{name}} address validator."""
+
+import typing
+import karrio.lib as lib
+import karrio.api.validator as validator
+import karrio.core.models as models
+import karrio.providers.{{id}} as provider
+from karrio.providers.{{id}}.utils import Settings
+
+
+class Validator(validator.Validator):
+    """{{name}} address validator."""
+
+    def __init__(self, settings: Settings):
+        self.settings = settings
+
+    def validate_address(self, payload: models.Address) -> models.AddressValidation:
+        """
+        Validate a shipping address using {{name}}'s API.
+
+        Args:
+            payload: The address to validate
+
+        Returns:
+            AddressValidation object with validation results
+        """
+        request = provider.address_validation_request(payload, self.settings)
+        response = provider.validation_call(request, self.settings)
+        result = provider.parse_address_validation_response(response, self.settings)
+
+        return result
+'''
 )
