@@ -8,4 +8,742 @@ author: Karrio Team
 
 # Custom Builds
 
+This guide provides developers with advanced techniques to customize Karrio through custom Docker builds, extension plugins, and additional Python packages.
+
+## Why Customize Karrio?
+
+There are several reasons you might want to customize your Karrio deployment:
+
+- **Custom carriers**: Add support for carriers not included in the standard distribution
+- **Custom integrations**: Connect to your internal systems or third-party platforms
+- **Enhanced functionality**: Add custom business logic or unique features
+- **Performance optimizations**: Tune the system for your specific workloads
+- **Compliance requirements**: Meet specific regulatory or security requirements
+
+## Prerequisites
+
+- Familiarity with Docker and Docker Compose
+- Basic understanding of Python and Django development
+- Git installed on your system
+- Docker and Docker Compose installed
+- Understanding of Karrio's architecture
+
+## Creating Custom Docker Images
+
+### Basic Approach: Extending the Official Image
+
+The simplest way to customize Karrio is to extend the official Docker image with your own modifications.
+
+1. Create a directory for your custom build:
+
+```bash
+mkdir -p ~/karrio-custom
+cd ~/karrio-custom
+```
+
+2. Create a `Dockerfile` that extends the official image:
+
+```dockerfile
+# Dockerfile
+FROM karrio/server:latest
+
+# Add your custom dependencies
+RUN pip install your-custom-package another-package
+
+# Add your custom files
+COPY ./custom_files /custom_files
+
+# Set environment variables if needed
+ENV CUSTOM_SETTING=value
+```
+
+3. Create a `docker-compose.yml` file that uses your custom image:
+
+```yaml
+# docker-compose.yml
+version: '3'
+
+services:
+  api:
+    build: .
+    container_name: karrio.api
+    restart: unless-stopped
+    ports:
+      - ${KARRIO_HTTP_PORT:-5002}:${KARRIO_HTTP_PORT:-5002}
+    depends_on:
+      - db
+      - redis
+    environment:
+      DEBUG_MODE: ${DEBUG_MODE:-False}
+      DETACHED_WORKER: "True"
+      SECRET_KEY: ${SECRET_KEY}
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      DATABASE_HOST: ${DATABASE_HOST:-db}
+      DATABASE_PORT: ${DATABASE_PORT:-5432}
+      DATABASE_NAME: ${DATABASE_NAME:-db}
+      DATABASE_ENGINE: ${DATABASE_ENGINE:-postgresql_psycopg2}
+      DATABASE_USERNAME: ${DATABASE_USERNAME:-postgres}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+      KARRIO_HTTP_PORT: ${KARRIO_HTTP_PORT:-5002}
+      # Add your custom environment variables here
+      CUSTOM_SETTING: ${CUSTOM_SETTING:-value}
+    volumes:
+      - karrio-static:/karrio/static
+      - ./plugins:/karrio/plugins # Mount plugins directory
+
+  worker:
+    build: .
+    container_name: karrio.worker
+    restart: unless-stopped
+    depends_on:
+      - db
+      - redis
+      - api
+    environment:
+      DEBUG_MODE: ${DEBUG_MODE:-False}
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      DATABASE_HOST: ${DATABASE_HOST:-db}
+      DATABASE_PORT: ${DATABASE_PORT:-5432}
+      DATABASE_NAME: ${DATABASE_NAME:-db}
+      DATABASE_ENGINE: ${DATABASE_ENGINE:-postgresql_psycopg2}
+      DATABASE_USERNAME: ${DATABASE_USERNAME:-postgres}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+      # Add your custom environment variables here
+      CUSTOM_SETTING: ${CUSTOM_SETTING:-value}
+    volumes:
+      - ./plugins:/karrio/plugins # Mount plugins directory
+    command: "/bin/bash ./worker"
+
+  # Include other services from the standard docker-compose.yml
+  dashboard:
+    image: karrio/dashboard:${KARRIO_TAG:-latest}
+    # ... rest of dashboard configuration
+
+  db:
+    # ... database configuration
+
+  redis:
+    # ... redis configuration
+
+volumes:
+  karrio-static:
+  postgres-data:
+  redis-data:
+```
+
+4. Create a `.env` file with your configuration:
+
+```bash
+# .env
+SECRET_KEY=your_secure_secret_key
+DEBUG_MODE=False
+KARRIO_HTTP_PORT=5002
+KARRIO_TAG=latest
+
+# Database settings
+DATABASE_ENGINE=postgresql_psycopg2
+DATABASE_NAME=db
+DATABASE_USERNAME=postgres
+DATABASE_PASSWORD=postgres
+DATABASE_HOST=db
+DATABASE_PORT=5432
+
+# Redis settings
+REDIS_HOST=redis
+REDIS_PORT=6379
+
+# Your custom settings
+CUSTOM_SETTING=value
+```
+
+5. Build and start your custom Karrio deployment:
+
+```bash
+docker-compose build
+docker-compose up -d
+```
+
+### Advanced Approach: Building from Source
+
+For more extensive customizations, you can build Karrio from source:
+
+1. Clone the Karrio repository:
+
+```bash
+git clone https://github.com/karrioapi/karrio.git
+cd karrio
+```
+
+2. Create a custom Dockerfile in the repository:
+
+```dockerfile
+# Dockerfile.custom
+FROM python:3.11-slim AS compile-image
+
+ARG REQUIREMENTS="requirements.txt"
+ARG CUSTOM_REQUIREMENTS="custom-requirements.txt"
+
+RUN apt-get update -y && apt-get install -y gcc
+
+RUN python -m venv /karrio/venv
+ENV PATH="/karrio/venv/bin:$PATH"
+
+# Install standard requirements
+COPY "${REQUIREMENTS}" /temp/
+RUN pip install --upgrade pip && \
+    pip install -r "/temp/${REQUIREMENTS}"
+
+# Install custom requirements if present
+COPY "${CUSTOM_REQUIREMENTS}" /temp/ || true
+RUN if [ -f "/temp/${CUSTOM_REQUIREMENTS}" ]; then \
+    pip install -r "/temp/${CUSTOM_REQUIREMENTS}"; \
+    fi
+
+# The runtime image
+FROM python:3.11-slim AS build-image
+
+LABEL maintainer=your-email@example.com
+LABEL org.opencontainers.image.title="custom karrio server"
+LABEL org.opencontainers.image.description="custom karrio server runtime image"
+
+ENV DEBUG_MODE=False
+ENV USE_HTTPS=False
+ENV ALLOWED_HOSTS=*
+ENV KARRIO_WORKERS=2
+ENV BACKGROUND_WORKERS=2
+ENV DETACHED_WORKER=False
+ENV WORK_DIR=/karrio/app
+ENV LOG_DIR=/karrio/log
+ENV WORKER_DB_DIR=/karrio/data
+ENV STATIC_ROOT_DIR=/karrio/static
+ENV PLUGINS_DIR=/karrio/plugins
+
+RUN apt-get update -y && apt-get install -y libpango1.0-0 libpangoft2-1.0-0 gcc zint curl
+RUN useradd -m karrio -d /karrio
+USER karrio
+
+COPY --chown=karrio:karrio --from=compile-image /karrio/ /karrio/
+RUN mkdir -p $WORK_DIR $LOG_DIR $WORKER_DB_DIR $STATIC_ROOT_DIR $PLUGINS_DIR
+COPY apps/api/gunicorn-cfg.py docker/api/entrypoint docker/api/worker $WORK_DIR/
+
+# Copy your custom code
+COPY custom/ /karrio/custom/
+
+WORKDIR $WORK_DIR
+
+# Make sure we use the virtualenv
+ENV PATH="/karrio/venv/bin:$PATH"
+
+# Add PYTHONPATH for plugins
+ENV PYTHONPATH="${PYTHONPATH}:/karrio/plugins"
+
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["./entrypoint"]
+```
+
+3. Create a `custom-requirements.txt` file with your additional Python dependencies:
+
+```
+# custom-requirements.txt
+your-custom-package==1.0.0
+another-package==2.3.4
+```
+
+4. Create a custom `docker-compose.yml` file:
+
+```yaml
+# docker-compose.custom.yml
+version: '3'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.custom
+      args:
+        - REQUIREMENTS=requirements.txt
+        - CUSTOM_REQUIREMENTS=custom-requirements.txt
+    # ... rest of configuration similar to above
+```
+
+5. Build and run your custom deployment:
+
+```bash
+docker-compose -f docker-compose.custom.yml build
+docker-compose -f docker-compose.custom.yml up -d
+```
+
+## Setting Up Mountable Plugin Directories
+
+Karrio can be extended with plugins loaded from a mounted directory, allowing you to update and add functionality without rebuilding the Docker image.
+
+### Creating the Plugin Structure
+
+1. Create a plugins directory in your project:
+
+```bash
+mkdir -p plugins
+```
+
+2. A Karrio plugin follows this basic structure:
+
+```
+plugins/
+├── my_plugin/
+│   ├── __init__.py
+│   ├── carrier.py     # For custom carrier integrations
+│   ├── models.py      # For custom data models
+│   ├── services.py    # For custom business logic
+│   └── hooks.py       # For event hooks
+└── another_plugin/
+    └── ...
+```
+
+3. The `__init__.py` file should register your plugin:
+
+```python
+# plugins/my_plugin/__init__.py
+from karrio.core.plugins import Plugin
+
+class MyPlugin(Plugin):
+    """Custom plugin for extending Karrio."""
+
+    id = 'my_plugin'
+    name = 'My Custom Plugin'
+    version = '1.0.0'
+
+    def initialize(self):
+        # This method is called when the plugin is loaded
+        print(f"Loading {self.name} v{self.version}")
+
+        # Register custom models, services, carriers, etc.
+        from . import carrier, models, services, hooks
+
+# Required: This allows Karrio to discover and load your plugin
+plugin = MyPlugin()
+```
+
+### Adding a Custom Carrier
+
+Create a `carrier.py` file to implement a custom shipping carrier:
+
+```python
+# plugins/my_plugin/carrier.py
+from karrio.core.models import ShippingRequest, ShippingResponse
+from karrio.core.carriers import Carrier
+
+class MyCustomCarrier(Carrier):
+    """Implementation for a custom shipping carrier."""
+
+    carrier_name = 'my_custom_carrier'
+    display_name = 'My Custom Carrier'
+
+    def create_shipment(self, request: ShippingRequest) -> ShippingResponse:
+        # Implement shipment creation logic
+        # This is where you would integrate with the carrier's API
+
+        response = ShippingResponse(
+            carrier_name=self.carrier_name,
+            carrier_id='shipment_id_from_carrier',
+            tracking_number='tracking_number_from_carrier',
+            label_url='https://example.com/labels/example.pdf'
+        )
+
+        return response
+
+    def track_shipment(self, tracking_number):
+        # Implement tracking logic
+        pass
+
+    def fetch_rates(self, request):
+        # Implement rate fetching logic
+        pass
+
+# Register the carrier with Karrio
+from karrio.core.registry import register_carrier
+register_carrier(MyCustomCarrier)
+```
+
+### Implementing Event Hooks
+
+Create a `hooks.py` file to implement custom event handlers:
+
+```python
+# plugins/my_plugin/hooks.py
+from karrio.core.events import on_event
+
+@on_event('shipment.created')
+def handle_shipment_created(shipment):
+    """Handle shipment created events."""
+    print(f"Shipment created: {shipment.id}")
+
+    # You could integrate with your internal systems here
+    # For example, update inventory, notify stakeholders, etc.
+
+@on_event('shipment.tracked')
+def handle_shipment_tracked(tracking_update):
+    """Handle shipment tracking updates."""
+    print(f"Tracking update for {tracking_update.tracking_number}: {tracking_update.status}")
+```
+
+### Mounting the Plugins Directory
+
+To make your plugins available to Karrio:
+
+1. Ensure your `docker-compose.yml` mounts the plugins directory:
+
+```yaml
+services:
+  api:
+    # ... other configuration
+    volumes:
+      - ./plugins:/karrio/plugins
+
+  worker:
+    # ... other configuration
+    volumes:
+      - ./plugins:/karrio/plugins
+```
+
+2. Set the `PLUGINS_DIR` environment variable (though this is already set in our custom Dockerfile):
+
+```yaml
+services:
+  api:
+    environment:
+      # ... other environment variables
+      PLUGINS_DIR: /karrio/plugins
+```
+
+## Installing Additional Python Packages
+
+There are several approaches to installing additional Python packages:
+
+### Method 1: Dockerfile (Recommended for Production)
+
+Include the packages in your Dockerfile (as shown above):
+
+```dockerfile
+FROM karrio/server:latest
+RUN pip install your-package another-package
+```
+
+### Method 2: Custom Requirements File
+
+1. Create a custom requirements file:
+
+```
+# custom-requirements.txt
+your-package==1.0.0
+another-package==2.3.4
+```
+
+2. Install it in your Dockerfile:
+
+```dockerfile
+COPY custom-requirements.txt /tmp/
+RUN pip install -r /tmp/custom-requirements.txt
+```
+
+### Method 3: Runtime Installation (Development Only)
+
+For development, you can install packages at runtime:
+
+1. Add a startup script:
+
+```bash
+# custom-startup.sh
+#!/bin/bash
+pip install your-package another-package
+./entrypoint
+```
+
+2. Use it in your Dockerfile:
+
+```dockerfile
+COPY custom-startup.sh /karrio/app/
+RUN chmod +x /karrio/app/custom-startup.sh
+CMD ["/karrio/app/custom-startup.sh"]
+```
+
+## Advanced Customization Techniques
+
+### Custom API Endpoints
+
+You can add custom API endpoints by creating Django views in your plugin:
+
+```python
+# plugins/my_plugin/views.py
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+from django.contrib.auth.decorators import login_required
+
+@require_http_methods(["GET"])
+def hello(request):
+    """A simple custom endpoint."""
+    return JsonResponse({"message": "Hello from custom plugin!"})
+
+@login_required
+@require_http_methods(["GET"])
+def protected(request):
+    """A protected endpoint requiring authentication."""
+    return JsonResponse({"message": f"Hello, {request.user.email}!"})
+```
+
+Then add the URLs to your plugin:
+
+```python
+# plugins/my_plugin/urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('hello/', views.hello, name='hello'),
+    path('protected/', views.protected, name='protected'),
+]
+```
+
+And register them in your plugin initialization:
+
+```python
+# In your __init__.py initialize method
+def initialize(self):
+    # Register URLs
+    from django.urls import include, path
+    from karrio.server.urls import urlpatterns
+    urlpatterns.append(path('api/custom/', include('my_plugin.urls')))
+```
+
+### Database Extensions
+
+You can add custom database models using Django's ORM:
+
+```python
+# plugins/my_plugin/models.py
+from django.db import models
+from karrio.core.models import Shipment
+
+class CustomModel(models.Model):
+    """A custom database model."""
+    name = models.CharField(max_length=100, db_index=True)
+    description = models.TextField(blank=True)
+
+    # You can relate to existing Karrio models
+    shipment = models.ForeignKey(Shipment, on_delete=models.CASCADE, related_name='custom_models')
+
+    def __str__(self):
+        return self.name
+```
+
+Then create and register migrations for your models:
+
+```python
+# In your __init__.py initialize method
+def initialize(self):
+    # Register models
+    from django.apps import apps
+    from django.conf import settings
+
+    if not apps.is_installed('my_plugin'):
+        settings.INSTALLED_APPS += ('my_plugin',)
+
+    # Run migrations
+    from django.core.management import call_command
+    call_command('makemigrations')
+    call_command('migrate')
+```
+
+### Custom Dashboard Components
+
+For frontend customizations, you can create custom React components for the dashboard.
+
+1. Create a `dashboard` directory in your project:
+
+```bash
+mkdir -p dashboard/custom-components
+```
+
+2. Create custom React components:
+
+```jsx
+// dashboard/custom-components/CustomWidget.jsx
+import React from 'react';
+
+export const CustomWidget = () => {
+  return (
+    <div className="custom-widget">
+      <h3>Custom Widget</h3>
+      <p>This is a custom dashboard widget!</p>
+    </div>
+  );
+};
+```
+
+3. Create a custom dashboard Dockerfile:
+
+```dockerfile
+# Dockerfile.dashboard
+FROM karrio/dashboard:latest
+
+COPY dashboard/custom-components /app/custom-components
+
+# Install any frontend dependencies
+WORKDIR /app
+RUN npm install custom-package
+```
+
+4. Update your `docker-compose.yml`:
+
+```yaml
+services:
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    # ... rest of configuration
+```
+
+## Deployment Considerations
+
+### Security
+
+- Never hardcode sensitive information in your Dockerfile or source code
+- Use environment variables for configuration
+- Consider using Docker secrets for sensitive information
+- Regularly update your dependencies
+
+### Performance
+
+- Be mindful of the resources your customizations require
+- Test your custom build under load
+- Monitor resource usage in production
+
+### Maintenance
+
+- Document your customizations thoroughly
+- Keep track of the changes you've made
+- Consider creating an automated build pipeline
+- Regularly rebase your custom builds on the latest Karrio releases
+
+## Examples
+
+### Example 1: Custom USPS Integration
+
+```python
+# plugins/custom_usps/carrier.py
+from karrio.core.carriers import Carrier
+from karrio.core.models import ShippingRequest, ShippingResponse
+
+class EnhancedUSPS(Carrier):
+    """Enhanced USPS integration with additional features."""
+
+    carrier_name = 'enhanced_usps'
+    display_name = 'Enhanced USPS'
+
+    def create_shipment(self, request: ShippingRequest) -> ShippingResponse:
+        # Your enhanced USPS logic here
+        pass
+```
+
+### Example 2: ERP Integration Plugin
+
+```python
+# plugins/erp_integration/__init__.py
+from karrio.core.plugins import Plugin
+
+class ERPIntegration(Plugin):
+    id = 'erp_integration'
+    name = 'ERP Integration'
+    version = '1.0.0'
+
+    def initialize(self):
+        from . import hooks, services
+
+plugin = ERPIntegration()
+
+# plugins/erp_integration/hooks.py
+from karrio.core.events import on_event
+import requests
+import os
+
+@on_event('shipment.created')
+def sync_to_erp(shipment):
+    """Sync new shipments to ERP system."""
+
+    erp_url = os.environ.get('ERP_API_URL')
+    api_key = os.environ.get('ERP_API_KEY')
+
+    if not erp_url or not api_key:
+        print("ERP integration not configured")
+        return
+
+    # Transform shipment data for ERP
+    erp_data = {
+        'order_id': shipment.order_id,
+        'tracking_number': shipment.tracking_number,
+        'carrier': shipment.carrier_name,
+        'status': 'SHIPPED'
+    }
+
+    # Send to ERP
+    response = requests.post(
+        f"{erp_url}/orders/update",
+        json=erp_data,
+        headers={"Authorization": f"Bearer {api_key}"}
+    )
+
+    if response.status_code != 200:
+        print(f"Failed to sync to ERP: {response.text}")
+```
+
+## Troubleshooting
+
+### Plugin Not Loading
+
+If your plugin isn't loading:
+
+1. Check the logs:
+```bash
+docker-compose logs api
+```
+
+2. Verify the plugin directory is correctly mounted:
+```bash
+docker-compose exec api ls -la /karrio/plugins
+```
+
+3. Ensure your plugin has the correct structure and `__init__.py` file.
+
+### Import Errors
+
+If you're seeing import errors:
+
+1. Make sure your custom packages are properly installed
+2. Check that `PYTHONPATH` includes your plugins directory
+3. Verify package versions are compatible with Karrio
+
+### Database Errors
+
+If you encounter database errors when adding custom models:
+
+1. Make sure your models are defined correctly
+2. Run migrations manually:
+```bash
+docker-compose exec api karrio migrate
+```
+
+## Conclusion
+
+Custom Docker builds give you the flexibility to extend and customize Karrio to meet your specific needs. By following this guide, you can create a tailored Karrio deployment that integrates with your existing systems and adds custom functionality.
+
+For more advanced customizations, consider contributing to the Karrio project directly or reaching out to the community for assistance.
+
+## Resources
+
+- [Karrio GitHub Repository](https://github.com/karrioapi/karrio)
+- [Docker Documentation](https://docs.docker.com/)
+- [Django Documentation](https://docs.djangoproject.com/) (used by Karrio's API)
+
 

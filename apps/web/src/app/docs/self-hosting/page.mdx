@@ -1,6 +1,34 @@
-# Installation
+# Self-Hosting
 
-This guide will help you set up a self-hosted instance of Karrio, giving you complete control over your shipping API infrastructure.
+There are multiple ways to deploy Karrio, providing support for customers who want to implement their shipping API infrastructure within their existing tech stack. This guide will help you get started with self-hosting Karrio.
+
+## Requirements
+
+Karrio runs with minimal hardware requirements. The most resource-intensive operations are during initial setup and database migrations, but once running, it's relatively lightweight.
+
+### Hardware Requirements
+
+- **Minimal Setup**:
+  - 2GB RAM
+  - 1 CPU core
+  - 10GB storage
+
+- **Recommended Setup (Production)**:
+  - 4GB+ RAM
+  - 2+ CPU cores
+  - 20GB+ storage
+
+### Software Requirements
+
+- **Operating System**:
+  - Karrio works well on Linux, macOS, and Windows
+  - For production deployments, we recommend Linux (Ubuntu 20.04+ or Debian 11+)
+
+- **Required Software**:
+  - Docker and Docker Compose (for container-based deployments)
+  - Git (for source-based deployments)
+  - PostgreSQL 12+ (if not using containerized database)
+  - Redis (if not using containerized cache)
 
 ## Why Self-Host?
 
@@ -14,142 +42,60 @@ Self-hosting Karrio offers several advantages:
 
 ## Deployment Options
 
-### Docker Compose (Recommended for Small to Medium Deployments)
+### [Docker](/docs/self-hosting/docker)
 
-The easiest way to self-host Karrio is using Docker Compose.
+Docker is the recommended and easiest way to get started with self-hosting Karrio. It provides a consistent environment across different platforms and simplifies the setup process.
 
-#### Prerequisites
-
-- Docker and Docker Compose installed
-- 2GB+ RAM, 2+ CPU cores
-- 20GB+ storage
-
-#### Steps
-
-1. Clone the repository:
+For quick deployments, we offer a one-click installation script:
 
 ```bash
-git clone https://github.com/karrioapi/karrio.git
-cd karrio
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/deploy-hobby)"
 ```
 
-2. Create a `.env` file with your configuration:
+### Cloud Providers
 
-```bash
-# Database settings
-DB_ENGINE=django.db.backends.postgresql
-DB_NAME=karrio
-DB_USER=postgres
-DB_PASSWORD=your_secure_password
-DB_HOST=db
-DB_PORT=5432
+Deploy Karrio on popular cloud platforms with detailed guides:
 
-# API settings
-SECRET_KEY=your_secure_secret_key
-ALLOWED_HOSTS=your-domain.com,localhost
-```
+- [AWS](/docs/self-hosting/aws)
+- [GCP](/docs/self-hosting/gcp)
+- [Digital Ocean](/docs/self-hosting/digital-ocean)
 
-3. Start the services:
+## Environment Configuration
 
-```bash
-docker-compose up -d
-```
+Karrio is configured primarily through environment variables. The most important ones are:
 
-4. Access your Karrio instance at `http://localhost:8000` or your configured domain.
+- `SECRET_KEY`: A secret key used for security
+- `DOMAIN`: Your domain name (for production)
+- `DASHBOARD_URL`: URL for the dashboard interface
+- `KARRIO_PUBLIC_URL`: URL for the API
+- `DATABASE_*`: Database connection details
+- `REDIS_*`: Redis connection details
 
-### Kubernetes (Recommended for Large Deployments)
+For a comprehensive list, see the [Environment Variables](/docs/self-hosting/environment) documentation.
 
-For production environments with high availability requirements, we recommend using Kubernetes.
+## Initial Setup
 
-#### Prerequisites
+After deployment, you can access your Karrio instance:
+- Dashboard: Default at `http://localhost:3000` or your configured domain
+- API: Default at `http://localhost:5002` or your configured domain
 
-- Kubernetes cluster
-- Helm installed
-- Persistent storage provisioner
+Default login credentials:
+- Email: `admin@example.com`
+- Password: `demo`
 
-#### Steps
+For production environments, we strongly recommend changing these credentials immediately.
 
-1. Add the Karrio Helm repository:
+## Integration with Shipping Carriers
 
-```bash
-helm repo add karrio https://charts.karrio.io
-helm repo update
-```
+Karrio supports multiple shipping carriers out of the box. To use them, you'll need to configure credentials in your environment variables:
 
-2. Create a `values.yaml` file with your configuration:
+- USPS
+- UPS
+- FedEx
+- DHL
+- And many more
 
-```yaml
-# values.yaml
-api:
-  replicas: 2
-  resources:
-    requests:
-      memory: "512Mi"
-      cpu: "500m"
-    limits:
-      memory: "1Gi"
-      cpu: "1000m"
-
-database:
-  persistence:
-    size: 20Gi
-  password: your_secure_password
-
-redis:
-  persistence:
-    size: 5Gi
-
-ingress:
-  enabled: true
-  hosts:
-    - host: karrio.your-domain.com
-      paths:
-        - path: /
-```
-
-3. Install the Karrio chart:
-
-```bash
-helm install karrio karrio/karrio -f values.yaml
-```
-
-## Configuration
-
-### Environment Variables
-
-Karrio can be configured using environment variables. Here are the most important ones:
-
-| Variable | Description | Default |
-| -------- | ----------- | ------- |
-| `SECRET_KEY` | Django secret key for security | Random string |
-| `DEBUG` | Enable debug mode | `False` |
-| `ALLOWED_HOSTS` | Comma-separated list of allowed hosts | `localhost` |
-| `DB_ENGINE` | Database engine | `django.db.backends.postgresql` |
-| `DB_NAME` | Database name | `karrio` |
-| `DB_USER` | Database user | `postgres` |
-| `DB_PASSWORD` | Database password | - |
-| `DB_HOST` | Database host | `localhost` |
-| `DB_PORT` | Database port | `5432` |
-| `REDIS_URL` | Redis URL | `redis://localhost:6379/0` |
-
-### Carrier Credentials
-
-To use shipping carriers, you'll need to configure their credentials:
-
-```bash
-# USPS
-USPS_USERNAME=your_usps_username
-USPS_PASSWORD=your_usps_password
-
-# DHL
-DHL_SITE_ID=your_dhl_site_id
-DHL_PASSWORD=your_dhl_password
-
-# UPS
-UPS_USERNAME=your_ups_username
-UPS_PASSWORD=your_ups_password
-UPS_ACCESS_LICENSE=your_ups_access_license
-```
+Each carrier requires specific API credentials that you can obtain from your carrier account.
 
 ## Maintenance
 
@@ -159,56 +105,28 @@ It's important to regularly back up your Karrio data:
 
 ```bash
 # Backup PostgreSQL database
-docker-compose exec db pg_dump -U postgres karrio > karrio_backup_$(date +%Y%m%d).sql
+docker-compose exec db pg_dump -U postgres -d db > karrio_backup_$(date +%Y%m%d).sql
 
 # Backup configuration
 cp .env .env.backup.$(date +%Y%m%d)
 ```
 
-### Updates
+### [Upgrades](/docs/self-hosting/upgrade)
 
-To update your Karrio instance:
-
-```bash
-# Pull the latest changes
-git pull
-
-# Rebuild and restart containers
-docker-compose down
-docker-compose build
-docker-compose up -d
-
-# Run migrations
-docker-compose exec api python manage.py migrate
-```
-
-## Troubleshooting
-
-### Common Issues
-
-#### Database Connection Errors
-
-If you encounter database connection issues:
+To upgrade your Karrio instance, we provide an upgrade script for hobby deployments:
 
 ```bash
-# Check if the database container is running
-docker-compose ps
-
-# Check database logs
-docker-compose logs db
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/upgrade-hobby)"
 ```
 
-#### API Not Responding
+For manual deployments, see our [Upgrade Guide](/docs/self-hosting/upgrade).
 
-If the API is not responding:
+## Next Steps
 
-```bash
-# Check API logs
-docker-compose logs api
-
-# Restart the API service
-docker-compose restart api
-```
+1. Choose your preferred [deployment method](#deployment-options)
+2. Set up your [environment variables](/docs/self-hosting/environment)
+3. Learn how to [upgrade](/docs/self-hosting/upgrade) your installation
+4. Explore [carrier configurations](/docs/carriers)
 
 ## Support
 
