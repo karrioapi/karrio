@@ -39,6 +39,10 @@ export default {
     title: 'Guides',
     type: 'separator',
   },
+  "environment": {
+    title: 'Environment',
+    type: 'page'
+  },
   "white-labeling": {
     title: 'White Labeling',
     type: 'page'

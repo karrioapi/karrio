@@ -1,218 +1,179 @@
-# Upgrade
+# Upgrading Karrio
 
-This guide will help you set up a self-hosted instance of Karrio, giving you complete control over your shipping API infrastructure.
+This guide provides instructions on how to safely upgrade your self-hosted Karrio instance.
 
-## Why Self-Host?
+## Before You Upgrade
 
-Self-hosting Karrio offers several advantages:
+Before upgrading your Karrio installation, it's important to:
 
-- **Data Control**: Keep all your shipping data within your own infrastructure
-- **Customization**: Modify the platform to suit your specific needs
-- **Integration**: Seamlessly integrate with your existing systems
-- **Cost**: Potentially reduce costs for high-volume shipping operations
-- **Compliance**: Meet specific regulatory or security requirements
+1. **Backup your data**: Always create backups of your database and configuration files before upgrading.
+2. **Check release notes**: Review the [release notes](https://github.com/karrioapi/karrio/releases) for any breaking changes.
+3. **Plan for downtime**: The upgrade process will cause a few minutes of downtime.
 
-## Deployment Options
-
-### Docker Compose (Recommended for Small to Medium Deployments)
-
-The easiest way to self-host Karrio is using Docker Compose.
-
-#### Prerequisites
-
-- Docker and Docker Compose installed
-- 2GB+ RAM, 2+ CPU cores
-- 20GB+ storage
-
-#### Steps
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/karrioapi/karrio.git
-cd karrio
-```
-
-2. Create a `.env` file with your configuration:
-
-```bash
-# Database settings
-DB_ENGINE=django.db.backends.postgresql
-DB_NAME=karrio
-DB_USER=postgres
-DB_PASSWORD=your_secure_password
-DB_HOST=db
-DB_PORT=5432
-
-# API settings
-SECRET_KEY=your_secure_secret_key
-ALLOWED_HOSTS=your-domain.com,localhost
-```
-
-3. Start the services:
-
-```bash
-docker-compose up -d
-```
-
-4. Access your Karrio instance at `http://localhost:8000` or your configured domain.
-
-### Kubernetes (Recommended for Large Deployments)
-
-For production environments with high availability requirements, we recommend using Kubernetes.
-
-#### Prerequisites
-
-- Kubernetes cluster
-- Helm installed
-- Persistent storage provisioner
-
-#### Steps
-
-1. Add the Karrio Helm repository:
-
-```bash
-helm repo add karrio https://charts.karrio.io
-helm repo update
-```
-
-2. Create a `values.yaml` file with your configuration:
-
-```yaml
-# values.yaml
-api:
-  replicas: 2
-  resources:
-    requests:
-      memory: "512Mi"
-      cpu: "500m"
-    limits:
-      memory: "1Gi"
-      cpu: "1000m"
-
-database:
-  persistence:
-    size: 20Gi
-  password: your_secure_password
-
-redis:
-  persistence:
-    size: 5Gi
-
-ingress:
-  enabled: true
-  hosts:
-    - host: karrio.your-domain.com
-      paths:
-        - path: /
-```
-
-3. Install the Karrio chart:
-
-```bash
-helm install karrio karrio/karrio -f values.yaml
-```
-
-## Configuration
-
-### Environment Variables
-
-Karrio can be configured using environment variables. Here are the most important ones:
-
-| Variable | Description | Default |
-| -------- | ----------- | ------- |
-| `SECRET_KEY` | Django secret key for security | Random string |
-| `DEBUG` | Enable debug mode | `False` |
-| `ALLOWED_HOSTS` | Comma-separated list of allowed hosts | `localhost` |
-| `DB_ENGINE` | Database engine | `django.db.backends.postgresql` |
-| `DB_NAME` | Database name | `karrio` |
-| `DB_USER` | Database user | `postgres` |
-| `DB_PASSWORD` | Database password | - |
-| `DB_HOST` | Database host | `localhost` |
-| `DB_PORT` | Database port | `5432` |
-| `REDIS_URL` | Redis URL | `redis://localhost:6379/0` |
-
-### Carrier Credentials
-
-To use shipping carriers, you'll need to configure their credentials:
-
-```bash
-# USPS
-USPS_USERNAME=your_usps_username
-USPS_PASSWORD=your_usps_password
-
-# DHL
-DHL_SITE_ID=your_dhl_site_id
-DHL_PASSWORD=your_dhl_password
-
-# UPS
-UPS_USERNAME=your_ups_username
-UPS_PASSWORD=your_ups_password
-UPS_ACCESS_LICENSE=your_ups_access_license
-```
-
-## Maintenance
-
-### Backups
+## Backing Up Your Data
 
 It's important to regularly back up your Karrio data:
 
 ```bash
 # Backup PostgreSQL database
-docker-compose exec db pg_dump -U postgres karrio > karrio_backup_$(date +%Y%m%d).sql
+docker-compose exec db pg_dump -U postgres -d db > karrio_backup_$(date +%Y%m%d).sql
 
 # Backup configuration
 cp .env .env.backup.$(date +%Y%m%d)
 ```
 
-### Updates
+## Upgrading a Hobby Deployment
 
-To update your Karrio instance:
+If you've used our one-click hobby deployment script, you can upgrade Karrio using the upgrade script:
 
 ```bash
-# Pull the latest changes
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/upgrade-hobby)"
+```
+
+The script will:
+
+1. Ask for confirmation before proceeding
+2. Check for named postgres volumes to avoid data loss
+3. Download the latest docker-compose file
+4. Pull the latest Karrio Docker images
+5. Stop the current stack
+6. Restart the stack with the new images
+
+### What to Expect During Upgrade
+
+The upgrade process will:
+
+1. Cause a few minutes of downtime
+2. Preserve your database data and configurations
+3. Apply any necessary database migrations automatically
+4. Update all Karrio components to the latest version
+
+## Manually Upgrading a Docker Compose Deployment
+
+If you're running a manual Docker Compose installation, follow these steps to upgrade:
+
+1. Navigate to your Karrio installation directory:
+
+```bash
+cd /path/to/your/karrio
+```
+
+2. Update your local repository (if you've cloned it):
+
+```bash
 git pull
+```
 
-# Rebuild and restart containers
+3. Update the `KARRIO_TAG` in your `.env` file to the desired version:
+
+```bash
+# Example
+KARRIO_TAG=2024.12.6
+```
+
+4. Pull the latest images:
+
+```bash
+docker-compose pull
+```
+
+5. Stop the current stack:
+
+```bash
 docker-compose down
-docker-compose build
+```
+
+6. Start the stack with the new images:
+
+```bash
 docker-compose up -d
-
-# Run migrations
-docker-compose exec api python manage.py migrate
 ```
 
-## Troubleshooting
-
-### Common Issues
-
-#### Database Connection Errors
-
-If you encounter database connection issues:
+7. Monitor the logs to ensure everything is working correctly:
 
 ```bash
-# Check if the database container is running
-docker-compose ps
-
-# Check database logs
-docker-compose logs db
+docker-compose logs -f
 ```
 
-#### API Not Responding
+## Upgrading Specific Components
 
-If the API is not responding:
+If you need to upgrade specific components only:
+
+### API and Worker
 
 ```bash
-# Check API logs
+docker-compose pull api worker
+docker-compose stop api worker
+docker-compose up -d api worker
+```
+
+### Dashboard
+
+```bash
+docker-compose pull dashboard
+docker-compose stop dashboard
+docker-compose up -d dashboard
+```
+
+## Troubleshooting Upgrades
+
+### Database Migration Issues
+
+If you encounter issues with database migrations:
+
+```bash
+# Check the API logs for migration errors
 docker-compose logs api
 
-# Restart the API service
-docker-compose restart api
+# Manually run migrations if needed
+docker-compose exec api karrio migrate
 ```
 
-## Support
+### Version Compatibility
 
-If you need help with your self-hosted Karrio instance:
+If you encounter compatibility issues between components, make sure all components are using the same version tag.
 
-- Join our [Community Forum](https://github.com/orgs/karrioapi/discussions)
-- Consider our [Enterprise Support Plans](/platform) for priority assistance
+### Rollback Procedure
+
+If you need to rollback to a previous version:
+
+1. Update your `.env` file with the previous version tag
+2. Pull the previous version's images:
+
+```bash
+docker-compose pull
+```
+
+3. Restart the stack:
+
+```bash
+docker-compose down
+docker-compose up -d
+```
+
+4. If you've made database changes, you may need to restore from your backup:
+
+```bash
+# Stop the stack
+docker-compose down
+
+# Restore database (adjust parameters as needed)
+cat karrio_backup_YYYYMMDD.sql | docker-compose exec -T db psql -U postgres -d db
+
+# Start the stack
+docker-compose up -d
+```
+
+## Checking Your Current Version
+
+To check which version of Karrio you're currently running:
+
+```bash
+docker-compose exec api karrio version
+```
+
+Or check the image tags:
+
+```bash
+docker ps --format "{{.Names}}: {{.Image}}"
+```

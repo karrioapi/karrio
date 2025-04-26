@@ -1,218 +1,354 @@
 # Docker
 
-This guide will help you set up a self-hosted instance of Karrio, giving you complete control over your shipping API infrastructure.
+The Docker configuration for Karrio is the recommended approach for most self-hosting scenarios. This guide will walk you through deploying Karrio using Docker.
 
-## Why Self-Host?
+## Requirements
 
-Self-hosting Karrio offers several advantages:
+Make sure you have `docker` & `docker compose` installed on your server or local machine:
 
-- **Data Control**: Keep all your shipping data within your own infrastructure
-- **Customization**: Modify the platform to suit your specific needs
-- **Integration**: Seamlessly integrate with your existing systems
-- **Cost**: Potentially reduce costs for high-volume shipping operations
-- **Compliance**: Meet specific regulatory or security requirements
+- Docker Engine 20.10.0 or later
+- Docker Compose V2 (comes with Docker Desktop or can be installed separately)
+- At least 2GB RAM (4GB+ recommended for production)
+- At least 20GB of available storage
 
-## Deployment Options
+Note: `docker compose` (without the hyphen) is now the primary method of using docker-compose, per the Docker documentation.
 
-### Docker Compose (Recommended for Small to Medium Deployments)
+## Getting Started
 
-The easiest way to self-host Karrio is using Docker Compose.
+There are two main ways to deploy Karrio with Docker:
 
-#### Prerequisites
+1. **One-click hobby installation** - The fastest way to get started
+2. **Manual Docker Compose setup** - For more customization options
 
-- Docker and Docker Compose installed
-- 2GB+ RAM, 2+ CPU cores
-- 20GB+ storage
+## One-Click Hobby Installation
 
-#### Steps
+For a quick start with minimal configuration, our one-click installation script is the fastest way to get up and running.
 
-1. Clone the repository:
+### Requirements
+
+- A Linux server (Ubuntu 20.04+ recommended)
+- An instance with at least 2GB of RAM (4GB recommended)
+- A domain name with DNS configured (for production use)
+
+### Setting up the Stack
+
+1. SSH into your server
+2. Run the following command:
 
 ```bash
-git clone https://github.com/karrioapi/karrio.git
-cd karrio
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/deploy-hobby)"
 ```
 
-2. Create a `.env` file with your configuration:
+3. When prompted, provide:
+   - The release tag you want to use (or accept the default)
+   - Your domain name (for production deployment)
+
+4. Wait for the setup to complete (~5-10 minutes)
+   - The script will download required files
+   - Set up Docker and Docker Compose
+   - Deploy the full Karrio stack with PostgreSQL, Redis, API, Dashboard, and Caddy
+   - Configure SSL certificates (if domain provided)
+
+Once complete, you'll be able to access your Karrio instance at:
+- Dashboard: `https://app.yourdomain.com` (or `http://localhost:3000` for local deployment)
+- API: `https://api.yourdomain.com` (or `http://localhost:5002` for local deployment)
+
+Default login credentials: `admin@example.com` | `demo`
+
+### Customizing Your Deployment
+
+The deployment creates a directory structure with the following key files:
+
+```
+~/karrio/
+├── .env                # Environment variables
+├── docker-compose.yml  # Docker Compose configuration
+└── Caddyfile           # Caddy web server configuration (for SSL)
+```
+
+To customize your deployment:
+
+1. Edit the `.env` file to change environment variables:
 
 ```bash
+nano ~/karrio/.env
+```
+
+2. Restart the services to apply changes:
+
+```bash
+cd ~/karrio
+docker-compose down
+docker-compose up -d
+```
+
+## Manual Docker Compose Setup
+
+If you prefer more control over the installation process, you can set up Karrio manually using Docker Compose.
+
+### Steps
+
+1. Create a directory for your Karrio installation:
+
+```bash
+mkdir -p ~/karrio
+cd ~/karrio
+```
+
+2. Download the Docker Compose file:
+
+```bash
+curl -O https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/docker-compose.yml
+```
+
+3. Create a `.env` file with your configuration:
+
+```bash
+cat > .env << EOL
 # Database settings
-DB_ENGINE=django.db.backends.postgresql
-DB_NAME=karrio
-DB_USER=postgres
-DB_PASSWORD=your_secure_password
-DB_HOST=db
-DB_PORT=5432
+DATABASE_ENGINE=postgresql_psycopg2
+DATABASE_NAME=db
+DATABASE_USERNAME=postgres
+DATABASE_PASSWORD=postgres
+DATABASE_HOST=db
+DATABASE_PORT=5432
+
+# Redis settings
+REDIS_HOST=redis
+REDIS_PORT=6379
 
 # API settings
-SECRET_KEY=your_secure_secret_key
-ALLOWED_HOSTS=your-domain.com,localhost
+SECRET_KEY=$(openssl rand -base64 32)
+KARRIO_HTTP_PORT=5002
+
+# Dashboard settings
+DASHBOARD_PORT=3000
+DASHBOARD_URL=http://localhost:3000
+KARRIO_PUBLIC_URL=http://localhost:5002
+JWT_SECRET=$(openssl rand -base64 32)
+
+# Set the Karrio version tag
+KARRIO_TAG=latest
+EOL
 ```
 
-3. Start the services:
+4. Start the services:
 
 ```bash
 docker-compose up -d
 ```
 
-4. Access your Karrio instance at `http://localhost:8000` or your configured domain.
+5. Access your Karrio instance:
+   - Dashboard: `http://localhost:3000`
+   - API: `http://localhost:5002`
 
-### Kubernetes (Recommended for Large Deployments)
+Default login credentials: `admin@example.com` | `demo`
 
-For production environments with high availability requirements, we recommend using Kubernetes.
+## Production Deployment with Caddy
 
-#### Prerequisites
+For production environments, we recommend using Caddy as a reverse proxy to handle HTTPS and domain routing.
 
-- Kubernetes cluster
-- Helm installed
-- Persistent storage provisioner
+1. Create a `Caddyfile` in your deployment directory:
 
-#### Steps
+```
+{
+  email your-email@example.com
+}
 
-1. Add the Karrio Helm repository:
+api.your-domain.com {
+  reverse_proxy karrio.api:5002
+}
 
-```bash
-helm repo add karrio https://charts.karrio.io
-helm repo update
+app.your-domain.com {
+  reverse_proxy karrio.dashboard:3000
+}
 ```
 
-2. Create a `values.yaml` file with your configuration:
-
-```yaml
-# values.yaml
-api:
-  replicas: 2
-  resources:
-    requests:
-      memory: "512Mi"
-      cpu: "500m"
-    limits:
-      memory: "1Gi"
-      cpu: "1000m"
-
-database:
-  persistence:
-    size: 20Gi
-  password: your_secure_password
-
-redis:
-  persistence:
-    size: 5Gi
-
-ingress:
-  enabled: true
-  hosts:
-    - host: karrio.your-domain.com
-      paths:
-        - path: /
-```
-
-3. Install the Karrio chart:
+2. Update your `.env` file with your domain information:
 
 ```bash
-helm install karrio karrio/karrio -f values.yaml
+DASHBOARD_URL=https://app.your-domain.com
+KARRIO_PUBLIC_URL=https://api.your-domain.com
 ```
 
-## Configuration
-
-### Environment Variables
-
-Karrio can be configured using environment variables. Here are the most important ones:
-
-| Variable | Description | Default |
-| -------- | ----------- | ------- |
-| `SECRET_KEY` | Django secret key for security | Random string |
-| `DEBUG` | Enable debug mode | `False` |
-| `ALLOWED_HOSTS` | Comma-separated list of allowed hosts | `localhost` |
-| `DB_ENGINE` | Database engine | `django.db.backends.postgresql` |
-| `DB_NAME` | Database name | `karrio` |
-| `DB_USER` | Database user | `postgres` |
-| `DB_PASSWORD` | Database password | - |
-| `DB_HOST` | Database host | `localhost` |
-| `DB_PORT` | Database port | `5432` |
-| `REDIS_URL` | Redis URL | `redis://localhost:6379/0` |
-
-### Carrier Credentials
-
-To use shipping carriers, you'll need to configure their credentials:
+3. Download the hobby Docker Compose file that includes Caddy:
 
 ```bash
-# USPS
-USPS_USERNAME=your_usps_username
-USPS_PASSWORD=your_usps_password
-
-# DHL
-DHL_SITE_ID=your_dhl_site_id
-DHL_PASSWORD=your_dhl_password
-
-# UPS
-UPS_USERNAME=your_ups_username
-UPS_PASSWORD=your_ups_password
-UPS_ACCESS_LICENSE=your_ups_access_license
+curl -O https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/docker-compose.hobby.yml
+mv docker-compose.hobby.yml docker-compose.yml
 ```
 
-## Maintenance
-
-### Backups
-
-It's important to regularly back up your Karrio data:
+4. Start the stack with Caddy:
 
 ```bash
-# Backup PostgreSQL database
-docker-compose exec db pg_dump -U postgres karrio > karrio_backup_$(date +%Y%m%d).sql
-
-# Backup configuration
-cp .env .env.backup.$(date +%Y%m%d)
-```
-
-### Updates
-
-To update your Karrio instance:
-
-```bash
-# Pull the latest changes
-git pull
-
-# Rebuild and restart containers
-docker-compose down
-docker-compose build
 docker-compose up -d
+```
 
-# Run migrations
-docker-compose exec api python manage.py migrate
+Caddy will automatically obtain and renew SSL certificates for your domains through Let's Encrypt.
+
+## Container Architecture
+
+The Karrio Docker deployment consists of the following containers:
+
+- **karrio.api**: The main API server running on port 5002
+- **karrio.worker**: Background worker for processing tasks
+- **karrio.dashboard**: Web interface running on port 3000
+- **karrio.db**: PostgreSQL database server
+- **karrio.redis**: Redis for caching and task queues
+- **karrio.caddy** (hobby deployment): Caddy web server for HTTPS and routing
+
+## Checking Container Status
+
+You can check the status of all containers using:
+
+```bash
+docker-compose ps
+```
+
+All containers should show as "Up" with their respective ports exposed.
+
+## Accessing Container Logs
+
+To view logs from a specific container:
+
+```bash
+docker-compose logs <container_name>
+```
+
+For example:
+
+```bash
+docker-compose logs karrio.api
+```
+
+Add the `-f` flag to follow logs in real-time:
+
+```bash
+docker-compose logs -f karrio.api
 ```
 
 ## Troubleshooting
 
-### Common Issues
+### All Containers Not Running
 
-#### Database Connection Errors
+If some containers aren't running:
+
+1. Check the status:
+```bash
+docker-compose ps
+```
+
+2. View the logs of the failing container:
+```bash
+docker-compose logs <container_name>
+```
+
+### Database Connection Issues
 
 If you encounter database connection issues:
 
 ```bash
-# Check if the database container is running
-docker-compose ps
-
 # Check database logs
-docker-compose logs db
+docker-compose logs karrio.db
+
+# Connect to the database to verify it's running
+docker-compose exec karrio.db psql -U postgres
 ```
 
-#### API Not Responding
+### API Not Responding
 
 If the API is not responding:
 
 ```bash
 # Check API logs
-docker-compose logs api
+docker-compose logs karrio.api
 
 # Restart the API service
-docker-compose restart api
+docker-compose restart karrio.api
 ```
 
-## Support
+### SSL Certificate Issues
 
-If you need help with your self-hosted Karrio instance:
+If you're using Caddy and SSL certificates aren't being issued:
 
-- Join our [Community Forum](https://github.com/orgs/karrioapi/discussions)
-- Consider our [Enterprise Support Plans](/platform) for priority assistance
+```bash
+# Check Caddy logs
+docker-compose logs karrio.caddy
+```
+
+Common issues include:
+- DNS records not properly configured
+- Ports 80/443 not open in your firewall
+- Incorrect domain name in your configuration
+
+## Updating Karrio
+
+For hobby deployments, use our upgrade script:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/upgrade-hobby)"
+```
+
+For manual deployments:
+
+1. Pull the latest images:
+```bash
+docker-compose pull
+```
+
+2. Restart the services:
+```bash
+docker-compose down
+docker-compose up -d
+```
+
+## Managing Data
+
+### Data Persistence
+
+Docker volumes are used to persist data:
+- `postgres-data`: Database files
+- `redis-data`: Redis data
+- `karrio-static`: Static files for the web interface
+- `caddy-data`: Caddy SSL certificates and configuration
+
+You can view all volumes with:
+
+```bash
+docker volume ls
+```
+
+### Backing Up Your Data
+
+To back up your database:
+
+```bash
+docker-compose exec karrio.db pg_dump -U postgres -d db > karrio_backup_$(date +%Y%m%d).sql
+```
+
+To back up your configuration:
+
+```bash
+cp .env .env.backup.$(date +%Y%m%d)
+cp Caddyfile Caddyfile.backup.$(date +%Y%m%d) # if using Caddy
+```
+
+### Stopping and Starting Services
+
+To stop all services:
+
+```bash
+docker-compose down
+```
+
+To start them again:
+
+```bash
+docker-compose up -d
+```
+
+To restart a specific service:
+
+```bash
+docker-compose restart <service_name>
+```
