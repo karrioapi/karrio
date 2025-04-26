@@ -130,9 +130,12 @@ apps/api/karrio/server/staticfiles/*
 packages/karriojs/api/generated
 !docker/.env
 
+# Karrio plugins
 plugins/*
 !plugins/README.md
-
+## Built-in plugins
+!plugins/addresscomplete
+!plugins/googlegeocoding
 
 # Meta-repo private directories
 meta/private/

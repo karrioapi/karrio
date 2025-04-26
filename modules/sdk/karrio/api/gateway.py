@@ -168,7 +168,9 @@ class GatewayInitializer:
 
     @property
     def providers(self):
-        return references.import_extensions()
+        references.import_extensions()
+
+        return references.PROVIDERS
 
     @staticmethod
     def get_instance() -> "GatewayInitializer":
