@@ -31,16 +31,20 @@ export default {
     title: 'Guides',
     type: 'separator',
   },
+  "plugin-development": {
+    title: 'Plugin Development',
+    type: 'page'
+  },
   "carrier-integration": {
     title: 'Carrier Integration',
     type: 'page',
   },
-  "address-validation": {
-    title: 'Address Validation',
-    type: 'page'
-  },
-  "email-setup": {
-    title: 'Email',
-    type: 'page'
-  },
+  // "address-validation": {
+  //   title: 'Address Validation',
+  //   type: 'page'
+  // },
+  // "email-setup": {
+  //   title: 'Email',
+  //   type: 'page'
+  // },
 }

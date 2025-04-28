@@ -43,10 +43,10 @@ export default {
     title: 'Environment',
     type: 'page'
   },
-  "white-labeling": {
-    title: 'White Labeling',
-    type: 'page'
-  },
+  // "white-labeling": {
+  //   title: 'White Labeling',
+  //   type: 'page'
+  // },
   "custom-builds": {
     title: 'Custom Builds',
     type: 'page'
