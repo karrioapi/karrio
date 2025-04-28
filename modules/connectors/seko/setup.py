@@ -24,4 +24,9 @@ setup(
     ],
     zip_safe=False,
     include_package_data=True,
+    entry_points={
+        "karrio.plugins": [
+            "seko = karrio.mappers.seko:METADATA",
+        ],
+    },
 )
