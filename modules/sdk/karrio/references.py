@@ -36,7 +36,11 @@ def import_extensions() -> None:
     Import extensions from main modules and plugins.
 
     This method collects carriers, address validators and mappers from
-    built-in modules and plugins.
+    built-in modules and plugins through multiple discovery methods:
+
+    1. Directory-based plugins
+    2. Entrypoint-based plugins (setuptools entry_points)
+    3. Built-in modules
     """
     global PROVIDERS, ADDRESS_VALIDATORS, MAPPERS, SCHEMAS, FAILED_IMPORTS, PLUGIN_METADATA, REFERENCES
     # Reset collections
@@ -51,15 +55,22 @@ def import_extensions() -> None:
     # Load plugins (if not already loaded)
     plugins.load_local_plugins()
 
-    # Discover and import modules from plugins
+    # Discover and import modules from directory-based plugins
     plugin_modules = plugins.discover_plugin_modules()
     metadata_dict, failed_metadata = plugins.collect_plugin_metadata(plugin_modules)
     PLUGIN_METADATA.update(metadata_dict)
+
+    # Discover and import modules from entrypoint-based plugins
+    entrypoint_plugins = plugins.discover_entrypoint_plugins()
+    entrypoint_metadata, entrypoint_failed = plugins.collect_plugin_metadata(entrypoint_plugins)
+    PLUGIN_METADATA.update(entrypoint_metadata)
 
     # Update failed imports
     FAILED_IMPORTS.update(plugins.get_failed_plugin_modules())
     for key, value in failed_metadata.items():
         FAILED_IMPORTS[f"metadata.{key}"] = value
+    for key, value in entrypoint_failed.items():
+        FAILED_IMPORTS[f"entrypoint.metadata.{key}"] = value
 
     # Process collected metadata to find carriers, validators, and mappers
     for plugin_name, metadata_obj in PLUGIN_METADATA.items():
