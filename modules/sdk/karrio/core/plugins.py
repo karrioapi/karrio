@@ -118,6 +118,14 @@ import traceback
 import pkgutil
 from typing import List, Optional, Dict, Any, Tuple
 
+# Add imports for entrypoint discovery
+try:
+    # For Python 3.8+
+    import importlib.metadata as importlib_metadata
+except ImportError:
+    # For Python < 3.8
+    import importlib_metadata
+
 # Configure logger with a higher default level to reduce noise
 logger = logging.getLogger(__name__)
 if not logger.level:
@@ -130,6 +138,9 @@ DEFAULT_PLUGINS = [
 
 # Track failed plugin loads
 FAILED_PLUGIN_MODULES = {}
+
+# Entrypoint group for Karrio plugins
+ENTRYPOINT_GROUP = "karrio.plugins"
 
 # Ensure the karrio.plugins module exists
 try:
@@ -520,3 +531,65 @@ def get_failed_plugin_modules() -> Dict[str, Any]:
         Dict containing information about failed plugin module loads
     """
     return FAILED_PLUGIN_MODULES
+
+def discover_entrypoint_plugins() -> Dict[str, Dict[str, Any]]:
+    """
+    Discover plugins registered via setuptools entrypoints.
+
+    This function looks for plugins registered under the 'karrio.plugins'
+    entrypoint group. Each entrypoint should point to a module with a METADATA
+    object that defines the plugin's capabilities.
+
+    Returns:
+        Dict mapping plugin names to a dict containing the plugin module
+    """
+    global FAILED_PLUGIN_MODULES
+    entrypoint_plugins = {}
+
+    try:
+        # Find all entry points in the karrio.plugins group
+        entry_points = importlib_metadata.entry_points()
+
+        # Handle different entry_points behavior in different versions of importlib_metadata
+        if hasattr(entry_points, 'select'):  # Python 3.10+
+            plugin_entry_points = entry_points.select(group=ENTRYPOINT_GROUP)
+        elif hasattr(entry_points, 'get'):  # Python 3.8, 3.9
+            plugin_entry_points = entry_points.get(ENTRYPOINT_GROUP, [])
+        else:  # Older versions or different implementation
+            plugin_entry_points = [
+                ep for ep in entry_points
+                if getattr(ep, 'group', None) == ENTRYPOINT_GROUP
+            ]
+
+        for entry_point in plugin_entry_points:
+            plugin_name = entry_point.name
+
+            try:
+                # Load the plugin module
+                plugin_module = entry_point.load()
+
+                # Create a structured dict similar to discover_plugin_modules output
+                if plugin_name not in entrypoint_plugins:
+                    entrypoint_plugins[plugin_name] = {
+                        "entrypoint": {
+                            plugin_name: plugin_module
+                        }
+                    }
+
+                logger.info(f"Loaded entrypoint plugin: {plugin_name}")
+
+            except Exception as e:
+                # Track failed entrypoint loads
+                logger.error(f"Error loading entrypoint plugin {plugin_name}: {str(e)}")
+                key = f"entrypoint.{plugin_name}"
+                FAILED_PLUGIN_MODULES[key] = {
+                    "plugin": plugin_name,
+                    "module_type": "entrypoint",
+                    "error": str(e),
+                    "traceback": traceback.format_exc()
+                }
+
+    except Exception as e:
+        logger.error(f"Error discovering entrypoint plugins: {str(e)}")
+
+    return entrypoint_plugins

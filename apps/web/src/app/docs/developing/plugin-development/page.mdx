@@ -1,0 +1,238 @@
+# Plugin Development
+
+Karrio's plugin system allows you to extend its functionality with custom carriers, address validators, and other integrations. This guide explains how to develop and register plugins with Karrio.
+
+## Plugin Types
+
+Karrio supports several types of plugins:
+
+1. **Carrier Integrations**: Connect with shipping carriers like UPS, FedEx, DHL, etc.
+2. **Address Validation**: Add support for address validation services
+3. **Duty & Tax Calculation**: Add support for duty & tax calculation services (design pending)
+4. **Package Insurances**: Add support for package insurance services (design pending)
+5. **Payment Services**: Add support for payment services (design pending)
+
+## Plugin Development Approaches
+
+Karrio offers two approaches for developing and registering plugins:
+
+1. **Directory-based plugins**: Traditional method where plugins are placed in a designated directory
+2. **Entrypoint-based plugins**: Modern method where plugins are registered via Python package entrypoints
+
+## Directory-Based Plugins
+
+Directory-based plugins are loaded from local directories and don't require a full Python package structure.
+
+### Directory Structure
+
+A valid plugin directory must follow this structure:
+
+```text
+/your_plugin_directory/
+├── plugin_name/
+│   └── karrio/
+│       ├── plugins/           # For plugins (carrier integrations, address validators, etc...)
+│       │   └── plugin_name/
+│       │       └── __init__.py # Contains METADATA
+│       ├── mappers/           # For carrier integrations
+│       │   └── plugin_name/
+│       │       ├── __init__.py # Contains METADATA
+│       │       ├── mapper.py   # Implementation of the mapper
+│       │       ├── proxy.py    # Implementation of the proxy
+│       │       └── settings.py # Settings schema
+│       ├── validators/        # For address validators
+│       │   └── plugin_name/
+│       │       ├── __init__.py # Contains METADATA
+│       │       └── validator.py # Implementation of the validator
+│       ├── providers/         # Provider-specific implementations
+│       │   └── plugin_name/
+│       │       ├── __init__.py
+│       │       ├── error.py    # Error handling
+│       │       ├── units.py    # Units and enums
+│       │       ├── utils.py    # Utility functions
+│       │       └── other implementation files...
+│       └── schemas/          # API schema definitions
+│           └── plugin_name/
+│               ├── __init__.py
+│               └── various schema files...
+```
+
+### Loading Directory-Based Plugins
+
+There are several ways to register directory-based plugins with Karrio:
+
+1. **Default plugins directory**:
+   - Place your plugin in a `plugins` directory in the current working directory
+
+2. **Custom plugin directory via environment variable**:
+   - Set the `KARRIO_PLUGINS` environment variable to the path of your plugins directory:
+   ```bash
+   export KARRIO_PLUGINS=/path/to/your/plugins
+   ```
+
+3. **Programmatically add plugin directories**:
+   ```python
+   import karrio.plugins as plugins
+   plugins.add_plugin_directory('/path/to/your/plugins')
+   ```
+
+## Entrypoint-Based Plugins (New)
+
+Entrypoint-based plugins use Python's setuptools entrypoint mechanism to register plugins with Karrio. This approach allows for easier distribution and installation of plugins as Python packages.
+
+### Creating an Entrypoint-Based Plugin
+
+1. **Create a Python package** with your plugin code following the same structure as directory-based plugins
+
+2. **Register your plugin as an entrypoint** in your package's `pyproject.toml` or `setup.py`:
+
+   **For pyproject.toml**:
+
+   ```toml
+   [project.entry-points."karrio.plugins"]
+   my_plugin_name = "my_package.module:METADATA"
+   ```
+
+   **For setup.py**:
+
+   ```python
+   setup(
+       name="my-karrio-plugin",
+       # ... other setup parameters ...
+       entry_points={
+           "karrio.plugins": [
+               "my_plugin_name = my_package.module:METADATA",
+           ],
+       },
+   )
+   ```
+
+3. **Install your package** using pip:
+
+   ```bash
+   pip install -e .
+   ```
+
+Karrio will automatically discover and load your plugin when it starts.
+
+## Plugin Metadata
+
+Every plugin must define a `METADATA` object in its module to provide information about the plugin's capabilities and features.
+
+### Example Metadata for a Carrier Integration
+
+```python
+from karrio.core.metadata import PluginMetadata
+
+# Import local plugin components
+from .mapper import Mapper
+from .proxy import Proxy
+from .settings import Settings
+from . import units
+
+# Define plugin metadata
+METADATA = PluginMetadata(
+    # Plugin identification
+    id="my_carrier",
+    label="My Carrier Service",
+    status="beta",
+
+    # Plugin components
+    Mapper=Mapper,
+    Proxy=Proxy,
+    Settings=Settings,
+
+    # Additional metadata
+    description="Integration with My Carrier shipping service",
+    website="https://www.mycarrier.com/",
+    documentation="https://docs.mycarrier.com/",
+
+    # Service definitions
+    services=units.ShippingService,
+    options=units.ShippingOption,
+    package_presets=units.PackagePresets,
+)
+```
+
+### Example Metadata for an Address Validator
+
+```python
+from karrio.core.metadata import PluginMetadata
+
+# Import local plugin components
+from .validator import Validator
+from .settings import Settings
+
+# Define plugin metadata
+METADATA = PluginMetadata(
+    # Plugin identification
+    id="my_validator",
+    label="My Address Validator",
+    status="beta",
+
+    # Plugin components
+    Validator=Validator,
+    Settings=Settings,
+
+    # Additional metadata
+    description="Address validation service",
+    website="https://www.myvalidator.com/",
+    documentation="https://docs.myvalidator.com/",
+)
+```
+
+## Plugin Registration Precedence
+
+When multiple plugins with the same name/ID are registered through different methods, Karrio follows this precedence order:
+
+1. Entrypoint-based plugins (highest precedence)
+2. Directory-based plugins from custom directories
+3. Directory-based plugins from the default directory
+
+## Testing Your Plugin
+
+To test your plugin during development:
+
+1. **For directory-based plugins**:
+   - Place your plugin in the `plugins` directory or use `KARRIO_PLUGINS` environment variable
+   - Restart Karrio server
+
+2. **For entrypoint-based plugins**:
+   - Install your package in development mode: `pip install -e .`
+   - Restart Karrio server
+
+You can verify that your plugin was loaded by checking the logs or using the Karrio admin interface.
+
+## Troubleshooting
+
+If your plugin isn't loading correctly:
+
+1. Check Karrio logs for error messages
+2. Ensure your plugin structure follows the required format
+3. Verify that the `METADATA` object is correctly defined
+4. For entrypoint-based plugins, make sure your package is correctly installed
+
+## Best Practices
+
+1. **Version compatibility**: Include Karrio version compatibility information in your plugin metadata
+2. **Error handling**: Implement proper error handling to prevent plugin failures from affecting core functionality
+3. **Documentation**: Document your plugin's features, configuration options, and usage instructions
+4. **Testing**: Create comprehensive tests for your plugin to ensure it works correctly
+5. **Maintenance**: Keep your plugin updated with the latest Karrio API changes
+
+## Example Plugins
+
+For reference implementations, see the [Karrio Plugins Repository](https://github.com/karrioapi/karrio-plugins) which contains example plugins using both directory-based and entrypoint-based approaches.
+
+## Plugin Distribution
+
+For entrypoint-based plugins, you can distribute your plugin as a Python package through:
+
+1. **PyPI**: Upload your package to the Python Package Index
+2. **Git repository**: Allow users to install directly from your repository
+3. **Wheel/ZIP files**: Distribute packaged versions for manual installation
+
+## Additional Resources
+
+- [Carrier Integration Guide](/docs/developing/carrier-integration)
+- [Address Validation Guide](/docs/developing/address-validation)
