@@ -8,4 +8,112 @@ author: Karrio Team
 
 # Contributor's Guide
 
+## Introduction
+
+Karrio is structured as a comprehensive shipping platform monorepo containing multiple components. The backend is built with Django and Python, complemented by a React/Node.js frontend. This guide provides technical details for effectively contributing to the Karrio ecosystem.
+
+## Understanding the Project Structure
+
+Karrio's codebase follows a structured monorepo organization that enables modular development:
+
+- **`/apps`**: Web applications and interfaces
+  - **`/apps/api`**: Django REST API server for external integrations
+  - **`/apps/dashboard`**: React-based admin dashboard UI
+  - **`/apps/web`**: Next.js documentation and marketing website
+  - **`/apps/www`**: Legacy website components
+- **`/modules`**: Core functionality and services
+  - **`/modules/sdk`**: Core shipping SDK that powers all integrations
+  - **`/modules/core/`**: Core shared functionality
+  - **`/modules/manager/`**: Account and organization management
+  - **`/modules/documents/`**: Document generation services
+  - **`/modules/events/`**: Event processing and webhooks
+  - **`/modules/orders/`**: Order management and fulfillment
+  - **`/modules/graph/`**: GraphQL API implementation
+- **`/bin`**: Helper scripts for development, testing, and deployment
+- **`/docker`**: Docker configurations and container definitions
+- **`/schemas`**: API schema definitions and validations
+- **`/ee`**: Enterprise Edition extensions (when applicable)
+
+## Karrio Architecture Components
+
+Karrio uses a robust microservices architecture with several key components:
+
+### API Server
+
+The Django-based API server exposes RESTful endpoints for shipping operations:
+
+- **Rating**: Get shipping rates from multiple carriers
+- **Shipping**: Generate shipping labels and documents
+- **Tracking**: Track packages across carriers
+- **Validation**: Validate addresses before shipping
+- **Management**: Manage carriers, users, and settings
+
+### SDK Core
+
+The SDK (`/modules/sdk/`) is the foundation of Karrio's shipping capabilities:
+
+- **Interfaces**: Abstract interfaces that define capabilities
+- **Mappers**: Translates between external APIs and Karrio's unified models
+- **Validators**: Input/output validation for requests
+- **Unified Models**: Common data models used across the platform
+- **Plugins**: Extension points for custom functionality
+
+### Dashboard
+
+The React-based dashboard provides a user interface for:
+
+- Managing carrier connections
+- Creating and managing shipments
+- Tracking packages
+- Generating documents
+- Managing user accounts
+
+## Technical Implementation Details
+
+### Core Interfaces
+
+The platform is built around several key interfaces:
+
+- **`RateInterface`**: For retrieving shipping rates
+- **`ShippingInterface`**: For creating shipping labels
+- **`TrackingInterface`**: For tracking shipments
+- **`PickupInterface`** (optional): For scheduling pickups
+- **`AddressValidationInterface`** (optional): For validating addresses
+
+### API Patterns
+
+Karrio follows consistent API patterns across all services:
+
+- **Request Validation**: All requests are validated against JSON schemas
+- **Error Handling**: Structured error responses with clear codes
+- **Pagination**: Consistent pagination across collection endpoints
+- **Filtering**: Query parameter-based filtering
+- **Authentication**: API key and JWT token authentication
+
+### Testing Philosophy
+
+All contributions should include comprehensive tests:
+
+- **Unit Tests**: For individual components and functions
+- **Integration Tests**: For API interactions
+- **Mocked Responses**: For predictable test outcomes
+- **Coverage Reports**: To ensure adequate test coverage
+
+## Troubleshooting Development Issues
+
+### Common API Issues
+
+- **Authentication Errors**: Check API keys and permissions
+- **Rate Limits**: Many external APIs have rate limits
+- **Schema Validation**: Ensure request data matches schemas
+- **API Versioning**: Check API version compatibility
+
+## Need More Help?
+
+For more specific implementation questions, reach out through:
+
+- [GitHub Discussions](https://github.com/karrioapi/karrio/discussions)
+- [Developer Discord](https://discord.gg/karrio)
+- [API Documentation](https://docs.karrio.io/api)
+
 
