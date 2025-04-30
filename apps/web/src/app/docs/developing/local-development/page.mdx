@@ -23,70 +23,17 @@ Karrio is built with a powerful and flexible microservices architecture, consist
 Before you begin, make sure you have the following installed:
 
 - [Git](https://git-scm.com/downloads)
-- [Docker](https://www.docker.com/products/docker-desktop) & [Docker Compose](https://docs.docker.com/compose/install/)
 - [Node.js v16.15.1+](https://nodejs.org/en/download/)
 - [Python 3.8+](https://www.python.org/downloads/)
+- [Docker](https://www.docker.com/products/docker-desktop) & [Docker Compose](https://docs.docker.com/compose/install/) (optional, for Docker-based setup)
 
 > [!WARNING]
 >
 > Windows users are strongly recommended to use [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/en-us/windows/wsl/install) for the best development experience. Windows versions before Windows 10 are not officially supported.
 
-## Quick Start with Docker
+## Manual Setup (Recommended)
 
-If you want the fastest path to a working development environment, our Docker setup has everything you need:
-
-```bash filename="Terminal"
-# Clone the repository
-git clone https://github.com/[YOUR_USERNAME]/karrio.git
-cd karrio
-
-# Create and setup the Docker development environment
-./bin/docker-env create
-
-# Start the Karrio server
-./bin/docker-env exec './bin/start-server'
-```
-
-Once running, Karrio will be available at [http://localhost:5002](http://localhost:5002)
-
-> [!NOTE]
->
-> The Docker environment provides a fully configured setup with all dependencies installed. This is often the easiest way to get started, especially if you're new to the project.
-
-For more Docker commands and options:
-
-```bash filename="Terminal"
-./bin/docker-env
-```
-
-This will display a help menu with all available commands like:
-
-```text
-Help: You can pass any the following commands to the './bin/docker-env' scripts
------
-create     Create and setup docker dev environment.
-destroy    Destroy docker dev environment.
-on         Start docker dev environment.
-off        Stop docker dev environment.
-shell      Start docker dev environment shell.
-exec       Execute command in docker dev environment.
-```
-
-### Example Docker Commands
-
-Run server tests:
-```bash filename="Terminal"
-./bin/docker-env exec './bin/run-server-tests'
-```
-
-Run tests for a specific carrier:
-```bash filename="Terminal"
-./bin/docker-env exec 'python -m unittest discover -v -f modules/connectors/dhl_express/tests'
-```
-
-## Manual Setup
-
-If you prefer to set up your environment manually, follow these steps:
+Follow these steps to set up your development environment manually:
 
 ### 1. Clone the Repository
 
@@ -127,15 +74,13 @@ Create and configure a Python virtual environment with all dependencies:
 source ./bin/setup-server-env
 ```
 
-Alternatively, you can set up and activate the environment separately:
-
-```bash filename="Terminal"
-# Setup the environment
-./bin/setup-server-env
-
-# Later, activate the environment
-source ./bin/activate-env
-```
+This command will:
+- Create a new Python virtual environment
+- Install server development requirements
+- Install insiders development requirements (if available)
+- Install platform development requirements (if available)
+- Install Node.js dependencies
+- Set up logging directories
 
 ### 4. Apply Database Migrations
 
@@ -196,6 +141,61 @@ Launch the Karrio server:
 
 ```bash filename="Terminal"
 ./bin/start
+```
+
+## Docker-based Setup (Alternative)
+
+If you prefer using Docker for development, here's how to set it up:
+
+### Quick Start with Docker
+
+```bash filename="Terminal"
+# Clone the repository
+git clone https://github.com/[YOUR_USERNAME]/karrio.git
+cd karrio
+
+# Create and setup the Docker development environment
+./bin/docker-env create
+
+# Start the Karrio server
+./bin/docker-env exec './bin/start-server'
+```
+
+Once running, Karrio will be available at [http://localhost:5002](http://localhost:5002)
+
+> [!NOTE]
+>
+> The Docker environment provides a fully configured setup with all dependencies installed. This is often the easiest way to get started, especially if you're new to the project.
+
+For more Docker commands and options:
+
+```bash filename="Terminal"
+./bin/docker-env
+```
+
+This will display a help menu with all available commands like:
+
+```text
+Help: You can pass any the following commands to the './bin/docker-env' scripts
+-----
+create     Create and setup docker dev environment.
+destroy    Destroy docker dev environment.
+on         Start docker dev environment.
+off        Stop docker dev environment.
+shell      Start docker dev environment shell.
+exec       Execute command in docker dev environment.
+```
+
+### Example Docker Commands
+
+Run server tests:
+```bash filename="Terminal"
+./bin/docker-env exec './bin/run-server-tests'
+```
+
+Run tests for a specific carrier:
+```bash filename="Terminal"
+./bin/docker-env exec 'python -m unittest discover -v -f modules/connectors/dhl_express/tests'
 ```
 
 ## Setting Up the Dashboard
@@ -333,14 +333,23 @@ karrio loaddata [BACKUP_PATH]/data[VERSION].json
 
 The Karrio codebase is organized as follows:
 
-- **`/apps`**: Application components
-  - **`/apps/api`**: Django REST API server
-  - **`/apps/dashboard`**: React web dashboard
-  - **`/apps/web`**: Next.js website and documentation
-- **`/modules`**: Core modules and carrier connectors
-  - **`/modules/sdk`**: Core SDK
-  - **`/modules/connectors`**: Carrier integrations
-- **`/bin`**: Helper scripts for development
+- **`/apps`**: Web applications and interfaces
+  - **`/apps/api`**: Django REST API server for external integrations
+  - **`/apps/dashboard`**: React-based admin dashboard UI
+  - **`/apps/web`**: Next.js documentation and marketing website
+  - **`/apps/www`**: Legacy website components
+- **`/modules`**: Core functionality and services
+  - **`/modules/sdk`**: Core shipping SDK that powers all integrations
+  - **`/modules/core/`**: Core shared functionality
+  - **`/modules/manager/`**: Account and organization management
+  - **`/modules/documents/`**: Document generation services
+  - **`/modules/events/`**: Event processing and webhooks
+  - **`/modules/orders/`**: Order management and fulfillment
+  - **`/modules/graph/`**: GraphQL API implementation
+- **`/bin`**: Helper scripts for development, testing, and deployment
+- **`/docker`**: Docker configurations and container definitions
+- **`/schemas`**: API schema definitions and validations
+- **`/ee`**: Enterprise Edition extensions (when applicable)
 
 ## Adding a New Carrier
 
@@ -356,7 +365,7 @@ One of the most common contributions is adding support for a new shipping carrie
 4. Add comprehensive tests
 5. Update documentation
 
-For a detailed guide, see [Adding a New Carrier](/docs/developing/adding-a-carrier).
+For a detailed guide, see [Adding a New Carrier](/docs/developing/http://localhost:3005/docs/developing/carrier-integration).
 
 ## Troubleshooting
 
@@ -388,9 +397,4 @@ For a detailed guide, see [Adding a New Carrier](/docs/developing/adding-a-carri
 > ```bash
 > docker compose -f docker/docker-compose.yml ps
 > ```
-
-## Next Steps
-
-- [API Development Guide](/docs/api-development)
-- [Adding a New Carrier](/docs/developing/carrier-integration)
 
