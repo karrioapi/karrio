@@ -45,25 +45,6 @@ Before you begin, make sure you have:
 - Access to the carrier's API documentation
 - Understanding of the carrier's API request/response format
 
-## Plugin Architecture
-
-Karrio offers a flexible plugin architecture that supports two different structures:
-
-1. **New Structure (Recommended)**: Includes a dedicated `plugins` directory for carrier integrations and other plugin types
-2. **Legacy Structure**: Directly defines carriers in the `mappers` directory (supported for backward compatibility)
-
-Plugins can be loaded in several ways:
-
-- From the default `plugins` directory in the current working directory
-- From a custom directory specified in the `KARRIO_PLUGINS` environment variable
-- Programmatically by adding plugin directories via code
-
-```python
-# Load plugins programmatically
-import karrio.plugins as plugins
-plugins.add_plugin_directory('/path/to/your/plugins')
-```
-
 ## Extension Structure Overview
 
 A Karrio carrier extension follows a standardized structure. Here's the recommended structure:
@@ -107,78 +88,6 @@ modules/connectors/[carrier_name]/
             └── ...
 ```
 
-### Plugin Discovery and Loading
-
-Karrio dynamically discovers and loads plugins using a structured approach:
-
-1. **Discovery**: Scans configured directories for plugin structures
-2. **Module Import**: Imports modules based on their types (plugins, mappers, validators)
-3. **Metadata Collection**: Extracts METADATA from each plugin's `__init__.py` file
-4. **Namespace Extension**: Extends the Karrio namespace with plugin modules
-
-This dynamic loading system allows for hot-swapping plugins and modular carrier integrations without modifying the core codebase.
-
-```mermaid
-classDiagram
-    class Metadata {
-        +id: string
-        +label: string
-        +Mapper: Mapper
-        +Proxy: Proxy
-        +Settings: Settings
-        +options: ShippingOption
-        +package_presets: PackagePresets
-        +services: ShippingService
-    }
-
-    class Mapper {
-        +settings: Settings
-        +create_shipment()
-        +get_rates()
-        +get_tracking()
-    }
-
-    class Proxy {
-        +settings: Settings
-        +get_rates()
-        +create_shipment()
-        +get_tracking()
-    }
-
-    class Settings {
-        +username: string
-        +password: string
-        +carrier_id: string
-        +test_mode: boolean
-    }
-
-    Metadata --> Mapper
-    Metadata --> Proxy
-    Metadata --> Settings
-    Mapper --> Proxy
-```
-
-## Bootstrapping a New Extension
-
-Karrio provides a CLI tool to quickly scaffold a new carrier extension. The tool creates all the necessary files and directories with the appropriate structure.
-
-```bash
-# Run the extension creation command
-kcli add-extension
-```
-
-This will start an interactive process:
-
-```text
-Carrier slug: freight_express            # Unique carrier identifier (e.g., dhl_express, ups, fedex)
-Display name: Freight Express            # Human-readable carrier name (e.g., DHL, UPS, FedEx)
-Features [tracking, rating, shipping]:   # The features you want to implement
-Version [2024.3]:                        # The extension version
-Is XML API? [y/N]:                       # Whether the carrier uses XML for API communication
-```
-
-After confirmation, the tool will generate the extension structure in the `modules/connectors/[carrier_name]` directory.
-
 ## Extension Anatomy
 
 At the core of Karrio's design is a modular architecture that separates carrier integrations from the unified interface abstraction. Each carrier integration is contained in its own Python package, making it easy to add, update, or remove carriers without affecting the rest of the system.
@@ -213,15 +122,26 @@ sequenceDiagram
     Karrio->>Client: Shipment Details
 ```
 
-## Plugin Deployment
+## Bootstrapping a New Extension
 
-Once you've built your extension, there are several ways to deploy it:
+Karrio provides a CLI tool to quickly scaffold a new carrier extension. The tool creates all the necessary files and directories with the appropriate structure.
 
-1. **Standalone Plugin Package**: Create a Python package that can be installed with pip
-2. **Local Plugin Directory**: Place the extension in a `plugins` directory in your project
-3. **Environment Variable**: Use the `KARRIO_PLUGINS` environment variable to specify a custom plugins location
+```bash
+# Run the extension creation command
+kcli add-extension
+```
 
-For production use, it's recommended to create a proper Python package that can be installed with pip and versioned appropriately.
+This will start an interactive process:
+
+```text
+Carrier slug: freight_express            # Unique carrier identifier (e.g., dhl_express, ups, fedex)
+Display name: Freight Express            # Human-readable carrier name (e.g., DHL, UPS, FedEx)
+Features [tracking, rating, shipping]:   # The features you want to implement
+Version [2024.3]:                        # The extension version
+Is XML API? [y/N]:                       # Whether the carrier uses XML for API communication
+```
+
+After confirmation, the tool will generate the extension structure in the `modules/connectors/[carrier_name]` directory.
 
 ## Detailed Guides
 
@@ -251,16 +171,16 @@ For reference, you can explore existing carrier integrations in the Karrio codeb
 
 These integrations cover a variety of API types (REST, SOAP) and carrier features (rating, shipping, tracking, etc.).
 
-## Troubleshooting Plugin Loading
+## Troubleshooting
 
-If your plugin isn't loading correctly:
+If your carrier integration isn't working correctly:
 
-1. Check the plugin directory structure matches the expected format
+1. Check the extension structure matches the expected format
 2. Ensure the METADATA object is properly defined in the `__init__.py` file
 3. Verify all required dependencies are installed
 4. Look for import errors in the application logs
 5. Use `get_failed_plugin_modules()` to get information about plugins that failed to load
 
-Karrio provides detailed logging of plugin loading failures to help diagnose issues.
+For more information on plugin loading and registration, see the [Plugin Development Guide](/docs/developing/plugin-development).
 
 

@@ -1,3 +1,11 @@
+---
+sidebarTitle: Guides
+title: Plugin Development
+description: Learn how to create a custom plugin for Karrio
+tags: [development, integration]
+author: Karrio Team
+---
+
 # Plugin Development
 
 Karrio's plugin system allows you to extend its functionality with custom carriers, address validators, and other integrations. This guide explains how to develop and register plugins with Karrio.
@@ -114,6 +122,57 @@ Entrypoint-based plugins use Python's setuptools entrypoint mechanism to registe
    ```
 
 Karrio will automatically discover and load your plugin when it starts.
+
+## Plugin Discovery and Loading
+
+Karrio dynamically discovers and loads plugins using a structured approach:
+
+1. **Discovery**: Scans configured directories for plugin structures
+2. **Module Import**: Imports modules based on their types (plugins, mappers, validators)
+3. **Metadata Collection**: Extracts METADATA from each plugin's `__init__.py` file
+4. **Namespace Extension**: Extends the Karrio namespace with plugin modules
+
+This dynamic loading system allows for hot-swapping plugins and modular integrations without modifying the core codebase.
+
+```mermaid
+classDiagram
+    class Metadata {
+        +id: string
+        +label: string
+        +Mapper: Mapper
+        +Proxy: Proxy
+        +Settings: Settings
+        +options: ShippingOption
+        +package_presets: PackagePresets
+        +services: ShippingService
+    }
+
+    class Mapper {
+        +settings: Settings
+        +create_shipment()
+        +get_rates()
+        +get_tracking()
+    }
+
+    class Proxy {
+        +settings: Settings
+        +get_rates()
+        +create_shipment()
+        +get_tracking()
+    }
+
+    class Settings {
+        +username: string
+        +password: string
+        +carrier_id: string
+        +test_mode: boolean
+    }
+
+    Metadata --> Mapper
+    Metadata --> Proxy
+    Metadata --> Settings
+    Mapper --> Proxy
+```
 
 ## Plugin Metadata
 
@@ -234,5 +293,5 @@ For entrypoint-based plugins, you can distribute your plugin as a Python package
 
 ## Additional Resources
 
-- [Carrier Integration Guide](/docs/developing/carrier-integration)
-- [Address Validation Guide](/docs/developing/address-validation)
+- [Carrier Integration Guide](/docs/developing/carrier-integration): Learn how to create carrier-specific integrations
+- [Address Validation Guide](/docs/developing/address-validation): Learn how to create address validation plugins
