@@ -22,13 +22,13 @@ if not logger.level:
     logger.setLevel(logging.INFO)
 
 # Global references - DO NOT RENAME (used for backward compatibility)
-PROVIDERS = {}
-ADDRESS_VALIDATORS = {}
-MAPPERS = {}
-SCHEMAS = {}
-FAILED_IMPORTS = {}
-PLUGIN_METADATA = {}
-REFERENCES = {}
+PROVIDERS: typing.Dict[str, metadata.PluginMetadata] = {}
+ADDRESS_VALIDATORS: typing.Dict[str, metadata.PluginMetadata] = {}
+MAPPERS: typing.Dict[str, typing.Any] = {}
+SCHEMAS: typing.Dict[str, typing.Any] = {}
+FAILED_IMPORTS: typing.Dict[str, typing.Any] = {}
+PLUGIN_METADATA: typing.Dict[str, metadata.PluginMetadata] = {}
+REFERENCES: typing.Dict[str, typing.Any] = {}
 
 
 def import_extensions() -> None:
@@ -464,19 +464,19 @@ def collect_references() -> dict:
     }
 
     REFERENCES = {
-        "countries": {c.name: c.value for c in list(units.Country)},
-        "currencies": {c.name: c.value for c in list(units.Currency)},
-        "weight_units": {c.name: c.value for c in list(units.WeightUnit)},
-        "dimension_units": {c.name: c.value for c in list(units.DimensionUnit)},
+        "countries": {c.name: c.value for c in list(units.Country)},  # type: ignore
+        "currencies": {c.name: c.value for c in list(units.Currency)},  # type: ignore
+        "weight_units": {c.name: c.value for c in list(units.WeightUnit)},  # type: ignore
+        "dimension_units": {c.name: c.value for c in list(units.DimensionUnit)},  # type: ignore
         "states": {
-            c.name: {s.name: s.value for s in list(c.value)}
-            for c in list(units.CountryState)
+            c.name: {s.name: s.value for s in list(c.value)}  # type: ignore
+            for c in list(units.CountryState)  # type: ignore
         },
-        "payment_types": {c.name: c.value for c in list(units.PaymentType)},
+        "payment_types": {c.name: c.value for c in list(units.PaymentType)},  # type: ignore
         "customs_content_type": {
-            c.name: c.value for c in list(units.CustomsContentType)
+            c.name: c.value for c in list(units.CustomsContentType)  # type: ignore
         },
-        "incoterms": {c.name: c.value for c in list(units.Incoterm)},
+        "incoterms": {c.name: c.value for c in list(units.Incoterm)},  # type: ignore
         "carriers": {
             carrier_id: metadata_obj.label for carrier_id, metadata_obj in PROVIDERS.items()
         },

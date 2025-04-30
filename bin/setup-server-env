@@ -24,15 +24,6 @@ if [[ "${HAS_PLATFORM}" == "true" && ! "$*" == *--oss* ]]; then
     run_pip_install "${ROOT:?}/requirements.platform.dev.txt" "Failed to install platform development requirements" || exit $?
 fi
 
-log_section "Installing Node Dependencies"
-# Install node dependencies
-cd "${ROOT}"
-minimal_log "Cleaning node_modules directories"
-run_command "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +" "Failed to clean node_modules" "Cleaning node_modules directories..."
-minimal_log "Installing npm dependencies"
-run_command "npm install" "Failed to install npm dependencies" "Installing npm dependencies..."
-cd -
-
 minimal_log "Creating log directory"
 mkdir -p $LOG_DIR
 

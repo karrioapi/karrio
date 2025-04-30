@@ -117,14 +117,7 @@ import importlib
 import traceback
 import pkgutil
 from typing import List, Optional, Dict, Any, Tuple
-
-# Add imports for entrypoint discovery
-try:
-    # For Python 3.8+
-    import importlib.metadata as importlib_metadata
-except ImportError:
-    # For Python < 3.8
-    import importlib_metadata
+import importlib.metadata as importlib_metadata
 
 # Configure logger with a higher default level to reduce noise
 logger = logging.getLogger(__name__)
@@ -137,7 +130,7 @@ DEFAULT_PLUGINS = [
 ]
 
 # Track failed plugin loads
-FAILED_PLUGIN_MODULES = {}
+FAILED_PLUGIN_MODULES: Dict[str, Any] = {}
 
 # Entrypoint group for Karrio plugins
 ENTRYPOINT_GROUP = "karrio.plugins"
@@ -280,7 +273,7 @@ def discover_plugin_modules(plugin_dirs: Optional[List[str]] = None,
         module_types = ["plugins", "mappers", "validators"]
 
     plugin_paths = discover_plugins(plugin_dirs)
-    plugin_modules = {}
+    plugin_modules: Dict[str, Dict[str, Any]] = {}
 
     for plugin_path in plugin_paths:
         plugin_name = os.path.basename(plugin_path)
@@ -575,8 +568,6 @@ def discover_entrypoint_plugins() -> Dict[str, Dict[str, Any]]:
                             plugin_name: plugin_module
                         }
                     }
-
-                logger.info(f"Loaded entrypoint plugin: {plugin_name}")
 
             except Exception as e:
                 # Track failed entrypoint loads
