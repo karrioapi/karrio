@@ -32,12 +32,16 @@ logger = logging.getLogger(__name__)
 MODELS: typing.Dict[str, typing.Any] = {}
 
 
-# Register karrio-server models extensions
-for _, name, _ in pkgutil.iter_modules(extensions.__path__):  # type: ignore
-    if name in karrio.gateway.providers:
-        try:
-            extension = __import__(f"{extensions.__name__}.{name}", fromlist=[name])
-            MODELS.update({name: register_model(extension.SETTINGS)})
-        except Exception as e:
-            logger.warning(f'Failed to register extension "{name}" Model')
-            logger.exception(e)
+def register_extensions():
+    """Register karrio-server models extensions after gateway is initialized"""
+    for _, name, _ in pkgutil.iter_modules(extensions.__path__):  # type: ignore
+        if hasattr(karrio, 'gateway') and name in karrio.gateway.providers:
+            try:
+                extension = __import__(f"{extensions.__name__}.{name}", fromlist=[name])
+                MODELS.update({name: register_model(extension.SETTINGS)})
+            except Exception as e:
+                logger.warning(f'Failed to register extension "{name}" Model')
+                logger.exception(e)
+
+# Register extensions after gateway initialization
+register_extensions()
