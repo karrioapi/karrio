@@ -52,6 +52,47 @@ docker compose up
 
 Default Login: `admin@example.com` | `demo`
 
+## Development Installation
+
+To install for development with lxml compatibility for Python 3.13:
+
+```sh
+# Install using pip with the --only-binary flag for lxml to use pre-built wheels
+pip install --only-binary :all: "lxml>=4.6.2,<5.0.0"
+pip install -e ./modules/sdk
+# or to install all dependencies:
+pip install -r requirements.sdk.dev.txt
+```
+
+If you're on Python 3.13 and encounter lxml build errors, use:
+
+```sh
+# Set environment variables before installation
+export STATIC_DEPS=true
+export MACOSX_DEPLOYMENT_TARGET=10.14  # For macOS users
+export PIP_ONLY_BINARY=:all:
+pip install --only-binary :all: "lxml>=4.6.2,<5.0.0"
+pip install -r requirements.sdk.dev.txt
+```
+
+The setup.py automatically handles lxml's static dependencies.
+
+## Python 3.13 Compatibility
+
+To install the project on Python 3.13, we recommend using pre-built wheels for lxml:
+
+```sh
+# Install lxml from pre-built wheels first
+pip install --only-binary=lxml "lxml>=4.9.3,<5.0.0"
+
+# Then install the project
+pip install -e ./modules/sdk
+# or install all dependencies
+pip install -r requirements.sdk.dev.txt
+```
+
+This approach avoids compilation issues with lxml on Python 3.13.
+
 <p align="center">
   <img alt="Karrio Dashboard" src="screenshots/dashboard.png" width="800" style="max-width: 100%;" />
 </p>
@@ -123,7 +164,7 @@ For more tooling to build on top of Karrio, join [Karrio Insiders](https://docs.
 
 -   multi-tenancy and team collaboration
 -   onboarding support
--   advanced shipping add-ons 
+-   advanced shipping add-ons
 -   customizable dashboard (soon)
 -   billing management (soon)
 -   and more...
