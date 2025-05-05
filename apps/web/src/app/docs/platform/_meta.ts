@@ -7,12 +7,24 @@ export default {
     title: 'Introduction',
     type: 'page'
   },
+  "setup": {
+    title: 'Setup',
+    type: 'page'
+  },
   "quickstart": {
     title: 'Quickstart',
+    type: 'page'
+  },
+  "elements": {
+    title: 'Elements',
     type: 'page'
   },
   "guides": {
     title: 'Guides',
     type: 'page'
   },
+  "faq": {
+    title: 'FAQ',
+    type: 'page'
+  }
 }
