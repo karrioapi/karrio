@@ -21,7 +21,8 @@
     "apps/*",
     "packages/*",
     "ee/apps/*",
-    "ee/packages/*"
+    "ee/packages/*",
+    "ee/insiders/packages/*"
   ],
   "packageManager": "npm@10.8.2"
 }
