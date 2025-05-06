@@ -2,27 +2,31 @@
     "folders": [
         {
             "name": "karrio",
-            "path": ".."
+            "path": "..",
         },
         {
             "name": "karrio-insiders",
-            "path": "../ee/insiders"
+            "path": "../ee/insiders",
         },
         {
             "name": "karrio-platform",
-            "path": "../ee/platform"
-        }
+            "path": "../ee/platform",
+        },
+        {
+            "name": "karrio-community",
+            "path": "../community",
+        },
     ],
     "settings": {
         "files.exclude": {
             "**/node_modules": true,
             "**/__pycache__": true,
-            "**/*.pyc": true
+            "**/*.pyc": true,
         },
         "search.exclude": {
             "**/node_modules": true,
             "**/bower_components": true,
-            "**/*.code-search": true
+            "**/*.code-search": true,
         },
         "editor.formatOnPaste": true,
         "python.terminal.activateEnvInCurrentTerminal": true,
@@ -32,7 +36,7 @@
             "**/*.html": "html",
             "**/templates/**/*.html": "django-html",
             "**/templates/**/*": "django-txt",
-            "**/requirements{/**,*}.{txt,in}": "pip-requirements"
+            "**/requirements{/**,*}.{txt,in}": "pip-requirements",
         },
         "python.analysis.autoImportCompletions": true,
     },
@@ -42,7 +46,7 @@
             "dbaeumer.vscode-eslint",
             "esbenp.prettier-vscode",
             "eamodio.gitlens",
-            "github.copilot"
-        ]
-    }
+            "github.copilot",
+        ],
+    },
 }
