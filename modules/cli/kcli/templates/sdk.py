@@ -18,7 +18,7 @@ pip install karrio.{{id}}
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.{{id}}.settings import Settings
 
 
@@ -34,6 +34,47 @@ Check the [Karrio Mutli-carrier SDK docs](https://docs.karrio.io) for Shipping A
 
 """
 )
+
+PYPROJECT_TEMPLATE = Template('''[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "karrio_{{id}}"
+version = "{{version}}"
+description = "Karrio - {{name}} Shipping Extension"
+readme = "README.md"
+requires-python = ">=3.7"
+license = "Apache-2.0"
+authors = [
+    {name = "karrio", email = "hello@karrio.io"}
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "karrio",
+]
+
+[project.urls]
+Homepage = "https://github.com/karrioapi/karrio"
+
+[project.entry-points."karrio.plugins"]
+{{id}} = "karrio.plugins.{{id}}"
+
+[tool.setuptools]
+zip-safe = false
+include-package-data = true
+
+[tool.setuptools.package-dir]
+"" = "."
+
+[tool.setuptools.packages.find]
+exclude = ["tests.*", "tests"]
+namespaces = true
+''')
 
 SETUP_TEMPLATE = Template('''
 """Warning: This setup.py is only there for git install until poetry support git subdirectory"""
@@ -70,7 +111,6 @@ XML_GENERATE_TEMPLATE = Template("""SCHEMAS=./schemas
 LIB_MODULES=./karrio/schemas/{{id}}
 find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \\;
 touch "${LIB_MODULES}/__init__.py"
-
 
 generateDS --no-namespace-defs -o "${LIB_MODULES}/error.py" $SCHEMAS/error_response.xsd{% if "address" in features %}
 generateDS --no-namespace-defs -o "${LIB_MODULES}/address_validation_request.py" $SCHEMAS/address_validation_request.xsd
@@ -167,6 +207,9 @@ import karrio.providers.{{id}}.units as units
 import karrio.providers.{{id}}.utils as utils
 
 
+# This METADATA object is used by Karrio to discover and register this plugin
+# when loaded through Python entrypoints or local plugin directories.
+# The entrypoint is defined in pyproject.toml under [project.entry-points."karrio.plugins"]
 METADATA = PluginMetadata(
     id="{{id}}",
     label="{{name}}",
@@ -793,7 +836,7 @@ class ConnectionConfig(lib.Enum):
 TEST_FIXTURE_TEMPLATE = Template(
     '''"""{{name}} carrier tests fixtures."""
 
-import karrio
+import karrio.sdk as karrio
 
 
 gateway = karrio.gateway["{{id}}"].create(
