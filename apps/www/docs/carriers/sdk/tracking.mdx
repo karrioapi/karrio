@@ -10,7 +10,7 @@ to the `Tracking` API.
 
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.core.models import TrackingRequest
 
 request = TrackingRequest(...)
@@ -72,7 +72,7 @@ tracking_details_list, messages = karrio.Tracking.fetch(request).from_(carrier_g
 ### Code sample
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.core.models import TrackingRequest
 
 request = karrio.Tracking.fetch(

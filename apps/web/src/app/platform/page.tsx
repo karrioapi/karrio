@@ -548,7 +548,7 @@ const shipment = await karrio.shipments.create({
                     label: "Python",
                     value: "python",
                     code: `# Get a shipment rate and create a label
-from karrio import Karrio
+from karrio.sdk import Karrio
 
 karrio = Karrio('sk_test_123456789')
 

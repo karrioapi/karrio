@@ -6,7 +6,7 @@ title: Pickup
 ## `Schedule`
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.core.models import PickupRequest
 
 request = PickupRequest(...)
@@ -123,7 +123,7 @@ pickup, messages = karrio.Pickup.schedule(request).from_(carrier_gateway).parse(
 ### Code sample
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.core.models import PickupRequest, Address
 
 address = Address(
@@ -171,7 +171,7 @@ pickup, messages = request.from_(carrier_gateway).parse()
 ## `Update`
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.core.models import PickupUpdateRequest
 
 request = PickupUpdateRequest(...)
@@ -289,7 +289,7 @@ pickup, messages = karrio.Pickup.update(request).from_(carrier_gateway).parse()
 ### Code sample
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.core.models import PickupUpdateRequest, Address
 
 address = Address(
@@ -338,7 +338,7 @@ pickup, messages = request.from_(gateway).parse()
 ## `Cancel`
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.core.models import PickupCancelRequest
 
 request = PickupCancelRequest(...)
@@ -420,7 +420,7 @@ confirmation, messages = karrio.Pickup.cancel(request).from_(carrier_gateway).pa
 ### Code sample
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.core.models import PickupCancelRequest
 
 request = karrio.Pickup.cancel(
