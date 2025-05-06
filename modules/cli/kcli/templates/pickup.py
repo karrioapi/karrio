@@ -637,7 +637,7 @@ JSON_SCHEMA_PICKUP_CANCEL_RESPONSE_TEMPLATE = Template(
 TEST_PICKUP_TEMPLATE = Template('''"""{{name}} carrier pickup tests."""
 
 import unittest
-import karrio
+import karrio.sdk as karrio
 import karrio.lib as lib
 import karrio.core.models as models
 from unittest.mock import patch

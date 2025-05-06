@@ -167,7 +167,7 @@ import unittest
 from unittest.mock import patch, ANY
 from .fixture import gateway
 import logging
-import karrio
+import karrio.sdk as karrio
 import karrio.lib as lib
 import karrio.core.models as models
 

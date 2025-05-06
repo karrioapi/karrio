@@ -142,7 +142,7 @@ except ImportError:
     # Create an empty module for plugins if it doesn't exist
     try:
         import types
-        import karrio
+        import karrio.sdk as karrio
         karrio.plugins = types.ModuleType('karrio.plugins')
         karrio.plugins.__path__ = []
         sys.modules['karrio.plugins'] = karrio.plugins
@@ -443,7 +443,7 @@ def load_local_plugins(plugin_dirs: Optional[List[str]] = None) -> List[str]:
             # Create the module if it doesn't exist
             try:
                 import types
-                import karrio
+                import karrio.sdk as karrio
                 module = types.ModuleType(module_name)
                 module.__path__ = []
                 setattr(karrio, namespace, module)
