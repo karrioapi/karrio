@@ -3,7 +3,7 @@ import {
   RegisterUserMutationInput,
   register_user_register_user_errors,
 } from "@karrio/types";
-import React, { FormEvent, useEffect, useReducer, useState } from "react";
+import React, { FormEvent, Suspense, useEffect, useReducer, useState } from "react";
 import { LoadingProvider, useLoader } from "@karrio/ui/core/components/loader";
 import { ButtonField } from "@karrio/ui/core/components/button-field";
 import { InputField } from "@karrio/ui/core/components/input-field";
@@ -34,7 +34,8 @@ function reducer(
   }
 }
 
-const Component = (): JSX.Element => {
+// Inner component that uses useSearchParams
+const SignUpForm = (): JSX.Element => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email") as string;
@@ -200,12 +201,26 @@ const Component = (): JSX.Element => {
   );
 };
 
+// Component with LoadingProvider
+const LoadingWrappedForm = () => {
+  return (
+    <LoadingProvider>
+      <SignUpForm />
+    </LoadingProvider>
+  );
+};
+
+// Exported component with Suspense
 export default function SignUp(pageProps: any) {
   return (
-    <>
-      <LoadingProvider>
-        <Component />
-      </LoadingProvider>
-    </>
+    <Suspense fallback={
+      <div className="card isolated-card">
+        <div className="card-content has-text-centered">
+          <p className="subtitle">Loading...</p>
+        </div>
+      </div>
+    }>
+      <LoadingWrappedForm />
+    </Suspense>
   );
 }
