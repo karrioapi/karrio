@@ -1,5 +1,5 @@
 "use client";
-import React, { FormEvent, useEffect, useReducer } from "react";
+import React, { FormEvent, Suspense, useEffect, useReducer } from "react";
 import { LoadingProvider, useLoader } from "@karrio/ui/core/components/loader";
 import { ConfirmPasswordResetMutationInput } from "@karrio/types";
 import { ButtonField } from "@karrio/ui/core/components/button-field";
@@ -28,7 +28,8 @@ function reducer(
   }
 }
 
-const Component = (): JSX.Element => {
+// Inner component that uses useSearchParams
+const PasswordResetForm = (): JSX.Element => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [uidb64, token] = [
@@ -151,12 +152,26 @@ const Component = (): JSX.Element => {
   );
 };
 
+// Component with LoadingProvider
+const LoadingWrappedComponent = () => {
+  return (
+    <LoadingProvider>
+      <PasswordResetForm />
+    </LoadingProvider>
+  );
+};
+
+// Exported component with Suspense
 export default function Page() {
   return (
-    <>
-      <LoadingProvider>
-        <Component />
-      </LoadingProvider>
-    </>
+    <Suspense fallback={
+      <div className="card isolated-card">
+        <div className="card-content has-text-centered">
+          <p className="subtitle">Loading...</p>
+        </div>
+      </div>
+    }>
+      <LoadingWrappedComponent />
+    </Suspense>
   );
 }
