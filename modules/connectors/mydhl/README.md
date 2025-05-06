@@ -16,7 +16,7 @@ pip install karrio.mydhl
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.mydhl.settings import Settings
 
 

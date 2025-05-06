@@ -2,7 +2,7 @@ import typing
 import pkgutil
 import logging
 
-import karrio
+import karrio.sdk as karrio
 
 from karrio.server.providers.models.sheet import RateSheet
 from karrio.server.providers.models.config import CarrierConfig

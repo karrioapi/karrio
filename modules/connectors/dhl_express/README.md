@@ -15,7 +15,7 @@ pip install karrio.dhl_express
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.dhl_express.settings import Settings
 
 

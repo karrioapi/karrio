@@ -9,7 +9,7 @@ Once you fetch shipping rates and select your preferred service, your can submit
 using the create function.
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.core.models import ShipmentRequest
 
 request = ShipmentRequest(...)
@@ -206,7 +206,7 @@ shipment, messages = karrio.Shipment.create(request).from_(gateway).parse()
 ### Code sample
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.core.models import Address, Parcel, ShipmentRequest, Payment
 
 shipper = Address(
@@ -281,7 +281,7 @@ the carrier know that you do not intend to ship using the method selected anymor
 :::
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.core.models import ShipmentCancelRequest
 
 request = ShipmentCancelRequest(...)
@@ -331,7 +331,7 @@ confirmation, messages = karrio.Shipment.cancel(request).from_(carrier_gateway).
 ### Code sample
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.core.models import ShipmentCancelRequest
 
 request = karrio.Shipment.cancel(

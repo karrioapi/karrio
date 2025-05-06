@@ -1,0 +1,63 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "karrio_server"
+dynamic = ["version"]
+description = "Multi-carrier shipping API"
+readme = "README.md"
+requires-python = ">=3.7"
+license = "Apache-2.0"
+authors = [
+    {name = "karrio", email = "hello@karrio.io"}
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "django",
+    "djangorestframework",
+    "djangorestframework-simplejwt",
+    "django-constance",
+    "django-filter",
+    "django-picklefield",
+    "django-email-verification",
+    "django-cors-headers",
+    "django-redis",
+    "django-two-factor-auth",
+    "django-oauth-toolkit",
+    "drf-api-tracking",
+    "drf-spectacular",
+    "dj-database-url",
+    "gunicorn",
+    "hiredis",
+    "uvicorn",
+    "jsonfield",
+    "more-itertools",
+    "requests",
+    "posthog",
+    "python-decouple",
+    "karrio_server_core",
+    "sentry-sdk",
+    "whitenoise",
+]
+
+[project.urls]
+Homepage = "https://github.com/karrioapi/karrio-server"
+
+[project.scripts]
+karrio = "karrio.server.__main__:main"
+
+[tool.setuptools]
+zip-safe = false
+include-package-data = true
+packages = {find = {}}
+
+[tool.setuptools.package-data]
+"karrio.server.static" = ["*"]
+"karrio.server.templates" = ["*"]
+"karrio.server.staticfiles" = [".gitignore"]
+
+[tool.setuptools.dynamic]
+version = {file = "karrio/server/VERSION"}

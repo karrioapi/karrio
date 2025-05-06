@@ -15,7 +15,7 @@ pip install karrio.fedex
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.fedex.settings import Settings
 
 

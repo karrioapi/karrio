@@ -16,7 +16,7 @@ pip install karrio.locate2u
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.locate2u.settings import Settings
 
 

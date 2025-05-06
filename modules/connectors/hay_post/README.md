@@ -15,7 +15,7 @@ pip install karrio.hay_post
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.hay_post.settings import Settings
 
 # Initialize a carrier gateway

@@ -16,7 +16,7 @@ pip install karrio.easyship
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.easyship.settings import Settings
 
 

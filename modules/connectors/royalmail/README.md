@@ -15,7 +15,7 @@ pip install karrio.royalmail
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.royalmail.settings import Settings
 
 

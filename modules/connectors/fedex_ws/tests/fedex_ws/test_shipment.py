@@ -4,7 +4,7 @@ import logging
 from unittest.mock import patch, ANY
 from karrio.core.utils import DP
 from karrio.core.models import ShipmentRequest, ShipmentCancelRequest
-from karrio import Shipment
+from karrio.sdk import Shipment
 from .fixture import gateway
 
 logger = logging.getLogger(__name__)

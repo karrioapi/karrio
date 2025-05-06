@@ -16,7 +16,7 @@ pip install karrio.seko
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.seko.settings import Settings
 
 

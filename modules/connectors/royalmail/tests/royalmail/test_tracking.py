@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from karrio.core.utils import DP
-from karrio import Tracking
+from karrio.sdk import Tracking
 from karrio.core.models import TrackingRequest
 from .fixture import gateway
 

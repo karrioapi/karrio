@@ -62,8 +62,8 @@ def _add_extension(
         time.sleep(1)
 
         # project files
-        templates.SETUP_TEMPLATE.stream(**context).dump(
-            f"{root_dir}/setup.py"
+        templates.PYPROJECT_TEMPLATE.stream(**context).dump(
+            f"{root_dir}/pyproject.toml"
         )
         templates.README_TEMPLATE.stream(**context).dump(
             f"{root_dir}/README.md"

@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, ANY
-import karrio
+import karrio.sdk as karrio
 from karrio.core.utils import DP
 from karrio.core.models import ShipmentRequest
 from ..fixture import gateway

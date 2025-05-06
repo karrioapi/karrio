@@ -8,7 +8,7 @@ from itertools import groupby
 from django.conf import settings
 from django.utils import timezone
 
-import karrio
+import karrio.sdk as karrio
 import karrio.lib as lib
 from karrio.api.gateway import Gateway
 from karrio.api.interface import IRequestFrom

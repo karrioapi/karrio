@@ -4,7 +4,7 @@ from unittest.mock import patch, ANY
 from karrio.core.utils import DP
 from karrio.core.models import ShipmentRequest, ShipmentCancelRequest
 from .fixture import gateway
-import karrio
+import karrio.sdk as karrio
 
 
 class TestUPSShipment(unittest.TestCase):

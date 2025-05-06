@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch, ANY
 from karrio.core.utils import DP
 from karrio.core.models import RateRequest
-from karrio import Rating
+from karrio.sdk import Rating
 from .fixture import gateway
 
 

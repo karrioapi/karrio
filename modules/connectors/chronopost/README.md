@@ -16,7 +16,7 @@ pip install karrio.chronopost
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.chronopost.settings import Settings
 
 

@@ -15,7 +15,7 @@ pip install karrio.dicom
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.dicom.settings import Settings
 
 

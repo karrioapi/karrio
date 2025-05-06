@@ -59,7 +59,7 @@ pip install karrio.canadapost
 - Fetch shipping rates
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.core.models import Address, Parcel, RateRequest
 from karrio.mappers.canadapost.settings import Settings
 

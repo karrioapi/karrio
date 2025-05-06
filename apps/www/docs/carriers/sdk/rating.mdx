@@ -9,7 +9,7 @@ Using the fluent API with a gateway previously initialized, you can fetch live s
 
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.core.models import RateRequest
 
 request = RateRequest(...)
@@ -137,7 +137,7 @@ rates, messages = karrio.Rating.fetch(request).from_(carrier_gateway).parse()
 ### Code sample
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.core.models import Address, Parcel, RateRequest
 
 shipper = Address(

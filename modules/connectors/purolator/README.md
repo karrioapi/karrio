@@ -15,7 +15,7 @@ pip install karrio.purolator
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.purolator.settings import Settings
 
 

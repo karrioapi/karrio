@@ -16,7 +16,7 @@ pip install karrio.dpd
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.dpd.settings import Settings
 
 

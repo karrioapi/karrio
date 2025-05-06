@@ -3,7 +3,7 @@ from unittest.mock import patch
 from .fixture import gateway
 from karrio.core.utils import DP
 from karrio.core.models import TrackingRequest
-from karrio import Tracking
+from karrio.sdk import Tracking
 
 
 class TestTNTTracking(unittest.TestCase):

@@ -15,7 +15,7 @@ pip install karrio.ups
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.ups.settings import Settings
 
 

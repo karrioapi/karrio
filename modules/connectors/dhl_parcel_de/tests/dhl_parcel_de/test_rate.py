@@ -1,5 +1,5 @@
 import unittest
-import karrio
+import karrio.sdk as karrio
 from karrio.core.utils import DP
 from karrio.core.models import RateRequest
 from .fixture import gateway

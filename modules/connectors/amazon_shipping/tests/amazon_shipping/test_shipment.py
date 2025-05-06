@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from karrio.core.utils import DP
 from karrio.core.models import ShipmentRequest, ShipmentCancelRequest
-from karrio import Shipment
+from karrio.sdk import Shipment
 from .fixture import gateway
 
 
