@@ -3,12 +3,12 @@ import { useOrganizationInvitation } from "@karrio/hooks/organization";
 import { Spinner } from "@karrio/ui/core/components/spinner";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
-import React, { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import { isNone } from "@karrio/lib";
 import Link from "next/link";
 
-
-export default function Page() {
+// Inner component that uses useSearchParams
+function AcceptInvitePage() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -74,5 +74,20 @@ export default function Page() {
         <></>
       )}
     </React.Fragment>
+  );
+}
+
+// Exported component with Suspense
+export default function Page() {
+  return (
+    <Suspense fallback={
+      <div className="card isolated-card my-6">
+        <div className="card-content has-text-centered">
+          <Spinner />
+        </div>
+      </div>
+    }>
+      <AcceptInvitePage />
+    </Suspense>
   );
 }
