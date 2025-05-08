@@ -18,7 +18,7 @@ class FedexWSSettings(Carrier):
 
     @property
     def carrier_name(self) -> str:
-        return "fedex_ws"
+        return "fedex"
 
 
 SETTINGS = FedexWSSettings
