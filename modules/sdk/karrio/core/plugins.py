@@ -127,6 +127,7 @@ if not logger.level:
 # Default plugin directories to scan
 DEFAULT_PLUGINS = [
     os.path.join(os.getcwd(), "plugins"),  # Local plugins directory
+    os.path.join(os.getcwd(), "community/plugins"), # Community plugins directory
 ]
 
 # Track failed plugin loads
@@ -142,7 +143,7 @@ except ImportError:
     # Create an empty module for plugins if it doesn't exist
     try:
         import types
-        import karrio.sdk as karrio
+        import karrio
         karrio.plugins = types.ModuleType('karrio.plugins')
         karrio.plugins.__path__ = []
         sys.modules['karrio.plugins'] = karrio.plugins
@@ -408,6 +409,25 @@ def collect_plugin_metadata(plugin_modules: Dict[str, Dict[str, Any]]) -> Tuple[
                 "error": "No METADATA found in any module"
             }
 
+        # NEW: Try direct import of karrio.plugins.[plugin_name] and karrio.mappers.[plugin_name] if not found
+        if not metadata_found:
+            for modtype in ["plugins", "mappers"]:
+                try:
+                    module_path = f"karrio.{modtype}.{plugin_name}"
+                    module = importlib.import_module(module_path)
+                    if hasattr(module, "METADATA"):
+                        plugin_metadata[plugin_name] = module.METADATA
+                        metadata_found = True
+                        break
+                except Exception as e:
+                    key = f"{plugin_name}.{modtype}.__init__"
+                    failed_metadata[key] = {
+                        "plugin": plugin_name,
+                        "module_type": modtype,
+                        "submodule": "__init__",
+                        "error": str(e)
+                    }
+
     return plugin_metadata, failed_metadata
 
 def load_local_plugins(plugin_dirs: Optional[List[str]] = None) -> List[str]:
@@ -443,7 +463,7 @@ def load_local_plugins(plugin_dirs: Optional[List[str]] = None) -> List[str]:
             # Create the module if it doesn't exist
             try:
                 import types
-                import karrio.sdk as karrio
+                import karrio
                 module = types.ModuleType(module_name)
                 module.__path__ = []
                 setattr(karrio, namespace, module)
