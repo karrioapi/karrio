@@ -5,7 +5,7 @@ This package is a Sendle extension of the [karrio](https://pypi.org/project/karr
 
 ## Requirements
 
-`Python 3.7+`
+`Python 3.11+`
 
 ## Installation
 

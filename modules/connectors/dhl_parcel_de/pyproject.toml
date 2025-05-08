@@ -7,7 +7,7 @@ name = "karrio_dhl_parcel_de"
 version = "2024.6.5"
 description = "Karrio - DHL Parcel DE Shipping Extension"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.11"
 license = "Apache-2.0"
 authors = [
     {name = "karrio", email = "hello@karrio.io"}

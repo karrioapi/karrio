@@ -5,7 +5,7 @@ This package is a Australia Post extension of the [karrio](https://pypi.org/proj
 
 ## Requirements
 
-`Python 3.7+`
+`Python 3.11+`
 
 ## Installation
 
