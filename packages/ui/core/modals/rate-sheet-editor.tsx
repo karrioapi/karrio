@@ -207,7 +207,7 @@ export const RateSheetModalEditor = ({
                   required
                   disabled={!!sheet.id}
                 >
-                  {Object.keys(service_levels).map((unit) => (
+                  {Object.keys(service_levels || {}).map((unit) => (
                     <option key={unit} value={unit}>
                       {unit}
                     </option>
@@ -231,7 +231,7 @@ export const RateSheetModalEditor = ({
                   value={
                     (sheet?.services || [])[0]?.currency ||
                     computeDefaultCurrency(
-                      service_levels[sheet.carrier_name] || [],
+                      service_levels?.[sheet.carrier_name] || [],
                     )
                   }
                   className="is-small is-fullwidth"
@@ -527,7 +527,7 @@ export const RateSheetModalEditor = ({
                         extensions={[jsonLanguage]}
                         value={failsafe(() =>
                           JSON.stringify(
-                            service_levels[sheet.carrier_name],
+                            service_levels?.[sheet.carrier_name] || [],
                             null,
                             2,
                           ),
