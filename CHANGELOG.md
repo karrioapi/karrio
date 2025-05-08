@@ -1,3 +1,11 @@
+# Karrio 2024.12.8
+
+## Changes
+
+### Fix
+
+- apply usps fix by @leonowski
+
 # Karrio 2024.12.7
 
 ## Changes
