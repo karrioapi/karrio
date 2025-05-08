@@ -231,7 +231,7 @@ RATE_SHEETS_RESPONSE = {
 CREATE_RATE_SHEET_DATA = {
     "data": {
         "name": "New Rate Sheet",
-        "carrier_name": "fedex_ws",
+        "carrier_name": "fedex",
         "services": [
             {
                 "service_name": "FedEx Ground",
@@ -256,7 +256,7 @@ CREATE_RATE_SHEET_RESPONSE = {
             "rate_sheet": {
                 "id": ANY,
                 "name": "New Rate Sheet",
-                "carrier_name": "fedex_ws",
+                "carrier_name": "fedex",
                 "services": [
                     {
                         "id": ANY,
