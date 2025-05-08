@@ -4,7 +4,7 @@ This package is a DHL Parcel Poland extension of the [karrio](https://pypi.org/p
 
 ## Requirements
 
-`Python 3.7+`
+`Python 3.11+`
 
 ## Installation
 

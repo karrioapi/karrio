@@ -4,7 +4,7 @@ This package is a module of the [karrio](https://pypi.org/project/karrio.server)
 
 ## Requirements
 
-`Python 3.7+`
+`Python 3.11+`
 
 ## Installation
 

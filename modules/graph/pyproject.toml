@@ -7,7 +7,7 @@ name = "karrio_server_graph"
 version = "2024.2.3"
 description = "Multi-carrier shipping API Graph module"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.11"
 license = "Apache-2.0"
 authors = [
     {name = "karrio", email = "hello@karrio.io"}
