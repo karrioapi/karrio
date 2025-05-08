@@ -5,12 +5,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Button } from "./ui/button";
 import { useState } from "react";
 import { cn } from "@karrio/ui/lib/utils";
-import { Loader2, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import { ScrollArea } from "./ui/scroll-area";
-import CodeMirror from "@uiw/react-codemirror";
-import { json } from "@codemirror/lang-json";
-
 interface RateSheetEditorProps {
   sheet?: any;
   onSubmit: (values: any) => Promise<any>;
