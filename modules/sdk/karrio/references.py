@@ -153,6 +153,10 @@ def import_extensions() -> None:
     except ImportError:
         logger.error("Could not import karrio.providers")
 
+    # Sort PLUGIN_METADATA and PROVIDERS alphabetically by their keys
+    PLUGIN_METADATA = dict(sorted(PLUGIN_METADATA.items()))
+    PROVIDERS = dict(sorted(PROVIDERS.items()))
+
 
 def _import_validators_from_module(module):
     """

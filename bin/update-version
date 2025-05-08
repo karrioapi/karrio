@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 sed -i '' -e "s/${1}/${2}/g" apps/api/karrio/server/VERSION
+sed -i '' -e "s/${1}/${2}/g" apps/web/public/openapi.yml
 sed -i '' -e "s/${1}/${2}/g" apps/www/openapi.yml
 sed -i '' -e "s/${1}/${2}/g" schemas/openapi.yml
 sed -i '' -e "s/${1}/${2}/g" packages/types/rest/api.ts
