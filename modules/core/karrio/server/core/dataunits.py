@@ -82,7 +82,10 @@ def contextual_reference(request: Request = None, reduced: bool = True):
     )
     references = {
         **contextual_metadata(request),
-        "ADDRESS_AUTO_COMPLETE": validators.Address.get_info(is_authenticated),
+        "ADDRESS_AUTO_COMPLETE": lib.failsafe(
+            lambda: validators.Address.get_info(is_authenticated),
+            None,
+        ),
         **{
             k: v
             for k, v in REFERENCE_MODELS.items()

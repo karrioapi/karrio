@@ -3,15 +3,14 @@ import { CarrierNameBadge } from '../components/carrier-name-badge';
 import { RateSheetModalEditor } from '../modals/rate-sheet-editor';
 import { ConfirmModalWrapper } from '../modals/form-modals';
 import { useAPIMetadata } from '@karrio/hooks/api-metadata';
-import React from 'react';
 
 
-export const RateSheetList= (): JSX.Element =>  {
+export const RateSheetList = (): JSX.Element => {
   const { references } = useAPIMetadata();
   const mutation = useRateSheetMutation();
   const { query: { data: { rate_sheets } = {} } } = useRateSheets();
 
-  const carrier = (name: string) => references?.carriers[name] || "Custom Carrier";
+  const carrier = (name: string) => references?.carriers?.[name] || "Custom Carrier";
 
   return (
     <>
