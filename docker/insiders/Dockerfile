@@ -1,5 +1,5 @@
 # The base image compilation
-FROM python:3.11-slim AS compile-image
+FROM python:3.12.10-slim AS compile-image
 
 ARG REQUIREMENTS=./source.requirements.insiders.txt
 
@@ -14,7 +14,7 @@ RUN cd /temp/app && \
 
 
 # The runtime image
-FROM python:3.11-slim AS build-image
+FROM python:3.12.10-slim AS build-image
 
 ARG SOURCE="https://github.com/karrioapi/karrio-insiders"
 ARG EDITION="insiders"
@@ -43,6 +43,7 @@ ENV WORK_DIR=/karrio/app
 ENV LOG_DIR=/karrio/log
 ENV WORKER_DB_DIR=/karrio/data
 ENV STATIC_ROOT_DIR=/karrio/static
+ENV KARRIO_PLUGINS=/karrio/plugins
 
 RUN apt-get update -y && apt-get install -y libpango1.0-0 libpangoft2-1.0-0 gcc zint curl
 
@@ -50,8 +51,9 @@ RUN useradd -m karrio -d /karrio
 USER karrio
 
 COPY --chown=karrio:karrio --from=compile-image /karrio/ /karrio/
-RUN mkdir -p $WORK_DIR $LOG_DIR $WORKER_DB_DIR $STATIC_ROOT_DIR
+RUN mkdir -p $WORK_DIR $LOG_DIR $WORKER_DB_DIR $STATIC_ROOT_DIR $KARRIO_PLUGINS
 COPY apps/api/gunicorn-cfg.py docker/insiders/entrypoint docker/insiders/worker $WORK_DIR/
+COPY --chown=karrio:karrio plugins/ $KARRIO_PLUGINS/
 
 WORKDIR $WORK_DIR
 

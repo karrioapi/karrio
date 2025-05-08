@@ -24,6 +24,9 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/karrioapi/karrio"
 
+[project.entry-points."karrio.plugins"]
+fedex = "karrio.plugins.fedex:METADATA"
+
 [tool.setuptools]
 zip-safe = false
 include-package-data = true

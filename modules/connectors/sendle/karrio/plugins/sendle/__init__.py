@@ -1,18 +1,17 @@
-from karrio.core.metadata import Metadata
-
-import karrio.mappers.sendle as sendle
+import karrio.core.metadata as metadata
+import karrio.mappers.sendle as mappers
 import karrio.providers.sendle.units as units
 
 
-METADATA = Metadata(
+METADATA = metadata.PluginMetadata(
     status="production-ready",
     id="sendle",
     label="Sendle",
     is_hub=False,
     # Integrations
-    Mapper=sendle.Mapper,
-    Proxy=sendle.Proxy,
-    Settings=sendle.Settings,
+    Mapper=mappers.Mapper,
+    Proxy=mappers.Proxy,
+    Settings=mappers.Settings,
     # Data Units
     options=units.ShippingOption,
     services=units.ShippingService,

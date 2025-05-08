@@ -4,3 +4,5 @@
 !/requirements.txt
 !/docker/api/*
 !/apps/api/gunicorn-cfg.py
+!/plugins/
+!/plugins/**

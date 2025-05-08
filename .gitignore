@@ -133,7 +133,6 @@ packages/karriojs/api/generated
 # Karrio plugins
 plugins/*
 !plugins/README.md
-## Built-in plugins
 !plugins/addresscomplete
 !plugins/googlegeocoding
 

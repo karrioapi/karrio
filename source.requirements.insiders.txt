@@ -13,9 +13,15 @@ deprecation==2.1.0
 diff-match-patch==20241021
 distro==1.9.0
 dj-database-url==2.3.0
+<<<<<<< HEAD
 Django==4.2.16
 django-auditlog==3.1.2
 django-constance==3.1.0
+=======
+Django==5.2.1
+django-auditlog==3.1.2
+django-constance==4.3.2
+>>>>>>> a6f37d756 (chore: reorganize carrier extension plugins separating actively maintained and mature integrations from community in-development ones)
 django-cors-headers==4.7.0
 django-downloadview==2.4.0
 django-email-verification==0.3.3
@@ -50,41 +56,23 @@ jsonschema-specifications==2025.4.1
 jstruct==2021.11
 jwcrypto==1.5.6
 karrio @ file://${PWD}/modules/sdk
-karrio_allied_express @ file://${PWD}/modules/connectors/allied_express
-karrio_allied_express_local @ file://${PWD}/modules/connectors/allied_express_local
-karrio_amazon_shipping @ file://${PWD}/modules/connectors/amazon_shipping
-karrio_aramex @ file://${PWD}/modules/connectors/aramex
-karrio_asendia_us @ file://${PWD}/modules/connectors/asendia_us
 karrio_australiapost @ file://${PWD}/modules/connectors/australiapost
-karrio_boxknight @ file://${PWD}/modules/connectors/boxknight
-karrio_bpost @ file://${PWD}/modules/connectors/bpost
 karrio_canadapost @ file://${PWD}/modules/connectors/canadapost
-karrio_canpar @ file://${PWD}/modules/connectors/canpar
-karrio_chronopost @ file://${PWD}/modules/connectors/chronopost
-karrio_colissimo @ file://${PWD}/modules/connectors/colissimo
+karrio_chronopost @ file://${PWD}/community/plugins/chronopost
 karrio_dhl_express @ file://${PWD}/modules/connectors/dhl_express
 karrio_dhl_parcel_de @ file://${PWD}/modules/connectors/dhl_parcel_de
 karrio_dhl_poland @ file://${PWD}/modules/connectors/dhl_poland
 karrio_dhl_universal @ file://${PWD}/modules/connectors/dhl_universal
-karrio_dicom @ file://${PWD}/modules/connectors/dicom
-karrio_dpd @ file://${PWD}/modules/connectors/dpd
-karrio_dpdhl @ file://${PWD}/modules/connectors/dpdhl
-karrio_easypost @ file://${PWD}/modules/connectors/easypost
-karrio_easyship @ file://${PWD}/modules/connectors/easyship
-karrio_eshipper @ file://${PWD}/modules/connectors/eshipper
+karrio_dpd @ file://${PWD}/community/plugins/dpd
+karrio_easypost @ file://${PWD}/community/plugins/easypost
+karrio_easyship @ file://${PWD}/community/plugins/easyship
+karrio_eshipper @ file://${PWD}/community/plugins/eshipper
 karrio_fedex @ file://${PWD}/modules/connectors/fedex
-karrio_fedex_ws @ file://${PWD}/modules/connectors/fedex_ws
-karrio_freightcom @ file://${PWD}/modules/connectors/freightcom
+karrio_freightcom @ file://${PWD}/community/plugins/freightcom
 karrio_generic @ file://${PWD}/modules/connectors/generic
-karrio_geodis @ file://${PWD}/modules/connectors/geodis
-karrio_hay_post @ file://${PWD}/modules/connectors/hay_post
 karrio_laposte @ file://${PWD}/modules/connectors/laposte
-karrio_locate2u @ file://${PWD}/modules/connectors/locate2u
-karrio_nationex @ file://${PWD}/modules/connectors/nationex
 karrio_purolator @ file://${PWD}/modules/connectors/purolator
-karrio_roadie @ file://${PWD}/modules/connectors/roadie
-karrio_royalmail @ file://${PWD}/modules/connectors/royalmail
-karrio_sapient @ file://${PWD}/modules/connectors/sapient
+karrio_sapient @ file://${PWD}/community/plugins/sapient
 karrio_seko @ file://${PWD}/modules/connectors/seko
 karrio_sendle @ file://${PWD}/modules/connectors/sendle
 karrio_server @ file://${PWD}/apps/api
@@ -103,14 +91,9 @@ karrio_server_orders @ file://${PWD}/modules/orders
 karrio_server_orgs @ file://${PWD}/ee/insiders/modules/orgs
 karrio_server_pricing @ file://${PWD}/modules/pricing
 karrio_server_proxy @ file://${PWD}/modules/proxy
-karrio_tge @ file://${PWD}/modules/connectors/tge
-karrio_tnt @ file://${PWD}/modules/connectors/tnt
 karrio_ups @ file://${PWD}/modules/connectors/ups
 karrio_usps @ file://${PWD}/modules/connectors/usps
 karrio_usps_international @ file://${PWD}/modules/connectors/usps_international
-karrio_usps_wt @ file://${PWD}/modules/connectors/usps_wt
-karrio_usps_wt_international @ file://${PWD}/modules/connectors/usps_wt_international
-karrio_zoom2u @ file://${PWD}/modules/connectors/zoom2u
 lxml==4.9.4
 lxml-stubs==0.5.1
 MarkupSafe==3.0.2

@@ -34,6 +34,9 @@ generate_source_requirements() {
                 "karrio")
                     # Keep the subdirectory as is
                     ;;
+                "community")
+                    subdir="community/plugins/${subdir#../../community/plugins/}"
+                    ;;
                 esac
 
                 # Replace git URL with local file path
