@@ -7,7 +7,7 @@ name = "karrio_australiapost"
 version = "2024.6"
 description = "Karrio - Australia Post Shipping Extension"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.11"
 license = "Apache-2.0"
 authors = [
     {name = "karrio", email = "hello@karrio.io"}
