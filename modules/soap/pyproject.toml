@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "py-soap"
 version = "0.0.0-dev"
 description = "SOAP client library"
-requires-python = ">=3.7"
+requires-python = ">=3.11"
 license = "Apache-2.0"
 dependencies = [
     "six",

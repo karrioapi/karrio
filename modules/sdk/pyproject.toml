@@ -7,7 +7,7 @@ name = "karrio"
 version = "2024.12.6"
 description = "Multi-carrier shipping API integration with python"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.11"
 license = "Apache-2.0"
 authors = [
     {name = "karrio", email = "hello@karrio.io"}

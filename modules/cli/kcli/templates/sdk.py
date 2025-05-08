@@ -7,7 +7,7 @@ This package is a {{name}} extension of the [karrio](https://pypi.org/project/ka
 
 ## Requirements
 
-`Python 3.7+`
+`Python 3.11+`
 
 ## Installation
 
@@ -44,7 +44,7 @@ name = "karrio_{{id}}"
 version = "{{version}}"
 description = "Karrio - {{name}} Shipping Extension"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.11"
 license = "Apache-2.0"
 authors = [
     {name = "karrio", email = "hello@karrio.io"}
