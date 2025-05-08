@@ -34,3 +34,6 @@ include-package-data = true
 [tool.setuptools.packages.find]
 exclude = ["tests.*", "tests"]
 namespaces = true
+
+[tool.setuptools.package-data]
+"karrio.server.graph.templates" = ["*"]
