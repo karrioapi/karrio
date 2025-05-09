@@ -62,22 +62,21 @@ const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
 );
 
-export default async function BillingPagePage({ params }: { params: Promise<{ orgId: string }> }) {
-  const query = await params;
+export default function BillingPagePage({ params }: { params: { orgId: string } }) {
   const { toast } = useToast();
   const router = useRouter();
   const utils = trpc.useUtils();
   const { data: subscription } = trpc.billing.getSubscription.useQuery({
-    orgId: query.orgId,
+    orgId: params.orgId,
   });
   const { data: billingInfo } = trpc.billing.getBillingInfo.useQuery({
-    orgId: query.orgId,
+    orgId: params.orgId,
   });
   const { data: currentPlan } = trpc.billing.getPlan.useQuery({
-    orgId: query.orgId,
+    orgId: params.orgId,
   });
   const { data: invoices } = trpc.billing.getInvoices.useQuery({
-    orgId: query.orgId,
+    orgId: params.orgId,
   });
   const updateBilling = trpc.billing.updateBillingInfo.useMutation();
   const createSetupIntent = trpc.billing.createSetupIntent.useMutation();
@@ -99,7 +98,7 @@ export default async function BillingPagePage({ params }: { params: Promise<{ or
 
   const [isMounted, setIsMounted] = useState(false);
   const { data: paymentMethods } = trpc.billing.getPaymentMethods.useQuery({
-    orgId: query.orgId,
+    orgId: params.orgId,
   });
   const setDefaultPaymentMethod =
     trpc.billing.setDefaultPaymentMethod.useMutation();
@@ -208,7 +207,7 @@ export default async function BillingPagePage({ params }: { params: Promise<{ or
   const handleUpdateBilling = async () => {
     try {
       await updateBilling.mutateAsync({
-        orgId: query.orgId,
+        orgId: params.orgId,
         email: billingEmail,
         address: billingAddress,
       });
@@ -229,7 +228,7 @@ export default async function BillingPagePage({ params }: { params: Promise<{ or
   const handleUpdateTaxId = async () => {
     try {
       await updateBilling.mutateAsync({
-        orgId: query.orgId,
+        orgId: params.orgId,
         taxId: {
           type: taxIdType,
           value: taxIdNumber,
@@ -252,7 +251,7 @@ export default async function BillingPagePage({ params }: { params: Promise<{ or
   const handleAddCard = async () => {
     try {
       const setupIntent = await createSetupIntent.mutateAsync({
-        orgId: query.orgId,
+        orgId: params.orgId,
       });
 
       setSetupIntentSecret(setupIntent.setupIntent);
@@ -269,7 +268,7 @@ export default async function BillingPagePage({ params }: { params: Promise<{ or
   const handleSetDefaultPaymentMethod = async (paymentMethodId: string) => {
     try {
       await setDefaultPaymentMethod.mutateAsync({
-        orgId: query.orgId,
+        orgId: params.orgId,
         paymentMethodId,
       });
       toast({
@@ -289,7 +288,7 @@ export default async function BillingPagePage({ params }: { params: Promise<{ or
   const handleDeletePaymentMethod = async (paymentMethodId: string) => {
     try {
       await deletePaymentMethod.mutateAsync({
-        orgId: query.orgId,
+        orgId: params.orgId,
         paymentMethodId,
       });
     } catch (error) {
@@ -314,7 +313,7 @@ export default async function BillingPagePage({ params }: { params: Promise<{ or
 
     try {
       await createSubscription.mutateAsync({
-        orgId: query.orgId,
+        orgId: params.orgId,
         priceId: selectedPlan,
       });
     } catch (error: any) {
@@ -466,7 +465,7 @@ export default async function BillingPagePage({ params }: { params: Promise<{ or
                               onValueChange={async (value) => {
                                 try {
                                   await retrySubscriptionPayment.mutateAsync({
-                                    orgId: query.orgId,
+                                    orgId: params.orgId,
                                     paymentMethodId: value,
                                   });
                                   utils.billing.getSubscription.invalidate();
@@ -582,7 +581,7 @@ export default async function BillingPagePage({ params }: { params: Promise<{ or
                           variant="outline"
                           onClick={() =>
                             reactivateSubscription.mutateAsync({
-                              orgId: query.orgId,
+                              orgId: params.orgId,
                             })
                           }
                           disabled={reactivateSubscription.status === "loading"}
@@ -966,7 +965,7 @@ export default async function BillingPagePage({ params }: { params: Promise<{ or
 
           <Elements stripe={stripePromise}>
             <PaymentMethodForm
-              orgId={query.orgId}
+              orgId={params.orgId}
               onSuccess={() => {
                 refreshAllResources();
                 setShowPaymentForm(false);
@@ -1015,7 +1014,7 @@ export default async function BillingPagePage({ params }: { params: Promise<{ or
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => {
                 cancelSubscription.mutateAsync({
-                  orgId: query.orgId,
+                  orgId: params.orgId,
                 });
                 setShowCancelDialog(false);
               }}
