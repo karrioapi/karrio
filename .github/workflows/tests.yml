@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.12"]
+        python-version: ["3.11", "3.12"]
 
     steps:
       - uses: actions/checkout@v2
@@ -18,13 +18,13 @@ jobs:
         run: |
           ./bin/setup-sdk-env -v &&
           ./bin/run-sdk-typecheck &&
-          ./bin/run-sdk-tests
+          ./bin/run-sdk-tests -v
 
   server-tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.12"]
+        python-version: ["3.11", "3.12"]
 
     steps:
       - uses: actions/checkout@v2

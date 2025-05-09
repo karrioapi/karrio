@@ -16,7 +16,7 @@ pip install karrio.amazon_shipping
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.amazon_shipping.settings import Settings
 
 

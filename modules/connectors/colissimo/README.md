@@ -16,7 +16,7 @@ pip install karrio.colissimo
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.colissimo.settings import Settings
 
 

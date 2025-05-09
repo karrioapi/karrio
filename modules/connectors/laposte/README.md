@@ -16,7 +16,7 @@ pip install karrio.laposte
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.laposte.settings import Settings
 
 

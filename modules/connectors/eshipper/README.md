@@ -16,7 +16,7 @@ pip install karrio.eshipper
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.eshipper.settings import Settings
 
 

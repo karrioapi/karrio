@@ -1,4 +1,4 @@
-import karrio
+import karrio.sdk as karrio
 import karrio.providers.canadapost.units as units
 
 gateway = karrio.gateway["canadapost"].create(

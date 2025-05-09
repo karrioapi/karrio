@@ -7,7 +7,7 @@ from karrio.core.models import (
     PickupRequest,
     PickupUpdateRequest,
 )
-from karrio import Pickup
+from karrio.sdk import Pickup
 from .fixture import gateway
 
 

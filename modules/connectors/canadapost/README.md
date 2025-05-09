@@ -15,7 +15,7 @@ pip install karrio.canadapost
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.canadapost.settings import Settings
 
 

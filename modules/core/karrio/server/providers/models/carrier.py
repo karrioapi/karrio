@@ -4,7 +4,7 @@ import django.conf as conf
 import django.forms as forms
 import django.db.models as models
 
-import karrio
+import karrio.sdk as karrio
 import karrio.lib as lib
 import karrio.core.units as units
 import django.core.cache as caching

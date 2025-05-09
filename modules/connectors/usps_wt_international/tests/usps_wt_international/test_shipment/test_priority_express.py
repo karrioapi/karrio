@@ -1,7 +1,7 @@
 import unittest
 import urllib.parse
 from unittest.mock import patch, ANY
-import karrio
+import karrio.sdk as karrio
 import karrio.lib as lib
 import karrio.core.models as models
 from ..fixture import gateway

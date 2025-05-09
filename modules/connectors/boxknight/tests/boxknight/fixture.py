@@ -1,4 +1,4 @@
-import karrio
+import karrio.sdk as karrio
 import karrio.lib as lib
 
 cached_auth = {f"boxknight|username|password": dict(token="****")}

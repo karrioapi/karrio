@@ -16,7 +16,7 @@ pip install karrio.asendia_us
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.asendia_us.settings import Settings
 
 

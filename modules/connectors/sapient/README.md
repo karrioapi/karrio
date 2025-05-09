@@ -16,7 +16,7 @@ pip install karrio.sapient
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.sapient.settings import Settings
 
 

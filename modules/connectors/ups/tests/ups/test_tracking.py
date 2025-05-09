@@ -3,7 +3,7 @@ from unittest.mock import patch
 from karrio.core.utils import DP
 from karrio.core.models import TrackingRequest
 from .fixture import gateway
-import karrio
+import karrio.sdk as karrio
 
 
 class TestUPSTracking(unittest.TestCase):

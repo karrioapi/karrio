@@ -140,7 +140,7 @@ class CarrierLabelPreview(VirtualDownloadView):
         return ContentFile(buffer.getvalue(), name=self.name)
 
     def _generate_label(self, carrier, format):
-        import karrio
+        import karrio.sdk as karrio
         import karrio.providers.generic.units as units
 
         template = carrier.label_template

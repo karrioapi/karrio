@@ -15,7 +15,7 @@ pip install karrio.freightcom
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.freightcom.settings import Settings
 
 

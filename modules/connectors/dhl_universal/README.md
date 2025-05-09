@@ -15,7 +15,7 @@ pip install karrio.dhl_universal
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.dhl_universal.settings import Settings
 
 

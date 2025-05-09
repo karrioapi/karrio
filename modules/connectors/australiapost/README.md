@@ -16,7 +16,7 @@ pip install karrio.australiapost
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.australiapost.settings import Settings
 
 

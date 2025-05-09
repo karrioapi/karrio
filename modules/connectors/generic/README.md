@@ -15,7 +15,7 @@ pip install karrio.generic
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.generic.settings import Settings
 
 

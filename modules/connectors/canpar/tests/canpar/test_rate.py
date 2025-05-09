@@ -4,7 +4,7 @@ import unittest
 import logging
 from unittest.mock import patch
 from karrio.core.utils import DP
-from karrio import Rating
+from karrio.sdk import Rating
 from karrio.core.models import RateRequest
 from .fixture import gateway
 

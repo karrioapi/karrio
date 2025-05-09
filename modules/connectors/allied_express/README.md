@@ -16,7 +16,7 @@ pip install karrio.allied_express
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.allied_express.settings import Settings
 
 

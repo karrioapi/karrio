@@ -170,7 +170,7 @@ pip install karrio.{{id}}
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.{{id}}.settings import Settings
 
 
@@ -1375,7 +1375,7 @@ TEST_PROVIDER_IMPORTS_TEMPLATE = Template("")
 
 TEST_FIXTURE_TEMPLATE = Template(
     """
-import karrio
+import karrio.sdk as karrio
 
 gateway = karrio.gateway["{{id}}"].create(
     dict(
@@ -1406,7 +1406,7 @@ from unittest.mock import patch, ANY
 from .fixture import gateway
 from tests import logger
 
-import karrio
+import karrio.sdk as karrio
 import karrio.lib as lib
 import karrio.core.models as models
 
@@ -1497,7 +1497,7 @@ from unittest.mock import patch, ANY
 from .fixture import gateway
 from tests import logger
 
-import karrio
+import karrio.sdk as karrio
 import karrio.lib as lib
 import karrio.core.models as models
 
@@ -1577,7 +1577,7 @@ from unittest.mock import patch, ANY
 from .fixture import gateway
 from tests import logger
 
-import karrio
+import karrio.sdk as karrio
 import karrio.lib as lib
 import karrio.core.models as models
 
@@ -1722,7 +1722,7 @@ from unittest.mock import patch, ANY
 from .fixture import gateway
 from tests import logger
 
-import karrio
+import karrio.sdk as karrio
 import karrio.lib as lib
 import karrio.core.models as models
 
@@ -1810,7 +1810,7 @@ from unittest.mock import patch, ANY
 from .fixture import gateway
 from tests import logger
 
-import karrio
+import karrio.sdk as karrio
 import karrio.lib as lib
 import karrio.core.models as models
 
@@ -1893,7 +1893,7 @@ from unittest.mock import patch, ANY
 from .fixture import gateway
 from tests import logger
 
-import karrio
+import karrio.sdk as karrio
 import karrio.lib as lib
 import karrio.core.models as models
 
@@ -2068,7 +2068,7 @@ from unittest.mock import patch, ANY
 from .fixture import gateway
 from tests import logger
 
-import karrio
+import karrio.sdk as karrio
 import karrio.lib as lib
 import karrio.core.models as models
 

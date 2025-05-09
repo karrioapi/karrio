@@ -3,7 +3,7 @@ import urllib.parse
 from unittest.mock import patch
 from karrio.core.utils import DP
 from karrio.core.models import RateRequest
-from karrio import Rating
+from karrio.sdk import Rating
 from .fixture import gateway
 
 

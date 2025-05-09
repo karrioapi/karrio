@@ -8,7 +8,7 @@ from django.conf import settings
 from rest_framework import status
 from rest_framework.exceptions import NotFound
 
-import karrio
+import karrio.sdk as karrio
 import karrio.lib as lib
 import karrio.server.core.utils as utils
 import karrio.server.core.models as core
