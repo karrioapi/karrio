@@ -159,7 +159,7 @@ class Carrier(core.OwnedEntity):
 
         return self.credentials.get("display_name") or references.collect_references()[
             "carriers"
-        ].get(self.ext)
+        ].get(self.ext) or "generic"
 
     @property
     def carrier_config(self):

@@ -315,7 +315,6 @@ export interface References {
   TENANT_LEVEL_BILLING: boolean;
   WORKFLOW_MANAGEMENT: boolean;
 
-  ADDRESS_AUTO_COMPLETE: Collection;
   countries: Collection;
   currencies: Collection;
   carriers: Collection;

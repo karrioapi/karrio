@@ -186,7 +186,7 @@ export const AddressForm = ({
         />
       </div>
 
-      <div className="columns mb-0">
+      <div className="columns is-multiline mb-0">
         <InputField
           label="Unit (Line 2)"
           name="address_line2"
@@ -196,19 +196,6 @@ export const AddressForm = ({
           wrapperClass="column px-1 py-3"
           fieldClass="mb-0 p-0"
           max={50}
-        />
-      </div>
-
-      <div className="columns is-multiline mb-0">
-        <InputField
-          label="Street no."
-          name="street_number"
-          onChange={handleChange}
-          value={address.street_number}
-          className="is-small"
-          wrapperClass="column is-6 px-1 py-3"
-          fieldClass="mb-0 p-0"
-          max={20}
         />
 
         <InputField
