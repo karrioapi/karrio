@@ -75,57 +75,47 @@ export function initDebouncedPrediction(data: any) {
 }
 
 function initGoogleService(): AutocompleteService {
-  const autocomplete = new (window as any).google.maps.places.AutocompleteService();
-  const placesService = new (window as any).google.maps.places.PlacesService(document.createElement('div'));
-
   return {
-    getPlacePredictions(params, callback) {
-      autocomplete.getPlacePredictions({
-        input: params.input,
-        componentRestrictions: {
-          country: params.country_code
-        },
-        types: ['address'] // Maybe places also can be used
-      }, (result: GooglePrediction[], status: string) => {
-        if (status === "OK") {
-          const predictions: QueryAutocompletePrediction[] = result.map(prediction => {
-            return {
-              id: prediction.place_id,
-              description: prediction.description,
-              details: prediction
-            }
-          });
-          callback(predictions);
-        } else {
-          callback([])
-        }
-      });
+    async getPlacePredictions(params, callback) {
+      try {
+        const url = `/api/places/autocomplete?input=${encodeURIComponent(params.input)}${params.country_code ? `&country=${params.country_code}` : ''}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const formatted: QueryAutocompletePrediction[] = (data.predictions || []).map((prediction: any) => ({
+          id: prediction.place_id,
+          description: prediction.description,
+          details: prediction,
+        }));
+        callback(formatted);
+      } catch (e) {
+        console.error('[Autocomplete] Error in getPlacePredictions:', e);
+        callback([]);
+      }
     },
-    formatPrediction(prediction: QueryAutocompletePrediction, callback) {
-      placesService.getDetails({ placeId: prediction.id }, (place: GooglePlace, status: string) => {
-        if (status === "OK") {
-          let address: Partial<Address> = {};
-
+    async formatPrediction(prediction: QueryAutocompletePrediction, callback: AddressCallback) {
+      try {
+        const url = `/api/places/details?place_id=${encodeURIComponent(prediction.id)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const place = data.result;
+        let address: Partial<Address> = {};
+        if (place && place.address_components) {
           for (const component of place.address_components) {
             const componentType = component.types[0];
-
             switch (componentType) {
               case "street_number": {
                 address.address_line1 = component.long_name;
                 break;
               }
-
               case "route": {
                 address.address_line1 = [component.short_name, address.address_line1]
                   .filter(v => v).join(' ');
                 break;
               }
-
               case "postal_code": {
                 address.postal_code = component.long_name;
                 break;
               }
-
               case "postal_code_suffix": {
                 address.postal_code = `${address.postal_code}-${component.long_name}`;
                 break;
@@ -133,19 +123,21 @@ function initGoogleService(): AutocompleteService {
               case "locality":
                 address.city = component.long_name;
                 break;
-
               case "administrative_area_level_1": {
                 address.state_code = component.short_name;
                 break;
               }
               case "country":
-                address.country_code = component.short_name
+                address.country_code = component.short_name;
                 break;
             }
           }
-          callback(address);
         }
-      });
+        callback(address);
+      } catch (err) {
+        console.error('[Autocomplete] Error in formatPrediction:', err);
+        callback({});
+      }
     }
   };
 }

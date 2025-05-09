@@ -20,9 +20,27 @@ export const CommoditySummary = ({
   orders,
   className,
 }: CommoditySummaryComponent): JSX.Element => {
-  const [unpackedItems, setUnpackedItems] = React.useState<OrderItems>([]);
-  const [packedItems, setPackedItems] = React.useState<PackedItems>([]);
-  const [orderItems, setOrderItems] = React.useState<OrderItems>([]);
+  const packedItems = React.useMemo(() => {
+    if (!shipment) return [];
+    const parcelItems = getShipmentCommodities(
+      shipment,
+      shipment.customs?.commodities,
+    );
+    return parcelItems.length === 0
+      ? shipment.customs?.commodities || []
+      : parcelItems;
+  }, [shipment]);
+
+  const orderItems = React.useMemo(() => {
+    if (!orders) return [];
+    return getUnfulfilledOrderLineItems(orders);
+  }, [orders]);
+
+  const unpackedItems = React.useMemo(() => {
+    return orderItems.filter(({ parent_id }) =>
+      isNone(packedItems.find((item) => item.parent_id === parent_id)),
+    );
+  }, [orderItems, packedItems]);
 
   const computeItemQuantity = (item: CommodityType, line_items: OrderItems) => {
     const parent = line_items.find(({ id }) => id === item.parent_id);
@@ -37,30 +55,6 @@ export const CommoditySummary = ({
   const computeTotalPackedItems = (items: PackedItems) => {
     return items.reduce((_, item) => _ + (item.quantity || 1), 0);
   };
-
-  React.useEffect(() => {
-    if (!!shipment) {
-      const parcelItems = getShipmentCommodities(
-        shipment,
-        shipment.customs?.commodities,
-      );
-      const packedItems =
-        parcelItems.length === 0
-          ? shipment.customs?.commodities || []
-          : parcelItems;
-      setPackedItems(packedItems);
-    }
-  }, [shipment]);
-  React.useEffect(() => {
-    if (!!orders) {
-      const unfulfilledItems = getUnfulfilledOrderLineItems(orders);
-      const unpackedItems = unfulfilledItems.filter(({ parent_id }) =>
-        isNone(packedItems.find((item) => item.parent_id === parent_id)),
-      );
-      setOrderItems(unfulfilledItems);
-      setUnpackedItems(unpackedItems);
-    }
-  }, [orders, packedItems]);
 
   return (
     <div className={className || "card px-0"}>
