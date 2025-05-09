@@ -90,11 +90,6 @@ ParsedRateResponse = [
             "carrier_name": "usps",
             "currency": "USD",
             "extra_charges": [
-                {
-                    "amount": 74.92,
-                    "currency": "USD",
-                    "name": "Priority Mail Machinable Dimensional Rectangular",
-                },
                 {"amount": 4.85, "currency": "USD", "name": "Certified Mail"},
                 {
                     "amount": 12.75,
@@ -213,11 +208,6 @@ ParsedRateResponse = [
             "carrier_name": "usps",
             "currency": "USD",
             "extra_charges": [
-                {
-                    "amount": 74.92,
-                    "currency": "USD",
-                    "name": "Priority Mail Machinable Dimensional Rectangular",
-                },
                 {"amount": 4.85, "currency": "USD", "name": "Certified Mail"},
                 {
                     "amount": 12.75,
@@ -336,11 +326,6 @@ ParsedRateResponse = [
             "carrier_name": "usps",
             "currency": "USD",
             "extra_charges": [
-                {
-                    "amount": 181.9,
-                    "currency": "USD",
-                    "name": "Priority Mail Express Machinable Dimensional Rectangular",
-                },
                 {"amount": 12.5, "currency": "USD", "name": "Sunday/Holiday Delivery"},
                 {"amount": 4.85, "currency": "USD", "name": "Certified Mail"},
                 {

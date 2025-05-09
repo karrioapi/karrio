@@ -1,15 +1,13 @@
 "use client";
-import React, { FormEvent, useEffect, useReducer } from "react";
-import { LoadingProvider, useLoader } from "@karrio/ui/components/loader";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
+import React, { FormEvent, Suspense, useEffect, useReducer } from "react";
+import { LoadingProvider, useLoader } from "@karrio/ui/core/components/loader";
 import { ConfirmPasswordResetMutationInput } from "@karrio/types";
-import { ButtonField } from "@karrio/ui/components/button-field";
-import { InputField } from "@karrio/ui/components/input-field";
+import { ButtonField } from "@karrio/ui/core/components/button-field";
+import { InputField } from "@karrio/ui/core/components/input-field";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useUserMutation } from "@karrio/hooks/user";
 import Link from "next/link";
 
-export const generateMetadata = dynamicMetadata("Password Reset");
 
 const DEFAULT_VALUE: Partial<ConfirmPasswordResetMutationInput> = {
   new_password1: "",
@@ -30,7 +28,8 @@ function reducer(
   }
 }
 
-const Component = (): JSX.Element => {
+// Inner component that uses useSearchParams
+const PasswordResetForm = (): JSX.Element => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [uidb64, token] = [
@@ -153,12 +152,26 @@ const Component = (): JSX.Element => {
   );
 };
 
-export default function Page(pageProps: any) {
+// Component with LoadingProvider
+const LoadingWrappedComponent = () => {
   return (
-    <>
-      <LoadingProvider>
-        <Component />
-      </LoadingProvider>
-    </>
+    <LoadingProvider>
+      <PasswordResetForm />
+    </LoadingProvider>
+  );
+};
+
+// Exported component with Suspense
+export default function Page() {
+  return (
+    <Suspense fallback={
+      <div className="card isolated-card">
+        <div className="card-content has-text-centered">
+          <p className="subtitle">Loading...</p>
+        </div>
+      </div>
+    }>
+      <LoadingWrappedComponent />
+    </Suspense>
   );
 }

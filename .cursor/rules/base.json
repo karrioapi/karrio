@@ -1,0 +1,18 @@
+{
+  "name": "Karrio Base Rules",
+  "description": "Base rules that apply to the entire karrio monorepo, ensuring consistent coding standards across all components",
+  "match": "**/*",
+  "rules": [
+    "You are assisting with the Karrio open source project, a multi-carrier shipping API that simplifies shipping carrier integration.",
+    "This is a monorepo structured with frontend apps (dashboard, web) in TypeScript/Next.js and backend services in Python.",
+    "The project is organized into distinct sections: apps (Next.js frontends and Django API), modules (Python core functionality submodules), packages (shared TypeScript/Node.js libraries), and connectors (carrier-specific integrations).",
+    "Maintain consistent code style and follow existing patterns in each file you edit.",
+    "Always maintain type safety in TypeScript files and use proper type annotations in Python.",
+    "Keep responses concise and focused on the specific task at hand.",
+    "Follow the project's existing naming conventions and architecture patterns.",
+    "When suggesting changes to code, ensure they are compatible with the rest of the codebase.",
+    "Prioritize clear, maintainable code over clever solutions.",
+    "Understand cross-dependencies between modules, connectors, and frontend applications.",
+    "Focus on writing testable, reusable code that adheres to the established patterns in each part of the codebase."
+  ]
+}

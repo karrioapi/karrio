@@ -194,7 +194,7 @@ ShipmentRequest = [
         "imageInfo": {
             "imageType": "PDF",
             "labelType": "4X6LABEL",
-            "receiptOption": "SEPARATE_PAGE",
+            "receiptOption": "NONE",
         },
         "packageDescription": {
             "customerReference": [
@@ -232,7 +232,7 @@ ShipmentRequest = [
             "firstName": "Lina",
             "lastName": "Smith",
             "ignoreBadAddress": True,
-            "phone": "+1 123 456 7890",
+            "phone": "1234567890",
             "secondaryAddress": "Apt 303",
             "state": "OK",
             "streetAddress": "1309 S Agnew Avenue",

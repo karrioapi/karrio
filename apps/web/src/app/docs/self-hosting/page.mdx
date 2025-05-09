@@ -1,0 +1,136 @@
+# Self-Hosting
+
+There are multiple ways to deploy Karrio, providing support for customers who want to implement their shipping API infrastructure within their existing tech stack. This guide will help you get started with self-hosting Karrio.
+
+## Requirements
+
+Karrio runs with minimal hardware requirements. The most resource-intensive operations are during initial setup and database migrations, but once running, it's relatively lightweight.
+
+### Hardware Requirements
+
+- **Minimal Setup**:
+  - 2GB RAM
+  - 1 CPU core
+  - 10GB storage
+
+- **Recommended Setup (Production)**:
+  - 4GB+ RAM
+  - 2+ CPU cores
+  - 20GB+ storage
+
+### Software Requirements
+
+- **Operating System**:
+  - Karrio works well on Linux, macOS, and Windows
+  - For production deployments, we recommend Linux (Ubuntu 20.04+ or Debian 11+)
+
+- **Required Software**:
+  - Docker and Docker Compose (for container-based deployments)
+  - Git (for source-based deployments)
+  - PostgreSQL 12+ (if not using containerized database)
+  - Redis (if not using containerized cache)
+
+## Why Self-Host?
+
+Self-hosting Karrio offers several advantages:
+
+- **Data Control**: Keep all your shipping data within your own infrastructure
+- **Customization**: Modify the platform to suit your specific needs
+- **Integration**: Seamlessly integrate with your existing systems
+- **Cost**: Potentially reduce costs for high-volume shipping operations
+- **Compliance**: Meet specific regulatory or security requirements
+
+## Deployment Options
+
+### [Docker](/docs/self-hosting/docker)
+
+Docker is the recommended and easiest way to get started with self-hosting Karrio. It provides a consistent environment across different platforms and simplifies the setup process.
+
+For quick deployments, we offer a one-click installation script:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/deploy-hobby)"
+```
+
+### Cloud Providers
+
+Deploy Karrio on popular cloud platforms with detailed guides:
+
+- [AWS](/docs/self-hosting/aws)
+- [GCP](/docs/self-hosting/gcp)
+- [Digital Ocean](/docs/self-hosting/digital-ocean)
+
+## Environment Configuration
+
+Karrio is configured primarily through environment variables. The most important ones are:
+
+- `SECRET_KEY`: A secret key used for security
+- `DOMAIN`: Your domain name (for production)
+- `DASHBOARD_URL`: URL for the dashboard interface
+- `KARRIO_PUBLIC_URL`: URL for the API
+- `DATABASE_*`: Database connection details
+- `REDIS_*`: Redis connection details
+
+For a comprehensive list, see the [Environment Variables](/docs/self-hosting/environment) documentation.
+
+## Initial Setup
+
+After deployment, you can access your Karrio instance:
+- Dashboard: Default at `http://localhost:3000` or your configured domain
+- API: Default at `http://localhost:5002` or your configured domain
+
+Default login credentials:
+- Email: `admin@example.com`
+- Password: `demo`
+
+For production environments, we strongly recommend changing these credentials immediately.
+
+## Integration with Shipping Carriers
+
+Karrio supports multiple shipping carriers out of the box. To use them, you'll need to configure credentials in your environment variables:
+
+- USPS
+- UPS
+- FedEx
+- DHL
+- And many more
+
+Each carrier requires specific API credentials that you can obtain from your carrier account.
+
+## Maintenance
+
+### Backups
+
+It's important to regularly back up your Karrio data:
+
+```bash
+# Backup PostgreSQL database
+docker-compose exec db pg_dump -U postgres -d db > karrio_backup_$(date +%Y%m%d).sql
+
+# Backup configuration
+cp .env .env.backup.$(date +%Y%m%d)
+```
+
+### [Upgrades](/docs/self-hosting/upgrade)
+
+To upgrade your Karrio instance, we provide an upgrade script for hobby deployments:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/upgrade-hobby)"
+```
+
+For manual deployments, see our [Upgrade Guide](/docs/self-hosting/upgrade).
+
+## Next Steps
+
+1. Choose your preferred [deployment method](#deployment-options)
+2. Set up your [environment variables](/docs/self-hosting/environment)
+3. Learn how to [upgrade](/docs/self-hosting/upgrade) your installation
+4. Explore [carrier configurations](/docs/carriers)
+
+## Support
+
+If you need help with your self-hosted Karrio instance:
+
+- Join our [Community Forum](https://github.com/orgs/karrioapi/discussions)
+- Consider our [Enterprise Support Plans](/platform) for priority assistance

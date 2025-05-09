@@ -31,7 +31,7 @@ class Settings(core.Settings):
 
     @property
     def server_url(self):
-        return "https://api-cat.usps.com" if self.test_mode else "https://api.usps.com"
+        return "https://api-cat.usps.com" if self.test_mode else "https://apis.usps.com"
 
     @property
     def tracking_url(self):
@@ -311,3 +311,9 @@ def parse_error_response(response) -> dict:
             message=response.strip(),
         )
     )
+
+def parse_phone_number(number: str) -> typing.Optional[str]:
+    if number is None:
+        return None
+
+    return number.replace(" ", "").replace("-", "").replace("+", "")[-10:]

@@ -1,71 +1,71 @@
 "use client";
 import {
-  AddressType,
-  CURRENCY_OPTIONS,
-  CommodityType,
-  CustomsType,
   DEFAULT_CUSTOMS_CONTENT,
   MetadataObjectTypeEnum,
+  CURRENCY_OPTIONS,
   NotificationType,
-  OrderType,
-  PaidByEnum,
+  CommodityType,
   ShipmentType,
+  AddressType,
+  CustomsType,
+  PaidByEnum,
+  OrderType,
 } from "@karrio/types";
 import {
-  createShipmentFromOrders,
   formatAddressLocationShort,
-  formatRef,
-  formatWeight,
+  createShipmentFromOrders,
   getShipmentCommodities,
-  isNone,
   isNoneOrEmpty,
+  formatWeight,
+  formatRef,
+  isNone,
   p,
 } from "@karrio/lib";
 import {
   CheckBoxField,
-  Dropdown,
-  InputField,
-  SelectField,
-  Spinner,
   TextAreaField,
-} from "@karrio/ui/components";
+  SelectField,
+  InputField,
+  Dropdown,
+  Spinner,
+} from "@karrio/ui/core/components";
 import {
   CommodityEditModalProvider,
   CommodityStateContext,
-} from "@karrio/ui/modals/commodity-edit-modal";
+} from "@karrio/ui/core/modals/commodity-edit-modal";
 import {
   AddressModalEditor,
   CustomsModalEditor,
   ParcelModalEditor,
-} from "@karrio/ui/modals/form-modals";
+} from "@karrio/ui/core/modals/form-modals";
 import {
-  MetadataEditor,
   MetadataEditorContext,
-} from "@karrio/ui/forms/metadata-editor";
-import { CustomsInfoDescription } from "@karrio/ui/components/customs-info-description";
-import { GoogleGeocodingScript } from "@karrio/ui/components/google-geocoding-script";
-import { CommodityDescription } from "@karrio/ui/components/commodity-description";
-import { MessagesDescription } from "@karrio/ui/components/messages-description";
-import { AddressDescription } from "@karrio/ui/components/address-description";
+  MetadataEditor,
+} from "@karrio/ui/core/forms/metadata-editor";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@karrio/ui/components/ui/collapsible";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@karrio/ui/components/ui/dialog";
+import { CustomsInfoDescription } from "@karrio/ui/core/components/customs-info-description";
+import { GoogleGeocodingScript } from "@karrio/ui/core/components/google-geocoding-script";
+import { CommodityDescription } from "@karrio/ui/core/components/commodity-description";
+import { MessagesDescription } from "@karrio/ui/core/components/messages-description";
+import { AddressDescription } from "@karrio/ui/core/components/address-description";
+import { ParcelDescription } from "@karrio/ui/core/components/parcel-description";
+import { CommoditySummary } from "@karrio/ui/core/components/commodity-summary";
+import { RateDescription } from "@karrio/ui/core/components/rate-description";
+import { LineItemSelector } from "@karrio/ui/core/forms/line-item-selector";
+import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { useSystemConnections } from "@karrio/hooks/system-connection";
-import { ParcelDescription } from "@karrio/ui/components/parcel-description";
-import { CommoditySummary } from "@karrio/ui/components/commodity-summary";
-import { RateDescription } from "@karrio/ui/components/rate-description";
-import { LineItemSelector } from "@karrio/ui/forms/line-item-selector";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { useDefaultTemplates } from "@karrio/hooks/default-template";
 import { useBatchShipmentForm } from "@karrio/hooks/bulk-shipments";
 import { useWorkspaceConfig } from "@karrio/hooks/workspace-config";
+import { closeDropdown } from "@karrio/ui/core/components/dropdown";
 import { useConnections } from "@karrio/hooks/carrier-connections";
-import { CarrierImage } from "@karrio/ui/components/carrier-image";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { closeDropdown } from "@karrio/ui/components/dropdown";
-import { useNotifier } from "@karrio/ui/components/notifier";
+import { useNotifier } from "@karrio/ui/core/components/notifier";
+import { useLoader } from "@karrio/ui/core/components/loader";
+import { AppLink } from "@karrio/ui/core/components/app-link";
+import { ModalProvider } from "@karrio/ui/core/modals/modal";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { useLoader } from "@karrio/ui/components/loader";
-import { AppLink } from "@karrio/ui/components/app-link";
-import { ModalProvider } from "@karrio/ui/modals/modal";
-import { Dialog, Disclosure } from "@headlessui/react";
 import { useShipments } from "@karrio/hooks/shipment";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { useLocation } from "@karrio/hooks/location";
@@ -75,10 +75,9 @@ import { useOrders } from "@karrio/hooks/order";
 import Image from "next/legacy/image";
 import React from "react";
 
-export const generateMetadata = dynamicMetadata("Create labels");
 const ContextProviders = bundleContexts([ModalProvider]);
 
-export default function Page(pageProps: any) {
+export default function Page() {
   const Component = (): JSX.Element => {
     // General context data         -----------------------------------------------------------
     //#region
@@ -425,32 +424,32 @@ export default function Page(pageProps: any) {
             {/* Error & messages */}
             {(batch.shipments || []).map((_) => _.messages || []).flat()
               .length > 0 && (
-              <>
-                <div className="notification is-warning is-light is-size-7 my-2 p-2">
-                  {(batch.shipments || [])
-                    .filter((_) => (_.messages || []).length > 0)
-                    .map((shipment, index) => (
-                      <React.Fragment key={`${index}-${new Date()}`}>
-                        <label
-                          className="label is-capitalized mt-2"
-                          style={{ fontSize: "0.8em" }}
-                        >
-                          {`#${shipment.meta?.order_id || shipment.metadata?.order_ids || " - "}`}
-                          {" - "}
-                          {formatAddressLocationShort(
-                            shipment.recipient as AddressType,
-                          )}
-                        </label>
-                        <hr className="my-1" style={{ height: "1px" }} />
-                        <MessagesDescription
-                          key={index}
-                          messages={shipment.messages}
-                        />
-                      </React.Fragment>
-                    ))}
-                </div>
-              </>
-            )}
+                <>
+                  <div className="notification is-warning is-light is-size-7 my-2 p-2">
+                    {(batch.shipments || [])
+                      .filter((_) => (_.messages || []).length > 0)
+                      .map((shipment, index) => (
+                        <React.Fragment key={`${index}-${new Date()}`}>
+                          <label
+                            className="label is-capitalized mt-2"
+                            style={{ fontSize: "0.8em" }}
+                          >
+                            {`#${shipment.meta?.order_id || shipment.metadata?.order_ids || " - "}`}
+                            {" - "}
+                            {formatAddressLocationShort(
+                              shipment.recipient as AddressType,
+                            )}
+                          </label>
+                          <hr className="my-1" style={{ height: "1px" }} />
+                          <MessagesDescription
+                            key={index}
+                            messages={shipment.messages}
+                          />
+                        </React.Fragment>
+                      ))}
+                  </div>
+                </>
+              )}
 
             {/* Batch labels table */}
             <>
@@ -520,12 +519,12 @@ export default function Page(pageProps: any) {
                               <p className="is-size-7 has-text-weight-bold has-text-grey">
                                 {((items: number): any =>
                                   `${items} item${items === 1 ? "" : "s"}`)(
-                                  (shipment.parcels[0]?.items || []).reduce(
-                                    (acc, item) =>
-                                      acc + (item.quantity as number) || 1,
-                                    0,
-                                  ),
-                                )}
+                                    (shipment.parcels[0]?.items || []).reduce(
+                                      (acc, item) =>
+                                        acc + (item.quantity as number) || 1,
+                                      0,
+                                    ),
+                                  )}
                               </p>
                               <p
                                 className="is-size-7 has-text-grey"
@@ -538,12 +537,12 @@ export default function Page(pageProps: any) {
                                 {(shipment.parcels[0]?.items || []).length > 1
                                   ? "(Multiple)"
                                   : (shipment.parcels[0]?.items || [])[0]
-                                      ?.title ||
-                                    (shipment.parcels[0]?.items || [])[0]
-                                      ?.description ||
-                                    (shipment.parcels[0]?.items || [])[0]
-                                      ?.sku ||
-                                    " - "}
+                                    ?.title ||
+                                  (shipment.parcels[0]?.items || [])[0]
+                                    ?.description ||
+                                  (shipment.parcels[0]?.items || [])[0]
+                                    ?.sku ||
+                                  " - "}
                               </p>
                             </div>
                           </label>
@@ -679,13 +678,11 @@ export default function Page(pageProps: any) {
 
             {/* Label editor */}
             <>
-              <Dialog
-                as="div"
-                open={isOpen}
-                onClose={onClose}
-                className={`modal side-modal ${isOpen ? "is-active" : ""}`}
-              >
-                <Dialog.Panel className="modal-card side-modal-body">
+              <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+                <DialogContent className="modal-card side-modal-body">
+                  <DialogHeader>
+                    <DialogTitle className="sr-only">Shipment Details</DialogTitle>
+                  </DialogHeader>
                   <section className="modal-card-body has-background-white p-2">
                     {retrieveShipment(
                       batch.shipments || [],
@@ -779,12 +776,12 @@ export default function Page(pageProps: any) {
 
                                       {Object.values(shipment.recipient || {})
                                         .length === 0 && (
-                                        <>
-                                          <div className="notification is-warning is-light my-2 py-2 px-4 my-2">
-                                            Please add a customer address.
-                                          </div>
-                                        </>
-                                      )}
+                                          <>
+                                            <div className="notification is-warning is-light my-2 py-2 px-4 my-2">
+                                              Please add a customer address.
+                                            </div>
+                                          </>
+                                        )}
                                     </div>
 
                                     <hr
@@ -825,12 +822,12 @@ export default function Page(pageProps: any) {
 
                                       {Object.values(shipment.shipper || {})
                                         .length === 0 && (
-                                        <>
-                                          <div className="notification is-warning is-light my-2 py-2 px-4 my-2">
-                                            Please specify an address.
-                                          </div>
-                                        </>
-                                      )}
+                                          <>
+                                            <div className="notification is-warning is-light my-2 py-2 px-4 my-2">
+                                              Please specify an address.
+                                            </div>
+                                          </>
+                                        )}
                                     </div>
 
                                     {/* Retrun address section */}
@@ -875,32 +872,32 @@ export default function Page(pageProps: any) {
                                             !isNone(
                                               shipment.return_address,
                                             )) && (
-                                            <AddressModalEditor
-                                              shipment={shipment}
-                                              address={
-                                                shipment.return_address ||
-                                                ({
-                                                  country_code:
-                                                    shipment.shipper
-                                                      ?.country_code,
-                                                } as AddressType)
-                                              }
-                                              onSubmit={(address) =>
-                                                onChange(
-                                                  shipment_index,
-                                                  shipment,
-                                                  {
-                                                    return_address: address,
-                                                  },
-                                                )
-                                              }
-                                              trigger={
-                                                <button className="button is-small is-info is-text is-inverted p-1">
-                                                  Edit return address
-                                                </button>
-                                              }
-                                            />
-                                          )}
+                                              <AddressModalEditor
+                                                shipment={shipment}
+                                                address={
+                                                  shipment.return_address ||
+                                                  ({
+                                                    country_code:
+                                                      shipment.shipper
+                                                        ?.country_code,
+                                                  } as AddressType)
+                                                }
+                                                onSubmit={(address) =>
+                                                  onChange(
+                                                    shipment_index,
+                                                    shipment,
+                                                    {
+                                                      return_address: address,
+                                                    },
+                                                  )
+                                                }
+                                                trigger={
+                                                  <button className="button is-small is-info is-text is-inverted p-1">
+                                                    Edit return address
+                                                  </button>
+                                                }
+                                              />
+                                            )}
                                         </div>
                                       </header>
 
@@ -921,16 +918,16 @@ export default function Page(pageProps: any) {
                                       {Object.values(
                                         shipment?.return_address || [],
                                       ).length === 0 && (
-                                        <div className="notification is-default p-2 is-size-7">
-                                          <span>
-                                            Use this to specify an origin
-                                            address different from the shipper
-                                            address above. <br />
-                                            This address will be used for pickup
-                                            and return.
-                                          </span>
-                                        </div>
-                                      )}
+                                          <div className="notification is-default p-2 is-size-7">
+                                            <span>
+                                              Use this to specify an origin
+                                              address different from the shipper
+                                              address above. <br />
+                                              This address will be used for pickup
+                                              and return.
+                                            </span>
+                                          </div>
+                                        )}
                                     </div>
 
                                     {/* Billing address section */}
@@ -1039,7 +1036,7 @@ export default function Page(pageProps: any) {
 
                                       {shipment.payment?.paid_by &&
                                         shipment.payment?.paid_by !==
-                                          PaidByEnum.sender && (
+                                        PaidByEnum.sender && (
                                           <div
                                             className="columns m-1 px-2 py-0"
                                             style={{
@@ -1073,60 +1070,60 @@ export default function Page(pageProps: any) {
 
                                     {(shipment?.billing_address ||
                                       shipment.payment?.paid_by ===
-                                        PaidByEnum.third_party) && (
-                                      <>
-                                        <div className="p-3">
-                                          <header className="is-flex is-justify-content-space-between">
-                                            <label
-                                              className="label is-capitalized"
-                                              style={{ fontSize: "0.8em" }}
-                                            >
-                                              Billing address
-                                            </label>
-                                            <div className="is-vcentered">
-                                              <AddressModalEditor
-                                                shipment={shipment}
+                                      PaidByEnum.third_party) && (
+                                        <>
+                                          <div className="p-3">
+                                            <header className="is-flex is-justify-content-space-between">
+                                              <label
+                                                className="label is-capitalized"
+                                                style={{ fontSize: "0.8em" }}
+                                              >
+                                                Billing address
+                                              </label>
+                                              <div className="is-vcentered">
+                                                <AddressModalEditor
+                                                  shipment={shipment}
+                                                  address={
+                                                    shipment.billing_address ||
+                                                    ({} as AddressType)
+                                                  }
+                                                  onSubmit={(address) =>
+                                                    onChange(
+                                                      shipment_index,
+                                                      shipment,
+                                                      {
+                                                        billing_address: address,
+                                                      },
+                                                    )
+                                                  }
+                                                  trigger={
+                                                    <button className="button is-small is-info is-text is-inverted p-1">
+                                                      Edit address
+                                                    </button>
+                                                  }
+                                                />
+                                              </div>
+                                            </header>
+
+                                            {shipment?.billing_address && (
+                                              <AddressDescription
                                                 address={
-                                                  shipment.billing_address ||
-                                                  ({} as AddressType)
-                                                }
-                                                onSubmit={(address) =>
-                                                  onChange(
-                                                    shipment_index,
-                                                    shipment,
-                                                    {
-                                                      billing_address: address,
-                                                    },
-                                                  )
-                                                }
-                                                trigger={
-                                                  <button className="button is-small is-info is-text is-inverted p-1">
-                                                    Edit address
-                                                  </button>
+                                                  shipment!.billing_address as any
                                                 }
                                               />
-                                            </div>
-                                          </header>
+                                            )}
 
-                                          {shipment?.billing_address && (
-                                            <AddressDescription
-                                              address={
-                                                shipment!.billing_address as any
-                                              }
-                                            />
-                                          )}
-
-                                          {isNone(
-                                            shipment?.billing_address,
-                                          ) && (
-                                            <div className="notification is-default p-2 is-size-7 my-2">
-                                              Add shipment billing address.
-                                              (optional)
-                                            </div>
-                                          )}
-                                        </div>
-                                      </>
-                                    )}
+                                            {isNone(
+                                              shipment?.billing_address,
+                                            ) && (
+                                                <div className="notification is-default p-2 is-size-7 my-2">
+                                                  Add shipment billing address.
+                                                  (optional)
+                                                </div>
+                                              )}
+                                          </div>
+                                        </>
+                                      )}
                                   </div>
 
                                   {/* Parcel & Items section */}
@@ -1252,10 +1249,10 @@ export default function Page(pageProps: any) {
                                                         orders,
                                                         item.parent_id,
                                                       ) && (
-                                                        <span className="has-text-info">
-                                                          {` | ORDER: ${getOrder(orders, item.parent_id)?.order_id}`}
-                                                        </span>
-                                                      )}
+                                                          <span className="has-text-info">
+                                                            {` | ORDER: ${getOrder(orders, item.parent_id)?.order_id}`}
+                                                          </span>
+                                                        )}
                                                     </p>
                                                     <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-grey"></p>
                                                   </div>
@@ -1303,13 +1300,13 @@ export default function Page(pageProps: any) {
                                                               item.parent_id,
                                                             )
                                                               ? {
-                                                                  max: getAvailableQuantity(
-                                                                    shipment,
-                                                                    orders,
-                                                                    item,
-                                                                    item_index,
-                                                                  ),
-                                                                }
+                                                                max: getAvailableQuantity(
+                                                                  shipment,
+                                                                  orders,
+                                                                  item,
+                                                                  item_index,
+                                                                ),
+                                                              }
                                                               : {})}
                                                           />
                                                         </p>
@@ -1317,18 +1314,18 @@ export default function Page(pageProps: any) {
                                                           orders,
                                                           item.parent_id,
                                                         ) && (
-                                                          <p className="control">
-                                                            <a className="button is-static is-small">
-                                                              of{" "}
-                                                              {getParent(
-                                                                orders,
-                                                                item.parent_id,
-                                                              )
-                                                                ?.unfulfilled_quantity ||
-                                                                item.quantity}
-                                                            </a>
-                                                          </p>
-                                                        )}
+                                                            <p className="control">
+                                                              <a className="button is-static is-small">
+                                                                of{" "}
+                                                                {getParent(
+                                                                  orders,
+                                                                  item.parent_id,
+                                                                )
+                                                                  ?.unfulfilled_quantity ||
+                                                                  item.quantity}
+                                                              </a>
+                                                            </p>
+                                                          )}
                                                       </div>
                                                     </div>
                                                     {/* @ts-ignore */}
@@ -1794,165 +1791,159 @@ export default function Page(pageProps: any) {
                                     {Object.keys(carrierOptions).length > 0 && (
                                       <div className="card mb-4 px-3 mx-2">
                                         {/* @ts-ignore */}
-                                        <Disclosure>
-                                          {({ open }) => (
-                                            <div className="block">
-                                              <Disclosure.Button
-                                                as="div"
-                                                style={{ boxShadow: "none" }}
-                                                className="is-flex is-justify-content-space-between is-clickable py-2"
-                                              >
-                                                <div className="has-text-grey has-text-weight-semibold is-size-7 pt-1">
-                                                  CARRIER SPECIFIC OPTIONS
-                                                </div>
-                                                <span className="icon is-small m-1">
-                                                  {open ? (
-                                                    <i className="fas fa-chevron-up"></i>
-                                                  ) : (
-                                                    <i className="fas fa-chevron-down"></i>
-                                                  )}
-                                                </span>
-                                              </Disclosure.Button>
-                                              <Disclosure.Panel
-                                                className="is-flat m-0 px-0"
-                                                style={{ maxHeight: "40vh" }}
-                                              >
-                                                {Object.entries(
-                                                  carrierOptions,
-                                                ).map(([carrier, options]) => (
-                                                  <React.Fragment key={carrier}>
-                                                    <label
-                                                      className="label is-capitalized"
-                                                      style={{
-                                                        fontSize: "0.8em",
-                                                      }}
-                                                    >
-                                                      {
-                                                        references!.carriers[
-                                                          carrier
-                                                        ]
-                                                      }
-                                                    </label>
-                                                    <hr
-                                                      className="my-1"
-                                                      style={{ height: "1px" }}
-                                                    />
+                                        <Collapsible>
+                                          <CollapsibleTrigger
+                                            asChild
+                                            className="button is-fullwidth is-small is-ellipsis px-1"
+                                            style={{ justifyContent: "space-between" }}
+                                          >
+                                            <div>
+                                              <span className="icon mr-1">
+                                                <i className="fas fa-caret-right"></i>
+                                              </span>
+                                              <span>
+                                                CARRIER SPECIFIC OPTIONS
+                                              </span>
+                                            </div>
+                                          </CollapsibleTrigger>
+                                          <CollapsibleContent
+                                            className="is-flat m-0 px-0"
+                                            style={{ maxHeight: "40vh" }}
+                                          >
+                                            {Object.entries(
+                                              carrierOptions,
+                                            ).map(([carrier, options]) => (
+                                              <React.Fragment key={carrier}>
+                                                <label
+                                                  className="label is-capitalized"
+                                                  style={{
+                                                    fontSize: "0.8em",
+                                                  }}
+                                                >
+                                                  {
+                                                    references!.carriers[
+                                                    carrier
+                                                    ]
+                                                  }
+                                                </label>
+                                                <hr
+                                                  className="my-1"
+                                                  style={{ height: "1px" }}
+                                                />
 
-                                                    <div className="is-flex is-flex-wrap-wrap m-0 p-0">
-                                                      {options.map(
-                                                        (option, index) => (
-                                                          <React.Fragment
-                                                            key={option}
-                                                          >
-                                                            {references!
-                                                              .options[carrier][
-                                                              option
-                                                            ]?.type ===
-                                                              "boolean" && (
-                                                              <div
+                                                <div className="is-flex is-flex-wrap-wrap m-0 p-0">
+                                                  {options.map(
+                                                    (option, index) => (
+                                                      <React.Fragment
+                                                        key={option}
+                                                      >
+                                                        {references!
+                                                          .options[carrier][
+                                                          option
+                                                        ]?.type ===
+                                                          "boolean" && (
+                                                            <div
+                                                              style={{
+                                                                minWidth:
+                                                                  "225px",
+                                                              }}
+                                                            >
+                                                              <CheckBoxField
+                                                                name={option}
+                                                                fieldClass="mb-0 p-1"
+                                                                defaultChecked={
+                                                                  shipment
+                                                                    .options?.[
+                                                                  option
+                                                                  ]
+                                                                }
+                                                                onChange={(
+                                                                  e,
+                                                                ) =>
+                                                                  onChange(
+                                                                    shipment_index,
+                                                                    shipment,
+                                                                    {
+                                                                      options:
+                                                                      {
+                                                                        ...shipment.options,
+                                                                        [option]:
+                                                                          e
+                                                                            .target
+                                                                            .checked ||
+                                                                          null,
+                                                                      },
+                                                                    },
+                                                                  )
+                                                                }
+                                                              >
+                                                                <span>
+                                                                  {formatRef(
+                                                                    option,
+                                                                  )}
+                                                                </span>
+                                                              </CheckBoxField>
+                                                            </div>
+                                                          )}
+
+                                                        {references!
+                                                          .options[carrier][
+                                                          option
+                                                        ]?.type ===
+                                                          "string" && (
+                                                            <>
+                                                              <InputField
+                                                                name={option}
                                                                 style={{
                                                                   minWidth:
                                                                     "225px",
                                                                 }}
-                                                              >
-                                                                <CheckBoxField
-                                                                  name={option}
-                                                                  fieldClass="mb-0 p-1"
-                                                                  defaultChecked={
-                                                                    shipment
-                                                                      .options?.[
-                                                                      option
-                                                                    ]
-                                                                  }
-                                                                  onChange={(
-                                                                    e,
-                                                                  ) =>
-                                                                    onChange(
-                                                                      shipment_index,
-                                                                      shipment,
+                                                                label={formatRef(
+                                                                  option,
+                                                                )}
+                                                                placeholder={formatRef(
+                                                                  option,
+                                                                )}
+                                                                className="is-small"
+                                                                wrapperClass="pl-0 pr-2 py-1"
+                                                                fieldClass="column mb-0 is-6 p-0"
+                                                                defaultValue={
+                                                                  shipment
+                                                                    .options[
+                                                                  option
+                                                                  ]
+                                                                }
+                                                                onChange={(
+                                                                  e,
+                                                                ) =>
+                                                                  onChange(
+                                                                    shipment_index,
+                                                                    shipment,
+                                                                    {
+                                                                      options:
                                                                       {
-                                                                        options:
-                                                                          {
-                                                                            ...shipment.options,
-                                                                            [option]:
-                                                                              e
-                                                                                .target
-                                                                                .checked ||
-                                                                              null,
-                                                                          },
+                                                                        ...shipment.options,
+                                                                        [option]:
+                                                                          e
+                                                                            .target
+                                                                            .value,
                                                                       },
-                                                                    )
-                                                                  }
-                                                                >
-                                                                  <span>
-                                                                    {formatRef(
-                                                                      option,
-                                                                    )}
-                                                                  </span>
-                                                                </CheckBoxField>
-                                                              </div>
-                                                            )}
+                                                                    },
+                                                                  )
+                                                                }
+                                                              />
+                                                            </>
+                                                          )}
+                                                      </React.Fragment>
+                                                    ),
+                                                  )}
+                                                </div>
 
-                                                            {references!
-                                                              .options[carrier][
-                                                              option
-                                                            ]?.type ===
-                                                              "string" && (
-                                                              <>
-                                                                <InputField
-                                                                  name={option}
-                                                                  style={{
-                                                                    minWidth:
-                                                                      "225px",
-                                                                  }}
-                                                                  label={formatRef(
-                                                                    option,
-                                                                  )}
-                                                                  placeholder={formatRef(
-                                                                    option,
-                                                                  )}
-                                                                  className="is-small"
-                                                                  wrapperClass="pl-0 pr-2 py-1"
-                                                                  fieldClass="column mb-0 is-6 p-0"
-                                                                  defaultValue={
-                                                                    shipment
-                                                                      .options[
-                                                                      option
-                                                                    ]
-                                                                  }
-                                                                  onChange={(
-                                                                    e,
-                                                                  ) =>
-                                                                    onChange(
-                                                                      shipment_index,
-                                                                      shipment,
-                                                                      {
-                                                                        options:
-                                                                          {
-                                                                            ...shipment.options,
-                                                                            [option]:
-                                                                              e
-                                                                                .target
-                                                                                .value,
-                                                                          },
-                                                                      },
-                                                                    )
-                                                                  }
-                                                                />
-                                                              </>
-                                                            )}
-                                                          </React.Fragment>
-                                                        ),
-                                                      )}
-                                                    </div>
-
-                                                    <div className="p-2"></div>
-                                                  </React.Fragment>
-                                                ))}
-                                              </Disclosure.Panel>
-                                            </div>
-                                          )}
-                                        </Disclosure>
+                                                <div className="p-2"></div>
+                                              </React.Fragment>
+                                            ))}
+                                          </CollapsibleContent>
+                                        </Collapsible>
                                       </div>
                                     )}
 
@@ -1996,7 +1987,7 @@ export default function Page(pageProps: any) {
                                                 ...DEFAULT_CUSTOMS_CONTENT,
                                                 incoterm:
                                                   shipment.payment?.paid_by ==
-                                                  PaidByEnum.sender
+                                                    PaidByEnum.sender
                                                     ? "DDP"
                                                     : "DDU",
                                                 duty: {
@@ -2132,11 +2123,11 @@ export default function Page(pageProps: any) {
                                               shipment.customs!.commodities ||
                                               []
                                             ).length === 0 && (
-                                              <div className="notification is-warning is-light my-2 py-2 px-4 is-size-7">
-                                                You need provide commodity items
-                                                for customs purpose. (required)
-                                              </div>
-                                            )}
+                                                <div className="notification is-warning is-light my-2 py-2 px-4 is-size-7">
+                                                  You need provide commodity items
+                                                  for customs purpose. (required)
+                                                </div>
+                                              )}
 
                                             <div className="is-flex is-justify-content-space-between mt-4">
                                               {/* @ts-ignore */}
@@ -2179,74 +2170,74 @@ export default function Page(pageProps: any) {
                                               .duty_billing_address ||
                                               shipment.customs!.duty
                                                 ?.paid_by ===
-                                                PaidByEnum.third_party) && (
-                                              <>
-                                                <hr
-                                                  className="my-1"
-                                                  style={{ height: "1px" }}
-                                                />
+                                              PaidByEnum.third_party) && (
+                                                <>
+                                                  <hr
+                                                    className="my-1"
+                                                    style={{ height: "1px" }}
+                                                  />
 
-                                                <div className="py-3">
-                                                  <header className="is-flex is-justify-content-space-between">
-                                                    <label
-                                                      className="label is-capitalized"
-                                                      style={{
-                                                        fontSize: "0.8em",
-                                                      }}
-                                                    >
-                                                      Billing address
-                                                    </label>
-                                                    <div className="is-vcentered">
-                                                      <AddressModalEditor
-                                                        address={
-                                                          shipment.customs
-                                                            ?.duty_billing_address ||
-                                                          ({} as AddressType)
-                                                        }
-                                                        onSubmit={(address) =>
-                                                          mutation.updateShipment(
-                                                            shipment_index,
-                                                          )({
-                                                            customs: {
-                                                              ...shipment!
-                                                                .customs,
-                                                              duty_billing_address:
-                                                                address,
-                                                            } as any,
-                                                          })
-                                                        }
-                                                        trigger={
-                                                          <button className="button is-small is-info is-text is-inverted p-1">
-                                                            Edit duty billing
-                                                            address
-                                                          </button>
-                                                        }
-                                                      />
-                                                    </div>
-                                                  </header>
+                                                  <div className="py-3">
+                                                    <header className="is-flex is-justify-content-space-between">
+                                                      <label
+                                                        className="label is-capitalized"
+                                                        style={{
+                                                          fontSize: "0.8em",
+                                                        }}
+                                                      >
+                                                        Billing address
+                                                      </label>
+                                                      <div className="is-vcentered">
+                                                        <AddressModalEditor
+                                                          address={
+                                                            shipment.customs
+                                                              ?.duty_billing_address ||
+                                                            ({} as AddressType)
+                                                          }
+                                                          onSubmit={(address) =>
+                                                            mutation.updateShipment(
+                                                              shipment_index,
+                                                            )({
+                                                              customs: {
+                                                                ...shipment!
+                                                                  .customs,
+                                                                duty_billing_address:
+                                                                  address,
+                                                              } as any,
+                                                            })
+                                                          }
+                                                          trigger={
+                                                            <button className="button is-small is-info is-text is-inverted p-1">
+                                                              Edit duty billing
+                                                              address
+                                                            </button>
+                                                          }
+                                                        />
+                                                      </div>
+                                                    </header>
 
-                                                  {shipment!.customs!
-                                                    .duty_billing_address && (
-                                                    <AddressDescription
-                                                      address={
-                                                        shipment!.customs!
-                                                          .duty_billing_address as any
-                                                      }
-                                                    />
-                                                  )}
+                                                    {shipment!.customs!
+                                                      .duty_billing_address && (
+                                                        <AddressDescription
+                                                          address={
+                                                            shipment!.customs!
+                                                              .duty_billing_address as any
+                                                          }
+                                                        />
+                                                      )}
 
-                                                  {isNone(
-                                                    shipment!.customs!
-                                                      .duty_billing_address,
-                                                  ) && (
-                                                    <div className="notification is-default p-2 is-size-7">
-                                                      Add customs duty billing
-                                                      address. (optional)
-                                                    </div>
-                                                  )}
-                                                </div>
-                                              </>
-                                            )}
+                                                    {isNone(
+                                                      shipment!.customs!
+                                                        .duty_billing_address,
+                                                    ) && (
+                                                        <div className="notification is-default p-2 is-size-7">
+                                                          Add customs duty billing
+                                                          address. (optional)
+                                                        </div>
+                                                      )}
+                                                  </div>
+                                                </>
+                                              )}
                                           </>
                                         )}
 
@@ -2480,7 +2471,7 @@ export default function Page(pageProps: any) {
                       },
                     )}
                   </section>
-                </Dialog.Panel>
+                </DialogContent>
               </Dialog>
             </>
           </>

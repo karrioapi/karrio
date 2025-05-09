@@ -315,7 +315,6 @@ export interface References {
   TENANT_LEVEL_BILLING: boolean;
   WORKFLOW_MANAGEMENT: boolean;
 
-  ADDRESS_AUTO_COMPLETE: Collection;
   countries: Collection;
   currencies: Collection;
   carriers: Collection;
@@ -516,6 +515,6 @@ export const DEFAULT_CUSTOMS_CONTENT: Partial<CustomsType> = {
 };
 
 export type PageProps = {
-  params: { id: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ id: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 };

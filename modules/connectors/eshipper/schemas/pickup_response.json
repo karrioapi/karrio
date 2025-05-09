@@ -1,8 +1,0 @@
-{
-  "order": {
-    "trackingId": "string",
-    "orderId": "string",
-    "message": "string"
-  },
-  "message": "string"
-}

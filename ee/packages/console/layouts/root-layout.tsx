@@ -4,13 +4,15 @@ import {
   noto,
   ubuntu,
   oxygen,
-} from "@karrio/insiders/fonts/font";
-import { ErrorBoundary } from "@karrio/ui/components/error-boudaries";
-import { Toaster } from "@karrio/insiders/components/ui/toaster";
+} from "@karrio/ui/fonts/font";
+import { ErrorBoundary } from "@karrio/ui/core/components/error-boudaries";
+import { Toaster } from "@karrio/ui/components/ui/toaster";
 import { Providers } from "@karrio/console/hooks/providers";
 import { PublicEnvScript } from "next-runtime-env";
 import { auth } from "@karrio/console/apis/auth";
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 
 export const metadata: Metadata = {
   title: "Karrio Platform",

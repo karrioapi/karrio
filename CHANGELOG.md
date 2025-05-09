@@ -1035,13 +1035,11 @@ With this, they will be able to deploy their dedicated shipping platform, automa
 Reach out for private beta access to [Karrio Cloud](https://www.karrio.io/)
 
 <p align="center">
- <img width="400" alt="Screenshot 2023-12-31 at 12 35 14 AM" src="https://github.com/karrioapi/karrio/assets/10974180/154c9448-4335-433c-b3a3-e584f795a199">
-
-<img width="400" alt="Screenshot 2023-12-31 at 12 34 48 AM" src="https://github.com/karrioapi/karrio/assets/10974180/2b17c8b8-9732-4ded-9f41-e4788d8554c3">
-
-<img width="400" alt="Screenshot 2023-12-31 at 12 34 27 AM" src="https://github.com/karrioapi/karrio/assets/10974180/353c856c-9774-470d-8f4e-ec2984c1dead">
-
+  <img width="400" alt="Screenshot 2023-12-31 at 12 35 14 AM" src="https://github.com/karrioapi/karrio/assets/10974180/154c9448-4335-433c-b3a3-e584f795a199"/>
+  <img width="400" alt="Screenshot 2023-12-31 at 12 34 48 AM" src="https://github.com/karrioapi/karrio/assets/10974180/2b17c8b8-9732-4ded-9f41-e4788d8554c3"/>
+  <img width="400" alt="Screenshot 2023-12-31 at 12 34 27 AM" src="https://github.com/karrioapi/karrio/assets/10974180/353c856c-9774-470d-8f4e-ec2984c1dead"/>
 </p>
+
 # Karrio patch 2023.9.11
 ## Feat
 
@@ -1158,14 +1156,10 @@ _follow these instructions to get your new API credentials_
 -   Copy your `client_id` and `client_secret` to update your karrio's UPS connections
 
 <details>
-<summary>app creation screenshots</summary>
-
-![Screenshot 2023-06-04 095624](https://github.com/karrioapi/karrio/assets/10974180/82d07d6e-a754-41d5-8260-f38cfa67e812)
-
-![ups-app-creation-setup](https://github.com/karrioapi/karrio/assets/10974180/cf60f949-02fe-4f85-a6a0-0721ca0d704b)
-
-![ups-app-credentials](https://github.com/karrioapi/karrio/assets/10974180/e91beb7e-10e1-495e-af81-80535d63521d)
-
+  <summary>app creation screenshots</summary>
+  <img src="https://github.com/karrioapi/karrio/assets/10974180/82d07d6e-a754-41d5-8260-f38cfa67e812" alt="Screenshot 2023-06-04 095624" width="600" />
+  <img src="https://github.com/karrioapi/karrio/assets/10974180/cf60f949-02fe-4f85-a6a0-0721ca0d704b" alt="ups-app-creation-setup" width="600" />
+  <img src="https://github.com/karrioapi/karrio/assets/10974180/e91beb7e-10e1-495e-af81-80535d63521d" alt="ups-app-credentials" width="600" />
 </details>
 
 # Karrio 2023.4.6 patch

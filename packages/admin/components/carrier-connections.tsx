@@ -1,8 +1,8 @@
 import { trpc } from "@karrio/trpc/client";
-import { Card, CardContent } from "@karrio/insiders/components/ui/card";
-import { CarrierConnectionDialog } from "@karrio/insiders/components/carrier-connection-dialog";
-import { DeleteConfirmationDialog } from "@karrio/insiders/components/delete-confirmation-dialog";
-import { useToast } from "@karrio/insiders/hooks/use-toast";
+import { Card, CardContent } from "@karrio/ui/components/ui/card";
+import { CarrierConnectionDialog } from "@karrio/ui/components/carrier-connection-dialog";
+import { DeleteConfirmationDialog } from "@karrio/ui/components/delete-confirmation-dialog";
+import { useToast } from "@karrio/ui/hooks/use-toast";
 import { useState } from "react";
 import { CarrierConnectionsTable } from "@karrio/admin/components/carrier-connections-table";
 import { GetSystemConnections_system_carrier_connections_edges_node } from "@karrio/types/graphql/admin/types";

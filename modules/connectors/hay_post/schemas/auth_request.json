@@ -1,7 +1,0 @@
-{
-  "username": "string",
-  "password": "string",
-  "customerType": 1,
-  "deviceId": "string",
-  "fcmToken": "string"
-}

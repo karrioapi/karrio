@@ -1,11 +1,11 @@
 "use client";
 
-import { CreateOrganizationModalProvider } from "@karrio/ui/modals/create-organization-modal";
-import { AcceptInvitationProvider } from "@karrio/ui/modals/accept-invitation-modal";
-import { ErrorBoundary } from "@karrio/ui/components/error-boudaries";
-import { ModeIndicator } from "@karrio/ui/components/mode-indicator";
-import { LoadingProvider } from "@karrio/ui/components/loader";
-import { Notifier } from "@karrio/ui/components/notifier";
+import { CreateOrganizationModalProvider } from "@karrio/ui/core/modals/create-organization-modal";
+import { AcceptInvitationProvider } from "@karrio/ui/core/modals/accept-invitation-modal";
+import { ErrorBoundary } from "@karrio/ui/core/components/error-boudaries";
+import { ModeIndicator } from "@karrio/ui/core/components/mode-indicator";
+import { LoadingProvider } from "@karrio/ui/core/components/loader";
+import { Notifier } from "@karrio/ui/core/components/notifier";
 import { OrganizationProvider } from "./organization";
 import { SessionProvider } from "next-auth/react";
 import APIMetadataProvider from "./api-metadata";

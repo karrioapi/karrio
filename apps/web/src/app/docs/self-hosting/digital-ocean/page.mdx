@@ -1,0 +1,331 @@
+---
+sidebarTitle: Guides
+title: Digital Ocean
+description: Learn how to deploy Karrio on Digital Ocean
+tags: [self-hosting, digital-ocean]
+author: Karrio Team
+---
+
+# Digital Ocean
+
+# Digital Ocean Deployment
+
+This guide will walk you through deploying Karrio on Digital Ocean.
+
+## Prerequisites
+
+1. A Digital Ocean account
+2. Basic familiarity with Digital Ocean and the control panel
+3. Basic knowledge of Docker and Docker Compose
+
+## Step 1: Create a Droplet
+
+1. Log into your Digital Ocean account
+2. Navigate to the "Droplets" section in the sidebar
+3. Click "Create Droplet"
+4. Choose an image:
+   - Select the **Marketplace** tab
+   - Choose **Docker** to get a pre-configured Docker environment, or
+   - Select **Ubuntu 22.04 LTS** for a clean installation
+5. Select a plan:
+   - For production: At least **Standard Droplet with 2 GB RAM / 1 CPU**
+   - For development/testing: **Basic Droplet with 2 GB RAM / 1 CPU**
+6. Choose a datacenter region close to your users
+7. Add SSH keys or select a password authentication method
+8. Choose a hostname (e.g., `karrio-server`)
+9. Click "Create Droplet"
+
+## Step 2: Set Up DNS Records
+
+1. Go to the "Networking" section in the Digital Ocean control panel
+2. Select "Domains"
+3. Either add an existing domain or purchase one through Digital Ocean
+4. Create the following DNS records for your domain:
+   - Type: `A`, Hostname: `api`, Value: Your Droplet's IP
+   - Type: `A`, Hostname: `app`, Value: Your Droplet's IP
+
+## Step 3: Connect to Your Droplet
+
+Connect to your Droplet using SSH:
+
+```bash
+ssh root@your-droplet-ip
+```
+
+Or if you used an SSH key with a different username:
+
+```bash
+ssh -i /path/to/your-key username@your-droplet-ip
+```
+
+## Step 4: Install Docker and Docker Compose
+
+If you selected a standard Ubuntu image (skip if you used the Docker Marketplace image):
+
+```bash
+# Update system packages
+sudo apt update
+sudo apt upgrade -y
+
+# Install prerequisites
+sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+
+# Add Docker repository
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+# Install Docker
+sudo apt update
+sudo apt install -y docker-ce
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo usermod -aG docker $USER
+
+# Install Docker Compose
+sudo curl -L "https://github.com/docker/compose/releases/download/v2.18.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+# Log out and log back in for group changes to take effect
+exit
+```
+
+After logging back in, verify Docker is working:
+
+```bash
+docker --version
+docker-compose --version
+```
+
+## Step 5: Configure Firewall
+
+Digital Ocean Droplets come with a built-in firewall called DigitalOcean Cloud Firewall. Let's configure it:
+
+1. Go to the "Networking" section
+2. Select "Firewalls"
+3. Click "Create Firewall"
+4. Name your firewall (e.g., `karrio-firewall`)
+5. Configure inbound rules:
+   - Allow SSH (port 22) - Already added by default
+   - Allow HTTP (port 80)
+   - Allow HTTPS (port 443)
+6. Under "Apply to Droplets", select your Karrio Droplet
+7. Click "Create Firewall"
+
+## Step 6: Deploy Karrio
+
+Now deploy Karrio using one of the following methods:
+
+### Option 1: One-Click Hobby Deployment
+
+This is the simplest method for a quick setup:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/deploy-hobby)"
+```
+
+When prompted, enter your domain name (e.g., `karrio.yourdomain.com`).
+
+### Option 2: Manual Deployment
+
+For more control over the deployment:
+
+```bash
+# Create a directory for Karrio
+mkdir -p ~/karrio
+cd ~/karrio
+
+# Download the docker-compose file
+curl -O https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/docker-compose.hobby.yml
+mv docker-compose.hobby.yml docker-compose.yml
+
+# Create the .env file
+cat > .env << EOL
+# Database settings
+DATABASE_ENGINE=postgresql_psycopg2
+DATABASE_NAME=db
+DATABASE_USERNAME=postgres
+DATABASE_PASSWORD=postgres
+DATABASE_HOST=db
+DATABASE_PORT=5432
+
+# Redis settings
+REDIS_HOST=redis
+REDIS_PORT=6379
+
+# Karrio settings
+SECRET_KEY=$(openssl rand -base64 32)
+JWT_SECRET=$(openssl rand -base64 32)
+KARRIO_TAG=latest
+
+# Domain settings
+DOMAIN=your-domain.com
+DASHBOARD_URL=https://app.your-domain.com
+KARRIO_PUBLIC_URL=https://api.your-domain.com
+EOL
+
+# Create the Caddyfile for reverse proxy
+cat > Caddyfile << EOL
+{
+  email your-email@example.com
+}
+
+api.your-domain.com {
+  reverse_proxy karrio.api:5002
+}
+
+app.your-domain.com {
+  reverse_proxy karrio.dashboard:3000
+}
+EOL
+
+# Start the containers
+docker-compose up -d
+```
+
+Remember to replace `your-domain.com`, `app.your-domain.com`, `api.your-domain.com`, and `your-email@example.com` with your actual domain and email details.
+
+## Step 7: Access Your Karrio Instance
+
+After DNS propagation (which can take up to 24-48 hours, but often much quicker):
+- Dashboard: `https://app.your-domain.com`
+- API: `https://api.your-domain.com`
+
+Default login credentials: `admin@example.com` / `demo`
+
+## Creating a Floating IP (Recommended)
+
+To ensure your Karrio instance remains accessible even after rebuilding your Droplet:
+
+1. Go to the "Networking" section in the Digital Ocean control panel
+2. Select "Floating IPs"
+3. Click "Assign Floating IP"
+4. Select your Karrio Droplet
+5. Click "Assign Floating IP"
+
+Update your DNS records to point to this Floating IP instead of the Droplet's IP.
+
+## Setting Up a Load Balancer (Optional)
+
+For high-availability deployments:
+
+1. Go to the "Networking" section
+2. Select "Load Balancers"
+3. Click "Create Load Balancer"
+4. Configure the load balancer:
+   - Region: Same as your Droplet
+   - Forwarding Rules: HTTP on port 80, HTTPS on port 443
+   - Health Checks: HTTP on port 80
+5. Select your Droplet under "Choose Droplets"
+6. Click "Create Load Balancer"
+
+Update your DNS records to point to the load balancer's IP address.
+
+## Backup and Restore
+
+### Setting Up Backups
+
+Digital Ocean offers automated backups for Droplets:
+
+1. Go to your Droplet's page
+2. Click on "Backups" in the left sidebar
+3. Click "Enable Backups"
+
+This will create weekly backups of your entire Droplet.
+
+### Manual Database Backup
+
+To manually back up your Karrio database:
+
+```bash
+cd ~/karrio
+docker-compose exec db pg_dump -U postgres -d db > karrio_backup_$(date +%Y%m%d).sql
+```
+
+For offsite backups, you can use Digital Ocean Spaces (S3-compatible storage):
+
+1. Create a Space in the Digital Ocean control panel
+2. Install s3cmd:
+   ```bash
+   sudo apt install -y s3cmd
+   ```
+3. Configure s3cmd with your Spaces credentials:
+   ```bash
+   s3cmd --configure
+   ```
+4. Upload your backup:
+   ```bash
+   s3cmd put karrio_backup_$(date +%Y%m%d).sql s3://your-space-name/
+   ```
+
+## Monitoring
+
+For basic monitoring, you can use:
+
+1. Digital Ocean's built-in Droplet monitoring
+2. Container logs:
+   ```bash
+   cd ~/karrio
+   docker-compose logs -f
+   ```
+
+For more advanced monitoring, consider:
+
+1. Installing Digital Ocean's monitoring agent
+2. Using the built-in alerts for CPU, memory, and disk usage
+
+## Updating Karrio
+
+To update your Karrio instance:
+
+```bash
+cd ~/karrio
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/upgrade-hobby)"
+```
+
+## Scaling Your Deployment
+
+As your needs grow, you can:
+
+1. **Vertical Scaling**: Increase your Droplet's resources
+   - Power off your Droplet
+   - Select "Resize Droplet" from the control panel
+   - Choose a larger plan
+   - Power on your Droplet
+
+2. **Horizontal Scaling**:
+   - Create multiple Droplets
+   - Set up a Load Balancer
+   - Configure a managed database (Digital Ocean Managed PostgreSQL)
+
+## Troubleshooting
+
+### SSL Certificate Issues
+
+If SSL certificates aren't being issued:
+
+1. Check that your DNS records are correctly set up
+2. Verify that ports 80 and 443 are open in your firewall
+3. Check the Caddy logs:
+   ```bash
+   cd ~/karrio
+   docker-compose logs caddy
+   ```
+
+### Container Issues
+
+If containers aren't starting properly:
+
+```bash
+cd ~/karrio
+docker-compose ps
+docker-compose logs <service_name>
+```
+
+### Resource Limitations
+
+If your Droplet is running out of resources:
+
+1. Monitor resource usage on the Digital Ocean dashboard
+2. Consider upgrading to a larger Droplet size if you're consistently using >70% of CPU or memory
+
+

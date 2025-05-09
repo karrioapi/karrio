@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@karrio/insiders/components/ui/button";
+import { Button } from "@karrio/ui/components/ui/button";
 import { Check, InfoIcon } from "lucide-react";
-import { cn } from "@karrio/insiders/lib/utils";
+import { cn } from "@karrio/ui/lib/utils";
 
 interface Plan {
   id: string;

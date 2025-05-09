@@ -1,1 +1,3 @@
-export { default, generateMetadata } from "@karrio/core/modules/Trackers";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
+export { default } from "@karrio/core/modules/Trackers";
+export const generateMetadata = dynamicMetadata("Trackers");

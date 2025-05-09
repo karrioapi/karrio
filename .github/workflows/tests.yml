@@ -17,7 +17,7 @@ jobs:
       - name: Run Tests
         run: |
           ./bin/setup-sdk-env -v &&
-          ./bin/run-sdk-typecheck &&
+          ./bin/run-sdk-typecheck -v  &&
           ./bin/run-sdk-tests -v
 
   server-tests:

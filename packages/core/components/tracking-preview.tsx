@@ -9,9 +9,9 @@ import {
   TrackerType,
   TrackingEventType,
 } from "@karrio/types";
-import { CarrierImage } from "@karrio/ui/components/carrier-image";
+import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import React, { useRef, useState, useContext } from "react";
-import { AppLink } from "@karrio/ui/components/app-link";
+import { AppLink } from "@karrio/ui/core/components/app-link";
 import { useLocation } from "@karrio/hooks/location";
 
 type DayEvents = { [k: string]: TrackingEventType[] };
@@ -233,8 +233,8 @@ export const TrackingPreview = ({
                     <div className="column is-size-7 has-text-weight-semibold py-1">
                       {formatRef(
                         tracker?.info?.shipment_service ||
-                          tracker?.shipment?.meta?.service_name ||
-                          tracker?.shipment?.service,
+                        tracker?.shipment?.meta?.service_name ||
+                        tracker?.shipment?.service,
                       )}
                     </div>
                   </div>

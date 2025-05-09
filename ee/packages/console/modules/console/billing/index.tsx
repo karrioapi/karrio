@@ -1,19 +1,19 @@
 "use client";
 
-import { Button } from "@karrio/insiders/components/ui/button";
+import { Button } from "@karrio/ui/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@karrio/insiders/components/ui/card";
+} from "@karrio/ui/components/ui/card";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@karrio/insiders/components/ui/tabs";
+} from "@karrio/ui/components/ui/tabs";
 
 export default function BillingPage() {
   return (

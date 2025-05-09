@@ -19,25 +19,23 @@ import {
 import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
-import { ShipmentsFilter } from "@karrio/ui/filters/shipments-filter";
+import { ShipmentsFilter } from "@karrio/ui/core/filters/shipments-filter";
 import { AddressType, RateType, ShipmentType } from "@karrio/types";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
-import { CarrierImage } from "@karrio/ui/components/carrier-image";
-import { StatusBadge } from "@karrio/ui/components/status-badge";
-import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
+import { ShipmentMenu } from "@karrio/ui/core/components/shipment-menu";
+import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
+import { StatusBadge } from "@karrio/ui/core/components/status-badge";
+import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { useLoader } from "@karrio/ui/components/loader";
-import { AppLink } from "@karrio/ui/components/app-link";
-import { Spinner } from "@karrio/ui/components/spinner";
+import { useLoader } from "@karrio/ui/core/components/loader";
+import { AppLink } from "@karrio/ui/core/components/app-link";
+import { Spinner } from "@karrio/ui/core/components/spinner";
 import { useShipments } from "@karrio/hooks/shipment";
 import React, { useContext, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
-export const generateMetadata = dynamicMetadata("Shipments");
 
 export default function Page(pageProps: any) {
-  const Component= (): JSX.Element =>  {
+  const Component = (): JSX.Element => {
     const searchParams = useSearchParams();
     const { setLoading } = useLoader();
     const { references } = useAPIMetadata();
@@ -320,14 +318,14 @@ export default function Page(pageProps: any) {
                     {selection.length > 0 && (
                       <td className="p-1 is-vcentered" colSpan={6}>
                         <div className="buttons has-addons">
-                          <AppLink
+                          {/* <AppLink
                             className={`button is-small is-default px-3 ${draftSelection(selection) ? "" : "is-static"}`}
                             href={`/shipments/create_labels?shipment_ids=${selection.join(",")}`}
                           >
                             <span className="has-text-weight-semibold">
                               Create labels
                             </span>
-                          </AppLink>
+                          </AppLink> */}
                           <a
                             href={url$`${references.HOST}/documents/shipments/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?shipments=${selection.join(",")}`}
                             className={`button is-small is-default px-3 ${compatibleTypeSelection(selection) ? "" : "is-static"}`}
@@ -404,9 +402,9 @@ export default function Page(pageProps: any) {
                           isNone(getRate(shipment))
                             ? "UNFULFILLED"
                             : formatRef(
-                                ((shipment.meta as any)?.service_name ||
-                                  getRate(shipment).service) as string,
-                              )
+                              ((shipment.meta as any)?.service_name ||
+                                getRate(shipment).service) as string,
+                            )
                         }
                       >
                         <div className="icon-text">

@@ -1,13 +1,11 @@
 "use client";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { Spinner } from "@karrio/ui/components/spinner";
+import { Spinner } from "@karrio/ui/core/components/spinner";
 import { useUserMutation } from "@karrio/hooks/user";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
 import { isNone } from "@karrio/lib";
 import Link from "next/link";
 
-export const generateMetadata = dynamicMetadata("Sign Up Confirmation");
 
 export default function Page(pageProps: any) {
   const searchParams = useSearchParams();

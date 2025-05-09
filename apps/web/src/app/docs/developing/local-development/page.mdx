@@ -1,0 +1,400 @@
+---
+sidebarTitle: Local Development
+title: Setting Up Your Dev Environment
+description: Complete guide to set up your Karrio development environment
+---
+
+# Local Development
+
+Welcome to the Karrio development guide! This comprehensive resource will help you set up your local environment to contribute to Karrio or build custom integrations. Whether you're adding a new carrier integration, enhancing the API, or improving the dashboard, this guide has you covered.
+
+## Architecture Overview
+
+Karrio is built with a powerful and flexible microservices architecture, consisting of several components:
+
+- **API Server**: Django REST Framework application that provides the core API
+- **Dashboard**: React application for the user interface
+- **Worker**: Huey workers for background tasks
+- **Database**: PostgreSQL for data storage (SQLite supported for development)
+- **Cache**: Redis for caching and as a message broker
+
+## Prerequisites
+
+Before you begin, make sure you have the following installed:
+
+- [Git](https://git-scm.com/downloads)
+- [Node.js v16.15.1+](https://nodejs.org/en/download/)
+- [Python 3.8+](https://www.python.org/downloads/)
+- [Docker](https://www.docker.com/products/docker-desktop) & [Docker Compose](https://docs.docker.com/compose/install/) (optional, for Docker-based setup)
+
+> [!WARNING]
+>
+> Windows users are strongly recommended to use [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/en-us/windows/wsl/install) for the best development experience. Windows versions before Windows 10 are not officially supported.
+
+## Manual Setup (Recommended)
+
+Follow these steps to set up your development environment manually:
+
+### 1. Clone the Repository
+
+First, fork the Karrio repository on GitHub, then clone your fork:
+
+```bash filename="Terminal"
+git clone https://github.com/[YOUR_USERNAME]/karrio.git
+cd karrio
+```
+
+### 2. Install System Dependencies
+
+Install the required system dependencies:
+
+```bash filename="Terminal"
+./bin/install-binaries
+```
+
+> [!NOTE]
+>
+> This script installs system dependencies based on your operating system:
+> - On macOS: `gcc`, `libffi`, and `zint`
+> - On Linux: `libpango1.0-0`, `libpangoft2-1.0-0`, `gcc`, and `zint`
+>
+> These libraries are required for PDF generation, font rendering, and barcode generation functionality.
+
+If you encounter permission issues:
+
+```bash filename="Terminal"
+chmod +x ./bin/*
+```
+
+### 3. Set up Python Environment
+
+Create and configure a Python virtual environment with all dependencies:
+
+```bash filename="Terminal"
+source ./bin/setup-server-env
+```
+
+This command will:
+- Create a new Python virtual environment
+- Install server development requirements
+- Install insiders development requirements (if available)
+- Install platform development requirements (if available)
+- Install Node.js dependencies
+- Set up logging directories
+
+### 4. Apply Database Migrations
+
+By default, Karrio uses SQLite for development to simplify setup:
+
+```bash filename="Terminal"
+karrio migrate
+```
+
+<details>
+  <summary>**Using PostgreSQL Instead**</summary>
+
+  If you prefer PostgreSQL, modify your environment configuration:
+
+  ```diff filename=".env"
+  - DATABASE_ENGINE=sqlite3
+  - # DATABASE_ENGINE=postgresql_psycopg2
+  - # DATABASE_USERNAME=postgres
+  - # DATABASE_PASSWORD=postgres
+  - # DATABASE_NAME=db
+  + # DATABASE_ENGINE=sqlite3
+  + DATABASE_ENGINE=postgresql_psycopg2
+  + DATABASE_USERNAME=postgres
+  + DATABASE_PASSWORD=postgres
+  + DATABASE_NAME=db
+  ```
+
+  Then start the PostgreSQL container:
+
+  ```bash filename="Terminal"
+  docker compose -f docker/docker-compose.yml up -d db
+  ```
+</details>
+
+### 5. Collect Static Assets
+
+Gather static files for the web interface:
+
+```bash filename="Terminal"
+karrio collectstatic --noinput
+```
+
+> [!WARNING]
+>
+> The `collectstatic` command is crucial for both development and production. Without it, CSS and JavaScript will not be served correctly, resulting in a broken UI.
+
+### 6. Create Admin User
+
+Create your admin account:
+
+```bash filename="Terminal"
+karrio createsuperuser
+```
+
+### 7. Start the Server
+
+Launch the Karrio server:
+
+```bash filename="Terminal"
+./bin/start
+```
+
+## Docker-based Setup (Alternative)
+
+If you prefer using Docker for development, here's how to set it up:
+
+### Quick Start with Docker
+
+```bash filename="Terminal"
+# Clone the repository
+git clone https://github.com/[YOUR_USERNAME]/karrio.git
+cd karrio
+
+# Create and setup the Docker development environment
+./bin/docker-env create
+
+# Start the Karrio server
+./bin/docker-env exec './bin/start-server'
+```
+
+Once running, Karrio will be available at [http://localhost:5002](http://localhost:5002)
+
+> [!NOTE]
+>
+> The Docker environment provides a fully configured setup with all dependencies installed. This is often the easiest way to get started, especially if you're new to the project.
+
+For more Docker commands and options:
+
+```bash filename="Terminal"
+./bin/docker-env
+```
+
+This will display a help menu with all available commands like:
+
+```text
+Help: You can pass any the following commands to the './bin/docker-env' scripts
+-----
+create     Create and setup docker dev environment.
+destroy    Destroy docker dev environment.
+on         Start docker dev environment.
+off        Stop docker dev environment.
+shell      Start docker dev environment shell.
+exec       Execute command in docker dev environment.
+```
+
+### Example Docker Commands
+
+Run server tests:
+```bash filename="Terminal"
+./bin/docker-env exec './bin/run-server-tests'
+```
+
+Run tests for a specific carrier:
+```bash filename="Terminal"
+./bin/docker-env exec 'python -m unittest discover -v -f modules/connectors/dhl_express/tests'
+```
+
+## Setting Up the Dashboard
+
+The Karrio dashboard is now part of the monorepo structure. To set it up:
+
+### 1. Install Node Dependencies
+
+At the root of the repository:
+
+```bash filename="Terminal"
+npm i
+```
+
+### 2. Configure Environment
+
+Copy the sample environment file:
+
+```bash filename="Terminal"
+cp apps/dashboard/.env.sample apps/dashboard/.env
+```
+
+### 3. Start the Dashboard
+
+Launch the development server:
+
+```bash filename="Terminal"
+npm run dev
+```
+
+## Development Workflows
+
+Karrio provides specialized workflows for different development tasks.
+
+### Working on the SDK and Carrier Extensions
+
+Set up the SDK environment:
+
+```bash filename="Terminal"
+cd karrio
+source ./bin/setup-sdk-env
+```
+
+Run all SDK tests:
+
+```bash filename="Terminal"
+./bin/run-sdk-tests
+```
+
+### Working on a Single Carrier
+
+Create a Python environment with the necessary dependencies:
+
+```bash filename="Terminal"
+cd karrio
+./bin/create-new-env
+```
+
+Install the extension in development mode:
+
+```bash filename="Terminal"
+# Install the core SDK
+pip install -e modules/sdk
+
+# Install a specific carrier extension
+pip install -e modules/connectors/fedex
+```
+
+Run tests for a specific carrier:
+
+```bash filename="Terminal" {3}
+# Format:
+# python -m unittest discover -v -f modules/connectors/[carrier_extension]/tests
+python -m unittest discover -v -f modules/connectors/fedex/tests
+```
+
+### Working on the Server
+
+Set up the server environment:
+
+```bash filename="Terminal"
+cd karrio
+source ./bin/setup-server-env
+```
+
+Run all server tests:
+
+```bash filename="Terminal"
+./bin/run-server-tests
+```
+
+Run tests for a specific module:
+
+```bash filename="Terminal" {3}
+# Format:
+# karrio test --failfast karrio.server.[module].tests
+karrio test --failfast karrio.server.manager.tests
+```
+
+## Database Management
+
+### Reset Database
+
+To completely reset your database for a fresh installation:
+
+```bash filename="Terminal"
+# Stop and remove the database container
+docker compose -f docker/docker-compose.yml down
+
+# Start a fresh PostgreSQL container
+docker compose -f docker/docker-compose.yml up -d db
+```
+
+### Backup Data
+
+Create a backup of your current database:
+
+```bash filename="Terminal"
+karrio dumpdata --natural-foreign --natural-primary -o [BACKUP_PATH]/data[VERSION].json
+# Example:
+# karrio dumpdata --natural-foreign --natural-primary -o ../backup/data2024.1.json
+```
+
+### Load Development Data
+
+Restore data from a backup:
+
+```bash filename="Terminal"
+karrio loaddata [BACKUP_PATH]/data[VERSION].json
+# Example:
+# karrio loaddata ../backup/data2024.1.json
+```
+
+## Code Organization
+
+The Karrio codebase is organized as follows:
+
+- **`/apps`**: Web applications and interfaces
+  - **`/apps/api`**: Django REST API server for external integrations
+  - **`/apps/dashboard`**: React-based admin dashboard UI
+  - **`/apps/web`**: Next.js documentation and marketing website
+  - **`/apps/www`**: Legacy website components
+- **`/modules`**: Core functionality and services
+  - **`/modules/sdk`**: Core shipping SDK that powers all integrations
+  - **`/modules/core/`**: Core shared functionality
+  - **`/modules/manager/`**: Account and organization management
+  - **`/modules/documents/`**: Document generation services
+  - **`/modules/events/`**: Event processing and webhooks
+  - **`/modules/orders/`**: Order management and fulfillment
+  - **`/modules/graph/`**: GraphQL API implementation
+- **`/bin`**: Helper scripts for development, testing, and deployment
+- **`/docker`**: Docker configurations and container definitions
+- **`/schemas`**: API schema definitions and validations
+- **`/ee`**: Enterprise Edition extensions (when applicable)
+
+## Adding a New Carrier
+
+One of the most common contributions is adding support for a new shipping carrier:
+
+1. Create a new carrier module in `/modules/connectors/`
+2. Implement the required interfaces:
+   - `CarrierInterface`: Base interface for all carriers
+   - `ShippingInterface`: For shipping operations
+   - `TrackingInterface`: For tracking operations
+   - `RateInterface`: For rate calculation
+3. Add carrier-specific settings
+4. Add comprehensive tests
+5. Update documentation
+
+For a detailed guide, see [Adding a New Carrier](/docs/developing/http://localhost:3005/docs/developing/carrier-integration).
+
+## Troubleshooting
+
+### Common Issues
+
+> [!WARNING]
+>
+> **Permission Denied Errors**
+>
+> If you encounter permission errors when running shell scripts, try making them executable:
+> ```bash
+> chmod +x ./bin/*
+> ```
+
+> [!WARNING]
+>
+> **Missing Styles/JavaScript**
+>
+> If the UI appears broken, ensure you've run the collectstatic command:
+> ```bash
+> karrio collectstatic --noinput
+> ```
+
+> [!WARNING]
+>
+> **Database Connection Issues**
+>
+> If you're using PostgreSQL and encounter connection errors, check that the database container is running:
+> ```bash
+> docker compose -f docker/docker-compose.yml ps
+> ```
+

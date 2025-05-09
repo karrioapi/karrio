@@ -1,0 +1,90 @@
+---
+sidebarTitle: OSS Contribution
+title: Pull Requests
+description: Learn how to create a pull request for Karrio
+tags: [development, pull-requests]
+author: Karrio Team
+---
+
+# Pull Requests
+
+This guide outlines our requirements and best practices for creating pull requests for the Karrio project. Following these guidelines will help maintainers review your contributions more efficiently.
+
+## Requirements
+
+We have requirements for PRs to ensure they are as easy to review as possible and to ensure that they meet our quality standards.
+
+## Title & Content
+
+Start by providing a short and concise title. Don't use generic titles (e.g., "Bug fixes"), and instead mention more specifically what your PR achieves, for example: "Fix dropdown not expanding in carrier settings page" or "Add Canada Post return label support".
+
+For the PR description, include:
+
+- A link to any relevant issues or discussions
+- A clear explanation of what the PR does
+- Any technical details that reviewers should know
+
+## Feature PRs
+
+For pull requests that add new features:
+
+1. **Functional Overview**: Explain how your feature works and how users will interact with it
+2. **Technical Details**: Share an overview of the implementation, including any important architectural decisions
+3. **Screenshots/Videos**: If applicable, add screenshots or short videos demonstrating the feature (Loom is a great tool for this)
+4. **Tests**: Describe how you've tested your feature
+
+## Bug Fix PRs
+
+For pull requests that fix bugs:
+
+1. **Problem Description**: Clearly describe the bug and how to reproduce it
+2. **Root Cause**: Explain what caused the issue
+3. **Fix Details**: Describe how your PR resolves the issue
+4. **Tests**: Show how you've tested the fix to ensure it works properly
+
+## Code Quality & Styling
+
+All submitted code must match our code styling standards:
+
+- Python code should follow PEP 8 guidelines
+- JavaScript/TypeScript code should follow our ESLint configuration
+- All code should pass the automated linting checks
+
+We use automated checks to enforce many of these standards. PRs that fail these checks will need to be updated before they can be merged.
+
+## Making a Pull Request
+
+1. Make sure your code is on a feature branch based on the latest `main` branch
+2. Run the tests locally to ensure everything passes
+3. Open a PR against the `main` branch
+4. Be sure to check the "Allow edits from maintainers" option when creating your PR
+5. If your PR refers to or fixes an issue, add `refs #XXX` or `fixes #XXX` to the PR description, replacing `XXX` with the issue number
+6. Fill out the PR template completely
+
+## PR Review Process
+
+At least two members of the Karrio team will review your PR before it can be merged. You may receive feedback requesting changes to your contribution. This is a normal part of the review process.
+
+Once your PR is approved by two team members, it will be merged. For Karrio team members, you should merge your own PRs once you have received the necessary approvals.
+
+## Guidelines for Large Changes
+
+If you're planning a large change or feature:
+
+1. Start by opening an issue or discussion to get feedback on your approach
+2. Consider breaking the work into smaller, more manageable PRs
+3. For major changes, create a design document outlining your approach
+
+This helps ensure your contribution aligns with the project's direction and avoids wasted effort.
+
+## Need Help?
+
+If you need help with your PR or have questions about our contribution process, you can:
+
+- Ask in GitHub Discussions
+- Reach out to the maintainers
+- Join our community chat
+
+We're here to help you make successful contributions to Karrio!
+
+

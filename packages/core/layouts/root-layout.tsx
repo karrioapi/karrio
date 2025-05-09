@@ -1,4 +1,4 @@
-import { ErrorBoundary } from "@karrio/ui/components/error-boudaries";
+import { ErrorBoundary } from "@karrio/ui/core/components/error-boudaries";
 import { loadMetadata } from "@karrio/core/context/main";
 import { PublicEnvScript } from "next-runtime-env";
 import { ServerErrorCode } from "@karrio/lib";

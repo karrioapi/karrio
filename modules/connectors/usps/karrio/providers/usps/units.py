@@ -84,7 +84,7 @@ class LabelType(lib.StrEnum):
     NONE = "NONE"
 
     """ Unified Label type mapping """
-    ZPL = ZPL300DPI
+    ZPL = ZPL203DPI
     PNG = JPG
 
 

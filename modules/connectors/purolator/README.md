@@ -4,7 +4,7 @@ This package is a Purolator extension of the [karrio](https://pypi.org/project/k
 
 ## Requirements
 
-`Python 3.7+`
+`Python 3.11+`
 
 ## Installation
 

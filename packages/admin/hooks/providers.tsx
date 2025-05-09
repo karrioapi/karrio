@@ -1,6 +1,6 @@
 "use client";
 
-import { ErrorBoundary } from "@karrio/ui/components/error-boudaries";
+import { ErrorBoundary } from "@karrio/ui/core/components/error-boudaries";
 import APIMetadataProvider from "@karrio/hooks/api-metadata";
 import { NextPostHogProvider } from "@karrio/hooks/posthog";
 import { SessionProvider } from "next-auth/react";

@@ -1,0 +1,94 @@
+---
+title: "Karrio Release 2023.4"
+date: "2023-04-27"
+description: "Here's our latest release. Check out what we've been working on over the last month!"
+author: "Karrio Team"
+image: /blog/release-2023-4.jpg
+tags: ["release", "update", "features", "carriers"]
+category: "OSS"
+---
+
+Here's our latest release. Check out what we've been working on over the last month!
+
+## New carrier integrations
+
+We've added new carrier compatibilities to Karrio. We've added a full integration for BoxKnight, Nationex, Roadie, and DPD, as well as tracking capabilities for La Poste and GEODIS. A mix of requests from the community and sponsored integrations.
+
+## Carrier connection configuration
+
+We've introduced config options for carrier accounts. Aside from regular carrier accounts and API credentials settings, you can now set up your default configuration, such as language, default label type, default shipping services and many other options specific to your connection.
+
+![Carrier connection configuration](/blog/release-2023-4-connection.png)
+
+## Large database migration
+
+We applied some Django best practices, such as SQL request optimization, to improve the performance of data migration during major Karrio version upgrades.
+
+## Exception-Related Shipment Status
+
+To facilitate the tracking and updating of shipments, we've enriched tracking and shipment data with exception-related statuses. Users can now view shipment statuses with exception statuses such as on hold, delivery delayed, delivery failed and more.
+
+```
+class ShipmentStatus(enum.Enum):
+    draft = "draft"
+    purchased = "purchased"
+    cancelled = "cancelled"
+    shipped = "shipped"
+    in_transit = "in_transit"
+    delivered = "delivered"
+    needs_attention = "needs_attention"
+    out_for_delivery = "out_for_delivery"
+    delivery_failed = "delivery_failed"
+
+
+class TrackerStatus(enum.Enum):
+    pending = "pending"
+    unknown = "unknown"
+    delivered = "delivered"
+    on_hold = "on_hold"
+    in_transit = "in_transit"
+    delivery_delayed = "delivery_delayed"
+    out_for_delivery = "out_for_delivery"
+    ready_for_pickup = "ready_for_pickup"
+    delivery_failed = "delivery_failed"
+```
+
+## Carrier Tracking Link
+
+In our last release, we added the carriers tracking links to the shipment's meta and tracker's info. This URL, accompanied by a tracking number, will allow users to directly view their shipment status on the carrier's website, without having to enter their tracking number.
+
+```
+{
+  "tracking_number": "string",
+  "carrier_name": "amazon_mws",
+  "account_number": "string",
+  "reference": "string",
+  "info": {
+    "carrier_tracking_link": "string",
+    "customer_name": "string",
+    "expected_delivery": "string",
+    "note": "string",
+    "order_date": "string",
+    "order_id": "string",
+    "package_weight": "string",
+    "package_weight_unit": "string",
+    "shipment_package_count": "string",
+    "shipment_pickup_date": "string",
+    "shipment_delivery_date": "string",
+    "shipment_service": "string",
+    "shipment_origin_country": "string",
+    "shipment_origin_postal_code": "string",
+    "shipment_destication_country": "string",
+    "shipment_destination_postal_code": "string",
+    "shipping_date": "string",
+    "signed_by": "string",
+    "source": "string"
+  }
+}
+```
+
+## To learn more:
+
+- Follow karrio on Github
+- Ask us anything at hello@karrio.io
+- Report any issues on our public repository

@@ -49,14 +49,15 @@ class APITestCase(BaseAPITestCase):
             capabilities=["pickup", "rating", "tracking", "shipping"],
         )
         self.fedex_carrier = providers.Carrier.objects.create(
-            carrier_code="fedex_ws",
+            carrier_code="fedex",
             carrier_id="fedex_express",
             test_mode=True,
             credentials=dict(
-                user_key="test",
-                password="password",
-                meter_number="000000",
+                api_key="test",
+                secret_key="password",
                 account_number="000000",
+                track_api_key="test",
+                track_secret_key="password",
             ),
             capabilities=["pickup", "rating", "tracking", "shipping"],
         )

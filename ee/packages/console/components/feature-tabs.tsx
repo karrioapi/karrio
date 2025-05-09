@@ -5,15 +5,15 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@karrio/insiders/components/ui/accordion";
+} from "@karrio/ui/components/ui/accordion";
 import {
   Tabs,
   TabsList,
   TabsTrigger,
   TabsContent,
-} from "@karrio/insiders/components/ui/tabs";
+} from "@karrio/ui/components/ui/tabs";
 import { useMediaQuery } from "@karrio/console/hooks/use-media-query";
-import { Button } from "@karrio/insiders/components/ui/button";
+import { Button } from "@karrio/ui/components/ui/button";
 import { ChevronRight } from "lucide-react";
 
 interface FeatureTab {

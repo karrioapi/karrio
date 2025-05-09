@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ErrorBoundary } from "@karrio/ui/components/error-boudaries";
+import { ErrorBoundary } from "@karrio/ui/core/components/error-boudaries";
 import { trpc } from "@karrio/console/trpc/client";
 import { SessionProvider } from "next-auth/react";
 import { httpBatchLink } from "@trpc/client";
