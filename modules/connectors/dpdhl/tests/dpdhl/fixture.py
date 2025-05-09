@@ -1,4 +1,4 @@
-import karrio
+import karrio.sdk as karrio
 
 gateway = karrio.gateway["dpdhl"].create(
     dict(

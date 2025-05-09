@@ -1,4 +1,4 @@
-import karrio
+import karrio.sdk as karrio
 import datetime
 import karrio.lib as lib
 

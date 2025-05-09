@@ -3,9 +3,9 @@ from unittest.mock import patch, ANY
 
 from karrio.schemas.dpdhl.business_interface import CancelPickupResponse
 from .fixture import gateway
-from tests import logger
+import logging as logger
 
-import karrio
+import karrio.sdk as karrio
 import karrio.lib as lib
 import karrio.core.models as models
 

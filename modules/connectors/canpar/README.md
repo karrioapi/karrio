@@ -15,7 +15,7 @@ pip install karrio.canpar
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.canpar.settings import Settings
 
 

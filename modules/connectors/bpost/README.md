@@ -16,7 +16,7 @@ pip install karrio.bpost
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.bpost.settings import Settings
 
 

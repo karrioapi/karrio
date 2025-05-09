@@ -15,7 +15,7 @@ pip install karrio.easypost
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.easypost.settings import Settings
 
 

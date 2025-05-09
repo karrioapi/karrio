@@ -1,3 +1,23 @@
+# Karrio 2024.12.7
+
+## Changes
+
+### Fix
+
+- fix: deprecated `carrier.settings` field access
+- fix: Python namespace + submodule broken backward compatibility behaviour
+
+Breaking change to how the karrio SDK is loaded
+
+```python
+# Before
+import karrio
+
+# Now
+import karrio.sdk as karrio
+```
+
+
 # Karrio 2024.12.6
 
 ## Changes

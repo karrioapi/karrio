@@ -3,7 +3,7 @@ from unittest.mock import patch
 import karrio.lib as lib
 import karrio.core.models as models
 from .fixture import gateway
-import karrio
+import karrio.sdk as karrio
 
 
 class TestUPSRating(unittest.TestCase):

@@ -16,7 +16,7 @@ pip install karrio.dhl_parcel_de
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.dhl_parcel_de.settings import Settings
 
 

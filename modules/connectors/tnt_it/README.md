@@ -16,7 +16,7 @@ pip install karrio.tnt_it
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.tnt_it.settings import Settings
 
 

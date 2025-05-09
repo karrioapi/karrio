@@ -15,7 +15,7 @@ pip install karrio.dhl_poland
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.dhl_poland.settings import Settings
 
 

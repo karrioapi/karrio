@@ -1,7 +1,7 @@
 import logging
 import unittest
 from unittest.mock import patch
-import karrio
+import karrio.sdk as karrio
 from karrio.core.utils import DP
 from karrio.core.models import (
     PickupRequest,

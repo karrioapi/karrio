@@ -15,7 +15,7 @@ pip install karrio.usps_wt_international
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.usps_wt_international.settings import Settings
 
 

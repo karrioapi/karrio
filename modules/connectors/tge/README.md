@@ -16,7 +16,7 @@ pip install karrio.tge
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.tge.settings import Settings
 
 

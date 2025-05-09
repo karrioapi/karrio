@@ -16,7 +16,7 @@ pip install karrio.boxknight
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.boxknight.settings import Settings
 
 

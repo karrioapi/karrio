@@ -1,5 +1,5 @@
 import unittest
-import karrio
+import karrio.sdk as karrio
 from unittest.mock import ANY
 
 from karrio.providers.generic.units import SAMPLE_SHIPMENT_REQUEST

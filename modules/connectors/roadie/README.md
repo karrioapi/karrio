@@ -16,7 +16,7 @@ pip install karrio.roadie
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.roadie.settings import Settings
 
 

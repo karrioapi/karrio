@@ -16,7 +16,7 @@ pip install karrio.sendle
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.sendle.settings import Settings
 
 

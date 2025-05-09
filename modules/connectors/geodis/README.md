@@ -16,7 +16,7 @@ pip install karrio.geodis
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.geodis.settings import Settings
 
 

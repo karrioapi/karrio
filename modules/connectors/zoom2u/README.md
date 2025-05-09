@@ -16,7 +16,7 @@ pip install karrio.zoom2u
 ## Usage
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.mappers.zoom2u.settings import Settings
 
 
