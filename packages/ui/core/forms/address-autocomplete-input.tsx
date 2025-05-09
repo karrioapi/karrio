@@ -13,7 +13,7 @@ import { InputFieldComponent } from "../components/input-field";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { Address } from "@karrio/types/rest/api";
 import { Subject } from "rxjs/internal/Subject";
-import { isNone } from "@karrio/lib";
+import { ADDRESS_AUTO_COMPLETE_SERVICE, ADDRESS_AUTO_COMPLETE_SERVICE_KEY, isNone } from "@karrio/lib";
 
 interface AddressAutocompleteInputComponent extends InputFieldComponent {
   onValueChange: (value: Partial<Address>) => void;
@@ -45,9 +45,6 @@ export const AddressAutocompleteInput = ({
       ? { value: props.value || "" }
       : {}),
   };
-  const {
-    references: { ADDRESS_AUTO_COMPLETE },
-  } = useAPIMetadata();
   const container = useRef<HTMLDivElement | null>(null);
   const [key] = useState<string>(`predictions_${Date.now()}`);
   const [isActive, setIsActive] = useState<boolean>(false);
@@ -93,14 +90,18 @@ export const AddressAutocompleteInput = ({
 
   useEffect(() => {
     if (
-      ADDRESS_AUTO_COMPLETE &&
-      (ADDRESS_AUTO_COMPLETE.provider !== "google" ||
-        (ADDRESS_AUTO_COMPLETE.provider === "google" &&
+      ADDRESS_AUTO_COMPLETE_SERVICE &&
+      (ADDRESS_AUTO_COMPLETE_SERVICE !== "google" ||
+        (ADDRESS_AUTO_COMPLETE_SERVICE === "google" &&
           !isNone((window as any).google)))
     ) {
-      initPredictor(initDebouncedPrediction(ADDRESS_AUTO_COMPLETE));
+      initPredictor(initDebouncedPrediction({
+        is_enabled: true,
+        provider: ADDRESS_AUTO_COMPLETE_SERVICE,
+        key: ADDRESS_AUTO_COMPLETE_SERVICE_KEY,
+      }));
     }
-  }, [ADDRESS_AUTO_COMPLETE]);
+  }, [ADDRESS_AUTO_COMPLETE_SERVICE]);
   useEffect(() => {
     if (isActive) document.addEventListener("click", onBodyClick);
   }, [isActive, onBodyClick]);
@@ -141,7 +142,7 @@ export const AddressAutocompleteInput = ({
               onChange={onChange}
               className={`input is-fullwidth ${className || ""}`}
               style={{ height: "100%" }}
-              {...(ADDRESS_AUTO_COMPLETE?.is_enabled
+              {...(!!(ADDRESS_AUTO_COMPLETE_SERVICE && ADDRESS_AUTO_COMPLETE_SERVICE_KEY)
                 ? { autoComplete: key }
                 : {})}
               {...Props}

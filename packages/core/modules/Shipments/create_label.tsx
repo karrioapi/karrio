@@ -63,7 +63,7 @@ import { Spinner } from "@karrio/ui/core/components/spinner";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { useLocation } from "@karrio/hooks/location";
 import { useAppMode } from "@karrio/hooks/app-mode";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { useOrders } from "@karrio/hooks/order";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@karrio/ui/components/ui/collapsible";
@@ -108,6 +108,8 @@ export default function CreateLabelPage(pageProps: any) {
         ? ({ id: shipment?.selected_rate_id } as any)
         : undefined,
     );
+    const hasRedirected = useRef(false);
+    const hasInitialized = useRef(false);
 
     const requireInfoForRating = (shipment: ShipmentType) => {
       return (
@@ -241,16 +243,22 @@ export default function CreateLabelPage(pageProps: any) {
     };
 
     useEffect(() => {
-      if (shipment.status && shipment.status !== ShipmentStatusEnum.draft) {
+      if (
+        !hasRedirected.current &&
+        shipment.status &&
+        shipment.status !== ShipmentStatusEnum.draft
+      ) {
+        hasRedirected.current = true;
         notifier.notify({
           type: NotificationType.info,
           message: "Label already purchased! redirecting...",
         });
         setTimeout(() => router.push(basePath), 2000);
       }
-    }, [shipment]);
+    }, [shipment.status, notifier, router, basePath]);
+
     useEffect(() => {
-      if (ready) return;
+      if (ready || hasInitialized.current) return;
       const orders_called =
         (references.ORDERS_MANAGEMENT && !orders.isLoading) || true;
 
@@ -261,6 +269,7 @@ export default function CreateLabelPage(pageProps: any) {
         shipment_id === "new" &&
         orders_called
       ) {
+        hasInitialized.current = true;
         setTimeout(() => setInitialData(), 1000);
       }
       if (
@@ -272,15 +281,7 @@ export default function CreateLabelPage(pageProps: any) {
       ) {
         setReady(true);
       }
-    }, [
-      ready,
-      templates.isLoading,
-      orders.isLoading,
-      query.isLoading,
-      workspace_config.query.isLoading,
-      shipment_id,
-      shipment,
-    ]);
+    }, [ready, templates.isLoading, orders.isLoading, query.isLoading, workspace_config.query.isLoading, shipment_id]);
 
     return (
       <>
