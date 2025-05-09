@@ -107,4 +107,4 @@ jobs:
           PULUMI_STATE_BUCKET: ${{ secrets.PULUMI_STATE_BUCKET }}
         run: |
           pulumi login s3://${{ secrets.PULUMI_STATE_BUCKET }}
-          cd ee/platform/packages/infra && npm install && pulumi up -s karrio-us --skip-preview --yes
+          cd ee/platform/infra && npm install && pulumi up -s karrio-us --skip-preview --yes
