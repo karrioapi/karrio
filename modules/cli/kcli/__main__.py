@@ -6,6 +6,8 @@ import kcli.commands.codegen as codegen
 import kcli.resources.shipments as shipments
 import kcli.resources.orders as orders
 import kcli.resources.trackers as trackers
+import kcli.resources.plugins as plugins
+import kcli.resources.carriers as carriers
 
 app = typer.Typer()
 
@@ -49,6 +51,18 @@ app.add_typer(
     codegen.app,
     name="codegen",
     help="Code generation utilities.",
+)
+
+app.add_typer(
+    plugins.app,
+    name="plugins",
+    help="Manage plugins.",
+)
+
+app.add_typer(
+    carriers.app,
+    name="carriers",
+    help="Manage carriers.",
 )
 
 if __name__ == "__main__":

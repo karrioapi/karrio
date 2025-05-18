@@ -4,12 +4,13 @@ This module provides references to carrier integrations, address validators,
 and other plugin-related functionality in the Karrio system.
 """
 
+import os
 import attr
 import pydoc
 import typing
 import logging
-import functools
 import pkgutil
+import functools
 
 import karrio.lib as lib
 import karrio.core.units as units
@@ -17,6 +18,9 @@ import karrio.core.plugins as plugins
 import karrio.core.metadata as metadata
 
 # Configure logger with a higher default level to reduce noise
+ENABLE_ALL_PLUGINS_BY_DEFAULT = bool(
+    os.environ.get("ENABLE_ALL_PLUGINS_BY_DEFAULT", True)
+)
 logger = logging.getLogger(__name__)
 if not logger.level:
     logger.setLevel(logging.INFO)
@@ -156,6 +160,8 @@ def import_extensions() -> None:
     # Sort PLUGIN_METADATA and PROVIDERS alphabetically by their keys
     PLUGIN_METADATA = dict(sorted(PLUGIN_METADATA.items()))
     PROVIDERS = dict(sorted(PROVIDERS.items()))
+
+    logger.info(f"> Loaded {len(PLUGIN_METADATA)} plugins")
 
 
 def _import_validators_from_module(module):
@@ -323,7 +329,7 @@ def collect_failed_plugins_data() -> typing.Dict[str, dict]:
     return FAILED_IMPORTS
 
 
-def collect_providers_data() -> typing.Dict[str, dict]:
+def collect_providers_data() -> typing.Dict[str, metadata.PluginMetadata]:
     """
     Collect metadata for carrier integration plugins.
 
@@ -334,7 +340,7 @@ def collect_providers_data() -> typing.Dict[str, dict]:
         import_extensions()
 
     return {
-        carrier_name: attr.asdict(metadata_obj)
+        carrier_name: metadata_obj
         for carrier_name, metadata_obj in PROVIDERS.items()
     }
 
@@ -384,12 +390,13 @@ def detect_proxy_methods(proxy_type: object) -> typing.List[str]:
         if "_" not in prop[0] and prop != "settings"
     ]
 
-
 # Fields to exclude when collecting connection fields
 COMMON_FIELDS = ["id", "carrier_id", "test_mode", "carrier_name"]
 
 
-def collect_references() -> dict:
+def collect_references(
+    plugin_registry: dict = None,
+) -> dict:
     """
     Collect all references from carriers, validators, and plugins.
 
@@ -400,23 +407,31 @@ def collect_references() -> dict:
     Returns:
         Dictionary containing all reference data
     """
-    global REFERENCES
+    global REFERENCES, PROVIDERS
     if not PROVIDERS:
         import_extensions()
 
     # If references have already been computed, return them
-    if REFERENCES:
+    if REFERENCES and not plugin_registry:
         return REFERENCES
+
+    registry = Registry(plugin_registry)
+
+    # Determine enabled carriers
+    enabled_carrier_ids = set(
+        carrier_id for carrier_id in PROVIDERS.keys()
+        if registry.get(f"{carrier_id.upper()}_ENABLED", registry.get("ENABLE_ALL_PLUGINS_BY_DEFAULT"))
+    )
 
     services = {
         key: {c.name: c.value for c in list(mapper.get("services", []))}
         for key, mapper in PROVIDERS.items()
-        if mapper.get("services") is not None
+        if key in enabled_carrier_ids and mapper.get("services") is not None
     }
     options = {
         key: {c.name: dict(code=c.value.code, type=parse_type(c.value.type), default=c.value.default) for c in list(mapper.get("options", []))}
         for key, mapper in PROVIDERS.items()
-        if mapper.get("options") is not None
+        if key in enabled_carrier_ids and mapper.get("options") is not None
     }
     connection_configs = {
         key: {
@@ -437,7 +452,7 @@ def collect_references() -> dict:
             for c in list(mapper.get("connection_configs", []))
         }
         for key, mapper in PROVIDERS.items()
-        if mapper.get("connection_configs") is not None
+        if key in enabled_carrier_ids and mapper.get("connection_configs") is not None
     }
 
     # Build connection_fields with proper attrs class checking
@@ -465,6 +480,7 @@ def collect_references() -> dict:
             or (mapper.get("has_intl_accounts") and _.name == "account_country_code")
         } if mapper.get("Settings") is not None and hasattr(mapper.get("Settings"), "__attrs_attrs__") else {}
         for key, mapper in PROVIDERS.items()
+        if key in enabled_carrier_ids
     }
 
     REFERENCES = {
@@ -482,12 +498,12 @@ def collect_references() -> dict:
         },
         "incoterms": {c.name: c.value for c in list(units.Incoterm)},  # type: ignore
         "carriers": {
-            carrier_id: metadata_obj.label for carrier_id, metadata_obj in PROVIDERS.items()
+            carrier_id: metadata_obj.label for carrier_id, metadata_obj in PROVIDERS.items() if carrier_id in enabled_carrier_ids
         },
         "carrier_hubs": {
             carrier_id: metadata_obj.label
             for carrier_id, metadata_obj in PROVIDERS.items()
-            if metadata_obj.is_hub
+            if carrier_id in enabled_carrier_ids and metadata_obj.is_hub
         },
         "address_validators": {
             validator_id: metadata_obj.get("label", "")
@@ -500,17 +516,17 @@ def collect_references() -> dict:
         "carrier_capabilities": {
             key: detect_capabilities(detect_proxy_methods(mapper.get("Proxy")))
             for key, mapper in PROVIDERS.items()
-            if mapper.get("Proxy") is not None
+            if key in enabled_carrier_ids and mapper.get("Proxy") is not None
         },
         "packaging_types": {
             key: {c.name: c.value for c in list(mapper.get("packaging_types", []))}
             for key, mapper in PROVIDERS.items()
-            if mapper.get("packaging_types") is not None
+            if key in enabled_carrier_ids and mapper.get("packaging_types") is not None
         },
         "package_presets": {
             key: {c.name: lib.to_dict(c.value) for c in list(mapper.get("package_presets", []))}
             for key, mapper in PROVIDERS.items()
-            if mapper.get("package_presets") is not None
+            if key in enabled_carrier_ids and mapper.get("package_presets") is not None
         },
         "option_names": {
             name: {key: key.upper().replace("_", " ") for key, _ in value.items()}
@@ -523,10 +539,10 @@ def collect_references() -> dict:
         "service_levels": {
             key: lib.to_dict(mapper.get("service_levels"))
             for key, mapper in PROVIDERS.items()
-            if mapper.get("service_levels") is not None
+            if key in enabled_carrier_ids and mapper.get("service_levels") is not None
         },
         "integration_status": {
-            carrier_id: metadata_obj.status for carrier_id, metadata_obj in PROVIDERS.items()
+            carrier_id: metadata_obj.status for carrier_id, metadata_obj in PROVIDERS.items() if carrier_id in enabled_carrier_ids
         },
         "address_validator_details": {
             validator_id: {
@@ -560,6 +576,7 @@ def collect_references() -> dict:
         "failed_plugins": collect_failed_plugins_data(),
     }
 
+    logger.info(f"> Karrio SDK datatypes references loaded. {plugin_registry is not None}")
     return REFERENCES
 
 
@@ -612,34 +629,40 @@ def parse_type(_type: type) -> str:
     return str(_type)
 
 
-def get_carrier_details(carrier_id: str, contextual_reference: dict = None) -> dict:
+def get_carrier_details(
+    plugin_code: str,
+    contextual_reference: dict = None,
+    plugin_registry: dict = None,
+) -> dict:
     """
     Get detailed information about a carrier.
 
     Args:
         carrier_id: The ID of the carrier
         contextual_reference: Optional pre-computed references dictionary
-
+        plugin_registry: Optional plugin registry dictionary
     Returns:
         Dictionary with detailed carrier information
     """
-    metadata_dict = collect_providers_data().get(carrier_id, {})
+    metadata_obj = collect_providers_data().get(plugin_code, {})
     references = contextual_reference or collect_references()
+    registry = Registry(plugin_registry)
 
     return dict(
-        id=carrier_id,
-        carrier_name=carrier_id,
-        display_name=metadata_dict.get("label", ""),
-        integration_status=metadata_dict.get("status", ""),
-        website=metadata_dict.get("website", ""),
-        description=metadata_dict.get("description", ""),
-        documentation=metadata_dict.get("documentation", ""),
-        capabilities=references["carrier_capabilities"].get(carrier_id, {}),
-        connection_fields=references["connection_fields"].get(carrier_id, {}),
-        config_fields=references["connection_configs"].get(carrier_id, {}),
-        shipping_services=references["services"].get(carrier_id, {}),
-        shipping_options=references["options"].get(carrier_id, {}),
-        readme=metadata_dict.get("readme", ""),
+        id=plugin_code,
+        carrier_name=plugin_code,
+        display_name=metadata_obj.label,
+        integration_status=metadata_obj.status,
+        website=metadata_obj.website,
+        description=metadata_obj.description,
+        documentation=metadata_obj.documentation,
+        is_enabled=registry.get(f"{plugin_code.upper()}_ENABLED", registry.get("ENABLE_ALL_PLUGINS_BY_DEFAULT")),
+        capabilities=references["carrier_capabilities"].get(plugin_code, {}),
+        connection_fields=references["connection_fields"].get(plugin_code, {}),
+        config_fields=references["connection_configs"].get(plugin_code, {}),
+        shipping_services=references["services"].get(plugin_code, {}),
+        shipping_options=references["options"].get(plugin_code, {}),
+        readme=metadata_obj.readme,
     )
 
 
@@ -673,17 +696,28 @@ def get_plugin_details(plugin_name: str, contextual_reference: dict = None) -> d
     return references["plugins"].get(plugin_name, {})
 
 
-def contextual_reference(context=None) -> dict:
-    """
-    Get references with context-specific data.
+class Registry(dict):
+    def __init__(self, registry: typing.Any = None):
+        if registry is None:
+            try:
+                from constance import config
+                config.ENABLE_ALL_PLUGINS_BY_DEFAULT
+                registry = config
+            except Exception:
+                registry = {}
+        self.registry = registry
 
-    This is a compatibility function to ensure backward compatibility
-    with existing code that uses contextual_reference.
+    def get(self, key, default=None):
+        try:
+            if isinstance(self.registry, dict):
+                return self.registry.get(key, os.environ.get(key, default))
+            else:
+                return getattr(self.registry, key, os.environ.get(key, default))
+        except AttributeError:
+            return os.environ.get(key, default)
 
-    Args:
-        context: Any context object providing test_mode
-
-    Returns:
-        Dictionary containing all reference data
-    """
-    return collect_references()
+    def __setitem__(self, key: str, value: typing.Any):
+        if isinstance(self.registry, dict):
+            self.registry[key] = value
+        else:
+            setattr(self.registry, key, value)
