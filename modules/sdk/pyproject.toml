@@ -27,6 +27,7 @@ dependencies = [
     "phonenumbers",
     "python-barcode",
     "PyPDF2",
+    "toml",
 ]
 
 [project.urls]

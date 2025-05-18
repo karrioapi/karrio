@@ -119,6 +119,8 @@ class GatewayInitializer:
         try:
             provider = self.providers[key]
 
+            print("> provider", provider)
+
             def initializer(
                 settings: typing.Union[core.Settings, dict],
                 tracer: utils.Tracer = None,
@@ -168,9 +170,7 @@ class GatewayInitializer:
 
     @property
     def providers(self):
-        references.import_extensions()
-
-        return references.PROVIDERS
+        return references.collect_providers_data()
 
     @staticmethod
     def get_instance() -> "GatewayInitializer":
