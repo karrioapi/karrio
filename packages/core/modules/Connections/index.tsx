@@ -25,15 +25,13 @@ const ContextProviders = bundleContexts([
   LabelTemplateEditModalProvider,
 ]);
 
-export default async function ConnectionsPage({
+export default function ConnectionsPage({
   params,
   searchParams,
 }: {
   params: Promise<{ id: string }>;
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const resolvedParams = await params;
-  const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const Component = (): JSX.Element => {
     const searchParams = useSearchParams();
     const modal = searchParams.get("modal");
