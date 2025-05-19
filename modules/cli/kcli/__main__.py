@@ -8,6 +8,8 @@ import kcli.resources.orders as orders
 import kcli.resources.trackers as trackers
 import kcli.resources.plugins as plugins
 import kcli.resources.carriers as carriers
+import kcli.resources.connections as connections
+import kcli.resources.logs as logs
 
 app = typer.Typer()
 
@@ -63,6 +65,18 @@ app.add_typer(
     carriers.app,
     name="carriers",
     help="Manage carriers.",
+)
+
+app.add_typer(
+    connections.app,
+    name="connections",
+    help="Manage carrier connections.",
+)
+
+app.add_typer(
+    logs.app,
+    name="logs",
+    help="View API request logs.",
 )
 
 if __name__ == "__main__":

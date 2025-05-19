@@ -102,11 +102,25 @@ def status():
             headers = {"Authorization": f"Token {api_key}"}
             response = requests.get(f"{host}", headers=headers)
             response.raise_for_status()
+
+            # Display connection status
             typer.echo(f"Connected to Karrio instance at {host}")
+
+            # Display API metadata if available
+            try:
+                metadata = response.json()
+                typer.echo("\nAPI Metadata:")
+                for key, value in metadata.items():
+                    typer.echo(f"  {key}: {value}")
+            except ValueError:
+                typer.echo("\nNo API metadata available")
+
+            # Display API key source
             if os.environ.get("KARRIO_API_KEY"):
-                typer.echo("Using API key from environment variable")
+                typer.echo("\nUsing API key from environment variable")
             elif os.path.exists(os.path.expanduser("~/.karrio/config")):
-                typer.echo("Using API key from config file")
+                typer.echo("\nUsing API key from config file")
+
         except requests.RequestException as e:
             typer.echo(f"Error connecting to Karrio instance: {str(e)}", err=True)
     else:

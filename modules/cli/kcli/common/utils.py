@@ -7,6 +7,7 @@ import karrio.lib as lib
 import kcli.commands.login as login
 from rich.syntax import Syntax
 from rich.console import Console
+from .queries import GET_LOGS, GET_LOG
 
 DEFAULT_FEATURES = [
     "tracking",
@@ -15,6 +16,65 @@ DEFAULT_FEATURES = [
 ]
 
 console = Console()
+
+
+def parse_json_or_xml_string(value: str):
+    """Parse a string that might be JSON or XML."""
+    if not value or not isinstance(value, str):
+        return value
+
+    # Try to parse as JSON first
+    try:
+        return json.loads(value)
+    except json.JSONDecodeError:
+        # If not JSON, return as is (could be XML or other format)
+        return value
+
+
+def parse_records(records):
+    """Parse record data and response fields."""
+    if not records:
+        return records
+
+    return [
+        {
+            **record,
+            "record": {
+                **record["record"],
+                "data": parse_json_or_xml_string(record["record"].get("data")),
+                "response": parse_json_or_xml_string(record["record"].get("response")),
+            } if record.get("record") else record["record"]
+        }
+        for record in records
+    ]
+
+
+def parse_log_response(data):
+    """Parse log response data, including nested records."""
+    if not data:
+        return data
+
+    # Handle logs list response
+    if "logs" in data:
+        edges = data["logs"].get("edges", [])
+        for edge in edges:
+            node = edge.get("node", {})
+            if node:
+                node["response"] = parse_json_or_xml_string(node.get("response"))
+                node["data"] = parse_json_or_xml_string(node.get("data"))
+                node["records"] = parse_records(node.get("records", []))
+        return data
+
+    # Handle single log response
+    if "log" in data:
+        log = data["log"]
+        if log:
+            log["response"] = parse_json_or_xml_string(log.get("response"))
+            log["data"] = parse_json_or_xml_string(log.get("data"))
+            log["records"] = parse_records(log.get("records", []))
+        return data
+
+    return data
 
 
 def format_json_output(data, pretty_print=False, line_numbers=False):
@@ -114,6 +174,61 @@ def make_delete_request(
     return make_request(
         "DELETE", endpoint, pretty_print=pretty_print, line_numbers=line_numbers
     )
+
+
+def make_graphql_request(
+    query_name: str,
+    variables: dict = None,
+    pretty_print: bool = False,
+    line_numbers: bool = False,
+):
+    """
+    Make a GraphQL request to the API.
+
+    Args:
+        query_name: Name of the query to execute (e.g., 'get_logs', 'get_log')
+        variables: Variables to pass to the query
+        pretty_print: Whether to pretty print the output
+        line_numbers: Whether to show line numbers in pretty print
+    """
+    api_url, headers = get_api_url_and_headers()
+    url = f"{api_url}/graphql"
+
+    # Get the query based on the query name
+    query = {
+        "get_logs": GET_LOGS,
+        "get_log": GET_LOG,
+    }.get(query_name)
+
+    if not query:
+        raise ValueError(f"Unknown query: {query_name}")
+
+    payload = {
+        "query": query,
+        "variables": variables or {}
+    }
+
+    try:
+        response = requests.post(url, json=payload, headers=headers)
+        response.raise_for_status()
+
+        data = response.json()
+
+        # Check for GraphQL errors
+        if "errors" in data:
+            error_message = {"error": data["errors"]}
+            format_json_output(error_message, pretty_print, line_numbers)
+            return None
+
+        # Extract and parse the data from the response
+        result = parse_log_response(data.get("data", {}))
+        format_json_output(result, pretty_print, line_numbers)
+        return result
+
+    except requests.RequestException as e:
+        error_message = {"error": str(e)}
+        format_json_output(error_message, pretty_print, line_numbers)
+        return None
 
 
 class CarrierFeatures(lib.StrEnum):
