@@ -359,15 +359,27 @@ export const LogComponent = ({
   );
 };
 
-export default async function LogPage({ params }: { params: Promise<{ id: string }> }) {
-  const query = await params;
-  return (
-    <>
-      <LogComponent logId={query.id} />
-    </>
-  );
-}
+export default function LogPage({ params }: { params: Promise<{ id: string }> }) {
+  const Component = (): JSX.Element => {
+    const [id, setId] = React.useState<string>();
 
+    React.useEffect(() => {
+      params.then(query => {
+        setId(query.id);
+      });
+    }, []);
+
+    if (!id) return <></>;
+
+    return (
+      <>
+        <LogComponent logId={id} />
+      </>
+    );
+  };
+
+  return <Component />;
+}
 
 function parseRecordData(record: any) {
   if (!record) return null;

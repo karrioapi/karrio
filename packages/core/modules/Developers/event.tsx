@@ -118,12 +118,25 @@ export const EventComponent = ({
   );
 };
 
-export default async function EventPage({ params }: { params: Promise<{ id: string }> }) {
-  const query = await params;
-  return (
-    <>
-      <EventComponent eventId={query.id} />
-    </>
-  );
+export default function EventPage({ params }: { params: Promise<{ id: string }> }) {
+  const Component = (): JSX.Element => {
+    const [id, setId] = React.useState<string>();
+
+    React.useEffect(() => {
+      params.then(query => {
+        setId(query.id);
+      });
+    }, []);
+
+    if (!id) return <></>;
+
+    return (
+      <>
+        <EventComponent eventId={id} />
+      </>
+    );
+  };
+
+  return <Component />;
 }
 

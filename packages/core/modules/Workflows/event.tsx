@@ -224,15 +224,27 @@ export const Component = ({
   );
 };
 
-export default async function Page({ params }: { params: Promise<{ id: string }> }) {
-  const query = await params;
-  return (
-    <>
-      <Component eventId={query.id} />
-    </>
-  );
-}
+export default function Page({ params }: { params: Promise<{ id: string }> }) {
+  const Component = (): JSX.Element => {
+    const [id, setId] = React.useState<string>();
 
+    React.useEffect(() => {
+      params.then(query => {
+        setId(query.id);
+      });
+    }, []);
+
+    if (!id) return <></>;
+
+    return (
+      <>
+        <Component eventId={id} />
+      </>
+    );
+  };
+
+  return <Component />;
+}
 
 export function parseWorkflowEventRecordData(record: any) {
   if (!record) return null;

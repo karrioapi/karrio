@@ -757,13 +757,24 @@ export const ShipmentComponent = ({
   );
 };
 
-export default async function Page({ params }: { params: Promise<{ id: string }> }) {
-  const query = await params;
-  return (
-    <>
-      <ConfirmModal>
-        <ShipmentComponent shipmentId={query.id} />
-      </ConfirmModal>
-    </>
-  );
+export default function Page({ params }: { params: Promise<{ id: string }> }) {
+  const Component = (): JSX.Element => {
+    const [id, setId] = React.useState<string>();
+
+    React.useEffect(() => {
+      params.then(query => {
+        setId(query.id);
+      });
+    }, []);
+
+    if (!id) return <></>;
+
+    return (
+      <>
+        <ShipmentComponent shipmentId={id} />
+      </>
+    );
+  };
+
+  return <Component />;
 }

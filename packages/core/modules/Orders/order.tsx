@@ -407,15 +407,24 @@ export const OrderComponent = ({
   );
 };
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const resolvedParams = await params;
-  return (
-    <>
-      <OrderComponent orderId={resolvedParams.id} />
-    </>
-  );
+export default function Page({ params }: { params: Promise<{ id: string }> }) {
+  const Component = (): JSX.Element => {
+    const [id, setId] = React.useState<string>();
+
+    React.useEffect(() => {
+      params.then(query => {
+        setId(query.id);
+      });
+    }, []);
+
+    if (!id) return <></>;
+
+    return (
+      <>
+        <OrderComponent orderId={id} />
+      </>
+    );
+  };
+
+  return <Component />;
 }
