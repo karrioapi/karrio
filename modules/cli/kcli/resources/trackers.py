@@ -28,11 +28,42 @@ def list_trackers(
     List all trackers with optional filters and pagination.
 
     Examples:
+    ```terminal
     # Get all trackers and display as a table
-    ./bin/cli trackers list --limit 10 | jq -r '.results[] | [.id, .tracking_number, .carrier_name, .status] | @tsv' | column -t -s $'\t'
+    kcli trackers list --limit 10 | jq -r ".results[] | [.id, .tracking_number, .carrier_name, .status] | @tsv" | column -t -s $"\t"
+    ```
 
+    ```terminal
     # Get in-transit trackers and extract specific fields
-    ./bin/cli trackers list --status in_transit --limit 5 | jq '.results[] | {id, tracking: .tracking_number, carrier: .carrier_name, status}'
+    kcli trackers list --status in_transit --limit 5 | jq ".results[] | {id, tracking: .tracking_number, carrier: .carrier_name, status}"
+    ```
+
+    Example Output:
+    ```json
+    {
+      "count": 10,
+      "next": "/v1/trackers?limit=10&offset=10",
+      "previous": null,
+      "results": [
+        {
+          "id": "trk_123456789",
+          "tracking_number": "1Z999AA1234567890",
+          "carrier_name": "ups",
+          "status": "in_transit",
+          "created_at": "2024-03-20T10:30:00Z",
+          "events": [
+            {
+              "date": "2024-03-20T10:30:00Z",
+              "description": "Package picked up",
+              "location": "San Francisco, CA",
+              "code": "PU"
+            }
+          ],
+          "metadata": {}
+        }
+      ]
+    }
+    ```
     """
     params = {
         "carrier_name": carrier_name,
@@ -66,7 +97,31 @@ def retrieve_tracker(
     Retrieve a tracker by ID.
 
     Example:
-    ./bin/cli trackers retrieve trk_123456789 | jq '{id, tracking: .tracking_number, carrier: .carrier_name, status, last_event: .events[-1].description}'
+    ```terminal
+    kcli trackers retrieve trk_123456789 | jq "{id, tracking: .tracking_number, carrier: .carrier_name, status, last_event: .events[-1].description}"
+    ```
+
+    Example Output:
+    ```json
+    {
+      "id": "trk_123456789",
+      "tracking_number": "1Z999AA1234567890",
+      "carrier_name": "ups",
+      "status": "delivered",
+      "created_at": "2024-03-19T15:45:00Z",
+      "events": [
+        {
+          "date": "2024-03-20T14:30:00Z",
+          "description": "Package delivered",
+          "location": "New York, NY",
+          "code": "DL"
+        }
+      ],
+      "metadata": {
+        "order_id": "ORD12345"
+      }
+    }
+    ```
     """
     utils.make_get_request(
         f"v1/trackers/{tracker_id}", pretty_print=pretty, line_numbers=line_numbers
@@ -100,8 +155,30 @@ def create_tracker(
     Create a new tracker.
 
     Example:
-    ./bin/cli trackers create --tracking-number 1Z999AA1234567890 --carrier-name ups \
-        -d info[customer_name]="John Doe" -d info[order_id]=ORD12345 -d metadata[source]=website | jq '{id, tracking: .tracking_number, carrier: .carrier_name, status}'
+    ```terminal
+    kcli trackers create --tracking-number 1Z999AA1234567890 --carrier-name ups \\
+        -d info[customer_name]="John Doe" \\
+        -d info[order_id]=ORD12345 \\
+        -d metadata[source]=website | jq "{id, tracking: .tracking_number, carrier: .carrier_name, status}"
+    ```
+
+    Example Output:
+    ```json
+    {
+      "id": "trk_123456789",
+      "tracking_number": "1Z999AA1234567890",
+      "carrier_name": "ups",
+      "status": "unknown",
+      "created_at": "2024-03-20T10:30:00Z",
+      "info": {
+        "customer_name": "John Doe",
+        "order_id": "ORD12345"
+      },
+      "metadata": {
+        "source": "website"
+      }
+    }
+    ```
     """
     payload = {
         "tracking_number": tracking_number,
@@ -142,8 +219,26 @@ def update_tracker(
     Update an existing tracker.
 
     Example:
-    ./bin/cli trackers update trk_123456789 \
-        -d info[note]="Package delayed" -d metadata[status]=delayed | jq '{id, tracking: .tracking_number, status, note: .info.note}'
+    ```terminal
+    kcli trackers update trk_123456789 \\
+        -d info[note]="Package delayed" \\
+        -d metadata[status]=delayed | jq "{id, tracking: .tracking_number, status, note: .info.note}"
+    ```
+
+    Example Output:
+    ```json
+    {
+      "id": "trk_123456789",
+      "tracking_number": "1Z999AA1234567890",
+      "status": "in_transit",
+      "info": {
+        "note": "Package delayed"
+      },
+      "metadata": {
+        "status": "delayed"
+      }
+    }
+    ```
     """
     payload = {}
 
@@ -176,7 +271,16 @@ def delete_tracker(
     Delete a tracker.
 
     Example:
-    ./bin/cli trackers delete trk_123456789 | jq '{message: "Tracker deleted successfully"}'
+    ```terminal
+    kcli trackers delete trk_123456789 | jq "{message: \"Tracker deleted successfully\"}"
+    ```
+
+    Example Output:
+    ```json
+    {
+      "message": "Tracker deleted successfully"
+    }
+    ```
     """
     utils.make_delete_request(
         f"v1/trackers/{tracker_id}", pretty_print=pretty, line_numbers=line_numbers

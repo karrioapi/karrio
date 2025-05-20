@@ -157,7 +157,7 @@ class Carrier(core.OwnedEntity):
     def display_name(self):
         import karrio.references as references
 
-        return self.credentials.get("display_name") or references.collect_references()[
+        return self.credentials.get("display_name") or references.REFERENCES[
             "carriers"
         ].get(self.ext) or "generic"
 

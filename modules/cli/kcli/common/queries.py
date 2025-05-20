@@ -62,3 +62,40 @@ GET_LOG = """
     }
   }
 """
+
+GET_EVENTS = """
+query get_events($filter: EventFilter) {
+    events(filter: $filter) {
+        page_info {
+            count
+            has_next_page
+            has_previous_page
+            start_cursor
+            end_cursor
+        }
+        edges {
+            node {
+                id
+                type
+                data
+                test_mode
+                pending_webhooks
+                created_at
+            }
+        }
+    }
+}
+"""
+
+GET_EVENT = """
+query get_event($id: String!) {
+    event(id: $id) {
+        id
+        type
+        data
+        test_mode
+        pending_webhooks
+        created_at
+    }
+}
+"""

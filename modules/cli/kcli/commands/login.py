@@ -40,7 +40,9 @@ def login(
     Configure a connection to a Karrio instance.
 
     Example:
-    ./bin/cli login --host http://localhost:5002 --api-key your_api_key_here | jq '{message: "Login successful", host: .host}'
+    ```terminal
+    kcli login --host http://localhost:5002 --api-key your_api_key_here | jq '{message: "Login successful", host: .host}'
+    ```
     """
     if not host:
         host = DEFAULT_HOST
@@ -75,7 +77,9 @@ def logout():
     Remove the saved Karrio configuration.
 
     Example:
-    ./bin/cli logout | jq '{message: "Logout successful"}'
+    ```terminal
+    kcli logout | jq '{message: "Logout successful"}'
+    ```
     """
     config_file = os.path.expanduser("~/.karrio/config")
     try:
@@ -93,7 +97,9 @@ def status():
     Check the current login status and connection to Karrio.
 
     Example:
-    ./bin/cli status | jq '{status: "Connected", host: .host, api_key: "********"}'
+    ```terminal
+    kcli status | jq '{status: "Connected", host: .host, api_key: "********"}'
+    ```
     """
     host, api_key = get_host_and_key()
 

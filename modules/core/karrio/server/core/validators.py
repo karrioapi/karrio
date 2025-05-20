@@ -303,27 +303,26 @@ class Address:
             Dictionary with information about the available validators
         """
         # If references module is available, get validator plugins info
-        if references is not None:
-            refs = references.collect_references()
-            if len(refs.get("address_validators", {})) > 0:
-                # Return information about the first available validator
-                validator_name = next(iter(refs["address_validators"].keys()))
-                validator_class = None
+        refs = references.REFERENCES
+        if len(refs.get("address_validators", {})) > 0:
+            # Return information about the first available validator
+            validator_name = next(iter(refs["address_validators"].keys()))
+            validator_class = None
 
-                # Try to get the validator class from the references
-                try:
-                    # Import the validator module dynamically
-                    import importlib
-                    module = importlib.import_module(f"karrio.validators.{validator_name}")
-                    if hasattr(module, "METADATA"):
-                        validator_class = module.METADATA.Validator
-                except (ImportError, AttributeError) as e:
-                    logger.warning(f"Could not import validator {validator_name}: {e}")
+            # Try to get the validator class from the references
+            try:
+                # Import the validator module dynamically
+                import importlib
+                module = importlib.import_module(f"karrio.validators.{validator_name}")
+                if hasattr(module, "METADATA"):
+                    validator_class = module.METADATA.Validator
+            except (ImportError, AttributeError) as e:
+                logger.warning(f"Could not import validator {validator_name}: {e}")
 
-                if validator_class is not None:
-                    # Return validator info with is_enabled=True
-                    validator_info = validator_class.get_info(is_authenticated)
-                    return {"is_enabled": True, **validator_info}
+            if validator_class is not None:
+                # Return validator info with is_enabled=True
+                validator_info = validator_class.get_info(is_authenticated)
+                return {"is_enabled": True, **validator_info}
 
         # Check for legacy config-based validation
         is_enabled = any(
@@ -378,10 +377,9 @@ class Address:
             Exception: If no validator is configured
         """
         # If references module is available, check for validator plugins
-        if references is not None:
-            refs = references.collect_references()
-            if len(refs.get("address_validators", {})) > 0:
-                # Get the first available validator
+        refs = references.REFERENCES
+        if len(refs.get("address_validators", {})) > 0:
+            # Get the first available validator
                 validator_name = next(iter(refs["address_validators"].keys()))
 
                 # Try to get the validator class from the references
