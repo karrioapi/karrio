@@ -29,11 +29,37 @@ def list_orders(
     List all orders with optional filters and pagination.
 
     Examples:
+    ```terminal
     # Get all orders and display as a table
-    ./bin/cli orders list --limit 15 | jq -r '.results[] | [.id, .status, .created_at, .total_charge.amount] | @tsv' | column -t -s $'\t'
+    kcli orders list --limit 15 | jq -r ".results[] | [.id, .status, .created_at, .total_charge.amount] | @tsv" | column -t -s $"\t"
+    ```
 
+    ```terminal
     # Get pending orders and extract specific fields
-    ./bin/cli orders list --status pending --limit 5 | jq '.results[] | {id, status, created: .created_at, total: .total_charge.amount}'
+    kcli orders list --status pending --limit 5 | jq ".results[] | {id, status, created: .created_at, total: .total_charge.amount}"
+    ```
+
+    Example Output:
+    ```json
+    {
+      "count": 15,
+      "next": "/v1/orders?limit=15&offset=15",
+      "previous": null,
+      "results": [
+        {
+          "id": "ord_123456789",
+          "status": "pending",
+          "created_at": "2024-03-20T10:30:00Z",
+          "total_charge": {
+            "amount": 25.50,
+            "currency": "USD"
+          },
+          "line_items": [],
+          "metadata": {}
+        }
+      ]
+    }
+    ```
     """
     params = {
         "created_after": created_after.isoformat() if created_after else None,
@@ -68,7 +94,9 @@ def retrieve_order(
     Retrieve an order by ID.
 
     Example:
-    ./bin/cli orders retrieve ord_987654321 | jq '{id, status, created: .created_at, total: .total_charge.amount, items: .line_items | length}'
+    ```terminal
+    kcli orders retrieve ord_987654321 | jq "{id, status, created: .created_at, total: .total_charge.amount, items: .line_items | length}"
+    ```
     """
     utils.make_get_request(
         f"v1/orders/{order_id}", pretty_print=pretty, line_numbers=line_numbers
@@ -95,7 +123,9 @@ def cancel_order(
     Cancel an order.
 
     Example:
-    ./bin/cli orders cancel ord_987654321 -d reason=customer_request | jq '{id, status, cancel_reason: .cancellation.reason}'
+    ```terminal
+    kcli orders cancel ord_987654321 -d reason=customer_request | jq "{id, status, cancel_reason: .cancellation.reason}"
+    ```
     """
     payload = {}
 

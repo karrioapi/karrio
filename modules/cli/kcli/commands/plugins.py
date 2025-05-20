@@ -11,6 +11,30 @@ def list_plugins(
 ):
     """
     List all plugins with short description and active status.
+
+    Examples:
+    ```terminal
+    # Get all plugins and display as a table (default)
+    kcli plugins list
+    ```
+
+    ```terminal
+    # Get plugins in JSON format
+    kcli plugins list --pretty | jq ".[] | {id, label, status, enabled}"
+    ```
+
+    Example Output:
+    ```json
+    [
+      {
+        "id": "plugin_id",
+        "label": "Plugin Name",
+        "status": "active",
+        "enabled": true,
+        "description": "A brief description of the plugin functionality"
+      }
+    ]
+    ```
     """
     plugins = references.collect_plugins_data()
     registry = references.Registry()
@@ -52,6 +76,29 @@ def show_plugin(
 ):
     """
     Show full details for a plugin by ID.
+
+    Example:
+    ```terminal
+    kcli plugins show plugin_id --pretty | jq "{id, label, description, status, enabled}"
+    ```
+
+    Example Output:
+    ```json
+    {
+      "id": "plugin_id",
+      "label": "Plugin Name",
+      "description": "A detailed description of the plugin functionality",
+      "status": "active",
+      "enabled": true,
+      "version": "1.0.0",
+      "author": "Plugin Author",
+      "website": "https://plugin-website.com",
+      "dependencies": {
+        "python": ">=3.8",
+        "karrio": ">=2024.12"
+      }
+    }
+    ```
     """
     details = references.get_plugin_details(plugin_id)
     if not details:
@@ -74,6 +121,16 @@ def enable_plugin(
 ):
     """
     Enable a plugin by updating the Django Constance env var associated.
+
+    Example:
+    ```terminal
+    kcli plugins enable plugin_id
+    ```
+
+    Example Output:
+    ```text
+    Plugin 'plugin_id' enabled.
+    ```
     """
     registry = references.Registry()
     key = f"{plugin_id.upper()}_ENABLED"
@@ -90,6 +147,16 @@ def disable_plugin(
 ):
     """
     Disable a plugin by updating the Django Constance env var associated.
+
+    Example:
+    ```terminal
+    kcli plugins disable plugin_id
+    ```
+
+    Example Output:
+    ```text
+    Plugin 'plugin_id' disabled.
+    ```
     """
     registry = references.Registry()
     key = f"{plugin_id.upper()}_ENABLED"

@@ -7,7 +7,8 @@ import karrio.lib as lib
 import kcli.commands.login as login
 from rich.syntax import Syntax
 from rich.console import Console
-from .queries import GET_LOGS, GET_LOG
+from .queries import GET_LOGS, GET_LOG, GET_EVENTS, GET_EVENT
+import os
 
 DEFAULT_FEATURES = [
     "tracking",
@@ -17,6 +18,43 @@ DEFAULT_FEATURES = [
 
 console = Console()
 
+# GraphQL Queries
+GET_EVENTS = """
+query get_events($filter: EventFilter) {
+    events(filter: $filter) {
+        page_info {
+            count
+            has_next_page
+            has_previous_page
+            start_cursor
+            end_cursor
+        }
+        edges {
+            node {
+                id
+                type
+                data
+                test_mode
+                pending_webhooks
+                created_at
+            }
+        }
+    }
+}
+"""
+
+GET_EVENT = """
+query get_event($id: String!) {
+    event(id: $id) {
+        id
+        type
+        data
+        test_mode
+        pending_webhooks
+        created_at
+    }
+}
+"""
 
 def parse_json_or_xml_string(value: str):
     """Parse a string that might be JSON or XML."""
@@ -176,6 +214,15 @@ def make_delete_request(
     )
 
 
+def parse_event_response(data):
+    """Parse the GraphQL response for events."""
+    if "events" in data:
+        return {"events": data["events"]}
+    elif "event" in data:
+        return {"event": data["event"]}
+    return data
+
+
 def make_graphql_request(
     query_name: str,
     variables: dict = None,
@@ -186,7 +233,7 @@ def make_graphql_request(
     Make a GraphQL request to the API.
 
     Args:
-        query_name: Name of the query to execute (e.g., 'get_logs', 'get_log')
+        query_name: Name of the query to execute (e.g., 'get_logs', 'get_log', 'get_events', 'get_event')
         variables: Variables to pass to the query
         pretty_print: Whether to pretty print the output
         line_numbers: Whether to show line numbers in pretty print
@@ -198,6 +245,8 @@ def make_graphql_request(
     query = {
         "get_logs": GET_LOGS,
         "get_log": GET_LOG,
+        "get_events": GET_EVENTS,
+        "get_event": GET_EVENT,
     }.get(query_name)
 
     if not query:
@@ -221,7 +270,11 @@ def make_graphql_request(
             return None
 
         # Extract and parse the data from the response
-        result = parse_log_response(data.get("data", {}))
+        if query_name.startswith("get_event"):
+            result = parse_event_response(data.get("data", {}))
+        else:
+            result = parse_log_response(data.get("data", {}))
+
         format_json_output(result, pretty_print, line_numbers)
         return result
 

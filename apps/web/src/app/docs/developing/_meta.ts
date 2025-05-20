@@ -39,6 +39,10 @@ export default {
     title: 'Carrier Integration',
     type: 'page',
   },
+  "cli-guide": {
+    title: 'CLI Guide',
+    type: 'page',
+  },
   // "address-validation": {
   //   title: 'Address Validation',
   //   type: 'page'

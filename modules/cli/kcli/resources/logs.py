@@ -28,11 +28,49 @@ def list_logs(
     List all logs with optional filters and pagination.
 
     Examples:
+    ```terminal
     # Get all logs and display as a table
-    ./bin/cli logs list --limit 10 | jq -r '.logs.edges[].node | [.id, .method, .status_code, .path] | @tsv' | column -t -s $'\t'
+    kcli logs list --limit 10 | jq -r ".logs.edges[].node | [.id, .method, .status_code, .path] | @tsv" | column -t -s $"\t"
+    ```
 
+    ```terminal
     # Get logs for a specific entity
-    ./bin/cli logs list --entity-id shp_123456789 --limit 5 | jq '.logs.edges[].node | {id, method, status_code, path}'
+    kcli logs list --entity-id shp_123456789 --limit 5 | jq ".logs.edges[].node | {id, method, status_code, path}"
+    ```
+
+    Example Output:
+    ```json
+    {
+      "logs": {
+        "edges": [
+          {
+            "node": {
+              "id": "123",
+              "method": "POST",
+              "status_code": 200,
+              "path": "/v1/shipments",
+              "request": {
+                "headers": {},
+                "body": {}
+              },
+              "response": {
+                "headers": {},
+                "body": {}
+              },
+              "response_ms": 245,
+              "requested_at": "2024-03-20T10:30:00Z"
+            }
+          }
+        ],
+        "pageInfo": {
+          "hasNextPage": true,
+          "hasPreviousPage": false,
+          "startCursor": "YXJyYXljb25uZWN0aW9uOjA=",
+          "endCursor": "YXJyYXljb25uZWN0aW9uOjk="
+        }
+      }
+    }
+    ```
     """
     params = {
         "entity_id": entity_id,
@@ -69,7 +107,41 @@ def retrieve_log(
     Retrieve a log by ID.
 
     Example:
-    ./bin/cli logs retrieve 123 | jq '{id, method, status_code, path, response_ms, requested_at}'
+    ```terminal
+    kcli logs retrieve 123 | jq "{id, method, status_code, path, response_ms, requested_at}"
+    ```
+
+    Example Output:
+    ```json
+    {
+      "log": {
+        "id": "123",
+        "method": "POST",
+        "status_code": 200,
+        "path": "/v1/shipments",
+        "request": {
+          "headers": {
+            "Content-Type": "application/json",
+            "Authorization": "Token <redacted>"
+          },
+          "body": {
+            "shipment_id": "shp_123456789"
+          }
+        },
+        "response": {
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "id": "shp_123456789",
+            "status": "created"
+          }
+        },
+        "response_ms": 245,
+        "requested_at": "2024-03-20T10:30:00Z"
+      }
+    }
+    ```
     """
     utils.make_graphql_request(
         "get_log",

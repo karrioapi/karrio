@@ -41,11 +41,15 @@ def list_shipments(
     List all shipments with optional filters and pagination.
 
     Examples:
+    ```terminal
     # Get all shipments and display as a table
-    ./bin/cli shipments list --limit 10 | jq -r '.results[] | [.id, .status, .carrier_name, .tracking_number] | @tsv' | column -t -s $'\t'
+    kcli shipments list --limit 10 | jq -r '.results[] | [.id, .status, .carrier_name, .tracking_number] | @tsv' | column -t -s $'\t'
+    ```
 
+    ```terminal
     # Get pending shipments and extract specific fields
-    ./bin/cli shipments list --status pending --limit 5 | jq '.results[] | {id, status, carrier: .carrier_name, tracking: .tracking_number}'
+    kcli shipments list --status pending --limit 5 | jq '.results[] | {id, status, carrier: .carrier_name, tracking: .tracking_number}'
+    ```
     """
     params = {
         "address": address,
@@ -92,7 +96,9 @@ def retrieve_shipment(
     Retrieve a shipment by ID.
 
     Example:
-    ./bin/cli shipments retrieve shp_123456789 | jq '{id, status, carrier: .carrier_name, tracking: .tracking_number, created: .created_at}'
+    ```terminal
+    kcli shipments retrieve shp_123456789 | jq '{id, status, carrier: .carrier_name, tracking: .tracking_number, created: .created_at}'
+    ```
     """
     utils.make_get_request(
         f"v1/shipments/{shipment_id}", pretty_print=pretty, line_numbers=line_numbers
@@ -121,13 +127,15 @@ def buy_label(
     Purchase a label for a shipment.
 
     Example:
-    ./bin/cli shipments buy-label shp_123456789 \
+    ```terminal
+    kcli shipments buy-label shp_123456789 \
         --selected-rate-id rate_987654321 \
         --label-type PDF \
         -d payment[paid_by]=sender \
         -d payment[currency]=USD \
         -d reference=order_12345 \
         -d metadata[customer_id]=cust_9876 | jq '{id, status, label: .label_url, tracking: .tracking_number}'
+    ```
     """
     payload = {
         "selected_rate_id": selected_rate_id,
@@ -163,7 +171,9 @@ def cancel_shipment(
     Cancel a shipment.
 
     Example:
-    ./bin/cli shipments cancel shp_123456789 | jq '{id, status, message: .cancellation.message}'
+    ```terminal
+    kcli shipments cancel shp_123456789 | jq '{id, status, message: .cancellation.message}'
+    ```
     """
     utils.make_post_request(
         f"v1/shipments/{shipment_id}/cancel",
@@ -187,7 +197,10 @@ def fetch_rates(
     Fetch rates for a shipment.
 
     Example:
-    ./bin/cli shipments fetch-rates shp_123456789 | jq '.[] | {carrier: .carrier_name, service: .service, total_charge: .total_charge}'
+
+    ```terminal
+    kcli shipments fetch-rates shp_123456789 | jq '.[] | {carrier: .carrier_name, service: .service, total_charge: .total_charge}'
+    ```
     """
     utils.make_post_request(
         f"v1/shipments/{shipment_id}/rates",
