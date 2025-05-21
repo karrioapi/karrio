@@ -2,30 +2,28 @@
 import {
   MetadataEditor,
   MetadataEditorContext,
-} from "@karrio/ui/forms/metadata-editor";
+} from "@karrio/ui/core/forms/metadata-editor";
 import {
   formatAddressLocation,
   formatDateTime,
   formatRef,
   isNone,
 } from "@karrio/lib";
-import { CommodityDescription } from "@karrio/ui/components/commodity-description";
-import { AddressDescription } from "@karrio/ui/components/address-description";
-import { StatusCode } from "@karrio/ui/components/status-code-badge";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { CopiableLink } from "@karrio/ui/components/copiable-link";
-import { StatusBadge } from "@karrio/ui/components/status-badge";
-import { OrderMenu } from "@karrio/ui/components/order-menu";
-import { useLoader } from "@karrio/ui/components/loader";
-import { AppLink } from "@karrio/ui/components/app-link";
-import { Spinner } from "@karrio/ui/components/spinner";
+import { CommodityDescription } from "@karrio/ui/core/components/commodity-description";
+import { AddressDescription } from "@karrio/ui/core/components/address-description";
+import { StatusCode } from "@karrio/ui/core/components/status-code-badge";
+import { CopiableLink } from "@karrio/ui/core/components/copiable-link";
+import { StatusBadge } from "@karrio/ui/core/components/status-badge";
+import { OrderMenu } from "@karrio/ui/core/components/order-menu";
+import { useLoader } from "@karrio/ui/core/components/loader";
+import { AppLink } from "@karrio/ui/core/components/app-link";
+import { Spinner } from "@karrio/ui/core/components/spinner";
 import { MetadataObjectTypeEnum } from "@karrio/types";
 import { useEvents } from "@karrio/hooks/event";
 import { useOrder } from "@karrio/hooks/order";
 import { useLogs } from "@karrio/hooks/log";
 import React from "react";
 
-export const generateMetadata = dynamicMetadata("Orders");
 
 type OrderComponentProps = {
   orderId: string;
@@ -409,14 +407,24 @@ export const OrderComponent = ({
   );
 };
 
-export default function Page({
-  params,
-}: {
-  params: { id: string };
-}): JSX.Element {
-  return (
-    <>
-      <OrderComponent orderId={params.id} />
-    </>
-  );
+export default function Page({ params }: { params: Promise<{ id: string }> }) {
+  const Component = (): JSX.Element => {
+    const [id, setId] = React.useState<string>();
+
+    React.useEffect(() => {
+      params.then(query => {
+        setId(query.id);
+      });
+    }, []);
+
+    if (!id) return <></>;
+
+    return (
+      <>
+        <OrderComponent orderId={id} />
+      </>
+    );
+  };
+
+  return <Component />;
 }

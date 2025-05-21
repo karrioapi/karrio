@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@karrio/insiders/components/ui/button";
+import { Button } from "@karrio/ui/components/ui/button";
 import { Check } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";

@@ -1,0 +1,100 @@
+---
+title: "Carrier connections management"
+date: "2024-03-02"
+description: "Carrier connection and accounts management are the essence of Karrio's ability to serve as a gateway for shipping transactions. It works like a routing engine to use the right accounts and connections for a transaction."
+author: "Karrio Team"
+image: /blog/connections.jpg
+tags: ["carriers", "connections", "integrations", "rates"]
+category: "Launch Week"
+---
+
+Hi there, thank you for engaging with our launch week and checking out what we are creating with Karrio. This post presents the evolution of a very critical feature of Karrio, and it also serves as a keynote to our launch week.
+
+Carrier connection and accounts management are the essence of Karrio's ability to serve as a gateway for shipping transactions. It works like a routing engine to use the right accounts and connections for a transaction.
+
+## What is Karrio?
+
+Karrio is a developer-first and API-first shipping integration platform. We believe that the logistics aspect of commerce hasn't received enough love. Especially now in a time where tech innovation like the MACH architecture has and is still driving innovation in the e-commerce world. From re-platforming projects to the progressive adoption of the modern web, the MACH principles enable large brands and e-commerce merchants to stay relevant and leverage tech for a better consumer shopping experience.
+
+We believe that open and/or composable architectures lower the barrier of entry for adoption and experimentation. An open ecosystem of building blocks solving logistics challenges could lay the foundations for modern and collaborative tech solutions.
+
+Karrio can be viewed as an alternative to other notable shipping APIs such as ShipEngine and EasyPost. However, we are bringing an entirely different approach to shipping integration with an open and composable platform. Karrio is a great alternative for platform builders (OMS, WMS, Marketplace, OSS eCommerce platform, etc.), brands and retailers, as well as enterprises in regulated industries like healthcare who need flexibility and access to a modern shipping platform. They require a solution that keeps them in control, empowers them to build custom logistics processes, and self-host when data privacy is required.
+
+Fun fact: Karrio has interoperability with EasyPost, and ShipEngine is next on our roadmap. What this means is that Karrio puts you back in control of your network of carriers without locking you in. You can still leverage the benefit of these platforms and even enable merchants on your platform to use their existing EasyPost or ShipEngine accounts. With a single integration, they can rate shop and find the right partner for the shipping experience you are designing for. Karrio routes Shipping API calls to the right platform based on existing accounts and connection configurations.
+
+![Karrio Carrier Integration](/blog/connections_diagram.jpg)
+
+With Karrio, you can do business with carriers that are not supported by third-party shipping platforms at a low engineering cost. Chances are someone else is also doing business with the same carrier.
+
+## Building a network of carriers
+
+Karrio has a unique feature called a generic carrier. With this feature, in addition to major carriers with tech infrastructure, you can manage shipments from carriers without APIs and a limited tech stack.
+
+Shipping plays a big part when doing business at scale. It requires partnerships and relationships with a network of carriers. Depending on your needs, various specialized carriers are involved, from last mile to regional, national and international.
+
+On the technical side, it means managing these partnerships through technology software integration and automation for efficiency and cost-saving optimization. That is why we continue to iterate on the carrier management module to process multiple shipping transactions with the peace of mind that the right negotiated account is used for the right shipping operation.
+
+![Carrier Management UI](/blog/connections_ui.jpg)
+
+## Rate sheet management
+
+With this release, we have improved the management of multiple generic carriers and rate sheets for carriers without rating APIs.
+
+Creating, updating and removing rate sheets and linking them to existing carrier connections across environments in live or test mode is now possible. This can be done using the GraphQL management API.
+
+Notice the "carrier" nodes from the query below return a list of carrier connections linked to a rate sheet object.
+
+```
+export const GET_RATE_SHEET = gql`query GetRateSheet($id: String!) {
+  rate_sheet(id: $id) {
+    id
+    name
+    carrier_name
+    services {
+      id
+      object_type
+      service_name
+      service_code
+      carrier_service_code
+      description
+      active
+      currency
+      transit_days
+      transit_time
+      max_width
+      max_height
+      max_length
+      dimension_unit
+      zones {
+        object_type
+        label
+        rate
+        min_weight
+        max_weight
+        transit_days
+        cities
+        postal_codes
+        country_codes
+      }
+    }
+  }
+}`;
+```
+
+Although Karrio is API-first, we are aware of the growing number of users who work with Karrio directly as part of their day-to-day fulfillment operation. Therefore, we also continue to improve the user experience on the dashboard when it comes to custom rate sheet management.
+
+![Rate Sheet UI](/blog/connections_rate_sheet.jpg)
+
+With this update, it is easier to have a big picture and review your rate sheets once they are created on the platform. Right now, the creation of these rate sheets still needs to be improved. We hope to eventually propose a standardized, simple, and familiar CSV or sheet template that could be imported into the platform, making it easier to get the sheets from carriers and upload them to Karrio.
+
+![Rate Sheet Format](/blog/connections_code.jpg)
+
+## What is next?
+
+Tomorrow, we will discuss Karrio's latest dashboard update, our design mindset and direction to cater to our ICP hypothesis.' In the meantime, we want to hear from you. Your feedback, ideas and suggestions are welcome.
+
+## To learn more:
+
+- Follow Karrio on Github
+- Ask us anything at hello@karrio.io
+- Report any issues on our public repository

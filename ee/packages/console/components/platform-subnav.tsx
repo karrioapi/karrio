@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@karrio/insiders/lib/utils";
+import { cn } from "@karrio/ui/lib/utils";
 import React, { useRef, useEffect } from "react";
 
 export function PlatformSubnav() {

@@ -4,7 +4,7 @@ This package is a DHL Universal Tracking extension of the [karrio](https://pypi.
 
 ## Requirements
 
-`Python 3.7+`
+`Python 3.11+`
 
 ## Installation
 

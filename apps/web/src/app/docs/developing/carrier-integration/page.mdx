@@ -1,0 +1,186 @@
+---
+sidebarTitle: Guides
+title: Carrier Integration
+description: Learn how to create a custom carrier integration for Karrio
+tags: [development, integration]
+author: Karrio Team
+---
+
+# Carrier Integration
+
+Karrio is designed to be easily extensible with new carrier integrations. This guide will walk you through the process of creating a custom carrier integration, from setting up the initial structure to implementing the specific API calls and data mapping.
+
+## Overview
+
+Integrating a new carrier into Karrio involves several key steps:
+
+1. **Bootstrapping the Extension**: Creating the initial package structure and boilerplate code
+2. **Generating Schemas**: Converting carrier API documentation into Python types
+3. **Defining Metadata**: Setting up carrier connection settings and data units
+4. **Implementing API Requests**: Creating the communication layer with the carrier's API
+5. **Mapping Data**: Transforming between Karrio's unified format and carrier-specific formats
+6. **Testing and Validation**: Ensuring the integration works correctly
+
+```mermaid
+flowchart TD
+    Start([Begin Integration]) --> Bootstrap[Bootstrap Extension]
+    Bootstrap --> Schemas[Generate Schemas]
+    Schemas --> Metadata[Define Metadata]
+    Metadata --> API[Implement API Requests]
+    API --> Mapping[Implement Data Mapping]
+    Mapping --> Testing[Test Integration]
+    Testing --> TypeScript[Generate TypeScript Types]
+    TypeScript --> End([Complete Integration])
+
+    style Start fill:#f9f,stroke:#333,stroke-width:2px
+    style End fill:#9f9,stroke:#333,stroke-width:2px
+```
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+- A development environment set up for Karrio
+- Basic knowledge of Python programming
+- Access to the carrier's API documentation
+- Understanding of the carrier's API request/response format
+
+## Extension Structure Overview
+
+A Karrio carrier extension follows a standardized structure. Here's the recommended structure:
+
+```text
+modules/connectors/[carrier_name]/
+├── setup.py                # Package setup file
+├── generate                # Schema generation script
+├── schemas/                # API schema files
+│   ├── rate_request.json   # (or .xsd for XML APIs)
+│   ├── rate_response.json
+│   └── ...
+└── karrio/
+    ├── plugins/            # Plugin registration (new structure)
+    │   └── [carrier_name]/
+    │       └── __init__.py    # Contains METADATA
+    ├── mappers/            # Integration layer
+    │   └── [carrier_name]/
+    │       ├── __init__.py    # Contains METADATA (legacy structure)
+    │       ├── mapper.py      # Data mapping functions
+    │       ├── proxy.py       # API client
+    │       └── settings.py    # Connection settings
+    ├── providers/          # Provider-specific code
+    │   └── [carrier_name]/
+    │       ├── __init__.py
+    │       ├── units.py       # Enums & constants
+    │       ├── utils.py       # Utility functions
+    │       ├── error.py       # Error handling
+    │       ├── rate.py        # Rating implementation
+    │       ├── tracking.py    # Tracking implementation
+    │       ├── shipment/      # Shipping implementation
+    │       │   ├── __init__.py
+    │       │   ├── create.py
+    │       │   └── cancel.py
+    │       └── ...
+    └── schemas/            # Generated API data types
+        └── [carrier_name]/
+            ├── __init__.py
+            ├── rate_request.py
+            ├── rate_response.py
+            └── ...
+```
+
+## Extension Anatomy
+
+At the core of Karrio's design is a modular architecture that separates carrier integrations from the unified interface abstraction. Each carrier integration is contained in its own Python package, making it easy to add, update, or remove carriers without affecting the rest of the system.
+
+### Key Components
+
+1. **Metadata**: Defined in the plugin's `__init__.py` file (either in `plugins/[carrier_name]/__init__.py` or `mappers/[carrier_name]/__init__.py`), this identifies your extension to Karrio.
+
+2. **Settings**: The `settings.py` file defines the connection parameters needed for the carrier's API.
+
+3. **Proxy**: The `proxy.py` file implements the API client that communicates with the carrier's services.
+
+4. **Mapper**: The `mapper.py` file contains functions that transform data between Karrio's unified format and carrier-specific formats.
+
+5. **Schemas**: Generated Python data types that represent the carrier's API request and response structures.
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Karrio
+    participant Mapper
+    participant Proxy
+    participant Carrier
+
+    Client->>Karrio: Create Shipment Request
+    Karrio->>Mapper: Transform to Carrier Format
+    Mapper->>Proxy: Send to Carrier
+    Proxy->>Carrier: API Request
+    Carrier->>Proxy: API Response
+    Proxy->>Mapper: Parse Response
+    Mapper->>Karrio: Transform to Unified Format
+    Karrio->>Client: Shipment Details
+```
+
+## Bootstrapping a New Extension
+
+Karrio provides a CLI tool to quickly scaffold a new carrier extension. The tool creates all the necessary files and directories with the appropriate structure.
+
+```bash
+# Run the extension creation command
+kcli add-extension
+```
+
+This will start an interactive process:
+
+```text
+Carrier slug: freight_express            # Unique carrier identifier (e.g., dhl_express, ups, fedex)
+Display name: Freight Express            # Human-readable carrier name (e.g., DHL, UPS, FedEx)
+Features [tracking, rating, shipping]:   # The features you want to implement
+Version [2024.3]:                        # The extension version
+Is XML API? [y/N]:                       # Whether the carrier uses XML for API communication
+```
+
+After confirmation, the tool will generate the extension structure in the `modules/connectors/[carrier_name]` directory.
+
+## Detailed Guides
+
+To complete your carrier integration, follow these detailed guides:
+
+- [Schema Generation](/docs/developing/carrier-integration/schema-generation): Learn how to generate Python data types from carrier API documentation
+- [Metadata](/docs/developing/carrier-integration/metadata): Define carrier connection settings and data units
+- [API Requests](/docs/developing/carrier-integration/api-requests): Implement API calls for different carrier operations
+- [Data Mapping](/docs/developing/carrier-integration/data-mapping): Transform data between Karrio's unified format and carrier-specific formats
+
+## Final Steps
+
+After implementing your carrier integration, you'll need to:
+
+1. Test your integration thoroughly with unit tests
+2. Update the API specs and generate TypeScript types
+3. Set up the carrier in the Karrio dashboard
+
+## Example Integrations
+
+For reference, you can explore existing carrier integrations in the Karrio codebase:
+
+- [Canada Post](https://github.com/karrioapi/karrio/tree/main/modules/connectors/canadapost)
+- [DHL Express](https://github.com/karrioapi/karrio/tree/main/modules/connectors/dhl_express)
+- [FedEx](https://github.com/karrioapi/karrio/tree/main/modules/connectors/fedex)
+- [UPS](https://github.com/karrioapi/karrio/tree/main/modules/connectors/ups)
+
+These integrations cover a variety of API types (REST, SOAP) and carrier features (rating, shipping, tracking, etc.).
+
+## Troubleshooting
+
+If your carrier integration isn't working correctly:
+
+1. Check the extension structure matches the expected format
+2. Ensure the METADATA object is properly defined in the `__init__.py` file
+3. Verify all required dependencies are installed
+4. Look for import errors in the application logs
+5. Use `get_failed_plugin_modules()` to get information about plugins that failed to load
+
+For more information on plugin loading and registration, see the [Plugin Development Guide](/docs/developing/plugin-development).
+
+

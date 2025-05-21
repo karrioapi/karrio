@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 4002",
     "dev:cloud": "next dev --port 4002",
     "build": "next build",
     "start": "next start",
@@ -21,14 +20,8 @@
     "@karrio/lib": "*",
     "@karrio/types": "*",
     "@karrio/ui": "*",
-    "@karrio/insiders": "*",
     "@karrio/console": "*",
-    "tailwindcss": "^3.4.1",
-    "@tailwindcss/forms": "^0.5.7",
-    "@tailwindcss/typography": "^0.5.10",
-    "tailwindcss-animate": "^1.0.7",
-    "autoprefixer": "^10.4.16",
-    "postcss": "^8.4.31"
+    "next-runtime-env": "^3.2.2"
   },
   "devDependencies": {
     "@turbo/gen": "^1.12.4",

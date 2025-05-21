@@ -119,7 +119,7 @@ SYSTEM_CONNECTIONS = {
             {
                 "active": True,
                 "carrier_id": "fedex_express",
-                "carrier_name": "fedex_ws",
+                "carrier_name": "fedex",
                 "id": ANY,
                 "test_mode": False,
             },
@@ -207,6 +207,7 @@ CONNECTION_UPDATE_RESPONSE = {
             "connection": {
                 "carrier_id": "canadapost_updated",
                 "credentials": {
+                    "account_country_code": "CA",
                     "contract_id": "42708517_updated",
                     "customer_number": "2004381_updated",
                     "password": "0bfa9fcb9853d1f51ee57a_updated",

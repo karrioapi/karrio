@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@karrio/insiders/components/ui/button";
+import { Button } from "@karrio/ui/components/ui/button";
 import { useEffect } from "react";
 import { getCalApi } from "@calcom/embed-react";
 import { ReactNode } from "react";

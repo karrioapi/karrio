@@ -3,7 +3,7 @@
 import {
   Card,
   CardContent,
-} from "@karrio/insiders/components/ui/card";
+} from "@karrio/ui/components/ui/card";
 import {
   Table,
   TableBody,
@@ -11,7 +11,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@karrio/insiders/components/ui/table";
+} from "@karrio/ui/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -20,19 +20,19 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@karrio/insiders/components/ui/dialog";
-import { Button } from "@karrio/insiders/components/ui/button";
-import { Input } from "@karrio/insiders/components/ui/input";
-import { Label } from "@karrio/insiders/components/ui/label";
-import { Checkbox } from "@karrio/insiders/components/ui/checkbox";
+} from "@karrio/ui/components/ui/dialog";
+import { Button } from "@karrio/ui/components/ui/button";
+import { Input } from "@karrio/ui/components/ui/input";
+import { Label } from "@karrio/ui/components/ui/label";
+import { Checkbox } from "@karrio/ui/components/ui/checkbox";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@karrio/insiders/components/ui/select";
-import { useToast } from "@karrio/insiders/hooks/use-toast";
+} from "@karrio/ui/components/ui/select";
+import { useToast } from "@karrio/ui/hooks/use-toast";
 import { useState } from "react";
 import { trpc } from "@karrio/trpc/client";
 import { format } from "date-fns";
@@ -42,7 +42,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@karrio/insiders/components/ui/dropdown-menu";
+} from "@karrio/ui/components/ui/dropdown-menu";
 import {
   GetUsers_users_edges_node as User,
 } from "@karrio/types/graphql/admin/types";

@@ -1,6 +1,7 @@
 """ Dynamic configuration editable on runtime powered by django-constance."""
 
 from decouple import config
+import karrio.references as ref
 import karrio.server.settings.base as base
 from karrio.server.settings.email import (
     EMAIL_USE_TLS,
@@ -26,6 +27,9 @@ ORDER_DATA_RETENTION = config("ORDER_DATA_RETENTION", default=183, cast=int)
 TRACKER_DATA_RETENTION = config("TRACKER_DATA_RETENTION", default=183, cast=int)
 SHIPMENT_DATA_RETENTION = config("SHIPMENT_DATA_RETENTION", default=183, cast=int)
 API_LOGS_DATA_RETENTION = config("API_LOGS_DATA_RETENTION", default=92, cast=int)
+
+# registry config
+ENABLE_ALL_PLUGINS_BY_DEFAULT = config("ENABLE_ALL_PLUGINS_BY_DEFAULT", default=True if base.DEBUG else False, cast=bool)
 
 # Create feature flags config only for modules that exist
 FEATURE_FLAGS_CONFIG = {
@@ -126,6 +130,23 @@ FEATURE_FLAGS_CONFIG = {
 # Update fieldsets to only include existing feature flags
 FEATURE_FLAGS_FIELDSET = [k for k, v in FEATURE_FLAGS_CONFIG.items() if v is not None]
 
+# Plugin registry
+ref.collect_failed_plugins_data()
+PLUGIN_REGISTRY = {
+    "ENABLE_ALL_PLUGINS_BY_DEFAULT": (
+        ENABLE_ALL_PLUGINS_BY_DEFAULT,
+        "Enable all plugins by default",
+        bool,
+    ),
+    **{
+        f"{ext.upper()}_ENABLED": (
+            config(f"{ext.upper()}_ENABLED", default=True, cast=bool),
+            f"{metadata.get('label')} plugin",
+            bool,
+        ) for ext, metadata in ref.PLUGIN_METADATA.items()
+    }
+}
+
 
 # Filter out None values and update CONSTANCE_CONFIG
 CONSTANCE_CONFIG = {
@@ -178,6 +199,7 @@ CONSTANCE_CONFIG = {
         int,
     ),
     **{k: v for k, v in FEATURE_FLAGS_CONFIG.items() if v is not None},
+    **PLUGIN_REGISTRY,
 }
 
 CONSTANCE_CONFIG_FIELDSETS = {
@@ -200,4 +222,6 @@ CONSTANCE_CONFIG_FIELDSETS = {
         "API_LOGS_DATA_RETENTION",
     ),
     "Feature Flags": tuple(FEATURE_FLAGS_FIELDSET),
+    "Registry Config": ("ENABLE_ALL_PLUGINS_BY_DEFAULT",),
+    "Registry Plugins": tuple([k for k in PLUGIN_REGISTRY.keys() if not k in ("ENABLE_ALL_PLUGINS_BY_DEFAULT",)]),
 }

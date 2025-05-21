@@ -1,0 +1,53 @@
+---
+title: "Experimental Features"
+date: "2023-02-03"
+description: "With every iteration of the Karrio SDK, new tools improve the developers' experience and your shipping and logistics operations. We aim to actively build a shipping platform that you can leverage to build logistics solutions that can scale and improve your fulfillment."
+author: "Karrio Team"
+image: /blog/experimental.jpg
+tags: ["features", "experimental", "development"]
+category: "Engineering"
+---
+
+With every iteration of the Karrio SDK, new tools improve the developers' experience and your shipping and logistics operations. We aim to actively build a shipping platform that you can leverage to build logistics solutions that can scale and improve your fulfillment.
+
+In Karrio 2023.1, we've released some experimental features that you may want to keep an eye on as we enrich our documentation.
+
+Among our beta features are the following:
+
+- Batch Operations API
+- Karrio Admin API
+- Karrio Apps
+- Team management permissions
+
+## Batch Operations API
+
+The batch API has multiple elements that are either at an alpha or beta phase. We have improved the resource endpoints and error reporting functionalities that precisely flag which items in a batch failed to process.
+
+The batches endpoints offer the following functionalities:
+
+- Batch shipments creation through CSV file or JSON list of shipment data
+- Batch orders creation through CSV file or JSON list of order data
+- Batch trackers creation through CSV file or JSON list of tracking data
+- Export shipments, orders and tracking data for your data warehouse and analytics
+
+There is still some work to be done on our end to improve the developers' experience and the resilience of batch operations. If you are adventurous, we would love to see you test out this feature and provide feedback to help us bring it to maturity.
+
+## Karrio Apps
+
+We have iterated over the foundations for Karrio embedded apps. You can now register apps using the GraphQL API and get assigned an OpenID secret and key to build custom apps on top of Karrio. With future releases, we hope to better guide you in building embedded apps and prepare the Karrio dashboards to allow you to navigate embedded apps. Look out for upcoming releases, and let us know how high on your priorities this feature ranks for you.
+
+## Karrio Admin API
+
+As we deepened our understanding of our user's needs, we realized that an admin API that could simplify the querying usage data for an instance owner is crucial to enterprise and platform users.
+
+As part of the development of Karrio Cloud for platforms, we have laid the foundation for an administration API. The API will allow super users to programmatically query details about shipments created by their instance users in order to manage billing. The API is still in its infancy; however, in this release (2023.1), it can spin up Karrio's dedicated tenants. Please reach out if you have suggestions on the direction of the admin API.
+
+## Karrio Team Management
+
+We have improved our GraphQL management API to handle roles and permissions assignments to team members. We have added all the necessary GraphQL queries and mutations to add or remove roles for team members by the Admin and Owner. The feature will be pushed to the user interface with the upcoming patch releases.
+
+## To learn more:
+
+- Follow karrio on Github
+- Ask us anything at hello@karrio.io
+- Report any issues on our public repository

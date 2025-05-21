@@ -119,6 +119,8 @@ class GatewayInitializer:
         try:
             provider = self.providers[key]
 
+            print("> provider", provider)
+
             def initializer(
                 settings: typing.Union[core.Settings, dict],
                 tracer: utils.Tracer = None,
@@ -145,12 +147,15 @@ class GatewayInitializer:
                     # set cache handle to all carrier settings
                     setattr(settings_value, "cache", _cache)
 
+                    # set tracer handle to all carrier settings
+                    setattr(settings_value, "tracer", _tracer)
+
                     return Gateway(
                         tracer=_tracer,
                         is_hub=provider.is_hub,
                         settings=settings_value,
                         mapper=provider.Mapper(settings_value),
-                        proxy=provider.Proxy(settings_value, tracer=_tracer),
+                        proxy=provider.Proxy(settings_value),
                     )
 
                 except Exception as er:
@@ -165,7 +170,7 @@ class GatewayInitializer:
 
     @property
     def providers(self):
-        return references.import_extensions()
+        return references.collect_providers_data()
 
     @staticmethod
     def get_instance() -> "GatewayInitializer":

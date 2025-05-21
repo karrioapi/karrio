@@ -1,6 +1,5 @@
 "use client";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { FieldInfo } from "@karrio/ui/components/field-info";
+import { FieldInfo } from "@karrio/ui/core/components/field-info";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useSearchParams } from "next/navigation";
 import { getCookie, isNone } from "@karrio/lib";
@@ -8,11 +7,10 @@ import { useForm } from "@tanstack/react-form";
 import { signIn } from "next-auth/react";
 import { p } from "@karrio/lib";
 import Link from "next/link";
-import React from "react";
+import React, { Suspense } from "react";
 
-export const generateMetadata = dynamicMetadata("Sign In");
-
-export default function Page(pageProps: any) {
+// Inner component that uses useSearchParams
+function SignInPage(pageProps: any) {
   const { metadata } = useAPIMetadata();
   const searchParams = useSearchParams();
   const form = useForm({
@@ -153,5 +151,20 @@ export default function Page(pageProps: any) {
         </div>
       )}
     </>
+  );
+}
+
+// Exported component with Suspense
+export default function Page(pageProps: any) {
+  return (
+    <Suspense fallback={
+      <div className="card isolated-card">
+        <div className="card-content has-text-centered">
+          <p className="subtitle">Loading...</p>
+        </div>
+      </div>
+    }>
+      <SignInPage {...pageProps} />
+    </Suspense>
   );
 }

@@ -12,8 +12,7 @@
     "@karrio/hooks": "*",
     "@karrio/lib": "*",
     "@karrio/types": "*",
-    "@karrio/trpc": "*",
-    "@karrio/insiders": "*"
+    "@karrio/trpc": "*"
   },
   "devDependencies": {
     "@karrio/eslint-config-custom": "*",
