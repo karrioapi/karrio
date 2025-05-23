@@ -28,7 +28,7 @@ def parse_error_response(
                     and not isinstance(result["output"], str)
                     and "message" in result.get("output", {})
                     and isinstance(result["output"]["message"], str)
-                    and not result["output"]["alertType"] != "NOTE"
+                    and not result["output"].get("alertType") != "NOTE"
                     else []
                 ),
                 *(
