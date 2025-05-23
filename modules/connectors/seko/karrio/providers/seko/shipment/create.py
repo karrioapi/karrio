@@ -62,6 +62,7 @@ def _extract_details(
             seko_carrier_name=details.CarrierName,
             seko_carrier_type=details.CarrierType,
             rate_provider=details.CarrierName,
+            seko_invoice_response=details.InvoiceResponse,
         ),
     )
 
@@ -92,6 +93,14 @@ def shipment_request(
     [label_format, label_type] = lib.identity(
         provider_units.LabelType.map(payload.label_type).value
         or provider_units.LabelType.PDF.value
+    )
+    commercial_invoice = lib.identity(
+        options.seko_invoice_data.state
+        or next((
+            _["doc_file"] for _ in options.doc_files.state or []
+            if _["doc_type"] == "commercial_invoice"
+            and _.get("doc_format", "PDF").lower() == "pdf"
+        ), None)
     )
 
     # map data to convert karrio model to seko specific type
@@ -173,6 +182,8 @@ def shipment_request(
         DutiesAndTaxesByReceiver=lib.identity(
             customs.duty.paid_by == "recipient" if payload.customs else None
         ),
+        ProductCategory=options.seko_product_category.state,
+        ShipType=options.seko_ship_type.state,
         PrintToPrinter=lib.identity(
             options.seko_print_to_printer.state
             if options.seko_print_to_printer.state is not None
@@ -182,6 +193,7 @@ def shipment_request(
         Carrier=options.seko_carrier.state,
         Service=service,
         CostCentreName=settings.connection_config.cost_center.state,
+        CostCentreId=settings.connection_config.cost_center_id.state,
         CodValue=options.cash_on_delivery.state,
         TaxCollected=lib.identity(
             options.seko_tax_collected.state
@@ -189,6 +201,11 @@ def shipment_request(
             else True
         ),
         AmountCollected=lib.to_money(options.seko_amount_collected.state),
+        CIFValue=options.seko_cif_value.state,
+        FreightValue=options.seko_freight_value.state,
+        SendLabel="Y" if options.seko_send_label.state else None,
+        LabelBranding=settings.connection_config.label_branding.state,
+        InvoiceData=commercial_invoice,
         TaxIds=[
             seko.TaxIDType(
                 IdType=option.code,

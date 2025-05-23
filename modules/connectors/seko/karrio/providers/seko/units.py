@@ -56,8 +56,10 @@ class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
     seko_carrier = lib.OptionEnum("Carrier")
+    seko_ship_type = lib.OptionEnum("ShipType")
     seko_package_id = lib.OptionEnum("PackageId")
     seko_destination_id = lib.OptionEnum("DestinationId")
+    seko_product_category = lib.OptionEnum("ProductCategory")
     origin_instructions = lib.OptionEnum("OriginInstructions")
     destination_instructions = lib.OptionEnum("DestinationInstructions")
     seko_is_saturday_delivery = lib.OptionEnum("IsSaturdayDelivery", bool)
@@ -68,11 +70,19 @@ class ShippingOption(lib.Enum):
     seko_cod_amount = lib.OptionEnum("CODAmount", float)
     seko_reference_2 = lib.OptionEnum("Reference2")
     seko_reference_3 = lib.OptionEnum("Reference3")
+    seko_invoice_data = lib.OptionEnum("InvoiceData")
+    seko_origin_id = lib.OptionEnum("OriginId", int)
+    seko_print_to_printer = lib.OptionEnum("PrintToPrinter", bool)
+    seko_cif_value = lib.OptionEnum("CIFValue", float)
+    seko_freight_value = lib.OptionEnum("FreightValue", float)
+    seko_send_label = lib.OptionEnum("SendLabel", bool)
 
     """ Unified Option type mapping """
     saturday_delivery = seko_is_saturday_delivery
     signature_required = seko_is_signature_required
     email_notification = seko_send_tracking_email
+    doc_files = lib.OptionEnum("doc_files", lib.to_dict)
+    doc_references = lib.OptionEnum("doc_references", lib.to_dict)
 
 
 def shipping_options_initializer(
