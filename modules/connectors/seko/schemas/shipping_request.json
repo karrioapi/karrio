@@ -17,7 +17,8 @@
     "PhoneNumber": "02 9111 01101",
     "Email": "originemail@sekologistics.com",
     "DeliveryInstructions": "Desinationdeliveryinstructions",
-    "RecipientTaxId": "123456"
+    "RecipientTaxId": "123456",
+    "SendTrackingEmail": "true"
   },
   "Destination": {
     "Id": 0,
@@ -35,7 +36,9 @@
     "Email": "destinationemail@test.com",
     "DeliveryInstructions": "LEAVE AT FRONT DOOR",
     "RecipientTaxId": "123456",
-    "SendTrackingEmail": "true"
+    "SendTrackingEmail": "true",
+    "SignOffName": "name",
+    "SignOffRole": "dangerous goods officer"
   },
   "DangerousGoods": {
     "AdditionalHandlingInfo": "sample",
@@ -46,20 +49,7 @@
     "TotalQuantity": 2,
     "TotalKg": 1.2,
     "SignOffName": "name",
-    "SignOffRole": "dangerous goods officer",
-    "LineItems": [
-      {
-        "HarmonizedCode": "sample",
-        "Description": "sample",
-        "ClassOrDivision": "sample",
-        "UNorIDNo": "sample",
-        "PackingGroup": "sample",
-        "SubsidaryRisk": "sample",
-        "Packing": "sample",
-        "PackingInstr": "sample",
-        "Authorization": "sample"
-      }
-    ]
+    "SignOffRole": "dangerous goods officer"
   },
   "Commodities": [
     {
@@ -67,13 +57,14 @@
       "HarmonizedCode": "sample",
       "Units": "1",
       "UnitValue": 50,
+      "UnitCostValue": 45.05,
       "UnitKg": 0.6,
       "Currency": "USD",
       "Country": "AU",
       "IsDG": true,
       "itemSKU": "SKU123",
+      "ImageURL": "https://cdn.omniparcel.com/images/logo_omni_v2_h52.png",
       "DangerousGoodsItem": {
-        "HarmonizedCode": "sample",
         "Description": "sample",
         "ClassOrDivision": "sample",
         "UNorIDNo": "sample",
@@ -82,16 +73,29 @@
         "Packing": "sample",
         "PackingInstr": "sample",
         "Authorization": "sample"
+      },
+      "Manufacturer": {
+        "ManufacturerMID": "sample",
+        "Name": "sample",
+        "Address1": "sample",
+        "Address2": "sample",
+        "City": "sample",
+        "State": "sample",
+        "Zip": "sample"
       }
     },
     {
       "Description": "Food Bar",
+      "HarmonizedCode": "sample",
       "Units": "1",
       "UnitValue": 50,
+      "UnitCostValue": 40.05,
       "UnitKg": 0.6,
       "Currency": "USD",
       "Country": "AU",
       "IsDG": true,
+      "itemSKU": "SKU456",
+      "ImageURL": "https://cdn.omniparcel.com/images/logo_omni_v2_h52.png",
       "DangerousGoodsItem": {
         "Description": "sample",
         "ClassOrDivision": "sample",
@@ -101,6 +105,15 @@
         "Packing": "sample",
         "PackingInstr": "sample",
         "Authorization": "sample"
+      },
+      "Manufacturer": {
+        "ManufacturerMID": "sample",
+        "Name": "sample",
+        "Address1": "sample",
+        "Address2": "sample",
+        "City": "sample",
+        "State": "sample",
+        "Zip": "sample"
       }
     }
   ],
@@ -117,6 +130,8 @@
   ],
   "issignaturerequired": false,
   "DutiesAndTaxesByReceiver": false,
+  "ProductCategory": "sample",
+  "ShipType": "P",
   "PrintToPrinter": true,
   "IncludeLineDetails": true,
   "Carrier": "Omni Parcel",
@@ -125,6 +140,13 @@
   "CodValue": 10.0,
   "TaxCollected": true,
   "AmountCollected": 10.0,
+  "CIFValue": 21.23,
+  "FreightValue": 125.57,
+  "SendLabel": "Y",
+  "LabelBranding": "sample",
+  "InvoiceData": "sample",
+  "CODValue": 10.0,
+  "CostCentreId": "sample",
   "TaxIds": [
     {
       "IdType": "XIEORINumber",
@@ -175,5 +197,7 @@
       "IdNumber": "0121212112"
     }
   ],
-  "Outputs": ["LABEL_PDF_100X150"]
+  "Outputs": [
+    "LABEL_PDF_100X150"
+  ]
 }
