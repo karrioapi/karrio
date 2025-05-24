@@ -97,6 +97,7 @@ class ConnectionConfig(lib.Enum):
 
     currency = lib.OptionEnum("currency", str)
     cost_center = lib.OptionEnum("cost_center", str)
+    cost_center_id = lib.OptionEnum("cost_center_id", str)
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
 

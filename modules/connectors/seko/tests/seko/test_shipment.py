@@ -185,6 +185,7 @@ ParsedShipmentResponse = [
             "seko_site_id": 1153896,
             "seko_carrier_type": 33,
             "seko_carrier_name": "MyChildData",
+            "seko_invoice_response": "No Invoice found",
             "consignment_id": 5473553,
             "consignment_ids": [5473553],
             "tracking_urls": ["http://track.omniparcel.com/1153896-6994008906"],
