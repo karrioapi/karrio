@@ -1,7 +1,6 @@
 import karrio.schemas.dpd.Authentication20 as auth
 import karrio.schemas.dpd.LoginServiceV21 as dpd
 
-import jstruct
 import datetime
 import karrio.lib as lib
 import karrio.core as core

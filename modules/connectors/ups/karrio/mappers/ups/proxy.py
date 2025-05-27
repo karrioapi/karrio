@@ -33,7 +33,7 @@ class Proxy(proxy.Proxy):
         request: lib.Serializable,
     ) -> lib.Deserializable:
         response = self._send_request(
-            "/api/rating/v2205/Shop?additionalinfo=timeintransit",
+            "/api/rating/v2409/Shop?additionalinfo=timeintransit",
             request,
         )
 
@@ -44,7 +44,7 @@ class Proxy(proxy.Proxy):
         request: lib.Serializable,
     ) -> lib.Deserializable:
         response = self._send_request(
-            "/api/shipments/v2205/ship",
+            "/api/shipments/v2409/ship",
             request,
         )
 
@@ -55,7 +55,7 @@ class Proxy(proxy.Proxy):
         request: lib.Serializable,
     ) -> lib.Deserializable:
         response = self._send_request(
-            f"/api/shipments/v2205/void/cancel/{request.serialize().get('shipmentidentificationnumber')}",
+            f"/api/shipments/v2409/void/cancel/{request.serialize().get('shipmentidentificationnumber')}",
             method="DELETE",
         )
 

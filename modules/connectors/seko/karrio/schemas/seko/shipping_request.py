@@ -4,8 +4,7 @@ import typing
 
 
 @attr.s(auto_attribs=True)
-class ItemType:
-    HarmonizedCode: typing.Optional[str] = None
+class DangerousGoodsItemType:
     Description: typing.Optional[str] = None
     ClassOrDivision: typing.Optional[str] = None
     UNorIDNo: typing.Optional[str] = None
@@ -17,17 +16,31 @@ class ItemType:
 
 
 @attr.s(auto_attribs=True)
+class ManufacturerType:
+    ManufacturerMID: typing.Optional[str] = None
+    Name: typing.Optional[str] = None
+    Address1: typing.Optional[str] = None
+    Address2: typing.Optional[str] = None
+    City: typing.Optional[str] = None
+    State: typing.Optional[str] = None
+    Zip: typing.Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
 class CommodityType:
     Description: typing.Optional[str] = None
     HarmonizedCode: typing.Optional[str] = None
     Units: typing.Optional[int] = None
     UnitValue: typing.Optional[int] = None
+    UnitCostValue: typing.Optional[float] = None
     UnitKg: typing.Optional[float] = None
     Currency: typing.Optional[str] = None
     Country: typing.Optional[str] = None
     IsDG: typing.Optional[bool] = None
     itemSKU: typing.Optional[str] = None
-    DangerousGoodsItem: typing.Optional[ItemType] = jstruct.JStruct[ItemType]
+    ImageURL: typing.Optional[str] = None
+    DangerousGoodsItem: typing.Optional[DangerousGoodsItemType] = jstruct.JStruct[DangerousGoodsItemType]
+    Manufacturer: typing.Optional[ManufacturerType] = jstruct.JStruct[ManufacturerType]
 
 
 @attr.s(auto_attribs=True)
@@ -41,7 +54,6 @@ class DangerousGoodsType:
     TotalKg: typing.Optional[float] = None
     SignOffName: typing.Optional[str] = None
     SignOffRole: typing.Optional[str] = None
-    LineItems: typing.Optional[typing.List[ItemType]] = jstruct.JList[ItemType]
 
 
 @attr.s(auto_attribs=True)
@@ -65,6 +77,8 @@ class DestinationType:
     DeliveryInstructions: typing.Optional[str] = None
     RecipientTaxId: typing.Optional[int] = None
     SendTrackingEmail: typing.Optional[bool] = None
+    SignOffName: typing.Optional[str] = None
+    SignOffRole: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
@@ -96,6 +110,8 @@ class ShippingRequestType:
     Packages: typing.Optional[typing.List[PackageType]] = jstruct.JList[PackageType]
     issignaturerequired: typing.Optional[bool] = None
     DutiesAndTaxesByReceiver: typing.Optional[bool] = None
+    ProductCategory: typing.Optional[str] = None
+    ShipType: typing.Optional[str] = None
     PrintToPrinter: typing.Optional[bool] = None
     IncludeLineDetails: typing.Optional[bool] = None
     Carrier: typing.Optional[str] = None
@@ -104,5 +120,12 @@ class ShippingRequestType:
     CodValue: typing.Optional[float] = None
     TaxCollected: typing.Optional[bool] = None
     AmountCollected: typing.Optional[float] = None
+    CIFValue: typing.Optional[float] = None
+    FreightValue: typing.Optional[float] = None
+    SendLabel: typing.Optional[str] = None
+    LabelBranding: typing.Optional[str] = None
+    InvoiceData: typing.Optional[str] = None
+    CODValue: typing.Optional[float] = None
+    CostCentreId: typing.Optional[str] = None
     TaxIds: typing.Optional[typing.List[TaxIDType]] = jstruct.JList[TaxIDType]
     Outputs: typing.Optional[typing.List[str]] = None

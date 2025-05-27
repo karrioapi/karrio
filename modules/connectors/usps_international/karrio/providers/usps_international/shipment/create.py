@@ -74,7 +74,10 @@ def shipment_request(
     if recipient.country_code == units.Country.US.name:
         raise errors.DestinationNotServicedError(recipient.country_code)
 
-    service = provider_units.ShippingService.map(payload.service).value_or_key
+    mail_class = lib.identity(
+        provider_units.ShippingService.to_mail_class(payload.service).value
+        or payload.service
+    )
     options = lib.to_shipping_options(
         payload.options,
         initializer=provider_units.shipping_options_initializer,
@@ -93,6 +96,12 @@ def shipment_request(
     )
     pickup_location = lib.to_address(options.hold_for_pickup_address.state)
     label_type = provider_units.LabelType.map(payload.label_type).value or "PDF"
+
+    package_options = lambda package: lib.identity(
+        package.options
+        if mail_class not in []
+        else {}
+    )
 
     # map data to convert karrio model to usps specific type
     request = [
@@ -156,7 +165,7 @@ def shipment_request(
                 height=package.height.IN,
                 width=package.width.IN,
                 girth=package.girth.value,
-                mailClass=service,
+                mailClass=mail_class,
                 rateIndicator=package.options.usps_rate_indicator.state or "DR",
                 processingCategory=lib.identity(
                     package.options.usps_processing_category.state or "NON_MACHINABLE"
@@ -196,11 +205,14 @@ def shipment_request(
                     for reference in [payload.reference]
                     if reference is not None
                 ],
-                extraServices=[
-                    lib.to_int(_.code)
-                    for __, _ in package.options.items()
-                    if __ not in provider_units.CUSTOM_OPTIONS
-                ],
+                extraServices=lib.identity(
+                    package.options.usps_extra_services.state
+                    or [
+                        lib.to_int(_.code)
+                        for __, _ in package_options(package).items()
+                        if __ not in provider_units.CUSTOM_OPTIONS
+                    ]
+                ),
                 mailingDate=lib.fdate(
                     package.options.shipment_date.state or time.strftime("%Y-%m-%d")
                 ),

@@ -40,7 +40,7 @@ class TestUPSShipment(unittest.TestCase):
         karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
-        self.assertEqual(url, f"{gateway.settings.server_url}/api/shipments/v2205/ship")
+        self.assertEqual(url, f"{gateway.settings.server_url}/api/shipments/v2409/ship")
 
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
@@ -202,7 +202,7 @@ ShipmentRequestJSON = {
         },
         "Request": {
             "RequestOption": "validate",
-            "SubVersion": "v2205",
+            "SubVersion": "v2409",
             "TransactionReference": {"CustomerContext": "Your Customer Context"},
         },
         "Shipment": {
@@ -306,7 +306,7 @@ ShipmentRequestWithPresetJSON = {
         },
         "Request": {
             "RequestOption": "validate",
-            "SubVersion": "v2205",
+            "SubVersion": "v2409",
             "TransactionReference": {"CustomerContext": "Your Customer Context"},
         },
         "Shipment": {

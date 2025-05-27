@@ -347,6 +347,8 @@ class ShippingOption(lib.Enum):
     paperless_trade = fedex_electronic_trade_documents
     doc_files = lib.OptionEnum("doc_files", lib.to_dict)
     doc_references = lib.OptionEnum("doc_references", lib.to_dict)
+    shipper_instructions = lib.OptionEnum("shipper_instructions")
+    recipient_instructions = lib.OptionEnum("recipient_instructions")
     # fmt: on
 
 

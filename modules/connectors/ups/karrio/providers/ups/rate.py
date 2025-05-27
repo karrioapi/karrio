@@ -95,7 +95,10 @@ def _extract_details(
             if name is not None or not amount
         ],
         transit_days=lib.to_int(transit_days),
-        meta=dict(service_name=service.name_or_key),
+        meta=dict(
+            service_name=service.name_or_key,
+            rate_zone=lib.failsafe(lambda: rate.Zone),
+        ),
     )
 
 
@@ -139,7 +142,7 @@ def rate_request(
         RateRequest=ups.RateRequestType(
             Request=ups.RequestType(
                 RequestOption="Shoptimeintransit",
-                SubVersion="2205",
+                SubVersion="2409",
                 TransactionReference=ups.TransactionReferenceType(
                     CustomerContext=payload.reference or "fetch rates",
                 ),

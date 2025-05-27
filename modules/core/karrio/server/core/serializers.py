@@ -666,6 +666,8 @@ class RateRequest(validators.OptionDefaultSerializer):
             "signature_confirmation": true,
             "saturday_delivery": true,
             "is_return": true,
+            "shipper_instructions": "This is a shipper instruction",
+            "recipient_instructions": "This is a recipient instruction",
             "doc_files": [
                 {
                     "doc_type": "commercial_invoice",
@@ -1267,6 +1269,8 @@ class ShippingData(validators.OptionDefaultSerializer):
             "signature_confirmation": true,
             "saturday_delivery": true,
             "is_return": true,
+            "shipper_instructions": "This is a shipper instruction",
+            "recipient_instructions": "This is a recipient instruction",
             "doc_files": [
                 {
                     "doc_type": "commercial_invoice",
@@ -1490,6 +1494,8 @@ class ShipmentContent(serializers.Serializer):
             "signature_confirmation": true,
             "saturday_delivery": true,
             "is_return": true,
+            "shipper_instructions": "This is a shipper instruction",
+            "recipient_instructions": "This is a recipient instruction",
             "doc_files": [
                 {
                     "doc_type": "commercial_invoice",

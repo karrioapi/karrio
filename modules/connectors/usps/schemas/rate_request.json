@@ -1,17 +1,28 @@
 {
-  "originZIPCode": "string",
-  "destinationZIPCode": "string",
-  "weight": 5,
-  "length": 0,
-  "width": 0,
-  "height": 0,
-  "mailClass": "PARCEL_SELECT",
-  "mailClasses": ["USPS_GROUND_ADVANTAGE", "USPS_RETAIL_GROUND"],
-  "priceType": "RETAIL",
-  "mailingDate": "2021-07-01",
-  "accountType": "EPS",
-  "accountNumber": "string",
-  "itemValue": 0,
-  "extraServices": [415]
+  "pricingOptions": [
+    {
+      "priceType": "RETAIL",
+      "paymentAccount": {
+        "accountType": "EPS",
+        "accountNumber": "1000115566"
+      }
+    }
+  ],
+  "originZIPCode": "10001",
+  "destinationZIPCode": "90210",
+  "destinationEntryFacilityType": "NONE",
+  "packageDescription": {
+    "weight": 2.5,
+    "length": 10,
+    "height": 5,
+    "width": 7,
+    "girth": 0.3,
+    "mailClass": "ALL",
+    "extraServices": [
+      365
+    ],
+    "packageValue": 35.00,
+    "mailingDate": "2025-05-27"
+  },
+  "shippingFilter": "PRICE"
 }
-

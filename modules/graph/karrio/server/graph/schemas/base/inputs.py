@@ -113,6 +113,11 @@ class WorkspaceConfigMutationInput(utils.BaseInput):
 
     insured_by_default: typing.Optional[bool] = strawberry.UNSET
 
+    label_message_1: typing.Optional[str] = strawberry.UNSET
+    label_message_2: typing.Optional[str] = strawberry.UNSET
+    label_message_3: typing.Optional[str] = strawberry.UNSET
+    label_logo: typing.Optional[str] = strawberry.UNSET
+
 
 @strawberry.input
 class TokenMutationInput(utils.BaseInput):

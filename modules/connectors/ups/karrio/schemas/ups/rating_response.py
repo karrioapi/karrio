@@ -30,7 +30,7 @@ class FreightDensityRateType:
 @attr.s(auto_attribs=True)
 class AdjustedHeightType:
     Value: typing.Optional[str] = None
-    UnitOfMeasurement: typing.Optional[ResponseStatusType] = jstruct.JStruct[ResponseStatusType]
+    UnitOfMeasurement: typing.Optional[typing.Union[ResponseStatusType, str]] = None
 
 
 @attr.s(auto_attribs=True)
@@ -72,12 +72,20 @@ class GuaranteedDeliveryType:
 
 
 @attr.s(auto_attribs=True)
-class ItemizedChargeType:
+class ItemizedChargeClassType:
     Code: typing.Optional[str] = None
     Description: typing.Optional[str] = None
     CurrencyCode: typing.Optional[str] = None
     MonetaryValue: typing.Optional[str] = None
     SubType: typing.Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
+class RateModifierType:
+    ModifierType: typing.Optional[str] = None
+    ModifierDesc: typing.Optional[str] = None
+    Amount: typing.Optional[str] = None
+    CurrencyCode: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
@@ -88,28 +96,22 @@ class TaxChargeType:
 
 @attr.s(auto_attribs=True)
 class NegotiatedRateChargesType:
-    ItemizedCharges: typing.Optional[typing.List[ItemizedChargeType]] = jstruct.JList[ItemizedChargeType]
+    ItemizedCharges: typing.Optional[typing.List[ItemizedChargeClassType]] = jstruct.JList[ItemizedChargeClassType]
     TaxCharges: typing.Optional[typing.List[TaxChargeType]] = jstruct.JList[TaxChargeType]
     TotalCharge: typing.Optional[BaseServiceChargeType] = jstruct.JStruct[BaseServiceChargeType]
     TotalChargesWithTaxes: typing.Optional[BaseServiceChargeType] = jstruct.JStruct[BaseServiceChargeType]
     BaseServiceCharge: typing.Optional[BaseServiceChargeType] = jstruct.JStruct[BaseServiceChargeType]
+    RateModifier: typing.Optional[typing.List[RateModifierType]] = jstruct.JList[RateModifierType]
 
 
 @attr.s(auto_attribs=True)
 class NegotiatedChargesType:
-    ItemizedCharges: typing.Optional[typing.List[ItemizedChargeType]] = jstruct.JList[ItemizedChargeType]
+    ItemizedCharges: typing.Optional[typing.List[typing.Union[ItemizedChargeClassType, str]]] = None
     BaseServiceCharge: typing.Optional[BaseServiceChargeType] = jstruct.JStruct[BaseServiceChargeType]
     TransportationCharges: typing.Optional[BaseServiceChargeType] = jstruct.JStruct[BaseServiceChargeType]
     ServiceOptionsCharges: typing.Optional[BaseServiceChargeType] = jstruct.JStruct[BaseServiceChargeType]
     TotalCharge: typing.Optional[BaseServiceChargeType] = jstruct.JStruct[BaseServiceChargeType]
-
-
-@attr.s(auto_attribs=True)
-class RateModifierType:
-    ModifierType: typing.Optional[str] = None
-    ModifierDesc: typing.Optional[str] = None
-    CurrencyCode: typing.Optional[str] = None
-    Amount: typing.Optional[str] = None
+    RateModifier: typing.Optional[typing.List[str]] = None
 
 
 @attr.s(auto_attribs=True)
@@ -126,7 +128,7 @@ class RatedPackageType:
     Weight: typing.Optional[str] = None
     BillingWeight: typing.Optional[BillingWeightType] = jstruct.JStruct[BillingWeightType]
     Accessorial: typing.Optional[typing.List[ResponseStatusType]] = jstruct.JList[ResponseStatusType]
-    ItemizedCharges: typing.Optional[typing.List[ItemizedChargeType]] = jstruct.JList[ItemizedChargeType]
+    ItemizedCharges: typing.Optional[typing.List[ItemizedChargeClassType]] = jstruct.JList[ItemizedChargeClassType]
     NegotiatedCharges: typing.Optional[NegotiatedChargesType] = jstruct.JStruct[NegotiatedChargesType]
     RateModifier: typing.Optional[typing.List[RateModifierType]] = jstruct.JList[RateModifierType]
     SimpleRate: typing.Optional[SimpleRateType] = jstruct.JStruct[SimpleRateType]
@@ -160,7 +162,7 @@ class ServiceType:
 class ServiceSummaryType:
     Service: typing.Optional[ServiceType] = jstruct.JStruct[ServiceType]
     GuaranteedIndicator: typing.Optional[str] = None
-    Disclaimer: typing.Optional[typing.List[str]] = None
+    Disclaimer: typing.Optional[typing.Union[typing.List[str], str]] = None
     EstimatedArrival: typing.Optional[EstimatedArrivalType] = jstruct.JStruct[EstimatedArrivalType]
     SaturdayDelivery: typing.Optional[str] = None
     SaturdayDeliveryDisclaimer: typing.Optional[str] = None
@@ -175,7 +177,7 @@ class TimeInTransitType:
     PackageBillType: typing.Optional[str] = None
     ServiceSummary: typing.Optional[ServiceSummaryType] = jstruct.JStruct[ServiceSummaryType]
     AutoDutyCode: typing.Optional[str] = None
-    Disclaimer: typing.Optional[typing.List[str]] = None
+    Disclaimer: typing.Optional[typing.Union[typing.List[str], str]] = None
 
 
 @attr.s(auto_attribs=True)
@@ -189,7 +191,7 @@ class RatedShipmentType:
     BillingWeight: typing.Optional[BillingWeightType] = jstruct.JStruct[BillingWeightType]
     TransportationCharges: typing.Optional[BaseServiceChargeType] = jstruct.JStruct[BaseServiceChargeType]
     BaseServiceCharge: typing.Optional[BaseServiceChargeType] = jstruct.JStruct[BaseServiceChargeType]
-    ItemizedCharges: typing.Optional[typing.List[ItemizedChargeType]] = jstruct.JList[ItemizedChargeType]
+    ItemizedCharges: typing.Optional[typing.List[ItemizedChargeClassType]] = jstruct.JList[ItemizedChargeClassType]
     FRSShipmentData: typing.Optional[FRSShipmentDataType] = jstruct.JStruct[FRSShipmentDataType]
     ServiceOptionsCharges: typing.Optional[BaseServiceChargeType] = jstruct.JStruct[BaseServiceChargeType]
     TaxCharges: typing.Optional[typing.List[TaxChargeType]] = jstruct.JList[TaxChargeType]
@@ -201,6 +203,7 @@ class RatedShipmentType:
     TimeInTransit: typing.Optional[TimeInTransitType] = jstruct.JStruct[TimeInTransitType]
     ScheduledDeliveryDate: typing.Optional[str] = None
     RoarRatedIndicator: typing.Optional[str] = None
+    Zone: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)

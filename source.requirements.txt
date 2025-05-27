@@ -7,7 +7,7 @@ certifi==2025.4.26
 cffi==1.17.1
 charset-normalizer==3.4.2
 click==8.2.1
-cryptography==45.0.2
+cryptography==45.0.3
 cssselect2==0.8.0
 deprecation==2.1.0
 diff-match-patch==20241021
@@ -36,13 +36,13 @@ fonttools==4.58.0
 graphql-core==3.2.6
 gunicorn==23.0.0
 h11==0.16.0
-hiredis==3.1.1
+hiredis==3.2.1
 huey==2.5.3
 idna==3.10
 inflection==0.5.1
 Jinja2==3.1.6
 jsonfield==3.1.0
-jsonschema==4.23.0
+jsonschema==4.24.0
 jsonschema-specifications==2025.4.1
 jstruct==2021.11
 jwcrypto==1.5.6
@@ -110,7 +110,7 @@ oauthlib==3.2.2
 packaging==25.0
 phonenumbers==9.0.5
 pillow==11.2.1
-posthog==4.0.1
+posthog==4.2.0
 psutil==7.0.0
 psycopg2-binary==2.9.10
 py-soap==2020.3.2
@@ -130,11 +130,11 @@ qrcode==7.4.2
 redis==6.1.0
 referencing==0.36.2
 requests==2.32.3
-rpds-py==0.25.0
+rpds-py==0.25.1
 sentry-sdk==2.29.1
 six==1.17.0
 sqlparse==0.5.3
-strawberry-graphql==0.270.0
+strawberry-graphql==0.270.2
 tablib==3.8.0
 tinycss2==1.4.0
 tinyhtml5==2.0.0

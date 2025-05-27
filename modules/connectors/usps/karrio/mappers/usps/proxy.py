@@ -12,7 +12,7 @@ class Proxy(proxy.Proxy):
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.run_asynchronously(
             lambda _: lib.request(
-                url=f"{self.settings.server_url}/prices/v3/total-rates/search",
+                url=f"{self.settings.server_url}/shipments/v3/options/search",
                 data=lib.to_json(_),
                 trace=self.trace_as("json"),
                 method="POST",

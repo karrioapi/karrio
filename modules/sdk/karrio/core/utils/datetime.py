@@ -1,5 +1,5 @@
 import typing
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 
 class DATEFORMAT:
@@ -124,7 +124,7 @@ class DATEFORMAT:
     def ftimestamp(timestamp: typing.Union[str, int] = None):
         if timestamp is None:
             return None
-        return datetime.utcfromtimestamp(float(timestamp)).strftime("%H:%M")
+        return datetime.fromtimestamp(float(timestamp), timezone.utc).strftime("%H:%M")
 
     @staticmethod
     def is_business_hour(dt: datetime):
