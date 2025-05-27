@@ -5692,6 +5692,10 @@ export interface WorkspaceConfigMutationInput {
   customs_nip_number?: string | null;
   customs_vat_registration_number?: string | null;
   insured_by_default?: boolean | null;
+  label_message_1?: string | null;
+  label_message_2?: string | null;
+  label_message_3?: string | null;
+  label_logo?: string | null;
 }
 
 // null

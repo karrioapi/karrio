@@ -152,6 +152,27 @@ class WorkspaceConfigType:
 
     # endregion
 
+    # label printing
+    # region
+
+    @strawberry.field
+    def label_message_1(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+        return self.config.get("label_message_1")
+
+    @strawberry.field
+    def label_message_2(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+        return self.config.get("label_message_2")
+
+    @strawberry.field
+    def label_message_3(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+        return self.config.get("label_message_3")
+
+    @strawberry.field
+    def label_logo(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+        return self.config.get("label_logo")
+
+    # endregion
+
     @staticmethod
     @utils.authentication_required
     def resolve(info) -> typing.Optional["WorkspaceConfigType"]:

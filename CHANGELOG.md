@@ -2,6 +2,25 @@
 
 ## Changes
 
+### Feat
+
+- feat: add support for commercial invoice upload as base64 to `seko` for international shipments.
+- feat: update seko shipping request with additional options
+- feat: add support for passing shipper and recipient instructions for supported carriers
+- feat: refactor `usps` extensions rating to use `Shipping Option 3.0` and enriched rate metadata (with zone and more)
+- feat: upgrade `usps` integration to `v2409` versions.
+- feat: collect rate zones for `ups`, `fedex` and `usps*`
+
+### Fix
+
+- fix: resolve warnings of the datetime library  (by @emmanuel-ferdman)
+- fix: for `fedex` shipment cancellation response parsing (by @leonowski)
+
+
+# Karrio 2024.12.8
+
+## Changes
+
 ### Fix
 
 - apply usps fix by @leonowski

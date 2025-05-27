@@ -1760,18 +1760,18 @@ export default function CreateLabelPage(pageProps: any) {
                       {/* @ts-ignore */}
                       <TextAreaField
                         rows={2}
-                        label="Shipping instructions"
+                        label="Shipper instructions"
                         autoComplete="off"
-                        name="instructions"
+                        name="shipper_instructions"
                         className="is-small"
-                        placeholder="shipping instructions"
-                        defaultValue={shipment.options?.instructions}
-                        required={!isNone(shipment.options?.instructions)}
+                        placeholder="shipper instructions"
+                        defaultValue={shipment.options?.shipper_instructions}
+                        required={!isNone(shipment.options?.shipper_instructions)}
                         onChange={(e) =>
                           onChange({
                             options: {
                               ...shipment.options,
-                              instructions: e.target.value,
+                              shipper_instructions: e.target.value,
                             },
                           })
                         }

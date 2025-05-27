@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2024.12.8`.
+    The current version is `2024.12.9`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2024.12.8
+  version: 2024.12.9
 paths:
   /:
     get:
@@ -683,6 +683,7 @@ paths:
                   value:
                   - carrier_name: dhl_express
                     display_name: DHL Express
+                    integration_status: production-ready
                     connection_fields:
                       site_id:
                         name: site_id
@@ -5052,6 +5053,14 @@ components:
         display_name:
           type: string
           description: The carrier verbose name.
+        integration_status:
+          enum:
+          - in-development
+          - beta
+          - production-ready
+          type: string
+          x-spec-enum-id: 12bd7dd6ff9a3b05
+          description: The carrier integration status.
         capabilities:
           type: array
           items:
@@ -5071,6 +5080,7 @@ components:
       required:
       - carrier_name
       - display_name
+      - integration_status
     Charge:
       type: object
       properties:
@@ -9047,14 +9057,16 @@ components:
             \           \"shipping_date\": \"2020-01-01T00:00\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
             : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
-            : true,\n            \"doc_files\": [\n                {\n           \
-            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
-            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
-            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
-            pdf\",\n                }\n            ],\n            \"doc_references\"\
-            : [\n                {\n                    \"doc_id\": \"123456789\"\
-            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        </details>\n        "
+            : true,\n            \"shipper_instructions\": \"This is a shipper instruction\"\
+            ,\n            \"recipient_instructions\": \"This is a recipient instruction\"\
+            ,\n            \"doc_files\": [\n                {\n                 \
+            \   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\"\
+            : \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\"\
+            ,\n                    \"doc_format\": \"pdf\",\n                }\n \
+            \           ],\n            \"doc_references\": [\n                {\n\
+            \                    \"doc_id\": \"123456789\",\n                    \"\
+            doc_type\": \"commercial_invoice\",\n                }\n            ],\n\
+            \        }\n        </details>\n        "
         reference:
           type: string
           nullable: true
@@ -9154,14 +9166,16 @@ components:
             \           \"shipping_date\": \"2020-01-01T00:00\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
             : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
-            : true,\n            \"doc_files\": [\n                {\n           \
-            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
-            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
-            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
-            pdf\",\n                }\n            ],\n            \"doc_references\"\
-            : [\n                {\n                    \"doc_id\": \"123456789\"\
-            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        </details>\n        "
+            : true,\n            \"shipper_instructions\": \"This is a shipper instruction\"\
+            ,\n            \"recipient_instructions\": \"This is a recipient instruction\"\
+            ,\n            \"doc_files\": [\n                {\n                 \
+            \   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\"\
+            : \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\"\
+            ,\n                    \"doc_format\": \"pdf\",\n                }\n \
+            \           ],\n            \"doc_references\": [\n                {\n\
+            \                    \"doc_id\": \"123456789\",\n                    \"\
+            doc_type\": \"commercial_invoice\",\n                }\n            ],\n\
+            \        }\n        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -9360,14 +9374,16 @@ components:
             \           \"shipping_date\": \"2020-01-01T00:00\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
             : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
-            : true,\n            \"doc_files\": [\n                {\n           \
-            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
-            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
-            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
-            pdf\",\n                }\n            ],\n            \"doc_references\"\
-            : [\n                {\n                    \"doc_id\": \"123456789\"\
-            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        </details>\n        "
+            : true,\n            \"shipper_instructions\": \"This is a shipper instruction\"\
+            ,\n            \"recipient_instructions\": \"This is a recipient instruction\"\
+            ,\n            \"doc_files\": [\n                {\n                 \
+            \   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\"\
+            : \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\"\
+            ,\n                    \"doc_format\": \"pdf\",\n                }\n \
+            \           ],\n            \"doc_references\": [\n                {\n\
+            \                    \"doc_id\": \"123456789\",\n                    \"\
+            doc_type\": \"commercial_invoice\",\n                }\n            ],\n\
+            \        }\n        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -9474,14 +9490,16 @@ components:
             \           \"shipping_date\": \"2020-01-01T00:00\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
             : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
-            : true,\n            \"doc_files\": [\n                {\n           \
-            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
-            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
-            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
-            pdf\",\n                }\n            ],\n            \"doc_references\"\
-            : [\n                {\n                    \"doc_id\": \"123456789\"\
-            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        </details>\n        "
+            : true,\n            \"shipper_instructions\": \"This is a shipper instruction\"\
+            ,\n            \"recipient_instructions\": \"This is a recipient instruction\"\
+            ,\n            \"doc_files\": [\n                {\n                 \
+            \   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\"\
+            : \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\"\
+            ,\n                    \"doc_format\": \"pdf\",\n                }\n \
+            \           ],\n            \"doc_references\": [\n                {\n\
+            \                    \"doc_id\": \"123456789\",\n                    \"\
+            doc_type\": \"commercial_invoice\",\n                }\n            ],\n\
+            \        }\n        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -9721,14 +9739,16 @@ components:
             \           \"shipping_date\": \"2020-01-01T00:00\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
             : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
-            : true,\n            \"doc_files\": [\n                {\n           \
-            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
-            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
-            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
-            pdf\",\n                }\n            ],\n            \"doc_references\"\
-            : [\n                {\n                    \"doc_id\": \"123456789\"\
-            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        </details>\n        "
+            : true,\n            \"shipper_instructions\": \"This is a shipper instruction\"\
+            ,\n            \"recipient_instructions\": \"This is a recipient instruction\"\
+            ,\n            \"doc_files\": [\n                {\n                 \
+            \   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\"\
+            : \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\"\
+            ,\n                    \"doc_format\": \"pdf\",\n                }\n \
+            \           ],\n            \"doc_references\": [\n                {\n\
+            \                    \"doc_id\": \"123456789\",\n                    \"\
+            doc_type\": \"commercial_invoice\",\n                }\n            ],\n\
+            \        }\n        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -9840,14 +9860,16 @@ components:
             \           \"shipping_date\": \"2020-01-01T00:00\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
             : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
-            : true,\n            \"doc_files\": [\n                {\n           \
-            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
-            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
-            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
-            pdf\",\n                }\n            ],\n            \"doc_references\"\
-            : [\n                {\n                    \"doc_id\": \"123456789\"\
-            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        </details>\n        "
+            : true,\n            \"shipper_instructions\": \"This is a shipper instruction\"\
+            ,\n            \"recipient_instructions\": \"This is a recipient instruction\"\
+            ,\n            \"doc_files\": [\n                {\n                 \
+            \   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\"\
+            : \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\"\
+            ,\n                    \"doc_format\": \"pdf\",\n                }\n \
+            \           ],\n            \"doc_references\": [\n                {\n\
+            \                    \"doc_id\": \"123456789\",\n                    \"\
+            doc_type\": \"commercial_invoice\",\n                }\n            ],\n\
+            \        }\n        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -11539,12 +11561,10 @@ tags:
     ### USPS
     | Code         | Service Name |
     | ------------ | ------------ |
-    | usps_standard_service | USPS Standard Service |
-    | usps_parcel_select | PARCEL_SELECT |
     | usps_parcel_select_lightweight | PARCEL_SELECT_LIGHTWEIGHT |
+    | usps_parcel_select | PARCEL_SELECT |
     | usps_priority_mail_express | PRIORITY_MAIL_EXPRESS |
     | usps_priority_mail | PRIORITY_MAIL |
-    | usps_first_class_package_service | FIRST-CLASS_PACKAGE_SERVICE |
     | usps_library_mail | LIBRARY_MAIL |
     | usps_media_mail | MEDIA_MAIL |
     | usps_bound_printed_matter | BOUND_PRINTED_MATTER |
@@ -11554,7 +11574,7 @@ tags:
     | usps_connect_regional | USPS_CONNECT_REGIONAL |
     | usps_connect_same_day | USPS_CONNECT_SAME_DAY |
     | usps_ground_advantage | USPS_GROUND_ADVANTAGE |
-    | usps_retail_ground | USPS_RETAIL_GROUND |
+    | usps_domestic_matter_for_the_blind | DOMESTIC_MATTER_FOR_THE_BLIND |
     | usps_all | ALL |
 
     ### UPS
