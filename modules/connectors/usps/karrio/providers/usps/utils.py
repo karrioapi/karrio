@@ -90,6 +90,10 @@ class ConnectionConfig(lib.Enum):
     permit_number = lib.OptionEnum("permit_number")
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
+    rate_shipping_filter = lib.OptionEnum(
+        "rate_shipping_filter",
+        lib.units.create_enum("RateShippingFilter", ["PRICE", "SERVICE"])
+    )
 
 
 def oauth2_login(settings: Settings):
@@ -109,6 +113,7 @@ def oauth2_login(settings: Settings):
         "locations",
         "international-labels",
         "prices",
+        "shipments",
     ]
     result = lib.request(
         url=f"{settings.server_url}/oauth2/v3/token",

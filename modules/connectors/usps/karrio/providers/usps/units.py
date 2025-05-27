@@ -1,3 +1,4 @@
+import typing
 import karrio.lib as lib
 import karrio.core.units as units
 
@@ -91,12 +92,10 @@ class LabelType(lib.StrEnum):
 class ShippingService(lib.StrEnum):
     """Carrier specific services"""
 
-    usps_standard_service = "USPS Standard Service"
-    usps_parcel_select = "PARCEL_SELECT"
     usps_parcel_select_lightweight = "PARCEL_SELECT_LIGHTWEIGHT"
+    usps_parcel_select = "PARCEL_SELECT"
     usps_priority_mail_express = "PRIORITY_MAIL_EXPRESS"
     usps_priority_mail = "PRIORITY_MAIL"
-    usps_first_class_package_service = "FIRST-CLASS_PACKAGE_SERVICE"
     usps_library_mail = "LIBRARY_MAIL"
     usps_media_mail = "MEDIA_MAIL"
     usps_bound_printed_matter = "BOUND_PRINTED_MATTER"
@@ -106,8 +105,70 @@ class ShippingService(lib.StrEnum):
     usps_connect_regional = "USPS_CONNECT_REGIONAL"
     usps_connect_same_day = "USPS_CONNECT_SAME_DAY"
     usps_ground_advantage = "USPS_GROUND_ADVANTAGE"
-    usps_retail_ground = "USPS_RETAIL_GROUND"
+    usps_domestic_matter_for_the_blind = "DOMESTIC_MATTER_FOR_THE_BLIND"
     usps_all = "ALL"
+
+    @classmethod
+    def to_product_code(cls, product_name: str) -> str:
+        """Convert product description to product code
+
+        to_product_code("Priority Mail Padded Flat Rate Envelope") -> "usps_priority_mail_padded_flat_rate_envelope"
+
+        Args:
+            product_name (str): Product name
+
+        Returns:
+            str: Service code
+        """
+        return lib.to_slug("usps", product_name)
+
+    @classmethod
+    def to_product_name(cls, product_code: str) -> str:
+        """Convert product code to product name
+
+        to_product_name("usps_priority_mail_padded_flat_rate_envelope") -> "USPS PRIORITY MAIL PADDED FLAT RATE ENVELOPE"
+
+        Args:
+            product_code (str): Service code
+
+        Returns:
+            str: Product name
+        """
+        if not product_code:
+            return ""
+
+        # Remove the "usps_" prefix if present
+        if product_code.startswith("usps_"):
+            product_code = product_code[5:]  # Remove "usps_" (5 characters)
+
+        # Replace underscores with spaces and convert to uppercase
+        product_name = product_code.replace("_", " ").upper()
+
+        # Add "USPS" prefix
+        return f"USPS {product_name}"
+
+    @classmethod
+    def to_mail_class(cls, product_code: str) -> typing.Optional['ShippingService']:
+        """Convert product code to mail class
+
+        to_mail_class("usps_priority_mail_padded_flat_rate_envelope") -> "PRIORITY_MAIL"
+
+        Args:
+            product_code (str): Service code
+
+        Returns:
+            str: ShippingService
+        """
+        return ShippingService.map(
+            next((
+                service for service in list(cls) if service.name in product_code
+            ), None)
+        )
+
+
+INCOMPATIBLE_SERVICES = [
+    ShippingService.usps_ground_advantage.name,  # type: ignore
+]
 
 
 class ShippingOption(lib.Enum):
@@ -174,14 +235,16 @@ class ShippingOption(lib.Enum):
     usps_sunday_delivery = lib.OptionEnum("981", bool)
 
     """ Custom Options """
+    usps_mail_class = lib.OptionEnum("mailClass", ShippingService)
     usps_facility_id = lib.OptionEnum("facilityId")
-    usps_machinable = lib.OptionEnum("machinable", bool)
+    usps_machinable_piece = lib.OptionEnum("machinable", bool)
     usps_hold_for_pickup = lib.OptionEnum("holdForPickup", bool)
     usps_processing_category = lib.OptionEnum("processingCategory")
     usps_carrier_release = lib.OptionEnum("carrierRelease", bool)
     usps_physical_signature_required = lib.OptionEnum("physicalSignatureRequired", bool)
-    usps_rate_indicator = lib.OptionEnum("rateIndicator", lib.units.create_enum("rateIndicator", ["DN", "DR", "SP"]))
     usps_price_type = lib.OptionEnum("priceType", lib.units.create_enum("priceType", ["RETAIL", "COMMERCIAL", "CONTRACT"]))
+    usps_destination_entry_facility_type = lib.OptionEnum("destinationEntryFacilityType", lib.units.create_enum("destinationEntryFacilityType", ["NONE", "DESTINATION_NETWORK_DISTRIBUTION_CENTER", "DESTINATION_SECTIONAL_CENTER_FACILITY", "DESTINATION_DELIVERY_UNIT", "DESTINATION_SERVICE_HUB"]))
+    usps_extra_services = lib.OptionEnum("extraServices", list)
 
     """ Unified Option type mapping """
     cash_on_delivery = usps_collect_on_delivery
@@ -192,14 +255,16 @@ class ShippingOption(lib.Enum):
 
 
 CUSTOM_OPTIONS = [
+    ShippingOption.usps_mail_class.name,
+    ShippingOption.usps_extra_services.name,
     ShippingOption.usps_facility_id.name,
-    ShippingOption.usps_machinable.name,
+    ShippingOption.usps_machinable_piece.name,
     ShippingOption.usps_hold_for_pickup.name,
     ShippingOption.usps_processing_category.name,
     ShippingOption.usps_carrier_release.name,
     ShippingOption.usps_physical_signature_required.name,
-    ShippingOption.usps_rate_indicator.name,
     ShippingOption.usps_price_type.name,
+    ShippingOption.usps_destination_entry_facility_type.name,
 ]
 
 
