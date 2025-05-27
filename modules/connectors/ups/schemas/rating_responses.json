@@ -240,7 +240,9 @@
                 "Description": "string"
               },
               "GuaranteedIndicator": "string",
-              "Disclaimer": ["string"],
+              "Disclaimer": [
+                "string"
+              ],
               "EstimatedArrival": {
                 "Arrival": {
                   "Date": "string",
@@ -264,7 +266,9 @@
               "SundayDeliveryDisclaimer": "string"
             },
             "AutoDutyCode": "string",
-            "Disclaimer": ["string"]
+            "Disclaimer": [
+              "string"
+            ]
           },
           "ScheduledDeliveryDate": "string",
           "RoarRatedIndicator": "string"
@@ -275,7 +279,10 @@
   {
     "RateResponse": {
       "Response": {
-        "ResponseStatus": { "Code": "1", "Description": "Success" },
+        "ResponseStatus": {
+          "Code": "1",
+          "Description": "Success"
+        },
         "Alert": [
           {
             "Code": "112081",
@@ -299,7 +306,10 @@
               "Description": "Taxes are included in the shipping cost and apply to the transportation charges but additional duties/taxes may apply and are not reflected in the total amount due."
             }
           ],
-          "Service": { "Code": "01", "Description": "" },
+          "Service": {
+            "Code": "01",
+            "Description": ""
+          },
           "RatedShipmentAlert": [
             {
               "Code": "112081",
@@ -313,7 +323,10 @@
           "RatingMethod": "01",
           "BillableWeightCalculationMethod": "02",
           "BillingWeight": {
-            "UnitOfMeasurement": { "Code": "LBS", "Description": "Pounds" },
+            "UnitOfMeasurement": {
+              "Code": "LBS",
+              "Description": "Pounds"
+            },
             "Weight": "6.0"
           },
           "TransportationCharges": {
@@ -331,13 +344,20 @@
               "MonetaryValue": "17.85",
               "SubType": "Extended Area Destination"
             },
-            { "Code": "375", "CurrencyCode": "CAD", "MonetaryValue": "13.52" }
+            {
+              "Code": "375",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "13.52"
+            }
           ],
           "ServiceOptionsCharges": {
             "CurrencyCode": "CAD",
             "MonetaryValue": "0.00"
           },
-          "TotalCharges": { "CurrencyCode": "CAD", "MonetaryValue": "81.97" },
+          "TotalCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "81.97"
+          },
           "NegotiatedRateCharges": {
             "BaseServiceCharge": {
               "CurrencyCode": "CAD",
@@ -350,19 +370,34 @@
                 "MonetaryValue": "6.25",
                 "SubType": "Extended Area Destination"
               },
-              { "Code": "375", "CurrencyCode": "CAD", "MonetaryValue": "4.23" }
+              {
+                "Code": "375",
+                "CurrencyCode": "CAD",
+                "MonetaryValue": "4.23"
+              }
             ],
             "TaxCharges": [
-              { "Type": "QST", "MonetaryValue": "2.56" },
-              { "Type": "GST", "MonetaryValue": "1.28" }
+              {
+                "Type": "QST",
+                "MonetaryValue": "2.56"
+              },
+              {
+                "Type": "GST",
+                "MonetaryValue": "1.28"
+              }
             ],
-            "TotalCharge": { "CurrencyCode": "CAD", "MonetaryValue": "25.66" },
+            "TotalCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "25.66"
+            },
             "TotalChargesWithTaxes": {
               "CurrencyCode": "CAD",
               "MonetaryValue": "29.50"
             }
           },
-          "GuaranteedDelivery": { "BusinessDaysInTransit": "1" },
+          "GuaranteedDelivery": {
+            "BusinessDaysInTransit": "1"
+          },
           "RatedPackage": [
             {
               "NegotiatedCharges": {
@@ -394,11 +429,19 @@
               "All services are guaranteed if shipment is paid for in full by a payee in Canada. Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance."
             ],
             "ServiceSummary": {
-              "Service": { "Description": "UPS Express" },
+              "Service": {
+                "Description": "UPS Express"
+              },
               "EstimatedArrival": {
-                "Arrival": { "Date": "20240912", "Time": "233000" },
+                "Arrival": {
+                  "Date": "20240912",
+                  "Time": "233000"
+                },
                 "BusinessDaysInTransit": "1",
-                "Pickup": { "Date": "20240911", "Time": "163000" },
+                "Pickup": {
+                  "Date": "20240911",
+                  "Time": "163000"
+                },
                 "DayOfWeek": "THU",
                 "CustomerCenterCutoff": "153000",
                 "TotalTransitDays": "1"
@@ -415,7 +458,10 @@
               "Description": "Taxes are included in the shipping cost and apply to the transportation charges but additional duties/taxes may apply and are not reflected in the total amount due."
             }
           ],
-          "Service": { "Code": "13", "Description": "" },
+          "Service": {
+            "Code": "13",
+            "Description": ""
+          },
           "RatedShipmentAlert": [
             {
               "Code": "112081",
@@ -429,7 +475,10 @@
           "RatingMethod": "01",
           "BillableWeightCalculationMethod": "02",
           "BillingWeight": {
-            "UnitOfMeasurement": { "Code": "LBS", "Description": "Pounds" },
+            "UnitOfMeasurement": {
+              "Code": "LBS",
+              "Description": "Pounds"
+            },
             "Weight": "6.0"
           },
           "TransportationCharges": {
@@ -447,13 +496,20 @@
               "MonetaryValue": "17.85",
               "SubType": "Extended Area Destination"
             },
-            { "Code": "375", "CurrencyCode": "CAD", "MonetaryValue": "12.17" }
+            {
+              "Code": "375",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "12.17"
+            }
           ],
           "ServiceOptionsCharges": {
             "CurrencyCode": "CAD",
             "MonetaryValue": "0.00"
           },
-          "TotalCharges": { "CurrencyCode": "CAD", "MonetaryValue": "73.77" },
+          "TotalCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "73.77"
+          },
           "NegotiatedRateCharges": {
             "BaseServiceCharge": {
               "CurrencyCode": "CAD",
@@ -466,19 +522,34 @@
                 "MonetaryValue": "6.25",
                 "SubType": "Extended Area Destination"
               },
-              { "Code": "375", "CurrencyCode": "CAD", "MonetaryValue": "3.83" }
+              {
+                "Code": "375",
+                "CurrencyCode": "CAD",
+                "MonetaryValue": "3.83"
+              }
             ],
             "TaxCharges": [
-              { "Type": "QST", "MonetaryValue": "2.31" },
-              { "Type": "GST", "MonetaryValue": "1.16" }
+              {
+                "Type": "QST",
+                "MonetaryValue": "2.31"
+              },
+              {
+                "Type": "GST",
+                "MonetaryValue": "1.16"
+              }
             ],
-            "TotalCharge": { "CurrencyCode": "CAD", "MonetaryValue": "23.20" },
+            "TotalCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "23.20"
+            },
             "TotalChargesWithTaxes": {
               "CurrencyCode": "CAD",
               "MonetaryValue": "26.67"
             }
           },
-          "GuaranteedDelivery": { "BusinessDaysInTransit": "1" },
+          "GuaranteedDelivery": {
+            "BusinessDaysInTransit": "1"
+          },
           "RatedPackage": [
             {
               "NegotiatedCharges": {
@@ -510,11 +581,19 @@
               "All services are guaranteed if shipment is paid for in full by a payee in Canada. Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance."
             ],
             "ServiceSummary": {
-              "Service": { "Description": "UPS Express Saver" },
+              "Service": {
+                "Description": "UPS Express Saver"
+              },
               "EstimatedArrival": {
-                "Arrival": { "Date": "20240912", "Time": "233000" },
+                "Arrival": {
+                  "Date": "20240912",
+                  "Time": "233000"
+                },
                 "BusinessDaysInTransit": "1",
-                "Pickup": { "Date": "20240911", "Time": "163000" },
+                "Pickup": {
+                  "Date": "20240911",
+                  "Time": "163000"
+                },
                 "DayOfWeek": "THU",
                 "CustomerCenterCutoff": "153000",
                 "TotalTransitDays": "1"
@@ -531,7 +610,10 @@
               "Description": "Taxes are included in the shipping cost and apply to the transportation charges but additional duties/taxes may apply and are not reflected in the total amount due."
             }
           ],
-          "Service": { "Code": "02", "Description": "" },
+          "Service": {
+            "Code": "02",
+            "Description": ""
+          },
           "RatedShipmentAlert": [
             {
               "Code": "112081",
@@ -545,7 +627,10 @@
           "RatingMethod": "01",
           "BillableWeightCalculationMethod": "02",
           "BillingWeight": {
-            "UnitOfMeasurement": { "Code": "LBS", "Description": "Pounds" },
+            "UnitOfMeasurement": {
+              "Code": "LBS",
+              "Description": "Pounds"
+            },
             "Weight": "6.0"
           },
           "TransportationCharges": {
@@ -563,13 +648,20 @@
               "MonetaryValue": "17.85",
               "SubType": "Extended Area Destination"
             },
-            { "Code": "375", "CurrencyCode": "CAD", "MonetaryValue": "11.53" }
+            {
+              "Code": "375",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "11.53"
+            }
           ],
           "ServiceOptionsCharges": {
             "CurrencyCode": "CAD",
             "MonetaryValue": "0.00"
           },
-          "TotalCharges": { "CurrencyCode": "CAD", "MonetaryValue": "69.93" },
+          "TotalCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "69.93"
+          },
           "NegotiatedRateCharges": {
             "BaseServiceCharge": {
               "CurrencyCode": "CAD",
@@ -582,13 +674,26 @@
                 "MonetaryValue": "6.25",
                 "SubType": "Extended Area Destination"
               },
-              { "Code": "375", "CurrencyCode": "CAD", "MonetaryValue": "3.63" }
+              {
+                "Code": "375",
+                "CurrencyCode": "CAD",
+                "MonetaryValue": "3.63"
+              }
             ],
             "TaxCharges": [
-              { "Type": "QST", "MonetaryValue": "2.20" },
-              { "Type": "GST", "MonetaryValue": "1.10" }
+              {
+                "Type": "QST",
+                "MonetaryValue": "2.20"
+              },
+              {
+                "Type": "GST",
+                "MonetaryValue": "1.10"
+              }
             ],
-            "TotalCharge": { "CurrencyCode": "CAD", "MonetaryValue": "22.04" },
+            "TotalCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "22.04"
+            },
             "TotalChargesWithTaxes": {
               "CurrencyCode": "CAD",
               "MonetaryValue": "25.34"
@@ -625,11 +730,19 @@
               "All services are guaranteed if shipment is paid for in full by a payee in Canada. Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance."
             ],
             "ServiceSummary": {
-              "Service": { "Description": "UPS Expedited" },
+              "Service": {
+                "Description": "UPS Expedited"
+              },
               "EstimatedArrival": {
-                "Arrival": { "Date": "20240912", "Time": "233000" },
+                "Arrival": {
+                  "Date": "20240912",
+                  "Time": "233000"
+                },
                 "BusinessDaysInTransit": "1",
-                "Pickup": { "Date": "20240911", "Time": "163000" },
+                "Pickup": {
+                  "Date": "20240911",
+                  "Time": "163000"
+                },
                 "DayOfWeek": "THU",
                 "CustomerCenterCutoff": "153000",
                 "TotalTransitDays": "1"
@@ -646,7 +759,10 @@
               "Description": "Taxes are included in the shipping cost and apply to the transportation charges but additional duties/taxes may apply and are not reflected in the total amount due."
             }
           ],
-          "Service": { "Code": "11", "Description": "" },
+          "Service": {
+            "Code": "11",
+            "Description": ""
+          },
           "RatedShipmentAlert": [
             {
               "Code": "112081",
@@ -660,7 +776,10 @@
           "RatingMethod": "01",
           "BillableWeightCalculationMethod": "02",
           "BillingWeight": {
-            "UnitOfMeasurement": { "Code": "LBS", "Description": "Pounds" },
+            "UnitOfMeasurement": {
+              "Code": "LBS",
+              "Description": "Pounds"
+            },
             "Weight": "6.0"
           },
           "TransportationCharges": {
@@ -678,13 +797,20 @@
               "MonetaryValue": "17.85",
               "SubType": "Extended Area Destination"
             },
-            { "Code": "375", "CurrencyCode": "CAD", "MonetaryValue": "14.59" }
+            {
+              "Code": "375",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "14.59"
+            }
           ],
           "ServiceOptionsCharges": {
             "CurrencyCode": "CAD",
             "MonetaryValue": "0.00"
           },
-          "TotalCharges": { "CurrencyCode": "CAD", "MonetaryValue": "70.69" },
+          "TotalCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "70.69"
+          },
           "NegotiatedRateCharges": {
             "BaseServiceCharge": {
               "CurrencyCode": "CAD",
@@ -697,13 +823,26 @@
                 "MonetaryValue": "6.25",
                 "SubType": "Extended Area Destination"
               },
-              { "Code": "375", "CurrencyCode": "CAD", "MonetaryValue": "3.81" }
+              {
+                "Code": "375",
+                "CurrencyCode": "CAD",
+                "MonetaryValue": "3.81"
+              }
             ],
             "TaxCharges": [
-              { "Type": "QST", "MonetaryValue": "1.84" },
-              { "Type": "GST", "MonetaryValue": "0.92" }
+              {
+                "Type": "QST",
+                "MonetaryValue": "1.84"
+              },
+              {
+                "Type": "GST",
+                "MonetaryValue": "0.92"
+              }
             ],
-            "TotalCharge": { "CurrencyCode": "CAD", "MonetaryValue": "18.47" },
+            "TotalCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "18.47"
+            },
             "TotalChargesWithTaxes": {
               "CurrencyCode": "CAD",
               "MonetaryValue": "21.23"
@@ -740,11 +879,19 @@
               "All services are guaranteed if shipment is paid for in full by a payee in Canada. Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance."
             ],
             "ServiceSummary": {
-              "Service": { "Description": "UPS Standard" },
+              "Service": {
+                "Description": "UPS Standard"
+              },
               "EstimatedArrival": {
-                "Arrival": { "Date": "20240912", "Time": "233000" },
+                "Arrival": {
+                  "Date": "20240912",
+                  "Time": "233000"
+                },
                 "BusinessDaysInTransit": "1",
-                "Pickup": { "Date": "20240911", "Time": "163000" },
+                "Pickup": {
+                  "Date": "20240911",
+                  "Time": "163000"
+                },
                 "DayOfWeek": "THU",
                 "CustomerCenterCutoff": "153000",
                 "TotalTransitDays": "1"
@@ -1009,7 +1156,9 @@
               "SundayDeliveryDisclaimer": "string"
             },
             "AutoDutyCode": "string",
-            "Disclaimer": ["string"]
+            "Disclaimer": [
+              "string"
+            ]
           },
           "GuaranteedDelivery": {
             "BusinessDaysInTransit": "string",
@@ -1025,7 +1174,10 @@
   {
     "RateResponse": {
       "Response": {
-        "ResponseStatus": { "Code": "1", "Description": "Success" },
+        "ResponseStatus": {
+          "Code": "1",
+          "Description": "Success"
+        },
         "Alert": [
           {
             "Code": "110971",
@@ -1049,7 +1201,10 @@
               "Description": "Additional duties/taxes may apply and are not reflected in the total amount due."
             }
           ],
-          "Service": { "Code": "14", "Description": "" },
+          "Service": {
+            "Code": "14",
+            "Description": ""
+          },
           "RatedShipmentAlert": [
             {
               "Code": "110971",
@@ -1063,7 +1218,10 @@
           "RatingMethod": "01",
           "BillableWeightCalculationMethod": "02",
           "BillingWeight": {
-            "UnitOfMeasurement": { "Code": "LBS", "Description": "Pounds" },
+            "UnitOfMeasurement": {
+              "Code": "LBS",
+              "Description": "Pounds"
+            },
             "Weight": "2.0"
           },
           "TransportationCharges": {
@@ -1085,7 +1243,10 @@
             "CurrencyCode": "CAD",
             "MonetaryValue": "0.00"
           },
-          "TotalCharges": { "CurrencyCode": "CAD", "MonetaryValue": "275.95" },
+          "TotalCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "275.95"
+          },
           "NegotiatedRateCharges": {
             "BaseServiceCharge": {
               "CurrencyCode": "CAD",
@@ -1098,7 +1259,10 @@
                 "MonetaryValue": "11.83"
               }
             ],
-            "TotalCharge": { "CurrencyCode": "CAD", "MonetaryValue": "66.23" }
+            "TotalCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "66.23"
+            }
           },
           "RatedPackage": [
             {
@@ -1131,11 +1295,19 @@
               "All services are guaranteed if shipment is paid for in full by a payee in Canada or the United States. Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance."
             ],
             "ServiceSummary": {
-              "Service": { "Description": "UPS Express Early" },
+              "Service": {
+                "Description": "UPS Express Early"
+              },
               "EstimatedArrival": {
-                "Arrival": { "Date": "20241002", "Time": "083000" },
+                "Arrival": {
+                  "Date": "20241002",
+                  "Time": "083000"
+                },
                 "BusinessDaysInTransit": "1",
-                "Pickup": { "Date": "20241001", "Time": "163000" },
+                "Pickup": {
+                  "Date": "20241001",
+                  "Time": "163000"
+                },
                 "DayOfWeek": "WED",
                 "CustomerCenterCutoff": "153000",
                 "TotalTransitDays": "1"
@@ -1152,7 +1324,10 @@
               "Description": "Additional duties/taxes may apply and are not reflected in the total amount due."
             }
           ],
-          "Service": { "Code": "07", "Description": "" },
+          "Service": {
+            "Code": "07",
+            "Description": ""
+          },
           "RatedShipmentAlert": [
             {
               "Code": "110971",
@@ -1166,7 +1341,10 @@
           "RatingMethod": "01",
           "BillableWeightCalculationMethod": "02",
           "BillingWeight": {
-            "UnitOfMeasurement": { "Code": "LBS", "Description": "Pounds" },
+            "UnitOfMeasurement": {
+              "Code": "LBS",
+              "Description": "Pounds"
+            },
             "Weight": "2.0"
           },
           "TransportationCharges": {
@@ -1188,7 +1366,10 @@
             "CurrencyCode": "CAD",
             "MonetaryValue": "0.00"
           },
-          "TotalCharges": { "CurrencyCode": "CAD", "MonetaryValue": "130.64" },
+          "TotalCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "130.64"
+          },
           "NegotiatedRateCharges": {
             "BaseServiceCharge": {
               "CurrencyCode": "CAD",
@@ -1201,7 +1382,10 @@
                 "MonetaryValue": "5.60"
               }
             ],
-            "TotalCharge": { "CurrencyCode": "CAD", "MonetaryValue": "31.35" }
+            "TotalCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "31.35"
+            }
           },
           "RatedPackage": [
             {
@@ -1234,11 +1418,19 @@
               "All services are guaranteed if shipment is paid for in full by a payee in Canada or the United States. Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance."
             ],
             "ServiceSummary": {
-              "Service": { "Description": "UPS Worldwide Express" },
+              "Service": {
+                "Description": "UPS Worldwide Express"
+              },
               "EstimatedArrival": {
-                "Arrival": { "Date": "20241002", "Time": "120000" },
+                "Arrival": {
+                  "Date": "20241002",
+                  "Time": "120000"
+                },
                 "BusinessDaysInTransit": "1",
-                "Pickup": { "Date": "20241001", "Time": "163000" },
+                "Pickup": {
+                  "Date": "20241001",
+                  "Time": "163000"
+                },
                 "DayOfWeek": "WED",
                 "CustomerCenterCutoff": "153000",
                 "TotalTransitDays": "1"
@@ -1255,7 +1447,10 @@
               "Description": "Additional duties/taxes may apply and are not reflected in the total amount due."
             }
           ],
-          "Service": { "Code": "65", "Description": "" },
+          "Service": {
+            "Code": "65",
+            "Description": ""
+          },
           "RatedShipmentAlert": [
             {
               "Code": "110971",
@@ -1269,7 +1464,10 @@
           "RatingMethod": "01",
           "BillableWeightCalculationMethod": "02",
           "BillingWeight": {
-            "UnitOfMeasurement": { "Code": "LBS", "Description": "Pounds" },
+            "UnitOfMeasurement": {
+              "Code": "LBS",
+              "Description": "Pounds"
+            },
             "Weight": "2.0"
           },
           "TransportationCharges": {
@@ -1291,7 +1489,10 @@
             "CurrencyCode": "CAD",
             "MonetaryValue": "0.00"
           },
-          "TotalCharges": { "CurrencyCode": "CAD", "MonetaryValue": "124.19" },
+          "TotalCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "124.19"
+          },
           "NegotiatedRateCharges": {
             "BaseServiceCharge": {
               "CurrencyCode": "CAD",
@@ -1304,7 +1505,10 @@
                 "MonetaryValue": "3.11"
               }
             ],
-            "TotalCharge": { "CurrencyCode": "CAD", "MonetaryValue": "17.39" }
+            "TotalCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "17.39"
+            }
           },
           "RatedPackage": [
             {
@@ -1337,11 +1541,19 @@
               "All services are guaranteed if shipment is paid for in full by a payee in Canada or the United States. Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance."
             ],
             "ServiceSummary": {
-              "Service": { "Description": "UPS Express Saver" },
+              "Service": {
+                "Description": "UPS Express Saver"
+              },
               "EstimatedArrival": {
-                "Arrival": { "Date": "20241002", "Time": "233000" },
+                "Arrival": {
+                  "Date": "20241002",
+                  "Time": "233000"
+                },
                 "BusinessDaysInTransit": "1",
-                "Pickup": { "Date": "20241001", "Time": "163000" },
+                "Pickup": {
+                  "Date": "20241001",
+                  "Time": "163000"
+                },
                 "DayOfWeek": "WED",
                 "CustomerCenterCutoff": "153000",
                 "TotalTransitDays": "1"
@@ -1358,7 +1570,10 @@
               "Description": "Additional duties/taxes may apply and are not reflected in the total amount due."
             }
           ],
-          "Service": { "Code": "08", "Description": "" },
+          "Service": {
+            "Code": "08",
+            "Description": ""
+          },
           "RatedShipmentAlert": [
             {
               "Code": "110971",
@@ -1372,7 +1587,10 @@
           "RatingMethod": "01",
           "BillableWeightCalculationMethod": "02",
           "BillingWeight": {
-            "UnitOfMeasurement": { "Code": "LBS", "Description": "Pounds" },
+            "UnitOfMeasurement": {
+              "Code": "LBS",
+              "Description": "Pounds"
+            },
             "Weight": "2.0"
           },
           "TransportationCharges": {
@@ -1394,7 +1612,10 @@
             "CurrencyCode": "CAD",
             "MonetaryValue": "0.00"
           },
-          "TotalCharges": { "CurrencyCode": "CAD", "MonetaryValue": "107.63" },
+          "TotalCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "107.63"
+          },
           "NegotiatedRateCharges": {
             "BaseServiceCharge": {
               "CurrencyCode": "CAD",
@@ -1407,7 +1628,10 @@
                 "MonetaryValue": "2.69"
               }
             ],
-            "TotalCharge": { "CurrencyCode": "CAD", "MonetaryValue": "15.07" }
+            "TotalCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "15.07"
+            }
           },
           "RatedPackage": [
             {
@@ -1440,11 +1664,19 @@
               "All services are guaranteed if shipment is paid for in full by a payee in Canada or the United States. Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance."
             ],
             "ServiceSummary": {
-              "Service": { "Description": "UPS Worldwide Expedited" },
+              "Service": {
+                "Description": "UPS Worldwide Expedited"
+              },
               "EstimatedArrival": {
-                "Arrival": { "Date": "20241003", "Time": "233000" },
+                "Arrival": {
+                  "Date": "20241003",
+                  "Time": "233000"
+                },
                 "BusinessDaysInTransit": "2",
-                "Pickup": { "Date": "20241001", "Time": "163000" },
+                "Pickup": {
+                  "Date": "20241001",
+                  "Time": "163000"
+                },
                 "DayOfWeek": "THU",
                 "CustomerCenterCutoff": "153000",
                 "TotalTransitDays": "2"
@@ -1460,7 +1692,10 @@
               "Description": "Additional duties/taxes may apply and are not reflected in the total amount due."
             }
           ],
-          "Service": { "Code": "12", "Description": "" },
+          "Service": {
+            "Code": "12",
+            "Description": ""
+          },
           "RatedShipmentAlert": [
             {
               "Code": "110971",
@@ -1474,7 +1709,10 @@
           "RatingMethod": "01",
           "BillableWeightCalculationMethod": "02",
           "BillingWeight": {
-            "UnitOfMeasurement": { "Code": "LBS", "Description": "Pounds" },
+            "UnitOfMeasurement": {
+              "Code": "LBS",
+              "Description": "Pounds"
+            },
             "Weight": "2.0"
           },
           "TransportationCharges": {
@@ -1496,7 +1734,10 @@
             "CurrencyCode": "CAD",
             "MonetaryValue": "0.00"
           },
-          "TotalCharges": { "CurrencyCode": "CAD", "MonetaryValue": "94.36" },
+          "TotalCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "94.36"
+          },
           "NegotiatedRateCharges": {
             "BaseServiceCharge": {
               "CurrencyCode": "CAD",
@@ -1509,7 +1750,10 @@
                 "MonetaryValue": "4.05"
               }
             ],
-            "TotalCharge": { "CurrencyCode": "CAD", "MonetaryValue": "22.65" }
+            "TotalCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "22.65"
+            }
           },
           "RatedPackage": [
             {
@@ -1542,11 +1786,19 @@
               "All services are guaranteed if shipment is paid for in full by a payee in Canada or the United States. Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance."
             ],
             "ServiceSummary": {
-              "Service": { "Description": "UPS 3 Day Select" },
+              "Service": {
+                "Description": "UPS 3 Day Select"
+              },
               "EstimatedArrival": {
-                "Arrival": { "Date": "20241004", "Time": "233000" },
+                "Arrival": {
+                  "Date": "20241004",
+                  "Time": "233000"
+                },
                 "BusinessDaysInTransit": "3",
-                "Pickup": { "Date": "20241001", "Time": "163000" },
+                "Pickup": {
+                  "Date": "20241001",
+                  "Time": "163000"
+                },
                 "DayOfWeek": "FRI",
                 "CustomerCenterCutoff": "153000",
                 "TotalTransitDays": "3"
@@ -1562,7 +1814,10 @@
               "Description": "Additional duties/taxes may apply and are not reflected in the total amount due."
             }
           ],
-          "Service": { "Code": "11", "Description": "" },
+          "Service": {
+            "Code": "11",
+            "Description": ""
+          },
           "RatedShipmentAlert": [
             {
               "Code": "110971",
@@ -1576,7 +1831,10 @@
           "RatingMethod": "01",
           "BillableWeightCalculationMethod": "02",
           "BillingWeight": {
-            "UnitOfMeasurement": { "Code": "LBS", "Description": "Pounds" },
+            "UnitOfMeasurement": {
+              "Code": "LBS",
+              "Description": "Pounds"
+            },
             "Weight": "2.0"
           },
           "TransportationCharges": {
@@ -1588,7 +1846,11 @@
             "MonetaryValue": "35.30"
           },
           "ItemizedCharges": [
-            { "Code": "375", "CurrencyCode": "CAD", "MonetaryValue": "5.11" },
+            {
+              "Code": "375",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "5.11"
+            },
             {
               "Code": "434",
               "CurrencyCode": "CAD",
@@ -1600,14 +1862,21 @@
             "CurrencyCode": "CAD",
             "MonetaryValue": "0.00"
           },
-          "TotalCharges": { "CurrencyCode": "CAD", "MonetaryValue": "40.96" },
+          "TotalCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "40.96"
+          },
           "NegotiatedRateCharges": {
             "BaseServiceCharge": {
               "CurrencyCode": "CAD",
               "MonetaryValue": "11.30"
             },
             "ItemizedCharges": [
-              { "Code": "375", "CurrencyCode": "CAD", "MonetaryValue": "1.69" },
+              {
+                "Code": "375",
+                "CurrencyCode": "CAD",
+                "MonetaryValue": "1.69"
+              },
               {
                 "Code": "434",
                 "CurrencyCode": "CAD",
@@ -1615,7 +1884,10 @@
                 "SubType": "Surge_Fee_Commercial"
               }
             ],
-            "TotalCharge": { "CurrencyCode": "CAD", "MonetaryValue": "13.54" }
+            "TotalCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "13.54"
+            }
           },
           "RatedPackage": [
             {
@@ -1648,14 +1920,1144 @@
               "All services are guaranteed if shipment is paid for in full by a payee in Canada or the United States. Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance."
             ],
             "ServiceSummary": {
-              "Service": { "Description": "UPS Standard" },
+              "Service": {
+                "Description": "UPS Standard"
+              },
               "EstimatedArrival": {
-                "Arrival": { "Date": "20241004", "Time": "233000" },
+                "Arrival": {
+                  "Date": "20241004",
+                  "Time": "233000"
+                },
                 "BusinessDaysInTransit": "3",
-                "Pickup": { "Date": "20241001", "Time": "163000" },
+                "Pickup": {
+                  "Date": "20241001",
+                  "Time": "163000"
+                },
                 "DayOfWeek": "FRI",
                 "CustomerCenterCutoff": "153000",
                 "TotalTransitDays": "3"
+              },
+              "SaturdayDelivery": "0",
+              "SundayDelivery": "0"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "RateResponse": {
+      "Response": {
+        "ResponseStatus": {
+          "Code": "s",
+          "Description": "string"
+        },
+        "Alert": [
+          {
+            "Code": "string",
+            "Description": "string"
+          }
+        ],
+        "AlertDetail": [
+          {
+            "Code": "string",
+            "Description": "string",
+            "ElementLevelInformation": {
+              "Level": "s",
+              "ElementIdentifier": [
+                {
+                  "Code": null,
+                  "Value": null
+                }
+              ]
+            }
+          }
+        ],
+        "TransactionReference": {
+          "CustomerContext": "string"
+        }
+      },
+      "RatedShipment": [
+        {
+          "Disclaimer": [
+            {
+              "Code": "st",
+              "Description": "string"
+            }
+          ],
+          "Service": {
+            "Code": "str",
+            "Description": "string"
+          },
+          "RateChart": "s",
+          "Zone": "stri",
+          "RatedShipmentAlert": [
+            {
+              "Code": "string",
+              "Description": "string"
+            }
+          ],
+          "BillableWeightCalculationMethod": "st",
+          "RatingMethod": "st",
+          "BillingWeight": {
+            "UnitOfMeasurement": {
+              "Code": "str",
+              "Description": "string"
+            },
+            "Weight": "strin"
+          },
+          "TransportationCharges": {
+            "CurrencyCode": "str",
+            "MonetaryValue": "string"
+          },
+          "BaseServiceCharge": {
+            "CurrencyCode": "str",
+            "MonetaryValue": "string"
+          },
+          "ItemizedCharges": [
+            {
+              "Code": "str",
+              "Description": "string",
+              "CurrencyCode": "str",
+              "MonetaryValue": "string",
+              "SubType": "string"
+            }
+          ],
+          "FRSShipmentData": {
+            "TransportationCharges": {
+              "GrossCharge": {
+                "CurrencyCode": "str",
+                "MonetaryValue": "string"
+              },
+              "DiscountAmount": {
+                "CurrencyCode": "str",
+                "MonetaryValue": "string"
+              },
+              "DiscountPercentage": "st",
+              "NetCharge": {
+                "CurrencyCode": "str",
+                "MonetaryValue": "string"
+              }
+            },
+            "FreightDensityRate": {
+              "Density": "strin",
+              "TotalCubicFeet": "string"
+            },
+            "HandlingUnits": [
+              {
+                "Quantity": "string",
+                "Type": {
+                  "Code": "",
+                  "Description": ""
+                },
+                "Dimensions": {
+                  "UnitOfMeasurement": "",
+                  "Length": "",
+                  "Width": "",
+                  "Height": ""
+                },
+                "AdjustedHeight": {
+                  "Value": "",
+                  "UnitOfMeasurement": ""
+                }
+              }
+            ]
+          },
+          "ServiceOptionsCharges": {
+            "CurrencyCode": "str",
+            "MonetaryValue": "string"
+          },
+          "TaxCharges": [
+            {
+              "Type": "string",
+              "MonetaryValue": "string"
+            }
+          ],
+          "TotalCharges": {
+            "CurrencyCode": "str",
+            "MonetaryValue": "string"
+          },
+          "TotalChargesWithTaxes": {
+            "CurrencyCode": "str",
+            "MonetaryValue": "string"
+          },
+          "NegotiatedRateCharges": {
+            "BaseServiceCharge": {
+              "CurrencyCode": "str",
+              "MonetaryValue": "string"
+            },
+            "RateModifier": [
+              {
+                "ModifierType": "str",
+                "ModifierDesc": "string",
+                "Amount": "string"
+              }
+            ],
+            "ItemizedCharges": [
+              {
+                "Code": "str",
+                "Description": "string",
+                "CurrencyCode": "str",
+                "MonetaryValue": "string",
+                "SubType": "string"
+              }
+            ],
+            "TaxCharges": [
+              {
+                "Type": "string",
+                "MonetaryValue": "string"
+              }
+            ],
+            "TotalCharge": {
+              "CurrencyCode": "string",
+              "MonetaryValue": "string"
+            },
+            "TotalChargesWithTaxes": {
+              "CurrencyCode": "string",
+              "MonetaryValue": "string"
+            }
+          },
+          "RatedPackage": [
+            {
+              "BaseServiceCharge": {
+                "CurrencyCode": "str",
+                "MonetaryValue": "string"
+              },
+              "TransportationCharges": {
+                "CurrencyCode": "string",
+                "MonetaryValue": "string"
+              },
+              "ServiceOptionsCharges": {
+                "CurrencyCode": "string",
+                "MonetaryValue": "string"
+              },
+              "TotalCharges": {
+                "CurrencyCode": "string",
+                "MonetaryValue": "string"
+              },
+              "Weight": "string",
+              "BillingWeight": {
+                "UnitOfMeasurement": {
+                  "Code": "",
+                  "Description": ""
+                },
+                "Weight": "string"
+              },
+              "Accessorial": [
+                {
+                  "Code": "",
+                  "Description": ""
+                }
+              ],
+              "ItemizedCharges": [
+                {
+                  "Code": "",
+                  "Description": "",
+                  "CurrencyCode": "",
+                  "MonetaryValue": "",
+                  "SubType": ""
+                }
+              ],
+              "NegotiatedCharges": {
+                "RateModifier": [
+                  ""
+                ],
+                "ItemizedCharges": [
+                  ""
+                ]
+              },
+              "SimpleRate": {
+                "Code": "st"
+              },
+              "RateModifier": [
+                {
+                  "ModifierType": "",
+                  "ModifierDesc": "",
+                  "Amount": ""
+                }
+              ]
+            }
+          ],
+          "TimeInTransit": {
+            "PickupDate": "stringst",
+            "DocumentsOnlyIndicator": "string",
+            "PackageBillType": "st",
+            "ServiceSummary": {
+              "Service": {
+                "Description": "string"
+              },
+              "GuaranteedIndicator": "string",
+              "Disclaimer": "string",
+              "EstimatedArrival": {
+                "Arrival": {
+                  "Date": "",
+                  "Time": ""
+                },
+                "BusinessDaysInTransit": "strin",
+                "Pickup": {
+                  "Date": "",
+                  "Time": ""
+                },
+                "DayOfWeek": "string",
+                "CustomerCenterCutoff": "string",
+                "DelayCount": "str",
+                "HolidayCount": "st",
+                "RestDays": "st",
+                "TotalTransitDays": "strin"
+              },
+              "SaturdayDelivery": "string",
+              "SaturdayDeliveryDisclaimer": "string",
+              "SundayDelivery": "string",
+              "SundayDeliveryDisclaimer": "string"
+            },
+            "AutoDutyCode": "st",
+            "Disclaimer": "string"
+          },
+          "GuaranteedDelivery": {
+            "BusinessDaysInTransit": "string",
+            "DeliveryByTime": "string",
+            "ScheduledDeliveryDate": "string"
+          },
+          "ScheduledDeliveryDate": "string",
+          "RoarRatedIndicator": "string"
+        }
+      ]
+    }
+  },
+  {
+    "RateResponse": {
+      "Response": {
+        "ResponseStatus": {
+          "Code": "1",
+          "Description": "Success"
+        },
+        "Alert": [
+          {
+            "Code": "110971",
+            "Description": "Your invoice may vary from the displayed reference rates"
+          }
+        ],
+        "TransactionReference": {
+          "CustomerContext": "testing",
+          "TransactionIdentifier": "ciewssoas5s6fsYNx17dFY"
+        }
+      },
+      "RatedShipment": [
+        {
+          "Disclaimer": [
+            {
+              "Code": "01",
+              "Description": "Taxes are included in the shipping cost and apply to the transportation charges but additional duties/taxes may apply and are not reflected in the total amount due."
+            }
+          ],
+          "Service": {
+            "Code": "14",
+            "Description": ""
+          },
+          "Zone": "708",
+          "RatedShipmentAlert": [
+            {
+              "Code": "110971",
+              "Description": "Your invoice may vary from the displayed reference rates"
+            }
+          ],
+          "RatingMethod": "01",
+          "BillableWeightCalculationMethod": "02",
+          "BillingWeight": {
+            "UnitOfMeasurement": {
+              "Code": "KGS",
+              "Description": "Kilograms"
+            },
+            "Weight": "13.6"
+          },
+          "TransportationCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "324.27"
+          },
+          "BaseServiceCharge": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "253.65"
+          },
+          "ItemizedCharges": [
+            {
+              "Code": "375",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "65.12"
+            },
+            {
+              "Code": "434",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "0.70",
+              "SubType": "Surge_Fee_Residential"
+            },
+            {
+              "Code": "270",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "4.80"
+            }
+          ],
+          "TaxCharges": [
+            {
+              "Type": "GST",
+              "MonetaryValue": "16.55"
+            }
+          ],
+          "ServiceOptionsCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "6.65"
+          },
+          "TotalCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "330.92"
+          },
+          "TotalChargesWithTaxes": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "347.47"
+          },
+          "NegotiatedRateCharges": {
+            "BaseServiceCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "251.11"
+            },
+            "TaxCharges": [
+              {
+                "Type": "GST",
+                "MonetaryValue": "16.38"
+              },
+              {
+                "Type": "GST",
+                "MonetaryValue": "16.38"
+              }
+            ],
+            "TotalCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "321.03"
+            },
+            "TotalChargesWithTaxes": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "344.00"
+            }
+          },
+          "GuaranteedDelivery": {
+            "BusinessDaysInTransit": "1",
+            "DeliveryByTime": "9:00 A.M."
+          },
+          "RatedPackage": [
+            {
+              "ItemizedCharges": [
+                {
+                  "Code": "120",
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "6.65",
+                  "SubType": "Signature and Date Required"
+                }
+              ],
+              "NegotiatedCharges": {
+                "BaseServiceCharge": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "TransportationCharges": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "ServiceOptionsCharges": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "TotalCharge": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "ItemizedCharges": [
+                  {
+                    "Code": "120",
+                    "CurrencyCode": "CAD",
+                    "MonetaryValue": "0.00",
+                    "SubType": "Signature and Date Required"
+                  }
+                ]
+              },
+              "Weight": "3.2"
+            }
+          ],
+          "TimeInTransit": {
+            "PickupDate": "20250526",
+            "PackageBillType": "03",
+            "AutoDutyCode": "02",
+            "Disclaimer": "All services are guaranteed if shipment is paid for in full by a payee in Canada. Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance.",
+            "ServiceSummary": {
+              "Service": {
+                "Description": "UPS Express Early"
+              },
+              "EstimatedArrival": {
+                "Arrival": {
+                  "Date": "20250527",
+                  "Time": "103000"
+                },
+                "BusinessDaysInTransit": "1",
+                "Pickup": {
+                  "Date": "20250526",
+                  "Time": "180000"
+                },
+                "DayOfWeek": "TUE",
+                "CustomerCenterCutoff": "170000",
+                "TotalTransitDays": "1"
+              },
+              "GuaranteedIndicator": "",
+              "SaturdayDelivery": "0"
+            }
+          }
+        },
+        {
+          "Disclaimer": [
+            {
+              "Code": "01",
+              "Description": "Taxes are included in the shipping cost and apply to the transportation charges but additional duties/taxes may apply and are not reflected in the total amount due."
+            }
+          ],
+          "Service": {
+            "Code": "01",
+            "Description": ""
+          },
+          "Zone": "408",
+          "RatedShipmentAlert": [
+            {
+              "Code": "110971",
+              "Description": "Your invoice may vary from the displayed reference rates"
+            }
+          ],
+          "RatingMethod": "01",
+          "BillableWeightCalculationMethod": "02",
+          "BillingWeight": {
+            "UnitOfMeasurement": {
+              "Code": "KGS",
+              "Description": "Kilograms"
+            },
+            "Weight": "13.6"
+          },
+          "TransportationCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "285.30"
+          },
+          "BaseServiceCharge": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "222.35"
+          },
+          "ItemizedCharges": [
+            {
+              "Code": "375",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "57.45"
+            },
+            {
+              "Code": "434",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "0.70",
+              "SubType": "Surge_Fee_Residential"
+            },
+            {
+              "Code": "270",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "4.80"
+            }
+          ],
+          "TaxCharges": [
+            {
+              "Type": "GST",
+              "MonetaryValue": "14.60"
+            }
+          ],
+          "ServiceOptionsCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "6.65"
+          },
+          "TotalCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "291.95"
+          },
+          "TotalChargesWithTaxes": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "306.55"
+          },
+          "NegotiatedRateCharges": {
+            "BaseServiceCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "220.13"
+            },
+            "TaxCharges": [
+              {
+                "Type": "GST",
+                "MonetaryValue": "14.45"
+              },
+              {
+                "Type": "GST",
+                "MonetaryValue": "14.45"
+              }
+            ],
+            "TotalCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "282.45"
+            },
+            "TotalChargesWithTaxes": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "303.48"
+            }
+          },
+          "GuaranteedDelivery": {
+            "BusinessDaysInTransit": "1",
+            "DeliveryByTime": "10:30 A.M."
+          },
+          "RatedPackage": [
+            {
+              "ItemizedCharges": [
+                {
+                  "Code": "120",
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "6.65",
+                  "SubType": "Signature and Date Required"
+                }
+              ],
+              "NegotiatedCharges": {
+                "BaseServiceCharge": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "TransportationCharges": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "ServiceOptionsCharges": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "TotalCharge": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "ItemizedCharges": [
+                  {
+                    "Code": "120",
+                    "CurrencyCode": "CAD",
+                    "MonetaryValue": "0.00",
+                    "SubType": "Signature and Date Required"
+                  }
+                ]
+              },
+              "Weight": "3.2"
+            }
+          ],
+          "TimeInTransit": {
+            "PickupDate": "20250526",
+            "PackageBillType": "03",
+            "AutoDutyCode": "02",
+            "Disclaimer": "All services are guaranteed if shipment is paid for in full by a payee in Canada. Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance.",
+            "ServiceSummary": {
+              "Service": {
+                "Description": "UPS Express"
+              },
+              "EstimatedArrival": {
+                "Arrival": {
+                  "Date": "20250527",
+                  "Time": "120000"
+                },
+                "BusinessDaysInTransit": "1",
+                "Pickup": {
+                  "Date": "20250526",
+                  "Time": "180000"
+                },
+                "DayOfWeek": "TUE",
+                "CustomerCenterCutoff": "170000",
+                "TotalTransitDays": "1"
+              },
+              "GuaranteedIndicator": "",
+              "SaturdayDelivery": "0"
+            }
+          }
+        },
+        {
+          "Disclaimer": [
+            {
+              "Code": "01",
+              "Description": "Taxes are included in the shipping cost and apply to the transportation charges but additional duties/taxes may apply and are not reflected in the total amount due."
+            }
+          ],
+          "Service": {
+            "Code": "13",
+            "Description": ""
+          },
+          "Zone": "508",
+          "RatedShipmentAlert": [
+            {
+              "Code": "110971",
+              "Description": "Your invoice may vary from the displayed reference rates"
+            }
+          ],
+          "RatingMethod": "01",
+          "BillableWeightCalculationMethod": "02",
+          "BillingWeight": {
+            "UnitOfMeasurement": {
+              "Code": "KGS",
+              "Description": "Kilograms"
+            },
+            "Weight": "13.6"
+          },
+          "TransportationCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "254.12"
+          },
+          "BaseServiceCharge": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "197.30"
+          },
+          "ItemizedCharges": [
+            {
+              "Code": "375",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "51.32"
+            },
+            {
+              "Code": "434",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "0.70",
+              "SubType": "Surge_Fee_Residential"
+            },
+            {
+              "Code": "270",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "4.80"
+            }
+          ],
+          "TaxCharges": [
+            {
+              "Type": "GST",
+              "MonetaryValue": "13.04"
+            }
+          ],
+          "ServiceOptionsCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "6.65"
+          },
+          "TotalCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "260.77"
+          },
+          "TotalChargesWithTaxes": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "273.81"
+          },
+          "NegotiatedRateCharges": {
+            "BaseServiceCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "195.33"
+            },
+            "TaxCharges": [
+              {
+                "Type": "GST",
+                "MonetaryValue": "12.91"
+              },
+              {
+                "Type": "GST",
+                "MonetaryValue": "12.91"
+              }
+            ],
+            "TotalCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "251.58"
+            },
+            "TotalChargesWithTaxes": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "271.07"
+            }
+          },
+          "GuaranteedDelivery": {
+            "BusinessDaysInTransit": "1"
+          },
+          "RatedPackage": [
+            {
+              "ItemizedCharges": [
+                {
+                  "Code": "120",
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "6.65",
+                  "SubType": "Signature and Date Required"
+                }
+              ],
+              "NegotiatedCharges": {
+                "BaseServiceCharge": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "TransportationCharges": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "ServiceOptionsCharges": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "TotalCharge": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "ItemizedCharges": [
+                  {
+                    "Code": "120",
+                    "CurrencyCode": "CAD",
+                    "MonetaryValue": "0.00",
+                    "SubType": "Signature and Date Required"
+                  }
+                ]
+              },
+              "Weight": "3.2"
+            }
+          ],
+          "TimeInTransit": {
+            "PickupDate": "20250526",
+            "PackageBillType": "03",
+            "AutoDutyCode": "02",
+            "Disclaimer": "All services are guaranteed if shipment is paid for in full by a payee in Canada. Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance.",
+            "ServiceSummary": {
+              "Service": {
+                "Description": "UPS Express Saver"
+              },
+              "EstimatedArrival": {
+                "Arrival": {
+                  "Date": "20250527",
+                  "Time": "233000"
+                },
+                "BusinessDaysInTransit": "1",
+                "Pickup": {
+                  "Date": "20250526",
+                  "Time": "180000"
+                },
+                "DayOfWeek": "TUE",
+                "CustomerCenterCutoff": "170000",
+                "TotalTransitDays": "1"
+              },
+              "GuaranteedIndicator": "",
+              "SaturdayDelivery": "0"
+            }
+          }
+        },
+        {
+          "Disclaimer": [
+            {
+              "Code": "01",
+              "Description": "Taxes are included in the shipping cost and apply to the transportation charges but additional duties/taxes may apply and are not reflected in the total amount due."
+            }
+          ],
+          "Service": {
+            "Code": "02",
+            "Description": ""
+          },
+          "Zone": "308",
+          "RatedShipmentAlert": [
+            {
+              "Code": "110971",
+              "Description": "Your invoice may vary from the displayed reference rates"
+            }
+          ],
+          "RatingMethod": "01",
+          "BillableWeightCalculationMethod": "02",
+          "BillingWeight": {
+            "UnitOfMeasurement": {
+              "Code": "KGS",
+              "Description": "Kilograms"
+            },
+            "Weight": "13.6"
+          },
+          "TransportationCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "240.98"
+          },
+          "BaseServiceCharge": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "186.75"
+          },
+          "ItemizedCharges": [
+            {
+              "Code": "375",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "48.73"
+            },
+            {
+              "Code": "434",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "0.70",
+              "SubType": "Surge_Fee_Residential"
+            },
+            {
+              "Code": "270",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "4.80"
+            }
+          ],
+          "TaxCharges": [
+            {
+              "Type": "GST",
+              "MonetaryValue": "12.38"
+            }
+          ],
+          "ServiceOptionsCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "6.65"
+          },
+          "TotalCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "247.63"
+          },
+          "TotalChargesWithTaxes": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "260.01"
+          },
+          "NegotiatedRateCharges": {
+            "BaseServiceCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "184.88"
+            },
+            "TaxCharges": [
+              {
+                "Type": "GST",
+                "MonetaryValue": "12.26"
+              },
+              {
+                "Type": "GST",
+                "MonetaryValue": "12.26"
+              }
+            ],
+            "TotalCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "238.57"
+            },
+            "TotalChargesWithTaxes": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "257.41"
+            }
+          },
+          "RatedPackage": [
+            {
+              "ItemizedCharges": [
+                {
+                  "Code": "120",
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "6.65",
+                  "SubType": "Signature and Date Required"
+                }
+              ],
+              "NegotiatedCharges": {
+                "BaseServiceCharge": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "TransportationCharges": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "ServiceOptionsCharges": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "TotalCharge": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "ItemizedCharges": [
+                  {
+                    "Code": "120",
+                    "CurrencyCode": "CAD",
+                    "MonetaryValue": "0.00",
+                    "SubType": "Signature and Date Required"
+                  }
+                ]
+              },
+              "Weight": "3.2"
+            }
+          ],
+          "TimeInTransit": {
+            "PickupDate": "20250526",
+            "PackageBillType": "03",
+            "AutoDutyCode": "02",
+            "Disclaimer": "All services are guaranteed if shipment is paid for in full by a payee in Canada. Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance.",
+            "ServiceSummary": {
+              "Service": {
+                "Description": "UPS Expedited"
+              },
+              "EstimatedArrival": {
+                "Arrival": {
+                  "Date": "20250528",
+                  "Time": "233000"
+                },
+                "BusinessDaysInTransit": "2",
+                "Pickup": {
+                  "Date": "20250526",
+                  "Time": "180000"
+                },
+                "DayOfWeek": "WED",
+                "CustomerCenterCutoff": "170000",
+                "TotalTransitDays": "2"
+              },
+              "SaturdayDelivery": "0"
+            }
+          }
+        },
+        {
+          "Disclaimer": [
+            {
+              "Code": "01",
+              "Description": "Taxes are included in the shipping cost and apply to the transportation charges but additional duties/taxes may apply and are not reflected in the total amount due."
+            }
+          ],
+          "Service": {
+            "Code": "11",
+            "Description": ""
+          },
+          "Zone": "208",
+          "RatedShipmentAlert": [
+            {
+              "Code": "110971",
+              "Description": "Your invoice may vary from the displayed reference rates"
+            }
+          ],
+          "RatingMethod": "01",
+          "BillableWeightCalculationMethod": "02",
+          "BillingWeight": {
+            "UnitOfMeasurement": {
+              "Code": "KGS",
+              "Description": "Kilograms"
+            },
+            "Weight": "11.3"
+          },
+          "TransportationCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "121.14"
+          },
+          "BaseServiceCharge": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "93.90"
+          },
+          "ItemizedCharges": [
+            {
+              "Code": "375",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "21.74"
+            },
+            {
+              "Code": "434",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "0.70",
+              "SubType": "Surge_Fee_Residential"
+            },
+            {
+              "Code": "270",
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "4.80"
+            }
+          ],
+          "TaxCharges": [
+            {
+              "Type": "GST",
+              "MonetaryValue": "6.39"
+            }
+          ],
+          "ServiceOptionsCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "6.65"
+          },
+          "TotalCharges": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "127.79"
+          },
+          "TotalChargesWithTaxes": {
+            "CurrencyCode": "CAD",
+            "MonetaryValue": "134.18"
+          },
+          "NegotiatedRateCharges": {
+            "BaseServiceCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "92.96"
+            },
+            "TaxCharges": [
+              {
+                "Type": "GST",
+                "MonetaryValue": "6.33"
+              },
+              {
+                "Type": "GST",
+                "MonetaryValue": "6.33"
+              }
+            ],
+            "TotalCharge": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "119.93"
+            },
+            "TotalChargesWithTaxes": {
+              "CurrencyCode": "CAD",
+              "MonetaryValue": "132.84"
+            }
+          },
+          "RatedPackage": [
+            {
+              "ItemizedCharges": [
+                {
+                  "Code": "120",
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "6.65",
+                  "SubType": "Signature and Date Required"
+                }
+              ],
+              "NegotiatedCharges": {
+                "BaseServiceCharge": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "TransportationCharges": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "ServiceOptionsCharges": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "TotalCharge": {
+                  "CurrencyCode": "CAD",
+                  "MonetaryValue": "0.00"
+                },
+                "ItemizedCharges": [
+                  {
+                    "Code": "120",
+                    "CurrencyCode": "CAD",
+                    "MonetaryValue": "0.00",
+                    "SubType": "Signature and Date Required"
+                  }
+                ]
+              },
+              "Weight": "3.2"
+            }
+          ],
+          "TimeInTransit": {
+            "PickupDate": "20250526",
+            "PackageBillType": "03",
+            "AutoDutyCode": "02",
+            "Disclaimer": "All services are guaranteed if shipment is paid for in full by a payee in Canada. Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance.",
+            "ServiceSummary": {
+              "Service": {
+                "Description": "UPS Standard"
+              },
+              "EstimatedArrival": {
+                "Arrival": {
+                  "Date": "20250604",
+                  "Time": "233000"
+                },
+                "BusinessDaysInTransit": "6",
+                "Pickup": {
+                  "Date": "20250527",
+                  "Time": "180000"
+                },
+                "DayOfWeek": "WED",
+                "CustomerCenterCutoff": "170000",
+                "RestDays": "2",
+                "TotalTransitDays": "8"
               },
               "SaturdayDelivery": "0",
               "SundayDelivery": "0"

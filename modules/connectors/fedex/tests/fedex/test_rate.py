@@ -91,7 +91,7 @@ ParsedRateResponse = [
                 {"amount": 6.88, "currency": "CAD", "name": "HST"},
                 {"amount": 5.9, "currency": "CAD", "name": "Fuel Surcharge"},
             ],
-            "meta": {"service_name": "fedex_express_saver"},
+            "meta": {"rate_zone": "2", "service_name": "fedex_express_saver"},
             "service": "fedex_express_saver",
             "total_charge": 52.76,
         }
@@ -124,7 +124,10 @@ IntlParsedRateResponse = [
                     "name": "Residential delivery surcharge",
                 },
             ],
-            "meta": {"service_name": "fedex_international_economy"},
+            "meta": {
+                "rate_zone": "US001D",
+                "service_name": "fedex_international_economy",
+            },
             "service": "fedex_international_economy",
             "total_charge": 954.17,
         },
@@ -143,7 +146,10 @@ IntlParsedRateResponse = [
                     "name": "Residential delivery surcharge",
                 },
             ],
-            "meta": {"service_name": "fedex_international_first"},
+            "meta": {
+                "rate_zone": "US001D",
+                "service_name": "fedex_international_first",
+            },
             "service": "fedex_international_first",
             "total_charge": 1338.5,
         },
@@ -162,7 +168,11 @@ IntlParsedRateResponse = [
                     "name": "Residential delivery surcharge",
                 },
             ],
-            "meta": {"service_name": "fedex_ground", "transit_time": "FOUR_DAYS"},
+            "meta": {
+                "rate_zone": "52",
+                "service_name": "fedex_ground",
+                "transit_time": "FOUR_DAYS",
+            },
             "service": "fedex_ground",
             "total_charge": 408.45,
             "transit_days": 115,
@@ -182,7 +192,10 @@ IntlParsedRateResponse = [
                 },
                 {"amount": 14.7, "currency": "USD", "name": "Demand Surcharge"},
             ],
-            "meta": {"service_name": "fedex_international_priority_express"},
+            "meta": {
+                "rate_zone": "A",
+                "service_name": "fedex_international_priority_express",
+            },
             "service": "fedex_international_priority_express",
             "total_charge": 1276.76,
         },
@@ -200,7 +213,10 @@ IntlParsedRateResponse = [
                     "name": "Residential delivery surcharge",
                 },
             ],
-            "meta": {"service_name": "fedex_international_connect_plus"},
+            "meta": {
+                "rate_zone": "A",
+                "service_name": "fedex_international_connect_plus",
+            },
             "service": "fedex_international_connect_plus",
             "total_charge": 932.27,
         },
@@ -219,7 +235,7 @@ IntlParsedRateResponse = [
                     "name": "Residential delivery surcharge",
                 },
             ],
-            "meta": {"service_name": "fedex_international_priority"},
+            "meta": {"rate_zone": "A", "service_name": "fedex_international_priority"},
             "service": "fedex_international_priority",
             "total_charge": 1775.61,
         },
@@ -241,7 +257,6 @@ IntlParsedRateResponse = [
         },
     ],
 ]
-
 
 RateRequest = {
     "accountNumber": {"value": "2349857"},

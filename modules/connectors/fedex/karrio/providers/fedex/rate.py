@@ -37,6 +37,7 @@ def _extract_details(
         next((_ for _ in rate.ratedShipmentDetails if _.rateType == "ACCOUNT"), None) or
         rate.ratedShipmentDetails[0]
     )
+
     charges = [
         ("Base Charge", lib.to_money(details.totalBaseCharge)),
         ("Discounts", lib.to_money(details.totalDiscounts)),
@@ -81,6 +82,7 @@ def _extract_details(
         meta=dict(
             service_name=service.name or rate.serviceName,
             transit_time=getattr(rate.operationalDetail, "transitTime", None),
+            rate_zone=lib.failsafe(lambda: details.shipmentRateDetail.rateZone),
         ),
     )
 

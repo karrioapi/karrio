@@ -1130,6 +1130,8 @@ class ShippingOption(utils.Enum):
         "hold_at_location_address",
         functools.partial(utils.DP.to_object, models.Address),
     )
+    shipper_instructions = utils.OptionEnum("shipper_instructions")
+    recipient_instructions = utils.OptionEnum("recipient_instructions")
 
     """TODO: dreprecate these"""
     shipment_date = utils.OptionEnum("shipment_date")
@@ -1220,6 +1222,14 @@ class ShippingOptions(Options):
     @property
     def shipment_note(self) -> utils.OptionEnum:
         return self[ShippingOption.shipment_note.name]
+
+    @property
+    def shipper_instructions(self) -> utils.OptionEnum:
+        return self[ShippingOption.shipper_instructions.name]
+
+    @property
+    def recipient_instructions(self) -> utils.OptionEnum:
+        return self[ShippingOption.recipient_instructions.name]
 
 
 class CustomsOption(utils.Enum):

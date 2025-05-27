@@ -204,7 +204,7 @@ def shipment_request(
                 tins=lib.identity(
                     fedex.TinType(number=shipper.tax_id) if shipper.has_tax_info else []
                 ),
-                deliveryInstructions=None,
+                deliveryInstructions=options.shipper_instructions.state,
             ),
             soldTo=None,
             recipients=[
@@ -236,7 +236,7 @@ def shipment_request(
                         if recipient.has_tax_info
                         else []
                     ),
-                    deliveryInstructions=None,
+                    deliveryInstructions=options.recipient_instructions.state,
                 )
             ],
             recipientLocationNumber=None,

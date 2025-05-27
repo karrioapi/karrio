@@ -169,7 +169,7 @@ def shipment_request(
     request = ups.ShippingRequestType(
         ShipmentRequest=ups.ShipmentRequestType(
             Request=ups.RequestType(
-                SubVersion="v2205",
+                SubVersion="v2409",
                 RequestOption="validate",
                 TransactionReference=ups.TransactionReferenceType(
                     CustomerContext=payload.reference or "generate label",
