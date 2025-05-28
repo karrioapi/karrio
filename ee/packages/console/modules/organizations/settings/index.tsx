@@ -28,16 +28,16 @@ import {
 } from "@karrio/ui/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
 
-export default function SettingsPage({
+export default async function SettingsPage({
   params,
 }: {
-  params: { orgId: string };
+  params: Promise<{ orgId: string }>;
 }) {
   const { toast } = useToast();
   const router = useRouter();
   const utils = trpc.useContext();
   const { data: session } = useSession();
-  const orgId = params.orgId;
+  const { orgId } = await params;
   const { data: organization } = trpc.organizations.get.useQuery({
     orgId,
   });

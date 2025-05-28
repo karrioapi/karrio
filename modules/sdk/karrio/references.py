@@ -576,7 +576,7 @@ def collect_references(
         "failed_plugins": collect_failed_plugins_data(),
     }
 
-    logger.info(f"> Karrio SDK datatypes references loaded. {plugin_registry is not None}")
+    logger.info(f"> Karrio references loaded. {len(PLUGIN_METADATA.keys())} plugins")
     return REFERENCES
 
 
@@ -644,18 +644,18 @@ def get_carrier_details(
     Returns:
         Dictionary with detailed carrier information
     """
-    metadata_obj = collect_providers_data().get(plugin_code, {})
+    metadata_obj: metadata.PluginMetadata = collect_providers_data().get(plugin_code)
     references = contextual_reference or collect_references()
     registry = Registry(plugin_registry)
 
     return dict(
         id=plugin_code,
         carrier_name=plugin_code,
-        display_name=metadata_obj.label,
-        integration_status=metadata_obj.status,
-        website=metadata_obj.website,
-        description=metadata_obj.description,
-        documentation=metadata_obj.documentation,
+        display_name=getattr(metadata_obj, "label", ""),
+        integration_status=getattr(metadata_obj, "status", ""),
+        website=getattr(metadata_obj, "website", ""),
+        description=getattr(metadata_obj, "description", ""),
+        documentation=getattr(metadata_obj, "documentation", ""),
         is_enabled=registry.get(f"{plugin_code.upper()}_ENABLED", registry.get("ENABLE_ALL_PLUGINS_BY_DEFAULT")),
         capabilities=references["carrier_capabilities"].get(plugin_code, {}),
         connection_fields=references["connection_fields"].get(plugin_code, {}),
@@ -698,26 +698,36 @@ def get_plugin_details(plugin_name: str, contextual_reference: dict = None) -> d
 
 class Registry(dict):
     def __init__(self, registry: typing.Any = None):
-        if registry is None:
+        self.registry = registry
+        self._config_loaded = False
+
+    def _ensure_config_loaded(self):
+        if not self._config_loaded and self.registry is None:
             try:
                 from constance import config
-                config.ENABLE_ALL_PLUGINS_BY_DEFAULT
-                registry = config
+                # Don't access config.ENABLE_ALL_PLUGINS_BY_DEFAULT here
+                # Just store the config object
+                self.registry = config
+                self._config_loaded = True
             except Exception:
-                registry = {}
-        self.registry = registry
+                self.registry = {}
+                self._config_loaded = True
 
     def get(self, key, default=None):
+        self._ensure_config_loaded()
         try:
             if isinstance(self.registry, dict):
                 return self.registry.get(key, os.environ.get(key, default))
             else:
                 return getattr(self.registry, key, os.environ.get(key, default))
-        except AttributeError:
+        except Exception:
             return os.environ.get(key, default)
 
     def __setitem__(self, key: str, value: typing.Any):
-        if isinstance(self.registry, dict):
-            self.registry[key] = value
-        else:
-            setattr(self.registry, key, value)
+        try:
+            if isinstance(self.registry, dict):
+                self.registry[key] = value
+            else:
+                setattr(self.registry, key, value)
+        except Exception as e:
+            logger.error(f"Failed to set item {key} in registry: {e}")

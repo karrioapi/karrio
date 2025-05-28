@@ -119,8 +119,6 @@ class GatewayInitializer:
         try:
             provider = self.providers[key]
 
-            print("> provider", provider)
-
             def initializer(
                 settings: typing.Union[core.Settings, dict],
                 tracer: utils.Tracer = None,

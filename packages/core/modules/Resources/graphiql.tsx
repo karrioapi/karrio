@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { useSyncedSession } from "@karrio/hooks/session";
 import { createGraphiQLFetcher } from "@graphiql/toolkit";
+import { useSyncedSession } from "@karrio/hooks/session";
 import { GraphiQL } from "graphiql";
 import "graphiql/graphiql.min.css";
 
@@ -36,7 +36,7 @@ export default function GraphiQLPage() {
       className="playground-wrapper"
       style={{ position: "absolute", top: 0, left: 0, bottom: 0, right: 0 }}
     >
-      <GraphiQL fetcher={fetcher} />
+      <GraphiQL fetcher={fetcher as any} />
     </div>
   );
 }

@@ -225,7 +225,7 @@ export const Component = ({
 };
 
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
-  const Component = (): JSX.Element => {
+  const PageComponent = (): JSX.Element => {
     const [id, setId] = React.useState<string>();
 
     React.useEffect(() => {
@@ -243,7 +243,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     );
   };
 
-  return <Component />;
+  return <PageComponent />;
 }
 
 export function parseWorkflowEventRecordData(record: any) {
