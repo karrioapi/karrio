@@ -115,6 +115,7 @@ strawberry-graphql==0.270.4
 tablib==3.8.0
 tinycss2==1.4.0
 tinyhtml5==2.0.0
+toml==0.10.2
 typing_extensions==4.13.2
 uritemplate==4.1.1
 urllib3==2.4.0

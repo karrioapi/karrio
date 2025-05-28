@@ -13,15 +13,9 @@ deprecation==2.1.0
 diff-match-patch==20241021
 distro==1.9.0
 dj-database-url==2.3.0
-<<<<<<< HEAD
-Django==4.2.16
-django-auditlog==3.1.2
-django-constance==3.1.0
-=======
 Django==5.2.1
 django-auditlog==3.1.2
 django-constance==4.3.2
->>>>>>> a6f37d756 (chore: reorganize carrier extension plugins separating actively maintained and mature integrations from community in-development ones)
 django-cors-headers==4.7.0
 django-downloadview==2.4.0
 django-email-verification==0.3.3
@@ -130,6 +124,7 @@ strawberry-graphql==0.270.4
 tablib==3.8.0
 tinycss2==1.4.0
 tinyhtml5==2.0.0
+toml==0.10.2
 typing_extensions==4.13.2
 uritemplate==4.1.1
 urllib3==2.4.0

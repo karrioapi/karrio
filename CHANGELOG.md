@@ -1,3 +1,60 @@
+# Karrio 2025.5rc1 (Yayra Edition)
+
+## Changes
+
+### Feat
+
+- feat: Introduce a unified website for all karrio sites
+- feat: introduce plugins loader for karrio SDK
+- feat: add support for entrypoint plugin loader
+- feat: improve and finalize CLI docs generation
+- feat: enrich CLI with plugins management and carriers details fetching
+- feat: add connections and logs resources control from cli
+- feat: refactor dashboard autocomplete to work with Google API key
+- feat: remove deprecated carrier-specific models
+- feat: introduce karrio community as a submodule
+- feat: enrich carrier metadata and add carriers page to new site
+- feat: add tracer to settings so that Proxy and Mappers can access tracing context from settings. PS: You can also access the cache handler through settings
+- feat: add support for default value for optionEnum fields
+- feat: add support for path when creating extension using kcli
+- feat: make kcli installable
+
+### Fix
+
+- fix: dashboard page definitions with breaking changes, async signature on client components
+- fix: migrations backward compatibility issue
+- fix: non-failsafe address autocomplete plugin info loading
+- fix: race condition issue with carrier models loading
+- fix: nextjs upgrade breaking change for dynamic page metadata
+- fix: minor web section layouts
+
+### Chore
+
+- chore: update supported Python version to >=3.11
+- chore: replace deprecated extensions used in tests
+- chore: reorganize carrier extension plugins, separating actively maintained and mature integrations from community in-development ones
+- chore: fix compatibility with Python 3.12 and migrate from setup.py to pyproject.toml
+- chore: add changelog page and web page CI
+- chore: remove headless/ui dependency in favour of shadcn-powered components
+- chore: remove headless/ui to only use `shadcn/ui` components
+- chore: theme corrections and standardized
+- chore: migrate karrio live sites' content to the unified web app
+- chore: fix app dependencies
+- chore: setup plugin folder
+- chore: unify packages to React 18.x
+- chore: upgrade django constance and unmigrated status update
+
+### Devx
+
+- devx: enrich carrier integration, boilerplate generation, and examples
+- devx: setup cursor rules for better and AI drivven development
+
+### Docs
+
+- docs(WIP): document self-hosting
+- docs(WIP): improve integration and development docs
+- docs(WIP): introduce new carrier integration guide
+
 # Karrio 2024.12.10
 
 ## Changes
@@ -1493,7 +1550,6 @@ Special thanks to @nahall for the contribution# Karrio Shipping Platform Edition
  "test_mode": true
 }
 ```
-
 # Karrio Shipping Platform Edition 2022.3
 
 ## What's New
@@ -1745,3 +1801,4 @@ danh91.docker.scarf.sh/purplship/server:2022.1.4
 -   Prevent confusing Purolator exception when address properties are required and not defined
 -   Fix invalid `CM` -> `IN` conversion
 -   Consolidated `Purolator` shipment cancellation request"
+
