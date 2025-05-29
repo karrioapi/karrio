@@ -61,12 +61,6 @@ def _extract_details(
     if machinable_piece is False and "machinable" in service_code:
         return None
 
-    transit_days = lib.failsafe(
-        lambda: lib.to_int(next(rateOption.commitment.name.split(" ")))
-    )
-    estimated_delivery = lib.failsafe(
-        lambda:lib.to_date(rateOption.commitment.scheduleDeliveryDate)
-    )
     charges = [
         ("Base Price", lib.to_money(rateOption.totalBasePrice)),
         *[(extra.name, lib.to_money(extra.price)) for extra in rateOption.extraServices],
@@ -86,21 +80,18 @@ def _extract_details(
             )
             for name, amount in charges
         ],
-        estimated_delivery=estimated_delivery,
-        transit_days=transit_days,
         meta=dict(
             service_name=service_name,
             usps_mail_class=rate.mailClass,
-            usps_guaranteed_delivery=lib.failsafe(lambda: rateOption.commitment.guaranteedDelivery),
-            usps_optimal_dimensional_weight=lib.failsafe(lambda: rate.dimensionalWeight),
             usps_processing_category=lib.failsafe(lambda: rate.processingCategory),
+            usps_dimensional_weight=lib.failsafe(lambda: rate.dimensionalWeight),
             usps_rate_indicator=lib.failsafe(lambda: rate.rateIndicator),
             usps_price_type=lib.failsafe(lambda: rate.priceType),
-            usps_rate_sku=lib.failsafe(lambda: rate.sku),
+            usps_rate_sku=lib.failsafe(lambda: rate.SKU),
             usps_zone=lib.failsafe(lambda: rate.zone),
             rate_zone=lib.failsafe(lambda: rate.zone),
             usps_extra_services=lib.failsafe(
-                lambda: [lib.to_int(_.code) for _ in rateOption.extraServices]
+                lambda: [lib.to_int(_.extraService) for _ in rateOption.extraServices]
             ),
         ),
     )
@@ -187,11 +178,7 @@ def rate_request(
                     package.options.shipment_date.state or time.strftime("%Y-%m-%d")
                 ),
             ),
-            shippingFilter=lib.identity(
-                package.options.usps_shipping_filter.state
-                or settings.connection_config.rate_shipping_filter.state
-                or "PRICE"
-            ),
+            shippingFilter=package.options.usps_shipping_filter.state,
         )
         for package in packages
     ]

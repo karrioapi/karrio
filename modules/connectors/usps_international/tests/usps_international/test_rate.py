@@ -101,11 +101,13 @@ ParsedRateResponse = [
             "meta": {
                 "rate_zone": "20",
                 "service_name": "USPS FIRST CLASS PACKAGE INTERNATIONAL SERVICE MACHINABLE ISC SINGLE PIECE",
+                "usps_dimensional_weight": 0,
+                "usps_extra_services": [813],
                 "usps_mail_class": "FIRST-CLASS_PACKAGE_INTERNATIONAL_SERVICE",
-                "usps_optimal_dimensional_weight": 0,
                 "usps_price_type": "RETAIL",
                 "usps_processing_category": "MACHINABLE",
                 "usps_rate_indicator": "SP",
+                "usps_rate_sku": "IFXP0XXXXR20200",
                 "usps_zone": "20",
             },
             "service": "usps_first_class_package_international_service_machinable_isc_single_piece",
@@ -139,7 +141,6 @@ RateRequest = [
                 "priceType": "RETAIL",
             }
         ],
-        "shippingFilter": "PRICE",
     }
 ]
 
