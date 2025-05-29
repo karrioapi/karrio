@@ -120,7 +120,7 @@ class ShippingService(lib.StrEnum):
         Returns:
             str: Service code
         """
-        return lib.to_slug("usps", product_name)
+        return lib.to_slug("usps", product_name).replace("usps_usps_", "usps_")
 
     @classmethod
     def to_product_name(cls, product_code: str) -> str:
@@ -245,6 +245,7 @@ class ShippingOption(lib.Enum):
     usps_price_type = lib.OptionEnum("priceType", lib.units.create_enum("priceType", ["RETAIL", "COMMERCIAL", "CONTRACT"]))
     usps_destination_entry_facility_type = lib.OptionEnum("destinationEntryFacilityType", lib.units.create_enum("destinationEntryFacilityType", ["NONE", "DESTINATION_NETWORK_DISTRIBUTION_CENTER", "DESTINATION_SECTIONAL_CENTER_FACILITY", "DESTINATION_DELIVERY_UNIT", "DESTINATION_SERVICE_HUB"]))
     usps_extra_services = lib.OptionEnum("extraServices", list)
+    usps_shipping_filter = lib.OptionEnum("shippingFilter", lib.units.create_enum("shippingFilter", ["PRICE", "SERVICE_STANDARDS"]))
 
     """ Unified Option type mapping """
     cash_on_delivery = usps_collect_on_delivery
@@ -265,6 +266,7 @@ CUSTOM_OPTIONS = [
     ShippingOption.usps_physical_signature_required.name,
     ShippingOption.usps_price_type.name,
     ShippingOption.usps_destination_entry_facility_type.name,
+    ShippingOption.usps_shipping_filter.name,
 ]
 
 

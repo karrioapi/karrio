@@ -195,6 +195,7 @@ class ShippingOption(lib.Enum):
     usps_rate_indicator = lib.OptionEnum("rateIndicator", RateIndicator)
     usps_physical_signature_required = lib.OptionEnum("physicalSignatureRequired", bool)
     usps_extra_services = lib.OptionEnum("extraServices", list)
+    usps_shipping_filter = lib.OptionEnum("shippingFilter", lib.units.create_enum("shippingFilter", ["PRICE"]))
 
     """ Unified Option type mapping """
     insurance = usps_insurance_below_500
@@ -212,6 +213,7 @@ CUSTOM_OPTIONS = [
     ShippingOption.usps_physical_signature_required.name,
     ShippingOption.usps_rate_indicator.name,
     ShippingOption.usps_price_type.name,
+    ShippingOption.usps_shipping_filter.name,
 ]
 
 

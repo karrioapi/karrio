@@ -96,10 +96,6 @@ class ConnectionConfig(lib.Enum):
             ["RETAIL", "COMMERCIAL", "COMMERCIAL_BASE", "COMMERCIAL_PLUS", "CONTRACT"],
         ),
     )
-    rate_shipping_filter = lib.OptionEnum(
-        "rate_shipping_filter",
-        lib.units.create_enum("RateShippingFilter", ["PRICE", "SERVICE"])
-    )
 
 
 def oauth2_login(settings: Settings):
