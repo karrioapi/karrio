@@ -1,4 +1,16 @@
-# Karrio 2024.12.8
+# Karrio 2024.12.10
+
+## Changes
+
+### Fix
+
+- fix: usps rating API request filter and response transit_days parsing
+
+### Chore
+
+- chore: add tests for documents template and generation module
+
+# Karrio 2024.12.9
 
 ## Changes
 
