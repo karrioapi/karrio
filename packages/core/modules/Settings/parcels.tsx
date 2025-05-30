@@ -2,21 +2,19 @@
 import {
   ParcelEditModal,
   useParcelEditModal,
-} from "@karrio/ui/modals/parcel-edit-modal";
+} from "@karrio/ui/core/modals/parcel-edit-modal";
 import {
   useParcelTemplateMutation,
   useParcelTemplates,
 } from "@karrio/hooks/parcel";
-import { ConfirmModal, useConfirmModal } from "@karrio/ui/modals/confirm-modal";
-import { ParcelDescription } from "@karrio/ui/components/parcel-description";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
+import { ConfirmModal, useConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
+import { ParcelDescription } from "@karrio/ui/core/components/parcel-description";
 import { getURLSearchParams, isNoneOrEmpty } from "@karrio/lib";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { useLoader } from "@karrio/ui/components/loader";
-import { AppLink } from "@karrio/ui/components/app-link";
+import { useLoader } from "@karrio/ui/core/components/loader";
+import { AppLink } from "@karrio/ui/core/components/app-link";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-export const generateMetadata = dynamicMetadata("Parcels");
 
 export default function ParcelsPage(pageProps: any) {
   const Component = (): JSX.Element => {

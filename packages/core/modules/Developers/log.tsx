@@ -7,19 +7,17 @@ import {
   jsonify,
   notEmptyJSON,
 } from "@karrio/lib";
-import { Tabs, TabStateProvider } from "@karrio/ui/components/tabs";
-import { StatusCode } from "@karrio/ui/components/status-code-badge";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { CopiableLink } from "@karrio/ui/components/copiable-link";
-import { useLoader } from "@karrio/ui/components/loader";
-import { AppLink } from "@karrio/ui/components/app-link";
+import { Tabs, TabStateProvider } from "@karrio/ui/core/components/tabs";
+import { StatusCode } from "@karrio/ui/core/components/status-code-badge";
+import { CopiableLink } from "@karrio/ui/core/components/copiable-link";
+import { useLoader } from "@karrio/ui/core/components/loader";
+import { AppLink } from "@karrio/ui/core/components/app-link";
 import json from "highlight.js/lib/languages/json";
 import { useLog } from "@karrio/hooks/log";
 import hljs from "highlight.js";
 import moment from "moment";
 import React from "react";
 
-export const generateMetadata = dynamicMetadata("API Log");
 hljs.registerLanguage("json", json);
 
 export const LogComponent = ({
@@ -292,8 +290,8 @@ export const LogComponent = ({
                                       dangerouslySetInnerHTML={{
                                         __html: hljs.highlight(
                                           request_data ||
-                                            request.record?.url ||
-                                            "",
+                                          request.record?.url ||
+                                          "",
                                           {
                                             language:
                                               request.record?.format || "json",
@@ -361,15 +359,27 @@ export const LogComponent = ({
   );
 };
 
-export default async function LogPage({ params }: { params: Promise<{ id: string }> }) {
-  const query = await params;
-  return (
-    <>
-      <LogComponent logId={query.id} />
-    </>
-  );
-}
+export default function LogPage({ params }: { params: Promise<{ id: string }> }) {
+  const Component = (): JSX.Element => {
+    const [id, setId] = React.useState<string>();
 
+    React.useEffect(() => {
+      params.then(query => {
+        setId(query.id);
+      });
+    }, []);
+
+    if (!id) return <></>;
+
+    return (
+      <>
+        <LogComponent logId={id} />
+      </>
+    );
+  };
+
+  return <Component />;
+}
 
 function parseRecordData(record: any) {
   if (!record) return null;

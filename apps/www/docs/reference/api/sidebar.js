@@ -83,6 +83,18 @@ const sidebar = {
         },
         {
           type: "doc",
+          id: "reference/api/get-details",
+          label: "Get carrier details",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "reference/api/get-options",
+          label: "Get carrier options",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
           id: "reference/api/get-services",
           label: "Get carrier services",
           className: "api-method get",

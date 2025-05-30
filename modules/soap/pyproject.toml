@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "py-soap"
+version = "2025.5rc1"
+description = "SOAP client library"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+dependencies = [
+    "six",
+    "lxml",
+]
+
+[tool.setuptools]
+zip-safe = false
+packages = {find = {}}

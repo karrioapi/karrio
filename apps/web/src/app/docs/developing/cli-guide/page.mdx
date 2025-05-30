@@ -1,0 +1,1564 @@
+---
+sidebarTitle: Guides
+title: CLI Guide
+description: Learn how to use the Karrio CLI for managing shipments, carriers, and more
+tags: [development, cli, tools]
+author: Karrio Team
+---
+
+# CLI Guide
+
+**Usage**:
+
+```console
+$ [OPTIONS] COMMAND [ARGS]...
+```
+
+**Options**:
+
+* `--install-completion`: Install completion for the current shell.
+* `--show-completion`: Show completion for the current shell, to copy it or customize the installation.
+* `--help`: Show this message and exit.
+
+**Commands**:
+
+* `login`: Configure a connection to a Karrio instance.
+* `logout`: Remove the saved Karrio configuration.
+* `status`: Check the current login status and...
+* `carriers`: Manage carriers.
+* `connections`: Manage carrier connections.
+* `shipments`: Manage shipments.
+* `trackers`: Manage trackers.
+* `orders`: Manage orders.
+* `logs`: View API request logs.
+* `events`: View system events.
+* `sdk`: SDK-related commands.
+* `codegen`: Code generation utilities.
+* `plugins`: Manage plugins.
+
+## `login`
+
+Configure a connection to a Karrio instance.
+
+Example:
+```terminal
+kcli login --host http://localhost:5002 --api-key your_api_key_here | jq '{message: "Login successful", host: .host}'
+```
+
+**Usage**:
+
+```console
+$ login [OPTIONS]
+```
+
+**Options**:
+
+* `--host TEXT`: The URL of the Karrio instance  [default: http://localhost:5002]
+* `--api-key TEXT`: Your Karrio API key  [required]
+* `--help`: Show this message and exit.
+
+## `logout`
+
+Remove the saved Karrio configuration.
+
+Example:
+```terminal
+kcli logout | jq '{message: "Logout successful"}'
+```
+
+**Usage**:
+
+```console
+$ logout [OPTIONS]
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+## `status`
+
+Check the current login status and connection to Karrio.
+
+Example:
+```terminal
+kcli status | jq '{status: "Connected", host: .host, api_key: "********"}'
+```
+
+**Usage**:
+
+```console
+$ status [OPTIONS]
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+## `carriers`
+
+Manage carriers.
+
+**Usage**:
+
+```console
+$ carriers [OPTIONS] COMMAND [ARGS]...
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+**Commands**:
+
+* `list`: List all carriers.
+* `retrieve`: Retrieve a carrier by name.
+
+### `carriers list`
+
+List all carriers.
+
+Examples:
+```terminal
+# Get all carriers and display as a table
+kcli carriers list | jq -r ".results[] | [.name, .display_name, .capabilities[]] | @tsv" | column -t -s $"  "
+```
+
+```terminal
+# Get carriers and extract specific fields
+kcli carriers list | jq ".results[] | {name, display_name, capabilities}"
+```
+
+Example Output:
+```json
+{
+  "count": 3,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "name": "ups",
+      "display_name": "UPS",
+      "capabilities": ["rating", "shipping", "tracking"],
+      "services": {
+        "ups_standard": "11",
+        "ups_express": "01",
+        "ups_expedited": "02"
+      },
+      "requirements": ["api_key", "password", "account_number"]
+    }
+  ]
+}
+```
+
+**Usage**:
+
+```console
+$ carriers list [OPTIONS]
+```
+
+**Options**:
+
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+### `carriers retrieve`
+
+Retrieve a carrier by name.
+
+Example:
+```terminal
+kcli carriers retrieve ups | jq "{name, display_name, capabilities, services: .services | length}"
+```
+
+Example Output:
+```json
+{
+  "name": "ups",
+  "display_name": "UPS",
+  "capabilities": ["rating", "shipping", "tracking"],
+  "services": {
+    "ups_standard": "11",
+    "ups_express": "01",
+    "ups_expedited": "02",
+    "ups_express_plus": "14",
+    "ups_worldwide_express": "07",
+    "ups_worldwide_expedited": "08",
+    "ups_standard_international": "65"
+  },
+  "requirements": ["api_key", "password", "account_number"],
+  "metadata": {
+    "test_mode_supported": true,
+    "multi_piece_supported": true
+  }
+}
+```
+
+**Usage**:
+
+```console
+$ carriers retrieve [OPTIONS] CARRIER_NAME
+```
+
+**Arguments**:
+
+* `CARRIER_NAME`: [required]
+
+**Options**:
+
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+## `connections`
+
+Manage carrier connections.
+
+**Usage**:
+
+```console
+$ connections [OPTIONS] COMMAND [ARGS]...
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+**Commands**:
+
+* `list`: List all carrier connections with optional...
+* `retrieve`: Retrieve a carrier connection by ID.
+* `create`: Create a new carrier connection.
+* `update`: Update a carrier connection by ID.
+* `delete`: Delete a carrier connection by ID.
+
+### `connections list`
+
+List all carrier connections with optional filters and pagination.
+
+Examples:
+```terminal
+# Get all connections and display as a table
+kcli connections list | jq -r ".results[] | [.id, .carrier_name, .test_mode] | @tsv" | column -t -s $"      "
+```
+
+```terminal
+# Get connections for a specific carrier
+kcli connections list --carrier-name ups | jq ".results[] | {id, carrier_name, test_mode}"
+```
+
+Example Output:
+```json
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": "conn_123456789",
+      "carrier_name": "ups",
+      "test_mode": true,
+      "active": true,
+      "capabilities": ["rating", "shipping", "tracking"],
+      "metadata": {}
+    }
+  ]
+}
+```
+
+**Usage**:
+
+```console
+$ connections list [OPTIONS]
+```
+
+**Options**:
+
+* `--carrier-name TEXT`
+* `--system-only`: Filter for system connections only
+* `--limit INTEGER`: Number of results to return per page  [default: 20]
+* `--offset INTEGER`: The initial index from which to return the results  [default: 0]
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+### `connections retrieve`
+
+Retrieve a carrier connection by ID.
+
+Example:
+```terminal
+kcli connections retrieve conn_123456789 | jq "{id, carrier_name, test_mode, active}"
+```
+
+Example Output:
+```json
+{
+  "id": "conn_123456789",
+  "carrier_name": "ups",
+  "test_mode": true,
+  "active": true,
+  "capabilities": ["rating", "shipping", "tracking"],
+  "credentials": {
+    "api_key": "YOUR_API_KEY",
+    "password": "YOUR_PASSWORD",
+    "account_number": "YOUR_ACCOUNT"
+  },
+  "metadata": {}
+}
+```
+
+**Usage**:
+
+```console
+$ connections retrieve [OPTIONS] CONNECTION_ID
+```
+
+**Arguments**:
+
+* `CONNECTION_ID`: [required]
+
+**Options**:
+
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+### `connections create`
+
+Create a new carrier connection.
+
+Example:
+```terminal
+kcli connections create \
+    -d carrier_name=ups \
+    -d test_mode=true \
+    -d credentials=YOUR_API_KEY \
+    -d credentials=YOUR_PASSWORD \
+    -d credentials=YOUR_ACCOUNT | jq "{id, carrier_name, test_mode}"
+```
+
+Example Output:
+```json
+{
+  "id": "conn_123456789",
+  "carrier_name": "ups",
+  "test_mode": true,
+  "active": true,
+  "capabilities": ["rating", "shipping", "tracking"],
+  "credentials": {
+    "api_key": "YOUR_API_KEY",
+    "password": "YOUR_PASSWORD",
+    "account_number": "YOUR_ACCOUNT"
+  }
+}
+```
+
+**Usage**:
+
+```console
+$ connections create [OPTIONS]
+```
+
+**Options**:
+
+* `-d, --property TEXT`: Set nested properties (e.g. -d carrier_name=ups -d credentials=xxx)
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+### `connections update`
+
+Update a carrier connection by ID.
+
+Example:
+```terminal
+kcli connections update conn_123456789 \
+    -d test_mode=false \
+    -d credentials=NEW_API_KEY | jq "{id, carrier_name, test_mode}"
+```
+
+Example Output:
+```json
+{
+  "id": "conn_123456789",
+  "carrier_name": "ups",
+  "test_mode": false,
+  "active": true,
+  "credentials": {
+    "api_key": "NEW_API_KEY",
+    "password": "YOUR_PASSWORD",
+    "account_number": "YOUR_ACCOUNT"
+  }
+}
+```
+
+**Usage**:
+
+```console
+$ connections update [OPTIONS] CONNECTION_ID
+```
+
+**Arguments**:
+
+* `CONNECTION_ID`: [required]
+
+**Options**:
+
+* `-d, --property TEXT`: Set nested properties (e.g. -d credentials=newvalue)
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+### `connections delete`
+
+Delete a carrier connection by ID.
+
+Example:
+```terminal
+kcli connections delete conn_123456789 | jq "{message: "Connection deleted successfully"}"
+```
+
+Example Output:
+```json
+{
+  "message": "Connection deleted successfully"
+}
+```
+
+**Usage**:
+
+```console
+$ connections delete [OPTIONS] CONNECTION_ID
+```
+
+**Arguments**:
+
+* `CONNECTION_ID`: [required]
+
+**Options**:
+
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+## `shipments`
+
+Manage shipments.
+
+**Usage**:
+
+```console
+$ shipments [OPTIONS] COMMAND [ARGS]...
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+**Commands**:
+
+* `list`: List all shipments with optional filters...
+* `retrieve`: Retrieve a shipment by ID.
+* `buy-label`: Purchase a label for a shipment.
+* `cancel`: Cancel a shipment.
+* `fetch-rates`: Fetch rates for a shipment.
+
+### `shipments list`
+
+List all shipments with optional filters and pagination.
+
+Examples:
+```terminal
+# Get all shipments and display as a table
+kcli shipments list --limit 10 | jq -r '.results[] | [.id, .status, .carrier_name, .tracking_number] | @tsv' | column -t -s $'      '
+```
+
+```terminal
+# Get pending shipments and extract specific fields
+kcli shipments list --status pending --limit 5 | jq '.results[] | {id, status, carrier: .carrier_name, tracking: .tracking_number}'
+```
+
+**Usage**:
+
+```console
+$ shipments list [OPTIONS]
+```
+
+**Options**:
+
+* `--address TEXT`
+* `--carrier-name TEXT`
+* `--created-after [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
+* `--created-before [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
+* `--has-manifest / --no-has-manifest`
+* `--has-tracker / --no-has-tracker`
+* `--id TEXT`
+* `--keyword TEXT`
+* `--meta-key TEXT`
+* `--meta-value TEXT`
+* `--metadata-key TEXT`
+* `--metadata-value TEXT`
+* `--option-key TEXT`
+* `--option-value TEXT`
+* `--reference TEXT`
+* `--service TEXT`
+* `--status TEXT`
+* `--tracking-number TEXT`
+* `--limit INTEGER`: Number of results to return per page  [default: 20]
+* `--offset INTEGER`: The initial index from which to return the results  [default: 0]
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+### `shipments retrieve`
+
+Retrieve a shipment by ID.
+
+Example:
+```terminal
+kcli shipments retrieve shp_123456789 | jq '{id, status, carrier: .carrier_name, tracking: .tracking_number, created: .created_at}'
+```
+
+**Usage**:
+
+```console
+$ shipments retrieve [OPTIONS] SHIPMENT_ID
+```
+
+**Arguments**:
+
+* `SHIPMENT_ID`: [required]
+
+**Options**:
+
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+### `shipments buy-label`
+
+Purchase a label for a shipment.
+
+Example:
+```terminal
+kcli shipments buy-label shp_123456789         --selected-rate-id rate_987654321         --label-type PDF         -d payment=sender         -d payment=USD         -d reference=order_12345         -d metadata=cust_9876 | jq '{id, status, label: .label_url, tracking: .tracking_number}'
+```
+
+**Usage**:
+
+```console
+$ shipments buy-label [OPTIONS] SHIPMENT_ID
+```
+
+**Arguments**:
+
+* `SHIPMENT_ID`: [required]
+
+**Options**:
+
+* `--selected-rate-id TEXT`: The ID of the selected rate  [required]
+* `--label-type TEXT`: The type of label to generate  [default: PDF]
+* `-d, --property TEXT`: Set nested properties (e.g. -d payment=sender)
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+### `shipments cancel`
+
+Cancel a shipment.
+
+Example:
+```terminal
+kcli shipments cancel shp_123456789 | jq '{id, status, message: .cancellation.message}'
+```
+
+**Usage**:
+
+```console
+$ shipments cancel [OPTIONS] SHIPMENT_ID
+```
+
+**Arguments**:
+
+* `SHIPMENT_ID`: [required]
+
+**Options**:
+
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+### `shipments fetch-rates`
+
+Fetch rates for a shipment.
+
+Example:
+
+```terminal
+kcli shipments fetch-rates shp_123456789 | jq '.[] | {carrier: .carrier_name, service: .service, total_charge: .total_charge}'
+```
+
+**Usage**:
+
+```console
+$ shipments fetch-rates [OPTIONS] SHIPMENT_ID
+```
+
+**Arguments**:
+
+* `SHIPMENT_ID`: [required]
+
+**Options**:
+
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+## `trackers`
+
+Manage trackers.
+
+**Usage**:
+
+```console
+$ trackers [OPTIONS] COMMAND [ARGS]...
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+**Commands**:
+
+* `list`: List all trackers with optional filters...
+* `retrieve`: Retrieve a tracker by ID.
+* `create`: Create a new tracker.
+* `update`: Update an existing tracker.
+* `delete`: Delete a tracker.
+
+### `trackers list`
+
+List all trackers with optional filters and pagination.
+
+Examples:
+```terminal
+# Get all trackers and display as a table
+kcli trackers list --limit 10 | jq -r ".results[] | [.id, .tracking_number, .carrier_name, .status] | @tsv" | column -t -s $"       "
+```
+
+```terminal
+# Get in-transit trackers and extract specific fields
+kcli trackers list --status in_transit --limit 5 | jq ".results[] | {id, tracking: .tracking_number, carrier: .carrier_name, status}"
+```
+
+Example Output:
+```json
+{
+  "count": 10,
+  "next": "/v1/trackers?limit=10&amp;offset=10",
+  "previous": null,
+  "results": [
+    {
+      "id": "trk_123456789",
+      "tracking_number": "1Z999AA1234567890",
+      "carrier_name": "ups",
+      "status": "in_transit",
+      "created_at": "2024-03-20T10:30:00Z",
+      "events": [
+        {
+          "date": "2024-03-20T10:30:00Z",
+          "description": "Package picked up",
+          "location": "San Francisco, CA",
+          "code": "PU"
+        }
+      ],
+      "metadata": {}
+    }
+  ]
+}
+```
+
+**Usage**:
+
+```console
+$ trackers list [OPTIONS]
+```
+
+**Options**:
+
+* `--carrier-name TEXT`
+* `--tracking-number TEXT`
+* `--status TEXT`
+* `--created-after [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
+* `--created-before [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
+* `--limit INTEGER`: Number of results to return per page  [default: 20]
+* `--offset INTEGER`: The initial index from which to return the results  [default: 0]
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+### `trackers retrieve`
+
+Retrieve a tracker by ID.
+
+Example:
+```terminal
+kcli trackers retrieve trk_123456789 | jq "{id, tracking: .tracking_number, carrier: .carrier_name, status, last_event: .events[-1].description}"
+```
+
+Example Output:
+```json
+{
+  "id": "trk_123456789",
+  "tracking_number": "1Z999AA1234567890",
+  "carrier_name": "ups",
+  "status": "delivered",
+  "created_at": "2024-03-19T15:45:00Z",
+  "events": [
+    {
+      "date": "2024-03-20T14:30:00Z",
+      "description": "Package delivered",
+      "location": "New York, NY",
+      "code": "DL"
+    }
+  ],
+  "metadata": {
+    "order_id": "ORD12345"
+  }
+}
+```
+
+**Usage**:
+
+```console
+$ trackers retrieve [OPTIONS] TRACKER_ID
+```
+
+**Arguments**:
+
+* `TRACKER_ID`: [required]
+
+**Options**:
+
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+### `trackers create`
+
+Create a new tracker.
+
+Example:
+```terminal
+kcli trackers create --tracking-number 1Z999AA1234567890 --carrier-name ups \
+    -d info="John Doe" \
+    -d info=ORD12345 \
+    -d metadata=website | jq "{id, tracking: .tracking_number, carrier: .carrier_name, status}"
+```
+
+Example Output:
+```json
+{
+  "id": "trk_123456789",
+  "tracking_number": "1Z999AA1234567890",
+  "carrier_name": "ups",
+  "status": "unknown",
+  "created_at": "2024-03-20T10:30:00Z",
+  "info": {
+    "customer_name": "John Doe",
+    "order_id": "ORD12345"
+  },
+  "metadata": {
+    "source": "website"
+  }
+}
+```
+
+**Usage**:
+
+```console
+$ trackers create [OPTIONS]
+```
+
+**Options**:
+
+* `--tracking-number TEXT`: The tracking number  [required]
+* `--carrier-name TEXT`: The carrier name  [required]
+* `--account-number TEXT`: The account number
+* `--reference TEXT`: A reference for the tracker
+* `-d, --property TEXT`: Set nested properties (e.g. -d info=John Doe)
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+### `trackers update`
+
+Update an existing tracker.
+
+Example:
+```terminal
+kcli trackers update trk_123456789 \
+    -d info="Package delayed" \
+    -d metadata=delayed | jq "{id, tracking: .tracking_number, status, note: .info.note}"
+```
+
+Example Output:
+```json
+{
+  "id": "trk_123456789",
+  "tracking_number": "1Z999AA1234567890",
+  "status": "in_transit",
+  "info": {
+    "note": "Package delayed"
+  },
+  "metadata": {
+    "status": "delayed"
+  }
+}
+```
+
+**Usage**:
+
+```console
+$ trackers update [OPTIONS] TRACKER_ID
+```
+
+**Arguments**:
+
+* `TRACKER_ID`: [required]
+
+**Options**:
+
+* `-d, --property TEXT`: Set nested properties (e.g. -d info=John Doe)
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+### `trackers delete`
+
+Delete a tracker.
+
+Example:
+```terminal
+kcli trackers delete trk_123456789 | jq "{message: "Tracker deleted successfully"}"
+```
+
+Example Output:
+```json
+{
+  "message": "Tracker deleted successfully"
+}
+```
+
+**Usage**:
+
+```console
+$ trackers delete [OPTIONS] TRACKER_ID
+```
+
+**Arguments**:
+
+* `TRACKER_ID`: [required]
+
+**Options**:
+
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+## `orders`
+
+Manage orders.
+
+**Usage**:
+
+```console
+$ orders [OPTIONS] COMMAND [ARGS]...
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+**Commands**:
+
+* `list`: List all orders with optional filters and...
+* `retrieve`: Retrieve an order by ID.
+* `cancel`: Cancel an order.
+
+### `orders list`
+
+List all orders with optional filters and pagination.
+
+Examples:
+```terminal
+# Get all orders and display as a table
+kcli orders list --limit 15 | jq -r ".results[] | [.id, .status, .created_at, .total_charge.amount] | @tsv" | column -t -s $"       "
+```
+
+```terminal
+# Get pending orders and extract specific fields
+kcli orders list --status pending --limit 5 | jq ".results[] | {id, status, created: .created_at, total: .total_charge.amount}"
+```
+
+Example Output:
+```json
+{
+  "count": 15,
+  "next": "/v1/orders?limit=15&amp;offset=15",
+  "previous": null,
+  "results": [
+    {
+      "id": "ord_123456789",
+      "status": "pending",
+      "created_at": "2024-03-20T10:30:00Z",
+      "total_charge": {
+        "amount": 25.50,
+        "currency": "USD"
+      },
+      "line_items": [],
+      "metadata": {}
+    }
+  ]
+}
+```
+
+**Usage**:
+
+```console
+$ orders list [OPTIONS]
+```
+
+**Options**:
+
+* `--created-after [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
+* `--created-before [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
+* `--status TEXT`
+* `--reference TEXT`
+* `--metadata-key TEXT`
+* `--metadata-value TEXT`
+* `--limit INTEGER`: Number of results to return per page  [default: 20]
+* `--offset INTEGER`: The initial index from which to return the results  [default: 0]
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+### `orders retrieve`
+
+Retrieve an order by ID.
+
+Example:
+```terminal
+kcli orders retrieve ord_987654321 | jq "{id, status, created: .created_at, total: .total_charge.amount, items: .line_items | length}"
+```
+
+**Usage**:
+
+```console
+$ orders retrieve [OPTIONS] ORDER_ID
+```
+
+**Arguments**:
+
+* `ORDER_ID`: [required]
+
+**Options**:
+
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+### `orders cancel`
+
+Cancel an order.
+
+Example:
+```terminal
+kcli orders cancel ord_987654321 -d reason=customer_request | jq "{id, status, cancel_reason: .cancellation.reason}"
+```
+
+**Usage**:
+
+```console
+$ orders cancel [OPTIONS] ORDER_ID
+```
+
+**Arguments**:
+
+* `ORDER_ID`: [required]
+
+**Options**:
+
+* `-d, --property TEXT`: Set nested properties (e.g. -d reason=customer_request)
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+## `logs`
+
+View API request logs.
+
+**Usage**:
+
+```console
+$ logs [OPTIONS] COMMAND [ARGS]...
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+**Commands**:
+
+* `list`: List all logs with optional filters and...
+* `retrieve`: Retrieve a log by ID.
+
+### `logs list`
+
+List all logs with optional filters and pagination.
+
+Examples:
+```terminal
+# Get all logs and display as a table
+kcli logs list --limit 10 | jq -r ".logs.edges[].node | [.id, .method, .status_code, .path] | @tsv" | column -t -s $"       "
+```
+
+```terminal
+# Get logs for a specific entity
+kcli logs list --entity-id shp_123456789 --limit 5 | jq ".logs.edges[].node | {id, method, status_code, path}"
+```
+
+Example Output:
+```json
+{
+  "logs": {
+    "edges": [
+      {
+        "node": {
+          "id": "123",
+          "method": "POST",
+          "status_code": 200,
+          "path": "/v1/shipments",
+          "request": {
+            "headers": {},
+            "body": {}
+          },
+          "response": {
+            "headers": {},
+            "body": {}
+          },
+          "response_ms": 245,
+          "requested_at": "2024-03-20T10:30:00Z"
+        }
+      }
+    ],
+    "pageInfo": {
+      "hasNextPage": true,
+      "hasPreviousPage": false,
+      "startCursor": "YXJyYXljb25uZWN0aW9uOjA=",
+      "endCursor": "YXJyYXljb25uZWN0aW9uOjk="
+    }
+  }
+}
+```
+
+**Usage**:
+
+```console
+$ logs list [OPTIONS]
+```
+
+**Options**:
+
+* `--entity-id TEXT`
+* `--method TEXT`
+* `--status-code TEXT`
+* `--created-after [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
+* `--created-before [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
+* `--limit INTEGER`: Number of results to return per page  [default: 20]
+* `--offset INTEGER`: The initial index from which to return the results  [default: 0]
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+### `logs retrieve`
+
+Retrieve a log by ID.
+
+Example:
+```terminal
+kcli logs retrieve 123 | jq "{id, method, status_code, path, response_ms, requested_at}"
+```
+
+Example Output:
+```json
+{
+  "log": {
+    "id": "123",
+    "method": "POST",
+    "status_code": 200,
+    "path": "/v1/shipments",
+    "request": {
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Token &lt;redacted&gt;"
+      },
+      "body": {
+        "shipment_id": "shp_123456789"
+      }
+    },
+    "response": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "id": "shp_123456789",
+        "status": "created"
+      }
+    },
+    "response_ms": 245,
+    "requested_at": "2024-03-20T10:30:00Z"
+  }
+}
+```
+
+**Usage**:
+
+```console
+$ logs retrieve [OPTIONS] LOG_ID
+```
+
+**Arguments**:
+
+* `LOG_ID`: [required]
+
+**Options**:
+
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+## `events`
+
+View system events.
+
+**Usage**:
+
+```console
+$ events [OPTIONS] COMMAND [ARGS]...
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+**Commands**:
+
+* `list`: List all events with optional filters and...
+* `retrieve`: Retrieve an event by ID.
+
+### `events list`
+
+List all events with optional filters and pagination.
+
+Examples:
+```terminal
+# Get all events and display as a table
+kcli events list --limit 10 | jq -r ".events.edges[].node | [.id, .type, .created_at] | @tsv" | column -t -s $"     "
+```
+
+```terminal
+# Get events of a specific type
+kcli events list --type shipment_purchased --limit 5 | jq ".events.edges[].node | {id, type, created_at, data}"
+```
+
+Example Output:
+```json
+{
+  "events": {
+    "edges": [
+      {
+        "node": {
+          "id": "evt_123456789",
+          "type": "shipment_purchased",
+          "data": {
+            "shipment_id": "shp_123456789",
+            "status": "purchased"
+          },
+          "test_mode": false,
+          "pending_webhooks": 0,
+          "created_at": "2024-03-20T10:30:00Z"
+        }
+      }
+    ],
+    "page_info": {
+      "count": 1,
+      "has_next_page": false,
+      "has_previous_page": false,
+      "start_cursor": "YXJyYXljb25uZWN0aW9uOjA=",
+      "end_cursor": "YXJyYXljb25uZWN0aW9uOjA="
+    }
+  }
+}
+```
+
+**Usage**:
+
+```console
+$ events list [OPTIONS]
+```
+
+**Options**:
+
+* `--type TEXT`: Event type (e.g. shipment_created, order_created, tracker_created)
+* `--created-after [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
+* `--created-before [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
+* `--limit INTEGER`: Number of results to return per page  [default: 20]
+* `--offset INTEGER`: The initial index from which to return the results  [default: 0]
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+### `events retrieve`
+
+Retrieve an event by ID.
+
+Example:
+```terminal
+kcli events retrieve evt_123456789 | jq "{id, type, created_at, data}"
+```
+
+Example Output:
+```json
+{
+  "event": {
+    "id": "evt_123456789",
+    "type": "shipment_purchased",
+    "data": {
+      "shipment_id": "shp_123456789",
+      "status": "purchased"
+    },
+    "test_mode": false,
+    "pending_webhooks": 0,
+    "created_at": "2024-03-20T10:30:00Z"
+  }
+}
+```
+
+**Usage**:
+
+```console
+$ events retrieve [OPTIONS] EVENT_ID
+```
+
+**Arguments**:
+
+* `EVENT_ID`: [required]
+
+**Options**:
+
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+## `sdk`
+
+SDK-related commands.
+
+**Usage**:
+
+```console
+$ sdk [OPTIONS] COMMAND [ARGS]...
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+**Commands**:
+
+* `add-extension`
+* `add-features`
+
+### `sdk add-extension`
+
+**Usage**:
+
+```console
+$ sdk add-extension [OPTIONS]
+```
+
+**Options**:
+
+* `-p, --path TEXT`: Path where the extension will be created  [required]
+* `--carrier-slug TEXT`: The unique identifier for the carrier (e.g., dhl_express, ups, fedex, canadapost)  [required]
+* `--display-name TEXT`: The human-readable name for the carrier (e.g., DHL, UPS, FedEx, Canada Post)  [required]
+* `--features TEXT`: [default: tracking, rating, shipping]
+* `--version TEXT`: [default: 2025.5]
+* `--is-xml-api / --no-is-xml-api`: [default: no-is-xml-api]
+* `--help`: Show this message and exit.
+
+### `sdk add-features`
+
+**Usage**:
+
+```console
+$ sdk add-features [OPTIONS]
+```
+
+**Options**:
+
+* `--carrier-slug TEXT`: The unique identifier for the carrier (e.g., dhl_express, ups, fedex, canadapost)  [required]
+* `--display-name TEXT`: The human-readable name for the carrier (e.g., DHL, UPS, FedEx, Canada Post)  [required]
+* `--features TEXT`: [default: tracking, rating, shipping]
+* `--is-xml-api / --no-is-xml-api`: [default: no-is-xml-api]
+* `-p, --path TEXT`: Path where the features will be created  [required]
+* `--help`: Show this message and exit.
+
+## `codegen`
+
+Code generation utilities.
+
+**Usage**:
+
+```console
+$ codegen [OPTIONS] COMMAND [ARGS]...
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+**Commands**:
+
+* `transform`: Transform Python code generated by...
+* `generate`: Generate Python code with jstruct from a...
+* `create-tree`: Generate a Python code tree from a class...
+
+### `codegen transform`
+
+Transform Python code generated by quicktype (using dataclasses)
+into code that uses attrs and jstruct decorators.
+
+**Usage**:
+
+```console
+$ codegen transform [OPTIONS] [INPUT_FILE] [OUTPUT_FILE]
+```
+
+**Arguments**:
+
+* `[INPUT_FILE]`: Input file path. If not provided, reads from stdin.
+* `[OUTPUT_FILE]`: Output file path. If not provided, writes to stdout.
+
+**Options**:
+
+* `--append-type-suffix / --no-append-type-suffix`: Append 'Type' to class names  [default: append-type-suffix]
+* `--help`: Show this message and exit.
+
+### `codegen generate`
+
+Generate Python code with jstruct from a JSON schema file using quicktype.
+
+**Usage**:
+
+```console
+$ codegen generate [OPTIONS] INPUT_FILE [OUTPUT_FILE]
+```
+
+**Arguments**:
+
+* `INPUT_FILE`: Input JSON schema file path  [required]
+* `[OUTPUT_FILE]`: Output Python file path. If not provided, writes to stdout.
+
+**Options**:
+
+* `--python-version TEXT`: Python version to target  [default: 3.11]
+* `--just-types / --no-just-types`: Generate just the type definitions without serialization code  [default: just-types]
+* `--append-type-suffix / --no-append-type-suffix`: Append 'Type' to class names  [default: append-type-suffix]
+* `--nice-property-names / --no-nice-property-names`: Use nice property names  [default: no-nice-property-names]
+* `--help`: Show this message and exit.
+
+### `codegen create-tree`
+
+Generate a Python code tree from a class definition.
+
+This command imports a class from a specified module and generates
+a Python code snippet that shows how to construct an instance of that class
+with all its nested properties.
+
+**Usage**:
+
+```console
+$ codegen create-tree [OPTIONS]
+```
+
+**Options**:
+
+* `--module TEXT`: Module containing the class  [required]
+* `--class-name TEXT`: Class name to generate a tree for  [required]
+* `--module-alias TEXT`: Optional alias for the module in the output
+* `--help`: Show this message and exit.
+
+## `plugins`
+
+Manage plugins.
+
+**Usage**:
+
+```console
+$ plugins [OPTIONS] COMMAND [ARGS]...
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+**Commands**:
+
+* `list`: List all plugins with short description...
+* `show`: Show full details for a plugin by ID.
+* `enable`: Enable a plugin by updating the Django...
+* `disable`: Disable a plugin by updating the Django...
+
+### `plugins list`
+
+List all plugins with short description and active status.
+
+Examples:
+```terminal
+# Get all plugins and display as a table (default)
+kcli plugins list
+```
+
+```terminal
+# Get plugins in JSON format
+kcli plugins list --pretty | jq ".[] | {id, label, status, enabled}"
+```
+
+Example Output:
+```json
+[
+  {
+    "id": "plugin_id",
+    "label": "Plugin Name",
+    "status": "active",
+    "enabled": true,
+    "description": "A brief description of the plugin functionality"
+  }
+]
+```
+
+**Usage**:
+
+```console
+$ plugins list [OPTIONS]
+```
+
+**Options**:
+
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+### `plugins show`
+
+Show full details for a plugin by ID.
+
+Example:
+```terminal
+kcli plugins show plugin_id --pretty | jq "{id, label, description, status, enabled}"
+```
+
+Example Output:
+```json
+{
+  "id": "plugin_id",
+  "label": "Plugin Name",
+  "description": "A detailed description of the plugin functionality",
+  "status": "active",
+  "enabled": true,
+  "version": "1.0.0",
+  "author": "Plugin Author",
+  "website": "https://plugin-website.com",
+  "dependencies": {
+    "python": "&gt;=3.8",
+    "karrio": "&gt;=2024.12"
+  }
+}
+```
+
+**Usage**:
+
+```console
+$ plugins show [OPTIONS] PLUGIN_ID
+```
+
+**Arguments**:
+
+* `PLUGIN_ID`: [required]
+
+**Options**:
+
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
+
+### `plugins enable`
+
+Enable a plugin by updating the Django Constance env var associated.
+
+Example:
+```terminal
+kcli plugins enable plugin_id
+```
+
+Example Output:
+```text
+Plugin 'plugin_id' enabled.
+```
+
+**Usage**:
+
+```console
+$ plugins enable [OPTIONS] PLUGIN_ID
+```
+
+**Arguments**:
+
+* `PLUGIN_ID`: [required]
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+### `plugins disable`
+
+Disable a plugin by updating the Django Constance env var associated.
+
+Example:
+```terminal
+kcli plugins disable plugin_id
+```
+
+Example Output:
+```text
+Plugin 'plugin_id' disabled.
+```
+
+**Usage**:
+
+```console
+$ plugins disable [OPTIONS] PLUGIN_ID
+```
+
+**Arguments**:
+
+* `PLUGIN_ID`: [required]
+
+**Options**:
+
+* `--help`: Show this message and exit.
+

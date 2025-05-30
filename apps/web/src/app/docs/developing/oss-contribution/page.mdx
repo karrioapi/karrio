@@ -1,0 +1,84 @@
+---
+sidebarTitle: OSS Contribution
+title: Introduction
+description: Learn how to contribute to the Karrio open source project
+tags: [development, contribution, open-source]
+author: Karrio Team
+---
+
+# Introduction
+
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make to Karrio are **greatly appreciated**.
+
+## Ways to Contribute
+
+There are many ways to contribute to the Karrio ecosystem:
+
+- **Answer Questions**: Help other users in [GitHub Discussions](https://github.com/orgs/karrioapi/discussions)
+- **Report Issues**: Submit bugs or feature requests through [GitHub Discussions](https://github.com/karrioapi/karrio/discussions)
+- **Improve Documentation**: Fix confusing or incomplete documentation sections
+- **Create Pull Requests**: Fix bugs or add new features to the codebase
+- **Test and Provide Feedback**: Try new features and provide feedback
+- **Spread the Word**: Share Karrio with others if you like what we're doing
+
+## Priorities
+
+When contributing to Karrio, we have different priorities for different types of issues:
+
+| Type of issue | Priority |
+| ------------- | -------- |
+| Critical bugs (API failures, shipping operations not working) | Urgent |
+| Core features (carrier integrations, tracking, label generation) | High |
+| Confusing UX (working but not intuitive) | Medium |
+| Minor improvements, non-core feature requests | Low |
+
+## Developing
+
+The development branch is `main`. This is the branch that all pull requests should be made against. The changes on the `main` branch are tagged into a release periodically.
+
+To start developing locally:
+
+1. Fork the repository to your own GitHub account and then clone it to your local device
+2. Create a new branch: `git checkout -b MY_BRANCH_NAME`
+3. Follow the setup instructions in the [Local Development](/docs/developing/local-development) guide
+
+## Building and Testing
+
+You can build the project with:
+
+```bash
+# For server components
+source ./bin/setup-server-env
+
+# For UI components
+npm i
+
+# Start the development
+npm run dev
+```
+
+### Running Tests
+
+To run and test all flows:
+
+```bash
+# For SDK tests
+./bin/run-sdk-tests
+
+# For server tests
+./bin/run-server-tests
+
+# For a specific carrier integration
+# python -m unittest discover -v -f modules/connectors/[carrier_extension]/tests
+python -m unittest discover -v -f modules/connectors/fedex/tests
+
+# For a specific server component
+# karrio test --failfast karrio.server.[component].tests
+karrio test --failfast karrio.server.core.tests
+```
+
+## Next Steps
+
+- [Learn about our Pull Request process](/docs/developing/pull-requests)
+- [Read our Contributor's Guide for technical details](/docs/developing/contributors-guide)
+- [Set up your Local Development environment](/docs/developing/local-development)

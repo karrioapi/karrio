@@ -1,15 +1,13 @@
 "use client";
 import { formatDateTimeLong, isNone, notEmptyJSON } from "@karrio/lib";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { CopiableLink } from "@karrio/ui/components/copiable-link";
-import { useLoader } from "@karrio/ui/components/loader";
-import { AppLink } from "@karrio/ui/components/app-link";
+import { CopiableLink } from "@karrio/ui/core/components/copiable-link";
+import { useLoader } from "@karrio/ui/core/components/loader";
+import { AppLink } from "@karrio/ui/core/components/app-link";
 import json from "highlight.js/lib/languages/json";
 import React, { useEffect, useState } from "react";
 import { useEvent } from "@karrio/hooks/event";
 import hljs from "highlight.js";
 
-export const generateMetadata = dynamicMetadata("Event");
 hljs.registerLanguage("json", json);
 
 export const EventComponent = ({
@@ -120,12 +118,25 @@ export const EventComponent = ({
   );
 };
 
-export default async function EventPage({ params }: { params: Promise<{ id: string }> }) {
-  const query = await params;
-  return (
-    <>
-      <EventComponent eventId={query.id} />
-    </>
-  );
+export default function EventPage({ params }: { params: Promise<{ id: string }> }) {
+  const Component = (): JSX.Element => {
+    const [id, setId] = React.useState<string>();
+
+    React.useEffect(() => {
+      params.then(query => {
+        setId(query.id);
+      });
+    }, []);
+
+    if (!id) return <></>;
+
+    return (
+      <>
+        <EventComponent eventId={id} />
+      </>
+    );
+  };
+
+  return <Component />;
 }
 

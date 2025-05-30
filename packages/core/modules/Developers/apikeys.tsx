@@ -1,15 +1,13 @@
 "use client";
-import { GenerateAPIModal } from "@karrio/ui/modals/generate-api-dialog";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
+import { GenerateAPIModal } from "@karrio/ui/core/modals/generate-api-dialog";
 import { useEffect, useRef, useState } from "react";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { AppLink } from "@karrio/ui/components/app-link";
-import { useLoader } from "@karrio/ui/components/loader";
+import { AppLink } from "@karrio/ui/core/components/app-link";
+import { useLoader } from "@karrio/ui/core/components/loader";
 import { useAPIToken } from "@karrio/hooks/api-token";
 
-export const generateMetadata = dynamicMetadata("API Keys");
 
-export default function ApiPage(pageProps: any) {
+export default function ApiPage() {
   const { references } = useAPIMetadata();
 
   const Component = (): JSX.Element => {

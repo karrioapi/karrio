@@ -5,10 +5,10 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@karrio/insiders/components/ui/card";
+} from "@karrio/ui/components/ui/card";
 import { DashboardHeader } from "@karrio/console/components/dashboard-header";
-import { Button } from "@karrio/insiders/components/ui/button";
-import { Badge } from "@karrio/insiders/components/ui/badge";
+import { Button } from "@karrio/ui/components/ui/button";
+import { Badge } from "@karrio/ui/components/ui/badge";
 import {
   CopyIcon,
   AlertCircle,
@@ -22,8 +22,8 @@ import {
   ExternalLink,
   Loader2,
 } from "lucide-react";
-import { Alert, AlertDescription } from "@karrio/insiders/components/ui/alert";
-import { toast } from "@karrio/insiders/hooks/use-toast";
+import { Alert, AlertDescription } from "@karrio/ui/components/ui/alert";
+import { toast } from "@karrio/ui/hooks/use-toast";
 import { trpc } from "@karrio/console/trpc/client";
 import moment from "moment";
 import React, { useState } from "react";
@@ -33,7 +33,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@karrio/insiders/components/ui/select";
+} from "@karrio/ui/components/ui/select";
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 
 interface DataPoint {

@@ -5,6 +5,10 @@
   "types": "./index.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "graphql-tag": "^2.12.6"
+    "graphql-tag": "^2.12.6",
+    "next-runtime-env": "^1.6.3"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.16"
   }
 }

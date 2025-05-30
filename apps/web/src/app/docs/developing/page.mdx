@@ -1,0 +1,90 @@
+---
+title: Introduction
+description: Getting started with Karrio
+---
+
+# Introduction
+
+<div className="relative w-full h-96 bg-gradient-to-br from-[#4a1db0] to-[#47a3ff] dark:from-[#5722cc] dark:to-[#2364e7] rounded-lg overflow-hidden mb-8 flex items-center justify-center">
+  <div className="text-center z-10">
+    <h1 className="text-4xl md:text-5xl font-bold text-white mb-2 !text-white">Karrio</h1>
+    <p className="text-xl md:text-2xl text-white font-medium !text-white">Product & Developer Docs</p>
+  </div>
+  <div className="absolute inset-0 opacity-20">
+    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+          <circle fill="white" cx="4" cy="4" r="1"></circle>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#dots)"></rect>
+    </svg>
+  </div>
+</div>
+
+<div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+  <a href="/docs/developing/local-development" className="group no-underline">
+    <div className="docs-card relative flex flex-col h-full rounded-lg border p-4 shadow-sm transition-all duration-200 hover:shadow-md">
+      <div className="flex items-center mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-purple-600">
+          <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+        <span className="ml-3 text-base font-medium text-gray-900">Start developing</span>
+      </div>
+      <span className="text-sm font-light text-gray-500">Follow our quickstart guide to start developing with Karrio</span>
+    </div>
+  </a>
+
+  <a href="/docs/self-hosting" className="group no-underline">
+    <div className="docs-card relative flex flex-col h-full rounded-lg border p-4 shadow-sm transition-all duration-200 hover:shadow-md">
+      <div className="flex items-center mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-purple-600">
+          <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+          <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+          <line x1="6" y1="6" x2="6.01" y2="6"></line>
+          <line x1="6" y1="18" x2="6.01" y2="18"></line>
+        </svg>
+        <span className="ml-3 text-base font-medium text-gray-900">Self Host</span>
+      </div>
+      <span className="text-sm font-light text-gray-500">Learn how to self-host Karrio for controlled instance</span>
+    </div>
+  </a>
+
+  <a href="/docs/api-reference" className="group no-underline">
+    <div className="docs-card relative flex flex-col h-full rounded-lg border p-4 shadow-sm transition-all duration-200 hover:shadow-md">
+      <div className="flex items-center mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-purple-600">
+          <polyline points="16 18 22 12 16 6"></polyline>
+          <polyline points="8 6 2 12 8 18"></polyline>
+        </svg>
+        <span className="ml-3 text-base font-medium text-gray-900">API</span>
+      </div>
+      <span className="text-sm font-light text-gray-500">Learn how to use Karrio's API to CRUD various Karrio resources programmatically</span>
+    </div>
+  </a>
+
+  <a href="/docs/carriers" className="group no-underline">
+    <div className="docs-card relative flex flex-col h-full rounded-lg border p-4 shadow-sm transition-all duration-200 hover:shadow-md">
+      <div className="flex items-center mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-purple-600">
+          <rect x="1" y="3" width="15" height="13"></rect>
+          <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+          <circle cx="5.5" cy="18.5" r="2.5"></circle>
+          <circle cx="18.5" cy="18.5" r="2.5"></circle>
+        </svg>
+        <span className="ml-3 text-base font-medium text-gray-900">Carriers</span>
+      </div>
+      <span className="text-sm font-light text-gray-500">Integrate with shipping carriers like USPS, DHL, UPS for rates, tracking and labels</span>
+    </div>
+  </a>
+</div>
+
+## Welcome to the Karrio Documentation!
+
+This is the documentation for Karrio, an open-source multi-carrier shipping API that helps you integrate with multiple shipping carriers like USPS, DHL, UPS, Canada Post, and more.
+
+It covers everything from setup to usage and development. Here you can explore advice and explanations for all of our features,
+as well as discover new tips and tricks to get the most out of the Karrio software.
+
+This also includes the more advanced documentation covering how to build on top of Karrio both in the codebase, by API and more.
+These guides will go into depth on how you can best integrate and extend Karrio for your needs.

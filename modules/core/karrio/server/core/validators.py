@@ -11,6 +11,12 @@ import karrio.core.units as units
 import karrio.server.serializers as serializers
 import karrio.server.core.datatypes as datatypes
 
+# Try to import the references module, which may not be available in all environments
+try:
+    import karrio.references as references
+except ImportError:
+    references = None
+
 logger = logging.getLogger(__name__)
 DIMENSIONS = ["width", "height", "length"]
 
@@ -236,201 +242,175 @@ class AugmentedAddressSerializer(serializers.Serializer):
 
 
 class AddressValidatorAbstract:
+    """
+    Abstract base class for address validators.
+
+    This class defines the interface that all address validators must implement.
+    Note: This class is kept here for backwards compatibility.
+    New validators should use the karrio.validators.abstract.AddressValidatorAbstract class.
+    """
+
     @staticmethod
     def get_info(is_authenticated: bool = None) -> dict:
+        """
+        Get information about the validator.
+
+        Args:
+            is_authenticated: Whether authenticated information should be returned
+
+        Returns:
+            Dictionary with information about the validator
+
+        Raises:
+            Exception: If the method is not implemented
+        """
         raise Exception("get_info method is not implemented")
 
     @staticmethod
     def validate(address: datatypes.Address) -> datatypes.AddressValidation:
+        """
+        Validate an address using the service.
+
+        Args:
+            address: Address object to validate
+
+        Returns:
+            Address validation result
+
+        Raises:
+            Exception: If the method is not implemented
+        """
         raise Exception("validate method is not implemented")
 
 
-class GoogleGeocode(AddressValidatorAbstract):
-    @staticmethod
-    def get_url() -> str:
-        return "https://maps.googleapis.com/maps/api/geocode/json"
-
-    @staticmethod
-    def get_info(is_authenticated: bool = True) -> dict:
-        return dict(
-            provider="google",
-            key=(GoogleGeocode.get_api_key() if is_authenticated else None),
-        )
-
-    @staticmethod
-    def get_api_key() -> str:
-        key = config.GOOGLE_CLOUD_API_KEY
-
-        if key is None or len(key) == 0:
-            raise Exception("No GOOGLE_CLOUD_API_KEY provided for address validation")
-
-        return key
-
-    @staticmethod
-    def format_address(address: datatypes.Address) -> str:
-        address_string = lib.join(
-            address.address_line1 or "",
-            address.address_line2 or "",
-            address.postal_code or "",
-            address.city or "",
-            join=True,
-        )
-
-        if address_string is None:
-            raise Exception(
-                "At least one address info must be provided (address_line1, city and/or postal_code)"
-            )
-
-        enriched_address = lib.join(
-            address_string,
-            address.state_code or "",
-            address.country_code or "",
-            join=True,
-        )
-
-        return enriched_address.replace(" ", "+")
-
-    @staticmethod
-    def validate(address: datatypes.Address) -> datatypes.AddressValidation:
-        formatted_address = GoogleGeocode.format_address(address)
-
-        logger.debug(
-            f"sending address validation request to Google Geocode API: {formatted_address}"
-        )
-        response = requests.request(
-            "GET",
-            GoogleGeocode.get_url(),
-            params=dict(
-                address=formatted_address,
-                key=GoogleGeocode.get_api_key(),
-                location_type="ROOFTOP",
-            ),
-        )
-        response_data = response.json()
-
-        is_ok = response_data.get("status") == "OK"
-        results = response_data.get("results") or []
-        meta = next(
-            (
-                r
-                for r in results
-                if r.get("geometry", {}).get("location_type") == "ROOFTOP"
-            ),
-            None,
-        )
-        success = is_ok and (meta is not None)
-
-        return datatypes.AddressValidation(
-            success=success, meta=(meta or dict(validation_results=results))
-        )
-
-
-class CanadaPostAddressComplete(AddressValidatorAbstract):
-    @staticmethod
-    def get_info(is_authenticated: bool = True) -> dict:
-        return dict(
-            provider="canadapost",
-            key=(CanadaPostAddressComplete.get_api_key() if is_authenticated else None),
-        )
-
-    @staticmethod
-    def get_url() -> str:
-        return "https://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Find/2.1/json.ws"
-
-    @staticmethod
-    def get_api_key() -> str:
-        key = config.CANADAPOST_ADDRESS_COMPLETE_API_KEY
-
-        if key is None or len(key) == 0:
-            raise Exception(
-                "No CANADAPOST_ADDRESS_COMPLETE_API_KEY provided for address validation"
-            )
-
-        return key
-
-    @staticmethod
-    def format_address(address: datatypes.Address) -> str:
-        address_string = lib.join(
-            address.address_line1 or "",
-            address.address_line2 or "",
-            address.city or "",
-            address.postal_code or "",
-            join=True,
-            separator=", ",
-        )
-
-        if address_string is None:
-            raise Exception(
-                "At least one address info must be provided (address_line1, city and/or postal_code)"
-            )
-
-        return address_string
-
-    @staticmethod
-    def validate(address: datatypes.Address) -> datatypes.AddressValidation:
-        formatted_address = CanadaPostAddressComplete.format_address(address)
-
-        logger.debug(
-            f"sending address validation request to Canada Post Address Complete API: {formatted_address}"
-        )
-        response = requests.request(
-            "GET",
-            CanadaPostAddressComplete.get_url(),
-            params=dict(
-                key=CanadaPostAddressComplete.get_api_key(),
-                SearchTerm=formatted_address,
-                Country=address.country_code,
-                MaxResults=5,
-                MaxSuggestions=5,
-                SearchFor="Places",
-                LanguagePreference="EN",
-            ),
-        )
-        results = response.json()
-        is_ok = response.status_code == 200
-        meta = next(
-            (
-                r
-                for r in results
-                if (
-                    r.get("Text").replace(",", "").lower()
-                    == address.address_line1.replace(",", "").lower()
-                    and r.get("Next") == "Retrieve"  # means it is a permanent address
-                )
-            ),
-            None,
-        )
-        success = is_ok and (meta is not None)
-
-        return datatypes.AddressValidation(
-            success=success, meta=(meta or dict(validation_results=results))
-        )
-
-
 class Address:
+    """
+    Address validation service provider.
+
+    This class provides methods to validate addresses using various service providers
+    which are loaded as plugins.
+    """
+
     @staticmethod
     def get_info(is_authenticated: bool = True) -> dict:
+        """
+        Get information about the available address validation services.
+
+        Args:
+            is_authenticated: Whether to include sensitive information like API keys
+
+        Returns:
+            Dictionary with information about the available validators
+        """
+        # If references module is available, get validator plugins info
+        refs = references.REFERENCES
+        if len(refs.get("address_validators", {})) > 0:
+            # Return information about the first available validator
+            validator_name = next(iter(refs["address_validators"].keys()))
+            validator_class = None
+
+            # Try to get the validator class from the references
+            try:
+                # Import the validator module dynamically
+                import importlib
+                module = importlib.import_module(f"karrio.validators.{validator_name}")
+                if hasattr(module, "METADATA"):
+                    validator_class = module.METADATA.Validator
+            except (ImportError, AttributeError) as e:
+                logger.warning(f"Could not import validator {validator_name}: {e}")
+
+            if validator_class is not None:
+                # Return validator info with is_enabled=True
+                validator_info = validator_class.get_info(is_authenticated)
+                return {"is_enabled": True, **validator_info}
+
+        # Check for legacy config-based validation
         is_enabled = any(
             [config.GOOGLE_CLOUD_API_KEY, config.CANADAPOST_ADDRESS_COMPLETE_API_KEY]
         )
 
         if is_enabled:
+            # Legacy validation is enabled, use the legacy validator
             return {
                 "is_enabled": is_enabled,
-                **Address.get_validator().get_info(is_authenticated),
+                **Address._get_legacy_validator().get_info(is_authenticated),
             }
 
-        return dict(is_enabled=is_enabled)
+        # No validation is available
+        return dict(is_enabled=False)
 
     @staticmethod
-    def get_validator() -> typing.Type[AddressValidatorAbstract]:
+    def _get_legacy_validator() -> typing.Type[AddressValidatorAbstract]:
+        """
+        Get a legacy validator instance based on configuration.
+
+        This method is used for backwards compatibility with the old validation system.
+
+        Returns:
+            An instance of a validator class
+
+        Raises:
+            Exception: If no validator is configured
+        """
+        # For backwards compatibility, check if Google or Canada Post is configured
         if any(config.GOOGLE_CLOUD_API_KEY or ""):
+            from karrio.validators.googlegeocoding import Validator as GoogleGeocode
             return GoogleGeocode
         elif any(config.CANADAPOST_ADDRESS_COMPLETE_API_KEY or ""):
-            return CanadaPostAddressComplete
+            from karrio.validators.addresscomplete import Validator as AddressComplete
+            return AddressComplete
 
         raise Exception("No address validation service provider configured")
 
     @staticmethod
+    def get_validator() -> typing.Type:
+        """
+        Get a validator instance based on configuration or plugins.
+
+        This method first checks for validator plugins, then falls back to
+        legacy validators if no plugins are available.
+
+        Returns:
+            An instance of a validator class
+
+        Raises:
+            Exception: If no validator is configured
+        """
+        # If references module is available, check for validator plugins
+        refs = references.REFERENCES
+        if len(refs.get("address_validators", {})) > 0:
+            # Get the first available validator
+                validator_name = next(iter(refs["address_validators"].keys()))
+
+                # Try to get the validator class from the references
+                try:
+                    # Import the validator module dynamically
+                    import importlib
+                    module = importlib.import_module(f"karrio.validators.{validator_name}")
+                    if hasattr(module, "METADATA"):
+                        return module.METADATA.Validator
+                except (ImportError, AttributeError) as e:
+                    logger.warning(f"Could not import validator {validator_name}: {e}")
+
+        # Fall back to legacy validator
+        return Address._get_legacy_validator()
+
+    @staticmethod
     def validate(address: datatypes.Address) -> datatypes.AddressValidation:
-        return Address.get_validator().validate(address)
+        """
+        Validate an address using the configured validator.
+
+        Args:
+            address: The address to validate
+
+        Returns:
+            AddressValidation object with validation results
+        """
+        validator = Address.get_validator()
+        result = validator.validate(address)
+
+        # Handle the case where the validator returns a dict instead of AddressValidation
+        if isinstance(result, dict):
+            return datatypes.AddressValidation(**result)
+
+        return result

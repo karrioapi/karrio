@@ -1,3 +1,60 @@
+# Karrio 2025.5rc1 (Yayra Edition)
+
+## Changes
+
+### Feat
+
+- feat: Introduce a unified website for all karrio sites
+- feat: introduce plugins loader for karrio SDK
+- feat: add support for entrypoint plugin loader
+- feat: improve and finalize CLI docs generation
+- feat: enrich CLI with plugins management and carriers details fetching
+- feat: add connections and logs resources control from cli
+- feat: refactor dashboard autocomplete to work with Google API key
+- feat: remove deprecated carrier-specific models
+- feat: introduce karrio community as a submodule
+- feat: enrich carrier metadata and add carriers page to new site
+- feat: add tracer to settings so that Proxy and Mappers can access tracing context from settings. PS: You can also access the cache handler through settings
+- feat: add support for default value for optionEnum fields
+- feat: add support for path when creating extension using kcli
+- feat: make kcli installable
+
+### Fix
+
+- fix: dashboard page definitions with breaking changes, async signature on client components
+- fix: migrations backward compatibility issue
+- fix: non-failsafe address autocomplete plugin info loading
+- fix: race condition issue with carrier models loading
+- fix: nextjs upgrade breaking change for dynamic page metadata
+- fix: minor web section layouts
+
+### Chore
+
+- chore: update supported Python version to >=3.11
+- chore: replace deprecated extensions used in tests
+- chore: reorganize carrier extension plugins, separating actively maintained and mature integrations from community in-development ones
+- chore: fix compatibility with Python 3.12 and migrate from setup.py to pyproject.toml
+- chore: add changelog page and web page CI
+- chore: remove headless/ui dependency in favour of shadcn-powered components
+- chore: remove headless/ui to only use `shadcn/ui` components
+- chore: theme corrections and standardized
+- chore: migrate karrio live sites' content to the unified web app
+- chore: fix app dependencies
+- chore: setup plugin folder
+- chore: unify packages to React 18.x
+- chore: upgrade django constance and unmigrated status update
+
+### Devx
+
+- devx: enrich carrier integration, boilerplate generation, and examples
+- devx: setup cursor rules for better and AI drivven development
+
+### Docs
+
+- docs(WIP): document self-hosting
+- docs(WIP): improve integration and development docs
+- docs(WIP): introduce new carrier integration guide
+
 # Karrio 2024.12.10
 
 ## Changes
@@ -1074,13 +1131,11 @@ With this, they will be able to deploy their dedicated shipping platform, automa
 Reach out for private beta access to [Karrio Cloud](https://www.karrio.io/)
 
 <p align="center">
- <img width="400" alt="Screenshot 2023-12-31 at 12 35 14 AM" src="https://github.com/karrioapi/karrio/assets/10974180/154c9448-4335-433c-b3a3-e584f795a199">
-
-<img width="400" alt="Screenshot 2023-12-31 at 12 34 48 AM" src="https://github.com/karrioapi/karrio/assets/10974180/2b17c8b8-9732-4ded-9f41-e4788d8554c3">
-
-<img width="400" alt="Screenshot 2023-12-31 at 12 34 27 AM" src="https://github.com/karrioapi/karrio/assets/10974180/353c856c-9774-470d-8f4e-ec2984c1dead">
-
+  <img width="400" alt="Screenshot 2023-12-31 at 12 35 14 AM" src="https://github.com/karrioapi/karrio/assets/10974180/154c9448-4335-433c-b3a3-e584f795a199"/>
+  <img width="400" alt="Screenshot 2023-12-31 at 12 34 48 AM" src="https://github.com/karrioapi/karrio/assets/10974180/2b17c8b8-9732-4ded-9f41-e4788d8554c3"/>
+  <img width="400" alt="Screenshot 2023-12-31 at 12 34 27 AM" src="https://github.com/karrioapi/karrio/assets/10974180/353c856c-9774-470d-8f4e-ec2984c1dead"/>
 </p>
+
 # Karrio patch 2023.9.11
 ## Feat
 
@@ -1197,14 +1252,10 @@ _follow these instructions to get your new API credentials_
 -   Copy your `client_id` and `client_secret` to update your karrio's UPS connections
 
 <details>
-<summary>app creation screenshots</summary>
-
-![Screenshot 2023-06-04 095624](https://github.com/karrioapi/karrio/assets/10974180/82d07d6e-a754-41d5-8260-f38cfa67e812)
-
-![ups-app-creation-setup](https://github.com/karrioapi/karrio/assets/10974180/cf60f949-02fe-4f85-a6a0-0721ca0d704b)
-
-![ups-app-credentials](https://github.com/karrioapi/karrio/assets/10974180/e91beb7e-10e1-495e-af81-80535d63521d)
-
+  <summary>app creation screenshots</summary>
+  <img src="https://github.com/karrioapi/karrio/assets/10974180/82d07d6e-a754-41d5-8260-f38cfa67e812" alt="Screenshot 2023-06-04 095624" width="600" />
+  <img src="https://github.com/karrioapi/karrio/assets/10974180/cf60f949-02fe-4f85-a6a0-0721ca0d704b" alt="ups-app-creation-setup" width="600" />
+  <img src="https://github.com/karrioapi/karrio/assets/10974180/e91beb7e-10e1-495e-af81-80535d63521d" alt="ups-app-credentials" width="600" />
 </details>
 
 # Karrio 2023.4.6 patch
@@ -1499,7 +1550,6 @@ Special thanks to @nahall for the contribution# Karrio Shipping Platform Edition
  "test_mode": true
 }
 ```
-
 # Karrio Shipping Platform Edition 2022.3
 
 ## What's New
@@ -1751,3 +1801,4 @@ danh91.docker.scarf.sh/purplship/server:2022.1.4
 -   Prevent confusing Purolator exception when address properties are required and not defined
 -   Fix invalid `CM` -> `IN` conversion
 -   Consolidated `Purolator` shipment cancellation request"
+

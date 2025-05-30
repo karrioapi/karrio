@@ -9,7 +9,10 @@ from django.db import migrations, models, transaction
 
 @transaction.atomic
 def forwards_func(apps, schema_editor):
-    from karrio.server.providers.models import MODELS
+    try:
+        from karrio.server.providers.models import MODELS
+    except ImportError:
+        pass
 
     db_alias = schema_editor.connection.alias
     User = apps.get_model(*conf.settings.AUTH_USER_MODEL.split("."))

@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@karrio/insiders/components/ui/button";
+import { Button } from "@karrio/ui/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@karrio/insiders/components/ui/card";
+} from "@karrio/ui/components/ui/card";
 import { DashboardHeader } from "@karrio/console/components/dashboard-header";
 import { CardGrid } from "@karrio/console/components/card-grid";
 import { PlusCircle, ChevronRight } from "lucide-react";

@@ -10,25 +10,23 @@ import {
 } from "@karrio/lib";
 import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
-import { CarrierImage } from "@karrio/ui/components/carrier-image";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
+import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { MenuComponent } from "@karrio/ui/components/menu";
+import { MenuComponent } from "@karrio/ui/core/components/menu";
 import { AddressType, ManifestType } from "@karrio/types";
-import { useLoader } from "@karrio/ui/components/loader";
-import { AppLink } from "@karrio/ui/components/app-link";
-import { ModalProvider } from "@karrio/ui/modals/modal";
+import { useLoader } from "@karrio/ui/core/components/loader";
+import { AppLink } from "@karrio/ui/core/components/app-link";
+import { ModalProvider } from "@karrio/ui/core/modals/modal";
 import { useManifests } from "@karrio/hooks/manifests";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { useSearchParams } from "next/navigation";
-import { Spinner } from "@karrio/ui/components";
+import { Spinner } from "@karrio/ui/core/components";
 import React from "react";
 
-export const generateMetadata = dynamicMetadata("Manifests");
 const ContextProviders = bundleContexts([ModalProvider]);
 
-export default function Page(pageProps: any) {
-  const Component= (): JSX.Element =>  {
+export default function Page() {
+  const Component = (): JSX.Element => {
     // General context data         -----------------------------------------------------------
     //#region
 

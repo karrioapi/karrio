@@ -1,5 +1,5 @@
 import { CardElement, useElements } from "@stripe/react-stripe-js";
-import { Button } from "@karrio/insiders/components/ui/button";
+import { Button } from "@karrio/ui/components/ui/button";
 import { useStripe } from "@stripe/react-stripe-js";
 import { trpc } from "@karrio/console/trpc/client";
 import { useState } from "react";

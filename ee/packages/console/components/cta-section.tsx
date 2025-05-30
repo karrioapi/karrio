@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@karrio/insiders/components/ui/button";
+import { Button } from "@karrio/ui/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { BookDemoButton } from "./book-demo-button";

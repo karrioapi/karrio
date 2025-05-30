@@ -1,5 +1,12 @@
 {
-  "extends": "../tsconfig/react-library.json",
+  "extends": "@karrio/tsconfig/react-library.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@karrio/ui/*": ["./*"],
+      "react": ["./node_modules/@types/react"],
+    },
+  },
   "include": [
     ".",
     "./**/*.ts",

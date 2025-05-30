@@ -1,17 +1,15 @@
 "use client";
-import { WorkflowMenu } from "@karrio/ui/components/workflow-menu";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { AppLink } from "@karrio/ui/components/app-link";
-import { ModalProvider } from "@karrio/ui/modals/modal";
+import { WorkflowMenu } from "@karrio/ui/core/components/workflow-menu";
+import { AppLink } from "@karrio/ui/core/components/app-link";
+import { ModalProvider } from "@karrio/ui/core/modals/modal";
 import { useWorkflows } from "@karrio/hooks/workflows";
 import { bundleContexts } from "@karrio/hooks/utils";
-import { Spinner } from "@karrio/ui/components";
+import { Spinner } from "@karrio/ui/core/components";
 
-export const generateMetadata = dynamicMetadata("Workflows");
 const ContextProviders = bundleContexts([ModalProvider]);
 
 export default function Page(pageProps: any) {
-  const Component= (): JSX.Element =>  {
+  const Component = (): JSX.Element => {
     const {
       query: { data: { workflows } = {}, ...query },
     } = useWorkflows();

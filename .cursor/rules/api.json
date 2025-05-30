@@ -1,0 +1,27 @@
+{
+  "name": "Karrio API Rules",
+  "description": "Rules specific to the Django API backend service in the Karrio monorepo",
+  "match": "apps/api/**/*.py",
+  "rules": [
+    "Follow Django's MVT (Model-View-Template) architecture pattern.",
+    "Use Django Rest Framework's class-based views for API endpoints.",
+    "Implement proper input validation using serializers and validators.",
+    "Use consistent error response formats across all API endpoints.",
+    "Document API endpoints with clear docstrings and examples.",
+    "Implement proper authentication and authorization checks for protected endpoints.",
+    "Use Django's ORM effectively with select_related and prefetch_related to optimize database queries.",
+    "Follow Django's QuerySet API for efficient database operations.",
+    "Implement proper pagination for list endpoints.",
+    "Use Django signals judiciously for decoupled event handling.",
+    "Follow the established pattern for API versioning.",
+    "Use appropriate HTTP status codes for different response types.",
+    "Maintain backward compatibility for public APIs when making changes.",
+    "Implement proper logging for debugging and monitoring purposes.",
+    "Use Django's middleware for cross-cutting concerns.",
+    "Follow Django's best practices for form validation and processing.",
+    "Use Django's built-in security features for protection against common vulnerabilities."
+  ],
+  "files": [
+    "@file:apps/api/README.md"
+  ]
+}

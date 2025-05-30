@@ -1,41 +1,39 @@
 "use client";
-import { CustomsInfoDescription } from "@karrio/ui/components/customs-info-description";
+import { CustomsInfoDescription } from "@karrio/ui/core/components/customs-info-description";
 import {
   MetadataEditor,
   MetadataEditorContext,
-} from "@karrio/ui/forms/metadata-editor";
+} from "@karrio/ui/core/forms/metadata-editor";
 import {
   useUploadRecordMutation,
   useUploadRecords,
 } from "@karrio/hooks/upload-record";
-import { CommodityDescription } from "@karrio/ui/components/commodity-description";
-import { OptionsDescription } from "@karrio/ui/components/options-description";
+import { CommodityDescription } from "@karrio/ui/core/components/commodity-description";
+import { OptionsDescription } from "@karrio/ui/core/components/options-description";
 import { formatDateTime, formatDayDate, formatRef, isNone } from "@karrio/lib";
-import { AddressDescription } from "@karrio/ui/components/address-description";
-import { ParcelDescription } from "@karrio/ui/components/parcel-description";
+import { AddressDescription } from "@karrio/ui/core/components/address-description";
+import { ParcelDescription } from "@karrio/ui/core/components/parcel-description";
 import { CustomsType, NotificationType, ParcelType } from "@karrio/types";
-import { StatusCode } from "@karrio/ui/components/status-code-badge";
-import { CopiableLink } from "@karrio/ui/components/copiable-link";
-import { CarrierBadge } from "@karrio/ui/components/carrier-badge";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
-import { SelectField } from "@karrio/ui/components/select-field";
-import { StatusBadge } from "@karrio/ui/components/status-badge";
-import { InputField } from "@karrio/ui/components/input-field";
-import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
-import { useNotifier } from "@karrio/ui/components/notifier";
+import { StatusCode } from "@karrio/ui/core/components/status-code-badge";
+import { CopiableLink } from "@karrio/ui/core/components/copiable-link";
+import { CarrierBadge } from "@karrio/ui/core/components/carrier-badge";
+import { ShipmentMenu } from "@karrio/ui/core/components/shipment-menu";
+import { SelectField } from "@karrio/ui/core/components/select-field";
+import { StatusBadge } from "@karrio/ui/core/components/status-badge";
+import { InputField } from "@karrio/ui/core/components/input-field";
+import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
+import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { DocumentUploadData } from "@karrio/types/rest/api";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { useLoader } from "@karrio/ui/components/loader";
-import { AppLink } from "@karrio/ui/components/app-link";
-import { Spinner } from "@karrio/ui/components/spinner";
+import { useLoader } from "@karrio/ui/core/components/loader";
+import { AppLink } from "@karrio/ui/core/components/app-link";
+import { Spinner } from "@karrio/ui/core/components/spinner";
 import { MetadataObjectTypeEnum } from "@karrio/types";
 import { useShipment } from "@karrio/hooks/shipment";
 import { useEvents } from "@karrio/hooks/event";
 import { useLogs } from "@karrio/hooks/log";
 import React from "react";
 
-export const generateMetadata = dynamicMetadata("Shipment");
 type FileDataType = DocumentUploadData["document_files"][0];
 
 export const ShipmentComponent = ({
@@ -364,13 +362,13 @@ export const ShipmentComponent = ({
                     {!isNone(
                       (shipment.tracker?.events || [])[0]?.description,
                     ) && (
-                      <div className="columns my-0">
-                        <div className="column is-4"></div>
-                        <div className="column has-text-weight-semibold py-1">
-                          {(shipment.tracker?.events || [])[0]?.description}
+                        <div className="columns my-0">
+                          <div className="column is-4"></div>
+                          <div className="column has-text-weight-semibold py-1">
+                            {(shipment.tracker?.events || [])[0]?.description}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </div>
                 </div>
               </div>
@@ -759,13 +757,24 @@ export const ShipmentComponent = ({
   );
 };
 
-export default async function Page({ params }: { params: Promise<{ id: string }> }) {
-  const query = await params;
-  return (
-    <>
-      <ConfirmModal>
-        <ShipmentComponent shipmentId={query.id} />
-      </ConfirmModal>
-    </>
-  );
+export default function Page({ params }: { params: Promise<{ id: string }> }) {
+  const Component = (): JSX.Element => {
+    const [id, setId] = React.useState<string>();
+
+    React.useEffect(() => {
+      params.then(query => {
+        setId(query.id);
+      });
+    }, []);
+
+    if (!id) return <></>;
+
+    return (
+      <>
+        <ShipmentComponent shipmentId={id} />
+      </>
+    );
+  };
+
+  return <Component />;
 }

@@ -1,9 +1,8 @@
 "use client";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { CopiableLink } from "@karrio/ui/components/copiable-link";
+import { CopiableLink } from "@karrio/ui/core/components/copiable-link";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { AppLink } from "@karrio/ui/components/app-link";
-import { SelectField } from "@karrio/ui/components";
+import { AppLink } from "@karrio/ui/core/components/app-link";
+import { SelectField } from "@karrio/ui/core/components";
 import { useAPIUsage } from "@karrio/hooks/usage";
 import {
   CartesianGrid,
@@ -15,12 +14,11 @@ import {
 } from "recharts";
 import moment from "moment";
 
-export const generateMetadata = dynamicMetadata("API Keys");
 
-export default function ApiPage(pageProps: any) {
+export default function ApiPage() {
   const { references } = useAPIMetadata();
 
-  const Component= (): JSX.Element =>  {
+  const Component = (): JSX.Element => {
     const {
       query: { data: { usage } = {} },
       setFilter,
@@ -121,10 +119,10 @@ export default function ApiPage(pageProps: any) {
                             (_, i) => ({
                               name:
                                 i === 0 ||
-                                i ===
+                                  i ===
                                   DAYS_LIST[currentFilter() || "15 days"]
                                     .length -
-                                    1
+                                  1
                                   ? _
                                   : "",
                               total:
@@ -176,10 +174,10 @@ export default function ApiPage(pageProps: any) {
                             (_, i) => ({
                               name:
                                 i === 0 ||
-                                i ===
+                                  i ===
                                   DAYS_LIST[currentFilter() || "15 days"]
                                     .length -
-                                    1
+                                  1
                                   ? _
                                   : "",
                               total:

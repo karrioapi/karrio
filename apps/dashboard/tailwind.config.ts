@@ -5,9 +5,9 @@ const config: Config = {
   darkMode: ["class"],
   content: [
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    "../../packages/insiders/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "../../packages/insiders/layouts/**/*.{js,ts,jsx,tsx,mdx}",
-    "../../packages/insiders/modules/**/*.{js,ts,jsx,tsx,mdx}",
+    "../../packages/ui/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "../../packages/ui/layouts/**/*.{js,ts,jsx,tsx,mdx}",
+    "../../packages/ui/modules/**/*.{js,ts,jsx,tsx,mdx}",
     "../../packages/admin/components/**/*.{js,ts,jsx,tsx,mdx}",
     "../../packages/admin/modules/**/*.{js,ts,jsx,tsx,mdx}",
   ],

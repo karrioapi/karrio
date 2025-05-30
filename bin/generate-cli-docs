@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# Get the directory of this script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Source environment variables
+source "${SCRIPT_DIR}/_env"
+
+# Change to workspace root
+cd "${WORKSPACE_ROOT}"
+
+# Default output file (using relative path)
+OUTPUT_FILE="apps/web/src/app/docs/developing/cli-guide/page.mdx"
+
+# Ensure output directory exists
+# mkdir -p "$(dirname "$OUTPUT_FILE")"
+
+# Create temporary file
+TEMP_FILE=$(mktemp)
+
+# Add MDX header
+cat >"$TEMP_FILE" <<EOL
+---
+sidebarTitle: Guides
+title: CLI Guide
+description: Learn how to use the Karrio CLI for managing shipments, carriers, and more
+tags: [development, cli, tools]
+author: Karrio Team
+---
+
+EOL
+
+# Generate raw docs and append to temp file
+typer kcli.__main__ utils docs >>"$TEMP_FILE"
+
+# Replace special characters with UTF-8 equivalents and fix title
+sed -i '' \
+    -e "s/&#x27;/'/g" \
+    -e 's/&quot;/"/g' \
+    -e 's/^# CLI$/# CLI Guide/' \
+    "$TEMP_FILE"
+
+# Move to final destination
+mv "$TEMP_FILE" "$OUTPUT_FILE"
+
+echo "CLI documentation generated at: $OUTPUT_FILE"

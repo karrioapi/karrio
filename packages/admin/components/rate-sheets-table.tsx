@@ -3,16 +3,16 @@ import {
   TableBody,
   TableCell,
   TableRow,
-} from "@karrio/insiders/components/ui/table";
+} from "@karrio/ui/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@karrio/insiders/components/ui/dropdown-menu";
-import { CarrierImage } from "@karrio/ui/components/carrier-image";
-import { Button } from "@karrio/insiders/components/ui/button";
-import { Badge } from "@karrio/insiders/components/ui/badge";
+} from "@karrio/ui/components/ui/dropdown-menu";
+import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
+import { Button } from "@karrio/ui/components/ui/button";
+import { Badge } from "@karrio/ui/components/ui/badge";
 import { MoreVertical, Copy, Plus } from "lucide-react";
 import { isNoneOrEmpty } from "@karrio/lib";
 import { GetRateSheets_rate_sheets_edges_node as RateSheet } from "@karrio/types/graphql/admin/types";

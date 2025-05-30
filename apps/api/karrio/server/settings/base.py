@@ -537,7 +537,7 @@ SWAGGER_SETTINGS = {
 }
 REDOC_SETTINGS = {
     "LAZY_RENDERING": False,
-    "HIDE_HOSTNAME": True,
+    "HIDE_HOSTNAME": False,
     "REQUIRED_PROPS_FIRST": True,
     "SPEC_URL": ("schema-json", dict(format=".json")),
 }

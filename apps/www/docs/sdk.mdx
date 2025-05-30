@@ -8,7 +8,7 @@ This section is dedicated to the karrio core shipping SDK. This SDK has been cre
 based on a core set of abtractions required for common shipping services. The constructs
 and helpers functions provided constitute a framework for shipping integration.
 
-The general architecture is an application of the translation pattern that maps various carrier 
+The general architecture is an application of the translation pattern that maps various carrier
 APIs under a unified set of standardized data models.
 
 The key features are:
@@ -79,7 +79,7 @@ pip install karrio.canadapost
 - Fetch shipping rates
 
 ```python
-import karrio
+import karrio.sdk as karrio
 from karrio.core.models import Address, Parcel, RateRequest
 from karrio.mappers.canadapost.settings import Settings
 

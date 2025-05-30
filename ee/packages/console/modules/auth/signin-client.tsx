@@ -1,18 +1,18 @@
 "use client";
 
-import { GitHubIcon, Spinner } from "@karrio/insiders/components/icons";
-import { Button } from "@karrio/insiders/components/ui/button";
-import { Input } from "@karrio/insiders/components/ui/input";
-import { Label } from "@karrio/insiders/components/ui/label";
-import { useToast } from "@karrio/insiders/hooks/use-toast";
-import { cn } from "@karrio/insiders/lib/utils";
+import { GitHubIcon, Spinner } from "@karrio/ui/components/icons";
+import { Button } from "@karrio/ui/components/ui/button";
+import { Input } from "@karrio/ui/components/ui/input";
+import { Label } from "@karrio/ui/components/ui/label";
+import { useToast } from "@karrio/ui/hooks/use-toast";
+import { cn } from "@karrio/ui/lib/utils";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import Image from "next/image";
 import * as React from "react";
 import Link from "next/link";
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> { }
 
 export function SignInClient({ className, ...props }: UserAuthFormProps) {
   const [email, setEmail] = useState("");

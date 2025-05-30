@@ -14,10 +14,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: Checkout submodules
+        run: |
+          git submodule sync --recursive
+          git submodule update --init --recursive || true
+          # Continue even if some submodules fail due to permissions
+          git submodule foreach --recursive 'git submodule update --init || true'
       - name: Run Tests
         run: |
           ./bin/setup-sdk-env -v &&
-          ./bin/run-sdk-typecheck &&
+          ./bin/cli plugins list &&
+          ./bin/run-sdk-typecheck -v  &&
           ./bin/run-sdk-tests -v
 
   server-tests:
@@ -28,9 +35,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: Checkout submodules
+        run: |
+          git submodule sync --recursive
+          git submodule update --init --recursive || true
+          # Continue even if some submodules fail due to permissions
+          git submodule foreach --recursive 'git submodule update --init || true'
       - name: Run Tests
+        env:
+          ENABLE_ALL_PLUGINS_BY_DEFAULT: true
         run: |
           ./bin/setup-server-env -v &&
+          ./bin/cli plugins list &&
           ./bin/migrate &&
           ./bin/run-server-tests -v
 
@@ -39,6 +55,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: Checkout submodules
+        run: |
+          git submodule sync --recursive
+          git submodule update --init --recursive || true
+          # Continue even if some submodules fail due to permissions
+          git submodule foreach --recursive 'git submodule update --init || true'
       - uses: actions/setup-node@v3
         with:
           node-version: 22.x

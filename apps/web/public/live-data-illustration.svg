@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1200 1200">
+  <!-- Generator: Adobe Illustrator 29.3.1, SVG Export Plug-In . SVG Version: 2.1.0 Build 151)  -->
+  <defs>
+    <style>
+      .st0, .st1, .st2 {
+        fill: none;
+      }
+
+      .st3 {
+        fill: #e6e6e6;
+      }
+
+      .st4 {
+        fill: #ffb406;
+      }
+
+      .st1 {
+        stroke: #e6e6e6;
+        stroke-width: 2px;
+      }
+
+      .st1, .st5, .st2 {
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .st5 {
+        fill: #ebebeb;
+        stroke: #f2f2f2;
+        stroke-width: 8px;
+      }
+
+      .st6 {
+        fill: #6fb368;
+      }
+
+      .st7, .st8 {
+        font-family: ArialRoundedMTBold, 'Arial Rounded MT Bold';
+      }
+
+      .st7, .st8, .st9, .st10, .st11 {
+        font-size: 20px;
+      }
+
+      .st7, .st8, .st11 {
+        fill: #404040;
+      }
+
+      .st7, .st9 {
+        letter-spacing: 0em;
+      }
+
+      .st8, .st10, .st11 {
+        letter-spacing: 0em;
+      }
+
+      .st12 {
+        fill: #341b14;
+      }
+
+      .st9, .st10 {
+        fill: #8f8f8f;
+      }
+
+      .st9, .st10, .st11, .st13, .st14 {
+        font-family: ArialMT, Arial;
+      }
+
+      .st2 {
+        stroke: #dedede;
+        stroke-width: 5px;
+      }
+
+      .st13 {
+        fill: red;
+        font-size: 18px;
+      }
+
+      .st14 {
+        font-size: 32px;
+      }
+
+      .st14, .st15 {
+        fill: #fff;
+      }
+
+      .st15 {
+        stroke: #d1d1d1;
+        stroke-miterlimit: 10;
+      }
+    </style>
+  </defs>
+  <rect class="st0" width="1200" height="1200" rx="3" ry="3"/>
+  <rect class="st15" x="153.5" y="121.7" width="893.1" height="956.6" rx="20" ry="20"/>
+  <rect class="st6" x="279.5" y="435.1" width="641.1" height="70" rx="10" ry="10"/>
+  <text class="st14" transform="translate(518.6 478.6) scale(1.2 1)"><tspan x="0" y="0">Delivered</tspan></text>
+  <g>
+    <text class="st8" transform="translate(575.9 355.6) scale(1.2 1)"><tspan x="0" y="0">1Z6559X42094952768</tspan></text>
+    <text class="st11" transform="translate(375.3 355) scale(1.2 1)"><tspan x="0" y="0">Tracking ID</tspan></text>
+    <text class="st11" transform="translate(377.2 393.4) scale(1.2 1)"><tspan x="0" y="0">Delivered</tspan></text>
+    <text class="st7" transform="translate(575.9 393.9) scale(1.2 1)"><tspan x="0" y="0">Tue. 11 Mar 2025</tspan></text>
+  </g>
+  <text class="st10" transform="translate(309.4 587.8) scale(1.2 1)"><tspan x="0" y="0">Tue. 11 Mar 2025</tspan></text>
+  <line class="st2" x1="279.5" y1="537.4" x2="920.5" y2="537.4"/>
+  <g>
+    <path class="st12" d="M653,302.7h-106c-7.2,0-13.1-5.9-13.1-13.1v-106c0-7.2,5.9-13.1,13.1-13.1h106c7.2,0,13.1,5.9,13.1,13.1v106c0,7.2-5.9,13.1-13.1,13.1Z"/>
+    <path class="st12" d="M600,285.7c.8-.5,23.1-10.1,30.1-15.8,7.2-5.9,11.1-14.5,11.1-24.8v-48l-.6-.2c-17.7-9.6-39.7-9-40.8-9s-22.9-.6-40.6,9l-.5.2v48.2c0,10.3,3.9,18.8,11.1,24.8,7,5.7,29.3,15.4,30.1,15.6"/>
+    <path class="st4" d="M600,286.7s-23.5-10.3-30.7-16c-7.7-6.4-11.3-15.2-11.3-25.2v-50c18.6-10,42-9.2,42-9.2,0,0,23.5-.8,42,9.2v49.7c0,10.1-3.6,18.8-11.3,25.2-7.2,6-30.7,16.3-30.7,16.3M561.4,245.5c0,9.4,3.4,17,10.1,22.4,5.9,4.9,23.7,12.8,28.6,15,4.9-2.1,22.9-10.3,28.6-15,6.6-5.4,10.1-13.2,10.1-22.4v-49.1c-24.8-2.3-54.2-1-77.3,20.3v28.9h0Z"/>
+    <path class="st4" d="M623.7,238.5c3.2,1.9,4.5,3.2,4.7,5.6,0,2.6-1.7,4.1-4.5,4.1s-5.1-1.3-7-3v6.8c2.3,1.3,5.1,2.3,8.1,2.3,7.2,0,10.7-5.1,10.7-9.8.2-4.3-1-7.7-7.2-11.3-2.8-1.7-4.9-2.8-4.9-5.4s2.3-3.6,4.3-3.6,5.1,1.5,6.6,3v-6.4c-1.3-1-4.1-2.6-8.1-2.3-4.9.2-10.1,3.6-10.1,9.6.3,4.1,1.5,7,7.5,10.5M598.5,253.9c.6.2,1.7.5,3.4.5,8.3,0,13-7.5,13-18.1s-4.9-17.5-13.7-17.5-7.2.8-10.1,2.6v48.2h7.2v-15.6h0ZM598.5,224.8c.6-.2,1.7-.6,2.6-.6,4.3,0,5.9,3.4,5.9,11.8s-2.1,11.9-6.4,11.9-1.9-.2-2.3-.5v-22.6h.3,0ZM576.1,254.2c4.5,0,8.3-1,11.1-3v-32.2h-7.5v28c-.8.6-1.9.8-3.4.8-3.4,0-3.9-3.2-3.9-5.1v-23.7h-7.5v23.2c0,7.9,3.8,11.9,11.1,11.9"/>
+  </g>
+  <g>
+    <rect class="st3" x="339.6" y="613.2" width="103" height="26.2" rx="5" ry="5"/>
+    <text class="st13" transform="translate(353.7 632.1)"><tspan x="0" y="0">11:20 AM</tspan></text>
+  </g>
+  <line class="st1" x1="328.4" y1="613.2" x2="328.4" y2="660.4"/>
+  <line class="st5" x1="354.7" y1="656" x2="578.6" y2="656"/>
+  <line class="st5" x1="462.6" y1="626.3" x2="686.5" y2="626.3"/>
+  <g>
+    <rect class="st3" x="339.7" y="680.3" width="103" height="26.2" rx="5" ry="5"/>
+    <text class="st13" transform="translate(353.2 699.2)"><tspan x="0" y="0">09:13 AM</tspan></text>
+  </g>
+  <line class="st1" x1="328.6" y1="680.3" x2="328.6" y2="727.5"/>
+  <line class="st5" x1="355" y1="723.1" x2="578.8" y2="723.1"/>
+  <line class="st5" x1="462.9" y1="693.4" x2="686.8" y2="693.4"/>
+  <g>
+    <rect class="st3" x="339.7" y="747.4" width="103" height="26.2" rx="5" ry="5"/>
+    <text class="st13" transform="translate(353.2 766.3)"><tspan x="0" y="0">07:54 AM</tspan></text>
+  </g>
+  <line class="st1" x1="328.6" y1="747.4" x2="328.6" y2="794.6"/>
+  <line class="st5" x1="355" y1="790.2" x2="578.8" y2="790.2"/>
+  <line class="st5" x1="462.9" y1="760.5" x2="686.8" y2="760.5"/>
+  <g>
+    <rect class="st3" x="339.7" y="814.4" width="103" height="26.2" rx="5" ry="5"/>
+    <text class="st13" transform="translate(353.2 833.4)"><tspan x="0" y="0">05:05 AM</tspan></text>
+  </g>
+  <line class="st1" x1="328.6" y1="814.4" x2="328.6" y2="861.6"/>
+  <line class="st5" x1="355" y1="857.2" x2="578.8" y2="857.2"/>
+  <line class="st5" x1="462.9" y1="827.6" x2="686.8" y2="827.6"/>
+  <g>
+    <rect class="st3" x="339.6" y="881.5" width="103" height="26.2" rx="5" ry="5"/>
+    <text class="st13" transform="translate(353 900.4)"><tspan x="0" y="0">00:45 AM</tspan></text>
+  </g>
+  <line class="st1" x1="328.4" y1="881.5" x2="328.4" y2="928.7"/>
+  <line class="st5" x1="354.7" y1="924.3" x2="578.6" y2="924.3"/>
+  <line class="st5" x1="462.6" y1="894.6" x2="686.5" y2="894.6"/>
+  <g>
+    <rect class="st3" x="339.6" y="990.1" width="103" height="26.2" rx="5" ry="5"/>
+    <text class="st13" transform="translate(352.5 1009)"><tspan x="0" y="0">21:23 PM</tspan></text>
+  </g>
+  <line class="st1" x1="328.4" y1="990.1" x2="328.4" y2="1037.3"/>
+  <line class="st5" x1="354.7" y1="1032.9" x2="578.6" y2="1032.9"/>
+  <line class="st5" x1="462.6" y1="1003.2" x2="686.5" y2="1003.2"/>
+  <text class="st9" transform="translate(309.4 964.7) scale(1.2 1)"><tspan x="0" y="0">Mon, 10 Mar 2025</tspan></text>
+</svg>

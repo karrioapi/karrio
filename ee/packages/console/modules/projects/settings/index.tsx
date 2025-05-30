@@ -8,16 +8,16 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-} from "@karrio/insiders/components/ui/card";
+} from "@karrio/ui/components/ui/card";
 import {
   TENANT_API_DOMAIN,
   TENANT_DASHBOARD_DOMAIN,
 } from "@karrio/console/shared/constants";
-import { Alert, AlertDescription } from "@karrio/insiders/components/ui/alert";
+import { Alert, AlertDescription } from "@karrio/ui/components/ui/alert";
 import { Copy, Trash2, AlertCircle, PlusIcon, Globe } from "lucide-react";
-import { Button } from "@karrio/insiders/components/ui/button";
-import { Input } from "@karrio/insiders/components/ui/input";
-import { useToast } from "@karrio/insiders/hooks/use-toast";
+import { Button } from "@karrio/ui/components/ui/button";
+import { Input } from "@karrio/ui/components/ui/input";
+import { useToast } from "@karrio/ui/hooks/use-toast";
 import { useState } from "react";
 import {
   AlertDialog,
@@ -28,7 +28,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@karrio/insiders/components/ui/alert-dialog";
+} from "@karrio/ui/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
 
 const ProjectStatusBadge = ({ status }: { status: string }) => {

@@ -20,64 +20,62 @@ import {
 import {
   CommodityEditModalProvider,
   CommodityStateContext,
-} from "@karrio/ui/modals/commodity-edit-modal";
+} from "@karrio/ui/core/modals/commodity-edit-modal";
 import {
   AddressModalEditor,
   CustomsModalEditor,
   ParcelModalEditor,
-} from "@karrio/ui/modals/form-modals";
+} from "@karrio/ui/core/modals/form-modals";
 import {
   MetadataEditor,
   MetadataEditorContext,
-} from "@karrio/ui/forms/metadata-editor";
-import { CustomsInfoDescription } from "@karrio/ui/components/customs-info-description";
-import { GoogleGeocodingScript } from "@karrio/ui/components/google-geocoding-script";
-import { CommodityDescription } from "@karrio/ui/components/commodity-description";
+} from "@karrio/ui/core/forms/metadata-editor";
+import { CustomsInfoDescription } from "@karrio/ui/core/components/customs-info-description";
+import { GoogleGeocodingScript } from "@karrio/ui/core/components/google-geocoding-script";
+import { CommodityDescription } from "@karrio/ui/core/components/commodity-description";
 import {
   LabelTypeEnum,
   MetadataObjectTypeEnum,
   PaidByEnum,
 } from "@karrio/types";
-import { MessagesDescription } from "@karrio/ui/components/messages-description";
-import { AddressDescription } from "@karrio/ui/components/address-description";
-import { ParcelDescription } from "@karrio/ui/components/parcel-description";
-import { CommoditySummary } from "@karrio/ui/components/commodity-summary";
-import { RateDescription } from "@karrio/ui/components/rate-description";
+import { MessagesDescription } from "@karrio/ui/core/components/messages-description";
+import { AddressDescription } from "@karrio/ui/core/components/address-description";
+import { ParcelDescription } from "@karrio/ui/core/components/parcel-description";
+import { CommoditySummary } from "@karrio/ui/core/components/commodity-summary";
+import { RateDescription } from "@karrio/ui/core/components/rate-description";
 import { useSystemConnections } from "@karrio/hooks/system-connection";
-import { LineItemSelector } from "@karrio/ui/forms/line-item-selector";
+import { LineItemSelector } from "@karrio/ui/core/forms/line-item-selector";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { useDefaultTemplates } from "@karrio/hooks/default-template";
-import { CheckBoxField } from "@karrio/ui/components/checkbox-field";
-import { TextAreaField } from "@karrio/ui/components/textarea-field";
+import { CheckBoxField } from "@karrio/ui/core/components/checkbox-field";
+import { TextAreaField } from "@karrio/ui/core/components/textarea-field";
 import { useWorkspaceConfig } from "@karrio/hooks/workspace-config";
 import { useConnections } from "@karrio/hooks/carrier-connections";
-import { dynamicMetadata } from "@karrio/core/components/metadata";
-import { CarrierImage } from "@karrio/ui/components/carrier-image";
-import { ButtonField } from "@karrio/ui/components/button-field";
-import { SelectField } from "@karrio/ui/components/select-field";
+import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
+import { ButtonField } from "@karrio/ui/core/components/button-field";
+import { SelectField } from "@karrio/ui/core/components/select-field";
 import { useLabelDataMutation } from "@karrio/hooks/label-data";
-import { InputField } from "@karrio/ui/components/input-field";
-import { useNotifier } from "@karrio/ui/components/notifier";
+import { InputField } from "@karrio/ui/core/components/input-field";
+import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { useLoader } from "@karrio/ui/components/loader";
-import { ModalProvider } from "@karrio/ui/modals/modal";
-import { Spinner } from "@karrio/ui/components/spinner";
+import { useLoader } from "@karrio/ui/core/components/loader";
+import { ModalProvider } from "@karrio/ui/core/modals/modal";
+import { Spinner } from "@karrio/ui/core/components/spinner";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { useLocation } from "@karrio/hooks/location";
 import { useAppMode } from "@karrio/hooks/app-mode";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useOrders } from "@karrio/hooks/order";
-import { Disclosure } from "@headlessui/react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@karrio/ui/components/ui/collapsible";
 import moment from "moment";
 
-export const generateMetadata = dynamicMetadata("Create shipment");
 const ContextProviders = bundleContexts([
   CommodityEditModalProvider,
   ModalProvider,
 ]);
 
-export default function Page(pageProps: any) {
+export default function Page() {
   const Component = (): JSX.Element => {
     const loader = useLoader();
     const notifier = useNotifier();
@@ -1075,108 +1073,69 @@ export default function Page(pageProps: any) {
                   {/* CARRIER OPTIONS SECTION */}
                   {Object.keys(carrierOptions).length > 0 && (
                     <div className="card mb-4 px-3 mx-2">
-                      {/* @ts-ignore */}
-                      <Disclosure>
-                        {({ open }) => (
-                          <div className="block">
-                            <Disclosure.Button
-                              as="div"
-                              style={{ boxShadow: "none" }}
-                              className="is-flex is-justify-content-space-between is-clickable py-2"
-                            >
-                              <div className="has-text-grey has-text-weight-semibold is-size-7 pt-1">
-                                CARRIER SPECIFIC OPTIONS
-                              </div>
-                              <span className="icon is-small m-1">
-                                {open ? (
-                                  <i className="fas fa-chevron-up"></i>
-                                ) : (
-                                  <i className="fas fa-chevron-down"></i>
-                                )}
-                              </span>
-                            </Disclosure.Button>
-                            <Disclosure.Panel
-                              className="is-flat m-0 px-0"
-                              style={{ maxHeight: "40vh" }}
-                            >
-                              {Object.entries(carrierOptions).map(
-                                ([carrier, options]) => (
-                                  <React.Fragment key={carrier}>
-                                    <label
-                                      className="label is-capitalized"
-                                      style={{ fontSize: "0.8em" }}
-                                    >
-                                      {references!.carriers[carrier]}
-                                    </label>
-                                    <hr
-                                      className="my-1"
-                                      style={{ height: "1px" }}
-                                    />
-
-                                    <div className="columns is-multiline m-0 p-0">
-                                      {options.map((option, index) => (
-                                        <React.Fragment key={option}>
-                                          {references!.options[carrier][option]
-                                            ?.type === "boolean" && (
-                                              <>
-                                                <CheckBoxField
-                                                  name={option}
-                                                  fieldClass="column mb-0 is-6 pl-0 pr-2 py-4"
-                                                  defaultChecked={
-                                                    shipment.options?.[option]
-                                                  }
-                                                  onChange={(e) =>
-                                                    onChange({
-                                                      options: {
-                                                        ...shipment.options,
-                                                        [option]:
-                                                          e.target.checked ||
-                                                          null,
-                                                      },
-                                                    })
-                                                  }
-                                                >
-                                                  <span>{formatRef(option)}</span>
-                                                </CheckBoxField>
-                                              </>
-                                            )}
-
-                                          {references!.options[carrier][option]
-                                            ?.type === "string" && (
-                                              <>
-                                                <InputField
-                                                  name={option}
-                                                  label={formatRef(option)}
-                                                  placeholder={formatRef(option)}
-                                                  className="is-small"
-                                                  fieldClass="mb-0 p-0"
-                                                  wrapperClass="column is-6 pl-0 pr-2 py-1"
-                                                  defaultValue={
-                                                    shipment.options[option]
-                                                  }
-                                                  onChange={(e) =>
-                                                    onChange({
-                                                      options: {
-                                                        ...shipment.options,
-                                                        [option]: e.target.value,
-                                                      },
-                                                    })
-                                                  }
-                                                />
-                                              </>
-                                            )}
-                                        </React.Fragment>
-                                      ))}
-                                    </div>
-
-                                    <div className="p-2"></div>
-                                  </React.Fragment>
-                                ),
-                              )}
-                            </Disclosure.Panel>
+                      <Collapsible>
+                        <CollapsibleTrigger
+                          asChild
+                        >
+                          <div className="is-flex is-justify-content-space-between is-clickable" style={{ boxShadow: "none" }}>
+                            <div className="has-text-grey has-text-weight-semibold is-size-7 pt-1">
+                              CARRIER SPECIFIC OPTIONS
+                            </div>
+                            <span className="icon is-small m-1">
+                              <i className="fas fa-chevron-down"></i>
+                            </span>
                           </div>
-                        )}
-                      </Disclosure>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent
+                          className="is-flat m-0 px-0"
+                          style={{ maxHeight: "40vh" }}
+                        >
+                          {Object.entries(carrierOptions).map(
+                            ([carrier, options]) => (
+                              <React.Fragment key={carrier}>
+                                <label
+                                  className="label is-capitalized"
+                                  style={{ fontSize: "0.8em" }}
+                                >
+                                  {references.carriers[carrier]}
+                                </label>
+                                <hr className="my-1" style={{ height: "1px" }} />
+
+                                {Object.entries(options).map(
+                                  ([name, option]) => (
+                                    <CheckBoxField
+                                      key={`${carrier}.${name}`}
+                                      name={`options.${carrier}.${name}`}
+                                      fieldClass="mb-0 px-1"
+                                      labelClass="px-2"
+                                      checked={
+                                        (shipment.options as any)?.[
+                                        carrier
+                                        ]?.[name] || false
+                                      }
+                                      onChange={(e: any) =>
+                                        onChange({
+                                          options: {
+                                            ...(shipment.options || {}),
+                                            [carrier]: {
+                                              ...(shipment.options as any)?.[
+                                              carrier
+                                              ],
+                                              [name]: e.target.checked,
+                                            },
+                                          },
+                                        })
+                                      }
+                                    >
+                                      <span>{option}</span>
+                                    </CheckBoxField>
+                                  ),
+                                )}
+                              </React.Fragment>
+                            ),
+                          )}
+                        </CollapsibleContent>
+                      </Collapsible>
                     </div>
                   )}
 
