@@ -201,11 +201,6 @@ const config = {
             label: 'Carriers',
           },
           {
-            href: 'https://platform.karrio.io',
-            position: 'left',
-            label: 'Platform',
-          },
-          {
             href: 'https://karrio.io',
             position: 'right',
             label: 'Karrio.io',
@@ -276,7 +271,7 @@ const config = {
             items: [
               {
                 label: 'Platform',
-                href: 'https://platform.karrio.io'
+                href: 'https://karrio.io/platform',
               },
               {
                 label: 'Download',
