@@ -39,4 +39,5 @@ include-package-data = true
 packages = {find = {exclude = ["tests.*", "tests"]}}
 
 [tool.setuptools.package-data]
-"karrio.addons.fonts" = ["*"]
+"karrio.addons.fonts" = ["*.ttf", "*.otf", "*.woff", "*.woff2"]
+"*" = ["*.ttf", "*.otf", "*.woff", "*.woff2", "*.json", "*.txt", "*.html", "*.css", "*.js"]

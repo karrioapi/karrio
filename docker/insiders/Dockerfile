@@ -7,10 +7,11 @@ RUN apt-get update -y && apt-get install -y gcc
 RUN python -m venv /karrio/venv
 ENV PATH="/karrio/venv/bin:$PATH"
 COPY . /temp/app/
-RUN cd /temp/app &&
-    pip install --upgrade pip &&
-    pip install dumb-init &&
+RUN cd /temp/app && \
+    pip install --upgrade pip && \
+    pip install dumb-init && \
     pip install -r ${REQUIREMENTS}
+
 
 # The runtime image
 FROM python:3.12.10-slim AS build-image

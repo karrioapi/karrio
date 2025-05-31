@@ -55,9 +55,8 @@ include-package-data = true
 packages = {find = {}}
 
 [tool.setuptools.package-data]
-"karrio.server.static" = ["*"]
-"karrio.server.templates" = ["*"]
-"karrio.server.staticfiles" = [".gitignore"]
+"karrio.server" = ["static/**/*", "templates/**/*", "staticfiles/**/*"]
+"*" = ["*.html", "*.txt", "*.css", "*.js", "*.png", "*.jpg", "*.gif", "*.ico", "*.svg", "*.woff", "*.woff2", "*.ttf", "*.eot"]
 
 [tool.setuptools.dynamic]
 version = {file = "karrio/server/VERSION"}

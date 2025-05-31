@@ -39,4 +39,5 @@ exclude = ["tests.*", "tests"]
 namespaces = true
 
 [tool.setuptools.package-data]
-"karrio.server.user.templates" = ["*"]
+"karrio.server.user" = ["templates/**/*"]
+"*" = ["*.html", "*.txt", "*.css", "*.js", "*.png", "*.jpg", "*.gif", "*.ico"]

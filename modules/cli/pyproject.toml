@@ -31,9 +31,16 @@ dependencies = [
 [project.scripts]
 kcli = "kcli.__main__:app"
 
+[tool.setuptools]
+include-package-data = true
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["kcli", "kcli.*"]
+
+[tool.setuptools.package-data]
+"kcli" = ["templates/**/*"]
+"*" = ["*.py", "*.txt", "*.md", "*.json"]
 
 [project.urls]
 Homepage = "https://github.com/karrioapi/karrio"
