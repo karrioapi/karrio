@@ -29,8 +29,7 @@ flowchart TD
     Metadata --> API[Implement API Requests]
     API --> Mapping[Implement Data Mapping]
     Mapping --> Testing[Test Integration]
-    Testing --> TypeScript[Generate TypeScript Types]
-    TypeScript --> End([Complete Integration])
+    Testing --> End([Complete Integration])
 
     style Start fill:#f9f,stroke:#333,stroke-width:2px
     style End fill:#9f9,stroke:#333,stroke-width:2px
@@ -157,8 +156,7 @@ To complete your carrier integration, follow these detailed guides:
 After implementing your carrier integration, you'll need to:
 
 1. Test your integration thoroughly with unit tests
-2. Update the API specs and generate TypeScript types
-3. Set up the carrier in the Karrio dashboard
+2. Set up the carrier in the Karrio dashboard
 
 ## Example Integrations
 
@@ -182,5 +180,3 @@ If your carrier integration isn't working correctly:
 5. Use `get_failed_plugin_modules()` to get information about plugins that failed to load
 
 For more information on plugin loading and registration, see the [Plugin Development Guide](/docs/developing/plugin-development).
-
-

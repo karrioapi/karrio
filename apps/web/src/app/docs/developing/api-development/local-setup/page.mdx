@@ -1,0 +1,355 @@
+---
+sidebarTitle: Setup API in a local instance
+title: Setup API in a local instance
+description: Learn how to set up and test Karrio APIs in your local development environment
+tags: [development, api, local setup, testing]
+author: Karrio Team
+---
+
+# How to setup API in a local instance
+
+To test and develop with Karrio APIs in your local environment, you'll need to set up the Karrio server, create API credentials, and configure your development workflow. This guide will walk you through the complete process.
+
+## Setting Up Your Local Karrio Instance
+
+### Quick Start with Docker
+
+If you don't have Karrio running locally yet, here's the fastest way to get started:
+
+```bash filename="Terminal"
+# Create your project folder
+mkdir karrio-api-dev
+cd karrio-api-dev
+
+# Download the latest version of karrio
+curl https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/docker-compose.yml -o docker-compose.yml
+curl https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/.env -o .env
+```
+
+Start the Karrio services:
+
+```bash filename="Terminal"
+docker compose up -d
+```
+
+Wait for all services to be ready. You can check the status with:
+
+```bash filename="Terminal"
+docker compose ps
+```
+
+> [!WARNING]
+>
+> **Cloud Deployment Configuration**
+>
+> If you're deploying on a cloud virtual environment (AWS EC2, Digital Ocean, etc.), update the `.env` file:
+>
+> ```diff
+> - KARRIO_PUBLIC_URL=http://localhost:5002
+> + KARRIO_PUBLIC_URL=http://[YOUR-VM-IP-ADDRESS]:5002
+> ```
+
+Once running, you should have:
+
+- **API Server**: http://localhost:5002
+- **Dashboard**: http://localhost:3000
+- **API Documentation**: http://localhost:5002/openapi
+
+## Testing Your API Setup
+
+### 1. Test API Connectivity
+
+First, verify that your API is accessible:
+
+```bash filename="Terminal"
+curl -X GET http://localhost:5002
+```
+
+You should receive a response indicating the API is healthy.
+
+### 2. Set Up Environment Variables
+
+To make your API testing experience smoother, let's set up some environment variables that we'll reuse throughout this guide:
+
+```bash filename="Terminal"
+# Set base configuration
+export KARRIO_API_URL="http://localhost:5002"
+export KARRIO_TEST_MODE="true"
+
+# Verify the setup
+echo "API URL: $KARRIO_API_URL"
+echo "Test Mode: $KARRIO_TEST_MODE"
+```
+
+### 3. Login and Get Access Token
+
+Start by authenticating with the default admin credentials to get an access token:
+
+```bash filename="Terminal"
+curl -X POST $KARRIO_API_URL/api/token \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "admin@example.com",
+    "password": "demo"
+  }'
+```
+
+**Expected Response:**
+
+```json
+{
+  "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...",
+  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."
+}
+```
+
+**Save the access token as an environment variable:**
+
+```bash filename="Terminal"
+# Replace with your actual token from the response above
+export KARRIO_ACCESS_TOKEN="eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."
+
+# Verify it's set
+echo "Access Token: ${KARRIO_ACCESS_TOKEN:0:20}..."
+```
+
+> [!TIP]
+>
+> **Quick Token Setup**
+>
+> You can combine the login and token extraction in one command:
+>
+> ```bash
+> export KARRIO_ACCESS_TOKEN=$(curl -s -X POST $KARRIO_API_URL/api/token \
+>   -H "Content-Type: application/json" \
+>   -d '{"email": "admin@example.com", "password": "demo"}' | \
+>   jq -r '.access')
+> ```
+
+### 4. Retrieve API Keys (Test Mode)
+
+Get your API keys using the GraphQL endpoint:
+
+```bash filename="Terminal"
+curl -X POST $KARRIO_API_URL/graphql \
+  -H "Authorization: Bearer $KARRIO_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "x-test-mode: $KARRIO_TEST_MODE" \
+  -d '{
+    "query": "query { token { key test_mode created permissions } }"
+  }'
+```
+
+**Save your API key as an environment variable:**
+
+```bash filename="Terminal"
+# Replace with your actual API key from the response above
+export KARRIO_API_KEY="your_api_key_here"
+
+# Verify it's set
+echo "API Key: ${KARRIO_API_KEY:0:20}..."
+```
+
+> [!TIP]
+>
+> **Auto-extract API Key**
+>
+> If you want to automatically extract the first API key from the response:
+>
+> ```bash
+> export KARRIO_API_KEY=$(curl -s -X POST $KARRIO_API_URL/graphql \
+>   -H "Authorization: Bearer $KARRIO_ACCESS_TOKEN" \
+>   -H "Content-Type: application/json" \
+>   -d '{"query": "query { token { key } }"}' | \
+>   jq -r '.data.token.key')
+> ```
+
+### 5. Test Authentication with API Key
+
+Test your API key authentication using GraphQL:
+
+```bash filename="Terminal"
+curl -X POST $KARRIO_API_URL/graphql \
+  -H "Authorization: Token $KARRIO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "query { user { email full_name is_staff date_joined } }"
+  }'
+```
+
+A successful response will return your user information:
+
+```json
+{
+  "data": {
+    "user": {
+      "email": "admin@example.com",
+      "full_name": "Admin User",
+      "is_staff": true,
+      "date_joined": "2024-01-01T00:00:00Z"
+    }
+  }
+}
+```
+
+### 6. Create a Generic Carrier Connection
+
+Set up a test carrier connection for development purposes:
+
+```bash filename="Terminal"
+curl -X POST $KARRIO_API_URL/v1/connections \
+  -H "Authorization: Token $KARRIO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "carrier_name": "generic",
+    "carrier_id": "aeroship:us:test",
+    "credentials": {
+      "custom_carrier_name": "aeroship",
+      "display_name": "Aeroship"
+    },
+    "metadata": {
+      "description": "Generic test carrier for development"
+    }
+  }'
+```
+
+**Expected Response:**
+
+```json
+{
+  "id": "conn_xxxxx",
+  "carrier_name": "generic",
+  "carrier_id": "generic_test_connection",
+  "test_mode": true,
+  ...
+}
+```
+
+**Save the connection ID as an environment variable:**
+
+```bash filename="Terminal"
+# Replace with your actual connection ID from the response above
+export KARRIO_CARRIER_ID="aeroship:us:test"
+
+# Verify it's set
+echo "Carrier ID: $KARRIO_CARRIER_ID"
+```
+
+> [!TIP]
+>
+> **Auto-extract Connection ID**
+>
+> You can automatically extract the connection ID from existing connections:
+>
+> ```bash
+> export KARRIO_CARRIER_ID=$(curl -s -X GET $KARRIO_API_URL/v1/connections \
+>   -H "Authorization: Token $KARRIO_API_KEY" \
+>   -H "Content-Type: application/json" | \
+>   jq -r '.results[0].carrier_id')
+> ```
+
+### 7. Create Your First Shipment
+
+Create a test shipment to generate your first label:
+
+```bash filename="Terminal"
+curl -X POST $KARRIO_API_URL/v1/shipments \
+  -H "Authorization: Token $KARRIO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "shipper": {
+      "postal_code": "10001",
+      "city": "New York",
+      "country_code": "US",
+      "state_code": "NY",
+      "address_line1": "123 Shipper Street",
+      "person_name": "Sender Name",
+      "company_name": "Sender Company",
+      "phone_number": "1234567890",
+      "email": "sender@example.com"
+    },
+    "recipient": {
+      "postal_code": "90210",
+      "city": "Beverly Hills",
+      "country_code": "US",
+      "state_code": "CA",
+      "address_line1": "456 Recipient Ave",
+      "person_name": "Recipient Name",
+      "company_name": "Recipient Company",
+      "phone_number": "0987654321",
+      "email": "recipient@example.com"
+    },
+    "parcels": [{
+      "weight": 1.0,
+      "width": 10,
+      "height": 10,
+      "length": 10,
+      "weight_unit": "LB",
+      "dimension_unit": "IN"
+    }],
+    "service": "standard_service",
+    "label_type": "PDF",
+    "reference": "TEST_SHIPMENT_001",
+    "metadata": {
+      "test_shipment": true
+    }
+  }'
+```
+
+**Expected Response:**
+
+```json
+{
+  "id": "ship_xxxxx",
+  "status": "purchased",
+  "carrier_name": "generic",
+  "service": "standard_service",
+  "tracking_number": "TEST123456789",
+  "label_url": "/v1/shipments/ship_xxxxx/label",
+  ...
+}
+```
+
+**Save the shipment details:**
+
+```bash filename="Terminal"
+# Replace with your actual values from the response above
+export KARRIO_SHIPMENT_ID="ship_xxxxx"
+export KARRIO_TRACKING_NUMBER="TEST123456789"
+
+echo "Shipment ID: $KARRIO_SHIPMENT_ID"
+echo "Tracking Number: $KARRIO_TRACKING_NUMBER"
+```
+
+**Download the label:**
+
+```bash filename="Terminal"
+open $KARRIO_API_URL/v1/shipments/$KARRIO_SHIPMENT_ID/label.pdf
+```
+
+### 8. Verify Your Setup
+
+After running the setup script, you should have:
+
+- ✅ A working JWT token for authentication
+- ✅ API keys for programmatic access
+- ✅ A generic carrier connection for testing
+- ✅ A test shipment with tracking number
+- ✅ A shipping label (PDF) ready for download
+- ✅ All environment variables saved for reuse
+
+You can now start building your shipping integration using the Karrio API!
+
+## Next Steps
+
+Once you have your local API development environment set up:
+
+1. **Explore the API Reference**: Visit http://localhost:5002/openapi for interactive API documentation
+2. **Test with Real Carriers**: Configure production carrier credentials for real-world testing
+3. **Deploy Your Application**: Move from local development to staging and production environments
+
+For more advanced topics, check out:
+
+- [Plugin Development](/docs/developing/plugin-development) - Extending Karrio functionality
+- [Carrier Integration](/docs/developing/carrier-integration) - Adding new shipping carriers
+- [API Reference](/docs/api-reference) - Complete API documentation

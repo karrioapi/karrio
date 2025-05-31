@@ -31,8 +31,8 @@ export default {
     title: 'Guides',
     type: 'separator',
   },
-  "plugin-development": {
-    title: 'Plugin Development',
+  "api-development": {
+    title: 'API Development',
     type: 'page'
   },
   "carrier-integration": {
@@ -42,6 +42,10 @@ export default {
   "cli-guide": {
     title: 'CLI Guide',
     type: 'page',
+  },
+  "plugin-development": {
+    title: 'Plugin Development',
+    type: 'page'
   },
   // "address-validation": {
   //   title: 'Address Validation',
