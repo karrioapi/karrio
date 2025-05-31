@@ -2,7 +2,7 @@
 
 set -e
 
-export KARRIO_TAG="${KARRIO_TAG:-2025.5.rc1}"
+export KARRIO_TAG="${KARRIO_TAG:-2025.5rc1}"
 export SENTRY_DSN="${SENTRY_DSN:-'https://public@sentry.example.com/1'}"
 
 SECRET_KEY=$(head -c 28 /dev/urandom | sha224sum -b | head -c 56)
@@ -19,32 +19,29 @@ echo "Power user or aspiring power user?"
 echo "Check out our docs on deploying Karrio! https://docs.karrio.io/guides/self-hosting/hobby"
 echo ""
 
-if ! [ -z "$1" ]
-then
-export KARRIO_TAG=$1
+if ! [ -z "$1" ]; then
+    export KARRIO_TAG=$1
 else
-echo "What version of Karrio would you like to install? (We default to '2025.5.rc1')"
-echo "You can check out available versions here: https://hub.docker.com/r/karrio/server/tags"
-read -r KARRIO_TAG_READ
-if [ -z "$KARRIO_TAG_READ" ]
-then
-    echo "Using default and installing $KARRIO_TAG"
-else
-    export KARRIO_TAG=$KARRIO_TAG_READ
-    echo "Using provided tag: $KARRIO_TAG"
-fi
+    echo "What version of Karrio would you like to install? (We default to '2025.5rc1')"
+    echo "You can check out available versions here: https://hub.docker.com/r/karrio/server/tags"
+    read -r KARRIO_TAG_READ
+    if [ -z "$KARRIO_TAG_READ" ]; then
+        echo "Using default and installing $KARRIO_TAG"
+    else
+        export KARRIO_TAG=$KARRIO_TAG_READ
+        echo "Using provided tag: $KARRIO_TAG"
+    fi
 fi
 echo ""
-if ! [ -z "$2" ]
-then
-export DOMAIN=$2
+if ! [ -z "$2" ]; then
+    export DOMAIN=$2
 else
-echo "Let's get the exact domain Karrio will be installed on"
-echo "Make sure that you have a Host A DNS record pointing to this instance!"
-echo "This will be used for TLS 🔐"
-echo "ie: karrio.net (NOT an IP address)"
-read -r DOMAIN
-export DOMAIN=$DOMAIN
+    echo "Let's get the exact domain Karrio will be installed on"
+    echo "Make sure that you have a Host A DNS record pointing to this instance!"
+    echo "This will be used for TLS 🔐"
+    echo "ie: karrio.net (NOT an IP address)"
+    read -r DOMAIN
+    export DOMAIN=$DOMAIN
 fi
 echo "Ok we'll set up certs for these subdomains: "
 echo "- https://api.$DOMAIN"
@@ -58,8 +55,7 @@ echo ""
 echo "Ok! We'll take it from here 🚀"
 
 echo "Making sure any stack that might exist is stopped"
-sudo -E docker-compose -f docker-compose.yml stop &> /dev/null || true
-
+sudo -E docker-compose -f docker-compose.yml stop &>/dev/null || true
 
 # update apt cache
 echo "Grabbing latest apt caches"
@@ -74,14 +70,13 @@ curl https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/docker-compo
 
 cd -
 
-if [ -n "$3" ]
-then
-export TLS_BLOCK="acme_ca https://acme-staging-v02.api.letsencrypt.org/directory"
+if [ -n "$3" ]; then
+    export TLS_BLOCK="acme_ca https://acme-staging-v02.api.letsencrypt.org/directory"
 fi
 
 # rewrite caddyfile
 rm -f Caddyfile
-envsubst > Caddyfile <<EOF
+envsubst >Caddyfile <<EOF
 {
     http_port 80
     https_port 443
@@ -110,7 +105,7 @@ app.$DOMAIN {
 EOF
 
 # Write .env file
-envsubst > .env <<EOF
+envsubst >.env <<EOF
 DOMAIN=$DOMAIN
 SECRET_KEY=$SECRET_KEY
 JWT_SECRET=$JWT_SECRET
@@ -128,7 +123,6 @@ sudo apt update
 sudo apt-cache policy docker-ce
 sudo apt install -y docker-ce
 
-
 # setup docker-compose
 echo "Setting up Docker Compose"
 sudo curl -L "https://github.com/docker/compose/releases/download/v2.13.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose || true
@@ -137,16 +131,14 @@ sudo chmod +x /usr/local/bin/docker-compose
 # enable docker without sudo
 sudo usermod -aG docker "${USER}" || true
 
-
 # start up the stack
 echo "Configuring Docker Compose...."
 rm -f docker-compose.yml
 cp karrio/docker-compose.hobby.yml docker-compose.yml.tmpl
-envsubst < docker-compose.yml.tmpl > docker-compose.yml
+envsubst <docker-compose.yml.tmpl >docker-compose.yml
 rm docker-compose.yml.tmpl
 echo "Starting the stack!"
 sudo -E docker-compose -f docker-compose.yml up -d
-
 
 echo "We will need to wait ~5-10 minutes for things to settle down, migrations to finish, and TLS certs to be issued"
 echo ""

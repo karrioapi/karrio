@@ -4,16 +4,14 @@ set -e
 
 echo "Upgrading Karrio. This will cause a few minutes of downtime."
 read -r -p "Do you want to upgarde Karrio? [y/N] " response
-if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]
-then
+if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
     echo "OK!"
 else
     exit
 fi
 
 echo "Checking for named postgres volumes to avoid data loss when upgrading"
-if docker volume ls | grep -e 'postgres-data'
-then
+if docker volume ls | grep -e 'postgres-data'; then
     DOCKER_VOLUMES_MISSING=FALSE
     echo "Found postgres volume, proceeding..."
 else
@@ -35,16 +33,15 @@ else
     echo "  ☑ /var/lib/postgresql/data in the db (*_db_1) container"
     echo "and be ready to check/recopy the data before you boot Karrio next."
     read -r -p "Do you want to proceed anyway? [y/N] " response
-    if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]
-    then
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
         echo "OK!"
     else
         exit
     fi
 fi
 
-[[ -f ".env" ]] && export $(cat .env | xargs) || ( echo "No .env file found. Please create it with SECRET_KEY and DOMAIN set." && exit 1)
-export KARRIO_TAG="${KARRIO_TAG:-2025.5.rc1}"
+[[ -f ".env" ]] && export $(cat .env | xargs) || (echo "No .env file found. Please create it with SECRET_KEY and DOMAIN set." && exit 1)
+export KARRIO_TAG="${KARRIO_TAG:-2025.5rc1}"
 
 # get karrio scripts
 mkdir -p ./karrio
@@ -61,22 +58,17 @@ sudo rm /usr/local/bin/docker-compose
 sudo curl -L "https://github.com/docker/compose/releases/download/v2.13.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose || true
 sudo chmod +x /usr/local/bin/docker-compose
 
-
 rm -f docker-compose.yml
 cp karrio/docker-compose.hobby.yml docker-compose.yml.tmpl
-envsubst < docker-compose.yml.tmpl > docker-compose.yml
+envsubst <docker-compose.yml.tmpl >docker-compose.yml
 rm docker-compose.yml.tmpl
 
-
 docker-compose pull
-
 
 echo "Stopping the stack!"
 docker-compose stop
 
-
-if [ ${DOCKER_VOLUMES_MISSING} == 'TRUE' ];
-then
+if [ ${DOCKER_VOLUMES_MISSING} == 'TRUE' ]; then
     echo ""
     echo ""
     echo "🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨"
@@ -90,8 +82,7 @@ then
 fi
 
 read -r -p "Do you want to restart the Karrio stack now ? (docker-compose up) [y/N] " response
-if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]
-then
+if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
     echo "OK, Restarting the stack!"
     sudo -E docker-compose up -d
 else
