@@ -7,11 +7,10 @@ RUN apt-get update -y && apt-get install -y gcc
 RUN python -m venv /karrio/venv
 ENV PATH="/karrio/venv/bin:$PATH"
 COPY . /temp/app/
-RUN cd /temp/app && \
-    pip install --upgrade pip && \
-    pip install dumb-init && \
+RUN cd /temp/app &&
+    pip install --upgrade pip &&
+    pip install dumb-init &&
     pip install -r ${REQUIREMENTS}
-
 
 # The runtime image
 FROM python:3.12.10-slim AS build-image
@@ -44,6 +43,7 @@ ENV LOG_DIR=/karrio/log
 ENV WORKER_DB_DIR=/karrio/data
 ENV STATIC_ROOT_DIR=/karrio/static
 ENV KARRIO_PLUGINS=/karrio/plugins
+ENV ENABLE_ALL_PLUGINS_BY_DEFAULT=True
 
 RUN apt-get update -y && apt-get install -y libpango1.0-0 libpangoft2-1.0-0 gcc zint curl
 

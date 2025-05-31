@@ -21,6 +21,7 @@ services:
       DATABASE_USERNAME: ${DATABASE_USERNAME}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
       KARRIO_HTTP_PORT: ${KARRIO_HTTP_PORT}
+      ENABLE_ALL_PLUGINS_BY_DEFAULT: "True"
     healthcheck:
       test: curl --fail http://api:5002/ || exit 1
       interval: 40s
@@ -46,6 +47,7 @@ services:
       DATABASE_ENGINE: ${DATABASE_ENGINE}
       DATABASE_USERNAME: ${DATABASE_USERNAME}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      ENABLE_ALL_PLUGINS_BY_DEFAULT: "True"
     command: "/bin/bash ./worker"
 
   dashboard:

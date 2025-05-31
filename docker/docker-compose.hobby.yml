@@ -21,6 +21,7 @@ services:
       DATABASE_ENGINE: ${DATABASE_ENGINE:-postgresql_psycopg2}
       DATABASE_USERNAME: ${DATABASE_USERNAME:-postgres}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+      ENABLE_ALL_PLUGINS_BY_DEFAULT: "True"
     volumes:
       - karrio-static:/karrio/static
 
@@ -28,7 +29,7 @@ services:
     container_name: karrio.worker
     image: karrio.docker.scarf.sh/karrio/server:$KARRIO_TAG
     restart: unless-stopped
-    command: '/bin/bash ./worker'
+    command: "/bin/bash ./worker"
     depends_on:
       - db
       - redis
@@ -43,6 +44,7 @@ services:
       DATABASE_ENGINE: ${DATABASE_ENGINE:-postgresql_psycopg2}
       DATABASE_USERNAME: ${DATABASE_USERNAME:-postgres}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+      ENABLE_ALL_PLUGINS_BY_DEFAULT: "True"
 
   dashboard:
     container_name: karrio.dashboard
@@ -61,8 +63,8 @@ services:
     image: caddy:2.6.2
     restart: unless-stopped
     ports:
-      - '80:80'
-      - '443:443'
+      - "80:80"
+      - "443:443"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - karrio-static:/var/www/karrio/static
