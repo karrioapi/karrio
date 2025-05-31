@@ -39,6 +39,8 @@ export default async function DocsLayout({ children }: { children: ReactNode }) 
         <NextraTheme pageMap={pageMap}>
           {children}
         </NextraTheme>
+
+        <img referrerPolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=a16a9706-d13e-4fbc-91ef-c313c2fcec3f" />
       </body>
     </html>
   )
