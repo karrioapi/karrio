@@ -41,7 +41,7 @@ export function MobileMenu({ isBlogPage }: MobileMenuProps) {
 
             <SheetClose asChild>
               <Link
-                href="/carriers"
+                href="/docs/carriers"
                 className="dark:text-white/80 dark:hover:text-white text-foreground/80 hover:text-foreground transition-colors px-6 py-3 font-medium"
               >
                 Carriers

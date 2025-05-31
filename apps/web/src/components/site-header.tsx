@@ -16,7 +16,7 @@ export const SiteHeader = () => {
   const isBlogPage = pathname?.startsWith("/blog");
   const isDocsPage = pathname?.startsWith("/docs");
   const isPlatformPage = pathname?.startsWith("/platform");
-  const isMarketingPage = pathname === '/' || pathname?.startsWith("/carriers") || (!isPlatformPage && !isBlogPage && !isDocsPage);
+  const isMarketingPage = pathname === '/' || (!isPlatformPage && !isBlogPage && !isDocsPage);
   const { theme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -76,7 +76,7 @@ export const SiteHeader = () => {
                 Blog
               </Link>
               <Link
-                href="/carriers"
+                href="/docs/carriers"
                 className="dark:text-white/80 dark:hover:text-white text-foreground/80 hover:text-foreground transition-colors font-semibold"
               >
                 Carriers
