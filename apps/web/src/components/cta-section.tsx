@@ -8,11 +8,17 @@ import Link from "next/link";
 interface CTASectionProps {
   title: string;
   description: string;
+  platformAction?: {
+    text: string;
+    href?: string;
+    className?: string;
+  };
 }
 
 export function CTASection({
   title,
   description,
+  platformAction,
 }: CTASectionProps) {
   return (
     <section className="py-24 relative bg-[#0f0826] text-white">
@@ -84,10 +90,22 @@ export function CTASection({
                 </p>
               </div>
 
-              <BookDemoButton
-                size="lg"
-                className="mt-2 bg-[#5722cc] hover:bg-[#5722cc]/90"
-              />
+              {platformAction ? (
+                <Button
+                  size="lg"
+                  className={platformAction.className || "mt-2 bg-[#5722cc] hover:bg-[#5722cc]/90"}
+                  asChild
+                >
+                  <Link href={platformAction.href || "#"}>
+                    {platformAction.text}
+                  </Link>
+                </Button>
+              ) : (
+                <BookDemoButton
+                  size="lg"
+                  className="mt-2 bg-[#5722cc] hover:bg-[#5722cc]/90"
+                />
+              )}
             </div>
 
             {/* Enhanced illustration showing more advanced features */}

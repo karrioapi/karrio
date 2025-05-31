@@ -256,6 +256,11 @@ export default function Home() {
       <CTASection
         title="Ready to get started?"
         description="Karrio is free to get started, and has an insider sponsorship tier for mission critical and shipping at scale."
+        platformAction={{
+          text: "Get Started",
+          href: "/platform",
+          className: "mt-2 bg-[#5722cc] hover:bg-[#5722cc]/90"
+        }}
       />
     </div>
   );
