@@ -24,15 +24,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       async authorize({ orgId, ...credentials }: any, req: any) {
         try {
+          const headersList = await headers();
           const domain = await getCurrentDomain();
           const { metadata } = await loadMetadata(domain!);
           const auth = Auth(metadata?.HOST || (KARRIO_API as string));
           const token = await auth.authenticate(credentials as any);
-          const testMode = (headers() as unknown as UnsafeUnwrappedHeaders)
-            .get("referer")
-            ?.includes("/test");
+          const testMode = Boolean(headersList.get("referer")?.includes("/test"));
           const org = metadata?.MULTI_ORGANIZATIONS
-            ? await auth.getCurrentOrg(token.access, orgId)
+            ? await auth.getCurrentOrg({
+              accessToken: token.access,
+              testMode,
+              orgId,
+            })
             : { id: null };
 
           return {
@@ -53,8 +56,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     jwt: async ({ token, user, trigger, session }: any): Promise<any> => {
-      const auth = Auth(KARRIO_API as string);
       const headersList = await headers();
+      const domain = await getCurrentDomain();
+      const host = domain || (KARRIO_API as string);
+      const { metadata } = await loadMetadata(host);
+      const auth = Auth(metadata?.HOST || host);
 
       if (user?.accessToken) {
         token.orgId = user.orgId;
@@ -68,11 +74,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       if (trigger === "update" && session?.orgId) {
         // Note, that `session` can be any arbitrary object, remember to validate it!
-        const org = await auth.getCurrentOrg(
-          (token as any).accessToken,
-          session.orgId,
-        );
-        token.orgId = org?.id;
+        const org = await auth.getCurrentOrg({
+          accessToken: (token as any).accessToken,
+          testMode: token.testMode,
+          orgId: session.orgId,
+        });
+        token.orgId = org?.id || token.orgId;
       }
 
       // Return previous token if the access token has not expired yet
