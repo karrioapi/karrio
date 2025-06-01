@@ -22,5 +22,5 @@ export function KarrioPlatformClient({
   const config = new Configuration(clientConfig);
   const axiosInstance = axios.create({ baseURL: config.basePath, headers });
 
-  return new GraphQLApi(`${config.basePath}/admin/graphql`, axiosInstance);
+  return new GraphQLApi(`${config.basePath}/platform/graphql`, axiosInstance);
 }

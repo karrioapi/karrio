@@ -27,6 +27,7 @@ import { toast } from "@karrio/ui/hooks/use-toast";
 import { trpc } from "@karrio/console/trpc/client";
 import moment from "moment";
 import React, { useState } from "react";
+import { useParams } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -42,16 +43,12 @@ interface DataPoint {
   failed: number;
 }
 
-export default async function DashboardPage({
-  params,
-}: {
-  params: Promise<{ orgId: string; projectId: string }>;
-}) {
-  const { orgId, projectId } = await params;
+export default function DashboardPage() {
+  const params = useParams<{ orgId: string; projectId: string }>();
+  const { orgId, projectId } = params;
   const utils = trpc.useContext();
+
   const { data: currentProject, isLoading: isProjectLoading } =
-
-
     trpc.projects.get.useQuery({
       id: projectId,
       orgId: orgId,
@@ -75,6 +72,18 @@ export default async function DashboardPage({
   const retryDeployment = trpc.projects.retryDeployment.useMutation({
     onSuccess: () => {
       utils.projects.get.invalidate();
+      toast({
+        title: "Retry initiated",
+        description: "Deployment retry has been started. Please wait...",
+      });
+    },
+    onError: (error) => {
+      console.error("Retry deployment failed:", error);
+      toast({
+        title: "Retry failed",
+        description: error.message || "Failed to retry deployment",
+        variant: "destructive",
+      });
     },
   });
 
