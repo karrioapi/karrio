@@ -20,11 +20,11 @@ export function NavMain({
 }) {
   const { orgId } = useParams();
   return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+    <SidebarGroup>
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton asChild tooltip={item.name}>
               <a href={item.url(orgId as string)}>
                 <item.icon />
                 <span>{item.name}</span>

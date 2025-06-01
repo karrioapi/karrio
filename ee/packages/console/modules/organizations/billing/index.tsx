@@ -62,23 +62,31 @@ const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
 );
 
-export default async function BillingPagePage({ params }: { params: Promise<{ orgId: string }> }) {
-  const { orgId } = await params;
+export default function BillingPagePage({ params }: { params: Promise<{ orgId: string }> }) {
+  const [orgId, setOrgId] = useState<string>("");
   const { toast } = useToast();
   const router = useRouter();
   const utils = trpc.useUtils();
+
+  // Handle the async params
+  useEffect(() => {
+    params.then(({ orgId }) => {
+      setOrgId(orgId);
+    });
+  }, [params]);
+
   const { data: subscription } = trpc.billing.getSubscription.useQuery({
     orgId,
-  });
+  }, { enabled: !!orgId });
   const { data: billingInfo } = trpc.billing.getBillingInfo.useQuery({
     orgId,
-  });
+  }, { enabled: !!orgId });
   const { data: currentPlan } = trpc.billing.getPlan.useQuery({
     orgId,
-  });
+  }, { enabled: !!orgId });
   const { data: invoices } = trpc.billing.getInvoices.useQuery({
     orgId,
-  });
+  }, { enabled: !!orgId });
   const updateBilling = trpc.billing.updateBillingInfo.useMutation();
   const createSetupIntent = trpc.billing.createSetupIntent.useMutation();
   const [billingEmail, setBillingEmail] = useState("");
@@ -100,7 +108,7 @@ export default async function BillingPagePage({ params }: { params: Promise<{ or
   const [isMounted, setIsMounted] = useState(false);
   const { data: paymentMethods } = trpc.billing.getPaymentMethods.useQuery({
     orgId,
-  });
+  }, { enabled: !!orgId });
   const setDefaultPaymentMethod =
     trpc.billing.setDefaultPaymentMethod.useMutation();
   const deletePaymentMethod = trpc.billing.deletePaymentMethod.useMutation({
@@ -338,6 +346,10 @@ export default async function BillingPagePage({ params }: { params: Promise<{ or
   };
 
   if (!isMounted) {
+    return null;
+  }
+
+  if (!orgId) {
     return null;
   }
 

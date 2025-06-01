@@ -21,11 +21,11 @@ export function NavProjects({
   const { orgId, projectId } = useParams();
 
   return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+    <SidebarGroup>
       <SidebarMenu>
         {projects.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton asChild tooltip={item.name}>
               <a href={item.url(orgId as string, projectId as string)}>
                 <item.icon />
                 <span>{item.name}</span>

@@ -15,7 +15,7 @@ import { UserPlus, Trash2, AlertCircle } from "lucide-react";
 import { Input } from "@karrio/ui/components/ui/input";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,7 +28,7 @@ import {
 } from "@karrio/ui/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
 
-export default async function SettingsPage({
+export default function SettingsPage({
   params,
 }: {
   params: Promise<{ orgId: string }>;
@@ -37,14 +37,37 @@ export default async function SettingsPage({
   const router = useRouter();
   const utils = trpc.useContext();
   const { data: session } = useSession();
-  const { orgId } = await params;
+
+  const [orgId, setOrgId] = useState<string>("");
+  const [orgName, setOrgName] = useState("");
+  const [newMemberEmail, setNewMemberEmail] = useState("");
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  // Handle the params Promise
+  useEffect(() => {
+    params.then(({ orgId }) => {
+      setOrgId(orgId);
+    });
+  }, [params]);
+
   const { data: organization } = trpc.organizations.get.useQuery({
     orgId,
-  });
-  const { data: members } = trpc.organizations.getMembers.useQuery({
-    orgId,
+  }, {
+    enabled: !!orgId, // Only run query when orgId is available
   });
 
+  const { data: members } = trpc.organizations.getMembers.useQuery({
+    orgId,
+  }, {
+    enabled: !!orgId, // Only run query when orgId is available
+  });
+
+  // Update orgName when organization data is loaded
+  useEffect(() => {
+    if (organization?.name) {
+      setOrgName(organization.name);
+    }
+  }, [organization?.name]);
 
   const currentUser = members?.find(
     (member) => member.user.email === session?.user?.email,
@@ -115,10 +138,6 @@ export default async function SettingsPage({
       });
     },
   });
-
-  const [orgName, setOrgName] = useState(organization?.name || "");
-  const [newMemberEmail, setNewMemberEmail] = useState("");
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   return (
     <>

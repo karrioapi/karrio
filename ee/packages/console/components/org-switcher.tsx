@@ -50,6 +50,7 @@ export function OrgSwitcher({ selectedOrgId }: { selectedOrgId?: string }) {
             <SidebarMenuButton
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              tooltip={activeOrg?.name || "Select Organization"}
             >
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                 <Building2 className="size-4" />

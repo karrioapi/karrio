@@ -78,27 +78,30 @@ export function DashboardSidebar({
   const { data: user } = trpc.users.get.useQuery();
 
   return (
-    <Sidebar collapsible="icon" className="sidebar-root" {...props}>
-      <SidebarHeader className="sidebar-header">
+    <Sidebar collapsible="icon" {...props}>
+      <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
+            <SidebarMenuButton size="lg" asChild tooltip="Karrio">
               <a href="/orgs">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                   <Image
-                    className="h-8 w-8"
+                    className="h-6 w-6"
                     src="/icon.svg"
                     alt="Karrio Logo"
                     width={24}
                     height={24}
                   />
                 </div>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">Karrio</span>
+                </div>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
           {!orgId && (
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton asChild tooltip="Organizations">
                 <a href="/orgs">
                   <Folder />
                   <span>Organizations</span>
@@ -111,16 +114,16 @@ export function DashboardSidebar({
         {orgId && <OrgSwitcher selectedOrgId={orgId} />}
       </SidebarHeader>
 
-      <SidebarContent className="sidebar-content">
+      <SidebarContent>
         {projectId && <NavProjects projects={data.projects} />}
         {orgId && !projectId && <NavMain items={data.navMain} />}
       </SidebarContent>
 
-      <SidebarFooter className="sidebar-footer">
+      <SidebarFooter>
         <NavUser user={user as any} />
       </SidebarFooter>
 
-      <SidebarRail className="sidebar-rail" />
+      <SidebarRail />
     </Sidebar>
   );
 }

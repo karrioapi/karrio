@@ -34,7 +34,7 @@ export default async function DashboardLayout({
   }
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       <DashboardSidebar />
       <SidebarInset className="bg-background">{children}</SidebarInset>
     </SidebarProvider>

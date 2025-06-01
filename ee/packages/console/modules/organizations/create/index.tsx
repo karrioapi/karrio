@@ -14,6 +14,7 @@ import {
 import { trpc } from "@karrio/console/trpc/client";
 import { signOut } from "next-auth/react";
 import { LogOut } from "lucide-react";
+import { KarrioLogo } from "@karrio/console/components/karrio-logo";
 
 export default function CreateOrganizationPage() {
   const router = useRouter();
@@ -36,7 +37,11 @@ export default function CreateOrganizationPage() {
       <div className="flex flex-col min-h-screen bg-background">
         <header className="border-b">
           <div className="container flex h-16 items-center justify-between px-4">
-            <h1 className="text-xl font-semibold">Create Organization</h1>
+            <div className="flex items-center gap-4">
+              <KarrioLogo />
+              <div className="h-6 w-px bg-border"></div>
+              <h3 className="text-lg font-semibold">Create Organization</h3>
+            </div>
             <Button
               variant="ghost"
               size="sm"
