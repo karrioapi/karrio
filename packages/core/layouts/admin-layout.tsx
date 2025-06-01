@@ -11,6 +11,7 @@ import {
   loadMetadata,
   loadOrgData,
   loadUserData,
+  getCurrentDomain,
   requireAuthentication,
 } from "@karrio/core/context/main";
 import React from "react";
@@ -20,9 +21,10 @@ export default async function Layout({ children }) {
 
   await requireAuthentication(session);
 
-  const metadata = await loadMetadata();
-  const user = await loadUserData(session, metadata.metadata as Metadata);
-  const org = await loadOrgData(session, metadata.metadata as Metadata);
+  const domain = await getCurrentDomain();
+  const metadata = await loadMetadata(domain!);
+  const user = await loadUserData(session, metadata.metadata as Metadata, domain!);
+  const org = await loadOrgData(session, metadata.metadata as Metadata, domain!);
   const orgId = ((session as any)?.orgId as string) || null;
 
   if (

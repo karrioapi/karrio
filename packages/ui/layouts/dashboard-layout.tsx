@@ -2,6 +2,7 @@ import { KARRIO_PUBLIC_URL, MULTI_TENANT } from "@karrio/lib";
 import { Sidebar } from "@karrio/ui/components/sidebar";
 import { Navbar } from "@karrio/ui/components/navbar";
 import { Providers } from "@karrio/hooks/providers";
+// import { getCurrentDomain } from "@karrio/core/context/main";
 
 export default async function Layout({
   children,
@@ -12,9 +13,10 @@ export default async function Layout({
 
   // await requireAuthentication(session);
 
-  // const metadata = await loadMetadata();
-  // const user = await loadUserData(session, metadata.metadata as Metadata);
-  // const org = await loadOrgData(session, metadata.metadata as Metadata);
+  // const domain = await getCurrentDomain();
+  // const metadata = await loadMetadata(domain!);
+  // const user = await loadUserData(session, metadata.metadata as Metadata, domain!);
+  // const org = await loadOrgData(session, metadata.metadata as Metadata, domain!);
   // const orgId = ((session as any)?.orgId as string) || null;
 
   const pageProps = {

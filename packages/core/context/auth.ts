@@ -6,8 +6,8 @@ import {
   computeTestMode,
 } from "@karrio/lib";
 import { cookies, headers, type UnsafeUnwrappedHeaders } from "next/headers";
+import { getCurrentDomain, loadMetadata } from "@karrio/core/context/main";
 import Credentials from "next-auth/providers/credentials";
-import { loadMetadata } from "@karrio/core/context/main";
 import NextAuth from "next-auth";
 import moment from "moment";
 
@@ -24,7 +24,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       async authorize({ orgId, ...credentials }: any, req: any) {
         try {
-          const { metadata } = await loadMetadata();
+          const domain = await getCurrentDomain();
+          const { metadata } = await loadMetadata(domain!);
           const auth = Auth(metadata?.HOST || (KARRIO_API as string));
           const token = await auth.authenticate(credentials as any);
           const testMode = (headers() as unknown as UnsafeUnwrappedHeaders)
