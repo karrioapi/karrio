@@ -55,6 +55,31 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
+    redirect: async ({ url, baseUrl, trigger }: any) => {
+      // Handle signout redirects to current site host with fallback
+      if (trigger === "signOut") {
+        try {
+          const currentDomain = await getCurrentDomain();
+          if (currentDomain) {
+            // Use the current domain as the redirect target
+            const protocol = currentDomain.startsWith("localhost") ? "http" : "https";
+            return `${protocol}://${currentDomain}`;
+          }
+        } catch (error) {
+          logger.error("Failed to get current domain for signout redirect:", error);
+        }
+
+        // Fallback to NEXTAUTH_URL if current domain is unavailable
+        return process.env.NEXTAUTH_URL || baseUrl;
+      }
+
+      // For other redirects (signin, error), use default behavior
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
+    },
     jwt: async ({ token, user, trigger, session }: any): Promise<any> => {
       const headersList = await headers();
       const domain = await getCurrentDomain();

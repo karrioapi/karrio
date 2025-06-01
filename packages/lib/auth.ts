@@ -48,10 +48,12 @@ export function Auth(HOST: string) {
       accessToken,
       orgId,
       testMode,
+      currentOrgId,
     }: {
       accessToken: string;
       testMode: boolean;
       orgId?: string;
+      currentOrgId?: string;
     }) {
       logger.debug({
         msg: "retrieving session org...",
@@ -71,7 +73,7 @@ export function Auth(HOST: string) {
         .then(({ data }) => {
           return (
             (data?.data?.organizations || []).find(({ id }: any) => id === orgId) ||
-            (data?.organizations || [{ id: null }])[0]
+            (data?.organizations || [{ id: currentOrgId }])[0]
           );
         })
         .catch(({ data }) => {
