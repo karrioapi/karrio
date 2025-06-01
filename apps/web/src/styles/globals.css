@@ -1,19 +1,249 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import '@docsearch/css';
 
-/*
- * Add custom variant for dark theme that makes all dark: utilities work
- * This allows both .dark and [data-theme='dark'] to use dark: utilities
- */
+/* #region Core Theme and Dark Mode Variant */
 @custom-variant dark (&:where(.dark, [data-theme='dark'], .dark *, [data-theme='dark'] *));
 
-/* Apply dark utilities to elements with data-theme="dark" attribute */
-html[data-theme="dark"] * {
-  color-scheme: dark;
+
+@layer base {
+
+  :root {
+    /* Light theme (default) variables */
+    --background: 0 0% 100%;
+    --foreground: 224 71.4% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 71.4% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71.4% 4.1%;
+    --primary: 259 71% 47%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 176 67% 69%;
+    --secondary-foreground: 252 24% 20%;
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 8.9% 46.1%;
+    --accent: 220 14.3% 95.9%;
+    --accent-foreground: 220.9 39.3% 11%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 262.1 83.3% 57.8%;
+    --radius: 0.3rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+
+    /* Documentation sidebar variables - light theme */
+    --sidebar-bg: #ffffff;
+    --sidebar-text: #333333;
+    --sidebar-border: #e5e7eb;
+
+    /* New CSS variable definitions for code highlighting */
+    --code-bg: #f8f9fc;
+    --code-fg: #1f2937;
+    --code-border: #e5e7eb;
+    --code-header-bg: #f3f4f6;
+    --code-header-fg: #374151;
+
+    /* Card variables for documentation (light mode) */
+    --doc-card-bg: white;
+    --doc-card-hover-bg: white;
+    --doc-card-border: #e5e7eb;
+    --doc-card-hover-border: #d1d5db;
+
+    /* Alert/callout variables (light mode) */
+    --callout-bg: #f9fafb;
+    --callout-border: #e5e7eb;
+    --callout-text: #1f2937;
+    --callout-info-bg: #f0f7ff;
+    --callout-info-border: #bfdbfe;
+    --callout-info-text: #1e40af;
+    --callout-warning-bg: #fffbeb;
+    --callout-warning-border: #fef3c7;
+    --callout-warning-text: #92400e;
+    --callout-error-bg: #fef2f2;
+    --callout-error-border: #fee2e2;
+    --callout-error-text: #b91c1c;
+  }
+
+  .dark,
+  [data-theme="dark"] {
+    --background: 262 69% 9%;
+    /* Equivalent to #0f0826 */
+    --foreground: 0 0% 100%;
+    --card: 252 24% 20%;
+    --card-foreground: 0 0% 100%;
+    --popover: 252 24% 20%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 264 72% 47%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 176 67% 69%;
+    --secondary-foreground: 252 24% 20%;
+    --muted: 252 16% 26%;
+    --muted-foreground: 0 0% 90%;
+    /* Improved from 70% to 90% for better contrast */
+    --accent: 16 100% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 252 16% 26%;
+    --input: 252 16% 26%;
+    --ring: 264 72% 47%;
+    --radius: 0.5rem;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+
+    /* Documentation sidebar variables in dark mode */
+    --sidebar-bg: hsl(var(--background));
+    /* Use the theme variable instead of hard-coded color */
+    --sidebar-text: #f3f4f6;
+    --sidebar-border: #27272a;
+
+    /* Dark mode CSS variable overrides */
+    --code-bg: #0f0c24;
+    --code-fg: #e2e8f0;
+    --code-border: #27272a;
+    --code-header-bg: #1e1e2e;
+    --code-header-fg: #e2e8f0;
+
+    /* Card variables for documentation */
+    --doc-card-bg: #1e1e1e;
+    --doc-card-hover-bg: #2a2a2a;
+    --doc-card-border: #2e2e2e;
+    --doc-card-hover-border: #3e3e3e;
+
+    /* Alert/callout variables */
+    --callout-bg: rgba(18, 13, 48, 0.6);
+    --callout-border: #332f4d;
+    --callout-text: #f3f4f6;
+    --callout-info-bg: rgba(15, 23, 42, 0.3);
+    --callout-info-border: #334d97;
+    --callout-info-text: #a5c8ff;
+    --callout-warning-bg: rgba(26, 19, 3, 0.3);
+    --callout-warning-border: #7c6519;
+    --callout-warning-text: #fde047;
+    --callout-error-bg: rgba(42, 13, 13, 0.3);
+    --callout-error-border: #8f3a3a;
+    --callout-error-text: #fca5a5;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+  }
+
+  pre,
+  code {
+    font-family: var(--font-mono);
+  }
+
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  /* Specific background overrides for dark theme */
+  .dark body,
+  [data-theme="dark"] body,
+  .dark main,
+  [data-theme="dark"] main {
+    color: hsl(var(--foreground));
+  }
+
+  /* Make container inherit parent background */
+  .container {
+    background-color: transparent;
+  }
+
+  /* Blog specific dark mode styling - ensure consistent background and text contrast */
+  .dark .prose,
+  [data-theme="dark"] .prose,
+  .dark .prose-lg,
+  [data-theme="dark"] .prose-lg {
+    background-color: hsl(var(--background));
+    color: #f3f4f6;
+    /* Improved contrast for body text */
+  }
+
+  /* Improve contrast for prose elements in dark mode */
+  .dark .prose p,
+  [data-theme="dark"] .prose p,
+  .dark .prose-lg p,
+  [data-theme="dark"] .prose-lg p,
+  .dark .prose li,
+  [data-theme="dark"] .prose li,
+  .dark .prose-lg li,
+  [data-theme="dark"] .prose-lg li {
+    color: #f3f4f6;
+    /* Light gray with better contrast */
+  }
+
+  /* Ensure headings have strong contrast */
+  .dark .prose h1,
+  .dark .prose h2,
+  .dark .prose h3,
+  .dark .prose h4,
+  .dark .prose h5,
+  .dark .prose h6,
+  [data-theme="dark"] .prose h1,
+  [data-theme="dark"] .prose h2,
+  [data-theme="dark"] .prose h3,
+  [data-theme="dark"] .prose h4,
+  [data-theme="dark"] .prose h5,
+  [data-theme="dark"] .prose h6 {
+    color: #ffffff;
+  }
+
+  /* Ensure links have good visibility and contrast */
+  .dark .prose a,
+  [data-theme="dark"] .prose a {
+    color: #a78bfa;
+    /* Purple that matches the brand */
+    text-decoration-color: #a78bfa;
+  }
+
+  .dark .prose a:hover,
+  [data-theme="dark"] .prose a:hover {
+    color: #c4b5fd;
+    /* Lighter purple on hover */
+    text-decoration-color: #c4b5fd;
+  }
+
+  /* Style for code and pre-formatted text */
+  .dark .prose code,
+  [data-theme="dark"] .prose code {
+    color: #e2e8f0;
+    background-color: #0f0c24;
+  }
+
+  /* Fix contrast for other text elements */
+  .dark .prose strong,
+  [data-theme="dark"] .prose strong {
+    color: #ffffff;
+  }
+
+  .dark .prose blockquote,
+  [data-theme="dark"] .prose blockquote {
+    color: #d1d5db;
+    border-left-color: #4b5563;
+  }
 }
 
+/* Dark Mode Shared Styles */
 .dark .dark\:shared,
 [data-theme="dark"] .dark\:shared {
   @apply block;
@@ -23,7 +253,16 @@ html[data-theme="dark"] * {
   @apply hidden;
 }
 
-/* DocSearch custom styles */
+/* Apply dark utilities to elements with data-theme="dark" attribute */
+html[data-theme="dark"] * {
+  color-scheme: dark;
+}
+
+/* #endregion */
+
+/* #region DocSearch Styles */
+@import '@docsearch/css';
+
 :root {
   --docsearch-primary-color: hsl(var(--primary));
   --docsearch-text-color: hsl(var(--foreground));
@@ -56,23 +295,6 @@ html[data-theme="dark"] * {
   --docsearch-footer-height: 44px;
   --docsearch-footer-background: hsl(var(--background));
   --docsearch-footer-shadow: 0 -1px 0 0 rgba(0, 0, 0, 0.1);
-}
-
-/* Dark mode overrides */
-.dark {
-  --docsearch-text-color: hsl(var(--foreground));
-  --docsearch-container-background: rgba(0, 0, 0, 0.5);
-  --docsearch-modal-background: hsl(var(--background));
-  --docsearch-modal-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);
-  --docsearch-searchbox-background: hsl(var(--muted));
-  --docsearch-searchbox-focus-background: hsl(var(--muted));
-  --docsearch-hit-color: hsl(var(--foreground));
-  --docsearch-hit-shadow: none;
-  --docsearch-hit-background: hsl(var(--background));
-  --docsearch-footer-background: hsl(var(--background));
-  --docsearch-footer-shadow: 0 -1px 0 0 rgba(255, 255, 255, 0.1);
-  --docsearch-logo-color: hsl(var(--muted-foreground));
-  --docsearch-muted-color: hsl(var(--muted-foreground));
 }
 
 /* DocSearch Button styles - adapt to the main UI */
@@ -284,250 +506,27 @@ html[data-theme="dark"] * {
   color: var(--docsearch-muted-color);
 }
 
-@layer base {
-
-  /* Base theme definitions */
-  :root {
-    /* Light theme (default) variables */
-    --background: 0 0% 100%;
-    --foreground: 224 71.4% 4.1%;
-    --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
-    --primary: 259 71% 47%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 176 67% 69%;
-    --secondary-foreground: 252 24% 20%;
-    --muted: 220 14.3% 95.9%;
-    --muted-foreground: 220 8.9% 46.1%;
-    --accent: 220 14.3% 95.9%;
-    --accent-foreground: 220.9 39.3% 11%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 262.1 83.3% 57.8%;
-    --radius: 0.3rem;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-
-    /* Documentation sidebar variables - light theme */
-    --sidebar-bg: #ffffff;
-    --sidebar-text: #333333;
-    --sidebar-border: #e5e7eb;
-
-    /* New CSS variable definitions for code highlighting */
-    --code-bg: #f8f9fc;
-    --code-fg: #1f2937;
-    --code-border: #e5e7eb;
-    --code-header-bg: #f3f4f6;
-    --code-header-fg: #374151;
-
-    /* Card variables for documentation (light mode) */
-    --doc-card-bg: white;
-    --doc-card-hover-bg: white;
-    --doc-card-border: #e5e7eb;
-    --doc-card-hover-border: #d1d5db;
-
-    /* Alert/callout variables (light mode) */
-    --callout-bg: #f9fafb;
-    --callout-border: #e5e7eb;
-    --callout-text: #1f2937;
-    --callout-info-bg: #f0f7ff;
-    --callout-info-border: #bfdbfe;
-    --callout-info-text: #1e40af;
-    --callout-warning-bg: #fffbeb;
-    --callout-warning-border: #fef3c7;
-    --callout-warning-text: #92400e;
-    --callout-error-bg: #fef2f2;
-    --callout-error-border: #fee2e2;
-    --callout-error-text: #b91c1c;
-  }
-
-  /* Dark theme variables */
-  .dark,
-  [data-theme="dark"] {
-    --background: 262 69% 9%;
-    /* Equivalent to #0f0826 */
-    --foreground: 0 0% 100%;
-    --card: 252 24% 20%;
-    --card-foreground: 0 0% 100%;
-    --popover: 252 24% 20%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 264 72% 47%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 176 67% 69%;
-    --secondary-foreground: 252 24% 20%;
-    --muted: 252 16% 26%;
-    --muted-foreground: 0 0% 90%;
-    /* Improved from 70% to 90% for better contrast */
-    --accent: 16 100% 50%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 252 16% 26%;
-    --input: 252 16% 26%;
-    --ring: 264 72% 47%;
-    --radius: 0.5rem;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-
-    /* Documentation sidebar variables in dark mode */
-    --sidebar-bg: hsl(var(--background));
-    /* Use the theme variable instead of hard-coded color */
-    --sidebar-text: #f3f4f6;
-    --sidebar-border: #27272a;
-
-    /* Dark mode CSS variable overrides */
-    --code-bg: #0f0c24;
-    --code-fg: #e2e8f0;
-    --code-border: #27272a;
-    --code-header-bg: #1e1e2e;
-    --code-header-fg: #e2e8f0;
-
-    /* Card variables for documentation */
-    --doc-card-bg: #1e1e1e;
-    --doc-card-hover-bg: #2a2a2a;
-    --doc-card-border: #2e2e2e;
-    --doc-card-hover-border: #3e3e3e;
-
-    /* Alert/callout variables */
-    --callout-bg: rgba(18, 13, 48, 0.6);
-    --callout-border: #332f4d;
-    --callout-text: #f3f4f6;
-    --callout-info-bg: rgba(15, 23, 42, 0.3);
-    --callout-info-border: #334d97;
-    --callout-info-text: #a5c8ff;
-    --callout-warning-bg: rgba(26, 19, 3, 0.3);
-    --callout-warning-border: #7c6519;
-    --callout-warning-text: #fde047;
-    --callout-error-bg: rgba(42, 13, 13, 0.3);
-    --callout-error-border: #8f3a3a;
-    --callout-error-text: #fca5a5;
-  }
-
-  /* Typography elements */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-heading);
-  }
-
-  pre,
-  code {
-    font-family: var(--font-mono);
-  }
+/* Dark mode overrides */
+.dark {
+  --docsearch-text-color: hsl(var(--foreground));
+  --docsearch-container-background: rgba(0, 0, 0, 0.5);
+  --docsearch-modal-background: hsl(var(--background));
+  --docsearch-modal-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);
+  --docsearch-searchbox-background: hsl(var(--muted));
+  --docsearch-searchbox-focus-background: hsl(var(--muted));
+  --docsearch-hit-color: hsl(var(--foreground));
+  --docsearch-hit-shadow: none;
+  --docsearch-hit-background: hsl(var(--background));
+  --docsearch-footer-background: hsl(var(--background));
+  --docsearch-footer-shadow: 0 -1px 0 0 rgba(255, 255, 255, 0.1);
+  --docsearch-logo-color: hsl(var(--muted-foreground));
+  --docsearch-muted-color: hsl(var(--muted-foreground));
 }
 
-@layer base {
-  * {
-    border-color: hsl(var(--border));
-  }
+/* #endregion */
 
-  body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
-  }
-
-  /* Specific background overrides for dark theme */
-  .dark body,
-  [data-theme="dark"] body,
-  .dark main,
-  [data-theme="dark"] main {
-    color: hsl(var(--foreground));
-  }
-
-  /* Make container inherit parent background */
-  .container {
-    background-color: transparent;
-  }
-
-  /* Blog specific dark mode styling - ensure consistent background and text contrast */
-  .dark .prose,
-  [data-theme="dark"] .prose,
-  .dark .prose-lg,
-  [data-theme="dark"] .prose-lg {
-    background-color: hsl(var(--background));
-    color: #f3f4f6;
-    /* Improved contrast for body text */
-  }
-
-  /* Improve contrast for prose elements in dark mode */
-  .dark .prose p,
-  [data-theme="dark"] .prose p,
-  .dark .prose-lg p,
-  [data-theme="dark"] .prose-lg p,
-  .dark .prose li,
-  [data-theme="dark"] .prose li,
-  .dark .prose-lg li,
-  [data-theme="dark"] .prose-lg li {
-    color: #f3f4f6;
-    /* Light gray with better contrast */
-  }
-
-  /* Ensure headings have strong contrast */
-  .dark .prose h1,
-  .dark .prose h2,
-  .dark .prose h3,
-  .dark .prose h4,
-  .dark .prose h5,
-  .dark .prose h6,
-  [data-theme="dark"] .prose h1,
-  [data-theme="dark"] .prose h2,
-  [data-theme="dark"] .prose h3,
-  [data-theme="dark"] .prose h4,
-  [data-theme="dark"] .prose h5,
-  [data-theme="dark"] .prose h6 {
-    color: #ffffff;
-  }
-
-  /* Ensure links have good visibility and contrast */
-  .dark .prose a,
-  [data-theme="dark"] .prose a {
-    color: #a78bfa;
-    /* Purple that matches the brand */
-    text-decoration-color: #a78bfa;
-  }
-
-  .dark .prose a:hover,
-  [data-theme="dark"] .prose a:hover {
-    color: #c4b5fd;
-    /* Lighter purple on hover */
-    text-decoration-color: #c4b5fd;
-  }
-
-  /* Style for code and pre-formatted text */
-  .dark .prose code,
-  [data-theme="dark"] .prose code {
-    color: #e2e8f0;
-    background-color: #0f0c24;
-  }
-
-  /* Fix contrast for other text elements */
-  .dark .prose strong,
-  [data-theme="dark"] .prose strong {
-    color: #ffffff;
-  }
-
-  .dark .prose blockquote,
-  [data-theme="dark"] .prose blockquote {
-    color: #d1d5db;
-    border-left-color: #4b5563;
-  }
-}
-
+/* #region Sidebar Styling */
 /**
- * SIDEBAR STYLING
  * Critical mobile and desktop styles
  * This needs to be high in the cascade to ensure it overrides other styles
  */
@@ -619,12 +618,9 @@ html[data-theme="dark"] * {
   }
 }
 
-/*
-  DOCUMENTATION STYLING
-  ------------------------------
-  Uses the main dark theme variables for consistency
-*/
+/* #endregion */
 
+/* #region Documentation Styling */
 /* Base styles for documentation pages */
 .docs-page {
   background-color: hsl(var(--background));
@@ -1117,3 +1113,5 @@ div.nextra-callout:not([data-type="info"]):not([data-type="note"]):not([data-typ
   color: #f3f4f6 !important;
   /* Light gray with good contrast */
 }
+
+/* #endregion */
