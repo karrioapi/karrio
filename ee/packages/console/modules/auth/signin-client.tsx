@@ -131,14 +131,14 @@ export function SignInClient({ className, ...props }: UserAuthFormProps) {
           <p className="px-8 text-center text-xs text-muted-foreground mt-8">
             By clicking continue, you agree to our{" "}
             <Link
-              href="/terms"
+              href="https://www.karrio.io/terms-of-service"
               className="underline underline-offset-4 hover:text-primary"
             >
               Terms of Service
             </Link>{" "}
             and{" "}
             <Link
-              href="/privacy"
+              href="https://www.karrio.io/privacy-policy"
               className="underline underline-offset-4 hover:text-primary"
             >
               Privacy Policy
@@ -155,11 +155,11 @@ export function SignInClient({ className, ...props }: UserAuthFormProps) {
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
-              &ldquo;Karrio is a game changer for our business. It has
-              streamlined our shipping processes and reduced our costs
-              significantly.&rdquo;
+              &ldquo;Karrio continues to be a great asset to us. It saved us
+              months of development time and allowed us to focus on our core
+              business.&rdquo;
             </p>
-            <footer className="text-sm">John Doe</footer>
+            <footer className="text-sm">Sumeet Sheokand</footer>
           </blockquote>
         </div>
       </div>

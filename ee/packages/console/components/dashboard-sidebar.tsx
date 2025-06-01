@@ -7,6 +7,7 @@ import {
   FileCode,
   Folder,
   LayoutGrid,
+  Server,
   Settings,
   Users,
 } from "lucide-react";
@@ -34,7 +35,7 @@ const data = {
     {
       name: "Projects",
       url: (orgId: string) => `/orgs/${orgId}`,
-      icon: Building2,
+      icon: Server,
     },
     {
       name: "Billing",

@@ -800,6 +800,10 @@ export const appRouter = router({
             });
           }
 
+          // Check if password was given before by looking at metadata
+          const metadata = project.metadata as Record<string, any> || {};
+          const passwordGivenBefore = metadata.admin_password_given_at !== undefined;
+
           const response = await karrio<ResetTenantAdminPassword>(
             gqlstr(RESET_TENANT_ADMIN_PASSWORD),
             {
@@ -818,7 +822,23 @@ export const appRouter = router({
             });
           }
 
-          return { success: true };
+          // Update project metadata to track password delivery
+          await prisma.project.update({
+            where: { id: input.projectId },
+            data: {
+              metadata: {
+                ...metadata,
+                admin_password_given_at: new Date().toISOString(),
+                admin_password_reset_count: (metadata.admin_password_reset_count || 0) + 1,
+              },
+            },
+          });
+
+          return {
+            success: true,
+            password: response.reset_tenant_admin_password.password,
+            isFirstTime: !passwordGivenBefore,
+          };
         }),
     }),
 

@@ -411,6 +411,7 @@ export const RESET_TENANT_ADMIN_PASSWORD = gql`
         messages
       }
       success
+      password
     }
   }
 `;

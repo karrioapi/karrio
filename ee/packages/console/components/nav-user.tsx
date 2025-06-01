@@ -66,7 +66,7 @@ export function NavUser({ user }: { user?: User }) {
                 </div>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
+            {/* <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <Settings />
@@ -76,7 +76,7 @@ export function NavUser({ user }: { user?: User }) {
                 <Key />
                 API Keys
               </DropdownMenuItem>
-            </DropdownMenuGroup>
+            </DropdownMenuGroup> */}
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => signOut()}>
               <LogOut />
