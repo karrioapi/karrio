@@ -16,9 +16,9 @@ generate_source_requirements() {
 
     # Process each line
     while IFS= read -r line; do
-        if [[ $line == -e\ git+https://github.com/karrioapi/* ]]; then
+        if [[ $line == -e\ git+https://github.com/* ]]; then
             # Extract repository name, egg name and subdirectory
-            if [[ $line =~ github.com/karrioapi/([^.]+)(.git)?@[^#]+#egg=([^&]+)\&subdirectory=(.+)$ ]]; then
+            if [[ $line =~ github.com/[^/]+/([^.]+)(.git)?@[^#]+#egg=([^&]+)\&subdirectory=(.+)$ ]]; then
                 repo="${BASH_REMATCH[1]}"
                 egg_name="${BASH_REMATCH[3]}"
                 subdir="${BASH_REMATCH[4]}"
