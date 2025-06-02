@@ -4,6 +4,7 @@ import datetime
 import strawberry
 import django.db.models as models
 import django.db.models.functions as functions
+from django.conf import settings
 from strawberry.types import Info
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
@@ -500,6 +501,7 @@ class APIKeyType:
             **(
                 {"org__id": info.context.request.org.id}
                 if getattr(info.context.request, "org", None) is not None
+                and settings.MULTI_ORGANIZATIONS
                 else {}
             ),
         }

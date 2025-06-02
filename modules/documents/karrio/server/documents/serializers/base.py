@@ -36,6 +36,10 @@ class DocumentTemplate(serializers.EntitySerializer, DocumentTemplateData):
     object_type = serializers.CharField(
         default="document-template", help_text="Specifies the object type"
     )
+    preview_url = serializers.URLField(
+        help_text="The template preview URL",
+        required=False,
+    )
 
 
 class DocumentData(serializers.Serializer):

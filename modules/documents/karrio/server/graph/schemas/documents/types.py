@@ -13,6 +13,7 @@ import karrio.server.documents.filters as filters
 @strawberry.type
 class DocumentTemplateType:
     object_type: str
+    preview_url: typing.Optional[str]
     id: str
     name: str
     slug: str

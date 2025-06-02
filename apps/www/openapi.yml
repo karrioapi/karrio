@@ -6572,6 +6572,10 @@ components:
           type: string
           default: document-template
           description: Specifies the object type
+        preview_url:
+          type: string
+          format: uri
+          description: The template preview URL
       required:
       - name
       - slug

@@ -198,9 +198,9 @@ export const ExpandedSidebar = (): JSX.Element => {
           pathname.includes("/resources")) && (
             <>
               <AppLink
-                href="/resources/reference"
+                href="/resources/playground"
                 className={
-                  "menu-item ml-5 " + activeClass("/resources/reference")
+                  "menu-item ml-5 " + activeClass("/resources/playground")
                 }
                 shallow={false}
                 prefetch={false}
