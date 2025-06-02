@@ -147,7 +147,6 @@ def tracker_import_resource(
         ):
             is_create = instance.pk is None
 
-            print(instance.pk, instance.id, is_create, "<<<")
             result = super().save_instance(
                 instance,
                 is_create,
