@@ -279,6 +279,7 @@ DOCUMENT_TEMPLATE_RESPONSE = {
     "active": True,
     "metadata": {"doc_type": "invoice", "version": "1.0"},
     "options": {"page_size": "A4", "orientation": "portrait"},
+    "preview_url": ANY,
 }
 
 DOCUMENT_TEMPLATE_DETAIL_RESPONSE = {
@@ -292,6 +293,7 @@ DOCUMENT_TEMPLATE_DETAIL_RESPONSE = {
     "related_object": "shipment",
     "slug": "test_template",
     "template": SAMPLE_HTML_TEMPLATE,
+    "preview_url": ANY,
 }
 
 DOCUMENT_TEMPLATE_UPDATE_DATA = {
@@ -312,4 +314,5 @@ DOCUMENT_TEMPLATE_UPDATE_RESPONSE = {
     "active": False,
     "metadata": {"doc_type": "commercial_invoice", "version": "2.0"},
     "options": {"page_size": "A4"},
+    "preview_url": ANY,
 }

@@ -1,3 +1,31 @@
+# Karrio 2025.5rc2
+
+## Changes
+
+### Feat
+
+- feat: replace embedded API navigator from Redoc to Swagger for playground experience
+- feat: add preview_url computed field to document template object
+
+### Fix
+
+- fix: dashboard bugs -> orgs swtching + admin modal transparent background
+- fix: dashboard org switching in multi-org deployments
+- fix: invalid use of unstable_cache for dashboard multi-tenant routing
+- fix: breacking changes required update for pages in platform app
+- hotfix: Python packages static assets collection with pyproject.toml
+- hotfix: docker setup with ENABLE_ALL_PLUGINS_BY_DEFAULT to True by default
+
+### Chore
+
+- chore: ensure book demo is only on paltform site
+- chore: clean up web site tailwind styling
+- chore: add scarf to website
+
+### Docs
+
+- docs: add API development getting started docs
+
 # Karrio 2025.5rc1 (Yayra Edition)
 
 ## Changes

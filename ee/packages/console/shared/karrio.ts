@@ -93,29 +93,6 @@ export async function karrio<T>(
 
     return response;
   } catch (error: any) {
-    const duration = Date.now() - startTime;
-
-    console.log(JSON.stringify(error?.data || {}, null, 2), ">>>>>>>");
-
-    // Enhanced error logging
-    console.error(`[Karrio API] Error ${operationName}`, {
-      operation: context?.operation || operationName,
-      duration: `${duration}ms`,
-      errorMessage: error.message,
-      errorData: error.data,
-      errorResponse: error.response?.data,
-      errorStatus: error.response?.status,
-      errorHeaders: error.response?.headers,
-      requestUrl: error.config?.url,
-      requestMethod: error.config?.method,
-      requestHeaders: error.config?.headers ? {
-        ...error.config.headers,
-        Authorization: error.config.headers.Authorization ? '[REDACTED]' : undefined,
-      } : undefined,
-      timestamp: new Date().toISOString(),
-      context,
-    });
-
     // Check for common authentication issues
     if (error.response?.status === 401) {
       console.error('[Karrio API] Authentication Error Details:', {
