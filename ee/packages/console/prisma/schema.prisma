@@ -93,18 +93,19 @@ model Organization {
     name             String
     stripeCustomerId String?                  @unique
     subscription     Subscription?
-    createdAt        DateTime                 @default(now())
-    updatedAt        DateTime                 @updatedAt
     members          OrganizationMembership[]
-    projects         Project[]
     invitations      OrganizationInvitation[]
+    projects         Project[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 model OrganizationMembership {
     id           String       @id @default(cuid())
     orgId        String
     userId       String
-    role         String // "OWNER" | "MEMBER"
+    role         String       @default("MEMBER") // "OWNER" | "ADMIN" | "MEMBER"
     organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
     user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 

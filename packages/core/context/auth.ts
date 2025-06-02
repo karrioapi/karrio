@@ -6,8 +6,8 @@ import {
   computeTestMode,
 } from "@karrio/lib";
 import { cookies, headers, type UnsafeUnwrappedHeaders } from "next/headers";
+import { getCurrentDomain, loadMetadata } from "@karrio/core/context/main";
 import Credentials from "next-auth/providers/credentials";
-import { loadMetadata } from "@karrio/core/context/main";
 import NextAuth from "next-auth";
 import moment from "moment";
 
@@ -24,14 +24,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       async authorize({ orgId, ...credentials }: any, req: any) {
         try {
-          const { metadata } = await loadMetadata();
+          const headersList = await headers();
+          const domain = await getCurrentDomain();
+          const { metadata } = await loadMetadata(domain!);
           const auth = Auth(metadata?.HOST || (KARRIO_API as string));
           const token = await auth.authenticate(credentials as any);
-          const testMode = (headers() as unknown as UnsafeUnwrappedHeaders)
-            .get("referer")
-            ?.includes("/test");
+          const testMode = Boolean(headersList.get("referer")?.includes("/test"));
           const org = metadata?.MULTI_ORGANIZATIONS
-            ? await auth.getCurrentOrg(token.access, orgId)
+            ? await auth.getCurrentOrg({
+              accessToken: token.access,
+              testMode,
+              orgId,
+            })
             : { id: null };
 
           return {
@@ -51,9 +55,37 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
+    redirect: async ({ url, baseUrl, trigger }: any) => {
+      // Handle signout redirects to current site host with fallback
+      if (trigger === "signOut") {
+        try {
+          const currentDomain = await getCurrentDomain();
+          if (currentDomain) {
+            // Use the current domain as the redirect target
+            const protocol = currentDomain.startsWith("localhost") ? "http" : "https";
+            return `${protocol}://${currentDomain}`;
+          }
+        } catch (error) {
+          logger.error("Failed to get current domain for signout redirect:", error);
+        }
+
+        // Fallback to NEXTAUTH_URL if current domain is unavailable
+        return process.env.NEXTAUTH_URL || baseUrl;
+      }
+
+      // For other redirects (signin, error), use default behavior
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
+    },
     jwt: async ({ token, user, trigger, session }: any): Promise<any> => {
-      const auth = Auth(KARRIO_API as string);
       const headersList = await headers();
+      const domain = await getCurrentDomain();
+      const host = domain || (KARRIO_API as string);
+      const { metadata } = await loadMetadata(host);
+      const auth = Auth(metadata?.HOST || host);
 
       if (user?.accessToken) {
         token.orgId = user.orgId;
@@ -67,11 +99,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       if (trigger === "update" && session?.orgId) {
         // Note, that `session` can be any arbitrary object, remember to validate it!
-        const org = await auth.getCurrentOrg(
-          (token as any).accessToken,
-          session.orgId,
-        );
-        token.orgId = org?.id;
+        const org = await auth.getCurrentOrg({
+          accessToken: (token as any).accessToken,
+          testMode: token.testMode,
+          orgId: session.orgId,
+        });
+        token.orgId = org?.id || token.orgId;
       }
 
       // Return previous token if the access token has not expired yet

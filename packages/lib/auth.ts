@@ -44,19 +44,36 @@ export function Auth(HOST: string) {
       });
       return { access, refresh };
     },
-    async getCurrentOrg(access: string, orgId?: string) {
-      logger.debug("retrieving session org...");
+    async getCurrentOrg({
+      accessToken,
+      orgId,
+      testMode,
+      currentOrgId,
+    }: {
+      accessToken: string;
+      testMode: boolean;
+      orgId?: string;
+      currentOrgId?: string;
+    }) {
+      logger.debug({
+        msg: "retrieving session org...",
+        orgId,
+        testMode,
+      });
 
       return axios({
         url: url$`${HOST || ""}/graphql`,
         method: "POST",
         data: { query: `{ organizations { id } }` },
-        headers: { authorization: `Bearer ${access}` },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "x-test-mode": testMode,
+        },
       })
-        .then(({ data: { data } }) => {
+        .then(({ data }) => {
           return (
-            (data?.organizations || []).find(({ id }: any) => id === orgId) ||
-            (data?.organizations || [{ id: null }])[0]
+            (data?.data?.organizations || []).find(({ id }: any) => id === orgId) ||
+            (data?.organizations || [{ id: currentOrgId }])[0]
           );
         })
         .catch(({ data }) => {

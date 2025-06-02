@@ -10,7 +10,6 @@ import karrio.server.conf as conf
 
 
 PACKAGE_MAPPERS = ref.collect_providers_data()
-
 REFERENCE_MODELS = {
     **ref.collect_references(),
     "customs_content_type": {c.name: c.value for c in list(units.CustomsContentType)},
@@ -26,7 +25,7 @@ REFERENCE_EXCLUSIONS = [
     "customs_content_type",
     "options",
 ]
-CARRIER_NAMES = list(sorted(REFERENCE_MODELS["carriers"].keys()))
+CARRIER_NAMES = list(sorted(set([*REFERENCE_MODELS["carriers"].keys(), "generic"])))
 CARRIER_HUBS = list(sorted(REFERENCE_MODELS["carrier_hubs"].keys()))
 NON_HUBS_CARRIERS = [
     carrier_name for carrier_name in CARRIER_NAMES if carrier_name not in CARRIER_HUBS

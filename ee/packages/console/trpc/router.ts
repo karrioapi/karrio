@@ -2,6 +2,7 @@ import { requireRole, isAuthed } from "@karrio/console/trpc/middleware";
 import { InviteEmail } from "@karrio/console/emails/invite-member";
 import {
   GET_TENANT,
+  GET_TENANTS,
   CREATE_TENANT,
   DELETE_TENANT,
   UPDATE_TENANT,
@@ -324,21 +325,77 @@ export const appRouter = router({
           },
         });
 
-        // Dispatch tenant creation asynchronously
-        karrio<CreateTenant>(
-          gqlstr(CREATE_TENANT),
-          {
-            input: {
-              name: input.name,
-              schema_name: project.id,
-              admin_email: session.user.email,
-              domain: `${project.id}.${TENANT_API_DOMAIN!.split(":")[0]}`,
-              app_domains: [`${project.id}.${TENANT_DASHBOARD_DOMAIN}`],
-            },
-          },
-          "Failed to create tenant",
-        )
-          .then(async (response) => {
+        // Helper function to create tenant - extracted for reuse
+        const createTenantForProject = async (project: any, isRetry: boolean = false, projectName?: string) => {
+          const logPrefix = isRetry ? "RETRY" : "INITIAL";
+
+          try {
+            // If this is a retry, first check if tenant already exists with this schema_name
+            if (isRetry) {
+              const existingTenantResponse = await karrio<{ tenants: { edges: Array<{ node: { id: string; schema_name: string } }> } }>(
+                gqlstr(GET_TENANTS),
+                { filter: { schema_name: project.id, first: 1 } },
+                "Failed to check existing tenants",
+                {
+                  operation: "CHECK_EXISTING_TENANT",
+                  userId: session.user.id,
+                  orgId: project.orgId,
+                },
+              );
+
+              const existingTenant = existingTenantResponse?.tenants?.edges?.[0]?.node;
+              if (existingTenant) {
+                console.log(`[TRPC] ${logPrefix}_CREATE_TENANT: Existing tenant found`, {
+                  projectId: project.id,
+                  existingTenantId: existingTenant.id,
+                  timestamp: new Date().toISOString(),
+                });
+
+                // Update project with existing tenant info
+                await prisma.project.update({
+                  where: { id: project.id },
+                  data: {
+                    tenantId: existingTenant.id,
+                    status: "ACTIVE",
+                    statusMessage: "Linked to existing tenant successfully",
+                    metadata: {
+                      ...(project.metadata as Record<string, any>),
+                      tenant_linked_at: new Date().toISOString(),
+                      linked_tenant_id: existingTenant.id,
+                      deployment_completed_at: new Date().toISOString(),
+                    },
+                  },
+                });
+                return;
+              }
+            }
+
+            // Attempt to create new tenant
+            const response = await karrio<CreateTenant>(
+              gqlstr(CREATE_TENANT),
+              {
+                input: {
+                  name: projectName || input.name,
+                  schema_name: project.id,
+                  admin_email: session.user.email,
+                  domain: `${project.id}.${TENANT_API_DOMAIN!.split(":")[0]}`,
+                  app_domains: [`${project.id}.${TENANT_DASHBOARD_DOMAIN}`],
+                },
+              },
+              "Failed to create tenant",
+              {
+                operation: "CREATE_TENANT",
+                userId: session.user.id,
+                orgId: project.orgId,
+              },
+            );
+
+            console.log(`[TRPC] ${logPrefix}_CREATE_TENANT Success for project ${project.id}`, {
+              projectId: project.id,
+              tenantId: response?.create_tenant?.tenant?.id,
+              errors: response?.create_tenant?.errors,
+            });
+
             if (response?.create_tenant?.tenant) {
               await prisma.project.update({
                 where: { id: project.id },
@@ -350,15 +407,30 @@ export const appRouter = router({
                     ...(project.metadata as Record<string, any>),
                     deployment_completed_at: new Date().toISOString(),
                     tenant_created_at: new Date().toISOString(),
+                    tenant_response: {
+                      id: response.create_tenant.tenant.id,
+                      schema_name: response.create_tenant.tenant.schema_name,
+                    },
                   },
                 },
               });
+            } else if (response?.create_tenant?.errors && response.create_tenant.errors.length > 0) {
+              const errorDetails = response.create_tenant.errors.map(error =>
+                `${error.field}: ${error.messages.join(", ")}`
+              ).join("; ");
+              throw new Error(`GraphQL validation errors: ${errorDetails}`);
             } else {
-              throw new Error("Tenant creation response is invalid");
+              throw new Error("Tenant creation response is invalid - no tenant or errors returned");
             }
-          })
-          .catch(async (error) => {
-            console.error("Failed to create tenant:", error.data || error);
+          } catch (error: any) {
+            console.error(`[TRPC] ${logPrefix}_CREATE_TENANT Failed for project ${project.id}`, {
+              projectId: project.id,
+              errorMessage: error.message,
+              errorCause: error.cause,
+              errorData: error.data,
+              timestamp: new Date().toISOString(),
+            });
+
             await prisma.project.update({
               where: { id: project.id },
               data: {
@@ -367,11 +439,20 @@ export const appRouter = router({
                 metadata: {
                   ...(project.metadata as Record<string, any>),
                   deployment_failed_at: new Date().toISOString(),
-                  error_details: error.data || error.message,
+                  error_details: {
+                    message: error.message,
+                    cause: error.cause,
+                    data: error.data,
+                    stack: error.stack,
+                  },
                 },
               },
             });
-          });
+          }
+        };
+
+        // Dispatch tenant creation asynchronously
+        createTenantForProject(project, false);
 
         return project;
       }),
@@ -446,7 +527,7 @@ export const appRouter = router({
       }),
 
     delete: protectedProcedure
-      .input(z.object({ id: z.string() }))
+      .input(z.object({ id: z.string(), orgId: z.string() }))
       .use(requireRole(["OWNER", "ADMIN"]))
       .mutation(async ({ input }) => {
         const project = await prisma.project.findUnique({
@@ -719,6 +800,10 @@ export const appRouter = router({
             });
           }
 
+          // Check if password was given before by looking at metadata
+          const metadata = project.metadata as Record<string, any> || {};
+          const passwordGivenBefore = metadata.admin_password_given_at !== undefined;
+
           const response = await karrio<ResetTenantAdminPassword>(
             gqlstr(RESET_TENANT_ADMIN_PASSWORD),
             {
@@ -737,7 +822,23 @@ export const appRouter = router({
             });
           }
 
-          return { success: true };
+          // Update project metadata to track password delivery
+          await prisma.project.update({
+            where: { id: input.projectId },
+            data: {
+              metadata: {
+                ...metadata,
+                admin_password_given_at: new Date().toISOString(),
+                admin_password_reset_count: (metadata.admin_password_reset_count || 0) + 1,
+              },
+            },
+          });
+
+          return {
+            success: true,
+            password: response.reset_tenant_admin_password.password,
+            isFirstTime: !passwordGivenBefore,
+          };
         }),
     }),
 
@@ -782,21 +883,77 @@ export const appRouter = router({
           },
         });
 
-        // Dispatch tenant creation asynchronously
-        karrio<CreateTenant>(
-          gqlstr(CREATE_TENANT),
-          {
-            input: {
-              name: project.name,
-              schema_name: project.id,
-              admin_email: session.user.email,
-              domain: `${project.id}.${TENANT_API_DOMAIN!.split(":")[0]}`,
-              app_domains: [`${project.id}.${TENANT_DASHBOARD_DOMAIN}`],
-            },
-          },
-          "Failed to create tenant",
-        )
-          .then(async (response) => {
+        // Helper function to create tenant - same as in create mutation
+        const createTenantForProject = async (project: any, isRetry: boolean = false, projectName?: string) => {
+          const logPrefix = isRetry ? "RETRY" : "INITIAL";
+
+          try {
+            // If this is a retry, first check if tenant already exists with this schema_name
+            if (isRetry) {
+              const existingTenantResponse = await karrio<{ tenants: { edges: Array<{ node: { id: string; schema_name: string } }> } }>(
+                gqlstr(GET_TENANTS),
+                { filter: { schema_name: project.id, first: 1 } },
+                "Failed to check existing tenants",
+                {
+                  operation: "CHECK_EXISTING_TENANT",
+                  userId: session.user.id,
+                  orgId: project.orgId,
+                },
+              );
+
+              const existingTenant = existingTenantResponse?.tenants?.edges?.[0]?.node;
+              if (existingTenant) {
+                console.log(`[TRPC] ${logPrefix}_CREATE_TENANT: Existing tenant found`, {
+                  projectId: project.id,
+                  existingTenantId: existingTenant.id,
+                  timestamp: new Date().toISOString(),
+                });
+
+                // Update project with existing tenant info
+                await prisma.project.update({
+                  where: { id: project.id },
+                  data: {
+                    tenantId: existingTenant.id,
+                    status: "ACTIVE",
+                    statusMessage: "Linked to existing tenant successfully",
+                    metadata: {
+                      ...(project.metadata as Record<string, any>),
+                      tenant_linked_at: new Date().toISOString(),
+                      linked_tenant_id: existingTenant.id,
+                      deployment_completed_at: new Date().toISOString(),
+                    },
+                  },
+                });
+                return;
+              }
+            }
+
+            // Attempt to create new tenant
+            const response = await karrio<CreateTenant>(
+              gqlstr(CREATE_TENANT),
+              {
+                input: {
+                  name: projectName || project.name,
+                  schema_name: project.id,
+                  admin_email: session.user.email,
+                  domain: `${project.id}.${TENANT_API_DOMAIN!.split(":")[0]}`,
+                  app_domains: [`${project.id}.${TENANT_DASHBOARD_DOMAIN}`],
+                },
+              },
+              "Failed to create tenant",
+              {
+                operation: "CREATE_TENANT",
+                userId: session.user.id,
+                orgId: project.orgId,
+              },
+            );
+
+            console.log(`[TRPC] ${logPrefix}_CREATE_TENANT Success for project ${project.id}`, {
+              projectId: project.id,
+              tenantId: response?.create_tenant?.tenant?.id,
+              errors: response?.create_tenant?.errors,
+            });
+
             if (response?.create_tenant?.tenant) {
               await prisma.project.update({
                 where: { id: project.id },
@@ -808,15 +965,30 @@ export const appRouter = router({
                     ...(project.metadata as Record<string, any>),
                     deployment_completed_at: new Date().toISOString(),
                     tenant_created_at: new Date().toISOString(),
+                    tenant_response: {
+                      id: response.create_tenant.tenant.id,
+                      schema_name: response.create_tenant.tenant.schema_name,
+                    },
                   },
                 },
               });
+            } else if (response?.create_tenant?.errors && response.create_tenant.errors.length > 0) {
+              const errorDetails = response.create_tenant.errors.map(error =>
+                `${error.field}: ${error.messages.join(", ")}`
+              ).join("; ");
+              throw new Error(`GraphQL validation errors: ${errorDetails}`);
             } else {
-              throw new Error("Tenant creation response is invalid");
+              throw new Error("Tenant creation response is invalid - no tenant or errors returned");
             }
-          })
-          .catch(async (error) => {
-            console.error("Failed to create tenant:", error.data || error);
+          } catch (error: any) {
+            console.error(`[TRPC] ${logPrefix}_CREATE_TENANT Failed for project ${project.id}`, {
+              projectId: project.id,
+              errorMessage: error.message,
+              errorCause: error.cause,
+              errorData: error.data,
+              timestamp: new Date().toISOString(),
+            });
+
             await prisma.project.update({
               where: { id: project.id },
               data: {
@@ -825,13 +997,75 @@ export const appRouter = router({
                 metadata: {
                   ...(project.metadata as Record<string, any>),
                   deployment_failed_at: new Date().toISOString(),
-                  error_details: error.data || error.message,
+                  error_details: {
+                    message: error.message,
+                    cause: error.cause,
+                    data: error.data,
+                    stack: error.stack,
+                  },
                 },
               },
             });
-          });
+          }
+        };
+
+        // Dispatch tenant creation asynchronously with retry flag
+        createTenantForProject(project, true, project.name);
 
         return project;
+      }),
+
+    // Debug endpoint to help diagnose configuration issues
+    debug: protectedProcedure
+      .input(z.object({ projectId: z.string() }))
+      .query(async ({ input }) => {
+        const project = await prisma.project.findUnique({
+          where: { id: input.projectId },
+          include: {
+            organization: {
+              include: {
+                subscription: true,
+              },
+            },
+          },
+        });
+
+        if (!project) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Project not found",
+          });
+        }
+
+        return {
+          project: {
+            id: project.id,
+            name: project.name,
+            status: project.status,
+            statusMessage: project.statusMessage,
+            tenantId: project.tenantId,
+            metadata: project.metadata,
+            createdAt: project.createdAt,
+            updatedAt: project.updatedAt,
+          },
+          organization: {
+            id: project.organization.id,
+            name: project.organization.name,
+            hasActiveSubscription: project.organization.subscription?.status === "active",
+            subscriptionStatus: project.organization.subscription?.status,
+          },
+          environment: {
+            apiUrl: process.env.KARRIO_PLATFORM_API_URL,
+            apiKeyConfigured: !!process.env.KARRIO_PLATFORM_API_KEY,
+            tenantApiDomain: process.env.TENANT_API_DOMAIN,
+            tenantDashboardDomain: process.env.TENANT_DASHBOARD_DOMAIN,
+            nodeEnv: process.env.NODE_ENV,
+          },
+          tenantConfiguration: project.tenantId ? {
+            expectedApiDomain: `${project.id}.${process.env.TENANT_API_DOMAIN?.split(":")[0]}`,
+            expectedDashboardDomain: `${project.id}.${process.env.TENANT_DASHBOARD_DOMAIN}`,
+          } : null,
+        };
       }),
   }),
 

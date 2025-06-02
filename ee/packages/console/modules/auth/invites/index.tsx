@@ -2,11 +2,11 @@
 
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { trpc } from "@karrio/console/trpc/client";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { useEffect } from "react";
 
-export default async function InvitePage({ params }: { params: Promise<{ token: string }> }) {
-  const query = await params;
+export default function InvitePage() {
+  const params = useParams<{ token: string }>();
   const router = useRouter();
   const { toast } = useToast();
   const acceptInvitation = trpc.organizations.acceptInvitation.useMutation({
@@ -29,8 +29,10 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
   });
 
   useEffect(() => {
-    acceptInvitation.mutate({ token: query.token });
-  }, [query.token]);
+    if (params.token) {
+      acceptInvitation.mutate({ token: params.token });
+    }
+  }, [params.token]);
 
 
   return (

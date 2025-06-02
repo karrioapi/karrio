@@ -1,5 +1,5 @@
 import { ErrorBoundary } from "@karrio/ui/core/components/error-boudaries";
-import { loadMetadata } from "@karrio/core/context/main";
+import { loadMetadata, getCurrentDomain } from "@karrio/core/context/main";
 import { PublicEnvScript } from "next-runtime-env";
 import { ServerErrorCode } from "@karrio/lib";
 
@@ -8,7 +8,8 @@ export default async function Layout({
 }: {
   children: React.ReactNode;
 }) {
-  const { error } = await loadMetadata();
+  const domain = await getCurrentDomain();
+  const { error } = await loadMetadata(domain!);
 
   return (
     <html lang="en">

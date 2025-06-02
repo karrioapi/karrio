@@ -3,22 +3,16 @@
   "compilerOptions": {
     "plugins": [
       {
-        "name": "next",
-      },
+        "name": "next"
+      }
     ],
     "baseUrl": ".",
     "paths": {
       "@karrio/console/*": ["./*"],
-      "react": ["./node_modules/@types/react"],
+      "react": ["./node_modules/@types/react"]
     },
-    "typeRoots": ["./node_modules/@types", "./types"],
+    "typeRoots": ["./node_modules/@types", "./types"]
   },
-  "include": [
-    ".",
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.d.ts"
-  ],
-  "exclude": ["dist", "build", "node_modules"],
+  "include": [".", "next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.d.ts"],
+  "exclude": ["dist", "build", "node_modules"]
 }

@@ -53,21 +53,21 @@ jwcrypto==1.5.6
 karrio @ file://${PWD}/modules/sdk
 karrio_australiapost @ file://${PWD}/modules/connectors/australiapost
 karrio_canadapost @ file://${PWD}/modules/connectors/canadapost
-karrio_chronopost @ file://${PWD}/community/plugins/chronopost
+-e git+https://github.com/***api/community.git@e41f8cd869bdb35c21fdfe20c453ae6eb53fe372#egg=karrio_chronopost&subdirectory=../../community/plugins/chronopost
 karrio_dhl_express @ file://${PWD}/modules/connectors/dhl_express
 karrio_dhl_parcel_de @ file://${PWD}/modules/connectors/dhl_parcel_de
 karrio_dhl_poland @ file://${PWD}/modules/connectors/dhl_poland
 karrio_dhl_universal @ file://${PWD}/modules/connectors/dhl_universal
-karrio_dpd @ file://${PWD}/community/plugins/dpd
-karrio_easypost @ file://${PWD}/community/plugins/easypost
-karrio_easyship @ file://${PWD}/community/plugins/easyship
-karrio_eshipper @ file://${PWD}/community/plugins/eshipper
+-e git+https://github.com/***api/community.git@e41f8cd869bdb35c21fdfe20c453ae6eb53fe372#egg=karrio_dpd&subdirectory=../../community/plugins/dpd
+-e git+https://github.com/***api/community.git@e41f8cd869bdb35c21fdfe20c453ae6eb53fe372#egg=karrio_easypost&subdirectory=../../community/plugins/easypost
+-e git+https://github.com/***api/community.git@e41f8cd869bdb35c21fdfe20c453ae6eb53fe372#egg=karrio_easyship&subdirectory=../../community/plugins/easyship
+-e git+https://github.com/***api/community.git@e41f8cd869bdb35c21fdfe20c453ae6eb53fe372#egg=karrio_eshipper&subdirectory=../../community/plugins/eshipper
 karrio_fedex @ file://${PWD}/modules/connectors/fedex
-karrio_freightcom @ file://${PWD}/community/plugins/freightcom
+-e git+https://github.com/***api/community.git@e41f8cd869bdb35c21fdfe20c453ae6eb53fe372#egg=karrio_freightcom&subdirectory=../../community/plugins/freightcom
 karrio_generic @ file://${PWD}/modules/connectors/generic
 karrio_laposte @ file://${PWD}/modules/connectors/laposte
 karrio_purolator @ file://${PWD}/modules/connectors/purolator
-karrio_sapient @ file://${PWD}/community/plugins/sapient
+-e git+https://github.com/***api/community.git@e41f8cd869bdb35c21fdfe20c453ae6eb53fe372#egg=karrio_sapient&subdirectory=../../community/plugins/sapient
 karrio_seko @ file://${PWD}/modules/connectors/seko
 karrio_sendle @ file://${PWD}/modules/connectors/sendle
 karrio_server @ file://${PWD}/apps/api
@@ -122,7 +122,7 @@ rpds-py==0.25.1
 sentry-sdk==2.29.1
 six==1.17.0
 sqlparse==0.5.3
-strawberry-graphql==0.270.4
+strawberry-graphql==0.270.5
 tablib==3.8.0
 tinycss2==1.4.0
 tinyhtml5==2.0.0
@@ -130,7 +130,7 @@ toml==0.10.2
 typing_extensions==4.13.2
 uritemplate==4.1.1
 urllib3==2.4.0
-uvicorn==0.34.2
+uvicorn==0.34.3
 validators==0.35.0
 weasyprint==65.1
 webencodings==0.5.1

@@ -2,7 +2,7 @@ import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { TrackingEvent, TrackingStatus } from "@karrio/types/rest/api";
 import { formatDayDate, isNone, KARRIO_API, url$ } from "@karrio/lib";
 import { Collection, KarrioClient } from "@karrio/types";
-import { loadMetadata } from "@karrio/core/context/main";
+import { loadMetadata, getCurrentDomain } from "@karrio/core/context/main";
 import Link from "next/link";
 
 
@@ -11,7 +11,8 @@ type DayEvents = { [k: string]: TrackingEvent[] };
 export default async function Page({ params }: { params: Promise<Collection> }) {
   const query = await params;
   const id = query?.id as string;
-  const { metadata } = await loadMetadata();
+  const domain = await getCurrentDomain();
+  const { metadata } = await loadMetadata(domain!);
   const client = new KarrioClient({
     basePath: url$`${(metadata?.HOST as string) || KARRIO_API}`,
   });

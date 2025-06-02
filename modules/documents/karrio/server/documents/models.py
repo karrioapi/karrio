@@ -1,4 +1,5 @@
 import functools
+import django.urls as urls
 from django.db import models
 from django.core.validators import RegexValidator
 
@@ -51,3 +52,10 @@ class DocumentTemplate(core.OwnedEntity):
     @property
     def object_type(self):
         return "document-template"
+
+    @property
+    def preview_url(self):
+        return urls.reverse(
+            "karrio.server.documents:templates-documents-print",
+            kwargs=dict(pk=self.pk, slug=self.slug),
+        ) + f"?{self.related_object or 'shipment'}s=sample"

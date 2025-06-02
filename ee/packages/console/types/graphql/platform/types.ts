@@ -1,5 +1,3 @@
-
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -601,6 +599,7 @@ export interface ResetTenantAdminPassword_reset_tenant_admin_password_errors {
 export interface ResetTenantAdminPassword_reset_tenant_admin_password {
   errors: ResetTenantAdminPassword_reset_tenant_admin_password_errors[] | null;
   success: boolean;
+  password: string | null;
 }
 
 export interface ResetTenantAdminPassword {
@@ -854,8 +853,8 @@ export interface UsageFilter {
 
 // null
 export interface ResetTenantAdminPasswordMutationInput {
+  id: string;
   email: string;
-  tenant_id: string;
 }
 
 // null

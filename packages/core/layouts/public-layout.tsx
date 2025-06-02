@@ -2,7 +2,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import "highlight.js/styles/stackoverflow-light.css";
 import "@/styles/theme.scss";
 import "@/styles/dashboard.scss";
-import { loadMetadata } from "@karrio/core/context/main";
+import { loadMetadata, getCurrentDomain } from "@karrio/core/context/main";
 import { Providers } from "@karrio/hooks/providers";
 import { url$ } from "@karrio/lib";
 
@@ -11,7 +11,8 @@ export default async function Layout({
 }: {
   children: React.ReactNode;
 }) {
-  const { metadata } = await loadMetadata();
+  const domain = await getCurrentDomain();
+  const { metadata } = await loadMetadata(domain!);
   const pageProps = { metadata };
 
   console.log(metadata, "metadata");

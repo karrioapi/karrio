@@ -29,7 +29,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@karrio/ui/components/ui/alert-dialog";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 
 const ProjectStatusBadge = ({ status }: { status: string }) => {
   const statusStyles = {
@@ -51,15 +51,13 @@ const ProjectStatusBadge = ({ status }: { status: string }) => {
   );
 };
 
-export default async function SettingsPage({
-  params,
-}: {
-  params: Promise<{ orgId: string; projectId: string }>;
-}) {
+export default function SettingsPage() {
   const { toast } = useToast();
   const router = useRouter();
   const utils = trpc.useUtils();
-  const { orgId, projectId } = await params;
+  const params = useParams<{ orgId: string; projectId: string }>();
+  const { orgId, projectId } = params;
+
   const { data: currentProject } = trpc.projects.get.useQuery({
     id: projectId,
     orgId: orgId,
@@ -89,7 +87,7 @@ export default async function SettingsPage({
       });
     },
   });
-  const deleteProject = trpc.projects.delete.useMutation<{ id: string }>({
+  const deleteProject = trpc.projects.delete.useMutation<{ id: string; orgId: string }>({
     onSuccess: () => {
       utils.projects.getAll.invalidate();
       toast({
@@ -198,6 +196,7 @@ export default async function SettingsPage({
     try {
       await deleteProject.mutateAsync({
         id: projectId,
+        orgId,
       });
     } catch (error) {
       // Error is handled by the mutation callbacks

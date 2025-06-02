@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "@karrio/ui/components/ui/card";
 import { DashboardHeader } from "@karrio/console/components/dashboard-header";
+import { ConnectModal } from "@karrio/console/components/connect-modal";
 import { Button } from "@karrio/ui/components/ui/button";
 import { Badge } from "@karrio/ui/components/ui/badge";
 import {
@@ -22,11 +23,14 @@ import {
   ExternalLink,
   Loader2,
 } from "lucide-react";
+import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import { Alert, AlertDescription } from "@karrio/ui/components/ui/alert";
 import { toast } from "@karrio/ui/hooks/use-toast";
 import { trpc } from "@karrio/console/trpc/client";
-import moment from "moment";
+import { useSession } from "next-auth/react";
+import { useParams } from "next/navigation";
 import React, { useState } from "react";
+import moment from "moment";
 import {
   Select,
   SelectContent,
@@ -34,7 +38,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@karrio/ui/components/ui/select";
-import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 
 interface DataPoint {
   name: string;
@@ -42,16 +45,27 @@ interface DataPoint {
   failed: number;
 }
 
-export default async function DashboardPage({
-  params,
-}: {
-  params: Promise<{ orgId: string; projectId: string }>;
-}) {
-  const { orgId, projectId } = await params;
+// Helper function to ensure URL has proper protocol
+const formatUrl = (url?: string): string => {
+  if (!url) return "";
+
+  // If URL already has protocol, return as is
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+
+  // Default to https for dashboard URLs and http for API endpoints
+  // API endpoints typically use HTTP in development, HTTPS in production
+  return `http://${url}`;
+};
+
+export default function DashboardPage() {
+  const params = useParams<{ orgId: string; projectId: string }>();
+  const { orgId, projectId } = params;
   const utils = trpc.useContext();
+  const { data: session } = useSession();
+
   const { data: currentProject, isLoading: isProjectLoading } =
-
-
     trpc.projects.get.useQuery({
       id: projectId,
       orgId: orgId,
@@ -75,6 +89,18 @@ export default async function DashboardPage({
   const retryDeployment = trpc.projects.retryDeployment.useMutation({
     onSuccess: () => {
       utils.projects.get.invalidate();
+      toast({
+        title: "Retry initiated",
+        description: "Deployment retry has been started. Please wait...",
+      });
+    },
+    onError: (error) => {
+      console.error("Retry deployment failed:", error);
+      toast({
+        title: "Retry failed",
+        description: error.message || "Failed to retry deployment",
+        variant: "destructive",
+      });
     },
   });
 
@@ -394,11 +420,22 @@ export default async function DashboardPage({
           <Card className="rounded-lg border-2 shadow-sm">
             <CardContent className="p-6 space-y-8">
               <div>
-                <h3 className="text-lg font-semibold">Project API</h3>
-                <p className="text-sm text-muted-foreground">
-                  Your API is secured behind a gateway which requires an API Key
-                  for every request.
-                </p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold">Project API</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Your API is secured behind a gateway which requires an API Key
+                      for every request.
+                    </p>
+                  </div>
+                  {tenant && isHealthy && (
+                    <ConnectModal
+                      projectId={projectId}
+                      tenantEmail={session?.user?.email || null}
+                      dashboardUrl={formatUrl(tenant.app_domains?.[0])}
+                    />
+                  )}
+                </div>
               </div>
 
               {tenant && isHealthy ? (
@@ -410,12 +447,12 @@ export default async function DashboardPage({
                     {tenant.api_domains?.map((domain, index) => (
                       <div key={index} className="flex items-center gap-2">
                         <code className="flex-1 rounded-lg bg-muted px-3 py-2 font-mono text-sm">
-                          {domain}
+                          {formatUrl(domain)}
                         </code>
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => copyToClipboard(domain)}
+                          onClick={() => copyToClipboard(formatUrl(domain))}
                         >
                           <CopyIcon className="h-4 w-4 mr-1" />
                           Copy
@@ -423,7 +460,7 @@ export default async function DashboardPage({
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => window.open(domain, "_blank")}
+                          onClick={() => window.open(formatUrl(domain), "_blank")}
                         >
                           <ExternalLink className="h-4 w-4 mr-1" />
                           Open
@@ -441,12 +478,12 @@ export default async function DashboardPage({
                     {tenant.app_domains?.map((domain, index) => (
                       <div key={index} className="flex items-center gap-2">
                         <code className="flex-1 rounded-lg bg-muted px-3 py-2 font-mono text-sm">
-                          {domain}
+                          {formatUrl(domain)}
                         </code>
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => copyToClipboard(domain)}
+                          onClick={() => copyToClipboard(formatUrl(domain))}
                         >
                           <CopyIcon className="h-4 w-4 mr-1" />
                           Copy
@@ -454,7 +491,7 @@ export default async function DashboardPage({
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => window.open(domain, "_blank")}
+                          onClick={() => window.open(formatUrl(domain), "_blank")}
                         >
                           <ExternalLink className="h-4 w-4 mr-1" />
                           Open
@@ -534,60 +571,73 @@ export default async function DashboardPage({
         <div className="max-w-6xl mx-auto w-full space-y-8">
           <h2 className="text-2xl font-semibold">Let's get started</h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <Card className="p-6 hover:border-primary/50 transition-colors rounded-lg border-2 shadow-sm">
-              <div className="p-2 w-fit rounded-lg bg-primary/10 mb-6">
-                <Code2 className="h-4 w-4 text-primary" />
-              </div>
-              <h3 className="font-semibold mb-3">API Integration</h3>
-              <p className="text-sm text-muted-foreground mb-6">
-                Start integrating shipping services with our API endpoints.
-              </p>
-              <Button
-                variant="ghost"
-                className="w-full justify-start"
-                onClick={() => window.open("/docs/api", "_blank")}
-              >
-                View Documentation <ExternalLink className="ml-2 h-4 w-4" />
-              </Button>
-            </Card>
+            <div
+              onClick={() =>
+                window.open(formatUrl(tenant?.app_domains?.[0]) + "/admin", "_blank")
+              }
+              className="cursor-pointer group"
+            >
+              <Card className="h-full flex flex-col p-6 hover:border-primary hover:shadow-lg transition-all duration-200 rounded-lg border-2">
+                <div className="p-2 w-fit rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors mb-4">
+                  <Settings className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
+                </div>
+                <div className="flex-grow space-y-3">
+                  <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">Administration Console</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Configure your instance system settings.
+                  </p>
+                </div>
+                <div className="flex items-center text-sm text-primary mt-6 group-hover:translate-x-1 transition-transform">
+                  <span className="font-medium">Open Admin Console</span>
+                  <ExternalLink className="h-4 w-4 ml-2" />
+                </div>
+              </Card>
+            </div>
 
-            <Card className="p-6 hover:border-primary/50 transition-colors rounded-lg border-2 shadow-sm">
-              <div className="p-2 w-fit rounded-lg bg-primary/10 mb-6">
-                <Boxes className="h-4 w-4 text-primary" />
-              </div>
-              <h3 className="font-semibold mb-3">Carrier Setup</h3>
-              <p className="text-sm text-muted-foreground mb-6">
-                Connect and configure your shipping carrier accounts.
-              </p>
-              <Button
-                variant="ghost"
-                className="w-full justify-start"
-                onClick={() =>
-                  window.open(tenant?.app_domains?.[0] + "/carriers", "_blank")
-                }
-              >
-                Configure Carriers <ExternalLink className="ml-2 h-4 w-4" />
-              </Button>
-            </Card>
+            <div
+              onClick={() =>
+                window.open(formatUrl(tenant?.app_domains?.[0]) + "/admin/carriers", "_blank")
+              }
+              className="cursor-pointer group"
+            >
+              <Card className="h-full flex flex-col p-6 hover:border-primary hover:shadow-lg transition-all duration-200 rounded-lg border-2">
+                <div className="p-2 w-fit rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors mb-4">
+                  <Boxes className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
+                </div>
+                <div className="flex-grow space-y-3">
+                  <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">System Carrier Connections</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Configure your shipping carrier network.
+                  </p>
+                </div>
+                <div className="flex items-center text-sm text-primary mt-6 group-hover:translate-x-1 transition-transform">
+                  <span className="font-medium">Configure Connections</span>
+                  <ExternalLink className="h-4 w-4 ml-2" />
+                </div>
+              </Card>
+            </div>
 
-            <Card className="p-6 hover:border-primary/50 transition-colors rounded-lg border-2 shadow-sm">
-              <div className="p-2 w-fit rounded-lg bg-primary/10 mb-6">
-                <Settings className="h-4 w-4 text-primary" />
-              </div>
-              <h3 className="font-semibold mb-3">Project Settings</h3>
-              <p className="text-sm text-muted-foreground mb-6">
-                Configure your project settings and API keys.
-              </p>
-              <Button
-                variant="ghost"
-                className="w-full justify-start"
-                onClick={() =>
-                  window.open(tenant?.app_domains?.[0] + "/settings", "_blank")
-                }
-              >
-                Open Settings <ExternalLink className="ml-2 h-4 w-4" />
-              </Button>
-            </Card>
+            <div
+              onClick={() =>
+                window.open(formatUrl(tenant?.app_domains?.[0]) + "/", "_blank")}
+              className="cursor-pointer group"
+            >
+              <Card className="h-full flex flex-col p-6 hover:border-primary hover:shadow-lg transition-all duration-200 rounded-lg border-2">
+                <div className="p-2 w-fit rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors mb-4">
+                  <Code2 className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
+                </div>
+                <div className="flex-grow space-y-3">
+                  <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">Shipping Integration</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Start integrating shipping services with our API endpoints.
+                  </p>
+                </div>
+                <div className="flex items-center text-sm text-primary mt-6 group-hover:translate-x-1 transition-transform">
+                  <span className="font-medium">Get Started</span>
+                  <ExternalLink className="h-4 w-4 ml-2" />
+                </div>
+              </Card>
+            </div>
           </div>
         </div>
 
