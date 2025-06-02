@@ -196,42 +196,42 @@ export const ExpandedSidebar = (): JSX.Element => {
 
         {((process.browser && showResourcesMenus) ||
           pathname.includes("/resources")) && (
-          <>
-            <AppLink
-              href="/resources/reference"
-              className={
-                "menu-item ml-5 " + activeClass("/resources/reference")
-              }
-              shallow={false}
-              prefetch={false}
-            >
-              <span className="has-text-weight-semibold">API Reference</span>
-            </AppLink>
-
-            <AppLink
-              href="/resources/graphiql"
-              className={"menu-item ml-5 " + activeClass("/resources/graphiql")}
-              shallow={false}
-              prefetch={false}
-            >
-              <span className="has-text-weight-semibold">GraphQL</span>
-            </AppLink>
-
-            {metadata?.APP_NAME.includes("Karrio") && (
-              <a
-                className="menu-item ml-5"
-                target="_blank"
-                rel="noreferrer"
-                href="https://docs.karrio.io"
+            <>
+              <AppLink
+                href="/resources/reference"
+                className={
+                  "menu-item ml-5 " + activeClass("/resources/reference")
+                }
+                shallow={false}
+                prefetch={false}
               >
-                <span>Guides</span>
-                <span className="icon is-small is-size-7 mx-2">
-                  <i className="fas fa-external-link-alt"></i>
-                </span>
-              </a>
-            )}
-          </>
-        )}
+                <span className="has-text-weight-semibold">Playground</span>
+              </AppLink>
+
+              <AppLink
+                href="/resources/graphiql"
+                className={"menu-item ml-5 " + activeClass("/resources/graphiql")}
+                shallow={false}
+                prefetch={false}
+              >
+                <span className="has-text-weight-semibold">GraphiQL</span>
+              </AppLink>
+
+              {metadata?.APP_NAME.includes("Karrio") && (
+                <a
+                  className="menu-item ml-5"
+                  target="_blank"
+                  rel="noreferrer"
+                  href="https://docs.karrio.io"
+                >
+                  <span>Guides</span>
+                  <span className="icon is-small is-size-7 mx-2">
+                    <i className="fas fa-external-link-alt"></i>
+                  </span>
+                </a>
+              )}
+            </>
+          )}
 
         {/* Administration */}
         {metadata?.ADMIN_DASHBOARD && user?.is_staff && (
