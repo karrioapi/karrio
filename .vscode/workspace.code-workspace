@@ -31,7 +31,7 @@
         "editor.formatOnPaste": true,
         "python.terminal.activateEnvInCurrentTerminal": true,
         "editor.formatOnSave": true,
-        "python.defaultInterpreterPath": "../.venv/karrio",
+        "python.defaultInterpreterPath": "../.venv/patch",
         "files.associations": {
             "**/*.html": "html",
             "**/templates/**/*.html": "django-html",

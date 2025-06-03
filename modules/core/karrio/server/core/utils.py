@@ -12,10 +12,11 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 import django_email_verification.confirm as confirm
 import rest_framework_simplejwt.tokens as jwt
+import rest_framework.status as status
 
 import karrio.lib as lib
 from karrio.core.utils import DP, DF
-from karrio.server.core import datatypes, serializers
+from karrio.server.core import datatypes, serializers, exceptions
 
 T = TypeVar("T")
 logger = logging.getLogger(__name__)
@@ -366,3 +367,113 @@ def process_events(
         key=lambda e: f"{e.get('date', '')} {e.get('time', '')}",
         reverse=True,
     )
+
+
+def apply_rate_selection(payload: typing.Union[dict, typing.Any], **kwargs):
+    data = kwargs.get("data") or {}
+    get = lambda key, default=None: lib.identity(
+        payload.get(key, data.get(key, default)) if isinstance(payload, dict)
+        else getattr(payload, key, data.get(key, default))
+    )
+
+    ctx = kwargs.get("context")
+    rates = get("rates") or data.get("rates", [])
+    options = get("options") or data.get("options", {})
+    service = get("service") or data.get("service", None)
+    rate_id = get("selected_rate_id") or data.get("selected_rate_id", None)
+    selected_rate = get("selected_rate") or data.get("selected_rate", None)
+    apply_shipping_rules = lib.identity(
+        getattr(settings, "SHIPPING_RULES", False)
+        and options.get("apply_shipping_rules", False)
+    )
+
+    if selected_rate:
+        kwargs.update(selected_rate=selected_rate)
+        return kwargs
+
+    # Select by id or service if provided
+    if rate_id or service:
+        kwargs.update(selected_rate=next(
+            (
+                rate for rate in rates
+                if (rate_id and rate.get("id") == rate_id)
+                or (service and rate.get("service") == service)
+            ),
+            None,
+        ))
+        return kwargs
+
+    # Apply shipping rules if enabled and no selected rate is provided
+    if apply_shipping_rules:
+        # Import rules engine only when needed
+        import karrio.server.automation.models as automation_models
+        import karrio.server.automation.services.rules_engine as engine
+
+        # Get active shipping rules
+        active_rules = list(
+            automation_models.ShippingRule
+            .access_by(ctx)
+            .filter(is_active=True)
+        )
+
+        # Always run rule evaluation for activity tracking
+        if active_rules:
+            _, rule_selected_rate, rule_activity = engine.process_shipping_rules(
+                shipment=payload,
+                rules=active_rules,
+            )
+
+            kwargs.update(
+                selected_rate=rule_selected_rate,
+                rule_activity=rule_activity,
+            )
+
+    return kwargs
+
+
+def require_selected_rate(func):
+    """
+    Decorator for rate selection process.
+    - Checks if shipping rules are enabled
+    - Evaluates and applies rules to modify service if needed
+    - Augments response metadata with applied rules
+    """
+
+    @functools.wraps(func)
+    def wrapper(payload, **kwargs):
+
+        kwargs = apply_rate_selection(payload, **kwargs)
+
+        if kwargs.get("selected_rate") is None:
+            raise exceptions.APIException(
+                "The service you selected is not available for this shipment.",
+                code="service_unavailable",
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Execute original function
+        result = func(payload, **kwargs)
+
+        if isinstance(result, datatypes.Shipment) and kwargs.get("rule_activity"):
+            return lib.to_object(
+                datatypes.Shipment,
+                {
+                    **lib.to_dict(result),
+                    "meta": {
+                        **(result.meta or {}),
+                        **({"rule_activity": kwargs.get("rule_activity")}),
+                    }
+                }
+            )
+
+        if hasattr(result, "save") and kwargs.get("rule_activity"):
+            result.meta = {
+                **(result.meta or {}),
+                **({"rule_activity": kwargs.get("rule_activity")}),
+            }
+            result.save()
+            return result
+
+        return result
+
+    return wrapper

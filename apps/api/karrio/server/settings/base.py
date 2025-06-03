@@ -181,6 +181,9 @@ PERSIST_SDK_TRACING = config("PERSIST_SDK_TRACING", default=True, cast=bool)
 WORKFLOW_MANAGEMENT = (
     importlib.util.find_spec("karrio.server.automation") is not None  # type:ignore
 )
+SHIPPING_RULES = (
+    importlib.util.find_spec("karrio.server.automation") is not None  # type:ignore
+)
 
 
 # Feature flags
@@ -198,6 +201,7 @@ FEATURE_FLAGS = [
     ("PERSIST_SDK_TRACING", bool),
     ("WORKFLOW_MANAGEMENT", bool),
     ("WORKFLOW_MANAGEMENT", bool),
+    ("SHIPPING_RULES", bool),
 ]
 
 
@@ -551,7 +555,7 @@ DRF_TRACKING_ADMIN_LOG_READONLY = True
 
 LOGGING = {
     "version": 1,
-    "disable_existing_loggers": True,
+    "disable_existing_loggers": False,
     "formatters": {
         "verbose": {
             "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
@@ -568,9 +572,9 @@ LOGGING = {
             "class": "logging.handlers.TimedRotatingFileHandler",
             "formatter": "verbose",
             "filename": LOG_FILE_NAME,
-            "when": "D",  # this specifies the interval
-            "interval": 1,  # defaults to 1, only necessary for other values
-            "backupCount": 20,  # how many backup file to keep, 10 days
+            "when": "D",
+            "interval": 1,
+            "backupCount": 20,
         },
         "console": {
             "class": "logging.StreamHandler",
@@ -586,6 +590,11 @@ LOGGING = {
         "karrio": {
             "handlers": ["file", "console"],
             "level": LOG_LEVEL,
+            "propagate": False,
+        },
+        "karrio.server.core.exceptions": {
+            "handlers": ["file", "console"],
+            "level": "DEBUG",
             "propagate": False,
         },
     },

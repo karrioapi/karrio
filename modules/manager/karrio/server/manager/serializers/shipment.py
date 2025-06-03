@@ -119,9 +119,13 @@ class ShipmentSerializer(ShipmentData):
         }
         rates = validated_data.get("rates") or []
         messages = validated_data.get("messages") or []
+        apply_shipping_rules = lib.identity(
+            getattr(conf.settings, "SHIPPING_RULES", False)
+            and (validated_data.get("options") or {}).get("apply_shipping_rules", False)
+        )
 
         # Get live rates.
-        if fetch_rates:
+        if fetch_rates or apply_shipping_rules:
             rate_response: datatypes.RateResponse = (
                 RateSerializer.map(data=rating_data, context=context)
                 .save(carriers=carriers)
@@ -185,11 +189,11 @@ class ShipmentSerializer(ShipmentData):
             context=context,
         )
 
-        # Buy label if preferred service is already selected.
-        if service and fetch_rates:
+        # Buy label if preferred service is selected or shipping rules should applied.
+        if (service and fetch_rates) or apply_shipping_rules:
             return buy_shipment_label(
                 shipment,
-                context,
+                context=context,
                 service=service,
             )
 
@@ -491,7 +495,8 @@ class ShipmentPurchaseSerializer(Shipment):
         return gateway.Shipments.create(
             Shipment(validated_data).data,
             carrier=validated_data.get("carrier"),
-            resolve_tracking_url=(
+            selected_rate=kwargs.get("selected_rate"),
+            resolve_tracking_url=lib.identity(
                 lambda tracking_number, carrier_name: reverse(
                     "karrio.server.manager:shipment-tracker",
                     kwargs=dict(
@@ -499,6 +504,7 @@ class ShipmentPurchaseSerializer(Shipment):
                     ),
                 )
             ),
+            **kwargs,
         )
 
 
@@ -565,36 +571,26 @@ def fetch_shipment_rates(
     return updated_shipment
 
 
+@utils.require_selected_rate
 def buy_shipment_label(
     shipment: models.Shipment,
-    context: typing.Any,
+    context: typing.Any = None,
     data: dict = dict(),
-    service: str = None,
+    selected_rate: typing.Union[dict, datatypes.Rate] = None,
+    **kwargs,
 ) -> models.Shipment:
     extra: dict = {}
     invoice: dict = {}
+    selected_rate = lib.to_dict(selected_rate or {})
     invoice_template = shipment.options.get("invoice_template")
-    rate = next(
-        (
-            rate
-            for rate in shipment.rates
-            if rate["service"] == service or rate["id"] == data.get("selected_rate_id")
-        ),
-        None,
-    )
 
-    if rate is None:
-        raise exceptions.APIException(
-            "The service you selected is not available for this shipment.",
-            code="service_unavailable",
-            status_code=status.HTTP_400_BAD_REQUEST,
-        )
-
-    payload = {**data, "selected_rate_id": rate["id"]}
+    payload = {**data, "selected_rate_id": selected_rate.get("id")}
     carrier = gateway.Carriers.first(
-        carrier_id=rate["carrier_id"],
-        test_mode=rate["test_mode"],
+        carrier_id=selected_rate.get("carrier_id"),
+        test_mode=selected_rate.get("test_mode"),
+        context=context,
     )
+
     is_paperless_trade = lib.identity(
         "paperless" in carrier.capabilities
         and shipment.options.get("paperless_trade") == True
@@ -603,7 +599,7 @@ def buy_shipment_label(
 
     # Generate invoice in advance if is_paperless_trade
     if pre_purchase_generation:
-        shipment.selected_rate = rate
+        shipment.selected_rate = selected_rate
         shipment.selected_rate_carrier = carrier
         document = generate_custom_invoice(invoice_template, shipment)
         invoice = dict(invoice=document["doc_file"])
@@ -622,12 +618,12 @@ def buy_shipment_label(
             )
 
     # Submit shipment to carriers
-    response: Shipment = (
+    response: Shipment = lib.identity(
         ShipmentPurchaseSerializer.map(
             context=context,
             data={**Shipment(shipment).data, **payload, **extra},
         )
-        .save(carrier=carrier)
+        .save(carrier=carrier, selected_rate=selected_rate, **kwargs)
         .instance
     )
 
@@ -640,7 +636,7 @@ def buy_shipment_label(
     )
 
     # Update shipment state
-    purchased_shipment = (
+    purchased_shipment = lib.identity(
         ShipmentSerializer.map(
             shipment,
             context=context,
@@ -648,6 +644,7 @@ def buy_shipment_label(
                 **payload,
                 **ShipmentDetails(response).data,
                 **extra,
+                # "meta": {**(response.meta or {}), "rule_activity": kwargs.get("rule_activity", None)},
             },
         )
         .save()
