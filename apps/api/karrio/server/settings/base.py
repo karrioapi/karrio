@@ -200,7 +200,6 @@ FEATURE_FLAGS = [
     ("DATA_IMPORT_EXPORT", bool),
     ("PERSIST_SDK_TRACING", bool),
     ("WORKFLOW_MANAGEMENT", bool),
-    ("WORKFLOW_MANAGEMENT", bool),
     ("SHIPPING_RULES", bool),
 ]
 

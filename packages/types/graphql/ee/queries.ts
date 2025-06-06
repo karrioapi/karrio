@@ -1228,3 +1228,159 @@ export const DELETE_WORKFLOW_TRIGGER = gql`
 `;
 
 //#endregion
+
+// -----------------------------------------------------------
+// Shipping Rules GraphQL queries and mutations
+// -----------------------------------------------------------
+//#region
+
+export const GET_SHIPPING_RULE = gql`
+  query GetShippingRule($id: String!) {
+    shipping_rule(id: $id) {
+      object_type
+      id
+      name
+      slug
+      priority
+      is_active
+      description
+      conditions {
+        destination {
+          country_code
+          postal_code
+        }
+        carrier_id
+        service
+        weight {
+          min
+          max
+          unit
+        }
+        rate_comparison {
+          compare
+          operator
+          value
+        }
+        address_type {
+          type
+        }
+        value
+        metadata
+      }
+      actions {
+        select_service {
+          carrier_code
+          carrier_id
+          service_code
+          strategy
+        }
+        block_service
+      }
+      metadata
+      created_at
+      updated_at
+    }
+  }
+`;
+
+export const GET_SHIPPING_RULES = gql`
+  query GetShippingRules($filter: ShippingRuleFilter) {
+    shipping_rules(filter: $filter) {
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
+      edges {
+        node {
+          object_type
+          id
+          name
+          slug
+          priority
+          is_active
+          description
+          conditions {
+            destination {
+              country_code
+              postal_code
+            }
+            carrier_id
+            service
+            weight {
+              min
+              max
+              unit
+            }
+            rate_comparison {
+              compare
+              operator
+              value
+            }
+            address_type {
+              type
+            }
+            value
+            metadata
+          }
+          actions {
+            select_service {
+              carrier_code
+              carrier_id
+              service_code
+              strategy
+            }
+            block_service
+          }
+          metadata
+          created_at
+          updated_at
+        }
+      }
+    }
+  }
+`;
+
+export const CREATE_SHIPPING_RULE = gql`
+  mutation CreateShippingRule($data: CreateShippingRuleMutationInput!) {
+    create_shipping_rule(input: $data) {
+      shipping_rule {
+        id
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const UPDATE_SHIPPING_RULE = gql`
+  mutation UpdateShippingRule($data: UpdateShippingRuleMutationInput!) {
+    update_shipping_rule(input: $data) {
+      shipping_rule {
+        id
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const DELETE_SHIPPING_RULE = gql`
+  mutation DeleteShippingRule($data: DeleteMutationInput!) {
+    delete_shipping_rule(input: $data) {
+      id
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+//#endregion
