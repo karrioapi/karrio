@@ -127,6 +127,22 @@ export const ExpandedSidebar = (): JSX.Element => {
           <span className="has-text-weight-bold">Carriers</span>
         </AppLink>
 
+        {metadata?.SHIPPING_RULES && (
+          <>
+            <AppLink
+              href="/shipping-rules"
+              className={"menu-item " + activeClass("/shipping-rules")}
+              shallow={false}
+              prefetch={false}
+            >
+              <i
+                className={`fa fa-signs-post pr-2 ${isActive("/shipping-rules") ? "" : "has-text-grey"}`}
+              ></i>
+              <span className="has-text-weight-bold">Automation</span>
+            </AppLink>
+          </>
+        )}
+
         {metadata?.WORKFLOW_MANAGEMENT && (
           <>
             <AppLink
@@ -138,7 +154,7 @@ export const ExpandedSidebar = (): JSX.Element => {
               <i
                 className={`fa fa-bolt pr-2 ${isActive("/workflows") ? "" : "has-text-grey"}`}
               ></i>
-              <span className="has-text-weight-bold">Automation</span>
+              <span className="has-text-weight-bold">Workflows</span>
             </AppLink>
           </>
         )}

@@ -2,6 +2,66 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Utility class to isolate Tailwind-only components from Bulma */
+.tailwind-only {
+  /* Reset any potential Bulma interference */
+  font-family: inherit;
+
+  /* Ensure grid and flexbox work properly */
+  .grid {
+    display: grid !important;
+  }
+
+  .flex {
+    display: flex !important;
+  }
+
+  /* Reset Bulma column system interference */
+  .columns {
+    display: revert !important;
+    margin: revert !important;
+  }
+
+  .column {
+    display: revert !important;
+    flex: revert !important;
+    padding: revert !important;
+  }
+
+  /* Force Tailwind breakpoints to work */
+  @screen xl {
+    .xl\:grid-cols-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    }
+
+    .xl\:grid-cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .xl\:col-span-1 {
+      grid-column: span 1 / span 1 !important;
+    }
+
+    .xl\:col-span-3 {
+      grid-column: span 3 / span 3 !important;
+    }
+  }
+
+  /* Ensure gaps work */
+  .gap-6 {
+    gap: 1.5rem !important;
+  }
+
+  .gap-8 {
+    gap: 2rem !important;
+  }
+
+  /* Force max-width */
+  .max-w-7xl {
+    max-width: 80rem !important;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
