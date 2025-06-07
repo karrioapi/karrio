@@ -1,3 +1,4 @@
+from karrio.server.core.utils import *
 import typing
 import base64
 import logging
@@ -7,7 +8,6 @@ import dataclasses
 from rest_framework import exceptions
 from django.utils.translation import gettext_lazy as _
 
-from karrio.server.core.utils import *
 import karrio.lib as lib
 import karrio.server.core.utils as utils
 import karrio.server.core.models as core

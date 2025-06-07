@@ -168,8 +168,8 @@ TRACKING_INFO = {
 UPDATE_TRACKING_RESPONSE = {
     "id": ANY,
     "object_type": "tracker",
-    "carrier_name": "dhl_universal",
-    "carrier_id": "dhl_universal",
+    "carrier_name": "dhl_express",
+    "carrier_id": "dhl_express",
     "tracking_number": "00340434292135100124",
     "events": [
         {

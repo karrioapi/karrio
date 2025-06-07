@@ -120,6 +120,15 @@ FEATURE_FLAGS_CONFIG = {
         if importlib.util.find_spec("karrio.server.automation") is not None
         else None
     ),
+    "SHIPPING_RULES": (
+        (
+            base.SHIPPING_RULES,
+            "Shipping rules",
+            bool,
+        )
+        if importlib.util.find_spec("karrio.server.automation") is not None
+        else None
+    ),
     "PERSIST_SDK_TRACING": (
         base.PERSIST_SDK_TRACING,
         "Persist SDK tracing",

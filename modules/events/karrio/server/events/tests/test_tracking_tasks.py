@@ -140,8 +140,8 @@ TRACKERS_LIST = {
             "id": ANY,
             "info": ANY,
             "object_type": "tracker",
-            "carrier_name": "dhl_universal",
-            "carrier_id": "dhl_universal",
+            "carrier_name": "dhl_express",
+            "carrier_id": "dhl_express",
             "tracking_number": "00340434292135100124",
             "delivery_image_url": None,
             "signature_image_url": None,
@@ -198,8 +198,8 @@ TRACKERS_LIST = {
 RETURNED_UPDATED_VALUE = (
     [
         TrackingDetails(
-            carrier_id="dhl_universal",
-            carrier_name="dhl_universal",
+            carrier_id="dhl_express",
+            carrier_name="dhl_express",
             tracking_number="00340434292135100124",
             delivered=False,
             events=[
@@ -239,8 +239,8 @@ UPDATED_TRACKERS_LIST = {
         {
             "id": ANY,
             "object_type": "tracker",
-            "carrier_name": "dhl_universal",
-            "carrier_id": "dhl_universal",
+            "carrier_name": "dhl_express",
+            "carrier_id": "dhl_express",
             "tracking_number": "00340434292135100124",
             "events": [
                 {

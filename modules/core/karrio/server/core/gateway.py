@@ -8,8 +8,8 @@ from django.conf import settings
 from rest_framework import status
 from rest_framework.exceptions import NotFound
 
-import karrio.sdk as karrio
 import karrio.lib as lib
+import karrio.sdk as karrio
 import karrio.server.core.utils as utils
 import karrio.server.core.models as core
 import karrio.server.core.datatypes as datatypes
@@ -17,6 +17,7 @@ import karrio.server.core.dataunits as dataunits
 import karrio.server.core.validators as validators
 import karrio.server.core.exceptions as exceptions
 import karrio.server.providers.models as providers
+import karrio.server.serializers as base_serializers
 import karrio.server.core.serializers as serializers
 
 logger = logging.getLogger(__name__)
@@ -143,27 +144,24 @@ class Address:
 
 class Shipments:
     @staticmethod
+    @utils.require_selected_rate
     def create(
         payload: dict,
         carrier: providers.Carrier = None,
+        selected_rate: typing.Union[datatypes.Rate, dict] = None,
         resolve_tracking_url: typing.Callable[[str, str], str] = None,
+        context: base_serializers.Context = None,
+        **kwargs,
     ) -> datatypes.Shipment:
-        selected_rate = next(
-            (
-                datatypes.Rate(**rate)
-                for rate in payload.get("rates")
-                if rate.get("id") == payload.get("selected_rate_id")
-            ),
-            None,
+        selected_rate = lib.to_object(
+            datatypes.Rate,
+            lib.to_dict(selected_rate),
         )
-
-        if selected_rate is None:
-            raise NotFound("Invalid selected rate")
-
         carrier = carrier or Carriers.first(
             carrier_id=selected_rate.carrier_id,
             test_mode=selected_rate.test_mode,
             services=[selected_rate.service],
+            context=context,
         )
 
         if carrier is None:
@@ -176,7 +174,9 @@ class Shipments:
 
         # The request is wrapped in utils.identity to simplify mocking in tests.
         shipment, messages = utils.identity(
-            lambda: karrio.Shipment.create(request).from_(carrier.gateway).parse()
+            lambda: karrio.Shipment.create(request)
+            .from_(carrier.gateway)
+            .parse()
         )
 
         if shipment is None:
@@ -202,7 +202,7 @@ class Shipments:
             }
 
         def process_selected_rate() -> dict:
-            rate = (
+            rate = lib.identity(
                 {
                     **lib.to_dict(shipment.selected_rate),
                     "id": f"rat_{uuid.uuid4().hex}",
@@ -211,10 +211,10 @@ class Shipments:
                 if shipment.selected_rate is not None
                 else lib.to_dict(selected_rate)
             )
-            return {
+            return lib.to_dict({
                 **rate,
                 "meta": process_meta(shipment.selected_rate or selected_rate),
-            }
+            })
 
         def process_tracking_url(rate: datatypes.Rate) -> str:
             rate_provider = (rate.get("meta") or {}).get("rate_provider")
@@ -263,9 +263,7 @@ class Shipments:
                 "parcels": process_parcel_refs(payload["parcels"]),
                 "tracking_url": process_tracking_url(shipment_rate),
                 "status": serializers.ShipmentStatus.purchased.value,
-                "created_at": datetime.datetime.now().strftime(
-                    "%Y-%m-%d %H:%M:%S.%f%z"
-                ),
+                "created_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f%z"),
                 "meta": process_meta(shipment),
                 "messages": messages,
             },

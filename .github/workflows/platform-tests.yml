@@ -9,6 +9,26 @@ permissions:
   contents: read
 
 jobs:
+  server-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          token: ${{ secrets.GH_PAT }}
+      - name: Run Tests
+        env:
+          ENABLE_ALL_PLUGINS_BY_DEFAULT: true
+        run: |
+          ./bin/setup-server-env -v &&
+          ./bin/cli plugins list &&
+          ./bin/migrate &&
+          ./bin/run-server-tests -v
+
   platform-ci:
     runs-on: ubuntu-latest
 

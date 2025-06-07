@@ -1955,6 +1955,259 @@ export interface DeleteWorkflowTriggerVariables {
   data: DeleteMutationInput;
 }
 
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetShippingRule
+// ====================================================
+
+export interface GetShippingRule_shipping_rule_conditions_destination {
+  country_code: string | null;
+  postal_code: string[] | null;
+}
+
+export interface GetShippingRule_shipping_rule_conditions_weight {
+  min: number | null;
+  max: number | null;
+  unit: string | null;
+}
+
+export interface GetShippingRule_shipping_rule_conditions_rate_comparison {
+  compare: RateComparisonField;
+  operator: ComparisonOperator;
+  value: number;
+}
+
+export interface GetShippingRule_shipping_rule_conditions_address_type {
+  type: string;
+}
+
+export interface GetShippingRule_shipping_rule_conditions {
+  destination: GetShippingRule_shipping_rule_conditions_destination | null;
+  carrier_id: string | null;
+  service: string | null;
+  weight: GetShippingRule_shipping_rule_conditions_weight | null;
+  rate_comparison: GetShippingRule_shipping_rule_conditions_rate_comparison | null;
+  address_type: GetShippingRule_shipping_rule_conditions_address_type | null;
+  value: number | null;
+  metadata: any | null;
+}
+
+export interface GetShippingRule_shipping_rule_actions_select_service {
+  carrier_code: string | null;
+  carrier_id: string | null;
+  service_code: string | null;
+  strategy: SelectServiceStrategy;
+}
+
+export interface GetShippingRule_shipping_rule_actions {
+  select_service: GetShippingRule_shipping_rule_actions_select_service | null;
+  block_service: boolean | null;
+}
+
+export interface GetShippingRule_shipping_rule {
+  object_type: string;
+  id: string;
+  name: string;
+  slug: string;
+  priority: number;
+  is_active: boolean;
+  description: string | null;
+  conditions: GetShippingRule_shipping_rule_conditions | null;
+  actions: GetShippingRule_shipping_rule_actions | null;
+  metadata: any | null;
+  created_at: any;
+  updated_at: any;
+}
+
+export interface GetShippingRule {
+  shipping_rule: GetShippingRule_shipping_rule | null;
+}
+
+export interface GetShippingRuleVariables {
+  id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetShippingRules
+// ====================================================
+
+export interface GetShippingRules_shipping_rules_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetShippingRules_shipping_rules_edges_node_conditions_destination {
+  country_code: string | null;
+  postal_code: string[] | null;
+}
+
+export interface GetShippingRules_shipping_rules_edges_node_conditions_weight {
+  min: number | null;
+  max: number | null;
+  unit: string | null;
+}
+
+export interface GetShippingRules_shipping_rules_edges_node_conditions_rate_comparison {
+  compare: RateComparisonField;
+  operator: ComparisonOperator;
+  value: number;
+}
+
+export interface GetShippingRules_shipping_rules_edges_node_conditions_address_type {
+  type: string;
+}
+
+export interface GetShippingRules_shipping_rules_edges_node_conditions {
+  destination: GetShippingRules_shipping_rules_edges_node_conditions_destination | null;
+  carrier_id: string | null;
+  service: string | null;
+  weight: GetShippingRules_shipping_rules_edges_node_conditions_weight | null;
+  rate_comparison: GetShippingRules_shipping_rules_edges_node_conditions_rate_comparison | null;
+  address_type: GetShippingRules_shipping_rules_edges_node_conditions_address_type | null;
+  value: number | null;
+  metadata: any | null;
+}
+
+export interface GetShippingRules_shipping_rules_edges_node_actions_select_service {
+  carrier_code: string | null;
+  carrier_id: string | null;
+  service_code: string | null;
+  strategy: SelectServiceStrategy;
+}
+
+export interface GetShippingRules_shipping_rules_edges_node_actions {
+  select_service: GetShippingRules_shipping_rules_edges_node_actions_select_service | null;
+  block_service: boolean | null;
+}
+
+export interface GetShippingRules_shipping_rules_edges_node {
+  object_type: string;
+  id: string;
+  name: string;
+  slug: string;
+  priority: number;
+  is_active: boolean;
+  description: string | null;
+  conditions: GetShippingRules_shipping_rules_edges_node_conditions | null;
+  actions: GetShippingRules_shipping_rules_edges_node_actions | null;
+  metadata: any | null;
+  created_at: any;
+  updated_at: any;
+}
+
+export interface GetShippingRules_shipping_rules_edges {
+  node: GetShippingRules_shipping_rules_edges_node;
+}
+
+export interface GetShippingRules_shipping_rules {
+  page_info: GetShippingRules_shipping_rules_page_info;
+  edges: GetShippingRules_shipping_rules_edges[];
+}
+
+export interface GetShippingRules {
+  shipping_rules: GetShippingRules_shipping_rules;
+}
+
+export interface GetShippingRulesVariables {
+  filter?: ShippingRuleFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: CreateShippingRule
+// ====================================================
+
+export interface CreateShippingRule_create_shipping_rule_shipping_rule {
+  id: string;
+}
+
+export interface CreateShippingRule_create_shipping_rule_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface CreateShippingRule_create_shipping_rule {
+  shipping_rule: CreateShippingRule_create_shipping_rule_shipping_rule | null;
+  errors: CreateShippingRule_create_shipping_rule_errors[] | null;
+}
+
+export interface CreateShippingRule {
+  create_shipping_rule: CreateShippingRule_create_shipping_rule;
+}
+
+export interface CreateShippingRuleVariables {
+  data: CreateShippingRuleMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateShippingRule
+// ====================================================
+
+export interface UpdateShippingRule_update_shipping_rule_shipping_rule {
+  id: string;
+}
+
+export interface UpdateShippingRule_update_shipping_rule_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UpdateShippingRule_update_shipping_rule {
+  shipping_rule: UpdateShippingRule_update_shipping_rule_shipping_rule | null;
+  errors: UpdateShippingRule_update_shipping_rule_errors[] | null;
+}
+
+export interface UpdateShippingRule {
+  update_shipping_rule: UpdateShippingRule_update_shipping_rule;
+}
+
+export interface UpdateShippingRuleVariables {
+  data: UpdateShippingRuleMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DeleteShippingRule
+// ====================================================
+
+export interface DeleteShippingRule_delete_shipping_rule_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface DeleteShippingRule_delete_shipping_rule {
+  id: string;
+  errors: DeleteShippingRule_delete_shipping_rule_errors[] | null;
+}
+
+export interface DeleteShippingRule {
+  delete_shipping_rule: DeleteShippingRule_delete_shipping_rule;
+}
+
+export interface DeleteShippingRuleVariables {
+  data: DeleteMutationInput;
+}
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -2028,6 +2281,30 @@ export enum AutomationEventType {
   manual = "manual",
   scheduled = "scheduled",
   webhook = "webhook",
+}
+
+export enum RateComparisonField {
+  duty_charge = "duty_charge",
+  estimated_delivery = "estimated_delivery",
+  fuel_surcharge = "fuel_surcharge",
+  insurance_charge = "insurance_charge",
+  tax_charge = "tax_charge",
+  total_charge = "total_charge",
+  transit_days = "transit_days",
+}
+
+export enum ComparisonOperator {
+  eq = "eq",
+  gt = "gt",
+  gte = "gte",
+  lt = "lt",
+  lte = "lte",
+}
+
+export enum SelectServiceStrategy {
+  cheapest = "cheapest",
+  fastest = "fastest",
+  preferred = "preferred",
 }
 
 // null
@@ -2340,6 +2617,89 @@ export interface UpdateWorkflowTriggerMutationInput {
   secret?: string | null;
   secret_key?: string | null;
   template_slug?: string | null;
+}
+
+// null
+export interface ShippingRuleFilter {
+  offset?: number | null;
+  first?: number | null;
+  keyword?: string | null;
+  is_active?: boolean | null;
+  priority?: number | null;
+}
+
+// null
+export interface CreateShippingRuleMutationInput {
+  name: string;
+  description?: string | null;
+  priority?: number | null;
+  conditions?: ShippingRuleConditionsInput | null;
+  actions?: ShippingRuleActionsInput | null;
+  metadata?: any | null;
+  is_active?: boolean | null;
+}
+
+// null
+export interface ShippingRuleConditionsInput {
+  destination?: DestinationConditionInput | null;
+  carrier_id?: string | null;
+  service?: string | null;
+  weight?: WeightConditionInput | null;
+  rate_comparison?: RateComparisonConditionInput | null;
+  metadata?: any | null;
+  address_type?: AddressTypeConditionInput | null;
+  value?: number | null;
+}
+
+// null
+export interface DestinationConditionInput {
+  country_code?: string | null;
+  postal_code?: string[] | null;
+}
+
+// null
+export interface WeightConditionInput {
+  min?: number | null;
+  max?: number | null;
+  unit?: string | null;
+}
+
+// null
+export interface RateComparisonConditionInput {
+  compare: RateComparisonField;
+  operator: ComparisonOperator;
+  value: number;
+}
+
+// null
+export interface AddressTypeConditionInput {
+  type: string;
+}
+
+// null
+export interface ShippingRuleActionsInput {
+  select_service?: SelectServiceActionInput | null;
+  block_service?: boolean | null;
+}
+
+// null
+export interface SelectServiceActionInput {
+  carrier_code?: string | null;
+  carrier_id?: string | null;
+  service_code?: string | null;
+  strategy?: SelectServiceStrategy | null;
+}
+
+// null
+export interface UpdateShippingRuleMutationInput {
+  id: string;
+  name?: string | null;
+  description?: string | null;
+  priority?: number | null;
+  conditions?: ShippingRuleConditionsInput | null;
+  actions?: ShippingRuleActionsInput | null;
+  metadata?: any | null;
+  is_active?: boolean | null;
 }
 
 //==============================================================
