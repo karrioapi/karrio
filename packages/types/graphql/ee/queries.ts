@@ -484,6 +484,10 @@ export const GET_WORKFLOW = gql`
           parameters_template
           auth_template
           credentials
+          credentials_from_metafields
+          required_credentials
+          is_credentials_complete
+          credential_validation
           template_slug
           metadata
           metafields {
@@ -535,6 +539,8 @@ export const GET_WORKFLOWS = gql`
             id
             secret
             secret_key
+            is_due
+            next_run_description
             created_at
             updated_at
           }
@@ -570,6 +576,107 @@ export const GET_WORKFLOWS = gql`
               parameters_template
               auth_template
               credentials
+              credentials_from_metafields
+              required_credentials
+              is_credentials_complete
+              credential_validation
+              metadata
+              template_slug
+              metafields {
+                id
+                key
+                is_required
+                type
+                value
+              }
+              created_at
+              updated_at
+            }
+            template_slug
+            metadata
+            metafields {
+              id
+              key
+              is_required
+              type
+              value
+            }
+            created_at
+            updated_at
+          }
+          metadata
+          template_slug
+          created_at
+          updated_at
+        }
+      }
+    }
+  }
+`;
+
+export const GET_SCHEDULED_WORKFLOWS = gql`
+  query GetScheduledWorkflows($filter: WorkflowFilter) {
+    scheduled_workflows(filter: $filter) {
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
+      edges {
+        node {
+          id
+          name
+          slug
+          description
+          trigger {
+            object_type
+            id
+            slug
+            trigger_type
+            schedule
+            is_due
+            next_run_description
+            created_at
+            updated_at
+          }
+          action_nodes {
+            order
+            slug
+          }
+          actions {
+            object_type
+            id
+            slug
+            name
+            action_type
+            description
+            port
+            host
+            endpoint
+            method
+            content_type
+            header_template
+            parameters_type
+            parameters_template
+            connection {
+              object_type
+              id
+              name
+              slug
+              auth_type
+              port
+              host
+              endpoint
+              description
+              parameters_template
+              auth_template
+              credentials
+              credentials_from_metafields
+              required_credentials
+              is_credentials_complete
+              credential_validation
               metadata
               template_slug
               metafields {
@@ -618,6 +725,10 @@ export const GET_WORKFLOW_CONNECTION = gql`
       parameters_template
       auth_template
       credentials
+      credentials_from_metafields
+      required_credentials
+      is_credentials_complete
+      credential_validation
       template_slug
       metadata
       metafields {
@@ -654,6 +765,10 @@ export const GET_WORKFLOW_CONNECTIONS = gql`
           parameters_template
           auth_template
           credentials
+          credentials_from_metafields
+          required_credentials
+          is_credentials_complete
+          credential_validation
           metadata
           template_slug
           metafields {
@@ -698,6 +813,10 @@ export const GET_WORKFLOW_ACTION = gql`
         parameters_template
         auth_template
         credentials
+        credentials_from_metafields
+        required_credentials
+        is_credentials_complete
+        credential_validation
         metadata
         template_slug
         metafields {
@@ -760,6 +879,10 @@ export const GET_WORKFLOW_ACTIONS = gql`
             parameters_template
             auth_template
             credentials
+            credentials_from_metafields
+            required_credentials
+            is_credentials_complete
+            credential_validation
             template_slug
             metadata
             metafields {
@@ -1219,6 +1342,37 @@ export const DELETE_WORKFLOW_TRIGGER = gql`
   mutation DeleteWorkflowTrigger($data: DeleteMutationInput!) {
     delete_workflow_trigger(input: $data) {
       id
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const TRIGGER_SCHEDULED_WORKFLOW = gql`
+  mutation TriggerScheduledWorkflow($trigger_id: String!) {
+    trigger_scheduled_workflow(trigger_id: $trigger_id) {
+      workflow_event {
+        id
+        status
+        created_at
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const VALIDATE_CRON_EXPRESSION = gql`
+  mutation ValidateCronExpression($input: ValidateCronExpressionInput!) {
+    validate_cron_expression(input: $input) {
+      is_valid
+      description
+      next_run_times
+      error_message
       errors {
         field
         messages

@@ -780,6 +780,7 @@ def request(
     on_error: typing.Callable = None,
     trace: typing.Callable[[typing.Any, str], typing.Any] = None,
     proxy: str = None,
+    timeout: typing.Optional[int] = None,
     **kwargs,
 ) -> str:
     return utils.request(
@@ -788,6 +789,7 @@ def request(
         on_error=on_error,
         trace=trace,
         proxy=proxy,
+        timeout=timeout,
         **kwargs,
     )
 

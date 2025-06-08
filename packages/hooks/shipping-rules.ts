@@ -299,25 +299,42 @@ export function useShippingRuleForm({ id }: { id?: string } = {}) {
     onSubmit: async ({ value }) => {
       try {
         loader.setLoading(true);
-        const { id: formId, ...data } = value;
+        const {
+          id: formId,
+          ...restValue
+        } = value;
+
+        // Remove read-only fields that shouldn't be sent to the API
+        const {
+          object_type,
+          slug,
+          created_at,
+          updated_at,
+          ...data
+        } = restValue as any;
+
+        // Filter out any undefined/null values for cleaner mutation data
+        const cleanData = Object.entries(data).reduce((acc, [key, val]) => {
+          if (val !== null && val !== undefined) {
+            acc[key] = val;
+          }
+          return acc;
+        }, {} as any);
 
         if (isLocalDraft(formId)) {
           const {
             create_shipping_rule: { shipping_rule },
           } = await mutation.createShippingRule.mutateAsync(
-            data as CreateShippingRuleMutationInput,
+            cleanData as CreateShippingRuleMutationInput,
           );
           notifier.notify({
             type: NotificationType.success,
             message: "Shipping rule saved!",
           });
-          router.push(
-            p`${basePath}/automation/${shipping_rule?.id}`.replace("//", "/"),
-          );
         } else {
           await mutation.updateShippingRule.mutateAsync({
             id: formId,
-            ...data,
+            ...cleanData,
           } as UpdateShippingRuleMutationInput);
           notifier.notify({
             type: NotificationType.success,
@@ -410,12 +427,19 @@ export function useShippingRuleForm({ id }: { id?: string } = {}) {
 
   React.useEffect(() => {
     if (query.isFetched && id !== "new" && current) {
-      form.reset();
-      Object.entries(current).forEach(([key, value]) => {
+      // Reset form with the fetched data
+      const formData = {
+        ...DEFAULT_STATE,
+        ...current,
+        id: current.id,
+      };
+
+      // Set field values for existing data
+      Object.entries(formData).forEach(([key, value]) => {
         form.setFieldValue(key as any, value);
       });
     }
-  }, [current, query.isFetched, id]);
+  }, [current, query.isFetched, id, form]);
 
   return {
     form,

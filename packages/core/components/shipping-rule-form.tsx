@@ -1,12 +1,13 @@
 "use client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
+import { ShippingRuleTemplate } from "@karrio/hooks/shipping-rule-templates";
 import { SheetHeader, SheetTitle } from "@karrio/ui/components/ui/sheet";
 import { useShippingRuleForm } from "@karrio/hooks/shipping-rules";
 import { useLoader } from "@karrio/ui/core/components/loader";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { Textarea } from "@karrio/ui/components/ui/textarea";
-import { Switch } from "@karrio/ui/components/ui/switch";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { Button } from "@karrio/ui/components/ui/button";
+import { Switch } from "@karrio/ui/components/ui/switch";
 import { Input } from "@karrio/ui/components/ui/input";
 import { Label } from "@karrio/ui/components/ui/label";
 import { Trash2, Plus, X } from "lucide-react";
@@ -14,65 +15,70 @@ import React from "react";
 
 interface ShippingRuleFormProps {
   ruleId?: string;
+  templateData?: ShippingRuleTemplate | null;
   onClose: () => void;
   onSave: () => void;
 }
 
-export function ShippingRuleForm({ ruleId, onClose, onSave }: ShippingRuleFormProps) {
+export function ShippingRuleForm({ ruleId, templateData, onClose, onSave }: ShippingRuleFormProps) {
   const loader = useLoader();
   const { references } = useAPIMetadata();
   const {
     form,
-    shippingRule,
     isNew,
     save,
     deleteShippingRule,
-    handleChange,
-    handleConditionChange,
-    handleActionChange,
-    handleWeightChange,
-    handleSelectServiceChange,
-    handleDestinationChange,
-    handleRateComparisonChange,
     current,
     query,
   } = useShippingRuleForm({ id: ruleId });
 
-  // Use current data when available for editing, otherwise use form state
-  const ruleData = current || shippingRule;
-
   // State for dynamic conditions and actions
   const [activeConditions, setActiveConditions] = React.useState<string[]>([]);
   const [activeActions, setActiveActions] = React.useState<string[]>([]);
+  const [conditionSelectValue, setConditionSelectValue] = React.useState<string>("");
+  const [actionSelectValue, setActionSelectValue] = React.useState<string>("");
 
-  // Initialize active conditions and actions based on existing data
+  // Initialize form with template data for new rules
   React.useEffect(() => {
+    if (isNew && templateData && !current) {
+      form.setFieldValue("name", templateData.name);
+      form.setFieldValue("description", templateData.description);
+      form.setFieldValue("priority", templateData.priority);
+      form.setFieldValue("conditions", templateData.conditions || {});
+      form.setFieldValue("actions", templateData.actions || {});
+    }
+  }, [isNew, templateData, current, form]);
+
+  // Initialize active conditions and actions based on form state
+  React.useEffect(() => {
+    const formValues = form.state.values;
     const conditions: string[] = [];
     const actions: string[] = [];
 
-    if (ruleData.conditions?.destination?.country_code) {
+    // Check for existence of condition structures, not just their values
+    if (formValues.conditions?.destination) {
       conditions.push('destination');
     }
-    if (ruleData.conditions?.weight?.min || ruleData.conditions?.weight?.max) {
+    if (formValues.conditions?.weight) {
       conditions.push('weight');
     }
-    if (ruleData.conditions?.carrier_id || ruleData.conditions?.service) {
+    if (formValues.conditions?.carrier_id !== undefined || formValues.conditions?.service !== undefined) {
       conditions.push('carrier_service');
     }
-    if (ruleData.conditions?.rate_comparison?.compare) {
+    if (formValues.conditions?.rate_comparison) {
       conditions.push('rate_comparison');
     }
 
-    if (ruleData.actions?.select_service?.strategy) {
+    if (formValues.actions?.select_service) {
       actions.push('service_selection');
     }
-    if (ruleData.actions?.block_service) {
+    if (formValues.actions?.block_service !== undefined) {
       actions.push('service_blocking');
     }
 
     setActiveConditions(conditions);
     setActiveActions(actions);
-  }, [ruleData]);
+  }, [form.state.values]);
 
   const conditionTypes = [
     { id: 'destination', label: 'Destination', description: 'Filter by destination country' },
@@ -89,29 +95,62 @@ export function ShippingRuleForm({ ruleId, onClose, onSave }: ShippingRuleFormPr
   const addCondition = (conditionType: string) => {
     if (!activeConditions.includes(conditionType)) {
       setActiveConditions([...activeConditions, conditionType]);
+
+      // Initialize condition data based on type
+      const currentConditions = form.getFieldValue("conditions") || {};
+      switch (conditionType) {
+        case 'destination':
+          form.setFieldValue("conditions", {
+            ...currentConditions,
+            destination: { country_code: "" }
+          });
+          break;
+        case 'weight':
+          form.setFieldValue("conditions", {
+            ...currentConditions,
+            weight: { min: null, max: null, unit: "lb" }
+          });
+          break;
+        case 'carrier_service':
+          form.setFieldValue("conditions", {
+            ...currentConditions,
+            carrier_id: "",
+            service: ""
+          });
+          break;
+        case 'rate_comparison':
+          form.setFieldValue("conditions", {
+            ...currentConditions,
+            rate_comparison: { compare: "total_charge", operator: "eq", value: null }
+          });
+          break;
+      }
     }
+    // Reset the select dropdown
+    setConditionSelectValue("");
   };
 
   const removeCondition = (conditionType: string) => {
     setActiveConditions(activeConditions.filter(c => c !== conditionType));
+
     // Clear the condition data
+    const currentConditions = form.getFieldValue("conditions") || {};
     switch (conditionType) {
       case 'destination':
-        handleDestinationChange('country_code', '');
+        const { destination, ...restConditions1 } = currentConditions;
+        form.setFieldValue("conditions", restConditions1);
         break;
       case 'weight':
-        handleWeightChange('min', null);
-        handleWeightChange('max', null);
-        handleWeightChange('unit', 'lb');
+        const { weight, ...restConditions2 } = currentConditions;
+        form.setFieldValue("conditions", restConditions2);
         break;
       case 'carrier_service':
-        handleConditionChange('carrier_id', '');
-        handleConditionChange('service', '');
+        const { carrier_id, service, ...restConditions3 } = currentConditions;
+        form.setFieldValue("conditions", restConditions3);
         break;
       case 'rate_comparison':
-        handleRateComparisonChange('compare', '');
-        handleRateComparisonChange('operator', '');
-        handleRateComparisonChange('value', null);
+        const { rate_comparison, ...restConditions4 } = currentConditions;
+        form.setFieldValue("conditions", restConditions4);
         break;
     }
   };
@@ -119,21 +158,41 @@ export function ShippingRuleForm({ ruleId, onClose, onSave }: ShippingRuleFormPr
   const addAction = (actionType: string) => {
     if (!activeActions.includes(actionType)) {
       setActiveActions([...activeActions, actionType]);
+
+      // Initialize action data based on type
+      const currentActions = form.getFieldValue("actions") || {};
+      switch (actionType) {
+        case 'service_selection':
+          form.setFieldValue("actions", {
+            ...currentActions,
+            select_service: { strategy: "cheapest" }
+          });
+          break;
+        case 'service_blocking':
+          form.setFieldValue("actions", {
+            ...currentActions,
+            block_service: true
+          });
+          break;
+      }
     }
+    // Reset the select dropdown
+    setActionSelectValue("");
   };
 
   const removeAction = (actionType: string) => {
     setActiveActions(activeActions.filter(a => a !== actionType));
+
     // Clear the action data
+    const currentActions = form.getFieldValue("actions") || {};
     switch (actionType) {
       case 'service_selection':
-        handleSelectServiceChange('strategy', '');
-        handleSelectServiceChange('carrier_code', '');
-        handleSelectServiceChange('carrier_id', '');
-        handleSelectServiceChange('service_code', '');
+        const { select_service, ...restActions1 } = currentActions;
+        form.setFieldValue("actions", restActions1);
         break;
       case 'service_blocking':
-        handleActionChange('block_service', false);
+        const { block_service, ...restActions2 } = currentActions;
+        form.setFieldValue("actions", restActions2);
         break;
     }
   };
@@ -163,18 +222,23 @@ export function ShippingRuleForm({ ruleId, onClose, onSave }: ShippingRuleFormPr
                 variant="ghost"
                 size="sm"
                 onClick={() => removeCondition('destination')}
-                className="h-6 w-6 p-0 text-slate-500 hover:text-red-600"
+                className="h-8 w-8 p-0 text-slate-500 hover:text-red-600 hover:bg-red-50"
               >
                 <X className="h-4 w-4" />
               </Button>
             </div>
             <div className="space-y-2">
               <Label className="text-xs text-slate-700">Country Code</Label>
-              <Input
-                value={ruleData.conditions?.destination?.country_code || ""}
-                onChange={(e) => handleDestinationChange("country_code", e.target.value)}
-                placeholder="CA, US, GB..."
-                className="h-8"
+              <form.Field
+                name="conditions.destination.country_code"
+                children={(field) => (
+                  <Input
+                    value={field.state.value || ""}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="CA, US, GB..."
+                    className="h-8"
+                  />
+                )}
               />
               <p className="text-xs text-slate-500">ISO 2-letter country code</p>
             </div>
@@ -190,7 +254,7 @@ export function ShippingRuleForm({ ruleId, onClose, onSave }: ShippingRuleFormPr
                 variant="ghost"
                 size="sm"
                 onClick={() => removeCondition('weight')}
-                className="h-6 w-6 p-0 text-slate-500 hover:text-red-600"
+                className="h-8 w-8 p-0 text-slate-500 hover:text-red-600 hover:bg-red-50"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -198,40 +262,55 @@ export function ShippingRuleForm({ ruleId, onClose, onSave }: ShippingRuleFormPr
             <div className="grid grid-cols-3 gap-2">
               <div className="space-y-1">
                 <Label className="text-xs text-slate-700">Min</Label>
-                <Input
-                  type="number"
-                  value={ruleData.conditions?.weight?.min || ""}
-                  onChange={(e) => handleWeightChange("min", parseFloat(e.target.value) || null)}
-                  placeholder="0"
-                  className="h-8"
+                <form.Field
+                  name="conditions.weight.min"
+                  children={(field) => (
+                    <Input
+                      type="number"
+                      value={field.state.value || ""}
+                      onChange={(e) => field.handleChange(parseFloat(e.target.value) || null)}
+                      placeholder="0"
+                      className="h-8"
+                    />
+                  )}
                 />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs text-slate-700">Max</Label>
-                <Input
-                  type="number"
-                  value={ruleData.conditions?.weight?.max || ""}
-                  onChange={(e) => handleWeightChange("max", parseFloat(e.target.value) || null)}
-                  placeholder="100"
-                  className="h-8"
+                <form.Field
+                  name="conditions.weight.max"
+                  children={(field) => (
+                    <Input
+                      type="number"
+                      value={field.state.value || ""}
+                      onChange={(e) => field.handleChange(parseFloat(e.target.value) || null)}
+                      placeholder="100"
+                      className="h-8"
+                    />
+                  )}
                 />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs text-slate-700">Unit</Label>
-                <Select
-                  value={ruleData.conditions?.weight?.unit || "lb"}
-                  onValueChange={(value) => handleWeightChange("unit", value)}
-                >
-                  <SelectTrigger className="h-8">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="lb">lb</SelectItem>
-                    <SelectItem value="oz">oz</SelectItem>
-                    <SelectItem value="kg">kg</SelectItem>
-                    <SelectItem value="g">g</SelectItem>
-                  </SelectContent>
-                </Select>
+                <form.Field
+                  name="conditions.weight.unit"
+                  children={(field) => (
+                    <Select
+                      value={field.state.value || "lb"}
+                      onValueChange={(value) => field.handleChange(value)}
+                    >
+                      <SelectTrigger className="h-8">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="lb">lb</SelectItem>
+                        <SelectItem value="oz">oz</SelectItem>
+                        <SelectItem value="kg">kg</SelectItem>
+                        <SelectItem value="g">g</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
               </div>
             </div>
           </div>
@@ -246,7 +325,7 @@ export function ShippingRuleForm({ ruleId, onClose, onSave }: ShippingRuleFormPr
                 variant="ghost"
                 size="sm"
                 onClick={() => removeCondition('carrier_service')}
-                className="h-6 w-6 p-0 text-slate-500 hover:text-red-600"
+                className="h-8 w-8 p-0 text-slate-500 hover:text-red-600 hover:bg-red-50"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -254,30 +333,40 @@ export function ShippingRuleForm({ ruleId, onClose, onSave }: ShippingRuleFormPr
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
                 <Label className="text-xs text-slate-700">Carrier</Label>
-                <Select
-                  value={ruleData.conditions?.carrier_id || "any"}
-                  onValueChange={(value) => handleConditionChange("carrier_id", value === "any" ? null : value)}
-                >
-                  <SelectTrigger className="h-8">
-                    <SelectValue placeholder="Select carrier" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">Any carrier</SelectItem>
-                    {references?.carriers && Object.entries(references.carriers).map(([key, name]) => (
-                      <SelectItem key={key} value={key}>
-                        {name as string}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <form.Field
+                  name="conditions.carrier_id"
+                  children={(field) => (
+                    <Select
+                      value={field.state.value || "any"}
+                      onValueChange={(value) => field.handleChange(value === "any" ? null : value)}
+                    >
+                      <SelectTrigger className="h-8">
+                        <SelectValue placeholder="Select carrier" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="any">Any carrier</SelectItem>
+                        {references?.carriers && Object.entries(references.carriers).map(([key, name]) => (
+                          <SelectItem key={key} value={key}>
+                            {name as string}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs text-slate-700">Service</Label>
-                <Input
-                  value={ruleData.conditions?.service || ""}
-                  onChange={(e) => handleConditionChange("service", e.target.value)}
-                  placeholder="ground, express..."
-                  className="h-8"
+                <form.Field
+                  name="conditions.service"
+                  children={(field) => (
+                    <Input
+                      value={field.state.value || ""}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      placeholder="ground, express..."
+                      className="h-8"
+                    />
+                  )}
                 />
               </div>
             </div>
@@ -293,7 +382,7 @@ export function ShippingRuleForm({ ruleId, onClose, onSave }: ShippingRuleFormPr
                 variant="ghost"
                 size="sm"
                 onClick={() => removeCondition('rate_comparison')}
-                className="h-6 w-6 p-0 text-slate-500 hover:text-red-600"
+                className="h-8 w-8 p-0 text-slate-500 hover:text-red-600 hover:bg-red-50"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -301,47 +390,62 @@ export function ShippingRuleForm({ ruleId, onClose, onSave }: ShippingRuleFormPr
             <div className="grid grid-cols-3 gap-2">
               <div className="space-y-1">
                 <Label className="text-xs text-slate-700">Field</Label>
-                <Select
-                  value={ruleData.conditions?.rate_comparison?.compare || "total_charge"}
-                  onValueChange={(value) => handleRateComparisonChange("compare", value)}
-                >
-                  <SelectTrigger className="h-8">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="total_charge">Total Charge</SelectItem>
-                    <SelectItem value="transit_days">Transit Days</SelectItem>
-                    <SelectItem value="insurance_charge">Insurance</SelectItem>
-                    <SelectItem value="fuel_surcharge">Fuel</SelectItem>
-                  </SelectContent>
-                </Select>
+                <form.Field
+                  name="conditions.rate_comparison.compare"
+                  children={(field) => (
+                    <Select
+                      value={field.state.value || "total_charge"}
+                      onValueChange={(value) => field.handleChange(value)}
+                    >
+                      <SelectTrigger className="h-8">
+                        <SelectValue placeholder="Select" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="total_charge">Total Charge</SelectItem>
+                        <SelectItem value="transit_days">Transit Days</SelectItem>
+                        <SelectItem value="insurance_charge">Insurance</SelectItem>
+                        <SelectItem value="fuel_surcharge">Fuel</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs text-slate-700">Operator</Label>
-                <Select
-                  value={ruleData.conditions?.rate_comparison?.operator || "eq"}
-                  onValueChange={(value) => handleRateComparisonChange("operator", value)}
-                >
-                  <SelectTrigger className="h-8">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="eq">=</SelectItem>
-                    <SelectItem value="gt">&gt;</SelectItem>
-                    <SelectItem value="gte">≥</SelectItem>
-                    <SelectItem value="lt">&lt;</SelectItem>
-                    <SelectItem value="lte">≤</SelectItem>
-                  </SelectContent>
-                </Select>
+                <form.Field
+                  name="conditions.rate_comparison.operator"
+                  children={(field) => (
+                    <Select
+                      value={field.state.value || "eq"}
+                      onValueChange={(value) => field.handleChange(value)}
+                    >
+                      <SelectTrigger className="h-8">
+                        <SelectValue placeholder="Select" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="eq">=</SelectItem>
+                        <SelectItem value="gt">&gt;</SelectItem>
+                        <SelectItem value="gte">≥</SelectItem>
+                        <SelectItem value="lt">&lt;</SelectItem>
+                        <SelectItem value="lte">≤</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs text-slate-700">Value</Label>
-                <Input
-                  type="number"
-                  value={ruleData.conditions?.rate_comparison?.value || ""}
-                  onChange={(e) => handleRateComparisonChange("value", parseFloat(e.target.value) || null)}
-                  placeholder="0.00"
-                  className="h-8"
+                <form.Field
+                  name="conditions.rate_comparison.value"
+                  children={(field) => (
+                    <Input
+                      type="number"
+                      value={field.state.value || ""}
+                      onChange={(e) => field.handleChange(parseFloat(e.target.value) || null)}
+                      placeholder="0.00"
+                      className="h-8"
+                    />
+                  )}
                 />
               </div>
             </div>
@@ -364,7 +468,7 @@ export function ShippingRuleForm({ ruleId, onClose, onSave }: ShippingRuleFormPr
                 variant="ghost"
                 size="sm"
                 onClick={() => removeAction('service_selection')}
-                className="h-6 w-6 p-0 text-slate-500 hover:text-red-600"
+                className="h-8 w-8 p-0 text-slate-500 hover:text-red-600 hover:bg-red-50"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -372,64 +476,92 @@ export function ShippingRuleForm({ ruleId, onClose, onSave }: ShippingRuleFormPr
             <div className="space-y-3">
               <div className="space-y-1">
                 <Label className="text-xs text-slate-700">Strategy</Label>
-                <Select
-                  value={shippingRule.actions?.select_service?.strategy || "cheapest"}
-                  onValueChange={(value) => handleSelectServiceChange("strategy", value)}
-                >
-                  <SelectTrigger className="h-8">
-                    <SelectValue placeholder="Select strategy" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="cheapest">Select Cheapest</SelectItem>
-                    <SelectItem value="fastest">Select Fastest</SelectItem>
-                    <SelectItem value="preferred">Prefer Specific Carrier</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {shippingRule.actions?.select_service?.strategy === "preferred" && (
-                <>
-                  <div className="space-y-1">
-                    <Label className="text-xs text-slate-700">Preferred Carrier</Label>
+                <form.Field
+                  name="actions.select_service.strategy"
+                  children={(field) => (
                     <Select
-                      value={shippingRule.actions?.select_service?.carrier_code || "none"}
-                      onValueChange={(value) => handleSelectServiceChange("carrier_code", value === "none" ? null : value)}
+                      value={field.state.value || "cheapest"}
+                      onValueChange={(value) => field.handleChange(value)}
                     >
                       <SelectTrigger className="h-8">
-                        <SelectValue placeholder="Select carrier" />
+                        <SelectValue placeholder="Select strategy" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="none">Select carrier</SelectItem>
-                        {references?.carriers && Object.entries(references.carriers).map(([key, name]) => (
-                          <SelectItem key={key} value={key}>
-                            {name as string}
-                          </SelectItem>
-                        ))}
+                        <SelectItem value="cheapest">Select Cheapest</SelectItem>
+                        <SelectItem value="fastest">Select Fastest</SelectItem>
+                        <SelectItem value="preferred">Prefer Specific Carrier</SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="space-y-1">
-                      <Label className="text-xs text-slate-700">Carrier ID</Label>
-                      <Input
-                        value={shippingRule.actions?.select_service?.carrier_id || ""}
-                        onChange={(e) => handleSelectServiceChange("carrier_id", e.target.value)}
-                        placeholder="Optional"
-                        className="h-8"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="text-xs text-slate-700">Service Code</Label>
-                      <Input
-                        value={shippingRule.actions?.select_service?.service_code || ""}
-                        onChange={(e) => handleSelectServiceChange("service_code", e.target.value)}
-                        placeholder="Optional"
-                        className="h-8"
-                      />
-                    </div>
-                  </div>
-                </>
-              )}
+                  )}
+                />
+              </div>
+
+              <form.Field
+                name="actions.select_service.strategy"
+                children={(strategyField) => {
+                  if (strategyField.state.value === "preferred") {
+                    return (
+                      <>
+                        <div className="space-y-1">
+                          <Label className="text-xs text-slate-700">Preferred Carrier</Label>
+                          <form.Field
+                            name="actions.select_service.carrier_code"
+                            children={(field) => (
+                              <Select
+                                value={field.state.value || "none"}
+                                onValueChange={(value) => field.handleChange(value === "none" ? null : value)}
+                              >
+                                <SelectTrigger className="h-8">
+                                  <SelectValue placeholder="Select carrier" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="none">Select carrier</SelectItem>
+                                  {references?.carriers && Object.entries(references.carriers).map(([key, name]) => (
+                                    <SelectItem key={key} value={key}>
+                                      {name as string}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            )}
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="space-y-1">
+                            <Label className="text-xs text-slate-700">Carrier ID</Label>
+                            <form.Field
+                              name="actions.select_service.carrier_id"
+                              children={(field) => (
+                                <Input
+                                  value={field.state.value || ""}
+                                  onChange={(e) => field.handleChange(e.target.value)}
+                                  placeholder="Optional"
+                                  className="h-8"
+                                />
+                              )}
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <Label className="text-xs text-slate-700">Service Code</Label>
+                            <form.Field
+                              name="actions.select_service.service_code"
+                              children={(field) => (
+                                <Input
+                                  value={field.state.value || ""}
+                                  onChange={(e) => field.handleChange(e.target.value)}
+                                  placeholder="Optional"
+                                  className="h-8"
+                                />
+                              )}
+                            />
+                          </div>
+                        </div>
+                      </>
+                    );
+                  }
+                  return null;
+                }}
+              />
             </div>
           </div>
         );
@@ -443,7 +575,7 @@ export function ShippingRuleForm({ ruleId, onClose, onSave }: ShippingRuleFormPr
                 variant="ghost"
                 size="sm"
                 onClick={() => removeAction('service_blocking')}
-                className="h-6 w-6 p-0 text-slate-500 hover:text-red-600"
+                className="h-8 w-8 p-0 text-slate-500 hover:text-red-600 hover:bg-red-50"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -453,9 +585,14 @@ export function ShippingRuleForm({ ruleId, onClose, onSave }: ShippingRuleFormPr
                 <Label className="text-xs text-slate-700">Block automatic selection</Label>
                 <p className="text-xs text-slate-500">Prevent auto service selection</p>
               </div>
-              <Switch
-                checked={ruleData.actions?.block_service || false}
-                onCheckedChange={(checked) => handleActionChange("block_service", checked)}
+              <form.Field
+                name="actions.block_service"
+                children={(field) => (
+                  <Switch
+                    checked={field.state.value || false}
+                    onCheckedChange={(checked) => field.handleChange(checked)}
+                  />
+                )}
               />
             </div>
           </div>
@@ -487,38 +624,58 @@ export function ShippingRuleForm({ ruleId, onClose, onSave }: ShippingRuleFormPr
             <div className="space-y-3">
               <div className="space-y-1">
                 <Label className="text-xs text-slate-700">Rule Name *</Label>
-                <Input
-                  value={ruleData.name || ""}
-                  onChange={(e) => handleChange({ name: e.target.value })}
-                  placeholder="e.g., Canada Express Rule"
-                  className={`h-8 ${!ruleData.name ? "border-red-300" : ""}`}
+                <form.Field
+                  name="name"
+                  validators={{
+                    onChange: ({ value }) => !value ? 'Rule name is required' : undefined,
+                  }}
+                  children={(field) => (
+                    <>
+                      <Input
+                        value={field.state.value || ""}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        placeholder="e.g., Canada Express Rule"
+                        className={`h-8 ${field.state.meta.errors.length ? "border-red-300" : ""}`}
+                      />
+                      {field.state.meta.errors.map((error, index) => (
+                        <p key={index} className="text-xs text-red-600">{error}</p>
+                      ))}
+                    </>
+                  )}
                 />
-                {!ruleData.name && (
-                  <p className="text-xs text-red-600">Rule name is required</p>
-                )}
               </div>
 
               <div className="space-y-1">
                 <Label className="text-xs text-slate-700">Priority</Label>
-                <Input
-                  type="number"
-                  value={ruleData.priority || 1}
-                  onChange={(e) => handleChange({ priority: parseInt(e.target.value) || 1 })}
-                  min="0"
-                  max="100"
-                  className="h-8"
+                <form.Field
+                  name="priority"
+                  children={(field) => (
+                    <Input
+                      type="number"
+                      value={field.state.value || 1}
+                      onChange={(e) => field.handleChange(parseInt(e.target.value) || 1)}
+                      min="0"
+                      max="100"
+                      className="h-8"
+                    />
+                  )}
                 />
                 <p className="text-xs text-slate-500">Lower numbers = higher priority</p>
               </div>
 
               <div className="space-y-1">
                 <Label className="text-xs text-slate-700">Description</Label>
-                <Textarea
-                  value={ruleData.description || ""}
-                  onChange={(e) => handleChange({ description: e.target.value })}
-                  placeholder="Describe when this rule should be applied..."
-                  rows={2}
-                  className="text-xs"
+                <form.Field
+                  name="description"
+                  children={(field) => (
+                    <Textarea
+                      value={field.state.value || ""}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      placeholder="Describe when this rule should be applied..."
+                      rows={2}
+                      className="text-xs"
+                    />
+                  )}
                 />
               </div>
 
@@ -527,9 +684,14 @@ export function ShippingRuleForm({ ruleId, onClose, onSave }: ShippingRuleFormPr
                   <Label className="text-xs text-slate-700">Enable Rule</Label>
                   <p className="text-xs text-slate-500">Activate this shipping rule</p>
                 </div>
-                <Switch
-                  checked={ruleData.is_active || false}
-                  onCheckedChange={(checked) => handleChange({ is_active: checked })}
+                <form.Field
+                  name="is_active"
+                  children={(field) => (
+                    <Switch
+                      checked={field.state.value || false}
+                      onCheckedChange={(checked) => field.handleChange(checked)}
+                    />
+                  )}
                 />
               </div>
             </div>
@@ -547,7 +709,7 @@ export function ShippingRuleForm({ ruleId, onClose, onSave }: ShippingRuleFormPr
 
               {availableConditions.length > 0 && (
                 <div className="border-2 border-dashed border-slate-200 rounded-md p-3 my-2">
-                  <Select onValueChange={addCondition}>
+                  <Select value={conditionSelectValue} onValueChange={addCondition}>
                     <SelectTrigger className="h-9">
                       <div className="flex items-center">
                         <Plus className="h-4 w-4 mr-2 text-slate-500" />
@@ -589,7 +751,7 @@ export function ShippingRuleForm({ ruleId, onClose, onSave }: ShippingRuleFormPr
 
               {availableActions.length > 0 && (
                 <div className="border-2 border-dashed border-slate-200 rounded-md p-3 my-2">
-                  <Select onValueChange={addAction}>
+                  <Select value={actionSelectValue} onValueChange={addAction}>
                     <SelectTrigger className="h-9">
                       <div className="flex items-center">
                         <Plus className="h-4 w-4 mr-2 text-slate-500" />
@@ -647,13 +809,18 @@ export function ShippingRuleForm({ ruleId, onClose, onSave }: ShippingRuleFormPr
             >
               Cancel
             </Button>
-            <Button
-              onClick={handleSave}
-              disabled={loader.loading || (!form.state.isDirty && !isNew)}
-              size="sm"
-            >
-              {loader.loading ? "Saving..." : "Save rule"}
-            </Button>
+            <form.Subscribe
+              selector={(state) => [state.canSubmit, state.isSubmitting]}
+              children={([canSubmit, isSubmitting]) => (
+                <Button
+                  onClick={handleSave}
+                  disabled={!canSubmit || isSubmitting || loader.loading}
+                  size="sm"
+                >
+                  {loader.loading || isSubmitting ? "Saving..." : "Save rule"}
+                </Button>
+              )}
+            />
           </div>
         </div>
       </div>

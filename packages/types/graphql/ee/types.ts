@@ -753,6 +753,10 @@ export interface GetWorkflow_workflow_actions_connection {
   parameters_template: string | null;
   auth_template: string | null;
   credentials: any | null;
+  credentials_from_metafields: any | null;
+  required_credentials: string[];
+  is_credentials_complete: boolean;
+  credential_validation: any;
   template_slug: string | null;
   metadata: any | null;
   metafields: GetWorkflow_workflow_actions_connection_metafields[];
@@ -829,6 +833,8 @@ export interface GetWorkflows_workflows_edges_node_trigger {
   schedule: string | null;
   secret: string | null;
   secret_key: string | null;
+  is_due: boolean;
+  next_run_description: string | null;
   created_at: any;
   updated_at: any;
 }
@@ -859,6 +865,10 @@ export interface GetWorkflows_workflows_edges_node_actions_connection {
   parameters_template: string | null;
   auth_template: string | null;
   credentials: any | null;
+  credentials_from_metafields: any | null;
+  required_credentials: string[];
+  is_credentials_complete: boolean;
+  credential_validation: any;
   metadata: any | null;
   template_slug: string | null;
   metafields: GetWorkflows_workflows_edges_node_actions_connection_metafields[];
@@ -933,6 +943,133 @@ export interface GetWorkflowsVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GetScheduledWorkflows
+// ====================================================
+
+export interface GetScheduledWorkflows_scheduled_workflows_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetScheduledWorkflows_scheduled_workflows_edges_node_trigger {
+  object_type: string;
+  id: string;
+  slug: string;
+  trigger_type: AutomationTriggerType;
+  schedule: string | null;
+  is_due: boolean;
+  next_run_description: string | null;
+  created_at: any;
+  updated_at: any;
+}
+
+export interface GetScheduledWorkflows_scheduled_workflows_edges_node_action_nodes {
+  order: number;
+  slug: string;
+}
+
+export interface GetScheduledWorkflows_scheduled_workflows_edges_node_actions_connection_metafields {
+  id: string;
+  key: string;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+  value: string | null;
+}
+
+export interface GetScheduledWorkflows_scheduled_workflows_edges_node_actions_connection {
+  object_type: string;
+  id: string;
+  name: string;
+  slug: string;
+  auth_type: AutomationAuthType;
+  port: number | null;
+  host: string | null;
+  endpoint: string | null;
+  description: string | null;
+  parameters_template: string | null;
+  auth_template: string | null;
+  credentials: any | null;
+  credentials_from_metafields: any | null;
+  required_credentials: string[];
+  is_credentials_complete: boolean;
+  credential_validation: any;
+  metadata: any | null;
+  template_slug: string | null;
+  metafields: GetScheduledWorkflows_scheduled_workflows_edges_node_actions_connection_metafields[];
+  created_at: any;
+  updated_at: any;
+}
+
+export interface GetScheduledWorkflows_scheduled_workflows_edges_node_actions_metafields {
+  id: string;
+  key: string;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+  value: string | null;
+}
+
+export interface GetScheduledWorkflows_scheduled_workflows_edges_node_actions {
+  object_type: string;
+  id: string;
+  slug: string;
+  name: string;
+  action_type: AutomationActionType;
+  description: string | null;
+  port: number | null;
+  host: string | null;
+  endpoint: string | null;
+  method: AutomationHTTPMethod | null;
+  content_type: AutomationHTTPContentType | null;
+  header_template: string | null;
+  parameters_type: AutomationParametersType | null;
+  parameters_template: string | null;
+  connection: GetScheduledWorkflows_scheduled_workflows_edges_node_actions_connection | null;
+  template_slug: string | null;
+  metadata: any | null;
+  metafields: GetScheduledWorkflows_scheduled_workflows_edges_node_actions_metafields[];
+  created_at: any;
+  updated_at: any;
+}
+
+export interface GetScheduledWorkflows_scheduled_workflows_edges_node {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  trigger: GetScheduledWorkflows_scheduled_workflows_edges_node_trigger | null;
+  action_nodes: GetScheduledWorkflows_scheduled_workflows_edges_node_action_nodes[];
+  actions: GetScheduledWorkflows_scheduled_workflows_edges_node_actions[];
+  metadata: any | null;
+  template_slug: string | null;
+  created_at: any;
+  updated_at: any;
+}
+
+export interface GetScheduledWorkflows_scheduled_workflows_edges {
+  node: GetScheduledWorkflows_scheduled_workflows_edges_node;
+}
+
+export interface GetScheduledWorkflows_scheduled_workflows {
+  page_info: GetScheduledWorkflows_scheduled_workflows_page_info;
+  edges: GetScheduledWorkflows_scheduled_workflows_edges[];
+}
+
+export interface GetScheduledWorkflows {
+  scheduled_workflows: GetScheduledWorkflows_scheduled_workflows;
+}
+
+export interface GetScheduledWorkflowsVariables {
+  filter?: WorkflowFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GetWorkflowConnection
 // ====================================================
 
@@ -956,6 +1093,10 @@ export interface GetWorkflowConnection_workflow_connection {
   parameters_template: string | null;
   auth_template: string | null;
   credentials: any | null;
+  credentials_from_metafields: any | null;
+  required_credentials: string[];
+  is_credentials_complete: boolean;
+  credential_validation: any;
   template_slug: string | null;
   metadata: any | null;
   metafields: GetWorkflowConnection_workflow_connection_metafields[];
@@ -1005,6 +1146,10 @@ export interface GetWorkflowConnections_workflow_connections_edges_node {
   parameters_template: string | null;
   auth_template: string | null;
   credentials: any | null;
+  credentials_from_metafields: any | null;
+  required_credentials: string[];
+  is_credentials_complete: boolean;
+  credential_validation: any;
   metadata: any | null;
   template_slug: string | null;
   metafields: GetWorkflowConnections_workflow_connections_edges_node_metafields[];
@@ -1056,6 +1201,10 @@ export interface GetWorkflowAction_workflow_action_connection {
   parameters_template: string | null;
   auth_template: string | null;
   credentials: any | null;
+  credentials_from_metafields: any | null;
+  required_credentials: string[];
+  is_credentials_complete: boolean;
+  credential_validation: any;
   metadata: any | null;
   template_slug: string | null;
   metafields: GetWorkflowAction_workflow_action_connection_metafields[];
@@ -1134,6 +1283,10 @@ export interface GetWorkflowActions_workflow_actions_edges_node_connection {
   parameters_template: string | null;
   auth_template: string | null;
   credentials: any | null;
+  credentials_from_metafields: any | null;
+  required_credentials: string[];
+  is_credentials_complete: boolean;
+  credential_validation: any;
   template_slug: string | null;
   metadata: any | null;
   metafields: GetWorkflowActions_workflow_actions_edges_node_connection_metafields[];
@@ -1960,6 +2113,67 @@ export interface DeleteWorkflowTriggerVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: TriggerScheduledWorkflow
+// ====================================================
+
+export interface TriggerScheduledWorkflow_trigger_scheduled_workflow_workflow_event {
+  id: string;
+  status: AutomationEventStatus;
+  created_at: any;
+}
+
+export interface TriggerScheduledWorkflow_trigger_scheduled_workflow_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface TriggerScheduledWorkflow_trigger_scheduled_workflow {
+  workflow_event: TriggerScheduledWorkflow_trigger_scheduled_workflow_workflow_event | null;
+  errors: TriggerScheduledWorkflow_trigger_scheduled_workflow_errors[] | null;
+}
+
+export interface TriggerScheduledWorkflow {
+  trigger_scheduled_workflow: TriggerScheduledWorkflow_trigger_scheduled_workflow;
+}
+
+export interface TriggerScheduledWorkflowVariables {
+  trigger_id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: ValidateCronExpression
+// ====================================================
+
+export interface ValidateCronExpression_validate_cron_expression_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface ValidateCronExpression_validate_cron_expression {
+  is_valid: boolean;
+  description: string | null;
+  next_run_times: any[] | null;
+  error_message: string | null;
+  errors: ValidateCronExpression_validate_cron_expression_errors[] | null;
+}
+
+export interface ValidateCronExpression {
+  validate_cron_expression: ValidateCronExpression_validate_cron_expression;
+}
+
+export interface ValidateCronExpressionVariables {
+  input: ValidateCronExpressionInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GetShippingRule
 // ====================================================
 
@@ -2390,6 +2604,8 @@ export interface WorkflowFilter {
   offset?: number | null;
   first?: number | null;
   keyword?: string | null;
+  trigger_type?: AutomationTriggerType | null;
+  is_active?: boolean | null;
 }
 
 // null
@@ -2617,6 +2833,11 @@ export interface UpdateWorkflowTriggerMutationInput {
   secret?: string | null;
   secret_key?: string | null;
   template_slug?: string | null;
+}
+
+// null
+export interface ValidateCronExpressionInput {
+  expression: string;
 }
 
 // null

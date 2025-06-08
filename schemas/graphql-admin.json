@@ -1152,6 +1152,18 @@
             "deprecationReason": null
           },
           {
+            "name": "SHIPPING_RULES",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "PERSIST_SDK_TRACING",
             "description": null,
             "args": [],
@@ -8489,6 +8501,16 @@
           },
           {
             "name": "WORKFLOW_MANAGEMENT",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "SHIPPING_RULES",
             "description": null,
             "type": {
               "kind": "SCALAR",

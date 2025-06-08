@@ -2,6 +2,7 @@ import {
   WorkflowFilter,
   GetWorkflows,
   GET_WORKFLOWS,
+  GET_SCHEDULED_WORKFLOWS,
   GetWorkflow,
   GET_WORKFLOW,
   CreateWorkflow,
@@ -20,6 +21,8 @@ import {
   UPDATE_WORKFLOW_TRIGGER,
   UpdateWorkflowTrigger,
   DELETE_WORKFLOW_TRIGGER,
+  TRIGGER_SCHEDULED_WORKFLOW,
+  VALIDATE_CRON_EXPRESSION,
   AutomationActionType,
   AutomationHTTPMethod,
   AutomationHTTPContentType,
@@ -30,12 +33,14 @@ import {
   PartialWorkflowConnectionMutationInput,
   AutomationEventType,
   AutomationEventStatus,
+  AutomationTriggerType,
 } from "@karrio/types/graphql/ee";
 import {
   WorkflowEventType,
   useWorkflowEventMutation,
   useWorkflowEvents,
 } from "./workflow-events";
+import { useWorkflowTemplates, PREDEFINED_WORKFLOW_TEMPLATES } from "./workflow-templates";
 import {
   gqlstr,
   insertUrlParam,
@@ -120,6 +125,17 @@ export function useWorkflows({
   };
 }
 
+export function useScheduledWorkflows({
+  setVariablesToURL = false,
+  ...initialData
+}: FilterType = {}) {
+  return useWorkflows({
+    setVariablesToURL,
+    trigger_type: AutomationTriggerType.scheduled,
+    ...initialData,
+  });
+}
+
 export function useWorkflow({
   id,
   setVariablesToURL = false,
@@ -198,6 +214,16 @@ export function useWorkflowMutation() {
       ),
     { onSuccess: invalidateCache, onError },
   );
+  const triggerScheduledWorkflow = useMutation(
+    (trigger_id: string) =>
+      karrio.graphql.request(gqlstr(TRIGGER_SCHEDULED_WORKFLOW), { trigger_id }),
+    { onSuccess: invalidateCache, onError },
+  );
+  const validateCronExpression = useMutation(
+    (input: { expression: string }) =>
+      karrio.graphql.request(gqlstr(VALIDATE_CRON_EXPRESSION), { input }),
+    { onError },
+  );
 
   return {
     createWorkflow,
@@ -206,6 +232,8 @@ export function useWorkflowMutation() {
     createWorkflowTrigger,
     updateWorkflowTrigger,
     deleteWorkflowTrigger,
+    triggerScheduledWorkflow,
+    validateCronExpression,
   };
 }
 
@@ -222,7 +250,7 @@ type WorkflowDataType = (
 const DEFAULT_STATE = {
   name: "",
   description: "",
-  trigger: { trigger_type: "manual" },
+  trigger: { trigger_type: AutomationTriggerType.manual },
   action_nodes: [{ order: 1, index: 0 }],
   actions: [
     {
@@ -266,7 +294,7 @@ function reducer(
   }
 }
 
-export function useWorkflowForm({ id }: { id?: string } = {}) {
+export function useWorkflowForm({ id, templateSlug }: { id?: string; templateSlug?: string } = {}) {
   const loader = useLoader();
   const router = useRouter();
   const notifier = useNotifier();
@@ -282,6 +310,18 @@ export function useWorkflowForm({ id }: { id?: string } = {}) {
     DEFAULT_STATE,
     () => DEFAULT_STATE,
   );
+
+  // Find template data (prioritize predefined templates)
+  const selectedTemplate = React.useMemo(() => {
+    if (!templateSlug) return null;
+
+    // First check predefined templates
+    const predefinedTemplate = PREDEFINED_WORKFLOW_TEMPLATES.find(t => t.slug === templateSlug);
+    if (predefinedTemplate) return predefinedTemplate;
+
+    // If not found in predefined, could extend to fetch from server
+    return null;
+  }, [templateSlug]);
   const {
     query: { data: { workflow: current } = {}, ...workflowQuery },
   } = useWorkflow({ id });
@@ -498,6 +538,28 @@ export function useWorkflowForm({ id }: { id?: string } = {}) {
   React.useEffect(() => {
     setIsNew(id === "new");
   }, [id]);
+
+  React.useEffect(() => {
+    // Load template data when templateSlug is provided and it's a new workflow
+    if (id === "new" && selectedTemplate) {
+      const templateData = {
+        name: selectedTemplate.name,
+        description: selectedTemplate.description,
+        trigger: selectedTemplate.trigger,
+        actions: selectedTemplate.actions?.map((action: any, index: number) => ({
+          ...action,
+          id: undefined, // Remove id for new actions
+        })) || [],
+        action_nodes: selectedTemplate.actions?.map((_: any, index: number) => ({
+          order: index + 1,
+          index: index,
+          slug: selectedTemplate.actions[index]?.slug,
+        })) || [],
+      };
+
+      dispatch({ name: "full", value: templateData });
+    }
+  }, [id, selectedTemplate]);
   React.useEffect(() => {
     if (query.isFetched && id !== "new") {
       const _ordered = zipActionWithNode(
