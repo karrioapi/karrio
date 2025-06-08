@@ -18,6 +18,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@karrio/ui/components/ui/dropdown-menu";
+import { AppLink } from "@karrio/ui/core/components/app-link";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 
 const ContextProviders = bundleContexts([ModalProvider]);
 
@@ -25,6 +27,7 @@ const ContextProviders = bundleContexts([ModalProvider]);
 
 export default function Page(pageProps: any) {
   const Component = (): JSX.Element => {
+    const { metadata } = useAPIMetadata();
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [isCreating, setIsCreating] = useState(false);
@@ -138,18 +141,18 @@ export default function Page(pageProps: any) {
     return (
       <>
         {/* Header */}
-        <header className="flex items-center justify-between py-4">
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold">Shipping Rules</h1>
-            <Badge variant="secondary" className="text-xs font-bold">
+        <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
+          <div className="title is-4">
+            <span>Automation</span>
+            <span className="tag is-warning is-size-7 has-text-weight-bold mx-2">
               PREVIEW
-            </Badge>
+            </span>
           </div>
           <Sheet open={isCreating} onOpenChange={setIsCreating}>
             <SheetTrigger asChild>
               <Button size="sm">
                 <Plus className="h-4 w-4 mr-2" />
-                Add Rule
+                New Rule
               </Button>
             </SheetTrigger>
             <SheetContent className="w-[800px] min-w-[800px] sm:max-w-[800px] p-0 shadow-none">
@@ -162,7 +165,28 @@ export default function Page(pageProps: any) {
           </Sheet>
         </header>
 
-        <div className="py-6">
+        <div className="tabs">
+          <ul>
+            <li className={`is-capitalized has-text-weight-semibold is-active`}>
+              <AppLink href="/shipping-rules" shallow={false} prefetch={false}>
+                <span>Shipping Rules</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold ${metadata?.WORKFLOW_MANAGEMENT ? "" : "is-disabled"}`}
+              onClick={() => {
+                if (!metadata?.WORKFLOW_MANAGEMENT) {
+                  alert("Workflow management is not enabled in your API configuration.");
+                }
+              }}
+            >
+              <AppLink href="/workflows" shallow={false} prefetch={false}>
+                <span>Workflows</span>
+              </AppLink>
+            </li>
+          </ul>
+        </div>
+
+        <div className="py-4">
           {!query.isFetched && (
             <div className="flex justify-center py-8">
               <Spinner />
