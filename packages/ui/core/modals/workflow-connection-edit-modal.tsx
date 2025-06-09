@@ -101,11 +101,11 @@ export const ConnectionModalEditor = ({
     };
 
     // Helper function to get credential validation errors
-    const getCredentialErrors = () => {
+    const getCredentialErrors = (): string[] => {
       if (!defaultValue.credential_validation) return [];
 
       const validation = defaultValue.credential_validation;
-      const errors = [];
+      const errors: string[] = [];
 
       if (validation.missing_credentials && validation.missing_credentials.length > 0) {
         errors.push(...validation.missing_credentials.map((cred: string) => `Missing: ${cred}`));
