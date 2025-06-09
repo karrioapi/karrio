@@ -1,0 +1,466 @@
+---
+sidebarTitle: Admin Console
+title: Admin Console
+description: Administrative interface for system management, user administration, and platform configuration
+tags: ["admin", "console", "management", "administration", "configuration"]
+---
+
+# Admin Console
+
+Karrio's Admin Console provides a comprehensive administrative interface for managing users, organizations, system settings, and platform configuration. Access advanced features for system monitoring, user management, and operational oversight.
+
+## Overview
+
+The Admin Console is designed for system administrators and platform managers who need to oversee the entire Karrio deployment. Manage users across organizations, configure system-wide settings, and monitor platform health and performance.
+
+### Key Features
+
+- **User Management**: Manage users across all organizations
+- **Organization Administration**: Create and manage organizations
+- **System Configuration**: Configure platform-wide settings
+- **Monitoring & Analytics**: Monitor system health and usage
+- **Security Management**: Manage security policies and access controls
+
+## Access Control
+
+### Admin Roles
+
+The Admin Console supports different levels of administrative access:
+
+#### Super Admin
+
+- Full system access
+- User and organization management
+- System configuration
+- Security policy management
+
+#### Organization Admin
+
+- Manage users within assigned organizations
+- Configure organization settings
+- Access organization analytics
+
+#### Support Admin
+
+- Read-only access to user data
+- Access to support tools
+- Limited user assistance capabilities
+
+### Authentication
+
+```bash
+# Admin authentication with elevated permissions
+curl -X POST "https://api.karrio.io/api/token" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "admin@company.com",
+    "password": "admin_password"
+  }'
+
+# Response includes admin permissions
+{
+  "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+  "user": {
+    "id": "admin_123",
+    "email": "admin@company.com",
+    "is_staff": true,
+    "is_superuser": true,
+    "permissions": ["admin.users", "admin.organizations", "admin.system"]
+  }
+}
+```
+
+## User Management
+
+### User Administration
+
+```bash
+# List all users across organizations
+curl -X POST "https://api.karrio.io/graphql" \
+  -H "Authorization: Token ADMIN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "query { users { id email isActive organizations { id name } } }"
+  }'
+
+# Create new user
+curl -X POST "https://api.karrio.io/graphql" \
+  -H "Authorization: Token ADMIN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "mutation CreateUser($input: CreateUserInput!) { createUser(input: $input) { user { id email } errors { field messages } } }",
+    "variables": {
+      "input": {
+        "email": "newuser@example.com",
+        "firstName": "John",
+        "lastName": "Doe",
+        "isActive": true
+      }
+    }
+  }'
+```
+
+### User Activity Monitoring
+
+```bash
+# Get user activity logs
+curl -X GET "https://api.karrio.io/admin/users/user_123/activity" \
+  -H "Authorization: Token ADMIN_API_KEY"
+
+# Response includes activity history
+{
+  "activities": [
+    {
+      "timestamp": "2024-01-15T10:30:00Z",
+      "action": "login",
+      "ip_address": "192.168.1.100",
+      "user_agent": "Mozilla/5.0..."
+    },
+    {
+      "timestamp": "2024-01-15T10:35:00Z",
+      "action": "create_shipment",
+      "resource_id": "shp_123",
+      "organization_id": "org_456"
+    }
+  ]
+}
+```
+
+## Organization Management
+
+### Organization Administration
+
+```bash
+# List all organizations
+curl -X POST "https://api.karrio.io/graphql" \
+  -H "Authorization: Token ADMIN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "query { organizations { id name slug userCount createdAt } }"
+  }'
+
+# Create organization
+curl -X POST "https://api.karrio.io/graphql" \
+  -H "Authorization: Token ADMIN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "mutation CreateOrg($input: CreateOrganizationMutationInput!) { createOrganization(input: $input) { organization { id name } errors { field messages } } }",
+    "variables": {
+      "input": {
+        "name": "New Company",
+        "slug": "new-company"
+      }
+    }
+  }'
+```
+
+### Organization Settings
+
+```bash
+# Configure organization settings
+curl -X POST "https://api.karrio.io/graphql" \
+  -H "Authorization: Token ADMIN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "mutation UpdateOrg($input: UpdateOrganizationMutationInput!) { updateOrganization(input: $input) { organization { id settings } errors { field messages } } }",
+    "variables": {
+      "input": {
+        "id": "org_123",
+        "settings": {
+          "maxUsers": 50,
+          "maxShipmentsPerMonth": 10000,
+          "allowedCarriers": ["fedex", "ups", "usps"],
+          "features": ["tracking", "webhooks", "batch_processing"]
+        }
+      }
+    }
+  }'
+```
+
+## System Configuration
+
+### Platform Settings
+
+```bash
+# Get system configuration
+curl -X GET "https://api.karrio.io/admin/system/config" \
+  -H "Authorization: Token ADMIN_API_KEY"
+
+# Update system settings via GraphQL
+curl -X POST "https://api.karrio.io/graphql" \
+  -H "Authorization: Token ADMIN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "mutation updateConfigs($input: InstanceConfigMutationInput!) { update_configs(input: $input) { configs { ALLOW_SIGNUP ALLOW_ADMIN_APPROVED_SIGNUP MULTI_ORGANIZATIONS ORDERS_MANAGEMENT } } }",
+    "variables": {
+      "input": {
+        "ALLOW_SIGNUP": false,
+        "ALLOW_ADMIN_APPROVED_SIGNUP": true,
+        "MULTI_ORGANIZATIONS": true,
+        "ORDERS_MANAGEMENT": true
+      }
+    }
+  }'
+```
+
+### Feature Management
+
+```bash
+# Query available features
+curl -X POST "https://api.karrio.io/graphql" \
+  -H "Authorization: Token ADMIN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "query { configs { WORKFLOW_MANAGEMENT SHIPPING_RULES DOCUMENTS_MANAGEMENT APPS_MANAGEMENT DATA_IMPORT_EXPORT } }"
+  }'
+```
+
+## System Monitoring
+
+### System Usage
+
+```bash
+# Get system usage metrics via GraphQL
+curl -X POST "https://api.karrio.io/graphql" \
+  -H "Authorization: Token ADMIN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "query { system_usage { total_users active_users total_organizations total_shipments api_requests_count } }"
+  }'
+
+# Response includes usage metrics
+{
+  "data": {
+    "system_usage": {
+      "total_users": 1247,
+      "active_users": 892,
+      "total_organizations": 450,
+      "total_shipments": 125000,
+      "api_requests_count": 1500000
+    }
+  }
+}
+```
+
+### System Connections
+
+```bash
+# Get system carrier connections
+curl -X POST "https://api.karrio.io/graphql" \
+  -H "Authorization: Token ADMIN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "query { system_connections { carrier_name display_name active test_mode config } }"
+  }'
+```
+
+## System Carrier Management
+
+### Create System Carrier Connection
+
+```bash
+# Create a system-wide carrier connection
+curl -X POST "https://api.karrio.io/graphql" \
+  -H "Authorization: Token ADMIN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "mutation createSystemCarrier($input: CreateSystemCarrierConnectionMutationInput!) { create_system_carrier_connection(input: $input) { system_carrier_connection { id carrier_name config } } }",
+    "variables": {
+      "input": {
+        "carrier_name": "fedex",
+        "config": {
+          "account_number": "123456789",
+          "meter_number": "987654321"
+        }
+      }
+    }
+  }'
+```
+
+### Update System Carrier Connection
+
+```bash
+# Update system carrier connection
+curl -X POST "https://api.karrio.io/graphql" \
+  -H "Authorization: Token ADMIN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "mutation updateSystemCarrier($input: UpdateSystemCarrierConnectionMutationInput!) { update_system_carrier_connection(input: $input) { system_carrier_connection { id carrier_name active } } }",
+    "variables": {
+      "input": {
+        "id": "sys_carrier_123",
+        "active": true
+      }
+    }
+  }'
+```
+
+## GraphQL Admin Operations
+
+The Admin Console provides GraphQL-based administration through the `/graphql` endpoint with admin authentication. All operations require proper admin privileges.
+
+### Available Admin Queries
+
+- `configs` - Get system configuration
+- `system_usage` - Get platform usage statistics
+- `system_connections` - List system carrier connections
+- `system_carrier_connections` - List system carriers with pagination
+
+### Available Admin Mutations
+
+- `update_configs` - Update system configuration flags
+- `create_system_carrier_connection` - Create system-wide carrier
+- `update_system_carrier_connection` - Update system carrier
+- `delete_system_carrier_connection` - Remove system carrier
+
+### JavaScript SDK Usage
+
+```javascript
+import { GraphQLApi } from "@karrio/types";
+
+const admin = new GraphQLApi("https://api.karrio.io", client.axios);
+
+// Get system config
+const config = await admin.request(`
+  query {
+    configs {
+      ALLOW_SIGNUP
+      MULTI_ORGANIZATIONS
+      ORDERS_MANAGEMENT
+      DOCUMENTS_MANAGEMENT
+    }
+  }
+`);
+
+// Update configuration
+const update = await admin.request(
+  `
+  mutation updateConfigs($input: InstanceConfigMutationInput!) {
+    update_configs(input: $input) {
+      configs {
+        ALLOW_SIGNUP
+        MULTI_ORGANIZATIONS
+      }
+    }
+  }
+`,
+  {
+    input: {
+      ALLOW_SIGNUP: false,
+      MULTI_ORGANIZATIONS: true,
+    },
+  },
+);
+```
+
+## Dashboard Features
+
+### Admin Dashboard
+
+The Admin Console includes a web-based dashboard with:
+
+#### User Management Interface
+
+- User search and filtering
+- Bulk user operations
+- User activity monitoring
+- Permission management
+
+#### Organization Overview
+
+- Organization metrics
+- Usage statistics
+- Billing information
+- Feature usage
+
+#### System Monitoring
+
+- Real-time system health
+- Performance metrics
+- Error tracking
+- Carrier status
+
+#### Configuration Management
+
+- System settings
+- Feature flags
+- Security policies
+- Integration settings
+
+### Custom Reports
+
+```bash
+# Generate custom reports
+curl -X POST "https://api.karrio.io/admin/reports" \
+  -H "Authorization: Token ADMIN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "reportType": "usage_summary",
+    "parameters": {
+      "period": "monthly",
+      "organizations": ["org_123", "org_456"],
+      "metrics": ["shipments", "costs", "carriers"],
+      "format": "pdf"
+    },
+    "schedule": {
+      "frequency": "monthly",
+      "recipients": ["admin@company.com"]
+    }
+  }'
+```
+
+## Best Practices
+
+### Security Guidelines
+
+1. **Use Strong Authentication**: Require MFA for all admin accounts
+2. **Principle of Least Privilege**: Grant minimum necessary permissions
+3. **Regular Audits**: Review admin access and activities regularly
+4. **Secure Communication**: Always use HTTPS for admin operations
+
+### Operational Procedures
+
+```bash
+# Regular maintenance checklist:
+# 1. Review system health and performance metrics
+# 2. Check audit logs for suspicious activities
+# 3. Update security policies as needed
+# 4. Monitor carrier integrations and performance
+# 5. Review user and organization growth
+# 6. Backup critical data regularly
+```
+
+### Monitoring Setup
+
+```javascript
+// Example monitoring configuration
+const monitoringConfig = {
+  alerts: {
+    systemHealth: {
+      threshold: "error_rate > 5%",
+      notification: "admin@company.com",
+    },
+    carrierIssues: {
+      threshold: "carrier_downtime > 10min",
+      notification: "operations@company.com",
+    },
+    securityEvents: {
+      threshold: "failed_logins > 10/hour",
+      notification: "security@company.com",
+    },
+  },
+
+  reports: {
+    daily: ["system_health", "usage_summary"],
+    weekly: ["security_audit", "performance_report"],
+    monthly: ["growth_metrics", "cost_analysis"],
+  },
+};
+```
+
+## What's Next?
+
+- [User Management →](/docs/products/user-management) - User administration
+- [Multi-Tenant →](/docs/products/multi-tenant) - Multi-tenant architecture
+- [API Reference →](/docs/reference/api) - Complete API documentation

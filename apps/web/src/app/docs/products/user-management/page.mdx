@@ -1,0 +1,281 @@
+---
+sidebarTitle: User Management
+title: User Management
+description: Manage users, roles, and permissions with organization-based access control
+tags: ["users", "roles", "permissions", "organizations", "access-control"]
+---
+
+# User Management
+
+Karrio's User Management system provides comprehensive user administration, role-based access control, and organization management. Control who can access your shipping operations and what actions they can perform.
+
+## Overview
+
+Manage users across your organization with flexible role assignments and granular permissions. Support for multiple organizations, user invitations, and secure access control for enterprise deployments.
+
+### Key Benefits
+
+- **Role-Based Access**: Assign specific roles and permissions to users
+- **Organization Support**: Multi-organization user management
+- **User Invitations**: Invite users via email with automatic onboarding
+- **Secure Authentication**: JWT-based authentication with token management
+- **Audit Trail**: Track user actions and access patterns
+
+## Core Features
+
+### User Authentication
+
+```bash
+# Authenticate user and get token
+curl -X POST "https://api.karrio.io/api/token" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "user@example.com",
+    "password": "secure_password"
+  }'
+
+# Response
+{
+  "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+}
+```
+
+### Token Management
+
+```bash
+# Refresh access token
+curl -X POST "https://api.karrio.io/api/token/refresh" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+  }'
+
+# Verify token
+curl -X POST "https://api.karrio.io/api/token/verify" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+  }'
+```
+
+### Organization Management
+
+```bash
+# Create organization (requires admin permissions)
+curl -X POST "https://api.karrio.io/graphql" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "mutation CreateOrganization($input: CreateOrganizationMutationInput!) { createOrganization(input: $input) { organization { id name } errors { field messages } } }",
+    "variables": {
+      "input": {
+        "name": "Acme Corporation",
+        "slug": "acme-corp"
+      }
+    }
+  }'
+
+# List organizations
+curl -X POST "https://api.karrio.io/graphql" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "query { organizations { id name slug } }"
+  }'
+```
+
+### User Invitations
+
+```bash
+# Send organization invites
+curl -X POST "https://api.karrio.io/graphql" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "mutation SendInvites($input: SendOrganizationInvitesMutationInput!) { sendOrganizationInvites(input: $input) { invitations { id email } errors { field messages } } }",
+    "variables": {
+      "input": {
+        "emails": ["newuser@example.com"],
+        "organizationId": "org_123"
+      }
+    }
+  }'
+
+# Accept invitation
+curl -X POST "https://api.karrio.io/graphql" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "mutation AcceptInvitation($input: AcceptOrganizationInvitationMutationInput!) { acceptOrganizationInvitation(input: $input) { organization { id name } errors { field messages } } }",
+    "variables": {
+      "input": {
+        "invitationId": "inv_123"
+      }
+    }
+  }'
+```
+
+## User Roles and Permissions
+
+### Standard Roles
+
+- **Admin**: Full access to all features and user management
+- **Manager**: Access to shipping operations and basic user management
+- **User**: Access to shipping operations only
+- **Viewer**: Read-only access to shipping data
+
+### Permission Management
+
+```bash
+# Set user roles in organization
+curl -X POST "https://api.karrio.io/graphql" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "mutation SetUserRoles($input: SetOrganizationUserRolesMutationInput!) { setOrganizationUserRoles(input: $input) { user { id email } errors { field messages } } }",
+    "variables": {
+      "input": {
+        "userId": "user_123",
+        "organizationId": "org_123",
+        "roles": ["manager"]
+      }
+    }
+  }'
+
+# Change organization owner
+curl -X POST "https://api.karrio.io/graphql" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "mutation ChangeOwner($input: ChangeOrganizationOwnerMutationInput!) { changeOrganizationOwner(input: $input) { organization { id owner { email } } errors { field messages } } }",
+    "variables": {
+      "input": {
+        "organizationId": "org_123",
+        "userId": "user_456"
+      }
+    }
+  }'
+```
+
+## Security Features
+
+### Two-Factor Authentication
+
+```bash
+# Get verified token with 2FA
+curl -X POST "https://api.karrio.io/api/token/verified" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "user@example.com",
+    "password": "secure_password",
+    "otp_token": "123456"
+  }'
+```
+
+### API Key Management
+
+Users can generate API keys for programmatic access:
+
+```bash
+# API keys are managed through the dashboard
+# Each key can have specific permissions and rate limits
+# Keys can be revoked or rotated as needed
+```
+
+## Best Practices
+
+### User Onboarding
+
+1. **Send Invitations**: Use email invitations for new users
+2. **Assign Appropriate Roles**: Start with minimal permissions
+3. **Provide Training**: Ensure users understand their permissions
+4. **Monitor Access**: Regularly review user access and roles
+
+### Security Guidelines
+
+```bash
+# Use strong authentication
+# Regularly rotate API keys
+# Monitor user activity
+# Implement least privilege access
+# Enable two-factor authentication where possible
+```
+
+### Organization Structure
+
+```bash
+# Example organization hierarchy:
+# - Main Organization (Admin users)
+#   - Shipping Department (Manager users)
+#   - Customer Service (User/Viewer roles)
+#   - Finance Department (Viewer access to reports)
+```
+
+## Integration Examples
+
+### User Authentication Flow
+
+```javascript
+// Example authentication flow
+async function authenticateUser(username, password) {
+  try {
+    const response = await fetch("https://api.karrio.io/api/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    });
+
+    const tokens = await response.json();
+
+    // Store tokens securely
+    localStorage.setItem("access_token", tokens.access);
+    localStorage.setItem("refresh_token", tokens.refresh);
+
+    return tokens;
+  } catch (error) {
+    console.error("Authentication failed:", error);
+    throw error;
+  }
+}
+
+// Use token for API calls
+function makeAuthenticatedRequest(url, options = {}) {
+  const token = localStorage.getItem("access_token");
+
+  return fetch(url, {
+    ...options,
+    headers: {
+      ...options.headers,
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+```
+
+### Organization Management
+
+```javascript
+// Create organization and invite users
+async function setupOrganization(orgData, userEmails) {
+  // Create organization
+  const org = await createOrganization(orgData);
+
+  // Invite users
+  const invitations = await sendInvitations(org.id, userEmails);
+
+  console.log(
+    `Organization ${org.name} created with ${invitations.length} invitations sent`,
+  );
+
+  return { organization: org, invitations };
+}
+```
+
+## What's Next?
+
+- [Multi-Tenant →](/docs/products/multi-tenant) - Multi-tenant architecture
+- [Admin Console →](/docs/products/admin-console) - Administrative interface
+- [API Reference →](/docs/reference/api) - Complete API documentation

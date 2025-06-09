@@ -1,0 +1,580 @@
+---
+sidebarTitle: API Logs
+title: API Logs
+description: Comprehensive API request and response logging for debugging, monitoring, and compliance
+tags: ["api", "logs", "debugging", "monitoring", "audit", "compliance"]
+---
+
+# API Logs
+
+Karrio's API Logs provide comprehensive logging of all API requests and responses, enabling detailed debugging, performance monitoring, and compliance auditing. Track every interaction with the Karrio platform for troubleshooting and optimization.
+
+## Overview
+
+Monitor and analyze all API activity with detailed request/response logging, performance metrics, and error tracking. Essential for debugging integration issues, monitoring system performance, and maintaining compliance with audit requirements.
+
+### Key Features
+
+- **Complete Request/Response Logging**: Capture all API interactions
+- **Performance Monitoring**: Track response times and throughput
+- **Error Analysis**: Detailed error logging and categorization
+- **Search & Filtering**: Advanced search capabilities across logs
+- **Compliance Support**: Audit trails for regulatory requirements
+
+## Log Types
+
+### API Request Logs
+
+Track all incoming API requests:
+
+```bash
+# Get API request logs
+curl -X GET "https://api.karrio.io/v1/logs/requests" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -d '{
+    "start_date": "2024-01-15T00:00:00Z",
+    "end_date": "2024-01-15T23:59:59Z",
+    "status_codes": [200, 400, 500],
+    "endpoints": ["/v1/shipments", "/v1/tracking"],
+    "limit": 100
+  }'
+
+# Response includes detailed request information
+{
+  "logs": [
+    {
+      "id": "log_123456",
+      "timestamp": "2024-01-15T10:30:00Z",
+      "method": "POST",
+      "endpoint": "/v1/shipments",
+      "status_code": 201,
+      "response_time_ms": 245,
+      "user_id": "user_789",
+      "organization_id": "org_456",
+      "ip_address": "192.168.1.100",
+      "user_agent": "MyApp/1.0",
+      "request_size": 1024,
+      "response_size": 512
+    }
+  ]
+}
+```
+
+### Carrier API Logs
+
+Monitor interactions with carrier APIs:
+
+```bash
+# Get carrier API logs
+curl -X GET "https://api.karrio.io/v1/logs/carriers" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -d '{
+    "carrier": "fedex",
+    "operation": "create_shipment",
+    "start_date": "2024-01-15T00:00:00Z",
+    "end_date": "2024-01-15T23:59:59Z"
+  }'
+
+# Response includes carrier interaction details
+{
+  "logs": [
+    {
+      "id": "carrier_log_789",
+      "timestamp": "2024-01-15T10:30:15Z",
+      "carrier": "fedex",
+      "operation": "create_shipment",
+      "request_id": "req_123",
+      "status": "success",
+      "response_time_ms": 1250,
+      "request_data": {
+        "service": "FEDEX_GROUND",
+        "weight": "2.5 LB"
+      },
+      "response_data": {
+        "tracking_number": "1234567890123456",
+        "label_url": "https://..."
+      }
+    }
+  ]
+}
+```
+
+### Error Logs
+
+Track and analyze API errors:
+
+```bash
+# Get error logs
+curl -X GET "https://api.karrio.io/v1/logs/errors" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -d '{
+    "severity": ["error", "critical"],
+    "start_date": "2024-01-15T00:00:00Z",
+    "end_date": "2024-01-15T23:59:59Z",
+    "group_by": "error_type"
+  }'
+
+# Response includes error analysis
+{
+  "errors": [
+    {
+      "error_type": "validation_error",
+      "count": 45,
+      "examples": [
+        {
+          "id": "error_123",
+          "timestamp": "2024-01-15T10:30:00Z",
+          "endpoint": "/v1/shipments",
+          "message": "Invalid postal code format",
+          "request_id": "req_456",
+          "user_id": "user_789"
+        }
+      ]
+    }
+  ]
+}
+```
+
+## Log Analysis
+
+### Performance Monitoring
+
+```bash
+# Get performance metrics
+curl -X GET "https://api.karrio.io/v1/logs/performance" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -d '{
+    "metric": "response_time",
+    "period": "last_24_hours",
+    "group_by": "endpoint",
+    "percentiles": [50, 95, 99]
+  }'
+
+# Response includes performance analysis
+{
+  "metrics": {
+    "/v1/shipments": {
+      "total_requests": 1250,
+      "avg_response_time": 245,
+      "p50_response_time": 180,
+      "p95_response_time": 450,
+      "p99_response_time": 850,
+      "error_rate": 0.02
+    },
+    "/v1/tracking": {
+      "total_requests": 3400,
+      "avg_response_time": 120,
+      "p50_response_time": 95,
+      "p95_response_time": 220,
+      "p99_response_time": 380,
+      "error_rate": 0.01
+    }
+  }
+}
+```
+
+### Usage Analytics
+
+```bash
+# Get usage analytics
+curl -X GET "https://api.karrio.io/v1/logs/analytics" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -d '{
+    "period": "last_30_days",
+    "group_by": ["endpoint", "user", "organization"],
+    "metrics": ["request_count", "data_volume", "error_rate"]
+  }'
+
+# Response includes usage patterns
+{
+  "analytics": {
+    "top_endpoints": [
+      {
+        "endpoint": "/v1/tracking",
+        "requests": 45000,
+        "data_volume_mb": 125.5,
+        "unique_users": 450
+      }
+    ],
+    "top_users": [
+      {
+        "user_id": "user_123",
+        "requests": 5600,
+        "endpoints_used": 8,
+        "error_rate": 0.005
+      }
+    ]
+  }
+}
+```
+
+## Search & Filtering
+
+### Advanced Search
+
+```bash
+# Search logs with complex filters
+curl -X POST "https://api.karrio.io/v1/logs/search" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": {
+      "bool": {
+        "must": [
+          {"range": {"timestamp": {"gte": "2024-01-15T00:00:00Z"}}},
+          {"term": {"status_code": 500}},
+          {"wildcard": {"endpoint": "/v1/shipments*"}}
+        ],
+        "should": [
+          {"term": {"carrier": "fedex"}},
+          {"term": {"carrier": "ups"}}
+        ]
+      }
+    },
+    "sort": [{"timestamp": "desc"}],
+    "size": 50
+  }'
+```
+
+### Log Aggregation
+
+```bash
+# Aggregate logs for reporting
+curl -X POST "https://api.karrio.io/v1/logs/aggregate" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "aggregations": {
+      "errors_by_hour": {
+        "date_histogram": {
+          "field": "timestamp",
+          "interval": "1h"
+        },
+        "aggs": {
+          "error_count": {
+            "filter": {"range": {"status_code": {"gte": 400}}}
+          }
+        }
+      },
+      "top_error_messages": {
+        "terms": {
+          "field": "error_message",
+          "size": 10
+        }
+      }
+    }
+  }'
+```
+
+## Real-time Monitoring
+
+### Log Streaming
+
+```bash
+# Stream logs in real-time
+curl -X GET "https://api.karrio.io/v1/logs/stream" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Accept: text/event-stream" \
+  -d '{
+    "filters": {
+      "status_codes": [400, 500],
+      "endpoints": ["/v1/shipments", "/v1/tracking"]
+    }
+  }'
+
+# Server-sent events stream
+data: {"id":"log_123","timestamp":"2024-01-15T10:30:00Z","status_code":500,"endpoint":"/v1/shipments"}
+
+data: {"id":"log_124","timestamp":"2024-01-15T10:30:05Z","status_code":400,"endpoint":"/v1/tracking"}
+```
+
+### Alerts & Notifications
+
+```bash
+# Configure log-based alerts
+curl -X POST "https://api.karrio.io/v1/logs/alerts" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "High Error Rate Alert",
+    "condition": {
+      "metric": "error_rate",
+      "threshold": 0.05,
+      "period": "5m",
+      "comparison": "greater_than"
+    },
+    "actions": [
+      {
+        "type": "email",
+        "recipients": ["ops@company.com"],
+        "template": "error_rate_alert"
+      },
+      {
+        "type": "webhook",
+        "url": "https://alerts.company.com/webhook"
+      }
+    ]
+  }'
+```
+
+## Debugging Tools
+
+### Request Replay
+
+```bash
+# Replay failed requests for debugging
+curl -X POST "https://api.karrio.io/v1/logs/replay" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "log_id": "log_123456",
+    "modifications": {
+      "headers": {
+        "X-Debug-Mode": "true"
+      },
+      "body": {
+        "recipient.postal_code": "90210"
+      }
+    }
+  }'
+
+# Response includes replay results
+{
+  "replay_id": "replay_789",
+  "original_log": "log_123456",
+  "status": "success",
+  "response": {
+    "status_code": 201,
+    "body": {...}
+  },
+  "comparison": {
+    "status_changed": true,
+    "response_diff": {...}
+  }
+}
+```
+
+### Error Analysis
+
+```bash
+# Analyze error patterns
+curl -X POST "https://api.karrio.io/v1/logs/analyze" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "analysis_type": "error_patterns",
+    "period": "last_7_days",
+    "filters": {
+      "status_codes": [400, 500],
+      "endpoints": ["/v1/shipments"]
+    }
+  }'
+
+# Response includes error analysis
+{
+  "patterns": [
+    {
+      "pattern": "Invalid postal code format",
+      "frequency": 45,
+      "trend": "increasing",
+      "affected_users": 12,
+      "suggested_fix": "Implement postal code validation"
+    }
+  ]
+}
+```
+
+## Compliance & Audit
+
+### Audit Trail
+
+```bash
+# Generate audit trail
+curl -X POST "https://api.karrio.io/v1/logs/audit" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "period": {
+      "start": "2024-01-01T00:00:00Z",
+      "end": "2024-01-31T23:59:59Z"
+    },
+    "scope": {
+      "users": ["user_123"],
+      "organizations": ["org_456"],
+      "actions": ["create", "update", "delete"]
+    },
+    "format": "pdf",
+    "include_details": true
+  }'
+```
+
+### Data Retention
+
+```bash
+# Configure log retention policies
+curl -X POST "https://api.karrio.io/v1/logs/retention" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "policies": [
+      {
+        "log_type": "api_requests",
+        "retention_days": 90,
+        "archive_after_days": 30
+      },
+      {
+        "log_type": "error_logs",
+        "retention_days": 365,
+        "archive_after_days": 90
+      },
+      {
+        "log_type": "audit_logs",
+        "retention_days": 2555, // 7 years
+        "archive_after_days": 365
+      }
+    ]
+  }'
+```
+
+## Integration Examples
+
+### Log Monitoring Dashboard
+
+```javascript
+// Example: Real-time log monitoring
+class LogMonitor {
+  constructor(apiKey) {
+    this.apiKey = apiKey;
+    this.eventSource = null;
+  }
+
+  startMonitoring(filters = {}) {
+    const url = new URL("https://api.karrio.io/v1/logs/stream");
+    url.searchParams.append("filters", JSON.stringify(filters));
+
+    this.eventSource = new EventSource(url, {
+      headers: {
+        Authorization: `Token ${this.apiKey}`,
+      },
+    });
+
+    this.eventSource.onmessage = (event) => {
+      const logEntry = JSON.parse(event.data);
+      this.handleLogEntry(logEntry);
+    };
+
+    this.eventSource.onerror = (error) => {
+      console.error("Log stream error:", error);
+      this.reconnect();
+    };
+  }
+
+  handleLogEntry(logEntry) {
+    // Update dashboard metrics
+    this.updateMetrics(logEntry);
+
+    // Check for alerts
+    if (logEntry.status_code >= 500) {
+      this.triggerAlert(logEntry);
+    }
+
+    // Update real-time log display
+    this.displayLog(logEntry);
+  }
+
+  stopMonitoring() {
+    if (this.eventSource) {
+      this.eventSource.close();
+    }
+  }
+}
+
+// Usage
+const monitor = new LogMonitor("your-api-key");
+monitor.startMonitoring({
+  status_codes: [400, 500],
+  endpoints: ["/v1/shipments", "/v1/tracking"],
+});
+```
+
+### Error Tracking Integration
+
+```javascript
+// Example: Integrate with error tracking service
+async function trackErrors() {
+  const response = await fetch("https://api.karrio.io/v1/logs/errors", {
+    method: "GET",
+    headers: {
+      Authorization: "Token YOUR_API_KEY",
+    },
+    body: JSON.stringify({
+      start_date: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+      severity: ["error", "critical"],
+    }),
+  });
+
+  const errors = await response.json();
+
+  // Send to error tracking service
+  errors.forEach((error) => {
+    errorTracker.captureException(new Error(error.message), {
+      tags: {
+        endpoint: error.endpoint,
+        user_id: error.user_id,
+        request_id: error.request_id,
+      },
+      extra: {
+        response_time: error.response_time_ms,
+        carrier: error.carrier,
+      },
+    });
+  });
+}
+```
+
+## Best Practices
+
+### Log Management
+
+1. **Set Appropriate Retention**: Balance storage costs with compliance needs
+2. **Use Structured Logging**: Ensure logs are searchable and analyzable
+3. **Monitor Performance Impact**: Logging shouldn't affect API performance
+4. **Secure Sensitive Data**: Mask or exclude sensitive information
+
+### Monitoring Strategy
+
+```javascript
+// Example monitoring configuration
+const monitoringConfig = {
+  alerts: {
+    error_rate: {
+      threshold: 0.05,
+      period: "5m",
+      notification: "email",
+    },
+    response_time: {
+      threshold: 1000,
+      period: "1m",
+      notification: "slack",
+    },
+    carrier_failures: {
+      threshold: 10,
+      period: "10m",
+      notification: "pagerduty",
+    },
+  },
+
+  dashboards: {
+    real_time: ["error_rate", "response_time", "throughput"],
+    daily: ["usage_trends", "error_patterns", "performance_metrics"],
+    weekly: ["user_activity", "carrier_performance", "cost_analysis"],
+  },
+};
+```
+
+## What's Next?
+
+- [Events →](/docs/products/events) - Event-driven architecture
+- [Webhooks →](/docs/products/webhooks) - Real-time notifications
+- [Admin Console →](/docs/products/admin-console) - Administrative interface
+- [API Reference →](/docs/reference/api) - Complete API documentation
