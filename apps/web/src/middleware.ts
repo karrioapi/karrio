@@ -7,7 +7,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/docs/developing', request.url))
   }
 
-  return NextResponse.next()
+  // Clone the request headers and add pathname
+  const response = NextResponse.next()
+
+  // Add the current pathname to headers for server components
+  response.headers.set('x-pathname', request.nextUrl.pathname)
+
+  return response
 }
 
 export const config = {

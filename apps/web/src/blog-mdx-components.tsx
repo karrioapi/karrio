@@ -7,6 +7,7 @@ import { Badge } from '@karrio/ui/components/ui/badge'
 import { withGitHubAlert } from 'nextra/components'
 import { Callout } from 'nextra/components/callout'
 import { formatDate } from '@/lib/utils'
+import { ThemeConfig } from '@/types/theme'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
@@ -181,9 +182,21 @@ const CustomCodeBlock = ({
   )
 }
 
-const BlogWrapper = ({ children, toc, metadata }) => {
+interface BlogWrapperProps {
+  children: any
+  toc?: any
+  metadata?: any
+  pageMap?: any[]
+}
+
+const BlogWrapper = ({ children, toc, metadata, pageMap }: BlogWrapperProps) => {
   const { title, date, description, tags, author, image, category } = metadata || {};
 
+  // Use default blog configuration
+  const typesetting = 'article'
+  const timestamp = true
+
+  // Default blog layout
   return (
     <div className="py-8">
       <BackButton className="mb-4" />
@@ -221,7 +234,7 @@ const BlogWrapper = ({ children, toc, metadata }) => {
 
         {/* Meta information row */}
         <div className="flex flex-wrap items-center gap-3 mb-8 text-sm text-muted-foreground">
-          {date && (
+          {timestamp && date && (
             <time dateTime={date} className="flex items-center">
               {formatDate(date)}
             </time>
@@ -249,7 +262,7 @@ const BlogWrapper = ({ children, toc, metadata }) => {
         </div>
 
         {/* Main content */}
-        <div className="prose prose-lg dark:prose-invert mx-auto max-w-none">
+        <div className={`prose ${typesetting === 'article' ? 'prose-lg' : 'prose-lg'} dark:prose-invert mx-auto max-w-none`}>
           {children}
         </div>
       </div>

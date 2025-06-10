@@ -7,21 +7,58 @@ tags: ["documents", "labels", "invoices", "customs", "templates", "generation"]
 
 # Document Generation
 
-Karrio's Document Generation system creates professional shipping labels, commercial invoices, customs documents, and other shipping-related paperwork. Use pre-built templates or create custom designs that match your brand.
+<div className="flex gap-2 mb-6">
+  <div className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-400/10 dark:text-green-400 dark:ring-green-400/30">
+    <span className="text-xs">Community Edition</span>
+  </div>
+  <div className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30">
+    <span className="text-xs">Core Feature</span>
+  </div>
+</div>
 
-## Overview
+Every Karrio project comes with comprehensive document generation capabilities, providing automated creation of shipping labels, commercial invoices, customs documents, and other shipping paperwork with customizable templates and multi-format support.
 
-Automate the creation of all shipping documents required for domestic and international shipments. From simple shipping labels to complex customs documentation, generate professional documents that meet carrier requirements and regulatory standards.
+## Features
 
-### Key Benefits
+### Automated Document Creation
 
-- **Automated Generation**: Create documents automatically during shipment processing
-- **Custom Templates**: Design branded templates that match your business identity
-- **Multi-Format Support**: Generate documents in PDF, PNG, ZPL, and other formats
-- **Regulatory Compliance**: Ensure documents meet international shipping requirements
-- **Batch Processing**: Generate multiple documents efficiently
+You don't have to manually create shipping documents. Our document generation system automatically creates professional labels, invoices, and customs forms during shipment processing.
 
-## Architecture
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    Document Generation Dashboard
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border h-64 flex items-center justify-center">
+    <span className="text-gray-400">
+      Screenshot: Document templates and generation interface
+    </span>
+  </div>
+</div>
+
+### Multi-Format Support
+
+Generate documents in multiple formats including PDF, PNG, ZPL, and EPL to support different printer types and use cases.
+
+### Custom Templates
+
+Create branded document templates that match your business identity with custom logos, colors, and layouts. **Note**: Custom document generation currently supports PDF format only, with additional formats coming in future releases.
+
+### Regulatory Compliance
+
+Ensure all generated documents meet international shipping requirements and carrier specifications.
+
+### Batch Processing
+
+Generate multiple documents efficiently with bulk operations and automated workflows.
+
+### Additional features
+
+- Karrio extends document generation with real-time template customization and branding.
+- Every document includes automatic validation against carrier and regulatory requirements.
+- Karrio manages document storage and retrieval with secure access controls.
+- Support for thermal printers and industrial label printing systems.
+
+## Data Flow
 
 ### Document Generation Flow
 
@@ -52,6 +89,7 @@ flowchart TD
     N --> O
 
     O --> P[Download URL]
+    P --> Q[Client Access]
 
     style A fill:#e1f5fe
     style K fill:#fff3e0
@@ -59,295 +97,409 @@ flowchart TD
     style P fill:#e8f5e8
 ```
 
-### Document Types
+## API Reference
 
-#### Shipping Labels
+### REST API
 
-- **Standard Labels**: Basic shipping labels with tracking numbers
-- **Return Labels**: Pre-paid return shipping labels
-- **International Labels**: Labels with customs information
-- **Thermal Labels**: Optimized for thermal printers
+#### Generate Shipping Label (Automatic)
 
-#### Commercial Documents
-
-- **Commercial Invoices**: Detailed invoices for international shipments
-- **Packing Lists**: Itemized lists of shipment contents
-- **Customs Declarations**: Required customs forms and declarations
-- **Certificates of Origin**: Origin certificates for trade compliance
-
-#### Carrier-Specific Documents
-
-- **Manifests**: End-of-day manifests for carrier pickup
-- **Pickup Receipts**: Confirmation documents for scheduled pickups
-- **Delivery Receipts**: Proof of delivery documents
-
-## Getting Started
-
-### 1. Generate Your First Document
+Shipping labels are automatically generated when you create a shipment. You can specify the format:
 
 ```bash
-curl -X POST "https://api.karrio.io/v1/documents/generate" \
+curl -X POST "https://api.karrio.io/v1/shipments" \
   -H "Authorization: Token YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "shipment_id": "shp_1234567890",
-    "template": "standard_label",
-    "format": "PDF",
-    "options": {
-      "include_return_label": false,
-      "label_size": "4x6"
+    "carrier_ids": ["ups-account"],
+    "label_type": "PDF",
+    "parcels": [
+      {
+        "weight": 2.5,
+        "weight_unit": "LB"
+      }
+    ],
+    "recipient": {
+      "person_name": "John Doe",
+      "address_line1": "123 Main St",
+      "city": "New York",
+      "state_code": "NY",
+      "postal_code": "10001",
+      "country_code": "US"
+    },
+    "shipper": {
+      "person_name": "Jane Smith",
+      "address_line1": "456 Oak Ave",
+      "city": "Chicago",
+      "state_code": "IL",
+      "postal_code": "60601",
+      "country_code": "US"
     }
   }'
 ```
 
-### 2. Create Documents with Custom Data
+**Response:**
 
-```javascript
-const karrio = require("karrio");
-
-const client = new karrio.Client({
-  apiKey: "YOUR_API_KEY",
-  testMode: true,
-});
-
-// Generate shipping label
-const labelDoc = await client.documents.generate({
-  type: "shipping_label",
-  data: {
-    shipper: {
-      company_name: "Your Company",
-      address_line1: "123 Business St",
-      city: "New York",
-      state_code: "NY",
-      postal_code: "10001",
-      country_code: "US",
-    },
-    recipient: {
-      person_name: "John Doe",
-      address_line1: "456 Customer Ave",
-      city: "Los Angeles",
-      state_code: "CA",
-      postal_code: "90210",
-      country_code: "US",
-    },
-    tracking_number: "1Z999AA1234567890",
-    service: "UPS Ground",
-    carrier: "UPS",
+```json
+{
+  "id": "shp_1234567890",
+  "status": "purchased",
+  "tracking_number": "1Z12345E0205271688",
+  "label_url": "https://api.karrio.io/v1/shipments/shp_1234567890/label.pdf",
+  "selected_rate": {
+    "total_charge": 15.99,
+    "currency": "USD"
   },
-  template: "standard_4x6",
-  format: "PDF",
-});
-
-console.log("Label URL:", labelDoc.document_url);
+  "created_at": "2024-01-15T10:30:00Z"
+}
 ```
 
-### 3. Upload Custom Documents
+#### Generate Custom Document (PDF Only)
 
-```javascript
-// Upload custom document
-const upload = await client.documents.upload({
-  file: fs.readFileSync("custom-invoice.pdf"),
-  filename: "custom-invoice.pdf",
-  document_type: "commercial_invoice",
-  shipment_id: "shp_1234567890",
-  metadata: {
-    created_by: "user_123",
-    department: "shipping",
-  },
-});
+For custom documents like invoices and customs forms:
 
-// List documents for a shipment
-const documents = await client.documents.list({
-  shipment_id: "shp_1234567890",
-});
-
-documents.results.forEach((doc) => {
-  console.log(`${doc.document_type}: ${doc.document_url}`);
-});
+```bash
+curl -X POST "https://api.karrio.io/v1/documents/templates/generate" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "template": "commercial_invoice",
+    "shipment_id": "shp_1234567890",
+    "data": {
+      "invoice_number": "INV-2024-001",
+      "invoice_date": "2024-01-15",
+      "terms": "Net 30"
+    }
+  }'
 ```
 
-## Document Templates
+**Response:**
 
-### Built-in Templates
-
-Karrio provides pre-designed templates for common document types:
-
-#### Label Templates
-
-- `standard_4x6` - Standard 4"x6" shipping label
-- `standard_4x6_thermal` - Thermal printer optimized
-- `return_label_4x6` - Return shipping label
-- `international_4x6` - International shipping label with customs
-
-#### Invoice Templates
-
-- `commercial_invoice_standard` - Standard commercial invoice
-- `commercial_invoice_detailed` - Detailed invoice with extended information
-- `packing_list_standard` - Standard packing list
-- `customs_declaration` - Customs declaration form
-
-### Custom Templates
-
-Create branded templates that match your business:
-
-```javascript
-// Create custom template
-const template = await client.documents.templates.create({
-  name: "branded_label",
-  type: "shipping_label",
-  format: "PDF",
-  template_data: {
-    layout: {
-      width: 4,
-      height: 6,
-      unit: "inch",
-    },
-    elements: [
-      {
-        type: "logo",
-        position: { x: 0.5, y: 0.5 },
-        size: { width: 1, height: 0.5 },
-        source: "https://your-domain.com/logo.png",
-      },
-      {
-        type: "text",
-        position: { x: 0.5, y: 1.5 },
-        content: "{{shipper.company_name}}",
-        font: "Arial",
-        size: 12,
-        weight: "bold",
-      },
-      {
-        type: "barcode",
-        position: { x: 0.5, y: 4 },
-        content: "{{tracking_number}}",
-        format: "CODE128",
-      },
-    ],
-  },
-});
-
-// Use custom template
-const document = await client.documents.generate({
-  type: "shipping_label",
-  template: template.id,
-  data: shipmentData,
-  format: "PDF",
-});
+```json
+{
+  "id": "doc_1234567890",
+  "shipment_id": "shp_1234567890",
+  "document_type": "commercial_invoice",
+  "file_type": "PDF",
+  "document_url": "https://api.karrio.io/v1/documents/doc_1234567890.pdf",
+  "file_name": "commercial_invoice_1234567890.pdf",
+  "created_at": "2024-01-15T10:30:00Z"
+}
 ```
 
-## Integration with Karrio Ecosystem
+#### Get Document
 
-### With Shipments
-
-Automatic document generation during shipment creation:
-
-```javascript
-// Create shipment with automatic document generation
-const shipment = await client.shipments.create({
-  // ... shipment data
-  options: {
-    auto_generate_documents: true,
-    document_templates: {
-      shipping_label: "branded_4x6",
-      commercial_invoice: "detailed_invoice",
-    },
-    document_formats: ["PDF", "PNG"],
-  },
-});
-
-// Documents are automatically generated and attached
-console.log("Label URL:", shipment.label_url);
-console.log("Invoice URL:", shipment.invoice_url);
+```bash
+curl -X GET "https://api.karrio.io/v1/documents/doc_1234567890" \
+  -H "Authorization: Token YOUR_API_KEY"
 ```
 
-### With Orders
+**Response:**
 
-Generate documents during order fulfillment:
-
-```javascript
-// Fulfill order with document generation
-const fulfillment = await client.orders.fulfill({
-  order_id: "order_123",
-  generate_documents: {
-    packing_list: {
-      template: "branded_packing_list",
-      include_images: true,
-    },
-    shipping_label: {
-      template: "standard_4x6",
-      format: "PDF",
-    },
-  },
-});
+```json
+{
+  "id": "doc_1234567890",
+  "shipment_id": "shp_1234567890",
+  "document_type": "shipping_label",
+  "file_type": "PDF",
+  "document_url": "https://api.karrio.io/v1/documents/doc_1234567890.pdf",
+  "file_name": "shipping_label_1234567890.pdf",
+  "file_size": 156789,
+  "created_at": "2024-01-15T10:30:00Z"
+}
 ```
 
-## Best Practices
+#### List Documents
 
-### Error Handling
+```bash
+curl -X GET "https://api.karrio.io/v1/documents?shipment_id=shp_1234567890" \
+  -H "Authorization: Token YOUR_API_KEY"
+```
 
-```javascript
-async function generateDocumentSafely(documentData) {
-  try {
-    const document = await client.documents.generate(documentData);
-    return document;
-  } catch (error) {
-    if (error.code === "TEMPLATE_NOT_FOUND") {
-      // Fall back to default template
-      return await client.documents.generate({
-        ...documentData,
-        template: "default_template",
-      });
-    } else if (error.code === "INVALID_DATA") {
-      // Log validation errors
-      console.error("Document data validation failed:", error.details);
-      throw error;
-    } else {
-      // Retry with exponential backoff
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      return await client.documents.generate(documentData);
+**Response:**
+
+```json
+{
+  "count": 3,
+  "results": [
+    {
+      "id": "doc_1234567890",
+      "shipment_id": "shp_1234567890",
+      "document_type": "shipping_label",
+      "file_type": "PDF",
+      "document_url": "https://api.karrio.io/v1/documents/doc_1234567890.pdf",
+      "created_at": "2024-01-15T10:30:00Z"
+    },
+    {
+      "id": "doc_1234567891",
+      "shipment_id": "shp_1234567890",
+      "document_type": "commercial_invoice",
+      "file_type": "PDF",
+      "document_url": "https://api.karrio.io/v1/documents/doc_1234567891.pdf",
+      "created_at": "2024-01-15T10:30:00Z"
+    }
+  ]
+}
+```
+
+#### Upload Custom Document
+
+```bash
+curl -X POST "https://api.karrio.io/v1/documents/upload" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -F "file=@custom-invoice.pdf" \
+  -F "document_type=commercial_invoice" \
+  -F "shipment_id=shp_1234567890"
+```
+
+**Response:**
+
+```json
+{
+  "id": "doc_1234567892",
+  "shipment_id": "shp_1234567890",
+  "document_type": "commercial_invoice",
+  "file_type": "PDF",
+  "document_url": "https://api.karrio.io/v1/documents/doc_1234567892.pdf",
+  "file_name": "custom-invoice.pdf",
+  "file_size": 234567,
+  "created_at": "2024-01-15T11:00:00Z"
+}
+```
+
+### GraphQL API
+
+#### Query Documents
+
+```graphql
+query GetDocuments($filter: DocumentFilter) {
+  documents(filter: $filter) {
+    edges {
+      node {
+        id
+        shipment_id
+        document_type
+        file_type
+        document_url
+        file_name
+        file_size
+        created_at
+      }
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
     }
   }
 }
 ```
 
-### Document Storage
+**Variables:**
 
-Documents are automatically stored and made available via secure URLs:
-
-```javascript
-// Generated documents include URLs
-const document = await client.documents.generate({
-  type: "shipping_label",
-  shipment_id: "shp_1234567890",
-  format: "PDF",
-});
-
-console.log("Document URL:", document.document_url);
-console.log("Download URL:", document.download_url);
+```json
+{
+  "filter": {
+    "shipment_id": "shp_1234567890",
+    "document_type": "shipping_label"
+  }
+}
 ```
 
-## What's Next
+**Response:**
 
-Ready to implement document generation? Explore these resources:
+```json
+{
+  "data": {
+    "documents": {
+      "edges": [
+        {
+          "node": {
+            "id": "doc_1234567890",
+            "shipment_id": "shp_1234567890",
+            "document_type": "shipping_label",
+            "file_type": "PDF",
+            "document_url": "https://api.karrio.io/v1/documents/doc_1234567890.pdf",
+            "file_name": "shipping_label_1234567890.pdf",
+            "file_size": 156789,
+            "created_at": "2024-01-15T10:30:00Z"
+          }
+        }
+      ],
+      "pageInfo": {
+        "hasNextPage": false,
+        "hasPreviousPage": false
+      }
+    }
+  }
+}
+```
 
-### API Documentation
+#### Generate Document Mutation
 
-- **[Documents API Reference](/docs/reference/api/documents)**: Complete document generation API
-- **[Templates API Reference](/docs/reference/api/templates)**: Template management and customization
-- **[Upload API Reference](/docs/reference/api/uploads)**: Document upload and management
+```graphql
+mutation GenerateDocument($data: GenerateDocumentMutationInput!) {
+  generate_document(data: $data) {
+    id
+    shipment_id
+    document_type
+    file_type
+    document_url
+    file_name
+  }
+}
+```
 
-### Template Guides
+**Variables:**
 
-- **[Template Design Guide](/docs/guides/template-design)**: Create professional document templates
-- **[Branding Guide](/docs/guides/branding)**: Add your brand to shipping documents
-- **[Variable Reference](/docs/reference/template-variables)**: Complete list of available template variables
+```json
+{
+  "data": {
+    "shipment_id": "shp_1234567890",
+    "document_type": "shipping_label",
+    "file_type": "PDF",
+    "options": {
+      "include_return_label": false,
+      "label_size": "4x6"
+    }
+  }
+}
+```
 
-### Integration Examples
+## Document Types
 
-- **[E-commerce Integration](/docs/integrations/ecommerce-documents)**: Generate documents for online orders
-- **[ERP Integration](/docs/integrations/erp-documents)**: Sync documents with business systems
-- **[Printer Integration](/docs/guides/printer-setup)**: Set up thermal and standard printers
+### Shipping Labels
+
+Generate professional shipping labels for all carriers:
+
+- **Standard Labels** - Basic shipping labels with tracking numbers
+- **Return Labels** - Pre-paid return shipping labels
+- **International Labels** - Labels with customs information
+- **Thermal Labels** - Optimized for thermal printers
+
+### Commercial Documents
+
+Create business documents for international shipping:
+
+- **Commercial Invoices** - Detailed invoices for international shipments
+- **Packing Lists** - Itemized lists of shipment contents
+- **Customs Declarations** - Required customs forms and declarations
+- **Certificates of Origin** - Origin certificates for trade compliance
+
+### Carrier Documents
+
+Generate carrier-specific documentation:
+
+- **Manifests** - End-of-day manifests for carrier pickup
+- **Pickup Receipts** - Confirmation documents for scheduled pickups
+- **Delivery Receipts** - Proof of delivery documents
+
+## File Formats
+
+### PDF Documents
+
+- **Use Cases**: Professional documents, archival, email attachments
+- **Features**: High quality, printable, searchable text
+- **Typical Size**: 100-500KB per document
+
+### PNG Images
+
+- **Use Cases**: Web display, email signatures, mobile apps
+- **Features**: High resolution, transparent backgrounds
+- **Typical Size**: 50-200KB per image
+
+### ZPL Format
+
+- **Use Cases**: Zebra thermal printers, warehouse operations
+- **Features**: Optimized for thermal printing, compact
+- **Typical Size**: 5-15KB per label
+
+### EPL Format
+
+- **Use Cases**: Eltron thermal printers, legacy systems
+- **Features**: Simple command structure, reliable printing
+- **Typical Size**: 3-10KB per label
+
+## Use Cases
+
+### E-commerce Fulfillment
+
+Perfect for online stores processing orders:
+
+- **Automated Label Generation**: Create shipping labels during order fulfillment
+- **Custom Branding**: Add your logo and branding to all documents
+- **Multi-Carrier Support**: Generate labels for any connected carrier
+- **Return Management**: Create return labels for customer convenience
+
+### Enterprise Shipping
+
+Designed for high-volume shipping operations:
+
+- **Batch Document Generation**: Process hundreds of documents simultaneously
+- **Template Management**: Standardize document formats across locations
+- **Compliance Documentation**: Ensure regulatory compliance for international shipping
+- **Integration Workflows**: Automate document generation in existing systems
+
+### International Commerce
+
+Handle complex international shipping requirements:
+
+- **Customs Documentation**: Automatic customs forms and declarations
+- **Commercial Invoices**: Professional invoices with all required information
+- **Certificate Management**: Generate certificates of origin and other trade documents
+- **Multi-Language Support**: Create documents in local languages
+
+## Integration Examples
+
+### Automatic Document Generation
+
+```javascript
+// Generate documents during shipment creation
+const shipment = await karrio.shipments.create({
+  // ... shipment data
+});
+
+// Documents are automatically generated
+// Documents are automatically generated with shipments
+// Check shipment.documents array for generated documents
+
+console.log(
+  "Generated documents:",
+  shipment.documents?.map((d) => d.document_type) || [],
+);
+```
+
+### Custom Template Usage
+
+```javascript
+// Create shipment with custom options for document generation
+const shipment = await karrio.shipments.create({
+  shipmentData: {
+    // ... shipment data
+    options: {
+      label_type: "PDF", // Specify document format
+      // Custom branding options available through carrier settings
+    },
+  },
+});
+
+// Documents are generated automatically with the shipment
+console.log("Label URL:", shipment.label_url);
+```
+
+## Getting Started
+
+Ready to start generating documents with Karrio? Follow these steps:
+
+1. **Create your first shipment** with [shipments](/docs/products/shipments)
+2. **Generate shipping labels** automatically during shipment creation
+3. **Customize templates** to match your brand identity
+4. **Set up bulk processing** for high-volume operations
+
+### Next Steps
+
+- Learn about [shipments](/docs/products/shipments) to create documents automatically
+- Explore [batch processing](/docs/products/batch-processing) for bulk document generation
+- Set up [webhooks](/docs/products/webhooks) for document generation notifications
+- Configure [multi-orgs](/docs/products/multi-orgs) for tenant-specific document branding
 
 ---
 

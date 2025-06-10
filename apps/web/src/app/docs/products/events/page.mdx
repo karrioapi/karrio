@@ -1,637 +1,545 @@
 ---
 sidebarTitle: Events
-title: Events
+title: Events & Real-Time Streaming
 description: Event-driven architecture for real-time shipping notifications and system integration
 tags: ["events", "real-time", "notifications", "integration", "event-driven"]
 ---
 
-# Events
+# Events & Real-Time Streaming
 
-Karrio's Event system provides a comprehensive event-driven architecture for real-time shipping notifications and system integration. Subscribe to shipping events, track system activities, and build responsive applications that react to shipping lifecycle changes.
+<div className="flex gap-2 mb-6">
+  <div className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10 dark:bg-purple-400/10 dark:text-purple-400 dark:ring-purple-400/30">
+    <span className="text-xs">Insiders</span>
+  </div>
+  <div className="inline-flex items-center rounded-md bg-pink-50 px-2 py-1 text-xs font-medium text-pink-700 ring-1 ring-inset ring-pink-700/10 dark:bg-pink-400/10 dark:text-pink-400 dark:ring-pink-400/30">
+    <span className="text-xs">Real-Time</span>
+  </div>
+</div>
 
-## Overview
+Every Karrio Insiders project comes with comprehensive event management and real-time streaming capabilities, providing event-driven architecture, real-time data synchronization, complete event history, and custom event handlers for complex automation workflows.
 
-The Event system enables real-time communication between Karrio and your applications through a robust event-driven architecture. Get instant notifications when shipments are created, tracking status changes, orders are fulfilled, and more.
+## Features
 
-### Key Features
+### Real-Time Event Processing
 
-- **Real-time Events**: Instant notifications when shipping events occur
-- **Event Streaming**: Continuous event streams for real-time processing
-- **Event History**: Complete audit trail of all system events
-- **Custom Event Handlers**: Build custom logic to respond to events
-- **Event Filtering**: Subscribe only to relevant events
+You don't have to constantly check for status updates. Our event system instantly publishes notifications when shipping activities occur, enabling immediate responses and real-time user experiences.
 
-## Event Types
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    Events Management Dashboard
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border h-64 flex items-center justify-center">
+    <span className="text-gray-400">
+      Screenshot: Event streams interface with real-time event monitoring and
+      subscription management
+    </span>
+  </div>
+</div>
 
-### Shipment Events
+### Event Streaming
 
-Track the complete shipment lifecycle:
+Continuous event streams for real-time processing with high-throughput, low-latency delivery to multiple subscribers.
 
-```bash
-# Subscribe to shipment events
-curl -X POST "https://api.karrio.io/v1/events/subscriptions" \
-  -H "Authorization: Token YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "event_types": [
-      "shipment.created",
-      "shipment.purchased",
-      "shipment.cancelled",
-      "shipment.updated"
-    ],
-    "endpoint": "https://your-app.com/events/shipments"
-  }'
+### Complete Event History
 
-# Example shipment.created event
-{
-  "id": "evt_123456",
-  "type": "shipment.created",
-  "timestamp": "2024-01-15T10:30:00Z",
-  "data": {
-    "shipment": {
-      "id": "shp_789",
-      "tracking_number": "1Z999AA1234567890",
-      "carrier_name": "ups",
-      "service": "ups_ground",
-      "status": "created",
-      "recipient": {
-        "person_name": "John Doe",
-        "city": "Los Angeles",
-        "state_code": "CA"
+Comprehensive audit trail of all system events with searchable history and detailed event metadata for compliance and debugging.
+
+### Custom Event Handlers
+
+Build custom logic to respond to events with flexible event routing and transformation capabilities.
+
+### Advanced Event Filtering
+
+Subscribe only to relevant events with powerful filtering by event type, metadata, and custom criteria.
+
+### Additional features
+
+- Karrio extends events with custom event routing and transformation pipelines.
+- Every event includes structured metadata and correlation IDs for tracing.
+- Karrio manages event ordering and guaranteed delivery with replay capabilities.
+- Support for event aggregation and batch processing for high-volume scenarios.
+
+## Data Flow
+
+### Event-Driven Architecture
+
+```mermaid
+flowchart TD
+    A[Shipping Activity] --> B[Event Generator]
+    B --> C[Event Bus]
+    C --> D[Event Router]
+
+    D --> E[Event Subscribers]
+    D --> F[Event Store]
+    D --> G[Event Stream]
+
+    E --> H[Webhook Delivery]
+    E --> I[Custom Handlers]
+    E --> J[System Integrations]
+
+    F --> K[Event History]
+    F --> L[Audit Trail]
+
+    G --> M[Real-Time Stream]
+    G --> N[Analytics Engine]
+
+    O[Event Filters] --> D
+    P[Event Transformers] --> E
+    Q[Dead Letter Queue] --> R[Failed Events]
+
+    style A fill:#e1f5fe
+    style C fill:#fff3e0
+    style E fill:#fff3e0
+    style K fill:#e8f5e8
+    style M fill:#e8f5e8
+    style R fill:#ffebee
+```
+
+## API Reference
+
+### GraphQL API
+
+#### Query Events
+
+```graphql
+query GetEvents($filter: EventFilter) {
+  events(filter: $filter) {
+    page_info {
+      count
+      has_next_page
+      has_previous_page
+      start_cursor
+      end_cursor
+    }
+    edges {
+      node {
+        id
+        type
+        data
+        test_mode
+        pending_webhooks
+        created_at
       }
     }
-  },
-  "metadata": {
-    "user_id": "user_123",
-    "organization_id": "org_456"
   }
 }
 ```
 
-### Tracking Events
+**Variables:**
 
-Monitor package delivery progress:
-
-```bash
-# Example tracking events
+```json
 {
-  "type": "tracking.status_updated",
-  "data": {
-    "tracking_number": "1Z999AA1234567890",
-    "status": "in_transit",
-    "location": "Los Angeles, CA",
-    "timestamp": "2024-01-15T14:30:00Z",
-    "carrier": "ups",
-    "events": [
-      {
-        "code": "DP",
-        "description": "Departed facility",
-        "location": "Los Angeles, CA",
-        "timestamp": "2024-01-15T14:30:00Z"
-      }
-    ]
-  }
-}
-
-{
-  "type": "tracking.delivered",
-  "data": {
-    "tracking_number": "1Z999AA1234567890",
-    "status": "delivered",
-    "delivered_to": "Front door",
-    "signature": "J.DOE",
-    "delivery_timestamp": "2024-01-16T16:45:00Z"
-  }
-}
-
-{
-  "type": "tracking.exception",
-  "data": {
-    "tracking_number": "1Z999AA1234567890",
-    "status": "exception",
-    "exception_code": "UPS001",
-    "exception_description": "Address correction required",
-    "location": "Los Angeles, CA"
+  "filter": {
+    "type": ["shipment.created", "tracking.status_updated"],
+    "offset": 0,
+    "first": 20
   }
 }
 ```
 
-### Order Events
+**Response:**
 
-Track order fulfillment and lifecycle:
-
-```bash
-# Example order events
+```json
 {
-  "type": "order.created",
   "data": {
-    "order": {
-      "id": "ord_123",
-      "reference": "ORDER-2024-001",
-      "status": "pending",
-      "items": [
+    "events": {
+      "page_info": {
+        "count": 1534,
+        "has_next_page": true,
+        "has_previous_page": false,
+        "start_cursor": "MjA5MA==",
+        "end_cursor": "MjA2MA=="
+      },
+      "edges": [
         {
-          "sku": "ITEM001",
-          "quantity": 2,
-          "description": "Product Name"
+          "node": {
+            "id": "evt_af5c3e8b94614bd1b8a0b8e2a5d9e7c4",
+            "type": "shipment.created",
+            "data": {
+              "shipment": {
+                "id": "shp_1234567890",
+                "tracking_number": "1Z999AA1234567890",
+                "carrier_name": "ups",
+                "service": "ups_ground",
+                "status": "purchased",
+                "recipient": {
+                  "person_name": "John Doe",
+                  "city": "Los Angeles",
+                  "state_code": "CA",
+                  "postal_code": "90210",
+                  "country_code": "US"
+                },
+                "shipper": {
+                  "person_name": "Warehouse",
+                  "city": "Chicago",
+                  "state_code": "IL",
+                  "postal_code": "60601",
+                  "country_code": "US"
+                },
+                "parcels": [
+                  {
+                    "weight": 2.5,
+                    "weight_unit": "LB"
+                  }
+                ]
+              }
+            },
+            "test_mode": false,
+            "pending_webhooks": 2,
+            "created_at": "2024-01-15T10:30:00Z"
+          }
         }
-      ],
-      "shipping_address": {
-        "person_name": "John Doe",
-        "address_line1": "123 Main St",
-        "city": "Los Angeles",
-        "state_code": "CA",
-        "postal_code": "90210"
-      }
+      ]
     }
   }
 }
+```
 
-{
-  "type": "order.fulfilled",
-  "data": {
-    "order_id": "ord_123",
-    "shipment_id": "shp_789",
-    "tracking_number": "1Z999AA1234567890",
-    "fulfillment_timestamp": "2024-01-15T10:30:00Z"
+#### Get Single Event
+
+```graphql
+query GetEvent($id: String!) {
+  event(id: $id) {
+    id
+    type
+    data
+    test_mode
+    pending_webhooks
+    created_at
   }
 }
 ```
 
-### System Events
+**Variables:**
 
-Monitor system-level activities:
-
-```bash
-# Example system events
+```json
 {
-  "type": "batch.completed",
-  "data": {
-    "batch_id": "batch_456",
-    "operation": "create_shipments",
-    "total_items": 100,
-    "successful_items": 98,
-    "failed_items": 2,
-    "completion_time": "2024-01-15T11:00:00Z"
-  }
-}
-
-{
-  "type": "carrier.connection_failed",
-  "data": {
-    "carrier": "fedex",
-    "connection_id": "conn_789",
-    "error_code": "AUTH_FAILED",
-    "error_message": "Invalid credentials",
-    "timestamp": "2024-01-15T10:30:00Z"
-  }
+  "id": "evt_af5c3e8b94614bd1b8a0b8e2a5d9e7c4"
 }
 ```
 
-## Event Streaming
+**Response:**
 
-### Real-time Event Stream
-
-```bash
-# Connect to event stream
-curl -X GET "https://api.karrio.io/v1/events/stream" \
-  -H "Authorization: Token YOUR_API_KEY" \
-  -H "Accept: text/event-stream" \
-  -d '{
-    "event_types": ["shipment.*", "tracking.*"],
-    "filters": {
-      "organization_id": "org_456"
+```json
+{
+  "data": {
+    "event": {
+      "id": "evt_af5c3e8b94614bd1b8a0b8e2a5d9e7c4",
+      "type": "tracking.status_updated",
+      "data": {
+        "tracking": {
+          "id": "trk_1234567890",
+          "tracking_number": "1Z999AA1234567890",
+          "carrier_name": "ups",
+          "status": "in_transit",
+          "events": [
+            {
+              "date": "2024-01-16",
+              "description": "Package has left the origin facility",
+              "location": "Chicago, IL",
+              "code": "DP",
+              "time": "08:30"
+            }
+          ]
+        }
+      },
+      "test_mode": false,
+      "pending_webhooks": 0,
+      "created_at": "2024-01-16T08:30:00Z"
     }
-  }'
-
-# Server-sent events stream
-event: shipment.created
-data: {"id":"evt_123","type":"shipment.created","data":{...}}
-
-event: tracking.status_updated
-data: {"id":"evt_124","type":"tracking.status_updated","data":{...}}
-
-event: shipment.purchased
-data: {"id":"evt_125","type":"shipment.purchased","data":{...}}
-```
-
-### Event Filtering
-
-```bash
-# Advanced event filtering
-curl -X POST "https://api.karrio.io/v1/events/subscriptions" \
-  -H "Authorization: Token YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "event_types": ["tracking.*"],
-    "filters": {
-      "carrier": ["fedex", "ups"],
-      "status": ["delivered", "exception"],
-      "value_range": {
-        "min": 100,
-        "max": 1000
-      }
+  }
+}
+            "person_name": "Acme Corp",
+            "city": "Chicago",
+            "state_code": "IL",
+            "postal_code": "60601",
+            "country_code": "US"
+          }
+        }
+      },
+      "metadata": {
+        "user_id": "usr_1234567890",
+        "organization_id": "org_1234567890",
+        "correlation_id": "corr_1234567890",
+        "source": "api_request"
+      },
+      "version": "2024-01-01"
     },
-    "endpoint": "https://your-app.com/events/high-value-tracking"
-  }'
-```
-
-## Event History
-
-### Query Event History
-
-```bash
-# Get event history
-curl -X GET "https://api.karrio.io/v1/events" \
-  -H "Authorization: Token YOUR_API_KEY" \
-  -d '{
-    "start_date": "2024-01-15T00:00:00Z",
-    "end_date": "2024-01-15T23:59:59Z",
-    "event_types": ["shipment.created", "tracking.delivered"],
-    "limit": 100,
-    "offset": 0
-  }'
-
-# Response includes event history
-{
-  "events": [
     {
-      "id": "evt_123456",
-      "type": "shipment.created",
-      "timestamp": "2024-01-15T10:30:00Z",
-      "data": {...},
-      "metadata": {...}
+      "id": "evt_1234567891",
+      "type": "tracking.status_updated",
+      "timestamp": "2024-01-15T14:30:00Z",
+      "data": {
+        "tracking": {
+          "tracking_number": "1Z999AA1234567890",
+          "carrier_name": "ups",
+          "status": "in_transit",
+          "previous_status": "shipped",
+          "estimated_delivery": "2024-01-18T17:00:00Z",
+          "events": [
+            {
+              "code": "DP",
+              "description": "Departed facility",
+              "location": "Los Angeles, CA, US",
+              "timestamp": "2024-01-15T14:30:00Z"
+            }
+          ]
+        }
+      },
+      "metadata": {
+        "organization_id": "org_1234567890",
+        "shipment_id": "shp_1234567890",
+        "correlation_id": "corr_1234567890",
+        "source": "tracking_update"
+      }
     }
-  ],
-  "total": 1250,
-  "has_more": true
+  ]
 }
 ```
 
-### Event Replay
+### JavaScript/TypeScript SDK
 
-```bash
-# Replay events for debugging or recovery
-curl -X POST "https://api.karrio.io/v1/events/replay" \
-  -H "Authorization: Token YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "event_ids": ["evt_123", "evt_124", "evt_125"],
-    "target_endpoint": "https://your-app.com/events/replay",
-    "replay_speed": "1x"
-  }'
+Using the Karrio SDK to access events:
 
-# Replay events within time range
-curl -X POST "https://api.karrio.io/v1/events/replay" \
-  -H "Authorization: Token YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "start_date": "2024-01-15T10:00:00Z",
-    "end_date": "2024-01-15T11:00:00Z",
-    "event_types": ["shipment.*"],
-    "target_endpoint": "https://your-app.com/events/replay"
-  }'
+```typescript
+import { useEvents, useEvent } from '@karrio/hooks';
+
+// Query events with filtering
+const EventsComponent = () => {
+  const { query, filter, setFilter } = useEvents({
+    type: ['shipment.created', 'tracking.status_updated'],
+    offset: 0,
+    first: 20
+  });
+
+  if (query.isLoading) return <div>Loading events...</div>;
+  if (query.error) return <div>Error loading events</div>;
+
+  return (
+    <div>
+      <h3>System Events</h3>
+      {query.data?.events.edges.map(({ node: event }) => (
+        <div key={event.id}>
+          <p>{event.type} - {event.created_at}</p>
+          <p>Test mode: {event.test_mode ? 'Yes' : 'No'}</p>
+          <p>Pending webhooks: {event.pending_webhooks}</p>
+          <pre>{JSON.stringify(event.data, null, 2)}</pre>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// Get single event
+const EventDetailComponent = ({ eventId }) => {
+  const { query } = useEvent(eventId);
+
+  if (query.isLoading) return <div>Loading event...</div>;
+  if (query.error) return <div>Error loading event</div>;
+
+  const event = query.data?.event;
+
+  return (
+    <div>
+      <h3>Event Details</h3>
+      <p>ID: {event?.id}</p>
+      <p>Type: {event?.type}</p>
+      <p>Created: {event?.created_at}</p>
+      <p>Test mode: {event?.test_mode ? 'Yes' : 'No'}</p>
+      <pre>{JSON.stringify(event?.data, null, 2)}</pre>
+    </div>
+  );
+};
 ```
 
-## Event Subscriptions
+## Event Types & Structure
 
-### Managing Subscriptions
+Events in Karrio follow a standardized structure with event-specific data payloads. All events include the same base fields with type-specific data:
 
-```bash
-# Create event subscription
-curl -X POST "https://api.karrio.io/v1/events/subscriptions" \
-  -H "Authorization: Token YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Order Fulfillment Events",
-    "description": "Track order fulfillment process",
-    "event_types": [
-      "order.created",
-      "order.fulfilled",
-      "shipment.created",
-      "tracking.delivered"
-    ],
-    "endpoint": "https://your-app.com/webhooks/fulfillment",
-    "secret": "your-webhook-secret",
-    "retry_policy": {
-      "max_retries": 3,
-      "retry_delay": 60
-    }
-  }'
+### Common Event Structure
 
-# List subscriptions
-curl -X GET "https://api.karrio.io/v1/events/subscriptions" \
-  -H "Authorization: Token YOUR_API_KEY"
-
-# Update subscription
-curl -X PATCH "https://api.karrio.io/v1/events/subscriptions/sub_123" \
-  -H "Authorization: Token YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "event_types": ["shipment.*", "tracking.*"],
-    "enabled": true
-  }'
+```json
+{
+  "id": "evt_unique_identifier",
+  "type": "event.type",
+  "data": {
+    // Event-specific data payload
+  },
+  "test_mode": false,
+  "pending_webhooks": 0,
+  "created_at": "2024-01-15T10:30:00Z"
+}
 ```
 
-### Subscription Testing
+### Available Event Types
 
-```bash
-# Test subscription endpoint
-curl -X POST "https://api.karrio.io/v1/events/subscriptions/sub_123/test" \
-  -H "Authorization: Token YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "event_type": "shipment.created",
-    "test_data": {
-      "shipment_id": "test_shp_123",
-      "tracking_number": "TEST123456789"
-    }
-  }'
-```
+Based on the Karrio event system, the following event types are supported:
 
-## Event Processing
+- **shipment.created**: When a new shipment is created
+- **shipment.updated**: When shipment details are modified
+- **shipment.cancelled**: When a shipment is cancelled
+- **tracking.updated**: When tracking information changes
+- **order.created**: When a new order is created
+- **order.fulfilled**: When an order is marked as fulfilled
+- **webhook.delivered**: When a webhook is successfully delivered
+- **webhook.failed**: When webhook delivery fails
 
-### Event Handlers
+## Real-Time Event Processing
 
-```javascript
-// Example: Event handler implementation
-class ShippingEventHandler {
-  constructor(apiKey) {
-    this.apiKey = apiKey;
-  }
+### Event-Driven Workflows
 
-  async handleEvent(event) {
-    console.log(`Processing event: ${event.type}`);
+Build reactive systems that respond immediately to shipping events:
 
-    switch (event.type) {
-      case "shipment.created":
-        await this.handleShipmentCreated(event.data);
-        break;
+```typescript
+// Event-driven order fulfillment
+class EventDrivenFulfillment {
+  async handleShipmentCreated(event) {
+    const { shipment } = event.data;
 
-      case "tracking.delivered":
-        await this.handleDelivery(event.data);
-        break;
+    // Update order status
+    await this.updateOrderStatus(shipment.reference, "shipped");
 
-      case "tracking.exception":
-        await this.handleException(event.data);
-        break;
-
-      default:
-        console.log(`Unhandled event type: ${event.type}`);
-    }
-  }
-
-  async handleShipmentCreated(data) {
-    // Update internal order status
-    await this.updateOrderStatus(data.shipment.reference, "shipped");
-
-    // Send customer notification
-    await this.sendTrackingNotification(data.shipment);
+    // Notify customer
+    await this.sendShippingNotification(shipment);
 
     // Update inventory
-    await this.updateInventory(data.shipment.items);
+    await this.decrementInventory(shipment.line_items);
   }
 
-  async handleDelivery(data) {
-    // Mark order as delivered
-    await this.updateOrderStatus(data.reference, "delivered");
+  async handleTrackingUpdated(event) {
+    const { tracking } = event.data;
 
-    // Send delivery confirmation
-    await this.sendDeliveryConfirmation(data);
+    if (tracking.status === "delivered") {
+      // Complete order
+      await this.completeOrder(tracking.reference);
 
-    // Trigger post-delivery workflows
-    await this.triggerPostDeliveryWorkflow(data);
-  }
+      // Request review
+      await this.requestCustomerReview(tracking.recipient);
 
-  async handleException(data) {
-    // Log exception for investigation
-    await this.logException(data);
-
-    // Notify customer service
-    await this.notifyCustomerService(data);
-
-    // Attempt automatic resolution
-    await this.attemptAutoResolution(data);
+      // Analytics tracking
+      await this.trackDeliveryMetrics(tracking);
+    }
   }
 }
-
-// Usage
-const eventHandler = new ShippingEventHandler("your-api-key");
-
-// Express.js webhook endpoint
-app.post("/webhooks/shipping-events", async (req, res) => {
-  try {
-    const event = req.body;
-
-    // Verify event signature
-    if (!verifyEventSignature(req)) {
-      return res.status(401).send("Unauthorized");
-    }
-
-    // Process event
-    await eventHandler.handleEvent(event);
-
-    res.status(200).send("OK");
-  } catch (error) {
-    console.error("Event processing error:", error);
-    res.status(500).send("Internal Server Error");
-  }
-});
 ```
 
-### Event Aggregation
+### Event Correlation
 
-```javascript
-// Example: Event aggregation for analytics
-class EventAggregator {
-  constructor() {
-    this.metrics = new Map();
-  }
+Track related events across the system:
 
-  processEvent(event) {
-    const key = `${event.type}:${this.getDateKey(event.timestamp)}`;
+````typescript
+// Correlate events across shipment lifecycle
+class EventCorrelator {
+  async trackShipmentJourney(shipmentId) {
+    const events = await this.getShipmentEvents(shipmentId);
 
-    if (!this.metrics.has(key)) {
-      this.metrics.set(key, {
-        count: 0,
-        first_seen: event.timestamp,
-        last_seen: event.timestamp,
+    const journey = events.reduce((timeline, event) => {
+      timeline.push({
+        timestamp: event.created_at,
+        type: event.type,
+        status: this.extractStatus(event),
+        location: this.extractLocation(event)
       });
-    }
+      return timeline;
+    }, []);
 
-    const metric = this.metrics.get(key);
-    metric.count++;
-    metric.last_seen = event.timestamp;
-
-    // Specific event processing
-    switch (event.type) {
-      case "shipment.created":
-        this.trackShipmentMetrics(event);
-        break;
-
-      case "tracking.delivered":
-        this.trackDeliveryMetrics(event);
-        break;
-    }
-  }
-
-  getDateKey(timestamp) {
-    return new Date(timestamp).toISOString().split("T")[0];
-  }
-
-  generateReport() {
-    const report = {
-      daily_metrics: {},
-      event_types: {},
-      trends: {},
+    return {
+      shipment_id: shipmentId,
+      timeline: journey.sort((a, b) =>
+        new Date(a.timestamp) - new Date(b.timestamp)
+      ),
+      current_status: journey[journey.length - 1]?.status,
+      total_events: events.length
     };
-
-    for (const [key, metric] of this.metrics) {
-      const [eventType, date] = key.split(":");
-
-      if (!report.daily_metrics[date]) {
-        report.daily_metrics[date] = {};
-      }
-
-      report.daily_metrics[date][eventType] = metric.count;
-
-      if (!report.event_types[eventType]) {
-        report.event_types[eventType] = 0;
-      }
-
-      report.event_types[eventType] += metric.count;
-    }
-
-    return report;
   }
 }
 ```
 
-## Event Security
+## Use Cases
 
-### Event Verification
+### Real-Time Order Management
 
-```javascript
-// Verify event signatures
-function verifyEventSignature(request) {
-  const crypto = require("crypto");
-  const signature = request.headers["x-karrio-signature"];
-  const secret = process.env.WEBHOOK_SECRET;
+Build responsive order management systems that react instantly to shipping events:
 
-  const expectedSignature = crypto
-    .createHmac("sha256", secret)
-    .update(JSON.stringify(request.body))
-    .digest("hex");
+- **Automated Status Updates**: Update order status immediately when shipments are created or tracking changes
+- **Customer Notifications**: Send real-time shipping notifications and delivery updates
+- **Inventory Management**: Automatically adjust inventory when shipments are created or cancelled
+- **Analytics & Reporting**: Track shipping performance and customer satisfaction metrics
 
-  return signature === `sha256=${expectedSignature}`;
-}
+### Integration & Automation
 
-// Event authentication
-function authenticateEvent(event) {
-  // Verify event timestamp (prevent replay attacks)
-  const eventTime = new Date(event.timestamp);
-  const now = new Date();
-  const timeDiff = Math.abs(now - eventTime);
+Connect Karrio events to external systems and automation workflows:
 
-  if (timeDiff > 5 * 60 * 1000) {
-    // 5 minutes
-    throw new Error("Event timestamp too old");
-  }
-
-  // Verify event structure
-  if (!event.id || !event.type || !event.data) {
-    throw new Error("Invalid event structure");
-  }
-
-  return true;
-}
-```
-
-## Best Practices
-
-### Event Handling
-
-1. **Idempotent Processing**: Handle duplicate events gracefully
-2. **Error Handling**: Implement robust error handling and retry logic
-3. **Event Ordering**: Don't assume events arrive in order
-4. **Timeout Handling**: Set appropriate timeouts for event processing
-
-### Performance Optimization
-
-```javascript
-// Example: Optimized event processing
-class OptimizedEventProcessor {
-  constructor() {
-    this.eventQueue = [];
-    this.processing = false;
-    this.batchSize = 10;
-    this.batchTimeout = 1000; // 1 second
-  }
-
-  async addEvent(event) {
-    this.eventQueue.push(event);
-
-    if (!this.processing) {
-      this.processing = true;
-      setTimeout(() => this.processBatch(), this.batchTimeout);
-    }
-
-    if (this.eventQueue.length >= this.batchSize) {
-      await this.processBatch();
-    }
-  }
-
-  async processBatch() {
-    if (this.eventQueue.length === 0) {
-      this.processing = false;
-      return;
-    }
-
-    const batch = this.eventQueue.splice(0, this.batchSize);
-
-    try {
-      await Promise.all(batch.map((event) => this.processEvent(event)));
-    } catch (error) {
-      console.error("Batch processing error:", error);
-      // Handle failed events
-      await this.handleFailedEvents(batch);
-    }
-
-    // Continue processing if more events exist
-    if (this.eventQueue.length > 0) {
-      setTimeout(() => this.processBatch(), this.batchTimeout);
-    } else {
-      this.processing = false;
-    }
-  }
-}
-```
+- **ERP Integration**: Sync shipping data with enterprise resource planning systems
+- **CRM Updates**: Update customer records with shipping and delivery information
+- **Webhook Triggering**: Trigger external webhooks and API calls based on events
+- **Business Intelligence**: Stream events to analytics platforms for reporting
 
 ### Monitoring & Alerting
 
-```bash
-# Monitor event processing health
-curl -X GET "https://api.karrio.io/v1/events/health" \
-  -H "Authorization: Token YOUR_API_KEY"
+Monitor your shipping operations with real-time event streams:
 
-# Response includes health metrics
-{
-  "status": "healthy",
-  "metrics": {
-    "events_per_minute": 450,
-    "processing_latency_ms": 125,
-    "failed_deliveries": 2,
-    "subscription_health": {
-      "active_subscriptions": 15,
-      "failing_subscriptions": 1
-    }
-  }
-}
-```
+- **Exception Handling**: Alert on failed shipments, delivery issues, or API errors
+- **Performance Monitoring**: Track response times and system performance
+- **Compliance Auditing**: Maintain audit trails for regulatory compliance
+- **Operational Dashboards**: Build real-time dashboards showing shipping metrics
 
-## What's Next?
+## Getting Started
 
-- [Webhooks →](/docs/products/webhooks) - Webhook implementation
-- [API Logs →](/docs/products/api-logs) - API logging and monitoring
-- [Workflows →](/docs/products/workflows) - Automated workflows
-- [API Reference →](/docs/reference/api) - Complete API documentation
+Ready to implement real-time event processing with Karrio? Follow these steps:
+
+1. **Set up event subscriptions** using GraphQL queries for your needed event types
+2. **Configure webhooks** for real-time event delivery to your applications
+3. **Implement event handlers** to process events and trigger business logic
+4. **Build monitoring dashboards** to track event streams and system health
+
+### Next Steps
+
+- Learn about [webhooks](/docs/products/webhooks) for event delivery and automation
+- Explore [workflows](/docs/products/workflows) for event-driven automation
+- Set up [admin console](/docs/products/admin-console) for event management
+- Configure [api logs](/docs/products/api-logs) for comprehensive system monitoring
+
+### Real-Time Customer Notifications
+
+Perfect for e-commerce and customer-facing applications:
+
+- **Shipping Confirmations**: Instant notifications when labels are purchased
+- **Delivery Updates**: Real-time tracking status updates to customers
+- **Exception Handling**: Proactive customer service for delivery issues
+- **Order Lifecycle**: Complete order-to-delivery communication
+
+### System Integration
+
+Designed for enterprise and platform integrations:
+
+- **ERP Synchronization**: Keep enterprise systems in sync with shipping status
+- **Inventory Management**: Update stock levels based on fulfillment events
+- **Analytics & Reporting**: Real-time data feeds for business intelligence
+- **Workflow Automation**: Trigger business processes based on shipping events
+
+### Monitoring & Operations
+
+Built for DevOps and operational teams:
+
+- **System Health Monitoring**: Track platform performance and carrier status
+- **Alert Management**: Real-time alerts for system issues and exceptions
+- **Audit & Compliance**: Complete audit trails for regulatory requirements
+- **Performance Analytics**: Monitor shipping performance and SLA compliance
+
+## Getting Started
+
+Ready to build event-driven shipping applications with Karrio? Follow these steps:
+
+1. **Subscribe to events** you need to monitor in your application
+2. **Implement event handlers** to process events and trigger actions
+3. **Set up event streaming** for real-time processing
+4. **Build event aggregation** for analytics and reporting
+
+### Next Steps
+
+- Learn about [webhooks](/docs/products/webhooks) for HTTP-based event delivery
+- Explore [api logs](/docs/products/api-logs) for detailed event monitoring
+- Set up [workflows](/docs/products/workflows) for event-driven automation
+- Configure [admin console](/docs/products/admin-console) for event management
+````

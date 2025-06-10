@@ -136,7 +136,7 @@ export const TOC: React.FC<TOCProps> = ({ toc: propsToc }) => {
 
   if (toc.length === 0) {
     return (
-      <div className="sticky top-16 max-h-[calc(100vh-4rem)] pl-6" ref={tocRef}>
+      <div className="sticky top-12 max-h-[calc(100vh-12rem)] pl-6" ref={tocRef}>
         <div className="mb-4 text-sm font-medium text-gray-900 dark:text-white toc-heading">On This Page</div>
         <div className="text-sm text-gray-500 dark:text-gray-400">No headings found</div>
 
@@ -157,7 +157,7 @@ export const TOC: React.FC<TOCProps> = ({ toc: propsToc }) => {
   }
 
   return (
-    <div className="sticky top-16 max-h-[calc(100vh-8rem)] w-full pl-6 flex flex-col" ref={tocRef}>
+    <div className="sticky top-16 max-h-[calc(100vh-12rem)] w-full pl-6 flex flex-col" ref={tocRef}>
       <div className="mb-4 text-sm font-medium text-gray-900 dark:text-white toc-heading">On This Page</div>
 
       {/* Flex-grow ScrollArea to take available space */}

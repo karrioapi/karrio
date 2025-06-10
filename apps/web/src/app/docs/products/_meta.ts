@@ -1,9 +1,17 @@
 export default {
-  "getting-started": {
+  "product-guides": {
     title: 'Product Guides',
     type: 'separator',
   },
   "index": {
+    title: 'Karrio Products',
+    type: 'page',
+    display: 'hidden',
+    theme: {
+      toc: false,
+    }
+  },
+  "carrier-connections": {
     title: 'Carrier Connections',
     type: 'page'
   },
@@ -23,12 +31,8 @@ export default {
     title: 'Document Generation',
     type: 'page'
   },
-  "user-management": {
-    title: 'User Management',
-    type: 'page'
-  },
-  "multi-orgs": {
-    title: 'Multi Organizations',
+  "batch-processing": {
+    title: 'Batch Processing',
     type: 'page'
   },
   "shipping-rules": {
@@ -39,17 +43,25 @@ export default {
     title: 'Workflows',
     type: 'page'
   },
-  "batch-processing": {
-    title: 'Batch Processing',
+  "control-plane": {
+    title: 'Control Plane',
+    type: 'separator',
+  },
+  "user-management": {
+    title: 'User Management',
+    type: 'page'
+  },
+  "multi-orgs": {
+    title: 'Multi Organizations',
     type: 'page'
   },
   "admin-console": {
     title: 'Admin Console',
     type: 'page'
   },
-  "webhooks": {
-    title: 'Webhooks',
-    type: 'page'
+  "developer-tools": {
+    title: 'Developer Tools',
+    type: 'separator',
   },
   "api-logs": {
     title: 'API Logs',
@@ -58,5 +70,9 @@ export default {
   "events": {
     title: 'Events',
     type: 'page'
-  }
+  },
+  "webhooks": {
+    title: 'Webhooks',
+    type: 'page'
+  },
 }

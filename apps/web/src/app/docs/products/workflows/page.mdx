@@ -1,535 +1,694 @@
 ---
 sidebarTitle: Workflows
-title: Integration Workflows
-description: Build automated shipping workflows using Karrio's webhook system and REST APIs
-tags: ["webhooks", "automation", "integration", "workflows", "rest-api"]
+title: Data Synchronization Workflows
+description: Sync shipping data between Karrio and external platforms like Shopify, Salesforce, Odoo, and other OMS/ERP systems
+tags:
+  [
+    "data-sync",
+    "integrations",
+    "oms",
+    "erp",
+    "shopify",
+    "salesforce",
+    "logistics",
+  ]
 ---
 
-# Integration Workflows
+# Data Synchronization Workflows
 
-Build automated shipping workflows by combining Karrio's webhook system with your application logic. Create event-driven processes that respond to shipping events and automate common shipping tasks through the REST API.
+<div className="flex gap-2 mb-6">
+  <div className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10 dark:bg-purple-400/10 dark:text-purple-400 dark:ring-purple-400/30">
+    <span className="text-xs">Insiders</span>
+  </div>
+  <div className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10 dark:bg-indigo-400/10 dark:text-indigo-400 dark:ring-indigo-400/30">
+    <span className="text-xs">Automation</span>
+  </div>
+</div>
 
-## Overview
+Every Karrio project comes with powerful data synchronization capabilities, enabling seamless integration with Order Management Systems (OMS), Enterprise Resource Planning (ERP) platforms, and e-commerce solutions like Shopify, WooCommerce, Salesforce, Odoo, Magento, BigCommerce, and CommerceTools for automated logistics operations.
 
-While Karrio doesn't include a built-in workflow engine, you can create sophisticated automation by combining webhooks, REST API calls, and your application logic. This approach provides maximum flexibility for implementing business-specific shipping processes.
+## Features
 
-### Key Capabilities
+### Platform Data Synchronization
 
-- **Webhook-Driven Events**: React to shipping events in real-time
-- **REST API Integration**: Automate shipping operations through API calls
-- **Custom Business Logic**: Implement your specific business rules and processes
-- **Event-Driven Architecture**: Build responsive, scalable shipping automation
+You don't have to manually sync shipping data across platforms. Our workflow system automatically synchronizes orders, shipments, tracking information, and inventory updates between Karrio and your existing business systems.
 
-## Common Integration Patterns
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    Automation Dashboard
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border h-64 flex items-center justify-center">
+    <span className="text-gray-400">
+      Screenshot: Platform connectors showing Shopify, Salesforce, Odoo
+      integrations
+    </span>
+  </div>
+</div>
 
-### Order-to-Shipment Automation
+### Logistics-Focused Automation
 
-Automatically create shipments when orders are received:
+Designed specifically for shipping and logistics operations, not general-purpose automation. Focus on order fulfillment, inventory updates, tracking synchronization, and shipping cost allocation.
 
-```javascript
-// Webhook handler for order creation
-app.post("/webhooks/orders", async (req, res) => {
-  const { type, data } = req.body;
+### Real-Time Data Orchestration
 
-  if (type === "order_created") {
-    try {
-      // Create shipment from order data
-      const shipment = await createShipmentFromOrder(data);
-      console.log(`Shipment created: ${shipment.id}`);
+Synchronize data in real-time between multiple systems while maintaining data consistency and handling API rate limits intelligently.
 
-      // Update order with shipment info
-      await updateOrderStatus(data.id, {
-        status: "processing",
-        shipment_id: shipment.id,
-      });
-    } catch (error) {
-      console.error("Shipment creation failed:", error);
-      // Handle error - notify staff, retry later, etc.
-    }
-  }
+### Business Logic Integration
 
-  res.status(200).send("OK");
-});
+Apply complex logistics rules, carrier selection logic, and compliance requirements across all connected platforms.
 
-async function createShipmentFromOrder(order) {
-  const response = await fetch("https://api.karrio.io/v1/shipments", {
-    method: "POST",
-    headers: {
-      Authorization: "Token YOUR_API_KEY",
-      "Content-Type": "application/json",
+### Error Handling & Retry
+
+Robust error handling with automatic retry mechanisms, dead letter queues, and comprehensive logging for troubleshooting integration issues.
+
+### Additional features
+
+- Karrio extends workflows with field mapping, data transformation, and conditional routing.
+- Every workflow includes automatic batching, rate limiting, and API optimization.
+- Karrio manages state synchronization and conflict resolution across platforms.
+- Support for custom business rules and logistics-specific compliance requirements.
+
+## Data Flow
+
+### Multi-Platform Synchronization Flow
+
+```mermaid
+flowchart TD
+    A[E-commerce Platform] --> B[Order Created]
+    B --> C[Karrio Workflow Engine]
+
+    C --> D[Data Transformation]
+    D --> E[Logistics Rules Engine]
+
+    E --> F[Carrier Selection]
+    F --> G[Shipment Creation]
+    G --> H[Label Generation]
+
+    H --> I[Platform Updates]
+    I --> J[Shopify Order Update]
+    I --> K[ERP Inventory Sync]
+    I --> L[OMS Status Update]
+
+    J --> M[Customer Notification]
+    K --> N[Stock Adjustment]
+    L --> O[Fulfillment Record]
+
+    G --> P[Tracking Creation]
+    P --> Q[Webhook Distribution]
+    Q --> R[Platform Tracking Updates]
+
+    style A fill:#e1f5fe
+    style C fill:#fff3e0
+    style E fill:#e8f5e8
+    style I fill:#f3e5f5
+```
+
+## Platform Integrations
+
+### Shopify Integration
+
+#### Order Synchronization
+
+```bash
+# Webhook from Shopify when order is created
+curl -X POST "https://your-karrio-instance.com/workflows/shopify/orders" \
+  -H "Content-Type: application/json" \
+  -H "X-Shopify-Webhook-Id: webhook_id" \
+  -d '{
+    "id": 450789469,
+    "order_number": "#1001",
+    "email": "customer@example.com",
+    "created_at": "2024-01-15T10:30:00Z",
+    "total_price": "59.98",
+    "currency": "USD",
+    "shipping_address": {
+      "first_name": "John",
+      "last_name": "Doe",
+      "address1": "123 Customer St",
+      "city": "New York",
+      "province": "NY",
+      "zip": "10001",
+      "country": "United States"
     },
-    body: JSON.stringify({
-      shipper: order.shipping_from,
-      recipient: order.customer,
-      parcels: mapOrderItemsToParcels(order.line_items),
-      service: selectShippingService(order),
-      reference: order.order_id,
-      metadata: {
-        order_id: order.id,
-        customer_id: order.customer_id,
-      },
-    }),
-  });
-
-  return await response.json();
-}
+    "line_items": [
+      {
+        "id": 866550311766439020,
+        "variant_id": 39072856,
+        "title": "IPod Nano - 8gb",
+        "quantity": 1,
+        "sku": "IPOD2008PINK",
+        "price": "59.98",
+        "grams": 500,
+        "product_id": 632910392
+      }
+    ]
+  }'
 ```
 
-### Tracking Update Notifications
+#### Fulfillment Update to Shopify
 
-Automatically notify customers of delivery updates:
-
-```javascript
-// Webhook handler for tracking updates
-app.post("/webhooks/tracking", async (req, res) => {
-  const { type, data } = req.body;
-
-  if (type === "tracker.updated") {
-    // Send customer notification based on status
-    switch (data.status) {
-      case "shipped":
-        await sendShippedNotification(data);
-        break;
-      case "out_for_delivery":
-        await sendOutForDeliveryNotification(data);
-        break;
-      case "delivered":
-        await sendDeliveredNotification(data);
-        break;
-      case "delivery_failed":
-        await handleDeliveryException(data);
-        break;
+```bash
+# Update Shopify with fulfillment information
+curl -X POST "https://your-store.myshopify.com/admin/api/2024-01/orders/450789469/fulfillments.json" \
+  -H "X-Shopify-Access-Token: YOUR_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fulfillment": {
+      "location_id": 24826418,
+      "tracking_number": "1Z12345E0205271688",
+      "tracking_company": "UPS",
+      "tracking_urls": [
+        "https://wwwapps.ups.com/tracking/tracking.cgi?tracknum=1Z12345E0205271688"
+      ],
+      "line_items": [
+        {
+          "id": 866550311766439020,
+          "quantity": 1
+        }
+      ]
     }
-  }
-
-  res.status(200).send("OK");
-});
-
-async function sendShippedNotification(tracker) {
-  // Get order info from metadata
-  const order = await getOrderById(tracker.metadata?.order_id);
-
-  if (order?.customer?.email) {
-    await sendEmail({
-      to: order.customer.email,
-      subject: `Your order ${order.order_id} has shipped!`,
-      template: "shipped",
-      data: {
-        tracking_number: tracker.tracking_number,
-        carrier_name: tracker.carrier_name,
-        estimated_delivery: tracker.estimated_delivery,
-      },
-    });
-  }
-}
+  }'
 ```
 
-### Exception Handling Workflow
+### Salesforce Integration
 
-Handle delivery exceptions automatically:
+#### Order Processing from Salesforce
 
-```javascript
-async function handleDeliveryException(tracker) {
-  const order = await getOrderById(tracker.metadata?.order_id);
-
-  // Log the exception
-  console.log(
-    `Delivery exception for ${tracker.tracking_number}:`,
-    tracker.events[0]?.description,
-  );
-
-  // Determine action based on exception type
-  const lastEvent = tracker.events[0];
-
-  if (lastEvent?.description?.includes("address")) {
-    // Address issue - contact customer
-    await requestAddressCorrection(order, tracker);
-  } else if (lastEvent?.description?.includes("unavailable")) {
-    // Customer unavailable - schedule redelivery
-    await scheduleRedelivery(tracker);
-  } else {
-    // Other exception - alert customer service
-    await alertCustomerService(order, tracker);
-  }
-}
-
-async function requestAddressCorrection(order, tracker) {
-  await sendEmail({
-    to: order.customer.email,
-    subject: "Address Correction Needed",
-    template: "address_correction",
-    data: {
-      order_id: order.order_id,
-      tracking_number: tracker.tracking_number,
+```bash
+# Salesforce Order to Karrio Shipment
+curl -X POST "https://api.karrio.io/v1/shipments" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "recipient": {
+      "person_name": "John Doe",
+      "company_name": "Acme Corp",
+      "address_line1": "123 Customer St",
+      "city": "New York",
+      "state_code": "NY",
+      "postal_code": "10001",
+      "country_code": "US",
+      "email": "customer@example.com"
     },
-  });
-}
+    "shipper": {
+      "company_name": "Your Warehouse",
+      "address_line1": "456 Warehouse Ave",
+      "city": "Chicago",
+      "state_code": "IL",
+      "postal_code": "60601",
+      "country_code": "US"
+    },
+    "parcels": [
+      {
+        "weight": 1.1,
+        "weight_unit": "LB",
+        "dimension_unit": "IN",
+        "length": 10,
+        "width": 8,
+        "height": 6,
+        "items": [
+          {
+            "description": "Product from Salesforce",
+            "quantity": 1,
+            "weight": 1.1,
+            "weight_unit": "LB",
+            "sku": "SF-PROD-001",
+            "value_amount": 59.98,
+            "value_currency": "USD"
+          }
+        ]
+      }
+    ],
+    "service": "ups_ground",
+    "label_type": "PDF",
+    "metadata": {
+      "salesforce_order_id": "0014100000ABC123",
+      "salesforce_account_id": "0014100000DEF456",
+      "platform": "salesforce"
+    }
+  }'
 ```
 
-### Batch Processing Workflow
+#### Update Salesforce with Shipping Data
 
-Process multiple shipments efficiently:
+```bash
+# Update Salesforce Order with shipping information
+curl -X PATCH "https://your-instance.salesforce.com/services/data/v59.0/sobjects/Order/0014100000ABC123" \
+  -H "Authorization: Bearer YOUR_SALESFORCE_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "Status": "Shipped",
+    "TrackingNumber": "1Z12345E0205271688",
+    "ShippingCarrier": "UPS",
+    "ShippedDate": "2024-01-15T10:30:00.000+0000",
+    "ShippingCost": 15.25
+  }'
+```
 
-```javascript
-// Process daily batch of orders
-async function processDailyOrders() {
-  try {
-    // Get pending orders
-    const orders = await getPendingOrders();
-    console.log(`Processing ${orders.length} orders`);
+### Odoo ERP Integration
 
-    // Group orders by shipping method for batch processing
-    const batches = groupOrdersByShippingMethod(orders);
+#### Order Export from Odoo
 
-    for (const [method, orderBatch] of Object.entries(batches)) {
-      await processBatch(method, orderBatch);
-    }
-  } catch (error) {
-    console.error("Batch processing failed:", error);
-  }
-}
+```python
+# Odoo XML-RPC integration example
+import xmlrpc.client
 
-async function processBatch(method, orders) {
-  // Create shipments for batch
-  const shipmentRequests = orders.map((order) => ({
-    shipper: getWarehouseAddress(),
-    recipient: order.customer,
-    parcels: mapOrderItemsToParcels(order.line_items),
-    service: method,
-    reference: order.order_id,
-    metadata: { order_id: order.id },
-  }));
+# Connect to Odoo
+url = 'https://your-odoo-instance.com'
+db = 'your_database'
+username = 'your_username'
+password = 'your_api_key'
 
-  // Process in chunks to avoid rate limits
-  const chunks = chunkArray(shipmentRequests, 10);
+common = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/common')
+uid = common.authenticate(db, username, password, {})
 
-  for (const chunk of chunks) {
-    const promises = chunk.map((request) =>
-      createShipment(request).catch((error) => ({ error, request })),
+models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object')
+
+# Get orders ready for shipping
+orders = models.execute_kw(db, uid, password,
+    'sale.order', 'search_read',
+    [[['state', '=', 'sale'], ['karrio_sync_status', '!=', 'synced']]],
+    {'fields': ['name', 'partner_id', 'partner_shipping_id', 'order_line', 'amount_total']}
+)
+
+# Process each order with Karrio
+for order in orders:
+    # Transform Odoo order to Karrio format
+    karrio_shipment = transform_odoo_order_to_karrio(order)
+
+    # Create shipment in Karrio
+    response = create_karrio_shipment(karrio_shipment)
+
+    # Update Odoo with tracking information
+    if response.get('tracking_number'):
+        models.execute_kw(db, uid, password,
+            'sale.order', 'write',
+            [[order['id']], {
+                'karrio_tracking_number': response['tracking_number'],
+                'karrio_carrier': response['carrier_name'],
+                'karrio_sync_status': 'synced'
+            }]
+        )
+```
+
+### WooCommerce Integration
+
+#### WooCommerce Order Processing
+
+```php
+<?php
+// WooCommerce webhook handler
+add_action('woocommerce_order_status_processing', 'sync_order_to_karrio');
+
+function sync_order_to_karrio($order_id) {
+    $order = wc_get_order($order_id);
+
+    // Prepare shipment data
+    $shipment_data = array(
+        'recipient' => array(
+            'person_name' => $order->get_shipping_first_name() . ' ' . $order->get_shipping_last_name(),
+            'address_line1' => $order->get_shipping_address_1(),
+            'address_line2' => $order->get_shipping_address_2(),
+            'city' => $order->get_shipping_city(),
+            'state_code' => $order->get_shipping_state(),
+            'postal_code' => $order->get_shipping_postcode(),
+            'country_code' => $order->get_shipping_country(),
+            'email' => $order->get_billing_email()
+        ),
+        'parcels' => array(),
+        'metadata' => array(
+            'woo_order_id' => $order_id,
+            'platform' => 'woocommerce'
+        )
     );
 
-    const results = await Promise.all(promises);
-
-    // Handle results
-    results.forEach((result, index) => {
-      if (result.error) {
-        console.error(
-          `Shipment failed for order ${chunk[index].reference}:`,
-          result.error,
+    // Add line items
+    foreach ($order->get_items() as $item) {
+        $product = $item->get_product();
+        $shipment_data['parcels'][0]['items'][] = array(
+            'description' => $item->get_name(),
+            'quantity' => $item->get_quantity(),
+            'weight' => $product->get_weight() ?: 1,
+            'weight_unit' => 'LB',
+            'sku' => $product->get_sku(),
+            'value_amount' => $item->get_total(),
+            'value_currency' => $order->get_currency()
         );
-      } else {
-        console.log(`Shipment created: ${result.id}`);
-      }
-    });
+    }
+
+    // Send to Karrio
+    $response = wp_remote_post('https://api.karrio.io/v1/shipments', array(
+        'headers' => array(
+            'Authorization' => 'Token ' . get_option('karrio_api_key'),
+            'Content-Type' => 'application/json'
+        ),
+        'body' => json_encode($shipment_data)
+    ));
+
+    if (!is_wp_error($response)) {
+        $shipment = json_decode(wp_remote_retrieve_body($response), true);
+
+        // Update order with tracking
+        $order->update_meta_data('_karrio_tracking_number', $shipment['tracking_number']);
+        $order->update_meta_data('_karrio_carrier', $shipment['carrier_name']);
+        $order->save();
+    }
+}
+?>
+```
+
+## Workflow Patterns
+
+### Bi-Directional Sync Pattern
+
+Maintain data consistency between Karrio and external platforms:
+
+```javascript
+class BiDirectionalSync {
+  constructor(config) {
+    this.platforms = config.platforms;
+    this.conflictResolution = config.conflictResolution || "karrio_wins";
+  }
+
+  async syncOrderStatus(orderId, newStatus, source) {
+    try {
+      // Update in Karrio first
+      await this.updateKarrioOrder(orderId, newStatus);
+
+      // Sync to all connected platforms except source
+      const platforms = this.platforms.filter((p) => p.name !== source);
+
+      await Promise.all(
+        platforms.map((platform) =>
+          this.syncToPlatform(platform, orderId, newStatus),
+        ),
+      );
+    } catch (error) {
+      await this.handleSyncError(orderId, error, source);
+    }
+  }
+
+  async syncToPlatform(platform, orderId, status) {
+    switch (platform.type) {
+      case "shopify":
+        return this.syncToShopify(platform, orderId, status);
+      case "salesforce":
+        return this.syncToSalesforce(platform, orderId, status);
+      case "odoo":
+        return this.syncToOdoo(platform, orderId, status);
+      case "woocommerce":
+        return this.syncToWooCommerce(platform, orderId, status);
+      default:
+        throw new Error(`Unsupported platform: ${platform.type}`);
+    }
+  }
+
+  async handleConflict(orderId, conflictData) {
+    switch (this.conflictResolution) {
+      case "karrio_wins":
+        return this.forceKarrioState(orderId);
+      case "platform_wins":
+        return this.forcePlatformState(orderId, conflictData);
+      case "manual_review":
+        return this.queueForManualReview(orderId, conflictData);
+      case "timestamp_wins":
+        return this.resolveByTimestamp(orderId, conflictData);
+    }
   }
 }
 ```
 
-## Event-Driven Architecture
+### Batch Processing Pattern
 
-### Webhook Event Processing
+Efficiently sync large volumes of data:
 
 ```javascript
-// Centralized webhook processor
+class BatchProcessor {
+  constructor(config) {
+    this.batchSize = config.batchSize || 100;
+    this.concurrency = config.concurrency || 5;
+    this.retryAttempts = config.retryAttempts || 3;
+  }
+
+  async processPlatformOrders(platform, orders) {
+    const batches = this.createBatches(orders, this.batchSize);
+
+    // Process batches with controlled concurrency
+    const semaphore = new Semaphore(this.concurrency);
+
+    const results = await Promise.allSettled(
+      batches.map((batch) =>
+        semaphore.acquire().then(async (release) => {
+          try {
+            return await this.processBatch(platform, batch);
+          } finally {
+            release();
+          }
+        }),
+      ),
+    );
+
+    return this.consolidateResults(results);
+  }
+
+  async processBatch(platform, orders) {
+    const shipmentRequests = await Promise.all(
+      orders.map((order) => this.transformOrderToShipment(platform, order)),
+    );
+
+    // Create batch shipment in Karrio
+    const batch = await karrio.batches.createShipments({
+      batchShipmentData: {
+        shipments: shipmentRequests,
+      },
+    });
+
+    // Monitor batch progress
+    const completedBatch = await this.monitorBatch(batch.id);
+
+    // Update platforms with results
+    await this.updatePlatformsWithResults(platform, completedBatch, orders);
+
+    return completedBatch;
+  }
+
+  async transformOrderToShipment(platform, order) {
+    switch (platform.type) {
+      case "shopify":
+        return this.transformShopifyOrder(order);
+      case "bigcommerce":
+        return this.transformBigCommerceOrder(order);
+      case "magento":
+        return this.transformMagentoOrder(order);
+      case "commercetools":
+        return this.transformCommerceToolsOrder(order);
+      default:
+        return this.transformGenericOrder(order);
+    }
+  }
+}
+```
+
+### Real-Time Webhook Processing
+
+Handle platform webhooks with proper error handling:
+
+```javascript
 class WebhookProcessor {
   constructor() {
-    this.handlers = new Map();
-    this.setupHandlers();
+    this.processors = new Map();
+    this.setupProcessors();
   }
 
-  setupHandlers() {
-    // Order events
-    this.handlers.set("order_created", this.handleOrderCreated);
-    this.handlers.set("order_updated", this.handleOrderUpdated);
-    this.handlers.set("order_cancelled", this.handleOrderCancelled);
-
-    // Shipment events
-    this.handlers.set("shipment_created", this.handleShipmentCreated);
-    this.handlers.set("shipment_purchased", this.handleShipmentPurchased);
-    this.handlers.set("shipment_cancelled", this.handleShipmentCancelled);
-
-    // Tracking events
-    this.handlers.set("tracker.created", this.handleTrackerCreated);
-    this.handlers.set("tracker.updated", this.handleTrackerUpdated);
+  setupProcessors() {
+    this.processors.set("shopify", new ShopifyProcessor());
+    this.processors.set("salesforce", new SalesforceProcessor());
+    this.processors.set("odoo", new OdooProcessor());
+    this.processors.set("woocommerce", new WooCommerceProcessor());
+    this.processors.set("bigcommerce", new BigCommerceProcessor());
+    this.processors.set("magento", new MagentoProcessor());
+    this.processors.set("commercetools", new CommerceToolsProcessor());
   }
 
-  async process(event) {
-    const handler = this.handlers.get(event.type);
+  async processWebhook(platform, event, data, headers) {
+    try {
+      // Verify webhook authenticity
+      await this.verifyWebhook(platform, data, headers);
 
-    if (handler) {
-      try {
-        await handler.call(this, event.data);
-      } catch (error) {
-        console.error(`Error processing ${event.type}:`, error);
-        throw error;
+      // Get platform processor
+      const processor = this.processors.get(platform);
+      if (!processor) {
+        throw new Error(`No processor found for platform: ${platform}`);
       }
-    } else {
-      console.log(`No handler for event type: ${event.type}`);
+
+      // Process the webhook
+      const result = await processor.process(event, data);
+
+      // Log successful processing
+      await this.logWebhookEvent(platform, event, "success", result);
+
+      return result;
+    } catch (error) {
+      // Log error and handle retry logic
+      await this.logWebhookEvent(platform, event, "error", error);
+
+      if (this.isRetryableError(error)) {
+        await this.queueForRetry(platform, event, data, headers);
+      }
+
+      throw error;
     }
   }
 
-  async handleOrderCreated(data) {
-    console.log(`Processing new order: ${data.order_id}`);
-    // Implement your order processing logic
-  }
-
-  async handleTrackerUpdated(data) {
-    console.log(`Tracking update: ${data.tracking_number} - ${data.status}`);
-    // Implement your tracking update logic
+  async verifyWebhook(platform, data, headers) {
+    switch (platform) {
+      case "shopify":
+        return this.verifyShopifyWebhook(data, headers);
+      case "salesforce":
+        return this.verifySalesforceWebhook(data, headers);
+      default:
+        // Generic verification or skip for platforms without verification
+        return true;
+    }
   }
 }
 
-// Usage in Express app
-const processor = new WebhookProcessor();
-
-app.post("/webhooks/:type", async (req, res) => {
-  try {
-    await processor.process(req.body);
-    res.status(200).send("OK");
-  } catch (error) {
-    console.error("Webhook processing error:", error);
-    res.status(500).send("Error");
-  }
-});
-```
-
-### Background Job Processing
-
-Implement reliable background processing for time-intensive tasks:
-
-```javascript
-// Using a job queue (e.g., Bull, Agenda, etc.)
-const Queue = require("bull");
-const shipmentQueue = new Queue("shipment processing");
-
-// Add job to queue from webhook
-app.post("/webhooks/orders", async (req, res) => {
-  if (req.body.type === "order_created") {
-    // Add to background queue instead of processing immediately
-    await shipmentQueue.add("create_shipment", req.body.data, {
-      attempts: 3,
-      backoff: "exponential",
-      delay: 1000,
-    });
-  }
-  res.status(200).send("Queued");
-});
-
-// Process jobs in background
-shipmentQueue.process("create_shipment", async (job) => {
-  const order = job.data;
-
-  try {
-    const shipment = await createShipmentFromOrder(order);
-
-    // Update order status
-    await updateOrderStatus(order.id, {
-      status: "shipped",
-      shipment_id: shipment.id,
-      tracking_number: shipment.tracking_number,
-    });
-
-    return { success: true, shipment_id: shipment.id };
-  } catch (error) {
-    console.error("Shipment creation failed:", error);
-    throw error; // Job will be retried
-  }
-});
-```
-
-## Integration Examples
-
-### E-commerce Platform Integration
-
-```javascript
-// Complete e-commerce automation workflow
-class EcommerceWorkflow {
-  async handleNewOrder(order) {
-    try {
-      // 1. Validate order
-      await this.validateOrder(order);
-
-      // 2. Check inventory
-      const inventoryCheck = await this.checkInventory(order.line_items);
-      if (!inventoryCheck.available) {
-        await this.handleBackorder(order);
-        return;
-      }
-
-      // 3. Create shipment
-      const shipment = await this.createShipment(order);
-
-      // 4. Purchase label
-      const label = await this.purchaseLabel(shipment);
-
-      // 5. Update order
-      await this.updateOrder(order.id, {
-        status: "shipped",
-        tracking_number: shipment.tracking_number,
-        shipment_id: shipment.id,
-      });
-
-      // 6. Send notifications
-      await this.sendShippingNotification(order, shipment);
-    } catch (error) {
-      await this.handleError(order, error);
+class ShopifyProcessor {
+  async process(event, data) {
+    switch (event) {
+      case "orders/create":
+        return this.handleOrderCreate(data);
+      case "orders/updated":
+        return this.handleOrderUpdate(data);
+      case "orders/cancelled":
+        return this.handleOrderCancel(data);
+      default:
+        console.log(`Unhandled Shopify event: ${event}`);
     }
   }
 
-  async createShipment(order) {
-    const response = await fetch("https://api.karrio.io/v1/shipments", {
-      method: "POST",
-      headers: {
-        Authorization: "Token YOUR_API_KEY",
-        "Content-Type": "application/json",
+  async handleOrderCreate(order) {
+    // Transform Shopify order to Karrio format
+    const shipmentData = {
+      recipient: {
+        person_name: `${order.shipping_address.first_name} ${order.shipping_address.last_name}`,
+        address_line1: order.shipping_address.address1,
+        address_line2: order.shipping_address.address2,
+        city: order.shipping_address.city,
+        state_code: order.shipping_address.province_code,
+        postal_code: order.shipping_address.zip,
+        country_code: order.shipping_address.country_code,
+        phone_number: order.shipping_address.phone,
+        email: order.email,
       },
-      body: JSON.stringify({
-        shipper: this.getWarehouseAddress(),
-        recipient: order.shipping_address,
-        parcels: this.mapOrderToParcels(order),
-        service: this.selectShippingService(order),
-        reference: order.order_id,
-      }),
+      shipper: await this.getWarehouseAddress(),
+      parcels: await this.transformLineItemsToParcels(order.line_items),
+      metadata: {
+        shopify_order_id: order.id,
+        shopify_order_number: order.order_number,
+        platform: "shopify",
+      },
+    };
+
+    // Apply business rules for carrier selection
+    const selectedCarrier = await this.selectCarrier(shipmentData, order);
+    if (selectedCarrier) {
+      shipmentData.carrier_ids = [selectedCarrier];
+    }
+
+    // Create shipment in Karrio
+    const shipment = await karrio.shipments.create({
+      shipmentData: shipmentData,
     });
 
-    if (!response.ok) {
-      throw new Error(`Shipment creation failed: ${response.statusText}`);
-    }
+    // Update Shopify with fulfillment
+    await this.createShopifyFulfillment(order.id, shipment);
 
-    return await response.json();
+    return shipment;
   }
 }
 ```
 
-### Multi-Carrier Failover
+## Platform-Specific Features
 
-```javascript
-// Implement carrier failover logic
-async function createShipmentWithFailover(shipmentData) {
-  const carriers = ["fedex", "ups", "usps"]; // Priority order
+### E-commerce Platform Integrations
 
-  for (const carrier of carriers) {
-    try {
-      const response = await fetch("https://api.karrio.io/v1/shipments", {
-        method: "POST",
-        headers: {
-          Authorization: "Token YOUR_API_KEY",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...shipmentData,
-          carrier_ids: [carrier], // Try specific carrier
-        }),
-      });
+#### Shopify Advanced Features
 
-      if (response.ok) {
-        const shipment = await response.json();
-        console.log(`Shipment created with ${carrier}:`, shipment.id);
-        return shipment;
-      }
+- **Multi-location fulfillment**: Route orders to appropriate warehouses
+- **Shopify Flow integration**: Trigger Shopify Flow actions based on shipping events
+- **App bridge integration**: Embedded shipping interface in Shopify admin
+- **Metafield synchronization**: Store shipping data in Shopify metafields
 
-      console.warn(`Carrier ${carrier} failed, trying next...`);
-    } catch (error) {
-      console.error(`Carrier ${carrier} error:`, error);
-    }
-  }
+#### BigCommerce Features
 
-  throw new Error("All carriers failed");
-}
-```
+- **Webhook management**: Automatic webhook setup and management
+- **Custom fields mapping**: Map BigCommerce custom fields to shipping metadata
+- **Multi-storefront support**: Handle multiple storefronts from single Karrio instance
+- **Tax integration**: Sync shipping costs with BigCommerce tax calculations
 
-## Best Practices
+### ERP System Integrations
 
-### Error Handling and Resilience
+#### Odoo Features
 
-```javascript
-// Implement retry logic with exponential backoff
-async function withRetry(operation, maxAttempts = 3) {
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      return await operation();
-    } catch (error) {
-      if (attempt === maxAttempts) {
-        throw error;
-      }
+- **Stock movement integration**: Sync inventory movements with shipping
+- **Accounting integration**: Post shipping costs to appropriate accounts
+- **Multi-company support**: Handle Odoo multi-company setups
+- **Custom module integration**: Work with custom Odoo modules
 
-      const delay = Math.pow(2, attempt) * 1000; // Exponential backoff
-      console.log(`Attempt ${attempt} failed, retrying in ${delay}ms...`);
-      await new Promise((resolve) => setTimeout(resolve, delay));
-    }
-  }
-}
+#### Salesforce Features
 
-// Usage
-const shipment = await withRetry(() => createShipment(orderData));
-```
+- **Lightning component**: Native Karrio shipping component for Salesforce
+- **Apex trigger integration**: Automatically process orders via Apex triggers
+- **Custom objects**: Store detailed shipping data in custom Salesforce objects
+- **Process Builder integration**: Include shipping in Salesforce automation
 
-### Idempotency
+## Use Cases
 
-```javascript
-// Ensure operations are idempotent
-const processedOrders = new Set();
+### Multi-Channel E-commerce
 
-app.post("/webhooks/orders", async (req, res) => {
-  const order = req.body.data;
+Perfect for businesses selling across multiple platforms:
 
-  // Check if already processed
-  if (processedOrders.has(order.id)) {
-    console.log(`Order ${order.id} already processed`);
-    return res.status(200).send("Already processed");
-  }
+- **Unified Shipping**: Consistent shipping experience across all channels
+- **Centralized Fulfillment**: Process orders from all platforms in one place
+- **Inventory Synchronization**: Keep stock levels updated across platforms
+- **Cost Allocation**: Distribute shipping costs back to source platforms
 
-  try {
-    await processOrder(order);
-    processedOrders.add(order.id);
-    res.status(200).send("OK");
-  } catch (error) {
-    console.error("Processing failed:", error);
-    res.status(500).send("Error");
-  }
-});
-```
+### Enterprise Logistics
 
-### Monitoring and Logging
+Designed for large organizations with complex systems:
 
-```javascript
-// Add comprehensive logging and monitoring
-class WorkflowMonitor {
-  static logEvent(event, data) {
-    console.log(
-      JSON.stringify({
-        timestamp: new Date().toISOString(),
-        event,
-        data,
-        level: "info",
-      }),
-    );
-  }
+- **System of Record**: Use Karrio as central shipping system of record
+- **Legacy Integration**: Connect older ERP systems with modern shipping APIs
+- **Compliance Management**: Ensure shipping compliance across all platforms
+- **Performance Analytics**: Unified shipping analytics across all systems
 
-  static logError(event, error, data) {
-    console.error(
-      JSON.stringify({
-        timestamp: new Date().toISOString(),
-        event,
-        error: error.message,
-        stack: error.stack,
-        data,
-        level: "error",
-      }),
-    );
-  }
-}
+### 3PL/Fulfillment Centers
 
-// Usage throughout your workflow
-WorkflowMonitor.logEvent("order_processing_started", { order_id: order.id });
-WorkflowMonitor.logError("shipment_creation_failed", error, {
-  order_id: order.id,
-});
-```
+Built for logistics service providers:
 
-## What's Next?
+- **Client Platform Integration**: Connect to each client's e-commerce platform
+- **White-label Solutions**: Provide shipping services under client branding
+- **Multi-tenant Architecture**: Isolate data between different clients
+- **Billing Integration**: Track shipping costs per client for billing
 
-- [Webhooks →](/docs/products/webhooks) - Complete webhook implementation guide
-- [API Reference →](/docs/reference/rest) - Full REST API documentation
-- [Batch Processing →](/docs/products/batch-processing) - Bulk operations and efficiency
-- [Events →](/docs/products/events) - Event-driven architecture patterns
+## Getting Started
+
+Ready to sync your platforms with Karrio? Follow these steps:
+
+1. **Identify your platforms** and their API capabilities
+2. **Set up authentication** for each platform integration
+3. **Configure data mapping** between platforms and Karrio
+4. **Test synchronization** with a small subset of data
+5. **Monitor and optimize** sync performance and reliability
+
+### Next Steps
+
+- Learn about [webhooks](/docs/products/webhooks) for real-time synchronization
+- Explore [batch processing](/docs/products/batch-processing) for high-volume data sync
+- Set up [orders](/docs/products/orders) for order management integration
+- Configure [API logs](/docs/products/api-logs) for monitoring sync operations
+
+---
+
+**Need help with platform integration?** Join our [community Discord](https://discord.gg/karrio) or check our integration guides for specific platforms.

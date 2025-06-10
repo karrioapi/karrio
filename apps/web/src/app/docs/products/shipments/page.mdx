@@ -1,6 +1,6 @@
 ---
 sidebarTitle: Shipments
-title: Shipments
+title: Shipments Management
 description: Create, manage, and optimize shipments across multiple carriers with intelligent routing
 tags:
   [
@@ -12,25 +12,62 @@ tags:
   ]
 ---
 
-# Shipments
+# Shipments Management
 
-Karrio's Shipments product is the core of our shipping automation platform. It provides a unified interface to create, manage, and optimize shipments across 50+ carriers worldwide, with intelligent rate shopping, automated label generation, and comprehensive tracking integration.
+<div className="flex gap-2 mb-6">
+  <div className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-400/10 dark:text-green-400 dark:ring-green-400/30">
+    <span className="text-xs">Community Edition</span>
+  </div>
+  <div className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30">
+    <span className="text-xs">Core Feature</span>
+  </div>
+</div>
 
-## Overview
+Every Karrio project comes with comprehensive shipment management capabilities, providing multi-carrier rate shopping, automated label generation, real-time tracking integration, and seamless order fulfillment workflows.
 
-The Shipments API transforms complex multi-carrier shipping operations into simple API calls. Whether you're shipping a single package or processing thousands of orders daily, Karrio handles the complexity of different carrier APIs, formats, and requirements behind a consistent interface.
+## Features
 
-### Key Benefits
+### Multi-Carrier Shipping
 
-- **Universal API**: One API for all carriers - no need to integrate with multiple carrier APIs
-- **Intelligent Rate Shopping**: Automatically compare rates across carriers to find the best price and service
-- **Automated Validation**: Built-in address validation and shipping requirement checks
-- **Flexible Integration**: Support for both synchronous and asynchronous processing
-- **Cost Optimization**: Smart carrier selection based on your business rules and preferences
+You don't have to integrate with multiple carrier APIs to start shipping. Our shipment engine makes creating FedEx, UPS, DHL, and other carrier shipments as simple as a single API call.
 
-## Architecture
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    Shipment Management Dashboard
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border h-64 flex items-center justify-center">
+    <span className="text-gray-400">
+      Screenshot: Shipment creation and management interface
+    </span>
+  </div>
+</div>
 
-### Data Flow
+### Intelligent Rate Shopping
+
+Compare shipping rates across multiple carriers automatically to find the best prices and service levels for each shipment.
+
+### Automated Label Generation
+
+Generate shipping labels in multiple formats (PDF, PNG, ZPL, EPL) with custom branding and automatic compliance documentation.
+
+### Real-time Tracking Integration
+
+Every shipment includes automatic tracking number generation and integration with Karrio's tracking system.
+
+### Batch Processing
+
+Process multiple shipments efficiently with bulk creation APIs and asynchronous processing capabilities.
+
+### Additional features
+
+- Karrio extends shipments with real-time rate comparison across all connected carriers.
+- Every shipment includes automatic address validation and correction.
+- Karrio manages international customs documentation automatically.
+- Import shipment data directly from CSV files or integrate with e-commerce platforms.
+
+## Data Flow
+
+### Shipment Creation Flow
 
 ```mermaid
 flowchart TD
@@ -47,8 +84,8 @@ flowchart TD
     E --> I[Selected Carrier API]
     H --> I
 
-    I --> J[Label Generation]
-    J --> K[Address Validation]
+    I --> J[Address Validation]
+    J --> K[Label Generation]
     K --> L[Document Generation]
 
     L --> M[Shipment Created]
@@ -57,118 +94,202 @@ flowchart TD
 
     O --> P[Client Notification]
     M --> Q[Database Storage]
+    N --> R[Automatic Tracking Setup]
 
     style A fill:#e1f5fe
     style M fill:#e8f5e8
     style O fill:#fff3e0
+    style R fill:#f3e5f5
 ```
 
-### Core Components
+## API Reference
 
-#### 1. Shipment Engine
+### REST API
 
-The central orchestrator that manages the entire shipment lifecycle:
+#### Create Shipment
 
-- **Request Processing**: Validates and normalizes shipment requests
-- **Carrier Selection**: Chooses the optimal carrier based on rules and preferences
-- **Error Handling**: Manages carrier API failures and retries
-- **Status Management**: Tracks shipment status throughout the lifecycle
-
-#### 2. Rate Shopping Engine
-
-Intelligent rate comparison across multiple carriers:
-
-- **Parallel Processing**: Simultaneous rate requests to multiple carriers
-- **Smart Filtering**: Filters rates based on service requirements and constraints
-- **Cost Optimization**: Compares total costs including additional fees
-- **Performance Caching**: Caches frequently requested routes for faster response
-
-#### 3. Label Generation Service
-
-Automated shipping label creation and management:
-
-- **Multi-Format Support**: PDF, PNG, ZPL, EPL label formats
-- **Custom Templates**: Branded label templates with your logo and styling
-- **Batch Processing**: Generate multiple labels in a single request
-- **Document Packaging**: Combine labels with customs forms and invoices
-
-#### 4. Validation Engine
-
-Comprehensive validation for shipping requirements:
-
-- **Address Validation**: Real-time address verification and correction
-- **Service Compatibility**: Validates service availability for origin-destination pairs
-- **Customs Requirements**: Checks international shipping documentation requirements
-- **Weight and Dimension Limits**: Validates package constraints per carrier
-
-## Use Cases
-
-### E-commerce Integration
-
-Perfect for online stores needing automated shipping:
-
-```json
-{
+```bash
+curl -X POST "https://api.karrio.io/v1/shipments" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "service": "fedex_ground",
   "shipper": {
-    "person_name": "Your Store",
-    "company_name": "Your Company Inc.",
+      "person_name": "John Doe",
+      "company_name": "Example Corp",
     "address_line1": "123 Main St",
     "city": "New York",
     "state_code": "NY",
     "postal_code": "10001",
-    "country_code": "US"
+      "country_code": "US",
+      "phone_number": "555-1234"
   },
   "recipient": {
-    "person_name": "John Doe",
+      "person_name": "Jane Smith",
     "address_line1": "456 Oak Ave",
     "city": "Los Angeles",
     "state_code": "CA",
     "postal_code": "90210",
-    "country_code": "US"
+      "country_code": "US",
+      "phone_number": "555-5678"
   },
-  "parcels": [
-    {
-      "weight": 1.5,
+    "parcels": [{
+      "weight": 2.5,
       "weight_unit": "LB",
-      "width": 10,
-      "height": 8,
-      "length": 12,
+      "length": 10,
+      "width": 8,
+      "height": 6,
       "dimension_unit": "IN"
+    }],
+    "options": {
+      "insurance": 100.00,
+      "signature_confirmation": true
     }
-  ],
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "id": "shp_1234567890",
+  "carrier_name": "fedex",
+  "carrier_id": "fedex_production",
   "service": "fedex_ground",
-  "options": {
-    "insurance": 100.0,
-    "signature_confirmation": true
-  }
-}
-```
-
-### Multi-Carrier Rate Shopping
-
-Compare rates across multiple carriers before shipping:
-
-```json
-{
-  "shipper": { ... },
-  "recipient": { ... },
-  "parcels": [{ ... }],
-  "carrier_ids": ["fedex", "ups", "usps"],
-  "services": ["ground", "express"],
-  "options": {
+  "tracking_number": "1234567890123456",
+  "shipment_identifier": "FDX_SHIP_123",
+  "status": "purchased",
+  "selected_rate": {
+    "carrier_name": "fedex",
+    "service": "fedex_ground",
+    "total_charge": 15.99,
     "currency": "USD",
-    "preferred_service": "ground"
-  }
+    "transit_days": 3
+  },
+  "label_type": "PDF",
+  "label_url": "https://api.karrio.io/v1/documents/label_123.pdf",
+  "invoice_url": "https://api.karrio.io/v1/documents/invoice_123.pdf",
+  "created_at": "2024-01-15T10:30:00Z",
+  "updated_at": "2024-01-15T10:30:00Z"
 }
 ```
 
-### International Shipping
+#### Get Shipping Rates
 
-Handle complex international shipments with customs:
+```bash
+curl -X POST "https://api.karrio.io/v1/proxy/rates" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "shipper": {
+      "postal_code": "10001",
+      "country_code": "US"
+    },
+    "recipient": {
+      "postal_code": "90210",
+      "country_code": "US"
+    },
+    "parcels": [{
+      "weight": 2.5,
+      "weight_unit": "LB",
+      "length": 10,
+      "width": 8,
+      "height": 6,
+      "dimension_unit": "IN"
+    }],
+    "services": ["ground", "express"]
+  }'
+```
+
+**Response:**
 
 ```json
 {
-  "shipper": { ... },
+  "rates": [
+    {
+      "carrier_name": "fedex",
+      "service": "fedex_ground",
+      "total_charge": 15.99,
+      "currency": "USD",
+      "transit_days": 3,
+      "extra_charges": [
+        {
+          "name": "Fuel surcharge",
+          "amount": 2.5,
+          "currency": "USD"
+        }
+      ]
+    },
+    {
+      "carrier_name": "ups",
+      "service": "ups_ground",
+      "total_charge": 16.49,
+      "currency": "USD",
+      "transit_days": 3,
+      "extra_charges": [
+        {
+          "name": "Fuel surcharge",
+          "amount": 2.75,
+          "currency": "USD"
+        }
+      ]
+    }
+  ]
+}
+```
+
+#### List Shipments
+
+```bash
+curl -X GET "https://api.karrio.io/v1/shipments?limit=10&offset=0" \
+  -H "Authorization: Token YOUR_API_KEY"
+```
+
+**Response:**
+
+```json
+{
+  "count": 25,
+  "next": "/v1/shipments?limit=10&offset=10",
+  "previous": null,
+  "results": [
+    {
+      "id": "shp_1234567890",
+      "carrier_name": "fedex",
+      "service": "fedex_ground",
+      "tracking_number": "1234567890123456",
+      "status": "delivered",
+      "shipper": {
+        "person_name": "John Doe",
+        "city": "New York",
+        "state_code": "NY"
+      },
+      "recipient": {
+        "person_name": "Jane Smith",
+        "city": "Los Angeles",
+        "state_code": "CA"
+      },
+      "created_at": "2024-01-15T10:30:00Z"
+    }
+  ]
+}
+```
+
+#### International Shipment with Customs
+
+```bash
+curl -X POST "https://api.karrio.io/v1/shipments" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "service": "fedex_international_priority",
+    "shipper": {
+      "person_name": "John Doe",
+      "address_line1": "123 Main St",
+      "city": "New York",
+      "postal_code": "10001",
+      "country_code": "US"
+    },
   "recipient": {
     "person_name": "Marie Dubois",
     "address_line1": "123 Rue de la Paix",
@@ -176,7 +297,10 @@ Handle complex international shipments with customs:
     "postal_code": "75001",
     "country_code": "FR"
   },
-  "parcels": [{ ... }],
+    "parcels": [{
+      "weight": 1.5,
+      "weight_unit": "LB"
+    }],
   "customs": {
     "content_type": "merchandise",
     "incoterm": "DDP",
@@ -189,267 +313,176 @@ Handle complex international shipments with customs:
       "weight_unit": "LB",
       "origin_country": "US"
     }]
-  }
-}
-```
-
-### Bulk Processing
-
-Process multiple shipments efficiently:
-
-```json
-{
-  "shipments": [
-    {
-      "reference": "ORDER-001",
-      "shipper": { ... },
-      "recipient": { ... },
-      "parcels": [{ ... }]
-    },
-    {
-      "reference": "ORDER-002",
-      "shipper": { ... },
-      "recipient": { ... },
-      "parcels": [{ ... }]
     }
-  ],
-  "options": {
-    "async": true,
-    "notify_webhook": "https://your-app.com/webhooks/shipments"
-  }
-}
-```
-
-## Getting Started
-
-### 1. Set Up Carrier Connections
-
-First, configure your carrier accounts:
-
-```bash
-curl -X POST "https://api.karrio.io/v1/carriers" \
-  -H "Authorization: Token YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "carrier_name": "fedex",
-    "display_name": "FedEx Production",
-    "credentials": {
-      "account_number": "YOUR_ACCOUNT",
-      "meter_number": "YOUR_METER",
-      "user_key": "YOUR_USER_KEY",
-      "password": "YOUR_PASSWORD"
-    },
-    "test_mode": false
   }'
 ```
 
-### 2. Create Your First Shipment
+### GraphQL API
 
-```javascript
-const karrio = require("karrio");
+#### Create Shipment Mutation
 
-const client = new karrio.Client({
-  apiKey: "YOUR_API_KEY",
-  testMode: true,
-});
-
-// Get rates first
-const rates = await client.shipments.getRates({
-  shipper: {
-    person_name: "John Smith",
-    company_name: "ABC Corp",
-    address_line1: "123 Main St",
-    city: "New York",
-    state_code: "NY",
-    postal_code: "10001",
-    country_code: "US",
-  },
-  recipient: {
-    person_name: "Jane Doe",
-    address_line1: "456 Oak Ave",
-    city: "Los Angeles",
-    state_code: "CA",
-    postal_code: "90210",
-    country_code: "US",
-  },
-  parcels: [
-    {
-      weight: 2.5,
-      weight_unit: "LB",
-      width: 12,
-      height: 8,
-      length: 10,
-      dimension_unit: "IN",
-    },
-  ],
-});
-
-// Create shipment with selected rate
-const shipment = await client.shipments.create({
-  selected_rate_id: rates.rates[0].id,
-  // ... same addresses and parcels as above
-});
-
-console.log("Tracking Number:", shipment.tracking_number);
-console.log("Label URL:", shipment.label_url);
-```
-
-### 3. Handle Webhooks
-
-Set up webhooks to receive real-time updates:
-
-```javascript
-app.post("/webhooks/shipments", (req, res) => {
-  const event = req.body;
-
-  switch (event.type) {
-    case "shipment.created":
-      console.log("Shipment created:", event.data.tracking_number);
-      break;
-    case "shipment.delivered":
-      console.log("Shipment delivered:", event.data.tracking_number);
-      break;
-    case "shipment.exception":
-      console.log("Shipment exception:", event.data.exception_description);
-      break;
-  }
-
-  res.status(200).send("OK");
-});
-```
-
-## Advanced Features
-
-### Smart Carrier Selection
-
-Configure business rules for automatic carrier selection:
-
-```json
-{
-  "rules": [
-    {
-      "name": "Express for High Value",
-      "condition": "declared_value > 500",
-      "action": "prefer_service",
-      "value": "express"
-    },
-    {
-      "name": "Ground for Heavy Packages",
-      "condition": "weight > 50",
-      "action": "exclude_carriers",
-      "value": ["fedex_express", "ups_express"]
+```graphql
+mutation CreateShipment($data: CreateShipmentMutationInput!) {
+  create_shipment(data: $data) {
+    id
+    carrier_name
+    service
+    tracking_number
+    status
+    selected_rate {
+      total_charge
+      currency
+      service
     }
-  ]
-}
-```
-
-### Address Validation
-
-Automatically validate and correct addresses:
-
-```json
-{
-  "recipient": {
-    "person_name": "John Doe",
-    "address_line1": "123 Main Street",
-    "city": "New York",
-    "state_code": "NY",
-    "postal_code": "10001",
-    "country_code": "US",
-    "validate_location": true
+    label_url
+    invoice_url
   }
 }
 ```
 
-### Custom Document Templates
-
-Use branded shipping labels and documents:
+**Variables:**
 
 ```json
 {
-  "options": {
-    "label_template": "your-custom-template",
-    "invoice_template": "your-invoice-template",
-    "branding": {
-      "logo_url": "https://your-domain.com/logo.png",
-      "primary_color": "#007bff"
+  "data": {
+    "service": "fedex_ground",
+    "shipper": {
+      "person_name": "John Doe",
+      "address_line1": "123 Main St",
+      "city": "New York",
+      "state_code": "NY",
+      "postal_code": "10001",
+      "country_code": "US"
+    },
+    "recipient": {
+      "person_name": "Jane Smith",
+      "address_line1": "456 Oak Ave",
+      "city": "Los Angeles",
+      "state_code": "CA",
+      "postal_code": "90210",
+      "country_code": "US"
+    },
+    "parcels": [
+      {
+        "weight": 2.5,
+        "weight_unit": "LB"
+      }
+    ]
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "data": {
+    "create_shipment": {
+      "id": "shp_1234567890",
+      "carrier_name": "fedex",
+      "service": "fedex_ground",
+      "tracking_number": "1234567890123456",
+      "status": "purchased",
+      "selected_rate": {
+        "total_charge": 15.99,
+        "currency": "USD",
+        "service": "fedex_ground"
+      },
+      "label_url": "https://api.karrio.io/v1/documents/label_123.pdf",
+      "invoice_url": "https://api.karrio.io/v1/documents/invoice_123.pdf"
     }
   }
 }
 ```
 
-## Integration with Karrio Ecosystem
+#### Query Shipments
 
-### With Tracking
+```graphql
+query GetShipments($filter: ShipmentFilter) {
+  shipments(filter: $filter) {
+    edges {
+      node {
+        id
+        carrier_name
+        service
+        tracking_number
+        status
+        shipper {
+          person_name
+          city
+          state_code
+        }
+        recipient {
+          person_name
+          city
+          state_code
+        }
+        created_at
+      }
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}
+```
 
-Shipments automatically integrate with Karrio's tracking system:
+**Variables:**
 
-- **Real-time Updates**: Automatic tracking data synchronization
-- **Event Notifications**: Webhook events for delivery milestones
-- **Exception Handling**: Automated alerts for delivery issues
+```json
+{
+  "filter": {
+    "status": "delivered",
+    "carrier_name": "fedex"
+  }
+}
+```
 
-### With Orders
+## Use Cases
 
-Seamless integration with order management:
+### E-commerce Integration
 
-- **Order Fulfillment**: Automatic shipment creation from orders
-- **Order Status Sync**: Keep order status updated with shipment progress
+Perfect for online stores needing automated shipping:
 
-### With Workflows
+- **Order Fulfillment**: Automatically create shipments from orders
+- **Multi-Warehouse**: Route shipments from optimal warehouse locations
+- **Rate Shopping**: Compare carriers to minimize shipping costs
+- **Label Printing**: Generate labels for pick-and-pack operations
 
-Automate complex shipping processes:
+### Enterprise Shipping
 
-- **Conditional Logic**: Ship based on customer preferences or product types
-- **Approval Workflows**: Require approval for high-value shipments
-- **Exception Handling**: Automated responses to shipping issues
+Designed for high-volume enterprise operations:
 
-### With Multi-Tenant
+- **Batch Processing**: Process hundreds of shipments simultaneously
+- **Carrier Diversification**: Distribute volume across multiple carriers
+- **SLA Management**: Route shipments based on delivery requirements
+- **Cost Control**: Implement shipping rules and budgets
 
-Perfect for platforms and marketplaces:
+### International Commerce
 
-- **Isolated Operations**: Each tenant's shipments are completely isolated
-- **Custom Branding**: Branded labels and documents per tenant
-- **Usage Analytics**: Detailed shipping analytics per tenant
+Handle complex international shipping requirements:
 
-## Performance and Scaling
+- **Customs Documentation**: Automatic customs forms and commercial invoices
+- **Duty and Tax Calculation**: Estimate landed costs for customers
+- **Restricted Items**: Validate items against carrier and country restrictions
+- **Multi-Currency**: Handle pricing in local currencies
 
-### Optimization Tips
+## Getting Started
 
-1. **Rate Caching**: Cache frequently requested routes for faster response times
-2. **Batch Processing**: Use bulk APIs for high-volume operations
-3. **Async Processing**: Use webhooks for time-intensive operations
-4. **Carrier Selection**: Pre-filter carriers based on service requirements
+Ready to start shipping with Karrio? Follow these steps:
 
-### Monitoring
+1. **Connect your carriers** using our [carrier connections](/docs/products/carrier-connections)
+2. **Get shipping rates** to compare prices and services
+3. **Create your first shipment** with automatic label generation
+4. **Track your packages** with integrated tracking
 
-Monitor your shipping operations with built-in analytics:
+### Next Steps
 
-- **Success Rates**: Track successful shipment creation rates per carrier
-- **Performance Metrics**: Monitor API response times and error rates
-- **Cost Analysis**: Analyze shipping costs and optimization opportunities
-- **Usage Patterns**: Understand peak shipping times and volumes
-
-## What's Next
-
-Ready to dive deeper? Explore these resources:
-
-### API Documentation
-
-- **[Shipments API Reference](/docs/reference/api/shipments)**: Complete API documentation
-- **[Rate Shopping API](/docs/reference/api/rates)**: Detailed rate comparison endpoints
-- **[Webhooks Reference](/docs/reference/api/webhooks)**: Event notifications and payload schemas
-
-### Advanced Topics
-
-- **[Shipping Rules Engine](/docs/products/shipping-rules)**: Configure intelligent shipping automation
-- **[Batch Processing](/docs/products/batch-processing)**: Handle high-volume shipping operations
-- **[Document Generation](/docs/products/document-generation)**: Custom shipping documents and forms
-
-### Integration Guides
-
-- **[E-commerce Platforms](/docs/integrations/ecommerce)**: Shopify, WooCommerce, Magento integrations
-- **[Webhook Implementation](/docs/guides/webhooks)**: Best practices for webhook handling
-- **[Error Handling](/docs/guides/error-handling)**: Robust error handling strategies
+- Set up [tracking](/docs/products/tracking) for real-time package monitoring
+- Configure [webhooks](/docs/products/webhooks) for shipment status notifications
+- Explore [batch processing](/docs/products/batch-processing) for bulk shipments
+- Learn about [document generation](/docs/products/document-generation) for customs forms
 
 ---
 

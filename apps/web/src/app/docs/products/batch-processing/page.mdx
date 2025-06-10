@@ -1,36 +1,64 @@
 ---
-sidebarTitle: Products
-title: Carrier Connections
-description: Carrier Connections Guide
-tags: ["community", "shipping-carriers", "carrier-network"]
----
-
----
-
 sidebarTitle: Batch Processing
-title: Batch Processing
+title: Batch Processing & Bulk Operations
 description: Process multiple shipments, orders, and tracking requests efficiently with bulk operations
 tags: ["batch", "bulk", "processing", "operations", "efficiency", "automation"]
-
 ---
+
+<div className="flex gap-2 mb-6">
+  <div className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10 dark:bg-purple-400/10 dark:text-purple-400 dark:ring-purple-400/30">
+    <span className="text-xs">Insiders</span>
+  </div>
+  <div className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-700/10 dark:bg-red-400/10 dark:text-red-400 dark:ring-red-400/30">
+    <span className="text-xs">High Volume</span>
+  </div>
+</div>
 
 # Batch Processing
 
-Karrio's Batch Processing system enables efficient handling of large volumes of shipping operations. Process hundreds or thousands of shipments, orders, and tracking requests in single API calls with automatic error handling and progress monitoring.
+Every Karrio project comes with comprehensive batch processing capabilities, providing high-performance bulk operations for shipments, orders, tracking requests, and document generation with automatic error handling and progress monitoring.
 
-## Overview
+## Features
 
-Instead of making individual API calls for each operation, batch processing allows you to submit multiple operations together, reducing API overhead and improving performance. Perfect for high-volume shippers, e-commerce platforms, and enterprise integrations.
+### High-Volume Operations
 
-### Key Benefits
+You don't have to process shipments one by one. Our batch processing system handles thousands of operations simultaneously with optimized performance and resource utilization.
 
-- **High Performance**: Process thousands of operations in single requests
-- **Error Isolation**: Individual operation failures don't affect the entire batch
-- **Progress Monitoring**: Real-time status updates on batch processing
-- **Automatic Retry**: Failed operations are automatically retried
-- **Resource Optimization**: Reduced API calls and improved throughput
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    Batch Processing Dashboard
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border h-64 flex items-center justify-center">
+    <span className="text-gray-400">
+      Screenshot: Batch operation progress monitoring and results interface
+    </span>
+  </div>
+</div>
 
-## Architecture
+### Intelligent Error Handling
+
+Individual operation failures don't affect the entire batch. Failed operations are automatically retried with exponential backoff and detailed error reporting.
+
+### Real-Time Progress Monitoring
+
+Track batch operation progress in real-time with detailed status updates, completion rates, and performance metrics.
+
+### Asynchronous Processing
+
+Submit large batches and receive webhook notifications when processing completes, allowing your application to handle other tasks.
+
+### Operation Optimization
+
+Automatically optimize batch operations by grouping similar requests and leveraging carrier bulk APIs for maximum efficiency.
+
+### Additional features
+
+- Karrio extends batch processing with intelligent batching algorithms and carrier-specific optimizations.
+- Every batch operation includes detailed logging and audit trails for compliance and debugging.
+- Karrio manages resource allocation and rate limiting to prevent API overload.
+- Support for custom batch validation rules and pre-processing workflows.
+
+## Data Flow
 
 ### Batch Processing Flow
 
@@ -58,36 +86,22 @@ flowchart TD
     K --> N[Final Results]
     N --> O[Webhook Notifications]
 
+    P[Error Handler] --> Q[Retry Logic]
+    Q --> R[Failed Operations]
+    R --> S[Manual Review]
+
     style A fill:#e1f5fe
     style K fill:#fff3e0
     style N fill:#e8f5e8
     style O fill:#e8f5e8
+    style P fill:#ffebee
 ```
 
-### Supported Operations
+## API Reference
 
-#### Shipment Operations
+### REST API
 
-- **Bulk Shipment Creation**: Create multiple shipments simultaneously
-- **Bulk Label Purchase**: Purchase labels for multiple shipments
-- **Bulk Rate Requests**: Get rates for multiple shipment requests
-- **Bulk Cancellation**: Cancel multiple shipments
-
-#### Order Operations
-
-- **Bulk Order Creation**: Create multiple orders
-- **Bulk Order Fulfillment**: Fulfill multiple orders with shipments
-- **Bulk Status Updates**: Update status for multiple orders
-
-#### Tracking Operations
-
-- **Bulk Tracking Creation**: Create trackers for multiple packages
-- **Bulk Status Updates**: Update tracking status for multiple packages
-- **Bulk Tracking Requests**: Request tracking updates for multiple packages
-
-## Getting Started
-
-### 1. Create Your First Batch
+#### Create Batch Shipments
 
 ```bash
 curl -X POST "https://api.karrio.io/v1/batches/shipments" \
@@ -109,7 +123,9 @@ curl -X POST "https://api.karrio.io/v1/batches/shipments" \
             "weight": 2.5,
             "weight_unit": "LB"
           }
-        ]
+        ],
+        "service": "ups_ground",
+        "reference": "ORDER-001"
       },
       {
         "recipient": {
@@ -125,691 +141,415 @@ curl -X POST "https://api.karrio.io/v1/batches/shipments" \
             "weight": 1.8,
             "weight_unit": "LB"
           }
-        ]
+        ],
+        "service": "fedex_ground",
+        "reference": "ORDER-002"
       }
     ],
     "options": {
       "async": true,
+      "auto_purchase": true,
       "notify_webhook": "https://your-app.com/webhooks/batch"
     }
   }'
 ```
 
-### 2. Monitor Batch Progress
+**Response:**
 
-```javascript
-const karrio = require("karrio");
-
-const client = new karrio.Client({
-  apiKey: "YOUR_API_KEY",
-  testMode: true,
-});
-
-// Submit batch operation
-const batch = await client.batches.shipments.create({
-  shipments: shipmentData,
-  options: {
-    async: true,
-    auto_purchase: false,
-  },
-});
-
-console.log("Batch ID:", batch.id);
-
-// Monitor progress
-const checkProgress = async () => {
-  const status = await client.batches.operations.retrieve(batch.id);
-
-  console.log(`Progress: ${status.completed_count}/${status.total_count}`);
-  console.log(`Status: ${status.status}`);
-  console.log(`Success Rate: ${status.success_rate}%`);
-
-  if (status.status === "completed") {
-    console.log("Batch completed!");
-    console.log("Results:", status.results);
-  } else if (status.status === "processing") {
-    // Check again in 30 seconds
-    setTimeout(checkProgress, 30000);
+```json
+{
+  "id": "batch_1234567890",
+  "type": "shipments",
+  "status": "processing",
+  "total_count": 2,
+  "completed_count": 0,
+  "success_count": 0,
+  "failed_count": 0,
+  "progress_percentage": 0,
+  "created_at": "2024-01-15T10:30:00Z",
+  "estimated_completion": "2024-01-15T10:32:00Z",
+  "options": {
+    "async": true,
+    "auto_purchase": true,
+    "notify_webhook": "https://your-app.com/webhooks/batch"
   }
-};
-
-checkProgress();
-```
-
-### 3. Handle Batch Results
-
-```javascript
-// Process batch results
-function processBatchResults(batchResults) {
-  const successful = batchResults.filter((result) => result.success);
-  const failed = batchResults.filter((result) => !result.success);
-
-  console.log(`Successful operations: ${successful.length}`);
-  console.log(`Failed operations: ${failed.length}`);
-
-  // Process successful shipments
-  successful.forEach((result) => {
-    console.log(`Shipment created: ${result.data.tracking_number}`);
-    // Update your database, send notifications, etc.
-  });
-
-  // Handle failed operations
-  failed.forEach((result) => {
-    console.error(`Operation failed: ${result.error.message}`);
-    // Log errors, retry if appropriate, notify administrators
-  });
 }
 ```
 
-## Batch Operations
+#### Get Batch Status
 
-### Bulk Shipment Creation
-
-Create multiple shipments efficiently:
-
-```javascript
-// Create batch of shipments
-const shipmentBatch = await client.batches.shipments.create({
-  shipments: [
-    {
-      recipient: {
-        person_name: "Customer 1",
-        address_line1: "123 First St",
-        city: "New York",
-        state_code: "NY",
-        postal_code: "10001",
-        country_code: "US",
-      },
-      parcels: [{ weight: 2.0, weight_unit: "LB" }],
-      reference: "ORDER-001",
-    },
-    {
-      recipient: {
-        person_name: "Customer 2",
-        address_line1: "456 Second Ave",
-        city: "Los Angeles",
-        state_code: "CA",
-        postal_code: "90210",
-        country_code: "US",
-      },
-      parcels: [{ weight: 1.5, weight_unit: "LB" }],
-      reference: "ORDER-002",
-    },
-  ],
-  options: {
-    auto_purchase: true, // Automatically purchase labels
-    carrier_ids: ["fedex_connection", "ups_connection"],
-    async: true,
-  },
-});
+```bash
+curl -X GET "https://api.karrio.io/v1/batches/operations/batch_1234567890" \
+  -H "Authorization: Token YOUR_API_KEY"
 ```
 
-### Bulk Order Processing
+**Response:**
 
-Process multiple orders in batch:
-
-```javascript
-// Create batch of orders
-const orderBatch = await client.batches.orders.create({
-  orders: [
+```json
+{
+  "id": "batch_1234567890",
+  "type": "shipments",
+  "status": "completed",
+  "total_count": 2,
+  "completed_count": 2,
+  "success_count": 2,
+  "failed_count": 0,
+  "progress_percentage": 100,
+  "created_at": "2024-01-15T10:30:00Z",
+  "completed_at": "2024-01-15T10:31:45Z",
+  "processing_time": 105,
+  "results": [
     {
-      order_id: "ORDER-001",
-      customer: {
-        name: "John Doe",
-        email: "john@example.com",
-        shipping_address: {
-          address_line1: "123 Main St",
-          city: "New York",
-          state_code: "NY",
-          postal_code: "10001",
-          country_code: "US",
-        },
-      },
-      line_items: [
-        {
-          sku: "PRODUCT-001",
-          quantity: 2,
-          weight: 1.0,
-          weight_unit: "LB",
-        },
-      ],
+      "index": 0,
+      "success": true,
+      "reference": "ORDER-001",
+      "data": {
+        "id": "shp_1234567890",
+        "tracking_number": "1Z999AA1234567890",
+        "carrier_name": "ups",
+        "label_url": "https://api.karrio.io/v1/shipments/shp_1234567890/label.pdf"
+      }
     },
     {
-      order_id: "ORDER-002",
-      customer: {
-        name: "Jane Smith",
-        email: "jane@example.com",
-        shipping_address: {
-          address_line1: "456 Oak Ave",
-          city: "Los Angeles",
-          state_code: "CA",
-          postal_code: "90210",
-          country_code: "US",
-        },
-      },
-      line_items: [
-        {
-          sku: "PRODUCT-002",
-          quantity: 1,
-          weight: 0.5,
-          weight_unit: "LB",
-        },
-      ],
-    },
-  ],
-  options: {
-    auto_fulfill: true, // Automatically create shipments
-    async: true,
-  },
-});
-```
-
-### Bulk Tracking Updates
-
-Update tracking for multiple packages:
-
-```javascript
-// Create batch tracking requests
-const trackingBatch = await client.batches.trackers.create({
-  tracking_requests: [
-    {
-      tracking_number: "1Z999AA1234567890",
-      carrier_name: "ups",
-    },
-    {
-      tracking_number: "1234567890123456",
-      carrier_name: "fedex",
-    },
-    {
-      tracking_number: "9400111899562123456789",
-      carrier_name: "usps",
-    },
-  ],
-  options: {
-    async: true,
-    update_existing: true,
-  },
-});
-```
-
-## Advanced Features
-
-### Data Import
-
-Import data from CSV or Excel files:
-
-```javascript
-// Import shipments from CSV
-const importBatch = await client.batches.dataImport.create({
-  file: fs.readFileSync("shipments.csv"),
-  file_type: "csv",
-  operation_type: "shipments",
-  mapping: {
-    "Customer Name": "recipient.person_name",
-    Address: "recipient.address_line1",
-    City: "recipient.city",
-    State: "recipient.state_code",
-    ZIP: "recipient.postal_code",
-    Weight: "parcels[0].weight",
-    "Order ID": "reference",
-  },
-  options: {
-    skip_header: true,
-    auto_purchase: false,
-    validate_addresses: true,
-  },
-});
-
-console.log("Import batch ID:", importBatch.id);
-```
-
-### Batch Validation
-
-Validate data before processing:
-
-```javascript
-// Validate batch data before submission
-const validation = await client.batches.validate({
-  operation_type: "shipments",
-  data: shipmentData,
-  validation_rules: {
-    required_fields: ["recipient.address_line1", "recipient.postal_code"],
-    address_validation: true,
-    weight_limits: { min: 0.1, max: 150 },
-  },
-});
-
-if (validation.valid) {
-  // Proceed with batch creation
-  const batch = await client.batches.shipments.create({
-    shipments: shipmentData,
-  });
-} else {
-  // Handle validation errors
-  console.error("Validation errors:", validation.errors);
-}
-```
-
-### Batch Scheduling
-
-Schedule batch operations for later execution:
-
-```javascript
-// Schedule batch for later processing
-const scheduledBatch = await client.batches.schedule({
-  operation_type: "shipments",
-  data: shipmentData,
-  schedule: {
-    execute_at: "2024-01-15T09:00:00Z",
-    timezone: "America/New_York",
-  },
-  options: {
-    auto_purchase: true,
-    notify_webhook: "https://your-app.com/webhooks/scheduled-batch",
-  },
-});
-```
-
-## Error Handling and Recovery
-
-### Partial Failure Handling
-
-Handle scenarios where some operations succeed and others fail:
-
-```javascript
-// Process batch with error handling
-async function processBatchWithRetry(batchData) {
-  try {
-    const batch = await client.batches.shipments.create({
-      shipments: batchData,
-      options: {
-        continue_on_error: true, // Don't stop on individual failures
-        max_retries: 3,
-      },
-    });
-
-    // Wait for completion
-    const results = await waitForBatchCompletion(batch.id);
-
-    // Separate successful and failed operations
-    const successful = results.filter((r) => r.success);
-    const failed = results.filter((r) => !r.success);
-
-    // Retry failed operations with different settings
-    if (failed.length > 0) {
-      const retryData = failed.map((f) => f.original_data);
-      await retryFailedOperations(retryData);
+      "index": 1,
+      "success": true,
+      "reference": "ORDER-002",
+      "data": {
+        "id": "shp_1234567891",
+        "tracking_number": "7721234567",
+        "carrier_name": "fedex",
+        "label_url": "https://api.karrio.io/v1/shipments/shp_1234567891/label.pdf"
+      }
     }
-
-    return { successful, failed };
-  } catch (error) {
-    console.error("Batch processing error:", error);
-    throw error;
-  }
-}
-
-async function retryFailedOperations(failedData) {
-  // Retry with different carrier or settings
-  const retryBatch = await client.batches.shipments.create({
-    shipments: failedData,
-    options: {
-      carrier_ids: ["backup_carrier"], // Use backup carrier
-      service_preference: "ground", // Use cheaper service
-    },
-  });
-
-  return retryBatch;
+  ]
 }
 ```
 
-### Batch Recovery
+#### Create Batch Trackers
 
-Recover from interrupted batch operations:
+```bash
+curl -X POST "https://api.karrio.io/v1/batches/trackers" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "trackers": [
+      {
+        "tracking_number": "1Z999AA1234567890",
+        "carrier_name": "ups"
+      },
+      {
+        "tracking_number": "7721234567",
+        "carrier_name": "fedex"
+      }
+    ]
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "id": "batch_1234567892",
+  "type": "trackers",
+  "status": "completed",
+  "total_count": 2,
+  "success_count": 2,
+  "failed_count": 0,
+  "results": [
+    {
+      "index": 0,
+      "success": true,
+      "data": {
+        "id": "trk_1234567890",
+        "tracking_number": "1Z999AA1234567890",
+        "carrier_name": "ups",
+        "status": "in_transit",
+        "estimated_delivery": "2024-01-18T17:00:00Z"
+      }
+    },
+    {
+      "index": 1,
+      "success": true,
+      "data": {
+        "id": "trk_1234567891",
+        "tracking_number": "7721234567",
+        "carrier_name": "fedex",
+        "status": "delivered",
+        "delivered_at": "2024-01-17T14:30:00Z"
+      }
+    }
+  ]
+}
+```
+
+## Use Cases
+
+### E-commerce Fulfillment
+
+Perfect for high-volume order processing:
+
+- **Daily Order Processing**: Process hundreds of orders in minutes
+- **Peak Season Handling**: Handle holiday and sale volume spikes
+- **Multi-Warehouse Operations**: Distribute orders across warehouses efficiently
+- **Automated Fulfillment**: End-to-end order-to-shipment automation
+
+### Enterprise Shipping
+
+Designed for large-scale operations:
+
+- **ERP Integration**: Bulk import and process shipments from ERP systems
+- **Scheduled Processing**: Automated daily/weekly batch operations
+- **Resource Optimization**: Maximize carrier bulk discounts
+- **Compliance Reporting**: Generate bulk shipping reports for compliance
+
+### 3PL Operations
+
+Built for third-party logistics providers:
+
+- **Multi-Client Processing**: Process shipments for multiple clients
+- **SLA Management**: Ensure processing time commitments
+- **Cost Optimization**: Bulk carrier negotiations and rate optimization
+- **Performance Analytics**: Track processing efficiency and client satisfaction
+
+## Integration Examples
+
+### Automated Daily Processing
 
 ```javascript
-// Resume interrupted batch
-async function resumeBatch(batchId) {
-  const batch = await client.batches.operations.retrieve(batchId);
+class DailyBatchProcessor {
+  constructor(config) {
+    this.warehouseConfig = config.warehouses;
+    this.batchSize = config.batchSize || 100;
+  }
 
-  if (batch.status === "failed" || batch.status === "partial") {
-    // Get failed operations
-    const failedOperations = batch.results.filter((r) => !r.success);
+  async runDailyProcessing() {
+    try {
+      console.log("Starting daily batch processing...");
 
-    if (failedOperations.length > 0) {
-      // Retry failed operations
-      const retryData = failedOperations.map((op) => op.original_data);
+      // 1. Get pending orders
+      const pendingOrders = await this.getPendingOrders();
+      console.log(`Found ${pendingOrders.length} pending orders`);
 
-      const retryBatch = await client.batches.shipments.create({
-        shipments: retryData,
-        options: {
-          parent_batch_id: batchId, // Link to original batch
-          retry_attempt: true,
-        },
-      });
+      // 2. Group orders by warehouse
+      const ordersByWarehouse = this.groupOrdersByWarehouse(pendingOrders);
 
-      return retryBatch;
+      // 3. Process each warehouse batch
+      const batchPromises = Object.entries(ordersByWarehouse).map(
+        ([warehouseId, orders]) =>
+          this.processWarehouseBatch(warehouseId, orders),
+      );
+
+      const results = await Promise.all(batchPromises);
+
+      // 4. Generate summary report
+      await this.generateProcessingReport(results);
+
+      console.log("Daily batch processing completed");
+    } catch (error) {
+      console.error("Daily batch processing failed:", error);
+      await this.notifyAdministrators(error);
     }
   }
 
-  return batch;
-}
-```
+  async processWarehouseBatch(warehouseId, orders) {
+    // Split into smaller batches
+    const batches = this.chunkArray(orders, this.batchSize);
+    const batchResults = [];
 
-## Performance Optimization
+    for (const batch of batches) {
+      try {
+        const shipmentRequests = batch.map((order) => ({
+          recipient: order.shipping_address,
+          parcels: this.mapOrderToParcels(order),
+          service: this.selectShippingService(order),
+          reference: order.order_number,
+          metadata: {
+            order_id: order.id,
+            warehouse_id: warehouseId,
+          },
+        }));
 
-### Batch Sizing
+        const batchResult = await karrio.batches.createShipments({
+          batchShipmentData: {
+            shipments: shipmentRequests,
+          },
+        });
 
-Optimize batch sizes for best performance:
+        batchResults.push(batchResult);
 
-```javascript
-// Optimal batch sizing strategy
-function createOptimalBatches(data, maxBatchSize = 100) {
-  const batches = [];
-
-  for (let i = 0; i < data.length; i += maxBatchSize) {
-    const batchData = data.slice(i, i + maxBatchSize);
-    batches.push(batchData);
-  }
-
-  return batches;
-}
-
-// Process large datasets in optimal batches
-async function processLargeDataset(largeDataset) {
-  const batches = createOptimalBatches(largeDataset, 100);
-  const results = [];
-
-  // Process batches in parallel (with concurrency limit)
-  const concurrencyLimit = 3;
-
-  for (let i = 0; i < batches.length; i += concurrencyLimit) {
-    const batchGroup = batches.slice(i, i + concurrencyLimit);
-
-    const batchPromises = batchGroup.map((batchData) =>
-      client.batches.shipments.create({
-        shipments: batchData,
-        options: { async: true },
-      }),
-    );
-
-    const batchResults = await Promise.all(batchPromises);
-    results.push(...batchResults);
-
-    // Wait between batch groups to avoid rate limits
-    if (i + concurrencyLimit < batches.length) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+        // Update order statuses
+        await this.updateOrderStatuses(batch, batchResult);
+      } catch (error) {
+        console.error(
+          `Batch processing failed for warehouse ${warehouseId}:`,
+          error,
+        );
+        batchResults.push({ error, orders: batch });
+      }
     }
+
+    return { warehouseId, results: batchResults };
   }
 
-  return results;
+  chunkArray(array, size) {
+    const chunks = [];
+    for (let i = 0; i < array.length; i += size) {
+      chunks.push(array.slice(i, i + size));
+    }
+    return chunks;
+  }
 }
+
+// Schedule daily processing
+const processor = new DailyBatchProcessor({
+  warehouses: warehouseConfig,
+  batchSize: 50,
+});
+
+// Using cron or similar scheduler
+cron.schedule("0 9 * * *", () => {
+  processor.runDailyProcessing();
+});
 ```
 
-### Progress Monitoring
-
-Implement efficient progress monitoring:
+### Batch Progress Monitoring
 
 ```javascript
-// Efficient batch monitoring
 class BatchMonitor {
-  constructor(client) {
-    this.client = client;
-    this.activeBatches = new Map();
+  constructor(batchId) {
+    this.batchId = batchId;
+    this.progressCallbacks = [];
   }
 
-  async monitorBatch(batchId, callback) {
-    this.activeBatches.set(batchId, {
-      callback,
-      lastCheck: Date.now(),
-    });
-
-    this.startMonitoring();
+  onProgress(callback) {
+    this.progressCallbacks.push(callback);
   }
 
   async startMonitoring() {
-    if (this.monitoringInterval) return;
+    const checkProgress = async () => {
+      try {
+        const status = await karrio.batches.retrieve({ id: this.batchId });
 
-    this.monitoringInterval = setInterval(async () => {
-      const batchIds = Array.from(this.activeBatches.keys());
+        // Notify all callbacks
+        this.progressCallbacks.forEach((callback) => {
+          callback(status);
+        });
 
-      if (batchIds.length === 0) {
-        clearInterval(this.monitoringInterval);
-        this.monitoringInterval = null;
-        return;
-      }
-
-      // Check all active batches
-      for (const batchId of batchIds) {
-        try {
-          const status = await this.client.batches.operations.retrieve(batchId);
-          const batchInfo = this.activeBatches.get(batchId);
-
-          // Call callback with status update
-          batchInfo.callback(status);
-
-          // Remove completed batches
-          if (status.status === "completed" || status.status === "failed") {
-            this.activeBatches.delete(batchId);
-          }
-        } catch (error) {
-          console.error(`Error monitoring batch ${batchId}:`, error);
+        if (status.status === "processing") {
+          setTimeout(checkProgress, 5000); // Check every 5 seconds
         }
+      } catch (error) {
+        console.error("Failed to check batch progress:", error);
       }
-    }, 10000); // Check every 10 seconds
+    };
+
+    await checkProgress();
   }
 }
 
 // Usage
-const monitor = new BatchMonitor(client);
-
-monitor.monitorBatch(batchId, (status) => {
-  console.log(
-    `Batch ${status.id}: ${status.completed_count}/${status.total_count} completed`,
-  );
-
-  if (status.status === "completed") {
-    console.log("Batch completed successfully!");
-  }
+const monitor = new BatchMonitor("batch_1234567890");
+monitor.onProgress((status) => {
+  console.log(`Progress: ${status.progress_percentage}%`);
+  console.log(`Completed: ${status.completed_count}/${status.total_count}`);
 });
+
+await monitor.startMonitoring();
 ```
 
-## Integration with Karrio Ecosystem
+## Performance Optimization
 
-### With Webhooks
+### Batch Size Optimization
 
-Receive real-time batch updates:
+Choose optimal batch sizes based on your use case:
+
+- **Small Batches (10-25)**: Better error isolation, faster individual results
+- **Medium Batches (50-100)**: Balanced performance and error handling
+- **Large Batches (200+)**: Maximum throughput for stable operations
+
+### Error Recovery Strategy
 
 ```javascript
-// Handle batch webhook events
-app.post("/webhooks/batch", (req, res) => {
-  const event = req.body;
-
-  switch (event.type) {
-    case "batch.started":
-      console.log(`Batch ${event.data.id} started processing`);
-      break;
-
-    case "batch.progress":
-      console.log(`Batch ${event.data.id}: ${event.data.progress}% complete`);
-      break;
-
-    case "batch.completed":
-      console.log(`Batch ${event.data.id} completed`);
-      processBatchResults(event.data.results);
-      break;
-
-    case "batch.failed":
-      console.error(`Batch ${event.data.id} failed:`, event.data.error);
-      handleBatchFailure(event.data);
-      break;
+class BatchErrorRecovery {
+  constructor() {
+    this.maxRetries = 3;
   }
 
-  res.status(200).send("OK");
-});
-```
+  async processBatchWithRecovery(operations) {
+    let attempt = 1;
+    let remainingOperations = [...operations];
 
-### With Orders and Shipments
+    while (remainingOperations.length > 0 && attempt <= this.maxRetries) {
+      console.log(
+        `Batch attempt ${attempt}, processing ${remainingOperations.length} operations`,
+      );
 
-Seamless integration with order fulfillment:
-
-```javascript
-// Batch order fulfillment workflow
-async function fulfillOrdersBatch(orders) {
-  // Create orders in batch
-  const orderBatch = await client.batches.orders.create({
-    orders: orders,
-    options: { async: true },
-  });
-
-  // Wait for order creation to complete
-  const orderResults = await waitForBatchCompletion(orderBatch.id);
-
-  // Extract successful orders
-  const successfulOrders = orderResults
-    .filter((r) => r.success)
-    .map((r) => r.data);
-
-  // Create shipments for successful orders
-  const shipmentData = successfulOrders.map((order) => ({
-    recipient: order.customer.shipping_address,
-    parcels: order.line_items.map((item) => ({
-      weight: item.weight,
-      weight_unit: item.weight_unit,
-      items: [item],
-    })),
-    reference: order.order_id,
-    metadata: { order_id: order.id },
-  }));
-
-  // Create shipments in batch
-  const shipmentBatch = await client.batches.shipments.create({
-    shipments: shipmentData,
-    options: {
-      auto_purchase: true,
-      async: true,
-    },
-  });
-
-  return { orderBatch, shipmentBatch };
-}
-```
-
-## Best Practices
-
-### Data Preparation
-
-```javascript
-// Validate and prepare data before batch processing
-function prepareBatchData(rawData) {
-  return rawData
-    .filter((item) => validateItem(item))
-    .map((item) => normalizeItem(item))
-    .slice(0, 1000); // Limit batch size
-}
-
-function validateItem(item) {
-  // Check required fields
-  if (!item.recipient?.address_line1 || !item.recipient?.postal_code) {
-    console.warn("Invalid item - missing address:", item);
-    return false;
-  }
-
-  // Check weight limits
-  if (!item.parcels?.[0]?.weight || item.parcels[0].weight <= 0) {
-    console.warn("Invalid item - missing or invalid weight:", item);
-    return false;
-  }
-
-  return true;
-}
-
-function normalizeItem(item) {
-  return {
-    ...item,
-    recipient: {
-      ...item.recipient,
-      country_code: item.recipient.country_code || "US",
-      postal_code: item.recipient.postal_code.replace(/\s+/g, ""),
-    },
-  };
-}
-```
-
-### Error Recovery
-
-```javascript
-// Implement robust error recovery
-async function robustBatchProcessing(data) {
-  const maxRetries = 3;
-  let attempt = 0;
-
-  while (attempt < maxRetries) {
-    try {
-      const batch = await client.batches.shipments.create({
-        shipments: data,
-        options: {
-          continue_on_error: true,
-          timeout: 300, // 5 minutes
+      const batch = await karrio.batches.createShipments({
+        batchShipmentData: {
+          shipments: remainingOperations,
         },
       });
 
-      const results = await waitForBatchCompletion(batch.id);
+      // Separate successful and failed operations
+      const failed = batch.results
+        .filter((result) => !result.success)
+        .map((result) => remainingOperations[result.index]);
 
-      // Check success rate
-      const successRate =
-        results.filter((r) => r.success).length / results.length;
+      const successful = batch.results
+        .filter((result) => result.success)
+        .map((result) => result.data);
 
-      if (successRate >= 0.95) {
-        // 95% success rate threshold
-        return results;
-      } else {
-        // Retry failed items
-        const failedData = results
-          .filter((r) => !r.success)
-          .map((r) => r.original_data);
+      // Process successful operations
+      await this.processSuccessfulShipments(successful);
 
-        data = failedData;
-        attempt++;
+      // Prepare failed operations for retry
+      remainingOperations = failed.filter((operation) =>
+        this.isRetryable(operation.error),
+      );
+
+      if (remainingOperations.length > 0) {
+        // Apply backoff delay
+        const delay = Math.pow(2, attempt) * 1000;
+        await this.sleep(delay);
       }
-    } catch (error) {
-      console.error(`Batch attempt ${attempt + 1} failed:`, error);
+
       attempt++;
+    }
 
-      if (attempt < maxRetries) {
-        // Exponential backoff
-        await new Promise((resolve) =>
-          setTimeout(resolve, Math.pow(2, attempt) * 1000),
-        );
-      }
+    // Handle permanently failed operations
+    if (remainingOperations.length > 0) {
+      await this.handlePermanentFailures(remainingOperations);
     }
   }
 
-  throw new Error("Batch processing failed after maximum retries");
+  isRetryable(error) {
+    const retryableCodes = [
+      "RATE_LIMIT_EXCEEDED",
+      "CARRIER_TIMEOUT",
+      "TEMPORARY_ERROR",
+    ];
+
+    return retryableCodes.includes(error.code);
+  }
+
+  sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 }
 ```
 
-## What's Next
+## Getting Started
 
-Ready to implement batch processing? Explore these resources:
+Ready to implement high-performance batch processing with Karrio? Follow these steps:
 
-### API Documentation
+1. **Identify batch operations** in your shipping workflow
+2. **Implement batch request logic** using our API examples
+3. **Set up progress monitoring** and error handling
+4. **Optimize batch sizes** for your specific use case
 
-- **[Batch Operations API](/docs/reference/api/batches)**: Complete batch processing API
-- **[Data Import API](/docs/reference/api/data-import)**: Import data from files
-- **[Batch Monitoring](/docs/reference/api/batch-monitoring)**: Monitor batch progress
+### Next Steps
 
-### Integration Guides
-
-- **[CSV Import Guide](/docs/guides/csv-import)**: Import shipments from CSV files
-- **[E-commerce Batch Processing](/docs/integrations/ecommerce-batch)**: Batch process e-commerce orders
-- **[Enterprise Integration](/docs/integrations/enterprise-batch)**: Enterprise-scale batch processing
-
-### Performance Guides
-
-- **[Optimization Guide](/docs/guides/batch-optimization)**: Optimize batch performance
-- **[Error Handling](/docs/guides/batch-error-handling)**: Handle batch errors effectively
-- **[Monitoring and Alerting](/docs/guides/batch-monitoring)**: Monitor batch operations
-
----
-
-**Need help with batch processing?** Join our [community Discord](https://discord.gg/karrio) or contact our support team for enterprise batch processing guidance.
+- Learn about [workflows](/docs/products/workflows) for automated batch triggering
+- Explore [webhooks](/docs/products/webhooks) for batch completion notifications
+- Set up [shipments](/docs/products/shipments) to understand individual operations
+- Configure [admin console](/docs/products/admin-console) for batch monitoring

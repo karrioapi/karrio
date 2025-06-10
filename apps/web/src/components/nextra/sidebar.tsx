@@ -23,11 +23,28 @@ import {
   Github,
   ChevronDown,
   ChevronRight,
+  Truck,
+  Package,
+  MapPin,
+  ShoppingBag,
+  FileImage,
+  Users,
+  Building2,
+  Settings,
+  Webhook,
+  ScrollText,
+  Bolt,
+  Activity,
+  BarChart3,
+  Globe,
+  Workflow,
+  Shield,
 } from 'lucide-react'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@karrio/ui/components/ui/collapsible'
 import { normalizePages } from 'nextra/normalize-pages'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect, useMemo } from 'react'
+import { ThemeConfig, getThemeConfig } from '@/types/theme'
 import type { PageMapItem } from 'nextra'
 import { useTheme } from 'next-themes'
 import type { FC } from 'react'
@@ -42,13 +59,28 @@ interface CarrierIntegration {
   capabilities: string[]
 }
 
-export const Sidebar: FC<{ pageMap: PageMapItem[] }> = ({ pageMap }) => {
+interface SidebarProps {
+  pageMap: PageMapItem[]
+  themeConfig?: ThemeConfig
+}
+
+export const Sidebar: FC<SidebarProps> = ({ pageMap, themeConfig }) => {
   const pathname = usePathname()
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
   // State for user-toggled sections (this won't cause infinite loops)
   const [userToggled, setUserToggled] = useState<Record<string, boolean>>({})
+
+  // Get theme config from pageMap if not provided as prop
+  const currentThemeConfig = themeConfig || getThemeConfig(pageMap, pathname)
+
+  console.log(currentThemeConfig)
+
+  // Check if sidebar should be hidden
+  if (currentThemeConfig.sidebar === false) {
+    return <></>
+  }
 
   // After mounting, initialize component
   useEffect(() => {
@@ -111,18 +143,66 @@ export const Sidebar: FC<{ pageMap: PageMapItem[] }> = ({ pageMap }) => {
     return pathBasedExpanded[path] || false;
   };
 
+  // Check if a product is an Insiders feature
+  const isInsidersProduct = (name: string): boolean => {
+    const normalizedName = name.toLowerCase().replace(/\s+/g, '-')
+    const insidersProducts = [
+      'batch-processing',
+      'workflows',
+      'shipping-rules',
+      'multi-organizations',
+      'multi-orgs',
+      'admin-console'
+    ]
+    return insidersProducts.includes(normalizedName)
+  }
+
   // Get icon for a specific page
   const getIcon = (name: string) => {
-    switch (name.toLowerCase()) {
+    const normalizedName = name.toLowerCase().replace(/\s+/g, '-')
+
+    switch (normalizedName) {
+      // Product Guide specific icons
+      case 'carrier-connections':
+        return <Truck className="h-4 w-4" />
+      case 'shipments':
+        return <Package className="h-4 w-4" />
+      case 'tracking':
+        return <MapPin className="h-4 w-4" />
+      case 'orders':
+        return <ShoppingBag className="h-4 w-4" />
+      case 'document-generation':
+        return <FileImage className="h-4 w-4" />
+      case 'user-management':
+        return <Users className="h-4 w-4" />
+      case 'multi-organizations':
+      case 'multi-orgs':
+        return <Building2 className="h-4 w-4" />
+      case 'shipping-rules':
+        return <Settings className="h-4 w-4" />
+      case 'workflows':
+        return <Workflow className="h-4 w-4" />
+      case 'batch-processing':
+        return <BarChart3 className="h-4 w-4" />
+      case 'admin-console':
+        return <Shield className="h-4 w-4" />
+      case 'webhooks':
+        return <Webhook className="h-4 w-4" />
+      case 'api-logs':
+        return <ScrollText className="h-4 w-4" />
+      case 'events':
+        return <Activity className="h-4 w-4" />
+
+      // Development/Setup specific icons
       case 'introduction':
+        return <BookOpen className="h-4 w-4" />
+      case 'local-development':
         return <Monitor className="h-4 w-4" />
-      case 'local development':
-        return <FileText className="h-4 w-4" />
-      case 'oss contribution':
+      case 'oss-contribution':
         return <GitFork className="h-4 w-4" />
       case 'installation':
-        return <FileText className="h-4 w-4" />
-      case 'database migrations':
+        return <Container className="h-4 w-4" />
+      case 'database-migrations':
         return <Database className="h-4 w-4" />
       case 'upgrade':
         return <ArrowUpCircle className="h-4 w-4" />
@@ -132,6 +212,8 @@ export const Sidebar: FC<{ pageMap: PageMapItem[] }> = ({ pageMap }) => {
         return <BookOpen className="h-4 w-4" />
       case 'quickstart':
         return <Zap className="h-4 w-4" />
+
+      // Default cases
       default:
         return <FileText className="h-4 w-4" />
     }
@@ -213,6 +295,9 @@ export const Sidebar: FC<{ pageMap: PageMapItem[] }> = ({ pageMap }) => {
                 )}>
                   {getIcon(page.title)}
                   <span>{page.title}</span>
+                  {isInsidersProduct(page.title) && (
+                    <div className="h-1.5 w-1.5 rounded-full bg-purple-500 dark:bg-purple-400 ml-1" />
+                  )}
                   <span className="ml-auto">
                     {expanded ?
                       <ChevronDown className="h-3.5 w-3.5" /> :
@@ -267,6 +352,9 @@ export const Sidebar: FC<{ pageMap: PageMapItem[] }> = ({ pageMap }) => {
       >
         {getIcon(page.title)}
         <span>{page.title}</span>
+        {isInsidersProduct(page.title) && (
+          <div className="h-1.5 w-1.5 rounded-full bg-purple-500 dark:bg-purple-400 ml-1" />
+        )}
       </Link>
     );
   };

@@ -1,123 +1,104 @@
 ---
 sidebarTitle: Webhooks
-title: Webhooks
+title: Webhooks & Real-Time Events
 description: Real-time event notifications for shipments, tracking, and order updates
 tags: ["webhooks", "events", "notifications", "real-time", "integration"]
 ---
 
+<div className="flex gap-2 mb-6">
+  <div className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-400/10 dark:text-green-400 dark:ring-green-400/30">
+    <span className="text-xs">Community Edition</span>
+  </div>
+  <div className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30">
+    <span className="text-xs">Core Feature</span>
+  </div>
+</div>
+
 # Webhooks
 
-Karrio's Webhook system provides real-time event notifications for all shipping activities. Get instant updates when shipments are created, tracking status changes, orders are fulfilled, and more. Build responsive applications that react immediately to shipping events.
+Every Karrio project comes with comprehensive webhook capabilities, providing real-time event notifications for all shipping activities with automatic retry mechanisms, signature verification, and event filtering for building responsive applications.
 
-## Overview
+## Features
 
-Instead of constantly polling APIs for status updates, webhooks push notifications to your application the moment events occur. This enables real-time user experiences, automated workflows, and efficient system integrations.
+### Real-Time Event Notifications
 
-### Key Benefits
+You don't have to poll APIs for status updates. Our webhook system instantly pushes notifications to your application the moment shipping events occur, enabling immediate responses and real-time user experiences.
 
-- **Real-time Updates**: Instant notifications when events occur
-- **Reduced API Calls**: No need to poll for status changes
-- **Reliable Delivery**: Automatic retry mechanism for failed deliveries
-- **Secure Communication**: Signature verification for webhook authenticity
-- **Event Filtering**: Subscribe only to events you need
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    Webhook Management Dashboard
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border h-64 flex items-center justify-center">
+    <span className="text-gray-400">
+      Screenshot: Webhook configuration interface with event filters and
+      delivery status
+    </span>
+  </div>
+</div>
 
-## Architecture
+### Automatic Retry Mechanism
 
-### Webhook Flow
+Failed webhook deliveries are automatically retried with exponential backoff to ensure reliable event delivery even during temporary outages.
+
+### Signature Verification
+
+All webhook payloads include cryptographic signatures to verify authenticity and prevent unauthorized access to your endpoints.
+
+### Event Filtering
+
+Subscribe only to the events you need, reducing unnecessary traffic and processing overhead in your application.
+
+### Delivery Monitoring
+
+Track webhook delivery success rates, response times, and failure patterns with detailed logging and analytics.
+
+### Additional features
+
+- Karrio extends webhooks with custom retry policies and delivery scheduling.
+- Every webhook includes structured event data and comprehensive metadata.
+- Karrio manages webhook endpoint health monitoring and automatic failover.
+- Support for multiple webhook endpoints with different event configurations.
+
+## Data Flow
+
+### Webhook Architecture
 
 ```mermaid
 flowchart TD
     A[Karrio Event] --> B[Event Processor]
-    B --> C[Webhook Queue]
-    C --> D[Delivery Engine]
+    B --> C[Event Queue]
+    C --> D[Filter Engine]
 
-    D --> E[Your Endpoint]
-    E --> F{Response OK?}
+    D --> E[Webhook Subscribers]
+    E --> F[Delivery Engine]
+    F --> G[Your Endpoint]
 
-    F -->|200 OK| G[Event Delivered]
-    F -->|Error| H[Retry Logic]
+    G --> H{Response Status}
+    H -->|200-299| I[Success]
+    H -->|Error| J[Retry Logic]
 
-    H --> I{Max Retries?}
-    I -->|No| D
-    I -->|Yes| J[Dead Letter Queue]
+    J --> K[Exponential Backoff]
+    K --> L{Max Attempts?}
+    L -->|No| F
+    L -->|Yes| M[Dead Letter Queue]
 
-    G --> K[Event Complete]
-    J --> L[Manual Review]
+    I --> N[Event Complete]
+    M --> O[Manual Review]
+
+    P[Signature Verification] --> G
+    Q[Event Logging] --> R[Analytics]
 
     style A fill:#e1f5fe
-    style E fill:#fff3e0
-    style G fill:#e8f5e8
-    style J fill:#ffebee
+    style G fill:#fff3e0
+    style I fill:#e8f5e8
+    style M fill:#ffebee
 ```
 
-### Event Types
+## API Reference
 
-Karrio supports webhooks for these event categories:
+### REST API
 
-#### Shipment Events
-
-- `shipment.created` - New shipment created
-- `shipment.purchased` - Shipping label purchased
-- `shipment.cancelled` - Shipment cancelled
-- `shipment.updated` - Shipment details updated
-
-#### Tracking Events
-
-- `tracking.status_updated` - Tracking status changed
-- `tracking.delivered` - Package delivered
-- `tracking.exception` - Delivery exception occurred
-- `tracking.in_transit` - Package in transit
-
-#### Order Events
-
-- `order.created` - New order created
-- `order.updated` - Order details updated
-- `order.fulfilled` - Order fulfilled with shipment
-- `order.cancelled` - Order cancelled
-
-#### System Events
-
-- `batch.completed` - Batch operation completed
-- `batch.failed` - Batch operation failed
-
-## Getting Started
-
-### 1. Create a Webhook Endpoint
-
-First, create an endpoint in your application to receive webhooks:
-
-```javascript
-// Express.js example
-app.post("/webhooks/karrio", (req, res) => {
-  const event = req.body;
-
-  // Verify webhook signature (recommended)
-  const signature = req.headers["x-karrio-signature"];
-  if (!verifySignature(req.body, signature)) {
-    return res.status(401).send("Unauthorized");
-  }
-
-  // Process the event
-  console.log("Received event:", event.type);
-  console.log("Event data:", event.data);
-
-  // Respond with 200 to acknowledge receipt
-  res.status(200).send("OK");
-});
-
-function verifySignature(payload, signature) {
-  const crypto = require("crypto");
-  const secret = process.env.WEBHOOK_SECRET;
-  const expectedSignature = crypto
-    .createHmac("sha256", secret)
-    .update(JSON.stringify(payload))
-    .digest("hex");
-
-  return signature === `sha256=${expectedSignature}`;
-}
-```
-
-### 2. Register Your Webhook
+#### Create Webhook
 
 ```bash
 curl -X POST "https://api.karrio.io/v1/webhooks" \
@@ -130,17 +111,81 @@ curl -X POST "https://api.karrio.io/v1/webhooks" \
       "shipment.created",
       "shipment.purchased",
       "tracking.status_updated",
-      "tracking.delivered"
+      "tracking.delivered",
+      "order.fulfilled"
     ],
     "secret": "your-webhook-secret"
   }'
 ```
 
-### 3. Test Your Webhook
+**Response:**
+
+```json
+{
+  "id": "wh_1234567890",
+  "url": "https://your-app.com/webhooks/karrio",
+  "description": "Main webhook endpoint",
+  "enabled_events": [
+    "shipment.created",
+    "shipment.purchased",
+    "tracking.status_updated",
+    "tracking.delivered",
+    "order.fulfilled"
+  ],
+  "secret": "your-webhook-secret",
+  "created_at": "2024-01-15T10:30:00Z",
+  "is_active": true,
+  "last_response_status": null,
+  "total_deliveries": 0,
+  "successful_deliveries": 0
+}
+```
+
+#### List Webhooks
 
 ```bash
-# Test webhook delivery
-curl -X POST "https://api.karrio.io/v1/webhooks/{webhook_id}/test" \
+curl -X GET "https://api.karrio.io/v1/webhooks" \
+  -H "Authorization: Token YOUR_API_KEY"
+```
+
+**Response:**
+
+```json
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": "wh_1234567890",
+      "url": "https://your-app.com/webhooks/karrio",
+      "description": "Main webhook endpoint",
+      "enabled_events": ["shipment.created", "tracking.status_updated"],
+      "is_active": true,
+      "created_at": "2024-01-15T10:30:00Z",
+      "last_response_status": 200,
+      "total_deliveries": 150,
+      "successful_deliveries": 148
+    },
+    {
+      "id": "wh_1234567891",
+      "url": "https://backup.your-app.com/webhooks",
+      "description": "Backup webhook endpoint",
+      "enabled_events": ["order.fulfilled"],
+      "is_active": true,
+      "created_at": "2024-01-16T09:00:00Z",
+      "last_response_status": 200,
+      "total_deliveries": 45,
+      "successful_deliveries": 45
+    }
+  ]
+}
+```
+
+#### Test Webhook
+
+```bash
+curl -X POST "https://api.karrio.io/v1/webhooks/wh_1234567890/test" \
   -H "Authorization: Token YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -148,468 +193,589 @@ curl -X POST "https://api.karrio.io/v1/webhooks/{webhook_id}/test" \
   }'
 ```
 
-## Event Handling
+**Response:**
 
-### Shipment Events
-
-Handle shipment lifecycle events:
-
-```javascript
-app.post("/webhooks/karrio", (req, res) => {
-  const { type, data } = req.body;
-
-  switch (type) {
-    case "shipment.created":
-      console.log(`Shipment ${data.id} created`);
-      // Update internal order status
-      updateOrderStatus(data.reference, "processing");
-      break;
-
-    case "shipment.purchased":
-      console.log(`Label purchased for ${data.tracking_number}`);
-      // Send tracking info to customer
-      sendTrackingNotification(data);
-      break;
-
-    case "shipment.cancelled":
-      console.log(`Shipment ${data.id} cancelled`);
-      // Handle cancellation logic
-      handleShipmentCancellation(data);
-      break;
-  }
-
-  res.status(200).send("OK");
-});
-```
-
-### Tracking Events
-
-Monitor package delivery progress:
-
-```javascript
-function handleTrackingEvent(event) {
-  const { type, data } = event;
-
-  switch (type) {
-    case "tracking.status_updated":
-      console.log(`Tracking ${data.tracking_number}: ${data.status}`);
-
-      // Update customer with status
-      notifyCustomer(data.tracking_number, {
-        status: data.status,
-        location: data.events[0]?.location,
-        estimated_delivery: data.estimated_delivery,
-      });
-      break;
-
-    case "tracking.delivered":
-      console.log(`Package ${data.tracking_number} delivered`);
-
-      // Mark order as complete
-      completeOrder(data.tracking_number);
-
-      // Request customer review
-      requestReview(data.tracking_number);
-      break;
-
-    case "tracking.exception":
-      console.log(`Delivery exception: ${data.tracking_number}`);
-
-      // Alert customer service
-      alertCustomerService({
-        tracking_number: data.tracking_number,
-        exception: data.events[0]?.description,
-        action_required: true,
-      });
-      break;
-  }
+```json
+{
+  "success": true,
+  "delivery_id": "del_1234567890",
+  "response_status": 200,
+  "response_body": "OK",
+  "response_time": 245,
+  "delivered_at": "2024-01-15T10:35:00Z"
 }
 ```
 
-### Order Events
+### Webhook Events
 
-Track order fulfillment:
+#### Shipment Created Event
 
-```javascript
-function handleOrderEvent(event) {
-  const { type, data } = event;
-
-  switch (type) {
-    case "order.created":
-      console.log(`Order ${data.order_id} created`);
-      // Trigger fulfillment workflow
-      triggerFulfillment(data);
-      break;
-
-    case "order.fulfilled":
-      console.log(`Order ${data.order_id} fulfilled`);
-      // Update e-commerce platform
-      updateEcommercePlatform(data.order_id, "fulfilled");
-      break;
-
-    case "order.cancelled":
-      console.log(`Order ${data.order_id} cancelled`);
-      // Process refund if needed
-      processRefund(data);
-      break;
-  }
-}
-```
-
-## Advanced Features
-
-### Event Filtering
-
-Subscribe only to specific events:
-
-```javascript
-// Create webhook with specific event filters
-const webhook = await karrio.webhooks.create({
-  url: "https://your-app.com/webhooks/tracking-only",
-  description: "Tracking events only",
-  enabled_events: [
-    "tracking.status_updated",
-    "tracking.delivered",
-    "tracking.exception",
-  ],
-  // Optional: filter by metadata
-  event_filters: {
-    carrier_name: ["fedex", "ups"],
-    test_mode: false,
-  },
-});
-```
-
-### Webhook Configuration
-
-Configure webhook endpoints with proper settings:
-
-```javascript
-const webhook = await karrio.webhooks.create({
-  url: "https://your-app.com/webhooks/karrio",
-  description: "Main webhook endpoint",
-  enabled_events: ["*"], // All events
-  secret: "your-webhook-secret-key", // For signature verification
-});
-```
-
-### Webhook Security
-
-Implement robust security measures:
-
-```javascript
-const crypto = require("crypto");
-
-function verifyWebhookSignature(payload, signature, secret) {
-  // Verify timestamp to prevent replay attacks
-  const timestamp = payload.timestamp;
-  const currentTime = Math.floor(Date.now() / 1000);
-
-  if (Math.abs(currentTime - timestamp) > 300) {
-    // 5 minutes
-    throw new Error("Webhook timestamp too old");
-  }
-
-  // Verify signature
-  const expectedSignature = crypto
-    .createHmac("sha256", secret)
-    .update(`${timestamp}.${JSON.stringify(payload)}`)
-    .digest("hex");
-
-  if (signature !== `sha256=${expectedSignature}`) {
-    throw new Error("Invalid webhook signature");
-  }
-
-  return true;
-}
-
-// Middleware for webhook verification
-function webhookAuth(req, res, next) {
-  try {
-    const signature = req.headers["x-karrio-signature"];
-    const secret = process.env.WEBHOOK_SECRET;
-
-    verifyWebhookSignature(req.body, signature, secret);
-    next();
-  } catch (error) {
-    console.error("Webhook verification failed:", error);
-    res.status(401).send("Unauthorized");
-  }
-}
-
-app.post("/webhooks/karrio", webhookAuth, handleWebhook);
-```
-
-### Idempotency Handling
-
-Ensure events are processed only once:
-
-```javascript
-const processedEvents = new Set();
-
-function handleWebhook(req, res) {
-  const event = req.body;
-  const eventId = event.id;
-
-  // Check if event already processed
-  if (processedEvents.has(eventId)) {
-    console.log(`Event ${eventId} already processed`);
-    return res.status(200).send("OK");
-  }
-
-  try {
-    // Process the event
-    processEvent(event);
-
-    // Mark as processed
-    processedEvents.add(eventId);
-
-    res.status(200).send("OK");
-  } catch (error) {
-    console.error("Event processing failed:", error);
-    res.status(500).send("Error processing event");
-  }
-}
-```
-
-## Event Processing
-
-### Available Event Types
-
-Karrio webhooks support these event types:
-
-- `shipment.created` - New shipment created
-- `shipment.purchased` - Shipping label purchased
-- `shipment.cancelled` - Shipment cancelled
-- `tracking.status_updated` - Tracking status changed
-- `tracking.delivered` - Package delivered
-- `order.created` - New order created
-- `order.updated` - Order modified
-- `order.fulfilled` - Order fulfilled
-
-### Event Structure
-
-All webhook events follow this structure:
-
-```javascript
+```json
 {
   "id": "evt_1234567890",
   "type": "shipment.created",
-  "created_at": "2024-01-15T10:30:00Z",
   "data": {
-    // Event-specific data
     "id": "shp_1234567890",
-    "tracking_number": "1Z12345E0205271688",
-    // ... additional fields
-  }
+    "tracking_number": "1Z999AA1234567890",
+    "carrier_name": "ups",
+    "carrier_id": "ups_connection",
+    "service": "ups_ground",
+    "status": "created",
+    "shipper": {
+      "person_name": "Acme Corp",
+      "address_line1": "123 Business Ave",
+      "city": "Chicago",
+      "state_code": "IL",
+      "postal_code": "60601",
+      "country_code": "US"
+    },
+    "recipient": {
+      "person_name": "John Doe",
+      "address_line1": "456 Customer St",
+      "city": "New York",
+      "state_code": "NY",
+      "postal_code": "10001",
+      "country_code": "US"
+    },
+    "parcels": [
+      {
+        "weight": 2.5,
+        "weight_unit": "LB",
+        "length": 12,
+        "width": 8,
+        "height": 6,
+        "dimension_unit": "IN"
+      }
+    ],
+    "selected_rate": {
+      "id": "rate_1234567890",
+      "total_charge": 15.25,
+      "currency": "USD",
+      "transit_days": 3
+    },
+    "reference": "ORDER-2024-001",
+    "metadata": {
+      "order_id": "ord_1234567890",
+      "customer_id": "cust_1234567890"
+    },
+    "created_at": "2024-01-15T10:30:00Z"
+  },
+  "created_at": "2024-01-15T10:30:00Z",
+  "api_version": "2024-01-01"
 }
 ```
 
-### Webhook Testing
+#### Tracking Status Updated Event
 
-Test webhook endpoints to ensure they're working properly:
-
-```javascript
-// Test webhook endpoint
-const testResult = await karrio.webhooks.test(webhookId, {
-  event_type: "shipment.created",
-});
-
-console.log("Test successful:", testResult.success);
+```json
+{
+  "id": "evt_1234567891",
+  "type": "tracking.status_updated",
+  "data": {
+    "id": "trk_1234567890",
+    "tracking_number": "1Z999AA1234567890",
+    "carrier_name": "ups",
+    "status": "in_transit",
+    "previous_status": "shipped",
+    "estimated_delivery": "2024-01-18T17:00:00Z",
+    "events": [
+      {
+        "code": "IT",
+        "description": "In Transit",
+        "location": "Chicago, IL, US",
+        "timestamp": "2024-01-16T08:30:00Z"
+      },
+      {
+        "code": "DP",
+        "description": "Departed Facility",
+        "location": "Origin Facility",
+        "timestamp": "2024-01-15T22:15:00Z"
+      }
+    ],
+    "metadata": {
+      "shipment_id": "shp_1234567890",
+      "order_id": "ord_1234567890"
+    },
+    "updated_at": "2024-01-16T08:30:00Z"
+  },
+  "created_at": "2024-01-16T08:30:00Z",
+  "api_version": "2024-01-01"
+}
 ```
 
-### Webhook Management
+#### Order Fulfilled Event
 
-Manage webhook endpoints throughout their lifecycle:
-
-```javascript
-// List all webhooks
-const webhooks = await karrio.webhooks.list();
-console.log("Active webhooks:", webhooks.results);
-
-// Update webhook
-await karrio.webhooks.update(webhookId, {
-  enabled_events: ["shipment.created", "tracking.delivered"],
-  description: "Updated webhook configuration",
-});
-
-// Delete webhook
-await karrio.webhooks.delete(webhookId);
-```
-
-## Best Practices
-
-### Error Handling
-
-```javascript
-app.post("/webhooks/karrio", async (req, res) => {
-  try {
-    const event = req.body;
-
-    // Validate event structure
-    if (!event.type || !event.data) {
-      return res.status(400).send("Invalid event structure");
+```json
+{
+  "id": "evt_1234567892",
+  "type": "order.fulfilled",
+  "data": {
+    "id": "ord_1234567890",
+    "order_number": "ORDER-2024-001",
+    "status": "fulfilled",
+    "customer": {
+      "id": "cust_1234567890",
+      "email": "customer@example.com",
+      "name": "John Doe"
+    },
+    "shipments": [
+      {
+        "id": "shp_1234567890",
+        "tracking_number": "1Z999AA1234567890",
+        "carrier_name": "ups",
+        "service": "ups_ground"
+      }
+    ],
+    "line_items": [
+      {
+        "id": "item_1234567890",
+        "sku": "PRODUCT-001",
+        "quantity": 2,
+        "fulfilled_quantity": 2
+      }
+    ],
+    "fulfilled_at": "2024-01-15T10:30:00Z",
+    "metadata": {
+      "source": "website",
+      "sales_channel": "online"
     }
+  },
+  "created_at": "2024-01-15T10:30:00Z",
+  "api_version": "2024-01-01"
+}
+```
 
-    // Process event with timeout
-    await Promise.race([
-      processEvent(event),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Timeout")), 10000),
-      ),
-    ]);
+## Event Handling
 
+### Basic Webhook Handler
+
+```javascript
+const express = require("express");
+const crypto = require("crypto");
+const app = express();
+
+app.use(express.json());
+
+app.post("/webhooks/karrio", (req, res) => {
+  const event = req.body;
+  const signature = req.headers["x-karrio-signature"];
+
+  // Verify webhook signature
+  if (!verifySignature(req.body, signature)) {
+    return res.status(401).send("Unauthorized");
+  }
+
+  // Process the event
+  try {
+    handleWebhookEvent(event);
     res.status(200).send("OK");
   } catch (error) {
     console.error("Webhook processing error:", error);
-
-    // Return 500 to trigger retry
-    res.status(500).send("Processing error");
+    res.status(500).send("Internal Server Error");
   }
 });
-```
 
-### Database Transactions
+function verifySignature(payload, signature) {
+  const secret = process.env.WEBHOOK_SECRET;
+  const expectedSignature = crypto
+    .createHmac("sha256", secret)
+    .update(JSON.stringify(payload))
+    .digest("hex");
 
-Ensure data consistency:
-
-```javascript
-async function processShipmentEvent(event) {
-  const transaction = await db.beginTransaction();
-
-  try {
-    // Update order status
-    await db.orders.update(
-      { reference: event.data.reference },
-      { status: "shipped", tracking_number: event.data.tracking_number },
-      { transaction },
-    );
-
-    // Log event
-    await db.webhook_events.create(
-      {
-        event_id: event.id,
-        event_type: event.type,
-        processed_at: new Date(),
-      },
-      { transaction },
-    );
-
-    await transaction.commit();
-  } catch (error) {
-    await transaction.rollback();
-    throw error;
-  }
-}
-```
-
-### Processing Best Practices
-
-Handle webhook events efficiently:
-
-```javascript
-// Respond quickly to avoid timeouts
-app.post("/webhooks/karrio", (req, res) => {
-  // Acknowledge receipt immediately
-  res.status(200).send("OK");
-
-  // Process event asynchronously
-  processWebhookAsync(req.body);
-});
-
-async function processWebhookAsync(event) {
-  try {
-    // Process the event
-    await handleEvent(event);
-  } catch (error) {
-    console.error("Event processing failed:", error);
-    // Handle error (e.g., retry, log, alert)
-  }
-}
-```
-
-## Integration Examples
-
-### E-commerce Platform Sync
-
-```javascript
-async function syncWithShopify(event) {
-  const { type, data } = event;
-
-  if (type === "tracking.status_updated") {
-    // Update Shopify order with tracking info
-    await shopify.order.update(data.order_id, {
-      fulfillment_status: mapKarrioToShopifyStatus(data.status),
-      tracking_number: data.tracking_number,
-      tracking_url: data.tracking_url,
-    });
-  }
+  return signature === `sha256=${expectedSignature}`;
 }
 
-function mapKarrioToShopifyStatus(karrioStatus) {
-  const statusMap = {
-    in_transit: "in_transit",
-    out_for_delivery: "out_for_delivery",
-    delivered: "delivered",
-    delivery_failed: "failure",
-  };
+function handleWebhookEvent(event) {
+  console.log(`Received ${event.type} event:`, event.id);
 
-  return statusMap[karrioStatus] || "in_transit";
-}
-```
+  switch (event.type) {
+    case "shipment.created":
+      handleShipmentCreated(event.data);
+      break;
 
-### Customer Notifications
-
-```javascript
-async function sendCustomerNotification(event) {
-  const { type, data } = event;
-
-  switch (type) {
     case "shipment.purchased":
-      await sendEmail({
-        to: data.recipient.email,
-        subject: "Your order has shipped!",
-        template: "shipment_confirmation",
-        data: {
-          tracking_number: data.tracking_number,
-          tracking_url: data.tracking_url,
-          estimated_delivery: data.estimated_delivery,
-        },
-      });
+      handleShipmentPurchased(event.data);
+      break;
+
+    case "tracking.status_updated":
+      handleTrackingUpdate(event.data);
       break;
 
     case "tracking.delivered":
-      await sendSMS({
-        to: data.recipient.phone,
-        message: `Your package has been delivered! Track: ${data.tracking_url}`,
-      });
+      handlePackageDelivered(event.data);
       break;
+
+    case "order.fulfilled":
+      handleOrderFulfilled(event.data);
+      break;
+
+    default:
+      console.log(`Unhandled event type: ${event.type}`);
   }
 }
 ```
 
-## What's Next
+### Shipment Event Handlers
 
-Ready to implement webhooks? Explore these resources:
+```javascript
+async function handleShipmentCreated(shipment) {
+  console.log(
+    `Shipment ${shipment.id} created for order ${shipment.reference}`,
+  );
 
-### API Documentation
+  // Update order status in database
+  await updateOrderStatus(shipment.reference, "processing");
 
-- **[Webhooks API Reference](/docs/reference/api/webhooks)**: Complete webhook management API
-- **[Events Reference](/docs/reference/events)**: All available event types and payloads
-- **[Authentication Guide](/docs/reference/auth)**: Secure webhook verification
+  // Create internal tracking record
+  await createTrackingRecord({
+    orderId: shipment.metadata.order_id,
+    shipmentId: shipment.id,
+    trackingNumber: shipment.tracking_number,
+    carrier: shipment.carrier_name,
+  });
+}
 
-### Integration Guides
+async function handleShipmentPurchased(shipment) {
+  console.log(`Label purchased for shipment ${shipment.tracking_number}`);
 
-- **[E-commerce Webhooks](/docs/integrations/ecommerce-webhooks)**: Platform-specific webhook implementations
-- **[Custom Notifications](/docs/guides/notifications)**: Build custom notification systems
-- **[Webhook Security](/docs/guides/webhook-security)**: Best practices for secure webhooks
+  // Send shipping confirmation to customer
+  await sendShippingConfirmation({
+    orderId: shipment.metadata.order_id,
+    trackingNumber: shipment.tracking_number,
+    carrier: shipment.carrier_name,
+    estimatedDelivery: shipment.estimated_delivery,
+  });
 
-### Advanced Topics
+  // Update order status
+  await updateOrderStatus(shipment.reference, "shipped");
+}
 
-- **[Event-Driven Architecture](/docs/guides/event-driven)**: Design event-driven shipping workflows
-- **[Monitoring and Alerting](/docs/guides/monitoring)**: Monitor webhook health and performance
-- **[Scaling Webhooks](/docs/guides/scaling)**: Handle high-volume webhook traffic
+async function sendShippingConfirmation(shipmentInfo) {
+  const order = await getOrderById(shipmentInfo.orderId);
 
----
+  await sendEmail({
+    to: order.customer.email,
+    subject: `Your order ${order.orderNumber} has shipped!`,
+    template: "shipping_confirmation",
+    data: {
+      customerName: order.customer.name,
+      orderNumber: order.orderNumber,
+      trackingNumber: shipmentInfo.trackingNumber,
+      carrier: shipmentInfo.carrier,
+      trackingUrl: `https://your-app.com/track/${shipmentInfo.trackingNumber}`,
+    },
+  });
+}
+```
 
-**Need help with webhooks?** Join our [community Discord](https://discord.gg/karrio) or check our webhook troubleshooting guide.
+### Tracking Event Handlers
+
+```javascript
+async function handleTrackingUpdate(tracking) {
+  console.log(
+    `Tracking update: ${tracking.tracking_number} - ${tracking.status}`,
+  );
+
+  // Update tracking status in database
+  await updateTrackingStatus(tracking.tracking_number, {
+    status: tracking.status,
+    location: tracking.events[0]?.location,
+    timestamp: tracking.events[0]?.timestamp,
+    estimatedDelivery: tracking.estimated_delivery,
+  });
+
+  // Send customer notification for key status updates
+  const notificationStatuses = [
+    "shipped",
+    "in_transit",
+    "out_for_delivery",
+    "delivered",
+  ];
+
+  if (notificationStatuses.includes(tracking.status)) {
+    await sendTrackingNotification(tracking);
+  }
+
+  // Handle delivery exceptions
+  if (
+    tracking.status === "delivery_failed" ||
+    tracking.status === "exception"
+  ) {
+    await handleDeliveryException(tracking);
+  }
+}
+
+async function handlePackageDelivered(tracking) {
+  console.log(`Package delivered: ${tracking.tracking_number}`);
+
+  // Update order status to completed
+  const shipment = await getShipmentByTrackingNumber(tracking.tracking_number);
+  if (shipment?.metadata?.order_id) {
+    await updateOrderStatus(shipment.reference, "completed");
+  }
+
+  // Send delivery confirmation
+  await sendDeliveryConfirmation(tracking);
+
+  // Trigger post-delivery workflows
+  await triggerPostDeliveryWorkflows(tracking);
+}
+
+async function sendTrackingNotification(tracking) {
+  const shipment = await getShipmentByTrackingNumber(tracking.tracking_number);
+  const order = await getOrderById(shipment.metadata.order_id);
+
+  const statusMessages = {
+    shipped: "Your package has been picked up and is on its way!",
+    in_transit: "Your package is in transit",
+    out_for_delivery: "Your package is out for delivery today!",
+    delivered: "Your package has been delivered!",
+  };
+
+  await sendEmail({
+    to: order.customer.email,
+    subject: `Package Update: ${order.orderNumber}`,
+    template: "tracking_update",
+    data: {
+      customerName: order.customer.name,
+      orderNumber: order.orderNumber,
+      trackingNumber: tracking.tracking_number,
+      status: tracking.status,
+      statusMessage: statusMessages[tracking.status],
+      location: tracking.events[0]?.location,
+      estimatedDelivery: tracking.estimated_delivery,
+    },
+  });
+}
+```
+
+### Order Event Handlers
+
+```javascript
+async function handleOrderFulfilled(order) {
+  console.log(
+    `Order ${order.order_number} fulfilled with ${order.shipments.length} shipments`,
+  );
+
+  // Update order fulfillment status
+  await updateOrderFulfillment(order.id, {
+    status: "fulfilled",
+    fulfilledAt: order.fulfilled_at,
+    shipments: order.shipments,
+  });
+
+  // Send fulfillment notification
+  await sendFulfillmentNotification(order);
+
+  // Update inventory
+  for (const item of order.line_items) {
+    await updateInventory(item.sku, -item.fulfilled_quantity);
+  }
+
+  // Trigger post-fulfillment analytics
+  await trackFulfillmentMetrics(order);
+}
+
+async function sendFulfillmentNotification(order) {
+  const trackingNumbers = order.shipments.map((s) => s.tracking_number);
+
+  await sendEmail({
+    to: order.customer.email,
+    subject: `Order ${order.order_number} Fulfilled`,
+    template: "order_fulfilled",
+    data: {
+      customerName: order.customer.name,
+      orderNumber: order.order_number,
+      items: order.line_items,
+      trackingNumbers: trackingNumbers,
+      trackingUrl: `https://your-app.com/orders/${order.id}/tracking`,
+    },
+  });
+}
+```
+
+## Error Handling & Reliability
+
+### Retry Configuration
+
+```javascript
+class WebhookProcessor {
+  constructor() {
+    this.retryConfig = {
+      maxAttempts: 5,
+      initialDelay: 1000, // 1 second
+      maxDelay: 300000, // 5 minutes
+      backoffMultiplier: 2,
+    };
+  }
+
+  async processWebhook(webhook, event) {
+    let attempt = 1;
+    let delay = this.retryConfig.initialDelay;
+
+    while (attempt <= this.retryConfig.maxAttempts) {
+      try {
+        const response = await this.deliverWebhook(webhook, event);
+
+        if (response.status >= 200 && response.status < 300) {
+          await this.logDeliverySuccess(webhook, event, response);
+          return { success: true, attempts: attempt };
+        }
+
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      } catch (error) {
+        console.error(
+          `Webhook delivery attempt ${attempt} failed:`,
+          error.message,
+        );
+
+        if (attempt === this.retryConfig.maxAttempts) {
+          await this.logDeliveryFailure(webhook, event, error);
+          await this.sendToDeadLetterQueue(webhook, event, error);
+          return { success: false, attempts: attempt, error: error.message };
+        }
+
+        // Wait before retry
+        await this.sleep(delay);
+        delay = Math.min(
+          delay * this.retryConfig.backoffMultiplier,
+          this.retryConfig.maxDelay,
+        );
+        attempt++;
+      }
+    }
+  }
+
+  async deliverWebhook(webhook, event) {
+    const signature = this.generateSignature(event, webhook.secret);
+
+    return await fetch(webhook.url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Karrio-Signature": signature,
+        "X-Karrio-Event-Type": event.type,
+        "X-Karrio-Delivery-Id": event.id,
+      },
+      body: JSON.stringify(event),
+      timeout: 30000, // 30 seconds
+    });
+  }
+
+  generateSignature(event, secret) {
+    const payload = JSON.stringify(event);
+    const signature = crypto
+      .createHmac("sha256", secret)
+      .update(payload)
+      .digest("hex");
+
+    return `sha256=${signature}`;
+  }
+
+  sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+}
+```
+
+### Dead Letter Queue Handling
+
+```javascript
+class DeadLetterQueueHandler {
+  async processFailedWebhooks() {
+    const failedWebhooks = await this.getFailedWebhooks();
+
+    for (const failedWebhook of failedWebhooks) {
+      // Analyze failure reason
+      const failureReason = this.analyzeFailure(failedWebhook);
+
+      switch (failureReason) {
+        case "endpoint_down":
+          // Check if endpoint is back online
+          if (await this.isEndpointHealthy(failedWebhook.webhook.url)) {
+            await this.retryWebhook(failedWebhook);
+          }
+          break;
+
+        case "invalid_endpoint":
+          // Disable webhook and notify admin
+          await this.disableWebhook(failedWebhook.webhook.id);
+          await this.notifyAdmin(failedWebhook);
+          break;
+
+        case "authentication_error":
+          // Webhook secret might be wrong
+          await this.notifyWebhookOwner(failedWebhook);
+          break;
+
+        default:
+          // Manual review required
+          await this.flagForManualReview(failedWebhook);
+      }
+    }
+  }
+
+  analyzeFailure(failedWebhook) {
+    const lastError = failedWebhook.lastError;
+
+    if (lastError.includes("ECONNREFUSED") || lastError.includes("timeout")) {
+      return "endpoint_down";
+    }
+
+    if (lastError.includes("404") || lastError.includes("DNS")) {
+      return "invalid_endpoint";
+    }
+
+    if (lastError.includes("401") || lastError.includes("403")) {
+      return "authentication_error";
+    }
+
+    return "unknown";
+  }
+}
+```
+
+## Use Cases
+
+### E-commerce Order Fulfillment
+
+Perfect for online stores:
+
+- **Order-to-Shipment Automation**: Automatically update order status when shipments are created
+- **Customer Communication**: Send real-time shipping and delivery notifications
+- **Inventory Management**: Update stock levels when orders are fulfilled
+- **Customer Service**: Proactively handle delivery exceptions
+
+### Marketplace Integration
+
+Designed for multi-vendor marketplaces:
+
+- **Seller Notifications**: Notify sellers when their orders are shipped
+- **Performance Tracking**: Monitor seller fulfillment performance
+- **Customer Updates**: Provide unified tracking experience across vendors
+- **Analytics**: Track marketplace shipping metrics
+
+### Enterprise Operations
+
+Built for complex shipping workflows:
+
+- **System Integration**: Connect shipping events to ERP and CRM systems
+- **Compliance Monitoring**: Track shipping compliance and audit requirements
+- **Cost Tracking**: Monitor shipping costs and carrier performance
+- **Exception Handling**: Automate responses to delivery issues
+
+## Getting Started
+
+Ready to implement real-time shipping notifications with Karrio webhooks? Follow these steps:
+
+1. **Create webhook endpoints** in your application to receive events
+2. **Register webhooks** with the events you need to monitor
+3. **Implement signature verification** for security
+4. **Test webhook delivery** and error handling
+
+### Next Steps
+
+- Learn about [workflows](/docs/products/workflows) for automated webhook-driven processes
+- Explore [api logs](/docs/products/api-logs) for webhook delivery monitoring
+- Set up [events](/docs/products/events) to understand the full event system
+- Configure [tracking](/docs/products/tracking) for shipment monitoring events

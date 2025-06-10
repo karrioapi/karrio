@@ -7,163 +7,892 @@ tags: ["users", "roles", "permissions", "organizations", "access-control"]
 
 # User Management
 
-Karrio's User Management system provides comprehensive user administration, role-based access control, and organization management. Control who can access your shipping operations and what actions they can perform.
+<div className="flex gap-2 mb-6">
+  <div className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-400/10 dark:text-green-400 dark:ring-green-400/30">
+    <span className="text-xs">Community Edition</span>
+  </div>
+  <div className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30">
+    <span className="text-xs">Basic Auth</span>
+  </div>
+</div>
 
-## Overview
+Every Karrio project comes with comprehensive user management capabilities, providing organization-based access control, role-based permissions, user invitations, and secure authentication for enterprise deployments.
 
-Manage users across your organization with flexible role assignments and granular permissions. Support for multiple organizations, user invitations, and secure access control for enterprise deployments.
+## Features
 
-### Key Benefits
+### Organization-Based Access Control
 
-- **Role-Based Access**: Assign specific roles and permissions to users
-- **Organization Support**: Multi-organization user management
-- **User Invitations**: Invite users via email with automatic onboarding
-- **Secure Authentication**: JWT-based authentication with token management
-- **Audit Trail**: Track user actions and access patterns
+You don't have to build user management from scratch. Our system provides multi-organization support with isolated user access and resource management.
 
-## Core Features
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    User Management Dashboard
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border h-64 flex items-center justify-center">
+    <span className="text-gray-400">
+      Screenshot: User roles, permissions, and organization management interface
+    </span>
+  </div>
+</div>
 
-### User Authentication
+### Role-Based Permissions
+
+Assign granular permissions with predefined roles or create custom roles tailored to your business needs.
+
+### User Invitations & Onboarding
+
+Send email invitations with automatic user onboarding and role assignment for seamless team collaboration.
+
+### Secure Authentication
+
+JWT-based authentication with token management, refresh capabilities, and optional two-factor authentication.
+
+### Audit & Activity Tracking
+
+Monitor user actions, access patterns, and permission changes with comprehensive audit trails.
+
+### Additional features
+
+- Karrio extends user management with API key management and rate limiting controls.
+- Every user interaction includes automatic session management and security monitoring.
+- Karrio manages user preferences and customizable dashboard configurations.
+- Support for SSO integration and external authentication providers.
+
+## Data Flow
+
+### User Authentication & Authorization Flow
+
+```mermaid
+flowchart TD
+    A[User Login] --> B[Authentication Server]
+    B --> C{Credentials Valid?}
+
+    C -->|Yes| D[Generate JWT Tokens]
+    C -->|No| E[Return Auth Error]
+
+    D --> F[Access Token]
+    D --> G[Refresh Token]
+
+    F --> H[API Request]
+    H --> I[Token Validation]
+    I --> J{Token Valid?}
+
+    J -->|Yes| K[Check Permissions]
+    J -->|No| L[Token Refresh]
+
+    L --> M{Refresh Valid?}
+    M -->|Yes| D
+    M -->|No| E
+
+    K --> N{Permission Granted?}
+    N -->|Yes| O[Process Request]
+    N -->|No| P[Access Denied]
+
+    O --> Q[Return Response]
+    P --> R[Return Error]
+
+    style A fill:#e1f5fe
+    style D fill:#fff3e0
+    style O fill:#e8f5e8
+    style E fill:#ffebee
+    style P fill:#ffebee
+    style R fill:#ffebee
+```
+
+## API Reference
+
+### REST API
+
+#### User Registration (Sign Up)
 
 ```bash
-# Authenticate user and get token
+curl -X POST "https://api.karrio.io/api/register" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "newuser@example.com",
+    "password1": "secure_password123",
+    "password2": "secure_password123",
+    "first_name": "John",
+    "last_name": "Doe"
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "user": {
+    "id": "usr_1234567890",
+    "email": "newuser@example.com",
+    "first_name": "John",
+    "last_name": "Doe",
+    "is_active": false,
+    "date_joined": "2024-01-15T08:00:00Z"
+  },
+  "message": "Verification email sent. Please check your email to activate your account."
+}
+```
+
+#### Email Verification
+
+```bash
+curl -X POST "https://api.karrio.io/api/verify-email" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "key": "verification_token_from_email"
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "detail": "Email verified successfully. Your account is now active."
+}
+```
+
+#### User Authentication (Sign In)
+
+```bash
 curl -X POST "https://api.karrio.io/api/token" \
   -H "Content-Type: application/json" \
   -d '{
     "username": "user@example.com",
     "password": "secure_password"
   }'
+```
 
-# Response
+**Response:**
+
+```json
 {
-  "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
-  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+  "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6InVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE2NDI2ODEyMDB9.xyz",
+  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE2NDI3Njc2MDB9.abc",
+  "user": {
+    "id": "usr_1234567890",
+    "email": "user@example.com",
+    "first_name": "John",
+    "last_name": "Doe",
+    "is_active": true,
+    "date_joined": "2024-01-15T08:00:00Z"
+  }
 }
 ```
 
-### Token Management
+#### Password Reset Request
 
 ```bash
-# Refresh access token
+curl -X POST "https://api.karrio.io/api/password/reset" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com"
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "detail": "Password reset email sent. Please check your email for reset instructions."
+}
+```
+
+#### Password Reset Confirm
+
+```bash
+curl -X POST "https://api.karrio.io/api/password/reset/confirm" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "uid": "user_id_from_email",
+    "token": "reset_token_from_email",
+    "new_password1": "new_secure_password123",
+    "new_password2": "new_secure_password123"
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "detail": "Password has been reset successfully."
+}
+```
+
+#### Refresh Token
+
+```bash
 curl -X POST "https://api.karrio.io/api/token/refresh" \
   -H "Content-Type: application/json" \
   -d '{
-    "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+    "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE2NDI3Njc2MDB9.abc"
   }'
+```
 
-# Verify token
+**Response:**
+
+```json
+{
+  "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6InVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE2NDI2ODEyMDB9.new_token"
+}
+```
+
+#### Verify Token
+
+```bash
 curl -X POST "https://api.karrio.io/api/token/verify" \
   -H "Content-Type: application/json" \
   -d '{
-    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6InVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE2NDI2ODEyMDB9.xyz"
   }'
 ```
 
-### Organization Management
+**Response (Valid Token):**
 
-```bash
-# Create organization (requires admin permissions)
-curl -X POST "https://api.karrio.io/graphql" \
-  -H "Authorization: Token YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "mutation CreateOrganization($input: CreateOrganizationMutationInput!) { createOrganization(input: $input) { organization { id name } errors { field messages } } }",
-    "variables": {
-      "input": {
+```json
+{
+  "valid": true,
+  "user": {
+    "id": "usr_1234567890",
+    "email": "user@example.com",
+    "organizations": [
+      {
+        "id": "org_1234567890",
         "name": "Acme Corporation",
-        "slug": "acme-corp"
+        "role": "admin"
       }
-    }
-  }'
-
-# List organizations
-curl -X POST "https://api.karrio.io/graphql" \
-  -H "Authorization: Token YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "query { organizations { id name slug } }"
-  }'
+    ]
+  }
+}
 ```
 
-### User Invitations
+#### Get Current User
 
 ```bash
-# Send organization invites
-curl -X POST "https://api.karrio.io/graphql" \
-  -H "Authorization: Token YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "mutation SendInvites($input: SendOrganizationInvitesMutationInput!) { sendOrganizationInvites(input: $input) { invitations { id email } errors { field messages } } }",
-    "variables": {
-      "input": {
-        "emails": ["newuser@example.com"],
-        "organizationId": "org_123"
-      }
-    }
-  }'
-
-# Accept invitation
-curl -X POST "https://api.karrio.io/graphql" \
-  -H "Authorization: Token YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "mutation AcceptInvitation($input: AcceptOrganizationInvitationMutationInput!) { acceptOrganizationInvitation(input: $input) { organization { id name } errors { field messages } } }",
-    "variables": {
-      "input": {
-        "invitationId": "inv_123"
-      }
-    }
-  }'
+curl -X GET "https://api.karrio.io/v1/users/me" \
+  -H "Authorization: Token YOUR_API_KEY"
 ```
 
-## User Roles and Permissions
+**Response:**
+
+```json
+{
+  "id": "usr_1234567890",
+  "email": "user@example.com",
+  "first_name": "John",
+  "last_name": "Doe",
+  "is_active": true,
+  "date_joined": "2024-01-15T08:00:00Z",
+  "organizations": [
+    {
+      "id": "org_1234567890",
+      "name": "Acme Corporation",
+      "role": "admin",
+      "permissions": ["create_shipments", "manage_users", "view_analytics"]
+    }
+  ]
+}
+```
+
+### GraphQL API
+
+#### User Registration Mutation
+
+```graphql
+mutation RegisterUser($input: RegisterUserMutationInput!) {
+  register_user(input: $input) {
+    user {
+      id
+      email
+      first_name
+      last_name
+      is_active
+      date_joined
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+```
+
+**Variables:**
+
+```json
+{
+  "input": {
+    "email": "newuser@example.com",
+    "password1": "secure_password123",
+    "password2": "secure_password123",
+    "first_name": "John",
+    "last_name": "Doe"
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "data": {
+    "register_user": {
+      "user": {
+        "id": "usr_1234567890",
+        "email": "newuser@example.com",
+        "first_name": "John",
+        "last_name": "Doe",
+        "is_active": false,
+        "date_joined": "2024-01-15T08:00:00Z"
+      },
+      "errors": []
+    }
+  }
+}
+```
+
+#### Verify Email Mutation
+
+```graphql
+mutation VerifyEmail($input: VerifyEmailMutationInput!) {
+  verify_email(input: $input) {
+    success
+    errors {
+      field
+      messages
+    }
+  }
+}
+```
+
+**Variables:**
+
+```json
+{
+  "input": {
+    "key": "verification_token_from_email"
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "data": {
+    "verify_email": {
+      "success": true,
+      "errors": []
+    }
+  }
+}
+```
+
+#### Token Authentication Mutation
+
+```graphql
+mutation TokenAuth($input: TokenAuthMutationInput!) {
+  token_auth(input: $input) {
+    token
+    refresh_token
+    user {
+      id
+      email
+      first_name
+      last_name
+      is_active
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+```
+
+**Variables:**
+
+```json
+{
+  "input": {
+    "username": "user@example.com",
+    "password": "secure_password"
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "data": {
+    "token_auth": {
+      "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6InVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE2NDI2ODEyMDB9.xyz",
+      "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE2NDI3Njc2MDB9.abc",
+      "user": {
+        "id": "usr_1234567890",
+        "email": "user@example.com",
+        "first_name": "John",
+        "last_name": "Doe",
+        "is_active": true
+      },
+      "errors": []
+    }
+  }
+}
+```
+
+#### Refresh Token Mutation
+
+```graphql
+mutation RefreshToken($input: RefreshTokenMutationInput!) {
+  refresh_token(input: $input) {
+    token
+    errors {
+      field
+      messages
+    }
+  }
+}
+```
+
+**Variables:**
+
+```json
+{
+  "input": {
+    "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE2NDI3Njc2MDB9.abc"
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "data": {
+    "refresh_token": {
+      "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6InVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE2NDI2ODQyMDB9.new_token",
+      "errors": []
+    }
+  }
+}
+```
+
+#### Password Reset Request Mutation
+
+```graphql
+mutation PasswordReset($input: PasswordResetMutationInput!) {
+  password_reset(input: $input) {
+    success
+    errors {
+      field
+      messages
+    }
+  }
+}
+```
+
+**Variables:**
+
+```json
+{
+  "input": {
+    "email": "user@example.com"
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "data": {
+    "password_reset": {
+      "success": true,
+      "errors": []
+    }
+  }
+}
+```
+
+#### Password Reset Confirm Mutation
+
+```graphql
+mutation PasswordResetConfirm($input: PasswordResetConfirmMutationInput!) {
+  password_reset_confirm(input: $input) {
+    success
+    errors {
+      field
+      messages
+    }
+  }
+}
+```
+
+**Variables:**
+
+```json
+{
+  "input": {
+    "uid": "user_id_from_email",
+    "token": "reset_token_from_email",
+    "new_password1": "new_secure_password123",
+    "new_password2": "new_secure_password123"
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "data": {
+    "password_reset_confirm": {
+      "success": true,
+      "errors": []
+    }
+  }
+}
+```
+
+#### Query Current User
+
+```graphql
+query GetCurrentUser {
+  user {
+    id
+    email
+    first_name
+    last_name
+    is_active
+    date_joined
+    organizations {
+      id
+      name
+      role
+      permissions
+    }
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "data": {
+    "user": {
+      "id": "usr_1234567890",
+      "email": "user@example.com",
+      "first_name": "John",
+      "last_name": "Doe",
+      "is_active": true,
+      "date_joined": "2024-01-15T08:00:00Z",
+      "organizations": [
+        {
+          "id": "org_1234567890",
+          "name": "Acme Corporation",
+          "role": "admin",
+          "permissions": ["create_shipments", "manage_users", "view_analytics"]
+        }
+      ]
+    }
+  }
+}
+```
+
+#### Query Users (Admin Only)
+
+```graphql
+query GetUsers($filter: UserFilter, $pagination: PaginationInput) {
+  users(filter: $filter, pagination: $pagination) {
+    edges {
+      node {
+        id
+        email
+        first_name
+        last_name
+        is_active
+        date_joined
+        organizations {
+          id
+          name
+          role
+        }
+      }
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+  }
+}
+```
+
+**Variables:**
+
+```json
+{
+  "filter": {
+    "is_active": true,
+    "organization_id": "org_1234567890"
+  },
+  "pagination": {
+    "first": 10
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "data": {
+    "users": {
+      "edges": [
+        {
+          "node": {
+            "id": "usr_1234567890",
+            "email": "user@example.com",
+            "first_name": "John",
+            "last_name": "Doe",
+            "is_active": true,
+            "date_joined": "2024-01-15T08:00:00Z",
+            "organizations": [
+              {
+                "id": "org_1234567890",
+                "name": "Acme Corporation",
+                "role": "admin"
+              }
+            ]
+          }
+        }
+      ],
+      "pageInfo": {
+        "hasNextPage": false,
+        "hasPreviousPage": false,
+        "startCursor": "cursor1",
+        "endCursor": "cursor1"
+      }
+    }
+  }
+}
+```
+
+#### Update User Profile Mutation
+
+```graphql
+mutation UpdateUserProfile($input: UpdateUserProfileMutationInput!) {
+  update_user_profile(input: $input) {
+    user {
+      id
+      email
+      first_name
+      last_name
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+```
+
+**Variables:**
+
+```json
+{
+  "input": {
+    "first_name": "John Updated",
+    "last_name": "Doe Updated"
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "data": {
+    "update_user_profile": {
+      "user": {
+        "id": "usr_1234567890",
+        "email": "user@example.com",
+        "first_name": "John Updated",
+        "last_name": "Doe Updated"
+      },
+      "errors": []
+    }
+  }
+}
+```
+
+#### Send User Invitations
+
+```graphql
+mutation SendInvitations($input: SendInvitationsMutationInput!) {
+  send_invitations(input: $input) {
+    invitations {
+      id
+      email
+      organization {
+        id
+        name
+      }
+      role
+      expires_at
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+```
+
+**Variables:**
+
+```json
+{
+  "input": {
+    "emails": ["newuser@example.com", "colleague@example.com"],
+    "organization_id": "org_1234567890",
+    "role": "user"
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "data": {
+    "send_invitations": {
+      "invitations": [
+        {
+          "id": "inv_1234567890",
+          "email": "newuser@example.com",
+          "organization": {
+            "id": "org_1234567890",
+            "name": "Acme Corporation"
+          },
+          "role": "user",
+          "expires_at": "2024-01-22T10:30:00Z"
+        }
+      ],
+      "errors": []
+    }
+  }
+}
+```
+
+## User Roles & Permissions
 
 ### Standard Roles
 
-- **Admin**: Full access to all features and user management
-- **Manager**: Access to shipping operations and basic user management
-- **User**: Access to shipping operations only
-- **Viewer**: Read-only access to shipping data
+Built-in roles with predefined permission groups:
 
-### Permission Management
+#### Owner
 
-```bash
-# Set user roles in organization
-curl -X POST "https://api.karrio.io/graphql" \
-  -H "Authorization: Token YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "mutation SetUserRoles($input: SetOrganizationUserRolesMutationInput!) { setOrganizationUserRoles(input: $input) { user { id email } errors { field messages } } }",
-    "variables": {
-      "input": {
-        "userId": "user_123",
-        "organizationId": "org_123",
-        "roles": ["manager"]
-      }
-    }
-  }'
+- **Permissions**: `manage_org_owner`
+- **Capabilities**: Complete organization ownership and control
+- **Restrictions**: Only available to organization owners
 
-# Change organization owner
-curl -X POST "https://api.karrio.io/graphql" \
-  -H "Authorization: Token YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "mutation ChangeOwner($input: ChangeOrganizationOwnerMutationInput!) { changeOrganizationOwner(input: $input) { organization { id owner { email } } errors { field messages } } }",
-    "variables": {
-      "input": {
-        "organizationId": "org_123",
-        "userId": "user_456"
-      }
-    }
-  }'
+#### Admin
+
+- **Permissions**: `manage_team`, `manage_apps`, `manage_carriers`
+- **Capabilities**: Team management, application settings, carrier connections
+- **Restrictions**: Cannot transfer organization ownership
+
+#### Developer
+
+- **Permissions**: `manage_webhooks`
+- **Capabilities**: Webhook configuration and API integrations
+- **Restrictions**: Limited to development and integration tasks
+
+#### Member
+
+- **Permissions**: `manage_data`, `manage_orders`, `manage_pickups`, `manage_trackers`, `manage_shipments`
+- **Capabilities**: Core shipping operations, order management, tracking
+- **Restrictions**: Cannot manage users or organization settings
+
+### Permission Groups
+
+The actual permission system uses these groups:
+
+```json
+{
+  "permission_groups": [
+    "manage_apps",
+    "manage_team",
+    "manage_system",
+    "manage_orders",
+    "manage_data",
+    "manage_pickups",
+    "manage_carriers",
+    "manage_trackers",
+    "manage_webhooks",
+    "manage_shipments",
+    "manage_org_owner"
+  ]
+}
 ```
+
+## Organization Management
+
+Organization management is handled by a separate system. For detailed information about creating organizations, managing teams, and organization-level features, see our [Multi-Organizations documentation](/docs/products/multi-orgs).
+
+## Use Cases
+
+### Team Collaboration
+
+Perfect for teams managing shipping operations:
+
+- **Role Assignment**: Assign appropriate roles based on responsibilities
+- **Access Control**: Limit access to sensitive operations and data
+- **Audit Trail**: Track who performed what actions and when
+- **Invitation Workflow**: Easily onboard new team members
+
+### Enterprise Deployment
+
+Designed for large organizations with complex requirements:
+
+- **Permission Groups**: Fine-grained control over feature access using permission groups
+- **User Provisioning**: Automated user creation and role assignment
+- **Compliance Reporting**: Detailed audit logs for compliance requirements
+- **Multi-Organization Support**: See [Multi-Organizations](/docs/products/multi-orgs) for details
+
+### Partner Integration
+
+Enable external partners and vendors to access specific resources:
+
+- **Limited Access**: Provide specific permission groups for controlled access
+- **Resource Isolation**: Keep partner data separate using organizational boundaries
+- **Temporary Access**: Set expiration dates for partner accounts
+- **Activity Monitoring**: Track partner usage and access patterns
 
 ## Security Features
 
-### Two-Factor Authentication
+### Authentication Options
+
+#### Standard Authentication
 
 ```bash
-# Get verified token with 2FA
+# Username/password authentication
+curl -X POST "https://api.karrio.io/api/token" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "user@example.com",
+    "password": "secure_password"
+  }'
+```
+
+#### Two-Factor Authentication
+
+```bash
+# 2FA authentication with OTP
 curl -X POST "https://api.karrio.io/api/token/verified" \
   -H "Content-Type: application/json" \
   -d '{
@@ -175,107 +904,44 @@ curl -X POST "https://api.karrio.io/api/token/verified" \
 
 ### API Key Management
 
-Users can generate API keys for programmatic access:
+Generate and manage API keys for programmatic access:
 
-```bash
-# API keys are managed through the dashboard
-# Each key can have specific permissions and rate limits
-# Keys can be revoked or rotated as needed
-```
-
-## Best Practices
-
-### User Onboarding
-
-1. **Send Invitations**: Use email invitations for new users
-2. **Assign Appropriate Roles**: Start with minimal permissions
-3. **Provide Training**: Ensure users understand their permissions
-4. **Monitor Access**: Regularly review user access and roles
-
-### Security Guidelines
-
-```bash
-# Use strong authentication
-# Regularly rotate API keys
-# Monitor user activity
-# Implement least privilege access
-# Enable two-factor authentication where possible
-```
-
-### Organization Structure
-
-```bash
-# Example organization hierarchy:
-# - Main Organization (Admin users)
-#   - Shipping Department (Manager users)
-#   - Customer Service (User/Viewer roles)
-#   - Finance Department (Viewer access to reports)
+```javascript
+// API keys are managed through the admin dashboard
+// Use the web interface to create and manage API keys
+// Each key can be assigned specific permissions and expiration dates
 ```
 
 ## Integration Examples
 
-### User Authentication Flow
+### User Onboarding Workflow
 
 ```javascript
-// Example authentication flow
-async function authenticateUser(username, password) {
-  try {
-    const response = await fetch("https://api.karrio.io/api/token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-    });
-
-    const tokens = await response.json();
-
-    // Store tokens securely
-    localStorage.setItem("access_token", tokens.access);
-    localStorage.setItem("refresh_token", tokens.refresh);
-
-    return tokens;
-  } catch (error) {
-    console.error("Authentication failed:", error);
-    throw error;
-  }
-}
-
-// Use token for API calls
-function makeAuthenticatedRequest(url, options = {}) {
-  const token = localStorage.getItem("access_token");
-
-  return fetch(url, {
-    ...options,
-    headers: {
-      ...options.headers,
-      Authorization: `Bearer ${token}`,
-    },
-  });
-}
+// User invitations are handled through the admin dashboard
+// Invitations are sent via email with secure acceptance links
+// Users create their accounts by following the invitation link
 ```
 
-### Organization Management
+### Permission Management
 
 ```javascript
-// Create organization and invite users
-async function setupOrganization(orgData, userEmails) {
-  // Create organization
-  const org = await createOrganization(orgData);
-
-  // Invite users
-  const invitations = await sendInvitations(org.id, userEmails);
-
-  console.log(
-    `Organization ${org.name} created with ${invitations.length} invitations sent`,
-  );
-
-  return { organization: org, invitations };
-}
+// User permissions are managed through the admin dashboard
+// Admins can update permission groups for team members
+// Changes take effect immediately for the user's session
 ```
 
-## What's Next?
+## Getting Started
 
-- [Multi-Tenant →](/docs/products/multi-tenant) - Multi-tenant architecture
-- [Admin Console →](/docs/products/admin-console) - Administrative interface
-- [API Reference →](/docs/reference/api) - Complete API documentation
+Ready to set up user management in Karrio? Follow these steps:
+
+1. **Register users** and handle email verification
+2. **Assign appropriate permission groups** based on responsibilities
+3. **Set up authentication** for your application
+4. **Configure role-based access** for different user types
+
+### Next Steps
+
+- Learn about [multi-orgs](/docs/products/multi-orgs) for advanced organization management
+- Explore [webhooks](/docs/products/webhooks) for user activity notifications
+- Set up [API logs](/docs/products/api-logs) to monitor user API usage
+- Configure [admin console](/docs/products/admin-console) for centralized management
