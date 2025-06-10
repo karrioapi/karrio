@@ -4,8 +4,8 @@ import typer
 import string
 import pathlib
 from rich.progress import Progress, SpinnerColumn, TextColumn
-import kcli.templates as templates
-import kcli.common.utils as utils
+import karrio_cli.templates as templates
+import karrio_cli.common.utils as utils
 import typing
 import datetime
 

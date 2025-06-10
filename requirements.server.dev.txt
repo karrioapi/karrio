@@ -3,7 +3,7 @@ django-debug-toolbar
 
 # Karrio dev packages
 -e ./modules/sdk
--e ./modules/cli
+-e ./modules/cli[dev]
 
 # Shipping Plugins
 -e ./modules/connectors/australiapost

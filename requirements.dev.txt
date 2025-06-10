@@ -1,10 +1,7 @@
 bandit
 black
 coverage
-generateDS
-Jinja2
 mypy
 twine
 wheel
-typer
 setuptools

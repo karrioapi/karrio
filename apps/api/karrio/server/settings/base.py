@@ -11,14 +11,14 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import decouple
 import importlib
 import dj_database_url
 from pathlib import Path
 from datetime import timedelta
-from decouple import AutoConfig
 from django.urls import reverse_lazy
-from django.core.management.utils import get_random_secret_key
 from corsheaders.defaults import default_headers
+from django.core.management.utils import get_random_secret_key
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -27,7 +27,15 @@ with open(BASE_DIR / "server" / "VERSION", "r") as v:
     VERSION = v.read().strip()
 
 
-config = AutoConfig(search_path=Path().resolve())
+config = decouple.AutoConfig(search_path=Path().resolve())
+
+if not config('SECRET_KEY', default=None):
+    try:
+        print("> fallback .env.sample...")
+        config = decouple.Config(decouple.RepositoryEnv(".env.sample"))
+    except Exception as e:
+        print(f"> error: {e}")
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/

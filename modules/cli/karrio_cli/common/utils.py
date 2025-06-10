@@ -1,14 +1,13 @@
 import json
+import enum
 import pydoc
 import typer
 import requests
 import importlib
-import karrio.lib as lib
-import kcli.commands.login as login
+import karrio_cli.commands.login as login
 from rich.syntax import Syntax
 from rich.console import Console
 from .queries import GET_LOGS, GET_LOG, GET_EVENTS, GET_EVENT
-import os
 
 DEFAULT_FEATURES = [
     "tracking",
@@ -282,16 +281,6 @@ def make_graphql_request(
         error_message = {"error": str(e)}
         format_json_output(error_message, pretty_print, line_numbers)
         return None
-
-
-class CarrierFeatures(lib.StrEnum):
-    tracking = "tracking"
-    rating = "rating"
-    shipping = "shipping"
-    pickup = "pickup"
-    address = "address"
-    document = "document"
-    manifest = "manifest"
 
 
 def gen(entity):

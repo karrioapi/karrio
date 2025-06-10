@@ -1,5 +1,5 @@
 import typer
-import kcli.common.utils as utils
+import karrio_cli.common.utils as utils
 import typing
 import datetime
 
