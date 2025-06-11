@@ -12,7 +12,7 @@ import karrio_cli.resources.connections as connections
 
 try:
     import google.adk
-    import karrio_cli.commands.ai as ai
+    import karrio_cli.ai.commands as agent
     has_ai_dep = True
 except ImportError:
     has_ai_dep = False
@@ -96,8 +96,8 @@ if has_sdk_dep:
 
 if has_ai_dep:
     app.add_typer(
-        ai.app,
-        name="ai",
+        agent.app,
+        name="agent",
         help="Karrio AI agent.",
     )
 
