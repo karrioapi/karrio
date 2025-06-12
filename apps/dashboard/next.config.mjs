@@ -15,6 +15,7 @@ const nextConfig = {
     "@karrio/types",
     "@karrio/trpc",
     "@karrio/admin",
+    "@karrio/developers",
   ],
   sassOptions: {
     includePaths: [path.join("src", "styles")],

@@ -8,10 +8,12 @@ const config: Config = {
     "../../packages/ui/components/**/*.{js,ts,jsx,tsx,mdx}",
     "../../packages/ui/layouts/**/*.{js,ts,jsx,tsx,mdx}",
     "../../packages/ui/modules/**/*.{js,ts,jsx,tsx,mdx}",
-    "../../packages/admin/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "../../packages/admin/modules/**/*.{js,ts,jsx,tsx,mdx}",
     "../../packages/core/components/**/*.{js,ts,jsx,tsx,mdx}",
     "../../packages/core/modules/**/*.{js,ts,jsx,tsx,mdx}",
+    "../../packages/admin/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "../../packages/admin/modules/**/*.{js,ts,jsx,tsx,mdx}",
+    "../../packages/developers/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "../../packages/developers/modules/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     container: {

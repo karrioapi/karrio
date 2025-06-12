@@ -12431,7 +12431,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -29578,7 +29578,7 @@
             "args": [],
             "type": {
               "kind": "OBJECT",
-              "name": "AppType",
+              "name": "PrivateAppType",
               "ofType": null
             },
             "isDeprecated": false,
@@ -29746,7 +29746,7 @@
             "args": [],
             "type": {
               "kind": "OBJECT",
-              "name": "AppType",
+              "name": "PrivateAppType",
               "ofType": null
             },
             "isDeprecated": false,
@@ -29774,6 +29774,28 @@
                 "kind": "SCALAR",
                 "name": "String",
                 "ofType": null
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "access_scopes",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
               }
             },
             "defaultValue": null

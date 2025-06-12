@@ -72,6 +72,10 @@ export const GET_PRIVATE_APP = gql`
       is_published
       launch_url
       features
+      client_id
+      redirect_uris
+      created_at
+      updated_at
       metadata
       installation {
         id
@@ -103,6 +107,10 @@ export const GET_PRIVATE_APPS = gql`
           is_published
           launch_url
           features
+          client_id
+          redirect_uris
+          created_at
+          updated_at
           metadata
           installation {
             id
@@ -153,6 +161,73 @@ export const UNINSTALL_APP = gql`
           metadata
         }
       }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const CREATE_APP = gql`
+  mutation CreateApp($data: CreateAppMutationInput!) {
+    create_app(input: $data) {
+      app {
+        id
+        display_name
+        developer_name
+        is_public
+        is_builtin
+        is_embedded
+        is_published
+        launch_url
+        features
+        client_id
+        redirect_uris
+        created_at
+        updated_at
+        metadata
+      }
+      client_secret
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const UPDATE_APP = gql`
+  mutation UpdateApp($data: UpdateAppMutationInput!) {
+    update_app(input: $data) {
+      app {
+        id
+        display_name
+        developer_name
+        is_public
+        is_builtin
+        is_embedded
+        is_published
+        launch_url
+        features
+        client_id
+        redirect_uris
+        created_at
+        updated_at
+        metadata
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const DELETE_APP = gql`
+  mutation DeleteApp($data: DeleteMutationInput!) {
+    delete_app(input: $data) {
+      id
       errors {
         field
         messages

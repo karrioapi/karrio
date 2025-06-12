@@ -2,38 +2,35 @@
 import {
   formatDateTimeLong,
   getURLSearchParams,
-  isNone,
   isNoneOrEmpty,
 } from "@karrio/lib";
 import {
-  LogPreview,
-  LogPreviewContext,
-} from "@karrio/core/components/log-preview";
-import { StatusCode } from "@karrio/ui/core/components/status-code-badge";
-import { LogsFilter } from "@karrio/ui/core/filters/logs-filter";
-import { useLoader } from "@karrio/ui/core/components/loader";
+  EventPreview,
+  EventPreviewContext,
+} from "@karrio/developers/components/event-preview";
+import { EventsFilter } from "@karrio/ui/core/filters/events-filter";
 import { AppLink } from "@karrio/ui/core/components/app-link";
+import { useLoader } from "@karrio/ui/core/components/loader";
 import { Spinner } from "@karrio/ui/core/components/spinner";
 import React, { useContext, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { useLogs } from "@karrio/hooks/log";
+import { useEvents } from "@karrio/hooks/event";
 
 
-export default function LogsPage() {
+export default function EventsPage() {
   const Component = (): JSX.Element => {
+    const context = useEvents();
     const searchParams = useSearchParams();
-    const modal = searchParams.get("modal");
     const { setLoading } = useLoader();
-    const { previewLog } = useContext(LogPreviewContext);
+    const { previewEvent } = useContext(EventPreviewContext);
     const [initialized, setInitialized] = React.useState(false);
-    const context = useLogs();
     const {
-      query: { data: { logs } = {}, ...query },
+      query: { data: { events } = {}, ...query },
       filter,
       setFilter,
     } = context;
 
-    const updateFilter = (extra: any = {}) => {
+    const updateFilter = (extra: Partial<typeof filter> = {}) => {
       const query = {
         ...filter,
         ...getURLSearchParams(),
@@ -45,23 +42,27 @@ export default function LogsPage() {
 
     useEffect(() => {
       updateFilter();
-    }, [modal]);
+    }, [searchParams]);
     useEffect(() => {
       setLoading(query.isFetching);
     }, [query.isFetching]);
     useEffect(() => {
-      if (query.isFetched && !initialized && !isNoneOrEmpty(modal)) {
-        previewLog(modal as string);
+      if (
+        query.isFetched &&
+        !initialized &&
+        !isNoneOrEmpty(searchParams.get("modal"))
+      ) {
+        previewEvent(searchParams.get("modal") as string);
         setInitialized(true);
       }
-    }, [modal, query.isFetched]);
+    }, [searchParams.get("modal"), query.isFetched]);
 
     return (
       <>
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
           <span className="title is-4">Developers</span>
           <div>
-            <LogsFilter context={context} />
+            <EventsFilter context={context} />
           </div>
         </header>
 
@@ -90,7 +91,7 @@ export default function LogsPage() {
                 <span>Webhooks</span>
               </AppLink>
             </li>
-            <li className={`is-capitalized has-text-weight-semibold`}>
+            <li className={`is-capitalized has-text-weight-semibold is-active`}>
               <AppLink
                 href="/developers/events"
                 shallow={false}
@@ -99,7 +100,7 @@ export default function LogsPage() {
                 <span>Events</span>
               </AppLink>
             </li>
-            <li className={`is-capitalized has-text-weight-semibold is-active`}>
+            <li className={`is-capitalized has-text-weight-semibold`}>
               <AppLink href="/developers/logs" shallow={false} prefetch={false}>
                 <span>Logs</span>
               </AppLink>
@@ -107,77 +108,35 @@ export default function LogsPage() {
           </ul>
         </div>
 
-        <div className="tabs">
-          <ul>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${isNone(filter?.status) ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !isNone(filter?.status) &&
-                  updateFilter({ status: null, offset: 0 })
-                }
-              >
-                all
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${filter?.status === "succeeded" ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  filter?.status !== "succeeded" &&
-                  updateFilter({ status: "succeeded", offset: 0 })
-                }
-              >
-                succeeded
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${filter?.status === "failed" ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  filter?.status !== "failed" &&
-                  updateFilter({ status: "failed", offset: 0 })
-                }
-              >
-                failed
-              </a>
-            </li>
-          </ul>
-        </div>
-
         {!query.isFetched && <Spinner />}
 
-        {query.isFetched && (logs?.edges || []).length > 0 && (
+        {query.isFetched && (events?.edges || []).length > 0 && (
           <>
             <div className="table-container">
-              <table className="logs-table table is-fullwidth is-size-7">
-                <tbody>
+              <table className="events-table is-size-7 table is-fullwidth">
+                <tbody className="events-table">
                   <tr>
-                    <td className="status is-size-7 is-vcentered">
-                      <span className="ml-2">STATUS</span>
+                    <td className="event is-size-7 px-0">
+                      <span className="ml-2">EVENT</span>
                     </td>
-                    <td className="description is-size-7 is-vcentered">
-                      DESCRIPTION
-                    </td>
-                    <td className="date has-text-right is-size-7"></td>
+                    <td className="date has-text-right"></td>
                   </tr>
 
-                  {(logs?.edges || []).map(({ node: log }) => (
+                  {(events?.edges || []).map(({ node: event }) => (
                     <tr
-                      key={log.id}
+                      key={event.id}
                       className="items is-clickable"
-                      onClick={() => previewLog(log.id as any)}
+                      onClick={() => previewEvent(event.id)}
                     >
-                      <td className="status">
-                        <StatusCode code={log.status_code as number} />
+                      <td className="description">
+                        <span
+                          className="text-ellipsis"
+                          title={event.type || ""}
+                        >{`${event.type}`}</span>
                       </td>
-                      <td className="description text-ellipsis">{`${log.method} ${log.path}`}</td>
                       <td className="date has-text-right">
-                        <span className="mr-2">
-                          {formatDateTimeLong(log.requested_at)}
+                        <span className="mx-2">
+                          {formatDateTimeLong(event.created_at)}
                         </span>
                       </td>
                     </tr>
@@ -188,7 +147,7 @@ export default function LogsPage() {
 
             <footer className="px-2 py-2 is-vcentered">
               <span className="is-size-7 has-text-weight-semibold">
-                {(logs?.edges || []).length} results
+                {(events?.edges || []).length} results
               </span>
 
               <div className="buttons has-addons is-centered is-pulled-right">
@@ -206,7 +165,7 @@ export default function LogsPage() {
                   onClick={() =>
                     updateFilter({ offset: (filter.offset as number) + 20 })
                   }
-                  disabled={!logs?.page_info.has_next_page}
+                  disabled={!events?.page_info.has_next_page}
                 >
                   Next
                 </button>
@@ -215,13 +174,10 @@ export default function LogsPage() {
           </>
         )}
 
-        {query.isFetched && (logs?.edges || []).length == 0 && (
+        {query.isFetched && (events?.edges || []).length == 0 && (
           <div className="card my-6">
             <div className="card-content has-text-centered">
-              <p>No API logs found.</p>
-              <p>
-                Use the <strong>API</strong> to send shipping requests.
-              </p>
+              <p>No API events found.</p>
             </div>
           </div>
         )}
@@ -231,9 +187,9 @@ export default function LogsPage() {
 
   return (
     <>
-      <LogPreview>
+      <EventPreview>
         <Component />
-      </LogPreview>
+      </EventPreview>
     </>
   );
 }
