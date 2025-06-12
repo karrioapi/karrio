@@ -609,41 +609,41 @@ shipment = karrio.shipments.create({
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div className="space-y-6">
               <div className="bg-white/5 rounded-lg p-6 backdrop-blur-sm border border-white/10">
-                <h3 className="text-lg font-semibold mb-2">How does Karrio handle carrier integration?</h3>
+                <h3 className="text-lg font-semibold mb-2">What is Karrio?</h3>
                 <p className="text-white/60">
-                  Karrio provides a unified API that abstracts away the complexity of individual carrier integrations. We handle the maintenance, updates, and certification requirements for each carrier, allowing you to focus on your core business.
+                  Karrio is an open-source shipping infrastructure for modern logistics. Our mission is to simplify shipping for developers and businesses of all sizes. We're open source, API-first, and self-serve.
                 </p>
               </div>
               <div className="bg-white/5 rounded-lg p-6 backdrop-blur-sm border border-white/10">
-                <h3 className="text-lg font-semibold mb-2">What carriers do you support?</h3>
+                <h3 className="text-lg font-semibold mb-2">How is Karrio different from other shipping APIs?</h3>
                 <p className="text-white/60">
-                  We support 30+ major carriers globally, including USPS, FedEx, UPS, DHL, and many regional carriers. Our platform is continuously expanding to include more carriers based on customer needs.
+                  1. We are API-first and built for developers. 2. We are open source, giving you full control and transparency. 3. We are designed for scale, from startups to enterprise. 4. Our unified data model abstracts away the complexity of individual carriers.
                 </p>
               </div>
               <div className="bg-white/5 rounded-lg p-6 backdrop-blur-sm border border-white/10">
-                <h3 className="text-lg font-semibold mb-2">Is Karrio suitable for small businesses?</h3>
+                <h3 className="text-lg font-semibold mb-2">Can I self-host?</h3>
                 <p className="text-white/60">
-                  Yes! Our platform is designed to scale with your business. Start with our free tier and upgrade as your shipping needs grow. We offer solutions for businesses of all sizes.
+                  Yes. The open-source version of Karrio can be deployed with Docker. This is a great option if you want full control over your infrastructure. See our self-hosting docs to get started.
                 </p>
               </div>
             </div>
             <div className="space-y-6">
               <div className="bg-white/5 rounded-lg p-6 backdrop-blur-sm border border-white/10">
-                <h3 className="text-lg font-semibold mb-2">How does pricing work?</h3>
+                <h3 className="text-lg font-semibold mb-2">How much does Karrio cost?</h3>
                 <p className="text-white/60">
-                  Our pricing is based on shipping volume and features needed. We offer a free tier for small businesses, a professional plan for growing companies, and custom enterprise solutions for large-scale operations.
-                </p>
-              </div>
-              <div className="bg-white/5 rounded-lg p-6 backdrop-blur-sm border border-white/10">
-                <h3 className="text-lg font-semibold mb-2">Can I use my existing carrier accounts?</h3>
-                <p className="text-white/60">
-                  Yes, you can connect your existing carrier accounts to Karrio. We provide easy-to-use tools for managing multiple carrier accounts and credentials in one place.
+                  Karrio is free to use if you self-host our open-source version. For our managed Karrio Platform, we have scalable, transparent pricing based on usage. See our pricing page for details.
                 </p>
               </div>
               <div className="bg-white/5 rounded-lg p-6 backdrop-blur-sm border border-white/10">
                 <h3 className="text-lg font-semibold mb-2">What kind of support do you offer?</h3>
                 <p className="text-white/60">
-                  We provide different levels of support based on your plan. This includes community support, email support, priority support with faster response times, and dedicated support teams for enterprise customers.
+                  We offer community support via GitHub. Platform customers get priority email support, with options for dedicated support channels for enterprise plans.
+                </p>
+              </div>
+              <div className="bg-white/5 rounded-lg p-6 backdrop-blur-sm border border-white/10">
+                <h3 className="text-lg font-semibold mb-2">Do I need my own carrier accounts?</h3>
+                <p className="text-white/60">
+                  Yes. Karrio is a universal API that plugs into your existing carrier accounts. This puts you in control of your rates and relationships. Think of it as your own white-label shipping platform, built on an open, modern infrastructure.
                 </p>
               </div>
             </div>

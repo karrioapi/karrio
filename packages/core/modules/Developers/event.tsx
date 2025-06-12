@@ -102,8 +102,9 @@ export const EventComponent = ({
                 style={{ position: "absolute", right: 0, zIndex: 1 }}
                 className="button is-primary is-small m-1"
               />
-              <pre className="code p-1">
+              <pre className="code p-1 max-h-[70vh] overflow-auto">
                 <code
+                  style={{ whiteSpace: "pre-wrap" }}
                   dangerouslySetInnerHTML={{
                     __html: hljs.highlight(data as string, { language: "json" })
                       .value,

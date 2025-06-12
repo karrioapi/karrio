@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 class APITestCase(BaseAPITestCase):
     def setUp(self) -> None:
         self.maxDiff = None
+        logging.basicConfig(level=logging.DEBUG)
 
         # Setup user and API Token.
         self.user = get_user_model().objects.create_superuser(
@@ -27,6 +28,7 @@ class APITestCase(BaseAPITestCase):
             carrier_code="canadapost",
             carrier_id="canadapost",
             test_mode=True,
+            active=True,
             created_by=self.user,
             credentials=dict(
                 username="6e93d53968881714",
@@ -34,24 +36,25 @@ class APITestCase(BaseAPITestCase):
                 contract_id="42708517",
                 password="0bfa9fcb9853d1f51ee57a",
             ),
-            capabilities=["pickup", "rating", "tracking", "shipping"],
         )
         self.ups_carrier = providers.Carrier.objects.create(
             carrier_code="ups",
             carrier_id="ups_package",
             test_mode=True,
+            active=True,
             created_by=self.user,
             credentials=dict(
                 client_id="test",
                 client_secret="test",
                 account_number="000000",
             ),
-            capabilities=["pickup", "rating", "tracking", "shipping"],
         )
         self.fedex_carrier = providers.Carrier.objects.create(
             carrier_code="fedex",
             carrier_id="fedex_express",
             test_mode=True,
+            active=True,
+            created_by=self.user,
             credentials=dict(
                 api_key="test",
                 secret_key="password",
@@ -59,17 +62,18 @@ class APITestCase(BaseAPITestCase):
                 track_api_key="test",
                 track_secret_key="password",
             ),
-            capabilities=["pickup", "rating", "tracking", "shipping"],
         )
         self.dhl_carrier = providers.Carrier.objects.create(
-            carrier_code="dhl_universal",
-            carrier_id="dhl_universal",
+            carrier_code="dhl_express",
+            carrier_id="dhl_express",
             test_mode=True,
+            active=True,
+            created_by=self.user,
             credentials=dict(
-                consumer_key="test",
-                consumer_secret="password",
-            ),
-            capabilities=["tracking"],
+                site_id="test",
+                password="password",
+                account_number="000000",
+            )
         )
 
     def assertResponseNoErrors(self, response):

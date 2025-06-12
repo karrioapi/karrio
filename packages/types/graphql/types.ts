@@ -4908,9 +4908,6 @@ export enum WeightUnitEnum {
 }
 
 export enum CarrierNameEnum {
-  allied_express = "allied_express",
-  allied_express_local = "allied_express_local",
-  amazon_shipping = "amazon_shipping",
   aramex = "aramex",
   asendia_us = "asendia_us",
   australiapost = "australiapost",
@@ -4926,12 +4923,10 @@ export enum CarrierNameEnum {
   dhl_universal = "dhl_universal",
   dicom = "dicom",
   dpd = "dpd",
-  dpdhl = "dpdhl",
   easypost = "easypost",
   easyship = "easyship",
   eshipper = "eshipper",
   fedex = "fedex",
-  fedex_ws = "fedex_ws",
   freightcom = "freightcom",
   generic = "generic",
   geodis = "geodis",
@@ -4950,8 +4945,6 @@ export enum CarrierNameEnum {
   ups = "ups",
   usps = "usps",
   usps_international = "usps_international",
-  usps_wt = "usps_wt",
-  usps_wt_international = "usps_wt_international",
   zoom2u = "zoom2u",
 }
 

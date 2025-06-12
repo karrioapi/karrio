@@ -50,7 +50,7 @@ A Karrio carrier extension follows a standardized structure. Here's the recommen
 
 ```text
 modules/connectors/[carrier_name]/
-├── setup.py                # Package setup file
+├── pyproject.toml          # Package setup file
 ├── generate                # Schema generation script
 ├── schemas/                # API schema files
 │   ├── rate_request.json   # (or .xsd for XML APIs)
@@ -127,7 +127,7 @@ Karrio provides a CLI tool to quickly scaffold a new carrier extension. The tool
 
 ```bash
 # Run the extension creation command
-kcli add-extension
+kcli sdk add-extension
 ```
 
 This will start an interactive process:
@@ -135,7 +135,7 @@ This will start an interactive process:
 ```text
 Carrier slug: freight_express            # Unique carrier identifier (e.g., dhl_express, ups, fedex)
 Display name: Freight Express            # Human-readable carrier name (e.g., DHL, UPS, FedEx)
-Features [tracking, rating, shipping]:   # The features you want to implement
+Features: [address, document, manifest, pickup, rating, shipping, tracking]   # The features you want to implement
 Version [2024.3]:                        # The extension version
 Is XML API? [y/N]:                       # Whether the carrier uses XML for API communication
 ```
@@ -151,32 +151,6 @@ To complete your carrier integration, follow these detailed guides:
 - [API Requests](/docs/developing/carrier-integration/api-requests): Implement API calls for different carrier operations
 - [Data Mapping](/docs/developing/carrier-integration/data-mapping): Transform data between Karrio's unified format and carrier-specific formats
 
-## Final Steps
+```
 
-After implementing your carrier integration, you'll need to:
-
-1. Test your integration thoroughly with unit tests
-2. Set up the carrier in the Karrio dashboard
-
-## Example Integrations
-
-For reference, you can explore existing carrier integrations in the Karrio codebase:
-
-- [Canada Post](https://github.com/karrioapi/karrio/tree/main/modules/connectors/canadapost)
-- [DHL Express](https://github.com/karrioapi/karrio/tree/main/modules/connectors/dhl_express)
-- [FedEx](https://github.com/karrioapi/karrio/tree/main/modules/connectors/fedex)
-- [UPS](https://github.com/karrioapi/karrio/tree/main/modules/connectors/ups)
-
-These integrations cover a variety of API types (REST, SOAP) and carrier features (rating, shipping, tracking, etc.).
-
-## Troubleshooting
-
-If your carrier integration isn't working correctly:
-
-1. Check the extension structure matches the expected format
-2. Ensure the METADATA object is properly defined in the `__init__.py` file
-3. Verify all required dependencies are installed
-4. Look for import errors in the application logs
-5. Use `get_failed_plugin_modules()` to get information about plugins that failed to load
-
-For more information on plugin loading and registration, see the [Plugin Development Guide](/docs/developing/plugin-development).
+```

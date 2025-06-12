@@ -5,8 +5,9 @@ import {
   ubuntu,
   oxygen,
 } from "@karrio/ui/fonts/font";
-import { NextraTheme } from '@/components/nextra/theme'
+import NextraTheme from '@/components/nextra/theme'
 import { getPageMap } from 'nextra/page-map'
+import { headers } from 'next/headers'
 import type { ReactNode } from 'react'
 import type { Metadata } from 'next'
 
@@ -31,6 +32,10 @@ export const metadata: Metadata = {
 
 export default async function DocsLayout({ children }: { children: ReactNode }) {
   const pageMap = await getPageMap();
+
+  // Get the current pathname from headers
+  const headersList = await headers();
+  const pathname = headersList.get('x-pathname') || '';
 
   return (
     <html lang="en" suppressHydrationWarning

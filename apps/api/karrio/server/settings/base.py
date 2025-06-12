@@ -11,14 +11,14 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import decouple
 import importlib
 import dj_database_url
 from pathlib import Path
 from datetime import timedelta
-from decouple import AutoConfig
 from django.urls import reverse_lazy
-from django.core.management.utils import get_random_secret_key
 from corsheaders.defaults import default_headers
+from django.core.management.utils import get_random_secret_key
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -27,7 +27,15 @@ with open(BASE_DIR / "server" / "VERSION", "r") as v:
     VERSION = v.read().strip()
 
 
-config = AutoConfig(search_path=Path().resolve())
+config = decouple.AutoConfig(search_path=Path().resolve())
+
+if not config('SECRET_KEY', default=None):
+    try:
+        print("> fallback .env.sample...")
+        config = decouple.Config(decouple.RepositoryEnv(".env.sample"))
+    except Exception as e:
+        print(f"> error: {e}")
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -181,6 +189,9 @@ PERSIST_SDK_TRACING = config("PERSIST_SDK_TRACING", default=True, cast=bool)
 WORKFLOW_MANAGEMENT = (
     importlib.util.find_spec("karrio.server.automation") is not None  # type:ignore
 )
+SHIPPING_RULES = (
+    importlib.util.find_spec("karrio.server.automation") is not None  # type:ignore
+)
 
 
 # Feature flags
@@ -197,7 +208,7 @@ FEATURE_FLAGS = [
     ("DATA_IMPORT_EXPORT", bool),
     ("PERSIST_SDK_TRACING", bool),
     ("WORKFLOW_MANAGEMENT", bool),
-    ("WORKFLOW_MANAGEMENT", bool),
+    ("SHIPPING_RULES", bool),
 ]
 
 
@@ -465,7 +476,7 @@ SIMPLE_JWT = {
 OIDC_RSA_PRIVATE_KEY = config("OIDC_RSA_PRIVATE_KEY", default="").replace("\\n", "\n")
 OAUTH2_PROVIDER_APPLICATION_MODEL = "oauth2_provider.Application"
 OAUTH2_PROVIDER = {
-    "PKCE_REQUIRED": True,
+    "PKCE_REQUIRED": False,
     "OIDC_ENABLED": True,
     "OIDC_RSA_PRIVATE_KEY": OIDC_RSA_PRIVATE_KEY,
     "SCOPES": {
@@ -551,7 +562,7 @@ DRF_TRACKING_ADMIN_LOG_READONLY = True
 
 LOGGING = {
     "version": 1,
-    "disable_existing_loggers": True,
+    "disable_existing_loggers": False,
     "formatters": {
         "verbose": {
             "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
@@ -568,9 +579,9 @@ LOGGING = {
             "class": "logging.handlers.TimedRotatingFileHandler",
             "formatter": "verbose",
             "filename": LOG_FILE_NAME,
-            "when": "D",  # this specifies the interval
-            "interval": 1,  # defaults to 1, only necessary for other values
-            "backupCount": 20,  # how many backup file to keep, 10 days
+            "when": "D",
+            "interval": 1,
+            "backupCount": 20,
         },
         "console": {
             "class": "logging.StreamHandler",
@@ -586,6 +597,11 @@ LOGGING = {
         "karrio": {
             "handlers": ["file", "console"],
             "level": LOG_LEVEL,
+            "propagate": False,
+        },
+        "karrio.server.core.exceptions": {
+            "handlers": ["file", "console"],
+            "level": "DEBUG",
             "propagate": False,
         },
     },

@@ -356,7 +356,7 @@ class LabelTemplateAdmin(admin.ModelAdmin):
 
 @utils.skip_on_commands()
 def register_carrier_admins():
-    for carrier_name, display_name in ref.collect_references()["carriers"].items():
+    for carrier_name, display_name in ref.REFERENCES["carriers"].items():
         proxy = providers.create_carrier_proxy(carrier_name, display_name)
         admin.site.register(proxy, model_admin(carrier_name, proxy))
 

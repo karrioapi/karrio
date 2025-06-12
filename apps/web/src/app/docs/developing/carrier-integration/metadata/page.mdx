@@ -1,5 +1,5 @@
 ---
-title: Metadata
+title: Metadata & Configuration
 description: Define carrier metadata, settings, and data units for Karrio integrations
 tags: [development, metadata]
 author: Karrio Team
@@ -7,245 +7,161 @@ author: Karrio Team
 
 # Metadata & Configuration
 
-Every Karrio carrier extension needs proper metadata and configuration settings to function correctly. This section covers how to define carrier metadata, connection settings, and data units.
+For Karrio to recognize and properly utilize a carrier extension, you must define its metadata, connection settings, and data units. These components tell Karrio how to interact with your integration, what settings to expose to users, and which specific services and options are available.
 
-## Plugin Metadata
+## Plugin Metadata (`__init__.py`)
 
-The core of your carrier extension is the `METADATA` object defined in the `karrio/mappers/[carrier_name]/__init__.py` file. This metadata identifies your extension to Karrio and specifies the integration classes required.
+The entry point for any carrier integration is the `METADATA` object defined in `karrio/plugins/[carrier_name]/__init__.py`. This object registers your integration with Karrio's plugin system.
 
 ```python
-from karrio.core.metadata import Metadata
-
+# karrio/plugins/[carrier_name]/__init__.py
+from karrio.core.metadata import PluginMetadata
 from karrio.mappers.[carrier_name].mapper import Mapper
-from karrio.mappers.[carrier_name].proxy import Proxy
 from karrio.mappers.[carrier_name].settings import Settings
-import karrio.providers.[carrier_name].units as units
 
+METADATA = PluginMetadata(
+    id="[carrier_name]",
+    label="[Carrier Name]",
 
-METADATA = Metadata(
-    id="freight_express",  # Unique carrier identifier
-    label="Freight Express",  # Human-readable carrier name
-
-    # Integration classes
-    Mapper=Mapper,  # Maps between Karrio and carrier formats
-    Proxy=Proxy,    # Handles API communication
-    Settings=Settings,  # Defines connection parameters
-
-    # Data units (optional)
-    options=units.ShippingOption,  # Enum of shipping options
-    package_presets=units.PackagePresets,  # Enum of package templates
-    services=units.ShippingService,  # Enum of shipping services
-
-    is_hub=False  # Set to True for hub-like carriers (e.g., EasyPost, Shippo)
+    # Integration Schemas
+    Mapper=Mapper,
+    Settings=Settings,
 )
 ```
 
-The metadata defines several critical aspects of your carrier integration:
+- **`id`**: A unique, lowercase identifier for the carrier (e.g., `dhl_express`, `sendle`).
+- **`label`**: The human-readable name displayed in the Karrio Dashboard (e.g., "DHL Express", "Sendle").
+- **`Mapper`**: A reference to the `Mapper` class in `karrio/mappers/[carrier_name]/mapper.py`.
+- **`Settings`**: A reference to the `Settings` class in `karrio/mappers/[carrier_name]/settings.py`.
 
-- **id**: A unique identifier for your carrier (e.g., `freight_express`, `dhl_express`)
-- **label**: A human-readable name displayed in the Karrio UI
-- **Mapper**: The class that implements data mapping functions
-- **Proxy**: The class that implements API client functionality
-- **Settings**: The class that defines connection parameters
-- **Data units**: Optional enums that define carrier-specific options, services, etc.
-- **is_hub**: A flag indicating whether this is a hub-like carrier integration
+## Connection Settings (`settings.py`)
 
-```mermaid
-classDiagram
-    class Metadata {
-        +id: string
-        +label: string
-        +Mapper: class
-        +Proxy: class
-        +Settings: class
-        +options: enum
-        +package_presets: enum
-        +services: enum
-        +is_hub: boolean
-    }
+The `Settings` class defines the configuration fields required to connect to the carrier's API, such as API keys, account numbers, and passwords. This class, located in `karrio/mappers/[carrier_name]/settings.py`, directly corresponds to the connection form presented to users in the Karrio Dashboard.
 
-    class Mapper {
-        +settings: Settings
-        +get_rates()
-        +create_shipment()
-        +get_tracking()
-    }
-
-    class Proxy {
-        +settings: Settings
-        +get_rates()
-        +create_shipment()
-        +get_tracking()
-    }
-
-    class Settings {
-        +carrier_id: string
-        +test_mode: boolean
-        +username: string
-        +password: string
-    }
-
-    Metadata ..> Mapper
-    Metadata ..> Proxy
-    Metadata ..> Settings
-```
-
-## Connection Settings
-
-The `Settings` class defines the parameters needed to connect to the carrier's API. It's implemented in the `karrio/mappers/[carrier_name]/settings.py` file.
+It inherits from `karrio.core.settings.Settings` and uses `attr.s` to define its attributes.
 
 ```python
+# karrio/mappers/[carrier_name]/settings.py
 import attr
-from karrio.providers.[carrier_name] import Settings as BaseSettings
+import karrio.lib as lib
+from karrio.core.settings import Settings
 
 @attr.s(auto_attribs=True)
-class Settings(BaseSettings):
-    """Freight Express connection settings."""
+class Settings(Settings):
+    """
+    [Carrier Name] connection settings.
+    """
+    # Add carrier specific api credentials and identifiers here
+    api_key: str
+    secret_key: str
+    account_number: str = None # Optional field
 
-    # API credentials and identifiers
-    username: str  # Required field (no default)
-    password: str  # Required field (no default)
-    account_number: str = None  # Optional field with default
-
-    # Common settings (typically included in all carriers)
-    id: str = None  # Internal connection ID
-    test_mode: bool = False  # Whether to use test/sandbox mode
-    carrier_id: str = "freight_express"  # Should match the METADATA id
-    account_country_code: str = "US"  # Country of the carrier account
-    metadata: dict = {}  # Additional metadata
-    config: dict = {}  # Additional configuration options
+    # metadata
+    carrier_id: str = "[carrier_name]"
+    account_country_code: str = "US"
+    test_mode: bool = False
+    metadata: dict = {}
+    config: dict = {}
 ```
 
-The settings class typically includes:
+Fields without a default value (e.g., `api_key`, `secret_key`) are treated as **required**. Fields with a default (e.g., `account_number = None`) are **optional**.
 
-1. **API Authentication Parameters**: Credentials required for the carrier's API (username, password, API keys, etc.)
-2. **Carrier-Specific Identifiers**: Account numbers, contract IDs, or other identifiers
-3. **Common Settings**: Standard settings used by Karrio (test mode, carrier ID, etc.)
-4. **Optional Configuration**: Additional settings specific to the carrier
+## Provider Utilities (`utils.py`)
 
-## Data Units
+While the mapper's `Settings` class defines the _structure_ of the settings, the `provider` module often needs a more functional version of these settings. In `karrio/providers/[carrier_name]/utils.py`, you define a second `Settings` class that inherits from the first one.
 
-Carrier-specific enumerations can be defined in the `karrio/providers/[carrier_name]/units.py` file. These enums define shipping services, options, and package presets supported by the carrier.
+This "provider settings" class adds computed properties and helper methods that can be used throughout your provider mapping functions.
 
 ```python
+# karrio/providers/[carrier_name]/utils.py
+from karrio.mappers.[carrier_name].settings import Settings as BaseSettings
+
+class Settings(BaseSettings):
+    """
+    [Carrier Name] provider settings.
+    """
+    # add carrier specific computed properties here
+
+    @property
+    def server_url(self) -> str:
+        """
+        The server URL to use based on the test_mode flag.
+        """
+        return (
+            "https://api.sandbox.carrier.com"
+            if self.test_mode
+            else "https://api.carrier.com"
+        )
+
+    @property
+    def authorization(self) -> str:
+        """
+        Compute the authorization header value.
+        """
+        import base64
+        pair = f"{self.api_key}:{self.secret_key}".encode("utf-8")
+        return base64.b64encode(pair).decode("ascii")
+```
+
+This approach keeps the data definition (`mapper.Settings`) separate from the runtime logic (`provider.Settings`), creating a clean separation of concerns.
+
+## Data Units (`units.py`)
+
+The `karrio/providers/[carrier_name]/units.py` file is where you define all carrier-specific enumerations, such as services, options, package types, and their initializers.
+
+### Services and Package Types
+
+Use `lib.Enum` for simple key-value pairs like services or package types.
+
+```python
+# karrio/providers/[carrier_name]/units.py
 import karrio.lib as lib
 
+class ShippingService(lib.Enum):
+    """ Carrier specific services """
+    standard = "standard"
+    express = "express"
+    # key = value
 
-class Service(lib.Enum):
-    """Freight Express shipping services."""
-
-    express = "EXPRESS"  # Freight Express Fast Shipping
-    standard = "STANDARD"  # Freight Express Standard Shipping
-    economy = "ECONOMY"  # Freight Express Economy Shipping
-
-
-class PackagePresets(lib.Enum):
-    """Freight Express package presets."""
-
-    small_box = "SMALL_BOX"
-    medium_box = "MEDIUM_BOX"
-    large_box = "LARGE_BOX"
-
-
-class ShippingOption(lib.Enum):
-    """Freight Express shipping options."""
-
-    signature_required = lib.OptionEnum("SIGNATURE_REQUIRED", bool)
-    insurance = lib.OptionEnum("INSURANCE", float)
-    saturday_delivery = lib.OptionEnum("SATURDAY_DELIVERY", bool)
+class PackageType(lib.Enum):
+    """ Carrier specific package types """
+    pak = "PAK"
+    tube = "TUBE"
+    # key = value
 ```
 
-These enums serve several purposes:
+### Shipping Options
 
-1. **Service Mapping**: Define carrier-specific service codes and map them to standardized Karrio services
-2. **Package Presets**: Define standard package sizes with dimensions and weights
-3. **Shipping Options**: Define additional service options that can be requested
+Use `lib.Flag` for shipping options, as a single request can have multiple options enabled. `lib.Flag` allows for complex option types (boolean, string, integer).
 
-```mermaid
-classDiagram
-    class ShippingServiceEnum {
-        <<abstract>>
-        +name_or_key
-        +map(carrier_service) Service
-    }
-
-    class Service {
-        +express: EXPRESS
-        +standard: STANDARD
-        +economy: ECONOMY
-        +map(carrier_service) Service
-    }
-
-    class PackagePresetEnum {
-        <<abstract>>
-        +get(preset) dict
-    }
-
-    class PackagePresets {
-        +small_box: SMALL_BOX
-        +medium_box: MEDIUM_BOX
-        +large_box: LARGE_BOX
-        +get(preset) dict
-    }
-
-    class ShippingOptionEnum {
-        <<abstract>>
-    }
-
-    class ShippingOption {
-        +signature_required: SIGNATURE_REQUIRED
-        +insurance: INSURANCE
-        +saturday_delivery: SATURDAY_DELIVERY
-    }
-
-    ShippingServiceEnum <|-- Service
-    PackagePresetEnum <|-- PackagePresets
-    ShippingOptionEnum <|-- ShippingOption
+```python
+class ShippingOption(lib.Flag):
+    """ Carrier specific shipping options """
+    saturday_delivery = lib.OptionEnum("saturday_delivery")
+    insurance = lib.OptionEnum("insurance", float)
+    cash_on_delivery = lib.OptionEnum("cash_on_delivery", str)
+    # key = lib.OptionEnum("key", type)
 ```
 
-## Authentication and Utils
+### Initializers
 
-Utility functions for API authentication and other common operations can be defined in the `karrio/providers/[carrier_name]/utils.py` file.
+Initializers are functions that apply default or computed values during the data mapping process. For example, a `shipping_options_initializer` can set default options or compute values based on other inputs.
 
-These utility functions typically include:
+```python
+def shipping_options_initializer(
+    options: dict,
+    package_options: lib.units.Options = None,
+) -> lib.units.Options:
+    """
+    Applies default values to the given shipping options.
+    """
+    _options = options.copy()
 
-1. **Authentication Helpers**: Functions to generate auth headers, sign requests, etc.
-2. **URL Construction**: Functions to build API endpoint URLs
-3. **Error Handling**: Functions to extract and process error messages
-4. **Data Transformation**: Helper functions for data formatting
+    # Add carrier specific option initializations here
+    if "insurance" in _options:
+        _options.update(insurance=True)
 
-```mermaid
-flowchart LR
-    Settings[Settings Object] --> Auth[Authentication]
-    Settings --> Endpoints[Endpoint URLs]
-    Settings --> Signing[Request Signing]
-
-    Auth --> Headers[Auth Headers]
-    Endpoints --> URLs[API URLs]
-    Signing --> Signature[HMAC Signature]
-
-    Headers --> Request[API Request]
-    URLs --> Request
-    Signature --> Request
+    return lib.units.Options(_options, ShippingOption)
 ```
 
-## Configuration Schema (Frontend)
-
-For your carrier to appear in the Karrio dashboard, you'll need to define a configuration schema. This is done in the frontend code, but is mentioned here for completeness.
-
-After completing your extension and generating the API specs, the carrier will be added to the available carriers in the UI with a form that reflects the required and optional settings.
-
-## Best Practices
-
-When defining metadata and settings:
-
-1. **Mandatory vs. Optional**: Clearly distinguish between required and optional parameters
-2. **Descriptive Names**: Use clear, descriptive names for services, options, and settings
-3. **Default Values**: Provide sensible defaults for optional parameters
-4. **Documentation**: Add docstrings explaining each class and parameter
-5. **Type Hints**: Use proper type hints for all parameters
-6. **Testing**: Create tests that verify correct settings parsing and validation
-
-In the next section, we'll cover how to implement API requests using the proxy class.
-
-
+These enums and initializers are then used by the `karrio.lib` helper functions (`lib.to_services`, `lib.to_shipping_options`, etc.) within your provider mapping functions to ensure data is correctly transformed.

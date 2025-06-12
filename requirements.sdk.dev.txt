@@ -1,6 +1,6 @@
 # Karrio Tools packages
 -e ./modules/sdk
--e ./modules/cli
+-e ./modules/cli[dev]
 
 # Shipping Plugins
 -e ./modules/connectors/australiapost

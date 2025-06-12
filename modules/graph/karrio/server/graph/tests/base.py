@@ -21,7 +21,7 @@ class Result:
 class GraphTestCase(BaseAPITestCase):
     def setUp(self) -> None:
         self.maxDiff = None
-
+        logging.basicConfig(level=logging.DEBUG)
         # Setup user and API Token.
         self.user = get_user_model().objects.create_superuser(
             "admin@example.com", "test"

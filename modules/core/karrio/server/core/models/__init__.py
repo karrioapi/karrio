@@ -34,6 +34,10 @@ def metafields_to_dict(metafields: typing.List[Metafield]) -> dict:
     _values = {}
 
     for _ in metafields:
+        # Skip metafields with None or empty values
+        if _.value is None or _.value == "":
+            continue
+
         if _.type == "number":
             _values.update({_.key: lib.failsafe(lambda: ast.literal_eval(_.value))})
         elif _.type == "boolean":

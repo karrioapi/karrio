@@ -72,7 +72,7 @@ export function formatMessage(msg: Notification["message"]) {
     if (Array.isArray(msg) && msg.length > 0 && msg[0] instanceof ErrorType) {
       return msg.map((error: any, index) => {
         return (
-          <p key={index}>
+          <p key={`error-${index}-${error.field}`}>
             <strong>{error.field}:</strong> {error.messages.join(" | ")}
           </p>
         );
@@ -106,7 +106,7 @@ function renderError(msg: any, _: number): any {
       const carrier_name =
         msg.carrier_name !== undefined ? `${msg.carrier_id} :` : "";
       return (
-        <p key={index}>
+        <p key={`msg-${index}-${msg.carrier_id || 'unknown'}`}>
           {carrier_name} {msg.message}
         </p>
       );
@@ -115,26 +115,26 @@ function renderError(msg: any, _: number): any {
     return (error || []).map((msg: any, index: number) => {
       if (msg.carrier_name) {
         return (
-          <p key={index}>
+          <p key={`carrier-${index}-${msg.carrier_name || msg.carrier_id}`}>
             {msg.carrier_name || msg.carrier_id || JSON.stringify(msg)}{" "}
             {msg.details?.carrier} {msg.message}
           </p>
         );
       }
       if (msg.details) {
-        return <>{renderError(msg, 0)}</>;
+        return <React.Fragment key={`details-${index}`}>{renderError(msg, 0)}</React.Fragment>;
       }
       if (msg.validation) {
-        return <>{renderError({ details: msg.validation }, 0)}</>;
+        return <React.Fragment key={`validation-${index}`}>{renderError({ details: msg.validation }, 0)}</React.Fragment>;
       }
       if (msg.message) {
         return (
-          <p key={index}>
+          <p key={`message-${index}-${msg.code || 'unknown'}`}>
             <strong>{JSON.stringify(msg.code)}:</strong> {msg.message}
           </p>
         );
       }
-      return <p key={index}>{JSON.stringify(msg)}</p>;
+      return <p key={`json-${index}`}>{JSON.stringify(msg)}</p>;
     });
   } else if (typeof error?.details == "object") {
     const render = (

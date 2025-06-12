@@ -173,7 +173,7 @@ class AccessMixin(mixins.AccessMixin):
     """Verify that the current user is authenticated."""
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
+        if not hasattr(request, 'user') or request.user is None or not request.user.is_authenticated:
             authenticate_user(request)
 
         request.user = SimpleLazyObject(
@@ -272,10 +272,11 @@ def get_request_user(request, user):
             _("Authentication token not verified"), code="otp_not_verified"
         )
 
-    user.otp_device = None
-    user.is_verified = functools.partial(
-        lambda _: getattr(request, "otp_is_verified", True), user
-    )
+    if user is not None:
+        user.otp_device = None
+        user.is_verified = functools.partial(
+            lambda _: getattr(request, "otp_is_verified", True), user
+        )
 
     return user
 

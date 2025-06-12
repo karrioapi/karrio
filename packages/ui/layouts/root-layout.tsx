@@ -22,7 +22,7 @@ export default function Layout({
       <head>
         <PublicEnvScript />
       </head>
-      <body className="min-h-screen font-sans antialiased">
+      <body className="min-h-screen font-sans antialiased" suppressHydrationWarning>
         <ErrorBoundary>
           {children}
           <Toaster />

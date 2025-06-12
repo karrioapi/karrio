@@ -121,6 +121,7 @@ paths:
                     DATA_IMPORT_EXPORT: true
                     PERSIST_SDK_TRACING: true
                     WORKFLOW_MANAGEMENT: true
+                    SHIPPING_RULES: true
           description: ''
   /api/token:
     post:
@@ -3160,6 +3161,7 @@ paths:
                     DATA_IMPORT_EXPORT: true
                     PERSIST_SDK_TRACING: true
                     WORKFLOW_MANAGEMENT: true
+                    SHIPPING_RULES: true
                     ADDRESS_AUTO_COMPLETE: {}
                     countries: {}
                     currencies: {}

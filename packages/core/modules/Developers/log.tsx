@@ -114,8 +114,9 @@ export const LogComponent = ({
                       style={{ position: "absolute", right: 0, zIndex: 1 }}
                       className="button is-primary is-small m-1"
                     />
-                    <pre className="code p-1">
+                    <pre className="code p-1 max-h-[70vh] overflow-auto">
                       <code
+                        style={{ whiteSpace: "pre-wrap" }}
                         dangerouslySetInnerHTML={{
                           __html: hljs.highlight(response as string, {
                             language: "json",
@@ -133,8 +134,9 @@ export const LogComponent = ({
                     <h2 className="title is-5 my-4">Request query params</h2>
 
                     <div className="py-3">
-                      <pre className="code p-1">
+                      <pre className="code p-1 max-h-[70vh] overflow-auto">
                         <code
+                          style={{ whiteSpace: "pre-wrap" }}
                           dangerouslySetInnerHTML={{
                             __html: hljs.highlight(query_params as string, {
                               language: "json",
@@ -161,8 +163,9 @@ export const LogComponent = ({
                         style={{ position: "absolute", right: 0, zIndex: 1 }}
                         className="button is-primary is-small m-1"
                       />
-                      <pre className="code p-1">
+                      <pre className="code p-1 max-h-[70vh] overflow-auto">
                         <code
+                          style={{ whiteSpace: "pre-wrap" }}
                           dangerouslySetInnerHTML={{
                             __html: hljs.highlight(data as string, {
                               language: "json",
@@ -278,13 +281,7 @@ export const LogComponent = ({
                                     }}
                                     className="button is-primary is-small m-1"
                                   />
-                                  <pre
-                                    className="code p-1"
-                                    style={{
-                                      overflow: "auto",
-                                      maxHeight: "40vh",
-                                    }}
-                                  >
+                                  <pre className="code p-1 max-h-[70vh] overflow-auto">
                                     <code
                                       style={{ whiteSpace: "pre-wrap" }}
                                       dangerouslySetInnerHTML={{
@@ -318,13 +315,7 @@ export const LogComponent = ({
                                     }}
                                     className="button is-primary is-small m-1"
                                   />
-                                  <pre
-                                    className="code p-1 is-relative"
-                                    style={{
-                                      overflow: "auto",
-                                      maxHeight: "40vh",
-                                    }}
-                                  >
+                                  <pre className="code p-1 is-relative max-h-[70vh] overflow-auto">
                                     <code
                                       style={{ whiteSpace: "pre-wrap" }}
                                       dangerouslySetInnerHTML={{
@@ -383,12 +374,40 @@ export default function LogPage({ params }: { params: Promise<{ id: string }> })
 
 function parseRecordData(record: any) {
   if (!record) return null;
+
+  const rawData = record.data || record.response || record.error;
+  if (!rawData) return null;
+
+  // Handle XML format
   if (record?.format === "xml") {
-    return record.data || record.response || record.error;
+    if (typeof rawData === 'string') {
+      // Format XML for better readability
+      return rawData.replace(/></g, '>\n<');
+    }
+    return rawData;
   }
 
-  return failsafe(
-    () => jsonify(record.data || record.response || record.error),
-    record.data || record.response || record.error,
-  );
+  // Handle JSON format
+  if (record?.format === "json" || !record?.format) {
+    if (typeof rawData === 'object') {
+      return JSON.stringify(rawData, null, 2);
+    }
+
+    if (typeof rawData === 'string') {
+      try {
+        const parsed = JSON.parse(rawData);
+        return JSON.stringify(parsed, null, 2);
+      } catch {
+        return rawData;
+      }
+    }
+
+    return failsafe(
+      () => jsonify(rawData),
+      rawData,
+    );
+  }
+
+  // Handle other formats
+  return typeof rawData === 'string' ? rawData : JSON.stringify(rawData, null, 2);
 }

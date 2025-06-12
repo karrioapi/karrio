@@ -83,6 +83,10 @@ celerybeat-schedule
 
 # Environments
 .env
+.env.development
+.env.test
+.env.production
+.env.staging
 .venv
 env/
 venv/

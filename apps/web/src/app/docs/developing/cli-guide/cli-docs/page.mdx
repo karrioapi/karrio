@@ -1,12 +1,13 @@
 ---
-sidebarTitle: CLI Docs
-title: CLI Docs
+sidebarTitle: Guides
+title: CLI Guide
 description: Learn how to use the Karrio CLI for managing shipments, carriers, and more
 tags: [development, cli, tools]
 author: Karrio Team
 ---
 
-# CLI Docs
+Loading environment from: /Users/danielkobina/Workspace/karrio/patch/.env
+# CLI Guide
 
 **Usage**:
 
@@ -16,32 +17,32 @@ $ [OPTIONS] COMMAND [ARGS]...
 
 **Options**:
 
-- `--install-completion`: Install completion for the current shell.
-- `--show-completion`: Show completion for the current shell, to copy it or customize the installation.
-- `--help`: Show this message and exit.
+* `--install-completion`: Install completion for the current shell.
+* `--show-completion`: Show completion for the current shell, to copy it or customize the installation.
+* `--help`: Show this message and exit.
 
 **Commands**:
 
-- `login`: Configure a connection to a Karrio instance.
-- `logout`: Remove the saved Karrio configuration.
-- `status`: Check the current login status and...
-- `carriers`: Manage carriers.
-- `connections`: Manage carrier connections.
-- `shipments`: Manage shipments.
-- `trackers`: Manage trackers.
-- `orders`: Manage orders.
-- `logs`: View API request logs.
-- `events`: View system events.
-- `sdk`: SDK-related commands.
-- `codegen`: Code generation utilities.
-- `plugins`: Manage plugins.
+* `login`: Configure a connection to a Karrio instance.
+* `logout`: Remove the saved Karrio configuration.
+* `status`: Check the current login status and...
+* `carriers`: Manage carriers.
+* `connections`: Manage carrier connections.
+* `shipments`: Manage shipments.
+* `trackers`: Manage trackers.
+* `orders`: Manage orders.
+* `logs`: View API request logs.
+* `events`: View system events.
+* `sdk`: SDK-related commands.
+* `codegen`: Code generation utilities.
+* `plugins`: Manage plugins.
+* `agent`: Karrio AI agent.
 
 ## `login`
 
 Configure a connection to a Karrio instance.
 
 Example:
-
 ```terminal
 kcli login --host http://localhost:5002 --api-key your_api_key_here | jq '{message: "Login successful", host: .host}'
 ```
@@ -54,16 +55,15 @@ $ login [OPTIONS]
 
 **Options**:
 
-- `--host TEXT`: The URL of the Karrio instance [default: http://localhost:5002]
-- `--api-key TEXT`: Your Karrio API key [required]
-- `--help`: Show this message and exit.
+* `--host TEXT`: The URL of the Karrio instance  [default: http://localhost:5002]
+* `--api-key TEXT`: Your Karrio API key  [required]
+* `--help`: Show this message and exit.
 
 ## `logout`
 
 Remove the saved Karrio configuration.
 
 Example:
-
 ```terminal
 kcli logout | jq '{message: "Logout successful"}'
 ```
@@ -76,14 +76,13 @@ $ logout [OPTIONS]
 
 **Options**:
 
-- `--help`: Show this message and exit.
+* `--help`: Show this message and exit.
 
 ## `status`
 
 Check the current login status and connection to Karrio.
 
 Example:
-
 ```terminal
 kcli status | jq '{status: "Connected", host: .host, api_key: "********"}'
 ```
@@ -96,7 +95,7 @@ $ status [OPTIONS]
 
 **Options**:
 
-- `--help`: Show this message and exit.
+* `--help`: Show this message and exit.
 
 ## `carriers`
 
@@ -110,19 +109,18 @@ $ carriers [OPTIONS] COMMAND [ARGS]...
 
 **Options**:
 
-- `--help`: Show this message and exit.
+* `--help`: Show this message and exit.
 
 **Commands**:
 
-- `list`: List all carriers.
-- `retrieve`: Retrieve a carrier by name.
+* `list`: List all carriers.
+* `retrieve`: Retrieve a carrier by name.
 
 ### `carriers list`
 
 List all carriers.
 
 Examples:
-
 ```terminal
 # Get all carriers and display as a table
 kcli carriers list | jq -r ".results[] | [.name, .display_name, .capabilities[]] | @tsv" | column -t -s $"  "
@@ -134,7 +132,6 @@ kcli carriers list | jq ".results[] | {name, display_name, capabilities}"
 ```
 
 Example Output:
-
 ```json
 {
   "count": 3,
@@ -164,22 +161,20 @@ $ carriers list [OPTIONS]
 
 **Options**:
 
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ### `carriers retrieve`
 
 Retrieve a carrier by name.
 
 Example:
-
 ```terminal
 kcli carriers retrieve ups | jq "{name, display_name, capabilities, services: .services | length}"
 ```
 
 Example Output:
-
 ```json
 {
   "name": "ups",
@@ -210,13 +205,13 @@ $ carriers retrieve [OPTIONS] CARRIER_NAME
 
 **Arguments**:
 
-- `CARRIER_NAME`: [required]
+* `CARRIER_NAME`: [required]
 
 **Options**:
 
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ## `connections`
 
@@ -230,22 +225,21 @@ $ connections [OPTIONS] COMMAND [ARGS]...
 
 **Options**:
 
-- `--help`: Show this message and exit.
+* `--help`: Show this message and exit.
 
 **Commands**:
 
-- `list`: List all carrier connections with optional...
-- `retrieve`: Retrieve a carrier connection by ID.
-- `create`: Create a new carrier connection.
-- `update`: Update a carrier connection by ID.
-- `delete`: Delete a carrier connection by ID.
+* `list`: List all carrier connections with optional...
+* `retrieve`: Retrieve a carrier connection by ID.
+* `create`: Create a new carrier connection.
+* `update`: Update a carrier connection by ID.
+* `delete`: Delete a carrier connection by ID.
 
 ### `connections list`
 
 List all carrier connections with optional filters and pagination.
 
 Examples:
-
 ```terminal
 # Get all connections and display as a table
 kcli connections list | jq -r ".results[] | [.id, .carrier_name, .test_mode] | @tsv" | column -t -s $"      "
@@ -257,7 +251,6 @@ kcli connections list --carrier-name ups | jq ".results[] | {id, carrier_name, t
 ```
 
 Example Output:
-
 ```json
 {
   "count": 2,
@@ -284,26 +277,24 @@ $ connections list [OPTIONS]
 
 **Options**:
 
-- `--carrier-name TEXT`
-- `--system-only`: Filter for system connections only
-- `--limit INTEGER`: Number of results to return per page [default: 20]
-- `--offset INTEGER`: The initial index from which to return the results [default: 0]
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `--carrier-name TEXT`
+* `--system-only`: Filter for system connections only
+* `--limit INTEGER`: Number of results to return per page  [default: 20]
+* `--offset INTEGER`: The initial index from which to return the results  [default: 0]
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ### `connections retrieve`
 
 Retrieve a carrier connection by ID.
 
 Example:
-
 ```terminal
 kcli connections retrieve conn_123456789 | jq "{id, carrier_name, test_mode, active}"
 ```
 
 Example Output:
-
 ```json
 {
   "id": "conn_123456789",
@@ -328,20 +319,19 @@ $ connections retrieve [OPTIONS] CONNECTION_ID
 
 **Arguments**:
 
-- `CONNECTION_ID`: [required]
+* `CONNECTION_ID`: [required]
 
 **Options**:
 
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ### `connections create`
 
 Create a new carrier connection.
 
 Example:
-
 ```terminal
 kcli connections create \
     -d carrier_name=ups \
@@ -352,7 +342,6 @@ kcli connections create \
 ```
 
 Example Output:
-
 ```json
 {
   "id": "conn_123456789",
@@ -376,17 +365,16 @@ $ connections create [OPTIONS]
 
 **Options**:
 
-- `-d, --property TEXT`: Set nested properties (e.g. -d carrier_name=ups -d credentials=xxx)
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `-d, --property TEXT`: Set nested properties (e.g. -d carrier_name=ups -d credentials=xxx)
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ### `connections update`
 
 Update a carrier connection by ID.
 
 Example:
-
 ```terminal
 kcli connections update conn_123456789 \
     -d test_mode=false \
@@ -394,7 +382,6 @@ kcli connections update conn_123456789 \
 ```
 
 Example Output:
-
 ```json
 {
   "id": "conn_123456789",
@@ -417,27 +404,25 @@ $ connections update [OPTIONS] CONNECTION_ID
 
 **Arguments**:
 
-- `CONNECTION_ID`: [required]
+* `CONNECTION_ID`: [required]
 
 **Options**:
 
-- `-d, --property TEXT`: Set nested properties (e.g. -d credentials=newvalue)
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `-d, --property TEXT`: Set nested properties (e.g. -d credentials=newvalue)
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ### `connections delete`
 
 Delete a carrier connection by ID.
 
 Example:
-
 ```terminal
 kcli connections delete conn_123456789 | jq "{message: "Connection deleted successfully"}"
 ```
 
 Example Output:
-
 ```json
 {
   "message": "Connection deleted successfully"
@@ -452,13 +437,13 @@ $ connections delete [OPTIONS] CONNECTION_ID
 
 **Arguments**:
 
-- `CONNECTION_ID`: [required]
+* `CONNECTION_ID`: [required]
 
 **Options**:
 
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ## `shipments`
 
@@ -472,22 +457,21 @@ $ shipments [OPTIONS] COMMAND [ARGS]...
 
 **Options**:
 
-- `--help`: Show this message and exit.
+* `--help`: Show this message and exit.
 
 **Commands**:
 
-- `list`: List all shipments with optional filters...
-- `retrieve`: Retrieve a shipment by ID.
-- `buy-label`: Purchase a label for a shipment.
-- `cancel`: Cancel a shipment.
-- `fetch-rates`: Fetch rates for a shipment.
+* `list`: List all shipments with optional filters...
+* `retrieve`: Retrieve a shipment by ID.
+* `buy-label`: Purchase a label for a shipment.
+* `cancel`: Cancel a shipment.
+* `fetch-rates`: Fetch rates for a shipment.
 
 ### `shipments list`
 
 List all shipments with optional filters and pagination.
 
 Examples:
-
 ```terminal
 # Get all shipments and display as a table
 kcli shipments list --limit 10 | jq -r '.results[] | [.id, .status, .carrier_name, .tracking_number] | @tsv' | column -t -s $'      '
@@ -506,36 +490,35 @@ $ shipments list [OPTIONS]
 
 **Options**:
 
-- `--address TEXT`
-- `--carrier-name TEXT`
-- `--created-after [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
-- `--created-before [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
-- `--has-manifest / --no-has-manifest`
-- `--has-tracker / --no-has-tracker`
-- `--id TEXT`
-- `--keyword TEXT`
-- `--meta-key TEXT`
-- `--meta-value TEXT`
-- `--metadata-key TEXT`
-- `--metadata-value TEXT`
-- `--option-key TEXT`
-- `--option-value TEXT`
-- `--reference TEXT`
-- `--service TEXT`
-- `--status TEXT`
-- `--tracking-number TEXT`
-- `--limit INTEGER`: Number of results to return per page [default: 20]
-- `--offset INTEGER`: The initial index from which to return the results [default: 0]
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `--address TEXT`
+* `--carrier-name TEXT`
+* `--created-after [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
+* `--created-before [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
+* `--has-manifest / --no-has-manifest`
+* `--has-tracker / --no-has-tracker`
+* `--id TEXT`
+* `--keyword TEXT`
+* `--meta-key TEXT`
+* `--meta-value TEXT`
+* `--metadata-key TEXT`
+* `--metadata-value TEXT`
+* `--option-key TEXT`
+* `--option-value TEXT`
+* `--reference TEXT`
+* `--service TEXT`
+* `--status TEXT`
+* `--tracking-number TEXT`
+* `--limit INTEGER`: Number of results to return per page  [default: 20]
+* `--offset INTEGER`: The initial index from which to return the results  [default: 0]
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ### `shipments retrieve`
 
 Retrieve a shipment by ID.
 
 Example:
-
 ```terminal
 kcli shipments retrieve shp_123456789 | jq '{id, status, carrier: .carrier_name, tracking: .tracking_number, created: .created_at}'
 ```
@@ -548,20 +531,19 @@ $ shipments retrieve [OPTIONS] SHIPMENT_ID
 
 **Arguments**:
 
-- `SHIPMENT_ID`: [required]
+* `SHIPMENT_ID`: [required]
 
 **Options**:
 
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ### `shipments buy-label`
 
 Purchase a label for a shipment.
 
 Example:
-
 ```terminal
 kcli shipments buy-label shp_123456789         --selected-rate-id rate_987654321         --label-type PDF         -d payment=sender         -d payment=USD         -d reference=order_12345         -d metadata=cust_9876 | jq '{id, status, label: .label_url, tracking: .tracking_number}'
 ```
@@ -574,23 +556,22 @@ $ shipments buy-label [OPTIONS] SHIPMENT_ID
 
 **Arguments**:
 
-- `SHIPMENT_ID`: [required]
+* `SHIPMENT_ID`: [required]
 
 **Options**:
 
-- `--selected-rate-id TEXT`: The ID of the selected rate [required]
-- `--label-type TEXT`: The type of label to generate [default: PDF]
-- `-d, --property TEXT`: Set nested properties (e.g. -d payment=sender)
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `--selected-rate-id TEXT`: The ID of the selected rate  [required]
+* `--label-type TEXT`: The type of label to generate  [default: PDF]
+* `-d, --property TEXT`: Set nested properties (e.g. -d payment=sender)
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ### `shipments cancel`
 
 Cancel a shipment.
 
 Example:
-
 ```terminal
 kcli shipments cancel shp_123456789 | jq '{id, status, message: .cancellation.message}'
 ```
@@ -603,13 +584,13 @@ $ shipments cancel [OPTIONS] SHIPMENT_ID
 
 **Arguments**:
 
-- `SHIPMENT_ID`: [required]
+* `SHIPMENT_ID`: [required]
 
 **Options**:
 
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ### `shipments fetch-rates`
 
@@ -629,13 +610,13 @@ $ shipments fetch-rates [OPTIONS] SHIPMENT_ID
 
 **Arguments**:
 
-- `SHIPMENT_ID`: [required]
+* `SHIPMENT_ID`: [required]
 
 **Options**:
 
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ## `trackers`
 
@@ -649,22 +630,21 @@ $ trackers [OPTIONS] COMMAND [ARGS]...
 
 **Options**:
 
-- `--help`: Show this message and exit.
+* `--help`: Show this message and exit.
 
 **Commands**:
 
-- `list`: List all trackers with optional filters...
-- `retrieve`: Retrieve a tracker by ID.
-- `create`: Create a new tracker.
-- `update`: Update an existing tracker.
-- `delete`: Delete a tracker.
+* `list`: List all trackers with optional filters...
+* `retrieve`: Retrieve a tracker by ID.
+* `create`: Create a new tracker.
+* `update`: Update an existing tracker.
+* `delete`: Delete a tracker.
 
 ### `trackers list`
 
 List all trackers with optional filters and pagination.
 
 Examples:
-
 ```terminal
 # Get all trackers and display as a table
 kcli trackers list --limit 10 | jq -r ".results[] | [.id, .tracking_number, .carrier_name, .status] | @tsv" | column -t -s $"       "
@@ -676,7 +656,6 @@ kcli trackers list --status in_transit --limit 5 | jq ".results[] | {id, trackin
 ```
 
 Example Output:
-
 ```json
 {
   "count": 10,
@@ -711,29 +690,27 @@ $ trackers list [OPTIONS]
 
 **Options**:
 
-- `--carrier-name TEXT`
-- `--tracking-number TEXT`
-- `--status TEXT`
-- `--created-after [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
-- `--created-before [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
-- `--limit INTEGER`: Number of results to return per page [default: 20]
-- `--offset INTEGER`: The initial index from which to return the results [default: 0]
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `--carrier-name TEXT`
+* `--tracking-number TEXT`
+* `--status TEXT`
+* `--created-after [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
+* `--created-before [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
+* `--limit INTEGER`: Number of results to return per page  [default: 20]
+* `--offset INTEGER`: The initial index from which to return the results  [default: 0]
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ### `trackers retrieve`
 
 Retrieve a tracker by ID.
 
 Example:
-
 ```terminal
 kcli trackers retrieve trk_123456789 | jq "{id, tracking: .tracking_number, carrier: .carrier_name, status, last_event: .events[-1].description}"
 ```
 
 Example Output:
-
 ```json
 {
   "id": "trk_123456789",
@@ -763,20 +740,19 @@ $ trackers retrieve [OPTIONS] TRACKER_ID
 
 **Arguments**:
 
-- `TRACKER_ID`: [required]
+* `TRACKER_ID`: [required]
 
 **Options**:
 
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ### `trackers create`
 
 Create a new tracker.
 
 Example:
-
 ```terminal
 kcli trackers create --tracking-number 1Z999AA1234567890 --carrier-name ups \
     -d info="John Doe" \
@@ -785,7 +761,6 @@ kcli trackers create --tracking-number 1Z999AA1234567890 --carrier-name ups \
 ```
 
 Example Output:
-
 ```json
 {
   "id": "trk_123456789",
@@ -811,21 +786,20 @@ $ trackers create [OPTIONS]
 
 **Options**:
 
-- `--tracking-number TEXT`: The tracking number [required]
-- `--carrier-name TEXT`: The carrier name [required]
-- `--account-number TEXT`: The account number
-- `--reference TEXT`: A reference for the tracker
-- `-d, --property TEXT`: Set nested properties (e.g. -d info=John Doe)
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `--tracking-number TEXT`: The tracking number  [required]
+* `--carrier-name TEXT`: The carrier name  [required]
+* `--account-number TEXT`: The account number
+* `--reference TEXT`: A reference for the tracker
+* `-d, --property TEXT`: Set nested properties (e.g. -d info=John Doe)
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ### `trackers update`
 
 Update an existing tracker.
 
 Example:
-
 ```terminal
 kcli trackers update trk_123456789 \
     -d info="Package delayed" \
@@ -833,7 +807,6 @@ kcli trackers update trk_123456789 \
 ```
 
 Example Output:
-
 ```json
 {
   "id": "trk_123456789",
@@ -856,27 +829,25 @@ $ trackers update [OPTIONS] TRACKER_ID
 
 **Arguments**:
 
-- `TRACKER_ID`: [required]
+* `TRACKER_ID`: [required]
 
 **Options**:
 
-- `-d, --property TEXT`: Set nested properties (e.g. -d info=John Doe)
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `-d, --property TEXT`: Set nested properties (e.g. -d info=John Doe)
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ### `trackers delete`
 
 Delete a tracker.
 
 Example:
-
 ```terminal
 kcli trackers delete trk_123456789 | jq "{message: "Tracker deleted successfully"}"
 ```
 
 Example Output:
-
 ```json
 {
   "message": "Tracker deleted successfully"
@@ -891,13 +862,13 @@ $ trackers delete [OPTIONS] TRACKER_ID
 
 **Arguments**:
 
-- `TRACKER_ID`: [required]
+* `TRACKER_ID`: [required]
 
 **Options**:
 
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ## `orders`
 
@@ -911,20 +882,19 @@ $ orders [OPTIONS] COMMAND [ARGS]...
 
 **Options**:
 
-- `--help`: Show this message and exit.
+* `--help`: Show this message and exit.
 
 **Commands**:
 
-- `list`: List all orders with optional filters and...
-- `retrieve`: Retrieve an order by ID.
-- `cancel`: Cancel an order.
+* `list`: List all orders with optional filters and...
+* `retrieve`: Retrieve an order by ID.
+* `cancel`: Cancel an order.
 
 ### `orders list`
 
 List all orders with optional filters and pagination.
 
 Examples:
-
 ```terminal
 # Get all orders and display as a table
 kcli orders list --limit 15 | jq -r ".results[] | [.id, .status, .created_at, .total_charge.amount] | @tsv" | column -t -s $"       "
@@ -936,7 +906,6 @@ kcli orders list --status pending --limit 5 | jq ".results[] | {id, status, crea
 ```
 
 Example Output:
-
 ```json
 {
   "count": 15,
@@ -948,7 +917,7 @@ Example Output:
       "status": "pending",
       "created_at": "2024-03-20T10:30:00Z",
       "total_charge": {
-        "amount": 25.5,
+        "amount": 25.50,
         "currency": "USD"
       },
       "line_items": [],
@@ -966,24 +935,23 @@ $ orders list [OPTIONS]
 
 **Options**:
 
-- `--created-after [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
-- `--created-before [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
-- `--status TEXT`
-- `--reference TEXT`
-- `--metadata-key TEXT`
-- `--metadata-value TEXT`
-- `--limit INTEGER`: Number of results to return per page [default: 20]
-- `--offset INTEGER`: The initial index from which to return the results [default: 0]
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `--created-after [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
+* `--created-before [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
+* `--status TEXT`
+* `--reference TEXT`
+* `--metadata-key TEXT`
+* `--metadata-value TEXT`
+* `--limit INTEGER`: Number of results to return per page  [default: 20]
+* `--offset INTEGER`: The initial index from which to return the results  [default: 0]
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ### `orders retrieve`
 
 Retrieve an order by ID.
 
 Example:
-
 ```terminal
 kcli orders retrieve ord_987654321 | jq "{id, status, created: .created_at, total: .total_charge.amount, items: .line_items | length}"
 ```
@@ -996,20 +964,19 @@ $ orders retrieve [OPTIONS] ORDER_ID
 
 **Arguments**:
 
-- `ORDER_ID`: [required]
+* `ORDER_ID`: [required]
 
 **Options**:
 
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ### `orders cancel`
 
 Cancel an order.
 
 Example:
-
 ```terminal
 kcli orders cancel ord_987654321 -d reason=customer_request | jq "{id, status, cancel_reason: .cancellation.reason}"
 ```
@@ -1022,14 +989,14 @@ $ orders cancel [OPTIONS] ORDER_ID
 
 **Arguments**:
 
-- `ORDER_ID`: [required]
+* `ORDER_ID`: [required]
 
 **Options**:
 
-- `-d, --property TEXT`: Set nested properties (e.g. -d reason=customer_request)
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `-d, --property TEXT`: Set nested properties (e.g. -d reason=customer_request)
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ## `logs`
 
@@ -1043,19 +1010,18 @@ $ logs [OPTIONS] COMMAND [ARGS]...
 
 **Options**:
 
-- `--help`: Show this message and exit.
+* `--help`: Show this message and exit.
 
 **Commands**:
 
-- `list`: List all logs with optional filters and...
-- `retrieve`: Retrieve a log by ID.
+* `list`: List all logs with optional filters and...
+* `retrieve`: Retrieve a log by ID.
 
 ### `logs list`
 
 List all logs with optional filters and pagination.
 
 Examples:
-
 ```terminal
 # Get all logs and display as a table
 kcli logs list --limit 10 | jq -r ".logs.edges[].node | [.id, .method, .status_code, .path] | @tsv" | column -t -s $"       "
@@ -1067,7 +1033,6 @@ kcli logs list --entity-id shp_123456789 --limit 5 | jq ".logs.edges[].node | {i
 ```
 
 Example Output:
-
 ```json
 {
   "logs": {
@@ -1109,29 +1074,27 @@ $ logs list [OPTIONS]
 
 **Options**:
 
-- `--entity-id TEXT`
-- `--method TEXT`
-- `--status-code TEXT`
-- `--created-after [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
-- `--created-before [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
-- `--limit INTEGER`: Number of results to return per page [default: 20]
-- `--offset INTEGER`: The initial index from which to return the results [default: 0]
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `--entity-id TEXT`
+* `--method TEXT`
+* `--status-code TEXT`
+* `--created-after [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
+* `--created-before [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
+* `--limit INTEGER`: Number of results to return per page  [default: 20]
+* `--offset INTEGER`: The initial index from which to return the results  [default: 0]
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ### `logs retrieve`
 
 Retrieve a log by ID.
 
 Example:
-
 ```terminal
 kcli logs retrieve 123 | jq "{id, method, status_code, path, response_ms, requested_at}"
 ```
 
 Example Output:
-
 ```json
 {
   "log": {
@@ -1171,13 +1134,13 @@ $ logs retrieve [OPTIONS] LOG_ID
 
 **Arguments**:
 
-- `LOG_ID`: [required]
+* `LOG_ID`: [required]
 
 **Options**:
 
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ## `events`
 
@@ -1191,19 +1154,18 @@ $ events [OPTIONS] COMMAND [ARGS]...
 
 **Options**:
 
-- `--help`: Show this message and exit.
+* `--help`: Show this message and exit.
 
 **Commands**:
 
-- `list`: List all events with optional filters and...
-- `retrieve`: Retrieve an event by ID.
+* `list`: List all events with optional filters and...
+* `retrieve`: Retrieve an event by ID.
 
 ### `events list`
 
 List all events with optional filters and pagination.
 
 Examples:
-
 ```terminal
 # Get all events and display as a table
 kcli events list --limit 10 | jq -r ".events.edges[].node | [.id, .type, .created_at] | @tsv" | column -t -s $"     "
@@ -1215,7 +1177,6 @@ kcli events list --type shipment_purchased --limit 5 | jq ".events.edges[].node 
 ```
 
 Example Output:
-
 ```json
 {
   "events": {
@@ -1253,27 +1214,25 @@ $ events list [OPTIONS]
 
 **Options**:
 
-- `--type TEXT`: Event type (e.g. shipment_created, order_created, tracker_created)
-- `--created-after [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
-- `--created-before [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
-- `--limit INTEGER`: Number of results to return per page [default: 20]
-- `--offset INTEGER`: The initial index from which to return the results [default: 0]
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `--type TEXT`: Event type (e.g. shipment_created, order_created, tracker_created)
+* `--created-after [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
+* `--created-before [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]`
+* `--limit INTEGER`: Number of results to return per page  [default: 20]
+* `--offset INTEGER`: The initial index from which to return the results  [default: 0]
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ### `events retrieve`
 
 Retrieve an event by ID.
 
 Example:
-
 ```terminal
 kcli events retrieve evt_123456789 | jq "{id, type, created_at, data}"
 ```
 
 Example Output:
-
 ```json
 {
   "event": {
@@ -1298,13 +1257,13 @@ $ events retrieve [OPTIONS] EVENT_ID
 
 **Arguments**:
 
-- `EVENT_ID`: [required]
+* `EVENT_ID`: [required]
 
 **Options**:
 
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ## `sdk`
 
@@ -1318,12 +1277,12 @@ $ sdk [OPTIONS] COMMAND [ARGS]...
 
 **Options**:
 
-- `--help`: Show this message and exit.
+* `--help`: Show this message and exit.
 
 **Commands**:
 
-- `add-extension`
-- `add-features`
+* `add-extension`
+* `add-features`
 
 ### `sdk add-extension`
 
@@ -1335,13 +1294,13 @@ $ sdk add-extension [OPTIONS]
 
 **Options**:
 
-- `-p, --path TEXT`: Path where the extension will be created [required]
-- `--carrier-slug TEXT`: The unique identifier for the carrier (e.g., dhl_express, ups, fedex, canadapost) [required]
-- `--display-name TEXT`: The human-readable name for the carrier (e.g., DHL, UPS, FedEx, Canada Post) [required]
-- `--features TEXT`: [default: tracking, rating, shipping]
-- `--version TEXT`: [default: 2025.5]
-- `--is-xml-api / --no-is-xml-api`: [default: no-is-xml-api]
-- `--help`: Show this message and exit.
+* `-p, --path TEXT`: Path where the extension will be created  [required]
+* `--carrier-slug TEXT`: The unique identifier for the carrier (e.g., dhl_express, ups, fedex, canadapost)  [required]
+* `--display-name TEXT`: The human-readable name for the carrier (e.g., DHL, UPS, FedEx, Canada Post)  [required]
+* `--features TEXT`: [default: tracking, rating, shipping]
+* `--version TEXT`: [default: 2025.6]
+* `--is-xml-api / --no-is-xml-api`: [default: no-is-xml-api]
+* `--help`: Show this message and exit.
 
 ### `sdk add-features`
 
@@ -1353,12 +1312,12 @@ $ sdk add-features [OPTIONS]
 
 **Options**:
 
-- `--carrier-slug TEXT`: The unique identifier for the carrier (e.g., dhl_express, ups, fedex, canadapost) [required]
-- `--display-name TEXT`: The human-readable name for the carrier (e.g., DHL, UPS, FedEx, Canada Post) [required]
-- `--features TEXT`: [default: tracking, rating, shipping]
-- `--is-xml-api / --no-is-xml-api`: [default: no-is-xml-api]
-- `-p, --path TEXT`: Path where the features will be created [required]
-- `--help`: Show this message and exit.
+* `--carrier-slug TEXT`: The unique identifier for the carrier (e.g., dhl_express, ups, fedex, canadapost)  [required]
+* `--display-name TEXT`: The human-readable name for the carrier (e.g., DHL, UPS, FedEx, Canada Post)  [required]
+* `--features TEXT`: [default: tracking, rating, shipping]
+* `--is-xml-api / --no-is-xml-api`: [default: no-is-xml-api]
+* `-p, --path TEXT`: Path where the features will be created  [required]
+* `--help`: Show this message and exit.
 
 ## `codegen`
 
@@ -1372,13 +1331,13 @@ $ codegen [OPTIONS] COMMAND [ARGS]...
 
 **Options**:
 
-- `--help`: Show this message and exit.
+* `--help`: Show this message and exit.
 
 **Commands**:
 
-- `transform`: Transform Python code generated by...
-- `generate`: Generate Python code with jstruct from a...
-- `create-tree`: Generate a Python code tree from a class...
+* `transform`: Transform Python code generated by...
+* `generate`: Generate Python code with jstruct from a...
+* `create-tree`: Generate a Python code tree from a class...
 
 ### `codegen transform`
 
@@ -1393,13 +1352,13 @@ $ codegen transform [OPTIONS] [INPUT_FILE] [OUTPUT_FILE]
 
 **Arguments**:
 
-- `[INPUT_FILE]`: Input file path. If not provided, reads from stdin.
-- `[OUTPUT_FILE]`: Output file path. If not provided, writes to stdout.
+* `[INPUT_FILE]`: Input file path. If not provided, reads from stdin.
+* `[OUTPUT_FILE]`: Output file path. If not provided, writes to stdout.
 
 **Options**:
 
-- `--append-type-suffix / --no-append-type-suffix`: Append 'Type' to class names [default: append-type-suffix]
-- `--help`: Show this message and exit.
+* `--append-type-suffix / --no-append-type-suffix`: Append 'Type' to class names  [default: append-type-suffix]
+* `--help`: Show this message and exit.
 
 ### `codegen generate`
 
@@ -1413,16 +1372,16 @@ $ codegen generate [OPTIONS] INPUT_FILE [OUTPUT_FILE]
 
 **Arguments**:
 
-- `INPUT_FILE`: Input JSON schema file path [required]
-- `[OUTPUT_FILE]`: Output Python file path. If not provided, writes to stdout.
+* `INPUT_FILE`: Input JSON schema file path  [required]
+* `[OUTPUT_FILE]`: Output Python file path. If not provided, writes to stdout.
 
 **Options**:
 
-- `--python-version TEXT`: Python version to target [default: 3.11]
-- `--just-types / --no-just-types`: Generate just the type definitions without serialization code [default: just-types]
-- `--append-type-suffix / --no-append-type-suffix`: Append 'Type' to class names [default: append-type-suffix]
-- `--nice-property-names / --no-nice-property-names`: Use nice property names [default: no-nice-property-names]
-- `--help`: Show this message and exit.
+* `--python-version TEXT`: Python version to target  [default: 3.11]
+* `--just-types / --no-just-types`: Generate just the type definitions without serialization code  [default: just-types]
+* `--append-type-suffix / --no-append-type-suffix`: Append 'Type' to class names  [default: append-type-suffix]
+* `--nice-property-names / --no-nice-property-names`: Use nice property names  [default: no-nice-property-names]
+* `--help`: Show this message and exit.
 
 ### `codegen create-tree`
 
@@ -1440,10 +1399,10 @@ $ codegen create-tree [OPTIONS]
 
 **Options**:
 
-- `--module TEXT`: Module containing the class [required]
-- `--class-name TEXT`: Class name to generate a tree for [required]
-- `--module-alias TEXT`: Optional alias for the module in the output
-- `--help`: Show this message and exit.
+* `--module TEXT`: Module containing the class  [required]
+* `--class-name TEXT`: Class name to generate a tree for  [required]
+* `--module-alias TEXT`: Optional alias for the module in the output
+* `--help`: Show this message and exit.
 
 ## `plugins`
 
@@ -1457,21 +1416,20 @@ $ plugins [OPTIONS] COMMAND [ARGS]...
 
 **Options**:
 
-- `--help`: Show this message and exit.
+* `--help`: Show this message and exit.
 
 **Commands**:
 
-- `list`: List all plugins with short description...
-- `show`: Show full details for a plugin by ID.
-- `enable`: Enable a plugin by updating the Django...
-- `disable`: Disable a plugin by updating the Django...
+* `list`: List all plugins with short description...
+* `show`: Show full details for a plugin by ID.
+* `enable`: Enable a plugin by updating the Django...
+* `disable`: Disable a plugin by updating the Django...
 
 ### `plugins list`
 
 List all plugins with short description and active status.
 
 Examples:
-
 ```terminal
 # Get all plugins and display as a table (default)
 kcli plugins list
@@ -1483,7 +1441,6 @@ kcli plugins list --pretty | jq ".[] | {id, label, status, enabled}"
 ```
 
 Example Output:
-
 ```json
 [
   {
@@ -1504,22 +1461,20 @@ $ plugins list [OPTIONS]
 
 **Options**:
 
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ### `plugins show`
 
 Show full details for a plugin by ID.
 
 Example:
-
 ```terminal
 kcli plugins show plugin_id --pretty | jq "{id, label, description, status, enabled}"
 ```
 
 Example Output:
-
 ```json
 {
   "id": "plugin_id",
@@ -1545,26 +1500,24 @@ $ plugins show [OPTIONS] PLUGIN_ID
 
 **Arguments**:
 
-- `PLUGIN_ID`: [required]
+* `PLUGIN_ID`: [required]
 
 **Options**:
 
-- `-p, --pretty`: Pretty print the output
-- `-n, --line-numbers`: Show line numbers in pretty print
-- `--help`: Show this message and exit.
+* `-p, --pretty`: Pretty print the output
+* `-n, --line-numbers`: Show line numbers in pretty print
+* `--help`: Show this message and exit.
 
 ### `plugins enable`
 
 Enable a plugin by updating the Django Constance env var associated.
 
 Example:
-
 ```terminal
 kcli plugins enable plugin_id
 ```
 
 Example Output:
-
 ```text
 Plugin 'plugin_id' enabled.
 ```
@@ -1577,24 +1530,22 @@ $ plugins enable [OPTIONS] PLUGIN_ID
 
 **Arguments**:
 
-- `PLUGIN_ID`: [required]
+* `PLUGIN_ID`: [required]
 
 **Options**:
 
-- `--help`: Show this message and exit.
+* `--help`: Show this message and exit.
 
 ### `plugins disable`
 
 Disable a plugin by updating the Django Constance env var associated.
 
 Example:
-
 ```terminal
 kcli plugins disable plugin_id
 ```
 
 Example Output:
-
 ```text
 Plugin 'plugin_id' disabled.
 ```
@@ -1607,8 +1558,43 @@ $ plugins disable [OPTIONS] PLUGIN_ID
 
 **Arguments**:
 
-- `PLUGIN_ID`: [required]
+* `PLUGIN_ID`: [required]
 
 **Options**:
 
-- `--help`: Show this message and exit.
+* `--help`: Show this message and exit.
+
+## `agent`
+
+Karrio AI agent.
+
+**Usage**:
+
+```console
+$ agent [OPTIONS] COMMAND [ARGS]...
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+**Commands**:
+
+* `web`: Launches the Karrio AI agent web UI.
+
+### `agent web`
+
+Launches the Karrio AI agent web UI.
+This function loads environment variables, and then uses the `adk` command-line
+tool to start the agent's web UI.
+
+**Usage**:
+
+```console
+$ agent web [OPTIONS]
+```
+
+**Options**:
+
+* `--help`: Show this message and exit.
+

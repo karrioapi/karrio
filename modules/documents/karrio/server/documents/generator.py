@@ -1,5 +1,4 @@
 import io
-import string
 import typing
 import base64
 import jinja2

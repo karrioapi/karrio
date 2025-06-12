@@ -7,10 +7,14 @@ export default {
     title: 'Self Hosting',
     type: 'separator'
   },
-  // "platform": {
-  //   title: 'Platform',
-  //   type: 'separator'
-  // },
+  "products": {
+    title: 'Products',
+    type: 'separator'
+  },
+  "platform": {
+    title: 'Platform',
+    type: 'separator'
+  },
   "carriers": {
     title: 'Carriers',
     type: 'separator'

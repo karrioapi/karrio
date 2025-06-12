@@ -252,6 +252,7 @@ def request(
     on_error: Callable[[HTTPError], str] = None,
     trace: Callable[[Any, str], Any] = None,
     proxy: str = None,
+    timeout: Optional[int] = None,
     **kwargs,
 ) -> str:
     """Return an HTTP response body.
@@ -266,7 +267,7 @@ def request(
     try:
         _request = process_request(_request_id, trace, proxy, **kwargs)
 
-        with urlopen(_request) as f:
+        with urlopen(_request, timeout=timeout) as f:
             _response = process_response(
                 _request_id, f, decoder, on_ok=on_ok, trace=trace
             )

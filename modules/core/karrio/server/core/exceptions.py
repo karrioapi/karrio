@@ -1,5 +1,6 @@
 import typing
 import logging
+import traceback
 from rest_framework.response import Response
 from rest_framework import status, exceptions
 from rest_framework.views import exception_handler
@@ -46,7 +47,7 @@ class APIExceptions(APIException):
 
 
 def custom_exception_handler(exc, context):
-    logger.exception(exc)
+    logging.error(exc)
 
     response = exception_handler(exc, context)
     detail = getattr(exc, "detail", None)
