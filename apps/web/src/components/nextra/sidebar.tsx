@@ -39,6 +39,14 @@ import {
   Globe,
   Workflow,
   Shield,
+  Terminal,
+  PlugZap,
+  GitPullRequest,
+  Code2,
+  Network,
+  Cloud,
+  Server,
+  Hammer,
 } from 'lucide-react'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@karrio/ui/components/ui/collapsible'
 import { normalizePages } from 'nextra/normalize-pages'
@@ -200,6 +208,18 @@ export const Sidebar: FC<SidebarProps> = ({ pageMap, themeConfig }) => {
         return <Monitor className="h-4 w-4" />
       case 'oss-contribution':
         return <GitFork className="h-4 w-4" />
+      case 'pull-requests':
+        return <GitPullRequest className="h-4 w-4" />
+      case 'contributors-guide':
+        return <Users className="h-4 w-4" />
+      case 'api-development':
+        return <Code2 className="h-4 w-4" />
+      case 'carrier-integration':
+        return <Network className="h-4 w-4" />
+      case 'cli-guide':
+        return <Terminal className="h-4 w-4" />
+      case 'plugin-development':
+        return <PlugZap className="h-4 w-4" />
       case 'installation':
         return <Container className="h-4 w-4" />
       case 'database-migrations':
@@ -208,6 +228,16 @@ export const Sidebar: FC<SidebarProps> = ({ pageMap, themeConfig }) => {
         return <ArrowUpCircle className="h-4 w-4" />
       case 'docker':
         return <Container className="h-4 w-4" />
+      case 'aws':
+        return <Cloud className="h-4 w-4" />
+      case 'gcp':
+        return <Cloud className="h-4 w-4" />
+      case 'digital-ocean':
+        return <Cloud className="h-4 w-4" />
+      case 'environment':
+        return <Server className="h-4 w-4" />
+      case 'custom-builds':
+        return <Hammer className="h-4 w-4" />
       case 'guides':
         return <BookOpen className="h-4 w-4" />
       case 'quickstart':

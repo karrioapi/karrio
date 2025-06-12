@@ -8,290 +8,192 @@ author: Karrio Team
 
 # Plugin Development
 
-Karrio's plugin system allows you to extend its functionality with custom carriers, address validators, and other integrations. This guide explains how to develop and register plugins with Karrio.
+Karrio's plugin system is the cornerstone of its extensibility, allowing you to seamlessly integrate custom carriers, address validators, and other third-party services. This guide provides a comprehensive overview of how to develop, structure, and register plugins with Karrio.
 
 ## Plugin Types
 
-Karrio supports several types of plugins:
+Karrio is designed to support a variety of plugin types, including:
 
-1. **Carrier Integrations**: Connect with shipping carriers like UPS, FedEx, DHL, etc.
-2. **Address Validation**: Add support for address validation services
-3. **Duty & Tax Calculation**: Add support for duty & tax calculation services (design pending)
-4. **Package Insurances**: Add support for package insurance services (design pending)
-5. **Payment Services**: Add support for payment services (design pending)
+- **Carrier Integrations**: Connect to any shipping carrier's API. This is the most common plugin type.
+- **Address Validators**: Integrate third-party address verification services.
+- **Upcoming**: Duty & Tax Calculators, Insurance Providers, and Payment Services.
 
 ## Plugin Development Approaches
 
-Karrio offers two approaches for developing and registering plugins:
+Karrio supports two methods for developing and registering plugins:
 
-1. **Directory-based plugins**: Traditional method where plugins are placed in a designated directory
-2. **Entrypoint-based plugins**: Modern method where plugins are registered via Python package entrypoints
+1.  **Directory-based plugins**: The traditional method where plugins are loaded from a specific local directory. This is ideal for private, in-house integrations.
+2.  **Entrypoint-based plugins**: The modern, recommended method where plugins are distributed as standard Python packages and registered via entrypoints. This is best for open-source or publicly distributed plugins.
+
+---
 
 ## Directory-Based Plugins
 
-Directory-based plugins are loaded from local directories and don't require a full Python package structure.
+Directory-based plugins are loaded from a local folder and do not require a full Python package setup, making them quick to create and test.
 
 ### Directory Structure
 
-A valid plugin directory must follow this structure:
+A valid plugin directory must contain a `karrio` sub-directory, which mirrors the structure of a native Karrio integration:
 
 ```text
-/your_plugin_directory/
-├── plugin_name/
-│   └── karrio/
-│       ├── plugins/           # For plugins (carrier integrations, address validators, etc...)
-│       │   └── plugin_name/
-│       │       └── __init__.py # Contains METADATA
-│       ├── mappers/           # For carrier integrations
-│       │   └── plugin_name/
-│       │       ├── __init__.py # Contains METADATA
-│       │       ├── mapper.py   # Implementation of the mapper
-│       │       ├── proxy.py    # Implementation of the proxy
-│       │       └── settings.py # Settings schema
-│       ├── validators/        # For address validators
-│       │   └── plugin_name/
-│       │       ├── __init__.py # Contains METADATA
-│       │       └── validator.py # Implementation of the validator
-│       ├── providers/         # Provider-specific implementations
-│       │   └── plugin_name/
-│       │       ├── __init__.py
-│       │       ├── error.py    # Error handling
-│       │       ├── units.py    # Units and enums
-│       │       ├── utils.py    # Utility functions
-│       │       └── other implementation files...
-│       └── schemas/          # API schema definitions
-│           └── plugin_name/
-│               ├── __init__.py
-│               └── various schema files...
+/your_plugins_folder/
+└── my_carrier/
+    └── karrio/
+        ├── mappers/
+        │   └── my_carrier/
+        │       ├── __init__.py  # Contains the legacy METADATA object (optional)
+        │       ├── mapper.py
+        │       ├── proxy.py
+        │       └── settings.py
+        ├── providers/
+        │   └── my_carrier/
+        │       ├── __init__.py
+        │       ├── rate.py
+        │       └── ...
+        └── schemas/
+            └── my_carrier/
+                └── ...
 ```
 
 ### Loading Directory-Based Plugins
 
-There are several ways to register directory-based plugins with Karrio:
+Karrio can load plugins from a directory specified in one of two ways:
 
-1. **Default plugins directory**:
-   - Place your plugin in a `plugins` directory in the current working directory
+1.  **Default `plugins` directory**: Place your plugin folder (e.g., `my_carrier`) inside a directory named `plugins` in your current working directory.
+2.  **`KARRIO_PLUGINS` Environment Variable**: Set the `KARRIO_PLUGINS` environment variable to the absolute path of your plugins folder.
+    ```bash
+    export KARRIO_PLUGINS=/path/to/your_plugins_folder
+    ```
 
-2. **Custom plugin directory via environment variable**:
-   - Set the `KARRIO_PLUGINS` environment variable to the path of your plugins directory:
-   ```bash
-   export KARRIO_PLUGINS=/path/to/your/plugins
-   ```
+---
 
-3. **Programmatically add plugin directories**:
-   ```python
-   import karrio.plugins as plugins
-   plugins.add_plugin_directory('/path/to/your/plugins')
-   ```
+## Entrypoint-Based Plugins
 
-## Entrypoint-Based Plugins (New)
+This is the standard and recommended approach for creating distributable plugins. Your plugin is built as a standard Python package and registered with Karrio's plugin system using a `pyproject.toml` entrypoint.
 
-Entrypoint-based plugins use Python's setuptools entrypoint mechanism to register plugins with Karrio. This approach allows for easier distribution and installation of plugins as Python packages.
+### Package Structure
 
-### Creating an Entrypoint-Based Plugin
+The internal structure of your package should follow the standard Karrio extension format:
 
-1. **Create a Python package** with your plugin code following the same structure as directory-based plugins
-
-2. **Register your plugin as an entrypoint** in your package's `pyproject.toml` or `setup.py`:
-
-   **For pyproject.toml**:
-
-   ```toml
-   [project.entry-points."karrio.plugins"]
-   my_plugin_name = "my_package.module:METADATA"
-   ```
-
-   **For setup.py**:
-
-   ```python
-   setup(
-       name="my-karrio-plugin",
-       # ... other setup parameters ...
-       entry_points={
-           "karrio.plugins": [
-               "my_plugin_name = my_package.module:METADATA",
-           ],
-       },
-   )
-   ```
-
-3. **Install your package** using pip:
-
-   ```bash
-   pip install -e .
-   ```
-
-Karrio will automatically discover and load your plugin when it starts.
-
-## Plugin Discovery and Loading
-
-Karrio dynamically discovers and loads plugins using a structured approach:
-
-1. **Discovery**: Scans configured directories for plugin structures
-2. **Module Import**: Imports modules based on their types (plugins, mappers, validators)
-3. **Metadata Collection**: Extracts METADATA from each plugin's `__init__.py` file
-4. **Namespace Extension**: Extends the Karrio namespace with plugin modules
-
-This dynamic loading system allows for hot-swapping plugins and modular integrations without modifying the core codebase.
-
-```mermaid
-classDiagram
-    class Metadata {
-        +id: string
-        +label: string
-        +Mapper: Mapper
-        +Proxy: Proxy
-        +Settings: Settings
-        +options: ShippingOption
-        +package_presets: PackagePresets
-        +services: ShippingService
-    }
-
-    class Mapper {
-        +settings: Settings
-        +create_shipment()
-        +get_rates()
-        +get_tracking()
-    }
-
-    class Proxy {
-        +settings: Settings
-        +get_rates()
-        +create_shipment()
-        +get_tracking()
-    }
-
-    class Settings {
-        +username: string
-        +password: string
-        +carrier_id: string
-        +test_mode: boolean
-    }
-
-    Metadata --> Mapper
-    Metadata --> Proxy
-    Metadata --> Settings
-    Mapper --> Proxy
+```text
+/karrio-my-carrier/
+├── pyproject.toml
+└── karrio/
+    └── plugins/
+        └── my_carrier/
+            └── __init__.py   # Contains the METADATA object
 ```
+
+### Registering the Plugin
+
+In your `pyproject.toml`, you define an entrypoint under the `karrio.plugins` group. This tells Karrio where to find your plugin's `METADATA`.
+
+```toml
+# pyproject.toml
+[project.entry-points."karrio.plugins"]
+my_carrier = "karrio.plugins.my_carrier"
+```
+
+The key (`my_carrier`) is the unique identifier for your plugin, and the value (`karrio.plugins.my_carrier`) is the Python path to the module containing the `METADATA` object.
+
+### Installing the Plugin
+
+Install your package in editable mode during development:
+
+```bash
+pip install -e .
+```
+
+Karrio will automatically discover and load the plugin upon restart.
+
+---
 
 ## Plugin Metadata
 
-Every plugin must define a `METADATA` object in its module to provide information about the plugin's capabilities and features.
+Every plugin, regardless of type, must define a `METADATA` object. This object, an instance of `PluginMetadata`, is the manifest that describes your plugin to Karrio.
 
-### Example Metadata for a Carrier Integration
+### Example: Carrier Integration Metadata
+
+For a carrier, the `METADATA` object references the `Mapper` and `Settings` classes.
 
 ```python
+# karrio/plugins/my_carrier/__init__.py
 from karrio.core.metadata import PluginMetadata
+from karrio.mappers.my_carrier.mapper import Mapper
+from karrio.mappers.my_carrier.settings import Settings
 
-# Import local plugin components
-from .mapper import Mapper
-from .proxy import Proxy
-from .settings import Settings
-from . import units
-
-# Define plugin metadata
 METADATA = PluginMetadata(
-    # Plugin identification
+    # Core properties
     id="my_carrier",
-    label="My Carrier Service",
-    status="beta",
+    label="My Carrier",
 
-    # Plugin components
+    # Integration Schemas
     Mapper=Mapper,
-    Proxy=Proxy,
     Settings=Settings,
 
-    # Additional metadata
-    description="Integration with My Carrier shipping service",
-    website="https://www.mycarrier.com/",
-    documentation="https://docs.mycarrier.com/",
-
-    # Service definitions
-    services=units.ShippingService,
-    options=units.ShippingOption,
-    package_presets=units.PackagePresets,
+    # Optional metadata
+    is_hub=False
 )
 ```
 
-### Example Metadata for an Address Validator
+### Example: Address Validator Metadata
+
+For an address validator, the `METADATA` object references the `Validator` and `Settings` classes.
 
 ```python
+# karrio/plugins/my_validator/__init__.py
 from karrio.core.metadata import PluginMetadata
+from karrio.validators.my_validator.validator import Validator
+from karrio.validators.my_validator.settings import Settings
 
-# Import local plugin components
-from .validator import Validator
-from .settings import Settings
-
-# Define plugin metadata
 METADATA = PluginMetadata(
-    # Plugin identification
+    # Core properties
     id="my_validator",
-    label="My Address Validator",
-    status="beta",
+    label="My Validator",
 
-    # Plugin components
+    # Integration Schemas
     Validator=Validator,
     Settings=Settings,
-
-    # Additional metadata
-    description="Address validation service",
-    website="https://www.myvalidator.com/",
-    documentation="https://docs.myvalidator.com/",
 )
 ```
 
-## Plugin Registration Precedence
+## Plugin Discovery Flow
 
-When multiple plugins with the same name/ID are registered through different methods, Karrio follows this precedence order:
+Karrio's plugin loading mechanism is designed to be robust and flexible.
 
-1. Entrypoint-based plugins (highest precedence)
-2. Directory-based plugins from custom directories
-3. Directory-based plugins from the default directory
+```mermaid
+graph TD
+    A[Karrio Starts] --> B{Discover Plugins};
+    B --> C[1. Scan Entrypoints<br/>(e.g., from `pip install`)];
+    B --> D[2. Scan `KARRIO_PLUGINS` Directory];
+    B --> E[3. Scan `./plugins` Directory];
+    C --> F[Load & Register Metadata];
+    D --> F;
+    E --> F;
+    F --> G[Extend Karrio's<br/>`mappers`, `providers`, `validators`];
+```
+
+**Precedence**: If plugins with the same `id` are found in multiple locations, Karrio uses the following order of precedence (first one found wins):
+
+1.  Entrypoint-based plugins
+2.  Plugins from `KARRIO_PLUGINS`
+3.  Plugins from the default `./plugins` directory
 
 ## Testing Your Plugin
 
-To test your plugin during development:
+1.  **For Directory-based plugins**: Place your plugin in one of the specified directories and restart the Karrio server.
+2.  **For Entrypoint-based plugins**: Install your package in editable mode (`pip install -e .`) and restart the Karrio server.
 
-1. **For directory-based plugins**:
-   - Place your plugin in the `plugins` directory or use `KARRIO_PLUGINS` environment variable
-   - Restart Karrio server
-
-2. **For entrypoint-based plugins**:
-   - Install your package in development mode: `pip install -e .`
-   - Restart Karrio server
-
-You can verify that your plugin was loaded by checking the logs or using the Karrio admin interface.
+Check the Karrio server logs on startup to confirm that your plugin was successfully discovered and loaded.
 
 ## Troubleshooting
 
-If your plugin isn't loading correctly:
+If your plugin isn't loading:
 
-1. Check Karrio logs for error messages
-2. Ensure your plugin structure follows the required format
-3. Verify that the `METADATA` object is correctly defined
-4. For entrypoint-based plugins, make sure your package is correctly installed
-
-## Best Practices
-
-1. **Version compatibility**: Include Karrio version compatibility information in your plugin metadata
-2. **Error handling**: Implement proper error handling to prevent plugin failures from affecting core functionality
-3. **Documentation**: Document your plugin's features, configuration options, and usage instructions
-4. **Testing**: Create comprehensive tests for your plugin to ensure it works correctly
-5. **Maintenance**: Keep your plugin updated with the latest Karrio API changes
-
-## Example Plugins
-
-For reference implementations, see the [Karrio Plugins Repository](https://github.com/karrioapi/karrio-plugins) which contains example plugins using both directory-based and entrypoint-based approaches.
-
-## Plugin Distribution
-
-For entrypoint-based plugins, you can distribute your plugin as a Python package through:
-
-1. **PyPI**: Upload your package to the Python Package Index
-2. **Git repository**: Allow users to install directly from your repository
-3. **Wheel/ZIP files**: Distribute packaged versions for manual installation
+- **Check Logs**: Karrio logs any errors encountered during plugin discovery.
+- **Verify Structure**: Ensure your directory structure and `METADATA` object are correct.
+- **Confirm Installation**: For entrypoint plugins, double-check that your package is properly installed in the Python environment (`pip list`).
 
 ## Additional Resources
 
-- [Carrier Integration Guide](/docs/developing/carrier-integration): Learn how to create carrier-specific integrations
-- [Address Validation Guide](/docs/developing/address-validation): Learn how to create address validation plugins
+- [Carrier Integration Guide](/docs/developing/carrier-integration): A deep dive into creating carrier-specific integrations.
