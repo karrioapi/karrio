@@ -76,7 +76,7 @@ export function ActionModalEditor({ action, onSubmit, trigger }: ActionEditorPro
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>{trigger}</SheetTrigger>
-      <SheetContent className="w-[800px] min-w-[800px] sm:max-w-[800px] p-0 shadow-none">
+      <SheetContent className="w-full sm:w-[800px] sm:max-w-[800px] p-0 shadow-none">
         <div className="h-full flex flex-col">
           <SheetHeader className="sticky top-0 z-10 bg-white px-4 py-3 border-b">
             <SheetTitle className="text-lg font-semibold">Edit Action</SheetTitle>

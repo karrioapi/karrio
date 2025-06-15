@@ -143,6 +143,21 @@ export const ExpandedSidebar = (): JSX.Element => {
           </>
         )}
 
+        {/* App Store */}
+        {metadata?.APPS_MANAGEMENT && (
+          <>
+            <AppLink
+              href="/app-store"
+              className={"menu-item " + activeClass("/app-store")}
+              shallow={false}
+              prefetch={false}
+            >
+              <i className={`fa fa-puzzle-piece pr-2 ${isActive("/app-store") ? "" : "has-text-grey"}`}></i>
+              <span className="has-text-weight-bold">App Store</span>
+            </AppLink>
+          </>
+        )}
+
         {/* Settings */}
         <AppLink
           href="/settings/account"
@@ -157,20 +172,6 @@ export const ExpandedSidebar = (): JSX.Element => {
         </AppLink>
 
         <hr className="my-3 mx-3" style={{ height: "1px" }} />
-
-        {testMode ? (
-          <a className="menu-item mode-menu-item" onClick={switchMode}>
-            <i className="fas fa-toggle-on pr-2"></i>
-            <span className="mode-menu-item has-text-weight-bold">
-              Viewing test data
-            </span>
-          </a>
-        ) : (
-          <a className="menu-item has-text-grey" onClick={switchMode}>
-            <i className="fas fa-toggle-off pr-2"></i>
-            <span className="has-text-weight-bold">View test data</span>
-          </a>
-        )}
 
         {/* Developers */}
         <AppLink

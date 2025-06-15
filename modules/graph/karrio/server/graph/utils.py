@@ -100,12 +100,14 @@ MetadataObjectTypeEnum: typing.Any = strawberry.enum(  # type: ignore
 def authentication_required(func):
     @functools.wraps(func)
     def wrapper(info, **kwargs):
-        if info.context.request.user.is_anonymous:
+        user = getattr(info.context.request, 'user', None)
+
+        if user is None or user.is_anonymous:
             raise exceptions.AuthenticationFailed(
                 _("You are not authenticated"), code="authentication_required"
             )
 
-        if not info.context.request.user.is_verified():
+        if not user.is_verified():
             raise exceptions.AuthenticationFailed(
                 _("Authentication Token not verified"), code="two_factor_required"
             )

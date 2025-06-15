@@ -1,18 +1,14 @@
 import { Dropdown, closeDropdown } from './dropdown';
 import { AppLink } from './app-link';
-import React from 'react';
 
 
-interface ShortcutDropdownComponent { }
-
-
-export const ShortcutDropdown= ({ ...props }): JSX.Element =>  {
+export const ShortcutDropdown = ({ ...props }): JSX.Element => {
 
   return (
     <Dropdown>
 
       {/* Dropdown trigger  */}
-      <button className="button is-primary mx-1" style={{ borderRadius: '50%' }}>
+      <button className="button is-default mr-1" style={{ borderRadius: "50%" }} >
         <span className="icon">
           <i className="is-size-6 fas fa-plus"></i>
         </span>

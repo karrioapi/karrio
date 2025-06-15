@@ -1,10 +1,18 @@
 "use client";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { ShortcutDropdown } from "./shortcut-dropdown";
 import { AccountDropdown } from "./account-dropdown";
 import { SearchBar } from "../forms/search-bar";
-import React from "react";
 
-export const Navbar = ({}): JSX.Element => {
+import React, { Suspense } from "react";
+
+// Lazy load the AppLauncher component
+const AppLauncher = React.lazy(() =>
+  import("@karrio/app-store").then(module => ({ default: module.AppLauncher }))
+);
+
+export const Navbar = ({ }): JSX.Element => {
+  const { metadata } = useAPIMetadata();
   const openSidebar = (e: React.MouseEvent) => {
     e.preventDefault();
     document.querySelector(".plex-sidebar")?.classList.add("is-mobile-active");
@@ -32,6 +40,20 @@ export const Navbar = ({}): JSX.Element => {
           <div className="nav-item mobile-item is-flex mobile-search-trigger">
             <i className="fas fa-search"></i>
           </div>
+
+          {metadata?.APPS_MANAGEMENT && (
+            <Suspense fallback={
+              <div className="nav-item is-flex">
+                <button className="button is-white is-small" disabled>
+                  <span className="icon is-small">
+                    <i className="fas fa-spinner fa-spin"></i>
+                  </span>
+                </button>
+              </div>
+            }>
+              <AppLauncher />
+            </Suspense>
+          )}
 
           <ShortcutDropdown />
 

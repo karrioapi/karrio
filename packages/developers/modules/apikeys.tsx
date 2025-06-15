@@ -8,7 +8,7 @@ import { useAPIToken } from "@karrio/hooks/api-token";
 
 
 export default function ApiPage() {
-  const { references } = useAPIMetadata();
+  const { references, metadata } = useAPIMetadata();
 
   const Component = (): JSX.Element => {
     const { setLoading } = useLoader();
@@ -50,6 +50,17 @@ export default function ApiPage() {
                 <span>API Keys</span>
               </AppLink>
             </li>
+            {metadata?.APPS_MANAGEMENT && (
+              <li className={`is-capitalized has-text-weight-semibold`}>
+                <AppLink
+                  href="/developers/apps"
+                  shallow={false}
+                  prefetch={false}
+                >
+                  <span>Apps</span>
+                </AppLink>
+              </li>
+            )}
             <li className={`is-capitalized has-text-weight-semibold`}>
               <AppLink
                 href="/developers/webhooks"

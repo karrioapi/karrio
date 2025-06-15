@@ -3,7 +3,7 @@
 import { CreateOrganizationModalProvider } from "@karrio/ui/core/modals/create-organization-modal";
 import { AcceptInvitationProvider } from "@karrio/ui/core/modals/accept-invitation-modal";
 import { ErrorBoundary } from "@karrio/ui/core/components/error-boudaries";
-import { ModeIndicator } from "@karrio/ui/core/components/mode-indicator";
+
 import { LoadingProvider } from "@karrio/ui/core/components/loader";
 import { Notifier } from "@karrio/ui/core/components/notifier";
 import { OrganizationProvider } from "./organization";
@@ -88,7 +88,6 @@ export function Providers({
       <NextPostHogProvider>
         <QueryClientProvider client={queryClient}>
           <AuthenticatedContexts {...props}>
-            {((props as any).session as any).testMode && <ModeIndicator />}
             <ErrorBoundary>{children}</ErrorBoundary>
           </AuthenticatedContexts>
         </QueryClientProvider>

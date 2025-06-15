@@ -16,9 +16,8 @@ import moment from "moment";
 
 
 export default function ApiPage() {
-  const { references } = useAPIMetadata();
-
   const Component = (): JSX.Element => {
+    const { references, metadata } = useAPIMetadata();
     const {
       query: { data: { usage } = {} },
       setFilter,
@@ -51,6 +50,17 @@ export default function ApiPage() {
                 <span>API Keys</span>
               </AppLink>
             </li>
+            {metadata?.APPS_MANAGEMENT && (
+              <li className={`is-capitalized has-text-weight-semibold`}>
+                <AppLink
+                  href="/developers/apps"
+                  shallow={false}
+                  prefetch={false}
+                >
+                  <span>Apps</span>
+                </AppLink>
+              </li>
+            )}
             <li className={`is-capitalized has-text-weight-semibold`}>
               <AppLink
                 href="/developers/webhooks"

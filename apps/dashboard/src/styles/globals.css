@@ -89,6 +89,16 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+
+    /* Sidebar colors - light theme */
+    --sidebar: 0 0% 98%;
+    --sidebar-foreground: 224 71.4% 4.1%;
+    --sidebar-primary: 259 71% 47%;
+    --sidebar-primary-foreground: 210 20% 98%;
+    --sidebar-accent: 220 14.3% 95.9%;
+    --sidebar-accent-foreground: 220.9 39.3% 11%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 262.1 83.3% 57.8%;
   }
 
   .dark {
@@ -116,6 +126,16 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+
+    /* Sidebar colors - dark theme */
+    --sidebar: 224 71.4% 4.1%;
+    --sidebar-foreground: 210 20% 98%;
+    --sidebar-primary: 263.4 70% 50.4%;
+    --sidebar-primary-foreground: 210 20% 98%;
+    --sidebar-accent: 215 27.9% 16.9%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-border: 215 27.9% 16.9%;
+    --sidebar-ring: 263.4 70% 50.4%;
   }
 }
 
@@ -128,10 +148,116 @@ body {
   color: hsl(var(--foreground));
   font-family: Arial, Helvetica, sans-serif;
   font-size: 15px;
+  overflow-x: hidden;
+  /* Prevent horizontal scrolling */
+}
+
+/* Prevent layout shift when dropdowns/modals open */
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+/* Ensure consistent scrollbar gutter */
+html {
+  scrollbar-gutter: stable;
+}
+
+/* Prevent viewport shifts */
+* {
+  box-sizing: border-box;
+}
+
+/* Ensure dropdowns don't cause layout shifts */
+[data-radix-popper-content-wrapper] {
+  position: fixed !important;
+  z-index: 50;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Line clamp utilities */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Auto-hiding scrollbar for main content */
+  .scrollable-content {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+
+  .scrollable-content:hover {
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  }
+
+  /* Prevent layout shift when dropdowns/modals are open */
+  [data-radix-dropdown-content],
+  [data-radix-dialog-content],
+  [data-radix-popover-content] {
+    /* Ensure dropdowns don't trigger scrollbars */
+    position: fixed !important;
+  }
+
+  /* Prevent body scroll when dropdowns are open */
+  body:has([data-state="open"]) {
+    overflow-x: hidden !important;
+  }
+
+  /* Stable scrollbar gutter for consistent layout */
+  .main-layout {
+    scrollbar-gutter: stable;
+  }
+
+  /* Responsive overflow utilities */
+  .overflow-x-auto-safe {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Prevent horizontal overflow on mobile */
+  @media (max-width: 768px) {
+    .mobile-no-overflow {
+      overflow-x: hidden;
+      max-width: 100vw;
+    }
+
+    .mobile-scroll-x {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
+  /* Table responsive utilities */
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+  }
+
+  /* Grid responsive fixes */
+  .grid-responsive {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+
+  @media (max-width: 640px) {
+    .grid-responsive {
+      grid-template-columns: 1fr;
+    }
   }
 }

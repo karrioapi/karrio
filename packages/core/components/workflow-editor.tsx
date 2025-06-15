@@ -217,24 +217,24 @@ export function WorkflowEditor({ workflowId, templateSlug, onClose, onSave }: Wo
   return (
     <div className="tailwind-only h-screen flex flex-col bg-slate-50 overflow-hidden">
       {/* Sticky Header */}
-      <header className="bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-10 shadow-sm flex-shrink-0">
-        <div className="flex items-center gap-4">
+      <header className="bg-white border-b border-slate-200 px-3 lg:px-4 py-3 flex items-center justify-between sticky top-0 z-10 shadow-sm flex-shrink-0">
+        <div className="flex items-center gap-2 lg:gap-4">
           <Button
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="h-10 w-10 rounded-md p-0 hover:bg-slate-100"
+            className="h-8 w-8 lg:h-10 lg:w-10 rounded-md p-0 hover:bg-slate-100"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4 lg:h-5 lg:w-5" />
           </Button>
-          <Separator orientation="vertical" className="h-6" />
+          <Separator orientation="vertical" className="h-4 lg:h-6" />
           <div>
-            <h1 className="text-lg font-semibold text-slate-900">
+            <h1 className="text-base lg:text-lg font-semibold text-slate-900">
               {isNew ? "Create workflow" : "Edit workflow"}
             </h1>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 lg:gap-3">
           <Button
             onClick={handleRunWorkflow}
             disabled={[AutomationEventStatus.running, AutomationEventStatus.pending].includes(
@@ -242,19 +242,21 @@ export function WorkflowEditor({ workflowId, templateSlug, onClose, onSave }: Wo
             )}
             variant="outline"
             size="sm"
-            className="flex items-center gap-2 h-10 px-4"
+            className="flex items-center gap-1 lg:gap-2 h-8 lg:h-10 px-2 lg:px-4 text-xs lg:text-sm"
           >
-            <Play className="h-4 w-4" />
-            Execute workflow
+            <Play className="h-3 w-3 lg:h-4 lg:w-4" />
+            <span className="hidden sm:inline">Execute workflow</span>
+            <span className="sm:hidden">Execute</span>
           </Button>
           <Button
             onClick={handleSave}
             disabled={loader.loading || isEqual(workflow, current || DEFAULT_STATE)}
-            className="flex items-center gap-2 h-10 px-4"
+            className="flex items-center gap-1 lg:gap-2 h-8 lg:h-10 px-2 lg:px-4 text-xs lg:text-sm"
             size="sm"
           >
-            <Save className="h-4 w-4" />
-            Save
+            <Save className="h-3 w-3 lg:h-4 lg:w-4" />
+            <span className="hidden sm:inline">Save</span>
+            <span className="sm:hidden">Save</span>
           </Button>
         </div>
       </header>
@@ -262,16 +264,16 @@ export function WorkflowEditor({ workflowId, templateSlug, onClose, onSave }: Wo
       {/* Tab Navigation */}
       <Tabs value={selectedTab} onValueChange={setSelectedTab} className="flex-1 flex flex-col overflow-hidden">
         <div className="bg-white border-b border-slate-200 flex-shrink-0">
-          <TabsList className="bg-transparent h-auto p-0 mx-4">
+          <TabsList className="bg-transparent h-auto p-0 mx-3 lg:mx-4">
             <TabsTrigger
               value="editor"
-              className="px-4 py-3 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-blue-500 rounded-none"
+              className="px-3 lg:px-4 py-3 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-blue-500 rounded-none text-sm"
             >
               Editor
             </TabsTrigger>
             <TabsTrigger
               value="executions"
-              className="px-4 py-3 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-blue-500 rounded-none"
+              className="px-3 lg:px-4 py-3 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-blue-500 rounded-none text-sm"
             >
               Executions
             </TabsTrigger>
@@ -280,9 +282,9 @@ export function WorkflowEditor({ workflowId, templateSlug, onClose, onSave }: Wo
 
         <TabsContent value="editor" className="flex-1 m-0 overflow-hidden">
           {query.isFetched && !!workflow.actions && (
-            <div className="flex h-full overflow-hidden">
+            <div className="flex flex-col lg:flex-row h-full overflow-hidden">
               {/* Left Sidebar - Form Fields */}
-              <div className="w-80 bg-white border-r border-slate-200 p-4 space-y-4 overflow-y-auto flex-shrink-0">
+              <div className="w-full lg:w-80 bg-white border-b lg:border-b-0 lg:border-r border-slate-200 p-4 space-y-4 overflow-y-auto flex-shrink-0 max-h-96 lg:max-h-none">
                 {/* Workflow Info Admonition */}
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
                   <div className="flex items-start gap-2">
@@ -291,7 +293,7 @@ export function WorkflowEditor({ workflowId, templateSlug, onClose, onSave }: Wo
                       <p className="text-xs font-medium text-blue-900">How Workflows Work</p>
                       <p className="text-xs text-blue-700">
                         Workflows automate tasks by combining triggers (when to run) with actions (what to do).
-                        Configure the trigger on the right, then add actions below.
+                        Configure the trigger below, then add actions.
                       </p>
                     </div>
                   </div>
@@ -351,13 +353,13 @@ export function WorkflowEditor({ workflowId, templateSlug, onClose, onSave }: Wo
               {/* Right Canvas - Workflow Visualization */}
               <div className="flex-1 flex flex-col bg-slate-50 overflow-hidden">
                 <div className="flex-1 overflow-y-auto">
-                  <div className="max-w-4xl mx-auto p-6 space-y-6 pb-8 min-h-full">
+                  <div className="max-w-4xl mx-auto p-4 lg:p-6 space-y-6 pb-8 min-h-full">
 
                     {/* Trigger Section */}
                     <Collapsible defaultOpen className="w-full">
                       <Card className="border-slate-200 rounded-lg shadow-sm">
                         <CollapsibleTrigger asChild>
-                          <CardHeader className="cursor-pointer hover:bg-slate-50 transition-colors p-4">
+                          <CardHeader className="cursor-pointer hover:bg-slate-50 transition-colors p-3 lg:p-4">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-3">
                                 <TriggerIcon type={workflow.trigger?.trigger_type || ""} />
@@ -373,7 +375,7 @@ export function WorkflowEditor({ workflowId, templateSlug, onClose, onSave }: Wo
                           </CardHeader>
                         </CollapsibleTrigger>
                         <CollapsibleContent>
-                          <CardContent className="pt-0 p-4 space-y-4">
+                          <CardContent className="pt-0 p-3 lg:p-4 space-y-4">
                             <Separator />
 
                             {/* Trigger Type Selection */}
@@ -576,30 +578,30 @@ export function WorkflowEditor({ workflowId, templateSlug, onClose, onSave }: Wo
                         <Collapsible className="w-full">
                           <Card className="border-slate-200 rounded-lg shadow-sm">
                             <CollapsibleTrigger asChild>
-                              <CardHeader className="cursor-pointer hover:bg-slate-50 transition-colors p-4">
+                              <CardHeader className="cursor-pointer hover:bg-slate-50 transition-colors p-3 lg:p-4">
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-3">
                                     <div className="w-8 h-8 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-sm font-medium">
                                       {index + 1}
                                     </div>
-                                    <div className="flex-1">
+                                    <div className="flex-1 min-w-0">
                                       <div className="flex items-center gap-2">
                                         <CardTitle className="text-base font-semibold">Action</CardTitle>
                                         {getActionStatusIcon(getActionStatus(action))}
                                         {getActionStatusBadge(getActionStatus(action))}
                                       </div>
-                                      <p className="text-sm text-slate-600 mt-1">
+                                      <p className="text-sm text-slate-600 mt-1 truncate">
                                         {action.name || "An action to perform"}
                                       </p>
                                     </div>
                                   </div>
-                                  <div className="flex items-center gap-2">
+                                  <div className="flex items-center gap-1 lg:gap-2 flex-shrink-0">
                                     <ActionModalEditor
                                       action={action}
                                       onSubmit={mutation.updateAction(index, action?.id)}
                                       trigger={
-                                        <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-slate-100">
-                                          <Edit className="h-4 w-4" />
+                                        <Button variant="ghost" size="sm" className="h-8 w-8 lg:h-9 lg:w-9 p-0 hover:bg-slate-100">
+                                          <Edit className="h-3 w-3 lg:h-4 lg:w-4" />
                                         </Button>
                                       }
                                     />
@@ -609,10 +611,10 @@ export function WorkflowEditor({ workflowId, templateSlug, onClose, onSave }: Wo
                                           variant="ghost"
                                           size="sm"
                                           disabled={index === 0}
-                                          className="text-red-600 hover:text-red-700 hover:bg-red-50 h-9 w-9 p-0"
+                                          className="text-red-600 hover:text-red-700 hover:bg-red-50 h-8 w-8 lg:h-9 lg:w-9 p-0"
                                           onClick={() => handleDeleteActionClick(index, action?.id)}
                                         >
-                                          <Trash2 className="h-4 w-4" />
+                                          <Trash2 className="h-3 w-3 lg:h-4 lg:w-4" />
                                         </Button>
                                       </AlertDialogTrigger>
                                       <AlertDialogContent>
@@ -633,22 +635,22 @@ export function WorkflowEditor({ workflowId, templateSlug, onClose, onSave }: Wo
                                         </AlertDialogFooter>
                                       </AlertDialogContent>
                                     </AlertDialog>
-                                    <ChevronDown className="h-5 w-5 text-slate-400" />
+                                    <ChevronDown className="h-4 w-4 text-slate-400" />
                                   </div>
                                 </div>
                               </CardHeader>
                             </CollapsibleTrigger>
                             <CollapsibleContent>
-                              <CardContent className="pt-0 p-4">
+                              <CardContent className="pt-0 p-3 lg:p-4">
                                 <Separator className="mb-4" />
 
                                 {/* Action Detail Tabs */}
                                 <Tabs defaultValue="template" className="w-full">
-                                  <TabsList className="grid w-full grid-cols-4 h-9">
-                                    <TabsTrigger value="template" className="text-sm">Template</TabsTrigger>
-                                    <TabsTrigger value="inputs" className="text-sm">Inputs</TabsTrigger>
-                                    <TabsTrigger value="outputs" className="text-sm">Outputs</TabsTrigger>
-                                    <TabsTrigger value="details" className="text-sm">Details</TabsTrigger>
+                                  <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 h-9">
+                                    <TabsTrigger value="template" className="text-xs lg:text-sm">Template</TabsTrigger>
+                                    <TabsTrigger value="inputs" className="text-xs lg:text-sm">Inputs</TabsTrigger>
+                                    <TabsTrigger value="outputs" className="text-xs lg:text-sm">Outputs</TabsTrigger>
+                                    <TabsTrigger value="details" className="text-xs lg:text-sm">Details</TabsTrigger>
                                   </TabsList>
 
                                   <TabsContent value="template" className="mt-3">
@@ -736,11 +738,9 @@ export function WorkflowEditor({ workflowId, templateSlug, onClose, onSave }: Wo
                                     )}
                                   </TabsContent>
 
-
-
                                   <TabsContent value="details" className="mt-3">
-                                    <div className="bg-white border rounded-lg p-5 space-y-5">
-                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="bg-white border rounded-lg p-3 lg:p-5 space-y-5">
+                                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
                                         <div className="space-y-4">
                                           <div>
                                             <Label className="text-sm text-slate-700 font-medium">Action Type</Label>
@@ -804,24 +804,24 @@ export function WorkflowEditor({ workflowId, templateSlug, onClose, onSave }: Wo
                                         <Collapsible className="w-full">
                                           <Card className="border-slate-200 rounded-md shadow-sm">
                                             <CollapsibleTrigger asChild>
-                                              <CardHeader className="cursor-pointer hover:bg-slate-50 transition-colors p-4">
+                                              <CardHeader className="cursor-pointer hover:bg-slate-50 transition-colors p-3 lg:p-4">
                                                 <div className="flex items-center justify-between">
                                                   <div className="flex items-center gap-3">
-                                                    <div>
+                                                    <div className="flex-1 min-w-0">
                                                       <CardTitle className="text-base font-semibold">Connection</CardTitle>
-                                                      <p className="text-sm text-slate-600 mt-1">
+                                                      <p className="text-sm text-slate-600 mt-1 truncate">
                                                         {action.connection?.name || "A connection for the action"}
                                                       </p>
                                                     </div>
                                                   </div>
-                                                  <div className="flex items-center gap-2">
+                                                  <div className="flex items-center gap-1 lg:gap-2 flex-shrink-0">
                                                     {action.connection ? (
                                                       <ConnectionModalEditor
                                                         connection={action.connection}
                                                         onSubmit={mutation.updateActionConnection(index, action?.id)}
                                                         trigger={
-                                                          <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-slate-100">
-                                                            <Edit className="h-4 w-4" />
+                                                          <Button variant="ghost" size="sm" className="h-8 w-8 lg:h-9 lg:w-9 p-0 hover:bg-slate-100">
+                                                            <Edit className="h-3 w-3 lg:h-4 lg:w-4" />
                                                           </Button>
                                                         }
                                                       />
@@ -844,8 +844,8 @@ export function WorkflowEditor({ workflowId, templateSlug, onClose, onSave }: Wo
                                                           }
                                                         }}
                                                       >
-                                                        <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-slate-100">
-                                                          <Plus className="h-4 w-4" />
+                                                        <Button variant="ghost" size="sm" className="h-8 w-8 lg:h-9 lg:w-9 p-0 hover:bg-slate-100">
+                                                          <Plus className="h-3 w-3 lg:h-4 lg:w-4" />
                                                         </Button>
                                                       </ConnectionTemplatePicker>
                                                     )}
@@ -855,10 +855,10 @@ export function WorkflowEditor({ workflowId, templateSlug, onClose, onSave }: Wo
                                                           variant="ghost"
                                                           size="sm"
                                                           disabled={!action.connection}
-                                                          className="text-red-600 hover:text-red-700 hover:bg-red-50 h-9 w-9 p-0"
+                                                          className="text-red-600 hover:text-red-700 hover:bg-red-50 h-8 w-8 lg:h-9 lg:w-9 p-0"
                                                           onClick={() => handleDeleteConnectionClick(index, action?.id, action.connection?.id)}
                                                         >
-                                                          <Trash2 className="h-4 w-4" />
+                                                          <Trash2 className="h-3 w-3 lg:h-4 lg:w-4" />
                                                         </Button>
                                                       </AlertDialogTrigger>
                                                       <AlertDialogContent>
@@ -885,7 +885,7 @@ export function WorkflowEditor({ workflowId, templateSlug, onClose, onSave }: Wo
                                               </CardHeader>
                                             </CollapsibleTrigger>
                                             <CollapsibleContent>
-                                              <CardContent className="pt-0 p-4">
+                                              <CardContent className="pt-0 p-3 lg:p-4">
                                                 <Separator className="mb-4" />
 
                                                 {!action.connection ? (
@@ -899,7 +899,7 @@ export function WorkflowEditor({ workflowId, templateSlug, onClose, onSave }: Wo
                                                   </div>
                                                 ) : (
                                                   <div className="space-y-4">
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                                       <div>
                                                         <Label className="text-sm text-slate-700 font-medium">Auth Type</Label>
                                                         <div className="text-sm mt-1">
@@ -917,10 +917,10 @@ export function WorkflowEditor({ workflowId, templateSlug, onClose, onSave }: Wo
                                                     {[AutomationAuthType.oauth2, AutomationAuthType.jwt].includes(
                                                       action.connection.auth_type as any,
                                                     ) && (
-                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                                           <div>
                                                             <Label className="text-sm text-slate-700 font-medium">Host</Label>
-                                                            <p className="text-sm text-slate-600 mt-1 font-mono">{action.connection.host}</p>
+                                                            <p className="text-sm text-slate-600 mt-1 font-mono break-all">{action.connection.host}</p>
                                                           </div>
                                                           {!isNone(action.connection.port) && (
                                                             <div>
@@ -929,9 +929,9 @@ export function WorkflowEditor({ workflowId, templateSlug, onClose, onSave }: Wo
                                                             </div>
                                                           )}
                                                           {!isNoneOrEmpty(action.connection.endpoint) && (
-                                                            <div>
+                                                            <div className="lg:col-span-2">
                                                               <Label className="text-sm text-slate-700 font-medium">Endpoint</Label>
-                                                              <p className="text-sm text-slate-600 mt-1 font-mono">{action.connection.endpoint}</p>
+                                                              <p className="text-sm text-slate-600 mt-1 font-mono break-all">{action.connection.endpoint}</p>
                                                             </div>
                                                           )}
                                                         </div>
@@ -992,7 +992,7 @@ export function WorkflowEditor({ workflowId, templateSlug, onClose, onSave }: Wo
                     ))}
 
                     {/* Add Action Button */}
-                    <div className="flex justify-center py-6">
+                    <div className="flex justify-center py-4 lg:py-6">
                       <ActionTemplatePicker
                         onSelectTemplate={(template) => {
                           if (template) {
@@ -1009,8 +1009,8 @@ export function WorkflowEditor({ workflowId, templateSlug, onClose, onSave }: Wo
                           }
                         }}
                       >
-                        <Button variant="outline" className="flex items-center gap-2 h-10 px-4">
-                          <Plus className="h-4 w-4" />
+                        <Button variant="outline" className="flex items-center gap-2 h-9 lg:h-10 px-3 lg:px-4 text-sm">
+                          <Plus className="h-3 w-3 lg:h-4 lg:w-4" />
                           Add action
                         </Button>
                       </ActionTemplatePicker>

@@ -81,59 +81,11 @@ export const WorkflowPreviewModal = ({
           onClick: () => setOpen(true),
         })}
       </SheetTrigger>
-      <SheetContent className="w-[800px] min-w-[800px] sm:max-w-[800px] p-0 shadow-none">
+      <SheetContent className="w-full sm:w-[800px] sm:max-w-[800px] p-0 shadow-none">
         <div className="h-full flex flex-col">
           <SheetHeader className="sticky top-0 z-10 bg-white px-4 py-3 border-b">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3 flex-1 min-w-0">
-                <div className="flex items-center space-x-2 min-w-0">
-                  {getStatusIcon(workflow_event?.status as string)}
-                  <SheetTitle className="text-lg font-semibold text-slate-900 truncate">
-                    Workflow Event
-                  </SheetTitle>
-                </div>
-                <Badge className={`${getStatusColor(workflow_event?.status as string)} text-xs font-medium flex-shrink-0`}>
-                  {workflow_event?.status}
-                </Badge>
-              </div>
-              <div className="flex items-center space-x-2 flex-shrink-0">
-                <AppLink
-                  href={`/workflows/events/${eventId}`}
-                  target="_blank"
-                  className="hidden sm:inline-flex"
-                >
-                  <Button variant="outline" size="sm" className="h-8 text-xs">
-                    <ExternalLink className="h-3 w-3 mr-1" />
-                    <span className="hidden md:inline">View Full Page</span>
-                    <span className="md:hidden">View</span>
-                  </Button>
-                </AppLink>
-                <SheetClose asChild>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-slate-100">
-                    <X className="h-4 w-4" />
-                    <span className="sr-only">Close</span>
-                  </Button>
-                </SheetClose>
-              </div>
-            </div>
-            <div className="text-sm text-slate-600 mt-1 pr-10">
-              <span className="block truncate">
-                {workflow_event?.event_type} trigger of "{workflow_event?.workflow?.name}"
-              </span>
-            </div>
-            {/* Mobile-only view full page link */}
-            <div className="sm:hidden mt-2">
-              <AppLink
-                href={`/workflows/events/${eventId}`}
-                target="_blank"
-                className="inline-flex"
-              >
-                <Button variant="outline" size="sm" className="h-7 text-xs w-full">
-                  <ExternalLink className="h-3 w-3 mr-1" />
-                  View Full Page
-                </Button>
-              </AppLink>
-            </div>
+            <SheetTitle className="text-lg font-semibold">Event Preview</SheetTitle>
+            <p className="text-xs text-slate-600">Preview workflow execution details and debug information.</p>
           </SheetHeader>
 
           {query.isFetching ? (

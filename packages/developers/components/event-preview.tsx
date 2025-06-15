@@ -1,4 +1,4 @@
-import { EventComponent } from "@karrio/core/modules/Developers/event";
+import { EventComponent } from "@karrio/developers/modules/event";
 import { useLocation } from "@karrio/hooks/location";
 import React, { useState } from "react";
 

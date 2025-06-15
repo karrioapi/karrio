@@ -110,11 +110,11 @@ export function ConnectionModalEditor({ connection, onSubmit, trigger }: Connect
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>{trigger}</SheetTrigger>
-      <SheetContent className="w-[800px] min-w-[800px] sm:max-w-[800px] p-0 shadow-none">
+      <SheetContent className="w-full sm:w-[800px] sm:max-w-[800px] p-0 shadow-none">
         <div className="h-full flex flex-col">
           <SheetHeader className="sticky top-0 z-10 bg-white px-4 py-3 border-b">
             <SheetTitle className="text-lg font-semibold">Edit Connection</SheetTitle>
-            <p className="text-xs text-slate-600">Configure authentication settings for this connection.</p>
+            <p className="text-xs text-slate-600">Configure connection settings and authentication for this action.</p>
           </SheetHeader>
 
           <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto">

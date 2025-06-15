@@ -169,7 +169,7 @@ ORDERS_MANAGEMENT = (
 )
 APPS_MANAGEMENT = (
     importlib.util.find_spec("karrio.server.apps") is not None  # type:ignore
-)
+) and config("APPS_MANAGEMENT", default=(True if DEBUG else False), cast=bool)
 DOCUMENTS_MANAGEMENT = (
     importlib.util.find_spec("karrio.server.documents") is not None  # type:ignore
 )
@@ -188,7 +188,7 @@ AUDIT_LOGGING = importlib.util.find_spec(  # type:ignore
 PERSIST_SDK_TRACING = config("PERSIST_SDK_TRACING", default=True, cast=bool)
 WORKFLOW_MANAGEMENT = (
     importlib.util.find_spec("karrio.server.automation") is not None  # type:ignore
-)
+) and config("WORKFLOW_MANAGEMENT", default=(True if DEBUG else False), cast=bool)
 SHIPPING_RULES = (
     importlib.util.find_spec("karrio.server.automation") is not None  # type:ignore
 )
@@ -472,16 +472,20 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 }
 
-# Oauth2 config
+# OAuth2 config
 OIDC_RSA_PRIVATE_KEY = config("OIDC_RSA_PRIVATE_KEY", default="").replace("\\n", "\n")
 OAUTH2_PROVIDER_APPLICATION_MODEL = "oauth2_provider.Application"
 OAUTH2_PROVIDER = {
-    "PKCE_REQUIRED": False,
+    "PKCE_REQUIRED": config("OAUTH_PKCE_REQUIRED", default=False, cast=bool),
     "OIDC_ENABLED": True,
     "OIDC_RSA_PRIVATE_KEY": OIDC_RSA_PRIVATE_KEY,
+    "AUTHORIZATION_CODE_EXPIRE_SECONDS": 600,  # 10 minutes
+    "ACCESS_TOKEN_EXPIRE_SECONDS": 3600,       # 1 hour
+    "REFRESH_TOKEN_EXPIRE_SECONDS": 3600 * 24 * 365,  # 1 year
+    "ROTATE_REFRESH_TOKEN": True,
     "SCOPES": {
-        "read": "Reading scope",
-        "write": "Writing scope",
+        "read": "Read access to Karrio data",
+        "write": "Write access to Karrio data",
         "openid": "OpenID connect",
     },
     "OAUTH2_VALIDATOR_CLASS": "karrio.server.core.oauth_validators.CustomOAuth2Validator",
@@ -589,6 +593,11 @@ LOGGING = {
         },
     },
     "loggers": {
+        'oauth2_provider': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': True,
+        },
         "django": {
             "handlers": ["file", "console"],
             "level": DJANGO_LOG_LEVEL,

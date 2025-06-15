@@ -13,6 +13,8 @@
     "@karrio/hooks": "*",
     "@karrio/lib": "*",
     "@karrio/types": "*",
+    "@karrio/developers": "*",
+    "@karrio/app-store": "*",
     "@karrio/ui": "*",
     "axios": "^1.6.7",
     "next-runtime-env": "^3.2.2"

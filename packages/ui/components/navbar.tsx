@@ -1,166 +1,93 @@
-import Link from "next/link";
-import {
-  CircleUser,
-  CirclePlus,
-  Home,
-  LineChart,
-  Menu,
-  Package,
-  Package2,
-  Search,
-  ShoppingCart,
-  Users,
-} from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@karrio/ui/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@karrio/ui/components/ui/dropdown-menu";
-import { Badge } from "@karrio/ui/components/ui/badge";
-import { Input } from "@karrio/ui/components/ui/input";
+"use client";
+
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { useAppMode } from "@karrio/hooks/app-mode";
 import { Button } from "@karrio/ui/components/ui/button";
-import { Switch } from "@karrio/ui/components/ui/switch";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@karrio/ui/components/ui/sheet";
+import { ShortcutDropdown } from "./shortcut-dropdown";
+import { AccountDropdown } from "./account-dropdown";
+import { Search, Loader2 } from "lucide-react";
+import { TestModeToggle } from "./test-mode-toggle";
+import { SidebarTrigger } from "@karrio/ui/components/ui/sidebar";
+import { Separator } from "@karrio/ui/components/ui/separator";
+import React, { Suspense, useState } from "react";
+// import { SearchBar } from "./search-bar";
+import { SearchBar } from "@karrio/ui/core/forms/search-bar";
+import { SearchModal } from "./search-modal";
 
-export const Navbar = () => {
+// Lazy load the AppLauncher component
+const AppLauncher = React.lazy(() =>
+  import("@karrio/app-store").then(module => ({ default: module.AppLauncher }))
+);
+
+// Main Navbar Component
+export function Navbar() {
+  const { metadata } = useAPIMetadata();
+  const { testMode } = useAppMode();
+  const [showMobileSearchModal, setShowMobileSearchModal] = useState(false);
+
+
+
   return (
-    <header className="flex h-14 items-center gap-4 px-4 lg:h-[60px] lg:px-6">
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button variant="outline" size="icon" className="shrink-0 md:hidden">
-            <Menu className="h-5 w-5" />
-            <span className="sr-only">Toggle navigation menu</span>
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="left" className="flex flex-col">
-          <nav className="grid gap-2 text-lg font-medium">
-            <Link
-              href="#"
-              className="flex items-center gap-2 text-lg font-semibold"
+    <>
+      {/* Main Navbar */}
+      <header className={`sticky z-40 flex h-14 shrink-0 items-center gap-2 bg-white transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 ${testMode ? 'top-[4px]' : 'top-0'}`}>
+        <div className="flex items-center gap-2 w-full max-w-7xl mx-auto px-4 2xl:px-0">
+          {/* Mobile Sidebar Trigger */}
+          <SidebarTrigger className="-ml-1 md:hidden" />
+          <Separator
+            orientation="vertical"
+            className="mr-2 h-4 md:hidden"
+          />
+
+          {/* Left Section - Search */}
+          <div className="flex items-center gap-4 flex-1">
+            {/* Desktop Search - Hidden on mobile */}
+            <div className="hidden md:block w-full">
+              {/* <SearchBar /> */}
+              <SearchBar />
+            </div>
+          </div>
+
+          {/* Right Section - Action Buttons */}
+          <div className="flex items-center gap-2">
+            {/* Mobile Search Toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={() => setShowMobileSearchModal(true)}
             >
-              <Package2 className="h-6 w-6" />
-              <span className="sr-only">Acme Inc</span>
-            </Link>
-            <Link
-              href="#"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-            >
-              <Home className="h-5 w-5" />
-              Dashboard
-            </Link>
-            <Link
-              href="#"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl bg-muted px-3 py-2 text-foreground hover:text-foreground"
-            >
-              <ShoppingCart className="h-5 w-5" />
-              Orders
-              <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                6
-              </Badge>
-            </Link>
-            <Link
-              href="#"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-            >
-              <Package className="h-5 w-5" />
-              Products
-            </Link>
-            <Link
-              href="#"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-            >
-              <Users className="h-5 w-5" />
-              Customers
-            </Link>
-            <Link
-              href="#"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-            >
-              <LineChart className="h-5 w-5" />
-              Analytics
-            </Link>
-          </nav>
-          <div className="mt-auto">
-            <Card>
-              <CardHeader>
-                <CardTitle>Upgrade to Pro</CardTitle>
-                <CardDescription>
-                  Unlock all features and get unlimited access to our support
-                  team.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button size="sm" className="w-full">
-                  Upgrade
+              <Search className="h-4 w-4" />
+            </Button>
+
+            {/* Test Mode Toggle */}
+            <TestModeToggle />
+
+            {/* App Launcher */}
+            {metadata?.APPS_MANAGEMENT && (
+              <Suspense fallback={
+                <Button variant="outline" size="icon" disabled className="rounded-full">
+                  <Loader2 className="h-4 w-4 animate-spin" />
                 </Button>
-              </CardContent>
-            </Card>
+              }>
+                <AppLauncher />
+              </Suspense>
+            )}
+
+            {/* Shortcut Dropdown */}
+            <ShortcutDropdown />
+
+            {/* Account Dropdown */}
+            <AccountDropdown />
           </div>
-        </SheetContent>
-      </Sheet>
+        </div>
 
-      <div className="w-full flex-1">
-        <form>
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search..."
-              className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
-            />
-          </div>
-        </form>
-      </div>
-
-      <Switch title="Toggle Test Mode" />
-
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="secondary" size="icon" className="rounded-full">
-            <CirclePlus className="h-5 w-5" />
-            <span className="sr-only">Toggle add menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>ONLINE SHIPPING</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Connect carrier</DropdownMenuItem>
-          <DropdownMenuItem>Create order</DropdownMenuItem>
-          <DropdownMenuItem>Create shipment</DropdownMenuItem>
-          <DropdownMenuItem>Create tracker</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="secondary" size="icon" className="rounded-full">
-            <CircleUser className="h-5 w-5" />
-            <span className="sr-only">Toggle user menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuItem>Support</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Logout</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </header>
+        {/* Mobile Search Modal */}
+        <SearchModal
+          open={showMobileSearchModal}
+          onOpenChange={setShowMobileSearchModal}
+        />
+      </header>
+    </>
   );
-};
+}

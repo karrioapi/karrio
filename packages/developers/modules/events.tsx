@@ -9,9 +9,10 @@ import {
   EventPreviewContext,
 } from "@karrio/developers/components/event-preview";
 import { EventsFilter } from "@karrio/ui/core/filters/events-filter";
-import { AppLink } from "@karrio/ui/core/components/app-link";
 import { useLoader } from "@karrio/ui/core/components/loader";
+import { AppLink } from "@karrio/ui/core/components/app-link";
 import { Spinner } from "@karrio/ui/core/components/spinner";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import React, { useContext, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useEvents } from "@karrio/hooks/event";
@@ -22,6 +23,7 @@ export default function EventsPage() {
     const context = useEvents();
     const searchParams = useSearchParams();
     const { setLoading } = useLoader();
+    const { metadata } = useAPIMetadata();
     const { previewEvent } = useContext(EventPreviewContext);
     const [initialized, setInitialized] = React.useState(false);
     const {
@@ -82,6 +84,17 @@ export default function EventsPage() {
                 <span>API Keys</span>
               </AppLink>
             </li>
+            {metadata?.APPS_MANAGEMENT && (
+              <li className={`is-capitalized has-text-weight-semibold`}>
+                <AppLink
+                  href="/developers/apps"
+                  shallow={false}
+                  prefetch={false}
+                >
+                  <span>Apps</span>
+                </AppLink>
+              </li>
+            )}
             <li className={`is-capitalized has-text-weight-semibold`}>
               <AppLink
                 href="/developers/webhooks"

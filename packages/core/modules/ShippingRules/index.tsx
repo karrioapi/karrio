@@ -349,7 +349,7 @@ export default function Page(pageProps: any) {
                                   Edit
                                 </DropdownMenuItem>
                               </SheetTrigger>
-                              <SheetContent className="w-[800px] min-w-[800px] sm:max-w-[800px] p-0 shadow-none">
+                              <SheetContent className="w-full sm:w-[800px] sm:max-w-[800px] p-0 shadow-none">
                                 <ShippingRuleForm
                                   ruleId={rule.id}
                                   onClose={() => setEditingId(null)}
@@ -422,16 +422,15 @@ export default function Page(pageProps: any) {
             </AlertDialogContent>
           </AlertDialog>
 
-          {/* Create Form Sheet */}
+          {/* Create Rule Sheet */}
           <Sheet open={isCreating} onOpenChange={(open) => {
             if (!open) {
               setIsCreating(false);
               setSelectedTemplate(null);
             }
           }}>
-            <SheetContent className="w-[800px] min-w-[800px] sm:max-w-[800px] p-0 shadow-none">
+            <SheetContent className="w-full sm:w-[800px] sm:max-w-[800px] p-0 shadow-none">
               <ShippingRuleForm
-                ruleId="new"
                 templateData={selectedTemplate}
                 onClose={() => {
                   setIsCreating(false);

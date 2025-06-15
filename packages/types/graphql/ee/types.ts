@@ -4,46 +4,10 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GetApp
+// GraphQL query operation: GetOAuthApps
 // ====================================================
 
-export interface GetApp_app_installation {
-  id: string;
-  access_scopes: string[];
-  metadata: any | null;
-}
-
-export interface GetApp_app {
-  id: string;
-  display_name: string;
-  developer_name: string;
-  is_public: boolean;
-  is_builtin: boolean;
-  is_embedded: boolean;
-  is_published: boolean;
-  launch_url: string;
-  features: string[];
-  metadata: any | null;
-  installation: GetApp_app_installation | null;
-}
-
-export interface GetApp {
-  app: GetApp_app;
-}
-
-export interface GetAppVariables {
-  id: string;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: GetApps
-// ====================================================
-
-export interface GetApps_apps_page_info {
+export interface GetOAuthApps_oauth_apps_page_info {
   count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
@@ -51,80 +15,76 @@ export interface GetApps_apps_page_info {
   end_cursor: string | null;
 }
 
-export interface GetApps_apps_edges_node_installation {
-  id: string;
-  access_scopes: string[];
-  metadata: any | null;
+export interface GetOAuthApps_oauth_apps_edges_node_created_by {
+  email: string;
+  full_name: string;
 }
 
-export interface GetApps_apps_edges_node {
+export interface GetOAuthApps_oauth_apps_edges_node {
   id: string;
+  object_type: string;
   display_name: string;
-  developer_name: string;
-  is_public: boolean;
-  is_builtin: boolean;
-  is_embedded: boolean;
-  is_published: boolean;
+  description: string | null;
   launch_url: string;
-  features: string[];
-  metadata: any | null;
-  installation: GetApps_apps_edges_node_installation | null;
-}
-
-export interface GetApps_apps_edges {
-  node: GetApps_apps_edges_node;
-}
-
-export interface GetApps_apps {
-  page_info: GetApps_apps_page_info;
-  edges: GetApps_apps_edges[];
-}
-
-export interface GetApps {
-  apps: GetApps_apps;
-}
-
-export interface GetAppsVariables {
-  filter?: AppFilter | null;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: GetPrivateApp
-// ====================================================
-
-export interface GetPrivateApp_private_app_installation {
-  id: string;
-  access_scopes: string[];
-  metadata: any | null;
-}
-
-export interface GetPrivateApp_private_app {
-  id: string;
-  display_name: string;
-  developer_name: string;
-  is_public: boolean;
-  is_builtin: boolean;
-  is_embedded: boolean;
-  is_published: boolean;
-  launch_url: string;
+  redirect_uris: string;
   features: string[];
   client_id: string;
-  redirect_uris: string;
   created_at: any;
   updated_at: any;
   metadata: any | null;
-  installation: GetPrivateApp_private_app_installation | null;
+  created_by: GetOAuthApps_oauth_apps_edges_node_created_by;
 }
 
-export interface GetPrivateApp {
-  private_app: GetPrivateApp_private_app;
+export interface GetOAuthApps_oauth_apps_edges {
+  node: GetOAuthApps_oauth_apps_edges_node;
 }
 
-export interface GetPrivateAppVariables {
+export interface GetOAuthApps_oauth_apps {
+  page_info: GetOAuthApps_oauth_apps_page_info;
+  edges: GetOAuthApps_oauth_apps_edges[];
+}
+
+export interface GetOAuthApps {
+  oauth_apps: GetOAuthApps_oauth_apps;
+}
+
+export interface GetOAuthAppsVariables {
+  filter?: OAuthAppFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetOAuthApp
+// ====================================================
+
+export interface GetOAuthApp_oauth_app_created_by {
+  email: string;
+  full_name: string;
+}
+
+export interface GetOAuthApp_oauth_app {
+  id: string;
+  object_type: string;
+  display_name: string;
+  description: string | null;
+  launch_url: string;
+  redirect_uris: string;
+  features: string[];
+  client_id: string;
+  created_at: any;
+  updated_at: any;
+  metadata: any | null;
+  created_by: GetOAuthApp_oauth_app_created_by;
+}
+
+export interface GetOAuthApp {
+  oauth_app: GetOAuthApp_oauth_app;
+}
+
+export interface GetOAuthAppVariables {
   id: string;
 }
 
@@ -133,10 +93,10 @@ export interface GetPrivateAppVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GetPrivateApps
+// GraphQL query operation: GetAppInstallations
 // ====================================================
 
-export interface GetPrivateApps_private_apps_page_info {
+export interface GetAppInstallations_app_installations_page_info {
   count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
@@ -144,45 +104,262 @@ export interface GetPrivateApps_private_apps_page_info {
   end_cursor: string | null;
 }
 
-export interface GetPrivateApps_private_apps_edges_node_installation {
-  id: string;
-  access_scopes: string[];
-  metadata: any | null;
+export interface GetAppInstallations_app_installations_edges_node_created_by {
+  email: string;
+  full_name: string;
 }
 
-export interface GetPrivateApps_private_apps_edges_node {
+export interface GetAppInstallations_app_installations_edges_node_oauth_app {
   id: string;
   display_name: string;
-  developer_name: string;
-  is_public: boolean;
-  is_builtin: boolean;
-  is_embedded: boolean;
-  is_published: boolean;
-  launch_url: string;
-  features: string[];
   client_id: string;
-  redirect_uris: string;
+  features: string[];
+}
+
+export interface GetAppInstallations_app_installations_edges_node_metafields {
+  id: string;
+  key: string;
+  value: string | null;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+}
+
+export interface GetAppInstallations_app_installations_edges_node {
+  id: string;
+  object_type: string;
+  app_id: string;
+  app_type: string;
+  access_scopes: string[];
+  is_active: boolean;
+  requires_oauth: boolean;
   created_at: any;
   updated_at: any;
   metadata: any | null;
-  installation: GetPrivateApps_private_apps_edges_node_installation | null;
+  created_by: GetAppInstallations_app_installations_edges_node_created_by;
+  oauth_app: GetAppInstallations_app_installations_edges_node_oauth_app | null;
+  metafields: GetAppInstallations_app_installations_edges_node_metafields[];
 }
 
-export interface GetPrivateApps_private_apps_edges {
-  node: GetPrivateApps_private_apps_edges_node;
+export interface GetAppInstallations_app_installations_edges {
+  node: GetAppInstallations_app_installations_edges_node;
 }
 
-export interface GetPrivateApps_private_apps {
-  page_info: GetPrivateApps_private_apps_page_info;
-  edges: GetPrivateApps_private_apps_edges[];
+export interface GetAppInstallations_app_installations {
+  page_info: GetAppInstallations_app_installations_page_info;
+  edges: GetAppInstallations_app_installations_edges[];
 }
 
-export interface GetPrivateApps {
-  private_apps: GetPrivateApps_private_apps;
+export interface GetAppInstallations {
+  app_installations: GetAppInstallations_app_installations;
 }
 
-export interface GetPrivateAppsVariables {
-  filter?: AppFilter | null;
+export interface GetAppInstallationsVariables {
+  filter?: AppInstallationFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetAppInstallation
+// ====================================================
+
+export interface GetAppInstallation_app_installation_created_by {
+  email: string;
+  full_name: string;
+}
+
+export interface GetAppInstallation_app_installation_oauth_app {
+  id: string;
+  display_name: string;
+  client_id: string;
+  features: string[];
+}
+
+export interface GetAppInstallation_app_installation_metafields {
+  id: string;
+  key: string;
+  value: string | null;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+}
+
+export interface GetAppInstallation_app_installation {
+  id: string;
+  object_type: string;
+  app_id: string;
+  app_type: string;
+  access_scopes: string[];
+  is_active: boolean;
+  requires_oauth: boolean;
+  created_at: any;
+  updated_at: any;
+  metadata: any | null;
+  created_by: GetAppInstallation_app_installation_created_by;
+  oauth_app: GetAppInstallation_app_installation_oauth_app | null;
+  metafields: GetAppInstallation_app_installation_metafields[];
+}
+
+export interface GetAppInstallation {
+  app_installation: GetAppInstallation_app_installation;
+}
+
+export interface GetAppInstallationVariables {
+  id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetAppInstallationByAppId
+// ====================================================
+
+export interface GetAppInstallationByAppId_app_installation_by_app_id_oauth_app {
+  id: string;
+  display_name: string;
+  client_id: string;
+  features: string[];
+}
+
+export interface GetAppInstallationByAppId_app_installation_by_app_id_metafields {
+  id: string;
+  key: string;
+  value: string | null;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+}
+
+export interface GetAppInstallationByAppId_app_installation_by_app_id {
+  id: string;
+  object_type: string;
+  app_id: string;
+  app_type: string;
+  access_scopes: string[];
+  is_active: boolean;
+  requires_oauth: boolean;
+  created_at: any;
+  updated_at: any;
+  metadata: any | null;
+  oauth_app: GetAppInstallationByAppId_app_installation_by_app_id_oauth_app | null;
+  metafields: GetAppInstallationByAppId_app_installation_by_app_id_metafields[];
+}
+
+export interface GetAppInstallationByAppId {
+  app_installation_by_app_id: GetAppInstallationByAppId_app_installation_by_app_id;
+}
+
+export interface GetAppInstallationByAppIdVariables {
+  app_id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: CreateOAuthApp
+// ====================================================
+
+export interface CreateOAuthApp_create_oauth_app_oauth_app {
+  id: string;
+  object_type: string;
+  display_name: string;
+  description: string | null;
+  launch_url: string;
+  redirect_uris: string;
+  features: string[];
+  client_id: string;
+  client_secret: string;
+  created_at: any;
+  updated_at: any;
+  metadata: any | null;
+}
+
+export interface CreateOAuthApp_create_oauth_app_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface CreateOAuthApp_create_oauth_app {
+  oauth_app: CreateOAuthApp_create_oauth_app_oauth_app | null;
+  errors: CreateOAuthApp_create_oauth_app_errors[] | null;
+}
+
+export interface CreateOAuthApp {
+  create_oauth_app: CreateOAuthApp_create_oauth_app;
+}
+
+export interface CreateOAuthAppVariables {
+  data: CreateOAuthAppMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateOAuthApp
+// ====================================================
+
+export interface UpdateOAuthApp_update_oauth_app_oauth_app {
+  id: string;
+  object_type: string;
+  display_name: string;
+  description: string | null;
+  launch_url: string;
+  redirect_uris: string;
+  features: string[];
+  client_id: string;
+  created_at: any;
+  updated_at: any;
+  metadata: any | null;
+}
+
+export interface UpdateOAuthApp_update_oauth_app_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UpdateOAuthApp_update_oauth_app {
+  oauth_app: UpdateOAuthApp_update_oauth_app_oauth_app | null;
+  errors: UpdateOAuthApp_update_oauth_app_errors[] | null;
+}
+
+export interface UpdateOAuthApp {
+  update_oauth_app: UpdateOAuthApp_update_oauth_app;
+}
+
+export interface UpdateOAuthAppVariables {
+  data: UpdateOAuthAppMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DeleteOAuthApp
+// ====================================================
+
+export interface DeleteOAuthApp_delete_oauth_app_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface DeleteOAuthApp_delete_oauth_app {
+  success: boolean;
+  errors: DeleteOAuthApp_delete_oauth_app_errors[] | null;
+}
+
+export interface DeleteOAuthApp {
+  delete_oauth_app: DeleteOAuthApp_delete_oauth_app;
+}
+
+export interface DeleteOAuthAppVariables {
+  data: DeleteOAuthAppMutationInput;
 }
 
 
@@ -193,12 +370,34 @@ export interface GetPrivateAppsVariables {
 // GraphQL mutation operation: InstallApp
 // ====================================================
 
+export interface InstallApp_install_app_installation_oauth_app {
+  id: string;
+  display_name: string;
+  client_id: string;
+  features: string[];
+}
+
+export interface InstallApp_install_app_installation_metafields {
+  id: string;
+  key: string;
+  value: string | null;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+}
+
 export interface InstallApp_install_app_installation {
   id: string;
+  object_type: string;
+  app_id: string;
+  app_type: string;
   access_scopes: string[];
+  is_active: boolean;
+  requires_oauth: boolean;
   created_at: any;
   updated_at: any;
   metadata: any | null;
+  oauth_app: InstallApp_install_app_installation_oauth_app | null;
+  metafields: InstallApp_install_app_installation_metafields[];
 }
 
 export interface InstallApp_install_app_errors {
@@ -227,33 +426,13 @@ export interface InstallAppVariables {
 // GraphQL mutation operation: UninstallApp
 // ====================================================
 
-export interface UninstallApp_uninstall_app_app_installation {
-  id: string;
-  access_scopes: string[];
-  metadata: any | null;
-}
-
-export interface UninstallApp_uninstall_app_app {
-  id: string;
-  display_name: string;
-  developer_name: string;
-  is_public: boolean;
-  is_builtin: boolean;
-  is_embedded: boolean;
-  is_published: boolean;
-  launch_url: string;
-  features: string[];
-  metadata: any | null;
-  installation: UninstallApp_uninstall_app_app_installation | null;
-}
-
 export interface UninstallApp_uninstall_app_errors {
   field: string;
   messages: string[];
 }
 
 export interface UninstallApp_uninstall_app {
-  app: UninstallApp_uninstall_app_app | null;
+  success: boolean;
   errors: UninstallApp_uninstall_app_errors[] | null;
 }
 
@@ -270,112 +449,55 @@ export interface UninstallAppVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: CreateApp
+// GraphQL mutation operation: UpdateAppInstallation
 // ====================================================
 
-export interface CreateApp_create_app_app {
+export interface UpdateAppInstallation_update_app_installation_installation_oauth_app {
   id: string;
   display_name: string;
-  developer_name: string;
-  is_public: boolean;
-  is_builtin: boolean;
-  is_embedded: boolean;
-  is_published: boolean;
-  launch_url: string;
-  features: string[];
   client_id: string;
-  redirect_uris: string;
+  features: string[];
+}
+
+export interface UpdateAppInstallation_update_app_installation_installation_metafields {
+  id: string;
+  key: string;
+  value: string | null;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+}
+
+export interface UpdateAppInstallation_update_app_installation_installation {
+  id: string;
+  object_type: string;
+  app_id: string;
+  app_type: string;
+  access_scopes: string[];
+  is_active: boolean;
+  requires_oauth: boolean;
   created_at: any;
   updated_at: any;
   metadata: any | null;
+  oauth_app: UpdateAppInstallation_update_app_installation_installation_oauth_app | null;
+  metafields: UpdateAppInstallation_update_app_installation_installation_metafields[];
 }
 
-export interface CreateApp_create_app_errors {
+export interface UpdateAppInstallation_update_app_installation_errors {
   field: string;
   messages: string[];
 }
 
-export interface CreateApp_create_app {
-  app: CreateApp_create_app_app | null;
-  client_secret: string | null;
-  errors: CreateApp_create_app_errors[] | null;
+export interface UpdateAppInstallation_update_app_installation {
+  installation: UpdateAppInstallation_update_app_installation_installation | null;
+  errors: UpdateAppInstallation_update_app_installation_errors[] | null;
 }
 
-export interface CreateApp {
-  create_app: CreateApp_create_app;
+export interface UpdateAppInstallation {
+  update_app_installation: UpdateAppInstallation_update_app_installation;
 }
 
-export interface CreateAppVariables {
-  data: CreateAppMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: UpdateApp
-// ====================================================
-
-export interface UpdateApp_update_app_app {
-  id: string;
-  display_name: string;
-  developer_name: string;
-  is_public: boolean;
-  is_builtin: boolean;
-  is_embedded: boolean;
-  is_published: boolean;
-  launch_url: string;
-  features: string[];
-  client_id: string;
-  redirect_uris: string;
-  created_at: any;
-  updated_at: any;
-  metadata: any | null;
-}
-
-export interface UpdateApp_update_app_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface UpdateApp_update_app {
-  app: UpdateApp_update_app_app | null;
-  errors: UpdateApp_update_app_errors[] | null;
-}
-
-export interface UpdateApp {
-  update_app: UpdateApp_update_app;
-}
-
-export interface UpdateAppVariables {
-  data: UpdateAppMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: DeleteApp
-// ====================================================
-
-export interface DeleteApp_delete_app_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface DeleteApp_delete_app {
-  id: string;
-  errors: DeleteApp_delete_app_errors[] | null;
-}
-
-export interface DeleteApp {
-  delete_app: DeleteApp_delete_app;
-}
-
-export interface DeleteAppVariables {
-  data: DeleteMutationInput;
+export interface UpdateAppInstallationVariables {
+  data: UpdateAppInstallationMutationInput;
 }
 
 
@@ -2550,6 +2672,12 @@ export interface DeleteShippingRuleVariables {
 // START Enums and Input Objects
 //==============================================================
 
+export enum MetafieldTypeEnum {
+  boolean = "boolean",
+  number = "number",
+  text = "text",
+}
+
 export enum UserRole {
   admin = "admin",
   developer = "developer",
@@ -2596,12 +2724,6 @@ export enum AutomationAuthType {
   oauth2 = "oauth2",
 }
 
-export enum MetafieldTypeEnum {
-  boolean = "boolean",
-  number = "number",
-  text = "text",
-}
-
 export enum AutomationEventStatus {
   aborted = "aborted",
   cancelled = "cancelled",
@@ -2643,9 +2765,10 @@ export enum SelectServiceStrategy {
 }
 
 // null
-export interface AppFilter {
+export interface OAuthAppFilter {
   offset?: number | null;
   first?: number | null;
+  display_name?: string | null;
   features?: string[] | null;
   metadata_key?: string | null;
   metadata_value?: string | null;
@@ -2654,10 +2777,62 @@ export interface AppFilter {
 }
 
 // null
+export interface AppInstallationFilter {
+  offset?: number | null;
+  first?: number | null;
+  app_id?: string | null;
+  app_type?: string | null;
+  is_active?: boolean | null;
+  metadata_key?: string | null;
+  metadata_value?: string | null;
+  created_after?: any | null;
+  created_before?: any | null;
+}
+
+// null
+export interface CreateOAuthAppMutationInput {
+  display_name: string;
+  description?: string | null;
+  launch_url: string;
+  redirect_uris: string;
+  features?: string[] | null;
+  metadata?: any | null;
+}
+
+// null
+export interface UpdateOAuthAppMutationInput {
+  id: string;
+  display_name?: string | null;
+  description?: string | null;
+  launch_url?: string | null;
+  redirect_uris?: string | null;
+  features?: string[] | null;
+  metadata?: any | null;
+}
+
+// null
+export interface DeleteOAuthAppMutationInput {
+  id: string;
+}
+
+// null
 export interface InstallAppMutationInput {
   app_id: string;
-  access_scopes: string[];
+  app_type?: string | null;
+  access_scopes?: string[] | null;
   metadata?: any | null;
+  metafields?: CreateMetafieldInput[] | null;
+  requires_oauth?: boolean | null;
+  oauth_app_data?: CreateOAuthAppMutationInput | null;
+}
+
+// null
+export interface CreateMetafieldInput {
+  key: string;
+  type: MetafieldTypeEnum;
+  value?: string | null;
+  namespace?: string | null;
+  is_required?: boolean | null;
 }
 
 // null
@@ -2666,33 +2841,22 @@ export interface UninstallAppMutationInput {
 }
 
 // null
-export interface CreateAppMutationInput {
-  display_name: string;
-  developer_name: string;
-  launch_url: string;
-  is_embedded: boolean;
-  features?: string[] | null;
-  redirect_uris: string;
-  is_public?: boolean | null;
+export interface UpdateAppInstallationMutationInput {
+  id: string;
+  access_scopes?: string[] | null;
+  is_active?: boolean | null;
   metadata?: any | null;
+  metafields?: MetafieldInput[] | null;
 }
 
 // null
-export interface UpdateAppMutationInput {
-  id: string;
-  display_name?: string | null;
-  developer_name?: string | null;
-  launch_url?: string | null;
-  is_embedded?: boolean | null;
-  features?: string[] | null;
-  redirect_uris?: string | null;
-  is_public?: boolean | null;
-  metadata?: any | null;
-}
-
-// null
-export interface DeleteMutationInput {
-  id: string;
+export interface MetafieldInput {
+  key: string;
+  type: MetafieldTypeEnum;
+  value?: string | null;
+  namespace?: string | null;
+  is_required?: boolean | null;
+  id?: string | null;
 }
 
 // null
@@ -2744,6 +2908,11 @@ export interface SendOrganizationInvitesMutationInput {
 // null
 export interface AcceptOrganizationInvitationMutationInput {
   guid: string;
+}
+
+// null
+export interface DeleteMutationInput {
+  id: string;
 }
 
 // null
@@ -2831,16 +3000,6 @@ export interface PartialWorkflowActionMutationInput {
 }
 
 // null
-export interface MetafieldInput {
-  key: string;
-  type: MetafieldTypeEnum;
-  value?: string | null;
-  namespace?: string | null;
-  is_required?: boolean | null;
-  id?: string | null;
-}
-
-// null
 export interface PartialWorkflowConnectionMutationInput {
   name?: string | null;
   auth_type?: AutomationAuthType | null;
@@ -2883,15 +3042,6 @@ export interface CreateWorkflowConnectionMutationInput {
   parameters_template?: string | null;
   template_slug?: string | null;
   metafields?: CreateMetafieldInput[] | null;
-}
-
-// null
-export interface CreateMetafieldInput {
-  key: string;
-  type: MetafieldTypeEnum;
-  value?: string | null;
-  namespace?: string | null;
-  is_required?: boolean | null;
 }
 
 // null

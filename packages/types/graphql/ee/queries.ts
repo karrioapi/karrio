@@ -5,31 +5,12 @@ import gql from "graphql-tag";
 // -----------------------------------------------------------
 //#region
 
-export const GET_APP = gql`
-  query GetApp($id: String!) {
-    app(id: $id) {
-      id
-      display_name
-      developer_name
-      is_public
-      is_builtin
-      is_embedded
-      is_published
-      launch_url
-      features
-      metadata
-      installation {
-        id
-        access_scopes
-        metadata
-      }
-    }
-  }
-`;
 
-export const GET_APPS = gql`
-  query GetApps($filter: AppFilter) {
-    apps(filter: $filter) {
+
+// OAuth Apps queries (replaces old private apps)
+export const GET_OAUTH_APPS = gql`
+  query GetOAuthApps($filter: OAuthAppFilter) {
+    oauth_apps(filter: $filter) {
       page_info {
         count
         has_next_page
@@ -40,82 +21,19 @@ export const GET_APPS = gql`
       edges {
         node {
           id
+          object_type
           display_name
-          developer_name
-          is_public
-          is_builtin
-          is_embedded
-          is_published
+          description
           launch_url
-          features
-          metadata
-          installation {
-            id
-            access_scopes
-            metadata
-          }
-        }
-      }
-    }
-  }
-`;
-
-export const GET_PRIVATE_APP = gql`
-  query GetPrivateApp($id: String!) {
-    private_app(id: $id) {
-      id
-      display_name
-      developer_name
-      is_public
-      is_builtin
-      is_embedded
-      is_published
-      launch_url
-      features
-      client_id
-      redirect_uris
-      created_at
-      updated_at
-      metadata
-      installation {
-        id
-        access_scopes
-        metadata
-      }
-    }
-  }
-`;
-
-export const GET_PRIVATE_APPS = gql`
-  query GetPrivateApps($filter: AppFilter) {
-    private_apps(filter: $filter) {
-      page_info {
-        count
-        has_next_page
-        has_previous_page
-        start_cursor
-        end_cursor
-      }
-      edges {
-        node {
-          id
-          display_name
-          developer_name
-          is_public
-          is_builtin
-          is_embedded
-          is_published
-          launch_url
+          redirect_uris
           features
           client_id
-          redirect_uris
           created_at
           updated_at
           metadata
-          installation {
-            id
-            access_scopes
-            metadata
+          created_by {
+            email
+            full_name
           }
         }
       }
@@ -123,15 +41,228 @@ export const GET_PRIVATE_APPS = gql`
   }
 `;
 
+export const GET_OAUTH_APP = gql`
+  query GetOAuthApp($id: String!) {
+    oauth_app(id: $id) {
+      id
+      object_type
+      display_name
+      description
+      launch_url
+      redirect_uris
+      features
+      client_id
+      created_at
+      updated_at
+      metadata
+      created_by {
+        email
+        full_name
+      }
+    }
+  }
+`;
+
+// App Installations queries (replaces old apps)
+export const GET_APP_INSTALLATIONS = gql`
+  query GetAppInstallations($filter: AppInstallationFilter) {
+    app_installations(filter: $filter) {
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
+      edges {
+        node {
+          id
+          object_type
+          app_id
+          app_type
+          access_scopes
+          is_active
+          requires_oauth
+          created_at
+          updated_at
+          metadata
+          created_by {
+            email
+            full_name
+          }
+          oauth_app {
+            id
+            display_name
+            client_id
+            features
+          }
+          metafields {
+            id
+            key
+            value
+            is_required
+            type
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const GET_APP_INSTALLATION = gql`
+  query GetAppInstallation($id: String!) {
+    app_installation(id: $id) {
+      id
+      object_type
+      app_id
+      app_type
+      access_scopes
+      is_active
+      requires_oauth
+      created_at
+      updated_at
+      metadata
+      created_by {
+        email
+        full_name
+      }
+      oauth_app {
+        id
+        display_name
+        client_id
+        features
+      }
+      metafields {
+        id
+        key
+        value
+        is_required
+        type
+      }
+    }
+  }
+`;
+
+export const GET_APP_INSTALLATION_BY_APP_ID = gql`
+  query GetAppInstallationByAppId($app_id: String!) {
+    app_installation_by_app_id(app_id: $app_id) {
+      id
+      object_type
+      app_id
+      app_type
+      access_scopes
+      is_active
+      requires_oauth
+      created_at
+      updated_at
+      metadata
+      oauth_app {
+        id
+        display_name
+        client_id
+        features
+      }
+      metafields {
+        id
+        key
+        value
+        is_required
+        type
+      }
+    }
+  }
+`;
+
+// OAuth App mutations (replaces old app mutations)
+export const CREATE_OAUTH_APP = gql`
+  mutation CreateOAuthApp($data: CreateOAuthAppMutationInput!) {
+    create_oauth_app(input: $data) {
+      oauth_app {
+        id
+        object_type
+        display_name
+        description
+        launch_url
+        redirect_uris
+        features
+        client_id
+        client_secret
+        created_at
+        updated_at
+        metadata
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const UPDATE_OAUTH_APP = gql`
+  mutation UpdateOAuthApp($data: UpdateOAuthAppMutationInput!) {
+    update_oauth_app(input: $data) {
+      oauth_app {
+        id
+        object_type
+        display_name
+        description
+        launch_url
+        redirect_uris
+        features
+        client_id
+        created_at
+        updated_at
+        metadata
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const DELETE_OAUTH_APP = gql`
+  mutation DeleteOAuthApp($data: DeleteOAuthAppMutationInput!) {
+    delete_oauth_app(input: $data) {
+      success
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+// App Installation mutations (replaces old install/uninstall)
 export const INSTALL_APP = gql`
   mutation InstallApp($data: InstallAppMutationInput!) {
     install_app(input: $data) {
       installation {
         id
+        object_type
+        app_id
+        app_type
         access_scopes
+        is_active
+        requires_oauth
         created_at
         updated_at
         metadata
+        oauth_app {
+          id
+          display_name
+          client_id
+          features
+        }
+        metafields {
+          id
+          key
+          value
+          is_required
+          type
+        }
       }
       errors {
         field
@@ -144,90 +275,43 @@ export const INSTALL_APP = gql`
 export const UNINSTALL_APP = gql`
   mutation UninstallApp($data: UninstallAppMutationInput!) {
     uninstall_app(input: $data) {
-      app {
+      success
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const UPDATE_APP_INSTALLATION = gql`
+  mutation UpdateAppInstallation($data: UpdateAppInstallationMutationInput!) {
+    update_app_installation(input: $data) {
+      installation {
         id
-        display_name
-        developer_name
-        is_public
-        is_builtin
-        is_embedded
-        is_published
-        launch_url
-        features
+        object_type
+        app_id
+        app_type
+        access_scopes
+        is_active
+        requires_oauth
+        created_at
+        updated_at
         metadata
-        installation {
+        oauth_app {
           id
-          access_scopes
-          metadata
+          display_name
+          client_id
+          features
+        }
+        metafields {
+          id
+          key
+          value
+          is_required
+          type
         }
       }
-      errors {
-        field
-        messages
-      }
-    }
-  }
-`;
-
-export const CREATE_APP = gql`
-  mutation CreateApp($data: CreateAppMutationInput!) {
-    create_app(input: $data) {
-      app {
-        id
-        display_name
-        developer_name
-        is_public
-        is_builtin
-        is_embedded
-        is_published
-        launch_url
-        features
-        client_id
-        redirect_uris
-        created_at
-        updated_at
-        metadata
-      }
-      client_secret
-      errors {
-        field
-        messages
-      }
-    }
-  }
-`;
-
-export const UPDATE_APP = gql`
-  mutation UpdateApp($data: UpdateAppMutationInput!) {
-    update_app(input: $data) {
-      app {
-        id
-        display_name
-        developer_name
-        is_public
-        is_builtin
-        is_embedded
-        is_published
-        launch_url
-        features
-        client_id
-        redirect_uris
-        created_at
-        updated_at
-        metadata
-      }
-      errors {
-        field
-        messages
-      }
-    }
-  }
-`;
-
-export const DELETE_APP = gql`
-  mutation DeleteApp($data: DeleteMutationInput!) {
-    delete_app(input: $data) {
-      id
       errors {
         field
         messages

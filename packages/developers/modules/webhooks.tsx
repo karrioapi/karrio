@@ -12,10 +12,11 @@ import {
   useConfirmModalContext,
 } from "@karrio/ui/core/modals/confirm-modal";
 import { useWebhookMutation, useWebhooks } from "@karrio/hooks/webhook";
-import { NotificationType, WebhookType } from "@karrio/types";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
-import { formatDateTime, isNoneOrEmpty } from "@karrio/lib";
+import { NotificationType, WebhookType } from "@karrio/types";
 import { AppLink } from "@karrio/ui/core/components/app-link";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { formatDateTime, isNoneOrEmpty } from "@karrio/lib";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import React from "react";
@@ -28,6 +29,7 @@ export default function WebhooksPage() {
     const { query } = useWebhooks();
     const mutation = useWebhookMutation();
     const { notify } = useNotifier();
+    const { metadata } = useAPIMetadata();
     const { editWebhook } = useWebhookModal();
     const { testWebhook } = useTestWebhookModal();
     const { confirm: confirmDeletion } = useConfirmModalContext();
@@ -93,6 +95,17 @@ export default function WebhooksPage() {
                 <span>API Keys</span>
               </AppLink>
             </li>
+            {metadata?.APPS_MANAGEMENT && (
+              <li className={`is-capitalized has-text-weight-semibold`}>
+                <AppLink
+                  href="/developers/apps"
+                  shallow={false}
+                  prefetch={false}
+                >
+                  <span>Apps</span>
+                </AppLink>
+              </li>
+            )}
             <li className={`is-capitalized has-text-weight-semibold is-active`}>
               <AppLink
                 href="/developers/webhooks"

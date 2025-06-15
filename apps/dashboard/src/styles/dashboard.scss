@@ -611,8 +611,35 @@ Karrio custom styling
     }
   }
 
-  td>div.dropdown.is-active .dropdown-menu {
-    top: 75%;
+  /* Ensure Bulma dropdowns work correctly */
+  .dropdown {
+    position: relative;
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 20;
+    display: none;
+  }
+
+  .dropdown.is-active .dropdown-menu {
+    display: block;
+  }
+
+  /* Fix Bulma dropdown positioning in tables */
+  .table td .dropdown.is-active .dropdown-menu {
+    top: 100%;
+    right: 0;
+    left: auto;
+    min-width: 200px;
+    z-index: 1000;
+  }
+
+  .table .dropdown.is-right .dropdown-menu {
+    right: 0;
+    left: auto;
   }
 
   .dropdown-content {
@@ -623,6 +650,15 @@ Karrio custom styling
     &.is-menu {
       max-height: 240px;
     }
+  }
+
+  /* Prevent layout shift from modern dropdowns only */
+  [data-radix-dropdown-content] {
+    position: fixed !important;
+    z-index: 50;
+    /* Ensure dropdowns don't affect page layout */
+    transform: translateZ(0);
+    will-change: transform;
   }
 
   .label-container {
@@ -746,13 +782,24 @@ Karrio custom styling
 
   @media screen and (min-width: 1080px) {
     .table-container {
-      overflow: unset;
+      overflow-x: auto;
       overflow-y: unset;
     }
 
     .admin-modal {
       margin: 1.5rem;
     }
+  }
+
+  /* Table container scrolling */
+  .table-container {
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+
+  .table-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
   }
 
   @media screen and (min-width: 768px) {
@@ -782,7 +829,7 @@ Karrio custom styling
     }
   }
 
-  // Scrollbar
+  // Scrollbar - Auto-hiding
   /* width */
   ::-webkit-scrollbar {
     width: 6px;
@@ -791,15 +838,26 @@ Karrio custom styling
 
   /* Track */
   ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: transparent;
   }
 
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    background: #888;
+    background: transparent;
+    border-radius: 3px;
+    transition: background 0.2s ease;
   }
 
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  /* Show scrollbar only on hover for main content areas */
+  .scrollable-content:hover::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  .scrollable-content:hover::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.4);
   }
