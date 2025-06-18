@@ -8,7 +8,7 @@ tags: ["features", "community", "insiders", "platform", "architecture"]
 category: "Engineering"
 ---
 
-# Karrio Community vs Insiders: Our Path Forward
+# Karrio Community vs Karrio Insiders: Our Path Forward
 
 **TL;DR: We're pausing Karrio Insiders sponsorship to focus our small team on Karrio Platform - a managed solution for logistics providers, platforms, and enterprises who need tailored control of their shipping infrastructure.**
 
@@ -34,37 +34,37 @@ Meet Sarah and Marcus. Both brilliant engineers, both tackling shipping challeng
 
 Same industry, entirely different operational models. And that's exactly why Karrio has evolved into two distinct architectural approaches: **Data Plane** and **Control Plane**.
 
-## Community: The Data Plane (Developer SDK)
+## Karrio Community: The Data Plane (Developer SDK)
 
 Karrio Community is for the Sarahs of the world - developers who need clean, reliable access to shipping data and services without the operational overhead of managing shipping infrastructure.
 
-Think of Community as the **data plane** for shipping - it's the layer that handles all the raw carrier interactions, data normalization, and API complexity, presenting you with a unified interface for shipping operations. Just like how cloud databases give you clean SQL interfaces without worrying about disk management, Community gives you clean shipping APIs without worrying about carrier idiosyncrasies.
+Think of Karrio Community as the **data plane** for shipping - it's the layer that handles all the raw carrier interactions, data normalization, and API complexity, presenting you with a unified interface for shipping operations. Just like how cloud databases give you clean SQL interfaces without worrying about disk management, Karrio Community gives you clean shipping APIs without worrying about carrier idiosyncrasies.
 
-Here's what makes Community architecturally elegant: **it's pure infrastructure with developer tooling**. Community doesn't impose shipping workflows or business logic on your application - it provides the foundational SDK and API layer that lets you build shipping experiences exactly how you want them. Your application maintains complete autonomy over user experience, business rules, and data flow, while Community handles the intricate choreography of multi-carrier integration beneath the surface.
+Here's what makes Karrio Community architecturally elegant: **it's pure infrastructure with developer tooling**. Karrio Community doesn't impose shipping workflows or business logic on your application - it provides the foundational SDK and API layer that lets you build shipping experiences exactly how you want them. Your application maintains complete autonomy over user experience, business rules, and data flow, while Karrio Community handles the intricate choreography of multi-carrier integration beneath the surface.
 
 The transformation is profound: instead of maintaining separate codebases for each carrier's idiosyncratic authentication schemes, rate calculation methods, and tracking event formats, you interact with a single, semantically consistent SDK. Rate requests return standardized pricing structures. Address validation follows unified rules. Tracking events speak a common language. Service options are normalized across carriers. What was once a fragmented landscape of incompatible systems becomes a coherent, predictable development experience that scales effortlessly as you add new carriers or expand into new markets.
 
-But Community is more than just convenience - it's our commitment to an open standard for shipping integration. Every carrier connector we build, every API improvement we make, goes straight into the open core. Because shipping integration shouldn't be a competitive moat - it should be commodity infrastructure that lets you focus on building the shipping experiences that actually differentiate your business.
+But Karrio Community is more than just convenience - it's our commitment to an open standard for shipping integration. Every carrier connector we build, every API improvement we make, goes straight into the open core. Because shipping integration shouldn't be a competitive moat - it should be commodity infrastructure that lets you focus on building the shipping experiences that actually differentiate your business.
 
-## Insiders: The Control Plane (Platform Foundation)
+## Karrio Insiders: The Control Plane (Platform Foundation)
 
 Now let's talk about Marcus and the world of logistics service providers, 3PLs, and enterprises running shipping operations. These folks aren't just integrating shipping data - they're orchestrating complex, multi-tenant shipping businesses with operational workflows, administrative oversight, and service-level requirements that go far beyond API calls.
 
 This is where Karrio Insiders operates as the **control plane** - the management layer that provides operational visibility, administrative controls, workflow orchestration, and the infrastructure needed to run shipping as a service.
 
-Insiders includes everything in Community's data plane, plus the control plane capabilities that shipping operations actually need: multi-organization tenant isolation for managing different clients or business units, advanced shipping rules that automatically route packages based on complex business logic, workflow automation that handles approval processes and exception management, comprehensive admin interfaces that give you visibility and control over your entire operation, and carrier relationship management tools for onboarding new shipping partners.
+Karrio Insiders includes everything in Karrio Community's data plane, plus the control plane capabilities that shipping operations actually need: multi-organization tenant isolation for managing different clients or business units, advanced shipping rules that automatically route packages based on complex business logic, workflow automation that handles approval processes and exception management, comprehensive admin interfaces that give you visibility and control over your entire operation, and carrier relationship management tools for onboarding new shipping partners.
 
-The key insight here: **Insiders customers aren't just consuming shipping data - they're running shipping businesses**. They need platform-level operational capabilities, not just data-level API functionality. They need to manage SLAs, handle customer support escalations, configure complex routing logic, and maintain compliance across multiple regulatory environments.
+The key insight here: **Karrio Insiders customers aren't just consuming shipping data - they're running shipping businesses**. They need platform-level operational capabilities, not just data-level API functionality. They need to manage SLAs, handle customer support escalations, configure complex routing logic, and maintain compliance across multiple regulatory environments.
 
 ## Architecture: Data Plane vs Control Plane
 
 This is where the architectural distinction becomes crucial. Understanding whether you need data plane access or control plane management determines which approach fits your operational model.
 
-### Community: Pure Data Plane SDK
+### Karrio Community: Pure Data Plane & Shipping Development Kit
 
 <div className="my-8 p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg border">
 
-With Community, you're building shipping functionality using our developer SDK and unified API. Karrio provides the data plane - carrier integrations, data normalization, and shipping services - but you're responsible for creating the entire application layer that your users will interact with.
+With Karrio Community, you're building shipping functionality using our developer SDK and unified API. Karrio provides the data plane - carrier integrations, data normalization, and shipping services - but you're responsible for creating the entire application layer that your users will interact with.
 
 <img
   src="/blog/karrio-community-architecture.svg"
@@ -78,11 +78,11 @@ Karrio's responsibility: The data plane infrastructure. We maintain all carrier 
 
 </div>
 
-### Insiders: Complete Control Plane
+### Karrio Insiders: Complete Control Plane & Modern Logistics Visibility Platform
 
 <div className="my-8 p-6 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-lg border">
 
-With Insiders, you're not building a shipping platform from scratch - you're configuring and customizing a complete control plane. The heavy lifting of multi-tenant architecture, operational workflows, and administrative management is handled for you.
+With Karrio Insiders, you're not building a shipping platform from scratch - you're configuring and customizing a complete control plane. The heavy lifting of multi-tenant architecture, operational workflows, and administrative management is handled for you.
 
 <img
   src="/blog/karrio-insiders-architecture.svg"
@@ -96,35 +96,35 @@ Karrio's responsibility: The entire control plane infrastructure. Multi-tenant d
 
 </div>
 
-Here's the key architectural insight: **Community provides the data plane SDK for building shipping features. Insiders provides the complete control plane for operating shipping services.**
+Here's the key architectural insight: **Karrio Community provides the data plane SDK for building shipping features. Karrio Insiders provides the complete control plane for operating shipping services.**
 
-## Why We're Hitting Pause on Insiders Sponsorship
+## Why We're Hitting Pause on Karrio Insiders Sponsorship
 
-Here's where we get real with you. The sponsorship model for Insiders didn't generate enough sustained revenue to support dedicated full-time development resources.
+Here's where we get real with you. The sponsorship model for Karrio Insiders didn't generate enough sustained revenue to support dedicated full-time development resources.
 
-When we launched Insiders, the goal was simple: create a sustainable revenue stream through sponsorships that would allow us to keep investing in advanced control plane features while maintaining the open data plane. While we got some amazing sponsors and design partners who helped shape the product, the sponsorship model ultimately didn't reach the scale needed to fund a dedicated team for mission-critical enterprise control plane capabilities.
+When we launched Karrio Insiders, the goal was simple: create a sustainable revenue stream through sponsorships that would allow us to keep investing in advanced control plane features while maintaining the open data plane. While we got some amazing sponsors and design partners who helped shape the product, the sponsorship model ultimately didn't reach the scale needed to fund a dedicated team for mission-critical enterprise control plane capabilities.
 
 As a result, many advanced features stalled in development, and we realized that enterprises evaluating Karrio for mission-critical shipping operations need more than just software - they need reliability guarantees, dedicated support, and ongoing partnership that a sponsorship model simply can't sustain.
 
-The Insiders build remains available, but we learned something crucial: **enterprises don't just want advanced control plane features - they want operational partnership**. They want someone who understands their business, can help them navigate carrier relationships, can customize workflows for their specific operational needs, and can provide the level of support that mission-critical shipping operations demand. This requires an adjusted approach that can sustain a dedicated team and the level of service these deployments require.
+The Karrio Insiders build remains available, but we learned something crucial: **enterprises don't just want advanced control plane features - they want operational partnership**. They want someone who understands their business, can help them navigate carrier relationships, can customize workflows for their specific operational needs, and can provide the level of support that mission-critical shipping operations demand. This requires an adjusted approach that can sustain a dedicated team and the level of service these deployments require.
 
 In other words, they want what we're now calling **Karrio Platform**.
 
 ## Enter Karrio Platform: Control Plane + Partnership
 
-Platform isn't a new product - it's a new way of delivering the Insiders control plane. Instead of handing you the software and wishing you luck, we become your shipping infrastructure partner.
+Platform isn't a new product - it's a new way of delivering the Karrio Insiders control plane. Instead of handing you the software and wishing you luck, we become your shipping infrastructure partner.
 
 Here's what that looks like: Whether you want us to host the control plane for you or prefer to self-host it yourself, we assign you a dedicated shipping operations expert and provide comprehensive scaling assistance. Need to onboard a new carrier? Your expert handles the technical integration and ongoing relationship management. Want to customize workflows for a new client? We work with you to implement exactly what you need. Running into scaling challenges? We help you optimize and scale your deployment.
 
 **You get three options:**
 
 - **Fully managed control plane** - We handle everything, you focus on your business
-- **Self-hosted with operational support** - You deploy Insiders, we provide expert guidance and scaling assistance
+- **Self-hosted with operational support** - You deploy Karrio Insiders, we provide expert guidance and scaling assistance
 - **Hybrid approach** - Some components managed, others self-hosted based on your operational needs
 
 The software is the same. The operational relationship is completely different.
 
-Platform customers get all the Insiders control plane capabilities - multi-tenant architecture, admin console, shipping rules, workflow automation - plus the operational support that enterprise shipping operations actually need. Because let's be honest: shipping operations aren't "set it and forget it." Carrier APIs change, compliance requirements evolve, business needs shift, and operational exceptions require expert handling. Having a team that understands both the technology and the logistics industry makes all the difference.
+Platform customers get all the Karrio Insiders control plane capabilities - multi-tenant architecture, admin console, shipping rules, workflow automation - plus the operational support that enterprise shipping operations actually need. Because let's be honest: shipping operations aren't "set it and forget it." Carrier APIs change, compliance requirements evolve, business needs shift, and operational exceptions require expert handling. Having a team that understands both the technology and the logistics industry makes all the difference.
 
 ## The Reality of Production Shipping Operations
 
@@ -140,7 +140,7 @@ Here's what actually happens when you try to operate shipping services at scale:
 
 This is why companies like Stripe succeeded in payments. They didn't just provide APIs - they provided ongoing operational expertise. They absorbed the complexity of maintaining relationships with financial institutions, monitoring for disruptions, and handling the edge cases that only surface at scale.
 
-We're taking the same approach with shipping. Community users who want data plane access get robust SDK tools, comprehensive documentation, and a unified API that abstracts away carrier complexity. Platform users who want control plane operations get dedicated expertise to navigate operational complexities plus ongoing maintenance and monitoring.
+We're taking the same approach with shipping. Karrio Community users who want data plane access get robust SDK tools, comprehensive documentation, and a unified API that abstracts away carrier complexity. Platform users who want control plane operations get dedicated expertise to navigate operational complexities plus ongoing maintenance and monitoring.
 
 ## What This Means for Different Users
 
@@ -154,15 +154,15 @@ We're taking the same approach with shipping. Community users who want data plan
 
 ## Looking Forward: The Next Chapter
 
-We're not pivoting away from open source - we're doubling down on doing it right. Community will always be fully open, completely self-hostable, and production-ready. But we're also acknowledging that different customers need different relationships with their infrastructure providers.
+We're not pivoting away from open source - we're doubling down on doing it right. Karrio Community will always be fully open, completely self-hostable, and production-ready. But we're also acknowledging that different customers need different relationships with their infrastructure providers.
 
 Some customers want complete control and are happy to maintain their own systems. Others want partnership and managed services. Both approaches are valid, and both deserve first-class solutions.
 
-Over the next few months, you'll see us invest heavily in both directions. Community 2025.6 will include significant improvements to carrier support and API reliability. Platform will launch with a select group of design partners who are helping us perfect the managed experience.
+Over the next few months, you'll see us invest heavily in both directions. Karrio Community 2025.6 will include significant improvements to carrier support and API reliability. Platform will launch with a select group of design partners who are helping us perfect the managed experience.
 
 Long-term, we're building toward a world where shipping integration is as easy as payment processing. Where developers can add sophisticated shipping capabilities to their applications in hours, not weeks. Where enterprises can deploy global shipping operations without hiring teams of carrier integration specialists.
 
-That world requires both exceptional data plane technology and exceptional control plane operations. Community provides the data plane foundation. Platform provides the operational control plane. Together, they make shipping infrastructure that just works.
+That world requires both exceptional data plane technology and exceptional control plane operations. Karrio Community provides the data plane foundation. Platform provides the operational control plane. Together, they make shipping infrastructure that just works.
 
 ## Ready to Build the Future of Shipping?
 
@@ -188,7 +188,7 @@ Whether you're shipping your first package or managing millions of shipments, we
         />
       </svg>
     </div>
-    <h4 className="text-lg font-semibold">Start with Community</h4>
+    <h4 className="text-lg font-semibold">Start with Karrio Community</h4>
   </div>
   <p className="text-gray-600 dark:text-gray-300 mb-4 text-sm">
     Perfect for developers who need to build shipping functionality into their
@@ -227,7 +227,7 @@ Whether you're shipping your first package or managing millions of shipments, we
     infrastructure with expert support.
   </p>
   <a
-    href="https://calendly.com/karrio/platform-demo"
+    href="https://cal.com/karrio/demo"
     className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-md text-sm font-medium hover:bg-purple-700 transition-colors"
   >
     Book a Demo →

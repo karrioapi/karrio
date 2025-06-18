@@ -1,3 +1,39 @@
+# Karrio 2025.5rc3
+
+## Changes
+
+### Feat
+
+- feat: improve entity logs and tracing record rendering
+- feat: build workflows and shipping rules management sections in the dashboard
+- feat: reorganized automation apps in the karrio dashboard for shipping rules and workflows
+- feat: shipping rules API integration
+- feat: add shipping rules panel to dashboard
+- feat(WIP): introduce shipping carrier integration agent based on Google ADK
+- feat(epic): introduce app-store + major dashboard refactor to shadcn
+
+### Fix
+
+- fix: karrio automation tests for workflow and background tasks
+- refactor: apply fixes based on multi-orgs testing
+
+### Chore
+
+- chore: fix regressions in karrio apps implementation + planning for the apps' full feature
+- chore: clean up docs discrepancies
+- chore: update ./bin/cli to target the updated module
+- chore: improve API docs
+- chore: fix clashing module imports in GraphQL utils
+- chore: clean up unused imports and reuse preloaded carriers ref
+- devx: reorganize dev env config and introduce karrio ai agent
+
+### Docs
+
+- docs: enrich multi-organization product documentation
+- docs: update products docs page and theme config
+- docs: Introduce products docs (https://karrio.io/docs/products)
+- blog: draft karrio edition difference, breakdown and explanation
+
 # Karrio 2025.5rc2
 
 ## Changes
