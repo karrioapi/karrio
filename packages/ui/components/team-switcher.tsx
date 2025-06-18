@@ -85,13 +85,12 @@ export function TeamSwitcher() {
     return (
       <SidebarMenu>
         <SidebarMenuItem>
-          <div className="flex items-center justify-center p-2">
+          <div className="p-2">
             <Image
               src={p`/icon.svg`}
-              width={32}
-              height={32}
+              width={24}
+              height={24}
               alt="logo"
-              className="rounded-lg"
             />
           </div>
         </SidebarMenuItem>

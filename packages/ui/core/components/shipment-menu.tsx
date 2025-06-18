@@ -63,16 +63,16 @@ export const ShipmentMenu = ({
     }
   };
   const displayDetails = (_: React.MouseEvent) => {
-    router.push(basePath + "/shipments/" + shipment.id);
+    router.push(p`${basePath}/shipments/${shipment.id}`);
   };
   const cancelShipment = (shipment: ShipmentType) => async () => {
     await mutation.voidLabel.mutateAsync(shipment);
   };
   const changeStatus =
     ({ id }: ShipmentType, status: ManualShipmentStatusEnum) =>
-    async () => {
-      await mutation.changeStatus.mutateAsync({ id, status });
-    };
+      async () => {
+        await mutation.changeStatus.mutateAsync({ id, status });
+      };
   const duplicateShipment = async (_: React.MouseEvent) => {
     console.log("> duplicating shipment...");
     const duplicatedShipment =
@@ -132,20 +132,20 @@ export const ShipmentMenu = ({
             ShipmentStatusEnum.cancelled,
             ShipmentStatusEnum.delivered,
           ].includes(shipment.status as any) && (
-            <a
-              className="dropdown-item"
-              onClick={() =>
-                confirmCancellation({
-                  identifier: shipment.id as string,
-                  label: `Cancel Shipment`,
-                  action: "Submit",
-                  onConfirm: cancelShipment(shipment),
-                })
-              }
-            >
-              Cancel Shipment
-            </a>
-          )}
+              <a
+                className="dropdown-item"
+                onClick={() =>
+                  confirmCancellation({
+                    identifier: shipment.id as string,
+                    label: `Cancel Shipment`,
+                    action: "Submit",
+                    onConfirm: cancelShipment(shipment),
+                  })
+                }
+              >
+                Cancel Shipment
+              </a>
+            )}
 
           {!isNone(shipment.invoice_url) && (
             <a
@@ -192,76 +192,76 @@ export const ShipmentMenu = ({
                   ShipmentStatusEnum.purchased,
                   ShipmentStatusEnum.in_transit,
                 ].includes(shipment.status as any) && (
-                  <a
-                    className="dropdown-item"
-                    onClick={() =>
-                      confirmCancellation({
-                        identifier: shipment.id as string,
-                        label: `Mark shipment as ${formatRef(ManualShipmentStatusEnum.needs_attention.toString())}`,
-                        action: "Save",
-                        onConfirm: changeStatus(
-                          shipment,
-                          ManualShipmentStatusEnum.needs_attention,
-                        ),
-                      })
-                    }
-                  >
-                    Mark as{" "}
-                    {formatRef(
-                      ManualShipmentStatusEnum.needs_attention.toString(),
-                    )}
-                  </a>
-                )}
+                    <a
+                      className="dropdown-item"
+                      onClick={() =>
+                        confirmCancellation({
+                          identifier: shipment.id as string,
+                          label: `Mark shipment as ${formatRef(ManualShipmentStatusEnum.needs_attention.toString())}`,
+                          action: "Save",
+                          onConfirm: changeStatus(
+                            shipment,
+                            ManualShipmentStatusEnum.needs_attention,
+                          ),
+                        })
+                      }
+                    >
+                      Mark as{" "}
+                      {formatRef(
+                        ManualShipmentStatusEnum.needs_attention.toString(),
+                      )}
+                    </a>
+                  )}
 
                 {[
                   ShipmentStatusEnum.purchased,
                   ShipmentStatusEnum.in_transit,
                   ShipmentStatusEnum.needs_attention,
                 ].includes(shipment.status as any) && (
-                  <a
-                    className="dropdown-item"
-                    onClick={() =>
-                      confirmCancellation({
-                        identifier: shipment.id as string,
-                        label: `Mark shipment as ${formatRef(ManualShipmentStatusEnum.delivery_failed.toString())}`,
-                        action: "Save",
-                        onConfirm: changeStatus(
-                          shipment,
-                          ManualShipmentStatusEnum.delivery_failed,
-                        ),
-                      })
-                    }
-                  >
-                    Mark as{" "}
-                    {formatRef(
-                      ManualShipmentStatusEnum.delivery_failed.toString(),
-                    )}
-                  </a>
-                )}
+                    <a
+                      className="dropdown-item"
+                      onClick={() =>
+                        confirmCancellation({
+                          identifier: shipment.id as string,
+                          label: `Mark shipment as ${formatRef(ManualShipmentStatusEnum.delivery_failed.toString())}`,
+                          action: "Save",
+                          onConfirm: changeStatus(
+                            shipment,
+                            ManualShipmentStatusEnum.delivery_failed,
+                          ),
+                        })
+                      }
+                    >
+                      Mark as{" "}
+                      {formatRef(
+                        ManualShipmentStatusEnum.delivery_failed.toString(),
+                      )}
+                    </a>
+                  )}
 
                 {[
                   ShipmentStatusEnum.purchased,
                   ShipmentStatusEnum.in_transit,
                   ShipmentStatusEnum.needs_attention,
                 ].includes(shipment.status as any) && (
-                  <a
-                    className="dropdown-item"
-                    onClick={() =>
-                      confirmCancellation({
-                        identifier: shipment.id as string,
-                        label: `Mark shipment as ${formatRef(ManualShipmentStatusEnum.delivered.toString())}`,
-                        action: "Save",
-                        onConfirm: changeStatus(
-                          shipment,
-                          ManualShipmentStatusEnum.delivered,
-                        ),
-                      })
-                    }
-                  >
-                    Mark as{" "}
-                    {formatRef(ManualShipmentStatusEnum.delivered.toString())}
-                  </a>
-                )}
+                    <a
+                      className="dropdown-item"
+                      onClick={() =>
+                        confirmCancellation({
+                          identifier: shipment.id as string,
+                          label: `Mark shipment as ${formatRef(ManualShipmentStatusEnum.delivered.toString())}`,
+                          action: "Save",
+                          onConfirm: changeStatus(
+                            shipment,
+                            ManualShipmentStatusEnum.delivered,
+                          ),
+                        })
+                      }
+                    >
+                      Mark as{" "}
+                      {formatRef(ManualShipmentStatusEnum.delivered.toString())}
+                    </a>
+                  )}
               </>
             )}
 

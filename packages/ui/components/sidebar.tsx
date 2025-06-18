@@ -105,7 +105,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         },
         ...(metadata?.APP_NAME?.includes("Karrio") ? [{
           title: "Guides",
-          url: "https://docs.karrio.io",
+          url: "https://karrio.io/docs",
           external: true,
         }] : []),
       ],
