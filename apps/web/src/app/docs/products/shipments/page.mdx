@@ -35,10 +35,12 @@ You don't have to integrate with multiple carrier APIs to start shipping. Our sh
   <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
     Shipment Management Dashboard
   </div>
-  <div className="bg-white dark:bg-gray-800 rounded border h-64 flex items-center justify-center">
-    <span className="text-gray-400">
-      Screenshot: Shipment creation and management interface
-    </span>
+  <div className="bg-white dark:bg-gray-800 rounded border overflow-hidden">
+    <img
+      src="/docs/karrio-shipments.png"
+      alt="Rate comparison interface with carrier options and pricing"
+      className="w-full h-auto"
+    />
   </div>
 </div>
 
@@ -106,7 +108,203 @@ flowchart TD
 
 ### REST API
 
-#### Create Shipment
+#### Rate Shopping
+
+Use the rates endpoint to compare shipping costs across carriers without creating a shipment:
+
+```bash
+curl -X POST "https://api.karrio.io/v1/proxy/rates" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "shipper": {
+      "postal_code": "10001",
+      "country_code": "US"
+    },
+    "recipient": {
+      "postal_code": "90210",
+      "country_code": "US"
+    },
+    "parcels": [{
+      "weight": 2.5,
+      "weight_unit": "LB",
+      "length": 10,
+      "width": 8,
+      "height": 6,
+      "dimension_unit": "IN"
+    }],
+    "services": ["ground", "express"],
+    "options": {
+      "insurance": 100.00,
+      "signature_confirmation": true
+    }
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "rates": [
+    {
+      "id": "rate_fedex_ground",
+      "carrier_name": "fedex",
+      "carrier_id": "fedex_production",
+      "service": "fedex_ground",
+      "total_charge": 15.99,
+      "currency": "USD",
+      "transit_days": 3,
+      "estimated_delivery": "2024-01-18",
+      "extra_charges": [
+        {
+          "name": "Fuel surcharge",
+          "amount": 2.5,
+          "currency": "USD"
+        }
+      ],
+      "test_mode": false
+    },
+    {
+      "id": "rate_ups_ground",
+      "carrier_name": "ups",
+      "carrier_id": "ups_production",
+      "service": "ups_ground",
+      "total_charge": 16.49,
+      "currency": "USD",
+      "transit_days": 3,
+      "estimated_delivery": "2024-01-18",
+      "extra_charges": [
+        {
+          "name": "Fuel surcharge",
+          "amount": 2.75,
+          "currency": "USD"
+        }
+      ],
+      "test_mode": false
+    },
+    {
+      "id": "rate_fedex_express",
+      "carrier_name": "fedex",
+      "carrier_id": "fedex_production",
+      "service": "fedex_express_saver",
+      "total_charge": 24.99,
+      "currency": "USD",
+      "transit_days": 1,
+      "estimated_delivery": "2024-01-16",
+      "extra_charges": [
+        {
+          "name": "Fuel surcharge",
+          "amount": 3.75,
+          "currency": "USD"
+        }
+      ],
+      "test_mode": false
+    }
+  ],
+  "messages": []
+}
+```
+
+#### Create Shipment (Rate Shopping)
+
+When you create a shipment without specifying a service, Karrio will return available rates for you to choose from:
+
+```bash
+curl -X POST "https://api.karrio.io/v1/shipments" \
+  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "shipper": {
+      "person_name": "John Doe",
+      "company_name": "Example Corp",
+    "address_line1": "123 Main St",
+    "city": "New York",
+    "state_code": "NY",
+    "postal_code": "10001",
+      "country_code": "US",
+      "phone_number": "555-1234"
+  },
+  "recipient": {
+      "person_name": "Jane Smith",
+    "address_line1": "456 Oak Ave",
+    "city": "Los Angeles",
+    "state_code": "CA",
+    "postal_code": "90210",
+      "country_code": "US",
+      "phone_number": "555-5678"
+  },
+    "parcels": [{
+      "weight": 2.5,
+      "weight_unit": "LB",
+      "length": 10,
+      "width": 8,
+      "height": 6,
+      "dimension_unit": "IN"
+    }],
+    "options": {
+      "insurance": 100.00,
+      "signature_confirmation": true
+    }
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "id": "shp_1234567890",
+  "carrier_name": null,
+  "carrier_id": null,
+  "service": null,
+  "tracking_number": null,
+  "shipment_identifier": null,
+  "status": "draft",
+  "selected_rate": null,
+  "rates": [
+    {
+      "id": "rate_1",
+      "carrier_name": "fedex",
+      "carrier_id": "fedex_production",
+      "service": "fedex_ground",
+      "total_charge": 15.99,
+      "currency": "USD",
+      "transit_days": 3,
+      "extra_charges": [
+        {
+          "name": "Fuel surcharge",
+          "amount": 2.5,
+          "currency": "USD"
+        }
+      ]
+    },
+    {
+      "id": "rate_2",
+      "carrier_name": "ups",
+      "carrier_id": "ups_production",
+      "service": "ups_ground",
+      "total_charge": 16.49,
+      "currency": "USD",
+      "transit_days": 3,
+      "extra_charges": [
+        {
+          "name": "Fuel surcharge",
+          "amount": 2.75,
+          "currency": "USD"
+        }
+      ]
+    }
+  ],
+  "label_type": null,
+  "label_url": null,
+  "invoice_url": null,
+  "created_at": "2024-01-15T10:30:00Z",
+  "updated_at": "2024-01-15T10:30:00Z"
+}
+```
+
+#### Create Shipment (Direct Service Selection)
+
+When you specify a service, the shipment will be created and purchased with that service:
 
 ```bash
 curl -X POST "https://api.karrio.io/v1/shipments" \
@@ -160,54 +358,26 @@ curl -X POST "https://api.karrio.io/v1/shipments" \
   "shipment_identifier": "FDX_SHIP_123",
   "status": "purchased",
   "selected_rate": {
+    "id": "rate_1",
     "carrier_name": "fedex",
+    "carrier_id": "fedex_production",
     "service": "fedex_ground",
     "total_charge": 15.99,
     "currency": "USD",
-    "transit_days": 3
+    "transit_days": 3,
+    "extra_charges": [
+      {
+        "name": "Fuel surcharge",
+        "amount": 2.5,
+        "currency": "USD"
+      }
+    ]
   },
-  "label_type": "PDF",
-  "label_url": "https://api.karrio.io/v1/documents/label_123.pdf",
-  "invoice_url": "https://api.karrio.io/v1/documents/invoice_123.pdf",
-  "created_at": "2024-01-15T10:30:00Z",
-  "updated_at": "2024-01-15T10:30:00Z"
-}
-```
-
-#### Get Shipping Rates
-
-```bash
-curl -X POST "https://api.karrio.io/v1/proxy/rates" \
-  -H "Authorization: Token YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "shipper": {
-      "postal_code": "10001",
-      "country_code": "US"
-    },
-    "recipient": {
-      "postal_code": "90210",
-      "country_code": "US"
-    },
-    "parcels": [{
-      "weight": 2.5,
-      "weight_unit": "LB",
-      "length": 10,
-      "width": 8,
-      "height": 6,
-      "dimension_unit": "IN"
-    }],
-    "services": ["ground", "express"]
-  }'
-```
-
-**Response:**
-
-```json
-{
   "rates": [
     {
+      "id": "rate_1",
       "carrier_name": "fedex",
+      "carrier_id": "fedex_production",
       "service": "fedex_ground",
       "total_charge": 15.99,
       "currency": "USD",
@@ -219,22 +389,13 @@ curl -X POST "https://api.karrio.io/v1/proxy/rates" \
           "currency": "USD"
         }
       ]
-    },
-    {
-      "carrier_name": "ups",
-      "service": "ups_ground",
-      "total_charge": 16.49,
-      "currency": "USD",
-      "transit_days": 3,
-      "extra_charges": [
-        {
-          "name": "Fuel surcharge",
-          "amount": 2.75,
-          "currency": "USD"
-        }
-      ]
     }
-  ]
+  ],
+  "label_type": "PDF",
+  "label_url": "https://api.karrio.io/v1/documents/label_123.pdf",
+  "invoice_url": "https://api.karrio.io/v1/documents/invoice_123.pdf",
+  "created_at": "2024-01-15T10:30:00Z",
+  "updated_at": "2024-01-15T10:30:00Z"
 }
 ```
 
@@ -319,23 +480,25 @@ curl -X POST "https://api.karrio.io/v1/shipments" \
 
 ### GraphQL API
 
-#### Create Shipment Mutation
+#### Update Shipment Mutation
 
 ```graphql
-mutation CreateShipment($data: CreateShipmentMutationInput!) {
-  create_shipment(data: $data) {
-    id
-    carrier_name
-    service
-    tracking_number
-    status
-    selected_rate {
-      total_charge
-      currency
+mutation PartialShipmentUpdate($data: PartialShipmentMutationInput!) {
+  partial_shipment_update(data: $data) {
+    shipment {
+      id
+      carrier_name
       service
+      tracking_number
+      status
+      selected_rate {
+        total_charge
+        currency
+        service
+      }
+      label_url
+      invoice_url
     }
-    label_url
-    invoice_url
   }
 }
 ```
@@ -345,6 +508,7 @@ mutation CreateShipment($data: CreateShipmentMutationInput!) {
 ```json
 {
   "data": {
+    "id": "shp_1234567890",
     "service": "fedex_ground",
     "shipper": {
       "person_name": "John Doe",
@@ -377,19 +541,21 @@ mutation CreateShipment($data: CreateShipmentMutationInput!) {
 ```json
 {
   "data": {
-    "create_shipment": {
-      "id": "shp_1234567890",
-      "carrier_name": "fedex",
-      "service": "fedex_ground",
-      "tracking_number": "1234567890123456",
-      "status": "purchased",
-      "selected_rate": {
-        "total_charge": 15.99,
-        "currency": "USD",
-        "service": "fedex_ground"
-      },
-      "label_url": "https://api.karrio.io/v1/documents/label_123.pdf",
-      "invoice_url": "https://api.karrio.io/v1/documents/invoice_123.pdf"
+    "partial_shipment_update": {
+      "shipment": {
+        "id": "shp_1234567890",
+        "carrier_name": "fedex",
+        "service": "fedex_ground",
+        "tracking_number": "1234567890123456",
+        "status": "purchased",
+        "selected_rate": {
+          "total_charge": 15.99,
+          "currency": "USD",
+          "service": "fedex_ground"
+        },
+        "label_url": "https://api.karrio.io/v1/documents/label_123.pdf",
+        "invoice_url": "https://api.karrio.io/v1/documents/invoice_123.pdf"
+      }
     }
   }
 }

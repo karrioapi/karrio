@@ -43,10 +43,10 @@ export default {
     title: 'CLI Guide',
     type: 'page',
   },
-  "plugin-development": {
-    title: 'Plugin Development',
-    type: 'page'
-  },
+  // "plugin-development": {
+  //   title: 'Plugin Development',
+  //   type: 'page'
+  // },
   // "address-validation": {
   //   title: 'Address Validation',
   //   type: 'page'
