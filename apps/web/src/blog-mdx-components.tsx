@@ -7,7 +7,6 @@ import { Badge } from '@karrio/ui/components/ui/badge'
 import { withGitHubAlert } from 'nextra/components'
 import { Callout } from 'nextra/components/callout'
 import { formatDate } from '@/lib/utils'
-import { ThemeConfig } from '@/types/theme'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
@@ -190,16 +189,32 @@ interface BlogWrapperProps {
 }
 
 const BlogWrapper = ({ children, toc, metadata, pageMap }: BlogWrapperProps) => {
-  const { title, date, description, tags, author, image, category } = metadata || {};
-
+  const { title, date, description, tags, author, image, category, draft } = metadata || {};
+  console.log(metadata, "<<< metadata")
   // Use default blog configuration
   const typesetting = 'article'
   const timestamp = true
+
+  // Check if we should show draft indicator
+  const isDraft = draft === true
+  const isDevelopment = process.env.NODE_ENV === 'development'
 
   // Default blog layout
   return (
     <div className="py-8">
       <BackButton className="mb-4" />
+
+      {/* Draft indicator - only show in development */}
+      {isDraft && isDevelopment && (
+        <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+            <span className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+              Draft Post - Only visible in development
+            </span>
+          </div>
+        </div>
+      )}
 
       <div className="container mx-auto px-2 sm:px-4 lg:px-0 max-w-6xl bg-background dark:bg-inherit">
         {/* Featured Image */}

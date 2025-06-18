@@ -6,12 +6,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 export function PostCard({ post }: { post: Post }) {
-  const { title, date, description, tags, author, image } = post.frontMatter;
+  const { title, date, description, tags, author, image, draft } = post.frontMatter;
+  const isDraft = draft === true;
+  const isDevelopment = process.env.NODE_ENV === 'development';
 
   return (
     <article className="group">
       <Link href={post.route}>
-        <div className="mb-4 overflow-hidden rounded-lg">
+        <div className="mb-4 overflow-hidden rounded-lg relative">
           {image ? (
             <div className="relative aspect-[16/6] w-full overflow-hidden">
               <Image
@@ -25,9 +27,26 @@ export function PostCard({ post }: { post: Post }) {
           ) : (
             <div className="relative aspect-[16/6] w-full overflow-hidden bg-gradient-to-br from-primary/10 to-secondary/10 dark:from-[#5722cc]/20 dark:to-purple-900/30" />
           )}
+
+          {/* Draft indicator overlay - only show in development */}
+          {isDraft && isDevelopment && (
+            <div className="absolute top-3 right-3">
+              <Badge variant="destructive" className="text-xs font-medium bg-yellow-500 hover:bg-yellow-600 text-black">
+                DRAFT
+              </Badge>
+            </div>
+          )}
         </div>
         <div>
-          <h2 className="text-2xl font-semibold group-hover:text-primary dark:group-hover:text-[#8a5cf5] transition-colors duration-200 dark:text-white">{title}</h2>
+          <div className="flex items-center gap-2 mb-2">
+            <h2 className="text-2xl font-semibold group-hover:text-primary dark:group-hover:text-[#8a5cf5] transition-colors duration-200 dark:text-white flex-1">{title}</h2>
+            {/* Small draft indicator next to title - only show in development */}
+            {isDraft && isDevelopment && (
+              <Badge variant="outline" className="text-xs border-yellow-500 text-yellow-600 dark:text-yellow-400">
+                Draft
+              </Badge>
+            )}
+          </div>
           <div className="mt-2 flex items-center text-sm text-muted-foreground dark:text-white/60">
             <time dateTime={date}>{formatDate(date)}</time>
             {author && (

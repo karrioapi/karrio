@@ -117,7 +117,7 @@ export default async function Page() {
                             <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
                               <div className="w-2 h-2 rounded-full bg-[#79e5dd]" />
                             </div>
-                            <span className="text-white/80">One integration for 100+ carrier connections</span>
+                            <span className="text-white/80">One integration for 30+ carrier connections</span>
                           </li>
                           <li className="flex items-start gap-3">
                             <div className="mt-1 w-5 h-5 rounded-full bg-[#79e5dd]/20 flex items-center justify-center flex-shrink-0">
