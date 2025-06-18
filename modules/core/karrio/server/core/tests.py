@@ -3,9 +3,11 @@ from django.contrib.auth import get_user_model
 from rest_framework.test import APITestCase as BaseAPITestCase, APIClient
 
 from karrio.server.user.models import Token
+import karrio.server.iam.permissions as iam
 import karrio.server.providers.models as providers
 
 logger = logging.getLogger(__name__)
+iam.setup_groups()
 
 
 class APITestCase(BaseAPITestCase):
@@ -75,6 +77,16 @@ class APITestCase(BaseAPITestCase):
                 account_number="000000",
             )
         )
+
+    def getJWTToken(self, email: str, password: str) -> str:
+        url = reverse("jwt-obtain-pair")
+        data = dict(
+            email=email,
+            password=password,
+        )
+        response = self.client.post(url, data)
+
+        return response.data.get("access")
 
     def assertResponseNoErrors(self, response):
         is_ok = f"{response.status_code}".startswith("2")

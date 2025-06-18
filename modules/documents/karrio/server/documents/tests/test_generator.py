@@ -254,6 +254,9 @@ class TestDocumentGeneratorIntegration(APITestCase):
         shipment = manager_models.Shipment.objects.create(
             recipient=recipient,
             shipper=shipper,
+            test_mode=True,
+            status="shipped",
+            tracking_number="TRACK123456",
             selected_rate={
                 "service": "express",
                 "carrier_id": "test_carrier",
@@ -262,9 +265,6 @@ class TestDocumentGeneratorIntegration(APITestCase):
                 "total_charge": 10.00,
                 "test_mode": True,
             },
-            tracking_number="TRACK123456",
-            status="shipped",
-            test_mode=True,
             created_by=self.user,
         )
 

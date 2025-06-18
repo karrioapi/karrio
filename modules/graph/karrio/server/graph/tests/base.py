@@ -85,7 +85,7 @@ class GraphTestCase(BaseAPITestCase):
         )
 
     def query(
-        self, query: str, operation_name: str = None, variables: dict = None
+        self, query: str, operation_name: str = None, variables: dict = None, org_id: str = None
     ) -> Result:
         url = reverse("karrio.server.graph:graphql")
         data = dict(
@@ -94,12 +94,24 @@ class GraphTestCase(BaseAPITestCase):
             operation_name=operation_name,
         )
 
-        response = self.client.post(url, data)
+        response = self.client.post(url, data, **(
+            { "x-org-id": org_id } if org_id else {}
+        ))
 
         return Result(
             status_code=response.status_code,
             data=json.loads(response.content),
         )
+
+    def getJWTToken(self, email: str, password: str) -> str:
+        url = reverse("jwt-obtain-pair")
+        data = dict(
+            email=email,
+            password=password,
+        )
+        response = self.client.post(url, data)
+
+        return response.data.get("access")
 
     def assertResponseNoErrors(self, result: Result):
         if (

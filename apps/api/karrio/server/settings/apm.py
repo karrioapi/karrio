@@ -2,8 +2,17 @@
 import posthog
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
-from posthog.sentry.posthog_integration import PostHogIntegration
 from karrio.server.settings.base import *
+
+# Try to import PostHog integration, fallback if not available
+try:
+    from posthog.sentry.posthog_integration import PostHogIntegration
+except ImportError:
+    try:
+        from posthog.sentry import PostHogIntegration
+    except ImportError:
+        # PostHog Sentry integration not available in this version
+        PostHogIntegration = None
 
 
 # Health check apps settings
@@ -31,13 +40,14 @@ sentry_sdk.utils.MAX_STRING_LENGTH = 4096
 SENTRY_DSN = config("SENTRY_DSN", default=None)
 
 if SENTRY_DSN:
+    # Build integrations list
+    integrations = [DjangoIntegration()]
+    if POSTHOG_KEY and PostHogIntegration is not None:
+        integrations.append(PostHogIntegration())
+
     sentry_sdk.init(
         dsn=SENTRY_DSN,
-        integrations=(
-            [DjangoIntegration(), PostHogIntegration()]
-            if POSTHOG_KEY
-            else [DjangoIntegration()]
-        ),
+        integrations=integrations,
         # Set traces_sample_rate to 1.0 to capture 100%
         # of transactions for performance monitoring.
         # We recommend adjusting this value in production,

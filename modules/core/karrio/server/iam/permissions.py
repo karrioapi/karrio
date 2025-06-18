@@ -17,6 +17,7 @@ User = get_user_model()
 @utils.tenant_aware
 def setup_groups(**_):
     """This function create all standard group permissions if they don't exsist."""
+    print("> setting up permissions")
 
     # manage_apps
     setup_group(

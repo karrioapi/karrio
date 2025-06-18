@@ -25,6 +25,7 @@ import karrio.server.graph.schemas.base.types as types
 import karrio.server.graph.serializers as serializers
 import karrio.server.providers.models as providers
 import karrio.server.manager.models as manager
+import karrio.server.user.forms as user_forms
 import karrio.server.core.gateway as gateway
 import karrio.server.graph.models as graph
 import karrio.server.graph.forms as forms
@@ -258,7 +259,7 @@ class RegisterUserMutation(utils.BaseMutation):
             )
 
         try:
-            form = forms.SignUpForm(input)
+            form = user_forms.SignUpForm(input)
             user = form.save()
 
             return RegisterUserMutation(user=user)  # type:ignore

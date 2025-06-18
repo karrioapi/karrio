@@ -33,6 +33,5 @@ def check_permissions(context, keys: typing.List[str]):
 
 def check_feature_flags(keys: typing.List[str] = [], **kwargs):
     flags = [flag for flag in keys if flag in conf.FEATURE_FLAGS]
-
     if any([conf.settings.get(flag) is False for flag in flags]):
         raise exceptions.PermissionDenied()
