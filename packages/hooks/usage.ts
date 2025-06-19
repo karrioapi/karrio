@@ -71,7 +71,7 @@ export function useAPIUsage({
   const orgUsage = () =>
     karrio.graphql
       .request<get_organization>(gqlstr(GET_ORGANIZATION), {
-        variables: { id: session.orgId, usage: filter },
+        variables: { id: session?.orgId, usage: filter },
       })
       .then(({ organization }) => ({
         usage: organization?.usage as UsageType,
@@ -81,7 +81,18 @@ export function useAPIUsage({
   const query = useQuery(
     ["usage", filter],
     metadata.MULTI_ORGANIZATIONS == true ? orgUsage : systemUsage,
-    { staleTime: 1500000, onError },
+    {
+      staleTime: 1500000,
+      onError,
+      enabled: !!karrio.isAuthenticated && !!session?.accessToken && (metadata.MULTI_ORGANIZATIONS ? !!session?.orgId : true),
+      retry: (failureCount, error) => {
+        // Don't retry if it's an authentication error
+        if ((error as any)?.response?.errors?.[0]?.code === "authentication_required") {
+          return false;
+        }
+        return failureCount < 3;
+      },
+    },
   );
 
   function setFilter(options: UsageFilter) {
@@ -90,9 +101,9 @@ export function useAPIUsage({
       return isNoneOrEmpty(options[key as keyof UsageFilter])
         ? acc
         : {
-            ...acc,
-            [key]: options[key as keyof UsageFilter],
-          };
+          ...acc,
+          [key]: options[key as keyof UsageFilter],
+        };
     }, {});
 
     if (setVariablesToURL) insertUrlParam(params);

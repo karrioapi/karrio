@@ -12,6 +12,6 @@
       "react": ["./node_modules/@types/react"]
     }
   },
-  "include": [".", "./**/*.ts", "./**/*.tsx"],
+  "include": [".", "./**/*.ts", "./**/*.tsx", "../developers/modules/APIKey"],
   "exclude": ["dist", "build", "node_modules"]
 }

@@ -190,7 +190,7 @@ interface BlogWrapperProps {
 
 const BlogWrapper = ({ children, toc, metadata, pageMap }: BlogWrapperProps) => {
   const { title, date, description, tags, author, image, category, draft } = metadata || {};
-  console.log(metadata, "<<< metadata")
+
   // Use default blog configuration
   const typesetting = 'article'
   const timestamp = true
