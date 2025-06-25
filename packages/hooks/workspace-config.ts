@@ -5,18 +5,17 @@ import {
   WorkspaceConfigMutationInput,
   UpdateWorkspaceConfig,
 } from "@karrio/types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { gqlstr, onError } from "@karrio/lib";
-import { useKarrio } from "./karrio";
+import { useAuthenticatedQuery, useKarrio } from "./karrio";
 
 export function useWorkspaceConfig() {
   const karrio = useKarrio();
   const workspace_config = karrio.pageData?.workspace_config;
   // Queries
-  const query = useQuery({
+  const query = useAuthenticatedQuery({
     queryKey: ["workspace-config"],
-    queryFn: () =>
-      karrio.graphql.request<GetWorkspaceConfig>(gqlstr(GET_WORKSPACE_CONFIG)),
+    queryFn: () => karrio.graphql.request<GetWorkspaceConfig>(gqlstr(GET_WORKSPACE_CONFIG)),
     initialData: !!workspace_config ? { workspace_config } : undefined,
     refetchOnWindowFocus: false,
     staleTime: 300000,

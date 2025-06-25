@@ -38,15 +38,10 @@ const ContextProviders = bundleContexts([ModalProvider]);
 hljs.registerLanguage("django", django);
 hljs.registerLanguage("json", json);
 
-export default function Page({ params }: { params: Promise<{ id: string }> }) {
+export default function Page(pageProps: any) {
   const Component = (): JSX.Element => {
-    const [id, setId] = React.useState<string>();
-
-    React.useEffect(() => {
-      params.then(query => {
-        setId(query.id);
-      });
-    }, []);
+    const params = pageProps.params || {};
+    const { id } = params;
 
     if (!id) return <></>;
 
@@ -815,12 +810,27 @@ function WorkflowComponent({ workflowId }: { workflowId: string }) {
                                         >
                                           <div>
                                             <div className="is-title is-size-6 is-vcentered my-2">
-                                              <span className="has-text-weight-bold">
-                                                Connection
-                                              </span>
+                                              <div className="is-flex is-align-items-center">
+                                                <span className="has-text-weight-bold">
+                                                  Connection
+                                                </span>
+                                                {action.connection && (action.connection as any).is_credentials_complete === false && (
+                                                  <span className="icon has-text-danger ml-2" title="Credentials incomplete">
+                                                    <i className="fas fa-exclamation-triangle"></i>
+                                                  </span>
+                                                )}
+                                                {action.connection && (action.connection as any).is_credentials_complete === true && (
+                                                  <span className="icon has-text-success ml-2" title="Credentials complete">
+                                                    <i className="fas fa-check-circle"></i>
+                                                  </span>
+                                                )}
+                                              </div>
                                               <p className="is-size-7 has-text-weight-semibold has-text-grey my-1">
                                                 {action.connection?.name ||
                                                   "A connection for the action"}
+                                                {action.connection && (action.connection as any).is_credentials_complete === false && (
+                                                  <span className="has-text-danger ml-1">(Missing credentials)</span>
+                                                )}
                                               </p>
                                             </div>
                                             <div>
@@ -918,6 +928,48 @@ function WorkflowComponent({ workflowId }: { workflowId: string }) {
                                                     </div>
                                                   </div>
                                                 )}
+
+                                              {/* credentials status */}
+                                              <div className="columns my-0 px-3">
+                                                <div className="column is-4 py-1">
+                                                  <span className="has-text-weight-bold has-text-grey">
+                                                    Credentials Status
+                                                  </span>
+                                                </div>
+                                                <div className="column is-8 py-1">
+                                                  {(action.connection as any).is_credentials_complete ? (
+                                                    <span className="tag is-success is-small">
+                                                      <i className="fas fa-check mr-1"></i>
+                                                      Complete
+                                                    </span>
+                                                  ) : (
+                                                    <span className="tag is-danger is-small">
+                                                      <i className="fas fa-exclamation-triangle mr-1"></i>
+                                                      Incomplete
+                                                    </span>
+                                                  )}
+                                                </div>
+                                              </div>
+
+                                              {/* required credentials */}
+                                              {(action.connection as any).required_credentials && (action.connection as any).required_credentials.length > 0 && (
+                                                <div className="columns my-0 px-3">
+                                                  <div className="column is-4 py-1">
+                                                    <span className="has-text-weight-bold has-text-grey">
+                                                      Required
+                                                    </span>
+                                                  </div>
+                                                  <div className="column is-8 py-1">
+                                                    <div className="tags">
+                                                      {(action.connection as any).required_credentials.map((cred: string) => (
+                                                        <span key={cred} className="tag is-light is-small">
+                                                          {cred}
+                                                        </span>
+                                                      ))}
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              )}
 
                                               {/* http request options */}
                                               {[

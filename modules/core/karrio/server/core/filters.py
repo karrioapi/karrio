@@ -624,6 +624,10 @@ class LogFilter(filters.FilterSet):
         field_name="status_code",
         choices=[(s, s) for s in serializers.HTTP_STATUS],
     )
+    keyword = filters.CharFilter(
+        method="keyword_filter",
+        help_text="search in entity_id and data",
+    )
 
     class Meta:
         model = core.APILogIndex
@@ -637,6 +641,15 @@ class LogFilter(filters.FilterSet):
 
         return queryset
 
+    def keyword_filter(self, queryset, name, value):
+        return queryset.filter(
+            models.Q(entity_id__icontains=value) |
+            models.Q(data__icontains=value) |
+            models.Q(path__icontains=value) |
+            models.Q(remote_addr__icontains=value) |
+            models.Q(host__icontains=value) |
+            models.Q(method__icontains=value)
+        )
 
 class TracingRecordFilter(filters.FilterSet):
     key = filters.CharFilter(
@@ -651,6 +664,10 @@ class TracingRecordFilter(filters.FilterSet):
     )
     date_after = filters.DateTimeFilter(field_name="requested_at", lookup_expr="gte")
     date_before = filters.DateTimeFilter(field_name="requested_at", lookup_expr="lte")
+    keyword = filters.CharFilter(
+        method="keyword_filter",
+        help_text="search in key and meta",
+    )
 
     class Meta:
         model = tracing.TracingRecord
@@ -658,6 +675,12 @@ class TracingRecordFilter(filters.FilterSet):
 
     def request_log_id_filter(self, queryset, name, value):
         return queryset.filter(meta__request_log_id=value)
+
+    def keyword_filter(self, queryset, name, value):
+        return queryset.filter(
+            models.Q(key__icontains=value) |
+            models.Q(meta__icontains=value)
+        )
 
 
 class UploadRecordFilter(filters.FilterSet):

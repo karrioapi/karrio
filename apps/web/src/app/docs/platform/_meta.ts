@@ -15,10 +15,10 @@ export default {
     title: 'Quickstart',
     type: 'page'
   },
-  "elements": {
-    title: 'Elements',
-    type: 'page'
-  },
+  // "elements": {
+  //   title: 'Elements',
+  //   type: 'page'
+  // },
   "guides": {
     title: 'Guides',
     type: 'page'

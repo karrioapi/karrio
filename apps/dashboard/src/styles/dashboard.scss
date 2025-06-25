@@ -44,762 +44,820 @@ Karrio custom styling
   height: 0.1rem !important;
 }
 
-.shipments-table {
-  .selector {
-    width: 3%;
-  }
-
-  .service {
-    width: 15%;
-    min-width: 250px;
-  }
-
-  .status {
-    width: 100px;
-    min-width: 100px;
-    max-width: 120px;
-  }
-
-  .recipient {
-    min-width: 200px;
-  }
-
-  .reference {
-    min-width: 150px;
-  }
-
-  .date {
-    width: 120px;
-    min-width: 120px;
-    max-width: 120px;
-  }
-
-  .action {
-    width: 35px;
-    min-width: 35px;
-  }
-
-  tbody>tr.items {
-    cursor: pointer;
-  }
-
-  tbody>tr.items:hover {
-    background-color: #fafafa;
-  }
-}
-
-.manifests-table {
-  .selector {
-    width: 3%;
-  }
-
-  .carrier {
-    width: 25%;
-    min-width: 300px;
-  }
-
-  .address {
-    min-width: 200px;
-  }
-
-  .reference {
-    min-width: 150px;
-  }
-
-  .date {
-    width: 120px;
-    min-width: 120px;
-    max-width: 120px;
-  }
-
-  .action {
-    width: 35px;
-    min-width: 35px;
-  }
-}
-
-.connections-table {
-  .carrier {
-    width: 15%;
-    text-align: center !important;
-  }
-
-  .mode {
-    width: 5%;
-  }
-
-  .active {
-    width: 6%;
-  }
-
-  .details {}
-
-  .action {
-    width: 20%;
-    min-width: 180px;
-  }
-}
-
-.admin-connections-table {
-  .carrier {
-    width: 160px;
-    min-width: 160px;
-  }
-
-  .mode {
-    width: 6%;
-  }
-
-  .active {
-    width: 5%;
-  }
-
-  .details {}
-
-  .action {
-    width: 20%;
-    min-width: 180px;
-  }
-}
-
-.system-connections-table {
-  .carrier {
-    width: 15%;
-    text-align: center !important;
-  }
-
-  .mode {
-    width: 6%;
-  }
-
-  .details {
-    width: 64%;
-  }
-
-  .action {
-    width: 6%;
-  }
-}
-
-.rate-sheets-table {
-  .carrier {
-    width: 15%;
-    text-align: center !important;
-  }
-
-  .details {}
-
-  .action {
-    width: 20%;
-    min-width: 180px;
-  }
-}
-
-.templates-table {
-  .template {}
-
-  .default {
-    width: 20%;
-  }
+  .shipments-table {
+    .selector {
+      width: 3%;
+    }
+
+    .service {
+      width: 15%;
+      min-width: 250px;
+    }
+
+    .status {
+      width: 100px;
+      min-width: 100px;
+      max-width: 120px;
+    }
+
+    .recipient {
+      min-width: 200px;
+    }
+
+    .reference {
+      min-width: 150px;
+    }
+
+    .date {
+      width: 120px;
+      min-width: 120px;
+      max-width: 120px;
+    }
+
+    .action {
+      width: 35px;
+      min-width: 35px;
+    }
+
+    tbody>tr.items {
+      cursor: pointer;
+    }
+
+    tbody>tr.items:hover {
+      background-color: #fafafa;
+    }
+  }
+
+  .manifests-table {
+    .selector {
+      width: 3%;
+    }
+
+    .carrier {
+      width: 25%;
+      min-width: 300px;
+    }
+
+    .address {
+      min-width: 200px;
+    }
+
+    .reference {
+      min-width: 150px;
+    }
+
+    .date {
+      width: 120px;
+      min-width: 120px;
+      max-width: 120px;
+    }
 
-  .action {
-    width: 150px;
-    min-width: 150px;
+    .action {
+      width: 35px;
+      min-width: 35px;
+    }
   }
-}
+
+  .connections-table {
+    .carrier {
+      width: 15%;
+      text-align: center !important;
+    }
 
-.address-templates-table {
-  .template {
-    width: 20%;
-    min-width: 10vw;
-  }
-
-  .address {
-    width: 40%;
-    min-width: 10vw;
-  }
-
-  .email {
-    min-width: 10vw;
-  }
-
-  .default {
-    width: 100px;
-    min-width: 100px;
-  }
+    .mode {
+      width: 5%;
+    }
+
+    .active {
+      width: 6%;
+    }
+
+    .details {}
+
+    .action {
+      width: 20%;
+      min-width: 180px;
+    }
+  }
+
+  .admin-connections-table {
+    .carrier {
+      width: 160px;
+      min-width: 160px;
+    }
 
-  .action {
-    width: 90px;
-    min-width: 90px;
-  }
-}
+    .mode {
+      width: 6%;
+    }
 
-.parcel-templates-table {
-  .template {
-    width: 30%;
-    min-width: 10vw;
-  }
+    .active {
+      width: 5%;
+    }
 
-  .parcel {
-    min-width: 250px;
-  }
+    .details {}
 
-  .default {
-    width: 100px;
-    min-width: 100px;
+    .action {
+      width: 20%;
+      min-width: 180px;
+    }
   }
 
-  .action {
-    width: 90px;
-    min-width: 90px;
-  }
-}
+  .system-connections-table {
+    .carrier {
+      width: 15%;
+      text-align: center !important;
+    }
 
-.commodities-table {
-  .commodity {}
+    .mode {
+      width: 6%;
+    }
 
-  .action {
-    width: 115px;
-  }
-}
+    .details {
+      width: 64%;
+    }
 
-.logs-table {
-  .status {
-    width: 8%;
+    .action {
+      width: 6%;
+    }
   }
 
-  .description {
-    min-width: 200px;
-    max-width: 200px;
-  }
+  .rate-sheets-table {
+    .carrier {
+      width: 15%;
+      text-align: center !important;
+    }
 
-  .date {
-    width: 20%;
-    min-width: 185px;
-  }
+    .details {}
 
-  tbody>tr.items {
-    cursor: pointer;
+    .action {
+      width: 20%;
+      min-width: 180px;
+    }
   }
 
-  tbody>tr.items:hover {
-    background-color: #fafafa;
-  }
-}
+  .templates-table {
+    .template {}
 
-.events-table {
-  .description {
-    width: 80%;
-    min-width: 200px;
-    max-width: 200px;
-  }
+    .default {
+      width: 20%;
+    }
 
-  .date {
-    width: 20%;
-    min-width: 190px;
-    max-width: 190px;
+    .action {
+      width: 150px;
+      min-width: 150px;
+    }
   }
 
-  tbody>tr.items {
-    cursor: pointer;
-  }
+  .address-templates-table {
+    .template {
+      width: 20%;
+      min-width: 10vw;
+    }
 
-  tbody>tr.items:hover {
-    background-color: #fafafa;
-  }
-}
+    .address {
+      width: 40%;
+      min-width: 10vw;
+    }
 
-.workflow-events-table {
-  .status {
-    width: 6%;
-    min-width: 60px;
-    max-width: 60px;
-  }
+    .email {
+      min-width: 10vw;
+    }
 
-  .description {
-    min-width: 200px;
-    max-width: 200px;
-  }
+    .default {
+      width: 100px;
+      min-width: 100px;
+    }
 
-  .date {
-    width: 20%;
-    min-width: 190px;
-    max-width: 190px;
+    .action {
+      width: 90px;
+      min-width: 90px;
+    }
   }
 
-  tbody>tr.items {
-    cursor: pointer;
-  }
+  .parcel-templates-table {
+    .template {
+      width: 30%;
+      min-width: 10vw;
+    }
 
-  tbody>tr.items:hover {
-    background-color: #fafafa;
-  }
-}
+    .parcel {
+      min-width: 250px;
+    }
 
-.trackers-table {
-  .service {
-    width: 15%;
-    min-width: 250px;
-  }
+    .default {
+      width: 100px;
+      min-width: 100px;
+    }
 
-  .status {
-    width: 10%;
+    .action {
+      width: 90px;
+      min-width: 90px;
+    }
   }
 
-  .last-event {
-    min-width: 200px;
-    max-width: 200px;
-  }
+  .commodities-table {
+    .commodity {}
 
-  .date {
-    width: 15%;
-    min-width: 130px;
-    max-width: 130px;
-  }
+    .action {
+      width: 115px;
+    }
+  }
 
-  .action {
-    width: 5%;
-    min-width: 50px;
-  }
+  .logs-table {
+    .status {
+      width: 8%;
+    }
 
-  tbody>tr.items {
-    cursor: pointer;
-  }
+    .description {
+      min-width: 200px;
+      max-width: 200px;
+    }
 
-  tbody>tr.items:hover {
-    background-color: #fafafa;
-  }
-}
+    .date {
+      width: 20%;
+      min-width: 185px;
+    }
+
+    tbody>tr.items {
+      cursor: pointer;
+    }
+
+    tbody>tr.items:hover {
+      background-color: #fafafa;
+    }
+  }
+
+  .events-table {
+    .description {
+      width: 80%;
+      min-width: 200px;
+      max-width: 200px;
+    }
 
-.webhooks-table {
-  .url {
-    width: 70%;
-    min-width: 200px;
-    max-width: 200px;
-  }
+    .date {
+      width: 20%;
+      min-width: 190px;
+      max-width: 190px;
+    }
 
-  .mode {
-    width: 50px;
-  }
+    tbody>tr.items {
+      cursor: pointer;
+    }
 
-  .last-event {
-    min-width: 150px;
-    max-width: 150px;
+    tbody>tr.items:hover {
+      background-color: #fafafa;
+    }
   }
 
-  .action {
-    width: 10%;
-    min-width: 150px;
-  }
-}
+  .workflow-events-table {
+    .status {
+      width: 6%;
+      min-width: 60px;
+      max-width: 60px;
+    }
+
+    .description {
+      min-width: 200px;
+      max-width: 200px;
+    }
+
+    .date {
+      width: 20%;
+      min-width: 190px;
+      max-width: 190px;
+    }
+
+    tbody>tr.items {
+      cursor: pointer;
+    }
+
+    tbody>tr.items:hover {
+      background-color: #fafafa;
+    }
+  }
+
+  .trackers-table {
+    .service {
+      width: 15%;
+      min-width: 250px;
+    }
+
+    .status {
+      width: 10%;
+    }
+
+    .last-event {
+      min-width: 200px;
+      max-width: 200px;
+    }
+
+    .date {
+      width: 15%;
+      min-width: 130px;
+      max-width: 130px;
+    }
+
+    .action {
+      width: 5%;
+      min-width: 50px;
+    }
+
+    tbody>tr.items {
+      cursor: pointer;
+    }
+
+    tbody>tr.items:hover {
+      background-color: #fafafa;
+    }
+  }
+
+  .webhooks-table {
+    .url {
+      width: 70%;
+      min-width: 200px;
+      max-width: 200px;
+    }
+
+    .mode {
+      width: 50px;
+    }
+
+    .last-event {
+      min-width: 150px;
+      max-width: 150px;
+    }
+
+    .action {
+      width: 10%;
+      min-width: 150px;
+    }
+  }
+
+  .orders-table {
+    .selector {
+      width: 3%;
+    }
+
+    .order {
+      width: 15%;
+      min-width: 130px;
+    }
+
+    .line-items {
+      min-width: 140px;
+    }
+
+    .status {
+      width: 100px;
+      min-width: 100px;
+      max-width: 120px;
+    }
+
+    .customer {
+      min-width: 150px;
+    }
+
+    .total {
+      width: 100px;
+      min-width: 100px;
+      max-width: 100px;
+    }
+
+    .date {
+      width: 120px;
+      min-width: 120px;
+      max-width: 120px;
+    }
+
+    .service {
+      width: 20%;
+      min-width: 240px;
+    }
+
+    .action {
+      width: 35px;
+      min-width: 35px;
+    }
+
+    tbody>tr.items {
+      cursor: pointer;
+    }
+
+    tbody>tr.items:hover {
+      background-color: #fafafa;
+    }
+  }
+
+  .batch-labels-table {
+    .selector {
+      width: 3%;
+    }
 
-.orders-table {
-  .selector {
-    width: 3%;
-  }
+    .order {
+      width: 20%;
+      min-width: 160px;
+    }
 
-  .order {
-    width: 15%;
-    min-width: 130px;
-  }
+    .items {
+      min-width: 150px;
+      max-width: 150px;
+    }
 
-  .line-items {
-    min-width: 140px;
-  }
+    .package {
+      min-width: 150px;
+      max-width: 150px;
+    }
 
-  .status {
-    width: 100px;
-    min-width: 100px;
-    max-width: 120px;
-  }
+    .total {
+      width: 120px;
+      min-width: 120px;
+      max-width: 120px;
+    }
 
-  .customer {
-    min-width: 150px;
-  }
+    .service {
+      width: 20%;
+      min-width: 280px;
+    }
 
-  .total {
-    width: 100px;
-    min-width: 100px;
-    max-width: 100px;
+    tbody>tr.items:hover {
+      background-color: #fafafa;
+    }
   }
 
-  .date {
-    width: 120px;
-    min-width: 120px;
-    max-width: 120px;
-  }
+  .related-item-table {
+    border-top: 2px solid #eee;
+    border-bottom: 2px solid #eee;
 
-  .service {
-    width: 20%;
-    min-width: 240px;
-  }
+    .status {
+      width: 3%;
+    }
 
-  .action {
-    width: 35px;
-    min-width: 35px;
-  }
+    .description {
+      min-width: 40%;
+    }
 
-  tbody>tr.items {
-    cursor: pointer;
+    .date {
+      width: 15%;
+      min-width: 130px;
+      max-width: 130px;
+    }
   }
 
-  tbody>tr.items:hover {
-    background-color: #fafafa;
-  }
-}
+  .members-table {
+    .member {
+      width: 40%;
+      min-width: 150px;
+    }
 
-.batch-labels-table {
-  .selector {
-    width: 3%;
-  }
+    .role {
+      width: 25%;
+      min-width: 150px;
+    }
 
-  .order {
-    width: 20%;
-    min-width: 160px;
-  }
+    .last-login {
+      width: 180px;
+      min-width: 180px;
+    }
 
-  .items {
-    min-width: 150px;
-    max-width: 150px;
+    .action {
+      width: 10%;
+    }
   }
 
-  .package {
-    min-width: 150px;
-    max-width: 150px;
-  }
+  .surcharges-table {
+    .surcharge {
+      width: 20%;
+    }
 
-  .total {
-    width: 120px;
-    min-width: 120px;
-    max-width: 120px;
-  }
+    .name {
+      width: 60%;
+    }
 
-  .service {
-    width: 20%;
-    min-width: 280px;
+    .action {
+      width: 20%;
+    }
   }
 
-  tbody>tr.items:hover {
-    background-color: #fafafa;
+  hr {
+    background-color: #dddddd;
   }
-}
 
-.related-item-table {
-  border-top: 2px solid #eee;
-  border-bottom: 2px solid #eee;
-
-  .status {
-    width: 3%;
+  .text-ellipsis {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 
-  .description {
-    min-width: 40%;
+  .text-overflow {
+    white-space: break-spaces;
   }
 
-  .date {
-    width: 15%;
-    min-width: 130px;
-    max-width: 130px;
+  .plex-sidebar {
+    z-index: 30;
   }
-}
 
-.members-table {
-  .member {
-    width: 40%;
-    min-width: 150px;
+  .log-card-header {
+    border-bottom: 1px solid #ddd;
   }
 
-  .role {
-    width: 25%;
-    min-width: 150px;
+  .bottom-menu-item {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
   }
 
-  .last-login {
-    width: 180px;
-    min-width: 180px;
+  .mode-menu-item {
+    color: rgb(196, 76, 52) !important;
   }
 
-  .action {
-    width: 10%;
+  .karrio-notifier {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    opacity: 0.9;
+    border-radius: 0;
+    font-weight: 700;
   }
-}
 
-.surcharges-table {
-  .surcharge {
-    width: 20%;
+  .static-nav {
+    top: 0;
+    z-index: 1;
+    position: sticky;
+    background-color: white;
   }
 
-  .name {
-    width: 60%;
-  }
+  .mode-indicator {
+    position: fixed;
+    top: 0;
+    z-index: 40;
+    border-top: 2px solid rgb(196, 76, 52);
+    padding: 0;
+    text-align: center;
+    width: 100%;
+    display: flex;
 
-  .action {
-    width: 20%;
+    .mode-indicator-label {
+      margin: 0 auto;
+      background: rgb(196, 76, 52);
+      display: inline;
+      padding: 0 10px;
+      border-radius: 0 0 5px 5px;
+      color: white;
+      font-size: 0.60em;
+      font-weight: bold;
+    }
   }
-}
-
-hr {
-  background-color: #dddddd;
-}
-
-.text-ellipsis {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
 
-.text-overflow {
-  white-space: break-spaces;
-}
-
-.plex-sidebar {
-  z-index: 30;
-}
-
-.log-card-header {
-  border-bottom: 1px solid #ddd;
-}
-
-.bottom-menu-item {
-  position: absolute;
-  bottom: 10px;
-  left: 0;
-  right: 0;
-}
-
-.mode-menu-item {
-  color: rgb(196, 76, 52) !important;
-}
-
-.karrio-notifier {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
-  opacity: 0.9;
-  border-radius: 0;
-  font-weight: 700;
-}
-
-.static-nav {
-  top: 0;
-  z-index: 1;
-  position: sticky;
-  background-color: white;
-}
-
-.mode-indicator {
-  position: fixed;
-  top: 0;
-  z-index: 40;
-  border-top: 2px solid rgb(196, 76, 52);
-  padding: 0;
-  text-align: center;
-  width: 100%;
-  display: flex;
-
-  .mode-indicator-label {
-    margin: 0 auto;
-    background: rgb(196, 76, 52);
-    display: inline;
-    padding: 0 10px;
-    border-radius: 0 0 5px 5px;
-    color: white;
-    font-size: 0.60em;
-    font-weight: bold;
+  /* Ensure Bulma dropdowns work correctly */
+  .dropdown {
+    position: relative;
   }
-}
 
-td>div.dropdown.is-active .dropdown-menu {
-  top: 75%;
-}
-
-.dropdown-content {
-  border: 1px solid #ddd;
-  border-top: none;
-  overflow: hidden;
-
-  &.is-menu {
-    max-height: 240px;
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 20;
+    display: none;
   }
-}
-
-.label-container {
-  width: 90%;
-  height: 90%;
-  z-index: 1;
-}
-
-.fullscreen {
-  background: #f7f7f7;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-}
-
-.small-icon>svg {
-  width: 0.8em !important;
-  height: 0.8em !important;
-}
-
-.tabs>ul {
-  scrollbar-width: none;
-  /* Firefox */
-  -ms-overflow-style: none;
-  /* Internet Explorer 10+ */
-}
-
-.tabs>ul::-webkit-scrollbar {
-  /* WebKit */
-  width: 0;
-  height: 0;
-}
-
-.tab-content {
-  display: none;
-  overflow: hidden;
 
-  &.is-active {
+  .dropdown.is-active .dropdown-menu {
     display: block;
   }
-}
 
-.dropped-panel {
-  max-height: 20.5rem;
-  overflow-y: auto;
-}
-
-.form-floating-header {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  z-index: 5;
-  background: #fff;
-  border-bottom: 1px solid #ddd;
-}
-
-.form-floating-footer {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  z-index: 5;
-  background: white;
-}
-
-.rates-list-box {
-  max-height: 11em;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-.modal-form {
-  background-color: #f9f9f9;
-}
-
-.side-modal {
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: auto;
-  border-left: solid #ddd;
-  width: 400px;
-}
-
-.side-modal-body {
-  max-height: 100vh;
-  height: 100vh;
-  width: 400px;
-}
-
-pre.code {
-  border: 1px solid #f2f2f2;
-}
-
-.admin-wrapper {
-  margin: auto;
-  max-width: 1080px;
-  padding: 0 20px;
-}
-
-.admin-sidebar {
-  width: 260px !important;
-}
-
-.admin-sidebar-header {
-  border-radius: 6px;
-}
-
-.sidebar-menu-button {
-  position: fixed;
-  top: 10px;
-  right: -40px;
-  display: none;
-}
-
-.admin-modal {
-  width: calc(100%);
-  max-height: 90vh !important;
-}
-
-@media screen and (min-width: 1080px) {
-  .table-container {
-    overflow: unset;
-    overflow-y: unset;
+  /* Fix Bulma dropdown positioning in tables */
+  .table td .dropdown.is-active .dropdown-menu {
+    top: 100%;
+    right: 0;
+    left: auto;
+    min-width: 200px;
+    z-index: 1000;
   }
 
-  .admin-modal {
-    margin: 1.5rem;
+  .table .dropdown.is-right .dropdown-menu {
+    right: 0;
+    left: auto;
   }
-}
 
-@media screen and (min-width: 768px) {
+  .dropdown-content {
+    border: 1px solid #ddd;
+    border-top: none;
+    overflow: hidden;
+
+    &.is-menu {
+      max-height: 240px;
+    }
+  }
+
+  /* Prevent layout shift from modern dropdowns only */
+  [data-radix-dropdown-content] {
+    position: fixed !important;
+    z-index: 50;
+    /* Ensure dropdowns don't affect page layout */
+    transform: translateZ(0);
+    will-change: transform;
+  }
+
+  .label-container {
+    width: 90%;
+    height: 90%;
+    z-index: 1;
+  }
+
+  .fullscreen {
+    background: #f7f7f7;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .small-icon>svg {
+    width: 0.8em !important;
+    height: 0.8em !important;
+  }
+
+  .tabs>ul {
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* Internet Explorer 10+ */
+  }
+
+  .tabs>ul::-webkit-scrollbar {
+    /* WebKit */
+    width: 0;
+    height: 0;
+  }
+
+  .tab-content {
+    display: none;
+    overflow: hidden;
+
+    &.is-active {
+      display: block;
+    }
+  }
+
+  .dropped-panel {
+    max-height: 20.5rem;
+    overflow-y: auto;
+  }
+
+  .form-floating-header {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 5;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .form-floating-footer {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: 5;
+    background: white;
+  }
+
+  .rates-list-box {
+    max-height: 11em;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .modal-form {
+    background-color: #f9f9f9;
+  }
+
+  .side-modal {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: auto;
+    border-left: solid #ddd;
+    width: 400px;
+  }
+
+  .side-modal-body {
+    max-height: 100vh;
+    height: 100vh;
+    width: 400px;
+  }
+
+  pre.code {
+    border: 1px solid #f2f2f2;
+  }
+
+  .admin-wrapper {
+    margin: auto;
+    max-width: 1080px;
+    padding: 0 20px;
+  }
+
   .admin-sidebar {
-    position: absolute !important;
-    z-index: 0 !important;
+    width: 260px !important;
   }
-}
 
-@media screen and (max-width: 768px) {
-  .table-container {
-    overflow-y: visible;
+  .admin-sidebar-header {
+    border-radius: 6px;
+  }
+
+  .sidebar-menu-button {
+    position: fixed;
+    top: 10px;
+    right: -40px;
+    display: none;
   }
 
   .admin-modal {
-    margin: 0;
-    max-height: 95vh !important;
+    width: calc(100%);
+    max-height: 90vh !important;
   }
 
-  .admin-sidebar-menu {
-    height: calc(100%);
-    margin: 0 !important;
+  @media screen and (min-width: 1080px) {
+    .table-container {
+      overflow-x: auto;
+      overflow-y: unset;
+    }
+
+    .admin-modal {
+      margin: 1.5rem;
+    }
   }
 
-  .sidebar-menu-button.is-mobile-active {
-    display: block !important;
+  /* Table container scrolling */
+  .table-container {
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
   }
-}
 
-// Scrollbar
-/* width */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
+  .table-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
 
-/* Track */
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
+  @media screen and (min-width: 768px) {
+    .admin-sidebar {
+      position: absolute !important;
+      z-index: 0 !important;
+    }
+  }
 
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #888;
-}
+  @media screen and (max-width: 768px) {
+    .table-container {
+      overflow-y: visible;
+    }
 
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
+    .admin-modal {
+      margin: 0;
+      max-height: 95vh !important;
+    }
+
+    .admin-sidebar-menu {
+      height: calc(100%);
+      margin: 0 !important;
+    }
+
+    .sidebar-menu-button.is-mobile-active {
+      display: block !important;
+    }
+  }
+
+  // Scrollbar - Auto-hiding
+  /* width */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 3px;
+    transition: background 0.2s ease;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  /* Show scrollbar only on hover for main content areas */
+  .scrollable-content:hover::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  .scrollable-content:hover::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.4);
+  }

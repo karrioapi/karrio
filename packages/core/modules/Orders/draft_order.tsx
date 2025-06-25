@@ -27,9 +27,10 @@ const ContextProviders = bundleContexts([
   ModalProvider,
 ]);
 
-export default async function Page({ params }: { params: Promise<{ id: string }> }) {
-  const query = await params;
-  const Component = ({ id }: { id: string }): JSX.Element => {
+export default function Page(pageProps: any) {
+  const Component = (): JSX.Element => {
+    const params = pageProps.params || {};
+    const { id } = params;
     const loader = useLoader();
     const [ready, setReady] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
@@ -551,7 +552,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     <>
       <GoogleGeocodingScript />
       <ContextProviders>
-        <Component id={query.id} />
+        <Component />
       </ContextProviders>
     </>
   );

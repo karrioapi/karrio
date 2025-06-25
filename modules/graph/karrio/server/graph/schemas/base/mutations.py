@@ -25,12 +25,14 @@ import karrio.server.graph.schemas.base.types as types
 import karrio.server.graph.serializers as serializers
 import karrio.server.providers.models as providers
 import karrio.server.manager.models as manager
+import karrio.server.user.forms as user_forms
 import karrio.server.core.gateway as gateway
 import karrio.server.graph.models as graph
 import karrio.server.graph.forms as forms
 import karrio.server.graph.utils as utils
 import karrio.server.user.models as auth
 import karrio.server.iam.models as iam
+import karrio.server.core.models as core
 import karrio.lib as lib
 
 logger = logging.getLogger(__name__)
@@ -258,7 +260,7 @@ class RegisterUserMutation(utils.BaseMutation):
             )
 
         try:
-            form = forms.SignUpForm(input)
+            form = user_forms.SignUpForm(input)
             user = form.save()
 
             return RegisterUserMutation(user=user)  # type:ignore
@@ -825,3 +827,45 @@ class UpdateServiceZoneMutation(utils.BaseMutation):
         serializer.update_zone(input["zone_index"], input["zone"])
 
         return UpdateServiceZoneMutation(rate_sheet=rate_sheet)  # type:ignore
+
+
+@strawberry.type
+class CreateMetafieldMutation(utils.BaseMutation):
+    metafield: typing.Optional[types.MetafieldType] = None
+
+    @staticmethod
+    @utils.authentication_required
+    @utils.authorization_required()
+    def mutate(
+        info: Info, **input: inputs.CreateMetafieldInput
+    ) -> "CreateMetafieldMutation":
+        data = input.copy()
+
+        metafield = serializers.MetafieldModelSerializer.map(
+            data=data,
+            context=info.context.request,
+        ).save().instance
+
+        return CreateMetafieldMutation(metafield=metafield)
+
+
+@strawberry.type
+class UpdateMetafieldMutation(utils.BaseMutation):
+    metafield: typing.Optional[types.MetafieldType] = None
+
+    @staticmethod
+    @utils.authentication_required
+    @utils.authorization_required()
+    def mutate(
+        info: Info, **input: inputs.UpdateMetafieldInput
+    ) -> "UpdateMetafieldMutation":
+        data = input.copy()
+        instance = core.Metafield.access_by(info.context.request).get(id=data.get("id"))
+
+        metafield = serializers.MetafieldModelSerializer.map(
+            instance,
+            data=data,
+            context=info.context.request,
+        ).save().instance
+
+        return UpdateMetafieldMutation(metafield=metafield)

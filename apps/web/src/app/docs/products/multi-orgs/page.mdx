@@ -1,0 +1,1032 @@
+---
+sidebarTitle: Multi Organizations
+title: Multi Organizations
+description: Enterprise multi-tenant system with complete data isolation, dual authentication, and organization-based access control
+tags:
+  [
+    "organizations",
+    "multi-tenant",
+    "data-isolation",
+    "authentication",
+    "graphql",
+    "workspace-config",
+  ]
+---
+
+# Multi-Organizations
+
+<div className="flex gap-2 mb-6">
+  <div className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10 dark:bg-purple-400/10 dark:text-purple-400 dark:ring-purple-400/30">
+    <span className="text-xs">Insiders</span>
+  </div>
+  <div className="inline-flex items-center rounded-md bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-700/10 dark:bg-amber-400/10 dark:text-amber-400 dark:ring-amber-400/30">
+    <span className="text-xs">Enterprise</span>
+  </div>
+</div>
+
+Karrio's multi-organization system provides enterprise-grade multi-tenancy with complete data isolation, dual authentication architecture, and sophisticated permission management. Built for SaaS platforms, enterprise deployments, and complex organizational structures.
+
+## Architecture Overview
+
+### System Architecture
+
+Karrio implements a **hub-and-spoke multi-tenant architecture** with complete data isolation:
+
+- **Organizations** serve as tenant boundaries with automatic API token generation
+- **Resource Isolation** creates secure data silos for all resources (20+ resource types)
+- **Dual Authentication** supports both JWT tokens and organization-specific API tokens
+- **Middleware Layer** automatically resolves organization context and filters queries
+- **IAM Integration** provides role-based permissions with context-aware enforcement
+
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    Multi-Organization Architecture
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border h-64 flex items-center justify-center">
+    <span className="text-gray-400">
+      Complete tenant isolation with Link models, dual authentication, and
+      automatic context resolution
+    </span>
+  </div>
+</div>
+
+### Data Isolation Architecture
+
+```mermaid
+flowchart TD
+    A[User Request] --> B{Authentication Type}
+    B -->|JWT Token| C[User Context]
+    B -->|API Token| D[Organization Token]
+    B -->|Bearer + X-Org-ID| E[Header Context]
+
+    C --> F[Context Resolution]
+    D --> F
+    E --> F
+
+    F --> G[Organization Context]
+    G --> H[OrganizationAccess Middleware]
+
+    H --> I[Automatic Query Filtering]
+    I --> J[Resource Queries]
+
+    J --> K[Carrier Connections]
+    J --> L[Shipments]
+    J --> M[Orders]
+    J --> N[20+ Resource Types]
+
+    K --> O[Isolated Carriers]
+    L --> P[Isolated Shipments]
+    M --> Q[Isolated Orders]
+    N --> R[Complete Data Separation]
+
+    style A fill:#e1f5fe
+    style G fill:#fff3e0
+    style R fill:#e8f5e8
+    style J fill:#f3e5f5
+```
+
+### Authentication Flow
+
+```mermaid
+flowchart TD
+    A[Authentication Request] --> B{Token Type?}
+
+    B -->|JWT Token| C[JWT Validation]
+    B -->|API Token| D[Organization Token Validation]
+
+    C --> E[User Identity]
+    D --> F[Organization + User Identity]
+
+    E --> G{Organization Context}
+    F --> H[Direct Organization Context]
+
+    G -->|X-Org-ID Header| I[Header Organization]
+    G -->|Default| J[User's Default Org]
+
+    I --> K[Context Resolution]
+    J --> K
+    H --> K
+
+    K --> L[Final Organization Context]
+    L --> M[Permission Validation]
+    M --> N[Resource Access]
+
+    style A fill:#e1f5fe
+    style L fill:#fff3e0
+    style N fill:#e8f5e8
+```
+
+## Core Features
+
+### Complete Data Isolation
+
+Every resource in Karrio is isolated by organization through sophisticated data isolation patterns:
+
+#### Resource Isolation Architecture
+
+```javascript
+// 20+ resource types ensure complete data separation
+const isolatedResources = [
+  "Carrier connections", // Shipping provider integrations
+  "Shipments", // Shipping operations
+  "Orders", // Order management
+  "Webhooks", // Event notifications
+  "Templates", // Document templates
+  "Trackers", // Package tracking
+  "Addresses", // Address book
+  "Rates", // Rate configurations
+  // ... 12+ more resource types
+];
+
+// Each resource is automatically scoped to organization
+// Automatic query filtering ensures 100% data separation
+```
+
+### Dual Authentication System
+
+#### Organization-Specific API Tokens
+
+Every organization automatically receives a unique API token with direct context:
+
+```bash
+# Organization token provides automatic context
+curl -H "Authorization: Token key_org_abc123def456" \
+     https://api.karrio.io/graphql
+
+# No additional headers needed - organization context is automatic
+```
+
+#### JWT with Organization Switching
+
+JWT tokens support multi-organization access with context switching:
+
+```bash
+# JWT with organization selection
+curl -H "Authorization: Bearer jwt_token_here" \
+     -H "X-Org-ID: org_1234567890" \
+     https://api.karrio.io/graphql
+
+# JWT defaults to user's primary organization if no X-Org-ID
+```
+
+### Role-Based Permissions
+
+Four-tier permission system with granular access control:
+
+#### Permission Hierarchy
+
+```javascript
+const roles = {
+  owner: {
+    permissions: [
+      "manage_org_owner",
+      "manage_team",
+      "manage_apps",
+      "manage_carriers",
+    ],
+    description: "Complete organizational control and ownership transfer",
+  },
+  admin: {
+    permissions: ["manage_team", "manage_apps", "manage_carriers"],
+    description: "Team management and operational control",
+  },
+  member: {
+    permissions: [
+      "manage_data",
+      "manage_orders",
+      "manage_shipments",
+      "manage_trackers",
+    ],
+    description: "Core shipping operations and data management",
+  },
+  developer: {
+    permissions: ["manage_webhooks"],
+    description: "API integrations and webhook management",
+  },
+};
+```
+
+## API Reference
+
+### GraphQL API
+
+#### Core Queries
+
+```graphql
+query GetOrganizations {
+  organizations {
+    id
+    name
+    slug
+    is_active
+    created
+    token
+    current_user {
+      email
+      is_admin
+      is_owner
+      roles
+    }
+    members {
+      email
+      roles
+      full_name
+      last_login
+    }
+    workspace_config {
+      default_currency
+      default_weight_unit
+      default_dimension_unit
+      insured_by_default
+    }
+    usage {
+      members
+      total_shipments
+      total_shipping_spend
+      api_requests {
+        period
+        count
+      }
+    }
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "data": {
+    "organizations": [
+      {
+        "id": "org_1234567890",
+        "name": "Acme Shipping",
+        "slug": "acme-shipping",
+        "is_active": true,
+        "created": "2024-01-15T10:30:00Z",
+        "token": "key_abc123def456",
+        "current_user": {
+          "email": "admin@acme.com",
+          "is_admin": true,
+          "is_owner": true,
+          "roles": ["owner"]
+        },
+        "members": [
+          {
+            "email": "admin@acme.com",
+            "roles": ["owner"],
+            "full_name": "John Admin",
+            "last_login": "2024-01-20T08:15:00Z"
+          },
+          {
+            "email": "user@acme.com",
+            "roles": ["member"],
+            "full_name": "Jane User",
+            "last_login": "2024-01-19T14:22:00Z"
+          }
+        ],
+        "workspace_config": {
+          "default_currency": "USD",
+          "default_weight_unit": "LB",
+          "default_dimension_unit": "IN",
+          "insured_by_default": false
+        },
+        "usage": {
+          "members": 2,
+          "total_shipments": 145,
+          "total_shipping_spend": 2847.5,
+          "api_requests": [
+            {
+              "period": "2024-01-20",
+              "count": 234
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
+```
+
+#### Organization Management Mutations
+
+##### Create Organization
+
+```graphql
+mutation CreateOrganization($input: CreateOrganizationMutationInput!) {
+  create_organization(input: $input) {
+    organization {
+      id
+      name
+      is_active
+      created
+      token
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+```
+
+**Variables:**
+
+```json
+{
+  "input": {
+    "name": "New Shipping Team"
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "data": {
+    "create_organization": {
+      "organization": {
+        "id": "org_9876543210",
+        "name": "New Shipping Team",
+        "is_active": true,
+        "created": "2024-01-20T15:45:00Z",
+        "token": "key_xyz789uvw456"
+      },
+      "errors": []
+    }
+  }
+}
+```
+
+##### Update Organization
+
+```graphql
+mutation UpdateOrganization($input: UpdateOrganizationMutationInput!) {
+  update_organization(input: $input) {
+    organization {
+      id
+      name
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+```
+
+##### Delete Organization
+
+```graphql
+mutation DeleteOrganization($input: DeleteOrganizationMutationInput!) {
+  delete_organization(input: $input) {
+    organization {
+      id
+      name
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+```
+
+#### Team Management Mutations
+
+##### Send Organization Invitations
+
+```graphql
+mutation SendOrganizationInvites(
+  $input: SendOrganizationInvitesMutationInput!
+) {
+  send_organization_invites(input: $input) {
+    organization {
+      id
+      name
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+```
+
+**Variables:**
+
+```json
+{
+  "input": {
+    "org_id": "org_1234567890",
+    "emails": ["newuser@example.com", "colleague@example.com"],
+    "redirect_url": "https://app.karrio.io/accept-invitation",
+    "roles": ["member"]
+  }
+}
+```
+
+##### Accept Organization Invitation
+
+```graphql
+mutation AcceptOrganizationInvitation(
+  $input: AcceptOrganizationInvitationMutationInput!
+) {
+  accept_organization_invitation(input: $input) {
+    organization {
+      id
+      name
+      current_user {
+        email
+        is_admin
+      }
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+```
+
+##### Change Organization Owner
+
+```graphql
+mutation ChangeOrganizationOwner(
+  $input: ChangeOrganizationOwnerMutationInput!
+) {
+  change_organization_owner(input: $input) {
+    organization {
+      id
+      name
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+```
+
+##### Set User Roles
+
+```graphql
+mutation SetOrganizationUserRoles(
+  $input: SetOrganizationUserRolesMutationInput!
+) {
+  set_organization_user_roles(input: $input) {
+    organization {
+      id
+      name
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+```
+
+### Workspace Configuration API
+
+#### Query Workspace Configuration
+
+```graphql
+query GetWorkspaceConfig {
+  workspace_config {
+    object_type
+    default_currency
+    default_weight_unit
+    default_dimension_unit
+    default_country_code
+    federal_tax_id
+    state_tax_id
+    insured_by_default
+  }
+}
+```
+
+#### Update Workspace Configuration
+
+```graphql
+mutation UpdateWorkspaceConfig($input: WorkspaceConfigMutationInput!) {
+  update_workspace_config(input: $input) {
+    workspace_config {
+      object_type
+      default_currency
+      default_weight_unit
+      default_dimension_unit
+      insured_by_default
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+```
+
+**Variables:**
+
+```json
+{
+  "input": {
+    "default_currency": "EUR",
+    "default_weight_unit": "KG",
+    "default_dimension_unit": "CM",
+    "insured_by_default": true,
+    "federal_tax_id": "FR12345678901"
+  }
+}
+```
+
+## Authentication Patterns
+
+### Organization Token Usage (Recommended)
+
+Organization tokens provide automatic context and are the preferred method for production integrations:
+
+```javascript
+// Organization token automatically sets context
+const client = new KarrioClient({
+  apiKey: "key_org_abc123def456", // Organization-specific token
+  baseUrl: "https://api.karrio.io",
+});
+
+// All operations automatically scoped to organization
+const shipments = await client.shipments.list();
+const carriers = await client.carriers.list();
+```
+
+### JWT with Organization Switching
+
+JWT tokens support multi-organization access patterns:
+
+```javascript
+// JWT with organization context
+const client = new KarrioClient({
+  accessToken: "jwt_token_here",
+  organization: "org_1234567890",
+  baseUrl: "https://api.karrio.io",
+});
+
+// Switch organization context
+client.setOrganization("org_9876543210");
+const differentOrgShipments = await client.shipments.list();
+```
+
+### Token Precedence Rules
+
+The system follows a specific precedence hierarchy for organization context:
+
+1. **Organization-specific API token** (highest precedence)
+2. **X-Org-ID header** with JWT token
+3. **User's default organization** (fallback)
+
+```bash
+# Precedence example - Organization token wins
+curl -H "Authorization: Token key_org_abc123" \
+     -H "X-Org-ID: org_different" \
+     https://api.karrio.io/graphql
+# Result: Uses organization from token, ignores header
+```
+
+## Data Isolation Patterns
+
+### Automatic Query Filtering
+
+Organization access control automatically filters all queries:
+
+```javascript
+// These queries are automatically scoped to the authenticated organization
+const carriers = await client.carriers.list(); // Only org's carriers
+const shipments = await client.shipments.list(); // Only org's shipments
+const orders = await client.orders.list(); // Only org's orders
+const webhooks = await client.webhooks.list(); // Only org's webhooks
+
+// 100% data isolation guaranteed at the database level
+```
+
+### Data Isolation Verification
+
+You can verify complete data isolation through testing:
+
+```javascript
+// Create resources in Organization A
+const orgAClient = new KarrioClient({ apiKey: "key_org_a_token" });
+const orgACarrier = await orgAClient.carriers.create(carrierData);
+
+// Organization B cannot access Organization A's resources
+const orgBClient = new KarrioClient({ apiKey: "key_org_b_token" });
+const orgBCarriers = await orgBClient.carriers.list();
+// Result: Empty list - complete isolation verified
+```
+
+## Use Cases & Implementation Patterns
+
+### Multi-Tenant SaaS Platform
+
+Perfect for SaaS platforms serving multiple clients:
+
+```javascript
+// Client-specific organization setup
+const createClientOrganization = async (clientData) => {
+  const response = await adminClient.graphql(
+    `
+    mutation CreateOrganization($input: CreateOrganizationMutationInput!) {
+      create_organization(input: $input) {
+        organization {
+          id
+          name
+          token
+          workspace_config {
+            default_currency
+          }
+        }
+      }
+    }
+  `,
+    {
+      input: {
+        name: clientData.companyName,
+      },
+    },
+  );
+
+  // Configure workspace for client's region
+  await adminClient.graphql(
+    `
+    mutation UpdateWorkspaceConfig($input: WorkspaceConfigMutationInput!) {
+      update_workspace_config(input: $input) {
+        workspace_config {
+          default_currency
+          default_country_code
+        }
+      }
+    }
+  `,
+    {
+      input: {
+        default_currency: clientData.currency,
+        default_country_code: clientData.country,
+      },
+    },
+  );
+
+  return response.data.create_organization.organization;
+};
+```
+
+### Enterprise Department Management
+
+Ideal for large enterprises with multiple departments:
+
+```javascript
+// Department-based organization structure
+const departmentOrgs = {
+  fulfillment: "org_fulfillment_123",
+  returns: "org_returns_456",
+  international: "org_intl_789",
+};
+
+// Department-specific configurations
+const configureDepartment = async (dept, config) => {
+  const client = new KarrioClient({
+    apiKey: departmentTokens[dept],
+  });
+
+  await client.updateWorkspaceConfig({
+    default_currency: config.currency,
+    federal_tax_id: config.taxId,
+    insured_by_default: config.insurance,
+  });
+};
+```
+
+### Partner Ecosystem Management
+
+Enable controlled partner access:
+
+```javascript
+// Partner organization with limited permissions
+const createPartnerAccess = async (partnerData) => {
+  // Create partner organization
+  const org = await createOrganization(partnerData.name);
+
+  // Create limited API key for partner
+  return await createAPIKey({
+    label: `${partnerData.name} Integration`,
+    permissions: ["manage_shipments"], // Limited scope
+    organization: org.id,
+  });
+};
+```
+
+### Franchise Management System
+
+Support franchise business models:
+
+```javascript
+// Franchise-specific configuration
+const setupFranchise = async (franchiseData) => {
+  const organization = await createOrganization(franchiseData.locationName);
+
+  // Configure franchise-specific settings
+  await updateWorkspaceConfig({
+    default_currency: franchiseData.currency,
+    federal_tax_id: franchiseData.taxId,
+    state_tax_id: franchiseData.stateTaxId,
+  });
+
+  // Set up franchise-specific carriers
+  await addCarrierConnection({
+    carrier: "fedex",
+    credentials: franchiseData.fedexAccount,
+  });
+
+  return organization;
+};
+```
+
+## Security & Best Practices
+
+### Authentication Security
+
+#### Token Management
+
+```javascript
+// Secure token handling
+class SecureKarrioClient {
+  constructor(config) {
+    this.token = config.apiKey;
+    this.organization = config.organization;
+  }
+
+  // Always validate token before use
+  async validateToken() {
+    const response = await this.query(`
+      query ValidateToken {
+        user {
+          id
+          organizations {
+            id
+            name
+          }
+        }
+      }
+    `);
+    return response.data.user;
+  }
+
+  // Rotate tokens regularly
+  async rotateToken(password) {
+    return await this.mutate(
+      `
+      mutation RefreshToken($input: MutateTokenMutationInput!) {
+        mutate_token(input: $input) {
+          token { key }
+        }
+      }
+    `,
+      {
+        input: {
+          key: this.token,
+          refresh: true,
+          password: password,
+        },
+      },
+    );
+  }
+}
+```
+
+#### Permission Validation
+
+```javascript
+// Always verify permissions before operations
+const validatePermissions = async (client, requiredPermissions) => {
+  const user = await client.query(`
+    query GetCurrentUser {
+      user {
+        organizations {
+          current_user {
+            roles
+          }
+        }
+      }
+    }
+  `);
+
+  const userRoles = user.data.user.organizations[0].current_user.roles;
+  return requiredPermissions.every((perm) =>
+    rolePermissions[userRoles[0]].includes(perm),
+  );
+};
+```
+
+### Data Security
+
+#### Audit Logging
+
+```javascript
+// Track organization activities
+const auditAction = async (action, resource, organization) => {
+  await logger.log({
+    action: action,
+    resource: resource,
+    organization: organization,
+    timestamp: new Date(),
+    user: getCurrentUser(),
+  });
+};
+
+// Example usage
+await auditAction("CREATE_SHIPMENT", shipment.id, org.id);
+```
+
+#### Data Retention
+
+```javascript
+// Organization-specific data retention
+const cleanupOrganizationData = async (orgId, retentionDays) => {
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
+
+  // Clean up old shipments, orders, etc.
+  await client.cleanupShipments({
+    organization: orgId,
+    before: cutoffDate,
+  });
+};
+```
+
+## Performance Optimization
+
+### Efficient Query Patterns
+
+```javascript
+// Batch organization operations
+const batchOrganizationQuery = async (orgIds) => {
+  return await client.query(`
+    query GetMultipleOrganizations {
+      organizations {
+        id
+        name
+        usage {
+          total_shipments
+          members
+        }
+        workspace_config {
+          default_currency
+        }
+      }
+    }
+  `);
+};
+
+// Cache organization configuration
+const orgConfigCache = new Map();
+
+const getCachedOrgConfig = async (orgId) => {
+  if (!orgConfigCache.has(orgId)) {
+    const config = await getWorkspaceConfig(orgId);
+    orgConfigCache.set(orgId, config);
+  }
+  return orgConfigCache.get(orgId);
+};
+```
+
+### Database Optimization
+
+```javascript
+// Optimize organization resource queries
+const getOrganizationResources = async (orgId, resourceType) => {
+  // Use efficient queries to avoid N+1 problems
+  return await client.query(
+    `
+    query GetOrgResources($orgId: String!, $type: String!) {
+      organization(id: $orgId) {
+        ${resourceType} {
+          # Select only needed fields
+          id
+          created
+          status
+        }
+      }
+    }
+  `,
+    { orgId, type: resourceType },
+  );
+};
+```
+
+## Migration & Setup
+
+### Adding Organization Support to Existing Systems
+
+```javascript
+// Migration helper for existing single-tenant systems
+const migrateToMultiOrg = async (defaultOrgName) => {
+  // 1. Create default organization
+  const defaultOrg = await createOrganization(defaultOrgName);
+
+  // 2. Migrate existing resources
+  await migrateExistingResources(defaultOrg.id);
+
+  // 3. Update API clients
+  await updateAPIClients(defaultOrg.token);
+
+  // 4. Verify data isolation
+  await verifyDataIsolation();
+};
+
+const migrateExistingResources = async (orgId) => {
+  // Associate existing resources to default organization
+  const resources = ["carriers", "shipments", "orders", "webhooks"];
+
+  for (const resourceType of resources) {
+    await associateResourcesToOrganization(resourceType, orgId);
+  }
+};
+```
+
+### Development Environment Setup
+
+```javascript
+// Development organization setup
+const setupDevEnvironment = async () => {
+  // Create development organizations
+  const devOrg = await createOrganization("Development Team");
+  const testOrg = await createOrganization("Testing Environment");
+
+  // Configure different settings for each
+  await configureDevOrganization(devOrg.id, {
+    currency: "USD",
+    testMode: true,
+  });
+
+  await configureTestOrganization(testOrg.id, {
+    currency: "EUR",
+    testMode: true,
+  });
+
+  return { devOrg, testOrg };
+};
+```
+
+## Getting Started
+
+### Quick Setup Guide
+
+1. **Enable Multi-Organization Mode**
+
+   ```bash
+   export MULTI_ORGANIZATIONS=True
+   ```
+
+2. **Create Your First Organization**
+
+   ```javascript
+   const organization = await client.createOrganization({
+     name: "My Shipping Company",
+   });
+   ```
+
+3. **Configure Workspace Settings**
+
+   ```javascript
+   await client.updateWorkspaceConfig({
+     default_currency: "USD",
+     default_weight_unit: "LB",
+     insured_by_default: false,
+   });
+   ```
+
+4. **Invite Team Members**
+
+   ```javascript
+   await client.sendOrganizationInvites({
+     org_id: organization.id,
+     emails: ["teammate@company.com"],
+     roles: ["member"],
+   });
+   ```
+
+5. **Use Organization Token**
+
+   ```javascript
+   const orgClient = new KarrioClient({
+     apiKey: organization.token,
+   });
+
+   // All operations automatically scoped to organization
+   const carriers = await orgClient.carriers.list();
+   ```
+
+### Next Steps
+
+- Learn about [user management](/docs/products/user-management) for detailed user administration
+- Explore [webhooks](/docs/products/webhooks) for organization activity notifications
+- Set up [API logs](/docs/products/api-logs) for organization-level monitoring
+- Configure [admin console](/docs/products/admin-console) for centralized management

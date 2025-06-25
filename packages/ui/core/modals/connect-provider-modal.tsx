@@ -401,8 +401,6 @@ export const ConnectProviderModal = ({
                     }
                     value={payload.credentials?.account_country_code}
                     className="is-small"
-                    dropdownClass="is-small"
-                    wrapperClass="pt-2"
                     required={field("account_country_code").required}
                   />
                 )}

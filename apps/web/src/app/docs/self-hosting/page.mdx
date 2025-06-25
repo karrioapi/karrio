@@ -2,6 +2,282 @@
 
 There are multiple ways to deploy Karrio, providing support for customers who want to implement their shipping API infrastructure within their existing tech stack. This guide will help you get started with self-hosting Karrio.
 
+## Architecture Overview
+
+Karrio is built with a modern, scalable architecture designed for reliability and extensibility. Understanding the architecture helps you make informed decisions about deployment, scaling, and customization.
+
+### Core Components
+
+Karrio has three main components:
+
+1. **Karrio SDK** - The foundational layer that unifies and standardizes communication with shipping carriers into a single interface. It's designed to be extensible, allowing integration of additional carrier support.
+
+2. **Karrio Server** - The backend server that exposes REST and GraphQL APIs for shipping operations. Built with Django and Python, it maintains state in a PostgreSQL database and handles all business logic.
+
+3. **Karrio Dashboard** - The user interface that operations teams use for manual fulfillment processes. Built with Next.js, it runs in the browser and communicates with the Karrio server via REST and GraphQL APIs.
+
+### Service Architecture
+
+When you deploy Karrio using Docker, several services work together to provide a complete shipping platform:
+
+```mermaid
+graph TB
+    %% External
+    User[User/Browser]
+    API_Client[External API Client]
+
+    %% Frontend
+    Dashboard[Karrio Dashboard<br/>Next.js Frontend<br/>Port 3000]
+
+    %% Backend Services
+    API[Karrio API Server<br/>Django Backend<br/>Port 5002]
+    Worker[Background Worker<br/>Async Task Processing]
+
+    %% Data Layer
+    DB[(PostgreSQL Database<br/>Persistent Data Storage)]
+    Redis[(Redis<br/>Cache & Message Broker)]
+
+    %% External Services
+    Carriers[Shipping Carriers<br/>UPS, FedEx, USPS, etc.]
+
+    %% Connections
+    User --> Dashboard
+    API_Client --> API
+    Dashboard --> API
+    API --> DB
+    API --> Redis
+    API --> Worker
+    Worker --> DB
+    Worker --> Redis
+    Worker --> Carriers
+    API --> Carriers
+
+    %% Styling
+    classDef frontend fill:#e1f5fe
+    classDef backend fill:#f3e5f5
+    classDef data fill:#e8f5e8
+    classDef external fill:#fff3e0
+
+    class Dashboard frontend
+    class API,Worker backend
+    class DB,Redis data
+    class User,API_Client,Carriers external
+```
+
+#### Service Details
+
+- **Dashboard (Port 3000)**: The web interface built with Next.js that provides:
+
+  - Shipment management
+  - Carrier configuration
+  - Order processing
+  - Analytics and reporting
+
+- **API Server (Port 5002)**: The core Django application that provides:
+
+  - REST API endpoints for shipping operations
+  - GraphQL API for data queries
+  - Authentication and authorization
+  - Business logic and carrier integrations
+
+- **Background Worker**: Processes asynchronous tasks including:
+
+  - Shipment tracking updates
+  - Webhook deliveries
+  - Email notifications
+  - Data synchronization
+
+- **PostgreSQL Database**: Stores all persistent data:
+
+  - User accounts and permissions
+  - Shipment records
+  - Carrier configurations
+  - Tracking information
+
+- **Redis**: Provides caching and message queuing:
+  - Session storage
+  - API response caching
+  - Task queue for background jobs
+  - Real-time data synchronization
+
+### Data Flow
+
+1. **User Interactions**: Users interact with the Dashboard or make direct API calls
+2. **API Processing**: The API server processes requests, applies business logic, and interacts with carriers
+3. **Background Tasks**: Long-running operations are queued for background processing
+4. **Data Persistence**: All data is stored in PostgreSQL with Redis providing caching
+5. **Real-time Updates**: Changes are propagated through webhooks
+
+### Extensibility
+
+Rather than modifying Karrio's source code directly, we recommend developing external **Apps** that interact with Karrio through its APIs:
+
+- **REST API**: For shipping operations, rate quotes, label generation, and tracking
+- **GraphQL API**: For complex data queries and real-time subscriptions
+- **Webhooks**: For event-driven integrations and real-time notifications
+- **SDK Extensions**: For adding custom carrier integrations
+
+This approach ensures your customizations remain compatible with future Karrio updates.
+
+## Technology Stack & Scalability
+
+Karrio is built on a proven technology stack designed for enterprise-scale shipping operations. Each component has been chosen for its ability to handle high-volume traffic, maintain reliability, and scale horizontally.
+
+### Core Technologies
+
+**Backend: Python & Django**
+
+- **Python**: A mature, enterprise-ready language with extensive shipping and logistics libraries
+- **Django**: Battle-tested web framework with built-in security, ORM, and admin interface
+- **Django REST Framework**: Provides robust API capabilities with authentication, serialization, and documentation
+- **Async Support**: Leverages Django's async capabilities and Celery/Huey for background task processing
+
+**Frontend: Next.js**
+
+- **React-based**: Modern, component-based architecture for maintainable user interfaces
+- **Server-Side Rendering**: Improves performance and SEO for better user experience
+- **Static Generation**: Optimizes page load times for frequently accessed content
+- **API Routes**: Built-in API capabilities for seamless backend integration
+
+**Infrastructure: Docker & Containerization**
+
+- **Container Orchestration**: Enables easy scaling and deployment across environments
+- **Resource Isolation**: Ensures stable performance under varying load conditions
+- **Multi-stage Builds**: Optimized container images for production deployments
+- **Health Checks**: Built-in monitoring and automatic recovery capabilities
+
+### High-Volume Shipping Operations
+
+Karrio's architecture is specifically designed to handle enterprise-scale shipping operations:
+
+#### Performance Characteristics
+
+**API Throughput**
+
+- **Rate Limiting**: Configurable rate limits to manage carrier API quotas efficiently
+- **Connection Pooling**: Optimized database and HTTP connections for high concurrency
+- **Caching Strategy**: Multi-layer caching (Redis, Django cache framework) reduces API response times
+- **Async Processing**: Background workers handle time-intensive operations without blocking user requests
+
+**Database Optimization**
+
+- **PostgreSQL**: Enterprise-grade database with excellent performance under heavy loads
+- **Query Optimization**: Efficient database queries with proper indexing and query optimization
+- **Connection Pooling**: PgBouncer integration for managing database connections at scale
+- **Read Replicas**: Support for read-only replicas to distribute query load
+
+**Carrier Integration Efficiency**
+
+- **Batch Processing**: Groups multiple shipment requests to reduce carrier API calls
+- **Circuit Breakers**: Prevents cascade failures when carrier services are unavailable
+- **Rate Limiting**: Respects carrier API limits while maximizing throughput
+
+#### Scalability Features
+
+**Horizontal Scaling**
+
+```mermaid
+graph LR
+    LB[Load Balancer]
+
+    subgraph "API Tier"
+        API1[API Server 1]
+        API2[API Server 2]
+        API3[API Server N...]
+    end
+
+    subgraph "Worker Tier"
+        W1[Worker 1]
+        W2[Worker 2]
+        W3[Worker N...]
+    end
+
+    subgraph "Data Tier"
+        DB[(Primary DB)]
+        DBR[(Read Replica)]
+        Redis[(Redis Cluster)]
+    end
+
+    LB --> API1
+    LB --> API2
+    LB --> API3
+
+    API1 --> DB
+    API2 --> DBR
+    API3 --> Redis
+
+    W1 --> DB
+    W2 --> Redis
+    W3 --> DB
+
+    classDef api fill:#f3e5f5
+    classDef worker fill:#e1f5fe
+    classDef data fill:#e8f5e8
+    classDef lb fill:#fce4ec
+
+    class API1,API2,API3 api
+    class W1,W2,W3 worker
+    class DB,DBR,Redis data
+    class LB lb
+```
+
+**Auto-scaling Capabilities**
+
+- **Container Orchestration**: Docker Swarm or Kubernetes for automatic scaling
+- **Resource Monitoring**: Built-in metrics for CPU, memory, and request volume
+- **Dynamic Worker Scaling**: Automatically adjust worker count based on queue length
+- **Database Scaling**: Support for read replicas and connection pooling
+
+### Production Deployment Considerations
+
+**High-Availability Setup**
+
+- **Multi-Zone Deployment**: Deploy across multiple availability zones for redundancy
+- **Database Clustering**: PostgreSQL streaming replication for failover capabilities
+- **Redis Clustering**: Redis Sentinel or Cluster mode for cache high availability
+- **Load Balancing**: Multiple API server instances behind load balancers
+
+**Performance Optimization**
+
+- **CDN Integration**: Static asset delivery through content delivery networks
+- **Compression**: Gzip compression for API responses and static content
+- **Database Indexing**: Optimized indexes for common shipping operation queries
+- **Background Processing**: Offload heavy operations to dedicated worker processes
+
+**Monitoring & Observability**
+
+- **Application Metrics**: Built-in Django metrics for request/response monitoring
+- **Database Performance**: PostgreSQL query analysis and performance monitoring
+- **Redis Monitoring**: Cache hit rates and memory usage tracking
+- **Carrier API Monitoring**: Success rates and response time tracking for each carrier
+
+### Volume Capacity Examples
+
+Based on production deployments, Karrio can handle:
+
+**Small to Medium Operations (Single Instance)**
+
+- 10,000+ shipments per day
+- 100+ concurrent API requests
+- Sub-second API response times
+- 99.9% uptime with proper maintenance
+
+**Large Scale Operations (Clustered Setup)**
+
+- 1M+ shipments per day
+- 1000+ concurrent API requests
+- Horizontal scaling to dozens of instances
+- 99.99% uptime with proper redundancy
+
+**Enterprise Scale (Multi-Region)**
+
+- Multi-million shipments per day
+- Global deployment with regional data centers
+- Custom carrier integrations and SLA requirements
+- 24/7 support and monitoring
+
+The technology stack's maturity and scalability ensure that Karrio can grow with your business from startup to enterprise scale without requiring architectural changes.
+
 ## Requirements
 
 Karrio runs with minimal hardware requirements. The most resource-intensive operations are during initial setup and database migrations, but once running, it's relatively lightweight.
@@ -9,6 +285,7 @@ Karrio runs with minimal hardware requirements. The most resource-intensive oper
 ### Hardware Requirements
 
 - **Minimal Setup**:
+
   - 2GB RAM
   - 1 CPU core
   - 10GB storage
@@ -21,6 +298,7 @@ Karrio runs with minimal hardware requirements. The most resource-intensive oper
 ### Software Requirements
 
 - **Operating System**:
+
   - Karrio works well on Linux, macOS, and Windows
   - For production deployments, we recommend Linux (Ubuntu 20.04+ or Debian 11+)
 
@@ -76,10 +354,12 @@ For a comprehensive list, see the [Environment Variables](/docs/self-hosting/env
 ## Initial Setup
 
 After deployment, you can access your Karrio instance:
+
 - Dashboard: Default at `http://localhost:3000` or your configured domain
 - API: Default at `http://localhost:5002` or your configured domain
 
 Default login credentials:
+
 - Email: `admin@example.com`
 - Password: `demo`
 

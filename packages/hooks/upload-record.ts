@@ -2,9 +2,9 @@ import {
   DocumentUploadData,
   DocumentsApiUploadsRequest,
 } from "@karrio/types/rest/api";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuthenticatedQuery, useKarrio } from "./karrio";
 import { handleFailure } from "@karrio/lib";
-import { useKarrio } from "./karrio";
 import React from "react";
 
 const PAGE_SIZE = 20;
@@ -18,11 +18,12 @@ export function useUploadRecords(params: DocumentsApiUploadsRequest = {}) {
   });
 
   // Queries
-  const query = useQuery(
-    ["upload_records"],
-    () => karrio.documents.uploads(filter).then(({ data }) => data),
-    { keepPreviousData: true, staleTime: 5000 },
-  );
+  const query = useAuthenticatedQuery({
+    queryKey: ["upload_records"],
+    queryFn: () => karrio.documents.uploads(filter).then(({ data }) => data),
+    keepPreviousData: true,
+    staleTime: 5000,
+  });
 
   return {
     query,
@@ -35,9 +36,10 @@ export function useUploadRecord(id: string) {
   const karrio = useKarrio();
 
   // Queries
-  const query = useQuery(["upload_records", id], () =>
-    karrio.documents.retrieveUpload({ id }),
-  );
+  const query = useAuthenticatedQuery({
+    queryKey: ["upload_records", id],
+    queryFn: () => karrio.documents.retrieveUpload({ id }),
+  });
 
   return {
     query,

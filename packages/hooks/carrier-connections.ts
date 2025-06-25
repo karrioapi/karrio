@@ -7,39 +7,37 @@ export function useConnections() {
     Record<string, string[]>
   >({});
   const {
-    query: { data: { user_connections = [] } = {}, ...userQuery },
+    query: { data: userConnectionsData, isFetched: isUserFetched },
   } = useCarrierConnections();
   const {
-    query: { data: { system_connections = [] } = {}, ...systemQuery },
+    query: { data: systemConnectionsData, isFetched: isSystemFetched },
   } = useSystemConnections();
 
   React.useEffect(() => {
-    if (!userQuery.isFetched) {
-      return;
-    }
-    if (!systemQuery.isFetched) {
+    if (!isUserFetched || !isSystemFetched) {
       return;
     }
 
-    setCarrierOptions(
-      [...(user_connections || []), ...(system_connections || [])]
-        .filter(
-          (_) => _.active && (_.config?.shipping_options || []).length > 0,
-        )
-        .reduce(
-          (acc, _) => ({
-            ...acc,
-            [_.carrier_name]: [
-              ...(new Set<string>([
-                ...((acc[_.carrier_name] as string[]) || []),
-                ...(_.config?.shipping_options || []),
-              ]) as any),
-            ],
-          }),
-          {} as Record<string, string[]>,
-        ),
-    );
-  }, [user_connections, userQuery.isFetched, systemQuery.isFetched]);
+    const user_connections = userConnectionsData?.user_connections || [];
+    const system_connections = systemConnectionsData?.system_connections || [];
+
+    const newCarrierOptions = [...user_connections, ...system_connections]
+      .filter((_) => _.active && (_.config?.shipping_options || []).length > 0)
+      .reduce(
+        (acc, _) => ({
+          ...acc,
+          [_.carrier_name]: [
+            ...(new Set<string>([
+              ...((acc[_.carrier_name] as string[]) || []),
+              ...(_.config?.shipping_options || []),
+            ]) as any),
+          ],
+        }),
+        {} as Record<string, string[]>
+      );
+
+    setCarrierOptions(newCarrierOptions);
+  }, [isUserFetched, isSystemFetched, userConnectionsData, systemConnectionsData]);
 
   return {
     carrierOptions,

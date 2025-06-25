@@ -1,0 +1,364 @@
+---
+title: "Why we show raw API data in our UI"
+date: "2025-06-16"
+description: "Why we show raw API responses in our UI, and why that's actually great UX"
+author: "Karrio Team"
+tags: ["community", "engineering", "UX"]
+category: "Engineering"
+draft: true
+---
+
+Most shipping software treats users like they can't handle the truth.
+
+They hide API responses behind friendly icons, bury error details in support tickets, and present logistics data through oversimplified dashboards that tell you your package is "in transit" without any real context.
+
+We think this is backwards.
+
+At Karrio, we've built something different: a shipping platform that shows you exactly what's happening under the hood. Raw API responses, complete event logs, unfiltered carrier data – all right there in the user interface where you can see it, understand it, and act on it.
+
+This isn't an accident. It's our core design philosophy, and here's why we think it matters.
+
+---
+
+## The Stripe inspiration: transparency as a feature
+
+The lightbulb moment came from using Stripe's dashboard.
+
+When you look at a payment in Stripe, you don't just see "Payment successful" with a green checkmark. You see the complete lifecycle: the API request that created the payment intent, the webhook that confirmed it, the exact response codes, timing data, and even the raw JSON payloads.
+
+Compare this to traditional payment processors where you get a simple "Payment failed" message. With Stripe, you see:
+
+- The exact error code (`card_declined`)
+- The decline reason (`insufficient_funds`)
+- The timestamp of the attempt
+- The raw response from the card network
+- Links to related webhook events
+
+This transparency isn't just developer-friendly – it's _user-empowering_. When something goes wrong, you don't need to guess what happened or wait for support to investigate. The answer is right there in the logs.
+
+We realized that shipping and logistics desperately needed this same approach.
+
+Think about the last time you had a shipment issue. Maybe a package was stuck in customs, or a carrier's API started returning cryptic errors. How long did it take to get real answers? How many support tickets and phone calls did it require?
+
+In traditional shipping software, this detective work happens behind closed doors. You submit a ticket, someone digs through server logs, and eventually you get a sanitized explanation of what went wrong.
+
+But what if the raw carrier response was right there in your dashboard? What if you could see that FedEx returned status code `L` with the message "Left at location as requested by customer" instead of just seeing "Delivered"? What if you could see the exact timestamp when that status changed, down to the second?
+
+**This goes against conventional UX wisdom** that says users want simple, clean interfaces. Traditional design thinking would hide the complexity and show only "Delivered" with a green checkmark. But we've learned that for technical users dealing with mission-critical operations, mystery is the enemy of efficiency.
+
+When a logistics manager is handling 500 shipments and three show "Exception" status, they don't want to play detective. They want to immediately see that one has a "Recipient not available" exception (retry tomorrow), another has "Invalid address format" (needs correction), and the third has "Customs documentation required" (needs immediate action).
+
+That's exactly what we show you in Karrio.
+
+## Why raw data isn't scary anymore
+
+There's a common assumption in software design that users can't handle technical details. That JSON responses will confuse them. That API logs are "too technical" for business users.
+
+But here's what we've observed: **logistics professionals have become surprisingly technical**.
+
+Today's supply chain managers routinely work with:
+
+- EDI documents (which are way more complex than JSON)
+- Carrier tracking APIs
+- WMS integrations
+- ERP data exports
+- Custom reporting tools
+
+They're not intimidated by structured data – they're frustrated by software that hides it from them.
+
+When we show the raw XML response from FedEx's tracking API alongside our parsed, friendly version, users appreciate having both. The parsed version is convenient for quick scanning, but the raw data is there when they need to understand exactly what the carrier said.
+
+Here's what a typical event looks like in our system:
+
+```json
+{
+  "event_id": "evt_1234567890",
+  "timestamp": "2024-06-16T14:32:15.123Z",
+  "event_type": "tracking_update",
+  "shipment_id": "shp_abcdef",
+  "carrier": "fedex",
+  "raw_response": {
+    "TransactionId": "FDXE_1234567890",
+    "TrackDetails": [
+      {
+        "Notification": {
+          "EventType": "PU",
+          "EventDescription": "Picked up",
+          "EventDateTime": "2024-06-16T14:32:15",
+          "Address": {
+            "City": "MEMPHIS",
+            "StateOrProvinceCode": "TN",
+            "CountryCode": "US"
+          }
+        }
+      }
+    ]
+  },
+  "normalized_data": {
+    "status": "in_transit",
+    "location": "Memphis, TN",
+    "description": "Package picked up by carrier",
+    "timestamp": "2024-06-16T14:32:15Z"
+  }
+}
+```
+
+The business user can focus on the `normalized_data`, but when they need to debug an issue or understand edge cases, the `raw_response` is right there.
+
+## Designing for technical empowerment
+
+Our primary audience isn't your typical end consumer checking where their Amazon package is. We're building for:
+
+- **Platform developers** integrating shipping into their apps
+- **Tech-savvy logistics managers** who want to understand what's really happening
+- **Operations teams** who need to troubleshoot issues quickly
+- **System integrators** building complex supply chain solutions
+
+Let's get specific about these personas:
+
+**The Platform Developer** needs to debug integration issues at 2 AM when their e-commerce site's checkout is failing. They don't want to wait for support tickets – they need to see the exact API request that's causing the 400 error and fix it immediately.
+
+**The Logistics Operations Manager** handles 500+ shipments daily across multiple carriers. When FedEx starts having delays in the Memphis hub, they need to see the pattern in real-time and proactively communicate with customers, not discover it three days later in a weekly report.
+
+**The Systems Integrator** is building a custom WMS that needs to react to specific carrier events. They need access to the raw status codes because their business logic depends on distinguishing between "delivery attempted" and "delivery attempted - no response" – nuances that get lost in simplified status mappings.
+
+These users don't want their platform to be a black box. They want observability, debuggability, and control.
+
+So when you create a shipment in Karrio, here's what you see:
+
+1. **API logs** – The exact request we sent to the carrier and their complete response
+2. **Event timeline** – Every status update, webhook, and state change with timestamps
+3. **Raw tracking data** – Unfiltered carrier responses alongside our normalized format
+4. **Error details** – Full error messages, not just "Something went wrong"
+
+You can see this in action in our [API logs documentation](https://docs.karrio.io/product/api-logs) and [events system](https://docs.karrio.io/product/events).
+
+## The supply chain visibility problem
+
+Supply chain visibility has been the holy grail of logistics for decades. Companies spend millions on "visibility platforms" that promise to tell them where everything is and what's happening.
+
+The numbers are staggering: businesses lose an average of $184 million per year due to supply chain disruptions, according to McKinsey. Much of this stems from a lack of real-time, actionable visibility. When a shipment is delayed, it takes an average of 2-3 days to understand the root cause through traditional systems.
+
+But most of these solutions create their own opacity layer. They aggregate data from dozens of sources, apply their own interpretations and algorithms, then present you with a dashboard that says "Your shipment is delayed" without telling you why or how they know.
+
+Consider a typical scenario: Your shipment shows "Exception" status in a traditional platform. You call support, they escalate to operations, operations calls the carrier, and two days later you learn it was held up in customs because of a missing commercial invoice field. Meanwhile, the raw carrier API response contained the exact error code and description from day one.
+
+**We believe real visibility starts with data transparency**:
+
+- Show the original carrier response, not just our interpretation
+- Expose the timing of every API call and webhook
+- Make error messages readable and actionable
+- Let users see the complete audit trail
+
+This is where our banking industry inspiration becomes clearer. Banks solved a similar problem decades ago – when you make a wire transfer, you can trace it through every correspondent bank, see the exact SWIFT messages, and understand precisely where delays occur. Supply chain needs this same level of transparency.
+
+When a shipment is delayed, you should be able to see:
+
+- Which carrier API provided that information
+- When they provided it
+- What the exact status code and message were
+- How that maps to our normalized status
+- What automated actions (if any) were triggered
+
+This granular access isn't just nice-to-have for debugging – it's becoming essential for regulatory compliance. New regulations like the EU Supply Chain Due Diligence Act and US UFLPA require companies to have complete visibility into their supply chains, including detailed audit trails.
+
+**Granular data access at every touchpoint** means you can see:
+
+- **Carrier pickup**: Exact pickup time, driver ID, and any special instructions
+- **Customs clearance**: Specific documentation requirements, duty calculations, and clearance timestamps
+- **Hub processing**: Scanning events, sort facility delays, and routing decisions
+- **Last-mile delivery**: Delivery attempts, recipient signatures, and geolocation data
+- **Exception handling**: Damage reports, weather delays, and address corrections
+
+Each touchpoint generates structured data that can be queried, analyzed, and acted upon in real-time.
+
+**The technical architecture behind granular access:**
+
+To enable this level of data granularity, we've built our platform around event-driven architecture where every interaction creates a structured event. This means:
+
+- **Immutable audit trails**: Every data point has a timestamp, source, and cryptographic integrity check
+- **Real-time streaming**: Events are processed and made available immediately, not batch-processed overnight
+- **Structured querying**: You can filter events by carrier, status code, time range, or any combination of attributes
+- **API-first access**: The same data available in our UI is accessible via API for custom integrations
+
+This isn't just about showing data – it's about building a platform where data is the primary interface.
+
+## The AI advantage of transparent data
+
+Here's where this gets really interesting: we're designing for an AI-first future.
+
+When your logistics data is transparent and structured, AI agents can quickly understand what's happening in your system. Instead of training models to interpret opaque dashboards, they can work directly with the same raw data you see.
+
+This enables some powerful use cases:
+
+**Instant diagnostics**: "Why is this shipment delayed?" → AI analyzes the carrier responses, identifies the specific customs hold code, and suggests next steps.
+
+**Predictive insights**: AI spots patterns in carrier performance data that would take humans weeks to identify.
+
+**System optimization**: AI reviews your API usage patterns and suggests configuration changes to improve reliability or reduce costs.
+
+**Automated responses**: When certain error conditions appear in the logs, AI can automatically retry with different parameters or switch to backup carriers.
+
+The key insight is that transparent data doesn't just help human users – it dramatically reduces the complexity of building intelligent automation on top of your logistics operations.
+
+Think of it like this: if you're building an AI system to manage your supply chain, would you rather feed it clean, structured event data with complete context, or try to screen-scrape insights from a traditional "friendly" dashboard?
+
+**Real AI applications we're seeing:**
+
+- **Intelligent rerouting**: When weather delays start affecting the Memphis hub, AI automatically suggests alternative routing through Atlanta based on historical performance data
+- **Predictive customs delays**: AI identifies patterns in customs clearance times for specific product categories and countries, enabling proactive documentation preparation
+- **Carrier performance optimization**: Machine learning models analyze carrier API response times and success rates to dynamically adjust routing preferences
+- **Anomaly detection**: AI flags unusual patterns, like a sudden increase in "address corrections" for a specific zip code, indicating potential delivery issues
+- **Smart exception handling**: When AI detects a pattern of failed deliveries due to "business closed" in a specific area, it can automatically suggest alternative delivery windows or pickup locations
+- **Compliance monitoring**: AI continuously monitors shipment data against trade regulations, flagging potential violations before they reach customs
+- **Cost optimization**: Machine learning analyzes historical shipping data to recommend optimal carrier and service combinations based on cost, speed, and reliability requirements
+
+## How this plays out in practice
+
+Let's look at a real example. Here's what happens when you track a shipment in Karrio vs. traditional shipping software:
+
+**Traditional platform:**
+
+- Status: "In Transit"
+- Last update: "2 hours ago"
+- Location: "Distribution Center"
+
+**Karrio platform:**
+
+- Status: "In Transit" (our normalized status)
+- Carrier status: "Departed FedEx location MEMPHIS, TN" (their exact message)
+- API response: Full JSON payload with all carrier-provided fields
+- Timestamp: 2024-06-16T14:32:15Z (precise, not "2 hours ago")
+- Event log: Complete history of every status change
+- Raw tracking data: Unfiltered carrier response available on click
+
+The difference? When something goes wrong, our users can investigate immediately instead of waiting for support.
+
+**More practical examples:**
+
+When UPS returns status `M` ("Billing Information Received"), traditional platforms might show "Processing" or "In Transit." Our users see the exact status and understand that the shipment hasn't physically moved yet – it's still waiting for pickup. This distinction matters when setting customer expectations.
+
+When DHL provides estimated delivery time of "End of day," we show both the carrier's original language and our normalized "by 6:00 PM" interpretation. Users can choose which to display to their customers based on their brand voice and customer expectations.
+
+When customs holds a package, instead of a generic "Delayed" status, users see the specific hold reason ("Additional duties required - $47.82") and can take immediate action rather than waiting days for details.
+
+## Why this matters for platforms
+
+If you're building a platform or enterprise solution on top of Karrio, this transparency becomes even more valuable.
+
+Your developers can:
+
+- Debug integration issues in real-time
+- Build sophisticated business logic based on granular carrier data
+- Create custom alerting based on specific API responses
+- Audit compliance with complete data trails
+
+Your operations teams can:
+
+- Identify carrier performance issues before they impact customers
+- Build custom reporting from raw event data
+- Troubleshoot customer issues without escalating to engineering
+- Understand exactly how your logistics spend is being used
+
+This is particularly important as regulatory requirements increase. The new EU Supply Chain Due Diligence Act requires companies to monitor and report on their entire supply chain. Having access to raw, timestamped data makes compliance significantly easier than trying to reconstruct events from sanitized summaries.
+
+**Real compliance scenarios:**
+
+- **UFLPA audits**: When CBP requests documentation for forced labor compliance, companies need exact timestamps and shipping routes. Raw carrier data provides this instantly.
+- **Carbon reporting**: EU regulations require detailed carbon footprint reporting. Having access to actual transit times, routes, and transportation modes enables accurate calculations.
+- **Trade finance verification**: Banks increasingly require real-time shipment data to verify letters of credit. Raw tracking data provides the audit trail they need.
+
+Check out our [platform use cases](https://www.karrio.io/platform/use-cases/platforms) and [enterprise solutions](https://www.karrio.io/platform/use-cases/enterprise-solutions) to see how this works in practice.
+
+## The counter-intuitive truth about complexity
+
+Here's what we've learned: **showing complex data doesn't make your product more complex to use**.
+
+When done thoughtfully, transparency actually reduces cognitive load. Users spend less time guessing what's happening and more time acting on accurate information.
+
+The key is layered disclosure:
+
+- Show the essential information prominently
+- Make detailed data easily accessible but not overwhelming
+- Provide context and explanation for technical details
+- Let users choose their level of detail based on their expertise
+
+Most users will stick with the simplified view most of the time. But when they need to dig deeper, they can – without leaving your platform, without submitting tickets, without waiting for someone else to investigate.
+
+This approach also future-proofs your platform. As users become more sophisticated (and they will), they appreciate having access to more detailed information. What seems "too technical" today often becomes standard practice tomorrow.
+
+**The counter-intuitive design principle** at work here is that complexity doesn't always mean complication. By showing raw data alongside simplified views, we actually reduce cognitive load for power users who previously had to maintain mental models of what might be happening behind the scenes. Instead of guessing, they can see exactly what's happening and make informed decisions.
+
+## API and event logs as first-class citizens
+
+Most platforms treat logs as an afterthought – something you check when things go wrong. We've designed Karrio with a different philosophy: **API and event logs are first-class citizens**, not separate diagnostic tools.
+
+This architectural decision means:
+
+**Every API interaction is traceable**: When you make a request to create a shipment, you can immediately see the corresponding calls we made to carrier APIs, their responses, and how we normalized the data.
+
+**Events are the source of truth**: Rather than maintaining separate audit logs, our event stream is the canonical record of what happened. The UI, webhooks, and reporting all derive from the same event stream.
+
+**Real-time debugging**: Because logs are built into the core platform, they're available in real-time. No waiting for log aggregation or searching through separate systems.
+
+**Structured observability**: Every log entry follows a consistent schema, making it easy to query, filter, and analyze programmatically.
+
+This isn't just about transparency – it's about building a platform that can grow with increasingly sophisticated automation and AI requirements.
+
+**Why first-class logs matter for the future:**
+
+As supply chains become more automated, the ability to understand and debug complex multi-system interactions becomes critical. When your AI system makes a routing decision, you need to see:
+
+- The input data it used (carrier performance metrics, weather data, capacity constraints)
+- The decision logic it applied (routing algorithms, business rules, optimization criteria)
+- The resulting actions it took (API calls to carriers, customer notifications, inventory updates)
+- The outcomes it achieved (delivery performance, cost impact, customer satisfaction)
+
+Traditional logging systems treat this as debugging information. We treat it as core platform functionality that enables continuous improvement and trust in automated systems.
+
+## Building infrastructure, not just software
+
+We're not just building another shipping API. We're building the infrastructure for next-generation logistics platforms.
+
+In a world where supply chains are increasingly digital, automated, and interconnected, transparency isn't just nice-to-have – it's a competitive necessity.
+
+The platforms that win will be the ones that empower their users with complete information, enable rapid troubleshooting, and provide the data foundation for intelligent automation.
+
+Consider the evolution of other industries: banking went from passbooks to real-time transaction data; telecommunications went from simple call logs to detailed network analytics; cloud computing went from basic server monitoring to comprehensive observability platforms.
+
+Supply chain is undergoing the same transformation, and transparent data access is the foundation that enables everything else – AI optimization, predictive analytics, automated compliance, and intelligent decision-making.
+
+**The network effects are already emerging:**
+
+As more platforms adopt transparent data practices, the entire supply chain ecosystem becomes more efficient. When everyone can see the same granular data, it becomes easier to:
+
+- **Standardize on common data formats** across different systems
+- **Automate inter-company processes** like carrier performance reporting and compliance documentation
+- **Create industry-wide benchmarks** for delivery performance, cost optimization, and sustainability metrics
+- **Enable new business models** like dynamic pricing based on real-time capacity and performance data
+
+The companies building transparent, data-rich platforms today are positioning themselves to benefit from these network effects as the industry evolves.
+
+## The competitive advantage of transparency
+
+**Transparency as a moat** might sound counterintuitive, but it creates several competitive advantages:
+
+**Technical user loyalty**: Once users experience the power of seeing raw data, they find it hard to go back to black-box systems. It's like going from a smartphone back to a flip phone – the functionality gap is too significant.
+
+**Faster innovation cycles**: With access to granular data, users can build custom solutions and integrations faster than competitors using opaque platforms. This creates a virtuous cycle where the platform becomes more valuable as users build on it.
+
+**Regulatory resilience**: As compliance requirements increase, platforms with built-in transparency and audit trails have a significant advantage over those trying to retrofit compliance features.
+
+**AI readiness**: The structured, granular data that enables transparency today is exactly what AI systems need to provide value tomorrow. Platforms built with transparency from the ground up are naturally AI-ready.
+
+**Developer ecosystem growth**: Transparent APIs attract developers who want to build sophisticated applications. This creates a thriving ecosystem that drives platform adoption and innovation.
+
+That's the future we're building toward at Karrio: a world where logistics data is as transparent, accessible, and actionable as the code that powers modern applications.
+
+---
+
+**Want to see this philosophy in action?**
+
+Create a free account at [karrio.io](https://www.karrio.io/platform) and see raw carrier responses in action. Or dive straight into our [API documentation](https://docs.karrio.io) to explore how we expose every detail of your logistics operations.
+
+_Words by the Karrio Team, who believe supply chain visibility starts with data transparency._

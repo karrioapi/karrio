@@ -288,6 +288,7 @@ export interface Metadata {
   ORG_LEVEL_BILLING: boolean;
   TENANT_LEVEL_BILLING: boolean;
   WORKFLOW_MANAGEMENT: boolean;
+  SHIPPING_RULES: boolean;
 }
 
 export interface References {

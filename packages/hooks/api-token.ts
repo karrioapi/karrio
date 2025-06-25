@@ -1,18 +1,19 @@
 import { MUTATE_API_TOKEN, GET_API_TOKEN, GetToken, mutate_token, TokenMutationInput } from "@karrio/types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { gqlstr, onError } from "@karrio/lib";
-import { useKarrio } from "./karrio";
+import { useKarrio, useAuthenticatedQuery, useAuthenticatedMutation } from "./karrio";
+import { useQueryClient } from "@tanstack/react-query";
+import { gqlstr } from "@karrio/lib";
 
-
-export function useAPIToken() {
+export function useAPIToken(org_id?: string) {
   const karrio = useKarrio();
 
-  // Queries
-  const query = useQuery(
-    ['api_token'],
-    () => karrio.graphql.request<GetToken>(gqlstr(GET_API_TOKEN)),
-    { onError, staleTime: 1500000, refetchOnWindowFocus: false, }
-  );
+  const query = useAuthenticatedQuery({
+    queryKey: ['api_token', org_id],
+    queryFn: () => karrio.graphql.request<GetToken>(gqlstr(GET_API_TOKEN), {
+      variables: { org_id }
+    }),
+    staleTime: 1500000,
+    refetchOnWindowFocus: false,
+  });
 
   return {
     query,
@@ -27,11 +28,13 @@ export function useAPITokenMutation() {
     queryClient.invalidateQueries(['organizations']);
   };
 
-  // Mutations
-  const updateToken = useMutation(
-    (data: TokenMutationInput) => karrio.graphql.request<mutate_token>(gqlstr(MUTATE_API_TOKEN), { data }),
-    { onSuccess: invalidateCache, onError }
-  );
+  const updateToken = useAuthenticatedMutation({
+    mutationFn: (data: TokenMutationInput) => karrio.graphql.request<mutate_token>(
+      gqlstr(MUTATE_API_TOKEN),
+      { data }
+    ),
+    onSuccess: invalidateCache,
+  });
 
   return {
     updateToken,

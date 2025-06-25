@@ -19,7 +19,7 @@ export default function GraphiQLPage() {
       url: metadata.GRAPHQL,
       headers: {
         ...(session?.orgId ? { "x-org-id": session.orgId } : {}),
-        ...(session?.testMode ? { "x-test-mode": session.testMode } : {}),
+        ...(session?.testMode ? { "x-test-mode": session.testMode.toString() } : {}),
         ...(session?.accessToken
           ? { authorization: `Bearer ${session.accessToken}` }
           : {}),

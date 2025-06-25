@@ -1,0 +1,5 @@
+# Exception: Allow specific .env files for development
+!.env.local
+!.env.sample
+!**/.env.local
+!**/.env.sample

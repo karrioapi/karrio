@@ -1,3 +1,4 @@
+from karrio.server.core.utils import *
 import typing
 import base64
 import logging
@@ -7,7 +8,6 @@ import dataclasses
 from rest_framework import exceptions
 from django.utils.translation import gettext_lazy as _
 
-from karrio.server.core.utils import *
 import karrio.lib as lib
 import karrio.server.core.utils as utils
 import karrio.server.core.models as core
@@ -100,12 +100,14 @@ MetadataObjectTypeEnum: typing.Any = strawberry.enum(  # type: ignore
 def authentication_required(func):
     @functools.wraps(func)
     def wrapper(info, **kwargs):
-        if info.context.request.user.is_anonymous:
+        user = getattr(info.context.request, 'user', None)
+
+        if user is None or user.is_anonymous:
             raise exceptions.AuthenticationFailed(
                 _("You are not authenticated"), code="authentication_required"
             )
 
-        if not info.context.request.user.is_verified():
+        if not user.is_verified():
             raise exceptions.AuthenticationFailed(
                 _("Authentication Token not verified"), code="two_factor_required"
             )

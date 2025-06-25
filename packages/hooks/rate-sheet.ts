@@ -1,7 +1,7 @@
 import { RateSheetFilter, GetRateSheets, GET_RATE_SHEETS, GetRateSheet, GET_RATE_SHEET, CreateRateSheet, UpdateRateSheet, UpdateRateSheetMutationInput, CreateRateSheetMutationInput, DELETE_RATE_SHEET, UPDATE_RATE_SHEET, CREATE_RATE_SHEET, DeleteMutationInput, GetRateSheets_rate_sheets_edges_node } from "@karrio/types/graphql";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { gqlstr, insertUrlParam, isNoneOrEmpty, onError } from "@karrio/lib";
-import { useKarrio } from "./karrio";
+import { useAuthenticatedQuery, useKarrio } from "./karrio";
 import React from "react";
 
 const PAGE_SIZE = 20;
@@ -19,11 +19,14 @@ export function useRateSheets({ setVariablesToURL = false, ...initialData }: Fil
   );
 
   // Queries
-  const query = useQuery(
-    ['rate-sheets', filter],
-    () => fetch({ filter }),
-    { keepPreviousData: true, staleTime: 5000, refetchInterval: 120000, onError },
-  );
+  const query = useAuthenticatedQuery({
+    queryKey: ['rate-sheets', filter],
+    queryFn: () => fetch({ filter }),
+    keepPreviousData: true,
+    staleTime: 5000,
+    refetchInterval: 120000,
+    onError,
+  });
 
   function setFilter(options: RateSheetFilter) {
     const params = Object.keys(options).reduce((acc, key) => {
@@ -68,7 +71,8 @@ export function useRateSheet({ id, setVariablesToURL = false }: Args = {}) {
   const [workflowActionId, _setRateSheetId] = React.useState<string>(id || 'new');
 
   // Queries
-  const query = useQuery(['rate-sheets', id], {
+  const query = useAuthenticatedQuery({
+    queryKey: ['rate-sheets', id],
     queryFn: () => karrio.graphql.request<GetRateSheet>(gqlstr(GET_RATE_SHEET), { variables: { id: workflowActionId } }),
     enabled: (workflowActionId !== 'new'),
     onError,

@@ -2,7 +2,7 @@ import { WebhookFilter, get_webhooks, GET_WEBHOOKS, GET_WEBHOOK, get_webhook } f
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { gqlstr, handleFailure, onError } from "@karrio/lib";
 import { Webhook, WebhookData } from "@karrio/types/rest/api";
-import { useKarrio } from "./karrio";
+import { useAuthenticatedQuery, useKarrio } from "./karrio";
 import React from "react";
 
 const PAGE_SIZE = 20;
@@ -13,11 +13,13 @@ export function useWebhooks() {
   const [filter, setFilter] = React.useState<WebhookFilter>(PAGINATION);
 
   // Queries
-  const query = useQuery(
-    ['webhooks'],
-    () => karrio.graphql.request<get_webhooks>(gqlstr(GET_WEBHOOKS), { variables: filter }),
-    { keepPreviousData: true, staleTime: 5000, onError },
-  );
+  const query = useAuthenticatedQuery({
+    queryKey: ['webhooks'],
+    queryFn: () => karrio.graphql.request<get_webhooks>(gqlstr(GET_WEBHOOKS), { variables: filter }),
+    keepPreviousData: true,
+    staleTime: 5000,
+    onError,
+  });
 
   return {
     query,

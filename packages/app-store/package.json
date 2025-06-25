@@ -1,0 +1,64 @@
+{
+  "name": "@karrio/app-store",
+  "version": "0.0.0",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "license": "Apache-2.0",
+  "scripts": {
+    "lint": "eslint .",
+    "dev": "tsup --watch",
+    "build": "tsup"
+  },
+  "dependencies": {
+    "@karrio/lib": "*",
+    "@karrio/types": "*",
+    "@karrio/ui": "*",
+    "@karrio/hooks": "*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "lucide-react": "^0.263.1"
+  },
+  "devDependencies": {
+    "@karrio/eslint-config-custom": "*",
+    "@karrio/tsconfig": "*",
+    "@types/node": "^20.5.2",
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "typescript": "^5.7.2",
+    "tsup": "^8.0.0"
+  },
+  "exports": {
+    ".": {
+      "import": "./index.ts",
+      "require": "./index.ts"
+    },
+    "./types": {
+      "import": "./types.ts",
+      "require": "./types.ts"
+    },
+    "./lib": {
+      "import": "./lib/index.ts",
+      "require": "./lib/index.ts"
+    },
+    "./lib/app-auth": {
+      "import": "./lib/app-auth.ts",
+      "require": "./lib/app-auth.ts"
+    },
+    "./lib/karrio-client": {
+      "import": "./lib/karrio-client.ts",
+      "require": "./lib/karrio-client.ts"
+    },
+    "./lib/app-routes": {
+      "import": "./lib/app-routes.ts",
+      "require": "./lib/app-routes.ts"
+    },
+    "./modules/Store": {
+      "import": "./modules/Store/index.tsx",
+      "require": "./modules/Store/index.tsx"
+    },
+    "./apps/*": {
+      "import": "./apps/*",
+      "require": "./apps/*"
+    }
+  }
+}

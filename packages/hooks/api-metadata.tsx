@@ -1,7 +1,7 @@
 "use client";
 
 import { Metadata, References } from "@karrio/types";
-import { useQuery } from "@tanstack/react-query";
+import { useAuthenticatedQuery } from "./karrio";
 import { useSyncedSession } from "./session";
 import { onError, url$ } from "@karrio/lib";
 import React, { useContext } from "react";
@@ -28,32 +28,49 @@ function APIMetadataProvider({
   const {
     query: { data: session },
   } = useSyncedSession();
-  const getHost = () =>
-    (MULTI_TENANT
+
+  const getHost = () => {
+    const host = (MULTI_TENANT
       ? metadata?.HOST || KARRIO_PUBLIC_URL
       : KARRIO_PUBLIC_URL) as string;
+
+    return host;
+  };
+
   const context = {
     getHost,
     metadata: (metadata || {}) as Metadata,
   };
 
-  const { data: references } = useQuery({
-    queryKey: ["references", session?.accessToken],
-    queryFn: () =>
-      axios
+  const host = getHost();
+  const isEnabled = !!host && host !== 'undefined';
+
+  const { data: references, isLoading, error } = useAuthenticatedQuery({
+    queryKey: ["references", session?.accessToken, host],
+    queryFn: () => {
+      return axios
         .get<References>(
-          url$`${getHost()}/v1/references?reduced=false`,
+          url$`${host}/v1/references?reduced=false`,
           !!session?.accessToken
             ? {
-                headers: { authorization: `Bearer ${session?.accessToken}` },
-              }
+              headers: { authorization: `Bearer ${session?.accessToken}` },
+            }
             : {},
         )
-        .then(({ data }) => data),
+        .then(({ data }) => {
+          return data;
+        })
+        .catch((err) => {
+          throw err;
+        });
+    },
     refetchOnWindowFocus: false,
     staleTime: 300000,
-    enabled: !!getHost(),
-    onError,
+    enabled: isEnabled,
+    requireAuth: false,
+    onError: (err) => {
+      onError(err);
+    },
   });
 
   return (

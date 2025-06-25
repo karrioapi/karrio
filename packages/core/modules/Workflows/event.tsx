@@ -224,15 +224,10 @@ export const Component = ({
   );
 };
 
-export default function Page({ params }: { params: Promise<{ id: string }> }) {
+export default function Page(pageProps: any) {
   const PageComponent = (): JSX.Element => {
-    const [id, setId] = React.useState<string>();
-
-    React.useEffect(() => {
-      params.then(query => {
-        setId(query.id);
-      });
-    }, []);
+    const params = pageProps.params || {};
+    const { id } = params;
 
     if (!id) return <></>;
 

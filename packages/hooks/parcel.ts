@@ -1,7 +1,7 @@
 import { TemplateFilter, CreateParcelTemplateInput, CREATE_PARCEL_TEMPLATE, DELETE_TEMPLATE, get_parcel_templates, GET_PARCEL_TEMPLATES, UpdateParcelTemplateInput, UPDATE_PARCEL_TEMPLATE, create_parcel_template, update_parcel_template, delete_template } from "@karrio/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { gqlstr, insertUrlParam, isNoneOrEmpty, onError } from "@karrio/lib";
-import { useKarrio } from "./karrio";
+import { useAuthenticatedQuery, useKarrio } from "./karrio";
 import React from "react";
 
 const PAGE_SIZE = 20;
@@ -17,11 +17,13 @@ export function useParcelTemplates({ setVariablesToURL = false, ...initialData }
   );
 
   // Queries
-  const query = useQuery(
-    ['parcels'],
-    () => fetch({ filter }),
-    { keepPreviousData: true, staleTime: 5000, onError },
-  );
+  const query = useAuthenticatedQuery({
+    queryKey: ['parcels'],
+    queryFn: () => fetch({ filter }),
+    keepPreviousData: true,
+    staleTime: 5000,
+    onError,
+  });
 
   function setFilter(options: TemplateFilter) {
     const params = Object.keys(options).reduce((acc, key) => {

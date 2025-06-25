@@ -181,12 +181,40 @@ const CustomCodeBlock = ({
   )
 }
 
-const BlogWrapper = ({ children, toc, metadata }) => {
-  const { title, date, description, tags, author, image, category } = metadata || {};
+interface BlogWrapperProps {
+  children: any
+  toc?: any
+  metadata?: any
+  pageMap?: any[]
+}
 
+const BlogWrapper = ({ children, toc, metadata, pageMap }: BlogWrapperProps) => {
+  const { title, date, description, tags, author, image, category, draft } = metadata || {};
+
+  // Use default blog configuration
+  const typesetting = 'article'
+  const timestamp = true
+
+  // Check if we should show draft indicator
+  const isDraft = draft === true
+  const isDevelopment = process.env.NODE_ENV === 'development'
+
+  // Default blog layout
   return (
     <div className="py-8">
       <BackButton className="mb-4" />
+
+      {/* Draft indicator - only show in development */}
+      {isDraft && isDevelopment && (
+        <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+            <span className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+              Draft Post - Only visible in development
+            </span>
+          </div>
+        </div>
+      )}
 
       <div className="container mx-auto px-2 sm:px-4 lg:px-0 max-w-6xl bg-background dark:bg-inherit">
         {/* Featured Image */}
@@ -221,7 +249,7 @@ const BlogWrapper = ({ children, toc, metadata }) => {
 
         {/* Meta information row */}
         <div className="flex flex-wrap items-center gap-3 mb-8 text-sm text-muted-foreground">
-          {date && (
+          {timestamp && date && (
             <time dateTime={date} className="flex items-center">
               {formatDate(date)}
             </time>
@@ -249,7 +277,7 @@ const BlogWrapper = ({ children, toc, metadata }) => {
         </div>
 
         {/* Main content */}
-        <div className="prose prose-lg dark:prose-invert mx-auto max-w-none">
+        <div className={`prose ${typesetting === 'article' ? 'prose-lg' : 'prose-lg'} dark:prose-invert mx-auto max-w-none`}>
           {children}
         </div>
       </div>

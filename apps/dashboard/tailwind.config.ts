@@ -8,14 +8,28 @@ const config: Config = {
     "../../packages/ui/components/**/*.{js,ts,jsx,tsx,mdx}",
     "../../packages/ui/layouts/**/*.{js,ts,jsx,tsx,mdx}",
     "../../packages/ui/modules/**/*.{js,ts,jsx,tsx,mdx}",
+    "../../packages/core/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "../../packages/core/modules/**/*.{js,ts,jsx,tsx,mdx}",
     "../../packages/admin/components/**/*.{js,ts,jsx,tsx,mdx}",
     "../../packages/admin/modules/**/*.{js,ts,jsx,tsx,mdx}",
+    "../../packages/developers/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "../../packages/developers/modules/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: {
+        DEFAULT: "1rem",
+        sm: "2rem",
+        lg: "4rem",
+        xl: "5rem",
+        "2xl": "6rem",
+      },
       screens: {
+        sm: "640px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1280px",
         "2xl": "1400px",
       },
     },
@@ -61,6 +75,16 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar))",
+          foreground: "hsl(var(--sidebar-foreground))",
+          primary: "hsl(var(--sidebar-primary))",
+          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
+          accent: "hsl(var(--sidebar-accent))",
+          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+          border: "hsl(var(--sidebar-border))",
+          ring: "hsl(var(--sidebar-ring))",
+        },
       },
       borderRadius: {
         xl: `calc(var(--radius) + 4px)`,
@@ -88,6 +112,31 @@ const config: Config = {
     require("tailwindcss-animate"),
     require("@tailwindcss/typography"),
     require("@tailwindcss/forms"),
+    function ({ addUtilities }: any) {
+      const newUtilities = {
+        '.scrollbar-hide': {
+          /* IE and Edge */
+          '-ms-overflow-style': 'none',
+          /* Firefox */
+          'scrollbar-width': 'none',
+          /* Safari and Chrome */
+          '&::-webkit-scrollbar': {
+            display: 'none'
+          }
+        },
+        '.scrollbar-default': {
+          /* IE and Edge */
+          '-ms-overflow-style': 'auto',
+          /* Firefox */
+          'scrollbar-width': 'auto',
+          /* Safari and Chrome */
+          '&::-webkit-scrollbar': {
+            display: 'block'
+          }
+        }
+      }
+      addUtilities(newUtilities)
+    }
   ],
 };
 

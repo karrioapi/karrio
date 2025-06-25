@@ -1,10 +1,15 @@
-import { ExpandedSidebar } from "@karrio/ui/core/components/expanded-sidebar";
-import { KARRIO_PUBLIC_URL, MULTI_TENANT } from "@karrio/lib";
+import { ModeIndicator } from "@karrio/ui/components/mode-indicator";
 import { Notifier } from "@karrio/ui/core/components/notifier";
-import { Navbar } from "@karrio/ui/core/components/navbar";
+import { KARRIO_PUBLIC_URL, MULTI_TENANT } from "@karrio/lib";
+import { AppSidebar } from "@karrio/ui/components/sidebar";
+import { Navbar } from "@karrio/ui/components/navbar";
 import { Providers } from "@karrio/hooks/providers";
 import { auth } from "@karrio/core/context/auth";
 import { Metadata } from "@karrio/types";
+import {
+  SidebarInset,
+  SidebarProvider,
+} from "@karrio/ui/components/ui/sidebar";
 import {
   loadMetadata,
   loadOrgData,
@@ -41,20 +46,21 @@ export default async function Layout({
   return (
     <>
       <Providers {...pageProps}>
-        <ExpandedSidebar />
-        <div className="plex-wrapper is-flex is-flex-direction-column pb-0">
-          <div className="wrapper-inner is-flex-grow-1 pb-0">
-            <Notifier />
-            <Navbar />
-
-            <div
-              className="dashboard-content is-relative pt-0 pb-4"
-              style={{ minHeight: "93vh" }}
-            >
-              {children}
+        <ModeIndicator />
+        <SidebarProvider>
+          <AppSidebar />
+          <SidebarInset className="flex flex-col h-screen overflow-hidden main-layout">
+            <div className="flex-shrink-0">
+              <Navbar />
             </div>
-          </div>
-        </div>
+            <div className="flex-1 overflow-y-auto overflow-x-hidden scrollable-content">
+              <div className="max-w-7xl mx-auto w-full px-4 2xl:px-0 py-4">
+                <Notifier />
+                {children}
+              </div>
+            </div>
+          </SidebarInset>
+        </SidebarProvider>
       </Providers>
     </>
   );

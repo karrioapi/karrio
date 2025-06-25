@@ -4379,6 +4379,88 @@ export interface GetManifestVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GetAPIKeys
+// ====================================================
+
+export interface GetAPIKeys_api_keys {
+  object_type: string;
+  key: string;
+  label: string;
+  test_mode: boolean;
+  created: any;
+  permissions: string[] | null;
+}
+
+export interface GetAPIKeys {
+  api_keys: GetAPIKeys_api_keys[];
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: CreateAPIKey
+// ====================================================
+
+export interface CreateAPIKey_create_api_key_api_key {
+  object_type: string;
+  key: string;
+  label: string;
+  test_mode: boolean;
+  created: any;
+  permissions: string[] | null;
+}
+
+export interface CreateAPIKey_create_api_key_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface CreateAPIKey_create_api_key {
+  api_key: CreateAPIKey_create_api_key_api_key | null;
+  errors: CreateAPIKey_create_api_key_errors[] | null;
+}
+
+export interface CreateAPIKey {
+  create_api_key: CreateAPIKey_create_api_key;
+}
+
+export interface CreateAPIKeyVariables {
+  data: CreateAPIKeyMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DeleteAPIKey
+// ====================================================
+
+export interface DeleteAPIKey_delete_api_key_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface DeleteAPIKey_delete_api_key {
+  label: string | null;
+  errors: DeleteAPIKey_delete_api_key_errors[] | null;
+}
+
+export interface DeleteAPIKey {
+  delete_api_key: DeleteAPIKey_delete_api_key;
+}
+
+export interface DeleteAPIKeyVariables {
+  data: DeleteAPIKeyMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: search_data
 // ====================================================
 
@@ -4908,9 +4990,6 @@ export enum WeightUnitEnum {
 }
 
 export enum CarrierNameEnum {
-  allied_express = "allied_express",
-  allied_express_local = "allied_express_local",
-  amazon_shipping = "amazon_shipping",
   aramex = "aramex",
   asendia_us = "asendia_us",
   australiapost = "australiapost",
@@ -4926,12 +5005,10 @@ export enum CarrierNameEnum {
   dhl_universal = "dhl_universal",
   dicom = "dicom",
   dpd = "dpd",
-  dpdhl = "dpdhl",
   easypost = "easypost",
   easyship = "easyship",
   eshipper = "eshipper",
   fedex = "fedex",
-  fedex_ws = "fedex_ws",
   freightcom = "freightcom",
   generic = "generic",
   geodis = "geodis",
@@ -4950,8 +5027,6 @@ export enum CarrierNameEnum {
   ups = "ups",
   usps = "usps",
   usps_international = "usps_international",
-  usps_wt = "usps_wt",
-  usps_wt_international = "usps_wt_international",
   zoom2u = "zoom2u",
 }
 
@@ -5706,6 +5781,19 @@ export interface ManifestFilter {
   created_after?: any | null;
   created_before?: any | null;
   carrier_name?: string[] | null;
+}
+
+// null
+export interface CreateAPIKeyMutationInput {
+  password: string;
+  label: string;
+  permissions?: string[] | null;
+}
+
+// null
+export interface DeleteAPIKeyMutationInput {
+  password: string;
+  key: string;
 }
 
 //==============================================================

@@ -1,8 +1,8 @@
 import { BatchOperationFilter, get_batch_operations, GET_BATCH_OPERATIONS, get_batch_operation, GET_BATCH_OPERATION } from "@karrio/types";
 import { BatchOrderData, BatchShipmentData, BatchTrackerData, BatchesApiImportFileRequest } from "@karrio/types/rest/api";
 import { gqlstr, handleFailure, insertUrlParam, isNoneOrEmpty, onError } from "@karrio/lib";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useKarrio } from "./karrio";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuthenticatedQuery, useKarrio } from "./karrio";
 import React from "react";
 
 const PAGE_SIZE = 20;
@@ -18,11 +18,22 @@ export function useBatchOperations({ setVariablesToURL = false, ...initialData }
   );
 
   // Queries
-  const query = useQuery(
-    ['batch-operations', filter],
-    () => fetch({ filter }),
-    { keepPreviousData: true, staleTime: 5000, onError },
-  );
+  // const query = useAuthenticatedQuery({
+  //   queryKey: ["user"],
+  //   queryFn: () => karrio.graphql.request<GetUser>(gqlstr(GET_USER)),
+  //   initialData: !!user ? { user } : undefined,
+  //   refetchOnWindowFocus: false,
+  //   staleTime: 300000,
+  //   enabled: !!user,
+  //   onError,
+  // });
+  const query = useAuthenticatedQuery({
+    queryKey: ['batch-operations', filter],
+    queryFn: () => fetch({ filter }),
+    keepPreviousData: true,
+    staleTime: 5000,
+    onError,
+  });
 
   function setFilter(options: BatchOperationFilter) {
     const params = Object.keys(options).reduce((acc, key) => {
@@ -72,7 +83,7 @@ export function useBatchOperation(id: string) {
   const karrio = useKarrio();
 
   // Queries
-  const query = useQuery({
+  const query = useAuthenticatedQuery({
     queryKey: ['batch-operations', id],
     queryFn: () => karrio.graphql.request<get_batch_operation>(gqlstr(GET_BATCH_OPERATION), { variables: { id } }),
     enabled: (!!id && id !== 'new'),

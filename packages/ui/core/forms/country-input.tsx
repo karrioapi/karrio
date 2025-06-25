@@ -1,27 +1,45 @@
-import {
-  DropdownInput,
-  DropdownInputComponent,
-} from "../components/dropdown-input";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { useEffect, useState } from "react";
-import { isNone } from "@karrio/lib";
+"use client";
 
-interface CountryInputComponent extends Omit<DropdownInputComponent, "items"> {}
+import { CountrySelect } from "@karrio/ui/components/country-select";
+import { forwardRef } from "react";
 
-export const CountryInput = ({
-  name,
+interface CountryInputProps {
+  name?: string;
+  value?: string;
+  onValueChange?: (value: string) => void;
+  placeholder?: string;
+  label?: string;
+  required?: boolean;
+  disabled?: boolean;
+  className?: string;
+}
+
+export const CountryInput = forwardRef<
+  HTMLInputElement,
+  CountryInputProps
+>(({
+  name = "country",
+  value,
+  onValueChange,
+  placeholder,
+  label,
+  required = false,
+  disabled = false,
+  className,
   ...props
-}: CountryInputComponent): JSX.Element => {
-  const {
-    references: { countries },
-  } = useAPIMetadata();
-  const [items, setItems] = useState<[string, string][]>();
-
-  useEffect(() => {
-    if (!isNone(countries)) {
-      setItems(Object.entries(countries).map((value) => value));
-    }
-  }, [countries]);
-
-  return <DropdownInput name={name || "country"} items={items} {...props} />;
-};
+}, ref) => {
+  return (
+    <CountrySelect
+      ref={ref}
+      name={name}
+      value={value}
+      onValueChange={onValueChange}
+      placeholder={placeholder}
+      label={label}
+      required={required}
+      disabled={disabled}
+      className={className}
+      {...props}
+    />
+  );
+});

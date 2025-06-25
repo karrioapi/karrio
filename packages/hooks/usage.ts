@@ -9,11 +9,11 @@ import {
   GetSystemUsage_system_usage,
   UsageFilter,
 } from "@karrio/types";
-import { gqlstr, insertUrlParam, isNoneOrEmpty, onError } from "@karrio/lib";
+import { gqlstr, insertUrlParam, isNoneOrEmpty } from "@karrio/lib";
 import { useQuery } from "@tanstack/react-query";
 import { useAPIMetadata } from "./api-metadata";
+import { useKarrio, useAuthenticatedQuery } from "./karrio";
 import { useSyncedSession } from "./session";
-import { useKarrio } from "./karrio";
 import moment from "moment";
 import React from "react";
 
@@ -55,34 +55,42 @@ export function useAPIUsage({
 }: FilterType = {}) {
   const karrio = useKarrio();
   const { metadata } = useAPIMetadata();
-  const {
-    query: { data: session },
-  } = useSyncedSession();
+  const { query: sessionQuery } = useSyncedSession();
+  const session = sessionQuery.data;
   const [filter, _setFilter] = React.useState<UsageFilter>({
     ...USAGE_FILTERS["15 days"],
     ...initialData,
   });
+
   const systemUsage = () =>
     karrio.graphql
       .request<GetSystemUsage>(gqlstr(GET_SYSTEM_USAGE), {
         variables: { filter },
       })
       .then(({ system_usage }) => ({ usage: system_usage as UsageType }));
+
   const orgUsage = () =>
     karrio.graphql
       .request<get_organization>(gqlstr(GET_ORGANIZATION), {
-        variables: { id: session.orgId, usage: filter },
+        variables: { id: session?.orgId, usage: filter },
       })
       .then(({ organization }) => ({
         usage: organization?.usage as UsageType,
       }));
 
-  // Queries
-  const query = useQuery(
-    ["usage", filter],
-    metadata.MULTI_ORGANIZATIONS == true ? orgUsage : systemUsage,
-    { staleTime: 1500000, onError },
-  );
+  const query = useAuthenticatedQuery({
+    queryKey: ["usage", filter],
+    queryFn: metadata.MULTI_ORGANIZATIONS == true ? orgUsage : systemUsage,
+    staleTime: 1500000,
+    enabled: metadata.MULTI_ORGANIZATIONS ? !!session?.orgId : true,
+    retry: (failureCount, error) => {
+      // Don't retry if it's an authentication error
+      if ((error as any)?.response?.errors?.[0]?.code === "authentication_required") {
+        return false;
+      }
+      return failureCount < 3;
+    },
+  });
 
   function setFilter(options: UsageFilter) {
     const params = Object.keys(options).reduce((acc, key) => {
@@ -90,9 +98,9 @@ export function useAPIUsage({
       return isNoneOrEmpty(options[key as keyof UsageFilter])
         ? acc
         : {
-            ...acc,
-            [key]: options[key as keyof UsageFilter],
-          };
+          ...acc,
+          [key]: options[key as keyof UsageFilter],
+        };
     }, {});
 
     if (setVariablesToURL) insertUrlParam(params);

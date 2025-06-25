@@ -4,17 +4,14 @@
     "baseUrl": ".",
     "paths": {
       "@karrio/ui/*": ["./*"],
-      "react": ["./node_modules/@types/react"],
-    },
+      "react": ["./node_modules/@types/react"]
+    }
   },
   "include": [
     ".",
     "./**/*.ts",
     "./**/*.tsx",
+    "../app-store/components/app-launcher.tsx"
   ],
-  "exclude": [
-    "dist",
-    "build",
-    "node_modules"
-  ]
+  "exclude": ["dist", "build", "node_modules"]
 }

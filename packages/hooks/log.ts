@@ -1,7 +1,7 @@
-import { gqlstr, insertUrlParam, isNoneOrEmpty, onError } from "@karrio/lib";
 import { LogFilter, get_logs, GET_LOGS, get_log, GET_LOG } from "@karrio/types";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useKarrio } from "./karrio";
+import { gqlstr, insertUrlParam, isNoneOrEmpty, onError } from "@karrio/lib";
+import { useAuthenticatedQuery, useKarrio } from "./karrio";
+import { useQueryClient } from "@tanstack/react-query";
 import React from "react";
 
 const PAGE_SIZE = 20;
@@ -17,11 +17,13 @@ export function useLogs({ setVariablesToURL = false, ...initialData }: FilterTyp
   );
 
   // Queries
-  const query = useQuery(
-    ['logs', filter],
-    () => fetch({ filter }),
-    { keepPreviousData: true, staleTime: 5000, onError },
-  );
+  const query = useAuthenticatedQuery({
+    queryKey: ['logs', filter],
+    queryFn: () => fetch({ filter }),
+    keepPreviousData: true,
+    staleTime: 5000,
+    onError,
+  });
 
   function setFilter(options: LogFilter) {
     const params = Object.keys(options).reduce((acc, key) => {
@@ -71,7 +73,7 @@ export function useLog(id: string) {
   const karrio = useKarrio();
 
   // Queries
-  const query = useQuery({
+  const query = useAuthenticatedQuery({
     queryKey: ['logs', id],
     queryFn: () => karrio.graphql.request<get_log>(gqlstr(GET_LOG), { variables: { id: parseInt(id) } }),
     enabled: !!id,

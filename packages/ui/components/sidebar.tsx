@@ -1,70 +1,134 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import * as React from "react"
 import {
   Home,
   Truck,
+  MapPin,
   Package,
-  Package2,
-  Navigation,
-  LayoutGrid,
-  ShoppingCart,
+  Settings,
+  Users,
   Zap,
+  Puzzle,
   Terminal,
+  Building,
+  Shield,
   Book,
-  Cog,
-} from "lucide-react";
+  Inbox,
+  List,
+} from "lucide-react"
 
-export const Sidebar = () => {
-  const pathname = usePathname();
+import { NavMain } from "@karrio/ui/components/nav-main"
+import { TeamSwitcher } from "@karrio/ui/components/team-switcher"
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarRail,
+  useSidebar,
+} from "@karrio/ui/components/ui/sidebar"
+import { useAPIMetadata } from "@karrio/hooks/api-metadata"
+import { useUser } from "@karrio/hooks/user"
+import { useAppMode } from "@karrio/hooks/app-mode"
 
-  const links = [
-    { href: "/", icon: Home, label: "Dashboard" },
-    { href: "/shipments", icon: Package, label: "Shipments" },
-    { href: "/trackers", icon: Navigation, label: "Trackers" },
-    { href: "/orders", icon: ShoppingCart, label: "Orders" },
-    { href: "/connections", icon: Truck, label: "Carriers" },
-    { href: "/automation", icon: Zap, label: "Automation" },
-    { href: "/apps", icon: LayoutGrid, label: "Apps" },
-    { href: "/developers", icon: Terminal, label: "Developers" },
-    { href: "/resources", icon: Book, label: "Resources" },
-    { href: "/settings", icon: Cog, label: "Settings" },
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { metadata } = useAPIMetadata();
+  const { testMode } = useAppMode();
+  const {
+    query: { data: { user } = {} },
+  } = useUser();
+
+  // Navigation items based on Karrio features - matching expanded-sidebar.tsx exactly
+  const navMain = [
+    {
+      title: "Home",
+      url: "/",
+      icon: Home,
+    },
+    {
+      title: "Shipments",
+      url: "/shipments",
+      icon: Truck,
+    },
+    {
+      title: "Trackers",
+      url: "/trackers",
+      icon: MapPin,
+    },
+    ...(metadata?.ORDERS_MANAGEMENT ? [{
+      title: "Orders",
+      url: "/orders",
+      icon: Inbox,
+    }] : []),
+    {
+      title: "Carriers",
+      url: "/connections",
+      icon: List,
+    },
+    ...(metadata?.SHIPPING_RULES || metadata?.WORKFLOW_MANAGEMENT ? [{
+      title: "Automation",
+      url: metadata?.SHIPPING_RULES ? "/shipping-rules" : "/workflows",
+      icon: Zap,
+    }] : []),
+    {
+      title: "Settings",
+      url: "/settings/account",
+      icon: Settings,
+    },
+  ];
+
+  // Separate section for developers and resources
+  const developerItems = [
+    {
+      title: "Developers",
+      url: "/developers",
+      icon: Terminal,
+    },
+    {
+      title: "Resources",
+      url: "/resources",
+      icon: Book,
+      items: [
+        {
+          title: "Playground",
+          url: "/resources/playground",
+        },
+        {
+          title: "GraphiQL",
+          url: "/resources/graphiql",
+        },
+        ...(metadata?.APP_NAME?.includes("Karrio") ? [{
+          title: "Guides",
+          url: "https://karrio.io/docs",
+          external: true,
+        }] : []),
+      ],
+    },
+    ...(metadata?.ADMIN_DASHBOARD && user?.is_staff ? [{
+      title: "Administration",
+      url: "/admin",
+      icon: Shield,
+    }] : []),
   ];
 
   return (
-    <div className="hidden border-r md:block">
-      <div className="flex h-full max-h-screen flex-col gap-2">
-        <div className="flex h-14 items-center px-4 lg:h-[60px] lg:px-6">
-          <Link href="/" className="flex items-center gap-2 font-semibold">
-            <Package2 className="h-6 w-6" />
-            <span className="">Purple Store</span>
-          </Link>
-        </div>
-
-        <div className="flex-1">
-          <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
-                  pathname === link.href
-                    ? "bg-muted text-primary"
-                    : "text-muted-foreground"
-                }`}
-              >
-                <link.icon className="h-4 w-4" />
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
-
-        <div className="mt-auto p-4">
-          <span>Version: 2024.6.5</span>
-        </div>
-      </div>
-    </div>
-  );
-};
+    <Sidebar
+      collapsible="icon"
+      {...props}
+      className={testMode ? "mt-[4px]" : ""}
+    >
+      <SidebarHeader>
+        <TeamSwitcher />
+      </SidebarHeader>
+      <SidebarContent>
+        <NavMain items={navMain} />
+        <NavMain items={developerItems} label="Resources" />
+      </SidebarContent>
+      <SidebarFooter>
+        {/* Footer content removed - user menu is in navbar */}
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
+  )
+}

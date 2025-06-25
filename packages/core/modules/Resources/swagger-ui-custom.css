@@ -436,7 +436,6 @@ Swagger UI Custom Styling for Karrio
 .swagger-ui-container {
     max-width: 1500px;
     margin: 0 auto;
-    padding: 20px;
     background: var(--karrio-white);
     min-height: 100vh;
 }

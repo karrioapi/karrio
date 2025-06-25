@@ -11,7 +11,7 @@ import {
 } from "@karrio/lib";
 import { CommodityDescription } from "@karrio/ui/core/components/commodity-description";
 import { AddressDescription } from "@karrio/ui/core/components/address-description";
-import { StatusCode } from "@karrio/ui/core/components/status-code-badge";
+import { ActivityTimeline } from "@karrio/ui/components/activity-timeline";
 import { CopiableLink } from "@karrio/ui/core/components/copiable-link";
 import { StatusBadge } from "@karrio/ui/core/components/status-badge";
 import { OrderMenu } from "@karrio/ui/core/components/order-menu";
@@ -300,98 +300,13 @@ export const OrderComponent = ({
 
           <div className="my-6 pt-1"></div>
 
-          {/* Logs section */}
-          <h2 className="title is-5 my-4">Logs</h2>
+          {/* Activity Timeline section */}
+          <h2 className="title is-5 my-4">Activity</h2>
 
-          {logs.isFetching && <Spinner />}
-
-          {logs.isFetched && (logs.data?.logs.edges || []).length == 0 && (
-            <div>No logs</div>
-          )}
-
-          {logs.isFetched && (logs.data?.logs.edges || []).length > 0 && (
-            <div
-              className="table-container"
-              style={{ maxHeight: "20em", overflow: "auto" }}
-            >
-              <table className="related-item-table table is-hoverable is-fullwidth">
-                <tbody>
-                  {(logs.data?.logs.edges || []).map(({ node: log }) => (
-                    <tr key={log.id} className="items is-clickable">
-                      <td className="status is-vcentered p-0 px-2">
-                        <AppLink
-                          href={`/developers/logs/${log.id}`}
-                          className="pr-2"
-                        >
-                          <StatusCode code={log.status_code as number} />
-                        </AppLink>
-                      </td>
-                      <td className="description is-vcentered p-0 px-2">
-                        <AppLink
-                          href={`/developers/logs/${log.id}`}
-                          className="is-size-7 has-text-weight-semibold has-text-grey is-flex py-2"
-                        >
-                          {`${log.method} ${log.path}`}
-                        </AppLink>
-                      </td>
-                      <td className="date is-vcentered p-0 px-2">
-                        <AppLink
-                          href={`/developers/logs/${log.id}`}
-                          className="is-size-7 has-text-weight-semibold has-text-grey is-flex is-justify-content-right py-2"
-                        >
-                          <span>{formatDateTime(log.requested_at)}</span>
-                        </AppLink>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          <div className="my-6 pt-1"></div>
-
-          {/* Events section */}
-          <h2 className="title is-5 my-4">Events</h2>
-
-          {events.isFetching && <Spinner />}
-
-          {events.isFetched &&
-            (events.data?.events.edges || []).length == 0 && (
-              <div>No events</div>
-            )}
-
-          {events.isFetched && (events.data?.events.edges || []).length > 0 && (
-            <div
-              className="table-container"
-              style={{ maxHeight: "20em", overflow: "auto" }}
-            >
-              <table className="related-item-table table is-hoverable is-fullwidth">
-                <tbody>
-                  {(events.data?.events.edges || []).map(({ node: event }) => (
-                    <tr key={event.id} className="items is-clickable">
-                      <td className="description is-vcentered p-0 px-2">
-                        <AppLink
-                          href={`/developers/events/${event.id}`}
-                          className="is-size-7 has-text-weight-semibold has-text-grey is-flex py-2"
-                        >
-                          {`${event.type}`}
-                        </AppLink>
-                      </td>
-                      <td className="date is-vcentered p-0 px-2">
-                        <AppLink
-                          href={`/developers/events/${event.id}`}
-                          className="is-size-7 has-text-weight-semibold has-text-grey is-flex is-justify-content-right py-2"
-                        >
-                          <span>{formatDateTime(event.created_at)}</span>
-                        </AppLink>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+          <ActivityTimeline
+            logs={logs}
+            events={events}
+          />
         </>
       )}
 
@@ -407,15 +322,10 @@ export const OrderComponent = ({
   );
 };
 
-export default function Page({ params }: { params: Promise<{ id: string }> }) {
+export default function Page(pageProps: any) {
   const Component = (): JSX.Element => {
-    const [id, setId] = React.useState<string>();
-
-    React.useEffect(() => {
-      params.then(query => {
-        setId(query.id);
-      });
-    }, []);
+    const params = pageProps.params || {};
+    const { id } = params;
 
     if (!id) return <></>;
 

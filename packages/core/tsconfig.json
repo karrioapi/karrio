@@ -8,22 +8,10 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@karrio/core/*": [
-        "./*"
-      ],
-      "react": [
-        "./node_modules/@types/react"
-      ],
+      "@karrio/core/*": ["./*"],
+      "react": ["./node_modules/@types/react"]
     }
   },
-  "include": [
-    ".",
-    "./**/*.ts",
-    "./**/*.tsx",
-  ],
-  "exclude": [
-    "dist",
-    "build",
-    "node_modules"
-  ],
+  "include": [".", "./**/*.ts", "./**/*.tsx", "../developers/modules/APIKey"],
+  "exclude": ["dist", "build", "node_modules"]
 }

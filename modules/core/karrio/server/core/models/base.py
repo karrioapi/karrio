@@ -61,6 +61,10 @@ class MetafieldType(lib.StrEnum):
     text = "text"
     number = "number"
     boolean = "boolean"
+    json = "json"
+    date = "date"
+    date_time = "date_time"
+    password = "password"
 
 
 METAFIELD_TYPE = [(c.name, c.name) for c in list(MetafieldType)]

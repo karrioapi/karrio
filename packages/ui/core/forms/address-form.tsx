@@ -22,9 +22,10 @@ import { InputField } from "../components/input-field";
 import { PhoneInput } from "../components/phone-input";
 import { NameInput } from "../components/name-input";
 import { Notify } from "../components/notifier";
-import { CountryInput } from "./country-input";
+// import { CountryInput } from "./country-input";
 import { Loading } from "../components/loader";
 import { StateInput } from "./state-input";
+import { CountrySelect } from "@karrio/ui/components/country-select";
 
 interface AddressFormComponent {
   value?: AddressType;
@@ -140,7 +141,6 @@ export const AddressForm = ({
             refresh && setKey(`address-${Date.now()}`);
           }}
           required
-          max={30}
         />
       </div>
 
@@ -158,14 +158,13 @@ export const AddressForm = ({
       </div>
 
       <div className="columns mb-0">
-        <CountryInput
+        <CountrySelect
           label="country"
           onValueChange={(value) =>
             dispatch({ name: "country_code", value: value as string })
           }
           value={address.country_code}
           className="is-small"
-          dropdownClass="is-small"
           wrapperClass="column px-1 py-3"
           fieldClass="mb-0 p-0"
           required

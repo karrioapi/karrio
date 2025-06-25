@@ -1,5 +1,4 @@
 "use client";
-import { CustomsInfoDescription } from "@karrio/ui/core/components/customs-info-description";
 import {
   MetadataEditor,
   MetadataEditorContext,
@@ -8,20 +7,20 @@ import {
   useUploadRecordMutation,
   useUploadRecords,
 } from "@karrio/hooks/upload-record";
+import { CustomsInfoDescription } from "@karrio/ui/core/components/customs-info-description";
 import { CommodityDescription } from "@karrio/ui/core/components/commodity-description";
 import { OptionsDescription } from "@karrio/ui/core/components/options-description";
-import { formatDateTime, formatDayDate, formatRef, isNone } from "@karrio/lib";
 import { AddressDescription } from "@karrio/ui/core/components/address-description";
 import { ParcelDescription } from "@karrio/ui/core/components/parcel-description";
+import { formatDateTime, formatDayDate, formatRef, isNone } from "@karrio/lib";
+import { ActivityTimeline } from "@karrio/ui/components/activity-timeline";
 import { CustomsType, NotificationType, ParcelType } from "@karrio/types";
-import { StatusCode } from "@karrio/ui/core/components/status-code-badge";
 import { CopiableLink } from "@karrio/ui/core/components/copiable-link";
 import { CarrierBadge } from "@karrio/ui/core/components/carrier-badge";
 import { ShipmentMenu } from "@karrio/ui/core/components/shipment-menu";
 import { SelectField } from "@karrio/ui/core/components/select-field";
 import { StatusBadge } from "@karrio/ui/core/components/status-badge";
 import { InputField } from "@karrio/ui/core/components/input-field";
-import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { DocumentUploadData } from "@karrio/types/rest/api";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
@@ -646,102 +645,13 @@ export const ShipmentComponent = ({
 
           <div className="my-6 pt-1"></div>
 
-          {/* Logs section */}
-          <h2 className="title is-5 my-4">Logs</h2>
+          {/* Activity Timeline section */}
+          <h2 className="title is-5 my-4">Activity</h2>
 
-          {!logs.isFetched && logs.isFetching && (
-            <Spinner className="my-1 p-1 has-text-centered" size={6} />
-          )}
-
-          {logs.isFetched && (logs.data?.logs.edges || []).length == 0 && (
-            <div>No logs</div>
-          )}
-
-          {logs.isFetched && (logs.data?.logs.edges || []).length > 0 && (
-            <div
-              className="table-container py-1"
-              style={{ maxHeight: "20em", overflow: "auto" }}
-            >
-              <table className="related-item-table table is-hoverable is-fullwidth">
-                <tbody>
-                  {(logs.data?.logs.edges || []).map(({ node: log }) => (
-                    <tr key={log.id} className="items is-clickable">
-                      <td className="status is-vcentered p-0 px-2">
-                        <AppLink
-                          href={`/developers/logs/${log.id}`}
-                          className="mr-4"
-                        >
-                          <StatusCode code={log.status_code as number} />
-                        </AppLink>
-                      </td>
-                      <td className="description is-vcentered p-0 px-2">
-                        <AppLink
-                          href={`/developers/logs/${log.id}`}
-                          className="is-size-7 has-text-weight-semibold has-text-grey is-flex py-2 text-ellipsis"
-                        >
-                          {`${log.method} ${log.path}`}
-                        </AppLink>
-                      </td>
-                      <td className="date is-vcentered p-0 px-2">
-                        <AppLink
-                          href={`/developers/logs/${log.id}`}
-                          className="is-size-7 has-text-weight-semibold has-text-grey is-flex is-justify-content-right py-2"
-                        >
-                          <span>{formatDateTime(log.requested_at)}</span>
-                        </AppLink>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          <div className="my-6 pt-1"></div>
-
-          {/* Events section */}
-          <h2 className="title is-5 my-4">Events</h2>
-
-          {!events.isFetched && events.isFetching && (
-            <Spinner className="my-1 p-1 has-text-centered" size={6} />
-          )}
-
-          {events.isFetched &&
-            (events.data?.events.edges || []).length == 0 && (
-              <div>No events</div>
-            )}
-
-          {events.isFetched && (events.data?.events.edges || []).length > 0 && (
-            <div
-              className="table-container py-1"
-              style={{ maxHeight: "20em", overflow: "auto" }}
-            >
-              <table className="related-item-table table is-hoverable is-fullwidth">
-                <tbody>
-                  {(events.data?.events.edges || []).map(({ node: event }) => (
-                    <tr key={event.id} className="items is-clickable">
-                      <td className="description is-vcentered p-0 px-2">
-                        <AppLink
-                          href={`/developers/events/${event.id}`}
-                          className="is-size-7 has-text-weight-semibold has-text-grey is-flex py-2 text-ellipsis"
-                        >
-                          {`${event.type}`}
-                        </AppLink>
-                      </td>
-                      <td className="date is-vcentered p-0 px-2">
-                        <AppLink
-                          href={`/developers/events/${event.id}`}
-                          className="is-size-7 has-text-weight-semibold has-text-grey is-flex is-justify-content-right py-2"
-                        >
-                          <span>{formatDateTime(event.created_at)}</span>
-                        </AppLink>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+          <ActivityTimeline
+            logs={logs}
+            events={events}
+          />
         </>
       )}
 
@@ -757,15 +667,10 @@ export const ShipmentComponent = ({
   );
 };
 
-export default function Page({ params }: { params: Promise<{ id: string }> }) {
+export default function Page(pageProps: any) {
   const Component = (): JSX.Element => {
-    const [id, setId] = React.useState<string>();
-
-    React.useEffect(() => {
-      params.then(query => {
-        setId(query.id);
-      });
-    }, []);
+    const params = pageProps.params || {};
+    const { id } = params;
 
     if (!id) return <></>;
 

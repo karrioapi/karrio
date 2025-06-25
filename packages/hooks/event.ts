@@ -1,7 +1,7 @@
 import { EventFilter, GET_EVENT, get_event, get_events, GET_EVENTS } from "@karrio/types";
 import { gqlstr, insertUrlParam, isNoneOrEmpty, onError } from "@karrio/lib";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useKarrio } from "./karrio";
+import { useAuthenticatedQuery, useKarrio } from "./karrio";
+import { useQueryClient } from "@tanstack/react-query";
 import React from "react";
 
 const PAGE_SIZE = 20;
@@ -17,11 +17,13 @@ export function useEvents({ setVariablesToURL = false, ...initialData }: FilterT
   );
 
   // Queries
-  const query = useQuery(
-    ['events', filter],
-    () => fetch({ filter }),
-    { keepPreviousData: true, staleTime: 5000, onError },
-  );
+  const query = useAuthenticatedQuery({
+    queryKey: ['events', filter],
+    queryFn: () => fetch({ filter }),
+    keepPreviousData: true,
+    staleTime: 5000,
+    onError,
+  });
 
   function setFilter(options: EventFilter) {
     const params = Object.keys(options).reduce((acc, key) => {
@@ -71,7 +73,8 @@ export function useEvent(id: string) {
   const karrio = useKarrio();
 
   // Queries
-  const query = useQuery(['events', id], {
+  const query = useAuthenticatedQuery({
+    queryKey: ['events', id],
     queryFn: () => (
       karrio.graphql.request<get_event>(gqlstr(GET_EVENT), { variables: { id } })
     ),

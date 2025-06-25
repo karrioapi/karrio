@@ -4,46 +4,10 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GetApp
+// GraphQL query operation: GetOAuthApps
 // ====================================================
 
-export interface GetApp_app_installation {
-  id: number;
-  access_scopes: string[];
-  metadata: any | null;
-}
-
-export interface GetApp_app {
-  id: string;
-  display_name: string;
-  developer_name: string;
-  is_public: boolean;
-  is_builtin: boolean;
-  is_embedded: boolean;
-  is_published: boolean;
-  launch_url: string;
-  features: string[];
-  metadata: any | null;
-  installation: GetApp_app_installation | null;
-}
-
-export interface GetApp {
-  app: GetApp_app;
-}
-
-export interface GetAppVariables {
-  id: string;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: GetApps
-// ====================================================
-
-export interface GetApps_apps_page_info {
+export interface GetOAuthApps_oauth_apps_page_info {
   count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
@@ -51,41 +15,41 @@ export interface GetApps_apps_page_info {
   end_cursor: string | null;
 }
 
-export interface GetApps_apps_edges_node_installation {
-  id: number;
-  access_scopes: string[];
-  metadata: any | null;
+export interface GetOAuthApps_oauth_apps_edges_node_created_by {
+  email: string;
+  full_name: string;
 }
 
-export interface GetApps_apps_edges_node {
+export interface GetOAuthApps_oauth_apps_edges_node {
   id: string;
+  object_type: string;
   display_name: string;
-  developer_name: string;
-  is_public: boolean;
-  is_builtin: boolean;
-  is_embedded: boolean;
-  is_published: boolean;
+  description: string | null;
   launch_url: string;
+  redirect_uris: string;
   features: string[];
+  client_id: string;
+  created_at: any;
+  updated_at: any;
   metadata: any | null;
-  installation: GetApps_apps_edges_node_installation | null;
+  created_by: GetOAuthApps_oauth_apps_edges_node_created_by;
 }
 
-export interface GetApps_apps_edges {
-  node: GetApps_apps_edges_node;
+export interface GetOAuthApps_oauth_apps_edges {
+  node: GetOAuthApps_oauth_apps_edges_node;
 }
 
-export interface GetApps_apps {
-  page_info: GetApps_apps_page_info;
-  edges: GetApps_apps_edges[];
+export interface GetOAuthApps_oauth_apps {
+  page_info: GetOAuthApps_oauth_apps_page_info;
+  edges: GetOAuthApps_oauth_apps_edges[];
 }
 
-export interface GetApps {
-  apps: GetApps_apps;
+export interface GetOAuthApps {
+  oauth_apps: GetOAuthApps_oauth_apps;
 }
 
-export interface GetAppsVariables {
-  filter?: AppFilter | null;
+export interface GetOAuthAppsVariables {
+  filter?: OAuthAppFilter | null;
 }
 
 
@@ -93,34 +57,34 @@ export interface GetAppsVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GetPrivateApp
+// GraphQL query operation: GetOAuthApp
 // ====================================================
 
-export interface GetPrivateApp_private_app_installation {
-  id: number;
-  access_scopes: string[];
-  metadata: any | null;
+export interface GetOAuthApp_oauth_app_created_by {
+  email: string;
+  full_name: string;
 }
 
-export interface GetPrivateApp_private_app {
+export interface GetOAuthApp_oauth_app {
   id: string;
+  object_type: string;
   display_name: string;
-  developer_name: string;
-  is_public: boolean;
-  is_builtin: boolean;
-  is_embedded: boolean;
-  is_published: boolean;
+  description: string | null;
   launch_url: string;
+  redirect_uris: string;
   features: string[];
+  client_id: string;
+  created_at: any;
+  updated_at: any;
   metadata: any | null;
-  installation: GetPrivateApp_private_app_installation | null;
+  created_by: GetOAuthApp_oauth_app_created_by;
 }
 
-export interface GetPrivateApp {
-  private_app: GetPrivateApp_private_app;
+export interface GetOAuthApp {
+  oauth_app: GetOAuthApp_oauth_app;
 }
 
-export interface GetPrivateAppVariables {
+export interface GetOAuthAppVariables {
   id: string;
 }
 
@@ -129,10 +93,10 @@ export interface GetPrivateAppVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GetPrivateApps
+// GraphQL query operation: GetAppInstallations
 // ====================================================
 
-export interface GetPrivateApps_private_apps_page_info {
+export interface GetAppInstallations_app_installations_page_info {
   count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
@@ -140,41 +104,265 @@ export interface GetPrivateApps_private_apps_page_info {
   end_cursor: string | null;
 }
 
-export interface GetPrivateApps_private_apps_edges_node_installation {
-  id: number;
-  access_scopes: string[];
-  metadata: any | null;
+export interface GetAppInstallations_app_installations_edges_node_created_by {
+  email: string;
+  full_name: string;
 }
 
-export interface GetPrivateApps_private_apps_edges_node {
+export interface GetAppInstallations_app_installations_edges_node_oauth_app {
   id: string;
   display_name: string;
-  developer_name: string;
-  is_public: boolean;
-  is_builtin: boolean;
-  is_embedded: boolean;
-  is_published: boolean;
-  launch_url: string;
+  client_id: string;
   features: string[];
+}
+
+export interface GetAppInstallations_app_installations_edges_node_metafields {
+  id: string;
+  key: string;
+  value: any | null;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+}
+
+export interface GetAppInstallations_app_installations_edges_node {
+  id: string;
+  object_type: string;
+  app_id: string;
+  app_type: string;
+  access_scopes: string[];
+  api_key: string | null;
+  is_active: boolean;
+  requires_oauth: boolean;
+  created_at: any;
+  updated_at: any;
   metadata: any | null;
-  installation: GetPrivateApps_private_apps_edges_node_installation | null;
+  created_by: GetAppInstallations_app_installations_edges_node_created_by;
+  oauth_app: GetAppInstallations_app_installations_edges_node_oauth_app | null;
+  metafields: GetAppInstallations_app_installations_edges_node_metafields[];
 }
 
-export interface GetPrivateApps_private_apps_edges {
-  node: GetPrivateApps_private_apps_edges_node;
+export interface GetAppInstallations_app_installations_edges {
+  node: GetAppInstallations_app_installations_edges_node;
 }
 
-export interface GetPrivateApps_private_apps {
-  page_info: GetPrivateApps_private_apps_page_info;
-  edges: GetPrivateApps_private_apps_edges[];
+export interface GetAppInstallations_app_installations {
+  page_info: GetAppInstallations_app_installations_page_info;
+  edges: GetAppInstallations_app_installations_edges[];
 }
 
-export interface GetPrivateApps {
-  private_apps: GetPrivateApps_private_apps;
+export interface GetAppInstallations {
+  app_installations: GetAppInstallations_app_installations;
 }
 
-export interface GetPrivateAppsVariables {
-  filter?: AppFilter | null;
+export interface GetAppInstallationsVariables {
+  filter?: AppInstallationFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetAppInstallation
+// ====================================================
+
+export interface GetAppInstallation_app_installation_created_by {
+  email: string;
+  full_name: string;
+}
+
+export interface GetAppInstallation_app_installation_oauth_app {
+  id: string;
+  display_name: string;
+  client_id: string;
+  features: string[];
+}
+
+export interface GetAppInstallation_app_installation_metafields {
+  id: string;
+  key: string;
+  value: any | null;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+}
+
+export interface GetAppInstallation_app_installation {
+  id: string;
+  object_type: string;
+  app_id: string;
+  app_type: string;
+  access_scopes: string[];
+  api_key: string | null;
+  is_active: boolean;
+  requires_oauth: boolean;
+  created_at: any;
+  updated_at: any;
+  metadata: any | null;
+  created_by: GetAppInstallation_app_installation_created_by;
+  oauth_app: GetAppInstallation_app_installation_oauth_app | null;
+  metafields: GetAppInstallation_app_installation_metafields[];
+}
+
+export interface GetAppInstallation {
+  app_installation: GetAppInstallation_app_installation;
+}
+
+export interface GetAppInstallationVariables {
+  id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetAppInstallationByAppId
+// ====================================================
+
+export interface GetAppInstallationByAppId_app_installation_by_app_id_oauth_app {
+  id: string;
+  display_name: string;
+  client_id: string;
+  features: string[];
+}
+
+export interface GetAppInstallationByAppId_app_installation_by_app_id_metafields {
+  id: string;
+  key: string;
+  value: any | null;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+}
+
+export interface GetAppInstallationByAppId_app_installation_by_app_id {
+  id: string;
+  object_type: string;
+  app_id: string;
+  app_type: string;
+  access_scopes: string[];
+  api_key: string | null;
+  is_active: boolean;
+  requires_oauth: boolean;
+  created_at: any;
+  updated_at: any;
+  metadata: any | null;
+  oauth_app: GetAppInstallationByAppId_app_installation_by_app_id_oauth_app | null;
+  metafields: GetAppInstallationByAppId_app_installation_by_app_id_metafields[];
+}
+
+export interface GetAppInstallationByAppId {
+  app_installation_by_app_id: GetAppInstallationByAppId_app_installation_by_app_id;
+}
+
+export interface GetAppInstallationByAppIdVariables {
+  app_id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: CreateOAuthApp
+// ====================================================
+
+export interface CreateOAuthApp_create_oauth_app_oauth_app {
+  id: string;
+  object_type: string;
+  display_name: string;
+  description: string | null;
+  launch_url: string;
+  redirect_uris: string;
+  features: string[];
+  client_id: string;
+  client_secret: string;
+  created_at: any;
+  updated_at: any;
+  metadata: any | null;
+}
+
+export interface CreateOAuthApp_create_oauth_app_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface CreateOAuthApp_create_oauth_app {
+  oauth_app: CreateOAuthApp_create_oauth_app_oauth_app | null;
+  errors: CreateOAuthApp_create_oauth_app_errors[] | null;
+}
+
+export interface CreateOAuthApp {
+  create_oauth_app: CreateOAuthApp_create_oauth_app;
+}
+
+export interface CreateOAuthAppVariables {
+  data: CreateOAuthAppMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateOAuthApp
+// ====================================================
+
+export interface UpdateOAuthApp_update_oauth_app_oauth_app {
+  id: string;
+  object_type: string;
+  display_name: string;
+  description: string | null;
+  launch_url: string;
+  redirect_uris: string;
+  features: string[];
+  client_id: string;
+  created_at: any;
+  updated_at: any;
+  metadata: any | null;
+}
+
+export interface UpdateOAuthApp_update_oauth_app_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UpdateOAuthApp_update_oauth_app {
+  oauth_app: UpdateOAuthApp_update_oauth_app_oauth_app | null;
+  errors: UpdateOAuthApp_update_oauth_app_errors[] | null;
+}
+
+export interface UpdateOAuthApp {
+  update_oauth_app: UpdateOAuthApp_update_oauth_app;
+}
+
+export interface UpdateOAuthAppVariables {
+  data: UpdateOAuthAppMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DeleteOAuthApp
+// ====================================================
+
+export interface DeleteOAuthApp_delete_oauth_app_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface DeleteOAuthApp_delete_oauth_app {
+  success: boolean;
+  errors: DeleteOAuthApp_delete_oauth_app_errors[] | null;
+}
+
+export interface DeleteOAuthApp {
+  delete_oauth_app: DeleteOAuthApp_delete_oauth_app;
+}
+
+export interface DeleteOAuthAppVariables {
+  data: DeleteOAuthAppMutationInput;
 }
 
 
@@ -185,12 +373,35 @@ export interface GetPrivateAppsVariables {
 // GraphQL mutation operation: InstallApp
 // ====================================================
 
+export interface InstallApp_install_app_installation_oauth_app {
+  id: string;
+  display_name: string;
+  client_id: string;
+  features: string[];
+}
+
+export interface InstallApp_install_app_installation_metafields {
+  id: string;
+  key: string;
+  value: any | null;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+}
+
 export interface InstallApp_install_app_installation {
-  id: number;
+  id: string;
+  object_type: string;
+  app_id: string;
+  app_type: string;
   access_scopes: string[];
+  api_key: string | null;
+  is_active: boolean;
+  requires_oauth: boolean;
   created_at: any;
   updated_at: any;
   metadata: any | null;
+  oauth_app: InstallApp_install_app_installation_oauth_app | null;
+  metafields: InstallApp_install_app_installation_metafields[];
 }
 
 export interface InstallApp_install_app_errors {
@@ -219,33 +430,13 @@ export interface InstallAppVariables {
 // GraphQL mutation operation: UninstallApp
 // ====================================================
 
-export interface UninstallApp_uninstall_app_app_installation {
-  id: number;
-  access_scopes: string[];
-  metadata: any | null;
-}
-
-export interface UninstallApp_uninstall_app_app {
-  id: string;
-  display_name: string;
-  developer_name: string;
-  is_public: boolean;
-  is_builtin: boolean;
-  is_embedded: boolean;
-  is_published: boolean;
-  launch_url: string;
-  features: string[];
-  metadata: any | null;
-  installation: UninstallApp_uninstall_app_app_installation | null;
-}
-
 export interface UninstallApp_uninstall_app_errors {
   field: string;
   messages: string[];
 }
 
 export interface UninstallApp_uninstall_app {
-  app: UninstallApp_uninstall_app_app | null;
+  success: boolean;
   errors: UninstallApp_uninstall_app_errors[] | null;
 }
 
@@ -255,6 +446,127 @@ export interface UninstallApp {
 
 export interface UninstallAppVariables {
   data: UninstallAppMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateAppInstallation
+// ====================================================
+
+export interface UpdateAppInstallation_update_app_installation_installation_oauth_app {
+  id: string;
+  display_name: string;
+  client_id: string;
+  features: string[];
+}
+
+export interface UpdateAppInstallation_update_app_installation_installation_metafields {
+  id: string;
+  key: string;
+  value: any | null;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+}
+
+export interface UpdateAppInstallation_update_app_installation_installation {
+  id: string;
+  object_type: string;
+  app_id: string;
+  app_type: string;
+  access_scopes: string[];
+  api_key: string | null;
+  is_active: boolean;
+  requires_oauth: boolean;
+  created_at: any;
+  updated_at: any;
+  metadata: any | null;
+  oauth_app: UpdateAppInstallation_update_app_installation_installation_oauth_app | null;
+  metafields: UpdateAppInstallation_update_app_installation_installation_metafields[];
+}
+
+export interface UpdateAppInstallation_update_app_installation_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UpdateAppInstallation_update_app_installation {
+  installation: UpdateAppInstallation_update_app_installation_installation | null;
+  errors: UpdateAppInstallation_update_app_installation_errors[] | null;
+}
+
+export interface UpdateAppInstallation {
+  update_app_installation: UpdateAppInstallation_update_app_installation;
+}
+
+export interface UpdateAppInstallationVariables {
+  data: UpdateAppInstallationMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: RotateAppApiKey
+// ====================================================
+
+export interface RotateAppApiKey_rotate_app_api_key_installation {
+  id: string;
+  app_id: string;
+  api_key: string | null;
+}
+
+export interface RotateAppApiKey_rotate_app_api_key_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface RotateAppApiKey_rotate_app_api_key {
+  installation: RotateAppApiKey_rotate_app_api_key_installation | null;
+  errors: RotateAppApiKey_rotate_app_api_key_errors[] | null;
+}
+
+export interface RotateAppApiKey {
+  rotate_app_api_key: RotateAppApiKey_rotate_app_api_key;
+}
+
+export interface RotateAppApiKeyVariables {
+  data: RotateAppApiKeyMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: EnsureAppApiKey
+// ====================================================
+
+export interface EnsureAppApiKey_ensure_app_api_key_installation {
+  id: string;
+  app_id: string;
+  api_key: string | null;
+}
+
+export interface EnsureAppApiKey_ensure_app_api_key_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface EnsureAppApiKey_ensure_app_api_key {
+  installation: EnsureAppApiKey_ensure_app_api_key_installation | null;
+  errors: EnsureAppApiKey_ensure_app_api_key_errors[] | null;
+}
+
+export interface EnsureAppApiKey {
+  ensure_app_api_key: EnsureAppApiKey_ensure_app_api_key;
+}
+
+export interface EnsureAppApiKeyVariables {
+  data: EnsureAppApiKeyMutationInput;
 }
 
 
@@ -739,7 +1051,7 @@ export interface GetWorkflow_workflow_actions_connection_metafields {
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflow_workflow_actions_connection {
@@ -753,6 +1065,10 @@ export interface GetWorkflow_workflow_actions_connection {
   parameters_template: string | null;
   auth_template: string | null;
   credentials: any | null;
+  credentials_from_metafields: any | null;
+  required_credentials: string[];
+  is_credentials_complete: boolean;
+  credential_validation: any;
   template_slug: string | null;
   metadata: any | null;
   metafields: GetWorkflow_workflow_actions_connection_metafields[];
@@ -763,7 +1079,7 @@ export interface GetWorkflow_workflow_actions_metafields {
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflow_workflow_actions {
@@ -829,6 +1145,8 @@ export interface GetWorkflows_workflows_edges_node_trigger {
   schedule: string | null;
   secret: string | null;
   secret_key: string | null;
+  is_due: boolean;
+  next_run_description: string | null;
   created_at: any;
   updated_at: any;
 }
@@ -843,7 +1161,7 @@ export interface GetWorkflows_workflows_edges_node_actions_connection_metafields
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflows_workflows_edges_node_actions_connection {
@@ -859,6 +1177,10 @@ export interface GetWorkflows_workflows_edges_node_actions_connection {
   parameters_template: string | null;
   auth_template: string | null;
   credentials: any | null;
+  credentials_from_metafields: any | null;
+  required_credentials: string[];
+  is_credentials_complete: boolean;
+  credential_validation: any;
   metadata: any | null;
   template_slug: string | null;
   metafields: GetWorkflows_workflows_edges_node_actions_connection_metafields[];
@@ -871,7 +1193,7 @@ export interface GetWorkflows_workflows_edges_node_actions_metafields {
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflows_workflows_edges_node_actions {
@@ -933,6 +1255,133 @@ export interface GetWorkflowsVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GetScheduledWorkflows
+// ====================================================
+
+export interface GetScheduledWorkflows_scheduled_workflows_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetScheduledWorkflows_scheduled_workflows_edges_node_trigger {
+  object_type: string;
+  id: string;
+  slug: string;
+  trigger_type: AutomationTriggerType;
+  schedule: string | null;
+  is_due: boolean;
+  next_run_description: string | null;
+  created_at: any;
+  updated_at: any;
+}
+
+export interface GetScheduledWorkflows_scheduled_workflows_edges_node_action_nodes {
+  order: number;
+  slug: string;
+}
+
+export interface GetScheduledWorkflows_scheduled_workflows_edges_node_actions_connection_metafields {
+  id: string;
+  key: string;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+  value: any | null;
+}
+
+export interface GetScheduledWorkflows_scheduled_workflows_edges_node_actions_connection {
+  object_type: string;
+  id: string;
+  name: string;
+  slug: string;
+  auth_type: AutomationAuthType;
+  port: number | null;
+  host: string | null;
+  endpoint: string | null;
+  description: string | null;
+  parameters_template: string | null;
+  auth_template: string | null;
+  credentials: any | null;
+  credentials_from_metafields: any | null;
+  required_credentials: string[];
+  is_credentials_complete: boolean;
+  credential_validation: any;
+  metadata: any | null;
+  template_slug: string | null;
+  metafields: GetScheduledWorkflows_scheduled_workflows_edges_node_actions_connection_metafields[];
+  created_at: any;
+  updated_at: any;
+}
+
+export interface GetScheduledWorkflows_scheduled_workflows_edges_node_actions_metafields {
+  id: string;
+  key: string;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+  value: any | null;
+}
+
+export interface GetScheduledWorkflows_scheduled_workflows_edges_node_actions {
+  object_type: string;
+  id: string;
+  slug: string;
+  name: string;
+  action_type: AutomationActionType;
+  description: string | null;
+  port: number | null;
+  host: string | null;
+  endpoint: string | null;
+  method: AutomationHTTPMethod | null;
+  content_type: AutomationHTTPContentType | null;
+  header_template: string | null;
+  parameters_type: AutomationParametersType | null;
+  parameters_template: string | null;
+  connection: GetScheduledWorkflows_scheduled_workflows_edges_node_actions_connection | null;
+  template_slug: string | null;
+  metadata: any | null;
+  metafields: GetScheduledWorkflows_scheduled_workflows_edges_node_actions_metafields[];
+  created_at: any;
+  updated_at: any;
+}
+
+export interface GetScheduledWorkflows_scheduled_workflows_edges_node {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  trigger: GetScheduledWorkflows_scheduled_workflows_edges_node_trigger | null;
+  action_nodes: GetScheduledWorkflows_scheduled_workflows_edges_node_action_nodes[];
+  actions: GetScheduledWorkflows_scheduled_workflows_edges_node_actions[];
+  metadata: any | null;
+  template_slug: string | null;
+  created_at: any;
+  updated_at: any;
+}
+
+export interface GetScheduledWorkflows_scheduled_workflows_edges {
+  node: GetScheduledWorkflows_scheduled_workflows_edges_node;
+}
+
+export interface GetScheduledWorkflows_scheduled_workflows {
+  page_info: GetScheduledWorkflows_scheduled_workflows_page_info;
+  edges: GetScheduledWorkflows_scheduled_workflows_edges[];
+}
+
+export interface GetScheduledWorkflows {
+  scheduled_workflows: GetScheduledWorkflows_scheduled_workflows;
+}
+
+export interface GetScheduledWorkflowsVariables {
+  filter?: WorkflowFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GetWorkflowConnection
 // ====================================================
 
@@ -941,7 +1390,7 @@ export interface GetWorkflowConnection_workflow_connection_metafields {
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflowConnection_workflow_connection {
@@ -956,6 +1405,10 @@ export interface GetWorkflowConnection_workflow_connection {
   parameters_template: string | null;
   auth_template: string | null;
   credentials: any | null;
+  credentials_from_metafields: any | null;
+  required_credentials: string[];
+  is_credentials_complete: boolean;
+  credential_validation: any;
   template_slug: string | null;
   metadata: any | null;
   metafields: GetWorkflowConnection_workflow_connection_metafields[];
@@ -990,7 +1443,7 @@ export interface GetWorkflowConnections_workflow_connections_edges_node_metafiel
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflowConnections_workflow_connections_edges_node {
@@ -1005,6 +1458,10 @@ export interface GetWorkflowConnections_workflow_connections_edges_node {
   parameters_template: string | null;
   auth_template: string | null;
   credentials: any | null;
+  credentials_from_metafields: any | null;
+  required_credentials: string[];
+  is_credentials_complete: boolean;
+  credential_validation: any;
   metadata: any | null;
   template_slug: string | null;
   metafields: GetWorkflowConnections_workflow_connections_edges_node_metafields[];
@@ -1042,7 +1499,7 @@ export interface GetWorkflowAction_workflow_action_connection_metafields {
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflowAction_workflow_action_connection {
@@ -1056,6 +1513,10 @@ export interface GetWorkflowAction_workflow_action_connection {
   parameters_template: string | null;
   auth_template: string | null;
   credentials: any | null;
+  credentials_from_metafields: any | null;
+  required_credentials: string[];
+  is_credentials_complete: boolean;
+  credential_validation: any;
   metadata: any | null;
   template_slug: string | null;
   metafields: GetWorkflowAction_workflow_action_connection_metafields[];
@@ -1066,7 +1527,7 @@ export interface GetWorkflowAction_workflow_action_metafields {
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflowAction_workflow_action {
@@ -1118,7 +1579,7 @@ export interface GetWorkflowActions_workflow_actions_edges_node_connection_metaf
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflowActions_workflow_actions_edges_node_connection {
@@ -1134,6 +1595,10 @@ export interface GetWorkflowActions_workflow_actions_edges_node_connection {
   parameters_template: string | null;
   auth_template: string | null;
   credentials: any | null;
+  credentials_from_metafields: any | null;
+  required_credentials: string[];
+  is_credentials_complete: boolean;
+  credential_validation: any;
   template_slug: string | null;
   metadata: any | null;
   metafields: GetWorkflowActions_workflow_actions_edges_node_connection_metafields[];
@@ -1146,7 +1611,7 @@ export interface GetWorkflowActions_workflow_actions_edges_node_metafields {
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflowActions_workflow_actions_edges_node {
@@ -1346,7 +1811,7 @@ export interface GetWorkflowTemplates_workflow_templates_edges_node_actions_conn
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflowTemplates_workflow_templates_edges_node_actions_connection {
@@ -1368,7 +1833,7 @@ export interface GetWorkflowTemplates_workflow_templates_edges_node_actions_meta
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflowTemplates_workflow_templates_edges_node_actions {
@@ -1436,7 +1901,7 @@ export interface GetWorkflowActionTemplates_workflow_action_templates_edges_node
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflowActionTemplates_workflow_action_templates_edges_node_connection {
@@ -1458,7 +1923,7 @@ export interface GetWorkflowActionTemplates_workflow_action_templates_edges_node
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflowActionTemplates_workflow_action_templates_edges_node {
@@ -1517,7 +1982,7 @@ export interface GetWorkflowConnectionTemplates_workflow_connection_templates_ed
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflowConnectionTemplates_workflow_connection_templates_edges_node {
@@ -1955,12 +2420,336 @@ export interface DeleteWorkflowTriggerVariables {
   data: DeleteMutationInput;
 }
 
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: TriggerScheduledWorkflow
+// ====================================================
+
+export interface TriggerScheduledWorkflow_trigger_scheduled_workflow_workflow_event {
+  id: string;
+  status: AutomationEventStatus;
+  created_at: any;
+}
+
+export interface TriggerScheduledWorkflow_trigger_scheduled_workflow_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface TriggerScheduledWorkflow_trigger_scheduled_workflow {
+  workflow_event: TriggerScheduledWorkflow_trigger_scheduled_workflow_workflow_event | null;
+  errors: TriggerScheduledWorkflow_trigger_scheduled_workflow_errors[] | null;
+}
+
+export interface TriggerScheduledWorkflow {
+  trigger_scheduled_workflow: TriggerScheduledWorkflow_trigger_scheduled_workflow;
+}
+
+export interface TriggerScheduledWorkflowVariables {
+  trigger_id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: ValidateCronExpression
+// ====================================================
+
+export interface ValidateCronExpression_validate_cron_expression_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface ValidateCronExpression_validate_cron_expression {
+  is_valid: boolean;
+  description: string | null;
+  next_run_times: any[] | null;
+  error_message: string | null;
+  errors: ValidateCronExpression_validate_cron_expression_errors[] | null;
+}
+
+export interface ValidateCronExpression {
+  validate_cron_expression: ValidateCronExpression_validate_cron_expression;
+}
+
+export interface ValidateCronExpressionVariables {
+  input: ValidateCronExpressionInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetShippingRule
+// ====================================================
+
+export interface GetShippingRule_shipping_rule_conditions_destination {
+  country_code: string | null;
+  postal_code: string[] | null;
+}
+
+export interface GetShippingRule_shipping_rule_conditions_weight {
+  min: number | null;
+  max: number | null;
+  unit: string | null;
+}
+
+export interface GetShippingRule_shipping_rule_conditions_rate_comparison {
+  compare: RateComparisonField;
+  operator: ComparisonOperator;
+  value: number;
+}
+
+export interface GetShippingRule_shipping_rule_conditions_address_type {
+  type: string;
+}
+
+export interface GetShippingRule_shipping_rule_conditions {
+  destination: GetShippingRule_shipping_rule_conditions_destination | null;
+  carrier_id: string | null;
+  service: string | null;
+  weight: GetShippingRule_shipping_rule_conditions_weight | null;
+  rate_comparison: GetShippingRule_shipping_rule_conditions_rate_comparison | null;
+  address_type: GetShippingRule_shipping_rule_conditions_address_type | null;
+  value: number | null;
+  metadata: any | null;
+}
+
+export interface GetShippingRule_shipping_rule_actions_select_service {
+  carrier_code: string | null;
+  carrier_id: string | null;
+  service_code: string | null;
+  strategy: SelectServiceStrategy;
+}
+
+export interface GetShippingRule_shipping_rule_actions {
+  select_service: GetShippingRule_shipping_rule_actions_select_service | null;
+  block_service: boolean | null;
+}
+
+export interface GetShippingRule_shipping_rule {
+  object_type: string;
+  id: string;
+  name: string;
+  slug: string;
+  priority: number;
+  is_active: boolean;
+  description: string | null;
+  conditions: GetShippingRule_shipping_rule_conditions | null;
+  actions: GetShippingRule_shipping_rule_actions | null;
+  metadata: any | null;
+  created_at: any;
+  updated_at: any;
+}
+
+export interface GetShippingRule {
+  shipping_rule: GetShippingRule_shipping_rule | null;
+}
+
+export interface GetShippingRuleVariables {
+  id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetShippingRules
+// ====================================================
+
+export interface GetShippingRules_shipping_rules_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetShippingRules_shipping_rules_edges_node_conditions_destination {
+  country_code: string | null;
+  postal_code: string[] | null;
+}
+
+export interface GetShippingRules_shipping_rules_edges_node_conditions_weight {
+  min: number | null;
+  max: number | null;
+  unit: string | null;
+}
+
+export interface GetShippingRules_shipping_rules_edges_node_conditions_rate_comparison {
+  compare: RateComparisonField;
+  operator: ComparisonOperator;
+  value: number;
+}
+
+export interface GetShippingRules_shipping_rules_edges_node_conditions_address_type {
+  type: string;
+}
+
+export interface GetShippingRules_shipping_rules_edges_node_conditions {
+  destination: GetShippingRules_shipping_rules_edges_node_conditions_destination | null;
+  carrier_id: string | null;
+  service: string | null;
+  weight: GetShippingRules_shipping_rules_edges_node_conditions_weight | null;
+  rate_comparison: GetShippingRules_shipping_rules_edges_node_conditions_rate_comparison | null;
+  address_type: GetShippingRules_shipping_rules_edges_node_conditions_address_type | null;
+  value: number | null;
+  metadata: any | null;
+}
+
+export interface GetShippingRules_shipping_rules_edges_node_actions_select_service {
+  carrier_code: string | null;
+  carrier_id: string | null;
+  service_code: string | null;
+  strategy: SelectServiceStrategy;
+}
+
+export interface GetShippingRules_shipping_rules_edges_node_actions {
+  select_service: GetShippingRules_shipping_rules_edges_node_actions_select_service | null;
+  block_service: boolean | null;
+}
+
+export interface GetShippingRules_shipping_rules_edges_node {
+  object_type: string;
+  id: string;
+  name: string;
+  slug: string;
+  priority: number;
+  is_active: boolean;
+  description: string | null;
+  conditions: GetShippingRules_shipping_rules_edges_node_conditions | null;
+  actions: GetShippingRules_shipping_rules_edges_node_actions | null;
+  metadata: any | null;
+  created_at: any;
+  updated_at: any;
+}
+
+export interface GetShippingRules_shipping_rules_edges {
+  node: GetShippingRules_shipping_rules_edges_node;
+}
+
+export interface GetShippingRules_shipping_rules {
+  page_info: GetShippingRules_shipping_rules_page_info;
+  edges: GetShippingRules_shipping_rules_edges[];
+}
+
+export interface GetShippingRules {
+  shipping_rules: GetShippingRules_shipping_rules;
+}
+
+export interface GetShippingRulesVariables {
+  filter?: ShippingRuleFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: CreateShippingRule
+// ====================================================
+
+export interface CreateShippingRule_create_shipping_rule_shipping_rule {
+  id: string;
+}
+
+export interface CreateShippingRule_create_shipping_rule_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface CreateShippingRule_create_shipping_rule {
+  shipping_rule: CreateShippingRule_create_shipping_rule_shipping_rule | null;
+  errors: CreateShippingRule_create_shipping_rule_errors[] | null;
+}
+
+export interface CreateShippingRule {
+  create_shipping_rule: CreateShippingRule_create_shipping_rule;
+}
+
+export interface CreateShippingRuleVariables {
+  data: CreateShippingRuleMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateShippingRule
+// ====================================================
+
+export interface UpdateShippingRule_update_shipping_rule_shipping_rule {
+  id: string;
+}
+
+export interface UpdateShippingRule_update_shipping_rule_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UpdateShippingRule_update_shipping_rule {
+  shipping_rule: UpdateShippingRule_update_shipping_rule_shipping_rule | null;
+  errors: UpdateShippingRule_update_shipping_rule_errors[] | null;
+}
+
+export interface UpdateShippingRule {
+  update_shipping_rule: UpdateShippingRule_update_shipping_rule;
+}
+
+export interface UpdateShippingRuleVariables {
+  data: UpdateShippingRuleMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DeleteShippingRule
+// ====================================================
+
+export interface DeleteShippingRule_delete_shipping_rule_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface DeleteShippingRule_delete_shipping_rule {
+  id: string;
+  errors: DeleteShippingRule_delete_shipping_rule_errors[] | null;
+}
+
+export interface DeleteShippingRule {
+  delete_shipping_rule: DeleteShippingRule_delete_shipping_rule;
+}
+
+export interface DeleteShippingRuleVariables {
+  data: DeleteMutationInput;
+}
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
 // START Enums and Input Objects
 //==============================================================
+
+export enum MetafieldTypeEnum {
+  boolean = "boolean",
+  date = "date",
+  date_time = "date_time",
+  json = "json",
+  number = "number",
+  password = "password",
+  text = "text",
+}
 
 export enum UserRole {
   admin = "admin",
@@ -2008,12 +2797,6 @@ export enum AutomationAuthType {
   oauth2 = "oauth2",
 }
 
-export enum MetafieldTypeEnum {
-  boolean = "boolean",
-  number = "number",
-  text = "text",
-}
-
 export enum AutomationEventStatus {
   aborted = "aborted",
   cancelled = "cancelled",
@@ -2030,10 +2813,35 @@ export enum AutomationEventType {
   webhook = "webhook",
 }
 
+export enum RateComparisonField {
+  duty_charge = "duty_charge",
+  estimated_delivery = "estimated_delivery",
+  fuel_surcharge = "fuel_surcharge",
+  insurance_charge = "insurance_charge",
+  tax_charge = "tax_charge",
+  total_charge = "total_charge",
+  transit_days = "transit_days",
+}
+
+export enum ComparisonOperator {
+  eq = "eq",
+  gt = "gt",
+  gte = "gte",
+  lt = "lt",
+  lte = "lte",
+}
+
+export enum SelectServiceStrategy {
+  cheapest = "cheapest",
+  fastest = "fastest",
+  preferred = "preferred",
+}
+
 // null
-export interface AppFilter {
+export interface OAuthAppFilter {
   offset?: number | null;
   first?: number | null;
+  display_name?: string | null;
   features?: string[] | null;
   metadata_key?: string | null;
   metadata_value?: string | null;
@@ -2042,14 +2850,95 @@ export interface AppFilter {
 }
 
 // null
-export interface InstallAppMutationInput {
-  app_id: string;
+export interface AppInstallationFilter {
+  offset?: number | null;
+  first?: number | null;
+  app_id?: string | null;
+  app_type?: string | null;
+  is_active?: boolean | null;
+  metadata_key?: string | null;
+  metadata_value?: string | null;
+  created_after?: any | null;
+  created_before?: any | null;
+}
+
+// null
+export interface CreateOAuthAppMutationInput {
+  display_name: string;
+  description?: string | null;
+  launch_url: string;
+  redirect_uris: string;
+  features?: string[] | null;
   metadata?: any | null;
 }
 
 // null
-export interface UninstallAppMutationInput {
+export interface UpdateOAuthAppMutationInput {
+  id: string;
+  display_name?: string | null;
+  description?: string | null;
+  launch_url?: string | null;
+  redirect_uris?: string | null;
+  features?: string[] | null;
+  metadata?: any | null;
+}
+
+// null
+export interface DeleteOAuthAppMutationInput {
+  id: string;
+}
+
+// null
+export interface InstallAppMutationInput {
   app_id: string;
+  app_type?: string | null;
+  access_scopes?: string[] | null;
+  metadata?: any | null;
+  metafields?: CreateMetafieldInput[] | null;
+  requires_oauth?: boolean | null;
+  oauth_app_data?: CreateOAuthAppMutationInput | null;
+}
+
+// null
+export interface CreateMetafieldInput {
+  key: string;
+  type: MetafieldTypeEnum;
+  value?: any | null;
+  is_required?: boolean | null;
+}
+
+// null
+export interface UninstallAppMutationInput {
+  app_id?: string | null;
+  installation_id?: string | null;
+}
+
+// null
+export interface UpdateAppInstallationMutationInput {
+  id: string;
+  access_scopes?: string[] | null;
+  is_active?: boolean | null;
+  metadata?: any | null;
+  metafields?: MetafieldInput[] | null;
+}
+
+// null
+export interface MetafieldInput {
+  key: string;
+  type: MetafieldTypeEnum;
+  value?: any | null;
+  is_required?: boolean | null;
+  id?: string | null;
+}
+
+// null
+export interface RotateAppApiKeyMutationInput {
+  id: string;
+}
+
+// null
+export interface EnsureAppApiKeyMutationInput {
+  id: string;
 }
 
 // null
@@ -2113,6 +3002,8 @@ export interface WorkflowFilter {
   offset?: number | null;
   first?: number | null;
   keyword?: string | null;
+  trigger_type?: AutomationTriggerType | null;
+  is_active?: boolean | null;
 }
 
 // null
@@ -2191,16 +3082,6 @@ export interface PartialWorkflowActionMutationInput {
 }
 
 // null
-export interface MetafieldInput {
-  key: string;
-  type: MetafieldTypeEnum;
-  value?: string | null;
-  namespace?: string | null;
-  is_required?: boolean | null;
-  id?: string | null;
-}
-
-// null
 export interface PartialWorkflowConnectionMutationInput {
   name?: string | null;
   auth_type?: AutomationAuthType | null;
@@ -2243,15 +3124,6 @@ export interface CreateWorkflowConnectionMutationInput {
   parameters_template?: string | null;
   template_slug?: string | null;
   metafields?: CreateMetafieldInput[] | null;
-}
-
-// null
-export interface CreateMetafieldInput {
-  key: string;
-  type: MetafieldTypeEnum;
-  value?: string | null;
-  namespace?: string | null;
-  is_required?: boolean | null;
 }
 
 // null
@@ -2340,6 +3212,94 @@ export interface UpdateWorkflowTriggerMutationInput {
   secret?: string | null;
   secret_key?: string | null;
   template_slug?: string | null;
+}
+
+// null
+export interface ValidateCronExpressionInput {
+  expression: string;
+}
+
+// null
+export interface ShippingRuleFilter {
+  offset?: number | null;
+  first?: number | null;
+  keyword?: string | null;
+  is_active?: boolean | null;
+  priority?: number | null;
+}
+
+// null
+export interface CreateShippingRuleMutationInput {
+  name: string;
+  description?: string | null;
+  priority?: number | null;
+  conditions?: ShippingRuleConditionsInput | null;
+  actions?: ShippingRuleActionsInput | null;
+  metadata?: any | null;
+  is_active?: boolean | null;
+}
+
+// null
+export interface ShippingRuleConditionsInput {
+  destination?: DestinationConditionInput | null;
+  carrier_id?: string | null;
+  service?: string | null;
+  weight?: WeightConditionInput | null;
+  rate_comparison?: RateComparisonConditionInput | null;
+  metadata?: any | null;
+  address_type?: AddressTypeConditionInput | null;
+  value?: number | null;
+}
+
+// null
+export interface DestinationConditionInput {
+  country_code?: string | null;
+  postal_code?: string[] | null;
+}
+
+// null
+export interface WeightConditionInput {
+  min?: number | null;
+  max?: number | null;
+  unit?: string | null;
+}
+
+// null
+export interface RateComparisonConditionInput {
+  compare: RateComparisonField;
+  operator: ComparisonOperator;
+  value: number;
+}
+
+// null
+export interface AddressTypeConditionInput {
+  type: string;
+}
+
+// null
+export interface ShippingRuleActionsInput {
+  select_service?: SelectServiceActionInput | null;
+  block_service?: boolean | null;
+}
+
+// null
+export interface SelectServiceActionInput {
+  carrier_code?: string | null;
+  carrier_id?: string | null;
+  service_code?: string | null;
+  strategy?: SelectServiceStrategy | null;
+}
+
+// null
+export interface UpdateShippingRuleMutationInput {
+  id: string;
+  name?: string | null;
+  description?: string | null;
+  priority?: number | null;
+  conditions?: ShippingRuleConditionsInput | null;
+  actions?: ShippingRuleActionsInput | null;
+  metadata?: any | null;
+  is_active?: boolean | null;
 }
 
 //==============================================================

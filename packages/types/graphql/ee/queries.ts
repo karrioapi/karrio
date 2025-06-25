@@ -5,31 +5,12 @@ import gql from "graphql-tag";
 // -----------------------------------------------------------
 //#region
 
-export const GET_APP = gql`
-  query GetApp($id: String!) {
-    app(id: $id) {
-      id
-      display_name
-      developer_name
-      is_public
-      is_builtin
-      is_embedded
-      is_published
-      launch_url
-      features
-      metadata
-      installation {
-        id
-        access_scopes
-        metadata
-      }
-    }
-  }
-`;
 
-export const GET_APPS = gql`
-  query GetApps($filter: AppFilter) {
-    apps(filter: $filter) {
+
+// OAuth Apps queries (replaces old private apps)
+export const GET_OAUTH_APPS = gql`
+  query GetOAuthApps($filter: OAuthAppFilter) {
+    oauth_apps(filter: $filter) {
       page_info {
         count
         has_next_page
@@ -40,19 +21,19 @@ export const GET_APPS = gql`
       edges {
         node {
           id
+          object_type
           display_name
-          developer_name
-          is_public
-          is_builtin
-          is_embedded
-          is_published
+          description
           launch_url
+          redirect_uris
           features
+          client_id
+          created_at
+          updated_at
           metadata
-          installation {
-            id
-            access_scopes
-            metadata
+          created_by {
+            email
+            full_name
           }
         }
       }
@@ -60,31 +41,32 @@ export const GET_APPS = gql`
   }
 `;
 
-export const GET_PRIVATE_APP = gql`
-  query GetPrivateApp($id: String!) {
-    private_app(id: $id) {
+export const GET_OAUTH_APP = gql`
+  query GetOAuthApp($id: String!) {
+    oauth_app(id: $id) {
       id
+      object_type
       display_name
-      developer_name
-      is_public
-      is_builtin
-      is_embedded
-      is_published
+      description
       launch_url
+      redirect_uris
       features
+      client_id
+      created_at
+      updated_at
       metadata
-      installation {
-        id
-        access_scopes
-        metadata
+      created_by {
+        email
+        full_name
       }
     }
   }
 `;
 
-export const GET_PRIVATE_APPS = gql`
-  query GetPrivateApps($filter: AppFilter) {
-    private_apps(filter: $filter) {
+// App Installations queries (replaces old apps)
+export const GET_APP_INSTALLATIONS = gql`
+  query GetAppInstallations($filter: AppInstallationFilter) {
+    app_installations(filter: $filter) {
       page_info {
         count
         has_next_page
@@ -95,19 +77,32 @@ export const GET_PRIVATE_APPS = gql`
       edges {
         node {
           id
-          display_name
-          developer_name
-          is_public
-          is_builtin
-          is_embedded
-          is_published
-          launch_url
-          features
+          object_type
+          app_id
+          app_type
+          access_scopes
+          api_key
+          is_active
+          requires_oauth
+          created_at
+          updated_at
           metadata
-          installation {
+          created_by {
+            email
+            full_name
+          }
+          oauth_app {
             id
-            access_scopes
-            metadata
+            display_name
+            client_id
+            features
+          }
+          metafields {
+            id
+            key
+            value
+            is_required
+            type
           }
         }
       }
@@ -115,12 +110,86 @@ export const GET_PRIVATE_APPS = gql`
   }
 `;
 
-export const INSTALL_APP = gql`
-  mutation InstallApp($data: InstallAppMutationInput!) {
-    install_app(input: $data) {
-      installation {
+export const GET_APP_INSTALLATION = gql`
+  query GetAppInstallation($id: String!) {
+    app_installation(id: $id) {
+      id
+      object_type
+      app_id
+      app_type
+      access_scopes
+      api_key
+      is_active
+      requires_oauth
+      created_at
+      updated_at
+      metadata
+      created_by {
+        email
+        full_name
+      }
+      oauth_app {
         id
-        access_scopes
+        display_name
+        client_id
+        features
+      }
+      metafields {
+        id
+        key
+        value
+        is_required
+        type
+      }
+    }
+  }
+`;
+
+export const GET_APP_INSTALLATION_BY_APP_ID = gql`
+  query GetAppInstallationByAppId($app_id: String!) {
+    app_installation_by_app_id(app_id: $app_id) {
+      id
+      object_type
+      app_id
+      app_type
+      access_scopes
+      api_key
+      is_active
+      requires_oauth
+      created_at
+      updated_at
+      metadata
+      oauth_app {
+        id
+        display_name
+        client_id
+        features
+      }
+      metafields {
+        id
+        key
+        value
+        is_required
+        type
+      }
+    }
+  }
+`;
+
+// OAuth App mutations (replaces old app mutations)
+export const CREATE_OAUTH_APP = gql`
+  mutation CreateOAuthApp($data: CreateOAuthAppMutationInput!) {
+    create_oauth_app(input: $data) {
+      oauth_app {
+        id
+        object_type
+        display_name
+        description
+        launch_url
+        redirect_uris
+        features
+        client_id
+        client_secret
         created_at
         updated_at
         metadata
@@ -133,25 +202,152 @@ export const INSTALL_APP = gql`
   }
 `;
 
+export const UPDATE_OAUTH_APP = gql`
+  mutation UpdateOAuthApp($data: UpdateOAuthAppMutationInput!) {
+    update_oauth_app(input: $data) {
+      oauth_app {
+        id
+        object_type
+        display_name
+        description
+        launch_url
+        redirect_uris
+        features
+        client_id
+        created_at
+        updated_at
+        metadata
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const DELETE_OAUTH_APP = gql`
+  mutation DeleteOAuthApp($data: DeleteOAuthAppMutationInput!) {
+    delete_oauth_app(input: $data) {
+      success
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+// App Installation mutations (replaces old install/uninstall)
+export const INSTALL_APP = gql`
+  mutation InstallApp($data: InstallAppMutationInput!) {
+    install_app(input: $data) {
+      installation {
+        id
+        object_type
+        app_id
+        app_type
+        access_scopes
+        api_key
+        is_active
+        requires_oauth
+        created_at
+        updated_at
+        metadata
+        oauth_app {
+          id
+          display_name
+          client_id
+          features
+        }
+        metafields {
+          id
+          key
+          value
+          is_required
+          type
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
 export const UNINSTALL_APP = gql`
   mutation UninstallApp($data: UninstallAppMutationInput!) {
     uninstall_app(input: $data) {
-      app {
+      success
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const UPDATE_APP_INSTALLATION = gql`
+  mutation UpdateAppInstallation($data: UpdateAppInstallationMutationInput!) {
+    update_app_installation(input: $data) {
+      installation {
         id
-        display_name
-        developer_name
-        is_public
-        is_builtin
-        is_embedded
-        is_published
-        launch_url
-        features
+        object_type
+        app_id
+        app_type
+        access_scopes
+        api_key
+        is_active
+        requires_oauth
+        created_at
+        updated_at
         metadata
-        installation {
+        oauth_app {
           id
-          access_scopes
-          metadata
+          display_name
+          client_id
+          features
         }
+        metafields {
+          id
+          key
+          value
+          is_required
+          type
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const ROTATE_APP_API_KEY = gql`
+  mutation RotateAppApiKey($data: RotateAppApiKeyMutationInput!) {
+    rotate_app_api_key(input: $data) {
+      installation {
+        id
+        app_id
+        api_key
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const ENSURE_APP_API_KEY = gql`
+  mutation EnsureAppApiKey($data: EnsureAppApiKeyMutationInput!) {
+    ensure_app_api_key(input: $data) {
+      installation {
+        id
+        app_id
+        api_key
       }
       errors {
         field
@@ -484,6 +680,10 @@ export const GET_WORKFLOW = gql`
           parameters_template
           auth_template
           credentials
+          credentials_from_metafields
+          required_credentials
+          is_credentials_complete
+          credential_validation
           template_slug
           metadata
           metafields {
@@ -535,6 +735,8 @@ export const GET_WORKFLOWS = gql`
             id
             secret
             secret_key
+            is_due
+            next_run_description
             created_at
             updated_at
           }
@@ -570,6 +772,107 @@ export const GET_WORKFLOWS = gql`
               parameters_template
               auth_template
               credentials
+              credentials_from_metafields
+              required_credentials
+              is_credentials_complete
+              credential_validation
+              metadata
+              template_slug
+              metafields {
+                id
+                key
+                is_required
+                type
+                value
+              }
+              created_at
+              updated_at
+            }
+            template_slug
+            metadata
+            metafields {
+              id
+              key
+              is_required
+              type
+              value
+            }
+            created_at
+            updated_at
+          }
+          metadata
+          template_slug
+          created_at
+          updated_at
+        }
+      }
+    }
+  }
+`;
+
+export const GET_SCHEDULED_WORKFLOWS = gql`
+  query GetScheduledWorkflows($filter: WorkflowFilter) {
+    scheduled_workflows(filter: $filter) {
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
+      edges {
+        node {
+          id
+          name
+          slug
+          description
+          trigger {
+            object_type
+            id
+            slug
+            trigger_type
+            schedule
+            is_due
+            next_run_description
+            created_at
+            updated_at
+          }
+          action_nodes {
+            order
+            slug
+          }
+          actions {
+            object_type
+            id
+            slug
+            name
+            action_type
+            description
+            port
+            host
+            endpoint
+            method
+            content_type
+            header_template
+            parameters_type
+            parameters_template
+            connection {
+              object_type
+              id
+              name
+              slug
+              auth_type
+              port
+              host
+              endpoint
+              description
+              parameters_template
+              auth_template
+              credentials
+              credentials_from_metafields
+              required_credentials
+              is_credentials_complete
+              credential_validation
               metadata
               template_slug
               metafields {
@@ -618,6 +921,10 @@ export const GET_WORKFLOW_CONNECTION = gql`
       parameters_template
       auth_template
       credentials
+      credentials_from_metafields
+      required_credentials
+      is_credentials_complete
+      credential_validation
       template_slug
       metadata
       metafields {
@@ -654,6 +961,10 @@ export const GET_WORKFLOW_CONNECTIONS = gql`
           parameters_template
           auth_template
           credentials
+          credentials_from_metafields
+          required_credentials
+          is_credentials_complete
+          credential_validation
           metadata
           template_slug
           metafields {
@@ -698,6 +1009,10 @@ export const GET_WORKFLOW_ACTION = gql`
         parameters_template
         auth_template
         credentials
+        credentials_from_metafields
+        required_credentials
+        is_credentials_complete
+        credential_validation
         metadata
         template_slug
         metafields {
@@ -760,6 +1075,10 @@ export const GET_WORKFLOW_ACTIONS = gql`
             parameters_template
             auth_template
             credentials
+            credentials_from_metafields
+            required_credentials
+            is_credentials_complete
+            credential_validation
             template_slug
             metadata
             metafields {
@@ -1218,6 +1537,193 @@ export const UPDATE_WORKFLOW_TRIGGER = gql`
 export const DELETE_WORKFLOW_TRIGGER = gql`
   mutation DeleteWorkflowTrigger($data: DeleteMutationInput!) {
     delete_workflow_trigger(input: $data) {
+      id
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const TRIGGER_SCHEDULED_WORKFLOW = gql`
+  mutation TriggerScheduledWorkflow($trigger_id: String!) {
+    trigger_scheduled_workflow(trigger_id: $trigger_id) {
+      workflow_event {
+        id
+        status
+        created_at
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const VALIDATE_CRON_EXPRESSION = gql`
+  mutation ValidateCronExpression($input: ValidateCronExpressionInput!) {
+    validate_cron_expression(input: $input) {
+      is_valid
+      description
+      next_run_times
+      error_message
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+//#endregion
+
+// -----------------------------------------------------------
+// Shipping Rules GraphQL queries and mutations
+// -----------------------------------------------------------
+//#region
+
+export const GET_SHIPPING_RULE = gql`
+  query GetShippingRule($id: String!) {
+    shipping_rule(id: $id) {
+      object_type
+      id
+      name
+      slug
+      priority
+      is_active
+      description
+      conditions {
+        destination {
+          country_code
+          postal_code
+        }
+        carrier_id
+        service
+        weight {
+          min
+          max
+          unit
+        }
+        rate_comparison {
+          compare
+          operator
+          value
+        }
+        address_type {
+          type
+        }
+        value
+        metadata
+      }
+      actions {
+        select_service {
+          carrier_code
+          carrier_id
+          service_code
+          strategy
+        }
+        block_service
+      }
+      metadata
+      created_at
+      updated_at
+    }
+  }
+`;
+
+export const GET_SHIPPING_RULES = gql`
+  query GetShippingRules($filter: ShippingRuleFilter) {
+    shipping_rules(filter: $filter) {
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
+      edges {
+        node {
+          object_type
+          id
+          name
+          slug
+          priority
+          is_active
+          description
+          conditions {
+            destination {
+              country_code
+              postal_code
+            }
+            carrier_id
+            service
+            weight {
+              min
+              max
+              unit
+            }
+            rate_comparison {
+              compare
+              operator
+              value
+            }
+            address_type {
+              type
+            }
+            value
+            metadata
+          }
+          actions {
+            select_service {
+              carrier_code
+              carrier_id
+              service_code
+              strategy
+            }
+            block_service
+          }
+          metadata
+          created_at
+          updated_at
+        }
+      }
+    }
+  }
+`;
+
+export const CREATE_SHIPPING_RULE = gql`
+  mutation CreateShippingRule($data: CreateShippingRuleMutationInput!) {
+    create_shipping_rule(input: $data) {
+      shipping_rule {
+        id
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const UPDATE_SHIPPING_RULE = gql`
+  mutation UpdateShippingRule($data: UpdateShippingRuleMutationInput!) {
+    update_shipping_rule(input: $data) {
+      shipping_rule {
+        id
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const DELETE_SHIPPING_RULE = gql`
+  mutation DeleteShippingRule($data: DeleteMutationInput!) {
+    delete_shipping_rule(input: $data) {
       id
       errors {
         field

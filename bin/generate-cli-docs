@@ -10,7 +10,7 @@ source "${SCRIPT_DIR}/_env"
 cd "${WORKSPACE_ROOT}"
 
 # Default output file (using relative path)
-OUTPUT_FILE="apps/web/src/app/docs/developing/cli-guide/page.mdx"
+OUTPUT_FILE="apps/web/src/app/docs/developing/cli-guide/cli-docs/page.mdx"
 
 # Ensure output directory exists
 # mkdir -p "$(dirname "$OUTPUT_FILE")"
@@ -31,7 +31,7 @@ author: Karrio Team
 EOL
 
 # Generate raw docs and append to temp file
-typer kcli.__main__ utils docs >>"$TEMP_FILE"
+typer karrio_cli.__main__ utils docs >>"$TEMP_FILE"
 
 # Replace special characters with UTF-8 equivalents and fix title
 sed -i '' \

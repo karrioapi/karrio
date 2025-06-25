@@ -3058,6 +3058,57 @@ export const GET_MANIFEST = gql`
 //#endregion
 
 // -----------------------------------------------------------
+// API Keys queries and mutations
+// -----------------------------------------------------------
+//#region
+
+export const GET_API_KEYS = gql`
+  query GetAPIKeys {
+    api_keys {
+      object_type
+      key
+      label
+      test_mode
+      created
+      permissions
+    }
+  }
+`;
+
+export const CREATE_API_KEY = gql`
+  mutation CreateAPIKey($data: CreateAPIKeyMutationInput!) {
+    create_api_key(input: $data) {
+      api_key {
+        object_type
+        key
+        label
+        test_mode
+        created
+        permissions
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const DELETE_API_KEY = gql`
+  mutation DeleteAPIKey($data: DeleteAPIKeyMutationInput!) {
+    delete_api_key(input: $data) {
+      label
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+//#endregion
+
+// -----------------------------------------------------------
 // Shared queries and mutations
 // -----------------------------------------------------------
 //#region
@@ -3126,3 +3177,5 @@ export const SEARCH_DATA = gql`
     }
   }
 `;
+
+

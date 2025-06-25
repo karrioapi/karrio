@@ -243,9 +243,6 @@ export const CommodityEditModalProvider = ({
                     <CountryInput
                       label="Origin Country"
                       className="is-small"
-                      dropdownClass="is-small"
-                      fieldClass="mb-0 p-0"
-                      wrapperClass="column mb-0 is-5 px-2 py-1"
                       value={commodity.origin_country}
                       onValueChange={(value) =>
                         dispatch({
