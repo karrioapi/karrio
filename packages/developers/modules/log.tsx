@@ -3,7 +3,6 @@ import {
   failsafe,
   formatDateTimeLong,
   groupBy,
-  isNone,
   jsonify,
   notEmptyJSON,
 } from "@karrio/lib";

@@ -4,12 +4,13 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@karrio/ui/components/ui/dropdown-menu";
-import { Sheet, SheetContent } from "@karrio/ui/components/ui/sheet";
+// Sheet component removed - using custom sidebar instead
+import { Loader2, LayoutGrid, AppWindow } from "lucide-react";
 import { useToast } from "@karrio/ui/hooks/use-toast";
-import { Loader2, LayoutGrid } from "lucide-react";
 import { useInstalledApps } from "@karrio/hooks";
 import { AppSheet } from "@karrio/app-store";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { getAppManifest } from "../utils";
 import { getAppStore } from "../index";
 
@@ -21,6 +22,7 @@ interface InstalledPhysicalApp {
 
 export const AppLauncher = (): JSX.Element => {
   const { toast } = useToast();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [installedApps, setInstalledApps] = useState<InstalledPhysicalApp[]>([]);
   const [loadingApps, setLoadingApps] = useState(true);
@@ -88,6 +90,94 @@ export const AppLauncher = (): JSX.Element => {
     setOpen(false); // Close the dropdown
   };
 
+  // Add CSS for proper app sidebar behavior
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      /* App sidebar styles */
+      .app-sidebar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        height: 100vh;
+        width: 100vw;
+        background: white;
+        border-left: 1px solid hsl(var(--border));
+        z-index: 50;
+        transform: translateX(100%);
+        transition: transform 0.3s ease-out;
+      }
+
+      .app-sidebar.open {
+        transform: translateX(0);
+      }
+
+      /* Desktop: sidebar behavior */
+      @media (min-width: 768px) {
+        .app-sidebar {
+          width: 400px;
+        }
+
+        .app-sidebar.open {
+          transform: translateX(0);
+        }
+
+        /* Push main content on desktop */
+        body[data-app-sidebar-open="true"] .main-layout {
+          margin-right: 400px;
+          transition: margin-right 0.3s ease-out;
+        }
+
+        /* Responsive grid adjustments for desktop */
+        body[data-app-sidebar-open="true"] .lg\\:grid-cols-4 {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        body[data-app-sidebar-open="true"] .lg\\:grid-cols-3 {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        body[data-app-sidebar-open="true"] .grid-cols-4 {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        body[data-app-sidebar-open="true"] .grid-cols-3 {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      /* Mobile: full screen overlay */
+      @media (max-width: 767px) {
+        .app-sidebar {
+          width: 100vw;
+        }
+
+        /* No content pushing on mobile */
+        body[data-app-sidebar-open="true"] .main-layout {
+          margin-right: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
+  // Handle body class for sidebar
+  useEffect(() => {
+    if (showAppSheet) {
+      document.body.setAttribute('data-app-sidebar-open', 'true');
+    } else {
+      document.body.removeAttribute('data-app-sidebar-open');
+    }
+
+    return () => {
+      document.body.removeAttribute('data-app-sidebar-open');
+    };
+  }, [showAppSheet]);
+
   return (
     <>
       <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -95,7 +185,7 @@ export const AppLauncher = (): JSX.Element => {
           <div className="nav-item is-flex m-0">
             <button className="button is-default mr-2" style={{ borderRadius: "50%" }}>
               <span className="icon">
-                <LayoutGrid className="w-8 h-8" />
+                <AppWindow className="w-4 h-4" />
               </span>
             </button>
           </div>
@@ -140,40 +230,37 @@ export const AppLauncher = (): JSX.Element => {
             </div>
           )}
 
-          {installedApps.length > 0 && (
-            <div className="mt-4 pt-3 border-t border-slate-100">
-              <button className="text-xs text-blue-600 hover:text-blue-700 font-medium">
-                Explore the App Marketplace →
-              </button>
-            </div>
-          )}
+          <div className="mt-4 pt-3 border-t border-slate-100">
+            <button
+              className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+              onClick={() => {
+                router.push('/app-store');
+                setOpen(false);
+              }}
+            >
+              Explore the App Marketplace →
+            </button>
+          </div>
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* App Launch Sheet */}
-      <Sheet open={showAppSheet} onOpenChange={(open) => {
-        if (!open) {
-          setShowAppSheet(false);
-          setLaunchedApp(null);
-        }
-      }}>
-        <SheetContent className="w-full sm:w-[500px] sm:max-w-[500px] p-0 shadow-none">
-          {launchedApp && (
-            <AppSheet
-              app={{
-                id: launchedApp.id,
-                manifest: launchedApp.manifest,
-                isInstalled: true,
-                installation: launchedApp.installation,
-              }}
-              onClose={() => {
-                setShowAppSheet(false);
-                setLaunchedApp(null);
-              }}
-            />
-          )}
-        </SheetContent>
-      </Sheet>
+      {/* App Launch Sidebar */}
+      {showAppSheet && launchedApp && (
+        <div className={`app-sidebar ${showAppSheet ? 'open' : ''}`}>
+          <AppSheet
+            app={{
+              id: launchedApp.id,
+              manifest: launchedApp.manifest,
+              isInstalled: true,
+              installation: launchedApp.installation,
+            }}
+            onClose={() => {
+              setShowAppSheet(false);
+              setLaunchedApp(null);
+            }}
+          />
+        </div>
+      )}
     </>
   );
 };

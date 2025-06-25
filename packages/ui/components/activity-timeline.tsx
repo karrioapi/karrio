@@ -8,10 +8,8 @@ import { Spinner } from "@karrio/ui/core/components/spinner";
 import { cn } from "@karrio/ui/lib/utils";
 
 type ActivityItem =
-  | ({ activityType: 'api-request'; parentLog: LogType; content: any; })
-  | ({ activityType: 'api-response'; parentLog: LogType; content: any; })
-  | ({ activityType: 'trace-request'; parentLog: LogType; traceRecord: any; content: any; })
-  | ({ activityType: 'trace-response'; parentLog: LogType; traceRecord: any; content: any; })
+  | ({ activityType: 'api-call'; parentLog: LogType; requestContent: any; responseContent: any; })
+  | ({ activityType: 'trace-call'; parentLog: LogType; traceRequestRecord: any; traceResponseRecord: any; requestContent: any; responseContent: any; })
   | ({ activityType: 'event'; content: any; } & EventType);
 
 interface ActivityTimelineProps {
@@ -47,16 +45,10 @@ const TimelineDot = ({ activityType, statusCode, isSelected }: {
     }
 
     switch (activityType) {
-      case 'api-request':
+      case 'api-call':
         return "bg-gray-500 border-gray-500";
-      case 'api-response':
-        return statusCode && statusCode >= 400
-          ? "bg-gray-600 border-gray-600"
-          : "bg-gray-400 border-gray-400";
-      case 'trace-request':
+      case 'trace-call':
         return "bg-gray-500 border-gray-500";
-      case 'trace-response':
-        return "bg-gray-400 border-gray-400";
       case 'event':
         return "bg-gray-600 border-gray-600";
       default:
@@ -81,7 +73,20 @@ const TimelineLine = () => (
   <div className="absolute left-3 top-6 bottom-0 w-px bg-gray-200 transform -translate-x-1/2" />
 );
 
-const RawContentViewer = ({ content, contentType }: { content: any; contentType: string }) => {
+const RawContentViewer = ({
+  content,
+  contentType,
+  responseContent,
+  showTabs = false,
+  activityItem
+}: {
+  content: any;
+  contentType: string;
+  responseContent?: any;
+  showTabs?: boolean;
+  activityItem?: ActivityItem;
+}) => {
+  const [activeTab, setActiveTab] = React.useState<'request' | 'response'>('request');
   if (!content) {
     return (
       <div className="flex items-center justify-center max-h-[80vh] text-gray-500">
@@ -234,43 +239,155 @@ const RawContentViewer = ({ content, contentType }: { content: any; contentType:
 
   const badgeStyle = getBadgeStyle(parsedContent.type);
 
+  // Handle tabs for request/response viewing
+  const currentContent = showTabs && responseContent ?
+    (activeTab === 'request' ? content : responseContent) : content;
+
+  const currentParsedContent = parseContent(currentContent);
+  const currentBadgeStyle = getBadgeStyle(currentParsedContent.type);
+
+  // Get detailed header information
+  const getDetailedHeader = () => {
+    if (!activityItem) {
+      return {
+        title: contentType,
+        statusCode: null,
+        method: null,
+        metadata: []
+      };
+    }
+
+    switch (activityItem.activityType) {
+      case 'api-call':
+        return {
+          title: contentType,
+          statusCode: activityItem.parentLog.status_code,
+          method: activityItem.parentLog.method,
+          metadata: [
+            ...(activityItem.parentLog.response_ms ? [`${activityItem.parentLog.response_ms}ms`] : []),
+            ...(activityItem.parentLog.remote_addr ? [activityItem.parentLog.remote_addr] : [])
+          ]
+        };
+      case 'trace-call':
+        const traceRecord = activityItem.traceRequestRecord?.record || activityItem.traceResponseRecord?.record;
+        return {
+          title: contentType,
+          statusCode: null,
+          method: traceRecord?.method || 'POST', // Most carrier APIs use POST
+          metadata: [
+            ...(activityItem.traceRequestRecord?.meta?.carrier_name ? [activityItem.traceRequestRecord.meta.carrier_name] : []),
+            ...(traceRecord?.request_id ? [`ID: ${traceRecord.request_id.slice(0, 8)}...`] : [])
+          ]
+        };
+      default:
+        return {
+          title: contentType,
+          statusCode: null,
+          method: null,
+          metadata: []
+        };
+    }
+  };
+
+  const headerInfo = getDetailedHeader();
+
   return (
     <div className="h-full flex flex-col bg-white max-h-[80vh] overflow-y-auto">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-gray-50 overflow-hidden">
-        <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
-          <span className="text-sm font-medium text-gray-900 truncate">{contentType}</span>
-          <span className={cn("px-2 py-1 rounded text-xs font-medium whitespace-nowrap", badgeStyle)}>
-            {parsedContent.type.toUpperCase()}
-          </span>
+      <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
+        {/* Main request line */}
+        <div className="flex items-center gap-3 mb-2">
+          <span className="text-xs text-gray-500">From your application</span>
         </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
-          {parsedContent.type === 'json' && (
+        <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden mb-3">
+          {headerInfo.method && (
+            <span className="text-sm font-semibold text-gray-900">{headerInfo.method}</span>
+          )}
+          <span className="text-sm font-medium text-gray-900 truncate">{headerInfo.title}</span>
+          {headerInfo.statusCode && (
+            <span className={cn(
+              "px-2 py-1 rounded text-xs font-medium whitespace-nowrap",
+              headerInfo.statusCode >= 200 && headerInfo.statusCode < 300
+                ? "bg-green-100 text-green-700"
+                : headerInfo.statusCode >= 400
+                  ? "bg-red-100 text-red-700"
+                  : "bg-gray-100 text-gray-700"
+            )}>
+              {headerInfo.statusCode} {headerInfo.statusCode >= 200 && headerInfo.statusCode < 300 ? 'OK' : 'ERROR'}
+            </span>
+          )}
+        </div>
+
+        {/* Metadata and actions */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <span className={cn("px-2 py-1 rounded text-xs font-medium whitespace-nowrap", currentBadgeStyle)}>
+              {currentParsedContent.type.toUpperCase()}
+            </span>
+            {headerInfo.metadata.length > 0 && (
+              <span className="text-xs text-gray-500 truncate">
+                {headerInfo.metadata.join(' • ')}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {currentParsedContent.type === 'json' && (
+              <button
+                onClick={() => {
+                  try {
+                    const minified = JSON.stringify(currentParsedContent.content);
+                    navigator.clipboard.writeText(minified);
+                  } catch {
+                    navigator.clipboard.writeText(currentParsedContent.formatted);
+                  }
+                }}
+                className="text-xs text-blue-600 hover:text-blue-800 px-2 py-1 rounded hover:bg-blue-50 whitespace-nowrap"
+              >
+                Copy Minified
+              </button>
+            )}
             <button
-              onClick={() => {
-                try {
-                  const minified = JSON.stringify(parsedContent.content);
-                  navigator.clipboard.writeText(minified);
-                } catch {
-                  navigator.clipboard.writeText(parsedContent.formatted);
-                }
-              }}
+              onClick={() => navigator.clipboard.writeText(currentParsedContent.formatted)}
               className="text-xs text-blue-600 hover:text-blue-800 px-2 py-1 rounded hover:bg-blue-50 whitespace-nowrap"
             >
-              Copy Minified
+              Copy
             </button>
-          )}
-          <button
-            onClick={() => navigator.clipboard.writeText(parsedContent.formatted)}
-            className="text-xs text-blue-600 hover:text-blue-800 px-2 py-1 rounded hover:bg-blue-50 whitespace-nowrap"
-          >
-            Copy
-          </button>
+          </div>
         </div>
       </div>
 
+      {/* Tabs for request/response */}
+      {showTabs && responseContent && (
+        <div className="border-b border-gray-200 bg-gray-50">
+          <div className="flex">
+            <button
+              onClick={() => setActiveTab('request')}
+              className={cn(
+                "px-4 py-2 text-sm font-medium border-b-2 transition-colors",
+                activeTab === 'request'
+                  ? "border-blue-500 text-blue-600 bg-white"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              )}
+            >
+              Request {activityItem?.activityType === 'api-call' ? 'parameters' : 'data'}
+            </button>
+            <button
+              onClick={() => setActiveTab('response')}
+              className={cn(
+                "px-4 py-2 text-sm font-medium border-b-2 transition-colors",
+                activeTab === 'response'
+                  ? "border-blue-500 text-blue-600 bg-white"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              )}
+            >
+              Response {activityItem?.activityType === 'api-call' ? 'body' : 'data'}
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="flex-1 overflow-auto">
         <pre className="p-4 text-xs font-mono leading-relaxed text-gray-800 whitespace-pre-wrap break-words overflow-x-auto">
-          {parsedContent.formatted}
+          {currentParsedContent.formatted}
         </pre>
       </div>
     </div>
@@ -280,14 +397,10 @@ const RawContentViewer = ({ content, contentType }: { content: any; contentType:
 const ActivityTitle = ({ item }: { item: ActivityItem }) => {
   const getTitle = () => {
     switch (item.activityType) {
-      case 'api-request':
+      case 'api-call':
         return `${item.parentLog.method} ${item.parentLog.path}`;
-      case 'api-response':
-        return `${item.parentLog.method} ${item.parentLog.path}`;
-      case 'trace-request':
-        return item.traceRecord.key || 'Trace Request';
-      case 'trace-response':
-        return item.traceRecord.key || 'Trace Response';
+      case 'trace-call':
+        return item.traceRequestRecord.key || 'Trace Request';
       case 'event':
         return item.type?.toString().replace(/_/g, ' ') || 'Unknown Event';
       default:
@@ -297,14 +410,10 @@ const ActivityTitle = ({ item }: { item: ActivityItem }) => {
 
   const getBadgeText = () => {
     switch (item.activityType) {
-      case 'api-request':
-        return 'Request';
-      case 'api-response':
-        return 'Response';
-      case 'trace-request':
-        return 'Trace Request';
-      case 'trace-response':
-        return 'Trace Response';
+      case 'api-call':
+        return 'API Call';
+      case 'trace-call':
+        return 'Trace';
       case 'event':
         return 'Event';
       default:
@@ -317,7 +426,7 @@ const ActivityTitle = ({ item }: { item: ActivityItem }) => {
       <span className="text-sm font-semibold text-gray-900 truncate">
         {getTitle()}
       </span>
-      {item.activityType === 'api-response' && (
+      {item.activityType === 'api-call' && (
         <StatusCode code={item.parentLog.status_code as number} />
       )}
       <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded whitespace-nowrap">
@@ -330,19 +439,17 @@ const ActivityTitle = ({ item }: { item: ActivityItem }) => {
 const ActivityMeta = ({ item }: { item: ActivityItem }) => {
   const getMeta = () => {
     switch (item.activityType) {
-      case 'api-request':
-      case 'api-response':
+      case 'api-call':
         const meta: string[] = [];
         if (item.parentLog.response_ms) meta.push(`${item.parentLog.response_ms as number}ms`);
         if (item.parentLog.remote_addr) meta.push(item.parentLog.remote_addr);
         return meta;
-      case 'trace-request':
-      case 'trace-response':
+      case 'trace-call':
         const traceMeta: string[] = [];
-        if (item.traceRecord.timestamp) {
-          traceMeta.push(new Date(item.traceRecord.timestamp * 1000).toLocaleTimeString());
+        if (item.traceRequestRecord.timestamp) {
+          traceMeta.push(new Date(item.traceRequestRecord.timestamp * 1000).toLocaleTimeString());
         }
-        if (item.traceRecord.test_mode) traceMeta.push('Test');
+        if (item.traceRequestRecord.test_mode) traceMeta.push('Test');
         return traceMeta;
       case 'event':
         const eventMeta: string[] = [];
@@ -382,13 +489,11 @@ const ActivityListItem = ({
 }) => {
   const getItemTimestamp = (item: ActivityItem) => {
     switch (item.activityType) {
-      case 'api-request':
-      case 'api-response':
+      case 'api-call':
         return item.parentLog.requested_at;
-      case 'trace-request':
-      case 'trace-response':
-        return item.traceRecord.timestamp
-          ? new Date(item.traceRecord.timestamp * 1000).toISOString()
+      case 'trace-call':
+        return item.traceRequestRecord.timestamp
+          ? new Date(item.traceRequestRecord.timestamp * 1000).toISOString()
           : item.parentLog.requested_at;
       case 'event':
         return item.created_at;
@@ -403,7 +508,7 @@ const ActivityListItem = ({
       <TimelineDot
         activityType={item.activityType}
         statusCode={
-          item.activityType === 'api-response'
+          item.activityType === 'api-call'
             ? (item.parentLog.status_code ?? undefined)
             : undefined
         }
@@ -454,56 +559,46 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
 
     // Process logs
     (logs?.data?.logs.edges || []).forEach(({ node: log }) => {
-      // Add API request
-      if (log.data) {
+      // Add API call (request + response grouped together)
+      if (log.data || log.response) {
         activityItems.push({
-          activityType: 'api-request',
+          activityType: 'api-call',
           parentLog: log,
-          content: log.data,
+          requestContent: log.data,
+          responseContent: log.response,
         });
       }
 
-      // Add tracing records
+      // Add tracing records (group request/response pairs by request_id)
       if (log.records && log.records.length > 0) {
-        log.records.forEach((record, recordIndex) => {
-          const recordData = record.record;
-
-          if (recordData) {
-            if (recordData.request || recordData.response) {
-              if (recordData.request) {
-                activityItems.push({
-                  activityType: 'trace-request',
-                  parentLog: log,
-                  traceRecord: record,
-                  content: recordData.request,
-                });
-              }
-              if (recordData.response) {
-                activityItems.push({
-                  activityType: 'trace-response',
-                  parentLog: log,
-                  traceRecord: record,
-                  content: recordData.response,
-                });
-              }
-            } else {
-              activityItems.push({
-                activityType: 'trace-request',
-                parentLog: log,
-                traceRecord: record,
-                content: recordData,
-              });
-            }
+        // Group records by request_id
+        const recordGroups: { [key: string]: any[] } = {};
+        log.records.forEach((record) => {
+          const requestId = record.record?.request_id || 'unknown';
+          if (!recordGroups[requestId]) {
+            recordGroups[requestId] = [];
           }
+          recordGroups[requestId].push(record);
         });
-      }
 
-      // Add API response
-      if (log.response) {
-        activityItems.push({
-          activityType: 'api-response',
-          parentLog: log,
-          content: log.response,
+        // Process each group
+        Object.values(recordGroups).forEach((records) => {
+          const requestRecord = records.find((r) => r.key === 'request');
+          const responseRecord = records.find((r) => r.key !== 'request');
+
+          if (requestRecord || responseRecord) {
+            const requestData = requestRecord?.record?.data || requestRecord?.record?.request || requestRecord?.record;
+            const responseData = responseRecord?.record?.data || responseRecord?.record?.response || responseRecord?.record?.error;
+
+            activityItems.push({
+              activityType: 'trace-call',
+              parentLog: log,
+              traceRequestRecord: requestRecord || responseRecord,
+              traceResponseRecord: responseRecord || requestRecord,
+              requestContent: requestData,
+              responseContent: responseData,
+            });
+          }
         });
       }
     });
@@ -523,14 +618,12 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
       let timestampB: string;
 
       switch (a.activityType) {
-        case 'api-request':
-        case 'api-response':
+        case 'api-call':
           timestampA = a.parentLog.requested_at;
           break;
-        case 'trace-request':
-        case 'trace-response':
-          timestampA = a.traceRecord.timestamp
-            ? new Date(a.traceRecord.timestamp * 1000).toISOString()
+        case 'trace-call':
+          timestampA = a.traceRequestRecord.timestamp
+            ? new Date(a.traceRequestRecord.timestamp * 1000).toISOString()
             : a.parentLog.requested_at;
           break;
         case 'event':
@@ -541,14 +634,12 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
       }
 
       switch (b.activityType) {
-        case 'api-request':
-        case 'api-response':
+        case 'api-call':
           timestampB = b.parentLog.requested_at;
           break;
-        case 'trace-request':
-        case 'trace-response':
-          timestampB = b.traceRecord.timestamp
-            ? new Date(b.traceRecord.timestamp * 1000).toISOString()
+        case 'trace-call':
+          timestampB = b.traceRequestRecord.timestamp
+            ? new Date(b.traceRequestRecord.timestamp * 1000).toISOString()
             : b.parentLog.requested_at;
           break;
         case 'event':
@@ -572,14 +663,12 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
 
   const getContentType = (item: ActivityItem): string => {
     switch (item.activityType) {
-      case 'api-request':
-        return `API Request - ${item.parentLog.status_code} ${item.parentLog.method} ${item.parentLog.path}`;
-      case 'api-response':
-        return `API Response - ${item.parentLog.status_code} ${item.parentLog.method} ${item.parentLog.path}`;
-      case 'trace-request':
-        return `Trace Request - ${item.traceRecord.key || 'Unknown'}`;
-      case 'trace-response':
-        return `Trace Response - ${item.traceRecord.key || 'Unknown'}`;
+      case 'api-call':
+        return `${item.parentLog.method} ${item.parentLog.path}`;
+      case 'trace-call':
+        // Try to get URL from trace record, fallback to key
+        const traceUrl = item.traceRequestRecord?.record?.url || item.traceRequestRecord?.key || 'Unknown';
+        return traceUrl;
       case 'event':
         return `Event - ${item.type?.toString().replace(/_/g, ' ') || 'Unknown Event'}`;
       default:
@@ -589,14 +678,10 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
 
   const getItemId = (item: ActivityItem, index: number) => {
     switch (item.activityType) {
-      case 'api-request':
-        return `api-request-${item.parentLog.id}`;
-      case 'api-response':
-        return `api-response-${item.parentLog.id}`;
-      case 'trace-request':
-        return `trace-request-${item.parentLog.id}-${item.traceRecord.id || index}`;
-      case 'trace-response':
-        return `trace-response-${item.parentLog.id}-${item.traceRecord.id || index}`;
+      case 'api-call':
+        return `api-call-${item.parentLog.id}`;
+      case 'trace-call':
+        return `trace-call-${item.parentLog.id}-${item.traceRequestRecord.id || index}`;
       case 'event':
         return `event-${item.id}`;
       default:
@@ -654,8 +739,11 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
               </div>
               <div className="flex-1">
                 <RawContentViewer
-                  content={selectedItem.content}
+                  content={selectedItem.activityType === 'event' ? selectedItem.content : selectedItem.requestContent}
                   contentType={getContentType(selectedItem)}
+                  responseContent={selectedItem.activityType !== 'event' ? selectedItem.responseContent : undefined}
+                  showTabs={selectedItem.activityType !== 'event'}
+                  activityItem={selectedItem}
                 />
               </div>
             </div>
@@ -686,8 +774,11 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
           {selectedItem ? (
             <div className="max-h-[80vh]">
               <RawContentViewer
-                content={selectedItem.content}
+                content={selectedItem.activityType === 'event' ? selectedItem.content : selectedItem.requestContent}
                 contentType={getContentType(selectedItem)}
+                responseContent={selectedItem.activityType !== 'event' ? selectedItem.responseContent : undefined}
+                showTabs={selectedItem.activityType !== 'event'}
+                activityItem={selectedItem}
               />
             </div>
           ) : (

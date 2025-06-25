@@ -81,6 +81,7 @@ export const GET_APP_INSTALLATIONS = gql`
           app_id
           app_type
           access_scopes
+          api_key
           is_active
           requires_oauth
           created_at
@@ -117,6 +118,7 @@ export const GET_APP_INSTALLATION = gql`
       app_id
       app_type
       access_scopes
+      api_key
       is_active
       requires_oauth
       created_at
@@ -151,6 +153,7 @@ export const GET_APP_INSTALLATION_BY_APP_ID = gql`
       app_id
       app_type
       access_scopes
+      api_key
       is_active
       requires_oauth
       created_at
@@ -245,6 +248,7 @@ export const INSTALL_APP = gql`
         app_id
         app_type
         access_scopes
+        api_key
         is_active
         requires_oauth
         created_at
@@ -293,6 +297,7 @@ export const UPDATE_APP_INSTALLATION = gql`
         app_id
         app_type
         access_scopes
+        api_key
         is_active
         requires_oauth
         created_at
@@ -311,6 +316,38 @@ export const UPDATE_APP_INSTALLATION = gql`
           is_required
           type
         }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const ROTATE_APP_API_KEY = gql`
+  mutation RotateAppApiKey($data: RotateAppApiKeyMutationInput!) {
+    rotate_app_api_key(input: $data) {
+      installation {
+        id
+        app_id
+        api_key
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const ENSURE_APP_API_KEY = gql`
+  mutation EnsureAppApiKey($data: EnsureAppApiKeyMutationInput!) {
+    ensure_app_api_key(input: $data) {
+      installation {
+        id
+        app_id
+        api_key
       }
       errors {
         field

@@ -2,7 +2,6 @@ import {
   WorkflowFilter,
   GetWorkflows,
   GET_WORKFLOWS,
-  GET_SCHEDULED_WORKFLOWS,
   GetWorkflow,
   GET_WORKFLOW,
   CreateWorkflow,
@@ -40,7 +39,7 @@ import {
   useWorkflowEventMutation,
   useWorkflowEvents,
 } from "./workflow-events";
-import { useWorkflowTemplates, PREDEFINED_WORKFLOW_TEMPLATES } from "./workflow-templates";
+import { PREDEFINED_WORKFLOW_TEMPLATES } from "./workflow-templates";
 import {
   gqlstr,
   insertUrlParam,
@@ -57,7 +56,7 @@ import { useLoader } from "@karrio/ui/core/components/loader";
 import { useRouter } from "next/navigation";
 import { NotificationType } from "@karrio/types";
 import { useAppMode } from "./app-mode";
-import { useKarrio } from "./karrio";
+import { useAuthenticatedQuery, useKarrio } from "./karrio";
 import React from "react";
 
 const PAGE_SIZE = 20;
@@ -81,7 +80,9 @@ export function useWorkflows({
     karrio.graphql.request<GetWorkflows>(gqlstr(GET_WORKFLOWS), { variables });
 
   // Queries
-  const query = useQuery(["workflows", filter], () => fetch({ filter }), {
+  const query = useAuthenticatedQuery({
+    queryKey: ["workflows", filter],
+    queryFn: () => fetch({ filter }),
     keepPreviousData: true,
     staleTime: 5000,
     refetchInterval: 120000,
@@ -144,11 +145,9 @@ export function useWorkflow({
   const [workflowId, _setWorkflowId] = React.useState<string>(id || "new");
 
   // Queries
-  const query = useQuery(["workflows", id], {
-    queryFn: () =>
-      karrio.graphql.request<GetWorkflow>(gqlstr(GET_WORKFLOW), {
-        variables: { id: workflowId },
-      }),
+  const query = useAuthenticatedQuery({
+    queryKey: ["workflows", id],
+    queryFn: () => karrio.graphql.request<GetWorkflow>(gqlstr(GET_WORKFLOW), { variables: { id: workflowId } }),
     enabled: workflowId !== "new",
     onError,
   });

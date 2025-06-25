@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { ChevronsUpDown, Plus, Building } from "lucide-react"
+import { ChevronsUpDown, Plus, Building, Check } from "lucide-react"
 import {
   OrganizationType,
   useOrganizationMutation,
@@ -9,23 +9,29 @@ import {
 } from "@karrio/hooks/organization";
 import { useCreateOrganizationModal } from "@karrio/ui/core/modals/create-organization-modal";
 import { useAcceptInvitation } from "@karrio/ui/core/modals/accept-invitation-modal";
+import { useLoader } from "@karrio/ui/core/components/loader";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useAPIToken } from "@karrio/hooks/api-token";
 import { useSearchParams } from "next/navigation";
-import { useLoader } from "@karrio/ui/core/components/loader";
 import { isNoneOrEmpty } from "@karrio/lib";
 import { p } from "@karrio/lib";
+import { cn } from "@karrio/ui/lib/utils";
 import Image from "next/image";
 
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger,
-} from "@karrio/ui/components/ui/dropdown-menu"
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+} from "@karrio/ui/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@karrio/ui/components/ui/popover"
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -46,21 +52,21 @@ export function TeamSwitcher() {
   const { acceptInvitation } = useAcceptInvitation();
   const { createOrganization } = useCreateOrganizationModal();
   const [initialized, setInitialized] = React.useState<boolean>(false);
+  const [open, setOpen] = React.useState(false);
 
-  const select = (org: OrganizationType) => async (e: any) => {
-    e.preventDefault();
-    e.stopPropagation();
-
+  const select = (org: OrganizationType) => async () => {
     if (org.id === organization?.id) return;
     setLoading(true);
     try {
       await mutation.changeActiveOrganization(org.id);
+      setOpen(false);
     } finally {
       setLoading(false);
     }
   };
 
   const create = async () => {
+    setOpen(false);
     createOrganization({
       onChange: (orgId: string) => {
         return mutation.changeActiveOrganization(orgId);
@@ -80,86 +86,138 @@ export function TeamSwitcher() {
     }
   }, [initialized, searchParams, acceptInvitation, mutation]);
 
-  // Show fallback logo if no organizations
-  if (query.isFetched && (organizations || []).length === 0) {
+  // Placeholder skeleton animation for loading states
+  const renderPlaceholder = () => (
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <div className="p-2 flex items-center gap-2">
+          <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-muted animate-pulse">
+            <div className="size-4 bg-muted-foreground/20 rounded" />
+          </div>
+          <div className="flex-1">
+            <div className="h-4 bg-muted animate-pulse rounded w-24" />
+          </div>
+        </div>
+      </SidebarMenuItem>
+    </SidebarMenu>
+  );
+
+  // Logo fallback - only show when loaded and multi-org is NOT supported
+  const renderLogoFallback = () => (
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <div className="p-2 flex items-center gap-2">
+          <Image
+            src={p`/icon.svg`}
+            width={24}
+            height={24}
+            alt="Karrio"
+          />
+        </div>
+      </SidebarMenuItem>
+    </SidebarMenu>
+  );
+
+  // Loading state - show placeholder animation
+  if (query.isLoading) {
+    return renderPlaceholder();
+  }
+
+  // Error state - show placeholder animation
+  if (query.error) {
+    return renderPlaceholder();
+  }
+
+  // Check if everything is loaded and multi-org is NOT supported
+  const isFullyLoaded = query.isFetched;
+  const isMultiOrgDisabled = !ALLOW_MULTI_ACCOUNT;
+  const hasNoOrganizations = (organizations || []).length === 0;
+
+  // Show logo only when fully loaded, multi-org disabled, and no organizations
+  if (isFullyLoaded && isMultiOrgDisabled && hasNoOrganizations) {
+    return renderLogoFallback();
+  }
+
+  // Show placeholder if not fully loaded yet
+  if (!isFullyLoaded) {
+    return renderPlaceholder();
+  }
+
+  // Show organization combobox if we have organizations
+  if ((organizations || []).length > 0) {
+    const currentOrg = organization || organizations![0];
     return (
       <SidebarMenu>
         <SidebarMenuItem>
-          <div className="p-2">
-            <Image
-              src={p`/icon.svg`}
-              width={24}
-              height={24}
-              alt="logo"
-            />
-          </div>
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+              <SidebarMenuButton
+                size="lg"
+                role="combobox"
+                aria-expanded={open}
+                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              >
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                  <Building className="size-4" />
+                </div>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">{currentOrg.name}</span>
+                </div>
+                <ChevronsUpDown className="ml-auto size-4 shrink-0 opacity-50" />
+              </SidebarMenuButton>
+            </PopoverTrigger>
+            <PopoverContent
+              className="w-[--radix-popover-trigger-width] min-w-56 p-0"
+              align="start"
+              side="bottom"
+              sideOffset={4}
+            >
+              <Command>
+                <CommandList>
+                  <CommandEmpty>No organizations found.</CommandEmpty>
+                  <CommandGroup heading="Organizations">
+                    {organizations!.map((org, index) => (
+                      <CommandItem
+                        key={`org-${org.id}`}
+                        value={org.name}
+                        onSelect={() => select(org)()}
+                      >
+                        <div className="flex size-6 items-center justify-center rounded-sm border bg-muted text-muted-foreground">
+                          <Building className="size-4 shrink-0" />
+                        </div>
+                        <span className="flex-1 truncate">{org.name}</span>
+                        <Check
+                          className={cn(
+                            "size-4",
+                            org.id === currentOrg.id ? "opacity-100" : "opacity-0"
+                          )}
+                        />
+                        <span className="ml-2 text-xs text-muted-foreground">⌘{index + 1}</span>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                  {ALLOW_MULTI_ACCOUNT && (
+                    <>
+                      <CommandSeparator />
+                      <CommandGroup>
+                        <CommandItem onSelect={create}>
+                          <div className="flex size-6 items-center justify-center rounded-md border bg-background">
+                            <Plus className="size-4" />
+                          </div>
+                          <span className="font-medium text-muted-foreground">New organization</span>
+                        </CommandItem>
+                      </CommandGroup>
+                    </>
+                  )}
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
         </SidebarMenuItem>
       </SidebarMenu>
     );
   }
 
-  // Don't render if no organizations yet
-  if (!organization || (organizations || []).length === 0) {
-    return null;
-  }
-
-  return (
-    <SidebarMenu>
-      <SidebarMenuItem>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <Building className="size-4" />
-              </div>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{organization.name}</span>
-              </div>
-              <ChevronsUpDown className="ml-auto" />
-            </SidebarMenuButton>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-            align="start"
-            side={isMobile ? "bottom" : "right"}
-            sideOffset={4}
-          >
-            <DropdownMenuLabel className="text-xs text-muted-foreground">
-              Organizations
-            </DropdownMenuLabel>
-            {(organizations || []).map((org, index) => (
-              <DropdownMenuItem
-                key={`org-${org.id}`}
-                onClick={select(org)}
-                className="gap-2 p-2"
-              >
-                <div className="flex size-6 items-center justify-center rounded-sm border">
-                  <Building className="size-4 shrink-0" />
-                </div>
-                <span className="flex-1 truncate">{org.name}</span>
-                {org.id === organization?.id && (
-                  <div className="size-2 rounded-full bg-blue-500" />
-                )}
-                <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
-              </DropdownMenuItem>
-            ))}
-            {ALLOW_MULTI_ACCOUNT && (
-              <>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={create} className="gap-2 p-2">
-                  <div className="flex size-6 items-center justify-center rounded-md border bg-background">
-                    <Plus className="size-4" />
-                  </div>
-                  <div className="font-medium text-muted-foreground">New organization</div>
-                </DropdownMenuItem>
-              </>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </SidebarMenuItem>
-    </SidebarMenu>
-  )
+  // Final fallback - show placeholder animation
+  return renderPlaceholder();
 }

@@ -217,101 +217,102 @@ export const ParcelForm = ({
         </div>
       )}
 
-      <div
-        style={{ display: `${parcel_type === "custom" ? "block" : "none"}` }}
-      >
-        <h6 className="is-size-7 my-2 has-text-weight-semibold">Dimensions</h6>
+      {/* Use conditional rendering instead of display: none to prevent form validation issues */}
+      {parcel_type === "custom" && (
+        <div>
+          <h6 className="is-size-7 my-2 has-text-weight-semibold">Dimensions</h6>
 
-        <div className="columns mb-0 px-2">
-          <SelectField
-            name="packaging_type"
-            onChange={handleChange}
-            value={parcel.packaging_type}
-            className="is-small is-fullwidth"
-            wrapperClass="column is-4 px-1 py-2"
-            fieldClass="mb-0 p-0"
-            required
-          >
-            {packaging_types &&
-              Object.entries(packaging_types).map(([key, value]) => (
-                <optgroup key={key} label={formatRef(key)}>
-                  {Object.keys(value as object).map((type) => (
-                    <option key={type} value={type}>
-                      {formatRef(type)}
-                    </option>
-                  ))}
-                </optgroup>
+          <div className="columns mb-0 px-2">
+            <SelectField
+              name="packaging_type"
+              onChange={handleChange}
+              value={parcel.packaging_type}
+              className="is-small is-fullwidth"
+              wrapperClass="column is-4 px-1 py-2"
+              fieldClass="mb-0 p-0"
+              required
+            >
+              {packaging_types &&
+                Object.entries(packaging_types).map(([key, value]) => (
+                  <optgroup key={key} label={formatRef(key)}>
+                    {Object.keys(value as object).map((type) => (
+                      <option key={type} value={type}>
+                        {formatRef(type)}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+            </SelectField>
+
+            <span className="is-size-7 mt-4">L:</span>
+            <InputField
+              type="number"
+              step="any"
+              min="0"
+              name="length"
+              onChange={validityCheck(handleChange)}
+              value={parcel.length}
+              className="is-small"
+              wrapperClass="px-1 py-2"
+              fieldClass="column mb-0 p-0"
+              required={isDimensionRequired(parcel)}
+              onInvalid={validityCheck(
+                validationMessage("Please enter a valid length"),
+              )}
+            />
+
+            <span className="is-size-7 mt-4">W:</span>
+            <InputField
+              type="number"
+              step="any"
+              min="0"
+              name="width"
+              onChange={validityCheck(handleChange)}
+              value={parcel.width}
+              className="is-small"
+              wrapperClass="px-1 py-2"
+              fieldClass="column mb-0 p-0"
+              required={isDimensionRequired(parcel)}
+              onInvalid={validityCheck(
+                validationMessage("Please enter a valid width"),
+              )}
+            />
+
+            <span className="is-size-7 mt-4">H:</span>
+            <InputField
+              type="number"
+              step="any"
+              min="0"
+              name="height"
+              onChange={validityCheck(handleChange)}
+              value={parcel.height}
+              className="is-small"
+              wrapperClass="px-1 py-2"
+              fieldClass="column mb-0 p-0"
+              required={isDimensionRequired(parcel)}
+              onInvalid={validityCheck(
+                validationMessage("Please enter a valid height"),
+              )}
+            />
+
+            <SelectField
+              name="dimension_unit"
+              onChange={handleChange}
+              value={parcel.dimension_unit}
+              className="is-small is-fullwidth"
+              wrapperClass="column is-2 px-1 py-2"
+              fieldClass="mb-0 p-0"
+              required={isDimensionRequired(parcel)}
+            >
+              {DIMENSION_UNITS.map((unit) => (
+                <option key={unit} value={unit}>
+                  {unit}
+                </option>
               ))}
-          </SelectField>
-
-          <span className="is-size-7 mt-4">L:</span>
-          <InputField
-            type="number"
-            step="any"
-            min="0"
-            name="length"
-            onChange={validityCheck(handleChange)}
-            value={parcel.length}
-            className="is-small"
-            wrapperClass="px-1 py-2"
-            fieldClass="column mb-0 p-0"
-            required={isDimensionRequired(parcel)}
-            onInvalid={validityCheck(
-              validationMessage("Please enter a valid length"),
-            )}
-          />
-
-          <span className="is-size-7 mt-4">W:</span>
-          <InputField
-            type="number"
-            step="any"
-            min="0"
-            name="width"
-            onChange={validityCheck(handleChange)}
-            value={parcel.width}
-            className="is-small"
-            wrapperClass="px-1 py-2"
-            fieldClass="column mb-0 p-0"
-            required={isDimensionRequired(parcel)}
-            onInvalid={validityCheck(
-              validationMessage("Please enter a valid width"),
-            )}
-          />
-
-          <span className="is-size-7 mt-4">H:</span>
-          <InputField
-            type="number"
-            step="any"
-            min="0"
-            name="height"
-            onChange={validityCheck(handleChange)}
-            value={parcel.height}
-            className="is-small"
-            wrapperClass="px-1 py-2"
-            fieldClass="column mb-0 p-0"
-            required={isDimensionRequired(parcel)}
-            onInvalid={validityCheck(
-              validationMessage("Please enter a valid height"),
-            )}
-          />
-
-          <SelectField
-            name="dimension_unit"
-            onChange={handleChange}
-            value={parcel.dimension_unit}
-            className="is-small is-fullwidth"
-            wrapperClass="column is-2 px-1 py-2"
-            fieldClass="mb-0 p-0"
-            required={isDimensionRequired(parcel)}
-          >
-            {DIMENSION_UNITS.map((unit) => (
-              <option key={unit} value={unit}>
-                {unit}
-              </option>
-            ))}
-          </SelectField>
+            </SelectField>
+          </div>
         </div>
-      </div>
+      )}
 
       <h6 className="is-size-7 my-2 has-text-weight-semibold">Weight</h6>
 

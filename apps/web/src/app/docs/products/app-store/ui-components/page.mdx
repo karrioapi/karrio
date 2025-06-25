@@ -1,0 +1,958 @@
+---
+sidebarTitle: UI Components
+title: Building Beautiful UIs with Karrio App Components
+description: Complete guide to UI components, design system, and building beautiful interfaces for Karrio Apps
+tags:
+  [
+    "ui",
+    "components",
+    "design-system",
+    "react",
+    "typescript",
+    "styling",
+    "accessibility",
+  ]
+---
+
+# UI Components & Design System
+
+<div className="flex gap-2 mb-6">
+  <div className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10 dark:bg-purple-400/10 dark:text-purple-400 dark:ring-purple-400/30">
+    <span className="text-xs">Insiders</span>
+  </div>
+  <div className="inline-flex items-center rounded-md bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-700/10 dark:bg-amber-400/10 dark:text-amber-400 dark:ring-amber-400/30">
+    <span className="text-xs">Enterprise</span>
+  </div>
+</div>
+
+Build beautiful, consistent, and accessible user interfaces for your Karrio Apps using our comprehensive component library and design system.
+
+## Overview
+
+Karrio Apps provide access to a rich set of pre-built UI components that follow our design system principles. These components are built with React, TypeScript, and Tailwind CSS, ensuring consistency across all apps in the platform.
+
+## Component Library
+
+### Core Components
+
+#### Button
+
+The `Button` component supports multiple variants, sizes, and states:
+
+```tsx
+import { Button } from "@karrio/ui";
+
+export default function MyApp() {
+  return (
+    <div className="space-y-4">
+      {/* Primary button */}
+      <Button
+        variant="primary"
+        size="md"
+        onClick={() => console.log("Clicked!")}
+      >
+        Primary Action
+      </Button>
+
+      {/* Secondary button */}
+      <Button variant="secondary" size="sm">
+        Secondary Action
+      </Button>
+
+      {/* Danger button */}
+      <Button variant="danger" size="lg" disabled>
+        Dangerous Action
+      </Button>
+
+      {/* Loading state */}
+      <Button variant="primary" loading>
+        Loading...
+      </Button>
+
+      {/* Icon button */}
+      <Button variant="ghost" size="sm" icon="plus">
+        Add Item
+      </Button>
+    </div>
+  );
+}
+```
+
+**Props:**
+
+- `variant`: `primary` | `secondary` | `danger` | `ghost` | `outline`
+- `size`: `xs` | `sm` | `md` | `lg` | `xl`
+- `loading`: boolean
+- `disabled`: boolean
+- `icon`: string (icon name)
+- `fullWidth`: boolean
+
+#### Input & Form Controls
+
+```tsx
+import { Input, Select, Textarea, Checkbox, Radio } from "@karrio/ui";
+
+export default function FormExample() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    priority: "medium",
+    description: "",
+    notifications: false,
+    type: "shipment",
+  });
+
+  return (
+    <form className="space-y-6">
+      {/* Text Input */}
+      <Input
+        label="Full Name"
+        placeholder="Enter your full name"
+        value={formData.name}
+        onChange={(value) => setFormData({ ...formData, name: value })}
+        required
+        error={!formData.name ? "Name is required" : undefined}
+      />
+
+      {/* Email Input */}
+      <Input
+        type="email"
+        label="Email Address"
+        placeholder="you@example.com"
+        value={formData.email}
+        onChange={(value) => setFormData({ ...formData, email: value })}
+        leftIcon="mail"
+        required
+      />
+
+      {/* Select Dropdown */}
+      <Select
+        label="Priority Level"
+        value={formData.priority}
+        onChange={(value) => setFormData({ ...formData, priority: value })}
+        options={[
+          { value: "low", label: "Low Priority" },
+          { value: "medium", label: "Medium Priority" },
+          { value: "high", label: "High Priority" },
+          { value: "urgent", label: "Urgent" },
+        ]}
+      />
+
+      {/* Textarea */}
+      <Textarea
+        label="Description"
+        placeholder="Describe the task..."
+        value={formData.description}
+        onChange={(value) => setFormData({ ...formData, description: value })}
+        rows={4}
+      />
+
+      {/* Checkbox */}
+      <Checkbox
+        label="Enable notifications"
+        checked={formData.notifications}
+        onChange={(checked) =>
+          setFormData({ ...formData, notifications: checked })
+        }
+      />
+
+      {/* Radio Group */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Type</label>
+        <div className="space-y-2">
+          <Radio
+            name="type"
+            value="shipment"
+            label="Shipment"
+            checked={formData.type === "shipment"}
+            onChange={(value) => setFormData({ ...formData, type: value })}
+          />
+          <Radio
+            name="type"
+            value="order"
+            label="Order"
+            checked={formData.type === "order"}
+            onChange={(value) => setFormData({ ...formData, type: value })}
+          />
+        </div>
+      </div>
+    </form>
+  );
+}
+```
+
+#### Cards & Containers
+
+```tsx
+import { Card, Panel, Section } from "@karrio/ui";
+
+export default function ContainerExample() {
+  return (
+    <div className="space-y-6">
+      {/* Basic Card */}
+      <Card>
+        <Card.Header>
+          <Card.Title>Shipping Summary</Card.Title>
+          <Card.Subtitle>Last 30 days</Card.Subtitle>
+        </Card.Header>
+        <Card.Content>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold">152</div>
+              <div className="text-sm text-gray-500">Total Shipments</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold">$2,451</div>
+              <div className="text-sm text-gray-500">Total Cost</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold">98.5%</div>
+              <div className="text-sm text-gray-500">Success Rate</div>
+            </div>
+          </div>
+        </Card.Content>
+        <Card.Footer>
+          <Button variant="outline" size="sm">
+            View Details
+          </Button>
+        </Card.Footer>
+      </Card>
+
+      {/* Panel with collapsible sections */}
+      <Panel title="Configuration" collapsible defaultOpen>
+        <Section title="API Settings">
+          <div className="space-y-4">
+            <Input
+              label="API Endpoint"
+              defaultValue="https://api.example.com"
+            />
+            <Input
+              label="API Key"
+              type="password"
+              placeholder="Enter your API key"
+            />
+          </div>
+        </Section>
+        <Section title="Notification Settings">
+          <div className="space-y-2">
+            <Checkbox label="Email notifications" defaultChecked />
+            <Checkbox label="SMS notifications" />
+            <Checkbox label="Webhook notifications" defaultChecked />
+          </div>
+        </Section>
+      </Panel>
+    </div>
+  );
+}
+```
+
+### Data Display Components
+
+#### Table
+
+```tsx
+import { Table, Badge, Avatar } from "@karrio/ui";
+
+export default function ShipmentTable() {
+  const shipments = [
+    {
+      id: "SH001",
+      recipient: "John Doe",
+      status: "delivered",
+      carrier: "FedEx",
+      cost: "$15.99",
+      date: "2024-01-15",
+    },
+    {
+      id: "SH002",
+      recipient: "Jane Smith",
+      status: "in_transit",
+      carrier: "UPS",
+      cost: "$22.50",
+      date: "2024-01-14",
+    },
+  ];
+
+  const columns = [
+    {
+      header: "Shipment ID",
+      accessor: "id" as const,
+      cell: (value: string) => (
+        <code className="text-sm bg-gray-100 px-2 py-1 rounded">{value}</code>
+      ),
+    },
+    {
+      header: "Recipient",
+      accessor: "recipient" as const,
+      cell: (value: string) => (
+        <div className="flex items-center space-x-2">
+          <Avatar name={value} size="sm" />
+          <span>{value}</span>
+        </div>
+      ),
+    },
+    {
+      header: "Status",
+      accessor: "status" as const,
+      cell: (value: string) => (
+        <Badge variant={value === "delivered" ? "success" : "warning"}>
+          {value.replace("_", " ")}
+        </Badge>
+      ),
+    },
+    {
+      header: "Carrier",
+      accessor: "carrier" as const,
+    },
+    {
+      header: "Cost",
+      accessor: "cost" as const,
+      cell: (value: string) => <span className="font-medium">{value}</span>,
+    },
+    {
+      header: "Date",
+      accessor: "date" as const,
+      cell: (value: string) => (
+        <span className="text-gray-500">
+          {new Date(value).toLocaleDateString()}
+        </span>
+      ),
+    },
+  ];
+
+  return (
+    <Table
+      data={shipments}
+      columns={columns}
+      searchable
+      sortable
+      pagination
+      emptyMessage="No shipments found"
+      onRowClick={(shipment) => console.log("Clicked:", shipment)}
+    />
+  );
+}
+```
+
+#### Lists & Grids
+
+```tsx
+import { List, Grid, StatusIndicator } from "@karrio/ui";
+
+export default function DataDisplayExample() {
+  const tasks = [
+    { id: 1, title: "Process refund", status: "pending", priority: "high" },
+    {
+      id: 2,
+      title: "Update tracking",
+      status: "completed",
+      priority: "medium",
+    },
+    { id: 3, title: "Generate report", status: "in_progress", priority: "low" },
+  ];
+
+  return (
+    <div className="space-y-8">
+      {/* List View */}
+      <div>
+        <h3 className="font-semibold mb-4">Task List</h3>
+        <List>
+          {tasks.map((task) => (
+            <List.Item key={task.id}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <StatusIndicator status={task.status} />
+                  <span className="font-medium">{task.title}</span>
+                </div>
+                <Badge
+                  variant={task.priority === "high" ? "danger" : "default"}
+                >
+                  {task.priority}
+                </Badge>
+              </div>
+            </List.Item>
+          ))}
+        </List>
+      </div>
+
+      {/* Grid View */}
+      <div>
+        <h3 className="font-semibold mb-4">Card Grid</h3>
+        <Grid cols={3} gap={4}>
+          {tasks.map((task) => (
+            <Card key={task.id} className="p-4">
+              <div className="flex items-center justify-between mb-2">
+                <StatusIndicator status={task.status} />
+                <Badge
+                  variant={task.priority === "high" ? "danger" : "default"}
+                >
+                  {task.priority}
+                </Badge>
+              </div>
+              <h4 className="font-medium">{task.title}</h4>
+            </Card>
+          ))}
+        </Grid>
+      </div>
+    </div>
+  );
+}
+```
+
+### Navigation Components
+
+#### Tabs
+
+```tsx
+import { Tabs, TabPanel } from "@karrio/ui";
+
+export default function AppTabs() {
+  return (
+    <Tabs defaultValue="overview">
+      <Tabs.List>
+        <Tabs.Trigger value="overview">Overview</Tabs.Trigger>
+        <Tabs.Trigger value="shipments">Shipments</Tabs.Trigger>
+        <Tabs.Trigger value="analytics">Analytics</Tabs.Trigger>
+        <Tabs.Trigger value="settings">Settings</Tabs.Trigger>
+      </Tabs.List>
+
+      <TabPanel value="overview">
+        <div className="py-6">
+          <h2 className="text-xl font-semibold mb-4">Overview</h2>
+          <p>Welcome to your shipping dashboard overview.</p>
+        </div>
+      </TabPanel>
+
+      <TabPanel value="shipments">
+        <div className="py-6">
+          <h2 className="text-xl font-semibold mb-4">Shipments</h2>
+          <ShipmentTable />
+        </div>
+      </TabPanel>
+
+      <TabPanel value="analytics">
+        <div className="py-6">
+          <h2 className="text-xl font-semibold mb-4">Analytics</h2>
+          <p>View your shipping analytics and insights.</p>
+        </div>
+      </TabPanel>
+
+      <TabPanel value="settings">
+        <div className="py-6">
+          <h2 className="text-xl font-semibold mb-4">Settings</h2>
+          <p>Configure your app settings.</p>
+        </div>
+      </TabPanel>
+    </Tabs>
+  );
+}
+```
+
+#### Breadcrumbs
+
+```tsx
+import { Breadcrumbs } from "@karrio/ui";
+
+export default function AppBreadcrumbs() {
+  return (
+    <Breadcrumbs
+      items={[
+        { label: "Dashboard", href: "/dashboard" },
+        { label: "Apps", href: "/apps" },
+        { label: "Shipping Manager", href: "/apps/shipping-manager" },
+        { label: "Settings" }, // Current page (no href)
+      ]}
+    />
+  );
+}
+```
+
+### Feedback Components
+
+#### Toast Notifications
+
+```tsx
+import { useToast } from "@karrio/ui";
+
+export default function NotificationExample() {
+  const { toast } = useToast();
+
+  const showToast = (type: string) => {
+    switch (type) {
+      case "success":
+        toast.success("Shipment created successfully!");
+        break;
+      case "error":
+        toast.error("Failed to create shipment. Please try again.");
+        break;
+      case "warning":
+        toast.warning("Rate limit approaching. Consider upgrading your plan.");
+        break;
+      case "info":
+        toast.info("New carrier integration available.");
+        break;
+    }
+  };
+
+  return (
+    <div className="space-x-4">
+      <Button onClick={() => showToast("success")}>Success Toast</Button>
+      <Button onClick={() => showToast("error")}>Error Toast</Button>
+      <Button onClick={() => showToast("warning")}>Warning Toast</Button>
+      <Button onClick={() => showToast("info")}>Info Toast</Button>
+    </div>
+  );
+}
+```
+
+#### Loading States
+
+```tsx
+import { Spinner, Skeleton, LoadingOverlay } from "@karrio/ui";
+
+export default function LoadingExample() {
+  const [loading, setLoading] = useState(false);
+
+  return (
+    <div className="space-y-8">
+      {/* Spinner */}
+      <div className="flex items-center space-x-2">
+        <Spinner size="sm" />
+        <span>Loading...</span>
+      </div>
+
+      {/* Skeleton Loading */}
+      <div className="space-y-4">
+        <Skeleton height="h-4" width="w-3/4" />
+        <Skeleton height="h-4" width="w-1/2" />
+        <Skeleton height="h-32" width="w-full" />
+      </div>
+
+      {/* Loading Overlay */}
+      <div className="relative">
+        <LoadingOverlay visible={loading} />
+        <Card className="p-6">
+          <h3 className="font-semibold mb-4">Data Processing</h3>
+          <p>
+            This content will be covered by loading overlay when processing.
+          </p>
+          <Button onClick={() => setLoading(!loading)} className="mt-4">
+            Toggle Loading
+          </Button>
+        </Card>
+      </div>
+    </div>
+  );
+}
+```
+
+#### Alerts & Banners
+
+```tsx
+import { Alert, Banner } from "@karrio/ui";
+
+export default function AlertExample() {
+  return (
+    <div className="space-y-4">
+      {/* Alert Messages */}
+      <Alert variant="success" title="Success">
+        Your shipment has been created and is ready for pickup.
+      </Alert>
+
+      <Alert variant="error" title="Error" dismissible>
+        Failed to connect to carrier API. Please check your credentials.
+      </Alert>
+
+      <Alert variant="warning" title="Warning">
+        Your API rate limit is at 80%. Consider upgrading your plan.
+      </Alert>
+
+      <Alert variant="info" title="Information">
+        New shipping rates are available. Update your preferences in settings.
+      </Alert>
+
+      {/* Banner (full-width) */}
+      <Banner variant="upgrade" dismissible>
+        <div className="flex items-center justify-between">
+          <div>
+            <strong>Upgrade to Pro</strong> to unlock advanced analytics and
+            unlimited shipments.
+          </div>
+          <Button variant="primary" size="sm">
+            Upgrade Now
+          </Button>
+        </div>
+      </Banner>
+    </div>
+  );
+}
+```
+
+### Modal & Overlay Components
+
+#### Modal Dialog
+
+```tsx
+import { Modal, ConfirmDialog } from "@karrio/ui";
+
+export default function ModalExample() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  const handleDelete = () => {
+    setShowConfirm(true);
+  };
+
+  const confirmDelete = () => {
+    console.log("Item deleted");
+    setShowConfirm(false);
+  };
+
+  return (
+    <>
+      <Button onClick={() => setIsOpen(true)}>Open Modal</Button>
+
+      <Modal
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        title="Create New Shipment"
+        size="lg"
+      >
+        <Modal.Content>
+          <form className="space-y-4">
+            <Input label="Recipient Name" placeholder="Enter recipient name" />
+            <Input
+              label="Tracking Number"
+              placeholder="Enter tracking number"
+            />
+            <Select
+              label="Carrier"
+              options={[
+                { value: "fedex", label: "FedEx" },
+                { value: "ups", label: "UPS" },
+                { value: "dhl", label: "DHL" },
+              ]}
+            />
+          </form>
+        </Modal.Content>
+        <Modal.Footer>
+          <Button variant="outline" onClick={() => setIsOpen(false)}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={() => setIsOpen(false)}>
+            Create Shipment
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Confirmation Dialog */}
+      <Button variant="danger" onClick={handleDelete}>
+        Delete Item
+      </Button>
+
+      <ConfirmDialog
+        open={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        onConfirm={confirmDelete}
+        title="Confirm Deletion"
+        message="Are you sure you want to delete this item? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+      />
+    </>
+  );
+}
+```
+
+#### Dropdown Menu
+
+```tsx
+import { DropdownMenu } from "@karrio/ui";
+
+export default function DropdownExample() {
+  return (
+    <DropdownMenu>
+      <DropdownMenu.Trigger asChild>
+        <Button variant="outline">
+          Actions
+          <ChevronDownIcon className="ml-2 h-4 w-4" />
+        </Button>
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Content>
+        <DropdownMenu.Item onClick={() => console.log("Edit")}>
+          <EditIcon className="mr-2 h-4 w-4" />
+          Edit
+        </DropdownMenu.Item>
+        <DropdownMenu.Item onClick={() => console.log("Duplicate")}>
+          <CopyIcon className="mr-2 h-4 w-4" />
+          Duplicate
+        </DropdownMenu.Item>
+        <DropdownMenu.Separator />
+        <DropdownMenu.Item
+          onClick={() => console.log("Delete")}
+          className="text-red-600"
+        >
+          <TrashIcon className="mr-2 h-4 w-4" />
+          Delete
+        </DropdownMenu.Item>
+      </DropdownMenu.Content>
+    </DropdownMenu>
+  );
+}
+```
+
+## Styling & Theming
+
+### Tailwind CSS Integration
+
+All Karrio UI components are built with Tailwind CSS and follow our design system:
+
+```tsx
+// Custom styling with Tailwind classes
+<Button
+  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+>
+  Gradient Button
+</Button>
+
+<Card className="border-l-4 border-l-blue-500 shadow-lg">
+  <Card.Content className="bg-blue-50 dark:bg-blue-900/20">
+    Custom styled card with accent border
+  </Card.Content>
+</Card>
+```
+
+### CSS Variables & Custom Properties
+
+Access design tokens through CSS variables:
+
+```css
+/* Available design tokens */
+:root {
+  --color-primary: #3b82f6;
+  --color-secondary: #64748b;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+
+  --border-radius-sm: 0.25rem;
+  --border-radius-md: 0.375rem;
+  --border-radius-lg: 0.5rem;
+}
+
+/* Custom component styling */
+.my-custom-component {
+  background-color: var(--color-primary);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-md);
+}
+```
+
+### Dark Mode Support
+
+All components automatically support dark mode:
+
+```tsx
+export default function ThemedComponent() {
+  return (
+    <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+      <Card className="border-gray-200 dark:border-gray-700">
+        <Card.Content>
+          This content adapts to light and dark themes automatically.
+        </Card.Content>
+      </Card>
+    </div>
+  );
+}
+```
+
+## Accessibility
+
+### Built-in Accessibility Features
+
+All Karrio UI components include accessibility features:
+
+- **Keyboard Navigation**: Full keyboard support with proper focus management
+- **Screen Reader Support**: ARIA labels and descriptions
+- **High Contrast**: Meets WCAG contrast requirements
+- **Focus Management**: Visible focus indicators and logical tab order
+
+```tsx
+// Accessibility example
+<form>
+  <Input
+    label="Email Address"
+    id="email"
+    type="email"
+    required
+    aria-describedby="email-error"
+    error="Please enter a valid email address"
+  />
+  <div id="email-error" role="alert" aria-live="polite">
+    {/* Error message will be announced by screen readers */}
+  </div>
+</form>
+```
+
+### Custom Accessibility
+
+```tsx
+import { useAnnouncer, useFocusManager } from "@karrio/ui";
+
+export default function AccessibleComponent() {
+  const { announce } = useAnnouncer();
+  const { focusFirst, focusLast } = useFocusManager();
+
+  const handleAction = () => {
+    // Announce status to screen readers
+    announce("Task completed successfully", "polite");
+
+    // Manage focus programmatically
+    focusFirst('[data-focusable="true"]');
+  };
+
+  return (
+    <div>
+      <Button onClick={handleAction}>Complete Task</Button>
+      <div data-focusable="true" tabIndex={0}>
+        Focusable element
+      </div>
+    </div>
+  );
+}
+```
+
+## Best Practices
+
+### Component Composition
+
+```tsx
+// ✅ Good: Compose components for flexibility
+<Card>
+  <Card.Header>
+    <div className="flex items-center justify-between">
+      <Card.Title>Shipment Details</Card.Title>
+      <Badge variant="success">Delivered</Badge>
+    </div>
+  </Card.Header>
+  <Card.Content>
+    <div className="space-y-4">
+      <div className="flex justify-between">
+        <span className="text-gray-500">Tracking Number:</span>
+        <code>1Z999AA1234567890</code>
+      </div>
+      <div className="flex justify-between">
+        <span className="text-gray-500">Delivery Date:</span>
+        <span>January 15, 2024</span>
+      </div>
+    </div>
+  </Card.Content>
+</Card>
+
+// ❌ Avoid: Overly complex single components
+<ComplexShipmentCard
+  trackingNumber="1Z999AA1234567890"
+  deliveryDate="2024-01-15"
+  status="delivered"
+  showBadge={true}
+  showActions={false}
+  customStyles={{...}}
+/>
+```
+
+### State Management
+
+```tsx
+// ✅ Good: Use controlled components with proper state management
+export default function ShippingForm() {
+  const [formState, setFormState] = useState({
+    recipient: "",
+    address: "",
+    carrier: "",
+  });
+
+  const updateField = (field: string, value: string) => {
+    setFormState((prev) => ({ ...prev, [field]: value }));
+  };
+
+  return (
+    <form>
+      <Input
+        label="Recipient"
+        value={formState.recipient}
+        onChange={(value) => updateField("recipient", value)}
+      />
+      <Input
+        label="Address"
+        value={formState.address}
+        onChange={(value) => updateField("address", value)}
+      />
+      <Select
+        label="Carrier"
+        value={formState.carrier}
+        onChange={(value) => updateField("carrier", value)}
+        options={carriers}
+      />
+    </form>
+  );
+}
+```
+
+### Performance Optimization
+
+```tsx
+import { memo, useMemo, useCallback } from "react";
+
+// ✅ Good: Memoize expensive operations
+const ShipmentList = memo(({ shipments, onUpdate }) => {
+  const sortedShipments = useMemo(() => {
+    return shipments.sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+    );
+  }, [shipments]);
+
+  const handleUpdate = useCallback(
+    (id, updates) => {
+      onUpdate(id, updates);
+    },
+    [onUpdate],
+  );
+
+  return (
+    <div>
+      {sortedShipments.map((shipment) => (
+        <ShipmentCard
+          key={shipment.id}
+          shipment={shipment}
+          onUpdate={handleUpdate}
+        />
+      ))}
+    </div>
+  );
+});
+```
+
+## Next Steps
+
+- **[API Integration](/docs/products/app-store/api-integration)** - Connect your UI to Karrio's APIs
+- **[Examples](/docs/products/app-store/examples)** - See complete app examples
+- **[Deployment](/docs/products/app-store/deployment)** - Deploy your app to production
+
+## Resources
+
+- **[Storybook](https://storybook.karrio.io)** - Interactive component documentation
+- **[Figma Design System](https://figma.com/karrio-design-system)** - Design resources
+- **[GitHub](https://github.com/karrioapi/karrio)** - Source code and issues
+- **[Discord](https://discord.gg/karrio)** - Community support
+
+---
+
+_Build beautiful, accessible, and consistent user interfaces that users love!_

@@ -71,10 +71,20 @@ export function Auth(HOST: string) {
         },
       })
         .then(({ data }) => {
-          return (
-            (data?.data?.organizations || []).find(({ id }: any) => id === orgId) ||
-            (data?.organizations || [{ id: currentOrgId }])[0]
-          );
+          console.log("orgs data", data);
+          const organizations = data?.data?.organizations || [];
+          // First try to find the specified org
+          const selectedOrg = organizations.find(({ id }: any) => id === orgId);
+          if (selectedOrg) return selectedOrg;
+
+          // If no org matches orgId, use currentOrgId if provided
+          if (currentOrgId) {
+            const currentOrg = organizations.find(({ id }: any) => id === currentOrgId);
+            if (currentOrg) return currentOrg;
+          }
+
+          // Finally, fall back to first org or null
+          return organizations[0] || { id: null };
         })
         .catch(({ data }) => {
           logger.error(data);

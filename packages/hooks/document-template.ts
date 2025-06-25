@@ -1,8 +1,8 @@
 import { DocumentTemplateFilter, CreateDocumentTemplateMutationInput, CREATE_DOCUMENT_TEMPLATE, DELETE_DOCUMENT_TEMPLATE, get_document_templates, GET_DOCUMENT_TEMPLATES, UpdateDocumentTemplateMutationInput, UPDATE_DOCUMENT_TEMPLATE, GET_DOCUMENT_TEMPLATE, get_document_template, create_document_template, update_document_template, delete_document_template } from "@karrio/types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { gqlstr, insertUrlParam, onError } from "@karrio/lib";
+import { useAuthenticatedQuery, useKarrio } from "./karrio";
 import { useAPIMetadata } from "./api-metadata";
-import { useKarrio } from "./karrio";
 import React from "react";
 
 const PAGE_SIZE = 20;
@@ -14,7 +14,7 @@ export function useDocumentTemplates(initialData: DocumentTemplateFilter = {}) {
   const [filter, setFilter] = React.useState<DocumentTemplateFilter>({ ...PAGINATION, ...initialData });
 
   // Queries
-  const query = useQuery({
+  const query = useAuthenticatedQuery({
     queryKey: ['document_templates', filter],
     queryFn: () => karrio.graphql.request<get_document_templates>(
       gqlstr(GET_DOCUMENT_TEMPLATES), { variables: { filter } }
@@ -39,7 +39,8 @@ export function useDocumentTemplate({ id, setVariablesToURL = false }: Args = {}
   const [docId, _setDocId] = React.useState<string>(id || 'new');
 
   // Queries
-  const query = useQuery(['document_templates', docId], {
+  const query = useAuthenticatedQuery({
+    queryKey: ['document_templates', docId],
     queryFn: () => karrio.graphql.request<get_document_template>(
       gqlstr(GET_DOCUMENT_TEMPLATE), { variables: { id: docId } }
     ),

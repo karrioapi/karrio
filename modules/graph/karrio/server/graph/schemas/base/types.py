@@ -338,7 +338,36 @@ class MetafieldType:
     key: str
     is_required: bool
     type: utils.MetafieldTypeEnum
-    value: typing.Optional[str] = None
+    value: typing.Optional[utils.JSON] = None
+
+    @strawberry.field
+    def parsed_value(self: core.Metafield) -> typing.Optional[utils.JSON]:
+        """Return the value parsed according to its type."""
+        return self.get_parsed_value()
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve(info, id: str) -> typing.Optional["MetafieldType"]:
+        return core.Metafield.access_by(info.context.request).filter(id=id).first()
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve_list(
+        info,
+        filter: typing.Optional[inputs.MetafieldFilter] = strawberry.UNSET,
+    ) -> utils.Connection["MetafieldType"]:
+        _filter = filter if not utils.is_unset(filter) else inputs.MetafieldFilter()
+        queryset = core.Metafield.access_by(info.context.request)
+
+        # Apply filters
+        if not utils.is_unset(_filter.key):
+            queryset = queryset.filter(key__icontains=_filter.key)
+        if not utils.is_unset(_filter.type):
+            queryset = queryset.filter(type=_filter.type)
+        if not utils.is_unset(_filter.is_required):
+            queryset = queryset.filter(is_required=_filter.is_required)
+
+        return utils.paginated_connection(queryset, **_filter.pagination())
 
 
 @strawberry.type

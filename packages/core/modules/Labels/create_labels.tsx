@@ -102,33 +102,27 @@ export default function Page() {
       shipment_ids.split(",").filter((_) => !isNoneOrEmpty(_)),
     );
 
-    const {
-      query: { data: { user_connections } = {} },
-    } = useCarrierConnections();
-    const {
-      query: { data: { system_connections } = {} },
-    } = useSystemConnections();
+    const carrierConnectionsQuery = useCarrierConnections();
+    const systemConnectionsQuery = useSystemConnections();
     const ordersQuery = useOrders({
       id: orderIds,
-      isDisabled: orderIds.length === 0,
     });
     const shipmentsQuery = useShipments({
       id: shipmentIds,
       cacheKey: "labels",
       isDisabled: shipmentIds.length === 0,
     });
-    const {
-      query: { data: { orders: orderList } = {} },
-    } = ordersQuery;
-    const {
-      query: { data: { shipments: shipmentList } = {} },
-    } = shipmentsQuery;
+
+    const user_connections = carrierConnectionsQuery.query?.data?.user_connections;
+    const system_connections = systemConnectionsQuery.query?.data?.system_connections;
+    const orderList = ordersQuery.query?.data?.orders;
+    const shipmentList = shipmentsQuery.query?.data?.shipments;
 
     const { batch, ...mutation } = useBatchShipmentForm({
       shipmentList:
         shipmentIds.length === 0
           ? collectShipments(orderList)
-          : (shipmentList?.edges.map(({ node }) => node) as ShipmentType[]),
+          : (shipmentList?.edges?.map(({ node }) => node) as ShipmentType[]) || [],
     });
 
     function collectShipments(current: typeof orderList) {
@@ -161,14 +155,6 @@ export default function Page() {
         )
         .flat()
         .filter((_) => !isNoneOrEmpty(_)),
-      isDisabled:
-        orderIds.length === 0 &&
-        (shipmentList?.edges || [])
-          .map(({ node }) =>
-            (node.meta?.order_id || node.metadata?.order_ids || "").split(","),
-          )
-          .flat()
-          .filter((_) => !isNoneOrEmpty(_)).length === 0,
     });
     const shipmentsOrdersQuery =
       orderIds.length > 0 ? ordersQuery : _shipmentsOrdersQuery;

@@ -72,33 +72,34 @@ export const LineItemSelector = ({
   };
 
   useEffect(() => {
-    if (query.isFetched && !isNone(query.data?.orders)) {
-      const filteredOrders = (query.data?.orders.edges || [])
-        .map(({ node: order }) => ({
-          ...order,
-          line_items: order.line_items
-            .map(({ unfulfilled_quantity: quantity, ...item }) => ({
-              ...item,
-              quantity: (quantity || 0) - getUsedQuantity(item.id as string),
-            }))
-            .filter((item) => item.quantity > 0),
-        }))
-        .filter((order) => order.line_items.length > 0);
+    if (!query.isFetched || isNone(query.data?.orders)) return;
 
-      setOrders(filteredOrders as any);
-      setLineItems(filteredOrders.map((order) => order.line_items).flat());
-    }
-  }, [query.isFetched, query.data?.orders, isActive]);
+    const filteredOrders = (query.data?.orders.edges || [])
+      .map(({ node: order }) => ({
+        ...order,
+        line_items: order.line_items
+          .map(({ unfulfilled_quantity: quantity, ...item }) => ({
+            ...item,
+            quantity: (quantity || 0) - getUsedQuantity(item.id as string),
+          }))
+          .filter((item) => item.quantity > 0),
+      }))
+      .filter((order) => order.line_items.length > 0);
+
+    setOrders(filteredOrders as any);
+    setLineItems(filteredOrders.map((order) => order.line_items).flat());
+  }, [query.isFetched, query.data?.orders]);
+
   useEffect(() => {
-    if (!!shipment) {
-      const extraItems = getShipmentCommodities(
-        shipment,
-        shipment.customs?.commodities,
-      )
-        .filter(({ parent_id }) => !parent_id)
-        .map((item) => ({ ...item, quantity: 1 }));
-      setExtraItems(extraItems);
-    }
+    if (!shipment) return;
+
+    const items = getShipmentCommodities(
+      shipment,
+      shipment.customs?.commodities,
+    )
+      .filter(({ parent_id }) => !parent_id)
+      .map((item) => ({ ...item, quantity: 1 }));
+    setExtraItems(items);
   }, [shipment]);
 
   return (
@@ -200,117 +201,75 @@ export const LineItemSelector = ({
                         checked={selection.includes(`ex-${item_index}`)}
                         onChange={handleChange([`ex-${item_index}`])}
                       />
-                      <p className="column is-5 p-0 my-1">
-                        {item_index + 1}{" "}
-                        {`${item.title || item.description || "Item"}`}
-                      </p>
-                      <p className="column is-3 p-0 my-1">{item.sku}</p>
-                      <p className="column is-2 p-0 my-1 has-text-centered">
-                        {item.metadata?.ship_qty}
-                      </p>
-                      <p className="column p-0 my-1 has-text-centered">
-                        {item.quantity}
-                      </p>
+                      <span className="column p-0 is-5">{item.description}</span>
+                      <span className="column p-0 is-3">{item.sku}</span>
+                      <span className="column p-0 is-2">{item.quantity}</span>
+                      <span className="column p-0">{item.quantity}</span>
                     </label>
                   ))}
-
-                  <hr className="my-4" style={{ height: "1px" }} />
-                </>
-              )}
-
-              {orders.length > 0 && (
-                <>
-                  <p className="is-size-7 mb-2 has-text-info">
-                    Unfulfilled order line items
-                  </p>
-
-                  <div className="columns m-0 pl-6 is-size-7">
-                    <p className="column p-0 is-5"></p>
-                    <p className="column p-0 is-3">| SKU</p>
-                    <p className="column p-0 is-2">| Ship qty</p>
-                    <p className="column p-0">| Unfulfilled</p>
-                  </div>
                 </>
               )}
 
               {orders.map((order) => (
-                <React.Fragment key={`order-${order.id}`}>
-                  <label
-                    className="panel-block has-background-grey-lighter is-size-7"
-                    key={`order-${order.id}`}
-                  >
+                <React.Fragment key={order.id}>
+                  <label className="panel-block has-background-grey-lighter is-size-7">
                     <input
                       type="checkbox"
-                      name={order.id}
-                      checked={
-                        order.line_items.filter(({ id }) =>
-                          selection.includes(id as string),
-                        ).length === order.line_items.length
-                      }
+                      checked={order.line_items.every((item) =>
+                        selection.includes(item.id as string),
+                      )}
                       onChange={handleChange(
-                        order.line_items.map(({ id }) => id as string),
+                        order.line_items.map((item) => item.id as string),
                       )}
                     />
                     <span>
                       {order.order_id} -{" "}
-                      <span className="has-text-grey is-size-7">ORDER ID</span>
+                      <span className="has-text-grey is-size-7">
+                        {order.source}
+                      </span>
                     </span>
                   </label>
 
-                  {order.line_items.map((item, item_index) => (
+                  {order.line_items.map((item) => (
                     <label
                       className="panel-block pl-5 is-size-7 has-text-weight-semibold columns m-0"
-                      key={`line-${item.id || item_index}`}
+                      key={item.id}
                     >
                       <input
                         type="checkbox"
                         name={item.id}
-                        checked={selection.includes(item.id)}
-                        onChange={handleChange([item.id])}
+                        checked={selection.includes(item.id as string)}
+                        onChange={handleChange([item.id as string])}
                       />
-                      <p className="column is-5 p-0 my-1">
-                        {item_index + 1}{" "}
-                        {`${item.title || item.description || "Item"}`}
-                      </p>
-                      <p className="column is-3 p-0 my-1">{item.sku}</p>
-                      <p className="column is-2 p-0 my-1 has-text-centered">
-                        {item.metadata?.ship_qty}
-                      </p>
-                      <p className="column p-0 my-1 has-text-centered">
-                        {item.quantity}
-                      </p>
+                      <span className="column p-0 is-5">{item.description}</span>
+                      <span className="column p-0 is-3">{item.sku}</span>
+                      <span className="column p-0 is-2">{item.quantity}</span>
+                      <span className="column p-0">{item.quantity}</span>
                     </label>
                   ))}
                 </React.Fragment>
               ))}
             </nav>
 
-            <div className="p-3 my-5"></div>
             <div className="form-floating-footer has-text-centered p-1">
               <button
-                className="button is-default m-1 is-small"
+                className="button is-default mr-2"
                 onClick={close}
-                disabled={query.isFetching}
+                type="button"
               >
-                <span>Cancel</span>
+                Cancel
               </button>
               <button
-                className={`button is-primary ${query.isFetching ? "is-loading" : ""} m-1 is-small`}
-                disabled={query.isFetching || selection.length === 0}
-                type="button"
+                className="button is-primary"
                 onClick={handleSubmit}
+                type="submit"
+                disabled={selection.length === 0}
               >
-                <span>Add selection</span>
+                Add items
               </button>
             </div>
           </section>
         </div>
-
-        <button
-          className="modal-close is-large has-background-dark"
-          aria-label="close"
-          onClick={close}
-        ></button>
       </div>
     </>
   );

@@ -1,7 +1,7 @@
-import { WorkflowEventFilter, GetWorkflowEvents, GET_WORKFLOW_EVENTS, GetWorkflowEvent, GET_WORKFLOW_EVENT, CreateWorkflowEvent, CreateWorkflowEventMutationInput, CREATE_WORKFLOW_EVENT, DeleteMutationInput, CancelWorkflowEvent, CancelWorkflowEventMutationInput, CANCEL_WORKFLOW_EVENT } from "@karrio/types/graphql/ee";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { WorkflowEventFilter, GetWorkflowEvents, GET_WORKFLOW_EVENTS, GetWorkflowEvent, GET_WORKFLOW_EVENT, CreateWorkflowEvent, CreateWorkflowEventMutationInput, CREATE_WORKFLOW_EVENT, CancelWorkflowEvent, CancelWorkflowEventMutationInput, CANCEL_WORKFLOW_EVENT } from "@karrio/types/graphql/ee";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { gqlstr, insertUrlParam, isNoneOrEmpty, onError } from "@karrio/lib";
-import { useKarrio } from "./karrio";
+import { useAuthenticatedQuery, useKarrio } from "./karrio";
 import React from "react";
 
 const PAGE_SIZE = 20;
@@ -19,11 +19,14 @@ export function useWorkflowEvents({ setVariablesToURL = false, ...initialData }:
   );
 
   // Queries
-  const query = useQuery(
-    ['workflow-events', filter],
-    () => fetch({ filter }),
-    { keepPreviousData: true, staleTime: 5000, refetchInterval, onError },
-  );
+  const query = useAuthenticatedQuery({
+    queryKey: ['workflow-events', filter],
+    queryFn: () => fetch({ filter }),
+    keepPreviousData: true,
+    staleTime: 5000,
+    refetchInterval,
+    onError,
+  });
 
   function setFilter(options: WorkflowEventFilter) {
     const params = Object.keys(options).reduce((acc, key) => {
@@ -71,7 +74,8 @@ export function useWorkflowEvent(id: string) {
   const karrio = useKarrio();
 
   // Queries
-  const query = useQuery(['workflow-events', id], {
+  const query = useAuthenticatedQuery({
+    queryKey: ['workflow-events', id],
     queryFn: () => karrio.graphql.request<GetWorkflowEvent>(gqlstr(GET_WORKFLOW_EVENT), { variables: { id } }),
     enabled: !!id,
     onError,

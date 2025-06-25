@@ -32,9 +32,9 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { gqlstr, insertUrlParam, onError, setCookie } from "@karrio/lib";
+import { gqlstr, insertUrlParam, setCookie } from "@karrio/lib";
 import { useSession } from "next-auth/react";
-import { useKarrio } from "./karrio";
+import { useKarrio, useAuthenticatedQuery, useAuthenticatedMutation } from "./karrio";
 import React from "react";
 
 export type OrganizationType = get_organizations_organizations;
@@ -74,7 +74,7 @@ export const OrganizationProvider = ({
     OrganizationType | undefined
   >(extractCurrent(props.organizations, props.orgId));
 
-  const query = useQuery({
+  const query = useAuthenticatedQuery({
     queryKey: ["organizations"],
     queryFn: () =>
       karrio.graphql
@@ -90,7 +90,6 @@ export const OrganizationProvider = ({
     enabled: props.metadata?.MULTI_ORGANIZATIONS === true,
     refetchOnWindowFocus: false,
     staleTime: 1500000,
-    onError,
   });
 
   if (!props.metadata?.MULTI_ORGANIZATIONS) return <>{children}</>;
@@ -123,60 +122,65 @@ export function useOrganizationMutation() {
     queryClient.invalidateQueries(["organizations"]);
   };
 
-  // Mutations
-  const createOrganization = useMutation(
-    (data: CreateOrganizationMutationInput) =>
+  const createOrganization = useAuthenticatedMutation({
+    mutationFn: (data: CreateOrganizationMutationInput) =>
       karrio.graphql.request<create_organization>(gqlstr(CREATE_ORGANIZATION), {
         data,
       }),
-    { onSuccess: invalidateCache, onError },
-  );
-  const updateOrganization = useMutation(
-    (data: UpdateOrganizationMutationInput) =>
+    onSuccess: invalidateCache,
+  });
+
+  const updateOrganization = useAuthenticatedMutation({
+    mutationFn: (data: UpdateOrganizationMutationInput) =>
       karrio.graphql.request<update_organization>(gqlstr(UPDATE_ORGANIZATION), {
         data,
       }),
-    { onSuccess: invalidateCache, onError },
-  );
-  const deleteOrganization = useMutation(
-    (data: { id: string }) =>
+    onSuccess: invalidateCache,
+  });
+
+  const deleteOrganization = useAuthenticatedMutation({
+    mutationFn: (data: { id: string }) =>
       karrio.graphql.request<delete_organization>(gqlstr(DELETE_ORGANIZATION), {
         data,
       }),
-    { onSuccess: invalidateCache, onError },
-  );
-  const changeOrganizationOwner = useMutation(
-    (data: ChangeOrganizationOwnerMutationInput) =>
+    onSuccess: invalidateCache,
+  });
+
+  const changeOrganizationOwner = useAuthenticatedMutation({
+    mutationFn: (data: ChangeOrganizationOwnerMutationInput) =>
       karrio.graphql.request<change_organization_owner>(
         gqlstr(CHANGE_ORGANIZATION_OWNER),
         { data },
       ),
-    { onSuccess: invalidateCache, onError },
-  );
-  const setOrganizationUserRoles = useMutation(
-    (data: SetOrganizationUserRolesMutationInput) =>
+    onSuccess: invalidateCache,
+  });
+
+  const setOrganizationUserRoles = useAuthenticatedMutation({
+    mutationFn: (data: SetOrganizationUserRolesMutationInput) =>
       karrio.graphql.request<set_organization_user_roles>(
         gqlstr(SET_ORGANIZATION_USER_ROLES),
         { data },
       ),
-    { onSuccess: invalidateCache, onError },
-  );
-  const sendOrganizationInvites = useMutation(
-    (data: SendOrganizationInvitesMutationInput) =>
+    onSuccess: invalidateCache,
+  });
+
+  const sendOrganizationInvites = useAuthenticatedMutation({
+    mutationFn: (data: SendOrganizationInvitesMutationInput) =>
       karrio.graphql.request<send_organization_invites>(
         gqlstr(SEND_ORGANIZATION_INVITES),
         { data },
       ),
-    { onSuccess: invalidateCache, onError },
-  );
-  const deleteOrganizationInvitation = useMutation(
-    (data: { id: string }) =>
+    onSuccess: invalidateCache,
+  });
+
+  const deleteOrganizationInvitation = useAuthenticatedMutation({
+    mutationFn: (data: { id: string }) =>
       karrio.graphql.request<delete_organization_invitation>(
         gqlstr(DELETE_ORGANIZATION_INVITES),
         { data },
       ),
-    { onSuccess: invalidateCache, onError },
-  );
+    onSuccess: invalidateCache,
+  });
 
   // Helpers
   const changeActiveOrganization = async (orgId: string) => {

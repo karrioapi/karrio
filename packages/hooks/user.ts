@@ -26,7 +26,8 @@ import {
   request_password_reset,
   REQUEST_PASSWORD_RESET,
 } from "@karrio/types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuthenticatedQuery } from "./karrio";
 import { gqlstr, onError } from "@karrio/lib";
 import { useKarrio } from "./karrio";
 
@@ -35,7 +36,7 @@ export function useUser() {
   const user = karrio.pageData?.user;
 
   // Queries
-  const query = useQuery({
+  const query = useAuthenticatedQuery({
     queryKey: ["user"],
     queryFn: () => karrio.graphql.request<GetUser>(gqlstr(GET_USER)),
     initialData: !!user ? { user } : undefined,

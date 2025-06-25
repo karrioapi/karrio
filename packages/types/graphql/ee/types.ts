@@ -119,7 +119,7 @@ export interface GetAppInstallations_app_installations_edges_node_oauth_app {
 export interface GetAppInstallations_app_installations_edges_node_metafields {
   id: string;
   key: string;
-  value: string | null;
+  value: any | null;
   is_required: boolean;
   type: MetafieldTypeEnum;
 }
@@ -130,6 +130,7 @@ export interface GetAppInstallations_app_installations_edges_node {
   app_id: string;
   app_type: string;
   access_scopes: string[];
+  api_key: string | null;
   is_active: boolean;
   requires_oauth: boolean;
   created_at: any;
@@ -180,7 +181,7 @@ export interface GetAppInstallation_app_installation_oauth_app {
 export interface GetAppInstallation_app_installation_metafields {
   id: string;
   key: string;
-  value: string | null;
+  value: any | null;
   is_required: boolean;
   type: MetafieldTypeEnum;
 }
@@ -191,6 +192,7 @@ export interface GetAppInstallation_app_installation {
   app_id: string;
   app_type: string;
   access_scopes: string[];
+  api_key: string | null;
   is_active: boolean;
   requires_oauth: boolean;
   created_at: any;
@@ -227,7 +229,7 @@ export interface GetAppInstallationByAppId_app_installation_by_app_id_oauth_app 
 export interface GetAppInstallationByAppId_app_installation_by_app_id_metafields {
   id: string;
   key: string;
-  value: string | null;
+  value: any | null;
   is_required: boolean;
   type: MetafieldTypeEnum;
 }
@@ -238,6 +240,7 @@ export interface GetAppInstallationByAppId_app_installation_by_app_id {
   app_id: string;
   app_type: string;
   access_scopes: string[];
+  api_key: string | null;
   is_active: boolean;
   requires_oauth: boolean;
   created_at: any;
@@ -380,7 +383,7 @@ export interface InstallApp_install_app_installation_oauth_app {
 export interface InstallApp_install_app_installation_metafields {
   id: string;
   key: string;
-  value: string | null;
+  value: any | null;
   is_required: boolean;
   type: MetafieldTypeEnum;
 }
@@ -391,6 +394,7 @@ export interface InstallApp_install_app_installation {
   app_id: string;
   app_type: string;
   access_scopes: string[];
+  api_key: string | null;
   is_active: boolean;
   requires_oauth: boolean;
   created_at: any;
@@ -462,7 +466,7 @@ export interface UpdateAppInstallation_update_app_installation_installation_oaut
 export interface UpdateAppInstallation_update_app_installation_installation_metafields {
   id: string;
   key: string;
-  value: string | null;
+  value: any | null;
   is_required: boolean;
   type: MetafieldTypeEnum;
 }
@@ -473,6 +477,7 @@ export interface UpdateAppInstallation_update_app_installation_installation {
   app_id: string;
   app_type: string;
   access_scopes: string[];
+  api_key: string | null;
   is_active: boolean;
   requires_oauth: boolean;
   created_at: any;
@@ -498,6 +503,70 @@ export interface UpdateAppInstallation {
 
 export interface UpdateAppInstallationVariables {
   data: UpdateAppInstallationMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: RotateAppApiKey
+// ====================================================
+
+export interface RotateAppApiKey_rotate_app_api_key_installation {
+  id: string;
+  app_id: string;
+  api_key: string | null;
+}
+
+export interface RotateAppApiKey_rotate_app_api_key_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface RotateAppApiKey_rotate_app_api_key {
+  installation: RotateAppApiKey_rotate_app_api_key_installation | null;
+  errors: RotateAppApiKey_rotate_app_api_key_errors[] | null;
+}
+
+export interface RotateAppApiKey {
+  rotate_app_api_key: RotateAppApiKey_rotate_app_api_key;
+}
+
+export interface RotateAppApiKeyVariables {
+  data: RotateAppApiKeyMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: EnsureAppApiKey
+// ====================================================
+
+export interface EnsureAppApiKey_ensure_app_api_key_installation {
+  id: string;
+  app_id: string;
+  api_key: string | null;
+}
+
+export interface EnsureAppApiKey_ensure_app_api_key_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface EnsureAppApiKey_ensure_app_api_key {
+  installation: EnsureAppApiKey_ensure_app_api_key_installation | null;
+  errors: EnsureAppApiKey_ensure_app_api_key_errors[] | null;
+}
+
+export interface EnsureAppApiKey {
+  ensure_app_api_key: EnsureAppApiKey_ensure_app_api_key;
+}
+
+export interface EnsureAppApiKeyVariables {
+  data: EnsureAppApiKeyMutationInput;
 }
 
 
@@ -982,7 +1051,7 @@ export interface GetWorkflow_workflow_actions_connection_metafields {
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflow_workflow_actions_connection {
@@ -1010,7 +1079,7 @@ export interface GetWorkflow_workflow_actions_metafields {
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflow_workflow_actions {
@@ -1092,7 +1161,7 @@ export interface GetWorkflows_workflows_edges_node_actions_connection_metafields
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflows_workflows_edges_node_actions_connection {
@@ -1124,7 +1193,7 @@ export interface GetWorkflows_workflows_edges_node_actions_metafields {
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflows_workflows_edges_node_actions {
@@ -1219,7 +1288,7 @@ export interface GetScheduledWorkflows_scheduled_workflows_edges_node_actions_co
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetScheduledWorkflows_scheduled_workflows_edges_node_actions_connection {
@@ -1251,7 +1320,7 @@ export interface GetScheduledWorkflows_scheduled_workflows_edges_node_actions_me
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetScheduledWorkflows_scheduled_workflows_edges_node_actions {
@@ -1321,7 +1390,7 @@ export interface GetWorkflowConnection_workflow_connection_metafields {
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflowConnection_workflow_connection {
@@ -1374,7 +1443,7 @@ export interface GetWorkflowConnections_workflow_connections_edges_node_metafiel
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflowConnections_workflow_connections_edges_node {
@@ -1430,7 +1499,7 @@ export interface GetWorkflowAction_workflow_action_connection_metafields {
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflowAction_workflow_action_connection {
@@ -1458,7 +1527,7 @@ export interface GetWorkflowAction_workflow_action_metafields {
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflowAction_workflow_action {
@@ -1510,7 +1579,7 @@ export interface GetWorkflowActions_workflow_actions_edges_node_connection_metaf
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflowActions_workflow_actions_edges_node_connection {
@@ -1542,7 +1611,7 @@ export interface GetWorkflowActions_workflow_actions_edges_node_metafields {
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflowActions_workflow_actions_edges_node {
@@ -1742,7 +1811,7 @@ export interface GetWorkflowTemplates_workflow_templates_edges_node_actions_conn
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflowTemplates_workflow_templates_edges_node_actions_connection {
@@ -1764,7 +1833,7 @@ export interface GetWorkflowTemplates_workflow_templates_edges_node_actions_meta
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflowTemplates_workflow_templates_edges_node_actions {
@@ -1832,7 +1901,7 @@ export interface GetWorkflowActionTemplates_workflow_action_templates_edges_node
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflowActionTemplates_workflow_action_templates_edges_node_connection {
@@ -1854,7 +1923,7 @@ export interface GetWorkflowActionTemplates_workflow_action_templates_edges_node
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflowActionTemplates_workflow_action_templates_edges_node {
@@ -1913,7 +1982,7 @@ export interface GetWorkflowConnectionTemplates_workflow_connection_templates_ed
   key: string;
   is_required: boolean;
   type: MetafieldTypeEnum;
-  value: string | null;
+  value: any | null;
 }
 
 export interface GetWorkflowConnectionTemplates_workflow_connection_templates_edges_node {
@@ -2674,7 +2743,11 @@ export interface DeleteShippingRuleVariables {
 
 export enum MetafieldTypeEnum {
   boolean = "boolean",
+  date = "date",
+  date_time = "date_time",
+  json = "json",
   number = "number",
+  password = "password",
   text = "text",
 }
 
@@ -2830,14 +2903,14 @@ export interface InstallAppMutationInput {
 export interface CreateMetafieldInput {
   key: string;
   type: MetafieldTypeEnum;
-  value?: string | null;
-  namespace?: string | null;
+  value?: any | null;
   is_required?: boolean | null;
 }
 
 // null
 export interface UninstallAppMutationInput {
-  app_id: string;
+  app_id?: string | null;
+  installation_id?: string | null;
 }
 
 // null
@@ -2853,10 +2926,19 @@ export interface UpdateAppInstallationMutationInput {
 export interface MetafieldInput {
   key: string;
   type: MetafieldTypeEnum;
-  value?: string | null;
-  namespace?: string | null;
+  value?: any | null;
   is_required?: boolean | null;
   id?: string | null;
+}
+
+// null
+export interface RotateAppApiKeyMutationInput {
+  id: string;
+}
+
+// null
+export interface EnsureAppApiKeyMutationInput {
+  id: string;
 }
 
 // null

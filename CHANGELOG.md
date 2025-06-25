@@ -16,6 +16,7 @@
 
 - fix: karrio automation tests for workflow and background tasks
 - refactor: apply fixes based on multi-orgs testing
+- fix: broken forms and pages caused but react upgrade breaking changes
 
 ### Chore
 

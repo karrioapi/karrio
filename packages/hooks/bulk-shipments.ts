@@ -17,13 +17,12 @@ import {
   Collection,
   DEFAULT_CUSTOMS_CONTENT,
 } from "@karrio/types";
-import { useBatchOperationMutation } from "./batch-operations";
-import { useNotifier } from "@karrio/ui/core/components/notifier";
-import { BatchShipmentData } from "@karrio/types/rest/api";
-import { useLoader } from "@karrio/ui/core/components/loader";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNotifier } from "@karrio/ui/core/components/notifier";
+import { useBatchOperationMutation } from "./batch-operations";
+import { useLoader } from "@karrio/ui/core/components/loader";
+import { BatchShipmentData } from "@karrio/types/rest/api";
 import { useShipmentMutation } from "./shipment";
-import { useAppMode } from "./app-mode";
 import React from "react";
 
 type BatchShipmentFormProps = {

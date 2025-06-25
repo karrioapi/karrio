@@ -9,10 +9,8 @@ import {
   GET_WORKFLOW_ACTION_TEMPLATES,
   GET_WORKFLOW_CONNECTION_TEMPLATES
 } from "@karrio/types/graphql/ee";
-import { useQuery } from "@tanstack/react-query";
 import { gqlstr, onError } from "@karrio/lib";
-import { useKarrio } from "./karrio";
-import React from "react";
+import { useAuthenticatedQuery, useKarrio } from "./karrio";
 
 const PAGE_SIZE = 50;
 const PAGINATION = { offset: 0, first: PAGE_SIZE };
@@ -26,11 +24,13 @@ export function useWorkflowTemplates(filter: WorkflowFilter = {}) {
   const fetch = (variables: { filter: WorkflowFilter }) =>
     karrio.graphql.request<GetWorkflowTemplates>(gqlstr(GET_WORKFLOW_TEMPLATES), { variables });
 
-  return useQuery(
-    ['workflow-templates', filter],
-    () => fetch({ filter: { ...PAGINATION, ...filter } }),
-    { keepPreviousData: true, staleTime: 10000, onError },
-  );
+  return useAuthenticatedQuery({
+    queryKey: ['workflow-templates', filter],
+    queryFn: () => fetch({ filter: { ...PAGINATION, ...filter } }),
+    keepPreviousData: true,
+    staleTime: 10000,
+    onError,
+  });
 }
 
 export function useWorkflowActionTemplates(filter: WorkflowActionFilter = {}) {
@@ -38,11 +38,13 @@ export function useWorkflowActionTemplates(filter: WorkflowActionFilter = {}) {
   const fetch = (variables: { filter: WorkflowActionFilter }) =>
     karrio.graphql.request<GetWorkflowActionTemplates>(gqlstr(GET_WORKFLOW_ACTION_TEMPLATES), { variables });
 
-  return useQuery(
-    ['workflow-action-templates', filter],
-    () => fetch({ filter: { ...PAGINATION, ...filter } }),
-    { keepPreviousData: true, staleTime: 10000, onError },
-  );
+  return useAuthenticatedQuery({
+    queryKey: ['workflow-action-templates', filter],
+    queryFn: () => fetch({ filter: { ...PAGINATION, ...filter } }),
+    keepPreviousData: true,
+    staleTime: 10000,
+    onError,
+  });
 }
 
 export function useWorkflowConnectionTemplates(filter: WorkflowConnectionFilter = {}) {
@@ -50,11 +52,13 @@ export function useWorkflowConnectionTemplates(filter: WorkflowConnectionFilter 
   const fetch = (variables: { filter: WorkflowConnectionFilter }) =>
     karrio.graphql.request<GetWorkflowConnectionTemplates>(gqlstr(GET_WORKFLOW_CONNECTION_TEMPLATES), { variables });
 
-  return useQuery(
-    ['workflow-connection-templates', filter],
-    () => fetch({ filter: { ...PAGINATION, ...filter } }),
-    { keepPreviousData: true, staleTime: 10000, onError },
-  );
+  return useAuthenticatedQuery({
+    queryKey: ['workflow-connection-templates', filter],
+    queryFn: () => fetch({ filter: { ...PAGINATION, ...filter } }),
+    keepPreviousData: true,
+    staleTime: 10000,
+    onError,
+  });
 }
 
 // Predefined workflow templates for common use cases

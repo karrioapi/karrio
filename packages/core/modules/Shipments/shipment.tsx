@@ -13,8 +13,8 @@ import { OptionsDescription } from "@karrio/ui/core/components/options-descripti
 import { AddressDescription } from "@karrio/ui/core/components/address-description";
 import { ParcelDescription } from "@karrio/ui/core/components/parcel-description";
 import { formatDateTime, formatDayDate, formatRef, isNone } from "@karrio/lib";
+import { ActivityTimeline } from "@karrio/ui/components/activity-timeline";
 import { CustomsType, NotificationType, ParcelType } from "@karrio/types";
-import { StatusCode } from "@karrio/ui/core/components/status-code-badge";
 import { CopiableLink } from "@karrio/ui/core/components/copiable-link";
 import { CarrierBadge } from "@karrio/ui/core/components/carrier-badge";
 import { ShipmentMenu } from "@karrio/ui/core/components/shipment-menu";
@@ -31,7 +31,6 @@ import { MetadataObjectTypeEnum } from "@karrio/types";
 import { useShipment } from "@karrio/hooks/shipment";
 import { useEvents } from "@karrio/hooks/event";
 import { useLogs } from "@karrio/hooks/log";
-import { ActivityTimeline } from "@karrio/ui/components/activity-timeline";
 import React from "react";
 
 type FileDataType = DocumentUploadData["document_files"][0];

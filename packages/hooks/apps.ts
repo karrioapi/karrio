@@ -32,12 +32,14 @@ import {
   UpdateAppInstallationMutationInput,
 } from "@karrio/types/graphql/ee/types";
 import { gqlstr } from "@karrio/lib";
-import { useKarrio } from "./karrio";
+import { useKarrio, useAuthenticatedQuery, useAuthenticatedMutation } from "./karrio";
+import { useSyncedSession } from "./session";
 
 // OAuth Apps queries (for developers page)
 export function useOAuthApps(filter?: OAuthAppFilter) {
   const karrio = useKarrio();
-  const query = useQuery({
+
+  const query = useAuthenticatedQuery({
     staleTime: 5000,
     refetchOnWindowFocus: false,
     queryKey: ["oauth-apps", filter],
@@ -54,7 +56,8 @@ export function useOAuthApps(filter?: OAuthAppFilter) {
 
 export function useOAuthApp(id: string) {
   const karrio = useKarrio();
-  const query = useQuery({
+
+  const query = useAuthenticatedQuery({
     staleTime: 5000,
     refetchOnWindowFocus: false,
     queryKey: ["oauth-app", id],
@@ -70,7 +73,8 @@ export function useOAuthApp(id: string) {
 // App Installations queries (for app store)
 export function useAppInstallations(filter?: AppInstallationFilter) {
   const karrio = useKarrio();
-  const query = useQuery({
+
+  const query = useAuthenticatedQuery({
     staleTime: 5000,
     refetchOnWindowFocus: false,
     queryKey: ["app-installations", filter],
@@ -87,7 +91,8 @@ export function useAppInstallations(filter?: AppInstallationFilter) {
 
 export function useAppInstallationByAppId(appId: string, enabled = true) {
   const karrio = useKarrio();
-  const query = useQuery({
+
+  const query = useAuthenticatedQuery({
     staleTime: 5000,
     refetchOnWindowFocus: false,
     queryKey: ["app-installation-by-app-id", appId],
@@ -113,17 +118,21 @@ export function usePrivateApps(filter?: OAuthAppFilter) {
 
 export function useInstalledApps(filter?: AppInstallationFilter) {
   const karrio = useKarrio();
-  const query = useQuery({
+
+  const query = useAuthenticatedQuery({
     staleTime: 5000,
     refetchOnWindowFocus: false,
     queryKey: ["installed-apps", filter],
     queryFn: async () => {
-      const response = await karrio.graphql.request<GetAppInstallations>(gqlstr(GET_APP_INSTALLATIONS), {
-        variables: { filter: { ...filter, is_active: true } }
-      });
-      return {
-        app_installations: response.app_installations
-      };
+      try {
+        const response = await karrio.graphql.request<GetAppInstallations>(gqlstr(GET_APP_INSTALLATIONS), {
+          variables: { filter: { ...filter, is_active: true } }
+        });
+        return response;
+      } catch (error) {
+        console.error("Failed to fetch installed apps:", error);
+        return { app_installations: { edges: [] } };
+      }
     },
   });
 
@@ -176,31 +185,31 @@ export function useAppMutations() {
     queryClient.invalidateQueries(["app-installation-by-app-id"]);
   };
 
-  const installApp = useMutation({
+  const installApp = useAuthenticatedMutation({
     mutationFn: (data: InstallAppMutationInput) =>
       karrio.graphql.request<InstallApp>(gqlstr(INSTALL_APP), { variables: { data } }),
     onSuccess: () => invalidateAppsCache(),
   });
 
-  const uninstallApp = useMutation({
+  const uninstallApp = useAuthenticatedMutation({
     mutationFn: (data: UninstallAppMutationInput) =>
       karrio.graphql.request<UninstallApp>(gqlstr(UNINSTALL_APP), { variables: { data } }),
     onSuccess: () => invalidateAppsCache(),
   });
 
-  const updateAppInstallation = useMutation({
+  const updateAppInstallation = useAuthenticatedMutation({
     mutationFn: (data: UpdateAppInstallationMutationInput) =>
       karrio.graphql.request<UpdateAppInstallation>(gqlstr(UPDATE_APP_INSTALLATION), { variables: { data } }),
     onSuccess: () => invalidateAppsCache(),
   });
 
-  const createOAuthApp = useMutation({
+  const createOAuthApp = useAuthenticatedMutation({
     mutationFn: (data: CreateOAuthAppMutationInput) =>
       karrio.graphql.request<CreateOAuthApp>(gqlstr(CREATE_OAUTH_APP), { variables: { data } }),
     onSuccess: () => invalidateAppsCache(),
   });
 
-  const updateOAuthApp = useMutation({
+  const updateOAuthApp = useAuthenticatedMutation({
     mutationFn: (data: UpdateOAuthAppMutationInput) => {
       const updateData = { ...data };
       return karrio.graphql.request<UpdateOAuthApp>(gqlstr(UPDATE_OAUTH_APP), { variables: { data: updateData } });
@@ -208,7 +217,7 @@ export function useAppMutations() {
     onSuccess: () => invalidateAppsCache(),
   });
 
-  const deleteOAuthApp = useMutation({
+  const deleteOAuthApp = useAuthenticatedMutation({
     mutationFn: (data: DeleteOAuthAppMutationInput) =>
       karrio.graphql.request<DeleteOAuthApp>(gqlstr(DELETE_OAUTH_APP), { variables: { data } }),
     onSuccess: () => invalidateAppsCache(),

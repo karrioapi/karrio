@@ -99,6 +99,13 @@ class Query:
         strawberry.field(resolver=types.CarrierConnectionType.resolve_list)
     )
 
+    metafield: typing.Optional[types.MetafieldType] = strawberry.field(
+        resolver=types.MetafieldType.resolve
+    )
+    metafields: utils.Connection[types.MetafieldType] = strawberry.field(
+        resolver=types.MetafieldType.resolve_list
+    )
+
 
 @strawberry.type
 class Mutation:
@@ -332,6 +339,18 @@ class Mutation:
         return mutations.DeleteMutation.mutate(
             info, model=providers.RateSheet, **input.to_dict()
         )
+
+    @strawberry.mutation
+    def create_metafield(
+        self, info: Info, input: inputs.CreateMetafieldInput
+    ) -> mutations.CreateMetafieldMutation:
+        return mutations.CreateMetafieldMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def update_metafield(
+        self, info: Info, input: inputs.UpdateMetafieldInput
+    ) -> mutations.UpdateMetafieldMutation:
+        return mutations.UpdateMetafieldMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
     def delete_metafield(

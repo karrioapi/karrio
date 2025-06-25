@@ -9,17 +9,20 @@
   },
   "dependencies": {
     "@karrio/admin": "*",
+    "@karrio/app-store": "*",
     "@karrio/core": "*",
+    "@karrio/developers": "*",
     "@karrio/hooks": "*",
     "@karrio/lib": "*",
     "@karrio/types": "*",
-    "@karrio/developers": "*",
-    "@karrio/app-store": "*",
     "@karrio/ui": "*",
     "axios": "^1.6.7",
+    "mime-types": "^2.1.35",
     "next-runtime-env": "^3.2.2"
   },
   "devDependencies": {
+    "@types/mime-types": "^3.0.1",
+    "copy-webpack-plugin": "^11.0.0",
     "eslint": "7.32.0",
     "eslint-config-custom": "*",
     "eslint-config-next": "^13.1.2",

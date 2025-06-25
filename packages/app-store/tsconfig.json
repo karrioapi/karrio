@@ -15,5 +15,6 @@
     "jsx": "preserve"
   },
   "include": ["**/*.ts", "**/*.tsx"],
+  "paths": { "@karrio/app-store/*": ["./*"] },
   "exclude": ["node_modules"]
 }

@@ -9,19 +9,18 @@ import {
 import {
   gqlstr,
   insertUrlParam,
-  isEqual,
   isNoneOrEmpty,
   onError,
   p,
 } from "@karrio/lib";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "@tanstack/react-form";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { useRouter } from "next/navigation";
 import { NotificationType } from "@karrio/types";
 import { useAppMode } from "./app-mode";
-import { useKarrio } from "./karrio";
+import { useAuthenticatedQuery, useKarrio } from "./karrio";
 import React from "react";
 
 const PAGE_SIZE = 20;
@@ -146,7 +145,9 @@ export function useShippingRules({
     karrio.graphql.request<GetShippingRules>(gqlstr(GET_SHIPPING_RULES), { variables });
 
   // Queries
-  const query = useQuery(["shipping_rules", filter], () => fetch({ filter }), {
+  const query = useAuthenticatedQuery({
+    queryKey: ["shipping_rules", filter],
+    queryFn: () => fetch({ filter }),
     keepPreviousData: true,
     staleTime: 5000,
     refetchInterval: 120000,
@@ -198,11 +199,9 @@ export function useShippingRule({
   const [shippingRuleId, _setShippingRuleId] = React.useState<string>(id || "new");
 
   // Queries
-  const query = useQuery(["shipping_rules", id], {
-    queryFn: () =>
-      karrio.graphql.request<GetShippingRule>(gqlstr(GET_SHIPPING_RULE), {
-        variables: { id: shippingRuleId },
-      }),
+  const query = useAuthenticatedQuery({
+    queryKey: ["shipping_rules", id],
+    queryFn: () => karrio.graphql.request<GetShippingRule>(gqlstr(GET_SHIPPING_RULE), { variables: { id: shippingRuleId } }),
     enabled: shippingRuleId !== "new",
     onError,
   });

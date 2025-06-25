@@ -26,15 +26,15 @@ import {
   LabelTypeEnum,
   PaidByEnum,
 } from "@karrio/types";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { useLoader } from "@karrio/ui/core/components/loader";
+import { useAuthenticatedQuery, useKarrio } from "./karrio";
+import { useMutation } from "@tanstack/react-query";
 import { useShipmentMutation } from "./shipment";
+import { useRouter } from "next/navigation";
 import { useAppMode } from "./app-mode";
-import { useKarrio } from "./karrio";
 import moment from "moment";
 import React from "react";
-import { useRouter } from "next/navigation";
 
 const DEFAULT_SHIPMENT_DATA = {
   shipper: {} as AddressType,
@@ -84,7 +84,7 @@ export function useLabelData(id: string, initialData?: ShipmentType) {
   );
 
   // Queries
-  const query = useQuery({
+  const query = useAuthenticatedQuery({
     queryKey: ["label", id],
     queryFn: async () => {
       const response = await (id === "new"

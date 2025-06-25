@@ -1,8 +1,8 @@
 import { ManifestFilter, GetManifests, GetManifest, GET_MANIFESTS, GET_MANIFEST } from "@karrio/types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { gqlstr, handleFailure, insertUrlParam, onError } from "@karrio/lib";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuthenticatedQuery, useKarrio } from "./karrio";
 import { ManifestData } from "@karrio/types/rest/api";
-import { useKarrio } from "./karrio";
 import React from "react";
 
 const PAGE_SIZE = 20;
@@ -18,7 +18,7 @@ export function useManifests({ setVariablesToURL = false, isDisabled = false, pr
   );
 
   // Queries
-  const query = useQuery({
+  const query = useAuthenticatedQuery({
     queryKey: [cacheKey || 'manifests', filter],
     queryFn: () => fetch({ filter }),
     enabled: !isDisabled,
@@ -86,7 +86,7 @@ export function useManifest(id: string) {
   const karrio = useKarrio();
 
   // Queries
-  const query = useQuery({
+  const query = useAuthenticatedQuery({
     queryKey: ['manifests', id],
     queryFn: () => karrio.graphql.request<GetManifest>(gqlstr(GET_MANIFEST), { variables: { id } }),
     enabled: !!id,

@@ -80,11 +80,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   // Separate section for developers and resources
   const developerItems = [
-    ...(metadata?.APPS_MANAGEMENT ? [{
-      title: "App Store",
-      url: "/app-store",
-      icon: Puzzle,
-    }] : []),
     {
       title: "Developers",
       url: "/developers",

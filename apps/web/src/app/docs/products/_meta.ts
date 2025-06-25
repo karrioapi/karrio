@@ -75,4 +75,8 @@ export default {
     title: 'Webhooks',
     type: 'page'
   },
+  "app-store": {
+    title: 'App & Integrations',
+    type: 'page'
+  }
 }

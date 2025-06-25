@@ -34,7 +34,8 @@ export const DropdownInput = ({
 }: DropdownInputComponent): JSX.Element => {
   const control = useRef<any>(null);
   const btn = useRef<HTMLInputElement>(null);
-  const [key, setKey] = useState<string>(`dropdown-${Date.now()}`);
+  const uniqueId = React.useId();
+  const [key, setKey] = useState<string>(`dropdown-${uniqueId}`);
   const [isActive, setIsActive] = useState<boolean>(false);
   const [search, setSearch] = useState<string>("");
   const [selected, setSelected] = useState<string>();
@@ -68,7 +69,7 @@ export const DropdownInput = ({
     if (e.target !== btn.current && e.target !== control.current) {
       setIsActive(false);
       setSearch("");
-      setKey(`dropdown-${Date.now()}`);
+      setKey(`dropdown-${uniqueId}-refresh`);
       document.removeEventListener("click", onBodyClick);
     }
   };
@@ -118,7 +119,7 @@ export const DropdownInput = ({
               value={selected || ""}
               className={
                 "dropdown-trigger input is-clickable is-fullwidth px-2" +
-                  ` ${className}` || ""
+                ` ${className}` || ""
               }
               aria-haspopup="true"
               readOnly
@@ -167,7 +168,7 @@ export const DropdownInput = ({
 
                 <ul className="panel dropped-panel">
                   <li
-                    key={`empty-${Date.now()}`}
+                    key={`empty-${uniqueId}`}
                     tabIndex={0}
                     onClick={onSelect("")}
                     className={`panel-block is-clickable ${key === selected ? "is-active" : ""}`}
@@ -183,7 +184,7 @@ export const DropdownInput = ({
                     )
                     .map(([key, val], index) => (
                       <li
-                        key={`${key}-${Date.now()}`}
+                        key={`${key}-${uniqueId}-${index}`}
                         tabIndex={index + 1}
                         onClick={onSelect(key)}
                         className={`panel-block is-clickable ${key === selected ? "is-active" : ""}`}

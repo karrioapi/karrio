@@ -1,222 +1,273 @@
 "use client";
 
-import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@karrio/ui/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@karrio/ui/components/ui/popover";
+import * as React from "react";
+import { Search, Loader2, Package, MapPin, X } from "lucide-react";
+import { cn } from "@karrio/ui/lib/utils";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandList,
+} from "@karrio/ui/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverAnchor,
+} from "@karrio/ui/components/ui/popover";
 import { StatusBadge } from '@karrio/ui/core/components/status-badge';
-import { formatAddressShort, isNoneOrEmpty } from '@karrio/lib';
 import { AppLink } from '@karrio/ui/core/components/app-link';
 import { useSearch } from '@karrio/hooks/search';
-import { Search, Loader2, Package, MapPin, X } from "lucide-react";
-import React, { useEffect, useState, useRef } from "react";
+import { formatAddressShort, isNoneOrEmpty } from '@karrio/lib';
 import moment from 'moment';
 
-export function SearchBar() {
-  const { query, setFilter } = useSearch();
-  const [searchValue, setSearchValue] = useState<string>("");
-  const [open, setOpen] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+interface SearchResult {
+  id: string;
+  type: 'shipment' | 'order' | 'tracker';
+  title: string;
+  subtitle?: string;
+  status?: string;
+  date?: string;
+  href: string;
+}
 
-  useEffect(() => {
-    setFilter({ keyword: searchValue });
-    if (searchValue && searchValue.length >= 2) {
-      setOpen(true);
+interface SearchBarProps {
+  placeholder?: string;
+  className?: string;
+  maxWidth?: string;
+}
+
+export const SearchBar = React.forwardRef<
+  HTMLInputElement,
+  SearchBarProps
+>(({
+  placeholder = "Search shipments, orders, tracking...",
+  className,
+  maxWidth = "max-w-md"
+}, ref) => {
+  const [open, setOpen] = React.useState(false);
+  const [inputValue, setInputValue] = React.useState("");
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  // Use search hook
+  const { query: searchQuery, setFilter } = useSearch();
+
+  // Simple debouncing - just like AddressCombobox
+  const [debouncedValue, setDebouncedValue] = React.useState("");
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(inputValue);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [inputValue]);
+
+  // Update search filter when debouncedValue changes
+  React.useEffect(() => {
+    if (debouncedValue.trim()) {
+      setFilter({ keyword: debouncedValue.trim() });
     } else {
+      setFilter({});
+    }
+  }, [debouncedValue, setFilter]);
+
+  const isLoading = React.useMemo(() => {
+    return debouncedValue.trim() !== "" && searchQuery.isFetching;
+  }, [debouncedValue, searchQuery.isFetching]);
+
+  // Transform search results
+  const searchResults = React.useMemo((): SearchResult[] => {
+    if (!searchQuery.data || !debouncedValue.trim()) return [];
+
+    const data = searchQuery.data as any;
+    const results: SearchResult[] = [];
+
+    if (data.results) {
+      data.results.forEach((item: any) => {
+        if (item.tracking_number) {
+          results.push({
+            id: item.id,
+            type: 'shipment',
+            title: `Shipment ${item.tracking_number || item.id}`,
+            subtitle: item.recipient ? formatAddressShort(item.recipient) : undefined,
+            status: item.status,
+            date: item.created_at,
+            href: `/shipments/${item.id}`,
+          });
+        } else if (item.order_id) {
+          results.push({
+            id: item.id,
+            type: 'order',
+            title: `Order ${item.order_id || item.id}`,
+            subtitle: item.shipping_to ? formatAddressShort(item.shipping_to) : undefined,
+            status: item.status,
+            date: item.created_at,
+            href: `/orders/${item.id}`,
+          });
+        } else if (item.carrier_tracking_number) {
+          results.push({
+            id: item.id,
+            type: 'tracker',
+            title: `Tracking ${item.carrier_tracking_number}`,
+            subtitle: item.delivered_to ? formatAddressShort(item.delivered_to) : undefined,
+            status: item.status,
+            date: item.created_at,
+            href: `/trackers/${item.id}`,
+          });
+        }
+      });
+    }
+
+    return results.slice(0, 8);
+  }, [searchQuery.data, debouncedValue]);
+
+  const handleInputValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setInputValue(newValue);
+
+    // Show dropdown if we have results
+    if (newValue.trim() && searchResults.length > 0) {
+      setOpen(true);
+    }
+  };
+
+  const handleInputFocus = () => {
+    if (inputValue.trim() && searchResults.length > 0) {
+      setOpen(true);
+    }
+  };
+
+  const handleInputBlur = (e: React.FocusEvent) => {
+    // Only close if focus is not moving to the popover content
+    const relatedTarget = e.relatedTarget as HTMLElement;
+    if (!relatedTarget || !relatedTarget.closest('[data-radix-popper-content-wrapper]')) {
       setOpen(false);
     }
-  }, [searchValue, setFilter]);
+  };
 
-  const clear = () => {
-    setSearchValue("");
+  const handleClear = () => {
+    setInputValue("");
     setOpen(false);
-    inputRef.current?.focus();
+    // Return focus to input after clearing
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
+    if (e.key === "Escape") {
       setOpen(false);
       inputRef.current?.blur();
     }
   };
 
-  const handleResultClick = () => {
-    setOpen(false);
-    setSearchValue("");
-    inputRef.current?.blur();
-  };
-
-  const handleFocus = () => {
-    setIsFocused(true);
-    if (searchValue && searchValue.length >= 2) {
-      setOpen(true);
+  const getResultIcon = (type: SearchResult['type']) => {
+    switch (type) {
+      case 'shipment':
+        return <Package className="h-4 w-4" />;
+      case 'order':
+        return <Package className="h-4 w-4" />;
+      case 'tracker':
+        return <MapPin className="h-4 w-4" />;
+      default:
+        return <Package className="h-4 w-4" />;
     }
   };
 
-  const handleBlur = () => {
-    setIsFocused(false);
-    // Delay closing to allow clicking on results
-    setTimeout(() => {
-      if (!containerRef.current?.contains(document.activeElement)) {
-        setOpen(false);
-      }
-    }, 150);
-  };
-
-  const isLoading = query.isFetching && searchValue.length >= 2;
-  const hasResults = !isNoneOrEmpty(searchValue) && searchValue.length >= 2 && (query.data?.results || []).length > 0;
+  // Combine refs
+  React.useImperativeHandle(ref, () => inputRef.current!, []);
 
   return (
-    <div className="relative w-full max-w-md min-w-[300px]" ref={containerRef}>
+    <div className={cn("w-full", maxWidth)}>
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <div className="relative">
-            <div className={`
-                            relative flex items-center rounded-lg transition-all duration-200
-                            ${isFocused ? 'bg-white ring-2 ring-blue-500 shadow-sm' : 'bg-gray-100 hover:bg-gray-200'}
-                        `}>
-              <Search className="absolute left-3 h-4 w-4 text-gray-500 pointer-events-none" />
-              <input
-                ref={inputRef}
-                type="text"
-                placeholder="Search..."
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                onKeyDown={handleKeyDown}
-                className="
-                                    w-full h-10 pl-10 pr-10 bg-transparent border-0 outline-none
-                                    text-sm placeholder:text-gray-500 text-gray-900
-                                "
-              />
-              <div className="absolute right-3 flex items-center">
-                {isLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
-                ) : searchValue ? (
-                  <button
-                    onClick={clear}
-                    className="h-4 w-4 text-gray-400 hover:text-gray-600 transition-colors"
-                    type="button"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                ) : null}
-              </div>
+        <PopoverAnchor asChild>
+          <div className={cn(
+            "flex h-8 w-full items-center rounded-md bg-gray-100 hover:bg-gray-200 focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-500 transition-all duration-200",
+            className
+          )}>
+            <Search className="ml-3 h-4 w-4 text-gray-500 pointer-events-none flex-shrink-0" />
+            <input
+              ref={inputRef}
+              value={inputValue}
+              onChange={handleInputValueChange}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
+              onKeyDown={handleKeyDown}
+              placeholder={placeholder}
+              className="flex-1 bg-transparent border-0 px-3 py-2 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
+              autoComplete="off"
+              data-lpignore="true"
+              data-form-type="search"
+            />
+            <div className="mr-3 flex items-center">
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
+              ) : inputValue ? (
+                <button
+                  type="button"
+                  onClick={handleClear}
+                  className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                  tabIndex={-1}
+                >
+                  <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                </button>
+              ) : null}
             </div>
           </div>
-        </PopoverTrigger>
+        </PopoverAnchor>
 
         <PopoverContent
-          className="w-[400px] p-0 mt-1"
+          className="w-full p-0"
           align="start"
           side="bottom"
           sideOffset={4}
           onOpenAutoFocus={(e) => e.preventDefault()}
+          style={{ width: 'var(--radix-popover-trigger-width)' }}
         >
           <Command shouldFilter={false}>
-            <CommandList className="max-h-80">
-              {isLoading ? (
-                <CommandEmpty>
-                  <div className="flex items-center justify-center py-6">
-                    <Loader2 className="h-4 w-4 animate-spin mr-2 text-gray-400" />
-                    <span className="text-sm text-gray-600">Searching...</span>
-                  </div>
-                </CommandEmpty>
-              ) : hasResults ? (
+            <CommandList>
+              {searchResults.length === 0 && debouncedValue.trim() && !isLoading && (
+                <CommandEmpty>No results found.</CommandEmpty>
+              )}
+
+              {searchResults.length > 0 && (
                 <CommandGroup>
-                  {(query.data?.results || []).slice(0, 8).map((result, key) => (
-                    <React.Fragment key={key}>
-                      {(result as any).recipient && (
-                        <CommandItem className="p-0" onSelect={handleResultClick}>
-                          <AppLink
-                            href={`/shipments/${result.id}`}
-                            className="flex items-center w-full px-4 py-3 text-sm hover:bg-gray-50 transition-colors"
-                          >
-                            <div className="flex items-center justify-center w-8 h-8 bg-blue-50 rounded-lg mr-3">
-                              <Package className="h-4 w-4 text-blue-600" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="font-medium text-gray-900 truncate">
-                                {formatAddressShort((result as any).recipient)}
-                              </div>
-                              <div className="text-xs text-gray-500">Shipment</div>
-                            </div>
-                            <div className="flex items-center gap-2 ml-3">
-                              <StatusBadge status={result.status as string} className="text-xs" />
-                              <span className="text-xs text-gray-500 whitespace-nowrap">
-                                {moment(result.created_at).format("MMM D")}
-                              </span>
-                            </div>
-                          </AppLink>
-                        </CommandItem>
-                      )}
-                      {(result as any).shipping_to && (
-                        <CommandItem className="p-0" onSelect={handleResultClick}>
-                          <AppLink
-                            href={`/orders/${result.id}`}
-                            className="flex items-center w-full px-4 py-3 text-sm hover:bg-gray-50 transition-colors"
-                          >
-                            <div className="flex items-center justify-center w-8 h-8 bg-green-50 rounded-lg mr-3">
-                              <Package className="h-4 w-4 text-green-600" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="font-medium text-gray-900 truncate">
-                                {formatAddressShort((result as any).shipping_to)}
-                              </div>
-                              <div className="text-xs text-gray-500">Order</div>
-                            </div>
-                            <div className="flex items-center gap-2 ml-3">
-                              <StatusBadge status={result.status as string} className="text-xs" />
-                              <span className="text-xs text-gray-500 whitespace-nowrap">
-                                {moment(result.created_at).format("MMM D")}
-                              </span>
-                            </div>
-                          </AppLink>
-                        </CommandItem>
-                      )}
-                      {(!(result as any).shipping_to && !(result as any).recipient) && (
-                        <CommandItem className="p-0" onSelect={handleResultClick}>
-                          <a
-                            href={`/tracking/${result.id}`}
-                            className="flex items-center w-full px-4 py-3 text-sm hover:bg-gray-50 transition-colors"
-                          >
-                            <div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mr-3">
-                              <MapPin className="h-4 w-4 text-orange-600" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="font-medium text-gray-900 truncate">
-                                {(result as any).tracking_number}
-                              </div>
-                              <div className="text-xs text-gray-500">Tracker</div>
-                            </div>
-                            <div className="flex items-center gap-2 ml-3">
-                              <StatusBadge status={result.status as string} className="text-xs" />
-                              <span className="text-xs text-gray-500 whitespace-nowrap">
-                                {moment(result.created_at).format("MMM D")}
-                              </span>
-                            </div>
-                          </a>
-                        </CommandItem>
-                      )}
-                    </React.Fragment>
+                  {searchResults.map((result) => (
+                    <CommandItem
+                      key={`${result.type}-${result.id}`}
+                      value={result.title}
+                      onSelect={() => setOpen(false)}
+                      onMouseDown={(e) => e.preventDefault()}
+                    >
+                      <AppLink href={result.href} className="flex items-center gap-3 p-3 hover:bg-gray-50 w-full">
+                        <div className="flex-shrink-0 text-gray-400">
+                          {getResultIcon(result.type)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <p className="text-sm font-medium text-gray-900 truncate">
+                              {result.title}
+                            </p>
+                            {result.status && (
+                              <StatusBadge status={result.status} />
+                            )}
+                          </div>
+                          {result.subtitle && (
+                            <p className="text-xs text-gray-500 truncate mt-1">
+                              {result.subtitle}
+                            </p>
+                          )}
+                          {result.date && (
+                            <p className="text-xs text-gray-400 mt-1">
+                              {moment(result.date).fromNow()}
+                            </p>
+                          )}
+                        </div>
+                      </AppLink>
+                    </CommandItem>
                   ))}
                 </CommandGroup>
-              ) : (
-                <CommandEmpty>
-                  <div className="py-8 text-center">
-                    <div className="text-sm text-gray-500">
-                      {isNoneOrEmpty(searchValue) ? "Start typing to search..." :
-                        searchValue.length < 2 ? "Type at least 2 characters..." :
-                          "No results found."}
-                    </div>
-                    {searchValue.length >= 2 && !isLoading && (
-                      <div className="text-xs text-gray-400 mt-1">
-                        Try searching for shipments, orders, or tracking numbers
-                      </div>
-                    )}
-                  </div>
-                </CommandEmpty>
               )}
             </CommandList>
           </Command>
@@ -224,4 +275,6 @@ export function SearchBar() {
       </Popover>
     </div>
   );
-}
+});
+
+SearchBar.displayName = "SearchBar";

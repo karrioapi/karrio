@@ -10,8 +10,7 @@ import { TestModeToggle } from "./test-mode-toggle";
 import { SidebarTrigger } from "@karrio/ui/components/ui/sidebar";
 import { Separator } from "@karrio/ui/components/ui/separator";
 import React, { Suspense, useState } from "react";
-// import { SearchBar } from "./search-bar";
-import { SearchBar } from "@karrio/ui/core/forms/search-bar";
+import { SearchBar } from "./search-bar";
 import { SearchModal } from "./search-modal";
 
 // Lazy load the AppLauncher component
@@ -43,7 +42,6 @@ export function Navbar() {
           <div className="flex items-center gap-4 flex-1">
             {/* Desktop Search - Hidden on mobile */}
             <div className="hidden md:block w-full">
-              {/* <SearchBar /> */}
               <SearchBar />
             </div>
           </div>

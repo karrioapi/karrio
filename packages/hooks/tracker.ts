@@ -12,8 +12,8 @@ import {
   isNoneOrEmpty,
   onError,
 } from "@karrio/lib";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useKarrio } from "./karrio";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuthenticatedQuery, useKarrio } from "./karrio";
 import React from "react";
 
 const PAGE_SIZE = 20;
@@ -38,7 +38,9 @@ export function useTrackers({
     karrio.graphql.request<get_trackers>(gqlstr(GET_TRACKERS), { variables });
 
   // Queries
-  const query = useQuery(["trackers", filter], () => fetch({ filter }), {
+  const query = useAuthenticatedQuery({
+    queryKey: ["trackers", filter],
+    queryFn: () => fetch({ filter }),
     keepPreviousData: true,
     staleTime: 5000,
     refetchInterval: 120000,
@@ -51,19 +53,19 @@ export function useTrackers({
       return isNoneOrEmpty(options[key as keyof TrackerFilter])
         ? acc
         : {
-            ...acc,
-            [key]: ["carrier_name", "status"].includes(key)
-              ? []
-                  .concat(options[key as keyof TrackerFilter])
-                  .reduce(
-                    (acc, item: string) =>
-                      [].concat(acc, item.split(",") as any),
-                    [],
-                  )
-              : ["offset", "first"].includes(key)
-                ? parseInt(options[key as keyof TrackerFilter])
-                : options[key as keyof TrackerFilter],
-          };
+          ...acc,
+          [key]: ["carrier_name", "status"].includes(key)
+            ? []
+              .concat(options[key as keyof TrackerFilter])
+              .reduce(
+                (acc, item: string) =>
+                  [].concat(acc, item.split(",") as any),
+                [],
+              )
+            : ["offset", "first"].includes(key)
+              ? parseInt(options[key as keyof TrackerFilter])
+              : options[key as keyof TrackerFilter],
+        };
     }, PAGINATION);
 
     if (setVariablesToURL) insertUrlParam(params);
@@ -95,11 +97,9 @@ export function useTracker(id: string) {
   const karrio = useKarrio();
 
   // Queries
-  const query = useQuery(["trackers", id], {
-    queryFn: () =>
-      karrio.graphql.request<get_tracker>(gqlstr(GET_TRACKER), {
-        data: { id },
-      }),
+  const query = useAuthenticatedQuery({
+    queryKey: ["trackers", id],
+    queryFn: () => karrio.graphql.request<get_tracker>(gqlstr(GET_TRACKER), { data: { id } }),
     enabled: !!id,
     onError,
   });

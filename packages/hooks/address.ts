@@ -1,7 +1,7 @@
 import { AddressFilter, CreateAddressTemplateInput, create_address_template, CREATE_ADDRESS_TEMPLATE, delete_template, DELETE_TEMPLATE, get_address_templates, GET_ADDRESS_TEMPLATES, UpdateAddressTemplateInput, update_address_template, UPDATE_ADDRESS_TEMPLATE } from "@karrio/types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { gqlstr, insertUrlParam, isNoneOrEmpty, onError } from "@karrio/lib";
-import { useKarrio } from "./karrio";
+import { useKarrio, useAuthenticatedQuery, useAuthenticatedMutation } from "./karrio";
+import { gqlstr, insertUrlParam, isNoneOrEmpty } from "@karrio/lib";
+import { useQueryClient } from "@tanstack/react-query";
 import React from "react";
 
 const PAGE_SIZE = 25;
@@ -16,14 +16,12 @@ export function useAddressTemplates({ setVariablesToURL = false, isDisabled = fa
     gqlstr(GET_ADDRESS_TEMPLATES), { variables }
   );
 
-  // Queries
-  const query = useQuery({
+  const query = useAuthenticatedQuery({
     queryKey: ['addresses', filter],
     queryFn: () => fetch({ filter }),
     enabled: !isDisabled,
     keepPreviousData: true,
     staleTime: 5000,
-    onError,
   });
 
   function setFilter(options: AddressFilter) {
@@ -79,23 +77,24 @@ export function useAddressTemplateMutation() {
     queryClient.invalidateQueries(['default_templates']);
   };
 
-  // Mutations
-  const createAddressTemplate = useMutation(
-    (data: CreateAddressTemplateInput) => karrio.graphql.request<create_address_template>(
+  const createAddressTemplate = useAuthenticatedMutation({
+    mutationFn: (data: CreateAddressTemplateInput) => karrio.graphql.request<create_address_template>(
       gqlstr(CREATE_ADDRESS_TEMPLATE), { data }
     ),
-    { onSuccess: invalidateCache, onError }
-  );
-  const updateAddressTemplate = useMutation(
-    (data: UpdateAddressTemplateInput) => karrio.graphql.request<update_address_template>(
+    onSuccess: invalidateCache,
+  });
+
+  const updateAddressTemplate = useAuthenticatedMutation({
+    mutationFn: (data: UpdateAddressTemplateInput) => karrio.graphql.request<update_address_template>(
       gqlstr(UPDATE_ADDRESS_TEMPLATE), { data }
     ),
-    { onSuccess: invalidateCache, onError }
-  );
-  const deleteAddressTemplate = useMutation(
-    (data: { id: string }) => karrio.graphql.request<delete_template>(gqlstr(DELETE_TEMPLATE), { data }),
-    { onSuccess: invalidateCache, onError }
-  );
+    onSuccess: invalidateCache,
+  });
+
+  const deleteAddressTemplate = useAuthenticatedMutation({
+    mutationFn: (data: { id: string }) => karrio.graphql.request<delete_template>(gqlstr(DELETE_TEMPLATE), { data }),
+    onSuccess: invalidateCache,
+  });
 
   return {
     createAddressTemplate,

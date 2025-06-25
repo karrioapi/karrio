@@ -7,13 +7,12 @@ import {
   gqlstr,
   onError,
 } from "@karrio/lib";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "@tanstack/react-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { useLoader } from "@karrio/ui/core/components/loader";
+import { useAuthenticatedQuery, useKarrio } from "./karrio";
 import { NotificationType } from "@karrio/types";
-import { useKarrio } from "./karrio";
-import React from "react";
+import { useForm } from "@tanstack/react-form";
 
 type APIKeyType = {
   object_type: string;
@@ -60,7 +59,9 @@ export function useAPIKeys() {
   const queryClient = useQueryClient();
   const fetch = () => karrio.graphql.request<GetAPIKeys>(gqlstr(GET_API_KEYS));
 
-  const query = useQuery(["api_keys"], fetch, {
+  const query = useAuthenticatedQuery({
+    queryKey: ["api_keys"],
+    queryFn: fetch,
     keepPreviousData: true,
     staleTime: 5000,
     refetchInterval: 120000,

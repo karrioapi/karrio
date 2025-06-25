@@ -32,6 +32,7 @@ import karrio.server.graph.forms as forms
 import karrio.server.graph.utils as utils
 import karrio.server.user.models as auth
 import karrio.server.iam.models as iam
+import karrio.server.core.models as core
 import karrio.lib as lib
 
 logger = logging.getLogger(__name__)
@@ -826,3 +827,45 @@ class UpdateServiceZoneMutation(utils.BaseMutation):
         serializer.update_zone(input["zone_index"], input["zone"])
 
         return UpdateServiceZoneMutation(rate_sheet=rate_sheet)  # type:ignore
+
+
+@strawberry.type
+class CreateMetafieldMutation(utils.BaseMutation):
+    metafield: typing.Optional[types.MetafieldType] = None
+
+    @staticmethod
+    @utils.authentication_required
+    @utils.authorization_required()
+    def mutate(
+        info: Info, **input: inputs.CreateMetafieldInput
+    ) -> "CreateMetafieldMutation":
+        data = input.copy()
+
+        metafield = serializers.MetafieldModelSerializer.map(
+            data=data,
+            context=info.context.request,
+        ).save().instance
+
+        return CreateMetafieldMutation(metafield=metafield)
+
+
+@strawberry.type
+class UpdateMetafieldMutation(utils.BaseMutation):
+    metafield: typing.Optional[types.MetafieldType] = None
+
+    @staticmethod
+    @utils.authentication_required
+    @utils.authorization_required()
+    def mutate(
+        info: Info, **input: inputs.UpdateMetafieldInput
+    ) -> "UpdateMetafieldMutation":
+        data = input.copy()
+        instance = core.Metafield.access_by(info.context.request).get(id=data.get("id"))
+
+        metafield = serializers.MetafieldModelSerializer.map(
+            instance,
+            data=data,
+            context=info.context.request,
+        ).save().instance
+
+        return UpdateMetafieldMutation(metafield=metafield)

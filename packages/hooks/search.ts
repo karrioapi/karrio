@@ -1,24 +1,44 @@
 import { SEARCH_DATA, search_data, search_dataVariables } from "@karrio/types";
 import { gqlstr, isNone, onError } from "@karrio/lib";
-import { useQuery } from "@tanstack/react-query";
-import { debounceTime, Subject, distinctUntilChanged } from "rxjs";
+import { useAuthenticatedQuery } from "./karrio";
 import { useKarrio } from "./karrio";
-import React from "react";
-
-const observable$ = new Subject<search_dataVariables>();
-const search$ = observable$.pipe(
-  debounceTime(800), // Increased debounce time
-  distinctUntilChanged((prev, curr) => prev.keyword === curr.keyword) // Only trigger if keyword actually changed
-);
+import { useState, useCallback, useEffect } from "react";
 
 export function useSearch() {
   const karrio = useKarrio();
-  const [filter, _setFilter] = React.useState<search_dataVariables>({});
+  const [filter, setFilter] = useState<search_dataVariables>({});
+  const [debouncedFilter, setDebouncedFilter] = useState<search_dataVariables>({});
+
+  // Debounce the filter to avoid too many API calls
+  const debounceFilter = useCallback(
+    (() => {
+      let timeoutId: NodeJS.Timeout;
+      return (newFilter: search_dataVariables) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          // Only update if keyword actually changed (distinctUntilChanged equivalent)
+          setDebouncedFilter(prev => {
+            if (prev.keyword !== newFilter.keyword) {
+              return newFilter;
+            }
+            return prev;
+          });
+        }, 800); // Increased debounce time
+      };
+    })(),
+    []
+  );
+
+  // Update debounced filter when filter changes
+  useEffect(() => {
+    debounceFilter(filter);
+  }, [filter, debounceFilter]);
 
   // Queries
-  const query = useQuery(['search', filter], {
+  const query = useAuthenticatedQuery({
+    queryKey: ['search', debouncedFilter],
     queryFn: () => (
-      karrio.graphql.request<search_data>(gqlstr(SEARCH_DATA), { variables: { ...filter } })
+      karrio.graphql.request<search_data>(gqlstr(SEARCH_DATA), { variables: { ...debouncedFilter } })
         .then((data) => {
           const results = [
             ...(data?.order_results?.edges || []),
@@ -32,7 +52,7 @@ export function useSearch() {
           return { results };
         })
     ),
-    enabled: !isNone(filter?.keyword) && (filter?.keyword?.length || 0) >= 2, // Only search with 2+ characters
+    enabled: !isNone(debouncedFilter?.keyword) && (debouncedFilter?.keyword?.length || 0) >= 2, // Only search with 2+ characters
     staleTime: 30000, // Cache results for 30 seconds
     cacheTime: 300000, // Keep in cache for 5 minutes
     refetchOnWindowFocus: false, // Don't refetch on window focus
@@ -40,11 +60,9 @@ export function useSearch() {
     onError,
   });
 
-  React.useEffect(() => { search$.subscribe(_ => _setFilter(_)); }, []);
-
   return {
     query,
     filter,
-    setFilter: (_: search_dataVariables) => observable$.next(_),
+    setFilter,
   };
 }

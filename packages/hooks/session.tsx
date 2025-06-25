@@ -2,58 +2,81 @@
 
 import { getSession, signOut, useSession } from "next-auth/react";
 import { ServerError, ServerErrorCode } from "@karrio/lib";
-import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { SessionType } from "@karrio/types";
+import { useRouter } from "next/navigation";
 import type { Session } from "next-auth";
 import { useKarrio } from "./karrio";
 import React from "react";
 
+interface ExtendedSession extends Session {
+  accessToken?: string;
+  testMode?: boolean;
+  error?: string;
+  orgId?: string;
+}
+
 export function useSyncedSession() {
+  const { status } = useSession();
+
   // Queries
-  const query = useQuery(
-    ["session"],
-    () =>
-      getSession().then((_) => {
-        console.log("fetch session", new Date());
-        return _;
-      }),
-    { refetchInterval: 120000 },
-  );
+  const query = useQuery({
+    queryKey: ["session"],
+    queryFn: async () => {
+      const session = await getSession();
+      return session as ExtendedSession;
+    },
+    refetchInterval: 120000,
+    enabled: status === "authenticated",
+    staleTime: 110000, // Slightly less than refetch interval
+    retry: 1,
+  });
 
   return {
     query,
-  } as any & { query: { data: SessionType } };
+    isAuthenticated: status === "authenticated" && !!(query.data as ExtendedSession)?.accessToken,
+    isLoading: status === "loading" || query.isLoading,
+  };
 }
 
-export const NextSession = React.createContext<Session | null | undefined>(
-  undefined,
-);
+export const NextSession = React.createContext<{
+  session: ExtendedSession | null | undefined;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+}>({
+  session: undefined,
+  isAuthenticated: false,
+  isLoading: true,
+});
 
 const NextSessionProvider = ({
   children,
 }: {
   children?: React.ReactNode;
 }): JSX.Element => {
-  const { data: session } = useSession();
-  const [sessionState, setSessionState] = React.useState<Session | null>(
-    session as Session,
-  );
+  const { data: session, status } = useSession();
+  const [sessionState, setSessionState] = React.useState<ExtendedSession | null>(session as ExtendedSession);
+  const isAuthenticated = status === "authenticated" && !!(session as ExtendedSession)?.accessToken;
+  const isLoading = status === "loading";
 
   React.useEffect(() => {
-    // set session state if session is not null, has no error and has a new access token
     if (
-      (session as any)?.error !== (sessionState as any)?.error ||
-      (session as any)?.accessToken !== (sessionState as any)?.accessToken ||
+      (session as ExtendedSession)?.error !== (sessionState as ExtendedSession)?.error ||
+      (session as ExtendedSession)?.accessToken !== (sessionState as ExtendedSession)?.accessToken ||
       session === null
     ) {
-      setSessionState(session);
+      setSessionState(session as ExtendedSession);
     }
   }, [session, sessionState]);
 
+  const value = React.useMemo(() => ({
+    session: sessionState,
+    isAuthenticated,
+    isLoading,
+  }), [sessionState, isAuthenticated, isLoading]);
+
   return (
-    <NextSession.Provider value={sessionState}>
-      {sessionState !== undefined ? children : <></>}
+    <NextSession.Provider value={value}>
+      {!isLoading ? children : null}
     </NextSession.Provider>
   );
 };
@@ -67,27 +90,26 @@ export const SessionWrapper = ({
 }): JSX.Element => {
   const karrio = useKarrio();
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const isAuthenticated = status === "authenticated" && !!(session as ExtendedSession)?.accessToken && karrio?.isAuthenticated;
 
   React.useEffect(() => {
     if (
       session === null ||
-      (session as any)?.error === "RefreshAccessTokenError"
+      (session as ExtendedSession)?.error === "RefreshAccessTokenError" ||
+      error?.code === ServerErrorCode.API_AUTH_ERROR
     ) {
-      router.push(
-        "/signin?next=" + window.location.pathname + window.location.search,
-      );
-    }
-    if (error?.code === ServerErrorCode.API_AUTH_ERROR) {
-      signOut({
-        callbackUrl:
-          "/signin?next=" + window.location.pathname + window.location.search,
-      });
-    }
-  }, [session, error]);
+      const redirectUrl = "/signin?next=" + window.location.pathname + window.location.search;
 
-  console.log("session", session, karrio);
-  return <>{session && karrio?.isAuthenticated && children}</>;
+      if (error?.code === ServerErrorCode.API_AUTH_ERROR) {
+        signOut({ callbackUrl: redirectUrl });
+      } else {
+        router.push(redirectUrl);
+      }
+    }
+  }, [session, error, router]);
+
+  return <>{isAuthenticated ? children : null}</>;
 };
 
 export default NextSessionProvider;

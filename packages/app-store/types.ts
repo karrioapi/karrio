@@ -1,3 +1,4 @@
+import { GetAppInstallation_app_installation } from "@karrio/types/graphql/ee";
 import type React from "react";
 
 // App Manifest inspired by Stripe's app manifest
@@ -17,8 +18,17 @@ export interface AppManifest {
   // App configuration
   category: AppCategory;
   type: AppType;
-  logo: string; // Path to logo asset
-  screenshots?: string[]; // Optional screenshots
+
+  // Static assets - standardized paths
+  assets: {
+    logo?: string; // Path to app logo/icon (recommended: 64x64px, SVG preferred)
+    screenshots?: string[]; // Array of screenshot paths (recommended: 1200x800px)
+    readme?: string; // Path to README.md file for app documentation
+  };
+
+  // Legacy logo field for backward compatibility
+  logo?: string;
+  screenshots?: string[];
 
   // Feature flags
   features: AppFeature[];
@@ -49,6 +59,12 @@ export interface AppManifest {
   webhooks?: {
     events: WebhookEvent[];
     endpoint?: string;
+  };
+
+  // API Configuration
+  api?: {
+    // Public endpoints that don't require authentication
+    publicEndpoints?: string[];
   };
 
   // Additional metadata
@@ -120,49 +136,39 @@ export interface MetafieldSchema {
 }
 
 export type MetafieldType =
-  | "string"
+  | "text"
   | "number"
   | "boolean"
-  | "url"
-  | "email"
+  | "json"
+  | "date"
+  | "datetime"
   | "password"
-  | "text"
   | "select"
   | "multiselect"
-  | "date"
-  | "datetime";
+  | "url"
+  | "email";
 
 // App component types
 export interface AppComponentProps {
   app: AppInstance;
-  context: AppContext;
+  context: AppContext & {
+    // Additional context for main app components
+    org?: {
+      id: string;
+      name: string;
+    };
+  };
+  karrio?: any; // Karrio client instance
   onAction?: (action: AppAction) => void;
 }
 
 export interface AppInstance {
   id: string;
   manifest: AppManifest;
-  installation?: AppInstallation;
+  installation?: Partial<GetAppInstallation_app_installation>;
   config?: Record<string, any>;
   isInstalled: boolean;
   isEnabled: boolean;
-}
-
-export interface AppInstallation {
-  id: string;
-  app_id: string;
-  access_scopes: string[];
-  config: Record<string, any>;
-  metadata: Record<string, any>;
-  installed_at: string;
-  updated_at: string;
-  metafields?: {
-    id: string;
-    key: string;
-    value: string | null;
-    is_required: boolean;
-    type: string;
-  }[];
 }
 
 export interface AppContext {
@@ -274,4 +280,20 @@ export interface AppMetrics {
   api_calls: number;
   errors: number;
   last_used?: string;
+}
+
+// Configuration context for embedded configuration components
+export interface AppConfigurationContext {
+  app: AppInstance;
+  context: AppContext & {
+    // Additional context for configuration
+    org?: {
+      id: string;
+      name: string;
+    };
+  };
+  karrio?: any; // Karrio client instance
+  onConfigChange: (key: string, value: any) => void;
+  onSave: () => void;
+  onCancel: () => void;
 }

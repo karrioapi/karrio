@@ -113,6 +113,7 @@ venv.bak/
 
 # node
 node_modules
+!**/packages/**/lib/
 
 # turbo
 .turbo

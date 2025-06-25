@@ -33,7 +33,7 @@ import { useLoader } from "@karrio/ui/core/components/loader";
 import { useRouter } from "next/navigation";
 import { OrderType } from "@karrio/types";
 import { useAppMode } from "./app-mode";
-import { useKarrio } from "./karrio";
+import { useAuthenticatedQuery, useKarrio } from "./karrio";
 import React from "react";
 
 const PAGE_SIZE = 20;
@@ -62,7 +62,7 @@ export function useOrders({
     karrio.graphql.request<get_orders>(gqlstr(GET_ORDERS), { variables });
 
   // Queries
-  const query = useQuery({
+  const query = useAuthenticatedQuery({
     queryKey: [cacheKey || "orders", filter],
     queryFn: () => fetch({ filter }),
     enabled: !isDisabled,
@@ -122,7 +122,7 @@ export function useOrder(id: string, { editable = false } = {}) {
   const QUERY = gqlstr(editable ? GET_ORDER_DATA : GET_ORDER);
 
   // Queries
-  const query = useQuery({
+  const query = useAuthenticatedQuery({
     queryKey: ["orders", id],
     queryFn: () =>
       karrio.graphql.request<get_order>(QUERY, { variables: { id } }),
@@ -244,7 +244,7 @@ export function useOrderForm({ id = "new" }: { id?: string }) {
   const isLocalDraft = (id?: string) => isNoneOrEmpty(id) || id === "new";
 
   // Queries
-  const query = useQuery({
+  const query = useAuthenticatedQuery({
     queryKey: ["orders", id],
     queryFn: () => (id === "new" ? { order } : { order: current }),
     enabled: !!id && (id === "new" || orderQuery.isFetched),

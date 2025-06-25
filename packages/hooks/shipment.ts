@@ -17,10 +17,10 @@ import {
   change_shipment_status,
   DISCARD_PARCEL,
 } from "@karrio/types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { gqlstr, handleFailure, insertUrlParam, onError } from "@karrio/lib";
+import { useAuthenticatedQuery, useKarrio } from "./karrio";
 import { ShipmentType } from "@karrio/types";
-import { useKarrio } from "./karrio";
 import React from "react";
 
 const PAGE_SIZE = 20;
@@ -49,7 +49,7 @@ export function useShipments({
     karrio.graphql.request<get_shipments>(gqlstr(GET_SHIPMENTS), { variables });
 
   // Queries
-  const query = useQuery({
+  const query = useAuthenticatedQuery({
     queryKey: [cacheKey || "shipments", filter],
     queryFn: () => fetch({ filter }),
     enabled: !isDisabled,
@@ -121,7 +121,7 @@ export function useShipment(id: string) {
   const karrio = useKarrio();
 
   // Queries
-  const query = useQuery({
+  const query = useAuthenticatedQuery({
     queryKey: ["shipments", id],
     queryFn: () =>
       karrio.graphql.request<get_shipment>(gqlstr(GET_SHIPMENT), {

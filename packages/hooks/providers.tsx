@@ -20,12 +20,12 @@ import {
 } from "@tanstack/react-query";
 
 const AuthenticatedContexts = bundleContexts([
-  CreateOrganizationModalProvider,
-  AcceptInvitationProvider,
   ClientProvider,
-  OrganizationProvider,
   APIMetadataProvider,
   AppModeProvider,
+  CreateOrganizationModalProvider,
+  AcceptInvitationProvider,
+  OrganizationProvider,
   LoadingProvider,
   Notifier,
 ]);

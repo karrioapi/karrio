@@ -1,9 +1,12 @@
 "use client";
-import React, { useState, useEffect, Suspense } from "react";
 import { Alert, AlertDescription } from "@karrio/ui/components/ui/alert";
 import { Card, CardContent } from "@karrio/ui/components/ui/card";
+import React, { useState, useEffect, Suspense } from "react";
+import { useSyncedSession } from "@karrio/hooks/session";
+import { createKarrioClient } from "@karrio/app-store";
 import { Loader2, AlertTriangle } from "lucide-react";
-import { useAppInstallation } from "@karrio/hooks";
+import { useAppInstallation, useAppStore } from "@karrio/hooks";
+import { getAppStore } from "@karrio/app-store";
 import {
   AppContainerProps,
   AppInstance,
@@ -19,7 +22,7 @@ import {
   appSupportsViewport,
   createAppError
 } from "../utils";
-import { getAppStore } from "@karrio/app-store";
+import { AppErrorBoundary } from "./app-error-boundary";
 
 interface AppContainerState {
   status: AppStatus;
@@ -42,12 +45,28 @@ export function AppContainer({
     error: null,
   });
 
-  // Only fetch app installation data for non-builtin apps
-  const shouldFetchInstallation = state.module?.default.type !== "builtin";
+  // Fetch app installation data for all apps (builtin and non-builtin)
+  const shouldFetchInstallation = state.status === "ready";
   const { isInstalled, installation, app, isLoading, error } = useAppInstallation(
     appId,
     shouldFetchInstallation
   );
+
+  // Debug logging for app installation data
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('App Installation Debug:', {
+        appId,
+        appType: state.module?.default.type,
+        hasInstallation: !!installation,
+        installationMetafieldsCount: installation?.metafields?.length || 0,
+        installationMetafields: installation?.metafields,
+        isLoading,
+        error: error,
+        isInstalled,
+      });
+    }
+  }, [appId, state.module?.default.type, installation, isLoading, error, isInstalled]);
 
   // Load app module when component mounts
   useEffect(() => {
@@ -104,14 +123,14 @@ export function AppContainer({
     return () => {
       isMounted = false;
     };
-  }, [appId, viewport]);
+  }, [appId, viewport, installation?.updated_at]);
 
-  // Show loading while app installation data is being fetched (only for non-builtin apps)
+  // Show loading while app installation data is being fetched
   if (shouldFetchInstallation && isLoading) {
     return <AppLoadingState />;
   }
 
-  // Show error if failed to fetch app installation data (only for non-builtin apps)
+  // Show error if failed to fetch app installation data
   if (shouldFetchInstallation && error) {
     return (
       <AppErrorState
@@ -124,7 +143,7 @@ export function AppContainer({
     );
   }
 
-  // Show not installed state for apps that require installation
+  // Show not installed state for non-builtin apps that require installation
   if (shouldFetchInstallation && !isInstalled && state.module?.default.type !== "builtin") {
     return <AppNotInstalledState appId={appId} manifest={state.module?.default} />;
   }
@@ -141,12 +160,15 @@ export function AppContainer({
 
   // Render the app
   if (state.status === "ready" && state.module) {
+    // Use the installation data directly (works for both builtin and non-builtin apps)
+    const finalInstallation = installation;
+
     return (
       <AppRenderer
         appId={appId}
         module={state.module}
         appData={app}
-        installation={installation}
+        installation={finalInstallation}
         context={context}
         viewport={viewport}
         className={className}
@@ -180,6 +202,8 @@ function AppRenderer({
   className,
 }: AppRendererProps) {
   const { Component } = module;
+  const { query: sessionQuery } = useSyncedSession();
+  const session = sessionQuery.data;
 
   if (!Component) {
     return (
@@ -193,30 +217,77 @@ function AppRenderer({
     );
   }
 
-  // Create app instance
+  // Create enhanced app instance with proper installation structure
   const appInstance: AppInstance = {
     id: appId,
-    manifest: module.default,
-    installation,
-    config: installation?.metadata || {},
+    manifest: module.default as AppManifest,
+    installation: {
+      ...installation,
+      // Ensure metafields are properly accessible
+      metafields: installation?.metafields || [],
+      config: installation?.metafields?.reduce((acc: Record<string, any>, field: any) => {
+        acc[field.key] = field.value;
+        return acc;
+      }, {}) || installation?.metadata || {},
+      // Ensure API key is accessible
+      api_key: installation?.api_key,
+    },
     isInstalled: !!installation,
     isEnabled: installation ? installation.enabled !== false : false,
     ...normalizeAppMetadata(appData),
   };
 
-  // Create app context
-  const appContext: AppContext = {
+  // Create enhanced app context with session data and org info
+  const appContext: AppContext & {
+    org?: { id: string; name: string };
+  } = {
     workspace: {
-      id: context.workspace?.id || "default",
+      id: session?.orgId || context.workspace?.id || "default",
       name: context.workspace?.name || "Default Workspace",
     },
-    user: context.user,
+    user: session?.user ? {
+      id: session.user.id || 'unknown',
+      email: session.user.email || '',
+      name: session.user.name || session.user.email || '',
+    } : context.user,
+    org: session?.orgId ? {
+      id: session.orgId,
+      name: 'Default Organization',
+    } : undefined,
     page: context.page || {
-      route: window.location.pathname,
+      route: typeof window !== 'undefined' ? window.location.pathname : '',
       params: {},
     },
     data: context.data,
   };
+
+  // Create Karrio client if API key is available
+  const karrio = appInstance.installation?.api_key ? createKarrioClient(appInstance.installation.api_key) : undefined;
+
+  // Debug logging for authentication context in development
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('AppContainer Authentication Debug:', {
+        appId,
+        appType: module.default?.type,
+        hasInstallation: !!appInstance.installation,
+        hasApiKey: !!appInstance.installation?.api_key,
+        hasKarrioClient: !!karrio,
+        metafieldsCount: appInstance.installation?.metafields?.length || 0,
+        configKeys: Object.keys((appInstance.installation as any)?.config || {}),
+        installationId: appInstance.installation?.id,
+        rawMetafields: appInstance.installation?.metafields,
+      });
+    }
+  }, [appId, appInstance.installation, karrio, module]);
+
+  // Set global context for JWT authentication if user and workspace are available
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && appContext.user?.id && appContext.workspace?.id) {
+      (window as any).__KARRIO_USER_ID__ = appContext.user.id;
+      (window as any).__KARRIO_ORG_ID__ = appContext.workspace.id;
+    }
+  }, [appContext.user?.id, appContext.workspace?.id]);
 
   // Handle app actions
   const handleAction = (action: any) => {
@@ -224,15 +295,24 @@ function AppRenderer({
     // TODO: Implement action handling (events, navigation, etc.)
   };
 
+  // Create enhanced props for the component
+  const componentProps = {
+    app: appInstance,
+    context: appContext,
+    karrio,
+    onAction: handleAction,
+  };
+
   return (
     <div className={`karrio-app-container ${className}`} data-app-id={appId}>
-      <Suspense fallback={<AppLoadingState />}>
-        <Component
-          app={appInstance}
-          context={appContext}
-          onAction={handleAction}
-        />
-      </Suspense>
+      <AppErrorBoundary
+        context={`App Component (${appId})`}
+        showDetails={process.env.NODE_ENV === 'development'}
+      >
+        <Suspense fallback={<AppLoadingState />}>
+          <Component {...componentProps} />
+        </Suspense>
+      </AppErrorBoundary>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { WorkflowConnectionFilter, GetWorkflowConnections, GET_WORKFLOW_CONNECTIONS, GetWorkflowConnection, GET_WORKFLOW_CONNECTION, CreateWorkflowConnection, UpdateWorkflowConnection, UpdateWorkflowConnectionMutationInput, CreateWorkflowConnectionMutationInput, DELETE_WORKFLOW_CONNECTION, UPDATE_WORKFLOW_CONNECTION, CREATE_WORKFLOW_CONNECTION, DeleteMutationInput } from "@karrio/types/graphql/ee";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { gqlstr, insertUrlParam, isNoneOrEmpty, onError } from "@karrio/lib";
-import { useKarrio } from "./karrio";
+import { useAuthenticatedQuery, useKarrio } from "./karrio";
 import React from "react";
 
 const PAGE_SIZE = 20;
@@ -17,11 +17,14 @@ export function useWorkflowConnections({ setVariablesToURL = false, ...initialDa
   );
 
   // Queries
-  const query = useQuery(
-    ['workflow-connections', filter],
-    () => fetch({ filter }),
-    { keepPreviousData: true, staleTime: 5000, refetchInterval: 120000, onError },
-  );
+  const query = useAuthenticatedQuery({
+    queryKey: ['workflow-connections', filter],
+    queryFn: () => fetch({ filter }),
+    keepPreviousData: true,
+    staleTime: 5000,
+    refetchInterval: 120000,
+    onError,
+  });
 
   function setFilter(options: WorkflowConnectionFilter) {
     const params = Object.keys(options).reduce((acc, key) => {
@@ -66,7 +69,8 @@ export function useWorkflowConnection({ id, setVariablesToURL = false }: Args = 
   const [workflowActionId, _setWorkflowConnectionId] = React.useState<string>(id || 'new');
 
   // Queries
-  const query = useQuery(['workflow-connections', id], {
+  const query = useAuthenticatedQuery({
+    queryKey: ['workflow-connections', id],
     queryFn: () => karrio.graphql.request<GetWorkflowConnection>(gqlstr(GET_WORKFLOW_CONNECTION), { variables: { id: workflowActionId } }),
     enabled: (workflowActionId !== 'new'),
     onError,

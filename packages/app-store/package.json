@@ -36,9 +36,29 @@
       "import": "./types.ts",
       "require": "./types.ts"
     },
+    "./lib": {
+      "import": "./lib/index.ts",
+      "require": "./lib/index.ts"
+    },
+    "./lib/app-auth": {
+      "import": "./lib/app-auth.ts",
+      "require": "./lib/app-auth.ts"
+    },
+    "./lib/karrio-client": {
+      "import": "./lib/karrio-client.ts",
+      "require": "./lib/karrio-client.ts"
+    },
+    "./lib/app-routes": {
+      "import": "./lib/app-routes.ts",
+      "require": "./lib/app-routes.ts"
+    },
     "./modules/Store": {
       "import": "./modules/Store/index.tsx",
       "require": "./modules/Store/index.tsx"
+    },
+    "./apps/*": {
+      "import": "./apps/*",
+      "require": "./apps/*"
     }
   }
 }
