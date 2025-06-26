@@ -37,6 +37,15 @@ UNITS = {
 }
 
 
+class TemplateRenderingError(Exception):
+    """Custom exception for template rendering errors"""
+    def __init__(self, message, line_number=None, template_error=None):
+        self.message = message
+        self.line_number = line_number
+        self.template_error = template_error
+        super().__init__(self.message)
+
+
 class Documents:
     @staticmethod
     def generate(
@@ -47,6 +56,8 @@ class Documents:
     ) -> io.BytesIO:
         options = kwargs.get("options") or {}
         metadata = kwargs.get("metadata") or {}
+
+        # Build contexts based on related_object and provided data
         shipment_contexts = data.get("shipments_context") or lib.identity(
             get_shipments_context(data["shipments"])
             if "shipments" in data and related_object == "shipment"
@@ -57,63 +68,120 @@ class Documents:
             if "orders" in data and related_object == "order"
             else []
         )
+
+        # For generic contexts, include the full data structure
         generic_contexts = data.get("generic_context") or lib.identity(
-            [{"data": data}] if related_object is None else []
+            [data] if related_object is None else []
         )
+
+        # If no specific contexts are provided but we have a related_object, create a context with the data
+        if not shipment_contexts and not order_contexts and not generic_contexts:
+            if related_object == "shipment" and data:
+                # For shipment templates, ensure we have the expected structure
+                generic_contexts = [data]
+            elif related_object == "order" and data:
+                # For order templates, ensure we have the expected structure
+                generic_contexts = [data]
+            else:
+                # Default fallback
+                generic_contexts = [data]
+
         filename = lib.identity(
             dict(filename=kwargs.get("doc_name")) if kwargs.get("doc_name") else {}
         )
 
-        prefetch = lambda ctx: {
-            k: v
-            for o in lib.run_concurently(
-                lambda _: {
-                    _[0]: str(
-                        lib.failsafe(
-                            lambda: _[1].render(
-                                **ctx,
-                                metadata=metadata,
-                                units=UNITS,
-                                utils=utils,
-                                lib=lib,
-                            )
-                        )
-                        or ""
+        def safe_render_prefetch(ctx):
+            """Safely render prefetch templates with error handling"""
+            result = {}
+            for key, value in options.get("prefetch", {}).items():
+                try:
+                    template_obj = jinja2.Template(value)
+                    rendered = template_obj.render(
+                        **ctx,
+                        metadata=metadata,
+                        units=UNITS,
+                        utils=utils,
+                        lib=lib,
                     )
-                },
-                [
-                    (key, jinja2.Template(value))
-                    for key, value in options.get("prefetch", {}).items()
-                ],
-            )
-            for k, v in o.items()
-        }
+                    result[key] = str(rendered or "")
+                except jinja2.TemplateError as e:
+                    # Log the error but continue with empty string
+                    result[key] = ""
+            return result
 
-        jinja_template = jinja2.Template(template)
+        try:
+            jinja_template = jinja2.Template(template)
+        except jinja2.TemplateSyntaxError as e:
+            raise TemplateRenderingError(
+                f"Template syntax error: {e.message}",
+                line_number=e.lineno,
+                template_error=e
+            )
+
         all_contexts = shipment_contexts + order_contexts + generic_contexts
-        rendered_pages = lib.run_asynchronously(
-            lambda ctx: jinja_template.render(
-                **ctx,
-                metadata=metadata,
-                units=UNITS,
-                utils=utils,
-                lib=lib,
-                prefetch=prefetch(ctx),
-            ),
-            all_contexts,
-        )
+
+        # If no contexts are available, create a default one
+        if not all_contexts:
+            all_contexts = [data or {}]
+
+        rendered_pages = []
+        for ctx in all_contexts:
+            try:
+                # Add prefetch data safely
+                ctx_with_prefetch = {
+                    **ctx,
+                    "prefetch": safe_render_prefetch(ctx)
+                }
+
+                rendered_page = jinja_template.render(
+                    **ctx_with_prefetch,
+                    metadata=metadata,
+                    units=UNITS,
+                    utils=utils,
+                    lib=lib,
+                )
+                rendered_pages.append(rendered_page)
+            except jinja2.UndefinedError as e:
+                raise TemplateRenderingError(
+                    f"Template variable error: {str(e)}. Available variables: {list(ctx.keys())}",
+                    template_error=e
+                )
+            except jinja2.TemplateRuntimeError as e:
+                raise TemplateRenderingError(
+                    f"Template runtime error: {str(e)}",
+                    line_number=getattr(e, 'lineno', None),
+                    template_error=e
+                )
+            except jinja2.TemplateError as e:
+                raise TemplateRenderingError(
+                    f"Template error: {str(e)}",
+                    line_number=getattr(e, 'lineno', None),
+                    template_error=e
+                )
+            except Exception as e:
+                raise TemplateRenderingError(
+                    f"Unexpected error during template rendering: {str(e)}",
+                    template_error=e
+                )
+
         content = PAGE_SEPARATOR.join(rendered_pages)
 
-        buffer = io.BytesIO()
-        html = weasyprint.HTML(string=content, encoding="utf-8")
-        html.write_pdf(
-            buffer,
-            stylesheets=STYLESHEETS,
-            font_config=FONT_CONFIG,
-            optimize_size=("fonts", "images"),
-        )
-
-        return buffer
+        # Handle PDF generation errors
+        try:
+            buffer = io.BytesIO()
+            html = weasyprint.HTML(string=content, encoding="utf-8")
+            html.write_pdf(
+                buffer,
+                stylesheets=STYLESHEETS,
+                font_config=FONT_CONFIG,
+                optimize_size=("fonts", "images"),
+            )
+            return buffer
+        except Exception as e:
+            raise TemplateRenderingError(
+                f"PDF generation error: {str(e)}",
+                template_error=e
+            )
 
     @staticmethod
     def generate_template(

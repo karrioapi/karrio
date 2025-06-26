@@ -9,18 +9,26 @@ export default function OrganizationPage(pageProps: any) {
 
     if (!metadata?.MULTI_ORGANIZATIONS) {
       return (
-        <SettingsLayout>
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">Organization management is not available.</p>
+        <div className="min-h-screen bg-background">
+          <div className="container mx-auto p-0">
+            <SettingsLayout>
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">Organization management is not available.</p>
+              </div>
+            </SettingsLayout>
           </div>
-        </SettingsLayout>
+        </div>
       );
     }
 
     return (
-      <SettingsLayout showOrganization={true}>
-        <OrganizationManagement />
-      </SettingsLayout>
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto p-0">
+          <SettingsLayout showOrganization={true}>
+            <OrganizationManagement />
+          </SettingsLayout>
+        </div>
+      </div>
     );
   };
 
