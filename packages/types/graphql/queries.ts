@@ -2605,6 +2605,7 @@ export const GET_DOCUMENT_TEMPLATE = gql`
       description
       related_object
       active
+      preview_url
       updated_at
     }
   }
@@ -2630,6 +2631,7 @@ export const GET_DOCUMENT_TEMPLATES = gql`
           related_object
           active
           updated_at
+          preview_url
         }
       }
     }

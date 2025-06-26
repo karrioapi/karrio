@@ -80,9 +80,9 @@ class User(auth.AbstractUser):
             if org_user.exists():
                 try:
                     context_permission = iam.ContextPermission.objects.get(
-                        object_pk=org_user.first().pk,
-                        content_type=ContentType.objects.get_for_model(org_user.first()),
-                    )
+                    object_pk=org_user.first().pk,
+                    content_type=ContentType.objects.get_for_model(org_user.first()),
+                )
                     _permissions = list(context_permission.groups.all().values_list("name", flat=True))
                 except iam.ContextPermission.DoesNotExist:
                     pass
