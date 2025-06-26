@@ -167,34 +167,73 @@ class DocumentGenerator(api.APIView):
         This API is designed to be used to generate GS1 labels,
         invoices and any document that requires external data.
         """
-        data = serializers.DocumentData.map(data=request.data).data
+        try:
+            data = serializers.DocumentData.map(data=request.data).data
 
-        if data.get("template") is None and data.get("template_id") is None:
-            raise serializers.ValidationError("template or template_id is required")
+            if data.get("template") is None and data.get("template_id") is None:
+                return Response(
+                    {"errors": [{"message": "template or template_id is required"}]},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
-        document_template = lib.identity(
-            None
-            if data.get("template_id") is None
-            else models.DocumentTemplate.objects.get(pk=data.get("template_id"))
-        )
+            document_template = lib.identity(
+                None
+                if data.get("template_id") is None
+                else models.DocumentTemplate.objects.get(pk=data.get("template_id"))
+            )
 
-        doc_file = generator.Documents.generate(
-            getattr(document_template, "template", data.get("template")),
-            related_object=getattr(document_template, "related_object", None),
-            metadata=getattr(document_template, "metadata", {}),
-            data=data.get("data"),
-            options=data.get("options"),
-            doc_name=data.get("doc_name"),
-            doc_fomat=data.get("doc_format"),
-        )
-        document = serializers.GeneratedDocument.map(
-            data={
-                **data,
-                "doc_file": base64.b64encode(doc_file.getvalue()).decode("utf-8"),
-            }
-        )
+            try:
+                doc_file = generator.Documents.generate(
+                    getattr(document_template, "template", data.get("template")),
+                    related_object=getattr(document_template, "related_object", None),
+                    metadata=getattr(document_template, "metadata", {}),
+                    data=data.get("data", {}),
+                    options=data.get("options", {}),
+                    doc_name=data.get("doc_name"),
+                    doc_format=data.get("doc_format"),
+                )
 
-        return Response(document.data, status=status.HTTP_201_CREATED)
+                document = serializers.GeneratedDocument.map(
+                    data={
+                        **data,
+                        "doc_file": base64.b64encode(doc_file.getvalue()).decode("utf-8"),
+                    }
+                )
+
+                return Response(document.data, status=status.HTTP_201_CREATED)
+
+            except generator.TemplateRenderingError as e:
+                error_message = e.message
+                if e.line_number:
+                    error_message += f" (line {e.line_number})"
+
+                return Response(
+                    {"errors": [{"message": error_message}]},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            except models.DocumentTemplate.DoesNotExist:
+                return Response(
+                    {"errors": [{"message": f"Document template with id '{data.get('template_id')}' not found"}]},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+            except Exception as e:
+                logger.exception(f"Unexpected error during document generation: {e}")
+                return Response(
+                    {"errors": [{"message": f"Document generation failed: {str(e)}"}]},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
+
+        except serializers.ValidationError as e:
+            return Response(
+                {"errors": [{"message": str(e)}]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            logger.exception(f"Unexpected error in document generator: {e}")
+            return Response(
+                {"errors": [{"message": "Internal server error"}]},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 
 urlpatterns = [

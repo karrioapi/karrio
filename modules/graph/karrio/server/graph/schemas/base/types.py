@@ -177,7 +177,16 @@ class WorkspaceConfigType:
     @staticmethod
     @utils.authentication_required
     def resolve(info) -> typing.Optional["WorkspaceConfigType"]:
-        return auth.WorkspaceConfig.access_by(info.context.request).first()
+        workspace_config = auth.WorkspaceConfig.access_by(info.context.request).first()
+
+        # Create a default workspace config if none exists
+        if workspace_config is None:
+            workspace_config = auth.WorkspaceConfig.objects.create(
+                created_by=info.context.request.user,
+                config={}
+            )
+
+        return workspace_config
 
 
 @strawberry.type
