@@ -412,10 +412,13 @@ export default function AppStorePage(pageProps: any) {
     return (
       <>
         {/* Header */}
-        <header className="px-0 pb-0 pt-4 flex justify-between items-center">
-          <div>
-            <h1 className="title is-4">App Store</h1>
-            <p className="text-sm text-muted-foreground">
+        <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
+          <div className="title is-4">
+            <span>App store</span>
+            <span className="tag is-warning is-size-7 has-text-weight-bold mx-2">
+              PREVIEW
+            </span>
+            <p className="text-sm text-muted-foreground pt-4">
               Discover and install apps to extend your Karrio experience
             </p>
           </div>

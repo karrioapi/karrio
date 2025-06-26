@@ -59,6 +59,10 @@
     "./apps/*": {
       "import": "./apps/*",
       "require": "./apps/*"
+    },
+    "./api/api-route": {
+      "import": "./api/api-route.ts",
+      "require": "./api/api-route.ts"
     }
   }
 }

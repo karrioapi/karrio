@@ -12,6 +12,21 @@
         ".next/**",
         "!.next/cache/**",
         "dist/**"
+      ],
+      "env": [
+        "KARRIO_ADMIN_URL",
+        "KARRIO_ADMIN_API_KEY",
+        "NEXTAUTH_SECRET",
+        "NEXTAUTH_URL",
+        "AUTH_TRUST_HOST",
+        "NEXT_PUBLIC_DASHBOARD_VERSION",
+        "NEXT_PUBLIC_KARRIO_PUBLIC_URL",
+        "NEXT_PUBLIC_MULTI_TENANT",
+        "NEXT_PUBLIC_BASE_PATH",
+        "NEXT_PUBLIC_ADDRESS_AUTO_COMPLETE_SERVICE",
+        "NEXT_PUBLIC_ADDRESS_AUTO_COMPLETE_SERVICE_KEY",
+        "NEXT_PUBLIC_SENTRY_DSN",
+        "SENTRY_IGNORE_API_RESOLUTION_ERROR"
       ]
     },
     "lint": {},
