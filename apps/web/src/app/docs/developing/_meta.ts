@@ -31,13 +31,13 @@ export default {
     title: 'Guides',
     type: 'separator',
   },
-  "api-development": {
-    title: 'API Development',
-    type: 'page'
-  },
   "carrier-integration": {
     title: 'Carrier Integration',
     type: 'page',
+  },
+  "api-development": {
+    title: 'API Development',
+    type: 'page'
   },
   "cli-guide": {
     title: 'CLI Guide',

@@ -190,6 +190,85 @@ export function useOrganizationMutation() {
     setTimeout(() => location.reload(), 1000);
   };
 
+  const removeOrganizationMember = useAuthenticatedMutation({
+    mutationFn: (data: { org_id: string; user_id: string }) =>
+      karrio.graphql.request(
+        `
+          mutation RemoveOrganizationMember($data: RemoveOrganizationMemberMutationInput!) {
+            remove_organization_member(input: $data) {
+              organization {
+                id
+                name
+                members {
+                  email
+                  full_name
+                  is_admin
+                  is_owner
+                  last_login
+                  invitation {
+                    id
+                    invitee_identifier
+                  }
+                }
+              }
+              errors { field messages }
+            }
+          }
+        `,
+        { data }
+      ),
+    onSuccess: invalidateCache,
+  });
+
+  const updateMemberStatus = useAuthenticatedMutation({
+    mutationFn: (data: { org_id: string; user_id: string; is_active: boolean }) =>
+      karrio.graphql.request(
+        `
+          mutation UpdateMemberStatus($data: UpdateMemberStatusMutationInput!) {
+            update_member_status(input: $data) {
+              organization {
+                id
+                name
+                members {
+                  email
+                  full_name
+                  is_admin
+                  is_owner
+                  last_login
+                  invitation {
+                    id
+                    invitee_identifier
+                  }
+                }
+              }
+              errors { field messages }
+            }
+          }
+        `,
+        { data }
+      ),
+    onSuccess: invalidateCache,
+  });
+
+  const resendOrganizationInvite = useAuthenticatedMutation({
+    mutationFn: (data: { invitation_id: string; redirect_url: string }) =>
+      karrio.graphql.request(
+        `
+          mutation ResendOrganizationInvite($data: ResendOrganizationInviteMutationInput!) {
+            resend_organization_invite(input: $data) {
+              invitation {
+                id
+                invitee_identifier
+              }
+              errors { field messages }
+            }
+          }
+        `,
+        { data }
+      ),
+    onSuccess: invalidateCache,
+  });
+
   return {
     createOrganization,
     updateOrganization,
@@ -198,6 +277,9 @@ export function useOrganizationMutation() {
     setOrganizationUserRoles,
     sendOrganizationInvites,
     deleteOrganizationInvitation,
+    removeOrganizationMember,
+    updateMemberStatus,
+    resendOrganizationInvite,
     changeActiveOrganization,
   };
 }

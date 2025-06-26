@@ -598,6 +598,7 @@ export interface get_organization_organization_members {
   full_name: string | null;
   is_admin: boolean;
   is_owner: boolean | null;
+  user_id: string | null;
   invitation: get_organization_organization_members_invitation | null;
   last_login: any | null;
 }
@@ -703,6 +704,7 @@ export interface get_organizations_organizations_members {
   full_name: string | null;
   is_admin: boolean;
   is_owner: boolean | null;
+  user_id: string | null;
   invitation: get_organizations_organizations_members_invitation | null;
   last_login: any | null;
 }
@@ -1023,6 +1025,137 @@ export interface delete_organization_invitation {
 
 export interface delete_organization_invitationVariables {
   data: DeleteMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: remove_organization_member
+// ====================================================
+
+export interface remove_organization_member_remove_organization_member_organization_members_invitation {
+  id: string;
+  guid: string;
+  invitee_identifier: string;
+  created: any;
+  modified: any;
+}
+
+export interface remove_organization_member_remove_organization_member_organization_members {
+  email: string;
+  full_name: string | null;
+  is_admin: boolean;
+  is_owner: boolean | null;
+  user_id: string | null;
+  invitation: remove_organization_member_remove_organization_member_organization_members_invitation | null;
+  last_login: any | null;
+}
+
+export interface remove_organization_member_remove_organization_member_organization {
+  id: string;
+  members: remove_organization_member_remove_organization_member_organization_members[];
+}
+
+export interface remove_organization_member_remove_organization_member_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface remove_organization_member_remove_organization_member {
+  organization: remove_organization_member_remove_organization_member_organization | null;
+  errors: remove_organization_member_remove_organization_member_errors[] | null;
+}
+
+export interface remove_organization_member {
+  remove_organization_member: remove_organization_member_remove_organization_member;
+}
+
+export interface remove_organization_memberVariables {
+  data: RemoveOrganizationMemberMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: update_member_status
+// ====================================================
+
+export interface update_member_status_update_member_status_organization_members_invitation {
+  id: string;
+  guid: string;
+  invitee_identifier: string;
+  created: any;
+  modified: any;
+}
+
+export interface update_member_status_update_member_status_organization_members {
+  email: string;
+  full_name: string | null;
+  is_admin: boolean;
+  is_owner: boolean | null;
+  user_id: string | null;
+  invitation: update_member_status_update_member_status_organization_members_invitation | null;
+  last_login: any | null;
+}
+
+export interface update_member_status_update_member_status_organization {
+  id: string;
+  members: update_member_status_update_member_status_organization_members[];
+}
+
+export interface update_member_status_update_member_status_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface update_member_status_update_member_status {
+  organization: update_member_status_update_member_status_organization | null;
+  errors: update_member_status_update_member_status_errors[] | null;
+}
+
+export interface update_member_status {
+  update_member_status: update_member_status_update_member_status;
+}
+
+export interface update_member_statusVariables {
+  data: UpdateMemberStatusMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: resend_organization_invite
+// ====================================================
+
+export interface resend_organization_invite_resend_organization_invite_invitation {
+  id: string;
+  invitee_identifier: string;
+  created: any;
+  modified: any;
+}
+
+export interface resend_organization_invite_resend_organization_invite_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface resend_organization_invite_resend_organization_invite {
+  invitation: resend_organization_invite_resend_organization_invite_invitation | null;
+  errors: resend_organization_invite_resend_organization_invite_errors[] | null;
+}
+
+export interface resend_organization_invite {
+  resend_organization_invite: resend_organization_invite_resend_organization_invite;
+}
+
+export interface resend_organization_inviteVariables {
+  data: ResendOrganizationInviteMutationInput;
 }
 
 
@@ -2995,6 +3128,25 @@ export interface AcceptOrganizationInvitationMutationInput {
 // null
 export interface DeleteMutationInput {
   id: string;
+}
+
+// null
+export interface RemoveOrganizationMemberMutationInput {
+  org_id: string;
+  user_id: string;
+}
+
+// null
+export interface UpdateMemberStatusMutationInput {
+  org_id: string;
+  user_id: string;
+  is_active: boolean;
+}
+
+// null
+export interface ResendOrganizationInviteMutationInput {
+  invitation_id: string;
+  redirect_url: string;
 }
 
 // null
