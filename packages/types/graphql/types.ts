@@ -4990,6 +4990,9 @@ export enum WeightUnitEnum {
 }
 
 export enum CarrierNameEnum {
+  allied_express = "allied_express",
+  allied_express_local = "allied_express_local",
+  amazon_shipping = "amazon_shipping",
   aramex = "aramex",
   asendia_us = "asendia_us",
   australiapost = "australiapost",

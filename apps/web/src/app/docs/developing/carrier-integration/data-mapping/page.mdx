@@ -82,19 +82,21 @@ The actual mapping logic resides in functions within your `provider` modules (e.
 
 ```mermaid
 flowchart TD
-    subgraph Request Mapping
-        A1[Unified Karrio Request<br/>(e.g., models.RateRequest)] --> A2[provider.rate_request()<br/>Transforms data]
-        A2 --> A3[Carrier-Specific Request<br/>(Generated from schema)]
-        A3 --> A4[lib.Serializable<br/>Wraps carrier request]
+    subgraph "Request Mapping"
+        A1["Unified Karrio Request<br/>(e.g., models.RateRequest)"] --> A2["provider.rate_request()<br/>Transforms data"]
+        A2 --> A3["Carrier-Specific Request<br/>(Generated from schema)"]
+        A3 --> A4["lib.Serializable<br/>Wraps carrier request"]
     end
 
-    subgraph Response Parsing
-        B1[lib.Deserializable<br/>Wraps raw carrier response] --> B2[provider.parse_rate_response()<br/>Parses data]
-        B2 --> B3[Unified Karrio Response<br/>(e.g., [models.RateDetails], [models.Message])]
+    subgraph "Response Parsing"
+        B1["lib.Deserializable<br/>Wraps raw carrier response"] --> B2["provider.parse_rate_response()<br/>Parses data"]
+        B2 --> B3["Unified Karrio Response<br/>(e.g., RateDetails, Message)"]
     end
 
-    A4 --> Karrio_Core -- sends to Proxy --> Carrier_API
-    Carrier_API -- response --> Karrio_Core --> B1
+    A4 --> KarrioCore["Karrio Core"]
+    KarrioCore --> CarrierAPI["Carrier API"]
+    CarrierAPI --> KarrioCore
+    KarrioCore --> B1
 ```
 
 ### Request Mapping Example: Rating
@@ -252,40 +254,40 @@ Karrio provides several helper functions in `karrio.lib` to simplify common mapp
 ```mermaid
 classDiagram
     class Mapper {
-        +settings: Settings
-        +create_shipment(payload) Tuple[dict, List[Message]]
-        +cancel_shipment(payload) Tuple[dict, List[Message]]
-        +get_rates(payload) Tuple[List[RateDetails], List[Message]]
-        +get_tracking(payload) Tuple[List[TrackingDetails], List[Message]]
-        +validate_address(payload) Tuple[List[AddressValidationDetails], List[Message]]
+        +settings Settings
+        +create_shipment(payload) Serializable
+        +cancel_shipment(payload) Serializable
+        +get_rates(payload) Serializable
+        +get_tracking(payload) Serializable
+        +validate_address(payload) Serializable
     }
 
-    class Provider_Shipment {
+    class ProviderShipment {
         +shipment_request(payload, settings) Serializable
-        +parse_shipment_response(response, settings) Tuple[dict, List[Message]]
+        +parse_shipment_response(response, settings) ShipmentDetails
         +cancel_shipment_request(payload, settings) Serializable
-        +parse_cancel_response(response, settings) Tuple[dict, List[Message]]
+        +parse_cancel_response(response, settings) ConfirmationDetails
     }
 
-    class Provider_Rate {
+    class ProviderRate {
         +rate_request(payload, settings) Serializable
-        +parse_rate_response(response, settings) Tuple[List[RateDetails], List[Message]]
+        +parse_rate_response(response, settings) RateDetails
     }
 
-    class Provider_Tracking {
+    class ProviderTracking {
         +tracking_request(payload, settings) Serializable
-        +parse_tracking_response(response, settings) Tuple[List[TrackingDetails], List[Message]]
+        +parse_tracking_response(response, settings) TrackingDetails
     }
 
-    class Provider_Address {
+    class ProviderAddress {
         +address_validation_request(payload, settings) Serializable
-        +parse_validation_response(response, settings) Tuple[List[AddressValidationDetails], List[Message]]
+        +parse_validation_response(response, settings) AddressValidationDetails
     }
 
-    Mapper --> Provider_Shipment : uses
-    Mapper --> Provider_Rate : uses
-    Mapper --> Provider_Tracking : uses
-    Mapper --> Provider_Address : uses
+    Mapper --> ProviderShipment : "uses"
+    Mapper --> ProviderRate : "uses"
+    Mapper --> ProviderTracking : "uses"
+    Mapper --> ProviderAddress : "uses"
 ```
 
 ## Unified Data Model
@@ -339,8 +341,8 @@ classDiagram
     CarrierModel <|-- CarrierRequest
     CarrierModel <|-- CarrierResponse
 
-    AddressModel <--> CarrierRequest : map_request()
-    CarrierResponse <--> ResponseModel : parse_response()
+    AddressModel <--> CarrierRequest : "map_request()"
+    CarrierResponse <--> ResponseModel : "parse_response()"
 ```
 
 ## Helper Functions
