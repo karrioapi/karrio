@@ -12,9 +12,9 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "paths": { "@karrio/app-store/*": ["./*"] }
   },
   "include": ["**/*.ts", "**/*.tsx"],
-  "paths": { "@karrio/app-store/*": ["./*"] },
   "exclude": ["node_modules"]
 }
