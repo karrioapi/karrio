@@ -26,7 +26,6 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-  useSidebar,
 } from "@karrio/ui/components/ui/sidebar"
 import { useAPIMetadata } from "@karrio/hooks/api-metadata"
 import { useUser } from "@karrio/hooks/user"

@@ -41,14 +41,37 @@ import {
 
 export function TeamSwitcher() {
   const { isMobile } = useSidebar();
+  const {
+    metadata: { ALLOW_MULTI_ACCOUNT, MULTI_ORGANIZATIONS },
+  } = useAPIMetadata();
+
+  // Logo fallback - only show when multi-org is NOT supported
+  const renderLogoFallback = () => (
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <div className="p-2 flex items-center gap-2">
+          <Image
+            src={p`/icon.svg`}
+            width={24}
+            height={24}
+            alt="Karrio"
+          />
+        </div>
+      </SidebarMenuItem>
+    </SidebarMenu>
+  );
+
+  // Early return if multi-organizations is disabled
+  if (!MULTI_ORGANIZATIONS) {
+    return renderLogoFallback();
+  }
+
+  // Only call organization-related hooks when multi-organizations is enabled
   const searchParams = useSearchParams();
   const { query } = useAPIToken();
   const mutation = useOrganizationMutation();
   const { setLoading } = useLoader();
   const { organizations, organization } = useOrganizations();
-  const {
-    metadata: { ALLOW_MULTI_ACCOUNT },
-  } = useAPIMetadata();
   const { acceptInvitation } = useAcceptInvitation();
   const { createOrganization } = useCreateOrganizationModal();
   const [initialized, setInitialized] = React.useState<boolean>(false);
@@ -97,22 +120,6 @@ export function TeamSwitcher() {
           <div className="flex-1">
             <div className="h-4 bg-muted animate-pulse rounded w-24" />
           </div>
-        </div>
-      </SidebarMenuItem>
-    </SidebarMenu>
-  );
-
-  // Logo fallback - only show when loaded and multi-org is NOT supported
-  const renderLogoFallback = () => (
-    <SidebarMenu>
-      <SidebarMenuItem>
-        <div className="p-2 flex items-center gap-2">
-          <Image
-            src={p`/icon.svg`}
-            width={24}
-            height={24}
-            alt="Karrio"
-          />
         </div>
       </SidebarMenuItem>
     </SidebarMenu>

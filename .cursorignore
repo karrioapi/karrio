@@ -3,3 +3,4 @@
 !.env.sample
 !**/.env.local
 !**/.env.sample
+!**/docker/.env

@@ -61,10 +61,11 @@ services:
         condition: service_healthy
         restart: true
     environment:
-      KARRIO_URL: http://api:${KARRIO_HTTP_PORT:-5002}
+      AUTH_TRUST_HOST: true
       NEXTAUTH_SECRET: ${JWT_SECRET}
       NEXT_PUBLIC_DASHBOARD_URL: ${DASHBOARD_URL}
       NEXT_PUBLIC_KARRIO_PUBLIC_URL: ${KARRIO_PUBLIC_URL}
+      KARRIO_URL: http://api:${KARRIO_HTTP_PORT:-5002}
 
   maildev:
     container_name: karrio.mail
