@@ -75,29 +75,28 @@ class User(auth.AbstractUser):
         ctx = middleware.SessionContext.get_current_request()
         _permissions = []
 
-        if conf.settings.MULTI_ORGANIZATIONS and ctx.org is not None:
+        if conf.settings.MULTI_ORGANIZATIONS and ctx is not None and hasattr(ctx, 'org') and ctx.org is not None:
             org_user = ctx.org.organization_users.filter(user_id=self.pk)
-            _permissions = (
-                iam.ContextPermission.objects.get(
-                    object_pk=org_user.first().pk,
-                    content_type=ContentType.objects.get_for_model(org_user.first()),
-                )
-                .groups.all()
-                .values_list("name", flat=True)
-                if org_user.exists()
-                else []
-            )
+            if org_user.exists():
+                try:
+                    context_permission = iam.ContextPermission.objects.get(
+                        object_pk=org_user.first().pk,
+                        content_type=ContentType.objects.get_for_model(org_user.first()),
+                    )
+                    _permissions = list(context_permission.groups.all().values_list("name", flat=True))
+                except iam.ContextPermission.DoesNotExist:
+                    pass
 
         if not any(_permissions):
-            _permissions = self.groups.all().values_list("name", flat=True)
+            _permissions = list(self.groups.all().values_list("name", flat=True))
 
         if not any(_permissions) and self.is_superuser:
-            return Group.objects.all().values_list("name", flat=True)
+            return list(Group.objects.all().values_list("name", flat=True))
 
         if not any(_permissions) and self.is_staff:
-            return Group.objects.exclude(
+            return list(Group.objects.exclude(
                 name__in=["manage_system", "manage_team", "manage_org_owner"]
-            ).values_list("name", flat=True)
+            ).values_list("name", flat=True))
 
         return _permissions
 
