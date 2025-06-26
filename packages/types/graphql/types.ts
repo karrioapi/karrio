@@ -3614,6 +3614,7 @@ export interface get_document_template_document_template {
   description: string | null;
   related_object: TemplateRelatedObject | null;
   active: boolean;
+  preview_url: string | null;
   updated_at: any | null;
 }
 
@@ -3650,6 +3651,7 @@ export interface get_document_templates_document_templates_edges_node {
   related_object: TemplateRelatedObject | null;
   active: boolean;
   updated_at: any | null;
+  preview_url: string | null;
 }
 
 export interface get_document_templates_document_templates_edges {

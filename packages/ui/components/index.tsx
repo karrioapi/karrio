@@ -2,7 +2,7 @@ export * from "./country-select";
 export * from "./address-combobox";
 export * from "./enhanced-select";
 
-// Organization Management Components
+// Settings Management Components
 export * from "./settings-layout";
 export * from "./settings-navigation";
 export * from "./organization-management";
@@ -11,3 +11,11 @@ export * from "./team-table";
 export * from "./invite-member-dialog";
 export * from "./confirmation-dialog";
 export * from "./role-management-dialog";
+export * from "./account-settings";
+export * from "./profile-settings";
+export * from "./addresses-management";
+export * from "./parcels-management";
+export * from "./templates-management";
+export * from "./template-editor";
+export * from "./address-form";
+export * from "./parcel-form";
