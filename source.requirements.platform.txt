@@ -15,7 +15,7 @@ diff-match-patch==20241021
 distro==1.9.0
 dj-database-url==3.0.0
 Django==5.2.3
-django-auditlog==3.1.2
+django-auditlog==3.2.0
 django-constance==4.3.2
 django-cors-headers==4.7.0
 django-downloadview==2.4.0
@@ -123,7 +123,7 @@ rpds-py==0.25.1
 sentry-sdk==2.31.0
 six==1.17.0
 sqlparse==0.5.3
-strawberry-graphql==0.275.2
+strawberry-graphql==0.275.5
 tablib==3.8.0
 tinycss2==1.4.0
 tinyhtml5==2.0.0

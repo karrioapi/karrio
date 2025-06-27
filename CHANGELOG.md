@@ -2,6 +2,14 @@
 
 ## Changes
 
+### Fix
+
+- fix: regression on label purchase for with preselected service
+
+# Karrio 2025.5rc3
+
+## Changes
+
 ### Feat
 
 - feat: improve entity logs and tracing record rendering

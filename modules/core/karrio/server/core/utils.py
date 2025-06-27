@@ -370,7 +370,7 @@ def process_events(
 
 
 def apply_rate_selection(payload: typing.Union[dict, typing.Any], **kwargs):
-    data = kwargs.get("data") or {}
+    data = kwargs.get("data") or kwargs
     get = lambda key, default=None: lib.identity(
         payload.get(key, data.get(key, default)) if isinstance(payload, dict)
         else getattr(payload, key, data.get(key, default))
