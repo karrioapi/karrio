@@ -18,6 +18,7 @@ import {
   SidebarMenuSubItem,
 } from "@karrio/ui/components/ui/sidebar"
 import { AppLink } from "@karrio/ui/core/components/app-link"
+import { useSidebar } from "@karrio/ui/components/ui/sidebar"
 
 export function NavMain({
   items,
@@ -28,6 +29,7 @@ export function NavMain({
     url: string
     icon?: LucideIcon
     isActive?: boolean
+    external?: boolean
     items?: {
       title: string
       url: string
@@ -36,6 +38,13 @@ export function NavMain({
   }[]
   label?: string
 }) {
+  const { setOpenMobile } = useSidebar();
+
+  const handleExternalClick = () => {
+    // Close mobile sidebar when clicking external links
+    setOpenMobile(false);
+  };
+
   return (
     <SidebarGroup>
       {label && <SidebarGroupLabel>{label}</SidebarGroupLabel>}
@@ -63,7 +72,12 @@ export function NavMain({
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton asChild>
                             {subItem.external ? (
-                              <a href={subItem.url} target="_blank" rel="noreferrer">
+                              <a
+                                href={subItem.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={handleExternalClick}
+                              >
                                 <span>{subItem.title}</span>
                               </a>
                             ) : (
@@ -79,10 +93,22 @@ export function NavMain({
                 </>
               ) : (
                 <SidebarMenuButton asChild tooltip={item.title}>
-                  <AppLink href={item.url}>
-                    {item.icon && <item.icon />}
-                    <span>{item.title}</span>
-                  </AppLink>
+                  {item.external ? (
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={handleExternalClick}
+                    >
+                      {item.icon && <item.icon />}
+                      <span>{item.title}</span>
+                    </a>
+                  ) : (
+                    <AppLink href={item.url}>
+                      {item.icon && <item.icon />}
+                      <span>{item.title}</span>
+                    </AppLink>
+                  )}
                 </SidebarMenuButton>
               )}
             </SidebarMenuItem>

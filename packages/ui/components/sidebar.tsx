@@ -5,18 +5,17 @@ import {
   Home,
   Truck,
   MapPin,
-  Package,
   Settings,
-  Users,
   Zap,
-  Puzzle,
+  Code2,
   Terminal,
-  Building,
   Shield,
-  Book,
+  BookOpen,
   Inbox,
   List,
+  Brackets,
 } from "lucide-react"
+
 
 import { NavMain } from "@karrio/ui/components/nav-main"
 import { TeamSwitcher } from "@karrio/ui/components/team-switcher"
@@ -26,6 +25,9 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
 } from "@karrio/ui/components/ui/sidebar"
 import { useAPIMetadata } from "@karrio/hooks/api-metadata"
 import { useUser } from "@karrio/hooks/user"
@@ -77,33 +79,28 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     },
   ];
 
-  // Separate section for developers and resources
-  const developerItems = [
+  // Resources items (moved from submenu to main nav)
+  const resourceItems = [
     {
-      title: "Developers",
-      url: "/developers",
-      icon: Terminal,
+      title: "Playground",
+      url: "/resources/playground",
+      icon: Code2, // Better icon for Swagger/API playground
     },
     {
-      title: "Resources",
-      url: "/resources",
-      icon: Book,
-      items: [
-        {
-          title: "Playground",
-          url: "/resources/playground",
-        },
-        {
-          title: "GraphiQL",
-          url: "/resources/graphiql",
-        },
-        ...(metadata?.APP_NAME?.includes("Karrio") ? [{
-          title: "Guides",
-          url: "https://karrio.io/docs",
-          external: true,
-        }] : []),
-      ],
+      title: "GraphiQL",
+      url: "/resources/graphiql",
+      icon: Brackets, // More appropriate for GraphQL interface
     },
+    ...(metadata?.APP_NAME?.includes("Karrio") ? [{
+      title: "Guides",
+      url: "https://karrio.io/docs",
+      icon: BookOpen, // More appropriate for documentation
+      external: true,
+    }] : []),
+  ];
+
+  // Admin and developer tools
+  const bottomItems = [
     ...(metadata?.ADMIN_DASHBOARD && user?.is_staff ? [{
       title: "Administration",
       url: "/admin",
@@ -122,10 +119,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navMain} />
-        <NavMain items={developerItems} label="Resources" />
+        <NavMain items={resourceItems} label="Resources" />
+        <NavMain items={bottomItems} label="Admin" />
       </SidebarContent>
       <SidebarFooter>
-        {/* Footer content removed - user menu is in navbar */}
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={() => {
+                // This will be handled by the provider context
+                const event = new CustomEvent('toggle-developer-tools');
+                window.dispatchEvent(event);
+              }}
+            >
+              <Terminal />
+              <span>Developer Tools</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

@@ -17,6 +17,7 @@ import {
   getCurrentDomain,
   requireAuthentication,
 } from "@karrio/core/context/main";
+import { DeveloperToolsProvider, DeveloperToolsDrawer } from "@karrio/developers";
 
 export default async function Layout({
   children,
@@ -46,21 +47,24 @@ export default async function Layout({
   return (
     <>
       <Providers {...pageProps}>
-        <ModeIndicator />
-        <SidebarProvider>
-          <AppSidebar />
-          <SidebarInset className="flex flex-col h-screen overflow-hidden main-layout">
-            <div className="flex-shrink-0">
-              <Navbar />
-            </div>
-            <div className="flex-1 overflow-y-auto overflow-x-hidden scrollable-content">
-              <div className="max-w-7xl mx-auto w-full px-4 2xl:px-0 py-4">
-                <Notifier />
-                {children}
+        <DeveloperToolsProvider>
+          <ModeIndicator />
+          <SidebarProvider>
+            <AppSidebar />
+            <SidebarInset className="flex flex-col h-screen overflow-hidden main-layout">
+              <div className="flex-shrink-0">
+                <Navbar />
               </div>
-            </div>
-          </SidebarInset>
-        </SidebarProvider>
+              <div className="flex-1 overflow-y-auto overflow-x-hidden scrollable-content">
+                <div className="max-w-7xl mx-auto w-full px-4 2xl:px-0 py-4">
+                  <Notifier />
+                  {children}
+                </div>
+              </div>
+            </SidebarInset>
+          </SidebarProvider>
+          <DeveloperToolsDrawer />
+        </DeveloperToolsProvider>
       </Providers>
     </>
   );

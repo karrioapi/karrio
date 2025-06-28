@@ -72,7 +72,7 @@ export function WorkflowTemplatePicker({ onSelectTemplate, children }: WorkflowT
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="max-w-full sm:max-w-4xl h-[90vh] sm:h-[80vh] flex flex-col p-0 mx-2 sm:mx-auto">
+      <DialogContent className="max-w-full sm:max-w-4xl h-[90vh] sm:h-[80vh] flex flex-col p-4 pb-8 mx-2 sm:mx-auto">
         <DialogHeader className="p-3 sm:p-4 pb-2">
           <DialogTitle className="flex items-center gap-2 text-base">
             <FileText className="h-4 w-4" />

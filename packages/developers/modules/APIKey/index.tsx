@@ -428,7 +428,7 @@ export default function APIKeyPage() {
 
       {/* Regenerate Dialog */}
       <Dialog open={showRegenerateDialog} onOpenChange={setShowRegenerateDialog}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md p-4 pb-8">
           <form onSubmit={handleRegenerate}>
             <DialogHeader>
               <DialogTitle>Regenerate API Key</DialogTitle>
@@ -499,7 +499,7 @@ export default function APIKeyPage() {
 
       {/* Create API Key Dialog */}
       <Dialog open={showCreateDialog} onOpenChange={handleDialogOpenChange}>
-        <DialogContent className="sm:max-w-2xl">
+        <DialogContent className="sm:max-w-2xl p-4 pb-8">
           <form onSubmit={handleCreateApiKey}>
             <DialogHeader>
               <DialogTitle>Create API Key</DialogTitle>
@@ -597,7 +597,7 @@ export default function APIKeyPage() {
 
       {/* Delete API Key Dialog */}
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md p-4 pb-8">
           <DialogHeader>
             <DialogTitle>Delete API Key</DialogTitle>
             <DialogDescription>

@@ -302,7 +302,6 @@ export default function ApiPage() {
 }
 
 // Developer modules exports
-export { default as ApiKeysPage } from "./apikeys";
 export { default as AppsPage } from "./apps";
 export { default as EventPage } from "./event";
 export { default as EventsPage } from "./events";

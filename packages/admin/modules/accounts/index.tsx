@@ -354,7 +354,7 @@ export default function OrganizationAccounts() {
                 <DialogTrigger asChild>
                   <Button>Create Organization</Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="p-4 pb-8">
                   <DialogHeader>
                     <DialogTitle>Create New Organization</DialogTitle>
                     <DialogDescription>
@@ -494,7 +494,7 @@ export default function OrganizationAccounts() {
           }
         }}
       >
-        <DialogContent>
+        <DialogContent className="p-4 pb-8">
           {selectedAccount && (
             <>
               <DialogHeader>
@@ -540,7 +540,7 @@ export default function OrganizationAccounts() {
           }
         }}
       >
-        <DialogContent>
+        <DialogContent className="p-4 pb-8">
           {selectedAccount && (
             <>
               <DialogHeader>
@@ -583,7 +583,7 @@ export default function OrganizationAccounts() {
           }
         }}
       >
-        <DialogContent>
+        <DialogContent className="p-4 pb-8">
           {selectedAccount && (
             <>
               <DialogHeader>

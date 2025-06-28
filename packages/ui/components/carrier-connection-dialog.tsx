@@ -451,7 +451,7 @@ export function CarrierConnectionDialog({
       }}
     >
       <DialogContent
-        className="max-w-2xl max-h-[90vh] flex flex-col p-0"
+        className="max-w-2xl max-h-[90vh] flex flex-col p-4 pb-8"
         onEscapeKeyDown={() => handleModalClose()}
         onInteractOutside={() => handleModalClose()}
       >

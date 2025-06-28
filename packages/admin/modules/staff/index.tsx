@@ -219,7 +219,7 @@ export default function Page() {
               <DialogTrigger asChild>
                 <Button>Invite User</Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="p-4 pb-8">
                 <DialogHeader>
                   <DialogTitle>Invite New User</DialogTitle>
                   <DialogDescription>
@@ -343,7 +343,7 @@ export default function Page() {
       </Card>
 
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent>
+        <DialogContent className="p-4 pb-8">
           <DialogHeader>
             <DialogTitle>Edit User</DialogTitle>
             <DialogDescription>
