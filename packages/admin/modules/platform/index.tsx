@@ -975,7 +975,7 @@ function EditDialog({
 
   return (
     <Dialog open={!!section} onOpenChange={() => onClose()}>
-      <DialogContent className="sm:max-w-[500px] bg-background">
+      <DialogContent className="sm:max-w-[500px] bg-background p-4 pb-8">
         <DialogHeader className="space-y-2">
           <DialogTitle>{titles[section]}</DialogTitle>
           <DialogDescription>

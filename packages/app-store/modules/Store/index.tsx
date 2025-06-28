@@ -530,7 +530,7 @@ export default function AppStorePage(pageProps: any) {
 
           {/* Install Confirmation Modal */}
           <Dialog open={showInstallConfirmation} onOpenChange={setShowInstallConfirmation}>
-            <DialogContent className="sm:max-w-[500px]" aria-describedby="install-dialog-description">
+            <DialogContent className="sm:max-w-[500px] p-4 pb-8" aria-describedby="install-dialog-description">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   <Shield className="h-5 w-5 text-blue-600" />
@@ -642,7 +642,7 @@ export default function AppStorePage(pageProps: any) {
 
           {/* Uninstall Confirmation Modal */}
           <Dialog open={showUninstallConfirmation} onOpenChange={setShowUninstallConfirmation}>
-            <DialogContent className="sm:max-w-[500px]" aria-describedby="uninstall-dialog-description">
+            <DialogContent className="sm:max-w-[500px] p-4 pb-8" aria-describedby="uninstall-dialog-description">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   <AlertTriangle className="h-5 w-5 text-red-600" />
