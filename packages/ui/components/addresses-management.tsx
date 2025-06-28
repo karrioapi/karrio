@@ -123,7 +123,7 @@ function AddressEditDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl p-4 pb-8">
         <DialogHeader>
           <DialogTitle>
             {addressTemplate ? "Edit Address Template" : "Create Address Template"}

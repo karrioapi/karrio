@@ -156,7 +156,7 @@ export default function AppsPage() {
                   Create OAuth App
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[525px]">
+              <DialogContent className="sm:max-w-[525px] p-4 pb-8">
                 <DialogHeader>
                   <DialogTitle>Create New OAuth App</DialogTitle>
                   <DialogDescription>
@@ -432,7 +432,7 @@ export default function AppsPage() {
 
         {/* Client Secret Display Dialog */}
         <Dialog open={showClientSecret} onOpenChange={setShowClientSecret}>
-          <DialogContent className="sm:max-w-[525px]">
+          <DialogContent className="sm:max-w-[525px] p-4 pb-8">
             <DialogHeader>
               <DialogTitle>OAuth App Created Successfully</DialogTitle>
               <DialogDescription>
@@ -516,7 +516,7 @@ export default function AppsPage() {
             setDeleteAppName("");
           }
         }}>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-[425px] p-4 pb-8">
             <DialogHeader>
               <DialogTitle>Delete OAuth App</DialogTitle>
               <DialogDescription>
