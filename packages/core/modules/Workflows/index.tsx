@@ -384,7 +384,7 @@ export default function Page(pageProps: any) {
             setSelectedTemplate(null);
           }
         }}>
-          <DialogContent className="max-w-none w-screen h-screen p-0 m-0">
+          <DialogContent className="max-w-none w-screen h-screen p-4 pb-8 m-0">
             <DialogTitle className="sr-only">
               {isCreating ? "Create Workflow" : "Edit Workflow"}
             </DialogTitle>

@@ -89,7 +89,7 @@ export function SurchargeDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="p-4 pb-8">
         <DialogHeader>
           <DialogTitle>
             {defaultValues ? "Edit Surcharge" : "Create Surcharge"}
