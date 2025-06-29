@@ -156,7 +156,7 @@ export default function AppsPage() {
                   Create OAuth App
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[525px] p-4 pb-8">
+              <DialogContent className="sm:max-w-[525px]">
                 <DialogHeader>
                   <DialogTitle>Create New OAuth App</DialogTitle>
                   <DialogDescription>
@@ -164,6 +164,7 @@ export default function AppsPage() {
                   </DialogDescription>
                 </DialogHeader>
                 <form
+                  className="p-4 pb-8"
                   onSubmit={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -432,7 +433,7 @@ export default function AppsPage() {
 
         {/* Client Secret Display Dialog */}
         <Dialog open={showClientSecret} onOpenChange={setShowClientSecret}>
-          <DialogContent className="sm:max-w-[525px] p-4 pb-8">
+          <DialogContent className="sm:max-w-[525px]">
             <DialogHeader>
               <DialogTitle>OAuth App Created Successfully</DialogTitle>
               <DialogDescription>
@@ -441,7 +442,7 @@ export default function AppsPage() {
             </DialogHeader>
 
             {newlyCreatedApp && (
-              <div className="space-y-4 py-4">
+              <div className="space-y-4 p-4 pb-8">
                 <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
                   <div className="flex items-start gap-3">
                     <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -496,7 +497,7 @@ export default function AppsPage() {
               </div>
             )}
 
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-end gap-2 p-4 pb-8">
               <Button
                 onClick={() => {
                   setShowClientSecret(false);
@@ -516,7 +517,7 @@ export default function AppsPage() {
             setDeleteAppName("");
           }
         }}>
-          <DialogContent className="sm:max-w-[425px] p-4 pb-8">
+          <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Delete OAuth App</DialogTitle>
               <DialogDescription>
@@ -524,7 +525,7 @@ export default function AppsPage() {
               </DialogDescription>
             </DialogHeader>
 
-            <div className="py-4">
+            <div className="py-4 p-4 pb-8">
               <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
                 <div className="flex items-start gap-3">
                   <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -541,7 +542,7 @@ export default function AppsPage() {
               </div>
             </div>
 
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-end gap-2 p-4 pb-8">
               <Button
                 variant="outline"
                 onClick={() => {

@@ -89,7 +89,7 @@ export function SurchargeDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="p-4 pb-8">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>
             {defaultValues ? "Edit Surcharge" : "Create Surcharge"}
@@ -104,7 +104,7 @@ export function SurchargeDialog({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-4"
+            className="space-y-4 p-4 pb-8"
           >
             <FormField
               control={form.control}

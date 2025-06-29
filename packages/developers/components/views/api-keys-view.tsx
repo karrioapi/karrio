@@ -139,14 +139,14 @@ export function ApiKeysView() {
                 Create API Key
               </Button>
             </DialogTrigger>
-            <DialogContent className="p-4 pb-8 max-w-lg mx-2 sm:mx-auto">
+            <DialogContent className="max-w-lg mx-2 sm:mx-auto">
               <DialogHeader>
                 <DialogTitle>Create API Key</DialogTitle>
                 <DialogDescription>
                   Create a new API key for programmatic access to your account.
                 </DialogDescription>
               </DialogHeader>
-              <form onSubmit={handleCreateSubmit} className="space-y-4">
+              <form onSubmit={handleCreateSubmit} className="space-y-4 p-4 pb-8">
                 <div className="space-y-2">
                   <Label htmlFor="label">Label</Label>
                   <Input

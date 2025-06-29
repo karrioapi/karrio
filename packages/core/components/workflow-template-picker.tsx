@@ -72,7 +72,7 @@ export function WorkflowTemplatePicker({ onSelectTemplate, children }: WorkflowT
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="max-w-full sm:max-w-4xl h-[90vh] sm:h-[80vh] flex flex-col p-4 pb-8 mx-2 sm:mx-auto">
+      <DialogContent className="max-w-full sm:max-w-4xl h-[90vh] sm:h-[80vh] flex flex-col mx-2 sm:mx-auto">
         <DialogHeader className="p-3 sm:p-4 pb-2">
           <DialogTitle className="flex items-center gap-2 text-base">
             <FileText className="h-4 w-4" />
@@ -81,7 +81,7 @@ export function WorkflowTemplatePicker({ onSelectTemplate, children }: WorkflowT
         </DialogHeader>
 
         {/* Search Bar */}
-        <div className="relative px-3 sm:px-4 pb-3">
+        <div className="relative p-3 sm:p-4 pb-8">
           <Search className="absolute left-6 sm:left-7 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
             placeholder="Search templates..."
@@ -92,7 +92,7 @@ export function WorkflowTemplatePicker({ onSelectTemplate, children }: WorkflowT
         </div>
 
         {/* Templates Grid */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto p-4 pb-8">
           {isLoading ? (
             <div className="flex items-center justify-center h-32">
               <div className="text-sm text-gray-500">Loading templates...</div>
@@ -173,7 +173,7 @@ export function WorkflowTemplatePicker({ onSelectTemplate, children }: WorkflowT
         </div>
 
         {/* Start from Scratch Option */}
-        <div className="border-t pt-3 px-3 sm:px-4 pb-3 sm:pb-4">
+        <div className="border-t pt-3 p-3 sm:p-4 pb-3 sm:pb-4">
           <Card
             className="cursor-pointer hover:shadow-md transition-shadow border-dashed border-slate-300"
             onClick={() => handleSelectTemplate(null)}

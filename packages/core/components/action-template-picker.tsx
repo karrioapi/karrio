@@ -74,7 +74,7 @@ export function ActionTemplatePicker({ onSelectTemplate, children }: ActionTempl
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="max-w-4xl h-[80vh] flex flex-col p-4 pb-8">
+      <DialogContent className="max-w-4xl h-[80vh] flex flex-col">
         <DialogHeader className="p-4 pb-2">
           <DialogTitle className="flex items-center gap-2 text-base">
             <Zap className="h-4 w-4" />
@@ -83,7 +83,7 @@ export function ActionTemplatePicker({ onSelectTemplate, children }: ActionTempl
         </DialogHeader>
 
         {/* Search Bar */}
-        <div className="relative px-4 pb-3">
+        <div className="relative p-4 pb-8">
           <Search className="absolute left-7 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
             placeholder="Search action templates..."
@@ -94,7 +94,7 @@ export function ActionTemplatePicker({ onSelectTemplate, children }: ActionTempl
         </div>
 
         {/* Templates Grid */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto p-4 pb-8">
           {isLoading ? (
             <div className="flex items-center justify-center h-32">
               <div className="text-sm text-gray-500">Loading templates...</div>
@@ -161,7 +161,7 @@ export function ActionTemplatePicker({ onSelectTemplate, children }: ActionTempl
         </div>
 
         {/* Custom Action Option */}
-        <div className="border-t pt-3 px-4 pb-4">
+        <div className="border-t pt-3 p-4 pb-4">
           <Card
             className="cursor-pointer hover:shadow-md transition-shadow border-dashed border-slate-300"
             onClick={() => handleSelectTemplate(null)}

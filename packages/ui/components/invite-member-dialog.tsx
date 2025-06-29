@@ -101,7 +101,7 @@ export function InviteMemberDialog({ onInvite, isLoading, children }: InviteMemb
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md p-4 pb-8">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Invite team members</DialogTitle>
           <DialogDescription>
@@ -109,7 +109,7 @@ export function InviteMemberDialog({ onInvite, isLoading, children }: InviteMemb
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <div className="space-y-4 p-4 pb-8">
           <div className="space-y-2">
             <Label htmlFor="email">Email addresses</Label>
             <div className="flex space-x-2">
