@@ -681,7 +681,7 @@ function EditDialog({
     switch (section) {
       case 'administration':
         return (
-          <div className="space-y-4">
+          <div className="space-y-4 p-4 pb-8">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Allow Signup</Label>
@@ -717,7 +717,7 @@ function EditDialog({
 
       case 'email':
         return (
-          <div className="space-y-4">
+          <div className="space-y-4 p-4 pb-8">
             <div className="space-y-2">
               <Label htmlFor="EMAIL_HOST">Email Host</Label>
               <Input
@@ -779,7 +779,7 @@ function EditDialog({
 
       case 'data_retention':
         return (
-          <div className="space-y-4">
+          <div className="space-y-4 p-4 pb-8">
             <div className="space-y-2">
               <Label htmlFor="ORDER_DATA_RETENTION">Orders Retention (days)</Label>
               <Input
@@ -815,7 +815,7 @@ function EditDialog({
 
       case 'api_keys':
         return (
-          <div className="space-y-4">
+          <div className="space-y-4 p-4 pb-8">
             <div className="space-y-2">
               <Label htmlFor="GOOGLE_CLOUD_API_KEY">Google Cloud API Key</Label>
               <Input
@@ -839,7 +839,7 @@ function EditDialog({
 
       case 'features':
         return (
-          <div className="space-y-4">
+          <div className="space-y-4 p-4 pb-8">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Multi Account</Label>
@@ -935,7 +935,7 @@ function EditDialog({
 
       case 'platform':
         return (
-          <div className="space-y-4">
+          <div className="space-y-4 p-4 pb-8">
             <div className="space-y-2">
               <Label htmlFor="APP_NAME">Platform Name</Label>
               <Input
@@ -975,7 +975,7 @@ function EditDialog({
 
   return (
     <Dialog open={!!section} onOpenChange={() => onClose()}>
-      <DialogContent className="sm:max-w-[500px] bg-background p-4 pb-8">
+      <DialogContent className="sm:max-w-[500px] bg-background">
         <DialogHeader className="space-y-2">
           <DialogTitle>{titles[section]}</DialogTitle>
           <DialogDescription>

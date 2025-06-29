@@ -168,14 +168,14 @@ export function WebhooksView() {
                 Create Webhook
               </Button>
             </DialogTrigger>
-            <DialogContent className="p-4 pb-8">
+            <DialogContent>
               <DialogHeader>
                 <DialogTitle>Create New Webhook</DialogTitle>
                 <DialogDescription>
                   Add a new webhook endpoint to receive event notifications
                 </DialogDescription>
               </DialogHeader>
-              <form onSubmit={handleCreateSubmit} className="space-y-4">
+              <form onSubmit={handleCreateSubmit} className="space-y-4 p-4 pb-8">
                 <div>
                   <Label htmlFor="url">Endpoint URL</Label>
                   <Input
@@ -355,14 +355,14 @@ export function WebhooksView() {
 
       {/* Edit Webhook Dialog */}
       <Dialog open={!!editingWebhook} onOpenChange={() => setEditingWebhook(null)}>
-        <DialogContent className="p-4 pb-8">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Webhook</DialogTitle>
             <DialogDescription>
               Update webhook endpoint configuration
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleUpdateSubmit} className="space-y-4">
+          <form onSubmit={handleUpdateSubmit} className="space-y-4 p-4 pb-8">
             <div>
               <Label htmlFor="edit-url">Endpoint URL</Label>
               <Input

@@ -428,7 +428,7 @@ export default function APIKeyPage() {
 
       {/* Regenerate Dialog */}
       <Dialog open={showRegenerateDialog} onOpenChange={setShowRegenerateDialog}>
-        <DialogContent className="sm:max-w-md p-4 pb-8">
+        <DialogContent className="sm:max-w-md">
           <form onSubmit={handleRegenerate}>
             <DialogHeader>
               <DialogTitle>Regenerate API Key</DialogTitle>
@@ -437,7 +437,7 @@ export default function APIKeyPage() {
               </DialogDescription>
             </DialogHeader>
 
-            <div className="space-y-4 py-4">
+            <div className="space-y-4 p-4 pb-8">
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                 <div className="flex items-start gap-2">
                   <AlertTriangle className="h-4 w-4 text-yellow-600 mt-0.5" />
@@ -499,7 +499,7 @@ export default function APIKeyPage() {
 
       {/* Create API Key Dialog */}
       <Dialog open={showCreateDialog} onOpenChange={handleDialogOpenChange}>
-        <DialogContent className="sm:max-w-2xl p-4 pb-8">
+        <DialogContent className="sm:max-w-2xl">
           <form onSubmit={handleCreateApiKey}>
             <DialogHeader>
               <DialogTitle>Create API Key</DialogTitle>
@@ -508,7 +508,7 @@ export default function APIKeyPage() {
               </DialogDescription>
             </DialogHeader>
 
-            <div className="space-y-6 py-6">
+            <div className="space-y-6 p-4 pb-8">
               <div className="space-y-2">
                 <Label htmlFor="key-name" className="text-sm font-medium">
                   Name <span className="text-red-500">*</span>
@@ -597,7 +597,7 @@ export default function APIKeyPage() {
 
       {/* Delete API Key Dialog */}
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <DialogContent className="sm:max-w-md p-4 pb-8">
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Delete API Key</DialogTitle>
             <DialogDescription>
@@ -605,7 +605,7 @@ export default function APIKeyPage() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4 py-4">
+          <div className="space-y-4 p-4 pb-8">
             <div className="bg-red-50 border border-red-200 rounded-lg p-3">
               <div className="flex items-start gap-2">
                 <AlertTriangle className="h-4 w-4 text-red-600 mt-0.5" />
