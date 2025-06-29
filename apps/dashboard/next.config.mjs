@@ -78,7 +78,6 @@ const nextConfig = {
     "@karrio/ui",
     "@karrio/lib",
     "@karrio/types",
-    "@karrio/trpc",
     "@karrio/admin",
     "@karrio/developers",
     "@karrio/app-store",

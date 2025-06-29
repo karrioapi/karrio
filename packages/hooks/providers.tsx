@@ -1,7 +1,7 @@
 "use client";
 
-import { CreateOrganizationModalProvider } from "@karrio/ui/core/modals/create-organization-modal";
-import { AcceptInvitationProvider } from "@karrio/ui/core/modals/accept-invitation-modal";
+import { CreateOrganizationDialogProvider } from "@karrio/ui/components/create-organization-dialog";
+import { AcceptInvitationDialogProvider } from "@karrio/ui/components/accept-invitation-dialog";
 import { ErrorBoundary } from "@karrio/ui/core/components/error-boudaries";
 
 import { LoadingProvider } from "@karrio/ui/core/components/loader";
@@ -23,8 +23,8 @@ const AuthenticatedContexts = bundleContexts([
   ClientProvider,
   APIMetadataProvider,
   AppModeProvider,
-  CreateOrganizationModalProvider,
-  AcceptInvitationProvider,
+  CreateOrganizationDialogProvider,
+  AcceptInvitationDialogProvider,
   OrganizationProvider,
   LoadingProvider,
   Notifier,

@@ -1,6 +1,6 @@
 "use client";
 
-import { trpc } from "@karrio/trpc/client";
+import { useSurcharges, useSurchargeMutation } from "@karrio/hooks/admin-surcharges";
 import { Card, CardContent } from "@karrio/ui/components/ui/card";
 import {
   Table,
@@ -41,7 +41,6 @@ interface FormValues {
 }
 
 export default function Page() {
-  const utils = trpc.useContext();
   const { toast } = useToast();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -49,93 +48,75 @@ export default function Page() {
   const [selectedSurcharge, setSelectedSurcharge] = useState<Surcharge | null>(null);
   const [page, setPage] = useState(1);
 
-  const { data: surcharges, isLoading } = trpc.admin.surcharges.list.useQuery({
-    filter: {
-      page,
-    },
-  });
+  const { query, surcharges } = useSurcharges();
+  const isLoading = query.isLoading;
 
-  const createSurcharge = trpc.admin.surcharges.create.useMutation({
-    onSuccess: () => {
-      toast({ title: "Surcharge created successfully" });
-      setIsCreateOpen(false);
-      utils.admin.surcharges.list.invalidate();
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to create surcharge",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  const { createSurcharge, updateSurcharge, deleteSurcharge } = useSurchargeMutation();
 
-  const updateSurcharge = trpc.admin.surcharges.update.useMutation({
-    onSuccess: () => {
-      toast({ title: "Surcharge updated successfully" });
-      setIsEditOpen(false);
-      setSelectedSurcharge(null);
-      utils.admin.surcharges.list.invalidate();
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to update surcharge",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  const handleCreateSuccess = () => {
+    toast({ title: "Surcharge created successfully" });
+    setIsCreateOpen(false);
+  };
 
-  const deleteSurcharge = trpc.admin.surcharges.delete.useMutation({
-    onSuccess: () => {
-      toast({ title: "Surcharge deleted successfully" });
-      setIsDeleteOpen(false);
-      setSelectedSurcharge(null);
-      utils.admin.surcharges.list.invalidate();
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to delete surcharge",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  const handleUpdateSuccess = () => {
+    toast({ title: "Surcharge updated successfully" });
+    setIsEditOpen(false);
+    setSelectedSurcharge(null);
+  };
+
+  const handleDeleteSuccess = () => {
+    toast({ title: "Surcharge deleted successfully" });
+    setIsDeleteOpen(false);
+    setSelectedSurcharge(null);
+  };
+
+  const handleError = (error: any, action: string) => {
+    toast({
+      title: `Failed to ${action} surcharge`,
+      description: error.message || "An error occurred",
+      variant: "destructive",
+    });
+  };
 
   const handleCreate = async (values: FormValues) => {
     const { carrier_accounts: _, id: __, ...input } = values;
-    await createSurcharge.mutateAsync({
-      data: {
-        name: input.name,
-        amount: input.amount,
-        surcharge_type: input.surcharge_type,
-        active: input.active,
-        carriers: input.carriers,
-        services: input.services,
-      },
+    createSurcharge.mutate({
+      name: input.name,
+      amount: input.amount,
+      surcharge_type: input.surcharge_type,
+      active: input.active,
+      carriers: input.carriers,
+      services: input.services,
+    }, {
+      onSuccess: handleCreateSuccess,
+      onError: (error) => handleError(error, "create")
     });
   };
 
   const handleUpdate = async (values: FormValues) => {
     if (!values.id) return;
     const { carrier_accounts: _, ...input } = values;
-    await updateSurcharge.mutateAsync({
-      data: {
-        id: values.id,
-        name: input.name,
-        amount: input.amount,
-        surcharge_type: input.surcharge_type,
-        active: input.active,
-        carriers: input.carriers,
-        services: input.services,
-      },
+    updateSurcharge.mutate({
+      id: values.id,
+      name: input.name,
+      amount: input.amount,
+      surcharge_type: input.surcharge_type,
+      active: input.active,
+      carriers: input.carriers,
+      services: input.services,
+    }, {
+      onSuccess: handleUpdateSuccess,
+      onError: (error) => handleError(error, "update")
     });
   };
 
   const handleDelete = async () => {
     if (!selectedSurcharge) return;
-    await deleteSurcharge.mutateAsync({
-      data: { id: selectedSurcharge.id },
+    deleteSurcharge.mutate({
+      id: selectedSurcharge.id,
+    }, {
+      onSuccess: handleDeleteSuccess,
+      onError: (error) => handleError(error, "delete")
     });
   };
 

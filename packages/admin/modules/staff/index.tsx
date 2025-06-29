@@ -34,7 +34,7 @@ import {
 } from "@karrio/ui/components/ui/select";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { useState } from "react";
-import { trpc } from "@karrio/trpc/client";
+import { useUsers, useUserMutation, usePermissionGroups } from "@karrio/hooks/admin-users";
 import { format } from "date-fns";
 import { MoreHorizontal } from "lucide-react";
 import {
@@ -53,111 +53,92 @@ export default function Page() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [cursor, setCursor] = useState<string | undefined>(undefined);
-  const utils = trpc.useContext();
 
   // Fetch users and permission groups
-  const { data: usersData, isLoading: isLoadingUsers } =
-    trpc.admin.users.list.useQuery({
-      filter: {
-        is_active: true,
-        after: cursor,
-      },
-    });
-  const { data: permissionGroupsData, isLoading: isLoadingPermissions } =
-    trpc.admin.permission_groups.list.useQuery({});
+  const { query: usersQuery, users: usersData } = useUsers({
+    is_active: true,
+  });
+  const { query: permissionGroupsQuery, permission_groups: permissionGroupsData } = usePermissionGroups();
   const users = usersData?.edges || [];
   const permissionGroups = permissionGroupsData?.edges || [];
+  const isLoadingUsers = usersQuery.isLoading;
+  const isLoadingPermissions = permissionGroupsQuery.isLoading;
 
   // Mutations
-  const createUser = trpc.admin.users.create.useMutation({
-    onSuccess: () => {
-      toast({ title: "User created successfully" });
-      setIsInviteOpen(false);
-      utils.admin.users.list.invalidate();
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to create user",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  const { createUser, updateUser, removeUser } = useUserMutation();
 
-  const updateUser = trpc.admin.users.update.useMutation({
-    onSuccess: () => {
-      toast({ title: "User updated successfully" });
-      setIsEditOpen(false);
-      utils.admin.users.list.invalidate();
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to update user",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  const handleCreateSuccess = () => {
+    toast({ title: "User created successfully" });
+    setIsInviteOpen(false);
+  };
 
-  const removeUser = trpc.admin.users.remove.useMutation({
-    onSuccess: () => {
-      toast({ title: "User removed successfully" });
-      utils.admin.users.list.invalidate();
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to remove user",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  const handleUpdateSuccess = () => {
+    toast({ title: "User updated successfully" });
+    setIsEditOpen(false);
+  };
 
-  const inviteUser = trpc.admin.users.create.useMutation({
-    onSuccess: () => {
-      toast({ title: "User invited successfully" });
-      setIsInviteOpen(false);
-      utils.admin.users.list.invalidate();
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to invite user",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  const handleRemoveSuccess = () => {
+    toast({ title: "User removed successfully" });
+  };
+
+  const handleError = (error: any, action: string) => {
+    toast({
+      title: `Failed to ${action} user`,
+      description: error.message || "An error occurred",
+      variant: "destructive",
+    });
+  };
 
   const handleInvite = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const role = formData.get("role") as "member" | "developer" | "admin";
+    const email = formData.get("email") as string;
+    const fullName = formData.get("full_name") as string;
+    const dummyPassword = Math.random().toString(36).slice(-8);
 
-    inviteUser.mutate({
-      data: {
-        email: formData.get("email") as string,
-        full_name: formData.get("full_name") as string,
+    createUser.mutate(
+      {
+        email,
+        full_name: fullName,
+        password1: dummyPassword,
+        password2: dummyPassword,
+        redirect_url: window.location.origin,
         is_staff: role === "admin",
         is_active: true,
-        permissions: [],
       },
-    });
+      {
+        onSuccess: () => {
+          toast({ title: "User invited successfully" });
+          setIsInviteOpen(false);
+        },
+        onError: (error) => handleError(error, "invite"),
+      },
+    );
   };
 
   const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const permissions = Array.from(formData.getAll("permissions")) as string[];
+    const dummyPassword = Math.random().toString(36).slice(-8);
 
-    createUser.mutate({
-      data: {
+    createUser.mutate(
+      {
         email: formData.get("email") as string,
         full_name: formData.get("full_name") as string,
+        password1: dummyPassword,
+        password2: dummyPassword,
+        redirect_url: window.location.origin,
         is_staff: formData.get("is_staff") === "on",
         is_active: true,
         permissions,
       },
-    });
+      {
+        onSuccess: handleCreateSuccess,
+        onError: (error) => handleError(error, "create"),
+      },
+    );
   };
 
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -169,31 +150,39 @@ export default function Page() {
 
     if (!selectedUser) return;
 
-    updateUser.mutate({
-      data: {
-        id: String(selectedUser.id),
+    updateUser.mutate(
+      {
+        id: selectedUser.id as any,
         full_name: formData.get("full_name") as string,
         is_staff: formData.get("is_staff") === "on",
         is_active: formData.get("is_active") === "on",
         permissions,
       },
-    });
+      {
+        onSuccess: handleUpdateSuccess,
+        onError: (error) => handleError(error, "update"),
+      },
+    );
   };
 
   const handleRemove = async (user: User) => {
     if (confirm("Are you sure you want to remove this user?")) {
-      removeUser.mutate({
-        data: {
-          id: String(user.id),
+      removeUser.mutate(
+        {
+          id: user.id as any,
         },
-      });
+        {
+          onSuccess: handleRemoveSuccess,
+          onError: (error) => handleError(error, "remove"),
+        },
+      );
     }
   };
 
   // Fix mutation status checks
-  const isInviting = inviteUser.status === "loading";
-  const isUpdating = updateUser.status === "loading";
-  const isRemoving = removeUser.status === "loading";
+  const isInviting = createUser.isLoading;
+  const isUpdating = updateUser.isLoading;
+  const isRemoving = removeUser.isLoading;
 
   if (isLoadingUsers || isLoadingPermissions) {
     return (
@@ -227,11 +216,15 @@ export default function Page() {
                   </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleInvite} className="space-y-4">
-                  <div className="space-y-2 p-4 pb-8">
+                  <div className="space-y-2 p-4 pb-2">
+                    <Label htmlFor="full_name">Full Name</Label>
+                    <Input id="full_name" name="full_name" required />
+                  </div>
+                  <div className="space-y-2 px-4">
                     <Label htmlFor="email">Email</Label>
                     <Input id="email" name="email" type="email" required />
                   </div>
-                  <div className="space-y-2 p-4 pb-8">
+                  <div className="space-y-2 p-4 pt-2 pb-8">
                     <Label htmlFor="role">Role</Label>
                     <Select name="role" defaultValue="member">
                       <SelectTrigger>

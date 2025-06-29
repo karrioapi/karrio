@@ -1,6 +1,6 @@
 "use client";
 
-import { trpc } from "@karrio/trpc/client";
+import { useOrganizationAccounts, useOrganizationAccountMutation } from "@karrio/hooks/admin-accounts";
 import {
   Card,
   CardContent,
@@ -142,82 +142,51 @@ export default function OrganizationAccounts() {
   const [isDisableOpen, setIsDisableOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
-  const utils = trpc.useContext();
 
   // Fetch accounts
-  const { data, isLoading } = trpc.admin.organization_accounts.list.useQuery(
-    {},
-  );
+  const { query, accounts: accountsData } = useOrganizationAccounts();
+  const isLoading = query.isLoading;
 
   // Mutations
-  const createOrganization =
-    trpc.admin.organization_accounts.create.useMutation({
-      onSuccess: () => {
-        toast({ title: "Organization created successfully" });
-        setIsCreateOpen(false);
-        utils.admin.organization_accounts.list.invalidate();
-      },
-      onError: (error) => {
-        toast({
-          title: "Failed to create organization",
-          description: error.message,
-          variant: "destructive",
-        });
-      },
-    });
+  const {
+    createOrganizationAccount,
+    updateOrganizationAccount,
+    disableOrganizationAccount,
+    deleteOrganizationAccount,
+  } = useOrganizationAccountMutation();
 
-  const updateOrganization =
-    trpc.admin.organization_accounts.update.useMutation({
-      onSuccess: () => {
-        toast({ title: "Organization updated successfully" });
-        setIsEditOpen(false);
-        setSelectedAccount(null);
-        utils.admin.organization_accounts.list.invalidate();
-      },
-      onError: (error) => {
-        toast({
-          title: "Failed to update organization",
-          description: error.message,
-          variant: "destructive",
-        });
-      },
-    });
+  const handleCreateSuccess = () => {
+    toast({ title: "Organization created successfully" });
+    setIsCreateOpen(false);
+  };
 
-  const disableOrganization =
-    trpc.admin.organization_accounts.disable.useMutation({
-      onSuccess: () => {
-        toast({ title: "Organization disabled successfully" });
-        setIsDisableOpen(false);
-        setSelectedAccount(null);
-        utils.admin.organization_accounts.list.invalidate();
-      },
-      onError: (error) => {
-        toast({
-          title: "Failed to disable organization",
-          description: error.message,
-          variant: "destructive",
-        });
-      },
-    });
+  const handleUpdateSuccess = () => {
+    toast({ title: "Organization updated successfully" });
+    setIsEditOpen(false);
+    setSelectedAccount(null);
+  };
 
-  const deleteOrganization =
-    trpc.admin.organization_accounts.delete.useMutation({
-      onSuccess: () => {
-        toast({ title: "Organization deleted successfully" });
-        setIsDeleteOpen(false);
-        setSelectedAccount(null);
-        utils.admin.organization_accounts.list.invalidate();
-      },
-      onError: (error) => {
-        toast({
-          title: "Failed to delete organization",
-          description: error.message,
-          variant: "destructive",
-        });
-      },
-    });
+  const handleDisableSuccess = () => {
+    toast({ title: "Organization disabled successfully" });
+    setIsDisableOpen(false);
+    setSelectedAccount(null);
+  };
 
-  const accounts = data?.edges || [];
+  const handleDeleteSuccess = () => {
+    toast({ title: "Organization deleted successfully" });
+    setIsDeleteOpen(false);
+    setSelectedAccount(null);
+  };
+
+  const handleError = (error: any, action: string) => {
+    toast({
+      title: `Failed to ${action} organization`,
+      description: error.message || "An error occurred",
+      variant: "destructive",
+    });
+  };
+
+  const accounts = accountsData?.edges || [];
   const totalAccounts = accounts.length;
   const totalPages = Math.ceil(totalAccounts / ITEMS_PER_PAGE);
 
@@ -257,11 +226,12 @@ export default function OrganizationAccounts() {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name") as string;
-    createOrganization.mutate({
-      data: {
-        name: name,
-        slug: generateSlug(name),
-      },
+    createOrganizationAccount.mutate({
+      name: name,
+      slug: generateSlug(name),
+    }, {
+      onSuccess: handleCreateSuccess,
+      onError: (error) => handleError(error, "create")
     });
   };
 
@@ -270,30 +240,33 @@ export default function OrganizationAccounts() {
     if (!selectedAccount) return;
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name") as string;
-    updateOrganization.mutate({
-      data: {
-        id: String(selectedAccount.id),
-        name: name,
-        slug: generateSlug(name),
-      },
+    updateOrganizationAccount.mutate({
+      id: String(selectedAccount.id),
+      name: name,
+      slug: generateSlug(name),
+    }, {
+      onSuccess: handleUpdateSuccess,
+      onError: (error) => handleError(error, "update")
     });
   };
 
   const handleDisable = async () => {
     if (!selectedAccount) return;
-    disableOrganization.mutate({
-      data: {
-        id: String(selectedAccount.id),
-      },
+    disableOrganizationAccount.mutate({
+      id: String(selectedAccount.id),
+    }, {
+      onSuccess: handleDisableSuccess,
+      onError: (error) => handleError(error, "disable")
     });
   };
 
   const handleDelete = async () => {
     if (!selectedAccount) return;
-    deleteOrganization.mutate({
-      data: {
-        id: String(selectedAccount.id),
-      },
+    deleteOrganizationAccount.mutate({
+      id: String(selectedAccount.id),
+    }, {
+      onSuccess: handleDeleteSuccess,
+      onError: (error) => handleError(error, "delete")
     });
   };
 
@@ -352,7 +325,7 @@ export default function OrganizationAccounts() {
 
               <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
                 <DialogTrigger asChild>
-                  <Button>Create Organization</Button>
+                  <Button size="sm">Create Organization</Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
@@ -369,9 +342,9 @@ export default function OrganizationAccounts() {
                     <DialogFooter>
                       <Button
                         type="submit"
-                        disabled={createOrganization.status === "loading"}
+                        disabled={createOrganizationAccount.isLoading}
                       >
-                        {createOrganization.status === "loading"
+                        {createOrganizationAccount.isLoading
                           ? "Creating..."
                           : "Create"}
                       </Button>
@@ -516,9 +489,9 @@ export default function OrganizationAccounts() {
                 <DialogFooter>
                   <Button
                     type="submit"
-                    disabled={updateOrganization.status === "loading"}
+                    disabled={updateOrganizationAccount.isLoading}
                   >
-                    {updateOrganization.status === "loading"
+                    {updateOrganizationAccount.isLoading
                       ? "Saving..."
                       : "Save Changes"}
                   </Button>
@@ -560,9 +533,9 @@ export default function OrganizationAccounts() {
                 <Button
                   variant="destructive"
                   onClick={handleDisable}
-                  disabled={disableOrganization.status === "loading"}
+                  disabled={disableOrganizationAccount.isLoading}
                 >
-                  {disableOrganization.status === "loading"
+                  {disableOrganizationAccount.isLoading
                     ? "Disabling..."
                     : "Disable Organization"}
                 </Button>
@@ -603,9 +576,9 @@ export default function OrganizationAccounts() {
                 <Button
                   variant="destructive"
                   onClick={handleDelete}
-                  disabled={deleteOrganization.status === "loading"}
+                  disabled={deleteOrganizationAccount.isLoading}
                 >
-                  {deleteOrganization.status === "loading"
+                  {deleteOrganizationAccount.isLoading
                     ? "Deleting..."
                     : "Delete Organization"}
                 </Button>

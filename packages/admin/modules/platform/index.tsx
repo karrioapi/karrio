@@ -12,7 +12,7 @@ import { Button } from "@karrio/ui/components/ui/button";
 import { Label } from "@karrio/ui/components/ui/label";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { trpc } from "@karrio/trpc/client";
+import { useConfigs, useConfigMutation } from "@karrio/hooks/admin-platform";
 import { useState, useEffect } from "react";
 import {
   Dialog,
@@ -116,27 +116,25 @@ type EditSection = 'email' | 'administration' | 'data_retention' | 'api_keys' | 
 export default function PlatformDetails() {
   const { toast } = useToast();
   const { metadata } = useAPIMetadata();
-  const utils = trpc.useContext();
-  const { data: configs } = trpc.admin.configs.list.useQuery<ConfigResponse>();
+  const { query, configs } = useConfigs();
   const [editSection, setEditSection] = useState<EditSection>(null);
 
-  const { mutate: updateConfigs } = trpc.admin.configs.update.useMutation({
-    onSuccess: () => {
-      toast({ title: "Settings saved successfully" });
-      utils.admin.configs.list.invalidate();
-      setEditSection(null);
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to save settings",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  const { updateConfigs } = useConfigMutation();
 
   const handleUpdate = (data: Partial<ConfigData>) => {
-    updateConfigs({ data });
+    updateConfigs.mutate(data, {
+      onSuccess: () => {
+        toast({ title: "Settings saved successfully" });
+        setEditSection(null);
+      },
+      onError: (error: any) => {
+        toast({
+          title: "Failed to save settings",
+          description: error.message || "An error occurred",
+          variant: "destructive",
+        });
+      },
+    });
   };
 
   const currentConfig = configs ? {
@@ -147,7 +145,7 @@ export default function PlatformDetails() {
   } as ConfigData : defaultConfig;
 
   return (
-    <div className="p-6">
+    <div>
       <div className="mb-8">
         <h1 className="text-2xl font-semibold tracking-tight">
           Platform Overview
