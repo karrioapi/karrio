@@ -119,7 +119,7 @@ function ParcelEditDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl p-4 pb-8">
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>
             {parcelTemplate ? "Edit Parcel Template" : "Create Parcel Template"}
@@ -132,7 +132,7 @@ function ParcelEditDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <DialogBody>
+        <DialogBody className="p-4 pb-8">
           <div className="space-y-3">
             <div className="space-y-1">
               <Label htmlFor="label" className="text-xs text-slate-700">

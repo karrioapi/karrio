@@ -354,7 +354,7 @@ export default function OrganizationAccounts() {
                 <DialogTrigger asChild>
                   <Button>Create Organization</Button>
                 </DialogTrigger>
-                <DialogContent className="p-4 pb-8">
+                <DialogContent>
                   <DialogHeader>
                     <DialogTitle>Create New Organization</DialogTitle>
                     <DialogDescription>
@@ -362,7 +362,7 @@ export default function OrganizationAccounts() {
                     </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleCreate} className="space-y-4">
-                    <div className="space-y-2">
+                    <div className="space-y-2 p-4 pb-8">
                       <Label htmlFor="name">Name</Label>
                       <Input id="name" name="name" required />
                     </div>
@@ -494,17 +494,17 @@ export default function OrganizationAccounts() {
           }
         }}
       >
-        <DialogContent className="p-4 pb-8">
+        <DialogContent>
           {selectedAccount && (
             <>
-              <DialogHeader>
+              <DialogHeader className="p-4 pb-2">
                 <DialogTitle>Edit Organization</DialogTitle>
                 <DialogDescription>
                   Update organization details.
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleUpdate} className="space-y-4">
-                <div className="space-y-2">
+                <div className="space-y-2 p-4 pb-8">
                   <Label htmlFor="edit_name">Name</Label>
                   <Input
                     id="edit_name"
@@ -540,7 +540,7 @@ export default function OrganizationAccounts() {
           }
         }}
       >
-        <DialogContent className="p-4 pb-8">
+        <DialogContent>
           {selectedAccount && (
             <>
               <DialogHeader>
@@ -583,7 +583,7 @@ export default function OrganizationAccounts() {
           }
         }}
       >
-        <DialogContent className="p-4 pb-8">
+        <DialogContent>
           {selectedAccount && (
             <>
               <DialogHeader>

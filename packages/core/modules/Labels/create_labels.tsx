@@ -665,11 +665,11 @@ export default function Page() {
             {/* Label editor */}
             <>
               <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-                <DialogContent className="modal-card side-modal-body p-4 pb-8">
+                <DialogContent className="modal-card side-modal-body">
                   <DialogHeader>
                     <DialogTitle className="sr-only">Shipment Details</DialogTitle>
                   </DialogHeader>
-                  <section className="modal-card-body has-background-white">
+                  <section className="modal-card-body has-background-white p-4 pb-8">
                     {retrieveShipment(
                       batch.shipments || [],
                       selectedRow,

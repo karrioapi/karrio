@@ -122,7 +122,7 @@ export function AppsView() {
                 Create OAuth App
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-lg p-4 pb-8">
+            <DialogContent className="max-w-lg">
               <DialogHeader>
                 <DialogTitle>Create OAuth App</DialogTitle>
                 <DialogDescription>
@@ -131,7 +131,7 @@ export function AppsView() {
               </DialogHeader>
               <form
                 onSubmit={(e) => { e.preventDefault(); e.stopPropagation(); createAppForm.handleSubmit(); }}
-                className="space-y-4 pt-4"
+                className="space-y-4 pt-4 p-4 pb-8"
               >
                 <createAppForm.Field
                   name="display_name"
@@ -252,7 +252,7 @@ export function AppsView() {
       </Sheet>
 
       <Dialog open={showClientSecret} onOpenChange={setShowClientSecret}>
-        <DialogContent className="sm:max-w-[525px] p-4 pb-8">
+        <DialogContent className="sm:max-w-[525px]">
           <DialogHeader>
             <DialogTitle>OAuth App Created Successfully</DialogTitle>
             <DialogDescription>
@@ -260,7 +260,7 @@ export function AppsView() {
             </DialogDescription>
           </DialogHeader>
           {newlyCreatedApp && (
-            <div className="space-y-4 py-4">
+            <div className="space-y-4 py-4 p-4 pb-8">
               <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
                 <div className="flex items-start gap-3">
                   <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><span className="text-red-600 text-sm font-bold">!</span></div>
@@ -295,7 +295,7 @@ export function AppsView() {
       </Dialog>
 
       <Dialog open={!!deleteAppId} onOpenChange={() => setDeleteAppId(null)}>
-        <DialogContent className="p-4 pb-8">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete OAuth App</DialogTitle>
             <DialogDescription>
