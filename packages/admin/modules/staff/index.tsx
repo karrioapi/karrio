@@ -219,7 +219,7 @@ export default function Page() {
               <DialogTrigger asChild>
                 <Button>Invite User</Button>
               </DialogTrigger>
-              <DialogContent className="p-4 pb-8">
+              <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Invite New User</DialogTitle>
                   <DialogDescription>
@@ -227,11 +227,11 @@ export default function Page() {
                   </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleInvite} className="space-y-4">
-                  <div className="space-y-2">
+                  <div className="space-y-2 p-4 pb-8">
                     <Label htmlFor="email">Email</Label>
                     <Input id="email" name="email" type="email" required />
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-2 p-4 pb-8">
                     <Label htmlFor="role">Role</Label>
                     <Select name="role" defaultValue="member">
                       <SelectTrigger>
@@ -343,7 +343,7 @@ export default function Page() {
       </Card>
 
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="p-4 pb-8">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit User</DialogTitle>
             <DialogDescription>
@@ -351,7 +351,7 @@ export default function Page() {
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleUpdate} className="space-y-4">
-            <div className="space-y-2">
+            <div className="space-y-2 p-4 pb-8">
               <Label htmlFor="full_name">Full Name</Label>
               <Input
                 id="full_name"
@@ -360,7 +360,7 @@ export default function Page() {
                 required
               />
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 p-4 pb-8">
               <Checkbox
                 id="is_staff"
                 name="is_staff"
@@ -368,7 +368,7 @@ export default function Page() {
               />
               <Label htmlFor="is_staff">Admin Access</Label>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 p-4 pb-8">
               <Checkbox
                 id="is_active"
                 name="is_active"
@@ -376,9 +376,9 @@ export default function Page() {
               />
               <Label htmlFor="is_active">Active</Label>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 p-4 pb-8">
               <Label>Permission Groups</Label>
-              <div className="space-y-2">
+              <div className="space-y-2 p-4 pb-8">
                 {permissionGroups.map(({ node: group }) => (
                   <div key={group.id} className="flex items-center space-x-2">
                     <Checkbox

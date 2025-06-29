@@ -44,7 +44,7 @@ export function ShippingRuleTemplatePicker({ onSelectTemplate, children }: Shipp
       })}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-4xl h-[80vh] p-4 pb-8">
+        <DialogContent className="max-w-4xl h-[80vh]">
           <DialogHeader className="p-4 pb-2">
             <div className="flex items-center gap-2">
               <Truck className="h-5 w-5" />
@@ -56,7 +56,7 @@ export function ShippingRuleTemplatePicker({ onSelectTemplate, children }: Shipp
           </DialogHeader>
 
           {/* Search */}
-          <div className="px-4 pb-3">
+          <div className="p-4 pb-8">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
               <Input
@@ -69,7 +69,7 @@ export function ShippingRuleTemplatePicker({ onSelectTemplate, children }: Shipp
           </div>
 
           {/* Templates Grid */}
-          <div className="flex-1 overflow-y-auto px-4 pb-4">
+          <div className="flex-1 overflow-y-auto p-4 pb-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {filteredTemplates.map((template) => (
                 <Card

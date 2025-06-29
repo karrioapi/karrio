@@ -79,12 +79,12 @@ export function RoleManagementDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md p-4 pb-8">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Manage Role</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-6 p-4 pb-8">
           {/* Member Info */}
           <div className="flex items-center space-x-3">
             <Avatar className="h-10 w-10">
