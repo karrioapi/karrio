@@ -1,0 +1,39 @@
+{
+    "shipmentTrackingNumber": "00340434292135100186",
+    "shipmentDetails": [
+        {
+            "shipmentTrackingNumber": "00340434292135100186",
+            "productCode": "V01PAK",
+            "localProductCode": "V01PAK",
+            "serviceHandlingFeatureCodes": []
+        }
+    ],
+    "documents": [
+        {
+            "imageFormat": "PDF",
+            "content": "JVBERi0xLjQKJeLjz9MKNyAwIG9iago8PAovVHlwZSAvUGFnZQovUGFyZW50IDEgMCBSCi9NZWRpYUJveCBbIDAgMCA2MTIgNzkyIF0KL0Ny",
+            "typeCode": "waybill-doc"
+        }
+    ],
+    "onDemandDelivery": {
+        "deliveryOption": "servicepoint",
+        "location": "DE",
+        "specialInstructions": [],
+        "gateCode": "",
+        "whereIsTheKey": "",
+        "neighborName": "",
+        "neighborHouseNumber": "",
+        "authorizerName": "",
+        "servicePointId": "8003-0900",
+        "requestedDeliveryDate": "2025-01-22"
+    },
+    "shipmentCharges": [
+        {
+            "currencyType": "BILLC",
+            "priceCurrency": "EUR",
+            "price": 25.50,
+            "priceType": "TOTAL",
+            "serviceCodeMutuallyExclusive": false
+        }
+    ]
+}

@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -e
+
+SCHEMAS=./schemas
+LIB_MODULES=./karrio/schemas/dhl_ecommerce_europe
+ROOT=../../../
+
+find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
+touch "${LIB_MODULES}/__init__.py"
+
+generate_schema() {
+    echo "Generating $1..."
+    "${ROOT}/bin/cli" codegen generate "$1" "$2" --no-append-type-suffix
+}
+
+echo "Generating DHL eCommerce Europe schemas..."
+
+# Generate Python schemas from JSON schemas
+generate_schema "rate_response" "karrio/schemas/dhl_ecommerce_europe/rate_response.py" <<< cat $SCHEMAS/rate_response.json
+generate_schema "shipment_response" "karrio/schemas/dhl_ecommerce_europe/shipment_response.py" <<< cat $SCHEMAS/shipment_response.json
+generate_schema "tracking_response" "karrio/schemas/dhl_ecommerce_europe/tracking_response.py" <<< cat $SCHEMAS/tracking_response.json
+
+# Optional: Generate error response schema if needed
+if [ -f "$SCHEMAS/error.json" ]; then
+    generate_schema "error" "karrio/schemas/dhl_ecommerce_europe/error.py" <<< cat $SCHEMAS/error.json
+fi
+
+echo "Schema generation completed!"
+echo "Generated files:"
+echo "- karrio/schemas/dhl_ecommerce_europe/rate_response.py"
+echo "- karrio/schemas/dhl_ecommerce_europe/shipment_response.py"
+echo "- karrio/schemas/dhl_ecommerce_europe/tracking_response.py" 
