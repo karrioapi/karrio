@@ -19,6 +19,10 @@ export default {
     title: 'Docker',
     type: 'page'
   },
+  "docker-less": {
+    title: 'Docker-less',
+    type: 'page'
+  },
   "deployments": {
     title: 'Deployments',
     type: 'separator',

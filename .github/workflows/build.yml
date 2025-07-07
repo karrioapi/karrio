@@ -20,6 +20,50 @@ jobs:
             version:
               - 'apps/api/karrio/server/VERSION'
 
+  python-packages:
+    # This job builds and releases all Python packages, including:
+    # - modules/
+    # - modules/connectors/
+    # - apps/api/
+    # - community/plugins/
+    # - plugins/
+    # Any subfolder with a pyproject.toml will be processed.
+    # See bin/build-and-release-packages for details.
+    needs: changes
+    if: ${{ needs.changes.outputs.version == 'true' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+
+      - id: get_tag
+        run: |
+          cat ./apps/api/karrio/server/VERSION
+          echo "tag=$(cat ./apps/api/karrio/server/VERSION)" >> "$GITHUB_ENV"
+
+      - name: Build and release Python packages
+        env:
+          PYPI_REPOSITORY: pypi
+          FORCE_RELEASE: true
+        run: |
+          echo 'Building and releasing Python packages for version ${{ env.tag }}...'
+          ./bin/build-and-release-packages --force
+
   server-build:
     needs: changes
     if: ${{ needs.changes.outputs.version == 'true' || github.event_name == 'workflow_dispatch' }}

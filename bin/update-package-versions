@@ -1,0 +1,151 @@
+#!/usr/bin/env bash
+
+# Activate python env
+source "bin/activate-env" > /dev/null 2>&1
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Logging functions
+log_info() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
+
+log_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+log_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Function to update package version
+update_package_version() {
+    local pyproject_file="$1"
+    local new_version="$2"
+
+    if [ -f "$pyproject_file" ]; then
+        # Update version in pyproject.toml
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            # macOS
+            sed -i '' "s/^version = \".*\"/version = \"$new_version\"/" "$pyproject_file"
+        else
+            # Linux
+            sed -i "s/^version = \".*\"/version = \"$new_version\"/" "$pyproject_file"
+        fi
+        log_info "Updated version to $new_version in $pyproject_file"
+    fi
+}
+
+# Main execution
+main() {
+    # Get target version (from argument or central version)
+    if [ $# -eq 1 ]; then
+        TARGET_VERSION="$1"
+    else
+        TARGET_VERSION=$(cat apps/api/karrio/server/VERSION)
+    fi
+
+    log_info "Updating all package versions to: $TARGET_VERSION"
+
+    # Define packages to update
+    declare -a packages=(
+        "modules/sdk"
+        "modules/core"
+        "modules/data"
+        "modules/documents"
+        "modules/events"
+        "modules/graph"
+        "modules/manager"
+        "modules/orders"
+        "modules/pricing"
+        "modules/proxy"
+        "modules/soap"
+        "modules/cli"
+    )
+
+    # Add connector packages
+    for connector_dir in modules/connectors/*/; do
+        if [ -d "$connector_dir" ] && [ -f "$connector_dir/pyproject.toml" ]; then
+            packages+=("$connector_dir")
+        fi
+    done
+    # Add community plugin packages
+    for plugin_dir in community/plugins/*/; do
+        if [ -d "$plugin_dir" ] && [ -f "$plugin_dir/pyproject.toml" ]; then
+            packages+=("$plugin_dir")
+        fi
+    done
+    # Add root plugins (oss) packages
+    for plugin_dir in plugins/*/; do
+        if [ -d "$plugin_dir" ] && [ -f "$plugin_dir/pyproject.toml" ]; then
+            packages+=("$plugin_dir")
+        fi
+    done
+
+    # Update each package
+    local updated_count=0
+
+    for package_dir in "${packages[@]}"; do
+        if [ ! -d "$package_dir" ]; then
+            log_warning "Package directory $package_dir not found, skipping"
+            continue
+        fi
+
+        pyproject_file="$package_dir/pyproject.toml"
+        if [ ! -f "$pyproject_file" ]; then
+            log_warning "No pyproject.toml found in $package_dir, skipping"
+            continue
+        fi
+
+        # Get current version
+        current_version=$(grep -E '^version = ' "$pyproject_file" | sed 's/version = "\(.*\)"/\1/')
+        if [ -z "$current_version" ]; then
+            log_warning "Could not determine version for $package_dir, skipping"
+            continue
+        fi
+
+        # Update if different
+        if [ "$current_version" != "$TARGET_VERSION" ]; then
+            update_package_version "$pyproject_file" "$TARGET_VERSION"
+            ((updated_count++))
+        else
+            log_info "Version already up to date in $package_dir"
+        fi
+    done
+
+    log_success "Updated $updated_count packages to version $TARGET_VERSION"
+}
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --help)
+            echo "Usage: $0 [VERSION]"
+            echo "Updates all package versions to match the specified version or central version"
+            echo ""
+            echo "Arguments:"
+            echo "  VERSION    Target version (optional, defaults to central version)"
+            echo ""
+            echo "Examples:"
+            echo "  $0                    # Update to central version"
+            echo "  $0 2025.5rc4         # Update to specific version"
+            exit 0
+            ;;
+        *)
+            # Assume it's the version argument
+            break
+            ;;
+    esac
+done
+
+# Run main function
+main "$@"

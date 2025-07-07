@@ -15,6 +15,9 @@ generate_requirements() {
 
     # Replace git+ssh:// with git+https://
     sed -i '' -e 's/git+ssh:\/\/git@/git+https:\/\//g' "$output_file"
+
+    # Fix community plugin paths - remove the ../../ prefix
+    sed -i '' -e 's/subdirectory=\.\.\/\.\.\/community\/plugins\//subdirectory=community\/plugins\//g' "$output_file"
 }
 
 # Start with clean environment
@@ -22,6 +25,7 @@ echo 'Creating clean environment...'
 source "${ROOT:?}/bin/create-new-env" --empty
 
 # Generate requirements files incrementally
+# requirements.txt should always be public-only (no insiders or platform modules)
 generate_requirements "requirements.build.txt" "requirements.txt"
 generate_requirements "requirements.build.insiders.txt" "requirements.insiders.txt"
 generate_requirements "requirements.build.platform.txt" "requirements.platform.txt"

@@ -1,0 +1,368 @@
+#!/usr/bin/env bash
+
+# Activate python env
+source "bin/activate-env" > /dev/null 2>&1
+
+# Configuration
+PYPI_REPOSITORY="${PYPI_REPOSITORY:-pypi}"
+DRY_RUN="${DRY_RUN:-false}"
+FORCE_RELEASE="${FORCE_RELEASE:-false}"
+BUILD_ONLY="${BUILD_ONLY:-false}"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Logging functions
+log_info() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
+
+log_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+log_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Function to get package version from pyproject.toml
+get_package_version() {
+    local pyproject_file="$1"
+    if [ -f "$pyproject_file" ]; then
+        # Extract version from pyproject.toml
+        grep -E '^version = ' "$pyproject_file" | sed 's/version = "\(.*\)"/\1/'
+    else
+        echo ""
+    fi
+}
+
+# Function to get latest version from PyPI
+get_pypi_version() {
+    local package_name="$1"
+    local version=""
+
+    # Try to get version from PyPI
+    if command -v curl >/dev/null 2>&1; then
+        version=$(curl -s "https://pypi.org/pypi/$package_name/json" 2>/dev/null | grep -o '"version":"[^"]*"' | head -1 | sed 's/"version":"//;s/"//')
+    fi
+
+    echo "$version"
+}
+
+# Function to check if version needs updating
+check_version_update() {
+    local package_name="$1"
+    local local_version="$2"
+    local pypi_version="$3"
+
+    if [ -z "$pypi_version" ]; then
+        log_info "Package $package_name not found on PyPI - will be released"
+        return 0
+    fi
+
+    if [ "$local_version" = "$pypi_version" ]; then
+        log_warning "Package $package_name version $local_version already exists on PyPI"
+        return 1
+    else
+        log_info "Package $package_name: local=$local_version, pypi=$pypi_version - will be updated"
+        return 0
+    fi
+}
+
+# Function to build a package
+build_package() {
+    local package_dir="$1"
+    local package_name="$2"
+    local version="$3"
+
+    log_info "Building $package_name ($version) in $package_dir"
+
+    # Ensure we're in the workspace root
+    cd "$ROOT" || return 1
+
+    # Change to package directory
+    cd "$package_dir" || return 1
+
+    # Clean previous builds
+    clean_build_files .
+
+    # Install build dependencies if needed
+    if ! python -c "import build" 2>/dev/null; then
+        log_info "Installing build dependencies..."
+        pip install build
+    fi
+
+    # Build wheel
+    if [ -f "pyproject.toml" ]; then
+        # Use setuptools for pyproject.toml
+        python -m build --wheel --no-isolation
+        result=$?
+    else
+        # Fallback to setup.py
+        python setup.py bdist_wheel
+        result=$?
+    fi
+
+    if [ $result -eq 0 ]; then
+        log_success "Built $package_name successfully"
+        # Move wheel to dist directory
+        backup_wheels . "$package_name"
+    else
+        log_error "Failed to build $package_name"
+        return 1
+    fi
+
+    # Return to workspace root
+    cd "$ROOT" > /dev/null
+    return $result
+}
+
+# Function to update package version
+update_package_version() {
+    local pyproject_file="$1"
+    local new_version="$2"
+
+    if [ -f "$pyproject_file" ]; then
+        # Update version in pyproject.toml
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            # macOS
+            sed -i '' "s/^version = \".*\"/version = \"$new_version\"/" "$pyproject_file"
+        else
+            # Linux
+            sed -i "s/^version = \".*\"/version = \"$new_version\"/" "$pyproject_file"
+        fi
+        log_info "Updated version to $new_version in $pyproject_file"
+    fi
+}
+
+# Function to publish packages
+publish_packages() {
+    if [ "$BUILD_ONLY" = "true" ]; then
+        log_info "Build-only mode - skipping publication"
+        return 0
+    fi
+
+    if [ "$DRY_RUN" = "true" ]; then
+        log_info "Dry run mode - would publish packages to $PYPI_REPOSITORY"
+        return 0
+    fi
+
+    log_info "Publishing packages to $PYPI_REPOSITORY..."
+
+    # Install twine if not available
+    if ! command -v twine >/dev/null 2>&1; then
+        pip install twine
+    fi
+
+    # Publish all wheels in dist directory
+    if [ -d "$DIST" ] && [ "$(ls -A $DIST/*.whl 2>/dev/null)" ]; then
+        twine upload --repository "$PYPI_REPOSITORY" "$DIST"/*.whl
+        if [ $? -eq 0 ]; then
+            log_success "Published packages successfully"
+        else
+            log_error "Failed to publish packages"
+            return 1
+        fi
+    else
+        log_warning "No wheels found in $DIST directory"
+    fi
+}
+
+# Main execution
+main() {
+    log_info "Starting package build and release process"
+    log_info "PyPI Repository: $PYPI_REPOSITORY"
+    log_info "Dry Run: $DRY_RUN"
+    log_info "Force Release: $FORCE_RELEASE"
+    log_info "Build Only: $BUILD_ONLY"
+
+    # Ensure build dependencies are present
+    if ! python -c "import setuptools" 2>/dev/null; then
+        log_info "Installing setuptools..."
+        pip install setuptools
+    fi
+    if ! python -c "import wheel" 2>/dev/null; then
+        log_info "Installing wheel..."
+        pip install wheel
+    fi
+    if ! python -c "import build" 2>/dev/null; then
+        log_info "Installing build..."
+        pip install build
+    fi
+
+    # Get central version
+    CENTRAL_VERSION=$(cat apps/api/karrio/server/VERSION)
+    log_info "Central version: $CENTRAL_VERSION"
+
+    # Define packages to build
+    declare -a packages=(
+        "modules/sdk:karrio"
+        "modules/core:karrio_server_core"
+        "modules/data:karrio_server_data"
+        "modules/documents:karrio_server_documents"
+        "modules/events:karrio_server_events"
+        "modules/graph:karrio_server_graph"
+        "modules/manager:karrio_server_manager"
+        "modules/orders:karrio_server_orders"
+        "modules/pricing:karrio_server_pricing"
+        "modules/proxy:karrio_server_proxy"
+        "modules/soap:pysoap"
+        "modules/cli:karrio_cli"
+        "apps/api:karrio_server"
+    )
+
+    # Add connector packages
+    for connector_dir in modules/connectors/*/; do
+        if [ -d "$connector_dir" ] && [ -f "$connector_dir/pyproject.toml" ]; then
+            connector_name=$(basename "$connector_dir")
+            package_name="karrio_${connector_name}"
+            packages+=("$connector_dir:$package_name")
+        fi
+    done
+    # Add community plugin packages
+    for plugin_dir in community/plugins/*/; do
+        if [ -d "$plugin_dir" ] && [ -f "$plugin_dir/pyproject.toml" ]; then
+            plugin_name=$(basename "$plugin_dir")
+            package_name="karrio_${plugin_name}"
+            packages+=("$plugin_dir:$package_name")
+        fi
+    done
+    # Add root plugins (oss) packages
+    for plugin_dir in plugins/*/; do
+        if [ -d "$plugin_dir" ] && [ -f "$plugin_dir/pyproject.toml" ]; then
+            plugin_name=$(basename "$plugin_dir")
+            package_name="karrio_${plugin_name}"
+            packages+=("$plugin_dir:$package_name")
+        fi
+    done
+
+    # Build and check each package
+    local build_success=true
+    local packages_to_release=()
+
+    for package_info in "${packages[@]}"; do
+        IFS=':' read -r package_dir package_name <<< "$package_info"
+
+        if [ ! -d "$package_dir" ]; then
+            log_warning "Package directory $package_dir not found, skipping"
+            continue
+        fi
+
+        pyproject_file="$package_dir/pyproject.toml"
+        if [ ! -f "$pyproject_file" ]; then
+            log_warning "No pyproject.toml found in $package_dir, skipping"
+            continue
+        fi
+
+        # Get current version
+        current_version=$(get_package_version "$pyproject_file")
+        if [ -z "$current_version" ]; then
+            log_warning "Could not determine version for $package_name, skipping"
+            continue
+        fi
+
+        # Handle dynamic version files
+        if [[ "$current_version" == *"file ="* ]]; then
+            # Extract file path from dynamic version
+            version_file=$(echo "$current_version" | sed 's/.*file = "\([^"]*\)".*/\1/')
+            if [ -f "$package_dir/$version_file" ]; then
+                current_version=$(cat "$package_dir/$version_file")
+                log_info "Using dynamic version from $version_file: $current_version"
+            else
+                log_warning "Version file $version_file not found for $package_name, skipping"
+                continue
+            fi
+        fi
+
+        # Update version to central version if different
+        if [ "$current_version" != "$CENTRAL_VERSION" ]; then
+            if [ "$FORCE_RELEASE" = "true" ]; then
+                log_info "Updating $package_name version from $current_version to $CENTRAL_VERSION"
+                update_package_version "$pyproject_file" "$CENTRAL_VERSION"
+                current_version="$CENTRAL_VERSION"
+            else
+                log_warning "Version mismatch for $package_name: $current_version vs central $CENTRAL_VERSION"
+            fi
+        fi
+
+        # Check if version needs updating on PyPI
+        pypi_version=$(get_pypi_version "$package_name")
+        if check_version_update "$package_name" "$current_version" "$pypi_version" || [ "$FORCE_RELEASE" = "true" ]; then
+            packages_to_release+=("$package_dir:$package_name:$current_version")
+        fi
+    done
+
+    # Build packages that need releasing
+    if [ ${#packages_to_release[@]} -eq 0 ]; then
+        log_info "No packages need to be released"
+        return 0
+    fi
+
+    log_info "Building ${#packages_to_release[@]} packages..."
+
+    for package_info in "${packages_to_release[@]}"; do
+        IFS=':' read -r package_dir package_name version <<< "$package_info"
+
+        if ! build_package "$package_dir" "$package_name" "$version"; then
+            build_success=false
+            log_error "Failed to build $package_name"
+        fi
+    done
+
+    if [ "$build_success" = false ]; then
+        log_error "Some packages failed to build"
+        return 1
+    fi
+
+    # Publish packages
+    publish_packages
+
+    log_success "Package build and release process completed"
+}
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --dry-run)
+            DRY_RUN=true
+            shift
+            ;;
+        --force)
+            FORCE_RELEASE=true
+            shift
+            ;;
+        --build-only)
+            BUILD_ONLY=true
+            shift
+            ;;
+        --repository)
+            PYPI_REPOSITORY="$2"
+            shift 2
+            ;;
+        --help)
+            echo "Usage: $0 [OPTIONS]"
+            echo "Options:"
+            echo "  --dry-run      Show what would be done without actually doing it"
+            echo "  --force        Force release even if version already exists on PyPI"
+            echo "  --build-only   Only build packages, don't publish"
+            echo "  --repository   PyPI repository to use (default: pypi)"
+            echo "  --help         Show this help message"
+            exit 0
+            ;;
+        *)
+            log_error "Unknown option: $1"
+            exit 1
+            ;;
+    esac
+done
+
+# Run main function
+main "$@"
