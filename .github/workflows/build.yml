@@ -38,8 +38,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
+      - name: Checkout submodules
+        run: |
+          # Only clone the community submodule which is public and needed for the build
+          git submodule update --init community
 
       - name: Set up Python
         uses: actions/setup-python@v4
