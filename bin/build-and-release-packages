@@ -164,12 +164,48 @@ publish_packages() {
 
     # Publish all wheels in dist directory
     if [ -d "$DIST" ] && [ "$(ls -A $DIST/*.whl 2>/dev/null)" ]; then
-        twine upload --repository "$PYPI_REPOSITORY" "$DIST"/*.whl
-        if [ $? -eq 0 ]; then
-            log_success "Published packages successfully"
+        # Try trusted publishing first (for GitHub Actions)
+        if [ "$PYPI_REPOSITORY" = "pypi" ]; then
+            log_info "Attempting to publish with trusted publishing..."
+            python -m twine upload --repository "$PYPI_REPOSITORY" "$DIST"/*.whl
+            upload_result=$?
+
+            if [ $upload_result -eq 0 ]; then
+                log_success "Published packages successfully with trusted publishing"
+                return 0
+            else
+                log_warning "Trusted publishing failed, falling back to token authentication"
+
+                # If trusted publishing fails, try with token (fallback)
+                if [ -n "$PYPI_TOKEN" ]; then
+                    log_info "Using PyPI token for authentication..."
+                    python -m twine upload --repository "$PYPI_REPOSITORY" --username __token__ --password "$PYPI_TOKEN" "$DIST"/*.whl
+                    upload_result=$?
+
+                    if [ $upload_result -eq 0 ]; then
+                        log_success "Published packages successfully with token authentication"
+                        return 0
+                    else
+                        log_error "Failed to publish packages with token authentication"
+                        return 1
+                    fi
+                else
+                    log_error "No PyPI token available for fallback authentication"
+                    return 1
+                fi
+            fi
         else
-            log_error "Failed to publish packages"
-            return 1
+            # For non-PyPI repositories, use standard authentication
+            python -m twine upload --repository "$PYPI_REPOSITORY" "$DIST"/*.whl
+            upload_result=$?
+
+            if [ $upload_result -eq 0 ]; then
+                log_success "Published packages successfully"
+                return 0
+            else
+                log_error "Failed to publish packages"
+                return 1
+            fi
         fi
     else
         log_warning "No wheels found in $DIST directory"

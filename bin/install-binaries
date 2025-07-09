@@ -1,10 +1,26 @@
 #!/usr/bin/env bash
 
-# Install system dependencies
+# Install system dependencies required for Karrio server
+# These are needed for document generation (weasyprint) and barcode generation (pyzint)
 if [ "$(uname)" == "Darwin" ]; then
     # Mac OS X platform
-    brew install gcc pango libffi zint
+    echo "Installing system dependencies for macOS..."
+    brew install gcc pango libffi ghostscript zint
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     # GNU/Linux platform
-    apt update -y && apt install -y libpango1.0-0 libpangoft2-1.0-0 gcc zint
+    echo "Installing system dependencies for Linux..."
+    apt update -y && apt install -y \
+        libpango-1.0-0 \
+        libharfbuzz0b \
+        libpangoft2-1.0-0 \
+        libharfbuzz-subset0 \
+        gcc \
+        ghostscript \
+        libffi-dev \
+        libjpeg-dev \
+        libopenjp2-7-dev \
+        zint \
+        curl
 fi
+
+echo "System dependencies installation complete."

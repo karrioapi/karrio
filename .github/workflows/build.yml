@@ -58,13 +58,17 @@ jobs:
           cat ./apps/api/karrio/server/VERSION
           echo "tag=$(cat ./apps/api/karrio/server/VERSION)" >> "$GITHUB_ENV"
 
-      - name: Build and release Python packages
-        env:
-          PYPI_REPOSITORY: pypi
-          FORCE_RELEASE: true
+      - name: Build Python packages
         run: |
-          echo 'Building and releasing Python packages for version ${{ env.tag }}...'
-          ./bin/build-and-release-packages --force
+          echo 'Building Python packages for version ${{ env.tag }}...'
+          ./bin/build-and-release-packages --build-only --force
+
+      - name: Publish Python packages to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: .venv/dist/
+          skip-existing: true
+          password: ${{ secrets.PYPI_ACCESS_TOKEN || '' }}
 
   server-build:
     needs: changes

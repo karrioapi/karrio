@@ -31,7 +31,7 @@ The deployment script will automatically install:
 
 ## Installation
 
-### Quick Installation
+### Quick Installation (Recommended)
 
 The fastest way to get started is using our automated deployment script:
 
@@ -39,12 +39,95 @@ The fastest way to get started is using our automated deployment script:
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/deploy)"
 ```
 
-### What the Script Does
+### Manual Installation
+
+For more control over the installation process, you can install manually:
+
+#### 1. Install System Dependencies
+
+First, install the required system libraries for document generation (weasyprint) and barcode generation (pyzint):
+
+```bash
+# Download and run the install-binaries script
+curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/install-binaries | bash
+```
+
+Or install manually:
+
+**For macOS:**
+```bash
+brew install gcc pango libffi ghostscript zint
+```
+
+**For Linux (Ubuntu/Debian):**
+```bash
+apt update -y && apt install -y \
+    libpango-1.0-0 \
+    libharfbuzz0b \
+    libpangoft2-1.0-0 \
+    libharfbuzz-subset0 \
+    gcc \
+    ghostscript \
+    libffi-dev \
+    libjpeg-dev \
+    libopenjp2-7-dev \
+    zint \
+    curl
+```
+
+#### 2. Set up Python Environment
+
+Install Python 3.12.10 using pyenv or your preferred method:
+
+```bash
+# Install pyenv (if not already installed)
+curl https://pyenv.run | bash
+
+# Install Python 3.12.10
+pyenv install 3.12.10
+pyenv global 3.12.10
+
+# Verify installation
+python3 --version
+```
+
+#### 3. Install Karrio Packages
+
+Download and install the required Python packages:
+
+```bash
+# Download requirements.txt
+curl -s https://raw.githubusercontent.com/karrioapi/karrio/main/requirements.txt -o requirements.txt
+
+# Install packages with relaxed compiler flags (handles pyzint compilation issues)
+CFLAGS="-Wno-error=array-bounds -Wno-error=stringop-overflow -Wno-error=incompatible-pointer-types" \
+    python3 -m pip install -r requirements.txt
+```
+
+**Note**: The `CFLAGS` environment variable is used to handle compilation issues with certain packages like `pyzint`. This ensures a smooth installation process.
+
+#### 4. Set up Working Directory
+
+Create the necessary directories and download configuration files:
+
+```bash
+# Create working directories
+mkdir -p ~/.karrio/{app,log,data,static}
+
+# Download configuration files
+curl -s https://raw.githubusercontent.com/karrioapi/karrio/main/apps/api/gunicorn-cfg.py -o ~/.karrio/app/gunicorn-cfg.py
+curl -s https://raw.githubusercontent.com/karrioapi/karrio/main/.env.sample -o ~/.karrio/.env
+
+# Move to working directory
+cd ~/.karrio
+```
+
+### What the Scripts Do
 
 The deployment script automatically:
 
 1. **Sets up Python environment** - Installs pyenv and Python 3.12.10
-2. **Installs system dependencies** - Required libraries and tools (libpango, zint, etc.)
+2. **Installs system dependencies** - Required libraries for document generation and barcode support
 3. **Downloads requirements.txt** - Gets the latest PyPI package versions from the specified branch
 4. **Installs Karrio packages** - All server packages from PyPI with proper compiler flags
 5. **Configures the environment** - Sets up working directories and downloads configuration files
@@ -63,11 +146,9 @@ KARRIO_BRANCH=develop /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.c
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/deploy)" main
 ```
 
-## Setup Required
+## Configuration
 
-After the script completes, you'll need to:
-
-### 1. Configure Environment Variables
+### Environment Variables
 
 Edit the environment configuration to point to your external services:
 
@@ -93,6 +174,14 @@ REDIS_PORT=6379
 # API settings
 SECRET_KEY=your_secret_key_here
 KARRIO_HTTP_PORT=5002
+
+# Admin settings (for initial setup)
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=your_admin_password
+
+# Workers configuration
+KARRIO_WORKERS=2
+BACKGROUND_WORKERS=2
 ```
 
 **Important**: Update the `DATABASE_HOST` and `REDIS_HOST` to point to your actual PostgreSQL and Redis instances. These can be:
@@ -101,10 +190,37 @@ KARRIO_HTTP_PORT=5002
 - Cloud database services (AWS RDS, Google Cloud SQL, etc.)
 - Managed Redis services (AWS ElastiCache, Redis Cloud, etc.)
 
+## Server Setup
+
+Before starting the server, you need to initialize the database and create the initial admin user:
+
+### 1. Run Database Migrations
+
+```bash
+cd ~/.karrio
+karrio migrate
+```
+
+### 2. Collect Static Files
+
+```bash
+karrio collectstatic --noinput
+```
+
+### 3. Create Initial Admin User
+
+```bash
+# Interactive method
+karrio createsuperuser
+```
+
 ## Running the Server
 
-### Start the API Server
+### Start API Server and Worker Separately
 
+This approach gives you better control and monitoring capabilities:
+
+**Terminal 1 - API Server:**
 ```bash
 # Activate the environment (if using pyenv)
 export PATH="$HOME/.pyenv/bin:$PATH"
@@ -113,43 +229,123 @@ eval "$(pyenv init -)"
 
 # Start the API server
 cd ~/.karrio
-gunicorn -c app/gunicorn-cfg.py karrio.server.wsgi:application
+gunicorn --config app/gunicorn-cfg.py karrio.server.asgi -k karrio.server.workers.UvicornWorker
 ```
 
-### Start the Background Worker
+**Terminal 2 - Background Worker:**
+```bash
+# Activate the environment
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+
+# Start the background worker
+cd ~/.karrio
+karrio run_huey -w 2  # -w specifies number of worker processes
+```
+
+## Monitoring and Logs
+
+### Check Service Status
 
 ```bash
-# In another terminal session
-cd ~/.karrio
-karrio run_huey
+# Check if services are running
+ps aux | grep -E "(gunicorn|karrio)"
+
+# Check specific processes
+pgrep -f "gunicorn.*karrio"
+pgrep -f "karrio run_huey"
+```
+
+### View Logs
+
+```bash
+# API server logs (if running directly)
+tail -f ~/.karrio/log/karrio.log
+
+# Worker logs
+tail -f ~/.karrio/log/worker.log
+
+# With systemd
+journalctl -u karrio-api -f
+journalctl -u karrio-worker -f
 ```
 
 ## Troubleshooting
 
 ### Common Issues
 
-#### Deploy Script Issues
+#### Installation Issues
 
 ```bash
+# Verify system dependencies
+# macOS
+brew list | grep -E "(gcc|pango|libffi|ghostscript|zint)"
+
+# Linux
+dpkg -l | grep -E "(libpango|gcc|ghostscript|zint)"
+
 # Verify Python installation
 python3 --version
 which python3
 
 # Check pip installation
 pip3 --version
+pip3 list | grep karrio
+```
 
-# Re-run deploy script if needed
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/deploy)"
+#### Database Connection Issues
+
+```bash
+# Test database connection
+karrio dbshell
+
+# Check database settings
+karrio shell -c "from django.conf import settings; print(settings.DATABASES)"
+```
+
+#### Redis Connection Issues
+
+```bash
+# Test Redis connection
+karrio shell -c "import redis; r = redis.Redis(host='localhost', port=6379); print(r.ping())"
 ```
 
 #### Server Startup Issues
 
 ```bash
-# Check if Karrio packages are installed
-pip3 list | grep karrio
+# Check for port conflicts
+netstat -tuln | grep :5002
 
 # Verify environment variables
-cat ~/.karrio/.env
+karrio shell -c "from django.conf import settings; print(settings.SECRET_KEY[:10])"
+
+# Test server configuration
+karrio check
+```
+
+#### Worker Issues
+
+```bash
+# Check worker status
+karrio run_huey --help
+
+# Test task queue
+karrio shell -c "from huey.contrib.djhuey import get_queue; print(get_queue())"
+```
+
+### Performance Optimization
+
+For production environments:
+
+```bash
+# Adjust worker processes based on CPU cores
+export KARRIO_WORKERS=4
+export BACKGROUND_WORKERS=4
+
+# Monitor resource usage
+htop
+iostat -x 1
 ```
 
 ## Support
@@ -159,5 +355,6 @@ For issues specific to server installation:
 - Check the [troubleshooting section](#troubleshooting) above
 - Review system logs for error messages
 - Ensure all dependencies are properly installed
+- Verify database and Redis connectivity
 
 For general Karrio support, refer to the [main documentation](/docs) or [GitHub issues](https://github.com/karrioapi/karrio/issues).
