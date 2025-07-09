@@ -1,0 +1,163 @@
+# Server Installation (No Docker)
+
+The server installation method allows you to deploy the Karrio server directly on your system without using containers. This approach is ideal for environments where Docker is not available or when you prefer direct system installation.
+
+## Overview
+
+Server installation deploys the Karrio server components directly on your system using Python. This method provides:
+
+- **Direct system access** - Full control over the installation environment
+- **No container overhead** - Direct resource utilization
+- **Custom system integration** - Easier integration with existing system services
+- **Simplified debugging** - Direct access to logs and processes
+
+## Requirements
+
+### System Requirements
+
+- **Operating System**: Ubuntu 20.04+, CentOS 8+, or macOS 10.15+
+- **Memory**: At least 4GB RAM (recommended for production)
+- **Storage**: At least 10GB of available disk space
+- **Network**: Internet access for package downloads
+
+### Software Dependencies
+
+The deployment script will automatically install:
+- **Python**: 3.12.10 (via pyenv)
+
+**External services required** (not installed by the script):
+- **PostgreSQL**: 12+ (for data persistence)
+- **Redis**: 6+ (for caching and task queues)
+
+## Installation
+
+### Quick Installation
+
+The fastest way to get started is using our automated deployment script:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/deploy)"
+```
+
+### What the Script Does
+
+The deployment script automatically:
+
+1. **Sets up Python environment** - Installs pyenv and Python 3.12.10
+2. **Installs system dependencies** - Required libraries and tools (libpango, zint, etc.)
+3. **Downloads requirements.txt** - Gets the latest PyPI package versions from the specified branch
+4. **Installs Karrio packages** - All server packages from PyPI with proper compiler flags
+5. **Configures the environment** - Sets up working directories and downloads configuration files
+
+**Note**: The script only installs the Karrio server packages. It does not deploy PostgreSQL, Redis, or other external services. You must provide these services separately and configure the environment variables accordingly.
+
+### Branch-Specific Installation
+
+To install a specific branch or version:
+
+```bash
+# Install from a specific branch
+KARRIO_BRANCH=develop /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/deploy)"
+
+# Or pass branch as argument
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/deploy)" main
+```
+
+## Setup Required
+
+After the script completes, you'll need to:
+
+### 1. Configure Environment Variables
+
+Edit the environment configuration to point to your external services:
+
+```bash
+nano ~/.karrio/.env
+```
+
+Key configuration variables:
+
+```bash
+# Database settings - Point to your PostgreSQL instance
+DATABASE_ENGINE=postgresql_psycopg2
+DATABASE_NAME=karrio
+DATABASE_USERNAME=karrio_user
+DATABASE_PASSWORD=your_secure_password
+DATABASE_HOST=localhost  # Or your PostgreSQL host
+DATABASE_PORT=5432
+
+# Redis settings - Point to your Redis instance
+REDIS_HOST=localhost  # Or your Redis host
+REDIS_PORT=6379
+
+# API settings
+SECRET_KEY=your_secret_key_here
+KARRIO_HTTP_PORT=5002
+```
+
+**Important**: Update the `DATABASE_HOST` and `REDIS_HOST` to point to your actual PostgreSQL and Redis instances. These can be:
+- Local installations (localhost)
+- Remote database servers
+- Cloud database services (AWS RDS, Google Cloud SQL, etc.)
+- Managed Redis services (AWS ElastiCache, Redis Cloud, etc.)
+
+## Running the Server
+
+### Start the API Server
+
+```bash
+# Activate the environment (if using pyenv)
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+
+# Start the API server
+cd ~/.karrio
+gunicorn -c app/gunicorn-cfg.py karrio.server.wsgi:application
+```
+
+### Start the Background Worker
+
+```bash
+# In another terminal session
+cd ~/.karrio
+karrio run_huey
+```
+
+## Troubleshooting
+
+### Common Issues
+
+#### Deploy Script Issues
+
+```bash
+# Verify Python installation
+python3 --version
+which python3
+
+# Check pip installation
+pip3 --version
+
+# Re-run deploy script if needed
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/deploy)"
+```
+
+#### Server Startup Issues
+
+```bash
+# Check if Karrio packages are installed
+pip3 list | grep karrio
+
+# Verify environment variables
+cat ~/.karrio/.env
+```
+
+## Support
+
+For issues specific to server installation:
+
+- Check the [troubleshooting section](#troubleshooting) above
+- Review system logs for error messages
+- Ensure all dependencies are properly installed
+
+For general Karrio support, refer to the [main documentation](/docs) or [GitHub issues](https://github.com/karrioapi/karrio/issues).

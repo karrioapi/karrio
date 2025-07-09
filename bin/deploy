@@ -1,16 +1,101 @@
 #!/usr/bin/env bash
 
+# Usage: KARRIO_BRANCH=<branch> ./bin/deploy
+#    or: ./bin/deploy <branch>
+
+# Set branch (default: main)
+KARRIO_BRANCH="${KARRIO_BRANCH:-${1:-main}}"
+
+# Function to check if command exists
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+# Function to setup pyenv and Python
+setup_pyenv_python() {
+    echo "Setting up pyenv and Python 3.12.10..."
+
+    # Install pyenv if not available
+    if ! command_exists pyenv; then
+        echo "Installing pyenv..."
+        if [ "$(uname)" == "Darwin" ]; then
+            # macOS
+            brew install pyenv
+        elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+            # Linux - install dependencies first
+            apt update -y && apt install -y curl git build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget libffi-dev liblzma-dev
+
+            # Install pyenv
+            curl https://pyenv.run | bash
+
+            # Setup pyenv environment
+            export PYENV_ROOT="$HOME/.pyenv"
+            export PATH="$PYENV_ROOT/bin:$PATH"
+            eval "$(pyenv init --path)"
+            eval "$(pyenv init -)"
+
+            # Add to shell profile for persistence
+            echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
+            echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
+            echo 'eval "$(pyenv init --path)"' >> ~/.bashrc
+            echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+        fi
+    fi
+
+    # Ensure pyenv is in PATH
+    export PYENV_ROOT="$HOME/.pyenv"
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init --path)" 2>/dev/null || true
+    eval "$(pyenv init -)" 2>/dev/null || true
+
+    # Install Python 3.12.10 if not already installed
+    if ! pyenv versions | grep -q "3.12.10"; then
+        echo "Installing Python 3.12.10..."
+        pyenv install 3.12.10
+    fi
+
+    # Set Python 3.12.10 as global
+    pyenv global 3.12.10
+    pyenv rehash
+
+    # Update PATH to use pyenv Python
+    export PATH="$(pyenv prefix)/bin:$PATH"
+
+    # Verify installation
+    echo "Python version: $(python3 --version)"
+    echo "Python location: $(which python3)"
+
+    # Ensure pip is available
+    python3 -m ensurepip --upgrade
+    echo "pip version: $(python3 -m pip --version)"
+}
+
+# Always setup pyenv and Python 3.12.10
+echo "Setting up Python environment with pyenv..."
+setup_pyenv_python
+
+echo "Python environment setup complete."
+
 # Install system dependencies
 if [ "$(uname)" == "Darwin" ]; then
     # Mac OS X platform
     brew install gcc pango libffi ghostscript
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     # GNU/Linux platform
-    apt update -y && apt install -y libpango1.0-0 libpangoft2-1.0-0 gcc ghostscript
+    apt update -y && apt install -y libpango-1.0-0 libharfbuzz0b libpangoft2-1.0-0 libharfbuzz-subset0 gcc ghostscript libffi-dev libjpeg-dev libopenjp2-7-dev zint
 fi
 
-# Install python dependencies
-pip3 install -r https://raw.githubusercontent.com/karrioapi/karrio/HEAD/requirements.txt
+# Download requirements.txt from the specified branch
+echo "Downloading requirements.txt from branch: ${KARRIO_BRANCH}"
+curl -s https://raw.githubusercontent.com/karrioapi/karrio/${KARRIO_BRANCH}/requirements.txt --output /tmp/requirements.txt
+
+# Use python -m pip to ensure we're using the correct pip
+# Install with relaxed compiler flags to handle pyzint compilation issues
+echo "Installing Python packages from PyPI..."
+CFLAGS="-Wno-error=array-bounds -Wno-error=stringop-overflow -Wno-error=incompatible-pointer-types" python3 -m pip install -r /tmp/requirements.txt
+
+# Clean up
+rm -f /tmp/requirements.txt
 
 # Setup working directory
 export WORK_DIR=.karrio/app
@@ -20,7 +105,7 @@ export STATIC_ROOT_DIR=.karrio/static
 mkdir -p $WORK_DIR $LOG_DIR $WORKER_DB_DIR $STATIC_ROOT_DIR
 
 # Download gunicorn config
-curl https://raw.githubusercontent.com/karrioapi/karrio/HEAD/server/gunicorn-cfg.py --output "${WORK_DIR}/gunicorn-cfg.py"
+curl https://raw.githubusercontent.com/karrioapi/karrio/${KARRIO_BRANCH}/server/gunicorn-cfg.py --output "${WORK_DIR}/gunicorn-cfg.py"
 
 # Download .env sample
-curl https://raw.githubusercontent.com/karrioapi/karrio/HEAD/.env
+curl https://raw.githubusercontent.com/karrioapi/karrio/${KARRIO_BRANCH}/.env.sample --output .env

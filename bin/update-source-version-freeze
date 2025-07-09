@@ -1,5 +1,72 @@
 #!/usr/bin/env bash
 
+# Function to convert egg name to PyPI package name
+convert_egg_to_pypi() {
+    local egg_name="$1"
+
+    # Handle special cases
+    case $egg_name in
+        karrio)
+            echo "karrio"
+            ;;
+        pysoap)
+            echo "pysoap"
+            ;;
+        karrio_cli)
+            echo "karrio-cli"
+            ;;
+        *)
+            # Convert karrio_* patterns to karrio-* (replace underscores with hyphens)
+            if [[ $egg_name =~ ^karrio_ ]]; then
+                echo "$egg_name" | sed 's/_/-/g'
+            else
+                echo "$egg_name" | sed 's/_/-/g'
+            fi
+            ;;
+    esac
+}
+
+# Function to generate PyPI requirements file
+generate_pypi_requirements() {
+    local input_file=$1
+    local output_file=$2
+
+    echo "Generating ${output_file} with PyPI packages..."
+
+    # Get target version
+    local target_version=$(cat apps/api/karrio/server/VERSION)
+
+    # Create a temporary file
+    TMP_FILE=$(mktemp)
+
+    # Copy the header (--extra-index-url line)
+    grep "^--extra-index" "$input_file" >"$TMP_FILE"
+
+    # Process each line
+    while IFS= read -r line; do
+        if [[ $line == -e\ git+https://github.com/* ]]; then
+            # Extract egg name from git URL
+            if [[ $line =~ \#egg=([^&]+) ]]; then
+                egg_name="${BASH_REMATCH[1]}"
+                pypi_package=$(convert_egg_to_pypi "$egg_name")
+                echo "$pypi_package==$target_version" >>"$TMP_FILE"
+            else
+                # If we can't extract egg name, keep the original line
+                echo "$line" >>"$TMP_FILE"
+            fi
+        elif [[ $line != --extra-index* ]]; then
+            # Copy non-git requirements as-is
+            echo "$line" >>"$TMP_FILE"
+        fi
+    done <"$input_file"
+
+    # Add a newline at the end
+    echo "" >>"$TMP_FILE"
+
+    # Replace the original file
+    mv "$TMP_FILE" "$output_file"
+}
+
 # Function to generate source requirements file
 generate_source_requirements() {
     local input_file=$1
@@ -60,4 +127,8 @@ generate_source_requirements "requirements.txt" "source.requirements.txt" "base"
 generate_source_requirements "requirements.insiders.txt" "source.requirements.insiders.txt" "insiders"
 generate_source_requirements "requirements.platform.txt" "source.requirements.platform.txt" "platform"
 
+# Generate PyPI requirements (convert git URLs to PyPI package versions)
+generate_pypi_requirements "requirements.txt" "requirements.txt"
+
 echo "Generated source requirements files from requirements files"
+echo "Updated requirements.txt with PyPI package versions"
