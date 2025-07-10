@@ -347,7 +347,7 @@ def shipment_request(
                                     fedex.AttachedDocumentType(
                                         documentType=(
                                             provider_units.UploadDocumentType.map(
-                                                doc["doc_name"]
+                                                doc["doc_type"]
                                             ).value
                                             or "COMMERCIAL_INVOICE"
                                         ),
