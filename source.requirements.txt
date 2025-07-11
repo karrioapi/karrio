@@ -3,7 +3,7 @@ asgiref==3.9.1
 attrs==25.3.0
 backoff==2.2.1
 Brotli==1.1.0
-certifi==2025.6.15
+certifi==2025.7.9
 cffi==1.17.1
 charset-normalizer==3.4.2
 click==8.2.1
@@ -49,21 +49,21 @@ jwcrypto==1.5.6
 karrio @ file://${PWD}/modules/sdk
 karrio_australiapost @ file://${PWD}/modules/connectors/australiapost
 karrio_canadapost @ file://${PWD}/modules/connectors/canadapost
-karrio_chronopost @ file://${PWD}/community/plugins/community/plugins/chronopost
+karrio_chronopost @ file://${PWD}/community/plugins/chronopost
 karrio_dhl_express @ file://${PWD}/modules/connectors/dhl_express
 karrio_dhl_parcel_de @ file://${PWD}/modules/connectors/dhl_parcel_de
 karrio_dhl_poland @ file://${PWD}/modules/connectors/dhl_poland
 karrio_dhl_universal @ file://${PWD}/modules/connectors/dhl_universal
-karrio_dpd @ file://${PWD}/community/plugins/community/plugins/dpd
-karrio_easypost @ file://${PWD}/community/plugins/community/plugins/easypost
-karrio_easyship @ file://${PWD}/community/plugins/community/plugins/easyship
-karrio_eshipper @ file://${PWD}/community/plugins/community/plugins/eshipper
+karrio_dpd @ file://${PWD}/community/plugins/dpd
+karrio_easypost @ file://${PWD}/community/plugins/easypost
+karrio_easyship @ file://${PWD}/community/plugins/easyship
+karrio_eshipper @ file://${PWD}/community/plugins/eshipper
 karrio_fedex @ file://${PWD}/modules/connectors/fedex
-karrio_freightcom @ file://${PWD}/community/plugins/community/plugins/freightcom
+karrio_freightcom @ file://${PWD}/community/plugins/freightcom
 karrio_generic @ file://${PWD}/modules/connectors/generic
 karrio_laposte @ file://${PWD}/modules/connectors/laposte
 karrio_purolator @ file://${PWD}/modules/connectors/purolator
-karrio_sapient @ file://${PWD}/community/plugins/community/plugins/sapient
+karrio_sapient @ file://${PWD}/community/plugins/sapient
 karrio_seko @ file://${PWD}/modules/connectors/seko
 karrio_sendle @ file://${PWD}/modules/connectors/sendle
 karrio_server @ file://${PWD}/apps/api
@@ -87,7 +87,7 @@ oauthlib==3.3.1
 packaging==25.0
 phonenumbers==9.0.9
 pillow==11.3.0
-posthog==6.0.3
+posthog==6.1.0
 psutil==7.0.0
 psycopg2-binary==2.9.10
 py-soap==2020.3.2

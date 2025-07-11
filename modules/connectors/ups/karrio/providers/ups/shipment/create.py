@@ -35,6 +35,7 @@ def _extract_shipment(
     enforce_zpl = settings.connection_config.enforce_zpl.state
     shipment = lib.to_object(ups_response.ShipmentResultsType, details)
     tracking_numbers = [pkg.TrackingNumber for pkg in shipment.PackageResults]
+    invoice = lib.failsafe(lambda: shipment.Form.Image.GraphicImage)
     label = _process_label(shipment)
     zpl_label = None
 
@@ -59,7 +60,7 @@ def _extract_shipment(
         tracking_number=shipment.ShipmentIdentificationNumber,
         shipment_identifier=shipment.ShipmentIdentificationNumber,
         label_type=label_type,
-        docs=models.Documents(label=label, zpl_label=zpl_label),
+        docs=models.Documents(label=label, zpl_label=zpl_label, invoice=invoice),
         meta=dict(
             carrier_tracking_link=settings.tracking_url.format(
                 shipment.ShipmentIdentificationNumber
@@ -70,7 +71,7 @@ def _extract_shipment(
 
 
 def _process_label(shipment: ups_response.ShipmentResultsType):
-    label_type = (
+    label_type = lib.identity(
         "ZPL"
         if "ZPL" in shipment.PackageResults[0].ShippingLabel.ImageFormat.Code
         else "PDF"
@@ -423,8 +424,10 @@ def shipment_request(
                         LabelDelivery=None,
                         InternationalForms=lib.identity(
                             ups.InternationalFormsType(
-                                FormType=(
-                                    "07" if options.paperless_trade.state else "01"
+                                FormType=lib.identity(
+                                    "07" if options.paperless_trade.state and any(options.doc_references.state or [])
+                                    else "03" if options.paperless_trade.state  # API-generated commercial invoice
+                                    else "01"  # Traditional paper forms
                                 ),
                                 UserCreatedForm=[
                                     ups.UserCreatedFormType(DocumentID=doc["doc_id"])
@@ -435,7 +438,7 @@ def shipment_request(
                                 AdditionalDocumentIndicator=None,
                                 FormGroupIdName=None,
                                 EEIFilingOption=None,
-                                Contacts=(
+                                Contacts=lib.identity(
                                     ups.ContactsType(
                                         ForwardAgent=None,
                                         UltimateConsignee=None,
@@ -541,17 +544,13 @@ def shipment_request(
                                 DeclarationStatement="I hereby certify that the information on this invoice is true and correct and the contents and value of this shipment is as stated above.",
                                 Discount=None,
                                 FreightCharges=None,
-                                InsuranceCharges=(
-                                    ups.DiscountType(
-                                        MonetaryValue=options.insurance.state,
-                                    )
+                                InsuranceCharges=lib.identity(
+                                    ups.DiscountType(MonetaryValue=options.insurance.state)
                                     if options.insurance.state is not None
                                     else None
                                 ),
                                 OtherCharges=None,
-                                CurrencyCode=(
-                                    customs.duty.currency or options.currency.state
-                                ),
+                                CurrencyCode=(customs.duty.currency or currency),
                                 BlanketPeriod=None,
                                 ExportDate=None,
                                 ExportingCarrier=None,

@@ -295,6 +295,21 @@ ParsedShipmentResponse = [
         "shipment_identifier": "545021584835957806",
         "label_type": "PDF",
         "docs": {"label": ANY},
+        "selected_rate": {
+            "carrier_id": "canadapost",
+            "carrier_name": "canadapost",
+            "service": "canadapost_expedited_parcel",
+            "total_charge": 25.07,
+            "currency": "CAD",
+            "extra_charges": [
+                {"name": "Base charge", "amount": 25.07, "currency": "CAD"},
+                {"name": "HST", "amount": 3.63, "currency": "CAD"},
+                {"name": "FUELSC", "amount": 2.88, "currency": "CAD"},
+            ],
+            "meta": {
+                "service_name": "canadapost_expedited_parcel",
+            },
+        },
         "meta": {
             "manifest_required": False,
             "customer_request_ids": ANY,

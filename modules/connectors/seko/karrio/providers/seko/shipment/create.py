@@ -45,6 +45,24 @@ def _extract_details(
         label_format,
     )
 
+    selected_rate = lib.identity(
+        models.RateDetails(
+            carrier_id=settings.carrier_id,
+            carrier_name=settings.carrier_name,
+            service=lib.failsafe(lambda: details.Service) or "seko",
+            total_charge=lib.to_money(lib.failsafe(lambda: details.Consignments[0].Cost)),
+            currency="NZD",
+            meta=dict(
+                carrier_type=details.CarrierType,
+                rate_provider=details.CarrierName,
+                is_saturday_delivery=lib.failsafe(lambda: details.Consignments[0].IsSaturdayDelivery),
+                is_rural=lib.failsafe(lambda: details.Consignments[0].IsRural),
+            ),
+        )
+        if any(details.Consignments or []) and lib.failsafe(lambda: details.Consignments[0].Cost) is not None
+        else None
+    )
+
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
@@ -52,6 +70,7 @@ def _extract_details(
         shipment_identifier=ConsignmentIds[0],
         label_type=label_format,
         docs=models.Documents(label=label),
+        selected_rate=selected_rate,
         meta=dict(
             carrier_tracking_link=TrackingUrls[0],
             seko_site_id=details.SiteId,

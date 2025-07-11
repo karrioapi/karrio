@@ -102,7 +102,9 @@ generate_source_requirements() {
                     # Keep the subdirectory as is
                     ;;
                 "community")
-                    subdir="community/plugins/${subdir#../../community/plugins/}"
+                    # Remove existing community/plugins/ prefix if it exists, then add it back
+                    subdir="${subdir#community/plugins/}"
+                    subdir="community/plugins/${subdir}"
                     ;;
                 esac
 

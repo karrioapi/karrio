@@ -47,6 +47,32 @@ def _extract_details(
     label = details.labelImage
     invoice = details.receiptImage
     label_type = ctx.get("label_type", "PDF")
+    charges = [
+        ("Postage", details.labelMetadata.postage),
+        *[(extra.name, lib.to_money(extra.price)) for extra in details.labelMetadata.extraServices or []],
+        *[(fee.name, lib.to_money(fee.price)) for fee in details.labelMetadata.fees or []],
+    ]
+
+    selected_rate = lib.identity(
+        models.RateDetails(
+            carrier_id=settings.carrier_id,
+            carrier_name=settings.carrier_name,
+            service=lib.failsafe(lambda: details.labelMetadata.serviceTypeCode) or "usps",
+            total_charge=lib.to_money(details.labelMetadata.postage),
+            currency="USD",
+            extra_charges=[
+                models.ChargeDetails(name=name, amount=lib.to_money(amount), currency="USD")
+                for name, amount in charges
+                if amount and lib.to_money(amount) != 0
+            ],
+            meta=dict(
+                SKU=details.labelMetadata.SKU,
+                zone=lib.failsafe(lambda: details.labelMetadata.zone),
+                commitment=lib.failsafe(lambda: details.labelMetadata.commitment.name),
+            ),
+        )
+        if details.labelMetadata.postage is not None else None
+    )
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
@@ -55,6 +81,7 @@ def _extract_details(
         shipment_identifier=details.labelMetadata.trackingNumber,
         label_type=label_type,
         docs=models.Documents(label=label, invoice=invoice),
+        selected_rate=selected_rate,
         meta=dict(
             SKU=details.labelMetadata.SKU,
             postage=details.labelMetadata.postage,

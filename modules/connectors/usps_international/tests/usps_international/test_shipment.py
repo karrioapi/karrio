@@ -147,6 +147,21 @@ ParsedShipmentResponse = [
         "docs": {"label": ANY},
         "label_type": "PDF",
         "meta": {"SKU": "DUXR0XXXXC01450", "postage": 36.12},
+        "selected_rate": {
+            "carrier_id": "usps_international",
+            "carrier_name": "usps_international",
+            "service": "361",
+            "total_charge": 36.12,
+            "currency": "USD",
+            "extra_charges": [
+                {"amount": 36.12, "currency": "USD", "name": "Postage"},
+            ],
+            "meta": {
+                "SKU": "DUXR0XXXXC01450",
+                "zone": "01",
+                "commitment": "6 Days",
+            },
+        },
         "shipment_identifier": "9236190361980900000015",
         "tracking_number": "9236190361980900000015",
     },

@@ -45,6 +45,20 @@ def _extract_shipment(
     response, label = _response
     info = lib.to_object(canadapost.ShipmentInfoType, response)
 
+    base_amount = lib.failsafe(lambda: info.shipment_price.base_amount)
+    service_code = lib.failsafe(lambda: info.shipment_price.service_code)
+    service = provider_units.ServiceType.map(service_code)
+    adjustments = getattr(info.shipment_price.adjustments, "adjustment", [])
+    priced_options = getattr(info.shipment_price.priced_options, "priced_option", [])
+    charges = [
+        ("Base charge", info.shipment_price.base_amount),
+        ("GST", info.shipment_price.gst_amount),
+        ("PST", info.shipment_price.pst_amount),
+        ("HST", info.shipment_price.hst_amount),
+        *((f"Option {o.option_code}", o.option_price) for o in priced_options),
+        *((a.adjustment_code, a.adjustment_amount) for a in adjustments),
+    ]
+
     return models.ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
@@ -52,6 +66,24 @@ def _extract_shipment(
         shipment_identifier=info.shipment_id,
         docs=models.Documents(label=label),
         label_type=ctx["label_type"],
+        selected_rate=lib.identity(
+            models.RateDetails(
+                carrier_id=settings.carrier_id,
+                carrier_name=settings.carrier_name,
+                service=service.name_or_key,
+                total_charge=lib.to_money(base_amount),
+                currency="CAD",
+                extra_charges=lib.identity([
+                    models.ChargeDetails(name=name, amount=lib.to_money(amount), currency="CAD")
+                    for name, amount in charges
+                    if amount and lib.to_money(amount) != 0
+                ]),
+                meta=dict(
+                    service_name=(service.name or service_code),
+                ),
+            )
+            if base_amount is not None else None
+        ),
         meta=lib.to_dict(
             dict(
                 carrier_tracking_link=settings.tracking_url.format(info.tracking_pin),

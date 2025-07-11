@@ -39,11 +39,13 @@ def _extract_details(
     service = provider_units.ServiceType.map(quote.service_code)
 
     adjustments = getattr(quote.price_details.adjustments, "adjustment", [])
+    options = getattr(quote.price_details.options, "option", [])
     charges = [
         ("Base charge", quote.price_details.base),
         ("GST", quote.price_details.taxes.gst.valueOf_),
         ("PST", quote.price_details.taxes.pst.valueOf_),
         ("HST", quote.price_details.taxes.hst.valueOf_),
+        *((o.option_name, o.option_price) for o in options),
         *((a.adjustment_name, a.adjustment_cost) for a in adjustments),
     ]
 
