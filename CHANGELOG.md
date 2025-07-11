@@ -1,4 +1,26 @@
-# Karrio 2025.5rc3
+# Karrio 2025.5rc5
+
+## Changes
+
+### Feat
+
+- feat: capture selected rates costs post label purchase for detailed final prices
+- feat: update paperless trade integration for FedEx and UPS to ensure a uniform behaviour + fix UPS missing duty currency error
+
+### Docs
+
+- docs: update docs with support breakdown of shipments management product
+
+### Chore
+
+- chore: debug python packages action release and update docs
+
+### Fix
+
+- hotfix: python modules automated build and release
+- fix: fix docker-less installation with deploy script and publish the python module packages to pypi with a requirements.txt file that uses that.
+
+# Karrio 2025.5rc4
 
 ## Changes
 
