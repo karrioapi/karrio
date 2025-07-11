@@ -12,6 +12,8 @@ import {
 import { usePathname } from "next/navigation";
 import { cn } from "@karrio/ui/lib/utils";
 import Link from "next/link";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { useEffect, useState } from "react";
 
 const menuItems = [
   {
@@ -48,22 +50,28 @@ const menuItems = [
   },
 ];
 
-export function AdminSidebar() {
+export function AdminSidebar({ isDrawer }: { isDrawer?: boolean }) {
   const pathname = usePathname();
   const basePath = pathname?.split("/admin")[0] || "";
+  const { metadata } = useAPIMetadata();
+  const [appHost, setAppHost] = useState("");
+
+  useEffect(() => {
+    setAppHost(window && window.location.host);
+  }, []);
 
   return (
-    <div className="sticky top-4 rounded-lg border bg-white shadow-sm">
-      <div className="flex h-14 items-center gap-3 border-b px-4">
+    <div className={cn(!isDrawer && "rounded-lg border bg-white shadow-sm h-fit")}>
+      {!isDrawer && <div className="flex h-14 items-center gap-3 border-b px-4">
         <div className="flex h-8 w-8 items-center justify-center rounded bg-primary">
           <Box className="h-5 w-5 text-white" />
         </div>
         <div className="flex flex-col">
-          <span className="text-sm font-medium">Karrio</span>
-          <span className="text-xs text-muted-foreground">localhost:3000</span>
+          <span className="text-sm font-medium">{metadata.APP_NAME}</span>
+          <span className="text-xs text-muted-foreground">{appHost}</span>
         </div>
-      </div>
-      <div className="max-h-[calc(100vh-120px)] overflow-y-auto px-2 py-4">
+      </div>}
+      <div className="px-2 py-4">
         {menuItems.map((item) => (
           <Link
             key={item.label}

@@ -11,10 +11,6 @@ export default {
     title: 'Products',
     type: 'separator'
   },
-  // "platform": {
-  //   title: 'Platform',
-  //   type: 'separator'
-  // },
   "carriers": {
     title: 'Carriers',
     type: 'separator'

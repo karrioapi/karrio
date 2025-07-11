@@ -12,7 +12,8 @@ import { Button } from "@karrio/ui/components/ui/button";
 import { Input } from "@karrio/ui/components/ui/input";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { Plus, Search, X, Filter } from "lucide-react";
-import { trpc } from "@karrio/trpc/client";
+import { useSystemConnections, useSystemConnectionMutation } from "@karrio/hooks/admin-system-connections";
+import { useRateSheets, useRateSheetMutation } from "@karrio/hooks/admin-rate-sheets";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import {
@@ -20,6 +21,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
+  SelectValue,
 } from "@karrio/ui/components/ui/select";
 
 export default function CarrierNetwork() {
@@ -33,14 +35,13 @@ export default function CarrierNetwork() {
 
       <div className="space-y-6">
         <CarrierConnectionManagement />
-        {/* <RateSheetManagement /> */}
+        <RateSheetManagement />
       </div>
     </div>
   );
 }
 
 function CarrierConnectionManagement() {
-  const utils = trpc.useContext();
   const { toast } = useToast();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -53,64 +54,45 @@ function CarrierConnectionManagement() {
     carrier_name: [] as string[],
   });
 
-  const { data: connections, isLoading } = trpc.admin.system_connections.list.useQuery({
-    filter: {
-      offset: (page - 1) * pageSize,
-      first: pageSize,
-      active: filters.active,
-      carrier_name: filters.carrier_name.length > 0 ? filters.carrier_name : undefined,
-      metadata_key: filters.search || undefined,
-      metadata_value: filters.search || undefined,
-    },
+  const { query, system_carrier_connections } = useSystemConnections({
+    offset: (page - 1) * pageSize,
+    first: pageSize,
+    active: filters.active,
+    carrier_name: filters.carrier_name.length > 0 ? filters.carrier_name : undefined,
+    metadata_key: filters.search || undefined,
+    metadata_value: filters.search || undefined,
   });
 
-  const createConnection = trpc.admin.system_connections.create.useMutation({
-    onSuccess: () => {
-      toast({ title: "Carrier connection created successfully" });
-      setIsEditOpen(false);
-      setSelectedConnection(null);
-      utils.admin.system_connections.list.invalidate();
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to create carrier connection",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  const connections = system_carrier_connections;
+  const isLoading = query.isLoading;
 
-  const updateConnection = trpc.admin.system_connections.update.useMutation({
-    onSuccess: () => {
-      toast({ title: "Carrier connection updated successfully" });
-      setIsEditOpen(false);
-      setSelectedConnection(null);
-      utils.admin.system_connections.list.invalidate();
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to update carrier connection",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  const { createSystemConnection, updateSystemConnection, deleteSystemConnection } = useSystemConnectionMutation();
 
-  const deleteConnection = trpc.admin.system_connections.delete.useMutation({
-    onSuccess: () => {
-      toast({ title: "Carrier connection deleted successfully" });
-      setIsDeleteOpen(false);
-      setSelectedConnection(null);
-      utils.admin.system_connections.list.invalidate();
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to delete carrier connection",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  const handleCreateSuccess = () => {
+    toast({ title: "Carrier connection created successfully" });
+    setIsEditOpen(false);
+    setSelectedConnection(null);
+  };
+
+  const handleUpdateSuccess = () => {
+    toast({ title: "Carrier connection updated successfully" });
+    setIsEditOpen(false);
+    setSelectedConnection(null);
+  };
+
+  const handleDeleteSuccess = () => {
+    toast({ title: "Carrier connection deleted successfully" });
+    setIsDeleteOpen(false);
+    setSelectedConnection(null);
+  };
+
+  const handleError = (error: any, action: string) => {
+    toast({
+      title: `Failed to ${action} carrier connection`,
+      description: error.message || "An error occurred",
+      variant: "destructive",
+    });
+  };
 
   const handleUpdate = (values: any) => {
     // Convert empty strings to undefined in credentials
@@ -133,29 +115,31 @@ function CarrierConnectionManagement() {
 
     if (selectedConnection) {
       // Update existing connection
-      updateConnection.mutate({
-        data: {
-          id: selectedConnection.id,
-          carrier_id: values.carrier_id === "" ? undefined : values.carrier_id,
-          active: values.active,
-          capabilities: values.capabilities,
-          credentials,
-          config,
-          metadata,
-        },
+      updateSystemConnection.mutate({
+        id: selectedConnection.id,
+        carrier_id: values.carrier_id === "" ? undefined : values.carrier_id,
+        active: values.active,
+        capabilities: values.capabilities,
+        credentials,
+        config,
+        metadata,
+      }, {
+        onSuccess: handleUpdateSuccess,
+        onError: (error) => handleError(error, "update")
       });
     } else {
       // Create new connection
-      createConnection.mutate({
-        data: {
-          carrier_name: values.carrier_name,
-          carrier_id: values.carrier_id === "" ? undefined : values.carrier_id,
-          active: values.active,
-          capabilities: values.capabilities,
-          credentials,
-          config,
-          metadata,
-        },
+      createSystemConnection.mutate({
+        carrier_name: values.carrier_name,
+        carrier_id: values.carrier_id === "" ? undefined : values.carrier_id,
+        active: values.active,
+        capabilities: values.capabilities,
+        credentials,
+        config,
+        metadata,
+      }, {
+        onSuccess: handleCreateSuccess,
+        onError: (error) => handleError(error, "create")
       });
     }
   };
@@ -242,7 +226,7 @@ function CarrierConnectionManagement() {
             <SelectTrigger className="w-[130px]">
               <div className="flex items-center gap-2">
                 <Filter className="h-4 w-4" />
-                <span>Status</span>
+                <SelectValue placeholder="Status" />
               </div>
             </SelectTrigger>
             <SelectContent>
@@ -262,7 +246,7 @@ function CarrierConnectionManagement() {
             <SelectTrigger className="w-[130px]">
               <div className="flex items-center gap-2">
                 <Filter className="h-4 w-4" />
-                <span>Carrier</span>
+                <SelectValue placeholder="Carrier" />
               </div>
             </SelectTrigger>
             <SelectContent>
@@ -324,11 +308,9 @@ function CarrierConnectionManagement() {
               setIsDeleteOpen(true);
             }}
             onStatusChange={(connection, active) => {
-              updateConnection.mutate({
-                data: {
-                  id: connection.id,
-                  active,
-                },
+              updateSystemConnection.mutate({
+                id: connection.id,
+                active,
               });
             }}
             onCopy={handleCopy}
@@ -349,10 +331,11 @@ function CarrierConnectionManagement() {
           description="Are you sure you want to delete this carrier connection? This action cannot be undone."
           onConfirm={() => {
             if (selectedConnection) {
-              deleteConnection.mutate({
-                data: {
-                  id: selectedConnection.id,
-                },
+              deleteSystemConnection.mutate({
+                id: selectedConnection.id,
+              }, {
+                onSuccess: handleDeleteSuccess,
+                onError: (e) => handleError(e, "delete connection")
               });
             }
           }}
@@ -363,81 +346,57 @@ function CarrierConnectionManagement() {
 }
 
 function RateSheetManagement() {
-  const utils = trpc.useContext();
   const { toast } = useToast();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedRateSheet, setSelectedRateSheet] = useState<RateSheet | null>(null);
 
-  const { data: rateSheets, isLoading } = trpc.admin.rate_sheets.list.useQuery({
-    filter: {},
-  });
+  const { query, rate_sheets: rateSheetsData } = useRateSheets({});
+  const rateSheets = rateSheetsData?.edges || [];
+  const isLoading = query.isLoading;
 
-  const createRateSheet = trpc.admin.rate_sheets.create.useMutation({
-    onSuccess: () => {
-      toast({ title: "Rate sheet created successfully" });
-      setIsEditOpen(false);
-      setSelectedRateSheet(null);
-      utils.admin.rate_sheets.list.invalidate();
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to create rate sheet",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  const { createRateSheet, updateRateSheet, deleteRateSheet } = useRateSheetMutation();
 
-  const updateRateSheet = trpc.admin.rate_sheets.update.useMutation({
-    onSuccess: () => {
-      toast({ title: "Rate sheet updated successfully" });
-      setIsEditOpen(false);
-      setSelectedRateSheet(null);
-      utils.admin.rate_sheets.list.invalidate();
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to update rate sheet",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  const handleCreateSuccess = () => {
+    toast({ title: "Rate sheet created successfully" });
+    setIsEditOpen(false);
+  };
 
-  const deleteRateSheet = trpc.admin.rate_sheets.delete.useMutation({
-    onSuccess: () => {
-      toast({ title: "Rate sheet deleted successfully" });
-      setIsDeleteOpen(false);
-      setSelectedRateSheet(null);
-      utils.admin.rate_sheets.list.invalidate();
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to delete rate sheet",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  const handleUpdateSuccess = () => {
+    toast({ title: "Rate sheet updated successfully" });
+    setIsEditOpen(false);
+    setSelectedRateSheet(null);
+  };
+
+  const handleDeleteSuccess = () => {
+    toast({ title: "Rate sheet deleted successfully" });
+    setIsDeleteOpen(false);
+    setSelectedRateSheet(null);
+  };
+
+  const handleError = (error: any, action: string) => {
+    toast({
+      title: `Failed to ${action} rate sheet`,
+      description: error.message || "An error occurred",
+      variant: "destructive",
+    });
+  };
 
   const handleUpdate = async (values: any) => {
+    const data = {
+      ...values,
+      services: JSON.stringify(values.services),
+    };
+
     if (selectedRateSheet) {
-      return updateRateSheet.mutateAsync({
-        data: {
-          id: values.id,
-          name: values.name,
-          carrier_name: values.carrier_name,
-          services: values.services,
-        },
+      updateRateSheet.mutate({ ...data, id: selectedRateSheet.id }, {
+        onSuccess: handleUpdateSuccess,
+        onError: (e) => handleError(e, "update")
       });
     } else {
-      return createRateSheet.mutateAsync({
-        data: {
-          name: values.name,
-          carrier_name: values.carrier_name,
-          services: values.services,
-        },
+      createRateSheet.mutate(data, {
+        onSuccess: handleCreateSuccess,
+        onError: (e) => handleError(e, "create")
       });
     }
   };
@@ -458,6 +417,14 @@ function RateSheetManagement() {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center my-6">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -465,7 +432,7 @@ function RateSheetManagement() {
           <div>
             <CardTitle>Rate Sheets</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Manage carrier rate sheets and service configurations.
+              Manage custom rate sheets for your carrier network.
             </p>
           </div>
           <Button
@@ -475,65 +442,52 @@ function RateSheetManagement() {
               setIsEditOpen(true);
             }}
           >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Sheet
+            <Plus className="mr-2 h-4 w-4" />
+            Add Rate Sheet
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="min-h-[40vh] relative">
-        {isLoading ? (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          </div>
-        ) : (
-          <RateSheetsTable
-            rateSheets={rateSheets?.edges as { node: RateSheet }[]}
-            onCreateNew={() => {
-              setSelectedRateSheet(null);
-              setIsEditOpen(true);
-            }}
-            onEdit={(sheet) => {
-              const rateSheetWithMetadata = {
-                ...sheet,
-                metadata: sheet.metadata || {},
-              };
-              setSelectedRateSheet(rateSheetWithMetadata);
-              setIsEditOpen(true);
-            }}
-            onDelete={(sheet) => {
-              const rateSheetWithMetadata = {
-                ...sheet,
-                metadata: sheet.metadata || {},
-              };
-              setSelectedRateSheet(rateSheetWithMetadata);
-              setIsDeleteOpen(true);
-            }}
-            onCopy={handleCopy}
-          />
-        )}
-
-        <RateSheetDialog
-          open={isEditOpen}
-          onOpenChange={setIsEditOpen}
-          selectedRateSheet={selectedRateSheet}
-          onSubmit={handleUpdate}
-          isLoading={createRateSheet.isLoading || updateRateSheet.isLoading}
-        />
-
-        <DeleteConfirmationDialog
-          open={isDeleteOpen}
-          onOpenChange={setIsDeleteOpen}
-          title="Delete Rate Sheet"
-          description="Are you sure you want to delete this rate sheet? This action cannot be undone."
-          onConfirm={() => {
-            if (selectedRateSheet) {
-              deleteRateSheet.mutate({
-                data: { id: selectedRateSheet.id },
-              });
-            }
+      <CardContent>
+        <RateSheetsTable
+          rateSheets={rateSheets as { node: RateSheet }[]}
+          onEdit={(sheet) => {
+            setSelectedRateSheet(sheet);
+            setIsEditOpen(true);
+          }}
+          onDelete={(sheet) => {
+            setSelectedRateSheet(sheet);
+            setIsDeleteOpen(true);
+          }}
+          onCopy={() => { }}
+          onCreateNew={() => {
+            setSelectedRateSheet(null);
+            setIsEditOpen(true);
           }}
         />
       </CardContent>
+
+      <RateSheetDialog
+        open={isEditOpen}
+        onOpenChange={setIsEditOpen}
+        onSubmit={handleUpdate}
+        selectedRateSheet={selectedRateSheet}
+        isLoading={createRateSheet.isLoading || updateRateSheet.isLoading}
+      />
+
+      <DeleteConfirmationDialog
+        open={isDeleteOpen}
+        onOpenChange={setIsDeleteOpen}
+        onConfirm={() => {
+          if (selectedRateSheet) {
+            deleteRateSheet.mutate({ id: selectedRateSheet.id }, {
+              onSuccess: handleDeleteSuccess,
+              onError: (e) => handleError(e, "delete")
+            });
+          }
+        }}
+        title="Delete Rate Sheet"
+        description={`Are you sure you want to delete the rate sheet: ${selectedRateSheet?.name}?`}
+      />
     </Card>
   );
 }

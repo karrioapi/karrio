@@ -1,0 +1,392 @@
+---
+title: Testing
+description: Comprehensive testing guide for Karrio carrier integrations
+tags: [development, testing]
+author: Karrio Team
+---
+
+# Testing Carrier Integrations
+
+Testing is **MANDATORY** and follows strict patterns in Karrio. Every integration must pass comprehensive tests before being considered complete. This page covers the exact testing requirements and patterns that must be followed.
+
+## 🚨 Critical Testing Rules
+
+### **ABSOLUTE REQUIREMENTS** (Non-Negotiable)
+
+1. **Use Python's `unittest` Framework Only**
+   - Never use pytest, nose, or any other testing framework
+   - All tests must inherit from `unittest.TestCase`
+   - Use `python -m unittest discover` to run tests
+
+2. **Follow Exact Naming Patterns**
+   - Test files: `test_[feature].py` (e.g., `test_rate.py`, `test_shipment.py`)
+   - Test classes: `Test[CarrierName][Feature]` (e.g., `TestDHLExpressRating`)
+   - Test methods: Exactly 4 methods per feature with specific names
+
+3. **Mandatory Test Structure**
+   - Every feature requires exactly 4 test methods
+   - Include debug print statements before all assertions
+   - Use `assertListEqual` with full dict data structures
+   - Mock all HTTP requests - never make real API calls
+
+4. **Test Data Pattern**
+   - Each test file must end with exactly these data structures
+   - Only adapt content to carrier API, never change structure
+
+## Test Class Structure
+
+### Complete Test Class Template
+
+```python
+"""[Carrier Name] carrier [feature] tests."""
+
+import unittest
+from unittest.mock import patch, ANY
+from .fixture import gateway
+import logging
+import karrio.sdk as karrio
+import karrio.lib as lib
+import karrio.core.models as models
+
+logger = logging.getLogger(__name__)
+
+class Test[CompactCarrierName][Feature](unittest.TestCase):
+    def setUp(self):
+        self.maxDiff = None
+        self.[Feature]Request = models.[Feature]Request(**[Feature]Payload)
+
+    def test_create_[feature]_request(self):
+        """Test request transformation from Karrio to carrier format."""
+        request = gateway.mapper.create_[feature]_request(self.[Feature]Request)
+        print(f"Generated request: {lib.to_dict(request.serialize())}")
+        self.assertEqual(lib.to_dict(request.serialize()), [Feature]Request)
+
+    def test_[action_verb](self):
+        """Test HTTP endpoint is called correctly."""
+        with patch("karrio.mappers.[carrier_id].proxy.lib.request") as mock:
+            mock.return_value = "{}"  # Use "<r></r>" for XML APIs
+            karrio.[Feature].[action](self.[Feature]Request).from_(gateway)
+            print(f"Called URL: {mock.call_args[1]['url']}")
+            self.assertEqual(
+                mock.call_args[1]["url"],
+                f"{gateway.settings.server_url}/[endpoint]"
+            )
+
+    def test_parse_[feature]_response(self):
+        """Test successful response parsing."""
+        with patch("karrio.mappers.[carrier_id].proxy.lib.request") as mock:
+            mock.return_value = [Feature]Response
+            parsed_response = (
+                karrio.[Feature].[action](self.[Feature]Request)
+                .from_(gateway)
+                .parse()
+            )
+            print(f"Parsed response: {lib.to_dict(parsed_response)}")
+            self.assertListEqual(lib.to_dict(parsed_response), Parsed[Feature]Response)
+
+    def test_parse_error_response(self):
+        """Test error response handling."""
+        with patch("karrio.mappers.[carrier_id].proxy.lib.request") as mock:
+            mock.return_value = ErrorResponse
+            parsed_response = (
+                karrio.[Feature].[action](self.[Feature]Request)
+                .from_(gateway)
+                .parse()
+            )
+            print(f"Error response: {lib.to_dict(parsed_response)}")
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
+
+if __name__ == "__main__":
+    unittest.main()
+```
+
+## Required Test Methods by Feature
+
+| Feature | Test Method Names (EXACT) |
+|---------|---------------------------|
+| **Rating** | `test_create_rate_request`, `test_get_rates`, `test_parse_rate_response`, `test_parse_error_response` |
+| **Shipment** | `test_create_shipment_request`, `test_create_shipment`, `test_parse_shipment_response`, `test_parse_error_response` |
+| **Tracking** | `test_create_tracking_request`, `test_get_tracking`, `test_parse_tracking_response`, `test_parse_error_response` |
+| **Pickup** | `test_create_pickup_request`, `test_schedule_pickup`, `test_parse_pickup_response`, `test_parse_error_response` |
+| **Address** | `test_create_address_validation_request`, `test_validate_address`, `test_parse_address_validation_response`, `test_parse_error_response` |
+
+## Mandatory Test Data Structure
+
+**CRITICAL**: Every test file must end with exactly these data structures:
+
+```python
+if __name__ == "__main__":
+    unittest.main()
+
+# 1. KARRIO INPUT PAYLOAD (standardized format)
+[Feature]Payload = {
+    "shipper": {
+        "address_line1": "123 Test Street",
+        "city": "Test City",
+        "postal_code": "12345",
+        "country_code": "US",
+        "state_code": "CA",
+        "person_name": "Test Person",
+        "company_name": "Test Company",
+        "phone_number": "1234567890",
+        "email": "test@example.com"
+    },
+    "recipient": {
+        "address_line1": "456 Test Avenue",
+        "city": "Test City",
+        "postal_code": "67890",
+        "country_code": "US",
+        "state_code": "NY",
+        "person_name": "Test Recipient",
+        "company_name": "Test Recipient Company",
+        "phone_number": "9876543210",
+        "email": "recipient@example.com"
+    },
+    "parcels": [
+        {
+            "weight": 10.0,
+            "width": 10.0,
+            "height": 10.0,
+            "length": 10.0,
+            "weight_unit": "KG",
+            "dimension_unit": "CM",
+            "packaging_type": "BOX"
+        }
+    ]
+}
+
+# 2. CARRIER REQUEST FORMAT (adapt to carrier API)
+[Feature]Request = {
+    # Adapt this structure to match your carrier's API format
+    # For JSON APIs with camelCase:
+    "shipper": {
+        "addressLine1": "123 Test Street",
+        "city": "Test City",
+        "postalCode": "12345",
+        "countryCode": "US"
+    },
+    # For XML APIs or snake_case, adjust accordingly
+}
+
+# 3. CARRIER RESPONSE MOCK (actual carrier format)
+[Feature]Response = """{
+  "rates": [
+    {
+      "serviceCode": "express",
+      "serviceName": "Express Service",
+      "totalCharge": 25.99,
+      "currency": "USD",
+      "transitDays": 2
+    }
+  ]
+}"""
+
+# 4. ERROR RESPONSE MOCK
+ErrorResponse = """{
+  "error": {
+    "code": "rate_error",
+    "message": "Unable to get rates",
+    "details": "Invalid address provided"
+  }
+}"""
+
+# 5. PARSED SUCCESS RESPONSE (Karrio format)
+Parsed[Feature]Response = [
+    [
+        {
+            "carrier_id": "[carrier_id]",
+            "carrier_name": "[carrier_id]",
+            "service": "express",
+            "currency": "USD",
+            "total_charge": 25.99,
+            "transit_days": 2,
+            "meta": {
+                "service_name": "Express Service"
+            }
+        }
+    ],
+    []  # Empty errors array
+]
+
+# 6. PARSED ERROR RESPONSE (Karrio format)
+ParsedErrorResponse = [
+    [],  # Empty success data
+    [
+        {
+            "carrier_id": "[carrier_id]",
+            "carrier_name": "[carrier_id]",
+            "code": "rate_error",
+            "message": "Unable to get rates",
+            "details": {
+                "details": "Invalid address provided"
+            }
+        }
+    ]
+]
+```
+
+## Test Fixture Setup
+
+Every integration needs a `fixture.py` file:
+
+```python
+"""[Carrier Name] carrier tests fixtures."""
+
+import karrio.sdk as karrio
+
+gateway = karrio.gateway["[carrier_id]"].create(
+    dict(
+        id="123456789",
+        test_mode=True,
+        carrier_id="[carrier_id]",
+        account_number="123456789",
+        api_key="TEST_API_KEY",  # For JSON APIs
+        # username="username",   # For XML APIs
+        # password="password",   # For XML APIs
+    )
+)
+```
+
+## Response Format Patterns
+
+### Success Response Pattern
+```python
+[
+    [data_objects],  # List of successful results
+    []               # Empty errors list
+]
+```
+
+### Error Response Pattern
+```python
+[
+    [],              # Empty or partial data
+    [error_objects]  # List of error Message objects
+]
+```
+
+### Mixed Response Pattern
+```python
+[
+    [partial_data],     # Some successful data
+    [warning_objects]   # List of warnings/non-fatal errors
+]
+```
+
+## Testing Checklist
+
+### Phase 1: Test Structure Validation
+- [ ] **Test files named correctly**: `test_rate.py`, `test_shipment.py`, etc.
+- [ ] **Test classes named correctly**: `Test[CarrierName][Feature]`
+- [ ] **All 4 test methods present** for each feature
+- [ ] **Debug print statements** before all assertions
+- [ ] **Proper imports** from fixture and required modules
+
+### Phase 2: Test Data Validation
+- [ ] **All 6 data structures present** at end of each test file
+- [ ] **Realistic test data** that matches carrier API requirements
+- [ ] **Mock responses** in actual carrier API format
+- [ ] **Expected responses** in correct Karrio format
+- [ ] **Error scenarios** properly mocked and tested
+
+### Phase 3: Test Execution
+- [ ] **All tests pass**: `python -m unittest discover -v -f [path]/tests`
+- [ ] **No real API calls**: All HTTP requests properly mocked
+- [ ] **Debug output present**: Print statements show actual vs expected data
+- [ ] **Assertions use correct methods**: `assertEqual`, `assertListEqual`
+
+### Phase 4: Integration Validation
+- [ ] **SDK tests still pass**: `./bin/run-sdk-tests` succeeds
+- [ ] **Plugin registration**: Tests verify plugin appears correctly
+- [ ] **Schema imports**: Generated types import without errors
+- [ ] **Error handling**: Both success and error paths tested
+
+## Running Tests
+
+### Development Testing
+```bash
+# Test single feature
+python -m unittest tests.[carrier_name].test_rate.Test[CarrierName]Rating -v
+
+# Test entire carrier
+python -m unittest discover -v -f modules/connectors/[carrier_name]/tests
+# OR for hub carriers
+python -m unittest discover -v -f community/plugins/[carrier_name]/tests
+
+# Check specific test output
+python -m unittest tests.[carrier_name].test_rate.Test[CarrierName]Rating.test_parse_rate_response -v
+```
+
+### Integration Testing
+```bash
+# MANDATORY: Ensure all SDK tests still pass
+source ./bin/activate-env && ./bin/run-sdk-tests
+
+# Verify plugin registration
+./bin/cli plugins list | grep [carrier_name]
+./bin/cli plugins show [carrier_name]
+```
+
+## Common Testing Mistakes
+
+### ❌ Wrong Patterns
+- Using pytest instead of unittest
+- Missing debug print statements
+- Using `assert` instead of `self.assertXXX`
+- Making real HTTP requests
+- Wrong test method names
+- Incorrect data structure format
+
+### ✅ Correct Patterns
+- Always use `unittest.TestCase`
+- Include `print()` statements before assertions
+- Use `self.assertListEqual` for response parsing
+- Mock all HTTP calls with `@patch`
+- Follow exact naming conventions
+- Use the 6-structure data pattern
+
+## Test Data Best Practices
+
+1. **Use Realistic Data**: Test data should resemble real shipping scenarios
+2. **Cover Edge Cases**: Test with various package sizes, addresses, services
+3. **Mock Actual Responses**: Use real carrier API response formats
+4. **Test Both Paths**: Success and error scenarios are equally important
+5. **Verify Transformations**: Ensure data is correctly transformed between formats
+6. **Use Generated Types**: Verify your code uses generated schema classes
+
+## Debugging Failed Tests
+
+### When Tests Fail
+1. **Check Debug Prints**: Look at the printed request/response data
+2. **Verify Mock Data**: Ensure mock responses match carrier API format
+3. **Validate Transformations**: Check that mapping functions work correctly
+4. **Test Individual Components**: Isolate provider functions for testing
+5. **Regenerate Schemas**: Ensure generated types are up-to-date
+
+### Common Debug Patterns
+```python
+# Add more detailed debugging
+def test_parse_rate_response(self):
+    with patch("karrio.mappers.[carrier_id].proxy.lib.request") as mock:
+        mock.return_value = RateResponse
+        parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
+
+        print(f"Mock response: {RateResponse}")
+        print(f"Parsed response: {lib.to_dict(parsed_response)}")
+        print(f"Expected response: {ParsedRateResponse}")
+
+        self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
+```
+
+## Success Criteria
+
+Your integration testing is complete when:
+
+1. **All carrier tests pass** with proper debug output
+2. **All SDK tests still pass** without regressions
+3. **Plugin is registered** and appears in CLI tools
+4. **Schema imports work** without errors
+5. **Both success and error paths** are tested
+6. **All test patterns followed** exactly as specified
+
+Remember: Testing is not optional. It's the primary way Karrio ensures consistency across 50+ carrier integrations.

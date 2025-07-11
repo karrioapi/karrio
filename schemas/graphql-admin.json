@@ -2650,6 +2650,24 @@
         "interfaces": null,
         "enumValues": [
           {
+            "name": "allied_express",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "allied_express_local",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "amazon_shipping",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "aramex",
             "description": null,
             "isDeprecated": false,
