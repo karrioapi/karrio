@@ -62,20 +62,29 @@ This command makes the Karrio CLI (`kcli`) and other development tools available
 
 Use the `sdk add-extension` command to generate the complete directory structure and boilerplate for your new integration.
 
+**For Direct Carriers (UPS, FedEx, DHL pattern)**:
 ```bash
 ./bin/cli sdk add-extension \
-  --path plugins \
-  --carrier-slug xship \
-  --display-name "X Ship" \
+  --path modules/connectors \
+  --carrier-slug dhl_express \
+  --display-name "DHL Express" \
   --features "rating,shipping,tracking" \
-  --no-is-xml-api \
-  --version "2025.5" \
+  --is-xml-api false \
+  --confirm
+```
+
+**For Hub Carriers (Easyship, ShipEngine pattern)**:
+```bash
+./bin/cli sdk add-extension \
+  --path community/plugins \
+  --carrier-slug shipengine \
+  --display-name "ShipEngine" \
+  --features "rating,shipping,tracking" \
+  --is-xml-api false \
   --confirm
 ```
 
 **Available Features**: `address`, `document`, `manifest`, `pickup`, `rating`, `shipping`, `tracking`
-**Use**: `--no-is-xml-api` for JSON API and `--is-xml-api` for XML APIs
-**Try Help if you encounter an error**: `./bin/cli sdk add-extension --help` (at the root of the project and make sure the env var has been activated.)
 
 **⚠️ CRITICAL**: This single command creates the entire plugin structure. If this command fails, **do not proceed with manual creation**. The failure indicates an issue with the development environment or the CLI tool itself that must be resolved first.
 
@@ -127,11 +136,11 @@ generate_schema "${SCHEMAS}/rate_response.json" "${LIB_MODULES}/rate_response.py
 
 **Choose the correct `[PARAMETERS]` based on your API field format**:
 
-| API Field Format | Parameters                                         | Example APIs         | Reason                              |
-| ---------------- | -------------------------------------------------- | -------------------- | ----------------------------------- |
-| **snake_case**   | `--nice-property-names`                            | Easyship             | Converts to Python snake_case       |
-| **camelCase**    | `--no-nice-property-names`                         | UPS, FedEx, SEKO     | Preserves camelCase naming          |
-| **PascalCase**   | `--no-append-type-suffix --no-nice-property-names` | Some enterprise APIs | Prevents conflicts with class names |
+| API Field Format | Parameters | Example APIs | Reason |
+|------------------|------------|--------------|---------|
+| **snake_case** | `--nice-property-names` | Easyship | Converts to Python snake_case |
+| **camelCase** | `--no-nice-property-names` | UPS, FedEx, SEKO | Preserves camelCase naming |
+| **PascalCase** | `--no-append-type-suffix --no-nice-property-names` | Some enterprise APIs | Prevents conflicts with class names |
 
 **Examples**:
 
@@ -166,7 +175,7 @@ generate_schema "${SCHEMAS}/rate_response.json" "${LIB_MODULES}/rate_response.py
     ./bin/run-generate-on community/plugins/[carrier_name]
     ```
 
-    **🚨 CRITICAL**:
+    **🚨 CRITICAL**: 
     - **ALWAYS use `./bin/run-generate-on` command** from the project root
     - **NEVER run `./generate` directly** from within the carrier directory
     - The `run-generate-on` script properly sets up the environment and paths
@@ -490,7 +499,7 @@ def rate_request(payload, settings):
 def _extract_details(data, settings):
     # Convert to typed object using generated schema
     rate = lib.to_object(carrier_res.RateType, data)
-
+    
     # Access fields through typed attributes
     return models.RateDetails(
         carrier_id=settings.carrier_id,
@@ -988,13 +997,13 @@ def test_parse_error_response(self):
 
 ### 3. Exact Method Names by Feature (NEVER DEVIATE)
 
-| Feature      | Test Methods (EXACT NAMES)                                                                                                                                                                                                |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Rating**   | `test_create_rate_request`, `test_get_rates`, `test_parse_rate_response`, `test_parse_error_response`                                                                                                                     |
+| Feature | Test Methods (EXACT NAMES) |
+|---------|----------------------------|
+| **Rating** | `test_create_rate_request`, `test_get_rates`, `test_parse_rate_response`, `test_parse_error_response` |
 | **Shipment** | `test_create_shipment_request`, `test_create_shipment`, `test_parse_shipment_response`, `test_create_shipment_cancel_request`, `test_cancel_shipment`, `test_parse_shipment_cancel_response`, `test_parse_error_response` |
-| **Tracking** | `test_create_tracking_request`, `test_get_tracking`, `test_parse_tracking_response`, `test_parse_error_response`                                                                                                          |
-| **Pickup**   | `test_create_pickup_request`, `test_schedule_pickup`, `test_update_pickup`, `test_cancel_pickup`, `test_parse_pickup_response`, `test_parse_error_response`                                                               |
-| **Address**  | `test_create_address_validation_request`, `test_validate_address`, `test_parse_address_validation_response`, `test_parse_error_response`                                                                                  |
+| **Tracking** | `test_create_tracking_request`, `test_get_tracking`, `test_parse_tracking_response`, `test_parse_error_response` |
+| **Pickup** | `test_create_pickup_request`, `test_schedule_pickup`, `test_update_pickup`, `test_cancel_pickup`, `test_parse_pickup_response`, `test_parse_error_response` |
+| **Address** | `test_create_address_validation_request`, `test_validate_address`, `test_parse_address_validation_response`, `test_parse_error_response` |
 
 ### 4. Test Data Structure (MANDATORY PATTERN)
 
@@ -1057,22 +1066,22 @@ ParsedErrorResponse = [
 
 Test the **exact** carrier API endpoints:
 
-| Feature             | Common Endpoint Patterns                        |
-| ------------------- | ----------------------------------------------- |
-| **Rating**          | `/rates`, `/api/rates`, `/v1/rates`             |
-| **Shipment**        | `/shipments`, `/api/shipments`, `/v1/shipments` |
-| **Shipment Cancel** | `/shipments/{id}/cancel`, `/shipments/cancel`   |
-| **Tracking**        | `/tracking`, `/track`, `/v1/tracking`           |
-| **Pickup**          | `/pickups`, `/pickup/schedule`, `/v1/pickups`   |
-| **Address**         | `/address/validate`, `/validate-address`        |
+| Feature | Common Endpoint Patterns |
+|---------|--------------------------|
+| **Rating** | `/rates`, `/api/rates`, `/v1/rates` |
+| **Shipment** | `/shipments`, `/api/shipments`, `/v1/shipments` |
+| **Shipment Cancel** | `/shipments/{id}/cancel`, `/shipments/cancel` |
+| **Tracking** | `/tracking`, `/track`, `/v1/tracking` |
+| **Pickup** | `/pickups`, `/pickup/schedule`, `/v1/pickups` |
+| **Address** | `/address/validate`, `/validate-address` |
 
 ### 6. Response Format Patterns (NEVER CHANGE)
 
-| Response Type | Format Pattern                                       |
-| ------------- | ---------------------------------------------------- |
-| **Success**   | `[data_array_or_object, []]`                         |
-| **Error**     | `[[], [error_objects]]` or `[None, [error_objects]]` |
-| **Mixed**     | `[partial_data, [warning_objects]]`                  |
+| Response Type | Format Pattern |
+|---------------|----------------|
+| **Success** | `[data_array_or_object, []]` |
+| **Error** | `[[], [error_objects]]` or `[None, [error_objects]]` |
+| **Mixed** | `[partial_data, [warning_objects]]` |
 
 ### 7. Mock Response Patterns
 
@@ -1501,7 +1510,7 @@ head -5 schemas/*.json | grep -l "\$schema"
 
 **Problem**: Choosing correct `--nice-property-names` flag
 **Quick Rule**:
-- snake_case APIs (field_name) → `--nice-property-names`
+- snake_case APIs (field_name) → `--nice-property-names` 
 - camelCase APIs (fieldName) → `--no-nice-property-names`
 - PascalCase APIs (FieldName) → `--no-append-type-suffix --no-nice-property-names`
 
@@ -1609,18 +1618,18 @@ def _extract_details(data, settings):
         rate = {}
         rate["service"] = rate_data.get("service_code", "")
         rate["total"] = 0
-
+        
         # Manual total calculation with loops
         amounts = []
         if rate_data.get("shipping_amount"):
             amounts.append(rate_data["shipping_amount"])
         if rate_data.get("insurance_amount"):
             amounts.append(rate_data["insurance_amount"])
-
+        
         for amount in amounts:
             if amount and amount.get("amount"):
                 rate["total"] += float(amount["amount"])
-
+        
         rates.append(rate)
     return rates
 ```
@@ -1632,7 +1641,7 @@ import karrio.lib as lib
 
 def _extract_details(data, settings):
     rate_response_obj = lib.to_object(carrier_res.RateResponseType, data)
-
+    
     return [
         _extract_rate_details(lib.to_dict(rate), settings)
         for rate in (rate_response_obj.rate_response.rates or [])
@@ -1641,21 +1650,21 @@ def _extract_details(data, settings):
 
 def _extract_rate_details(rate_data: dict, settings) -> models.RateDetails:
     rate = lib.to_object(carrier_res.RateType, rate_data)
-
+    
     # Functional amount calculation with list comprehension
     amounts = [rate.shipping_amount, rate.insurance_amount, rate.confirmation_amount, rate.other_amount]
-
+    
     total_amount = sum(
         lib.to_money(amount.amount)
         for amount in amounts if amount and amount.amount
     )
-
+    
     # Functional currency extraction
     currency = next(
-        (amount.currency for amount in amounts if amount and amount.currency),
+        (amount.currency for amount in amounts if amount and amount.currency), 
         "USD"
     )
-
+    
     return models.RateDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
@@ -1749,7 +1758,7 @@ def rate_request(payload, settings):
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels)
-
+    
     # Build request tree declaratively
     request = carrier_req.RateRequestType(
         rate_options=carrier_req.RateOptionsType(
@@ -1774,7 +1783,7 @@ def rate_request(payload, settings):
             ],
         ),
     )
-
+    
     return lib.Serializable(request, lib.to_dict)
 
 def _build_package(package):
