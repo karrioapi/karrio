@@ -57,12 +57,6 @@ const MetadataStateProvider = ({
         if (isNone(key) && isNone(value) && Object.keys(state).length == 1) {
           return acc;
         }
-        // This means that we have more than one metadata items with the same key
-        if (Object.keys(acc).includes(key as string)) {
-          let error: any | Error = new Error("Metadata keys must be unique.");
-          error.key = key;
-          throw error;
-        }
         // This means that the metadata item has undefined key and/or value
         if (isNoneOrEmpty(key) || isNoneOrEmpty(value)) {
           let error: any | Error = new Error(
@@ -71,7 +65,14 @@ const MetadataStateProvider = ({
           error.key = key;
           throw error;
         }
-        return { ...acc, [key as string]: value };
+        // Convert key to string and check for uniqueness
+        const stringKey = String(key);
+        if (Object.keys(acc).includes(stringKey)) {
+          let error: any | Error = new Error("Metadata keys must be unique.");
+          error.key = key;
+          throw error;
+        }
+        return { ...acc, [stringKey]: value };
       }, {});
       let discarded_keys = Object.keys(value || {}).filter(
         (key) => !Object.keys(added_values).includes(key),
