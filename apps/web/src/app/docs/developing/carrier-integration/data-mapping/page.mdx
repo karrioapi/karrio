@@ -7,18 +7,16 @@ author: Karrio Team
 
 # Data Mapping
 
-The core of a Karrio carrier integration is the data mapping layer. This layer is responsible for the crucial task of transforming data between Karrio's unified models and the specific formats required by the carrier's API.
+The core of a Karrio carrier integration is the data mapping layer. This layer transforms data between Karrio's unified models and the specific formats required by the carrier's API.
 
 This transformation logic lives in two places:
 
-1.  The **`Mapper` class** in `karrio/mappers/[carrier_name]/mapper.py`.
-2.  The **provider functions** in `karrio/providers/[carrier_name]/`.
+1. The **`Mapper` class** in `karrio/mappers/[carrier_name]/mapper.py`
+2. The **provider functions** in `karrio/providers/[carrier_name]/`
 
 ## Mapper Implementation
 
-The `Mapper` class connects Karrio's core logic to your provider-specific implementation. It inherits from `karrio.api.mapper.Mapper` and its methods are straightforward delegations to the functions in your `provider` module.
-
-A `Mapper` has distinct methods for creating requests and parsing responses for each capability (rating, shipping, tracking, etc.).
+The `Mapper` class connects Karrio's core logic to your provider-specific implementation. It inherits from `karrio.api.mapper.Mapper` and delegates to functions in your `provider` module.
 
 ```python
 # karrio/mappers/[carrier_name]/mapper.py
@@ -29,14 +27,10 @@ import karrio.core.models as models
 import karrio.providers.[carrier_name] as provider
 import karrio.mappers.[carrier_name].settings as provider_settings
 
-
 class Mapper(mapper.Mapper):
     settings: provider_settings.Settings
 
-    # --------------------------------------------------------------------
-    # REQUEST CREATION METHODS
-    # --------------------------------------------------------------------
-
+    # Request Creation Methods
     def create_rate_request(
         self, payload: models.RateRequest
     ) -> lib.Serializable:
@@ -52,12 +46,7 @@ class Mapper(mapper.Mapper):
     ) -> lib.Serializable:
         return provider.tracking_request(payload, self.settings)
 
-    # ... other request mappers for cancel, pickup, etc.
-
-    # --------------------------------------------------------------------
-    # RESPONSE PARSING METHODS
-    # --------------------------------------------------------------------
-
+    # Response Parsing Methods
     def parse_rate_response(
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
@@ -72,54 +61,50 @@ class Mapper(mapper.Mapper):
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
         return provider.parse_tracking_response(response, self.settings)
-
-    # ... other response parsers for cancel, pickup, etc.
 ```
 
 ## Provider Mapping Functions
 
-The actual mapping logic resides in functions within your `provider` modules (e.g., `rate.py`, `shipment/create.py`). For each operation, you will implement two functions: one to create the request and one to parse the response.
+The actual mapping logic resides in functions within your `provider` modules. For each operation, you implement two functions: one to create the request and one to parse the response.
 
 ```mermaid
 flowchart TD
     subgraph "Request Mapping"
-        A1["Unified Karrio Request<br/>(e.g., models.RateRequest)"] --> A2["provider.rate_request()<br/>Transforms data"]
-        A2 --> A3["Carrier-Specific Request<br/>(Generated from schema)"]
-        A3 --> A4["lib.Serializable<br/>Wraps carrier request"]
+        A1["Unified Karrio Request<br/>(models.RateRequest)"] --> A2["provider.rate_request()<br/>Transform data"]
+        A2 --> A3["Carrier-Specific Request<br/>(Generated schema)"]
+        A3 --> A4["lib.Serializable<br/>Ready for API"]
     end
 
     subgraph "Response Parsing"
-        B1["lib.Deserializable<br/>Wraps raw carrier response"] --> B2["provider.parse_rate_response()<br/>Parses data"]
-        B2 --> B3["Unified Karrio Response<br/>(e.g., RateDetails, Message)"]
+        B1["lib.Deserializable<br/>Raw carrier response"] --> B2["provider.parse_rate_response()<br/>Parse data"]
+        B2 --> B3["Unified Karrio Response<br/>(RateDetails, Messages)"]
     end
 
-    A4 --> KarrioCore["Karrio Core"]
-    KarrioCore --> CarrierAPI["Carrier API"]
-    CarrierAPI --> KarrioCore
-    KarrioCore --> B1
+    A4 --> API["Carrier API"]
+    API --> B1
 ```
 
 ### Request Mapping Example: Rating
 
-This function takes a unified `models.RateRequest` and transforms it into a `lib.Serializable` object containing the carrier-specific request payload.
+**File**: `karrio/providers/[carrier_name]/rate.py`
 
 ```python
-# karrio/providers/[carrier_name]/rate.py
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.[carrier_name].units as provider_units
 import karrio.providers.[carrier_name].utils as provider_utils
-# Import your generated carrier schema
-import karrio.schemas.[carrier_name].rate_request as carrier
+import karrio.providers.[carrier_name].error as provider_error
+# CRITICAL: Always import and use generated schema types
+import karrio.schemas.[carrier_name].rate_request as carrier_req
+import karrio.schemas.[carrier_name].rate_response as carrier_res
 
 def rate_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    """
-    Transforms a Karrio RateRequest into a carrier-specific rate request.
-    """
+    """Transform a Karrio RateRequest into a carrier-specific rate request."""
+
     # Use Karrio helpers to parse the unified payload
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
@@ -131,262 +116,409 @@ def rate_request(
         initializer=provider_units.shipping_options_initializer,
     )
 
-    # Use the generated schema to construct the carrier request
-    request = carrier.RateRequestType(
-        shipper=carrier.AddressType(
-            address_line1=shipper.address_line1,
-            city=shipper.city,
-            postal_code=shipper.postal_code,
-            country_code=shipper.country_code,
-            # ... other address fields
-        ),
-        recipient=carrier.AddressType(
-            address_line1=recipient.address_line1,
-            city=recipient.city,
-            postal_code=recipient.postal_code,
-            country_code=recipient.country_code,
-            # ... other address fields
-        ),
+    # Create the carrier-specific request using generated schema types
+    request = carrier_req.RateRequestType(
+        shipper={
+            "addressLine1": shipper.address_line1,
+            "city": shipper.city,
+            "postalCode": shipper.postal_code,
+            "countryCode": shipper.country_code,
+            "stateCode": shipper.state_code,
+            "personName": shipper.person_name,
+            "companyName": shipper.company_name,
+        },
+        recipient={
+            "addressLine1": recipient.address_line1,
+            "city": recipient.city,
+            "postalCode": recipient.postal_code,
+            "countryCode": recipient.country_code,
+            "stateCode": recipient.state_code,
+            "personName": recipient.person_name,
+            "companyName": recipient.company_name,
+        },
         packages=[
-            carrier.PackageType(
-                weight=package.weight.KG,
-                # ... other package fields
-            )
+            {
+                "weight": package.weight.value,
+                "weightUnit": provider_units.WeightUnit[package.weight.unit].value,
+                "length": package.length.value if package.length else None,
+                "width": package.width.value if package.width else None,
+                "height": package.height.value if package.height else None,
+                "dimensionUnit": provider_units.DimensionUnit[package.dimension_unit].value if package.dimension_unit else None,
+                "packagingType": provider_units.PackagingType[package.packaging_type or 'your_packaging'].value,
+            }
             for package in packages
         ],
-        services=[s.value for s in services],
-        # ... other request fields
+        services=[s.value_or_key for s in services] if services else None,
+        customerNumber=settings.account_number,
     )
 
-    # Return a Serializable object containing the request and a serializer function
-    return lib.Serializable(request, lib.to_dict) # or lib.to_xml, etc.
-```
-
-### Response Parsing Example: Rating
-
-This function takes a `lib.Deserializable` object (containing the raw carrier response) and parses it into a tuple of `RateDetails` and `Message` objects.
-
-```python
-# karrio/providers/[carrier_name]/rate.py
-import typing
-import karrio.lib as lib
-import karrio.core.models as models
-import karrio.providers.[carrier_name].error as provider_error
-import karrio.providers.[carrier_name].utils as provider_utils
-# Import your generated carrier schema
-import karrio.schemas.[carrier_name].rate_response as carrier
+    return lib.Serializable(request, lib.to_dict)  # Use lib.to_xml for XML APIs
 
 def parse_rate_response(
     _response: lib.Deserializable[str],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-    """
-    Parses a carrier rate response into a list of Karrio RateDetails.
-    """
+    """Parse a carrier rate response into Karrio RateDetails."""
     response = _response.deserialize()
 
-    # Use the provider's error parser to check for and extract any errors
+    # Parse any errors first
     messages = provider_error.parse_error_response(response, settings)
-    # Extract the rate-related data from the response
-    rates = response.get("rates", [])
 
-    # Map the carrier rates to Karrio's unified RateDetails model
-    rate_details = [_extract_details(rate, settings) for rate in rates]
+    # Extract rates from response
+    rate_objects = response.get("rates", []) if hasattr(response, 'get') else []
+    rates = [_extract_rate_details(rate, settings) for rate in rate_objects]
 
-    return rate_details, messages
+    return rates, messages
 
-
-def _extract_details(
-    detail: dict,
+def _extract_rate_details(
+    data: dict,
     settings: provider_utils.Settings,
 ) -> models.RateDetails:
-    """Helper function to map a single carrier rate to a RateDetails object."""
-    rate = lib.to_object(carrier.RateType, detail)
+    """Helper function to map a single carrier rate to RateDetails."""
+    # Convert to typed object using generated schema
+    rate = lib.to_object(carrier_res.RateType, data)
 
     return models.RateDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        service=rate.service_name,
-        total_charge=lib.to_money(rate.total_charge),
-        currency=rate.currency,
-        transit_days=rate.transit_days,
-        # ... other details
+        service=rate.serviceCode if hasattr(rate, 'serviceCode') else "",
+        total_charge=lib.to_money(rate.totalCharge),
+        currency=rate.currency if hasattr(rate, 'currency') else "USD",
+        transit_days=int(rate.transitDays) if hasattr(rate, 'transitDays') and rate.transitDays else None,
+        meta=dict(
+            service_name=rate.serviceName if hasattr(rate, 'serviceName') else "",
+        ),
     )
 ```
 
-### Tracking Request Mapping
+### Shipment Implementation Example
 
-Tracking requests are often simpler. Many carriers just need a list of tracking numbers. The `tracking_request` function should return a `Serializable` object containing this list.
+**File**: `karrio/providers/[carrier_name]/shipment.py`
 
 ```python
-# karrio/providers/[carrier_name]/tracking.py
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.[carrier_name].units as provider_units
+import karrio.providers.[carrier_name].utils as provider_utils
+import karrio.providers.[carrier_name].error as provider_error
+import karrio.schemas.[carrier_name].shipment_request as carrier_req
+import karrio.schemas.[carrier_name].shipment_response as carrier_res
+
+def shipment_request(
+    payload: models.ShipmentRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable:
+    """Create a shipment request for the carrier API."""
+
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
+    packages = lib.to_packages(payload.parcels)
+    service = lib.to_services(payload.service, provider_units.ShippingService).first
+    options = lib.to_shipping_options(
+        payload.options,
+        package_options=packages.options,
+        initializer=provider_units.shipping_options_initializer,
+    )
+
+    request = carrier_req.ShipmentRequestType(
+        shipper={
+            "addressLine1": shipper.address_line1,
+            "city": shipper.city,
+            "postalCode": shipper.postal_code,
+            "countryCode": shipper.country_code,
+            "personName": shipper.person_name,
+            "companyName": shipper.company_name,
+        },
+        recipient={
+            "addressLine1": recipient.address_line1,
+            "city": recipient.city,
+            "postalCode": recipient.postal_code,
+            "countryCode": recipient.country_code,
+            "personName": recipient.person_name,
+            "companyName": recipient.company_name,
+        },
+        packages=[
+            {
+                "weight": package.weight.value,
+                "weightUnit": provider_units.WeightUnit[package.weight.unit].value,
+                "dimensions": {
+                    "length": package.length.value if package.length else None,
+                    "width": package.width.value if package.width else None,
+                    "height": package.height.value if package.height else None,
+                    "unit": provider_units.DimensionUnit[package.dimension_unit].value if package.dimension_unit else None,
+                },
+                "packagingType": provider_units.PackagingType[package.packaging_type or 'your_packaging'].value,
+            }
+            for package in packages
+        ],
+        serviceCode=service.value_or_key,
+        customerNumber=settings.account_number,
+        labelFormat=payload.label_type or "PDF",
+    )
+
+    return lib.Serializable(request, lib.to_dict)
+
+def parse_shipment_response(
+    _response: lib.Deserializable[str],
+    settings: provider_utils.Settings,
+) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    """Parse a carrier shipment response into ShipmentDetails."""
+    response = _response.deserialize()
+
+    messages = provider_error.parse_error_response(response, settings)
+
+    # Convert to typed object
+    shipment = lib.to_object(carrier_res.ShipmentResponseType, response)
+
+    return models.ShipmentDetails(
+        carrier_id=settings.carrier_id,
+        carrier_name=settings.carrier_name,
+        tracking_number=shipment.trackingNumber,
+        shipment_identifier=shipment.shipmentId if hasattr(shipment, 'shipmentId') else None,
+        label=shipment.labelData if hasattr(shipment, 'labelData') else None,
+        meta=dict(
+            service_name=shipment.serviceName if hasattr(shipment, 'serviceName') else "",
+            label_type=shipment.labelType if hasattr(shipment, 'labelType') else "PDF",
+        ),
+    ), messages
+```
+
+### Tracking Implementation Example
+
+**File**: `karrio/providers/[carrier_name]/tracking.py`
+
+```python
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.[carrier_name].units as provider_units
+import karrio.providers.[carrier_name].utils as provider_utils
+import karrio.schemas.[carrier_name].tracking_response as carrier_res
+
 def tracking_request(
     payload: models.TrackingRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    """
-    Create a tracking request object.
-    """
-    # Simply serialize the list of tracking numbers
+    """Create a tracking request object."""
+    # Most carriers just need the tracking numbers
     return lib.Serializable(payload.tracking_numbers)
+
+def parse_tracking_response(
+    _response: lib.Deserializable,
+    settings: provider_utils.Settings,
+) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+    """Parse carrier tracking response into TrackingDetails."""
+    response = _response.deserialize()
+
+    tracking_details = []
+    for tracking_number, tracking_data in response:
+        if not tracking_data:
+            continue
+
+        # Convert to typed object
+        tracking = lib.to_object(carrier_res.TrackingResponseType, tracking_data)
+
+        events = [
+            models.TrackingEvent(
+                date=lib.to_date(event.date) if hasattr(event, 'date') else None,
+                description=event.description if hasattr(event, 'description') else "",
+                location=event.location if hasattr(event, 'location') else "",
+                code=event.status if hasattr(event, 'status') else "",
+                time=lib.to_time(event.time) if hasattr(event, 'time') else None,
+            )
+            for event in (getattr(tracking, 'events', None) or [])
+        ]
+
+        detail = models.TrackingDetails(
+            carrier_id=settings.carrier_id,
+            carrier_name=settings.carrier_name,
+            tracking_number=tracking_number,
+            events=events,
+            status=provider_units.TrackingStatus.map(getattr(tracking, 'status', None)),
+        )
+        tracking_details.append(detail)
+
+    return tracking_details, []
 ```
 
 ## Helper Functions
 
-Karrio provides several helper functions in `karrio.lib` to simplify common mapping tasks:
+Karrio provides helper functions in `karrio.lib` to simplify common mapping tasks:
 
-- `lib.to_address`: Converts a payload address to a standardized `Address` object.
-- `lib.to_packages`: Converts a list of parcels to standardized `Package` objects.
-- `lib.to_shipping_options`: Converts shipping options to a standardized `ShippingOptions` object.
-- `lib.to_services`: Converts service string(s) to a list of carrier-specific service codes/enums.
-- `lib.fdatetime`: Formats a date or datetime string into another format.
-- `lib.to_money`: Converts a value to a `Decimal` money type.
-- `lib.to_object`: Converts a dictionary into a specific `jstruct` data class object.
+- **`lib.to_address`**: Converts payload address to standardized `Address` object
+- **`lib.to_packages`**: Converts parcels list to standardized `Package` objects
+- **`lib.to_shipping_options`**: Converts options to `ShippingOptions` object
+- **`lib.to_services`**: Converts service strings to carrier-specific service codes
+- **`lib.to_money`**: Converts values to `Decimal` money type
+- **`lib.to_object`**: Converts dictionaries to specific schema class objects
+- **`lib.to_date`**: Parses date strings into date objects
+- **`lib.to_time`**: Parses time strings into time objects
+
+## Unified Data Models
+
+Karrio's unified data model is defined in `karrio.core.models`:
+
+### Request Models
+- **`RateRequest`**: Request for shipping rates
+- **`ShipmentRequest`**: Request to create shipment
+- **`TrackingRequest`**: Request to track shipments
+- **`PickupRequest`**: Request to schedule pickup
+
+### Response Models
+- **`RateDetails`**: Individual rate quote
+- **`ShipmentDetails`**: Created shipment information
+- **`TrackingDetails`**: Tracking status and events
+- **`PickupDetails`**: Pickup confirmation
+
+### Supporting Models
+- **`Address`**: Standardized address format
+- **`Package`**: Package dimensions and weight
+- **`Message`**: Error or warning message
 
 ## Best Practices
 
-- **Stay Pure**: Mapping functions should be pure and free of side effects (like making API calls).
-- **Use Helpers**: Leverage the `karrio.lib` helper functions to standardize data conversion.
-- **Handle Missing Data**: Provide sensible defaults for optional fields.
-- **Use Enums**: Define carrier-specific units, services, and options as enums in `units.py` for type safety and clarity.
-- **Unit Test**: Write unit tests for your mapping functions to ensure they handle various inputs correctly.
+1. **Always Use Generated Types**: Import and use schema classes from `karrio.schemas.[carrier_name]`
+2. **Handle Missing Data**: Provide sensible defaults for optional fields
+3. **Use Helper Functions**: Leverage `karrio.lib` helpers for data conversion
+4. **Map to Unified Types**: Always map from carrier-specific to unified formats
+5. **Error Handling**: Parse and return carrier errors as `Message` objects
+6. **Type Safety**: Use type hints and proper typing throughout
+7. **Stay Pure**: Mapping functions should be side-effect free
 
-```mermaid
-classDiagram
-    class Mapper {
-        +settings Settings
-        +create_shipment(payload) Serializable
-        +cancel_shipment(payload) Serializable
-        +get_rates(payload) Serializable
-        +get_tracking(payload) Serializable
-        +validate_address(payload) Serializable
-    }
+## Common Patterns
 
-    class ProviderShipment {
-        +shipment_request(payload, settings) Serializable
-        +parse_shipment_response(response, settings) ShipmentDetails
-        +cancel_shipment_request(payload, settings) Serializable
-        +parse_cancel_response(response, settings) ConfirmationDetails
-    }
-
-    class ProviderRate {
-        +rate_request(payload, settings) Serializable
-        +parse_rate_response(response, settings) RateDetails
-    }
-
-    class ProviderTracking {
-        +tracking_request(payload, settings) Serializable
-        +parse_tracking_response(response, settings) TrackingDetails
-    }
-
-    class ProviderAddress {
-        +address_validation_request(payload, settings) Serializable
-        +parse_validation_response(response, settings) AddressValidationDetails
-    }
-
-    Mapper --> ProviderShipment : "uses"
-    Mapper --> ProviderRate : "uses"
-    Mapper --> ProviderTracking : "uses"
-    Mapper --> ProviderAddress : "uses"
-```
-
-## Unified Data Model
-
-Karrio's unified data model is defined in the `karrio.core.models` module. It provides standard classes for various shipping operations:
-
-- `AddressValidationRequest` / `AddressValidationDetails`
-- `RateRequest` / `RateDetails`
-- `ShipmentRequest` / `ShipmentDetails`
-- `TrackingRequest` / `TrackingDetails`
-- `PickupRequest` / `PickupDetails`
-
-Your mapping functions should transform between these unified models and carrier-specific formats.
-
-```mermaid
-classDiagram
-    class UnifiedModel {
-        <<interface>>
-    }
-
-    class AddressModel {
-        +RateRequest
-        +ShipmentRequest
-        +AddressValidationRequest
-    }
-
-    class ResponseModel {
-        +RateDetails
-        +ShipmentDetails
-        +TrackingDetails
-    }
-
-    class CarrierModel {
-        <<interface>>
-    }
-
-    class CarrierRequest {
-        +rate_request
-        +shipment_request
-        +tracking_request
-    }
-
-    class CarrierResponse {
-        +rate_response
-        +shipment_response
-        +tracking_response
-    }
-
-    UnifiedModel <|-- AddressModel
-    UnifiedModel <|-- ResponseModel
-    CarrierModel <|-- CarrierRequest
-    CarrierModel <|-- CarrierResponse
-
-    AddressModel <--> CarrierRequest : "map_request()"
-    CarrierResponse <--> ResponseModel : "parse_response()"
-```
-
-## Helper Functions
-
-Karrio provides several helper functions to simplify common mapping tasks:
-
+### Address Mapping
 ```python
-# Convert a payload address to a standardized Address object
-address = lib.to_address(payload.address)
-
-# Convert a list of parcels to standardized Package objects
-packages = lib.to_packages(payload.parcels)
-
-# Convert shipping options to a standardized ShippingOptions object
-options = lib.to_shipping_options(payload.options)
-
-# Convert service string(s) to carrier-specific service codes
-services = lib.to_services(payload.services, provider_units.Service)
-
-# Format a date or datetime string
-formatted_date = lib.fdatetime(
-    date_string, "%Y-%m-%d", "%Y-%m-%dT%H:%M:%S.%fZ"
-)
-
-# Convert a string to a decimal value
-amount = lib.to_decimal("123.45")
-
-# Convert a string to a date object
-date = lib.to_date("2023-09-15", "%Y-%m-%d")
-
-# Convert a dict to a specific object type
-obj = lib.to_object(carrier.Address, address_dict)
+def _build_address(address: models.Address) -> dict:
+    return {
+        "addressLine1": address.address_line1,
+        "city": address.city,
+        "postalCode": address.postal_code,
+        "countryCode": address.country_code,
+        "stateCode": address.state_code,
+        "personName": address.person_name,
+        "companyName": address.company_name,
+    }
 ```
 
-## Best Practices
+### Service Code Mapping
+```python
+def _map_service_code(service_code: str) -> str:
+    service_map = {
+        "CARRIER_EXPRESS": "carrier_express",
+        "CARRIER_STANDARD": "carrier_standard",
+        "CARRIER_GROUND": "carrier_ground",
+    }
+    return service_map.get(service_code, service_code.lower())
+```
 
-When implementing data mapping:
+### Weight/Dimension Conversion
+```python
+def _build_weight(package: models.Package) -> dict:
+    return {
+        "value": package.weight.value,
+        "unit": "KG" if package.weight.unit == "KG" else "LB"
+    }
 
-1. **Stay Pure**: Keep mapping functions pure (no side effects)
-2. **Handle Missing Data**: Provide defaults for optional fields
-3. **Validate Data**: Check for required fields and valid formats
-4. **Type Safety**: Use type hints to ensure type safety
-5. **Error Handling**: Gracefully handle mapping errors
-6. **Documentation**: Document complex mapping logic
-7. **Unit Testing**: Write tests for mapping functions
+def _build_dimensions(package: models.Package) -> dict:
+    if not package.length:
+        return None
+    return {
+        "length": package.length.value,
+        "width": package.width.value,
+        "height": package.height.value,
+        "unit": "CM" if package.dimension_unit == "CM" else "IN"
+    }
+```
 
-In the next section, we'll cover how to test your carrier integration.
+### Error Handling Pattern
+```python
+def parse_error_response(
+    response: dict,
+    settings: provider_utils.Settings,
+) -> typing.List[models.Message]:
+    """Parse carrier errors into Karrio Messages."""
+    errors = response.get("errors", [])
+
+    return [
+        models.Message(
+            carrier_id=settings.carrier_id,
+            carrier_name=settings.carrier_name,
+            code=error.get("code", ""),
+            message=error.get("message", ""),
+            details=error.get("details", {}),
+        )
+        for error in errors
+    ]
+```
+
+## Integration Flow
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Karrio
+    participant Mapper
+    participant Provider
+    participant Carrier
+
+    Client->>Karrio: Rate Request
+    Karrio->>Mapper: create_rate_request()
+    Mapper->>Provider: rate_request()
+    Provider->>Provider: Transform using generated types
+    Provider-->>Mapper: lib.Serializable
+    Mapper->>Carrier: HTTP Request
+    Carrier->>Mapper: HTTP Response
+    Mapper->>Provider: parse_rate_response()
+    Provider->>Provider: Parse using generated types
+    Provider-->>Mapper: RateDetails, Messages
+    Mapper-->>Karrio: Unified Response
+    Karrio-->>Client: JSON Response
+```
+
+## Testing Data Mapping
+
+**CRITICAL**: Every mapping function must be tested with the exact patterns:
+
+### 1. Request Transformation Test
+```python
+def test_create_rate_request(self):
+    request = gateway.mapper.create_rate_request(self.RateRequest)
+    print(f"Generated request: {lib.to_dict(request.serialize())}")
+    self.assertEqual(lib.to_dict(request.serialize()), RateRequest)
+```
+
+### 2. Response Parsing Test
+```python
+def test_parse_rate_response(self):
+    with patch("karrio.mappers.[carrier_id].proxy.lib.request") as mock:
+        mock.return_value = RateResponse
+        parsed_response = (
+            karrio.Rating.fetch(self.RateRequest)
+            .from_(gateway)
+            .parse()
+        )
+        print(f"Parsed response: {lib.to_dict(parsed_response)}")
+        self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
+```
+
+### 3. Test Data Requirements
+- **Input Payload**: Standard Karrio format with realistic test data
+- **Expected Request**: Carrier-specific format that your `rate_request()` should produce
+- **Mock Response**: Actual carrier API response format
+- **Expected Output**: Karrio format with `[data, errors]` structure
+
+### 4. Generated Types Validation
+Always test that your mapping correctly uses generated schema types:
+```python
+# Verify request uses generated types
+rate = lib.to_object(carrier_req.RateRequestType, request.serialize())
+self.assertIsInstance(rate, carrier_req.RateRequestType)
+
+# Verify response parsing uses generated types
+response_obj = lib.to_object(carrier_res.RateResponseType, mock_data)
+self.assertTrue(hasattr(response_obj, 'rates'))
+```
+
+The data mapping layer is the heart of your integration, transforming between Karrio's unified format and carrier-specific requirements while maintaining type safety and error handling throughout the process.
