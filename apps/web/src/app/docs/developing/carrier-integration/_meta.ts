@@ -19,4 +19,8 @@ export default {
     title: 'API Requests',
     type: 'page'
   },
+  "testing": {
+    title: 'Testing',
+    type: 'page'
+  },
 }
