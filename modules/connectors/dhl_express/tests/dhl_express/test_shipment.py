@@ -253,6 +253,18 @@ ParsedShipmentResponse = [
         "shipment_identifier": "0057714403",
         "tracking_number": "0057714403",
         "docs": {"label": ANY, "invoice": ANY},
+        "selected_rate": {
+            "carrier_id": "carrier_id",
+            "carrier_name": "dhl_express",
+            "service": "dhl_express",
+            "total_charge": 151.14,
+            "currency": "USD",
+            "extra_charges": [
+                {"amount": 144.98, "currency": "USD", "name": "Package Charge"},
+                {"amount": 151.14, "currency": "USD", "name": "Shipping Charge"},
+            ],
+            "meta": {"package_charge": 144.98},
+        },
         "meta": {
             "carrier_tracking_link": "https://www.dhl.com/ca-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=0057714403"
         },

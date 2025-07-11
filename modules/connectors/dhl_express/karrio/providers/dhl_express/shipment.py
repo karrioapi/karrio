@@ -41,6 +41,34 @@ def _extract_shipment(
     invoice = next(
         (item for item in multilabels if item.DocName == "CustomInvoiceImage"), None
     )
+    
+    pricing_data = {
+        "package_charge": lib.find_element("PackageCharge", shipment_node, first=True),
+        "shipping_charge": lib.find_element("ShippingCharge", shipment_node, first=True),
+        "currency": lib.find_element("QtdSInAdCur/CurrencyCode", shipment_node, first=True),
+    }
+    
+    charges = [
+        ("Package Charge", lib.failsafe(lambda: pricing_data["package_charge"].text)),
+        ("Shipping Charge", lib.failsafe(lambda: pricing_data["shipping_charge"].text)),
+    ]
+    selected_rate = lib.identity(
+        models.RateDetails(
+            carrier_id=settings.carrier_id,
+            carrier_name=settings.carrier_name,
+            service="dhl_express",
+            total_charge=lib.to_money(pricing_data["shipping_charge"].text),
+            currency=lib.failsafe(lambda: pricing_data["currency"].text) or "USD",
+            extra_charges=[
+                models.ChargeDetails(name=name, amount=lib.to_money(amount), currency=lib.failsafe(lambda: pricing_data["currency"].text) or "USD")
+                for name, amount in charges
+                if amount and lib.to_money(amount) != 0
+            ],
+            meta=dict(package_charge=lib.to_money(lib.failsafe(lambda: pricing_data["package_charge"].text))),
+        )
+        if pricing_data["shipping_charge"] is not None and pricing_data["shipping_charge"].text is not None
+        else None
+    )
 
     label = base64.encodebytes(label_image.OutputImage).decode("utf-8")
     invoice_data = (
@@ -55,6 +83,7 @@ def _extract_shipment(
         tracking_number=tracking_number,
         shipment_identifier=tracking_number,
         docs=models.Documents(label=label, **invoice_data),
+        selected_rate=selected_rate,
         meta=dict(
             carrier_tracking_link=settings.tracking_url.format(tracking_number),
         ),
