@@ -43,93 +43,45 @@ if __name__ == "__main__":
 
 
 RatePayload = {
-  "customs": {
-    "options": {
-      "ioss": "IM3720021461",
-      "eori_number": "GB457532476000"
+    "shipper": {
+        "company_name": "TESTING COMPANY",
+        "address_line1": "17 VULCAN RD",
+        "city": "CANNING VALE",
+        "postal_code": "6155",
+        "country_code": "AU",
+        "person_name": "TEST USER",
+        "state_code": "WA",
+        "email": "test@gmail.com",
+        "phone_number": "(07) 3114 1499",
     },
-    "incoterm": "DAP",
-    "commodities": [
-      {
-        "sku": "1234567890",
-        "title": "iPod Nano",
-        "weight": 1,
-        "quantity": 1,
-        "weight_unit": "KG",
-        "value_amount": 17.26,
-        "origin_country": "CN",
-        "value_currency": "EUR"
-      }
-    ],
-    "content_type": "merchandise"
-  },
-  "options": {
-    "currency": "EUR",
-    "shipping_date": "2025-07-14T23:47",
-    "declared_value": 17.26,
-    "seko_reference_2": "TSGBDERMUTFR002728973"
-  },
-  "parcels": [
-    {
-      "items": [
+    "recipient": {
+        "address_line1": "DestinationStreetAddress",
+        "city": "Christchurch",
+        "postal_code": "8061",
+        "country_code": "NZ",
+        "person_name": "DestinationName",
+        "phone_number": "123456789",
+        "email": "destinationemail@email.com",
+        "state_tax_id": "123456",
+    },
+    "parcels": [
         {
-          "sku": "1234567890",
-          "title": "iPod Nano",
-          "weight": 1,
-          "quantity": 1,
-          "weight_unit": "KG",
-          "value_amount": 17.26,
-          "origin_country": "CN",
-          "value_currency": "EUR"
+            "height": 1,
+            "length": 1,
+            "weight": 0.1,
+            "width": 10,
+            "dimension_unit": "CM",
+            "weight_unit": "KG",
+            "description": "SATCHEL",
+            "packaging_type": "small_box",
         }
-      ],
-      "width": 30,
-      "height": 16,
-      "length": 40,
-      "weight": 1.2,
-      "weight_unit": "KG",
-      "dimension_unit": "CM",
-      "reference_number": "ZS034789256GB"
-    }
-  ],
-  "shipper": {
-    "city": "London",
-    "email": "customer@teleship.com",
-    "state_code": "Egham",
-    "person_name": "Teleship C/O SEKO Logistics",
-    "postal_code": "TW20 8EY",
-    "residential": True,
-    "company_name": "Jane",
-    "country_code": "GB",
-    "phone_number": "+447557544686",
-    "address_line1": "Unit 11, Egham Business Park",
-    "address_line2": "Ten Acre Lane"
-  },
-  "recipient": {
-    "city": "Munchen",
-    "email": "customer@teleship.com",
-    "person_name": "Lepold",
-    "postal_code": "80804",
-    "residential": True,
-    "company_name": "Lepold",
-    "country_code": "DE",
-    "phone_number": "+447557544686",
-    "address_line1": "Leopoldstrasse 119"
-  },
-  "reference": "TSGBDERMUTFR002728973",
-  "return_address": {
-    "city": "London",
-    "email": "customer@teleship.com",
-    "state_code": "Egham",
-    "person_name": "Teleship C/O SEKO Logistics",
-    "postal_code": "TW20 8EY",
-    "residential": True,
-    "company_name": "Teleship Inc",
-    "country_code": "GB",
-    "phone_number": "+447557544686",
-    "address_line1": "Unit 11, Egham Business Park",
-    "address_line2": "Ten Acre Lane"
-  }
+    ],
+    "options": {
+        "saturday_delivery": False,
+        "seko_is_signature_required": True,
+        "destination_instructions": "Desinationdeliveryinstructions",
+    },
+    "reference": "ORDER123",
 }
 
 ParsedRateResponse = [
