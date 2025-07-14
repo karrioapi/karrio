@@ -124,10 +124,10 @@ RateRequest = {
     "DeliveryReference": "ORDER123",
     "Destination": {
         "Address": {
-            "Suburb": "Christchurch",
             "CountryCode": "NZ",
             "PostCode": "8061",
             "StreetAddress": "DestinationStreetAddress",
+            "Suburb": "Christchurch",
         },
         "ContactPerson": "DestinationName",
         "DeliveryInstructions": "Desinationdeliveryinstructions",
@@ -137,6 +137,20 @@ RateRequest = {
     },
     "IsSaturdayDelivery": False,
     "IsSignatureRequired": True,
+    "Origin": {
+        "Address": {
+            "BuildingName": "TESTING COMPANY",
+            "City": "WA",
+            "CountryCode": "AU",
+            "PostCode": "6155",
+            "StreetAddress": "17 VULCAN RD",
+            "Suburb": "CANNING VALE",
+        },
+        "ContactPerson": "TEST USER",
+        "Email": "test@gmail.com",
+        "Name": "TESTING COMPANY",
+        "PhoneNumber": "(07) 3114 1499",
+    },
     "Packages": [
         {
             "Height": 1.0,

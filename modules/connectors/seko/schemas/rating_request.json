@@ -1,5 +1,25 @@
 {
   "DeliveryReference": "ORDER123",
+  "Reference2": "",
+  "Reference3": "",
+  "Origin": {
+    "Id": 0,
+    "Name": "OriginName",
+    "Address": {
+      "BuildingName": "",
+      "StreetAddress": "285 Main Street",
+      "Suburb": "GLENWOOD",
+      "City": "NSW",
+      "PostCode": "2768",
+      "CountryCode": "AU"
+    },
+    "ContactPerson": "Origin contact name",
+    "PhoneNumber": "02 9111 01101",
+    "Email": "originemail@sekologistics.com",
+    "DeliveryInstructions": "Origin delivery instructions",
+    "RecipientTaxId": "123456",
+    "SendTrackingEmail": "true"
+  },
   "Destination": {
     "Id": 0,
     "Name": "DestinationName",
@@ -14,11 +34,57 @@
     "ContactPerson": "DestinationContact",
     "PhoneNumber": "123456789",
     "Email": "destinationemail@email.com",
-    "DeliveryInstructions": "Desinationdeliveryinstructions",
-    "RecipientTaxId": "123456"
+    "DeliveryInstructions": "Destination delivery instructions",
+    "RecipientTaxId": "123456",
+    "SendTrackingEmail": "true"
   },
   "IsSaturdayDelivery": false,
   "IsSignatureRequired": true,
+  "DangerousGoods": {
+    "AdditionalHandlingInfo": "sample",
+    "HazchemCode": "sample",
+    "IsRadioActive": "false",
+    "CargoAircraftOnly": "false",
+    "IsDGLQ": "false",
+    "TotalQuantity": 2,
+    "TotalKg": 1.2,
+    "SignOffName": "name",
+    "SignOffRole": "dangerous goods officer"
+  },
+  "Commodities": [
+    {
+      "Description": "Food Bar",
+      "HarmonizedCode": "sample",
+      "Units": "1",
+      "UnitValue": 50,
+      "UnitCostValue": 45.05,
+      "UnitKg": 0.6,
+      "Currency": "USD",
+      "Country": "AU",
+      "IsDG": true,
+      "itemSKU": "SKU123",
+      "ImageURL": "https://cdn.omniparcel.com/images/logo_omni_v2_h52.png",
+      "DangerousGoodsItem": {
+        "Description": "sample",
+        "ClassOrDivision": "sample",
+        "UNorIDNo": "sample",
+        "PackingGroup": "sample",
+        "SubsidaryRisk": "sample",
+        "Packing": "sample",
+        "PackingInstr": "sample",
+        "Authorization": "sample"
+      },
+      "Manufacturer": {
+        "ManufacturerMID": "sample",
+        "Name": "sample",
+        "Address1": "sample",
+        "Address2": "sample",
+        "City": "sample",
+        "State": "sample",
+        "Zip": "sample"
+      }
+    }
+  ],
   "Packages": [
     {
       "Height": 1,
@@ -29,6 +95,28 @@
       "Name": "SATCHEL",
       "PackageCode": "DLE",
       "Type": "Box"
+    }
+  ],
+  "Carrier": "Omni Parcel",
+  "Service": "eCommerce Express Tracked",
+  "ProductCategory": "sample",
+  "ShipType": "P",
+  "CostCentreName": "mysite.com",
+  "CostCentreId": "sample",
+  "CodValue": 10.0,
+  "TaxCollected": true,
+  "AmountCollected": 10.0,
+  "CIFValue": 21.23,
+  "FreightValue": 125.57,
+  "DutiesAndTaxesByReceiver": false,
+  "TaxIds": [
+    {
+      "IdType": "XIEORINumber",
+      "IdNumber": "0121212112"
+    },
+    {
+      "IdType": "IOSSNUMBER",
+      "IdNumber": "0121212112"
     }
   ]
 }

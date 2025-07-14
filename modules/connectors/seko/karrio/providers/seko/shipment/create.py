@@ -92,6 +92,7 @@ def shipment_request(
 ) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
+    return_address = lib.to_address(payload.return_address or payload.shipper)
     packages = lib.to_packages(payload.parcels)
     service = provider_units.ShippingService.map(payload.service).value_or_key
     options = lib.to_shipping_options(
@@ -144,6 +145,8 @@ def shipment_request(
             DeliveryInstructions=options.origin_instructions.state,
             RecipientTaxId=shipper.tax_id,
             SendTrackingEmail=None,
+            SignOffName=None,
+            SignOffRole=None,
         ),
         Destination=seko.DestinationType(
             Id=options.seko_destination_id.state,
@@ -164,22 +167,27 @@ def shipment_request(
             DeliveryInstructions=options.destination_instructions.state,
             RecipientTaxId=recipient.tax_id,
             SendTrackingEmail=options.seko_send_tracking_email.state,
+            SignOffName=None,
+            SignOffRole=None,
         ),
         DangerousGoods=None,
         Commodities=[
             seko.CommodityType(
                 Description=lib.identity(
-                    lib.text(commodity.description or commodity.title, max=35) or "item"
+                    lib.text(commodity.description or commodity.title, max=200) or "item"
                 ),
                 HarmonizedCode=commodity.hs_code or "0000.00.00",
                 Units=commodity.quantity,
                 UnitValue=commodity.value_amount,
+                UnitCostValue=None,
                 UnitKg=commodity.weight,
                 Currency=commodity.value_currency,
                 Country=commodity.origin_country,
                 IsDG=None,
                 itemSKU=commodity.sku,
+                ImageURL=commodity.metadata.get("image_url"),
                 DangerousGoodsItem=None,
+                Manufacturer=None,
             )
             for commodity in commodities
         ],
@@ -194,6 +202,8 @@ def shipment_request(
                     provider_units.PackagingType.map(package.packaging_type).value
                 ),
                 OverLabelBarcode=package.reference_number,
+                Id=package.options.seko_package_id.state,
+                PackageCode=package.reference_number,
             )
             for package in packages
         ],
@@ -212,7 +222,6 @@ def shipment_request(
         Carrier=options.seko_carrier.state,
         Service=service,
         CostCentreName=settings.connection_config.cost_center.state,
-        CostCentreId=settings.connection_config.cost_center_id.state,
         CodValue=options.cash_on_delivery.state,
         TaxCollected=lib.identity(
             options.seko_tax_collected.state
@@ -225,6 +234,8 @@ def shipment_request(
         SendLabel="Y" if options.seko_send_label.state else None,
         LabelBranding=settings.connection_config.label_branding.state,
         InvoiceData=commercial_invoice,
+        CODValue=options.cash_on_delivery.state,
+        CostCentreId=settings.connection_config.cost_center_id.state,
         TaxIds=[
             seko.TaxIDType(
                 IdType=option.code,
@@ -234,6 +245,31 @@ def shipment_request(
             if key in provider_units.CustomsOption and option.state is not None
         ],
         Outputs=[label_type],
+        IsSaturdayDelivery=options.seko_is_saturday_delivery.state,
+        IsSignatureRequired=options.seko_is_signature_required.state,
+        SpecialInstructions=options.seko_special_instructions.state,
+        InsuranceValue=options.seko_insurance_value.state,
+        InsuranceCurrency=options.currency.state,
+        ReturnAddress=seko.DestinationType(
+            Id=return_address.tax_id,
+            Name=return_address.company_name,
+            Address=seko.AddressType(
+                BuildingName=return_address.company_name,
+                StreetAddress=return_address.street,
+                Suburb=return_address.city,
+                City=return_address.state_code,
+                PostCode=return_address.postal_code,
+                CountryCode=return_address.country_code,
+            ),
+            ContactPerson=return_address.contact,
+            PhoneNumber=return_address.phone_number,
+            Email=return_address.email,
+            DeliveryInstructions=return_address.instructions,
+            RecipientTaxId=None,
+            SendTrackingEmail=None,
+            SignOffName=None,
+            SignOffRole=None,
+        ),
     )
 
     return lib.Serializable(

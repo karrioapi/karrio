@@ -276,14 +276,14 @@ class CommodityData(serializers.Serializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=35,
+        max_length=200,
         help_text="A description of the commodity",
     )
     description = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=100,
+        max_length=200,
         help_text="A description of the commodity",
     )
     quantity = serializers.IntegerField(
@@ -295,14 +295,14 @@ class CommodityData(serializers.Serializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=35,
+        max_length=100,
         help_text="The commodity's sku number",
     )
     hs_code = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=35,
+        max_length=100,
         help_text="The commodity's hs_code number",
     )
     value_amount = serializers.FloatField(
@@ -1313,7 +1313,7 @@ class ShippingData(validators.OptionDefaultSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=35,
+        max_length=100,
         help_text="The shipment reference",
     )
     label_type = serializers.ChoiceField(

@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2025.5rc5`.
+    The current version is `2025.5rc6`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2025.5rc5
+  version: 2025.5rc6
 paths:
   /:
     get:
@@ -5343,12 +5343,12 @@ components:
           type: string
           nullable: true
           description: A description of the commodity
-          maxLength: 35
+          maxLength: 200
         description:
           type: string
           nullable: true
           description: A description of the commodity
-          maxLength: 100
+          maxLength: 200
         quantity:
           type: integer
           default: 1
@@ -5357,12 +5357,12 @@ components:
           type: string
           nullable: true
           description: The commodity's sku number
-          maxLength: 35
+          maxLength: 100
         hs_code:
           type: string
           nullable: true
           description: The commodity's hs_code number
-          maxLength: 35
+          maxLength: 100
         value_amount:
           type: number
           format: double
@@ -5805,12 +5805,12 @@ components:
           type: string
           nullable: true
           description: A description of the commodity
-          maxLength: 35
+          maxLength: 200
         description:
           type: string
           nullable: true
           description: A description of the commodity
-          maxLength: 100
+          maxLength: 200
         quantity:
           type: integer
           default: 1
@@ -5819,12 +5819,12 @@ components:
           type: string
           nullable: true
           description: The commodity's sku number
-          maxLength: 35
+          maxLength: 100
         hs_code:
           type: string
           nullable: true
           description: The commodity's hs_code number
-          maxLength: 35
+          maxLength: 100
         value_amount:
           type: number
           format: double
@@ -6972,12 +6972,12 @@ components:
           type: string
           nullable: true
           description: A description of the commodity
-          maxLength: 35
+          maxLength: 200
         description:
           type: string
           nullable: true
           description: A description of the commodity
-          maxLength: 100
+          maxLength: 200
         quantity:
           type: integer
           default: 1
@@ -6986,12 +6986,12 @@ components:
           type: string
           nullable: true
           description: The commodity's sku number
-          maxLength: 35
+          maxLength: 100
         hs_code:
           type: string
           nullable: true
           description: The commodity's hs_code number
-          maxLength: 35
+          maxLength: 100
         value_amount:
           type: number
           format: double
@@ -9615,7 +9615,7 @@ components:
           type: string
           nullable: true
           description: The shipment reference
-          maxLength: 35
+          maxLength: 100
         label_type:
           enum:
           - PDF
@@ -9731,7 +9731,7 @@ components:
           type: string
           nullable: true
           description: The shipment reference
-          maxLength: 35
+          maxLength: 100
         label_type:
           enum:
           - PDF
@@ -9980,7 +9980,7 @@ components:
           type: string
           nullable: true
           description: The shipment reference
-          maxLength: 35
+          maxLength: 100
         label_type:
           enum:
           - PDF
@@ -11498,8 +11498,8 @@ components:
           authorizationUrl: /oauth/authorize/
           tokenUrl: /oauth/token/
           scopes:
-            read: Reading scope
-            write: Writing scope
+            read: Read access to Karrio data
+            write: Write access to Karrio data
             openid: OpenID connect
       description: 'Authorization: Bearer xxxxxxxx'
     Token:

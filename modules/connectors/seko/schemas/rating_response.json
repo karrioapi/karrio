@@ -12,20 +12,51 @@
       "IsRuralDelivery": false,
       "IsSaturdayDelivery": false,
       "IsFreightForward": false,
-      "CarrierServiceType": "InternationalCourier"
+      "CarrierServiceType": "InternationalCourier",
+      "EstimatedDeliveryDays": 3,
+      "TransitTime": "3-5 business days",
+      "ServiceLevel": "Express",
+      "CarrierType": 33,
+      "IsOvernight": false,
+      "HasTrackPaks": false
     }
   ],
   "Rejected": [
     {
       "CarrierName": "CarrierName",
       "DeliveryType": "DeliveryType",
-      "Reason": "Reason"
+      "Reason": "Reason",
+      "CarrierId": 0,
+      "QuoteId": "",
+      "ErrorCode": "ERR001",
+      "ErrorDetails": "Detailed error information"
     }
   ],
-  "ValidationErrors": {
-    "Property": "Destination.Address.CountryCode",
-    "Message": "CountryCode is required",
-    "Key": "CountryCode",
-    "Value": ""
-  }
+  "ValidationErrors": [
+    {
+      "Property": "Destination.Address.CountryCode",
+      "Message": "CountryCode is required",
+      "Key": "CountryCode",
+      "Value": "",
+      "ErrorCode": "VAL001",
+      "Severity": "Error"
+    }
+  ],
+  "Summary": {
+    "TotalAvailable": 1,
+    "TotalRejected": 0,
+    "TotalValidationErrors": 0,
+    "Currency": "NZD",
+    "RequestId": "req-12345"
+  },
+  "Warnings": [
+    {
+      "Property": "Packages[0].Weight",
+      "Message": "Package weight is below minimum threshold",
+      "Key": "Weight",
+      "Value": "0.1",
+      "WarningCode": "WARN001",
+      "Severity": "Warning"
+    }
+  ]
 }
