@@ -1,3 +1,12 @@
+# Karrio 2025.5rc6
+
+## Changes
+
+### Feat
+
+- feat: increase karrio API max size for commodities title and description and shipment reference to accomodate APIs that accept longer.
+- feat: update SEKO API fields to have new fields and increase text size
+
 # Karrio 2025.5rc5
 
 ## Changes
