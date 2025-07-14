@@ -125,7 +125,7 @@ def rate_request(
                 Units=commodity.quantity,
                 UnitValue=commodity.value_amount,
                 UnitCostValue=commodity.value_amount,
-                UnitKg=commodity.weight.value,
+                UnitKg=commodity.weight,
                 Currency=commodity.value_currency,
                 Country=commodity.country_code,
                 IsDG=None,
