@@ -12,7 +12,19 @@
       "Property": "Destination.Address.CountryCode",
       "Message": "CountryCode is required",
       "Key": "CountryCode",
-      "Value": ""
+      "Value": "",
+      "ErrorCode": "ERR001",
+      "Severity": "Error"
+    }
+  ],
+  "Warnings": [
+    {
+      "Property": "Packages[0].Weight",
+      "Message": "Package weight is below minimum threshold",
+      "Key": "Weight",
+      "Value": "0.1",
+      "WarningCode": "WARN001",
+      "Severity": "Warning"
     }
   ],
   "SiteId": 1153896,
@@ -27,6 +39,9 @@
       "IsOvernight": false,
       "HasTrackPaks": false,
       "ConsignmentId": 5473553,
+      "EstimatedDeliveryDate": "2024-01-15",
+      "ServiceLevel": "Express",
+      "TransitTime": "3-5 business days",
       "OutputFiles": {
         "LABEL_PDF_100X150": [
           "JVBERi0xLjQKJdP0zOEKMSAwIG9iago8PAovQ3JlYXRpb25EYXRlKEQ6MjAxNzAyMTMwOTA0MTkrMDU...."
@@ -46,7 +61,14 @@
           "IsTrackPack": false,
           "BarcodeText": "699400890601",
           "TrackingBarcode": "019931265099999891699400890601",
-          "TrackingBarcode2": "019931265099999891699400890601"
+          "TrackingBarcode2": "019931265099999891699400890601",
+          "ItemDescription": "Sample item description",
+          "ItemWeight": 0.5,
+          "ItemDimensions": {
+            "Length": 10.0,
+            "Width": 5.0,
+            "Height": 2.0
+          }
         }
       ]
     }
@@ -57,19 +79,51 @@
     {
       "OriginalDescription": "OriginalDS1",
       "SuitableDescription": "SuitableDS1 - OriginalDS1",
-      "OriginalHSCode": null,
+      "OriginalHSCode": "",
       "SuitableHsCode": "1234567890"
     },
     {
       "OriginalDescription": "OriginalDS2",
       "SuitableDescription": "SuitableDS2 - OriginalDS2",
-      "OriginalHSCode": null,
+      "OriginalHSCode": "",
       "SuitableHsCode": "1234567890"
     }
   ],
   "CarrierType": 33,
-  "AlertPath": null,
-  "Notifications": [],
+  "AlertPath": "",
+  "Notifications": [
+    {
+      "Type": "Email",
+      "Recipient": "customer@example.com",
+      "Subject": "Shipment Created",
+      "Message": "Your shipment has been created successfully"
+    }
+  ],
   "InvoiceResponse": "No Invoice found",
-  "LogoPath": "http://cdn.omniparcel.com/images/aramex_logo_h50.png"
+  "LogoPath": "http://cdn.omniparcel.com/images/aramex_logo_h50.png",
+  "Summary": {
+    "TotalConsignments": 1,
+    "TotalCost": 6.0,
+    "Currency": "NZD",
+    "RequestId": "req-12345",
+    "ProcessingTime": "2.5 seconds"
+  },
+  "CustomsInfo": {
+    "DeclarationNumber": "DEC123456",
+    "CustomsValue": 100.0,
+    "Currency": "USD",
+    "DutyPaidBy": "Sender",
+    "TaxPaidBy": "Sender"
+  },
+  "InsuranceInfo": {
+    "InsuredValue": 100.0,
+    "Currency": "USD",
+    "InsuranceType": "Standard",
+    "Premium": 5.0
+  },
+  "ReturnInfo": {
+    "ReturnTrackingNumber": "RET123456",
+    "ReturnLabelUrl": "http://example.com/return-label",
+    "ReturnInstructions": "Return to sender address"
+  }
 }

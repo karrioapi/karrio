@@ -90,6 +90,8 @@ class PackageType:
     Name: typing.Optional[str] = None
     Type: typing.Optional[str] = None
     OverLabelBarcode: typing.Optional[str] = None
+    Id: typing.Optional[int] = None
+    PackageCode: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
@@ -129,3 +131,10 @@ class ShippingRequestType:
     CostCentreId: typing.Optional[str] = None
     TaxIds: typing.Optional[typing.List[TaxIDType]] = jstruct.JList[TaxIDType]
     Outputs: typing.Optional[typing.List[str]] = None
+    IsSaturdayDelivery: typing.Optional[bool] = None
+    IsSignatureRequired: typing.Optional[bool] = None
+    EstimatedDeliveryDate: typing.Optional[str] = None
+    SpecialInstructions: typing.Optional[str] = None
+    InsuranceValue: typing.Optional[float] = None
+    InsuranceCurrency: typing.Optional[str] = None
+    ReturnAddress: typing.Optional[DestinationType] = jstruct.JStruct[DestinationType]

@@ -209,7 +209,7 @@ def generate(
     output_file: Optional[str] = typer.Argument(
         None, help="Output Python file path. If not provided, writes to stdout."
     ),
-    python_version: str = typer.Option("3.11", help="Python version to target"),
+    python_version: str = typer.Option("3.7", help="Python version to target"),
     just_types: bool = typer.Option(True, help="Generate just the type definitions without serialization code"),
     append_type_suffix: bool = typer.Option(True, help="Append 'Type' to class names"),
     nice_property_names: bool = typer.Option(False, help="Use nice property names"),

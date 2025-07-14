@@ -16,9 +16,11 @@
     "ContactPerson": "Origin contact name",
     "PhoneNumber": "02 9111 01101",
     "Email": "originemail@sekologistics.com",
-    "DeliveryInstructions": "Desinationdeliveryinstructions",
+    "DeliveryInstructions": "Origin delivery instructions",
     "RecipientTaxId": "123456",
-    "SendTrackingEmail": "true"
+    "SendTrackingEmail": "true",
+    "SignOffName": "name",
+    "SignOffRole": "origin sign off"
   },
   "Destination": {
     "Id": 0,
@@ -125,7 +127,9 @@
       "Kg": 5.0,
       "Name": "PARCEL",
       "Type": "Box",
-      "OverLabelBarcode": "TEST0301201902"
+      "OverLabelBarcode": "TEST0301201902",
+      "Id": 0,
+      "PackageCode": "DLE"
     }
   ],
   "issignaturerequired": false,
@@ -199,5 +203,29 @@
   ],
   "Outputs": [
     "LABEL_PDF_100X150"
-  ]
+  ],
+  "IsSaturdayDelivery": false,
+  "IsSignatureRequired": true,
+  "EstimatedDeliveryDate": "2024-01-15",
+  "SpecialInstructions": "Handle with care",
+  "InsuranceValue": 100.0,
+  "InsuranceCurrency": "USD",
+  "ReturnAddress": {
+    "Id": 0,
+    "Name": "Return Address Name",
+    "Address": {
+      "BuildingName": "",
+      "StreetAddress": "123 Return Street",
+      "Suburb": "RETURN CITY",
+      "City": "RETURN STATE",
+      "PostCode": "1234",
+      "CountryCode": "AU"
+    },
+    "ContactPerson": "Return Contact",
+    "PhoneNumber": "123456789",
+    "Email": "return@email.com",
+    "DeliveryInstructions": "Return instructions",
+    "RecipientTaxId": "123456",
+    "SendTrackingEmail": "true"
+  }
 }

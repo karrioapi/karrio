@@ -76,6 +76,19 @@ class ShippingOption(lib.Enum):
     seko_cif_value = lib.OptionEnum("CIFValue", float)
     seko_freight_value = lib.OptionEnum("FreightValue", float)
     seko_send_label = lib.OptionEnum("SendLabel", bool)
+    seko_special_instructions = lib.OptionEnum("SpecialInstructions")
+    seko_insurance_value = lib.OptionEnum("InsuranceValue", float)
+    seko_estimated_delivery_date = lib.OptionEnum("EstimatedDeliveryDate")
+    seko_dangerous_goods = lib.OptionEnum("DangerousGoods", bool)
+    seko_dg_additional_handling = lib.OptionEnum("DGAdditionalHandling")
+    seko_dg_hazchem_code = lib.OptionEnum("DGHazchemCode")
+    seko_dg_radioactive = lib.OptionEnum("DGRadioactive", bool)
+    seko_dg_cargo_aircraft_only = lib.OptionEnum("DGCargoAircraftOnly", bool)
+    seko_dg_limited_quantity = lib.OptionEnum("DGLimitedQuantity", bool)
+    seko_dg_total_quantity = lib.OptionEnum("DGTotalQuantity", int)
+    seko_dg_total_kg = lib.OptionEnum("DGTotalKg", float)
+    seko_dg_signoff_name = lib.OptionEnum("DGSignOffName")
+    seko_dg_signoff_role = lib.OptionEnum("DGSignOffRole")
 
     """ Unified Option type mapping """
     saturday_delivery = seko_is_saturday_delivery
@@ -119,8 +132,8 @@ class CustomsOption(lib.Enum):
     """ Unified Customs Identifier type mapping """
 
     ioss = IOSSNUMBER
-    nip_number = VATNUMBER
     eori_number = EUEORINumber
+    vat_registration_number = VATNUMBER
 
 
 class TrackingStatus(lib.Enum):
