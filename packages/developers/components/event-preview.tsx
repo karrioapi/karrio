@@ -1,3 +1,5 @@
+"use client";
+
 import { EventComponent } from "@karrio/developers/modules/event";
 import { useLocation } from "@karrio/hooks/location";
 import React, { useState } from "react";

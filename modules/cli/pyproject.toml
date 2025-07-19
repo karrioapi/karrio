@@ -31,7 +31,6 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "google-adk",
     "python-dotenv",
     "karrio",
     "beautifulsoup4",

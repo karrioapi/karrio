@@ -1,4 +1,7 @@
-import { trpc } from "@karrio/trpc/client";
+import {
+  useSystemConnections,
+  useSystemConnectionMutation,
+} from "@karrio/hooks/admin-system-connections";
 import { Card, CardContent } from "@karrio/ui/components/ui/card";
 import { CarrierConnectionDialog } from "@karrio/ui/components/carrier-connection-dialog";
 import { DeleteConfirmationDialog } from "@karrio/ui/components/delete-confirmation-dialog";
@@ -14,64 +17,43 @@ type Connection = Omit<GetSystemConnections_system_carrier_connections_edges_nod
 };
 
 export default function CarrierConnections() {
-  const utils = trpc.useContext();
   const { toast } = useToast();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedConnection, setSelectedConnection] = useState<Connection | null>(null);
   const [page, setPage] = useState(1);
 
-  const { data: connections, isLoading } = trpc.admin.system_connections.list.useQuery({
-    filter: {},
-  });
+  const { query, system_carrier_connections: connectionsData } = useSystemConnections({});
+  const { updateSystemConnection, deleteSystemConnection } = useSystemConnectionMutation();
 
-  const updateConnection = trpc.admin.system_connections.update.useMutation({
-    onSuccess: () => {
-      toast({ title: "Carrier connection updated successfully" });
-      setIsEditOpen(false);
-      setSelectedConnection(null);
-      utils.admin.system_connections.list.invalidate();
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to update carrier connection",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  const handleUpdateSuccess = () => {
+    toast({ title: "Carrier connection updated successfully" });
+    setIsEditOpen(false);
+    setSelectedConnection(null);
+  };
 
-  const deleteConnection = trpc.admin.system_connections.delete.useMutation({
-    onSuccess: () => {
-      toast({ title: "Carrier connection deleted successfully" });
-      setIsDeleteOpen(false);
-      setSelectedConnection(null);
-      utils.admin.system_connections.list.invalidate();
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to delete carrier connection",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  const handleDeleteSuccess = () => {
+    toast({ title: "Carrier connection deleted successfully" });
+    setIsDeleteOpen(false);
+    setSelectedConnection(null);
+  };
 
-  const handleUpdate = (values: any) => {
-    updateConnection.mutate({
-      data: {
-        id: values.id,
-        carrier_name: values.carrier_name,
-        display_name: values.display_name,
-        test_mode: values.test_mode,
-        active: values.active,
-        capabilities: values.capabilities,
-        credentials: values.credentials || {},
-        config: values.config || {},
-        metadata: values.metadata || {},
-      },
+  const handleError = (error: any, action: string) => {
+    toast({
+      title: `Failed to ${action} carrier connection`,
+      description: error.message,
+      variant: "destructive",
     });
   };
+
+  const handleUpdate = (values: any) => {
+    updateSystemConnection.mutate(values, {
+      onSuccess: handleUpdateSuccess,
+      onError: (error) => handleError(error, "update"),
+    });
+  };
+
+  const connections = connectionsData;
 
   return (
     <div className="p-6">
@@ -108,18 +90,9 @@ export default function CarrierConnections() {
                 setIsDeleteOpen(true);
               }}
               onStatusChange={(connection, active) => {
-                updateConnection.mutate({
-                  data: {
-                    id: connection.id,
-                    active,
-                    carrier_name: connection.carrier_name,
-                    display_name: connection.display_name || "",
-                    test_mode: connection.test_mode,
-                    capabilities: connection.capabilities || [],
-                    credentials: connection.credentials || {},
-                    config: connection.config || {},
-                    metadata: connection.metadata || {},
-                  },
+                updateSystemConnection.mutate({
+                  id: connection.id,
+                  active,
                 });
               }}
               onCopy={(text, description) => {
@@ -148,10 +121,9 @@ export default function CarrierConnections() {
         description="Are you sure you want to delete this carrier connection? This action cannot be undone."
         onConfirm={() => {
           if (selectedConnection) {
-            deleteConnection.mutate({
-              data: {
-                id: selectedConnection.id,
-              },
+            deleteSystemConnection.mutate({ id: selectedConnection.id }, {
+              onSuccess: handleDeleteSuccess,
+              onError: (error) => handleError(error, "delete"),
             });
           }
         }}

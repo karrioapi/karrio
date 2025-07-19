@@ -669,7 +669,7 @@ export default function Page() {
                   <DialogHeader>
                     <DialogTitle className="sr-only">Shipment Details</DialogTitle>
                   </DialogHeader>
-                  <section className="modal-card-body has-background-white p-2">
+                  <section className="modal-card-body has-background-white p-4 pb-8">
                     {retrieveShipment(
                       batch.shipments || [],
                       selectedRow,
