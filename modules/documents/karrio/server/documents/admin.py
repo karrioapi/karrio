@@ -32,7 +32,7 @@ class DocumentTemplateAdmin(admin.ModelAdmin):
 
     def preview_link(self, obj):
         """Return a clickable preview link that opens in a new tab"""
-        url = obj.preview_url()
+        url = obj.preview_url
         return format_html(
             '<a href="{}" target="_blank" rel="noopener noreferrer">Preview</a>',
             url
@@ -45,7 +45,7 @@ class DocumentTemplateAdmin(admin.ModelAdmin):
         if obj.pk:
             request = self.request if hasattr(self, 'request') else None
             if request:
-                relative_url = obj.preview_url()
+                relative_url = obj.preview_url
                 absolute_url = request.build_absolute_uri(relative_url)
                 return format_html(
                     '<a href="{}" target="_blank" rel="noopener noreferrer">{}</a>',
@@ -53,7 +53,7 @@ class DocumentTemplateAdmin(admin.ModelAdmin):
                 )
             else:
                 # Fallback if request is not available
-                relative_url = obj.preview_url()
+                relative_url = obj.preview_url
                 return f"(Relative URL: {relative_url})"
         return "Save the template first to generate preview URL"
 
