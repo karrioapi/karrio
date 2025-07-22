@@ -1,3 +1,11 @@
+# Karrio 2025.5rc7
+
+## Changes
+
+### Fix
+
+- hotfix: document preview_url field causing admin access to templates to crash
+
 # Karrio 2025.5rc6
 
 ## Changes
