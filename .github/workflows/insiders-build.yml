@@ -53,14 +53,15 @@ jobs:
 
       - name: Create or get GitHub release
         env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
+          GH_TOKEN: ${{ secrets.INSIDERS_GH_PAT }}
         run: |
-          echo 'Checking for existing GitHub release v${{ env.tag }}...'
-          if gh release view "v${{ env.tag }}" >/dev/null 2>&1; then
-            echo 'Release v${{ env.tag }} already exists, using existing release'
+          echo 'Checking for existing GitHub release v${{ env.tag }} in karrio-insiders repository...'
+          if gh release view "v${{ env.tag }}" --repo karrioapi/karrio-insiders >/dev/null 2>&1; then
+            echo 'Release v${{ env.tag }} already exists in karrio-insiders, using existing release'
           else
-            echo 'Creating new GitHub release v${{ env.tag }}...'
+            echo 'Creating new GitHub release v${{ env.tag }} in karrio-insiders repository...'
             gh release create "v${{ env.tag }}" \
+              --repo karrioapi/karrio-insiders \
               --title "Karrio Insiders v${{ env.tag }}" \
               --notes "Karrio Insiders wheels release v${{ env.tag }}" \
               --draft
@@ -68,7 +69,7 @@ jobs:
 
       - name: Build and publish insiders wheels
         env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
+          GH_TOKEN: ${{ secrets.INSIDERS_GH_PAT }}
         run: |
           echo 'Building and publishing insiders wheels for version ${{ env.tag }}...'
           ./bin/publish-insiders-wheels ${{ env.tag }}

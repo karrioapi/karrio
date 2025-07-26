@@ -103,7 +103,7 @@ upload_wheels_to_release() {
     local upload_failures=0
     local upload_successes=0
 
-    log_info "Uploading wheels to GitHub release v$target_version..."
+    log_info "Uploading wheels to GitHub release v$target_version in karrio-insiders repository..."
 
     # Check if wheels exist
     if [ ! -d "$wheels_dir" ] || [ -z "$(ls -A $wheels_dir/*.whl 2>/dev/null)" ]; then
@@ -115,12 +115,12 @@ upload_wheels_to_release() {
     for wheel in "$wheels_dir"/*.whl; do
         # Check if wheel already exists in release
         wheel_name=$(basename "$wheel")
-        if gh release view "v$target_version" --json assets | jq -e ".assets[] | select(.name == \"$wheel_name\")" >/dev/null 2>&1; then
+        if gh release view "v$target_version" --repo karrioapi/karrio-insiders --json assets | jq -e ".assets[] | select(.name == \"$wheel_name\")" >/dev/null 2>&1; then
             log_info "Wheel $wheel_name already exists in release, skipping upload"
             ((upload_successes++))
         else
             log_info "Uploading $wheel_name to release..."
-            if gh release upload "v$target_version" "$wheel"; then
+            if gh release upload "v$target_version" "$wheel" --repo karrioapi/karrio-insiders; then
                 log_success "Uploaded $wheel_name successfully"
                 ((upload_successes++))
             else
@@ -143,9 +143,9 @@ upload_wheels_to_release() {
 publish_release() {
     local target_version="$1"
 
-    log_info "Publishing GitHub release v$target_version..."
+    log_info "Publishing GitHub release v$target_version in karrio-insiders repository..."
 
-    if gh release edit "v$target_version" --draft=false; then
+    if gh release edit "v$target_version" --repo karrioapi/karrio-insiders --draft=false; then
         log_success "Published GitHub release v$target_version"
     else
         log_error "Failed to publish GitHub release v$target_version"
