@@ -39,8 +39,14 @@ generate_pypi_requirements() {
     # Create a temporary file
     TMP_FILE=$(mktemp)
 
-    # Copy the header (--extra-index-url line)
-    grep "^--extra-index" "$input_file" >"$TMP_FILE"
+    # Handle different index URLs based on the file type
+    if [[ "$input_file" == *"insiders"* ]]; then
+        # For insiders, use GitHub releases index URL
+        echo "--extra-index-url https://github.com/karrioapi/karrio-insiders/releases/" >"$TMP_FILE"
+    else
+        # Copy the header (--extra-index-url lines) for other files
+        grep "^--extra-index" "$input_file" >"$TMP_FILE"
+    fi
 
     # Process each line
     while IFS= read -r line; do
@@ -132,5 +138,9 @@ generate_source_requirements "requirements.platform.txt" "source.requirements.pl
 # Generate PyPI requirements (convert git URLs to PyPI package versions)
 generate_pypi_requirements "requirements.txt" "requirements.txt"
 
+# Generate PyPI requirements for insiders (convert git URLs to PyPI package versions)
+generate_pypi_requirements "requirements.insiders.txt" "requirements.insiders.txt"
+
 echo "Generated source requirements files from requirements files"
 echo "Updated requirements.txt with PyPI package versions"
+echo "Updated requirements.insiders.txt with PyPI package versions"

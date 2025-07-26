@@ -90,6 +90,14 @@ main() {
             packages+=("$plugin_dir")
         fi
     done
+    # Add insiders packages if ee/insiders/modules exists
+    if [ -d "ee/insiders/modules" ]; then
+        for insiders_dir in ee/insiders/modules/*/; do
+            if [ -d "$insiders_dir" ] && [ -f "$insiders_dir/pyproject.toml" ]; then
+                packages+=("$insiders_dir")
+            fi
+        done
+    fi
 
     # Update each package
     local updated_count=0

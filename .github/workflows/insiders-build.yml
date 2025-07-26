@@ -20,6 +20,54 @@ jobs:
             version:
               - 'apps/api/karrio/server/VERSION'
 
+  insiders-wheels:
+    needs: changes
+    if: ${{ needs.changes.outputs.version == 'true' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+
+      - id: get_tag
+        run: |
+          cat ./apps/api/karrio/server/VERSION
+          echo "tag=$(cat ./apps/api/karrio/server/VERSION)" >> "$GITHUB_ENV"
+
+      - name: Create or get GitHub release
+        run: |
+          echo 'Checking for existing GitHub release v${{ env.tag }}...'
+          if gh release view "v${{ env.tag }}" >/dev/null 2>&1; then
+            echo 'Release v${{ env.tag }} already exists, using existing release'
+          else
+            echo 'Creating new GitHub release v${{ env.tag }}...'
+            gh release create "v${{ env.tag }}" \
+              --title "Karrio Insiders v${{ env.tag }}" \
+              --notes "Karrio Insiders wheels release v${{ env.tag }}" \
+              --draft
+          fi
+
+      - name: Build and publish insiders wheels
+        run: |
+          echo 'Building and publishing insiders wheels for version ${{ env.tag }}...'
+          ./bin/publish-insiders-wheels ${{ env.tag }}
+
   insiders-server-build:
     needs: changes
     if: ${{ needs.changes.outputs.version == 'true' || github.event_name == 'workflow_dispatch' }}
@@ -44,6 +92,8 @@ jobs:
         run: |
           echo 'Build and push karrio-insiders server:${{ env.tag }}...'
           echo ${{ secrets.GH_PAT }} | docker login ghcr.io -u USERNAME --password-stdin
+          # Update requirements to use wheels instead of git URLs
+          ./bin/update-source-version-freeze
           ./bin/build-insiders-image ${{ env.tag }} &&
           docker push ghcr.io/karrioapi/server:${{ env.tag }} || exit 1
 

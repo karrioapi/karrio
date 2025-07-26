@@ -1,0 +1,171 @@
+#!/usr/bin/env bash
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Logging functions
+log_info() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
+
+log_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+log_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Function to build insiders wheels
+build_insiders_wheels() {
+    local wheels_dir="insiders-wheels"
+
+    log_info "Building insiders wheels..."
+
+    # Create wheels directory
+    mkdir -p "$wheels_dir"
+
+    # Check if insiders modules directory exists
+    if [ ! -d "ee/insiders/modules" ]; then
+        log_warning "ee/insiders/modules directory not found, skipping wheel building"
+        return 0
+    fi
+
+    # Build each insiders package
+    for package_dir in ee/insiders/modules/*/; do
+        if [ ! -d "$package_dir" ] || [ ! -f "$package_dir/pyproject.toml" ]; then
+            continue
+        fi
+
+        package_name=$(basename "$package_dir")
+        log_info "Building $package_name in $package_dir"
+
+        # Change to package directory
+        cd "$package_dir" || continue
+
+        # Clean previous builds
+        rm -rf build/ dist/ *.egg-info/
+
+        # Install build dependencies if needed
+        if ! python -c "import build" 2>/dev/null; then
+            pip install build
+        fi
+
+        # Build wheel
+        python -m build --wheel --no-isolation
+        result=$?
+
+        if [ $result -eq 0 ]; then
+            # Move wheel to wheels directory
+            find dist/ -name "*.whl" -exec cp {} "../../$wheels_dir/" \;
+            log_success "Built $package_name successfully"
+        else
+            log_error "Failed to build $package_name"
+        fi
+
+        # Return to workspace root
+        cd - > /dev/null
+    done
+
+    log_success "Built insiders wheels in $wheels_dir/"
+}
+
+# Function to upload wheels to GitHub release
+upload_wheels_to_release() {
+    local target_version="$1"
+    local wheels_dir="insiders-wheels"
+
+    log_info "Uploading wheels to GitHub release v$target_version..."
+
+    # Check if wheels exist
+    if [ ! -d "$wheels_dir" ] || [ -z "$(ls -A $wheels_dir/*.whl 2>/dev/null)" ]; then
+        log_warning "No wheels found in $wheels_dir"
+        return 0
+    fi
+
+    # Upload each wheel
+    for wheel in "$wheels_dir"/*.whl; do
+        # Check if wheel already exists in release
+        wheel_name=$(basename "$wheel")
+        if gh release view "v$target_version" --json assets | jq -e ".assets[] | select(.name == \"$wheel_name\")" >/dev/null 2>&1; then
+            log_info "Wheel $wheel_name already exists in release, skipping upload"
+        else
+            log_info "Uploading $wheel_name to release..."
+            if gh release upload "v$target_version" "$wheel"; then
+                log_success "Uploaded $wheel_name successfully"
+            else
+                log_error "Failed to upload $wheel_name"
+            fi
+        fi
+    done
+
+    log_success "Wheel upload completed"
+}
+
+# Function to publish release
+publish_release() {
+    local target_version="$1"
+
+    log_info "Publishing GitHub release v$target_version..."
+
+    if gh release edit "v$target_version" --draft=false; then
+        log_success "Published GitHub release v$target_version"
+    else
+        log_error "Failed to publish GitHub release v$target_version"
+        return 1
+    fi
+}
+
+# Main execution
+main() {
+    # Get target version from argument or VERSION file
+    local target_version="${1:-$(cat apps/api/karrio/server/VERSION)}"
+
+    log_info "Starting insiders wheels publishing for version $target_version"
+
+    # Build insiders wheels
+    build_insiders_wheels
+
+    # Upload wheels to GitHub release
+    upload_wheels_to_release "$target_version"
+
+    # Publish release
+    publish_release "$target_version"
+
+    log_success "Insiders wheels publishing completed for version $target_version"
+}
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --help)
+            echo "Usage: $0 [VERSION]"
+            echo ""
+            echo "Builds and publishes insiders wheels to GitHub releases"
+            echo "Note: Package versions should be updated locally before running this script"
+            echo ""
+            echo "Arguments:"
+            echo "  VERSION    Target version (optional, defaults to central version)"
+            echo ""
+            echo "Examples:"
+            echo "  $0                    # Use central version"
+            echo "  $0 2025.5rc4         # Use specific version"
+            exit 0
+            ;;
+        *)
+            # Assume it's the version argument
+            break
+            ;;
+    esac
+done
+
+# Run main function
+main "$@"

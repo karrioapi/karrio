@@ -1,3 +1,11 @@
+# Karrio 2025.5rc8
+
+## Changes
+
+### Chore
+
+- chore: debug and update installation and deployment scripts for insiders packages
+
 # Karrio 2025.5rc7
 
 ## Changes

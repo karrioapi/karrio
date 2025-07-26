@@ -2,7 +2,7 @@
 
 set -e
 
-export KARRIO_TAG="${KARRIO_TAG:-2025.5rc7}"
+export KARRIO_TAG="${KARRIO_TAG:-2025.5rc8}"
 export SENTRY_DSN="${SENTRY_DSN:-'https://public@sentry.example.com/1'}"
 
 SECRET_KEY=$(head -c 28 /dev/urandom | sha224sum -b | head -c 56)
@@ -22,7 +22,7 @@ echo ""
 if ! [ -z "$1" ]; then
     export KARRIO_TAG=$1
 else
-    echo "What version of Karrio would you like to install? (We default to '2025.5rc7')"
+    echo "What version of Karrio would you like to install? (We default to '2025.5rc8')"
     echo "You can check out available versions here: https://hub.docker.com/r/karrio/server/tags"
     read -r KARRIO_TAG_READ
     if [ -z "$KARRIO_TAG_READ" ]; then
@@ -55,7 +55,7 @@ echo ""
 echo "Ok! We'll take it from here 🚀"
 
 echo "Making sure any stack that might exist is stopped"
-sudo -E docker-compose -f docker-compose.yml stop &>/dev/null || true
+sudo -E docker compose -f docker-compose.yml stop &>/dev/null || true
 
 # update apt cache
 echo "Grabbing latest apt caches"
@@ -116,17 +116,15 @@ EOF
 
 # setup docker
 echo "Setting up Docker"
-sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo -E apt-key add -
-sudo add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+sudo apt install -y apt-transport-https ca-certificates curl software-properties-common gnupg
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt update
 sudo apt-cache policy docker-ce
-sudo apt install -y docker-ce
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-# setup docker-compose
-echo "Setting up Docker Compose"
-sudo curl -L "https://github.com/docker/compose/releases/download/v2.13.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose || true
-sudo chmod +x /usr/local/bin/docker-compose
+# setup docker-compose (included with docker-ce)
+echo "Docker Compose is included with Docker CE"
 
 # enable docker without sudo
 sudo usermod -aG docker "${USER}" || true
@@ -138,7 +136,7 @@ cp karrio/docker-compose.hobby.yml docker-compose.yml.tmpl
 envsubst <docker-compose.yml.tmpl >docker-compose.yml
 rm docker-compose.yml.tmpl
 echo "Starting the stack!"
-sudo -E docker-compose -f docker-compose.yml up -d
+sudo -E docker compose -f docker-compose.yml up -d
 
 echo "We will need to wait ~5-10 minutes for things to settle down, migrations to finish, and TLS certs to be issued"
 echo ""
@@ -148,8 +146,8 @@ echo "⌛️ Karrio looks up!"
 echo ""
 echo "🎉🎉🎉  Done! 🎉🎉🎉"
 echo ""
-echo "To stop the stack run 'docker-compose stop'"
-echo "To start the stack again run 'docker-compose start'"
+echo "To stop the stack run 'docker compose stop'"
+echo "To start the stack again run 'docker compose start'"
 echo "If you have any issues at all delete everything in this directory and run the curl command again"
 echo ""
 echo 'To upgrade: run /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/upgrade-hobby)"'
