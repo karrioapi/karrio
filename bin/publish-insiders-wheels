@@ -29,6 +29,7 @@ build_insiders_wheels() {
     local wheels_dir="insiders-wheels"
     local build_failures=0
     local build_successes=0
+    local workspace_root=$(pwd)
 
     log_info "Building insiders wheels..."
 
@@ -66,8 +67,8 @@ build_insiders_wheels() {
         result=$?
 
         if [ $result -eq 0 ]; then
-            # Move wheel to wheels directory
-            find dist/ -name "*.whl" -exec cp {} "../../$wheels_dir/" \;
+            # Move wheel to wheels directory using absolute path
+            find dist/ -name "*.whl" -exec cp {} "$workspace_root/$wheels_dir/" \;
             log_success "Built $package_name successfully"
             ((build_successes++))
         else
@@ -76,7 +77,7 @@ build_insiders_wheels() {
         fi
 
         # Return to workspace root
-        cd - > /dev/null
+        cd "$workspace_root"
     done
 
     # Check if any wheels were built successfully
