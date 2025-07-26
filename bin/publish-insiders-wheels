@@ -27,6 +27,8 @@ log_error() {
 # Function to build insiders wheels
 build_insiders_wheels() {
     local wheels_dir="insiders-wheels"
+    local build_failures=0
+    local build_successes=0
 
     log_info "Building insiders wheels..."
 
@@ -67,28 +69,45 @@ build_insiders_wheels() {
             # Move wheel to wheels directory
             find dist/ -name "*.whl" -exec cp {} "../../$wheels_dir/" \;
             log_success "Built $package_name successfully"
+            ((build_successes++))
         else
             log_error "Failed to build $package_name"
+            ((build_failures++))
         fi
 
         # Return to workspace root
         cd - > /dev/null
     done
 
+    # Check if any wheels were built successfully
+    if [ $build_successes -eq 0 ]; then
+        log_error "No wheels were built successfully. Build failures: $build_failures"
+        return 1
+    fi
+
+    if [ $build_failures -gt 0 ]; then
+        log_warning "Built $build_successes wheels successfully, but $build_failures builds failed"
+    else
+        log_success "Built all $build_successes wheels successfully"
+    fi
+
     log_success "Built insiders wheels in $wheels_dir/"
+    return 0
 }
 
 # Function to upload wheels to GitHub release
 upload_wheels_to_release() {
     local target_version="$1"
     local wheels_dir="insiders-wheels"
+    local upload_failures=0
+    local upload_successes=0
 
     log_info "Uploading wheels to GitHub release v$target_version..."
 
     # Check if wheels exist
     if [ ! -d "$wheels_dir" ] || [ -z "$(ls -A $wheels_dir/*.whl 2>/dev/null)" ]; then
-        log_warning "No wheels found in $wheels_dir"
-        return 0
+        log_error "No wheels found in $wheels_dir"
+        return 1
     fi
 
     # Upload each wheel
@@ -97,17 +116,26 @@ upload_wheels_to_release() {
         wheel_name=$(basename "$wheel")
         if gh release view "v$target_version" --json assets | jq -e ".assets[] | select(.name == \"$wheel_name\")" >/dev/null 2>&1; then
             log_info "Wheel $wheel_name already exists in release, skipping upload"
+            ((upload_successes++))
         else
             log_info "Uploading $wheel_name to release..."
             if gh release upload "v$target_version" "$wheel"; then
                 log_success "Uploaded $wheel_name successfully"
+                ((upload_successes++))
             else
                 log_error "Failed to upload $wheel_name"
+                ((upload_failures++))
             fi
         fi
     done
 
-    log_success "Wheel upload completed"
+    if [ $upload_failures -gt 0 ]; then
+        log_error "Failed to upload $upload_failures wheels"
+        return 1
+    fi
+
+    log_success "Wheel upload completed successfully"
+    return 0
 }
 
 # Function to publish release
@@ -132,13 +160,22 @@ main() {
     log_info "Starting insiders wheels publishing for version $target_version"
 
     # Build insiders wheels
-    build_insiders_wheels
+    if ! build_insiders_wheels; then
+        log_error "Failed to build insiders wheels. Aborting."
+        exit 1
+    fi
 
     # Upload wheels to GitHub release
-    upload_wheels_to_release "$target_version"
+    if ! upload_wheels_to_release "$target_version"; then
+        log_error "Failed to upload wheels to release. Aborting."
+        exit 1
+    fi
 
     # Publish release
-    publish_release "$target_version"
+    if ! publish_release "$target_version"; then
+        log_error "Failed to publish release. Aborting."
+        exit 1
+    fi
 
     log_success "Insiders wheels publishing completed for version $target_version"
 }
