@@ -53,7 +53,7 @@ jobs:
 
       - name: Create or get GitHub release
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           echo 'Checking for existing GitHub release v${{ env.tag }}...'
           if gh release view "v${{ env.tag }}" >/dev/null 2>&1; then
