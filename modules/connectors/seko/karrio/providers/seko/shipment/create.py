@@ -34,6 +34,7 @@ def _extract_details(
     ctx: dict = None,
 ) -> models.ShipmentDetails:
     details = lib.to_object(shipping.ShippingResponseType, data)
+    service = provider_units.ShippingService.map(ctx.get("service"))
     Connotes = [_.Connote for _ in details.Consignments]
     TrackingUrls = [_.TrackingUrl for _ in details.Consignments]
     ConsignmentIds = [_.ConsignmentId for _ in details.Consignments]
@@ -49,17 +50,23 @@ def _extract_details(
         models.RateDetails(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
-            service=lib.failsafe(lambda: details.Service) or "seko",
-            total_charge=lib.to_money(lib.failsafe(lambda: details.Consignments[0].Cost)),
-            currency="NZD",
+            service=service.name_or_key,
+            total_charge=lib.to_money(
+                lib.failsafe(lambda: details.Consignments[0].Cost)
+            ),
+            currency=settings.connection_config.currency.state or "USD",
             meta=dict(
-                carrier_type=details.CarrierType,
+                service_name=service.value_or_key,
                 rate_provider=details.CarrierName,
-                is_saturday_delivery=lib.failsafe(lambda: details.Consignments[0].IsSaturdayDelivery),
-                is_rural=lib.failsafe(lambda: details.Consignments[0].IsRural),
+                seko_carrier=details.CarrierName,
+                CarrierType=details.CarrierType,
+                IsRuralDelivery=details.IsRural,
+                IsSaturdayDelivery=details.IsSaturdayDelivery,
+                IsFreightForward=details.IsFreightForward,
             ),
         )
-        if any(details.Consignments or []) and lib.failsafe(lambda: details.Consignments[0].Cost) is not None
+        if any(details.Consignments or [])
+        and lib.failsafe(lambda: details.Consignments[0].Cost) is not None
         else None
     )
 
@@ -116,11 +123,15 @@ def shipment_request(
     )
     commercial_invoice = lib.identity(
         options.seko_invoice_data.state
-        or next((
-            _["doc_file"] for _ in options.doc_files.state or []
-            if _["doc_type"] == "commercial_invoice"
-            and _.get("doc_format", "PDF").lower() == "pdf"
-        ), None)
+        or next(
+            (
+                _["doc_file"]
+                for _ in options.doc_files.state or []
+                if _["doc_type"] == "commercial_invoice"
+                and _.get("doc_format", "PDF").lower() == "pdf"
+            ),
+            None,
+        )
     )
 
     # map data to convert karrio model to seko specific type
@@ -174,7 +185,8 @@ def shipment_request(
         Commodities=[
             seko.CommodityType(
                 Description=lib.identity(
-                    lib.text(commodity.description or commodity.title, max=200) or "item"
+                    lib.text(commodity.description or commodity.title, max=200)
+                    or "item"
                 ),
                 HarmonizedCode=commodity.hs_code or "0000.00.00",
                 Units=commodity.quantity,
@@ -275,5 +287,5 @@ def shipment_request(
     return lib.Serializable(
         request,
         lib.to_dict,
-        dict(label_type=label_type, label_format=label_format),
+        dict(label_type=label_type, label_format=label_format, service=service),
     )
