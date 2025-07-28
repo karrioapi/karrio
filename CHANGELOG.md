@@ -1,3 +1,15 @@
+# Karrio 2025.5rc9
+
+## Changes
+
+### Fix
+
+- hotfix: remove test hardcoded seko shipment selected_rate currency
+
+### Chore
+
+- chore: setup docker-compose.insiders.local.yml in root docker folder for centralized and simple insiders quick start.
+
 # Karrio 2025.5rc8
 
 ## Changes
