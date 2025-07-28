@@ -11,12 +11,6 @@ sed -i '' -e "s/${1}/${2}/g" bin/deploy-insiders
 sed -i '' -e "s/${1}/${2}/g" bin/upgrade-insiders
 sed -i '' -e "s/${1}/${2}/g" docker/.env
 
-if [ -d "ee/insiders" ]; then
-    sed -i '' -e "s/${1}/${2}/g" ee/insiders/docker/.env
-fi
-
-
-
 if [ -d "ee/platform" ]; then
     sed -i '' -e "s/${1}/${2}/g" ee/platform/infra/Pulumi.karrio-us.yaml
 fi
