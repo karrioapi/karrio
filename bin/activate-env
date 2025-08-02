@@ -3,6 +3,12 @@
 # Source environment variables
 source "bin/_env" "$@"
 
-# activate Python virtual environment
-echo "activating $BASE_DIR env ..."
-source "${ROOT:?}/$ENV_DIR/$BASE_DIR/bin/activate"
+# Check if the correct virtual environment is already active
+EXPECTED_VENV_PATH="${ROOT:?}/$ENV_DIR/$BASE_DIR"
+if [[ -n "$VIRTUAL_ENV" ]] && [[ "$VIRTUAL_ENV" == "$EXPECTED_VENV_PATH" ]]; then
+    echo "$BASE_DIR env already active"
+else
+    # activate Python virtual environment
+    echo "activating $BASE_DIR env ..."
+    source "${ROOT:?}/$ENV_DIR/$BASE_DIR/bin/activate"
+fi

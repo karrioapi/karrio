@@ -1,0 +1,286 @@
+#!/usr/bin/env bash
+
+# =============================================================================
+# KARRIO HOSTS FILE MANAGER
+# =============================================================================
+# Safely manages /etc/hosts entries for Karrio local development domains
+# Features:
+# - Automatic backup creation
+# - Duplicate detection and prevention
+# - Safe add/remove operations
+# - Validation and error handling
+# =============================================================================
+
+set -e
+
+# Color codes for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+# Configuration
+HOSTS_FILE="/etc/hosts"
+BACKUP_DIR=".karrio/backups"
+KARRIO_DOMAINS="api.karrio.local app.karrio.local karrio.local"
+KARRIO_IP="127.0.0.1"
+KARRIO_MARKER="# Karrio local development domains"
+
+# =============================================================================
+# UTILITY FUNCTIONS
+# =============================================================================
+
+print_step() { echo -e "${CYAN}→ $1${NC}"; }
+print_success() { echo -e "${GREEN}✓ $1${NC}"; }
+print_warning() { echo -e "${YELLOW}⚠ $1${NC}"; }
+print_error() { echo -e "${RED}✗ $1${NC}"; }
+
+command_exists() { command -v "$1" >/dev/null 2>&1; }
+
+# =============================================================================
+# BACKUP FUNCTIONS
+# =============================================================================
+
+create_backup() {
+    local backup_file="$1"
+    
+    if [[ ! -d "$BACKUP_DIR" ]]; then
+        mkdir -p "$BACKUP_DIR"
+        print_step "Created backup directory: $BACKUP_DIR"
+    fi
+    
+    if sudo cp "$HOSTS_FILE" "$backup_file"; then
+        print_success "Backup created: $backup_file"
+        return 0
+    else
+        print_error "Failed to create backup"
+        return 1
+    fi
+}
+
+restore_backup() {
+    local backup_file="$1"
+    
+    if [[ ! -f "$backup_file" ]]; then
+        print_error "Backup file not found: $backup_file"
+        return 1
+    fi
+    
+    print_warning "Restoring hosts file from backup..."
+    if sudo cp "$backup_file" "$HOSTS_FILE"; then
+        print_success "Hosts file restored from: $backup_file"
+        return 0
+    else
+        print_error "Failed to restore backup"
+        return 1
+    fi
+}
+
+# =============================================================================
+# HOSTS FILE MANAGEMENT
+# =============================================================================
+
+check_domains_exist() {
+    if sudo grep -q "api.karrio.local" "$HOSTS_FILE" 2>/dev/null; then
+        return 0  # Domains exist
+    else
+        return 1  # Domains don't exist
+    fi
+}
+
+add_domains() {
+    local timestamp=$(date +"%Y%m%d_%H%M%S")
+    local backup_file="$BACKUP_DIR/hosts_backup_$timestamp"
+    
+    print_step "Adding Karrio domains to $HOSTS_FILE"
+    
+    # Check if domains already exist
+    if check_domains_exist; then
+        print_success "Karrio domains already configured in $HOSTS_FILE"
+        return 0
+    fi
+    
+    # Create backup
+    if ! create_backup "$backup_file"; then
+        return 1
+    fi
+    
+    # Add domains to hosts file
+    print_step "Adding domains to hosts file..."
+    
+    # Create temporary file with new entries
+    local temp_file=$(mktemp)
+    cat > "$temp_file" << EOF
+
+$KARRIO_MARKER
+$KARRIO_IP $KARRIO_DOMAINS
+EOF
+    
+    # Append to hosts file
+    if sudo tee -a "$HOSTS_FILE" < "$temp_file" >/dev/null; then
+        rm -f "$temp_file"
+        print_success "Karrio domains added to $HOSTS_FILE"
+        print_success "Domains: $KARRIO_DOMAINS"
+        return 0
+    else
+        rm -f "$temp_file"
+        print_error "Failed to add domains to hosts file"
+        print_warning "Restoring from backup..."
+        restore_backup "$backup_file"
+        return 1
+    fi
+}
+
+remove_domains() {
+    local timestamp=$(date +"%Y%m%d_%H%M%S")
+    local backup_file="$BACKUP_DIR/hosts_backup_$timestamp"
+    
+    print_step "Removing Karrio domains from $HOSTS_FILE"
+    
+    # Check if domains exist
+    if ! check_domains_exist; then
+        print_success "Karrio domains not found in $HOSTS_FILE (already clean)"
+        return 0
+    fi
+    
+    # Create backup
+    if ! create_backup "$backup_file"; then
+        return 1
+    fi
+    
+    # Remove domains from hosts file
+    print_step "Removing domains from hosts file..."
+    
+    # Create temporary file without Karrio entries
+    local temp_file=$(mktemp)
+    
+    # Copy hosts file excluding Karrio lines
+    if sudo grep -v -E "(api\.karrio\.local|app\.karrio\.local|karrio\.local|$KARRIO_MARKER)" "$HOSTS_FILE" > "$temp_file"; then
+        # Replace hosts file
+        if sudo cp "$temp_file" "$HOSTS_FILE"; then
+            rm -f "$temp_file"
+            print_success "Karrio domains removed from $HOSTS_FILE"
+            return 0
+        else
+            rm -f "$temp_file"
+            print_error "Failed to remove domains from hosts file"
+            restore_backup "$backup_file"
+            return 1
+        fi
+    else
+        rm -f "$temp_file"
+        print_error "Failed to process hosts file"
+        return 1
+    fi
+}
+
+# =============================================================================
+# VALIDATION FUNCTIONS
+# =============================================================================
+
+validate_hosts_file() {
+    print_step "Validating hosts file..."
+    
+    # Check if hosts file exists
+    if [[ ! -f "$HOSTS_FILE" ]]; then
+        print_error "Hosts file not found: $HOSTS_FILE"
+        return 1
+    fi
+    
+    # Check for basic syntax (this will prompt for sudo if needed)
+    if sudo grep -q "localhost" "$HOSTS_FILE" 2>/dev/null; then
+        print_success "Hosts file appears valid"
+        return 0
+    else
+        print_warning "Hosts file may be corrupted (no localhost entry found)"
+        # Don't fail here, might be a custom setup
+        return 0
+    fi
+}
+
+show_status() {
+    print_step "Checking Karrio domains status..."
+    
+    if check_domains_exist; then
+        print_success "Karrio domains are configured in $HOSTS_FILE"
+        echo ""
+        print_step "Current Karrio entries:"
+        sudo grep -E "(api\.karrio\.local|app\.karrio\.local|karrio\.local|$KARRIO_MARKER)" "$HOSTS_FILE" 2>/dev/null | while read line; do
+            echo "  $line"
+        done
+    else
+        print_warning "Karrio domains are not configured in $HOSTS_FILE"
+    fi
+    
+    echo ""
+    print_step "Available backups:"
+    if [[ -d "$BACKUP_DIR" ]]; then
+        ls -la "$BACKUP_DIR"/hosts_backup_* 2>/dev/null | while read line; do
+            echo "  $line"
+        done || print_warning "No backups found"
+    else
+        print_warning "No backup directory found"
+    fi
+}
+
+# =============================================================================
+# MAIN EXECUTION
+# =============================================================================
+
+show_usage() {
+    echo "Karrio Hosts File Manager"
+    echo ""
+    echo "Usage: $0 [COMMAND]"
+    echo ""
+    echo "Commands:"
+    echo "  add     - Add Karrio domains to /etc/hosts"
+    echo "  remove  - Remove Karrio domains from /etc/hosts"
+    echo "  status  - Show current domain configuration status"
+    echo "  restore - Restore from the latest backup"
+    echo "  help    - Show this help message"
+    echo ""
+    echo "Domains managed: $KARRIO_DOMAINS"
+    echo "IP address: $KARRIO_IP"
+}
+
+main() {
+    local command="${1:-status}"
+    
+    case "$command" in
+        add)
+            validate_hosts_file || exit 1
+            add_domains
+            ;;
+        remove)
+            validate_hosts_file || exit 1
+            remove_domains
+            ;;
+        status)
+            validate_hosts_file || exit 1
+            show_status
+            ;;
+        restore)
+            local latest_backup=$(ls -t "$BACKUP_DIR"/hosts_backup_* 2>/dev/null | head -1)
+            if [[ -n "$latest_backup" ]]; then
+                restore_backup "$latest_backup"
+            else
+                print_error "No backup files found"
+                exit 1
+            fi
+            ;;
+        help|--help|-h)
+            show_usage
+            ;;
+        *)
+            print_error "Unknown command: $command"
+            echo ""
+            show_usage
+            exit 1
+            ;;
+    esac
+}
+
+# Run main function
+main "$@"

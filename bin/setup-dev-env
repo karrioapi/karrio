@@ -1,0 +1,466 @@
+#!/usr/bin/env bash
+
+# =============================================================================
+# KARRIO DEVELOPMENT ENVIRONMENT SETUP
+# =============================================================================
+# Sets up complete development environment for Karrio
+# Based on bin/deploy pattern but adapted for local development
+# =============================================================================
+
+# Don't exit on error - we'll handle errors explicitly
+set +e
+
+# Detect if script is being sourced or executed
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    SCRIPT_SOURCED=false
+else
+    SCRIPT_SOURCED=true
+fi
+
+# Save current directory
+ORIGINAL_DIR="$(pwd)"
+
+# Get script directory
+if [[ -n "${BASH_SOURCE[0]}" ]]; then
+    SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+else
+    # Fallback for when script is sourced
+    SCRIPT_DIR="$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")"
+fi
+ROOT_DIR="$( cd "$SCRIPT_DIR/.." && pwd )"
+
+# Color codes for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+# Utility functions
+print_step() { echo -e "${CYAN}→ $1${NC}"; }
+print_success() { echo -e "${GREEN}✓ $1${NC}"; }
+print_warning() { echo -e "${YELLOW}⚠ $1${NC}"; }
+print_error() { echo -e "${RED}✗ $1${NC}"; }
+command_exists() { command -v "$1" >/dev/null 2>&1; }
+
+# Header
+echo -e "${BLUE}"
+echo "██╗  ██╗ █████╗ ██████╗ ██████╗ ██╗ ██████╗ "
+echo "██║ ██╔╝██╔══██╗██╔══██╗██╔══██╗██║██╔═══██╗"
+echo "█████╔╝ ███████║██████╔╝██████╔╝██║██║   ██║"
+echo "██╔═██╗ ██╔══██║██╔══██╗██╔══██╗██║██║   ██║"
+echo "██║  ██╗██║  ██║██║  ██║██║  ██║██║╚██████╔╝"
+echo "╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝ "
+echo -e "${NC}"
+echo "Development Environment Setup"
+echo ""
+
+# Change to root directory
+cd "$ROOT_DIR"
+
+# =============================================================================
+# STEP 1: SYSTEM DEPENDENCIES
+# =============================================================================
+print_step "Installing system dependencies..."
+
+# Install system binaries - inline installation like in deploy script
+if [[ "$(uname)" == "Darwin" ]]; then
+    # macOS
+    print_step "Installing macOS dependencies..."
+    if command_exists brew; then
+        brew install gcc pango libffi ghostscript zint curl git 2>/dev/null || {
+            print_warning "Some packages may already be installed"
+        }
+    else
+        print_warning "Homebrew not found. Please install Homebrew first: https://brew.sh"
+    fi
+elif [[ "$(uname -s)" == "Linux" ]]; then
+    # Linux
+    print_step "Installing Linux dependencies..."
+    sudo apt update -y && sudo apt install -y \
+        libpango-1.0-0 libharfbuzz0b libpangoft2-1.0-0 libharfbuzz-subset0 \
+        gcc ghostscript libffi-dev libjpeg-dev libopenjp2-7-dev zint curl git || {
+        print_warning "Some packages may already be installed"
+    }
+fi
+print_success "System dependencies installed"
+
+# =============================================================================
+# STEP 2: DOCKER INSTALLATION CHECK
+# =============================================================================
+print_step "Checking Docker installation..."
+
+if command_exists docker; then
+    docker_version=$(docker --version 2>/dev/null || echo "unknown")
+    print_success "Docker found: $docker_version"
+
+    # Check if Docker daemon is running
+    if ! docker info >/dev/null 2>&1; then
+        print_warning "Docker daemon is not running. Please start Docker Desktop or Docker service."
+    fi
+else
+    print_warning "Docker not found. Please install Docker Desktop manually."
+    print_warning "Download from: https://docs.docker.com/desktop/"
+fi
+
+# Check Docker Compose
+if command_exists docker-compose || docker compose version >/dev/null 2>&1; then
+    print_success "Docker Compose available"
+else
+    print_warning "Docker Compose not found"
+fi
+
+# =============================================================================
+# STEP 3: PYENV AND PYTHON SETUP
+# =============================================================================
+print_step "Setting up Python environment..."
+
+# Install pyenv if not available
+if ! command_exists pyenv; then
+    print_step "Installing pyenv..."
+    if [[ "$(uname)" == "Darwin" ]]; then
+        # macOS
+        brew install pyenv
+    elif [[ "$(uname -s)" == "Linux" ]]; then
+        # Linux
+        curl https://pyenv.run | bash
+    fi
+fi
+
+# Setup pyenv environment
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)" 2>/dev/null || true
+eval "$(pyenv init -)" 2>/dev/null || true
+
+# Add pyenv to shell profile if not already there
+for shell_config in ~/.bashrc ~/.zshrc ~/.profile; do
+    if [[ -f "$shell_config" ]] && ! grep -q "pyenv init" "$shell_config"; then
+        echo '' >> "$shell_config"
+        echo '# pyenv configuration' >> "$shell_config"
+        echo 'export PYENV_ROOT="$HOME/.pyenv"' >> "$shell_config"
+        echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> "$shell_config"
+        echo 'eval "$(pyenv init --path)"' >> "$shell_config"
+        echo 'eval "$(pyenv init -)"' >> "$shell_config"
+    fi
+done
+
+# Update pyenv
+print_step "Updating pyenv..."
+if command_exists brew && brew list pyenv >/dev/null 2>&1; then
+    # Run brew update/upgrade but don't fail if it doesn't work
+    (brew update && brew upgrade pyenv) 2>/dev/null || true
+fi
+
+# Install Python 3.12.x
+print_step "Installing Python 3.12..."
+PYTHON_VERSION=$(pyenv install --list 2>/dev/null | grep -E "^\s*3\.12\.[0-9]+$" | tail -1 | xargs)
+if [[ -z "$PYTHON_VERSION" ]]; then
+    PYTHON_VERSION="3.12"
+fi
+
+if ! pyenv versions 2>/dev/null | grep -q "$PYTHON_VERSION"; then
+    print_step "Python $PYTHON_VERSION not found, installing..."
+    CFLAGS="-Wno-error=array-bounds -Wno-error=stringop-overflow -Wno-error=incompatible-pointer-types" \
+    pyenv install "$PYTHON_VERSION" || {
+        print_error "Failed to install Python $PYTHON_VERSION"
+        print_warning "Continuing with setup anyway..."
+    }
+else
+    print_success "Python $PYTHON_VERSION already installed"
+fi
+
+# Set local Python version
+pyenv local "$PYTHON_VERSION"
+pyenv rehash
+print_success "Python $PYTHON_VERSION set up"
+
+# =============================================================================
+# STEP 4: NODE.JS SETUP
+# =============================================================================
+print_step "Setting up Node.js environment..."
+
+# Install nvm if not available
+if [[ ! -d "$HOME/.nvm" ]] && ! command_exists nvm; then
+    print_step "Installing nvm..."
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+fi
+
+# Source nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# Install Node.js
+if command_exists nvm; then
+    nvm install stable
+    nvm use stable
+    nvm alias default stable
+    print_success "Node.js installed and set as default"
+else
+    print_warning "nvm not available, skipping Node.js setup"
+fi
+
+# =============================================================================
+# STEP 5: PYTHON VIRTUAL ENVIRONMENT AND DEPENDENCIES
+# =============================================================================
+print_step "Setting up Python virtual environment..."
+
+# Create necessary directories
+mkdir -p .karrio/app .karrio/log .karrio/data .karrio/static .karrio/caddy .karrio/ssl
+
+# Use setup-server-env to install Python dependencies
+if [[ -f "bin/setup-server-env" ]]; then
+    print_step "Installing Python dependencies using setup-server-env..."
+    export CFLAGS="-Wno-error=array-bounds -Wno-error=stringop-overflow -Wno-error=incompatible-pointer-types"
+
+    # Run setup-server-env in a subshell to prevent it from exiting our script
+    print_step "Running setup-server-env (this may take a while)..."
+    if (
+        cd "$ROOT_DIR"
+        # Run without verbose output to speed up
+        ./bin/setup-server-env
+    ); then
+        print_success "Python environment and dependencies installed"
+    else
+        print_warning "setup-server-env exited with an error, but continuing..."
+    fi
+
+    unset CFLAGS
+
+    # Verify the virtual environment was created
+    if [[ ! -d ".venv/karrio" ]]; then
+        print_warning "Virtual environment not found after setup, this might be normal on first run"
+    fi
+else
+    print_error "bin/setup-server-env not found!"
+    if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+        return 1
+    else
+        exit 1
+    fi
+fi
+
+# =============================================================================
+# STEP 6: NODE.JS DEPENDENCIES
+# =============================================================================
+if command_exists npm; then
+    print_step "Installing Node.js dependencies..."
+    npm install
+    print_success "Node.js dependencies installed"
+else
+    print_warning "npm not found, skipping Node.js dependencies"
+fi
+
+# =============================================================================
+# STEP 7: CADDY INSTALLATION
+# =============================================================================
+print_step "Setting up Caddy for local SSL..."
+
+if ! command_exists caddy; then
+    if [[ "$(uname)" == "Darwin" ]]; then
+        brew install caddy
+    elif [[ "$(uname -s)" == "Linux" ]]; then
+        # Install Caddy on Linux
+        sudo apt update
+        sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https
+        curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+        curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+        sudo apt update
+        sudo apt install caddy
+    fi
+fi
+
+if command_exists caddy; then
+    print_success "Caddy installed"
+else
+    print_error "Failed to install Caddy"
+    if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+        return 1
+    else
+        exit 1
+    fi
+fi
+
+# =============================================================================
+# STEP 8: CADDY CONFIGURATION
+# =============================================================================
+print_step "Creating Caddy configuration..."
+
+cat > .karrio/caddy/Caddyfile << 'EOF'
+# Karrio Local Development Proxy
+{
+    local_certs
+}
+
+api.karrio.local {
+    reverse_proxy localhost:5002
+    log {
+        output file .karrio/caddy/api.log
+        level INFO
+    }
+}
+
+app.karrio.local {
+    reverse_proxy localhost:3000
+    log {
+        output file .karrio/caddy/app.log
+        level INFO
+    }
+}
+
+http://api.karrio.local {
+    redir https://api.karrio.local{uri}
+}
+
+http://app.karrio.local {
+    redir https://app.karrio.local{uri}
+}
+EOF
+
+print_success "Caddy configuration created"
+
+# =============================================================================
+# STEP 9: LOCAL DOMAINS SETUP
+# =============================================================================
+print_step "Setting up local domains..."
+
+# Use manage-hosts script if available
+if [[ -f "bin/manage-hosts" ]]; then
+    print_step "Using manage-hosts to configure local domains..."
+    ./bin/manage-hosts add || {
+        print_warning "Failed to add domains using manage-hosts"
+        print_warning "You may need to run: sudo ./bin/manage-hosts add"
+    }
+else
+    # Fallback to manual method
+    if ! grep -q "api.karrio.local" /etc/hosts 2>/dev/null; then
+        print_warning "Local domains not configured in /etc/hosts"
+        print_warning "Please run: echo '127.0.0.1 api.karrio.local app.karrio.local' | sudo tee -a /etc/hosts"
+    fi
+fi
+
+# Trust Caddy certificates
+print_step "Installing Caddy's local CA..."
+if command_exists caddy; then
+    # First try direct trust (may work if CA already exists)
+    if caddy trust 2>/dev/null; then
+        print_success "Caddy CA installed successfully"
+    else
+        # Start Caddy temporarily to generate CA, then trust it
+        print_step "Starting Caddy temporarily to generate CA..."
+        caddy run --config .karrio/caddy/Caddyfile >/dev/null 2>&1 &
+        CADDY_PID=$!
+        
+        # Wait for Caddy to start and generate CA
+        sleep 3
+        
+        # Try to trust the CA
+        if caddy trust 2>/dev/null; then
+            print_success "Caddy CA installed successfully"
+        else
+            print_warning "Failed to install Caddy CA. You may see SSL warnings."
+            print_warning "Try running: sudo caddy trust (when Caddy is running)"
+        fi
+        
+        # Stop the temporary Caddy instance
+        kill $CADDY_PID 2>/dev/null || true
+        wait $CADDY_PID 2>/dev/null || true
+    fi
+else
+    print_warning "Caddy not found, skipping CA installation"
+fi
+
+# =============================================================================
+# STEP 10: ENVIRONMENT FILES
+# =============================================================================
+print_step "Setting up environment files..."
+
+# Copy main .env file
+if [[ ! -f ".env" ]] && [[ -f ".env.sample" ]]; then
+    cp ".env.sample" ".env"
+    print_success "Created .env from .env.sample"
+fi
+
+# Copy dashboard .env file
+if [[ ! -f "apps/dashboard/.env" ]] && [[ -f "apps/dashboard/.env.sample" ]]; then
+    cp "apps/dashboard/.env.sample" "apps/dashboard/.env"
+    print_success "Created dashboard .env from .env.sample"
+fi
+
+# =============================================================================
+# COMPLETION
+# =============================================================================
+echo ""
+print_success "Development environment setup complete! 🎉"
+echo ""
+echo -e "${YELLOW}Next steps:${NC}"
+echo ""
+echo "1. Activate Python environment:"
+echo "   source bin/activate-env"
+echo ""
+echo "2. Run database migrations:"
+echo "   karrio migrate"
+echo ""
+echo "3. Create superuser:"
+echo "   karrio createsuperuser"
+echo ""
+echo "4. Collect static files:"
+echo "   karrio collectstatic --noinput"
+echo ""
+echo "5. Start development servers:"
+echo "   ./bin/start-dev"
+echo ""
+echo -e "${GREEN}Access your application at:${NC}"
+echo "   → API: https://api.karrio.local"
+echo "   → Dashboard: https://app.karrio.local"
+echo "   → Admin: https://api.karrio.local/admin"
+echo ""
+
+# Check for any warnings
+if [[ "$(uname -s)" == "Linux" ]] && ! groups | grep -q docker; then
+    print_warning "Please log out and log back in for Docker permissions"
+fi
+
+if ! grep -q "api.karrio.local" /etc/hosts 2>/dev/null; then
+    print_warning "Don't forget to add local domains to /etc/hosts"
+    print_warning "Run: sudo ./bin/manage-hosts add"
+fi
+
+# =============================================================================
+# FINAL SETUP
+# =============================================================================
+
+# If sourced, activate the Python environment
+if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+    print_step "Activating Python environment..."
+    if [[ -f "bin/activate-env" ]]; then
+        source "bin/activate-env"
+        
+        # Fix double parentheses in prompt if they exist
+        if [[ "$PS1" == *"((karrio) )"* ]]; then
+            PS1="$(echo "$PS1" | sed 's/((karrio) )/(karrio) /')"
+            export PS1
+        fi
+        
+        print_success "Python environment activated!"
+    else
+        print_warning "bin/activate-env not found, skipping activation"
+    fi
+    echo ""
+    echo -e "${GREEN}You can now run:${NC}"
+    echo "   → karrio migrate"
+    echo "   → karrio createsuperuser"
+    echo "   → ./bin/start-dev"
+fi
+
+# Return to original directory
+cd "$ORIGINAL_DIR"
+
+# Use return for sourced scripts, exit for executed scripts
+if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+    return 0
+else
+    exit 0
+fi
