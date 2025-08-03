@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useDeveloperTools, DeveloperView } from "@karrio/developers/context/developer-tools-context";
 import { Drawer, DrawerPortal, DrawerHeader, DrawerTitle, DrawerDescription } from "@karrio/ui/components/ui/drawer";
 import { Drawer as DrawerPrimitive } from "vaul";
-import { X, Activity, Key, Webhook, Calendar, FileText, Settings, Terminal, Menu } from "lucide-react";
+import { X, Activity, Key, Webhook, Calendar, FileText, Settings, Terminal, Menu, Code2, Database } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@karrio/ui/components/ui/tabs";
 import { Button } from "@karrio/ui/components/ui/button";
 import { cn } from "@karrio/ui/lib/utils";
@@ -16,8 +16,10 @@ import { ApiKeysView } from "@karrio/developers/components/views/api-keys-view";
 import { EventsView } from "@karrio/developers/components/views/events-view";
 import { LogsView } from "@karrio/developers/components/views/logs-view";
 import { AppsView } from "@karrio/developers/components/views/apps-view";
+import { PlaygroundView } from "@karrio/developers/components/views/playground-view";
+import { GraphiQLView } from "@karrio/developers/components/views/graphiql-view";
 
-// Custom DrawerContent without overlay
+// Custom DrawerContent with responsive positioning
 const CustomDrawerContent = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>
@@ -26,8 +28,11 @@ const CustomDrawerContent = React.forwardRef<
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed inset-0 z-50 flex h-full flex-col rounded-none border bg-background",
-        "w-full max-w-full", // Full screen on mobile, no margins
+        "fixed z-50 flex flex-col border-t bg-background",
+        // Mobile: full screen with rounded top corners
+        "inset-0 h-full w-full lg:inset-auto",
+        // Desktop: positioned below navbar (navbar is h-14 = 56px)
+        "lg:top-14 lg:left-0 lg:right-0 lg:bottom-0 lg:h-[calc(100vh-3.5rem)]",
         className
       )}
       {...props}
@@ -69,11 +74,29 @@ const VIEW_CONFIG = {
     icon: Webhook,
     component: WebhooksView,
   },
+  playground: {
+    label: "Playground",
+    icon: Code2,
+    component: PlaygroundView,
+  },
+  graphiql: {
+    label: "GraphiQL",
+    icon: Database,
+    component: GraphiQLView,
+  },
 };
 
 export function DeveloperToolsDrawer() {
   const { isOpen, currentView, closeDeveloperTools, setCurrentView } = useDeveloperTools();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  // Emit state changes for floating button
+  React.useEffect(() => {
+    const event = new CustomEvent('developer-tools-state-change', {
+      detail: { isOpen }
+    });
+    window.dispatchEvent(event);
+  }, [isOpen]);
 
   const handleTabChange = (value: string) => {
     setCurrentView(value as DeveloperView);
@@ -128,14 +151,14 @@ export function DeveloperToolsDrawer() {
             {/* Mobile Sidebar Overlay */}
             {isMobileSidebarOpen && (
               <div
-                className="absolute inset-0 bg-black/20 z-20 lg:hidden"
+                className="absolute inset-0 bg-black/20 z-5 lg:hidden"
                 onClick={() => setIsMobileSidebarOpen(false)}
               />
             )}
 
             {/* Sidebar Navigation */}
             <div className={cn(
-              "flex-shrink-0 border-r bg-background transition-transform duration-200 ease-in-out z-30",
+              "flex-shrink-0 border-r bg-background transition-transform duration-200 ease-in-out z-10",
               // Mobile: slide in from left, hidden by default
               "absolute lg:relative inset-y-0 left-0",
               "w-52 sm:w-56 lg:w-52",

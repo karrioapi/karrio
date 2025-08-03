@@ -8,7 +8,9 @@ export type DeveloperView =
   | "logs"
   | "events"
   | "apps"
-  | "webhooks";
+  | "webhooks"
+  | "playground"
+  | "graphiql";
 
 interface DeveloperToolsContextType {
   isOpen: boolean;

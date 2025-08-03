@@ -309,3 +309,5 @@ export { default as DevelopersOverview } from "./index";
 export { default as LogPage } from "./log";
 export { default as LogsPage } from "./logs";
 export { default as WebhooksPage } from "./webhooks";
+export { PlaygroundModule } from "./playground";
+export { GraphiQLModule } from "./graphiql";

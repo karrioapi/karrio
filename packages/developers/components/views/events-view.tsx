@@ -1,15 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
-import { Search, Filter, RefreshCw, Calendar, Package, Truck, Webhook, AlertCircle, X } from "lucide-react";
+import { RefreshCw, Calendar, Package, Truck, Webhook, AlertCircle, X } from "lucide-react";
+import { EventsFilter } from "@karrio/ui/core/filters/events-filter";
 import { Button } from "@karrio/ui/components/ui/button";
-import { Input } from "@karrio/ui/components/ui/input";
 import { Label } from "@karrio/ui/components/ui/label";
 import { Badge } from "@karrio/ui/components/ui/badge";
 import { formatDateTimeLong } from "@karrio/lib";
 import { useEvents } from "@karrio/hooks/event";
-import { EventsFilter } from "@karrio/ui/core/filters/events-filter";
 import CodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
 import { EventTypes } from "@karrio/types";

@@ -2,7 +2,9 @@
 
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@karrio/ui/components/ui/dialog";
-import { Trash2, Plus, Copy, Settings, Eye, EyeOff, CheckCircle, XCircle } from "lucide-react";
+import { Trash2, Plus, Copy, Settings, Eye, EyeOff, CheckCircle, XCircle, MoreHorizontal } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@karrio/ui/components/ui/table";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@karrio/ui/components/ui/dropdown-menu";
 import { useWebhooks, useWebhookMutation } from "@karrio/hooks/webhook";
 import { Card, CardContent, CardHeader, CardTitle } from "@karrio/ui/components/ui/card";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
@@ -278,77 +280,99 @@ export function WebhooksView() {
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {webhooks.map((webhook) => (
-              <Card key={webhook.id} className="flex flex-col justify-between">
-                <CardHeader>
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1 min-w-0">
-                      <CardTitle className="text-base font-medium flex items-center gap-2">
-                        {getStatusIcon(webhook)}
-                        <span className="truncate" title={webhook.url || ''}>{webhook.url}</span>
-                      </CardTitle>
-                      {webhook.description && (
-                        <p className="text-sm text-slate-600 pt-2 truncate" title={webhook.description}>
-                          {webhook.description}
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex items-center flex-shrink-0">
-                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEdit(webhook)}>
-                        <Settings className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600 hover:text-red-700" onClick={() => handleDelete(webhook)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="text-sm space-y-4 py-4">
-                  <div>
-                    <Badge variant={webhook.disabled ? "destructive" : "default"}>
-                      {webhook.disabled ? "Disabled" : "Active"}
-                    </Badge>
-                  </div>
-                  {webhook.secret && (
-                    <div>
-                      <Label className="text-xs text-slate-600">Secret</Label>
-                      <div className="flex items-center gap-2 mt-1">
-                        <code className="flex-1 text-sm bg-slate-100 px-2 py-1 rounded font-mono truncate">
-                          {showSecrets[webhook.id] ? webhook.secret : "••••••••••••••••"}
-                        </code>
-                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => toggleSecret(webhook.id)}>
-                          {showSecrets[webhook.id] ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard(webhook.secret || "")}>
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                  {webhook.enabled_events && webhook.enabled_events.length > 0 && (
-                    <div>
-                      <Label className="text-xs text-slate-600">Subscribed Events</Label>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {webhook.enabled_events.slice(0, 3).map((event: EventTypes) => (
-                          <Badge key={event} variant="secondary" className="text-xs font-normal">
-                            {event}
-                          </Badge>
-                        ))}
-                        {webhook.enabled_events.length > 3 && (
-                          <Badge variant="secondary" className="text-xs font-normal">
-                            +{webhook.enabled_events.length - 3} more
-                          </Badge>
+          <div className="border-b">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Endpoint</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Events</TableHead>
+                  <TableHead>Created</TableHead>
+                  <TableHead className="w-12"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {webhooks.map((webhook) => (
+                  <TableRow key={webhook.id}>
+                    <TableCell className="font-medium">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          {getStatusIcon(webhook)}
+                          <span className="truncate text-sm">{webhook.url}</span>
+                        </div>
+                        {webhook.description && (
+                          <p className="text-xs text-muted-foreground truncate">
+                            {webhook.description}
+                          </p>
                         )}
                       </div>
-                    </div>
-                  )}
-                </CardContent>
-                <div className="text-xs text-slate-500 p-4 pt-3 border-t">
-                  Created: {formatDateTimeLong(webhook.created_at)}
-                </div>
-              </Card>
-            ))}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={webhook.disabled ? "destructive" : "default"}>
+                        {webhook.disabled ? "Disabled" : "Active"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="max-w-md">
+                        {webhook.enabled_events && webhook.enabled_events.length > 0 ? (
+                          <div className="flex flex-wrap gap-1">
+                            {webhook.enabled_events.slice(0, 2).map((event: EventTypes) => (
+                              <Badge key={event} variant="secondary" className="text-xs">
+                                {event}
+                              </Badge>
+                            ))}
+                            {webhook.enabled_events.length > 2 && (
+                              <Badge variant="secondary" className="text-xs">
+                                +{webhook.enabled_events.length - 2}
+                              </Badge>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">No events</span>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm text-muted-foreground">
+                        {formatDateTimeLong(webhook.created_at)}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleEdit(webhook)}>
+                            <Settings className="h-4 w-4 mr-2" />
+                            Configure
+                          </DropdownMenuItem>
+                          {webhook.secret && (
+                            <DropdownMenuItem onClick={() => copyToClipboard(webhook.secret || "")}>
+                              <Copy className="h-4 w-4 mr-2" />
+                              Copy Secret
+                            </DropdownMenuItem>
+                          )}
+                          <DropdownMenuItem onClick={() => copyToClipboard(webhook.url || "")}>
+                            <Copy className="h-4 w-4 mr-2" />
+                            Copy URL
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => handleDelete(webhook)}
+                            className="text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         )}
       </div>

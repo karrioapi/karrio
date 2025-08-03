@@ -1,18 +1,18 @@
 "use client";
 
 import React, { useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
+import { Clock, Activity, AlertCircle, CheckCircle, Filter, RefreshCw, X } from "lucide-react";
 import { formatDateTimeLong, groupBy, jsonify, notEmptyJSON, failsafe } from "@karrio/lib";
-import { Card, CardContent, CardHeader, CardTitle } from "@karrio/ui/components/ui/card";
-import { Clock, Activity, AlertCircle, CheckCircle, Search, Filter, RefreshCw, X } from "lucide-react";
-import { ChevronDown, ChevronRight, Copy, Server } from "lucide-react";
+import { Card, CardContent, CardHeader } from "@karrio/ui/components/ui/card";
 import { Button } from "@karrio/ui/components/ui/button";
 import { Input } from "@karrio/ui/components/ui/input";
 import { Label } from "@karrio/ui/components/ui/label";
 import { Badge } from "@karrio/ui/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
-import { useLogs } from "@karrio/hooks/log";
 import CodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
+import { Copy, Server } from "lucide-react";
+import { useLogs } from "@karrio/hooks/log";
 import { xml } from "@codemirror/lang-xml";
 import { cn } from "@karrio/ui/lib/utils";
 import moment from "moment";
@@ -541,7 +541,7 @@ const LogsFilterDropdown = ({ context }: { context: ReturnType<typeof useLogs> }
       return acc;
     }, {} as any);
 
-    setFilter({ ...cleanFilters, offset: 0 });
+    setFilter({ ...cleanFilters, offset: 0, first: 20 });
     setIsOpen(false);
   };
 
@@ -717,7 +717,7 @@ export function LogsView() {
   const logs = query.data?.logs?.edges || [];
 
   const updateFilter = (extra: any = {}) => {
-    setFilter({ ...filter, ...extra, offset: 0 });
+    setFilter({ ...filter, ...extra });
   };
 
   const handleRefresh = () => {
