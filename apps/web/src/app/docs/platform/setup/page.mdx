@@ -1,0 +1,283 @@
+---
+sidebarTitle: Setup
+title: Karrio Insiders Setup
+description: Complete guide to installing and configuring Karrio Insiders for enterprise shipping
+tags: [platform, setup, installation, docker, insiders]
+author: Karrio Team
+---
+
+# Karrio Insiders Setup
+
+Karrio Insiders is the enterprise-ready shipping integration platform built on top of Karrio. This guide will walk you through the installation and initial setup of Karrio Insiders.
+
+## Prerequisites
+
+Before beginning the installation, ensure you have:
+
+- **Docker and Docker Compose** installed on your system
+- **GitHub Personal Access Token (PAT)** with `read:packages` scope
+- **Valid Karrio Insiders subscription** from [karrio.io](https://karrio.io)
+- **Domain name** (for production deployments)
+- **SSL certificates** (for production deployments)
+
+## Authentication Setup
+
+First, you'll need to authenticate with the GitHub Container Registry to access Karrio Insiders images.
+
+### Creating a GitHub Personal Access Token
+
+1. Navigate to GitHub Settings → Developer settings → Personal access tokens
+2. Click "Generate new token (classic)"
+3. Give your token a descriptive name (e.g., "Karrio Insiders Access")
+4. Select the `read:packages` scope
+5. Click "Generate token" and save it securely
+
+### Logging into GitHub Container Registry
+
+```bash
+echo YOUR_PAT | docker login ghcr.io -u YOUR_GITHUB_USERNAME --password-stdin
+```
+
+Replace `YOUR_PAT` with your personal access token and `YOUR_GITHUB_USERNAME` with your GitHub username.
+
+## Installation Methods
+
+### Quick Start with Docker Compose
+
+For development or testing environments:
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/karrioapi/karrio
+   git submodule update --init community
+   git submodule update --init ee/insiders
+   cd karrio/docker
+   ```
+
+2. **Start the services**
+
+   ```bash
+   docker compose -f docker-compose.insiders.yml up -d
+   ```
+
+3. **Access the platform**
+   - Dashboard: http://localhost:3000
+   - API: http://localhost:5002
+   - Default credentials: `admin@example.com` / `demo`
+
+The Docker setup includes these services:
+
+- **API**: Karrio server (port 5002)
+- **Worker**: Background task processor
+- **Dashboard**: Web interface (port 3000)
+- **Database**: PostgreSQL database
+- **Redis**: Caching and task queue
+- **Caddy**: Reverse proxy (ports 80/443)
+
+![Karrio Dashboard Login](/placeholder.svg)
+
+### Production Deployment
+
+For production environments, you'll need to:
+
+1. Set up your own server infrastructure
+2. Configure Docker and Docker Compose
+3. Set up SSL certificates (e.g., using Let's Encrypt)
+4. Configure your domain DNS settings
+5. Set up PostgreSQL and Redis databases
+6. Configure environment variables for production
+
+## Environment Configuration
+
+### Essential Environment Variables
+
+Create a `.env` file in your deployment directory:
+
+```env
+############
+# Secrets - CHANGE THESE BEFORE PRODUCTION
+############
+SECRET_KEY=your-secret-jwt-token-with-at-least-32-characters-long
+JWT_SECRET=your-secret-jwt-token-with-at-least-32-characters-long
+
+############
+# Database Configuration
+############
+DATABASE_HOST=db
+DATABASE_NAME=db
+DATABASE_PORT=5432
+DATABASE_USERNAME=postgres
+DATABASE_PASSWORD=postgres
+DATABASE_ENGINE=postgresql
+
+############
+# Redis Cache Configuration
+############
+REDIS_HOST=redis
+REDIS_PORT=6379
+# REDIS_PASSWORD=redis  # uncomment if using password
+
+############
+# API Configuration
+############
+KARRIO_TAG=2025.5rc6
+KARRIO_HTTP_PORT=5002
+
+############
+# Dashboard Configuration
+############
+DASHBOARD_PORT=3000
+DASHBOARD_URL=http://localhost:3000
+KARRIO_PUBLIC_URL=http://localhost:5002
+
+############
+# General Settings
+############
+ENABLE_ALL_PLUGINS_BY_DEFAULT=True
+JWT_ACCESS_EXPIRY=30  # in minutes
+ALLOW_SIGNUP=false
+ALLOW_ADMIN_APPROVED_SIGNUP=false
+PERSIST_SDK_TRACING=true
+
+############
+# Email Configuration (optional)
+############
+EMAIL_PORT=587
+EMAIL_USE_TLS=true
+EMAIL_HOST=smtp.gmail.com
+EMAIL_HOST_USER=your-email@company.com
+EMAIL_HOST_PASSWORD=your-app-password
+```
+
+### Production Configuration
+
+For production deployments, update your `.env` file with production values:
+
+```env
+############
+# Production URLs
+############
+DASHBOARD_URL=https://app.yourcompany.com
+KARRIO_PUBLIC_URL=https://api.yourcompany.com
+
+############
+# Production Database (use managed service)
+############
+DATABASE_HOST=your-db-host.com
+DATABASE_NAME=karrio_prod
+DATABASE_USERNAME=karrio_user
+DATABASE_PASSWORD=secure-database-password
+
+############
+# Production Redis (use managed service)
+############
+REDIS_HOST=your-redis-host.com
+REDIS_PORT=6379
+REDIS_PASSWORD=secure-redis-password
+
+############
+# Email Configuration (use service like SendGrid or Resend)
+############
+EMAIL_HOST=smtp.sendgrid.net
+EMAIL_PORT=587
+EMAIL_USE_TLS=true
+EMAIL_HOST_USER=apikey
+EMAIL_HOST_PASSWORD=your-sendgrid-api-key
+
+############
+# Security Settings
+############
+ALLOW_SIGNUP=false
+ALLOW_ADMIN_APPROVED_SIGNUP=true
+PERSIST_SDK_TRACING=false  # disable in production for performance
+```
+
+## Verifying Installation
+
+After deployment, verify your installation:
+
+1. **Check service health**
+
+   ```bash
+   docker compose -f docker-compose.insiders.yml ps
+   docker compose -f docker-compose.insiders.yml logs -f api
+   ```
+
+2. **Run diagnostics**
+
+   ```bash
+   docker compose -f docker-compose.insiders.yml exec api karrio check --deploy
+   ```
+
+3. **Test API connectivity**
+   ```bash
+   curl -X GET http://localhost:5002/
+   ```
+
+## Initial Configuration
+
+After successful installation:
+
+1. **Change default credentials** immediately
+2. **Configure your superadmin account** (see [Quickstart Guide](/docs/platform/quickstart))
+3. **Set up SSL certificates** if not using the automated script
+4. **Configure backup procedures** for the database
+5. **Set up monitoring** (optional but recommended)
+
+## Troubleshooting
+
+### Common Issues
+
+#### Authentication Errors
+
+```
+Error: denied: permission_denied: read_packages scope is required
+```
+
+**Solution**: Ensure your GitHub PAT has the `read:packages` scope enabled.
+
+#### Port Conflicts
+
+```
+Error: bind: address already in use
+```
+
+**Solution**: Change the port mappings in `docker-compose.yml` or stop conflicting services.
+
+#### Database Connection Issues
+
+```
+django.db.utils.OperationalError: could not connect to server
+```
+
+**Solution**: Ensure the database container is running and healthy:
+
+```bash
+docker compose -f docker-compose.insiders.yml ps db
+docker compose -f docker-compose.insiders.yml logs db
+```
+
+### Getting Help
+
+- **Documentation**: [karrio.io/docs](https://karrio.io/docs)
+- **Discord Community**: [Join our Discord](https://discord.gg/gS88uE7sEx)
+- **Email Support**: support@karrio.io (Insiders subscribers)
+
+## Next Steps
+
+Once your Karrio Insiders instance is running:
+
+1. **[Set up your superadmin account](/docs/platform/quickstart)** - Configure the initial admin user
+2. **[Configure white labeling](/docs/platform/guides/white-label)** - Customize the platform appearance
+3. **[Manage feature flags](/docs/platform/guides/feature-flags)** - Enable/disable platform features
+4. **[Set up carriers](/docs/platform/guides/carriers)** - Configure shipping carrier integrations
+
+## Security Considerations
+
+- Always use HTTPS in production
+- Regularly update Docker images
+- Use strong passwords for all accounts
+- Enable audit logging for compliance
+- Implement proper backup strategies
+- Consider using a Web Application Firewall (WAF)

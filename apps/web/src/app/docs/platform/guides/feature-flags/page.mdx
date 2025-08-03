@@ -1,0 +1,560 @@
+---
+sidebarTitle: Feature Flags
+title: Feature Flags Management
+description: Complete guide to controlling platform features and capabilities through feature flags
+tags: [platform, guides, feature-flags, configuration, administration]
+author: Karrio Team
+---
+
+# Feature Flags Management
+
+Feature flags in Karrio Insiders allow you to control which capabilities are available in your platform. This guide covers how to manage feature flags, understand their impact, and configure them for different use cases.
+
+## Overview
+
+Feature flags provide:
+- **Granular Control**: Enable or disable specific features without code changes
+- **Progressive Rollout**: Test new features with selected users or organizations
+- **License Management**: Control feature access based on subscription tiers
+- **Performance Optimization**: Disable unused features to improve performance
+
+## Available Feature Flags
+
+### Core Platform Features
+
+#### Multi Organizations
+- **Flag**: `MULTI_ORGANIZATIONS`
+- **Default**: `True`
+- **Description**: Enables multi-tenant organization management
+- **Impact**: When disabled, the platform operates in single-organization mode
+
+
+#### Admin Dashboard
+- **Flag**: `ADMIN_DASHBOARD`
+- **Default**: `True`
+- **Description**: Provides access to the platform administration interface
+- **Impact**: When disabled, the `/admin` route and admin menu items are hidden
+
+#### Audit Logging
+- **Flag**: `AUDIT_LOGGING`
+- **Default**: `False`
+- **Description**: Tracks all system activities for compliance and security
+- **Impact**: When enabled, all API calls and user actions are logged
+
+
+### User Management Features
+
+#### Allow Signup
+- **Flag**: `ALLOW_SIGNUP`
+- **Default**: `True`
+- **Description**: Enables public user registration
+- **Impact**: When disabled, only administrators can create user accounts
+
+#### Admin Approved Signup
+- **Flag**: `ALLOW_ADMIN_APPROVED_SIGNUP`
+- **Default**: `False`
+- **Description**: Requires admin approval for new user registrations
+- **Impact**: New users enter a pending state until approved
+
+#### Multi Account
+- **Flag**: `ALLOW_MULTI_ACCOUNT`
+- **Default**: `False`
+- **Description**: Allows users to belong to multiple organizations
+- **Impact**: Users can switch between different organization contexts
+
+
+### Business Features
+
+#### Orders Management
+- **Flag**: `ORDERS_MANAGEMENT`
+- **Default**: `True`
+- **Description**: Enables e-commerce order fulfillment features
+- **Impact**: Shows/hides the Orders section and related APIs
+
+
+#### Documents Management
+- **Flag**: `DOCUMENTS_MANAGEMENT`
+- **Default**: `True`
+- **Description**: Enables document generation and management
+- **Impact**: Controls access to shipping labels, invoices, and customs documents
+
+#### Workflow Management
+- **Flag**: `WORKFLOW_MANAGEMENT`
+- **Default**: `True`
+- **Description**: Enables automation rules and workflow engine
+- **Impact**: Shows/hides workflow configuration and execution
+
+
+#### Apps Management
+- **Flag**: `APPS_MANAGEMENT`
+- **Default**: `True`
+- **Description**: Enables third-party app integrations
+- **Impact**: Controls access to the app marketplace and OAuth features
+
+### Advanced Features
+
+#### Data Import/Export
+- **Flag**: `DATA_IMPORT_EXPORT`
+- **Default**: `True`
+- **Description**: Enables bulk data operations
+- **Impact**: Shows/hides import/export functionality in the UI
+
+#### Advanced Analytics
+- **Flag**: `ADVANCED_ANALYTICS`
+- **Default**: `False`
+- **Description**: Enables detailed analytics and reporting
+- **Impact**: Unlocks advanced dashboards and data visualization
+
+#### Persist SDK Tracing
+- **Flag**: `PERSIST_SDK_TRACING`
+- **Default**: `False`
+- **Description**: Stores detailed API traces for debugging
+- **Impact**: Increases storage usage but provides detailed diagnostics
+
+## Configuration Methods
+
+### 1. Admin Dashboard Configuration
+
+The easiest way to manage feature flags:
+
+1. Navigate to **Admin** → **Platform**
+2. Click the edit icon next to **Features**
+3. Toggle features on/off using the switches
+4. Click **Save Changes**
+
+![Feature Flags UI](/placeholder.svg)
+
+Changes take effect immediately for new sessions.
+
+### 2. Environment Variables
+
+Configure features at deployment time:
+
+```env
+# .env file
+MULTI_ORGANIZATIONS=True
+ADMIN_DASHBOARD=True
+AUDIT_LOGGING=False
+ALLOW_SIGNUP=True
+ALLOW_ADMIN_APPROVED_SIGNUP=False
+ALLOW_MULTI_ACCOUNT=False
+ORDERS_MANAGEMENT=True
+DOCUMENTS_MANAGEMENT=True
+DATA_IMPORT_EXPORT=True
+WORKFLOW_MANAGEMENT=True
+APPS_MANAGEMENT=True
+ADVANCED_ANALYTICS=False
+PERSIST_SDK_TRACING=False
+```
+
+### 3. Django Settings
+
+For more complex configurations:
+
+```python
+# settings/custom.py
+FEATURE_FLAGS = {
+    'MULTI_ORGANIZATIONS': os.getenv('MULTI_ORGANIZATIONS', 'True') == 'True',
+    'ADMIN_DASHBOARD': os.getenv('ADMIN_DASHBOARD', 'True') == 'True',
+    'AUDIT_LOGGING': os.getenv('AUDIT_LOGGING', 'False') == 'True',
+    # ... other flags
+}
+
+# Conditional feature loading
+if FEATURE_FLAGS['AUDIT_LOGGING']:
+    INSTALLED_APPS += ['karrio.server.audit']
+    MIDDLEWARE += ['karrio.server.audit.middleware.AuditMiddleware']
+```
+
+### 4. Runtime Configuration (Constance)
+
+Feature flags can be modified at runtime through Django Constance:
+
+```python
+# Access in code
+from constance import config
+
+if config.ORDERS_MANAGEMENT:
+    # Show orders functionality
+    pass
+```
+
+## Plugin Registry
+
+In addition to feature flags, Karrio supports enabling/disabling carrier plugins:
+
+### Viewing Available Plugins
+
+1. Go to **Admin** → **Platform**
+2. Scroll to **Registry Plugins** section
+3. View all available carrier integrations
+
+
+### Enabling/Disabling Plugins
+
+Toggle individual carrier plugins:
+
+```env
+# Enable all plugins by default
+ENABLE_ALL_PLUGINS_BY_DEFAULT=True
+
+# Or control individually
+FEDEX_ENABLED=True
+UPS_ENABLED=True
+DHL_EXPRESS_ENABLED=True
+USPS_ENABLED=False
+```
+
+## Use Cases
+
+### 1. Tiered Subscriptions
+
+Create different feature sets for subscription tiers:
+
+```python
+# Subscription tiers configuration
+SUBSCRIPTION_FEATURES = {
+    'starter': {
+        'MULTI_ORGANIZATIONS': False,
+        'ADVANCED_ANALYTICS': False,
+        'WORKFLOW_MANAGEMENT': False,
+        'APPS_MANAGEMENT': False,
+    },
+    'professional': {
+        'MULTI_ORGANIZATIONS': True,
+        'ADVANCED_ANALYTICS': False,
+        'WORKFLOW_MANAGEMENT': True,
+        'APPS_MANAGEMENT': True,
+    },
+    'enterprise': {
+        'MULTI_ORGANIZATIONS': True,
+        'ADVANCED_ANALYTICS': True,
+        'WORKFLOW_MANAGEMENT': True,
+        'APPS_MANAGEMENT': True,
+        'AUDIT_LOGGING': True,
+    }
+}
+```
+
+### 2. Gradual Feature Rollout
+
+Test new features with specific organizations:
+
+```python
+# Organization-specific features
+def get_features_for_org(organization):
+    base_features = get_default_features()
+    
+    # Beta testers get early access
+    if organization.is_beta_tester:
+        base_features['NEW_FEATURE'] = True
+    
+    # Custom features per organization
+    custom_features = organization.metadata.get('features', {})
+    base_features.update(custom_features)
+    
+    return base_features
+```
+
+### 3. Performance Optimization
+
+Disable unused features for better performance:
+
+```env
+# Minimal configuration for high-performance API-only deployment
+MULTI_ORGANIZATIONS=False
+ADMIN_DASHBOARD=False
+ORDERS_MANAGEMENT=False
+DOCUMENTS_MANAGEMENT=True  # Keep only essential features
+WORKFLOW_MANAGEMENT=False
+APPS_MANAGEMENT=False
+ADVANCED_ANALYTICS=False
+PERSIST_SDK_TRACING=False
+```
+
+### 4. Compliance Requirements
+
+Enable features based on regulatory needs:
+
+```python
+# GDPR compliance configuration
+if organization.country in EU_COUNTRIES:
+    features['AUDIT_LOGGING'] = True
+    features['DATA_EXPORT'] = True
+    features['RIGHT_TO_ERASURE'] = True
+
+# Healthcare compliance
+if organization.industry == 'healthcare':
+    features['AUDIT_LOGGING'] = True
+    features['ENCRYPTION_AT_REST'] = True
+    features['ACCESS_CONTROLS'] = True
+```
+
+## Feature Dependencies
+
+Some features depend on others:
+
+**Feature Dependencies:**
+
+- **Multi Account** requires **Multi Organizations** to be enabled
+- **Shipping Rules** requires **Workflow Management** to be enabled
+- **Advanced Analytics** may require additional infrastructure setup
+- **Audit Logging** requires configured log storage
+
+### Dependency Rules
+
+1. **Multi Account** requires **Multi Organizations**
+2. **Shipping Rules** requires **Workflow Management**
+3. **Advanced Analytics** requires additional infrastructure
+4. **Audit Logging** requires configured log storage
+
+## API Access Control
+
+Feature flags also control API endpoint availability:
+
+```python
+# API endpoint conditional availability
+@require_feature('ORDERS_MANAGEMENT')
+class OrderViewSet(viewsets.ModelViewSet):
+    """Only available when ORDERS_MANAGEMENT is enabled"""
+    pass
+
+# GraphQL field conditional
+class Query:
+    @require_feature('ADVANCED_ANALYTICS')
+    def analytics(self, info):
+        """Only available with ADVANCED_ANALYTICS flag"""
+        pass
+```
+
+### Checking Features via API
+
+```graphql
+query {
+  platform {
+    features {
+      multiOrganizations
+      ordersManagement
+      workflowManagement
+      advancedAnalytics
+    }
+  }
+}
+```
+
+Response:
+```json
+{
+  "data": {
+    "platform": {
+      "features": {
+        "multiOrganizations": true,
+        "ordersManagement": true,
+        "workflowManagement": true,
+        "advancedAnalytics": false
+      }
+    }
+  }
+}
+```
+
+## Frontend Feature Flags
+
+Access feature flags in the dashboard:
+
+```tsx
+// Using feature flags in React components
+import { useFeatureFlags } from '@karrio/hooks/feature-flags';
+
+function Navigation() {
+  const features = useFeatureFlags();
+  
+  return (
+    <nav>
+      <Link to="/shipments">Shipments</Link>
+      {features.ordersManagement && (
+        <Link to="/orders">Orders</Link>
+      )}
+      {features.workflowManagement && (
+        <Link to="/workflows">Workflows</Link>
+      )}
+      {features.adminDashboard && user.isStaff && (
+        <Link to="/admin">Admin</Link>
+      )}
+    </nav>
+  );
+}
+```
+
+### Conditional UI Rendering
+
+```tsx
+// Feature-gated components
+function DashboardPage() {
+  const features = useFeatureFlags();
+  
+  return (
+    <div>
+      <ShipmentWidget />
+      
+      <FeatureGate feature="ordersManagement">
+        <OrdersWidget />
+      </FeatureGate>
+      
+      <FeatureGate 
+        feature="advancedAnalytics"
+        fallback={<BasicAnalytics />}
+      >
+        <AdvancedAnalytics />
+      </FeatureGate>
+    </div>
+  );
+}
+```
+
+## Monitoring Feature Usage
+
+Track which features are being used:
+
+```sql
+-- Feature usage query
+SELECT 
+  feature_name,
+  COUNT(DISTINCT user_id) as unique_users,
+  COUNT(*) as total_uses,
+  DATE(created_at) as date
+FROM audit_logs
+WHERE action LIKE 'feature.%'
+GROUP BY feature_name, DATE(created_at)
+ORDER BY date DESC, total_uses DESC;
+```
+
+
+## Best Practices
+
+### 1. Start Conservative
+
+Begin with minimal features enabled:
+- Enable only what you need
+- Add features as requirements grow
+- Monitor performance impact
+
+### 2. Document Feature Sets
+
+Maintain clear documentation:
+```yaml
+# feature-sets.yml
+production:
+  multi_organizations: true
+  audit_logging: true
+  advanced_analytics: false
+
+staging:
+  multi_organizations: true
+  audit_logging: true
+  advanced_analytics: true  # Testing new feature
+
+development:
+  all_features: true  # Enable everything for dev
+```
+
+### 3. Test Feature Combinations
+
+Ensure features work well together:
+- Test with different flag combinations
+- Verify UI consistency
+- Check API compatibility
+
+### 4. Plan for Migration
+
+When changing features:
+1. Announce changes in advance
+2. Provide migration guides
+3. Offer grace periods
+4. Support data export if disabling features
+
+## Troubleshooting
+
+### Feature Not Appearing
+
+1. **Check Configuration**
+   ```bash
+   # Verify environment variable
+   echo $FEATURE_NAME_ENABLED
+   
+   # Check Django settings
+   docker exec -it karrio-api python manage.py shell
+   >>> from django.conf import settings
+   >>> settings.FEATURE_FLAGS
+   ```
+
+2. **Clear Cache**
+   ```bash
+   docker exec -it karrio-api python manage.py clear_cache
+   ```
+
+3. **Restart Services**
+   ```bash
+   docker compose restart api worker dashboard
+   ```
+
+### Performance Issues
+
+If enabling features causes performance problems:
+
+1. **Check Resource Usage**
+   ```bash
+   docker stats
+   ```
+
+2. **Review Logs**
+   ```bash
+   docker compose logs -f api | grep ERROR
+   ```
+
+3. **Disable Non-Essential Features**
+   - Start with `PERSIST_SDK_TRACING`
+   - Consider disabling `ADVANCED_ANALYTICS`
+   - Reduce audit log retention
+
+### Feature Conflicts
+
+Some features may conflict:
+- `ALLOW_SIGNUP=False` with `ALLOW_ADMIN_APPROVED_SIGNUP=True`
+- `MULTI_ORGANIZATIONS=False` with `ALLOW_MULTI_ACCOUNT=True`
+
+The system will log warnings for invalid combinations.
+
+## Security Considerations
+
+### Sensitive Features
+
+These features have security implications:
+
+1. **Audit Logging**
+   - Stores sensitive user actions
+   - Requires secure log storage
+   - Consider retention policies
+
+2. **Data Import/Export**
+   - Can expose bulk data
+   - Implement access controls
+   - Log all export activities
+
+3. **Apps Management**
+   - Third-party code execution
+   - OAuth token management
+   - Review app permissions
+
+### Recommendations
+
+- Enable `AUDIT_LOGGING` for compliance
+- Restrict `DATA_IMPORT_EXPORT` to admins
+- Review `APPS_MANAGEMENT` permissions regularly
+- Use `ALLOW_ADMIN_APPROVED_SIGNUP` for controlled access
+
+## Next Steps
+
+- [Configure Carrier Network](../carriers) - Set up shipping providers
+- [Set Up Workflows](../workflows) - Automate with feature flags
+- [Manage Billing](../billing) - Tie features to subscriptions
