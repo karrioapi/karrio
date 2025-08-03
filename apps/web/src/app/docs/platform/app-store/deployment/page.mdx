@@ -1,0 +1,1257 @@
+---
+sidebarTitle: Deployment
+title: Deploying Karrio Apps to Production
+description: Complete guide to deploying, testing, and managing Karrio Apps in production environments
+tags:
+  [
+    "deployment",
+    "production",
+    "ci-cd",
+    "testing",
+    "staging",
+    "docker",
+    "monitoring",
+  ]
+---
+
+# Deployment Guide
+
+<div className="flex gap-2 mb-6">
+  <div className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10 dark:bg-purple-400/10 dark:text-purple-400 dark:ring-purple-400/30">
+    <span className="text-xs">Insiders</span>
+  </div>
+  <div className="inline-flex items-center rounded-md bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-700/10 dark:bg-amber-400/10 dark:text-amber-400 dark:ring-amber-400/30">
+    <span className="text-xs">Enterprise</span>
+  </div>
+</div>
+
+Learn how to deploy your Karrio Apps to production with confidence, including testing strategies, CI/CD pipelines, and monitoring.
+
+## Deployment Overview
+
+Karrio Apps can be deployed in several ways depending on your architecture and requirements:
+
+```mermaid
+graph TB
+    A[Development] --> B[Testing]
+    B --> C[Staging]
+    C --> D[Production]
+
+    subgraph "Development Environment"
+        E[Local Development]
+        F[Hot Reload]
+        G[Dev Database]
+    end
+
+    subgraph "Testing Pipeline"
+        H[Unit Tests]
+        I[Integration Tests]
+        J[E2E Tests]
+    end
+
+    subgraph "Staging Environment"
+        K[Pre-production Testing]
+        L[Performance Testing]
+        M[Security Testing]
+    end
+
+    subgraph "Production Environment"
+        N[Load Balancer]
+        O[App Servers]
+        P[Database]
+        Q[Monitoring]
+    end
+
+    A --> E
+    B --> H
+    C --> K
+    D --> N
+
+    style A fill:#e3f2fd
+    style B fill:#e8f5e8
+    style C fill:#fff3e0
+    style D fill:#fce4ec
+```
+
+## Development Setup
+
+### Local Development Environment
+
+```bash
+# Clone your app repository
+git clone https://github.com/your-org/your-karrio-app.git
+cd your-karrio-app
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env.local
+
+# Configure your local environment
+cat > .env.local << EOF
+KARRIO_API_URL=http://localhost:8000
+KARRIO_API_KEY=your-dev-api-key
+JWT_APP_SECRET_KEY=your-jwt-secret
+DATABASE_URL=postgresql://user:pass@localhost:5432/karrio_apps
+REDIS_URL=redis://localhost:6379
+NODE_ENV=development
+EOF
+
+# Start development server
+npm run dev
+```
+
+### Project Structure
+
+```
+your-karrio-app/
+├── src/
+│   ├── components/        # React components
+│   ├── pages/            # Next.js pages
+│   ├── api/              # API routes
+│   ├── lib/              # Utility functions
+│   ├── hooks/            # Custom hooks
+│   └── types/            # TypeScript definitions
+├── tests/
+│   ├── __mocks__/        # Test mocks
+│   ├── unit/             # Unit tests
+│   ├── integration/      # Integration tests
+│   └── e2e/              # End-to-end tests
+├── docs/
+│   ├── README.md
+│   ├── API.md
+│   └── DEPLOYMENT.md
+├── .github/
+│   └── workflows/        # GitHub Actions
+├── docker/
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   └── nginx.conf
+├── manifest.ts           # App manifest
+├── package.json
+├── tsconfig.json
+└── .env.example
+```
+
+### Development Scripts
+
+```json
+{
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:e2e": "playwright test",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "type-check": "tsc --noEmit",
+    "docker:build": "docker build -t your-app .",
+    "docker:run": "docker run -p 3000:3000 your-app"
+  }
+}
+```
+
+## Testing Strategy
+
+### Unit Testing
+
+```tsx
+// __tests__/components/ShipmentCard.test.tsx
+import { render, screen, fireEvent } from "@testing-library/react";
+import { ShipmentCard } from "../components/ShipmentCard";
+
+const mockShipment = {
+  id: "1",
+  tracking_number: "TEST123",
+  status: "delivered",
+  recipient: { name: "John Doe" },
+  created_at: "2024-01-15T10:00:00Z",
+};
+
+describe("ShipmentCard", () => {
+  it("renders shipment information correctly", () => {
+    render(<ShipmentCard shipment={mockShipment} />);
+
+    expect(screen.getByText("TEST123")).toBeInTheDocument();
+    expect(screen.getByText("John Doe")).toBeInTheDocument();
+    expect(screen.getByText("delivered")).toBeInTheDocument();
+  });
+
+  it("handles click events", () => {
+    const onClickMock = jest.fn();
+    render(<ShipmentCard shipment={mockShipment} onClick={onClickMock} />);
+
+    fireEvent.click(screen.getByTestId("shipment-card"));
+    expect(onClickMock).toHaveBeenCalledWith(mockShipment);
+  });
+
+  it("displays correct status badge", () => {
+    render(<ShipmentCard shipment={mockShipment} />);
+
+    const badge = screen.getByTestId("status-badge");
+    expect(badge).toHaveClass("bg-green-100"); // Delivered status
+  });
+});
+```
+
+### Integration Testing
+
+```tsx
+// __tests__/api/shipments.test.tsx
+import { createMocks } from "node-mocks-http";
+import handler from "../../pages/api/shipments";
+import { setupTestDatabase, cleanupTestDatabase } from "../helpers/database";
+
+describe("/api/shipments", () => {
+  beforeAll(async () => {
+    await setupTestDatabase();
+  });
+
+  afterAll(async () => {
+    await cleanupTestDatabase();
+  });
+
+  it("GET /api/shipments returns shipments list", async () => {
+    const { req, res } = createMocks({
+      method: "GET",
+      headers: {
+        authorization: "Bearer test-jwt-token",
+      },
+    });
+
+    await handler(req, res);
+
+    expect(res._getStatusCode()).toBe(200);
+    const data = JSON.parse(res._getData());
+    expect(data).toHaveProperty("shipments");
+    expect(Array.isArray(data.shipments)).toBe(true);
+  });
+
+  it("POST /api/shipments creates new shipment", async () => {
+    const { req, res } = createMocks({
+      method: "POST",
+      headers: {
+        authorization: "Bearer test-jwt-token",
+        "content-type": "application/json",
+      },
+      body: {
+        recipient: {
+          name: "Test User",
+          address_line1: "123 Test St",
+          city: "Test City",
+          state_code: "TS",
+          postal_code: "12345",
+          country_code: "US",
+        },
+        parcels: [
+          {
+            weight: 1.5,
+            width: 10,
+            height: 10,
+            length: 10,
+          },
+        ],
+      },
+    });
+
+    await handler(req, res);
+
+    expect(res._getStatusCode()).toBe(201);
+    const data = JSON.parse(res._getData());
+    expect(data).toHaveProperty("id");
+    expect(data.recipient.name).toBe("Test User");
+  });
+});
+```
+
+### End-to-End Testing
+
+```tsx
+// tests/e2e/shipment-workflow.spec.ts
+import { test, expect } from "@playwright/test";
+
+test.describe("Shipment Management Workflow", () => {
+  test.beforeEach(async ({ page }) => {
+    // Login and navigate to app
+    await page.goto("/apps/shipping-manager");
+    await page.waitForLoadState("networkidle");
+  });
+
+  test("should create a new shipment", async ({ page }) => {
+    // Click create shipment button
+    await page.click('[data-testid="create-shipment-btn"]');
+
+    // Fill out shipment form
+    await page.fill('[data-testid="recipient-name"]', "John Doe");
+    await page.fill('[data-testid="recipient-address"]', "123 Main St");
+    await page.fill('[data-testid="recipient-city"]', "New York");
+    await page.selectOption('[data-testid="recipient-state"]', "NY");
+    await page.fill('[data-testid="recipient-zip"]', "10001");
+
+    // Fill parcel information
+    await page.fill('[data-testid="parcel-weight"]', "2.5");
+    await page.fill('[data-testid="parcel-length"]', "12");
+    await page.fill('[data-testid="parcel-width"]', "8");
+    await page.fill('[data-testid="parcel-height"]', "6");
+
+    // Select carrier and service
+    await page.selectOption('[data-testid="carrier-select"]', "fedex");
+    await page.selectOption('[data-testid="service-select"]', "fedex_ground");
+
+    // Submit form
+    await page.click('[data-testid="create-shipment-submit"]');
+
+    // Verify success
+    await expect(page.locator('[data-testid="success-message"]')).toBeVisible();
+    await expect(page.locator('[data-testid="tracking-number"]')).toBeVisible();
+  });
+
+  test("should display shipments list", async ({ page }) => {
+    // Wait for shipments to load
+    await page.waitForSelector('[data-testid="shipments-table"]');
+
+    // Verify table headers
+    await expect(page.locator('th:has-text("Tracking Number")')).toBeVisible();
+    await expect(page.locator('th:has-text("Recipient")')).toBeVisible();
+    await expect(page.locator('th:has-text("Status")')).toBeVisible();
+
+    // Verify at least one shipment row exists
+    await expect(
+      page.locator('[data-testid="shipment-row"]').first(),
+    ).toBeVisible();
+  });
+
+  test("should filter shipments by status", async ({ page }) => {
+    // Apply delivered filter
+    await page.selectOption('[data-testid="status-filter"]', "delivered");
+
+    // Wait for filtered results
+    await page.waitForTimeout(1000);
+
+    // Verify all visible shipments have delivered status
+    const statusBadges = page.locator('[data-testid="status-badge"]');
+    const count = await statusBadges.count();
+
+    for (let i = 0; i < count; i++) {
+      await expect(statusBadges.nth(i)).toHaveText("delivered");
+    }
+  });
+});
+```
+
+## CI/CD Pipeline
+
+### GitHub Actions Workflow
+
+```yaml
+# .github/workflows/deploy.yml
+name: Deploy Karrio App
+
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+    branches: [main]
+
+env:
+  NODE_VERSION: "18"
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linting
+        run: npm run lint
+
+      - name: Run type checking
+        run: npm run type-check
+
+      - name: Run unit tests
+        run: npm test -- --coverage
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+          REDIS_URL: redis://localhost:6379
+
+      - name: Run integration tests
+        run: npm run test:integration
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+          REDIS_URL: redis://localhost:6379
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run E2E tests
+        run: npm run test:e2e
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-results
+          path: |
+            coverage/
+            test-results/
+            playwright-report/
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  deploy-staging:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/staging'
+    environment: staging
+
+    steps:
+      - name: Deploy to staging
+        run: |
+          echo "Deploying to staging environment..."
+          # Add your staging deployment commands here
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    environment: production
+
+    steps:
+      - name: Deploy to production
+        run: |
+          echo "Deploying to production environment..."
+          # Add your production deployment commands here
+```
+
+### Docker Configuration
+
+```dockerfile
+# Dockerfile
+FROM node:18-alpine AS base
+
+# Install dependencies only when needed
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+# Install dependencies based on the preferred package manager
+COPY package.json package-lock.json* ./
+RUN npm ci --only=production
+
+# Build the app
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+ENV NEXT_TELEMETRY_DISABLED 1
+
+RUN npm run build
+
+# Production image, copy all the files and run next
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+
+# Set the correct permission for prerender cache
+RUN mkdir .next
+RUN chown nextjs:nodejs .next
+
+# Automatically leverage output traces to reduce image size
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
+
+CMD ["node", "server.js"]
+```
+
+```yaml
+# docker-compose.yml
+version: "3.8"
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - KARRIO_API_URL=${KARRIO_API_URL}
+      - KARRIO_API_KEY=${KARRIO_API_KEY}
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+
+  db:
+    image: postgres:14
+    environment:
+      - POSTGRES_DB=karrio_app
+      - POSTGRES_USER=karrio
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/ssl
+    depends_on:
+      - app
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+```
+
+## Staging Environment
+
+### Staging Configuration
+
+```bash
+# .env.staging
+NODE_ENV=staging
+KARRIO_API_URL=https://staging-api.karrio.io
+KARRIO_API_KEY=staging-api-key
+DATABASE_URL=postgresql://user:pass@staging-db:5432/karrio_app_staging
+REDIS_URL=redis://staging-redis:6379
+JWT_APP_SECRET_KEY=staging-jwt-secret
+ENABLE_ANALYTICS=false
+DEBUG_MODE=true
+```
+
+### Staging Deployment Script
+
+```bash
+#!/bin/bash
+# scripts/deploy-staging.sh
+
+set -e
+
+echo "🚀 Deploying to staging environment..."
+
+# Pull latest changes
+git checkout staging
+git pull origin staging
+
+# Install dependencies
+npm ci
+
+# Run tests
+npm test
+
+# Build application
+npm run build
+
+# Stop existing containers
+docker-compose -f docker-compose.staging.yml down
+
+# Build and start new containers
+docker-compose -f docker-compose.staging.yml up -d --build
+
+# Wait for services to be ready
+echo "⏳ Waiting for services to start..."
+sleep 30
+
+# Run database migrations
+docker-compose -f docker-compose.staging.yml exec app npm run db:migrate
+
+# Run smoke tests
+npm run test:smoke
+
+echo "✅ Staging deployment completed successfully!"
+echo "🌐 Application available at: https://staging-app.karrio.io"
+```
+
+## Production Deployment
+
+### Production Configuration
+
+```bash
+# .env.production
+NODE_ENV=production
+KARRIO_API_URL=https://api.karrio.io
+KARRIO_API_KEY=production-api-key
+DATABASE_URL=postgresql://user:pass@prod-db:5432/karrio_app
+REDIS_URL=redis://prod-redis:6379
+JWT_APP_SECRET_KEY=production-jwt-secret
+ENABLE_ANALYTICS=true
+DEBUG_MODE=false
+SSL_ENABLED=true
+RATE_LIMIT_ENABLED=true
+```
+
+### Blue-Green Deployment
+
+```bash
+#!/bin/bash
+# scripts/deploy-production.sh
+
+set -e
+
+BLUE_PORT=3000
+GREEN_PORT=3001
+CURRENT_PORT=$(curl -s http://localhost/health | jq -r '.port' || echo $BLUE_PORT)
+
+if [ "$CURRENT_PORT" = "$BLUE_PORT" ]; then
+    DEPLOY_PORT=$GREEN_PORT
+    DEPLOY_COLOR="green"
+else
+    DEPLOY_PORT=$BLUE_PORT
+    DEPLOY_COLOR="blue"
+fi
+
+echo "🚀 Starting $DEPLOY_COLOR deployment on port $DEPLOY_PORT..."
+
+# Build new image
+docker build -t karrio-app:$DEPLOY_COLOR .
+
+# Start new container
+docker run -d \
+  --name karrio-app-$DEPLOY_COLOR \
+  --port $DEPLOY_PORT:3000 \
+  --env-file .env.production \
+  karrio-app:$DEPLOY_COLOR
+
+# Health check
+echo "⏳ Performing health checks..."
+for i in {1..30}; do
+  if curl -f http://localhost:$DEPLOY_PORT/health; then
+    echo "✅ Health check passed"
+    break
+  fi
+
+  if [ $i -eq 30 ]; then
+    echo "❌ Health check failed"
+    docker stop karrio-app-$DEPLOY_COLOR
+    docker rm karrio-app-$DEPLOY_COLOR
+    exit 1
+  fi
+
+  sleep 2
+done
+
+# Switch traffic
+echo "🔄 Switching traffic to $DEPLOY_COLOR..."
+# Update load balancer configuration
+# This would typically update your nginx/HAProxy/AWS ALB configuration
+
+# Stop old container
+if [ "$CURRENT_PORT" = "$BLUE_PORT" ]; then
+    docker stop karrio-app-blue
+    docker rm karrio-app-blue
+else
+    docker stop karrio-app-green
+    docker rm karrio-app-green
+fi
+
+echo "✅ Production deployment completed successfully!"
+```
+
+### Kubernetes Deployment
+
+```yaml
+# k8s/deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: karrio-app
+  labels:
+    app: karrio-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: karrio-app
+  template:
+    metadata:
+      labels:
+        app: karrio-app
+    spec:
+      containers:
+        - name: karrio-app
+          image: ghcr.io/your-org/karrio-app:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: karrio-app-secrets
+                  key: database-url
+            - name: KARRIO_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: karrio-app-secrets
+                  key: karrio-api-key
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: karrio-app-service
+spec:
+  selector:
+    app: karrio-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: karrio-app-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+    - hosts:
+        - your-app.karrio.io
+      secretName: karrio-app-tls
+  rules:
+    - host: your-app.karrio.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: karrio-app-service
+                port:
+                  number: 80
+```
+
+## Monitoring & Observability
+
+### Health Checks
+
+```tsx
+// pages/api/health.ts
+import { NextApiRequest, NextApiResponse } from "next";
+
+export default async function health(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
+  try {
+    // Check database connection
+    await checkDatabase();
+
+    // Check Redis connection
+    await checkRedis();
+
+    // Check Karrio API connectivity
+    await checkKarrioAPI();
+
+    res.status(200).json({
+      status: "healthy",
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      version: process.env.npm_package_version,
+      environment: process.env.NODE_ENV,
+    });
+  } catch (error) {
+    res.status(503).json({
+      status: "unhealthy",
+      error: error.message,
+      timestamp: new Date().toISOString(),
+    });
+  }
+}
+
+async function checkDatabase() {
+  // Implement database health check
+}
+
+async function checkRedis() {
+  // Implement Redis health check
+}
+
+async function checkKarrioAPI() {
+  // Implement Karrio API health check
+}
+```
+
+### Application Metrics
+
+```tsx
+// lib/metrics.ts
+import { createPrometheusMetrics } from "@prometheus/client";
+
+export const metrics = {
+  httpRequestDuration: new Histogram({
+    name: "http_request_duration_seconds",
+    help: "Duration of HTTP requests in seconds",
+    labelNames: ["method", "route", "status_code"],
+  }),
+
+  shipmentOperations: new Counter({
+    name: "shipment_operations_total",
+    help: "Total number of shipment operations",
+    labelNames: ["operation", "status"],
+  }),
+
+  apiErrors: new Counter({
+    name: "api_errors_total",
+    help: "Total number of API errors",
+    labelNames: ["endpoint", "error_type"],
+  }),
+
+  activeConnections: new Gauge({
+    name: "active_connections",
+    help: "Number of active connections",
+  }),
+};
+
+// Middleware to collect metrics
+export function metricsMiddleware(req, res, next) {
+  const start = Date.now();
+
+  res.on("finish", () => {
+    const duration = (Date.now() - start) / 1000;
+    metrics.httpRequestDuration
+      .labels(req.method, req.route?.path || req.url, res.statusCode)
+      .observe(duration);
+  });
+
+  next();
+}
+```
+
+### Logging
+
+```tsx
+// lib/logger.ts
+import winston from "winston";
+
+const logger = winston.createLogger({
+  level: process.env.LOG_LEVEL || "info",
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.errors({ stack: true }),
+    winston.format.json(),
+  ),
+  defaultMeta: {
+    service: "karrio-app",
+    version: process.env.npm_package_version,
+  },
+  transports: [
+    new winston.transports.File({ filename: "logs/error.log", level: "error" }),
+    new winston.transports.File({ filename: "logs/combined.log" }),
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    }),
+  ],
+});
+
+export { logger };
+
+// Usage in your app
+export function logShipmentCreation(shipment) {
+  logger.info("Shipment created", {
+    shipmentId: shipment.id,
+    trackingNumber: shipment.tracking_number,
+    carrier: shipment.carrier.name,
+    userId: shipment.created_by,
+  });
+}
+
+export function logAPIError(error, context) {
+  logger.error("API Error", {
+    error: error.message,
+    stack: error.stack,
+    context,
+    timestamp: new Date().toISOString(),
+  });
+}
+```
+
+## Environment Management
+
+### Environment Variables
+
+```bash
+# .env.example
+# Application
+NODE_ENV=development
+PORT=3000
+APP_URL=http://localhost:3000
+
+# Karrio API
+KARRIO_API_URL=https://api.karrio.io
+KARRIO_API_KEY=your-api-key
+
+# Authentication
+JWT_APP_SECRET_KEY=your-jwt-secret
+SESSION_SECRET=your-session-secret
+
+# Database
+DATABASE_URL=postgresql://user:pass@localhost:5432/karrio_app
+
+# Redis
+REDIS_URL=redis://localhost:6379
+
+# External Services
+STRIPE_SECRET_KEY=sk_test_...
+SENDGRID_API_KEY=SG....
+
+# Monitoring
+SENTRY_DSN=https://...
+NEW_RELIC_LICENSE_KEY=...
+
+# Feature Flags
+ENABLE_ANALYTICS=true
+ENABLE_RATE_LIMITING=true
+DEBUG_MODE=false
+```
+
+### Configuration Management
+
+```tsx
+// lib/config.ts
+interface Config {
+  app: {
+    name: string;
+    version: string;
+    url: string;
+    port: number;
+  };
+  karrio: {
+    apiUrl: string;
+    apiKey: string;
+  };
+  database: {
+    url: string;
+  };
+  redis: {
+    url: string;
+  };
+  features: {
+    analytics: boolean;
+    rateLimiting: boolean;
+    debugMode: boolean;
+  };
+}
+
+function validateConfig(): Config {
+  const requiredEnvVars = [
+    "KARRIO_API_URL",
+    "KARRIO_API_KEY",
+    "DATABASE_URL",
+    "JWT_APP_SECRET_KEY",
+  ];
+
+  for (const envVar of requiredEnvVars) {
+    if (!process.env[envVar]) {
+      throw new Error(`Missing required environment variable: ${envVar}`);
+    }
+  }
+
+  return {
+    app: {
+      name: process.env.npm_package_name || "karrio-app",
+      version: process.env.npm_package_version || "1.0.0",
+      url: process.env.APP_URL || "http://localhost:3000",
+      port: parseInt(process.env.PORT || "3000"),
+    },
+    karrio: {
+      apiUrl: process.env.KARRIO_API_URL!,
+      apiKey: process.env.KARRIO_API_KEY!,
+    },
+    database: {
+      url: process.env.DATABASE_URL!,
+    },
+    redis: {
+      url: process.env.REDIS_URL || "redis://localhost:6379",
+    },
+    features: {
+      analytics: process.env.ENABLE_ANALYTICS === "true",
+      rateLimiting: process.env.ENABLE_RATE_LIMITING === "true",
+      debugMode: process.env.DEBUG_MODE === "true",
+    },
+  };
+}
+
+export const config = validateConfig();
+```
+
+## Best Practices
+
+### Security
+
+```tsx
+// Security headers middleware
+export function securityHeaders(req, res, next) {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("X-XSS-Protection", "1; mode=block");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader(
+    "Content-Security-Policy",
+    [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline'",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: https:",
+      "connect-src 'self' https://api.karrio.io",
+    ].join("; "),
+  );
+
+  next();
+}
+
+// Rate limiting
+import rateLimit from "express-rate-limit";
+
+export const rateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: "Too many requests from this IP",
+});
+```
+
+### Performance
+
+```tsx
+// Caching strategy
+import NodeCache from "node-cache";
+
+const cache = new NodeCache({ stdTTL: 600 }); // 10 minutes
+
+export function withCache(key: string, ttl?: number) {
+  return function (
+    target: any,
+    propertyName: string,
+    descriptor: PropertyDescriptor,
+  ) {
+    const method = descriptor.value;
+
+    descriptor.value = async function (...args: any[]) {
+      const cacheKey = `${key}:${JSON.stringify(args)}`;
+
+      const cached = cache.get(cacheKey);
+      if (cached) {
+        return cached;
+      }
+
+      const result = await method.apply(this, args);
+      cache.set(cacheKey, result, ttl);
+
+      return result;
+    };
+  };
+}
+
+// Usage
+class ShipmentService {
+  @withCache("shipments", 300) // 5 minutes
+  async getShipments(filters: any) {
+    // Implementation
+  }
+}
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Database Connection Errors**
+
+   ```bash
+   # Check database connectivity
+   npx prisma db push --preview-feature
+
+   # Verify database schema
+   npx prisma db pull
+   ```
+
+2. **API Authentication Failures**
+
+   ```bash
+   # Verify API key format
+   echo $KARRIO_API_KEY | base64 -d
+
+   # Test API connectivity
+   curl -H "Authorization: Token $KARRIO_API_KEY" https://api.karrio.io/v1/carriers
+   ```
+
+3. **Build Failures**
+   ```bash
+   # Clear build cache
+   rm -rf .next
+   rm -rf node_modules
+   npm install
+   npm run build
+   ```
+
+### Debugging
+
+```tsx
+// Debug utilities
+export const debug = {
+  logRequest: (req: NextApiRequest) => {
+    if (process.env.DEBUG_MODE === "true") {
+      console.log("🔍 Request:", {
+        method: req.method,
+        url: req.url,
+        headers: req.headers,
+        body: req.body,
+      });
+    }
+  },
+
+  logResponse: (res: any, data: any) => {
+    if (process.env.DEBUG_MODE === "true") {
+      console.log("📤 Response:", {
+        status: res.statusCode,
+        data,
+      });
+    }
+  },
+};
+```
+
+## Next Steps
+
+- **[Examples](/docs/products/app-store/examples)** - See complete deployment examples
+- **[Authentication](/docs/products/app-store/authentication)** - Review security best practices
+- **[API Integration](/docs/products/app-store/api-integration)** - Optimize API usage
+
+---
+
+_Deploy your Karrio Apps with confidence using these battle-tested strategies!_

@@ -1,0 +1,307 @@
+---
+sidebarTitle: Quickstart
+title: Quickstart Guide
+description: Get up and running with Karrio Insiders - set up your superadmin account and manage staff
+tags: [platform, quickstart, admin, users, setup]
+author: Karrio Team
+---
+
+# Quickstart Guide
+
+Welcome to Karrio Insiders! This guide will help you quickly set up your platform, create your superadmin account, and manage your team members.
+
+## First Login
+
+After completing the [installation](../setup), access your Karrio instance:
+
+1. Navigate to your dashboard URL (e.g., `https://app.shipping.company.com` or `http://localhost:3000`)
+2. Log in with the default credentials:
+   - Email: `admin@example.com`
+   - Password: `demo`
+
+![Initial Login Screen](/placeholder.svg)
+
+> ⚠️ **Important**: Change these default credentials immediately after your first login.
+
+## Setting Up Your Superadmin Account
+
+### 1. Change Default Password
+
+After your first login:
+
+1. Click on your profile icon in the top right corner
+2. Select **Account Settings**
+3. Navigate to **Security** tab
+4. Click **Change Password**
+5. Enter the current password (`demo`)
+6. Create a strong new password
+7. Confirm your new password
+8. Click **Update Password**
+
+![Change Password Screen](/placeholder.svg)
+
+### 2. Update Profile Information
+
+Complete your superadmin profile:
+
+1. Navigate to **Account Settings** → **Profile**
+2. Update the following information:
+   - Full Name
+   - Email Address (if different from default)
+   - Phone Number (optional)
+   - Time Zone
+3. Click **Save Changes**
+
+![Profile Settings](/placeholder.svg)
+
+
+## Accessing the Admin Dashboard
+
+As a superadmin, you have access to the platform administration panel:
+
+1. Click on the **Admin** link in the navigation menu
+2. Or navigate directly to `/admin`
+
+The admin dashboard provides access to:
+- Platform configuration
+- User management
+- Carrier network management
+- Feature flags
+- System monitoring
+
+![Admin Dashboard Overview](/placeholder.svg)
+
+## Managing Staff Members
+
+### Creating Your First Staff User
+
+1. Navigate to **Admin** → **User Management**
+2. Click **Invite User** button
+3. Fill in the user details:
+   - **Full Name**: Enter the staff member's name
+   - **Email**: Their email address
+   - **Role**: Select from:
+     - **Member**: Basic access to shipping operations
+     - **Developer**: Access to API keys and developer tools
+     - **Admin**: Full administrative access
+
+![Invite User Dialog](/placeholder.svg)
+
+4. Click **Send Invitation**
+
+The user will receive an email invitation to set up their account.
+
+### User Roles and Permissions
+
+#### Member Role
+- Create and manage shipments
+- Access tracking information
+- View reports
+- Manage personal API keys
+
+#### Developer Role
+All Member permissions plus:
+- Access to developer tools
+- Create and manage webhooks
+- View API logs
+- Access to API documentation
+
+#### Admin Role
+All Developer permissions plus:
+- Access to admin dashboard
+- Manage users and permissions
+- Configure platform settings
+- Manage carrier connections
+- Control feature flags
+
+![User Management Table](/placeholder.svg)
+
+### Managing Existing Users
+
+From the User Management page, you can:
+
+1. **Edit User Details**
+   - Click the menu icon (⋮) next to a user
+   - Select **Edit**
+   - Update their information and permissions
+   - Click **Update User**
+
+2. **Deactivate Users**
+   - Edit the user
+   - Uncheck the **Active** checkbox
+   - Save changes
+
+3. **Remove Users**
+   - Click the menu icon (⋮)
+   - Select **Remove**
+   - Confirm the action
+
+![Edit User Dialog](/placeholder.svg)
+
+## Organization Setup
+
+### Creating Your First Organization
+
+1. Navigate to **Settings** → **Organizations**
+2. Click **Create Organization**
+3. Enter organization details:
+   - Organization Name
+   - Country
+   - Currency
+   - Time Zone
+4. Click **Create**
+
+![Create Organization](/placeholder.svg)
+
+### Inviting Team Members to Organizations
+
+1. Navigate to your organization settings
+2. Click **Members** tab
+3. Click **Invite Member**
+4. Enter their email address
+5. Select their role within the organization
+6. Click **Send Invitation**
+
+![Organization Members](/placeholder.svg)
+
+## Initial Platform Configuration
+
+### 1. White Label Setup
+
+Customize your platform appearance:
+
+1. Go to **Admin** → **Platform**
+2. Update:
+   - Platform Name
+   - Platform Website URL
+3. Save changes
+
+![Platform Configuration](/placeholder.svg)
+
+### 2. Email Configuration
+
+Set up email notifications:
+
+1. Navigate to **Admin** → **Platform**
+2. Click edit icon next to **Email Configuration**
+3. Configure SMTP settings:
+   - Email Host (e.g., `smtp.gmail.com`)
+   - Email Port (e.g., `587`)
+   - Email User
+   - Email Password
+   - From Address
+   - Enable TLS if required
+4. Click **Save Changes**
+
+![Email Configuration](/placeholder.svg)
+
+### 3. Feature Flags
+
+Enable or disable platform features:
+
+1. Go to **Admin** → **Platform**
+2. Click edit icon next to **Features**
+3. Toggle features on/off:
+   - Multi Organizations
+   - Document Management
+   - Workflow Management
+   - Order Management
+   - Apps Management
+4. Save your preferences
+
+![Feature Flags Configuration](/placeholder.svg)
+
+## Setting Up Your First Carrier
+
+1. Navigate to **Admin** → **Carriers Network**
+2. Click **Add Connection**
+3. Select a carrier (e.g., FedEx, UPS, DHL)
+4. Enter carrier credentials
+5. Configure settings:
+   - Set as active/inactive
+   - Select capabilities
+   - Add metadata tags
+6. Click **Create Connection**
+
+![Add Carrier Connection](/placeholder.svg)
+
+## Quick Actions Checklist
+
+After installation, complete these essential tasks:
+
+- [ ] Change default admin password
+- [ ] Update admin profile information
+- [ ] Configure platform name and branding
+- [ ] Set up email configuration
+- [ ] Create your first organization
+- [ ] Invite team members
+- [ ] Configure at least one carrier
+- [ ] Test create a shipment
+
+## Common Next Steps
+
+### For Platform Administrators
+
+1. **Review Security Settings**
+   - Enable audit logging
+   - Configure password policies
+   - Set up IP whitelisting (if needed)
+
+2. **Configure Integrations**
+   - Set up webhooks
+   - Configure API rate limits
+   - Enable third-party integrations
+
+3. **Customize Platform**
+   - Upload company logo
+   - Customize email templates
+   - Configure default settings
+
+### For Development Teams
+
+1. **Generate API Keys**
+   - Navigate to **Developers** → **API Keys**
+   - Create keys for different environments
+   - Set appropriate permissions
+
+2. **Explore API Documentation**
+   - Access OpenAPI/Swagger docs
+   - Review GraphQL schema
+   - Test endpoints in playground
+
+3. **Set Up Development Environment**
+   - Configure webhooks for testing
+   - Set up logging preferences
+   - Create test organizations
+
+![Developer Tools](/placeholder.svg)
+
+## Getting Help
+
+If you encounter any issues:
+
+1. **Check Documentation**
+   - Platform guides in `/docs/platform`
+   - API documentation in `/developers`
+   - Carrier-specific guides
+
+2. **Community Support**
+   - Join our [Discord server](https://discord.gg/gS88uE7sEx)
+   - Browse community forums
+   - Check GitHub issues
+
+3. **Premium Support** (Insiders only)
+   - Email: support@karrio.io
+   - Priority response times
+   - Direct access to engineering team
+
+
+## What's Next?
+
+Now that your platform is set up:
+
+1. **[Configure White Labeling](../guides/white-label)** - Customize the platform for your brand
+2. **[Manage Feature Flags](../guides/feature-flags)** - Control available features
+3. **[Set Up Carriers](../guides/carriers)** - Add more shipping providers
+4. **[Configure Workflows](../guides/workflows)** - Automate shipping processes
+5. **[Explore API](../../developers)** - Integrate with your systems
