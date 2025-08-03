@@ -9,7 +9,9 @@ import { Badge } from "@karrio/ui/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@karrio/ui/components/ui/dialog";
 import { Sheet, SheetContent } from "@karrio/ui/components/ui/sheet";
 import { Textarea } from "@karrio/ui/components/ui/textarea";
-import { Trash2, Plus, Copy, Settings, Eye, EyeOff, Globe, Key, Edit3, Loader2 } from "lucide-react";
+import { Trash2, Plus, Copy, Settings, Eye, EyeOff, Globe, Key, Edit3, Loader2, MoreHorizontal } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@karrio/ui/components/ui/table";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@karrio/ui/components/ui/dropdown-menu";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { formatDateTimeLong } from "@karrio/lib";
 import { useAppStore, useAppMutations } from "@karrio/hooks";
@@ -201,46 +203,78 @@ export function AppsView() {
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {myApps.map((app) => (
-              <Card key={app.id}>
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <CardTitle className="text-base flex items-center gap-2">
-                        <Globe className="h-4 w-4 flex-shrink-0" />
-                        <span className="truncate">{app.display_name}</span>
-                      </CardTitle>
-                      <CardDescription className="mt-1 truncate">
-                        {app.description || "No description provided"}
-                      </CardDescription>
-                    </div>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      <Button variant="ghost" size="sm" onClick={() => setSelectedAppId(app.id)}>
-                        <Edit3 className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => { setDeleteAppId(app.id); setDeleteAppName(app.display_name); }} className="text-red-600 hover:text-red-700">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <Label className="text-xs text-slate-600 flex items-center gap-1"><Key className="h-3 w-3" />Client ID</Label>
-                      <div className="flex items-center gap-2 mt-1">
-                        <code className="flex-1 text-sm bg-slate-50 px-3 py-2 rounded font-mono truncate">{app.client_id}</code>
-                        <Button variant="ghost" size="sm" onClick={() => copyToClipboard(app.client_id, "Client ID")}><Copy className="h-4 w-4" /></Button>
+          <div className="border-b">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>App Name</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead>Client ID</TableHead>
+                  <TableHead>Created</TableHead>
+                  <TableHead className="w-12"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {myApps.map((app) => (
+                  <TableRow key={app.id}>
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-2">
+                        <Globe className="h-4 w-4 text-muted-foreground" />
+                        <span>{app.display_name}</span>
                       </div>
-                    </div>
-                    <div className="text-xs text-slate-500 pt-2 border-t">
-                      Created {formatDateTimeLong(app.created_at)}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                    </TableCell>
+                    <TableCell>
+                      <div className="max-w-md">
+                        <p className="text-sm text-muted-foreground truncate">
+                          {app.description || "No description provided"}
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <code className="text-sm bg-muted px-2 py-1 rounded font-mono">
+                          {app.client_id.substring(0, 8)}...
+                        </code>
+                        <Button variant="ghost" size="sm" onClick={() => copyToClipboard(app.client_id, "Client ID")}>
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm text-muted-foreground">
+                        {formatDateTimeLong(app.created_at)}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => setSelectedAppId(app.id)}>
+                            <Edit3 className="h-4 w-4 mr-2" />
+                            Configure
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => copyToClipboard(app.client_id, "Client ID")}>
+                            <Copy className="h-4 w-4 mr-2" />
+                            Copy Client ID
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => { setDeleteAppId(app.id); setDeleteAppName(app.display_name); }}
+                            className="text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         )}
       </div>
