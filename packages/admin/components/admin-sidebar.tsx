@@ -60,7 +60,6 @@ export function AdminSidebar() {
         </div>
         <div className="flex flex-col">
           <span className="text-sm font-medium">Karrio</span>
-          <span className="text-xs text-muted-foreground">localhost:3000</span>
         </div>
       </div>
       <div className="max-h-[calc(100vh-120px)] overflow-y-auto px-2 py-4">

@@ -6,106 +6,106 @@ This page provides a comprehensive reference for all environment variables you c
 
 These variables control the basic functionality of your Karrio installation.
 
-| Variable | Description | Default | Required |
-| -------- | ----------- | ------- | -------- |
-| `SECRET_KEY` | Django secret key used for cryptographic signing | Random string | Yes |
-| `DEBUG_MODE` | Enable debug mode (not recommended in production) | `False` | No |
-| `USE_HTTPS` | Enable HTTPS support | `False` | No |
-| `DOMAIN` | Your domain name | `localhost` | Yes (for production) |
-| `ALLOWED_HOSTS` | Comma-separated list of allowed hosts | `*` | No |
+| Variable        | Description                                       | Default       | Required             |
+| --------------- | ------------------------------------------------- | ------------- | -------------------- |
+| `SECRET_KEY`    | Django secret key used for cryptographic signing  | Random string | Yes                  |
+| `DEBUG_MODE`    | Enable debug mode (not recommended in production) | `False`       | No                   |
+| `USE_HTTPS`     | Enable HTTPS support                              | `False`       | No                   |
+| `DOMAIN`        | Your domain name                                  | `localhost`   | Yes (for production) |
+| `ALLOWED_HOSTS` | Comma-separated list of allowed hosts             | `*`           | No                   |
 
 ## Database Configuration
 
 These variables configure the PostgreSQL database connection.
 
-| Variable | Description | Default | Required |
-| -------- | ----------- | ------- | -------- |
-| `DATABASE_ENGINE` | Database engine to use | `postgresql_psycopg2` | Yes |
-| `DATABASE_NAME` | Database name | `db` | Yes |
-| `DATABASE_USERNAME` | Database user | `postgres` | Yes |
-| `DATABASE_PASSWORD` | Database password | `postgres` | Yes |
-| `DATABASE_HOST` | Database host | `db` | Yes |
-| `DATABASE_PORT` | Database port | `5432` | Yes |
+| Variable            | Description            | Default               | Required |
+| ------------------- | ---------------------- | --------------------- | -------- |
+| `DATABASE_ENGINE`   | Database engine to use | `postgresql_psycopg2` | Yes      |
+| `DATABASE_NAME`     | Database name          | `db`                  | Yes      |
+| `DATABASE_USERNAME` | Database user          | `postgres`            | Yes      |
+| `DATABASE_PASSWORD` | Database password      | `postgres`            | Yes      |
+| `DATABASE_HOST`     | Database host          | `db`                  | Yes      |
+| `DATABASE_PORT`     | Database port          | `5432`                | Yes      |
 
 ## Redis Configuration
 
 Redis is used for caching and background task management.
 
-| Variable | Description | Default | Required |
-| -------- | ----------- | ------- | -------- |
-| `REDIS_HOST` | Redis host | `redis` | Yes |
-| `REDIS_PORT` | Redis port | `6379` | Yes |
-| `REDIS_PASSWORD` | Redis password (if required) | None | No |
-| `REDIS_DB` | Redis database number | `1` | No |
+| Variable         | Description                  | Default | Required |
+| ---------------- | ---------------------------- | ------- | -------- |
+| `REDIS_HOST`     | Redis host                   | `redis` | Yes      |
+| `REDIS_PORT`     | Redis port                   | `6379`  | Yes      |
+| `REDIS_PASSWORD` | Redis password (if required) | None    | No       |
+| `REDIS_DB`       | Redis database number        | `1`     | No       |
 
 ## API Configuration
 
 These variables configure the Karrio API server.
 
-| Variable | Description | Default | Required |
-| -------- | ----------- | ------- | -------- |
-| `KARRIO_HTTP_PORT` | HTTP port for the API server | `5002` | No |
-| `KARRIO_PUBLIC_URL` | Public URL for the API | `http://localhost:5002` | Yes (for production) |
-| `KARRIO_WORKERS` | Number of API workers | `2` | No |
-| `BACKGROUND_WORKERS` | Number of background workers | `2` | No |
-| `DETACHED_WORKER` | Run worker in detached mode | `False` | No |
+| Variable             | Description                  | Default                 | Required             |
+| -------------------- | ---------------------------- | ----------------------- | -------------------- |
+| `KARRIO_HTTP_PORT`   | HTTP port for the API server | `5002`                  | No                   |
+| `KARRIO_PUBLIC_URL`  | Public URL for the API       | `http://localhost:5002` | Yes (for production) |
+| `KARRIO_WORKERS`     | Number of API workers        | `2`                     | No                   |
+| `BACKGROUND_WORKERS` | Number of background workers | `2`                     | No                   |
+| `DETACHED_WORKER`    | Run worker in detached mode  | `False`                 | No                   |
 
 ## Dashboard Configuration
 
 These variables configure the Karrio dashboard.
 
-| Variable | Description | Default | Required |
-| -------- | ----------- | ------- | -------- |
-| `DASHBOARD_PORT` | HTTP port for the dashboard | `3000` | No |
-| `DASHBOARD_URL` | Public URL for the dashboard | `http://localhost:3000` | Yes (for production) |
-| `NEXTAUTH_SECRET` | Secret key for NextAuth (dashboard auth) | Same as `JWT_SECRET` | Yes |
-| `JWT_SECRET` | Secret key for JWT tokens | Random string | Yes |
+| Variable          | Description                              | Default                 | Required             |
+| ----------------- | ---------------------------------------- | ----------------------- | -------------------- |
+| `DASHBOARD_PORT`  | HTTP port for the dashboard              | `3002`                  | No                   |
+| `DASHBOARD_URL`   | Public URL for the dashboard             | `http://localhost:3002` | Yes (for production) |
+| `NEXTAUTH_SECRET` | Secret key for NextAuth (dashboard auth) | Same as `JWT_SECRET`    | Yes                  |
+| `JWT_SECRET`      | Secret key for JWT tokens                | Random string           | Yes                  |
 
 ## Email Configuration
 
 These variables configure email sending for notifications.
 
-| Variable | Description | Default | Required |
-| -------- | ----------- | ------- | -------- |
-| `EMAIL_HOST` | SMTP server host | None | No |
-| `EMAIL_PORT` | SMTP server port | `587` | No |
-| `EMAIL_HOST_USER` | SMTP username | None | No |
-| `EMAIL_HOST_PASSWORD` | SMTP password | None | No |
-| `EMAIL_USE_TLS` | Use TLS for SMTP connection | `True` | No |
-| `DEFAULT_FROM_EMAIL` | Default sender email address | `noreply@localhost` | No |
+| Variable              | Description                  | Default             | Required |
+| --------------------- | ---------------------------- | ------------------- | -------- |
+| `EMAIL_HOST`          | SMTP server host             | None                | No       |
+| `EMAIL_PORT`          | SMTP server port             | `587`               | No       |
+| `EMAIL_HOST_USER`     | SMTP username                | None                | No       |
+| `EMAIL_HOST_PASSWORD` | SMTP password                | None                | No       |
+| `EMAIL_USE_TLS`       | Use TLS for SMTP connection  | `True`              | No       |
+| `DEFAULT_FROM_EMAIL`  | Default sender email address | `noreply@localhost` | No       |
 
 ## Admin Account
 
 These variables configure the default admin account created on first startup.
 
-| Variable | Description | Default | Required |
-| -------- | ----------- | ------- | -------- |
-| `ADMIN_EMAIL` | Admin user email | `admin@example.com` | No |
-| `ADMIN_PASSWORD` | Admin user password | `demo` | No |
+| Variable         | Description         | Default             | Required |
+| ---------------- | ------------------- | ------------------- | -------- |
+| `ADMIN_EMAIL`    | Admin user email    | `admin@example.com` | No       |
+| `ADMIN_PASSWORD` | Admin user password | `demo`              | No       |
 
 ## File Storage
 
 These variables configure where files are stored.
 
-| Variable | Description | Default | Required |
-| -------- | ----------- | ------- | -------- |
-| `WORK_DIR` | Working directory for the API | `/karrio/app` | No |
-| `LOG_DIR` | Directory for log files | `/karrio/log` | No |
-| `WORKER_DB_DIR` | Directory for worker databases | `/karrio/data` | No |
-| `STATIC_ROOT_DIR` | Directory for static files | `/karrio/static` | No |
+| Variable          | Description                    | Default          | Required |
+| ----------------- | ------------------------------ | ---------------- | -------- |
+| `WORK_DIR`        | Working directory for the API  | `/karrio/app`    | No       |
+| `LOG_DIR`         | Directory for log files        | `/karrio/log`    | No       |
+| `WORKER_DB_DIR`   | Directory for worker databases | `/karrio/data`   | No       |
+| `STATIC_ROOT_DIR` | Directory for static files     | `/karrio/static` | No       |
 
 ## Advanced Configuration
 
 These variables enable advanced features and optimizations.
 
-| Variable | Description | Default | Required |
-| -------- | ----------- | ------- | -------- |
-| `LOG_LEVEL` | Logging level (DEBUG, INFO, WARNING, ERROR) | `INFO` | No |
-| `SENTRY_DSN` | Sentry DSN for error monitoring | None | No |
-| `CORS_ALLOWED_ORIGINS` | Comma-separated list of allowed CORS origins | `*` | No |
-| `MAX_UPLOAD_SIZE` | Maximum upload size in MB | `10` | No |
-| `THROTTLE_RATE` | API throttle rate (requests/minute) | `None` | No |
-| `CACHE_TIMEOUT` | Cache timeout in seconds | `300` | No |
+| Variable               | Description                                  | Default | Required |
+| ---------------------- | -------------------------------------------- | ------- | -------- |
+| `LOG_LEVEL`            | Logging level (DEBUG, INFO, WARNING, ERROR)  | `INFO`  | No       |
+| `SENTRY_DSN`           | Sentry DSN for error monitoring              | None    | No       |
+| `CORS_ALLOWED_ORIGINS` | Comma-separated list of allowed CORS origins | `*`     | No       |
+| `MAX_UPLOAD_SIZE`      | Maximum upload size in MB                    | `10`    | No       |
+| `THROTTLE_RATE`        | API throttle rate (requests/minute)          | `None`  | No       |
+| `CACHE_TIMEOUT`        | Cache timeout in seconds                     | `300`   | No       |
 
 ## Example .env File
 

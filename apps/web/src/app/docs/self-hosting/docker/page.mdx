@@ -40,6 +40,7 @@ For a quick start with minimal configuration, our one-click installation script 
 ```
 
 3. When prompted, provide:
+
    - The release tag you want to use (or accept the default)
    - Your domain name (for production deployment)
 
@@ -50,7 +51,8 @@ For a quick start with minimal configuration, our one-click installation script 
    - Configure SSL certificates (if domain provided)
 
 Once complete, you'll be able to access your Karrio instance at:
-- Dashboard: `https://app.yourdomain.com` (or `http://localhost:3000` for local deployment)
+
+- Dashboard: `https://app.yourdomain.com` (or `http://localhost:3002` for local deployment)
 - API: `https://api.yourdomain.com` (or `http://localhost:5002` for local deployment)
 
 Default login credentials: `admin@example.com` | `demo`
@@ -122,8 +124,8 @@ SECRET_KEY=$(openssl rand -base64 32)
 KARRIO_HTTP_PORT=5002
 
 # Dashboard settings
-DASHBOARD_PORT=3000
-DASHBOARD_URL=http://localhost:3000
+DASHBOARD_PORT=3002
+DASHBOARD_URL=http://localhost:3002
 KARRIO_PUBLIC_URL=http://localhost:5002
 JWT_SECRET=$(openssl rand -base64 32)
 
@@ -139,7 +141,7 @@ docker-compose up -d
 ```
 
 5. Access your Karrio instance:
-   - Dashboard: `http://localhost:3000`
+   - Dashboard: `http://localhost:3002`
    - API: `http://localhost:5002`
 
 Default login credentials: `admin@example.com` | `demo`
@@ -160,7 +162,7 @@ api.your-domain.com {
 }
 
 app.your-domain.com {
-  reverse_proxy karrio.dashboard:3000
+  reverse_proxy karrio.dashboard:3002
 }
 ```
 
@@ -192,7 +194,7 @@ The Karrio Docker deployment consists of the following containers:
 
 - **karrio.api**: The main API server running on port 5002
 - **karrio.worker**: Background worker for processing tasks
-- **karrio.dashboard**: Web interface running on port 3000
+- **karrio.dashboard**: Web interface running on port 3002
 - **karrio.db**: PostgreSQL database server
 - **karrio.redis**: Redis for caching and task queues
 - **karrio.caddy** (hobby deployment): Caddy web server for HTTPS and routing
@@ -234,11 +236,13 @@ docker-compose logs -f karrio.api
 If some containers aren't running:
 
 1. Check the status:
+
 ```bash
 docker-compose ps
 ```
 
 2. View the logs of the failing container:
+
 ```bash
 docker-compose logs <container_name>
 ```
@@ -277,6 +281,7 @@ docker-compose logs karrio.caddy
 ```
 
 Common issues include:
+
 - DNS records not properly configured
 - Ports 80/443 not open in your firewall
 - Incorrect domain name in your configuration
@@ -292,11 +297,13 @@ For hobby deployments, use our upgrade script:
 For manual deployments:
 
 1. Pull the latest images:
+
 ```bash
 docker-compose pull
 ```
 
 2. Restart the services:
+
 ```bash
 docker-compose down
 docker-compose up -d
@@ -307,6 +314,7 @@ docker-compose up -d
 ### Data Persistence
 
 Docker volumes are used to persist data:
+
 - `postgres-data`: Database files
 - `redis-data`: Redis data
 - `karrio-static`: Static files for the web interface

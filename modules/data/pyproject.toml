@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "karrio_server_data"
-version = "2025.5rc9"
+version = "2025.5rc10"
 description = "Multi-carrier shipping API data import/export module"
 readme = "README.md"
 requires-python = ">=3.11"

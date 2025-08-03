@@ -174,7 +174,7 @@ api.your-domain.com {
 }
 
 app.your-domain.com {
-  reverse_proxy karrio.dashboard:3000
+  reverse_proxy karrio.dashboard:3002
 }
 EOL
 
@@ -187,6 +187,7 @@ Remember to replace `your-domain.com`, `app.your-domain.com`, `api.your-domain.c
 ## Step 7: Access Your Karrio Instance
 
 After DNS propagation (which can take up to 24-48 hours, but often much quicker):
+
 - Dashboard: `https://app.your-domain.com`
 - API: `https://api.your-domain.com`
 
@@ -287,6 +288,7 @@ cd ~/karrio
 As your needs grow, you can:
 
 1. **Vertical Scaling**: Increase your Droplet's resources
+
    - Power off your Droplet
    - Select "Resize Droplet" from the control panel
    - Choose a larger plan
@@ -327,5 +329,3 @@ If your Droplet is running out of resources:
 
 1. Monitor resource usage on the Digital Ocean dashboard
 2. Consider upgrading to a larger Droplet size if you're consistently using >70% of CPU or memory
-
-

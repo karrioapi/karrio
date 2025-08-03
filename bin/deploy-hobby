@@ -2,7 +2,7 @@
 
 set -e
 
-export KARRIO_TAG="${KARRIO_TAG:-2025.5rc9}"
+export KARRIO_TAG="${KARRIO_TAG:-2025.5rc10}"
 export SENTRY_DSN="${SENTRY_DSN:-'https://public@sentry.example.com/1'}"
 
 SECRET_KEY=$(head -c 28 /dev/urandom | sha224sum -b | head -c 56)
@@ -22,7 +22,7 @@ echo ""
 if ! [ -z "$1" ]; then
     export KARRIO_TAG=$1
 else
-    echo "What version of Karrio would you like to install? (We default to '2025.5rc9')"
+    echo "What version of Karrio would you like to install? (We default to '2025.5rc10')"
     echo "You can check out available versions here: https://hub.docker.com/r/karrio/server/tags"
     read -r KARRIO_TAG_READ
     if [ -z "$KARRIO_TAG_READ" ]; then
@@ -100,7 +100,7 @@ api.$DOMAIN {
     }
 }
 app.$DOMAIN {
-    reverse_proxy http://dashboard:3000
+    reverse_proxy http://dashboard:3002
 }
 EOF
 

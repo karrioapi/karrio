@@ -50,7 +50,7 @@ services:
     container_name: karrio.dashboard
     image: karrio.docker.scarf.sh/karrio/dashboard:$KARRIO_TAG
     ports:
-      - 3000:3000/tcp
+      - 3002:3000/tcp
     depends_on:
       - api
     environment:

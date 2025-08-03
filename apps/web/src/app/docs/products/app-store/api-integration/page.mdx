@@ -786,7 +786,7 @@ export function useWebSocketConnection(appContext) {
       // Attempt to reconnect after 3 seconds
       reconnectTimeoutRef.current = setTimeout(() => {
         connect();
-      }, 3000);
+      }, 3002);
     };
 
     ws.onerror = (error) => {
