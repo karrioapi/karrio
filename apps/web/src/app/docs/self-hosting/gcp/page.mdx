@@ -155,7 +155,7 @@ api.your-domain.com {
 }
 
 app.your-domain.com {
-  reverse_proxy karrio.dashboard:3000
+  reverse_proxy karrio.dashboard:3002
 }
 EOL
 
@@ -183,6 +183,7 @@ To ensure your Karrio instance remains accessible with the same IP:
 ## Step 7: Configure DNS
 
 1. In your domain registrar or DNS provider, add the following records:
+
    - Type: `A`, Name: `api`, Value: Your VM's static IP
    - Type: `A`, Name: `app`, Value: Your VM's static IP
 
@@ -191,6 +192,7 @@ To ensure your Karrio instance remains accessible with the same IP:
 ## Step 8: Access Your Karrio Instance
 
 After DNS propagation:
+
 - Dashboard: `https://app.your-domain.com`
 - API: `https://api.your-domain.com`
 
@@ -247,6 +249,7 @@ chmod +x ~/backup_karrio.sh
 ### Setting Up Google Cloud Storage for Backups (Optional)
 
 1. Create a Storage Bucket:
+
    - In the Google Cloud Console, navigate to "Storage" > "Browser"
    - Click "Create Bucket"
    - Name your bucket (e.g., `karrio-backups-YOUR-PROJECT`)
@@ -326,5 +329,3 @@ To optimize your GCP costs:
 2. Consider using preemptible VMs for non-production environments
 3. Right-size your VM instance based on actual usage
 4. Set up budget alerts in the Google Cloud Console
-
-

@@ -60,6 +60,29 @@ echo ""
 cd "$ROOT_DIR"
 
 # =============================================================================
+# PREREQUISITES CHECK
+# =============================================================================
+print_step "Checking prerequisites..."
+
+# Check if running with proper permissions
+if [[ "$(uname -s)" == "Linux" ]] && [[ $EUID -ne 0 ]] && ! groups | grep -qE "sudo|wheel"; then
+    print_warning "You may need sudo permissions to install system packages"
+    print_warning "Some installation steps might fail without proper permissions"
+fi
+
+# Check internet connectivity
+if ! curl -s --head https://pypi.org >/dev/null 2>&1; then
+    print_error "No internet connection detected. This script requires internet access."
+    if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+        return 1
+    else
+        exit 1
+    fi
+fi
+
+print_success "Prerequisites check passed"
+
+# =============================================================================
 # STEP 1: SYSTEM DEPENDENCIES
 # =============================================================================
 print_step "Installing system dependencies..."
@@ -78,13 +101,49 @@ if [[ "$(uname)" == "Darwin" ]]; then
 elif [[ "$(uname -s)" == "Linux" ]]; then
     # Linux
     print_step "Installing Linux dependencies..."
-    sudo apt update -y && sudo apt install -y \
+    
+    # First update package lists
+    print_step "Updating package lists..."
+    if ! sudo apt update -y; then
+        print_error "Failed to update package lists"
+        if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+            return 1
+        else
+            exit 1
+        fi
+    fi
+    
+    # Install pyenv build dependencies as per official wiki
+    print_step "Installing pyenv build dependencies..."
+    if ! sudo apt install -y make build-essential libssl-dev zlib1g-dev \
+        libbz2-dev libreadline-dev libsqlite3-dev curl git \
+        libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev; then
+        print_error "Failed to install pyenv build dependencies. This is critical for Python compilation."
+        if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+            return 1
+        else
+            exit 1
+        fi
+    fi
+    
+    # Install additional dependencies for Python and Karrio
+    print_step "Installing additional dependencies..."
+    sudo apt install -y \
+        pkg-config wget llvm libncurses5-dev \
+        python3-full python3-pip python3-venv python3-dev \
         libpango-1.0-0 libharfbuzz0b libpangoft2-1.0-0 libharfbuzz-subset0 \
-        gcc ghostscript libffi-dev libjpeg-dev libopenjp2-7-dev zint curl git || {
+        gcc ghostscript libjpeg-dev libopenjp2-7-dev zint || {
         print_warning "Some packages may already be installed"
     }
+    
+    # Try to install version-specific python venv packages
+    print_step "Installing Python venv packages..."
+    for version in 3.13 3.12 3.11; do
+        sudo apt install -y python${version}-venv 2>/dev/null || true
+    done
 fi
 print_success "System dependencies installed"
+
 
 # =============================================================================
 # STEP 2: DOCKER INSTALLATION CHECK
@@ -123,26 +182,42 @@ if ! command_exists pyenv; then
         # macOS
         brew install pyenv
     elif [[ "$(uname -s)" == "Linux" ]]; then
-        # Linux
-        curl https://pyenv.run | bash
+        # Linux - install pyenv
+        if [[ ! -d "$HOME/.pyenv" ]]; then
+            curl https://pyenv.run | bash
+        else
+            print_step "pyenv directory exists, updating..."
+            cd "$HOME/.pyenv" && git pull 2>/dev/null || true
+            cd "$ROOT_DIR"
+        fi
     fi
+else
+    print_success "pyenv already available"
 fi
 
-# Setup pyenv environment
+# Setup pyenv environment - critical for the script to work
 export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init --path)" 2>/dev/null || true
-eval "$(pyenv init -)" 2>/dev/null || true
+if [[ -d "$PYENV_ROOT/bin" ]]; then
+    export PATH="$PYENV_ROOT/bin:$PATH"
+fi
+
+# Initialize pyenv if it exists
+if [[ -d "$PYENV_ROOT" ]]; then
+    eval "$(pyenv init --path)" 2>/dev/null || true
+    eval "$(pyenv init -)" 2>/dev/null || true
+fi
 
 # Add pyenv to shell profile if not already there
 for shell_config in ~/.bashrc ~/.zshrc ~/.profile; do
     if [[ -f "$shell_config" ]] && ! grep -q "pyenv init" "$shell_config"; then
+        print_step "Adding pyenv to $shell_config"
         echo '' >> "$shell_config"
         echo '# pyenv configuration' >> "$shell_config"
         echo 'export PYENV_ROOT="$HOME/.pyenv"' >> "$shell_config"
-        echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> "$shell_config"
+        echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> "$shell_config"
         echo 'eval "$(pyenv init --path)"' >> "$shell_config"
         echo 'eval "$(pyenv init -)"' >> "$shell_config"
+        break
     fi
 done
 
@@ -153,26 +228,82 @@ if command_exists brew && brew list pyenv >/dev/null 2>&1; then
     (brew update && brew upgrade pyenv) 2>/dev/null || true
 fi
 
-# Install Python 3.12.x
-print_step "Installing Python 3.12..."
-PYTHON_VERSION=$(pyenv install --list 2>/dev/null | grep -E "^\s*3\.12\.[0-9]+$" | tail -1 | xargs)
-if [[ -z "$PYTHON_VERSION" ]]; then
-    PYTHON_VERSION="3.12"
+# Reload pyenv environment
+print_step "Setting up pyenv environment..."
+export PYENV_ROOT="$HOME/.pyenv"
+if [[ -d "$PYENV_ROOT/bin" ]]; then
+    export PATH="$PYENV_ROOT/bin:$PATH"
 fi
 
-if ! pyenv versions 2>/dev/null | grep -q "$PYTHON_VERSION"; then
-    print_step "Python $PYTHON_VERSION not found, installing..."
+if [[ -d "$PYENV_ROOT" ]]; then
+    eval "$(pyenv init --path)" 2>/dev/null || true
+    eval "$(pyenv init -)" 2>/dev/null || true
+fi
+
+if ! command_exists pyenv; then
+    print_error "pyenv not available. Please restart your shell and run this script again."
+    if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+        return 1
+    else
+        exit 1
+    fi
+fi
+
+# Install latest Python 3.12.x
+print_step "Finding latest Python 3.12.x version..."
+
+# Get the latest 3.12.x version
+PYTHON_VERSION=$(pyenv install --list 2>/dev/null | grep -E "^\s*3\.12\.[0-9]+$" | tail -1 | xargs)
+
+if [[ -z "$PYTHON_VERSION" ]]; then
+    PYTHON_VERSION="3.12.11"  # Fallback
+fi
+
+print_step "Installing Python $PYTHON_VERSION"
+
+# Check if the specific version is already installed
+if pyenv versions 2>/dev/null | grep -q "$PYTHON_VERSION"; then
+    print_success "Python $PYTHON_VERSION already installed"
+else
+    print_step "Installing Python $PYTHON_VERSION (this may take a few minutes)..."
+    
+    # For Linux, ensure all build dependencies are available
+    if [[ "$(uname -s)" == "Linux" ]]; then
+        if ! command_exists make; then
+            print_error "'make' command not found. Build dependencies may not be properly installed."
+            print_error "Please ensure build-essential is installed: sudo apt install build-essential"
+            if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+                return 1
+            else
+                exit 1
+            fi
+        fi
+    fi
+    
+    # Install Python with appropriate compiler flags
+    print_step "Compiling Python $PYTHON_VERSION from source..."
     CFLAGS="-Wno-error=array-bounds -Wno-error=stringop-overflow -Wno-error=incompatible-pointer-types" \
     pyenv install "$PYTHON_VERSION" || {
         print_error "Failed to install Python $PYTHON_VERSION"
-        print_warning "Continuing with setup anyway..."
+        if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+            return 1
+        else
+            exit 1
+        fi
     }
-else
-    print_success "Python $PYTHON_VERSION already installed"
+    
+    print_success "Python $PYTHON_VERSION installed successfully"
 fi
 
 # Set local Python version
-pyenv local "$PYTHON_VERSION"
+pyenv local "$PYTHON_VERSION" || {
+    print_error "Failed to set Python version"
+    if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+        return 1
+    else
+        exit 1
+    fi
+}
 pyenv rehash
 print_success "Python $PYTHON_VERSION set up"
 
@@ -208,23 +339,33 @@ fi
 print_step "Setting up Python virtual environment..."
 
 # Create necessary directories
-mkdir -p .karrio/app .karrio/log .karrio/data .karrio/static .karrio/caddy .karrio/ssl
+mkdir -p .karrio/app .karrio/log .karrio/data .karrio/static
 
 # Use setup-server-env to install Python dependencies
 if [[ -f "bin/setup-server-env" ]]; then
     print_step "Installing Python dependencies using setup-server-env..."
     export CFLAGS="-Wno-error=array-bounds -Wno-error=stringop-overflow -Wno-error=incompatible-pointer-types"
 
-    # Run setup-server-env in a subshell to prevent it from exiting our script
+    # Run setup-server-env
     print_step "Running setup-server-env (this may take a while)..."
     if (
         cd "$ROOT_DIR"
-        # Run without verbose output to speed up
+        export PYENV_ROOT="$HOME/.pyenv"
+        export PATH="$PYENV_ROOT/bin:$PATH"
+        if [[ -d "$PYENV_ROOT" ]]; then
+            eval "$(pyenv init --path)" 2>/dev/null || true
+            eval "$(pyenv init -)" 2>/dev/null || true
+        fi
         ./bin/setup-server-env
     ); then
         print_success "Python environment and dependencies installed"
     else
-        print_warning "setup-server-env exited with an error, but continuing..."
+        print_error "setup-server-env failed"
+        if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+            return 1
+        else
+            exit 1
+        fi
     fi
 
     unset CFLAGS
@@ -254,145 +395,87 @@ else
 fi
 
 # =============================================================================
-# STEP 7: CADDY INSTALLATION
+# STEP 7: ENVIRONMENT FILES
 # =============================================================================
-print_step "Setting up Caddy for local SSL..."
 
-if ! command_exists caddy; then
-    if [[ "$(uname)" == "Darwin" ]]; then
-        brew install caddy
-    elif [[ "$(uname -s)" == "Linux" ]]; then
-        # Install Caddy on Linux
-        sudo apt update
-        sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https
-        curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
-        curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
-        sudo apt update
-        sudo apt install caddy
-    fi
-fi
-
-if command_exists caddy; then
-    print_success "Caddy installed"
-else
-    print_error "Failed to install Caddy"
-    if [[ "$SCRIPT_SOURCED" == "true" ]]; then
-        return 1
-    else
-        exit 1
-    fi
-fi
-
-# =============================================================================
-# STEP 8: CADDY CONFIGURATION
-# =============================================================================
-print_step "Creating Caddy configuration..."
-
-cat > .karrio/caddy/Caddyfile << 'EOF'
-# Karrio Local Development Proxy
-{
-    local_certs
-}
-
-api.karrio.local {
-    reverse_proxy localhost:5002
-    log {
-        output file .karrio/caddy/api.log
-        level INFO
-    }
-}
-
-app.karrio.local {
-    reverse_proxy localhost:3000
-    log {
-        output file .karrio/caddy/app.log
-        level INFO
-    }
-}
-
-http://api.karrio.local {
-    redir https://api.karrio.local{uri}
-}
-
-http://app.karrio.local {
-    redir https://app.karrio.local{uri}
-}
-EOF
-
-print_success "Caddy configuration created"
-
-# =============================================================================
-# STEP 9: LOCAL DOMAINS SETUP
-# =============================================================================
-print_step "Setting up local domains..."
-
-# Use manage-hosts script if available
-if [[ -f "bin/manage-hosts" ]]; then
-    print_step "Using manage-hosts to configure local domains..."
-    ./bin/manage-hosts add || {
-        print_warning "Failed to add domains using manage-hosts"
-        print_warning "You may need to run: sudo ./bin/manage-hosts add"
-    }
-else
-    # Fallback to manual method
-    if ! grep -q "api.karrio.local" /etc/hosts 2>/dev/null; then
-        print_warning "Local domains not configured in /etc/hosts"
-        print_warning "Please run: echo '127.0.0.1 api.karrio.local app.karrio.local' | sudo tee -a /etc/hosts"
-    fi
-fi
-
-# Trust Caddy certificates
-print_step "Installing Caddy's local CA..."
-if command_exists caddy; then
-    # First try direct trust (may work if CA already exists)
-    if caddy trust 2>/dev/null; then
-        print_success "Caddy CA installed successfully"
-    else
-        # Start Caddy temporarily to generate CA, then trust it
-        print_step "Starting Caddy temporarily to generate CA..."
-        caddy run --config .karrio/caddy/Caddyfile >/dev/null 2>&1 &
-        CADDY_PID=$!
-        
-        # Wait for Caddy to start and generate CA
-        sleep 3
-        
-        # Try to trust the CA
-        if caddy trust 2>/dev/null; then
-            print_success "Caddy CA installed successfully"
-        else
-            print_warning "Failed to install Caddy CA. You may see SSL warnings."
-            print_warning "Try running: sudo caddy trust (when Caddy is running)"
-        fi
-        
-        # Stop the temporary Caddy instance
-        kill $CADDY_PID 2>/dev/null || true
-        wait $CADDY_PID 2>/dev/null || true
-    fi
-else
-    print_warning "Caddy not found, skipping CA installation"
-fi
-
-# =============================================================================
-# STEP 10: ENVIRONMENT FILES
-# =============================================================================
 print_step "Setting up environment files..."
 
-# Copy main .env file
-if [[ ! -f ".env" ]] && [[ -f ".env.sample" ]]; then
-    cp ".env.sample" ".env"
-    print_success "Created .env from .env.sample"
+# Setup main server .env file
+if [[ -f ".env" ]]; then
+    # File exists, ask user if they want to overwrite
+    print_warning "Main .env already exists"
+    echo -n "Do you want to overwrite it with .env.sample? [y/N]: "
+    read -r response
+    if [[ "$response" =~ ^[Yy]$ ]]; then
+        if [[ -f ".env.sample" ]]; then
+            cp ".env.sample" ".env"
+            print_success "Updated .env from .env.sample (optimized for local development)"
+        else
+            print_warning ".env.sample not found, skipping main .env update"
+        fi
+    else
+        print_success "Main .env kept unchanged"
+    fi
+else
+    # File doesn't exist, create it
+    if [[ -f ".env.sample" ]]; then
+        cp ".env.sample" ".env"
+        print_success "Created .env from .env.sample (optimized for local development)"
+    else
+        print_warning ".env.sample not found, skipping main .env creation"
+    fi
 fi
 
-# Copy dashboard .env file
-if [[ ! -f "apps/dashboard/.env" ]] && [[ -f "apps/dashboard/.env.sample" ]]; then
-    cp "apps/dashboard/.env.sample" "apps/dashboard/.env"
-    print_success "Created dashboard .env from .env.sample"
+# Setup dashboard .env file
+if [[ -f "apps/dashboard/.env" ]]; then
+    # File exists, ask user if they want to overwrite
+    print_warning "Dashboard .env already exists"
+    echo -n "Do you want to overwrite it with .env.sample? [y/N]: "
+    read -r response
+    if [[ "$response" =~ ^[Yy]$ ]]; then
+        if [[ -f "apps/dashboard/.env.sample" ]]; then
+            cp "apps/dashboard/.env.sample" "apps/dashboard/.env"
+            print_success "Updated dashboard .env from .env.sample"
+        else
+            print_warning "apps/dashboard/.env.sample not found, skipping dashboard .env update"
+        fi
+    else
+        print_success "Dashboard .env kept unchanged"
+    fi
+else
+    # File doesn't exist, create it
+    if [[ -f "apps/dashboard/.env.sample" ]]; then
+        cp "apps/dashboard/.env.sample" "apps/dashboard/.env"
+        print_success "Created dashboard .env from .env.sample"
+    else
+        print_warning "apps/dashboard/.env.sample not found, skipping dashboard .env creation"
+    fi
 fi
+
+# Display environment setup summary
+print_success "Environment files configured for local development"
+echo ""
+echo -e "${CYAN}Environment Configuration Summary:${NC}"
+echo "   → API Server: http://localhost:5002"
+echo "   → Dashboard: http://localhost:3002"
+echo "   → SQLite Database: .karrio/db.sqlite3"
+echo "   → Work Directory: .karrio/"
 
 # =============================================================================
 # COMPLETION
 # =============================================================================
 echo ""
+
+# Check if setup was successful
+if ! command_exists pyenv; then
+    print_warning "Setup incomplete - please restart your shell and run this script again"
+    if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+        return 0
+    else
+        exit 0
+    fi
+fi
+
 print_success "Development environment setup complete! 🎉"
 echo ""
 echo -e "${YELLOW}Next steps:${NC}"
@@ -413,9 +496,9 @@ echo "5. Start development servers:"
 echo "   ./bin/start-dev"
 echo ""
 echo -e "${GREEN}Access your application at:${NC}"
-echo "   → API: https://api.karrio.local"
-echo "   → Dashboard: https://app.karrio.local"
-echo "   → Admin: https://api.karrio.local/admin"
+echo "   → API: http://localhost:5002"
+echo "   → Dashboard: http://localhost:3002"
+echo "   → Admin: http://localhost:5002/admin"
 echo ""
 
 # Check for any warnings
@@ -423,10 +506,6 @@ if [[ "$(uname -s)" == "Linux" ]] && ! groups | grep -q docker; then
     print_warning "Please log out and log back in for Docker permissions"
 fi
 
-if ! grep -q "api.karrio.local" /etc/hosts 2>/dev/null; then
-    print_warning "Don't forget to add local domains to /etc/hosts"
-    print_warning "Run: sudo ./bin/manage-hosts add"
-fi
 
 # =============================================================================
 # FINAL SETUP
@@ -437,13 +516,13 @@ if [[ "$SCRIPT_SOURCED" == "true" ]]; then
     print_step "Activating Python environment..."
     if [[ -f "bin/activate-env" ]]; then
         source "bin/activate-env"
-        
+
         # Fix double parentheses in prompt if they exist
         if [[ "$PS1" == *"((karrio) )"* ]]; then
             PS1="$(echo "$PS1" | sed 's/((karrio) )/(karrio) /')"
             export PS1
         fi
-        
+
         print_success "Python environment activated!"
     else
         print_warning "bin/activate-env not found, skipping activation"

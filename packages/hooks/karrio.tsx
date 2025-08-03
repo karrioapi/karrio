@@ -114,7 +114,7 @@ function requestInterceptor(session?: ExtendedSessionType) {
       ? { authorization: `Bearer ${session.accessToken}` }
       : {};
     const orgHeader: any = !!session?.orgId
-      ? { "x-org-id": getCookie("orgId") }
+      ? { "x-org-id": session.orgId }
       : {};
 
     config.headers = {

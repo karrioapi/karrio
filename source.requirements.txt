@@ -3,7 +3,7 @@ asgiref==3.9.1
 attrs==25.3.0
 backoff==2.2.1
 Brotli==1.1.0
-certifi==2025.7.14
+certifi==2025.8.3
 cffi==1.17.1
 charset-normalizer==3.4.2
 click==8.2.1
@@ -87,7 +87,7 @@ oauthlib==3.3.1
 packaging==25.0
 phonenumbers==9.0.10
 pillow==11.3.0
-posthog==6.3.1
+posthog==6.3.3
 psutil==7.0.0
 psycopg2-binary==2.9.10
 py-soap==2020.3.2
@@ -108,7 +108,7 @@ redis==6.2.0
 referencing==0.36.2
 requests==2.32.4
 rpds-py==0.26.0
-sentry-sdk==2.33.2
+sentry-sdk==2.34.1
 six==1.17.0
 sqlparse==0.5.3
 strawberry-graphql==0.278.0

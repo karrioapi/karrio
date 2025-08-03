@@ -4,7 +4,6 @@
 # KARRIO DEVELOPMENT SERVER STARTER
 # =============================================================================
 # Starts the complete Karrio development environment:
-# - Caddy SSL proxy for local domains
 # - Karrio API server
 # - Karrio Dashboard
 # =============================================================================
@@ -50,18 +49,6 @@ echo ""
 # =============================================================================
 print_step "Checking prerequisites..."
 
-# Check Caddy
-if ! command_exists caddy; then
-    print_error "Caddy not found. Please run ./bin/setup-dev-env first"
-    exit 1
-fi
-
-# Check Caddyfile
-if [[ ! -f ".karrio/caddy/Caddyfile" ]]; then
-    print_error "Caddyfile not found. Please run ./bin/setup-dev-env first"
-    exit 1
-fi
-
 # Check Python virtual environment
 if [[ ! -d ".venv/karrio" ]]; then
     print_error "Python virtual environment not found. Please run ./bin/setup-dev-env first"
@@ -74,12 +61,6 @@ if [[ ! -d "node_modules" ]]; then
     npm install
 fi
 
-# Check local domains
-if ! grep -q "api.karrio.local" /etc/hosts 2>/dev/null; then
-    print_warning "Local domains not configured in /etc/hosts"
-    print_warning "Run: sudo ./bin/manage-hosts add"
-fi
-
 print_success "All prerequisites satisfied"
 
 # =============================================================================
@@ -88,24 +69,23 @@ print_success "All prerequisites satisfied"
 cleanup() {
     echo ""
     echo "Shutting down development environment..."
-    
+
     # Kill all child processes
     pkill -P $$ 2>/dev/null || true
-    
+
     # Kill specific processes by port
-    for port in 5002 3000 443; do
+    for port in 5002 3002; do
         # macOS doesn't have xargs -r, so we handle it differently
         pids=$(lsof -ti :$port 2>/dev/null || true)
         if [[ -n "$pids" ]]; then
             echo "$pids" | xargs kill 2>/dev/null || true
         fi
     done
-    
+
     # Additional cleanup for common processes
-    pkill -f "caddy run" 2>/dev/null || true
     pkill -f "karrio runserver" 2>/dev/null || true
     pkill -f "npm.*@karrio/dashboard" 2>/dev/null || true
-    
+
     echo "Development environment stopped"
     exit 0
 }
@@ -116,14 +96,6 @@ trap cleanup SIGINT SIGTERM EXIT
 # =============================================================================
 # START SERVICES
 # =============================================================================
-
-# Start Caddy
-print_step "Starting Caddy SSL proxy..."
-cd .karrio/caddy
-caddy run --config Caddyfile &
-CADDY_PID=$!
-cd - > /dev/null
-sleep 2
 
 # Start API server
 print_step "Starting Karrio API server..."
@@ -153,13 +125,9 @@ echo ""
 print_success "Development environment started! 🚀"
 echo ""
 echo -e "${GREEN}Access your application:${NC}"
-echo "   → API: https://api.karrio.local"
-echo "   → Dashboard: https://app.karrio.local"
-echo "   → Admin: https://api.karrio.local/admin"
-echo ""
-echo -e "${YELLOW}Direct access (if domains not configured):${NC}"
 echo "   → API: http://localhost:5002"
-echo "   → Dashboard: http://localhost:3000"
+echo "   → Dashboard: http://localhost:3002"
+echo "   → Admin: http://localhost:5002/admin"
 echo ""
 echo -e "${CYAN}Press Ctrl+C to stop all services${NC}"
 echo ""

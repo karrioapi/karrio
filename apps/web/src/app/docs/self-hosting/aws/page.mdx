@@ -173,7 +173,7 @@ api.your-domain.com {
 }
 
 app.your-domain.com {
-  reverse_proxy karrio.dashboard:3000
+  reverse_proxy karrio.dashboard:3002
 }
 EOL
 
@@ -186,6 +186,7 @@ Remember to replace `your-domain.com`, `app.your-domain.com`, `api.your-domain.c
 ## Step 5: Configure DNS
 
 1. In your domain registrar or DNS provider, add the following records:
+
    - Type: `A`, Name: `api`, Value: Your EC2 instance's public IP
    - Type: `A`, Name: `app`, Value: Your EC2 instance's public IP
 
@@ -194,6 +195,7 @@ Remember to replace `your-domain.com`, `app.your-domain.com`, `api.your-domain.c
 ## Step 6: Access Your Karrio Instance
 
 After DNS propagation:
+
 - Dashboard: `https://app.your-domain.com`
 - API: `https://api.your-domain.com`
 
@@ -290,5 +292,3 @@ If your instance is running out of resources:
 
 1. Check usage with `top` or `htop`
 2. Consider upgrading to a larger instance type through the AWS console
-
-

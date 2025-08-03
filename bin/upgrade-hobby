@@ -41,7 +41,7 @@ else
 fi
 
 [[ -f ".env" ]] && export $(cat .env | xargs) || (echo "No .env file found. Please create it with SECRET_KEY and DOMAIN set." && exit 1)
-export KARRIO_TAG="${KARRIO_TAG:-2025.5rc9}"
+export KARRIO_TAG="${KARRIO_TAG:-2025.5rc10}"
 
 # get karrio scripts
 mkdir -p ./karrio

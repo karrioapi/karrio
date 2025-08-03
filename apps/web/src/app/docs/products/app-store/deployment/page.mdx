@@ -149,7 +149,7 @@ your-karrio-app/
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "type-check": "tsc --noEmit",
     "docker:build": "docker build -t your-app .",
-    "docker:run": "docker run -p 3000:3000 your-app"
+    "docker:run": "docker run -p 3002:3002 your-app"
   }
 }
 ```
@@ -556,9 +556,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 
-EXPOSE 3000
+EXPOSE 3002
 
-ENV PORT 3000
+ENV PORT 3002
 ENV HOSTNAME "0.0.0.0"
 
 CMD ["node", "server.js"]
@@ -572,7 +572,7 @@ services:
   app:
     build: .
     ports:
-      - "3000:3000"
+      - "3002:3002"
     environment:
       - NODE_ENV=production
       - DATABASE_URL=${DATABASE_URL}
@@ -699,7 +699,7 @@ RATE_LIMIT_ENABLED=true
 
 set -e
 
-BLUE_PORT=3000
+BLUE_PORT=3002
 GREEN_PORT=3001
 CURRENT_PORT=$(curl -s http://localhost/health | jq -r '.port' || echo $BLUE_PORT)
 
@@ -719,7 +719,7 @@ docker build -t karrio-app:$DEPLOY_COLOR .
 # Start new container
 docker run -d \
   --name karrio-app-$DEPLOY_COLOR \
-  --port $DEPLOY_PORT:3000 \
+  --port $DEPLOY_PORT:3002 \
   --env-file .env.production \
   karrio-app:$DEPLOY_COLOR
 
@@ -782,7 +782,7 @@ spec:
         - name: karrio-app
           image: ghcr.io/your-org/karrio-app:latest
           ports:
-            - containerPort: 3000
+            - containerPort: 3002
           env:
             - name: NODE_ENV
               value: "production"
@@ -806,13 +806,13 @@ spec:
           livenessProbe:
             httpGet:
               path: /health
-              port: 3000
+              port: 3002
             initialDelaySeconds: 30
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /ready
-              port: 3000
+              port: 3002
             initialDelaySeconds: 5
             periodSeconds: 5
 
@@ -827,7 +827,7 @@ spec:
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 3000
+      targetPort: 3002
   type: LoadBalancer
 
 ---
@@ -1009,8 +1009,8 @@ export function logAPIError(error, context) {
 # .env.example
 # Application
 NODE_ENV=development
-PORT=3000
-APP_URL=http://localhost:3000
+PORT=3002
+APP_URL=http://localhost:3002
 
 # Karrio API
 KARRIO_API_URL=https://api.karrio.io
@@ -1086,8 +1086,8 @@ function validateConfig(): Config {
     app: {
       name: process.env.npm_package_name || "karrio-app",
       version: process.env.npm_package_version || "1.0.0",
-      url: process.env.APP_URL || "http://localhost:3000",
-      port: parseInt(process.env.PORT || "3000"),
+      url: process.env.APP_URL || "http://localhost:3002",
+      port: parseInt(process.env.PORT || "3002"),
     },
     karrio: {
       apiUrl: process.env.KARRIO_API_URL!,

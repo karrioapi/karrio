@@ -15,7 +15,7 @@ export class AppApiClient {
   constructor(config: AppApiClientConfig) {
     this.appId = config.appId;
     this.installationId = config.installationId;
-    this.baseURL = config.baseURL || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
+    this.baseURL = config.baseURL || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3002');
   }
 
   /**

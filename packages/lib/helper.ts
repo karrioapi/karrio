@@ -562,24 +562,24 @@ export function createShipmentFromOrders(
   const customs = isDocument
     ? null
     : {
-        ...DEFAULT_CUSTOMS_CONTENT,
-        commercial_invoice: true,
-        invoice: orderList[0].order_id,
-        invoice_date:
-          order_options.invoice_date || moment().format("YYYY-MM-DD"),
-        incoterm: payment?.paid_by == "sender" ? "DDP" : "DDU",
-        commodities: getShipmentCommodities({ parcels } as any),
-        duty: {
-          ...DEFAULT_CUSTOMS_CONTENT.duty,
-          currency: order_options?.currency,
-          paid_by: order_options.duty_paid_by || payment?.paid_by,
-          account_number:
-            order_options.duty_account_number || payment?.account_number,
-          declared_value,
-        },
-        duty_billing_address: billing_address,
-        options: workspace_config?.customsOptions || {},
-      };
+      ...DEFAULT_CUSTOMS_CONTENT,
+      commercial_invoice: true,
+      invoice: orderList[0].order_id,
+      invoice_date:
+        order_options.invoice_date || moment().format("YYYY-MM-DD"),
+      incoterm: payment?.paid_by == "sender" ? "DDP" : "DDU",
+      commodities: getShipmentCommodities({ parcels } as any),
+      duty: {
+        ...DEFAULT_CUSTOMS_CONTENT.duty,
+        currency: order_options?.currency,
+        paid_by: order_options.duty_paid_by || payment?.paid_by,
+        account_number:
+          order_options.duty_account_number || payment?.account_number,
+        declared_value,
+      },
+      duty_billing_address: billing_address,
+      options: workspace_config?.customsOptions || {},
+    };
 
   return {
     ...(shipper ? { shipper: shipper as any } : {}),
@@ -677,5 +677,5 @@ export function getBaseUrl() {
     // reference for render.com
     return `http://${process.env.RENDER_INTERNAL_HOSTNAME}:${process.env.PORT}`;
   // assume localhost
-  return `http://localhost:${process.env.PORT ?? 3000}`;
+  return `http://localhost:${process.env.PORT ?? 3002}`;
 }

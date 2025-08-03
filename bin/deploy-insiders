@@ -2,7 +2,7 @@
 
 set -e
 
-export KARRIO_TAG="${KARRIO_TAG:-2025.5rc9}"
+export KARRIO_TAG="${KARRIO_TAG:-2025.5rc10}"
 export SENTRY_DSN="${SENTRY_DSN:-'https://public@sentry.example.com/1'}"
 
 SECRET_KEY=$(head -c 28 /dev/urandom | sha224sum -b | head -c 56)
@@ -108,7 +108,7 @@ api.$DOMAIN {
     }
 }
 app.$DOMAIN {
-    reverse_proxy http://dashboard:3000
+    reverse_proxy http://dashboard:3002
 }
 EOF
 

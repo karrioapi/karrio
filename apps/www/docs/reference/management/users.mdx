@@ -30,13 +30,13 @@ Karrio automatically require an email confirmation if the an email server is con
 
 You can configure your Karrio email server at http://localhost:5002/admin/constance/config/
 
--   EMAIL_USE_TLS
--   EMAIL_HOST_USER
--   EMAIL_HOST_PASSWORD
--   EMAIL_HOST
--   EMAIL_PORT
--   EMAIL_PAGE_DOMAIN
--   EMAIL_FROM_ADDRESS
+- EMAIL_USE_TLS
+- EMAIL_HOST_USER
+- EMAIL_HOST_PASSWORD
+- EMAIL_HOST
+- EMAIL_PORT
+- EMAIL_PAGE_DOMAIN
+- EMAIL_FROM_ADDRESS
 
 The `EMAIL_PAGE_DOMAIN` should be set to the domain name of your Karrio dashboard.
 
@@ -71,10 +71,10 @@ flowchart TD
 
 To create a new user account, use the accountRegister mutation. The mutation takes the following input fields:
 
--   `email`: user's email address.
--   `password1`: user's password.
--   `password2`: user's password confirmation.
--   `full_name`: optionally, user's full name.
+- `email`: user's email address.
+- `password1`: user's password.
+- `password2`: user's password confirmation.
+- `full_name`: optionally, user's full name.
 
 ```graphql
 mutation {
@@ -103,7 +103,7 @@ As mentioned above, if the you have configured the karrio server email settings,
 the user will receive an email with a link to activate their account.
 
 ```
-http://localhost:3000/email/YWxleC5taWxsZXIyNEBvdXRsb29rLmNvbQ-axd6yl-ce379fa50ced5079908ab669cabb456a89f441c2
+http://localhost:3002/email/YWxleC5taWxsZXIyNEBvdXRsb29rLmNvbQ-axd6yl-ce379fa50ced5079908ab669cabb456a89f441c2
 ```
 
 The link contains a `token` which is required to proceed with the second mutation, `confirm_email`:
@@ -207,15 +207,15 @@ send an email with a unique link to reset the password.
 
 The mutation takes the following input fields:
 
--   `email`: user's email address.
--   `redirect_url`: path to a view where the user should be redirected to reset the password.
+- `email`: user's email address.
+- `redirect_url`: path to a view where the user should be redirected to reset the password.
 
 ```graphql
 mutation {
     request_password_reset(
         input: {
             email: "test@example.com"
-            redirect_url: "localhost:3000/password/reset"
+            redirect_url: "localhost:3002/password/reset"
         }
     ) {
         errors {
@@ -230,7 +230,7 @@ As a result, if there are no errors in the response, the system sends an email t
 user@example.com with a link to provide a new password, for example:
 
 ```
-http://localhost:3000/password/reset?uidb64=Mw&token=ax10pr-af2cc4352f19713547b12ab0dd6c0661
+http://localhost:3002/password/reset?uidb64=Mw&token=ax10pr-af2cc4352f19713547b12ab0dd6c0661
 ```
 
 The link contains two query parameters— `uidb64` and `token` — which are required to proceed
@@ -238,10 +238,10 @@ with the second mutation, `confirm_password_reset`.
 
 The mutation takes the following input fields:
 
--   `uid`: user's db id hashed in base64.
--   `token`: a unique token that was included in the link in the email.
--   `new_password1`: the new password.
--   `new_password1`: the new password's confirmation.
+- `uid`: user's db id hashed in base64.
+- `token`: a unique token that was included in the link in the email.
+- `new_password1`: the new password.
+- `new_password1`: the new password's confirmation.
 
 ```graphql
 mutation {
@@ -268,9 +268,9 @@ If there are no errors in the response, the password is successfully changed.
 If you wish to change your password as an authenticated user, use the `change_password` mutation.
 The mutation takes the following input fields:
 
--   `old_password`: the current user's password.
--   `new_password1`: the new password.
--   `new_password2`: the new password confirmation.
+- `old_password`: the current user's password.
+- `new_password1`: the new password.
+- `new_password2`: the new password confirmation.
 
 ```graphql
 mutation {
@@ -298,8 +298,8 @@ You need to call the `update_user` mutation.
 
 The mutation takes the following input fields:
 
--   `email`: the new email address to set for the account.
--   `full_name`: the new full name to set for the account.
+- `email`: the new email address to set for the account.
+- `full_name`: the new full name to set for the account.
 
 ```graphql
 mutation {

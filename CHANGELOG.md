@@ -1,3 +1,11 @@
+# Karrio 2025.5rc10
+
+## Changes
+
+### Chore
+
+- chore: introduce 'setup-dev-env' for full end-to-end dev environment setup.
+
 # Karrio 2025.5rc9
 
 ## Changes
