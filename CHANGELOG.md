@@ -6,6 +6,9 @@
 
 - chore: introduce 'setup-dev-env' for full end-to-end dev environment setup.
 
+> [!IMPORTANT]
+> This release is changing karrio's dashboard default port from `:3000` to `:3002`
+
 # Karrio 2025.5rc9
 
 ## Changes
