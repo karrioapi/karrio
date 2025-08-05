@@ -91,6 +91,38 @@ class ShipmentSerializer(ShipmentData):
                 context=context,
                 partial=instance.customs is not None,
             )
+        if is_update and ("recipient" in data):
+            instance.recipient = save_one_to_one_data(
+                "recipient",
+                AddressSerializer,
+                instance,
+                payload=data,
+                context=context,
+            )
+        if is_update and ("return_address" in data):
+            instance.return_address = save_one_to_one_data(
+                "return_address",
+                AddressSerializer,
+                instance,
+                payload=data,
+                context=context,
+            )
+        if is_update and ("billing_address" in data):
+            instance.billing_address = save_one_to_one_data(
+                "billing_address",
+                AddressSerializer,
+                instance,
+                payload=data,
+                context=context,
+            )
+        if is_update and ("shipper" in data):
+            instance.shipper = save_one_to_one_data(
+                "shipper",
+                AddressSerializer,
+                instance,
+                payload=data,
+                context=context,
+            )
 
         super().__init__(instance, **kwargs)
 
@@ -220,41 +252,6 @@ class ShipmentSerializer(ShipmentData):
                     prop.delete(keep_parents=True)
                     setattr(instance, key, None)
                     validated_data.pop(key)
-
-        save_one_to_one_data(
-            "shipper",
-            AddressSerializer,
-            instance,
-            payload=validated_data,
-            context=context,
-        )
-        save_one_to_one_data(
-            "recipient",
-            AddressSerializer,
-            instance,
-            payload=validated_data,
-            context=context,
-        )
-
-        if "return_address" in validated_data:
-            changes.append("return_address")
-            instance.return_address = save_one_to_one_data(
-                "return_address",
-                AddressSerializer,
-                instance,
-                payload=validated_data,
-                context=context,
-            )
-
-        if "billing_address" in validated_data:
-            changes.append("billing_address")
-            instance.billing_address = save_one_to_one_data(
-                "billing_address",
-                AddressSerializer,
-                instance,
-                payload=validated_data,
-                context=context,
-            )
 
         if "docs" in validated_data:
             changes.append("label")

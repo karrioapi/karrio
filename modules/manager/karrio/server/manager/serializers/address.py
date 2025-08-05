@@ -1,11 +1,11 @@
 from rest_framework import status
 
-from karrio.server.core.exceptions import APIException
-from karrio.server.serializers import owned_model_serializer
-from karrio.core import utils
-from karrio.server.core import gateway
 from karrio.server.core.serializers import AddressData, ShipmentStatus
+from karrio.server.serializers import owned_model_serializer
+from karrio.server.core.exceptions import APIException
 from karrio.server.manager import models
+from karrio.server.core import gateway
+from karrio.core import utils
 
 
 @owned_model_serializer

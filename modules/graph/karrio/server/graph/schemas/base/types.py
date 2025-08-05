@@ -639,7 +639,6 @@ class AddressType:
     email: typing.Optional[str]
     phone_number: typing.Optional[str]
     state_code: typing.Optional[str]
-    suburb: typing.Optional[str]
     residential: typing.Optional[bool]
     street_number: typing.Optional[str]
     address_line1: typing.Optional[str]

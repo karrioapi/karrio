@@ -88,6 +88,7 @@ class CarrierDetails(serializers.Serializer):
         help_text="The carrier shipping options.",
     )
 
+
 class CarrierSettings(serializers.Serializer):
     id = serializers.CharField(required=True, help_text="A unique address identifier")
     object_type = serializers.CharField(
@@ -161,7 +162,7 @@ class AddressData(validators.AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=30,
+        max_length=50,
         help_text="""The address city.
         **(required for shipment purchase)**
         """,
@@ -170,21 +171,21 @@ class AddressData(validators.AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=20,
+        max_length=50,
         help_text="The party frederal tax id",
     )
     state_tax_id = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=20,
+        max_length=50,
         help_text="The party state id",
     )
     person_name = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=50,
+        max_length=100,
         help_text="""Attention to
         **(required for shipment purchase)**
         """,
@@ -193,7 +194,7 @@ class AddressData(validators.AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=50,
+        max_length=100,
         help_text="The company name if the party is a company",
     )
     country_code = serializers.ChoiceField(
@@ -208,14 +209,14 @@ class AddressData(validators.AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=20,
+        max_length=50,
         help_text="The party phone number.",
     )
     state_code = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=20,
+        max_length=50,
         help_text="The address state code",
     )
     residential = serializers.BooleanField(
@@ -229,14 +230,14 @@ class AddressData(validators.AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=20,
+        max_length=100,
         help_text="""The address street number""",
     )
     address_line1 = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=50,
+        max_length=100,
         help_text="""The address line with street number <br/>
         **(required for shipment purchase)**
         """,
@@ -245,7 +246,7 @@ class AddressData(validators.AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=50,
+        max_length=100,
         help_text="The address line with suite number",
     )
     validate_location = serializers.BooleanField(
@@ -915,7 +916,7 @@ class PickupUpdateRequest(serializers.Serializer):
     )
     ready_time = serializers.CharField(
         required=True,
-        validators=[(validators.valid_time_format("ready_time"))],
+        validators=[validators.valid_time_format("ready_time")],
         help_text="""The ready time for pickup.
         Time Format: `HH:MM`
         """,

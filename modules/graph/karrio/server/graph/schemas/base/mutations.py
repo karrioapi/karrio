@@ -841,10 +841,14 @@ class CreateMetafieldMutation(utils.BaseMutation):
     ) -> "CreateMetafieldMutation":
         data = input.copy()
 
-        metafield = serializers.MetafieldModelSerializer.map(
-            data=data,
-            context=info.context.request,
-        ).save().instance
+        metafield = (
+            serializers.MetafieldModelSerializer.map(
+                data=data,
+                context=info.context.request,
+            )
+            .save()
+            .instance
+        )
 
         return CreateMetafieldMutation(metafield=metafield)
 
@@ -862,10 +866,14 @@ class UpdateMetafieldMutation(utils.BaseMutation):
         data = input.copy()
         instance = core.Metafield.access_by(info.context.request).get(id=data.get("id"))
 
-        metafield = serializers.MetafieldModelSerializer.map(
-            instance,
-            data=data,
-            context=info.context.request,
-        ).save().instance
+        metafield = (
+            serializers.MetafieldModelSerializer.map(
+                instance,
+                data=data,
+                context=info.context.request,
+            )
+            .save()
+            .instance
+        )
 
         return UpdateMetafieldMutation(metafield=metafield)
