@@ -1,3 +1,14 @@
+# Karrio 2025.5rc11
+
+## Changes
+
+### Chore
+
+- feat: ensure transit and estimated_date from the selected_rate
+- fix: missing fedex signature option on rate request
+- fix: `RON` currency getting overriden
+- fix: `country-select` dropdown
+
 # Karrio 2025.5rc10
 
 ## Changes

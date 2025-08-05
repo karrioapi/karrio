@@ -99,7 +99,7 @@ oauthlib==3.3.1
 packaging==25.0
 phonenumbers==9.0.10
 pillow==11.3.0
-posthog==6.3.3
+posthog==6.3.4
 psutil==7.0.0
 psycopg2-binary==2.9.10
 py-soap==2020.3.2
@@ -116,7 +116,7 @@ pytz==2025.2
 PyYAML==6.0.2
 pyzint==0.1.10
 qrcode==7.4.2
-redis==6.2.0
+redis==6.3.0
 referencing==0.36.2
 requests==2.32.4
 rpds-py==0.26.0
