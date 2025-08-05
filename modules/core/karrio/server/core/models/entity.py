@@ -12,7 +12,9 @@ class Entity(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.id
+        return (
+            str(self.id) if self.id is not None else f"{self.__class__.__name__}(None)"
+        )
 
 
 class OwnedEntity(ControlledAccessModel, Entity):

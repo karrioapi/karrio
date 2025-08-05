@@ -174,9 +174,7 @@ class Shipments:
 
         # The request is wrapped in utils.identity to simplify mocking in tests.
         shipment, messages = utils.identity(
-            lambda: karrio.Shipment.create(request)
-            .from_(carrier.gateway)
-            .parse()
+            lambda: karrio.Shipment.create(request).from_(carrier.gateway).parse()
         )
 
         if shipment is None:
@@ -202,19 +200,35 @@ class Shipments:
             }
 
         def process_selected_rate() -> dict:
+            estimated_delivery = lib.failsafe(
+                lambda: (
+                    getattr(shipment.selected_rate, "estimated_delivery", None)
+                    or getattr(selected_rate, "estimated_delivery", None)
+                )
+            )
+            transit_days = lib.failsafe(
+                lambda: (
+                    getattr(shipment.selected_rate, "transit_days", None)
+                    or getattr(selected_rate, "transit_days", None)
+                )
+            )
             rate = lib.identity(
                 {
                     **lib.to_dict(shipment.selected_rate),
                     "id": f"rat_{uuid.uuid4().hex}",
                     "test_mode": carrier.test_mode,
+                    "estimated_delivery": estimated_delivery,
+                    "transit_days": transit_days,
                 }
                 if shipment.selected_rate is not None
                 else lib.to_dict(selected_rate)
             )
-            return lib.to_dict({
-                **rate,
-                "meta": process_meta(shipment.selected_rate or selected_rate),
-            })
+            return lib.to_dict(
+                {
+                    **rate,
+                    "meta": process_meta(shipment.selected_rate or selected_rate),
+                }
+            )
 
         def process_tracking_url(rate: datatypes.Rate) -> str:
             rate_provider = (rate.get("meta") or {}).get("rate_provider")
@@ -263,7 +277,9 @@ class Shipments:
                 "parcels": process_parcel_refs(payload["parcels"]),
                 "tracking_url": process_tracking_url(shipment_rate),
                 "status": serializers.ShipmentStatus.purchased.value,
-                "created_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f%z"),
+                "created_at": datetime.datetime.now().strftime(
+                    "%Y-%m-%d %H:%M:%S.%f%z"
+                ),
                 "meta": process_meta(shipment),
                 "messages": messages,
             },

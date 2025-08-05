@@ -302,6 +302,10 @@ RateRequest = {
                     "width": 3.0,
                 },
                 "groupPackageCount": 1,
+                "packageSpecialServices": {
+                    "signatureOptionType": "SERVICE_DEFAULT",
+                    "specialServiceTypes": ["SIGNATURE_OPTION"],
+                },
                 "subPackagingType": "OTHER",
                 "weight": {"units": "LB", "value": 4.0},
             }
