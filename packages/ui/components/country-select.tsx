@@ -14,7 +14,6 @@ import {
   PopoverAnchor,
 } from "@karrio/ui/components/ui/popover";
 import { Input } from "@karrio/ui/components/ui/input";
-import { Label } from "@karrio/ui/components/ui/label";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 
 interface CountryOption {
@@ -99,18 +98,14 @@ export const CountrySelect = React.forwardRef<
     const newValue = e.target.value;
     setInputValue(newValue);
 
-    // Try to find a matching country
-    const matchingCountry = countryOptions.find(c => c.searchText.includes(newValue.toLowerCase()));
-    if (matchingCountry) {
-      setSelectedCountry(matchingCountry);
-      onValueChange?.(matchingCountry.value);
-    } else {
+    // Don't auto-select countries while typing - let user choose from filtered options
+    // Only clear selection if input is empty
+    if (!newValue) {
       setSelectedCountry(null);
-      // Don't call onValueChange for invalid countries
-    }
-
-    // Show dropdown when typing
-    if (newValue && filteredCountries.length > 0) {
+      onValueChange?.("");
+      setOpen(false);
+    } else {
+      // Show dropdown when typing - either with filtered results or show "no results"
       setOpen(true);
     }
   };
@@ -138,7 +133,11 @@ export const CountrySelect = React.forwardRef<
   };
 
   const handleInputFocus = () => {
-    if (filteredCountries.length > 0) {
+    // Show dropdown when focused, either with filtered results or all countries
+    if (inputValue && filteredCountries.length > 0) {
+      setOpen(true);
+    } else if (!inputValue) {
+      // If no input, show all countries
       setOpen(true);
     }
   };
@@ -149,9 +148,9 @@ export const CountrySelect = React.forwardRef<
     if (!relatedTarget || !relatedTarget.closest('[data-radix-popper-content-wrapper]')) {
       setOpen(false);
 
-      // Validate input on blur - revert to last valid country if invalid
-      if (inputValue && !selectedCountry) {
-        // Input has text but no valid country selected - revert to empty or last valid
+      // Only revert if input has text but no valid country is selected AND we're not in the middle of selection
+      if (inputValue && !selectedCountry && !open) {
+        // If there's a value prop, try to restore it
         if (value) {
           const country = countryOptions.find(c => c.value === value);
           if (country) {
@@ -216,7 +215,7 @@ export const CountrySelect = React.forwardRef<
                 <CommandList>
                   {filteredCountries.length === 0 ? (
                     <CommandEmpty>
-                      {inputValue ? "No countries found" : "Start typing to search countries"}
+                      {inputValue ? `No countries found for "${inputValue}"` : "Start typing to search countries"}
                     </CommandEmpty>
                   ) : (
                     <CommandGroup>
