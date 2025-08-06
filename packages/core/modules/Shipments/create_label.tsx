@@ -274,14 +274,15 @@ export default function CreateLabelPage(pageProps: any) {
       }
       if (
         !ready &&
-        query.isLoading &&
+        !query.isLoading && // Changed from query.isLoading to !query.isLoading
+        query.isFetched && // Ensure query has been fetched
         !isNoneOrEmpty(shipment_id) &&
         shipment_id !== "new" &&
         orders_called
       ) {
         setReady(true);
       }
-    }, [ready, templates.isLoading, orders.isLoading, query.isLoading, workspace_config.query.isLoading, shipment_id]);
+    }, [ready, templates.isLoading, orders.isLoading, query.isLoading, query.isFetched, workspace_config.query.isLoading, shipment_id]);
 
     return (
       <>
@@ -296,7 +297,26 @@ export default function CreateLabelPage(pageProps: any) {
             </div>
           )}
 
-          {!ready && <Spinner />}
+          {query.isError && (
+            <div className="notification is-danger is-light is-size-7 my-2 p-2">
+              <p>
+                <strong>Failed to load shipment data.</strong>
+                {query.error && typeof query.error === 'object' && 'message' in query.error ?
+                  ` ${query.error.message}` :
+                  ' Please check your connection and try refreshing the page.'
+                }
+              </p>
+              <button
+                className="button is-small is-danger mt-2"
+                onClick={() => query.refetch()}
+                disabled={query.isFetching}
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
+          {!ready && !query.isError && <Spinner />}
 
           {/* Shipment details section */}
           {ready && (
