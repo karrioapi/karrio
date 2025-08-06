@@ -15,16 +15,16 @@ export default {
     title: 'Quickstart',
     type: 'page'
   },
-  // "elements": {
-  //   title: 'Elements',
-  //   type: 'page'
-  // },
   "guides": {
     title: 'Guides',
+    type: 'page'
+  },
+  "app-store": {
+    title: 'App & Integrations',
     type: 'page'
   },
   "faq": {
     title: 'FAQ',
     type: 'page'
-  }
+  },
 }

@@ -1,143 +1,106 @@
 ---
-sidebarTitle: Getting Started
+sidebarTitle: FAQ
 title: FAQ
-description: Frequently asked questions about Karrio Platform
-tags: [platform, quickstart]
+description: Frequently asked questions about Karrio Insiders
+tags: [platform, faq]
 author: Karrio Team
 ---
 
-# FAQ
+# Frequently Asked Questions
 
-## General Questions
+## Installation & Setup
 
-### What is Karrio Platform?
+### What is Karrio Insiders?
 
-Karrio Platform is a comprehensive shipping API that enables businesses to integrate multi-carrier shipping capabilities into their applications. It provides a unified interface for connecting with multiple carriers, generating shipping labels, tracking shipments, and managing shipping workflows.
+Karrio Insiders is the enterprise version of Karrio, providing advanced shipping management capabilities with admin controls, multi-organization support, and additional features beyond the open-source version.
 
-### Who is Karrio Platform for?
+### What are the system requirements?
 
-Karrio Platform is designed for:
-- Logistics providers
-- E-commerce platforms
-- Retailers
-- 3PLs (Third-Party Logistics)
-- Marketplaces
-- Any business that needs shipping functionality
+- Docker and Docker Compose
+- At least 2GB RAM
+- 10GB free disk space
+- Linux/macOS/Windows with Docker support
 
-### What carriers does Karrio Platform support?
+### How do I get access to Karrio Insiders?
 
-Karrio Platform supports a wide range of carriers including but not limited to:
-- UPS
-- FedEx
-- DHL
-- USPS
-- Canada Post
-- And many more
+You need a valid subscription and GitHub Personal Access Token with `read:packages` scope to access the private container images.
 
-## Technical Questions
+## Features & Capabilities
 
-### How do I get started with Karrio Platform?
+### What white labeling options are available?
 
-To get started:
-1. Sign up for a Karrio Platform account
-2. Create your platform team
-3. Generate your API keys
-4. Connect your preferred carriers
-5. Start making API calls or using our SDK
+Currently, you can customize:
+- Platform name
+- Website URL
 
-### What programming languages are supported?
+Advanced customization (logos, colors, themes) requires self-hosting and code modifications.
 
-Karrio Platform provides:
-- A RESTful API that can be used with any programming language
-- Official SDKs for JavaScript/TypeScript
-- React components and hooks for web applications
+### Which carriers are supported?
 
-### How do I handle errors in the API?
+Karrio supports 50+ carriers including FedEx, UPS, DHL, USPS, Canada Post, and many regional carriers. You can enable/disable specific carriers through the admin panel.
 
-The API returns standard HTTP status codes and detailed error messages. All errors include:
-- An error code
-- A descriptive message
-- Additional context when available
+### Can I use my own domain?
 
-### Is there a rate limit?
+Yes, but it requires manual server configuration including DNS setup, SSL certificates, and environment variable updates. This is not available through the admin interface.
 
-Yes, Karrio Platform has rate limits based on your subscription plan. The limits are:
-- Free tier: 100 requests per minute
-- Pro tier: 1000 requests per minute
-- Enterprise tier: Custom limits
+## Administration
 
-## Integration Questions
+### How do I create admin users?
 
-### How do I integrate Karrio Platform into my application?
+1. Log in with the default admin account
+2. Navigate to Admin → User Management
+3. Click "Invite User" and select "Admin" role
+4. The user will receive an email invitation
 
-You can integrate Karrio Platform in several ways:
-1. Using our REST API directly
-2. Using our JavaScript/TypeScript SDK
-3. Using our React components and hooks
-4. Using our pre-built UI components (Elements)
+### How do I manage feature flags?
 
-### How do I handle webhooks?
+Feature flags can be managed through:
+1. Admin dashboard: Admin → Platform → Features
+2. Environment variables
+3. Django settings (for self-hosted deployments)
 
-Karrio Platform supports webhooks for real-time updates. To set up webhooks:
-1. Configure your webhook endpoint in the platform settings
-2. Select the events you want to receive
-3. Implement the webhook handler in your application
-4. Test your webhook configuration
+### How do I backup my data?
 
-### How do I handle international shipping?
+For self-hosted deployments:
+- Use PostgreSQL's `pg_dump` for database backups
+- Back up uploaded files and static assets
+- Save environment variables and configurations
 
-Karrio Platform provides comprehensive support for international shipping:
-- Customs documentation generation
-- HS code validation
-- Duties and taxes calculation
-- International address validation
+## Troubleshooting
 
-## Billing Questions
+### Services won't start after installation
 
-### How is pricing determined?
+Check:
+1. Docker is running
+2. GitHub authentication is working
+3. Ports 3000 and 5002 are available
+4. Review logs with `docker compose logs`
 
-Pricing is based on:
-- Number of API requests
-- Number of shipments
-- Number of carrier connections
-- Additional features used
+### Can't access admin dashboard
 
-### What payment methods are accepted?
+Ensure:
+1. You're logged in as a staff user
+2. `ADMIN_DASHBOARD` feature flag is enabled
+3. Your user has `is_staff=True` permission
 
-We accept:
-- Credit cards (Visa, Mastercard, American Express)
-- Bank transfers
-- PayPal
+### Feature flags not updating
 
-### Can I change my subscription plan?
+1. Clear browser cache
+2. Restart services: `docker compose restart`
+3. Check environment variables are correctly set
 
-Yes, you can upgrade or downgrade your subscription plan at any time. Changes will take effect at the start of your next billing cycle.
+## Support
 
-## Support Questions
+### How do I get help?
 
-### How do I get support?
+- Documentation: [docs.karrio.io](https://docs.karrio.io)
+- Community Discord: [Join here](https://discord.gg/gS88uE7sEx)
+- Email support: support@karrio.io (subscribers only)
 
-We provide support through:
-- Documentation
-- Email support
-- Chat support (for Pro and Enterprise plans)
-- Dedicated account manager (for Enterprise plans)
+### Can I contribute to the documentation?
 
-### Where can I find the API documentation?
+Yes! The documentation is open source. You can contribute improvements, corrections, and additions through our GitHub repository.
 
-The API documentation is available at [docs.karrio.com/api](https://docs.karrio.com/api).
+### Is there a staging environment?
 
-### How do I report bugs or request features?
-
-You can:
-- Submit a bug report through our support channels
-- Request features through our feature request form
-- Contribute to our open-source components on GitHub
-
-## Next Steps
-
-- [Setup Guide](/docs/platform/setup) - Learn how to set up your Karrio Platform account
-- [Quickstart](/docs/platform/quickstart) - Get up and running quickly
-- [Elements Documentation](/docs/platform/elements) - Learn about Karrio's UI components
-- [Hooks Documentation](/docs/platform/hooks) - Learn about Karrio's React hooks
-- [Guides](/docs/platform/guides) - Detailed implementation guides
+You'll need to set up your own staging environment. We recommend using the same Docker setup but with a separate database and domain.

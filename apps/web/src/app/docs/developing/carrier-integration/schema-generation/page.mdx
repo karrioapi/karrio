@@ -7,90 +7,218 @@ author: Karrio Team
 
 # Schema Generation
 
-Karrio uses strongly-typed data structures to ensure data integrity and improve the developer experience. This process, called schema generation, converts a carrier's API specification (in formats like JSON Schema, XSD, or WSDL) into Python data classes. These classes represent the exact structure of the requests you send to and the responses you receive from the carrier's API.
+Karrio uses strongly-typed data structures to ensure data integrity and improve the developer experience. Schema generation converts a carrier's API specification into Python data classes that represent the exact structure of requests and responses for the carrier's API.
 
-## 1. Prepare Schema Files
+## Overview
 
-First, you need to obtain the schema files from the carrier. These are typically provided in their developer documentation.
+The schema generation process involves:
 
-- **For JSON APIs**: You will need sample JSON request/response pairs or, ideally, JSON Schema files (`.json`).
-- **For XML/SOAP APIs**: You will need XSD (`.xsd`) or WSDL (`.wsdl`) files.
-
-Place these files inside the `modules/connectors/[carrier_name]/schemas/` directory of your extension. It's best practice to name them logically, for example:
-
-- `rate_request.json` / `rate_response.json`
-- `shipping_request.xsd` / `shipping_response.xsd`
-- `tracking.wsdl`
+1. **Prepare Schema Files**: Create JSON or XML files with API examples
+2. **Configure Generation Script**: Set up the `generate` script with correct parameters
+3. **Run Generation**: Execute `./bin/run-generate-on [path]` to generate Python classes
+4. **Use Generated Types**: Import and use the generated classes in your provider implementation
 
 ```mermaid
 flowchart TD
-    A["Study API Docs"] --> B["Collect Schema Files<br/>(XSD, WSDL, JSON)"]
-    B --> C["Place in /schemas directory"]
+    A["API Documentation"] --> B["Create Schema Files<br/>(JSON/XML samples)"]
+    B --> C["Configure generate script"]
+    C --> D["Run ./bin/run-generate-on"]
+    D --> E["Generated Python Classes"]
+    E --> F["Use in Provider Logic"]
 ```
 
-## 2. Create the `generate` Script
+## Step 1: Prepare Schema Files
 
-Next, you'll create a `generate` shell script in the root of your extension directory (`modules/connectors/[carrier_name]/`). This script will call Karrio's code generation tools to process your schema files.
+Create schema files in the `schemas/` directory of your extension based on the carrier's API documentation.
 
 ### For JSON APIs
 
-Karrio uses `kcli codegen` which wraps `quicktype` to generate Python data classes from JSON or JSON Schema.
+Create JSON files with actual API request/response examples (not JSON Schema definitions):
 
-```bash
-#!/bin/bash
-# modules/connectors/[carrier_name]/generate
-set -e
-kcli codegen a --src-dir schemas --out-dir karrio/schemas
+```text
+schemas/
+├── error_response.json      # Error response format
+├── rate_request.json        # Rate request format
+├── rate_response.json       # Rate response format
+├── shipment_request.json    # Shipment request format
+├── shipment_response.json   # Shipment response format
+├── tracking_request.json    # Tracking request format
+└── tracking_response.json   # Tracking response format
+```
+
+**Example rate_request.json:**
+```json
+{
+  "shipper": {
+    "addressLine1": "123 Main St",
+    "city": "New York",
+    "postalCode": "10001",
+    "countryCode": "US"
+  },
+  "recipient": {
+    "addressLine1": "456 Oak Ave",
+    "city": "Los Angeles",
+    "postalCode": "90210",
+    "countryCode": "US"
+  },
+  "packages": [
+    {
+      "weight": 5.0,
+      "weightUnit": "KG",
+      "dimensions": {
+        "length": 10.0,
+        "width": 10.0,
+        "height": 10.0,
+        "unit": "CM"
+      }
+    }
+  ]
+}
 ```
 
 ### For XML/SOAP APIs
 
-Karrio uses `generateDS` to transform XSD and WSDL files into Python classes.
+Create XSD schema files or XML examples:
+
+```text
+schemas/
+├── error_response.xsd
+├── rate_request.xsd
+├── rate_response.xsd
+└── ...
+```
+
+**Note**: Use actual API samples from the carrier's documentation, not abstract schema definitions.
+
+## Step 2: Configure the Generate Script
+
+The CLI automatically creates a `generate` script in your extension root. You need to configure it with the correct parameters for your carrier's API.
+
+### Understanding Generation Parameters
+
+The key parameters that affect how Python classes are generated:
+
+| Parameter | Usage | API Field Format | Example |
+|-----------|-------|------------------|---------|
+| `--nice-property-names` | Convert to snake_case | APIs with camelCase fields | Easyship |
+| `--no-nice-property-names` | Preserve original naming | APIs with camelCase that should stay camelCase | UPS, FedEx, SEKO |
+| `--no-append-type-suffix --no-nice-property-names` | For PascalCase APIs | APIs with PascalCase fields | Some enterprise APIs |
+
+### Example Generate Script
+
+**File**: `modules/connectors/[carrier_name]/generate`
 
 ```bash
 #!/bin/bash
-# modules/connectors/[carrier_name]/generate
 set -e
-kcli codegen x --src-dir schemas --out-dir karrio/schemas
+
+SCHEMAS=./schemas
+LIB_MODULES=./karrio/schemas/[carrier_name]
+ROOT="$(pwd)"
+
+# Clean existing generated files
+find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
+touch "${LIB_MODULES}/__init__.py"
+
+# Generation function
+generate_schema() {
+    echo "Generating $1..."
+    "${ROOT}/bin/cli" codegen generate "$1" "$2" --no-nice-property-names
+}
+
+# Generate all required schemas
+generate_schema "${SCHEMAS}/error_response.json" "${LIB_MODULES}/error_response.py"
+generate_schema "${SCHEMAS}/rate_request.json" "${LIB_MODULES}/rate_request.py"
+generate_schema "${SCHEMAS}/rate_response.json" "${LIB_MODULES}/rate_response.py"
+generate_schema "${SCHEMAS}/shipment_request.json" "${LIB_MODULES}/shipment_request.py"
+generate_schema "${SCHEMAS}/shipment_response.json" "${LIB_MODULES}/shipment_response.py"
+generate_schema "${SCHEMAS}/tracking_request.json" "${LIB_MODULES}/tracking_request.py"
+generate_schema "${SCHEMAS}/tracking_response.json" "${LIB_MODULES}/tracking_response.py"
 ```
 
-The `kcli` command automatically finds all relevant schema files in the source directory, runs the appropriate generator, and places the output Python files in the specified output directory, creating an `__init__.py` file to export all the generated types.
+### Choose Correct Parameters
 
-## 3. Run Code Generation
+**For camelCase APIs (UPS, FedEx, SEKO):**
+```bash
+"${ROOT}/bin/cli" codegen generate "$1" "$2" --no-nice-property-names
+```
 
-Once the `generate` script is in place, execute it using the following command from the project root:
+**For snake_case APIs (Easyship):**
+```bash
+"${ROOT}/bin/cli" codegen generate "$1" "$2" --nice-property-names
+```
+
+**For PascalCase APIs:**
+```bash
+"${ROOT}/bin/cli" codegen generate "$1" "$2" --no-append-type-suffix --no-nice-property-names
+```
+
+**🚨 CRITICAL RULES BEFORE GENERATION**:
+
+1. **Generated Files Are READ-ONLY**:
+   - **NEVER edit files in `karrio/schemas/[carrier_name]/`**
+   - Generated files are completely overwritten on each run
+   - Any manual changes will be lost permanently
+
+2. **Source-Only Editing**:
+   - Only modify files in `schemas/` directory (your source files)
+   - To change API structure: Edit source schemas → regenerate
+   - Never create schema files manually outside the CLI
+
+3. **Generation Must Succeed**:
+   - If generation fails, **STOP IMMEDIATELY**
+   - Fix the source schema files or CLI parameters
+   - Never proceed with incomplete/broken generation
+
+4. **Verification Required**:
+   - Always test imports after generation
+   - Verify class names match expectations
+   - Ensure type annotations are correct
+
+## Step 3: Run Schema Generation
+
+Execute the generation command from the project root:
 
 ```bash
-# The 'a' stands for 'all', but you can specify the extension name
-bin/run-generate-on a
+# Activate environment first (CRITICAL)
+source ./bin/activate-env
+
+# Generate schemas for your carrier
+./bin/run-generate-on modules/connectors/[carrier_name]
+
+# For hub carriers
+./bin/run-generate-on community/plugins/[carrier_name]
+
+# Make the script executable if needed
+chmod +x modules/connectors/[carrier_name]/generate
 ```
 
-This command iterates through all extensions in `modules/connectors/`, finds the `generate` script in each one, and executes it. The generated Python modules will appear in `modules/connectors/[carrier_name]/karrio/schemas/[carrier_name]/`.
+This command:
+1. Finds the `generate` script in your extension
+2. Executes it to process all schema files
+3. Creates Python classes in `karrio/schemas/[carrier_name]/`
 
-```mermaid
-graph LR
-    subgraph Your Extension
-        A["schemas/*.json"]
-        B["generate script"]
-    end
-    C["bin/run-generate-on a"]
-    subgraph Generated Code
-        D["karrio/schemas/[carrier_name]/*.py"]
-        E["karrio/schemas/[carrier_name]/__init__.py"]
-    end
+## Step 4: Verify Generated Code
 
-    A --> B
-    C -- executes --> B
-    B -- creates --> D
-    B -- creates --> E
+After successful generation, verify the output:
+
+```bash
+# Check generated files
+ls -la modules/connectors/[carrier_name]/karrio/schemas/[carrier_name]/
+
+# Test imports
+python -c "
+import karrio.schemas.[carrier_name].rate_request as req
+import karrio.schemas.[carrier_name].rate_response as res
+print('Schema imports successful')
+"
 ```
 
 ## Generated Code Structure
 
-The output will be a set of Python files, each corresponding to a schema file. These files will contain `jstruct` or `attr`-decorated classes that you can import and use in your provider mapping functions.
+The generated Python classes use `attrs` and `jstruct` decorators for type safety and serialization:
 
-**Example Generated Python Class (from JSON):**
-
+**Example Generated Class:**
 ```python
 # karrio/schemas/[carrier_name]/rate_request.py
 import attr
@@ -98,284 +226,225 @@ import jstruct
 import typing
 
 @attr.s(auto_attribs=True)
-class AddressType:
-    address_line1: str
-    city: str
-    postal_code: str
-    country_code: str
-    # ...
+class Address:
+    addressLine1: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    postalCode: typing.Optional[str] = None
+    countryCode: typing.Optional[str] = None
+
+@attr.s(auto_attribs=True)
+class Package:
+    weight: typing.Optional[float] = None
+    weightUnit: typing.Optional[str] = None
+    dimensions: typing.Optional[Dimensions] = None
 
 @attr.s(auto_attribs=True)
 class RateRequestType:
-    shipper: AddressType
-    recipient: AddressType
-    packages: typing.List[typing.Any]
-    # ...
+    shipper: typing.Optional[Address] = None
+    recipient: typing.Optional[Address] = None
+    packages: typing.Optional[typing.List[Package]] = jstruct.JList[Package]
 ```
 
-## Using Generated Types
+**Class Naming Conventions:**
+- **With default settings**: Classes have `Type` suffix (e.g., `RateRequestType`)
+- **With `--no-append-type-suffix`**: Classes named exactly as in schema (e.g., `RateRequest`)
 
-These generated classes are the building blocks of your data mapping logic.
+## Step 5: Using Generated Types
 
-- In your **request mapping** functions (e.g., `provider.rate_request`), you will instantiate these classes and populate them with data from the unified Karrio models.
-- In your **response parsing** functions (e.g., `provider.parse_rate_response`), you will use `lib.to_object` to cast the raw dictionary or XML element response into these generated classes, giving you strongly-typed access to the response data.
+Import and use the generated classes in your provider implementation:
+
+**In Rate Implementation:**
+```python
+# karrio/providers/[carrier_name]/rate.py
+import karrio.schemas.[carrier_name].rate_request as carrier_req
+import karrio.schemas.[carrier_name].rate_response as carrier_res
+
+def rate_request(payload: models.RateRequest, settings: Settings) -> lib.Serializable:
+    # Use generated request type
+    request = carrier_req.RateRequestType(
+        shipper=carrier_req.Address(
+            addressLine1=payload.shipper.address_line1,
+            city=payload.shipper.city,
+            # ... map other fields
+        ),
+        recipient=carrier_req.Address(
+            addressLine1=payload.recipient.address_line1,
+            city=payload.recipient.city,
+            # ... map other fields
+        ),
+        packages=[
+            carrier_req.Package(
+                weight=package.weight.value,
+                weightUnit=package.weight.unit,
+                # ... map other fields
+            )
+            for package in packages
+        ]
+    )
+
+    return lib.Serializable(request, lib.to_dict)
+
+def parse_rate_response(response: lib.Deserializable, settings: Settings):
+    data = response.deserialize()
+
+    # Use generated response type
+    rate_response = lib.to_object(carrier_res.RateResponseType, data)
+
+    # Extract rates using typed access
+    rates = [
+        models.RateDetails(
+            carrier_id=settings.carrier_id,
+            service=rate.serviceCode,
+            total_charge=lib.to_money(rate.totalCharge),
+            currency=rate.currency,
+        )
+        for rate in (rate_response.rates or [])
+    ]
+
+    return rates, []
+```
 
 ## Advanced CLI Tools
 
-The `kcli codegen` command offers several utilities for more granular control over schema generation.
+### Create Tree Command
 
-### `kcli codegen x` and `kcli codegen a`
-
-Generate code from XML (`x`) or JSON/JSON Schema (`a`) files. These are the underlying commands used by the `generate` script.
-
-### `kcli codegen t`
-
-Transform Python code generated by `quicktype` (using `dataclasses`) into code that uses `attrs` and `jstruct` decorators.
-
-### `kcli codegen tree`
-
-The `create-tree` command is a powerful utility for developers. It inspects a generated Python class and prints a tree structure representing a complete instantiation of that class. This is extremely useful for understanding the shape of complex, nested API request objects and serves as a boilerplate for writing your mapping functions.
-
-**Usage**
+Generate initialization templates for complex nested objects:
 
 ```bash
-kcli codegen tree --module=[path.to.module] --class-name=[ClassName] --module-alias=[alias]
-```
+# Generate a tree structure for a class
+kcli codegen tree --module=karrio.schemas.[carrier_name].rate_request --class-name=RateRequestType --module-alias=carrier
 
-**Example**
-
-Let's generate a tree for the `ShipmentRequestType` from the UPS integration's generated schemas.
-
-**Command:**
-
-```bash
-kcli codegen tree --module=karrio.schemas.ups.shipping_request --class-name=ShipmentRequestType --module-alias=ups
-```
-
-**Output:**
-
-```python
-ups.ShipmentRequestType(
-    Request=ups.RequestType(
-        SubVersion=None,
-        RequestOption=None,
-        TransactionReference=ups.TransactionReferenceType(
-            CustomerContext=None,
-            ToolVersion=None,
-        ),
+# Output example:
+carrier.RateRequestType(
+    shipper=carrier.Address(
+        addressLine1=None,
+        city=None,
+        postalCode=None,
+        countryCode=None,
     ),
-    Shipment=ups.ShipmentType(
-        Description=None,
-        ReturnService=ups.ReturnServiceType(
-            Code=None,
-            Description=None,
-        ),
-        DocumentsOnlyIndicator=None,
-        Shipper=ups.ShipperType(
-            Name=None,
-            AttentionName=None,
-            CompanyDisplayableName=None,
-            TaxIdentificationNumber=None,
-            Phone=ups.ShipToPhoneType(
-                Number=None,
-                Extension=None,
+    recipient=carrier.Address(
+        addressLine1=None,
+        city=None,
+        postalCode=None,
+        countryCode=None,
+    ),
+    packages=[
+        carrier.Package(
+            weight=None,
+            weightUnit=None,
+            dimensions=carrier.Dimensions(
+                length=None,
+                width=None,
+                height=None,
+                unit=None,
             ),
-            ShipperNumber=None,
-            FaxNumber=None,
-            EMailAddress=None,
-            Address=ups.AlternateDeliveryAddressAddressType(
-                AddressLine=None,
-                City=None,
-                StateProvinceCode=None,
-                PostalCode=None,
-                CountryCode=None,
-                ResidentialAddressIndicator=None,
-                POBoxIndicator=None,
-            ),
-        ),
-        ShipTo=ups.ShipToType(
-            Name=None,
-            AttentionName=None,
-            # ... and so on for the entire structure
-        ),
-        # ...
-    ),
-    LabelSpecification=ups.LabelSpecificationType(
-        LabelImageFormat=ups.LabelImageFormatType(
-            Code=None,
-            Description=None,
-        ),
-        HTTPUserAgent=None,
-        LabelStockSize=ups.LabelStockSizeType(
-            Height=None,
-            Width=None,
-        ),
-    ),
+        )
+    ],
 )
 ```
 
-This generated code can be copied directly into your `shipment_request` mapping function as a starting point, saving significant time and preventing errors.
-
-```mermaid
-flowchart LR
-    A[JSON/XML Schemas] --> B[Generate Script]
-    B --> C[Python Data Types]
-
-    subgraph Tools
-    D[quicktype for JSON]
-    E[generateDS for XML]
-    end
-
-    B --- Tools
-```
-
-## Generated Code Structure
-
-The generated code will be placed in the `karrio/schemas/[carrier_name]/` directory of your extension. Each schema file will generate a corresponding Python file with data classes that represent the API structures.
-
-Example generated Python class for a JSON API:
-
-```python
-import attr
-import jstruct
-import typing
-
-@attr.s(auto_attribs=True)
-class Dimensions:
-    height: typing.Optional[float] = None
-    length: typing.Optional[float] = None
-    unit: typing.Optional[str] = None
-    width: typing.Optional[float] = None
-
-@attr.s(auto_attribs=True)
-class Weight:
-    unit: typing.Optional[str] = None
-    value: typing.Optional[float] = None
-
-@attr.s(auto_attribs=True)
-class ContainerSpecification:
-    dimensions: typing.Optional[Dimensions] = None
-    weight: typing.Optional[Weight] = None
-
-# More classes...
-
-@attr.s(auto_attribs=True)
-class RateRequest:
-    containerSpecifications: typing.Optional[typing.List[ContainerSpecification]] = jstruct.JList[ContainerSpecification]
-    serviceTypes: typing.Optional[typing.List[str]] = jstruct.JList[str]
-    shipFrom: typing.Optional[Address] = None
-    shipTo: typing.Optional[Address] = None
-    shipDate: typing.Optional[str] = None
-```
-
-```mermaid
-classDiagram
-    class RateRequest {
-        +List~ContainerSpecification~ containerSpecifications
-        +List~string~ serviceTypes
-        +Address shipFrom
-        +Address shipTo
-        +string shipDate
-    }
-
-    class ContainerSpecification {
-        +Dimensions dimensions
-        +Weight weight
-    }
-
-    class Dimensions {
-        +float height
-        +float length
-        +string unit
-        +float width
-    }
-
-    class Weight {
-        +string unit
-        +float value
-    }
-
-    class Address {
-        +string addressLine1
-        +string city
-        +string countryCode
-        +string name
-        +string postalCode
-        +string stateOrRegion
-    }
-
-    RateRequest --> ContainerSpecification
-    RateRequest --> Address
-    ContainerSpecification --> Dimensions
-    ContainerSpecification --> Weight
-```
-
-## Using Generated Types
-
-Once generated, these Python data types become the foundation of your carrier integration. You'll use them to:
-
-1. Create carrier-specific API requests
-2. Parse carrier-specific API responses
-3. Map between Karrio's unified format and carrier-specific formats
-
-In the next sections, we'll cover how to use these generated types in your integration.
+This output can be copied directly into your mapping functions as a starting template.
 
 ## Troubleshooting
 
-If you encounter issues during code generation:
+### Common Issues
 
-- Ensure your schema files are valid (for JSON: valid JSON, for XML: valid XML schema)
-- Check that your `generate` script references the correct schema files
-- For XML APIs, ensure generateDS is installed with Karrio's development dependencies
+**Generation Fails:**
+- Ensure schema files contain valid JSON/XML
+- Check that `generate` script is executable: `chmod +x generate`
+- Verify environment is activated: `source ./bin/activate-env`
 
-## CLI Tools for Schema Generation
+**Import Errors:**
+- Verify extension is installed: `pip install -e modules/connectors/[carrier_name]`
+- Check `__init__.py` files exist in schema directories
+- Ensure class names match generated output
 
-Karrio provides several CLI tools to help with schema generation and code transformation. The `kcli` command includes utilities for code generation, particularly for transforming JSON schemas into Python code using jstruct.
+**Wrong Field Names:**
+- Review generation parameters in your `generate` script
+- Use `--nice-property-names` for snake_case conversion
+- Use `--no-nice-property-names` to preserve original naming
 
-### Transform
+### Testing Generation
 
-The `transform` command converts Python code generated by quicktype (using dataclasses) into code that uses attrs and jstruct decorators.
-
-```bash
-# Transform from stdin to stdout
-cat input.py | kcli codegen transform > output.py
-
-# Transform from file to file
-kcli codegen transform input.py output.py
-
-# Transform from file to stdout
-kcli codegen transform input.py
-
-# Disable appending 'Type' to class names
-kcli codegen transform input.py output.py --no-append-type-suffix
-```
-
-### Generate
-
-The `generate` command generates Python code with jstruct from a JSON schema file using quicktype.
+Test your generation setup:
 
 ```bash
-# Generate Python code with jstruct from a JSON schema
-kcli codegen generate --src=schema.json --out=output.py
+# Test CLI command directly
+./bin/cli codegen generate schemas/rate_request.json test_output.py --no-nice-property-names
 
-# Specify Python version
-kcli codegen generate --src=schema.json --out=output.py --python-version=3.8
-
-# Generate without --just-types
-kcli codegen generate --src=schema.json --out=output.py --just-types=false
-
-# Disable appending 'Type' to class names
-kcli codegen generate --src=schema.json --out=output.py --no-append-type-suffix
+# Check output
+cat test_output.py
 ```
 
-### Create Tree
+## Best Practices
 
-The `create-tree` command generates a Python code tree from a class definition. It's useful for visualizing the structure of complex nested objects and generating initialization code templates.
+1. **Use Real API Examples**: Create schema files from actual carrier API documentation
+2. **Choose Correct Parameters**: Match generation parameters to your API's field format
+3. **Test Imports Early**: Verify generated classes import correctly before implementing logic
+4. **Use Generated Types**: Always import and use generated classes in provider implementations
+5. **Regenerate When Needed**: Only modify source schema files, never edit generated Python files
+
+## XML API Considerations
+
+For XML/SOAP APIs, the process is similar but uses `generateDS` instead:
 
 ```bash
-# Generate a tree for a class
-kcli codegen create-tree --module=karrio.schemas.allied_express.label_request --class-name=LabelRequest
-
-# Generate a tree with a module alias
-kcli codegen create-tree --module=karrio.schemas.allied_express.label_request --class-name=LabelRequest --module-alias=allied
+# XML generation in generate script
+generateDS --no-namespace-defs -o "${LIB_MODULES}/rate_request.py" $SCHEMAS/rate_request.xsd
 ```
+
+Generated XML classes have different patterns:
+- No `Type` suffix by default
+- Use `lib.to_element` for deserialization
+- Use `request.serialize()` for XML serialization
+
+## Testing Generated Types
+
+**MANDATORY**: Validate your generated types work correctly in tests:
+
+### 1. Import Verification Test
+```python
+def test_schema_imports(self):
+    """Verify all generated schema types import correctly."""
+    try:
+        import karrio.schemas.[carrier_name].rate_request as req
+        import karrio.schemas.[carrier_name].rate_response as res
+        print("All schema imports successful")
+        self.assertTrue(hasattr(req, 'RateRequestType'))  # Adjust for your naming
+        self.assertTrue(hasattr(res, 'RateResponseType'))
+    except ImportError as e:
+        self.fail(f"Schema import failed: {e}")
+```
+
+### 2. Type Validation Test
+```python
+def test_generated_types_usage(self):
+    """Verify generated types work in mapping functions."""
+    request = gateway.mapper.create_rate_request(self.RateRequest)
+
+    # Verify the request uses generated types correctly
+    serialized = request.serialize()
+    self.assertIsInstance(serialized, dict)  # For JSON APIs
+
+    # Verify specific required fields exist
+    self.assertIn('shipper', serialized)
+    self.assertIn('recipient', serialized)
+    self.assertIn('packages', serialized)
+```
+
+### 3. Schema Regeneration Test
+Always verify that schema regeneration still works:
+```bash
+# Test regeneration doesn't break
+./bin/run-generate-on modules/connectors/[carrier_name]
+python -c "import karrio.schemas.[carrier_name] as schemas; print('Regeneration successful')"
+```
+
+## Next Steps
+
+Once schema generation is complete:
+
+1. **Configure Metadata**: Set up connection settings and data units
+2. **Implement API Requests**: Create the HTTP communication layer
+3. **Implement Data Mapping**: Transform between Karrio and carrier formats
+4. **Write Tests**: Validate your integration works correctly with exact patterns

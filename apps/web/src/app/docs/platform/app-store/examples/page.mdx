@@ -1,0 +1,1526 @@
+---
+sidebarTitle: Examples
+title: Complete Karrio App Examples
+description: Real-world examples and complete source code for different types of Karrio Apps
+tags:
+  [
+    "examples",
+    "tutorials",
+    "source-code",
+    "e-commerce",
+    "analytics",
+    "automation",
+    "integrations",
+  ]
+---
+
+# Karrio App Examples
+
+<div className="flex gap-2 mb-6">
+  <div className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10 dark:bg-purple-400/10 dark:text-purple-400 dark:ring-purple-400/30">
+    <span className="text-xs">Insiders</span>
+  </div>
+  <div className="inline-flex items-center rounded-md bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-700/10 dark:bg-amber-400/10 dark:text-amber-400 dark:ring-amber-400/30">
+    <span className="text-xs">Enterprise</span>
+  </div>
+</div>
+
+Learn by example with complete, real-world Karrio Apps that you can use as templates for your own projects.
+
+## Example Apps Overview
+
+| App                                             | Type        | Complexity   | Features                            |
+| ----------------------------------------------- | ----------- | ------------ | ----------------------------------- |
+| [Hello World](#hello-world-app)                 | Basic       | Beginner     | Authentication, UI basics           |
+| [Shipment Tracker](#shipment-tracker-app)       | Utility     | Intermediate | Real-time tracking, webhooks        |
+| [E-commerce Sync](#e-commerce-integration-app)  | Integration | Advanced     | OAuth, data sync, automation        |
+| [Analytics Dashboard](#analytics-dashboard-app) | Analytics   | Advanced     | Charts, reports, data visualization |
+| [Workflow Automation](#workflow-automation-app) | Automation  | Expert       | Rules engine, batch processing      |
+
+---
+
+## Hello World App
+
+A simple introduction app demonstrating basic Karrio App concepts.
+
+### Features
+
+- Basic authentication
+- Simple UI components
+- API data fetching
+- Configuration management
+
+### Complete Source Code
+
+#### App Manifest
+
+```typescript
+// manifest.ts
+import { AppManifest } from "@karrio/app-store/types";
+
+export const manifest: AppManifest = {
+  id: "hello-world",
+  name: "Hello World",
+  version: "1.0.0",
+  description: "A simple hello world app demonstrating Karrio App basics",
+  author: {
+    name: "Your Name",
+    email: "you@example.com",
+    url: "https://your-website.com",
+  },
+  permissions: ["manage_data"],
+  assets: {
+    icon: "./assets/icon.svg",
+    screenshots: ["./assets/screenshot1.png"],
+    readme: "./README.md",
+  },
+  components: {
+    main: "./component.tsx",
+    configuration: "./configuration.tsx",
+  },
+  api: {
+    routes: {
+      "/api/hello": "./api/hello.ts",
+    },
+  },
+};
+```
+
+#### Main Component
+
+```tsx
+// component.tsx
+import React, { useState, useEffect } from "react";
+import { Card, Button, Badge, Spinner } from "@karrio/ui";
+import { AppComponentProps } from "@karrio/app-store/types";
+
+export default function HelloWorldApp({
+  app,
+  context,
+  karrio,
+}: AppComponentProps) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    fetchUserInfo();
+  }, []);
+
+  const fetchUserInfo = async () => {
+    try {
+      const response = await karrio.get("/v1/users/me");
+      setUser(response);
+    } catch (error) {
+      console.error("Failed to fetch user info:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const sendGreeting = async () => {
+    try {
+      const response = await fetch(`/api/apps/${app.id}/hello`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${app.installation.api_key}`,
+        },
+        body: JSON.stringify({ name: user?.first_name || "User" }),
+      });
+
+      const data = await response.json();
+      setMessage(data.message);
+    } catch (error) {
+      console.error("Failed to send greeting:", error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-2xl mx-auto p-6 space-y-6">
+      {/* Header */}
+      <div className="text-center">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          Hello World! 👋
+        </h1>
+        <p className="text-gray-600">Welcome to your first Karrio App</p>
+      </div>
+
+      {/* User Info Card */}
+      <Card>
+        <Card.Header>
+          <Card.Title>User Information</Card.Title>
+        </Card.Header>
+        <Card.Content>
+          <div className="space-y-3">
+            <div className="flex justify-between">
+              <span className="text-gray-500">Name:</span>
+              <span className="font-medium">
+                {user?.first_name} {user?.last_name}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Email:</span>
+              <span className="font-medium">{user?.email}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Organization:</span>
+              <span className="font-medium">{context.organization?.name}</span>
+            </div>
+          </div>
+        </Card.Content>
+      </Card>
+
+      {/* App Info Card */}
+      <Card>
+        <Card.Header>
+          <Card.Title>App Information</Card.Title>
+        </Card.Header>
+        <Card.Content>
+          <div className="space-y-3">
+            <div className="flex justify-between">
+              <span className="text-gray-500">App ID:</span>
+              <code className="text-sm bg-gray-100 px-2 py-1 rounded">
+                {app.id}
+              </code>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Version:</span>
+              <Badge variant="secondary">{app.version}</Badge>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Installation ID:</span>
+              <code className="text-sm bg-gray-100 px-2 py-1 rounded">
+                {app.installation.id}
+              </code>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Status:</span>
+              <Badge
+                variant={app.installation.is_active ? "success" : "danger"}
+              >
+                {app.installation.is_active ? "Active" : "Inactive"}
+              </Badge>
+            </div>
+          </div>
+        </Card.Content>
+      </Card>
+
+      {/* Interactive Section */}
+      <Card>
+        <Card.Header>
+          <Card.Title>Try It Out</Card.Title>
+        </Card.Header>
+        <Card.Content>
+          <div className="space-y-4">
+            <p className="text-gray-600">
+              Click the button below to call the app's API endpoint:
+            </p>
+            <Button onClick={sendGreeting} className="w-full">
+              Send Greeting
+            </Button>
+            {message && (
+              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                <p className="text-green-800">{message}</p>
+              </div>
+            )}
+          </div>
+        </Card.Content>
+      </Card>
+    </div>
+  );
+}
+```
+
+#### Configuration Component
+
+```tsx
+// configuration.tsx
+import React, { useState } from "react";
+import { Input, Textarea, Checkbox, Button } from "@karrio/ui";
+import { AppConfigurationContext } from "@karrio/app-store/types";
+
+export default function HelloWorldConfiguration({
+  app,
+  context,
+  karrio,
+  onConfigChange,
+  onSave,
+  onCancel,
+}: AppConfigurationContext) {
+  const [config, setConfig] = useState({
+    greeting_message: "Hello",
+    show_user_info: true,
+    custom_message: "",
+    debug_mode: false,
+  });
+
+  const handleChange = (key: string, value: any) => {
+    const newConfig = { ...config, [key]: value };
+    setConfig(newConfig);
+    onConfigChange?.(key, value);
+  };
+
+  const handleSave = async () => {
+    try {
+      // Save configuration via metafields
+      await karrio.graphql(
+        `
+        mutation UpdateAppInstallation($input: UpdateAppInstallationMutationInput!) {
+          update_app_installation(input: $input) {
+            installation {
+              id
+              metafields {
+                key
+                value
+              }
+            }
+            errors {
+              field
+              messages
+            }
+          }
+        }
+      `,
+        {
+          input: {
+            id: app.installation.id,
+            metafields: Object.entries(config).map(([key, value]) => ({
+              key,
+              value: String(value),
+              type: typeof value === "boolean" ? "boolean" : "text",
+            })),
+          },
+        },
+      );
+
+      onSave?.(config);
+    } catch (error) {
+      console.error("Failed to save configuration:", error);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-xl font-semibold mb-4">App Configuration</h2>
+        <p className="text-gray-600">
+          Customize your Hello World app settings.
+        </p>
+      </div>
+
+      <div className="space-y-4">
+        <Input
+          label="Greeting Message"
+          value={config.greeting_message}
+          onChange={(value) => handleChange("greeting_message", value)}
+          placeholder="Enter greeting message"
+        />
+
+        <Textarea
+          label="Custom Message"
+          value={config.custom_message}
+          onChange={(value) => handleChange("custom_message", value)}
+          placeholder="Enter a custom message to display"
+          rows={3}
+        />
+
+        <Checkbox
+          label="Show User Information"
+          checked={config.show_user_info}
+          onChange={(checked) => handleChange("show_user_info", checked)}
+        />
+
+        <Checkbox
+          label="Debug Mode"
+          checked={config.debug_mode}
+          onChange={(checked) => handleChange("debug_mode", checked)}
+        />
+      </div>
+
+      <div className="flex space-x-4">
+        <Button variant="primary" onClick={handleSave}>
+          Save Configuration
+        </Button>
+        <Button variant="outline" onClick={onCancel}>
+          Cancel
+        </Button>
+      </div>
+    </div>
+  );
+}
+```
+
+#### API Route
+
+```tsx
+// api/hello.ts
+import { NextRequest, NextResponse } from "next/server";
+import { authenticateAppRequest } from "@karrio/app-store";
+
+export async function POST(request: NextRequest) {
+  try {
+    // Authenticate the app request
+    const appContext = await authenticateAppRequest("hello-world", request);
+
+    const { name } = await request.json();
+
+    const message = `Hello ${name}! This message is from your Karrio App API.`;
+
+    return NextResponse.json({
+      message,
+      timestamp: new Date().toISOString(),
+      appId: appContext.app.id,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Authentication failed" },
+      { status: 401 },
+    );
+  }
+}
+```
+
+---
+
+## Shipment Tracker App
+
+A real-time shipment tracking app with webhooks and notifications.
+
+### Features
+
+- Real-time tracking updates
+- Webhook integration
+- Status notifications
+- Tracking history
+- Multiple carrier support
+
+### Key Components
+
+#### Main Tracking Component
+
+```tsx
+// components/ShipmentTracker.tsx
+import React, { useState, useEffect } from "react";
+import { Card, Badge, Button, Input, Table } from "@karrio/ui";
+import { useRealtimeUpdates } from "../hooks/useRealtimeUpdates";
+
+export default function ShipmentTracker({ app, context, karrio }) {
+  const [trackingNumber, setTrackingNumber] = useState("");
+  const [trackingData, setTrackingData] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  // Real-time updates via WebSocket
+  const { updates } = useRealtimeUpdates(app.installation.id);
+
+  useEffect(() => {
+    if (updates.length > 0) {
+      const latestUpdate = updates[updates.length - 1];
+      if (
+        latestUpdate.type === "tracking_update" &&
+        latestUpdate.tracking_number === trackingNumber
+      ) {
+        setTrackingData(latestUpdate.data);
+      }
+    }
+  }, [updates, trackingNumber]);
+
+  const trackShipment = async () => {
+    if (!trackingNumber.trim()) return;
+
+    try {
+      setLoading(true);
+
+      const response = await karrio.graphql(
+        `
+        query GetShipmentByTracking($trackingNumber: String!) {
+          shipments(filter: { tracking_number: $trackingNumber, first: 1 }) {
+            edges {
+              node {
+                id
+                tracking_number
+                status
+                tracking_url
+                recipient {
+                  name
+                  city
+                  state_code
+                }
+                shipper {
+                  name
+                  city
+                  state_code
+                }
+                created_at
+              }
+            }
+          }
+        }
+      `,
+        { trackingNumber },
+      );
+
+      const shipment = response.data.shipments.edges[0]?.node;
+      if (shipment) {
+        // Use REST API to get detailed tracking info
+        const trackingResponse = await karrio.get(
+          `/v1/trackers/${shipment.tracking_number}`,
+        );
+        setTrackingData(trackingResponse);
+      }
+    } catch (error) {
+      console.error("Failed to track shipment:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getStatusColor = (status) => {
+    const colors = {
+      delivered: "success",
+      in_transit: "warning",
+      out_for_delivery: "info",
+      exception: "danger",
+      pending: "secondary",
+    };
+    return colors[status] || "secondary";
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto p-6 space-y-6">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold mb-4">Shipment Tracker</h1>
+        <p className="text-gray-600">
+          Track your shipments in real-time across multiple carriers
+        </p>
+      </div>
+
+      {/* Tracking Input */}
+      <Card>
+        <Card.Content>
+          <div className="flex space-x-4">
+            <Input
+              placeholder="Enter tracking number"
+              value={trackingNumber}
+              onChange={setTrackingNumber}
+              className="flex-1"
+            />
+            <Button
+              onClick={trackShipment}
+              loading={loading}
+              disabled={!trackingNumber.trim()}
+            >
+              Track Shipment
+            </Button>
+          </div>
+        </Card.Content>
+      </Card>
+
+      {/* Tracking Results */}
+      {trackingData && (
+        <>
+          {/* Status Overview */}
+          <Card>
+            <Card.Header>
+              <Card.Title>Tracking Details</Card.Title>
+            </Card.Header>
+            <Card.Content>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                  <label className="text-sm text-gray-500">
+                    Tracking Number
+                  </label>
+                  <p className="font-mono">{trackingData.tracking_number}</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-500">Carrier</label>
+                  <p className="font-medium">{trackingData.carrier_name}</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-500">Status</label>
+                  <Badge variant={getStatusColor(trackingData.status)}>
+                    {trackingData.status.replace("_", " ")}
+                  </Badge>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-500">Est. Delivery</label>
+                  <p>{trackingData.estimated_delivery || "N/A"}</p>
+                </div>
+              </div>
+            </Card.Content>
+          </Card>
+
+          {/* Tracking Events */}
+          <Card>
+            <Card.Header>
+              <Card.Title>Tracking History</Card.Title>
+            </Card.Header>
+            <Card.Content>
+              <div className="space-y-4">
+                {trackingData.events.map((event, index) => (
+                  <div key={index} className="border-l-2 border-gray-200 pl-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-medium">{event.description}</p>
+                        <p className="text-sm text-gray-500">
+                          {event.location}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium">
+                          {event.date} {event.time}
+                        </p>
+                        <Badge variant={getStatusColor(event.status)} size="sm">
+                          {event.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card.Content>
+          </Card>
+        </>
+      )}
+    </div>
+  );
+}
+```
+
+#### Real-time Updates Hook
+
+```tsx
+// hooks/useRealtimeUpdates.ts
+import { useState, useEffect } from "react";
+
+export function useRealtimeUpdates(installationId: string) {
+  const [updates, setUpdates] = useState([]);
+  const [connectionStatus, setConnectionStatus] = useState("disconnected");
+
+  useEffect(() => {
+    const eventSource = new EventSource(
+      `/api/sse/tracking?installation=${installationId}`,
+    );
+
+    eventSource.onopen = () => {
+      setConnectionStatus("connected");
+    };
+
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      setUpdates((prev) => [...prev, data]);
+    };
+
+    eventSource.onerror = () => {
+      setConnectionStatus("error");
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, [installationId]);
+
+  return { updates, connectionStatus };
+}
+```
+
+#### Webhook Handler
+
+```tsx
+// api/webhooks/tracking.ts
+import { NextRequest, NextResponse } from "next/server";
+
+export async function POST(request: NextRequest) {
+  try {
+    const payload = await request.json();
+
+    // Process tracking webhook
+    if (payload.event === "tracking.updated") {
+      // Broadcast update to connected clients
+      await broadcastTrackingUpdate(payload.data);
+
+      // Store in database
+      await storeTrackingEvent(payload.data);
+
+      // Send notifications if needed
+      if (payload.data.status === "delivered") {
+        await sendDeliveryNotification(payload.data);
+      }
+    }
+
+    return NextResponse.json({ received: true });
+  } catch (error) {
+    console.error("Webhook error:", error);
+    return NextResponse.json(
+      { error: "Webhook processing failed" },
+      { status: 500 },
+    );
+  }
+}
+
+async function broadcastTrackingUpdate(trackingData) {
+  // Implementation for real-time broadcasting
+}
+
+async function storeTrackingEvent(trackingData) {
+  // Implementation for storing tracking events
+}
+
+async function sendDeliveryNotification(trackingData) {
+  // Implementation for sending notifications
+}
+```
+
+---
+
+## E-commerce Integration App
+
+A sophisticated e-commerce platform integration with order synchronization.
+
+### Features
+
+- OAuth authentication with e-commerce platforms
+- Automatic order import
+- Shipment creation and label generation
+- Inventory tracking
+- Customer notifications
+
+### Key Components
+
+#### OAuth Configuration
+
+```tsx
+// components/OAuthSetup.tsx
+import React, { useState } from "react";
+import { Button, Card, Alert, Input } from "@karrio/ui";
+
+export default function OAuthSetup({ app, platform }) {
+  const [connecting, setConnecting] = useState(false);
+  const [connected, setConnected] = useState(false);
+  const [credentials, setCredentials] = useState({
+    client_id: "",
+    client_secret: "",
+    shop_url: "",
+  });
+
+  const handleConnect = async () => {
+    try {
+      setConnecting(true);
+
+      // Step 1: Save credentials
+      await app.api.post("/oauth/credentials", credentials);
+
+      // Step 2: Initiate OAuth flow
+      const authUrl = await app.api.get("/oauth/authorize", {
+        platform,
+        return_url: window.location.href,
+      });
+
+      // Redirect to OAuth provider
+      window.location.href = authUrl.authorization_url;
+    } catch (error) {
+      console.error("OAuth connection failed:", error);
+    } finally {
+      setConnecting(false);
+    }
+  };
+
+  return (
+    <Card>
+      <Card.Header>
+        <Card.Title>Connect to {platform}</Card.Title>
+        <Card.Subtitle>
+          Securely connect your {platform} store to sync orders
+        </Card.Subtitle>
+      </Card.Header>
+      <Card.Content>
+        {connected ? (
+          <Alert variant="success">Successfully connected to {platform}!</Alert>
+        ) : (
+          <div className="space-y-4">
+            <Input
+              label="Client ID"
+              value={credentials.client_id}
+              onChange={(value) =>
+                setCredentials((prev) => ({ ...prev, client_id: value }))
+              }
+            />
+            <Input
+              label="Client Secret"
+              type="password"
+              value={credentials.client_secret}
+              onChange={(value) =>
+                setCredentials((prev) => ({ ...prev, client_secret: value }))
+              }
+            />
+            <Input
+              label="Shop URL"
+              value={credentials.shop_url}
+              onChange={(value) =>
+                setCredentials((prev) => ({ ...prev, shop_url: value }))
+              }
+              placeholder="your-shop.myshopify.com"
+            />
+          </div>
+        )}
+      </Card.Content>
+      <Card.Footer>
+        <Button
+          onClick={handleConnect}
+          loading={connecting}
+          disabled={connected}
+        >
+          {connected ? "Connected" : "Connect Store"}
+        </Button>
+      </Card.Footer>
+    </Card>
+  );
+}
+```
+
+#### Order Sync Component
+
+```tsx
+// components/OrderSync.tsx
+import React, { useState, useEffect } from "react";
+import { Table, Button, Badge, Card } from "@karrio/ui";
+
+export default function OrderSync({ app, karrio }) {
+  const [orders, setOrders] = useState([]);
+  const [syncing, setSyncing] = useState(false);
+  const [stats, setStats] = useState({
+    total: 0,
+    pending: 0,
+    synced: 0,
+    errors: 0,
+  });
+
+  useEffect(() => {
+    loadOrders();
+    loadStats();
+  }, []);
+
+  const loadOrders = async () => {
+    try {
+      const response = await app.api.get("/orders");
+      setOrders(response.orders);
+    } catch (error) {
+      console.error("Failed to load orders:", error);
+    }
+  };
+
+  const loadStats = async () => {
+    try {
+      const response = await app.api.get("/orders/stats");
+      setStats(response);
+    } catch (error) {
+      console.error("Failed to load stats:", error);
+    }
+  };
+
+  const syncOrders = async () => {
+    try {
+      setSyncing(true);
+
+      const response = await app.api.post("/orders/sync");
+
+      // Process each order
+      for (const order of response.orders) {
+        await createShipmentForOrder(order);
+      }
+
+      await loadOrders();
+      await loadStats();
+    } catch (error) {
+      console.error("Order sync failed:", error);
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  const createShipmentForOrder = async (order) => {
+    try {
+      const shipmentData = {
+        recipient: {
+          name: `${order.customer.first_name} ${order.customer.last_name}`,
+          company: order.shipping_address.company,
+          address_line1: order.shipping_address.address1,
+          address_line2: order.shipping_address.address2,
+          city: order.shipping_address.city,
+          state_code: order.shipping_address.province_code,
+          postal_code: order.shipping_address.zip,
+          country_code: order.shipping_address.country_code,
+          phone_number: order.shipping_address.phone,
+          email: order.customer.email,
+        },
+        parcels: order.line_items.map((item) => ({
+          weight: item.weight || 1,
+          width: item.width || 10,
+          height: item.height || 10,
+          length: item.length || 10,
+          description: item.title,
+        })),
+        reference: order.order_number,
+        service: "fedex_ground", // Default service
+      };
+
+      const shipment = await karrio.createShipment(shipmentData);
+
+      // Update order with shipment info
+      await app.api.patch(`/orders/${order.id}`, {
+        shipment_id: shipment.id,
+        tracking_number: shipment.tracking_number,
+        status: "shipped",
+      });
+
+      return shipment;
+    } catch (error) {
+      console.error(`Failed to create shipment for order ${order.id}:`, error);
+      throw error;
+    }
+  };
+
+  const orderColumns = [
+    {
+      header: "Order #",
+      accessor: "order_number",
+      cell: (value) => <code className="text-sm">{value}</code>,
+    },
+    {
+      header: "Customer",
+      accessor: "customer",
+      cell: (customer) => (
+        <div>
+          <div className="font-medium">
+            {customer.first_name} {customer.last_name}
+          </div>
+          <div className="text-sm text-gray-500">{customer.email}</div>
+        </div>
+      ),
+    },
+    {
+      header: "Total",
+      accessor: "total_price",
+      cell: (value, row) => `${row.currency} ${value}`,
+    },
+    {
+      header: "Status",
+      accessor: "fulfillment_status",
+      cell: (status) => {
+        const variant =
+          status === "shipped"
+            ? "success"
+            : status === "pending"
+              ? "warning"
+              : "secondary";
+        return <Badge variant={variant}>{status || "unfulfilled"}</Badge>;
+      },
+    },
+    {
+      header: "Tracking",
+      accessor: "tracking_number",
+      cell: (trackingNumber) =>
+        trackingNumber ? (
+          <code className="text-sm">{trackingNumber}</code>
+        ) : (
+          <span className="text-gray-400">-</span>
+        ),
+    },
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card className="p-4">
+          <div className="text-center">
+            <div className="text-2xl font-bold">{stats.total}</div>
+            <div className="text-sm text-gray-500">Total Orders</div>
+          </div>
+        </Card>
+        <Card className="p-4">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-orange-600">
+              {stats.pending}
+            </div>
+            <div className="text-sm text-gray-500">Pending</div>
+          </div>
+        </Card>
+        <Card className="p-4">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-green-600">
+              {stats.synced}
+            </div>
+            <div className="text-sm text-gray-500">Synced</div>
+          </div>
+        </Card>
+        <Card className="p-4">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-red-600">
+              {stats.errors}
+            </div>
+            <div className="text-sm text-gray-500">Errors</div>
+          </div>
+        </Card>
+      </div>
+
+      {/* Controls */}
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-semibold">Orders</h2>
+        <Button onClick={syncOrders} loading={syncing}>
+          Sync Orders
+        </Button>
+      </div>
+
+      {/* Orders Table */}
+      <Table
+        data={orders}
+        columns={orderColumns}
+        searchable
+        pagination
+        emptyMessage="No orders found"
+      />
+    </div>
+  );
+}
+```
+
+---
+
+## Analytics Dashboard App
+
+A comprehensive analytics dashboard with charts and insights.
+
+### Features
+
+- Real-time shipping metrics
+- Cost analysis and trends
+- Performance dashboards
+- Custom reports
+- Data export capabilities
+
+### Key Components
+
+#### Dashboard Overview
+
+```tsx
+// components/Dashboard.tsx
+import React, { useState, useEffect } from "react";
+import { Card, Select, DatePicker } from "@karrio/ui";
+import { LineChart, BarChart, PieChart, MetricCard } from "./Charts";
+
+// Helper function to process shipment data into metrics
+const processShipmentData = (shipments) => {
+  const totalShipments = shipments.length;
+  const totalCost = shipments.reduce(
+    (sum, s) => sum + (parseFloat(s.selected_rate?.total_charge) || 0),
+    0,
+  );
+  const averageCost = totalCost / totalShipments || 0;
+
+  // Calculate success rate (delivered shipments)
+  const deliveredCount = shipments.filter(
+    (s) => s.status === "delivered",
+  ).length;
+  const successRate = ((deliveredCount / totalShipments) * 100).toFixed(1);
+
+  // Top carriers by usage
+  const carrierCounts = {};
+  shipments.forEach((s) => {
+    const carrier = s.selected_rate?.carrier?.carrier_name || "Unknown";
+    carrierCounts[carrier] = (carrierCounts[carrier] || 0) + 1;
+  });
+
+  const topCarriers = Object.entries(carrierCounts)
+    .map(([name, count]) => ({ name, count, cost: 0 }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
+
+  return {
+    total_shipments: totalShipments,
+    total_cost: totalCost,
+    average_cost: averageCost,
+    success_rate: successRate,
+    top_carriers: topCarriers,
+    daily_trends: [], // Could be calculated from created_at dates
+    status_breakdown: [], // Could be calculated from status values
+    cost_breakdown: [], // Could be calculated from carriers
+  };
+};
+
+export default function AnalyticsDashboard({ app, karrio }) {
+  const [dateRange, setDateRange] = useState({
+    start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
+    end: new Date(),
+  });
+  const [metrics, setMetrics] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadMetrics();
+  }, [dateRange]);
+
+  const loadMetrics = async () => {
+    try {
+      setLoading(true);
+
+      // Since shipping_metrics doesn't exist, we'll use actual shipments data
+      const response = await karrio.graphql(
+        `
+        query GetShipmentAnalytics($start: DateTime!, $end: DateTime!) {
+          shipments(filter: {
+            created_after: $start,
+            created_before: $end,
+            first: 1000
+          }) {
+            edges {
+              node {
+                id
+                status
+                created_at
+                selected_rate {
+                  total_charge
+                  currency
+                  service
+                  carrier {
+                    carrier_name
+                  }
+                }
+                recipient {
+                  city
+                  state_code
+                  country_code
+                }
+              }
+            }
+          }
+        }
+      `,
+        {
+          start: dateRange.start.toISOString(),
+          end: dateRange.end.toISOString(),
+        },
+      );
+
+      // Process the raw shipment data to create metrics
+      const shipments = response.data.shipments.edges.map((edge) => edge.node);
+      const processedMetrics = processShipmentData(shipments);
+      setMetrics(processedMetrics);
+    } catch (error) {
+      console.error("Failed to load metrics:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <div>Loading analytics...</div>;
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header & Controls */}
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Shipping Analytics</h1>
+        <div className="flex space-x-4">
+          <DatePicker
+            value={dateRange}
+            onChange={setDateRange}
+            placeholder="Select date range"
+          />
+        </div>
+      </div>
+
+      {/* Key Metrics */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <MetricCard
+          title="Total Shipments"
+          value={metrics.total_shipments}
+          change={"+12%"}
+          trend="up"
+        />
+        <MetricCard
+          title="Total Cost"
+          value={`$${metrics.total_cost.toFixed(2)}`}
+          change={"-5%"}
+          trend="down"
+        />
+        <MetricCard
+          title="Average Cost"
+          value={`$${metrics.average_cost.toFixed(2)}`}
+          change={"+2%"}
+          trend="up"
+        />
+        <MetricCard
+          title="Success Rate"
+          value={`${metrics.success_rate}%`}
+          change={"+1%"}
+          trend="up"
+        />
+      </div>
+
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Daily Trends */}
+        <Card>
+          <Card.Header>
+            <Card.Title>Daily Shipping Trends</Card.Title>
+          </Card.Header>
+          <Card.Content>
+            <LineChart
+              data={metrics.daily_trends}
+              xKey="date"
+              yKeys={["shipments", "cost"]}
+              colors={["#3b82f6", "#10b981"]}
+            />
+          </Card.Content>
+        </Card>
+
+        {/* Status Breakdown */}
+        <Card>
+          <Card.Header>
+            <Card.Title>Shipment Status</Card.Title>
+          </Card.Header>
+          <Card.Content>
+            <PieChart
+              data={metrics.status_breakdown}
+              dataKey="count"
+              nameKey="status"
+            />
+          </Card.Content>
+        </Card>
+
+        {/* Top Carriers */}
+        <Card>
+          <Card.Header>
+            <Card.Title>Top Carriers</Card.Title>
+          </Card.Header>
+          <Card.Content>
+            <BarChart
+              data={metrics.top_carriers}
+              xKey="name"
+              yKey="count"
+              color="#f59e0b"
+            />
+          </Card.Content>
+        </Card>
+
+        {/* Cost Breakdown */}
+        <Card>
+          <Card.Header>
+            <Card.Title>Cost by Carrier</Card.Title>
+          </Card.Header>
+          <Card.Content>
+            <PieChart
+              data={metrics.cost_breakdown}
+              dataKey="cost"
+              nameKey="carrier"
+            />
+          </Card.Content>
+        </Card>
+      </div>
+    </div>
+  );
+}
+```
+
+---
+
+## Workflow Automation App
+
+An advanced automation app with rules engine and batch processing.
+
+### Features
+
+- Visual workflow builder
+- Rule-based automation
+- Batch processing
+- Conditional logic
+- Integration triggers
+
+### Workflow Builder
+
+```tsx
+// components/WorkflowBuilder.tsx
+import React, { useState } from "react";
+import { Card, Button, Select, Input } from "@karrio/ui";
+
+export default function WorkflowBuilder({ app, karrio }) {
+  const [workflow, setWorkflow] = useState({
+    name: "",
+    trigger: null,
+    conditions: [],
+    actions: [],
+  });
+
+  const triggers = [
+    { value: "order_created", label: "New Order Created" },
+    { value: "shipment_delivered", label: "Shipment Delivered" },
+    { value: "tracking_exception", label: "Tracking Exception" },
+    { value: "cost_threshold", label: "Cost Threshold Exceeded" },
+  ];
+
+  const conditions = [
+    { value: "order_value", label: "Order Value", type: "number" },
+    { value: "destination", label: "Destination", type: "text" },
+    { value: "carrier", label: "Carrier", type: "select" },
+    { value: "weight", label: "Weight", type: "number" },
+  ];
+
+  const actions = [
+    { value: "send_email", label: "Send Email" },
+    { value: "create_shipment", label: "Create Shipment" },
+    { value: "update_inventory", label: "Update Inventory" },
+    { value: "webhook", label: "Call Webhook" },
+  ];
+
+  const addCondition = () => {
+    setWorkflow((prev) => ({
+      ...prev,
+      conditions: [
+        ...prev.conditions,
+        {
+          field: "",
+          operator: "equals",
+          value: "",
+        },
+      ],
+    }));
+  };
+
+  const addAction = () => {
+    setWorkflow((prev) => ({
+      ...prev,
+      actions: [
+        ...prev.actions,
+        {
+          type: "",
+          config: {},
+        },
+      ],
+    }));
+  };
+
+  const saveWorkflow = async () => {
+    try {
+      await app.api.post("/workflows", workflow);
+      // Success handling
+    } catch (error) {
+      console.error("Failed to save workflow:", error);
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto space-y-6">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold mb-2">Workflow Builder</h1>
+        <p className="text-gray-600">
+          Create automated workflows for your shipping operations
+        </p>
+      </div>
+
+      {/* Workflow Name */}
+      <Card>
+        <Card.Header>
+          <Card.Title>Workflow Details</Card.Title>
+        </Card.Header>
+        <Card.Content>
+          <Input
+            label="Workflow Name"
+            value={workflow.name}
+            onChange={(value) =>
+              setWorkflow((prev) => ({ ...prev, name: value }))
+            }
+            placeholder="Enter workflow name"
+          />
+        </Card.Content>
+      </Card>
+
+      {/* Trigger */}
+      <Card>
+        <Card.Header>
+          <Card.Title>Trigger</Card.Title>
+          <Card.Subtitle>When should this workflow run?</Card.Subtitle>
+        </Card.Header>
+        <Card.Content>
+          <Select
+            label="Select Trigger"
+            value={workflow.trigger}
+            onChange={(value) =>
+              setWorkflow((prev) => ({ ...prev, trigger: value }))
+            }
+            options={triggers}
+          />
+        </Card.Content>
+      </Card>
+
+      {/* Conditions */}
+      <Card>
+        <Card.Header>
+          <div className="flex justify-between items-center">
+            <div>
+              <Card.Title>Conditions</Card.Title>
+              <Card.Subtitle>
+                Add conditions to filter when the workflow runs
+              </Card.Subtitle>
+            </div>
+            <Button onClick={addCondition} variant="outline" size="sm">
+              Add Condition
+            </Button>
+          </div>
+        </Card.Header>
+        <Card.Content>
+          <div className="space-y-4">
+            {workflow.conditions.map((condition, index) => (
+              <div key={index} className="flex space-x-4 items-end">
+                <Select
+                  label="Field"
+                  value={condition.field}
+                  onChange={(value) => {
+                    const newConditions = [...workflow.conditions];
+                    newConditions[index].field = value;
+                    setWorkflow((prev) => ({
+                      ...prev,
+                      conditions: newConditions,
+                    }));
+                  }}
+                  options={conditions}
+                />
+                <Select
+                  label="Operator"
+                  value={condition.operator}
+                  onChange={(value) => {
+                    const newConditions = [...workflow.conditions];
+                    newConditions[index].operator = value;
+                    setWorkflow((prev) => ({
+                      ...prev,
+                      conditions: newConditions,
+                    }));
+                  }}
+                  options={[
+                    { value: "equals", label: "Equals" },
+                    { value: "greater_than", label: "Greater Than" },
+                    { value: "less_than", label: "Less Than" },
+                    { value: "contains", label: "Contains" },
+                  ]}
+                />
+                <Input
+                  label="Value"
+                  value={condition.value}
+                  onChange={(value) => {
+                    const newConditions = [...workflow.conditions];
+                    newConditions[index].value = value;
+                    setWorkflow((prev) => ({
+                      ...prev,
+                      conditions: newConditions,
+                    }));
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </Card.Content>
+      </Card>
+
+      {/* Actions */}
+      <Card>
+        <Card.Header>
+          <div className="flex justify-between items-center">
+            <div>
+              <Card.Title>Actions</Card.Title>
+              <Card.Subtitle>
+                What should happen when conditions are met?
+              </Card.Subtitle>
+            </div>
+            <Button onClick={addAction} variant="outline" size="sm">
+              Add Action
+            </Button>
+          </div>
+        </Card.Header>
+        <Card.Content>
+          <div className="space-y-4">
+            {workflow.actions.map((action, index) => (
+              <div key={index} className="border rounded-lg p-4">
+                <Select
+                  label="Action Type"
+                  value={action.type}
+                  onChange={(value) => {
+                    const newActions = [...workflow.actions];
+                    newActions[index].type = value;
+                    setWorkflow((prev) => ({ ...prev, actions: newActions }));
+                  }}
+                  options={actions}
+                />
+                {/* Action-specific configuration would go here */}
+              </div>
+            ))}
+          </div>
+        </Card.Content>
+      </Card>
+
+      {/* Save */}
+      <div className="flex justify-center">
+        <Button onClick={saveWorkflow} size="lg">
+          Save Workflow
+        </Button>
+      </div>
+    </div>
+  );
+}
+```
+
+## Getting Started with Examples
+
+### 1. Clone an Example
+
+```bash
+# Clone the examples repository
+git clone https://github.com/karrioapi/karrio-app-examples.git
+cd karrio-app-examples
+
+# Choose an example
+cd hello-world-app
+
+# Install dependencies
+npm install
+
+# Configure environment
+cp .env.example .env.local
+# Edit .env.local with your settings
+
+# Run in development
+npm run dev
+```
+
+### 2. Customize for Your Needs
+
+1. **Update the manifest** - Change app ID, name, and permissions
+2. **Modify components** - Adapt UI to your requirements
+3. **Add your business logic** - Implement your specific features
+4. **Test thoroughly** - Use the included test suites
+5. **Deploy** - Follow the deployment guide
+
+### 3. Resources
+
+- **[GitHub Repository](https://github.com/karrioapi/karrio-app-examples)** - Complete source code
+- **[Live Demos](https://examples.karrio.io)** - See examples in action
+- **[Video Tutorials](https://youtube.com/karrio-apps)** - Step-by-step walkthroughs
+- **[Community Discord](https://discord.gg/karrio)** - Get help and share ideas
+
+## Next Steps
+
+- **[Authentication](/docs/products/app-store/authentication)** - Implement secure authentication
+- **[API Integration](/docs/products/app-store/api-integration)** - Connect to Karrio's APIs
+- **[Deployment](/docs/products/app-store/deployment)** - Deploy your app to production
+
+---
+
+_Start building amazing Karrio Apps with these proven examples and patterns!_

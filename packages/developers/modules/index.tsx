@@ -302,7 +302,6 @@ export default function ApiPage() {
 }
 
 // Developer modules exports
-export { default as ApiKeysPage } from "./apikeys";
 export { default as AppsPage } from "./apps";
 export { default as EventPage } from "./event";
 export { default as EventsPage } from "./events";
@@ -310,3 +309,5 @@ export { default as DevelopersOverview } from "./index";
 export { default as LogPage } from "./log";
 export { default as LogsPage } from "./logs";
 export { default as WebhooksPage } from "./webhooks";
+export { PlaygroundModule } from "./playground";
+export { GraphiQLModule } from "./graphiql";
