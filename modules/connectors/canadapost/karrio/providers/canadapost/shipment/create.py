@@ -48,16 +48,16 @@ def _extract_shipment(
     base_amount = lib.failsafe(lambda: info.shipment_price.base_amount)
     service_code = lib.failsafe(lambda: info.shipment_price.service_code)
     service = provider_units.ServiceType.map(service_code)
-    adjustments = getattr(info.shipment_price.adjustments, "adjustment", [])
-    priced_options = getattr(info.shipment_price.priced_options, "priced_option", [])
-    charges = [
+    adjustments = lib.failsafe(lambda: info.shipment_price.adjustments.adjustment) or []
+    priced_options = lib.failsafe(lambda: info.shipment_price.priced_options.priced_option) or []
+    charges = lib.failsafe(lambda: [
         ("Base charge", info.shipment_price.base_amount),
         ("GST", info.shipment_price.gst_amount),
         ("PST", info.shipment_price.pst_amount),
         ("HST", info.shipment_price.hst_amount),
         *((f"Option {o.option_code}", o.option_price) for o in priced_options),
         *((a.adjustment_code, a.adjustment_amount) for a in adjustments),
-    ]
+    ]) or []
 
     return models.ShipmentDetails(
         carrier_name=settings.carrier_name,
