@@ -466,7 +466,6 @@ export interface get_shipment_shipment_recipient {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -486,7 +485,6 @@ export interface get_shipment_shipment_shipper {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -506,7 +504,6 @@ export interface get_shipment_shipment_return_address {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -526,7 +523,6 @@ export interface get_shipment_shipment_billing_address {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -602,7 +598,6 @@ export interface get_shipment_shipment_customs_duty_billing_address {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -818,7 +813,6 @@ export interface get_shipments_shipments_edges_node_recipient {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -838,7 +832,6 @@ export interface get_shipments_shipments_edges_node_shipper {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -858,7 +851,6 @@ export interface get_shipments_shipments_edges_node_return_address {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -878,7 +870,6 @@ export interface get_shipments_shipments_edges_node_billing_address {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -954,7 +945,6 @@ export interface get_shipments_shipments_edges_node_customs_duty_billing_address
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -1109,7 +1099,6 @@ export interface get_shipment_data_shipment_recipient {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -1129,7 +1118,6 @@ export interface get_shipment_data_shipment_shipper {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -1149,7 +1137,6 @@ export interface get_shipment_data_shipment_return_address {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -1169,7 +1156,6 @@ export interface get_shipment_data_shipment_billing_address {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -1245,7 +1231,6 @@ export interface get_shipment_data_shipment_customs_duty_billing_address {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -1350,7 +1335,6 @@ export interface partial_shipment_update_partial_shipment_update_shipment_recipi
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -1370,7 +1354,6 @@ export interface partial_shipment_update_partial_shipment_update_shipment_shippe
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -1390,7 +1373,6 @@ export interface partial_shipment_update_partial_shipment_update_shipment_return
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -1410,7 +1392,6 @@ export interface partial_shipment_update_partial_shipment_update_shipment_billin
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -1486,7 +1467,6 @@ export interface partial_shipment_update_partial_shipment_update_shipment_custom
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -2694,7 +2674,6 @@ export interface get_order_order_shipping_to {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -2714,7 +2693,6 @@ export interface get_order_order_shipping_from {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -2734,7 +2712,6 @@ export interface get_order_order_billing_address {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -2781,7 +2758,6 @@ export interface get_order_order_shipments_recipient {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -2801,7 +2777,6 @@ export interface get_order_order_shipments_shipper {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -2821,7 +2796,6 @@ export interface get_order_order_shipments_return_address {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -2841,7 +2815,6 @@ export interface get_order_order_shipments_billing_address {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -2917,7 +2890,6 @@ export interface get_order_order_shipments_customs_duty_billing_address {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -3082,7 +3054,6 @@ export interface get_order_data_order_shipping_to {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -3102,7 +3073,6 @@ export interface get_order_data_order_shipping_from {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -3122,7 +3092,6 @@ export interface get_order_data_order_billing_address {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -3192,7 +3161,6 @@ export interface get_orders_orders_edges_node_shipping_to {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -3212,7 +3180,6 @@ export interface get_orders_orders_edges_node_shipping_from {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -3232,7 +3199,6 @@ export interface get_orders_orders_edges_node_billing_address {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -3279,7 +3245,6 @@ export interface get_orders_orders_edges_node_shipments_recipient {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -3299,7 +3264,6 @@ export interface get_orders_orders_edges_node_shipments_shipper {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -3319,7 +3283,6 @@ export interface get_orders_orders_edges_node_shipments_return_address {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -3339,7 +3302,6 @@ export interface get_orders_orders_edges_node_shipments_billing_address {
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -3415,7 +3377,6 @@ export interface get_orders_orders_edges_node_shipments_customs_duty_billing_add
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
-  suburb: string | null;
   residential: boolean | null;
   street_number: string | null;
   address_line1: string | null;
@@ -4341,7 +4302,6 @@ export interface GetManifest_manifest_address {
   address_line1: string | null;
   address_line2: string | null;
   state_code: string | null;
-  suburb: string | null;
   street_number: string | null;
 }
 
@@ -4936,6 +4896,7 @@ export enum CurrencyCodeEnum {
   PLN = "PLN",
   PYG = "PYG",
   QAR = "QAR",
+  RON = "RON",
   RSD = "RSD",
   RUB = "RUB",
   RWF = "RWF",
@@ -4990,6 +4951,9 @@ export enum WeightUnitEnum {
 }
 
 export enum CarrierNameEnum {
+  allied_express = "allied_express",
+  allied_express_local = "allied_express_local",
+  amazon_shipping = "amazon_shipping",
   aramex = "aramex",
   asendia_us = "asendia_us",
   australiapost = "australiapost",
@@ -5015,6 +4979,7 @@ export enum CarrierNameEnum {
   hay_post = "hay_post",
   laposte = "laposte",
   locate2u = "locate2u",
+  mydhl = "mydhl",
   nationex = "nationex",
   purolator = "purolator",
   roadie = "roadie",
@@ -5022,11 +4987,13 @@ export enum CarrierNameEnum {
   sapient = "sapient",
   seko = "seko",
   sendle = "sendle",
+  shipengine = "shipengine",
   tge = "tge",
   tnt = "tnt",
   ups = "ups",
   usps = "usps",
   usps_international = "usps_international",
+  veho = "veho",
   zoom2u = "zoom2u",
 }
 
@@ -5244,7 +5211,6 @@ export interface UpdateAddressInput {
   email?: string | null;
   phone_number?: string | null;
   state_code?: string | null;
-  suburb?: string | null;
   residential?: boolean | null;
   street_number?: string | null;
   address_line1?: string | null;
@@ -5308,7 +5274,6 @@ export interface AddressInput {
   email?: string | null;
   phone_number?: string | null;
   state_code?: string | null;
-  suburb?: string | null;
   residential?: boolean | null;
   street_number?: string | null;
   address_line1?: string | null;

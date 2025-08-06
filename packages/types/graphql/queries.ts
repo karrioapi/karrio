@@ -305,7 +305,6 @@ export const GET_SHIPMENT = gql`
         email
         phone_number
         state_code
-        suburb
         residential
         street_number
         address_line1
@@ -324,7 +323,6 @@ export const GET_SHIPMENT = gql`
         email
         phone_number
         state_code
-        suburb
         residential
         street_number
         address_line1
@@ -343,7 +341,6 @@ export const GET_SHIPMENT = gql`
         email
         phone_number
         state_code
-        suburb
         residential
         street_number
         address_line1
@@ -362,7 +359,6 @@ export const GET_SHIPMENT = gql`
         email
         phone_number
         state_code
-        suburb
         residential
         street_number
         address_line1
@@ -453,7 +449,6 @@ export const GET_SHIPMENT = gql`
           email
           phone_number
           state_code
-          suburb
           residential
           street_number
           address_line1
@@ -602,7 +597,6 @@ export const GET_SHIPMENTS = gql`
             email
             phone_number
             state_code
-            suburb
             residential
             street_number
             address_line1
@@ -621,7 +615,6 @@ export const GET_SHIPMENTS = gql`
             email
             phone_number
             state_code
-            suburb
             residential
             street_number
             address_line1
@@ -640,7 +633,6 @@ export const GET_SHIPMENTS = gql`
             email
             phone_number
             state_code
-            suburb
             residential
             street_number
             address_line1
@@ -659,7 +651,6 @@ export const GET_SHIPMENTS = gql`
             email
             phone_number
             state_code
-            suburb
             residential
             street_number
             address_line1
@@ -750,7 +741,6 @@ export const GET_SHIPMENTS = gql`
               email
               phone_number
               state_code
-              suburb
               residential
               street_number
               address_line1
@@ -835,7 +825,6 @@ export const GET_SHIPMENT_DATA = gql`
         email
         phone_number
         state_code
-        suburb
         residential
         street_number
         address_line1
@@ -854,7 +843,6 @@ export const GET_SHIPMENT_DATA = gql`
         email
         phone_number
         state_code
-        suburb
         residential
         street_number
         address_line1
@@ -873,7 +861,6 @@ export const GET_SHIPMENT_DATA = gql`
         email
         phone_number
         state_code
-        suburb
         residential
         street_number
         address_line1
@@ -892,7 +879,6 @@ export const GET_SHIPMENT_DATA = gql`
         email
         phone_number
         state_code
-        suburb
         residential
         street_number
         address_line1
@@ -976,7 +962,6 @@ export const GET_SHIPMENT_DATA = gql`
           email
           phone_number
           state_code
-          suburb
           residential
           street_number
           address_line1
@@ -1037,7 +1022,6 @@ export const PARTIAL_UPDATE_SHIPMENT = gql`
           email
           phone_number
           state_code
-          suburb
           residential
           street_number
           address_line1
@@ -1056,7 +1040,6 @@ export const PARTIAL_UPDATE_SHIPMENT = gql`
           email
           phone_number
           state_code
-          suburb
           residential
           street_number
           address_line1
@@ -1075,7 +1058,6 @@ export const PARTIAL_UPDATE_SHIPMENT = gql`
           email
           phone_number
           state_code
-          suburb
           residential
           street_number
           address_line1
@@ -1094,7 +1076,6 @@ export const PARTIAL_UPDATE_SHIPMENT = gql`
           email
           phone_number
           state_code
-          suburb
           residential
           street_number
           address_line1
@@ -1178,7 +1159,6 @@ export const PARTIAL_UPDATE_SHIPMENT = gql`
             email
             phone_number
             state_code
-            suburb
             residential
             street_number
             address_line1
@@ -1850,7 +1830,6 @@ export const GET_ORDER = gql`
         email
         phone_number
         state_code
-        suburb
         residential
         street_number
         address_line1
@@ -1869,7 +1848,6 @@ export const GET_ORDER = gql`
         email
         phone_number
         state_code
-        suburb
         residential
         street_number
         address_line1
@@ -1888,7 +1866,6 @@ export const GET_ORDER = gql`
         email
         phone_number
         state_code
-        suburb
         residential
         street_number
         address_line1
@@ -1943,7 +1920,6 @@ export const GET_ORDER = gql`
           email
           phone_number
           state_code
-          suburb
           residential
           street_number
           address_line1
@@ -1962,7 +1938,6 @@ export const GET_ORDER = gql`
           email
           phone_number
           state_code
-          suburb
           residential
           street_number
           address_line1
@@ -1981,7 +1956,6 @@ export const GET_ORDER = gql`
           email
           phone_number
           state_code
-          suburb
           residential
           street_number
           address_line1
@@ -2000,7 +1974,6 @@ export const GET_ORDER = gql`
           email
           phone_number
           state_code
-          suburb
           residential
           street_number
           address_line1
@@ -2090,7 +2063,6 @@ export const GET_ORDER = gql`
             email
             phone_number
             state_code
-            suburb
             residential
             street_number
             address_line1
@@ -2175,7 +2147,6 @@ export const GET_ORDER_DATA = gql`
         email
         phone_number
         state_code
-        suburb
         residential
         street_number
         address_line1
@@ -2194,7 +2165,6 @@ export const GET_ORDER_DATA = gql`
         email
         phone_number
         state_code
-        suburb
         residential
         street_number
         address_line1
@@ -2213,7 +2183,6 @@ export const GET_ORDER_DATA = gql`
         email
         phone_number
         state_code
-        suburb
         residential
         street_number
         address_line1
@@ -2269,7 +2238,6 @@ export const GET_ORDERS = gql`
             email
             phone_number
             state_code
-            suburb
             residential
             street_number
             address_line1
@@ -2288,7 +2256,6 @@ export const GET_ORDERS = gql`
             email
             phone_number
             state_code
-            suburb
             residential
             street_number
             address_line1
@@ -2307,7 +2274,6 @@ export const GET_ORDERS = gql`
             email
             phone_number
             state_code
-            suburb
             residential
             street_number
             address_line1
@@ -2362,7 +2328,6 @@ export const GET_ORDERS = gql`
               email
               phone_number
               state_code
-              suburb
               residential
               street_number
               address_line1
@@ -2381,7 +2346,6 @@ export const GET_ORDERS = gql`
               email
               phone_number
               state_code
-              suburb
               residential
               street_number
               address_line1
@@ -2400,7 +2364,6 @@ export const GET_ORDERS = gql`
               email
               phone_number
               state_code
-              suburb
               residential
               street_number
               address_line1
@@ -2419,7 +2382,6 @@ export const GET_ORDERS = gql`
               email
               phone_number
               state_code
-              suburb
               residential
               street_number
               address_line1
@@ -2509,7 +2471,6 @@ export const GET_ORDERS = gql`
                 email
                 phone_number
                 state_code
-                suburb
                 residential
                 street_number
                 address_line1
@@ -3039,7 +3000,6 @@ export const GET_MANIFEST = gql`
         address_line1
         address_line2
         state_code
-        suburb
         street_number
       }
       messages {

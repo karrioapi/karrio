@@ -1,3 +1,13 @@
+# Karrio 2025.5rc12
+
+## Changes
+
+### Fix
+
+- fix: shipment menu
+- fix: create_label page loading race condition
+- fix: `partial_shipment_update` mutation for better shipment draft handling
+
 # Karrio 2025.5rc11
 
 ## Changes

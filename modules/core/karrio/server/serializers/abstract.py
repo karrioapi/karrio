@@ -223,6 +223,7 @@ def link_org(entity: ModelSerializer, context: Context):
             update_fields=(["created_at"] if hasattr(entity, "created_at") else [])
         )
 
+
 def bulk_link_org(entities: typing.List[models.Model], context: Context):
     if len(entities) == 0 or settings.MULTI_ORGANIZATIONS is False:
         return

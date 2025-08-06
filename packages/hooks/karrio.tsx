@@ -83,14 +83,23 @@ export function useAuthenticatedQuery<TQueryFnData = unknown, TError = unknown, 
   }
 ) {
   const { isAuthenticated } = useKarrio();
+  const { query: sessionQuery } = useSyncedSession();
   const { requireAuth = true, enabled = true, ...queryOptions } = options;
+
+  // Wait for session to be loaded before enabling authenticated queries
+  const sessionLoaded = sessionQuery.isFetched || sessionQuery.isSuccess;
+  const shouldEnable = requireAuth ? (enabled && isAuthenticated && sessionLoaded) : enabled;
 
   return useQuery({
     ...queryOptions,
-    enabled: requireAuth ? (enabled && isAuthenticated) : enabled,
+    enabled: shouldEnable,
     retry: (failureCount, error) => {
       // Don't retry if it's an authentication error
-      if ((error as any)?.response?.errors?.[0]?.code === "authentication_required") {
+      if (
+        (error as any)?.response?.errors?.[0]?.code === "authentication_required" ||
+        (error as any)?.errors?.[0]?.extensions?.code === "UNAUTHENTICATED" ||
+        (error as any)?.message?.includes("authentication")
+      ) {
         return false;
       }
       return failureCount < 1;

@@ -313,6 +313,7 @@ class Address:
             try:
                 # Import the validator module dynamically
                 import importlib
+
                 module = importlib.import_module(f"karrio.validators.{validator_name}")
                 if hasattr(module, "METADATA"):
                     validator_class = module.METADATA.Validator
@@ -355,9 +356,11 @@ class Address:
         # For backwards compatibility, check if Google or Canada Post is configured
         if any(config.GOOGLE_CLOUD_API_KEY or ""):
             from karrio.validators.googlegeocoding import Validator as GoogleGeocode
+
             return GoogleGeocode
         elif any(config.CANADAPOST_ADDRESS_COMPLETE_API_KEY or ""):
             from karrio.validators.addresscomplete import Validator as AddressComplete
+
             return AddressComplete
 
         raise Exception("No address validation service provider configured")
@@ -380,17 +383,18 @@ class Address:
         refs = references.REFERENCES
         if len(refs.get("address_validators", {})) > 0:
             # Get the first available validator
-                validator_name = next(iter(refs["address_validators"].keys()))
+            validator_name = next(iter(refs["address_validators"].keys()))
 
-                # Try to get the validator class from the references
-                try:
-                    # Import the validator module dynamically
-                    import importlib
-                    module = importlib.import_module(f"karrio.validators.{validator_name}")
-                    if hasattr(module, "METADATA"):
-                        return module.METADATA.Validator
-                except (ImportError, AttributeError) as e:
-                    logger.warning(f"Could not import validator {validator_name}: {e}")
+            # Try to get the validator class from the references
+            try:
+                # Import the validator module dynamically
+                import importlib
+
+                module = importlib.import_module(f"karrio.validators.{validator_name}")
+                if hasattr(module, "METADATA"):
+                    return module.METADATA.Validator
+            except (ImportError, AttributeError) as e:
+                logger.warning(f"Could not import validator {validator_name}: {e}")
 
         # Fall back to legacy validator
         return Address._get_legacy_validator()

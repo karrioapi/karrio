@@ -21,7 +21,7 @@ import { useDocumentTemplates } from "@karrio/hooks/document-template";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { ShipmentsFilter } from "@karrio/ui/core/filters/shipments-filter";
 import { AddressType, RateType, ShipmentType } from "@karrio/types";
-import { ShipmentMenu } from "@karrio/ui/core/components/shipment-menu";
+import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { StatusBadge } from "@karrio/ui/core/components/status-badge";
 import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";

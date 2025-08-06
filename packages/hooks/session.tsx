@@ -28,7 +28,16 @@ export function useSyncedSession() {
     refetchInterval: 120000,
     enabled: status === "authenticated",
     staleTime: 110000, // Slightly less than refetch interval
-    retry: 1,
+    retry: (failureCount, error) => {
+      // Don't retry if session is invalid or authentication failed
+      if (
+        (error as any)?.message?.includes("authentication") ||
+        status === "unauthenticated"
+      ) {
+        return false;
+      }
+      return failureCount < 1;
+    },
   });
 
   return {

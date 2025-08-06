@@ -97,7 +97,14 @@ export function useLabelData(id: string, initialData?: ShipmentType) {
     },
     initialData: !!initialData ? { shipment: initialData } : undefined,
     staleTime: 150000,
-    enabled: !!id,
+    enabled: !!id && karrio.isAuthenticated,
+    retry: (failureCount, error) => {
+      // Don't retry if it's an authentication error
+      if ((error as any)?.errors?.[0]?.extensions?.code === "UNAUTHENTICATED") {
+        return false;
+      }
+      return failureCount < 1;
+    },
   });
 
   const updateLabelData = (data: Partial<ShipmentType> = {}) => {
@@ -114,9 +121,19 @@ export function useLabelData(id: string, initialData?: ShipmentType) {
       dispatch({ name: "full", value: query!.data!.shipment as ShipmentType });
     }
   }, [query.data?.shipment]);
+
   React.useEffect(() => {
-    if (!query.isFetched || !query.isLoading) query.refetch();
-  }, [id]);
+    // Only refetch if we have authentication and the query is enabled
+    if (
+      karrio.isAuthenticated &&
+      id &&
+      id !== "new" &&
+      !query.isFetching &&
+      !query.data
+    ) {
+      query.refetch();
+    }
+  }, [id, karrio.isAuthenticated]);
 
   return {
     query,
