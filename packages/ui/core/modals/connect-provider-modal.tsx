@@ -93,7 +93,7 @@ export const ConnectProviderModal = ({
   const [key, setKey] = useState<string>(`connection-${Date.now()}`);
   const [isNew, setIsNew] = useState<boolean>(true);
   const [payload, dispatch] = useReducer(reducer, DEFAULT_STATE());
-  const [carrier_name, setCarrierName] = useState<CarrierNameType>(
+  const [carrier_name, setCarrierName] = useState<CarrierNameType | keyof typeof carriers>(
     NoneEnum.none,
   );
   const [isActive, setIsActive] = useState<boolean>(false);
