@@ -16,7 +16,7 @@
     "@karrio/hooks": "*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "lucide-react": "^0.263.1"
+    "lucide-react": "^0.439.0"
   },
   "devDependencies": {
     "@karrio/eslint-config-custom": "*",

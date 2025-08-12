@@ -11,21 +11,23 @@ import { useLabelTemplateModal } from "../modals/label-template-edit-modal";
 import { CarrierNameBadge } from "../components/carrier-name-badge";
 import { ConfirmModalContext } from "../modals/confirm-modal";
 import { CopiableLink } from "../components/copiable-link";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { isNoneOrEmpty, jsonify } from "@karrio/lib";
 import { useAppMode } from "@karrio/hooks/app-mode";
 import { useSearchParams } from "next/navigation";
 import { Notify } from "../components/notifier";
 import { Spinner } from "../components/spinner";
 import { Loading } from "../components/loader";
+import { RateSheetEditor } from "@karrio/core/modules/Connections/rate-sheet-editor";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 
 type ConnectionUpdateType = Partial<UpdateCarrierConnectionMutationInput> & {
   id: string;
   carrier_name: string;
 };
-interface UserConnectionListView {}
+interface UserConnectionListView { }
 
-export const UserConnectionList= (): JSX.Element =>  {
+export const UserConnectionList = (): JSX.Element => {
   const searchParams = useSearchParams();
   const modal = searchParams.get("modal") as string;
   const { testMode } = useAppMode();
@@ -36,20 +38,51 @@ export const UserConnectionList= (): JSX.Element =>  {
   const { editConnection } = useContext(ConnectProviderModalContext);
   const mutation = useCarrierConnectionMutation();
   const { query } = useCarrierConnections();
+  const [rateSheetEditorOpen, setRateSheetEditorOpen] = useState(false);
+  const [selectedConnection, setSelectedConnection] = useState<any>(null);
+  const { metadata } = useAPIMetadata();
+  const [carrierMetadata, setCarrierMetadata] = useState<any[]>([]);
+
+  // Fetch detailed carrier metadata
+  useEffect(() => {
+    if (metadata?.HOST) {
+      fetch(`${metadata.HOST}/v1/carriers`)
+        .then(res => res.json())
+        .then(setCarrierMetadata)
+        .catch(console.error);
+    }
+  }, [metadata?.HOST]);
+
+  // Dynamic function to check if carrier supports rate sheets
+  const supportsRateSheets = (carrierName: string) => {
+    // Always support rate sheets for generic and custom carriers
+    if (carrierName === 'generic') return true;
+
+    // Find carrier in metadata
+    const carrier = carrierMetadata.find(c => c.carrier_name === carrierName);
+    if (!carrier) return false;
+
+    // Check if carrier has default services with zones in connection_fields
+    const services = carrier.connection_fields?.services;
+    if (!services?.default || !Array.isArray(services.default)) return false;
+
+    // Check if any default service has zones
+    return services.default.some((service: any) => service.zones && Array.isArray(service.zones));
+  };
 
   const update =
     ({ carrier_name, ...changes }: ConnectionUpdateType) =>
-    async () => {
-      try {
-        await mutation.updateCarrierConnection.mutateAsync(changes);
-        notify({
-          type: NotificationType.success,
-          message: `carrier connection updated!`,
-        });
-      } catch (message: any) {
-        notify({ type: NotificationType.error, message });
-      }
-    };
+      async () => {
+        try {
+          await mutation.updateCarrierConnection.mutateAsync(changes);
+          notify({
+            type: NotificationType.success,
+            message: `carrier connection updated!`,
+          });
+        } catch (message: any) {
+          notify({ type: NotificationType.error, message });
+        }
+      };
   const onDelete = (id: string) => async () => {
     try {
       await mutation.deleteCarrierConnection.mutateAsync({ id });
@@ -179,26 +212,42 @@ export const UserConnectionList= (): JSX.Element =>  {
                         {!isNoneOrEmpty(
                           (connection as any).custom_carrier_name,
                         ) && (
-                          <button
-                            title="edit label"
-                            className="button is-white"
-                            onClick={() =>
-                              labelModal.editLabelTemplate({
-                                connection: connection as any,
-                                onSubmit: (label_template) =>
-                                  update({
-                                    id: connection.id,
-                                    carrier_name: connection.carrier_name,
-                                    label_template,
-                                  } as any)(),
-                              })
-                            }
-                          >
-                            <span className="icon is-small">
-                              <i className="fas fa-sticky-note"></i>
-                            </span>
-                          </button>
-                        )}
+                            <button
+                              title="edit label"
+                              className="button is-white"
+                              onClick={() =>
+                                labelModal.editLabelTemplate({
+                                  connection: connection as any,
+                                  onSubmit: (label_template) =>
+                                    update({
+                                      id: connection.id,
+                                      carrier_name: connection.carrier_name,
+                                      label_template,
+                                    } as any)(),
+                                })
+                              }
+                            >
+                              <span className="icon is-small">
+                                <i className="fas fa-sticky-note"></i>
+                              </span>
+                            </button>
+                          )}
+                        {(supportsRateSheets(connection.carrier_name) ||
+                          !isNoneOrEmpty((connection as any).custom_carrier_name) ||
+                          !isNoneOrEmpty((connection as any).rate_sheet_id)) && (
+                            <button
+                              title="manage rate sheet"
+                              className="button is-white"
+                              onClick={() => {
+                                setSelectedConnection(connection);
+                                setRateSheetEditorOpen(true);
+                              }}
+                            >
+                              <span className="icon is-small">
+                                <i className="fas fa-table"></i>
+                              </span>
+                            </button>
+                          )}
                         <button
                           title="edit account"
                           className="button is-white"
@@ -249,6 +298,19 @@ export const UserConnectionList= (): JSX.Element =>  {
             </p>
           </div>
         </div>
+      )}
+
+      {/* Rate Sheet Editor */}
+      {rateSheetEditorOpen && selectedConnection && (
+        <RateSheetEditor
+          rateSheetId={selectedConnection.rate_sheet?.id || 'new'}
+          preloadCarrier={selectedConnection.rate_sheet?.id ? undefined : selectedConnection.carrier_name}
+          linkConnectionId={selectedConnection.id}
+          onClose={() => {
+            setRateSheetEditorOpen(false);
+            setSelectedConnection(null);
+          }}
+        />
       )}
     </>
   );

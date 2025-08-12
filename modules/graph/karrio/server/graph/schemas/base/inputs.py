@@ -517,6 +517,35 @@ class UpdateRateSheetMutationInput(utils.BaseInput):
 
 
 @strawberry.input
+class UpdateRateSheetZoneCellMutationInput(utils.BaseInput):
+    id: str  # Rate sheet ID
+    service_id: str  # Service level ID
+    zone_id: str  # Zone ID
+    field: str  # Field name to update
+    value: utils.JSON  # New value
+
+
+@strawberry.input
+class CellUpdate(utils.BaseInput):
+    service_id: str
+    zone_id: str
+    field: str
+    value: utils.JSON
+
+
+@strawberry.input
+class BatchUpdateRateSheetCellsMutationInput(utils.BaseInput):
+    id: str  # Rate sheet ID
+    updates: typing.List[CellUpdate]
+
+
+@strawberry.input
+class DeleteRateSheetServiceMutationInput(utils.BaseInput):
+    rate_sheet_id: str
+    service_id: str
+
+
+@strawberry.input
 class RateSheetFilter(utils.Paginated):
     keyword: typing.Optional[str] = strawberry.UNSET
 

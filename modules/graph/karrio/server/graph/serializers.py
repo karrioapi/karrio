@@ -12,6 +12,7 @@ import karrio.server.manager.models as manager
 import karrio.server.graph.models as graph
 import karrio.server.core.models as core
 import karrio.server.user.models as auth
+import karrio.server.core.gateway as gateway
 
 
 class UserModelSerializer(serializers.ModelSerializer):
@@ -268,10 +269,10 @@ class ServiceLevelModelSerializer(serializers.ModelSerializer):
         )
         self.instance.save(update_fields=["zones"])
 
-    def update(self, instance, validated_data):
+    def update(self, instance, validated_data, context=None, **kwargs):
         """Handle partial updates of service level data including zones."""
         zones_data = validated_data.pop("zones", None)
-        instance = super().update(instance, validated_data)
+        instance = super().update(instance, validated_data, context=context)
 
         if zones_data is not None:
             # Handle zone updates if provided
@@ -362,10 +363,10 @@ class RateSheetModelSerializer(serializers.ModelSerializer):
             ).filter(id__in=list(_ids))
 
             for carrier in _carriers:
-                carrier.settings.rate_sheet = (
+                carrier.rate_sheet = (
                     self.instance if carrier.id in carriers else None
                 )
-                carrier.settings.save(update_fields=["rate_sheet"])
+                carrier.save(update_fields=["rate_sheet"])
 
     def update(self, instance, validated_data, **kwargs):
         """Handle updates of rate sheet data including services and carriers."""

@@ -2656,6 +2656,34 @@ export const UPDATE_RATE_SHEET = gql`
     update_rate_sheet(input: $data) {
       rate_sheet {
         id
+        name
+        carrier_name
+        services {
+          id
+          service_name
+          service_code
+          currency
+          transit_days
+          transit_time
+          max_width
+          max_height
+          max_length
+          dimension_unit
+          max_weight
+          weight_unit
+          active
+          zones {
+            id
+            label
+            rate
+            min_weight
+            max_weight
+            transit_days
+            cities
+            postal_codes
+            country_codes
+          }
+        }
       }
       errors {
         field
@@ -2666,9 +2694,119 @@ export const UPDATE_RATE_SHEET = gql`
 `;
 
 export const DELETE_RATE_SHEET = gql`
-  mutation DeteRateSheet($data: DeleteMutationInput!) {
+  mutation DeleteRateSheet($data: DeleteMutationInput!) {
     delete_rate_sheet(input: $data) {
       id
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const UPDATE_RATE_SHEET_ZONE_CELL = gql`
+  mutation UpdateRateSheetZoneCell($data: UpdateRateSheetZoneCellMutationInput!) {
+    update_rate_sheet_zone_cell(input: $data) {
+      rate_sheet {
+        id
+        services {
+          id
+          service_name
+          service_code
+          zones {
+            id
+            label
+            rate
+            min_weight
+            max_weight
+            transit_days
+            transit_time
+            radius
+            latitude
+            longitude
+            cities
+            postal_codes
+            country_codes
+          }
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const BATCH_UPDATE_RATE_SHEET_CELLS = gql`
+  mutation BatchUpdateRateSheetCells($data: BatchUpdateRateSheetCellsMutationInput!) {
+    batch_update_rate_sheet_cells(input: $data) {
+      rate_sheet {
+        id
+        services {
+          id
+          service_name
+          service_code
+          zones {
+            id
+            label
+            rate
+            min_weight
+            max_weight
+            transit_days
+            transit_time
+            radius
+            latitude
+            longitude
+            cities
+            postal_codes
+            country_codes
+          }
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const DELETE_RATE_SHEET_SERVICE = gql`
+  mutation DeleteRateSheetService($data: DeleteRateSheetServiceMutationInput!) {
+    delete_rate_sheet_service(input: $data) {
+      rate_sheet {
+        id
+        name
+        carrier_name
+        services {
+          id
+          service_name
+          service_code
+          currency
+          transit_days
+          transit_time
+          max_width
+          max_height
+          max_length
+          dimension_unit
+          max_weight
+          weight_unit
+          active
+          zones {
+            id
+            label
+            rate
+            min_weight
+            max_weight
+            transit_days
+            cities
+            postal_codes
+            country_codes
+          }
+        }
+      }
       errors {
         field
         messages
@@ -2700,6 +2838,7 @@ export const GET_RATE_SHEET = gql`
         dimension_unit
         zones {
           object_type
+          id
           label
           rate
           min_weight
@@ -2753,6 +2892,7 @@ export const GET_RATE_SHEETS = gql`
             max_length
             dimension_unit
             zones {
+              id
               label
               rate
               min_weight

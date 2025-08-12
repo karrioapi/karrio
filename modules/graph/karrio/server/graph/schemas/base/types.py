@@ -1117,6 +1117,7 @@ class ShipmentType:
 @strawberry.type
 class ServiceZoneType:
     object_type: str
+    id: typing.Optional[str] = None
     label: typing.Optional[str] = None
     rate: typing.Optional[float] = None
 
@@ -1175,7 +1176,8 @@ class ServiceLevelType:
 
     @strawberry.field
     def zones(self: providers.ServiceLevel) -> typing.List[ServiceZoneType]:
-        return [ServiceZoneType.parse(zone) for zone in self.zones or []]
+        # Use computed_zones for backward compatibility with optimized structure
+        return [ServiceZoneType.parse(zone) for zone in self.computed_zones]
 
     @strawberry.field
     def metadata(self: providers.RateSheet) -> typing.Optional[utils.JSON]:
