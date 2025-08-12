@@ -22,3 +22,6 @@ Sentry.init({
     return scope;
   },
 });
+
+// Export the required hook for Sentry navigation instrumentation
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
