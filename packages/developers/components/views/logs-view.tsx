@@ -654,23 +654,6 @@ const LogsFilterDropdown = ({ context }: { context: ReturnType<typeof useLogs> }
                   </Select>
                 </div>
 
-                {/* Test Mode */}
-                <div>
-                  <Label htmlFor="test-mode" className="text-sm font-medium">Test Mode</Label>
-                  <Select
-                    value={tempFilters.test_mode === undefined ? "all" : String(tempFilters.test_mode)}
-                    onValueChange={(value) => handleTempFilterChange('test_mode', value === 'all' ? undefined : value === 'true')}
-                  >
-                    <SelectTrigger className="w-full mt-1">
-                      <SelectValue placeholder="All modes" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All modes</SelectItem>
-                      <SelectItem value="true">Test mode</SelectItem>
-                      <SelectItem value="false">Live mode</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
               </div>
 
               <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">

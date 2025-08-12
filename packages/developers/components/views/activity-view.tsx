@@ -132,7 +132,7 @@ export function ActivityView() {
                       }}
                     />
                     <Line
-                      type="monotone"
+                      type="linear"
                       dataKey="requests"
                       stroke="#3b82f6"
                       strokeWidth={2}
@@ -140,7 +140,7 @@ export function ActivityView() {
                       name="Requests"
                     />
                     <Line
-                      type="monotone"
+                      type="linear"
                       dataKey="errors"
                       stroke="#ef4444"
                       strokeWidth={2}
