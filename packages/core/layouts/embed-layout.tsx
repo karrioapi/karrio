@@ -1,3 +1,4 @@
+import { FloatingDeveloperTools } from "@karrio/ui/components/floating-developer-tools";
 import { ModeIndicator } from "@karrio/ui/components/mode-indicator";
 import { Notifier } from "@karrio/ui/core/components/notifier";
 import { KARRIO_PUBLIC_URL, MULTI_TENANT } from "@karrio/lib";
@@ -59,6 +60,7 @@ export default async function Layout({
               </div>
             </SidebarInset>
           </SidebarProvider>
+          <FloatingDeveloperTools />
           <DeveloperToolsDrawer />
         </DeveloperToolsProvider>
       </Providers>

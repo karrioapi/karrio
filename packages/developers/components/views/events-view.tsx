@@ -1,16 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
-import { RefreshCw, Calendar, Package, Truck, Webhook, AlertCircle, X } from "lucide-react";
-import { EventsFilter } from "@karrio/ui/core/filters/events-filter";
+import { RefreshCw, Calendar, Package, Truck, Webhook, AlertCircle, X, Filter, Copy, Activity } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
 import { Button } from "@karrio/ui/components/ui/button";
+import { Input } from "@karrio/ui/components/ui/input";
 import { Label } from "@karrio/ui/components/ui/label";
 import { Badge } from "@karrio/ui/components/ui/badge";
 import { formatDateTimeLong } from "@karrio/lib";
 import { useEvents } from "@karrio/hooks/event";
 import CodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
-import { EventTypes } from "@karrio/types";
+import { EventTypes, EVENT_TYPES } from "@karrio/types";
 import { cn } from "@karrio/ui/lib/utils";
 
 const EVENT_TYPE_COLORS = {
@@ -35,15 +36,16 @@ const EVENT_TYPE_ICONS = {
 };
 
 const EventDetailViewer = ({ event }: { event: any }) => {
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+  };
+
   if (!event) {
     return (
-      <div className="flex items-center justify-center h-full text-gray-400 bg-white">
+      <div className="flex items-center justify-center h-64 text-gray-500">
         <div className="text-center">
-          <svg className="h-12 w-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-          </svg>
-          <p className="text-sm text-gray-500">Select an event to view details</p>
+          <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
+          <p>Select an event to view details</p>
         </div>
       </div>
     );
@@ -61,63 +63,45 @@ const EventDetailViewer = ({ event }: { event: any }) => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-white">
-      <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 flex-shrink-0">
-        <div className="flex items-center gap-3 mb-2">
-          <span className="text-xs text-gray-500">Event Details</span>
-        </div>
-        <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden mb-3">
-          {getEventTypeIcon(event.type as EventTypes | null)}
-          <span className="text-sm font-medium text-gray-900 truncate">{event.type}</span>
-          <Badge className={`${getEventTypeColor(event.type as EventTypes | null)} border-none text-xs`}>
-            {event.type}
-          </Badge>
-        </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 min-w-0 flex-1">
-            <code className="text-xs bg-gray-100 px-2 py-1 rounded font-mono">
-              ID: {event.id}
-            </code>
-            <span className="text-xs text-gray-500">
-              {formatDateTimeLong(event.created_at)}
-            </span>
+    <div className="h-full flex flex-col">
+      {/* Header */}
+      <div className="border-b px-4 py-3 flex-shrink-0">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            {getEventTypeIcon(event.type as EventTypes | null)}
+            <Badge className={getEventTypeColor(event.type as EventTypes | null)}>
+              {event.type}
+            </Badge>
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <button
-              onClick={() => navigator.clipboard.writeText(JSON.stringify(event.data, null, 2))}
-              className="text-xs text-blue-600 hover:text-blue-800 px-2 py-1 rounded hover:bg-blue-50 whitespace-nowrap"
-            >
-              Copy Data
-            </button>
+          <div className="text-xs text-gray-500">
+            {formatDateTimeLong(event.created_at)}
           </div>
+        </div>
+        <div className="text-sm font-medium truncate">
+          Event: {event.type}
+        </div>
+        <div className="text-xs text-gray-500 mt-1">
+          ID: {event.id} • Test: {event.test_mode ? "Yes" : "No"}
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4">
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <Label className="font-medium">Event ID</Label>
-              <p className="text-slate-600 font-mono">{event.id}</p>
-            </div>
-            <div>
-              <Label className="font-medium">Timestamp</Label>
-              <p className="text-slate-600">{formatDateTimeLong(event.created_at)}</p>
-            </div>
-            <div>
-              <Label className="font-medium">Test Mode</Label>
-              <p className="text-slate-600">{event.test_mode ? "Yes" : "No"}</p>
-            </div>
-            <div>
-              <Label className="font-medium">Pending Webhooks</Label>
-              <p className="text-slate-600">{event.pending_webhooks || 0}</p>
-            </div>
-          </div>
-
+      {/* Event Content */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="p-4">
           {event.data && (
-            <div>
-              <Label className="font-medium">Event Data</Label>
-              <div className="mt-1 border rounded-md overflow-hidden">
+            <div className="mb-3">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-700">Event Data</span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => copyToClipboard(JSON.stringify(event.data, null, 2))}
+                  className="h-7 px-2"
+                >
+                  <Copy className="h-3 w-3" />
+                </Button>
+              </div>
+              <div className="border rounded-md overflow-hidden">
                 <CodeMirror
                   value={JSON.stringify(event.data, null, 2)}
                   extensions={[json()]}
@@ -181,14 +165,17 @@ const EventListItem = ({
               <Badge className={`${getEventTypeColor(event.type as EventTypes | null)} border-none text-xs`}>
                 {event.type}
               </Badge>
-              {event.id && (
-                <code className="text-xs bg-slate-100 px-2 py-1 rounded truncate">
-                  {event.id}
-                </code>
+              {event.pending_webhooks > 0 && (
+                <span className="text-xs text-orange-500">
+                  {event.pending_webhooks} pending
+                </span>
               )}
             </div>
-            <div className="text-sm text-slate-600 truncate">
-              Event ID: {event.id}
+            <div className="text-sm text-slate-900 truncate font-mono">
+              {event.type}
+            </div>
+            <div className="text-xs text-slate-500 truncate">
+              ID: {event.id} • Test: {event.test_mode ? "Yes" : "No"}
             </div>
           </div>
           <div className="text-xs text-slate-500 flex-shrink-0">
@@ -200,6 +187,164 @@ const EventListItem = ({
   );
 };
 
+// Custom Events Filter Component
+const EventsFilterDropdown = ({ context }: { context: ReturnType<typeof useEvents> }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [tempFilters, setTempFilters] = useState<any>({});
+  const { query, filter, setFilter } = context;
+
+  const handleTempFilterChange = (key: string, value: any) => {
+    setTempFilters((prev: any) => ({
+      ...prev,
+      [key]: value === "" ? undefined : value
+    }));
+  };
+
+  const handleApply = () => {
+    const cleanFilters = Object.entries(tempFilters).reduce((acc, [key, value]) => {
+      if (value !== undefined && value !== "") {
+        acc[key] = value;
+      }
+      return acc;
+    }, {} as any);
+
+    setFilter({ ...cleanFilters, offset: 0, first: 20 });
+    setIsOpen(false);
+  };
+
+  const handleClear = () => {
+    setTempFilters({});
+    setFilter({ offset: 0, first: 20 });
+    setIsOpen(false);
+  };
+
+  const hasActiveFilters = () => {
+    const { offset, first, ...otherFilters } = filter;
+    return Object.keys(otherFilters).length > 0;
+  };
+
+  // Sync temp filters with actual filters when opened
+  React.useEffect(() => {
+    if (isOpen) {
+      const { offset, first, ...activeFilters } = filter;
+      setTempFilters(activeFilters);
+    }
+  }, [isOpen, filter]);
+
+  return (
+    <div className="relative">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setIsOpen(!isOpen)}
+        className="h-8"
+      >
+        <Filter className="h-4 w-4 mr-2" />
+        Filters
+        {hasActiveFilters() && (
+          <Badge variant="secondary" className="ml-2 h-5 px-1.5 text-xs">
+            {Object.keys(filter).filter(k => k !== 'offset' && k !== 'first' && filter[k]).length}
+          </Badge>
+        )}
+      </Button>
+
+      {isOpen && (
+        <>
+          <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
+          <div className="absolute right-0 top-full mt-1 w-80 bg-white border border-gray-200 rounded-md shadow-lg z-20">
+            <div className="p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-medium text-sm">Filter Events</h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsOpen(false)}
+                  className="h-6 w-6 p-0"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+
+              <div className="space-y-4">
+                {/* Search */}
+                <div>
+                  <Label htmlFor="search" className="text-sm font-medium">Search</Label>
+                  <Input
+                    id="search"
+                    placeholder="Search events..."
+                    value={tempFilters.query || ""}
+                    onChange={(e) => handleTempFilterChange('query', e.target.value)}
+                    className="mt-1"
+                  />
+                </div>
+
+                {/* Event Type */}
+                <div>
+                  <Label htmlFor="type" className="text-sm font-medium">Event Type</Label>
+                  <Select
+                    value={tempFilters.type?.[0] || "all"}
+                    onValueChange={(value) => handleTempFilterChange('type', value === 'all' ? undefined : [value])}
+                  >
+                    <SelectTrigger className="w-full mt-1">
+                      <SelectValue placeholder="All event types" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All event types</SelectItem>
+                      {EVENT_TYPES.map((type) => (
+                        <SelectItem key={type} value={type}>{type}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Entity ID */}
+                <div>
+                  <Label htmlFor="entity_id" className="text-sm font-medium">Related Object ID</Label>
+                  <Input
+                    id="entity_id"
+                    placeholder="e.g: shp_123456"
+                    value={tempFilters.entity_id || ""}
+                    onChange={(e) => handleTempFilterChange('entity_id', e.target.value)}
+                    className="mt-1"
+                  />
+                </div>
+
+              </div>
+
+              <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleClear}
+                  disabled={!hasActiveFilters() && Object.keys(tempFilters).length === 0}
+                >
+                  Clear All
+                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={handleApply}
+                    disabled={query.isLoading}
+                  >
+                    {query.isLoading ? 'Applying...' : 'Apply'}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
 export function EventsView() {
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
 
@@ -207,15 +352,10 @@ export function EventsView() {
   const eventsContext = useEvents();
   const { query, filter, setFilter } = eventsContext;
 
-  const events = query.data?.events?.edges?.map(edge => edge.node) || [];
+  const events = query.data?.events?.edges || [];
 
   const updateFilter = (extra: any = {}) => {
-    const newFilter = {
-      ...filter,
-      ...extra,
-      offset: extra.offset || 0,
-    };
-    setFilter(newFilter);
+    setFilter({ ...filter, ...extra });
   };
 
   const handleRefresh = () => {
@@ -236,93 +376,228 @@ export function EventsView() {
   };
 
   return (
-    <div className="h-full flex flex-col bg-white">
-      {/* Header */}
-      <div className="px-4 py-3 border-b border-slate-200">
-        <div className="flex items-center justify-between mb-3">
-          <div>
-            <h2 className="text-lg font-semibold text-slate-900">Events</h2>
+    <div className="h-full flex overflow-hidden">
+      {/* Left Panel - Events List */}
+      <div className="w-1/2 border-r flex flex-col lg:flex hidden h-full">
+        {/* Header */}
+        <div className="border-b px-4 py-3 flex-shrink-0">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-semibold">Events</h2>
+            <div className="flex items-center gap-2">
+              {/* Use the custom EventsFilterDropdown component */}
+              <EventsFilterDropdown context={eventsContext} />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRefresh}
+                disabled={query.isFetching}
+              >
+                <RefreshCw className={`h-4 w-4 ${query.isFetching ? 'animate-spin' : ''}`} />
+              </Button>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            {/* Use the proper EventsFilter component */}
-            <EventsFilter context={eventsContext} />
-            <Button size="sm" onClick={handleRefresh} disabled={query.isLoading}>
-              <RefreshCw className={`h-4 w-4 mr-2 ${query.isLoading ? 'animate-spin' : ''}`} />
-              Refresh
-            </Button>
-          </div>
+
+          {/* Show active filters indicator */}
+          {hasActiveFilters() && (
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs text-muted-foreground">Filters active:</span>
+              <Badge variant="secondary" className="text-xs">
+                {Object.keys(filter).filter(key => !['offset', 'first'].includes(key)).length} active
+              </Badge>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearFilters}
+                className="h-6 px-2 text-xs"
+              >
+                <X className="h-3 w-3 mr-1" />
+                Clear all
+              </Button>
+            </div>
+          )}
         </div>
 
-        {/* Show active filters indicator */}
-        {hasActiveFilters() && (
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs text-muted-foreground">Filters active:</span>
-            <Badge variant="secondary" className="text-xs">
-              {Object.keys(filter).filter(key => !['offset', 'first'].includes(key)).length} active
-            </Badge>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={clearFilters}
-              className="h-6 px-2 text-xs"
-            >
-              <X className="h-3 w-3 mr-1" />
-              Clear all
-            </Button>
+        {/* Events List */}
+        <div className="flex-1 overflow-y-auto">
+          {query.isFetching && (
+            <div className="flex items-center justify-center py-8">
+              <RefreshCw className="h-6 w-6 animate-spin text-gray-400" />
+            </div>
+          )}
+
+          {!query.isFetching && events.length === 0 && (
+            <div className="text-center py-8 text-gray-500">
+              <Activity className="h-8 w-8 mx-auto mb-2 opacity-50" />
+              <p>No events found</p>
+              {hasActiveFilters() && (
+                <p className="text-xs mt-1">Try adjusting your filters</p>
+              )}
+            </div>
+          )}
+
+          {!query.isFetching && events.length > 0 && (
+            <div className="divide-y">
+              {events.map(({ node: event }) => (
+                <EventListItem
+                  key={event.id}
+                  event={event}
+                  isSelected={selectedEvent?.id === event.id}
+                  onSelect={setSelectedEvent}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Pagination */}
+        {events.length > 0 && (
+          <div className="border-t px-4 py-2 flex items-center justify-between text-sm flex-shrink-0">
+            <span className="text-gray-600">
+              Showing {((filter.offset as number) || 0) + 1}-{((filter.offset as number) || 0) + events.length}
+              {query.data?.events?.page_info.has_next_page && " of many"}
+            </span>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => updateFilter({ offset: Math.max(0, ((filter.offset as number) || 0) - 20) })}
+                disabled={(filter.offset as number) === 0 || filter.offset === undefined}
+                className="h-7 px-2 text-xs"
+              >
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => updateFilter({ offset: ((filter.offset as number) || 0) + 20 })}
+                disabled={!query.data?.events?.page_info.has_next_page}
+                className="h-7 px-2 text-xs"
+              >
+                Next
+              </Button>
+            </div>
           </div>
         )}
       </div>
 
-      {/* Mobile Layout */}
-      <div className="lg:hidden flex-1 overflow-auto">
-        {query.isLoading ? (
-          <div className="flex items-center justify-center h-32">
-            <div className="animate-spin rounded-full h-6 w-6 border-2 border-slate-300 border-t-slate-600"></div>
-          </div>
-        ) : events.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-slate-400 mb-4">
-              <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5zM15 17H9a4 4 0 01-4-4V8a4 4 0 014-4h6a4 4 0 014 4v5l-4 4z" />
-              </svg>
+      {/* Right Panel - Event Details */}
+      <div className="flex-1 lg:w-1/2 w-full h-full overflow-hidden">
+        <EventDetailViewer event={selectedEvent} />
+      </div>
+
+      {/* Mobile View */}
+      <div className="lg:hidden w-full">
+        {selectedEvent ? (
+          <div className="h-full flex flex-col">
+            <div className="border-b px-4 py-2 flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSelectedEvent(null)}
+              >
+                ← Back
+              </Button>
+              <span className="text-sm font-medium">Event Details</span>
             </div>
-            <h3 className="text-lg font-medium text-slate-900 mb-2">No events found</h3>
-            <p className="text-slate-500">No events match your current filters.</p>
-            {hasActiveFilters() && (
-              <p className="text-xs mt-1">Try adjusting your filters</p>
-            )}
+            <div className="flex-1">
+              <EventDetailViewer event={selectedEvent} />
+            </div>
           </div>
         ) : (
-          <div>
-            {events.map((event) => (
-              <EventListItem
-                key={event.id}
-                event={event}
-                isSelected={selectedEvent?.id === event.id}
-                onSelect={setSelectedEvent}
-              />
-            ))}
-
-            {/* Pagination */}
-            {query.data?.events?.page_info && (
-              <div className="flex items-center justify-between px-4 py-3 border-t bg-slate-50">
-                <div className="text-sm text-slate-500">
-                  Showing {events.length} events
-                </div>
-                <div className="flex space-x-2">
+          <div className="h-full flex flex-col">
+            {/* Mobile Header */}
+            <div className="border-b px-4 py-3">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-lg font-semibold">Events</h2>
+                <div className="flex items-center gap-2">
+                  {/* Use the custom EventsFilterDropdown component for mobile */}
+                  <EventsFilterDropdown context={eventsContext} />
                   <Button
                     variant="outline"
                     size="sm"
-                    disabled={!query.data.events.page_info.has_previous_page}
-                    onClick={() => updateFilter({ offset: Math.max(0, (filter.offset || 0) - 20) })}
+                    onClick={handleRefresh}
+                    disabled={query.isFetching}
+                  >
+                    <RefreshCw className={`h-4 w-4 ${query.isFetching ? 'animate-spin' : ''}`} />
+                  </Button>
+                </div>
+              </div>
+
+              {/* Show active filters indicator for mobile */}
+              {hasActiveFilters() && (
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xs text-muted-foreground">Filters active:</span>
+                  <Badge variant="secondary" className="text-xs">
+                    {Object.keys(filter).filter(key => !['offset', 'first'].includes(key)).length} active
+                  </Badge>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={clearFilters}
+                    className="h-6 px-2 text-xs"
+                  >
+                    <X className="h-3 w-3 mr-1" />
+                    Clear all
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            {/* Mobile Events List */}
+            <div className="flex-1 overflow-auto">
+              {query.isFetching && (
+                <div className="flex items-center justify-center py-8">
+                  <RefreshCw className="h-6 w-6 animate-spin text-gray-400" />
+                </div>
+              )}
+
+              {!query.isFetching && events.length === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  <Activity className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p>No events found</p>
+                  {hasActiveFilters() && (
+                    <p className="text-xs mt-1">Try adjusting your filters</p>
+                  )}
+                </div>
+              )}
+
+              {!query.isFetching && events.length > 0 && (
+                <div className="divide-y">
+                  {events.map(({ node: event }) => (
+                    <EventListItem
+                      key={event.id}
+                      event={event}
+                      isSelected={false}
+                      onSelect={setSelectedEvent}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Mobile Pagination */}
+            {events.length > 0 && (
+              <div className="border-t px-4 py-2 flex items-center justify-between text-sm">
+                <span className="text-gray-600">
+                  Showing {((filter.offset as number) || 0) + 1}-{((filter.offset as number) || 0) + events.length}
+                  {query.data?.events?.page_info.has_next_page && " of many"}
+                </span>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => updateFilter({ offset: Math.max(0, ((filter.offset as number) || 0) - 20) })}
+                    disabled={(filter.offset as number) === 0 || filter.offset === undefined}
+                    className="h-7 px-2 text-xs"
                   >
                     Previous
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
-                    disabled={!query.data.events.page_info.has_next_page}
-                    onClick={() => updateFilter({ offset: (filter.offset || 0) + 20 })}
+                    onClick={() => updateFilter({ offset: ((filter.offset as number) || 0) + 20 })}
+                    disabled={!query.data?.events?.page_info.has_next_page}
+                    className="h-7 px-2 text-xs"
                   >
                     Next
                   </Button>
@@ -331,94 +606,6 @@ export function EventsView() {
             )}
           </div>
         )}
-
-        {/* Mobile Detail Modal */}
-        {selectedEvent && (
-          <div className="fixed inset-0 z-50 bg-white">
-            <div className="h-full flex flex-col">
-              <div className="flex items-center justify-between p-4 border-b border-gray-200">
-                <h3 className="font-medium text-gray-900">{selectedEvent.type}</h3>
-                <button
-                  onClick={() => setSelectedEvent(null)}
-                  className="p-1 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-600"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-              <div className="flex-1">
-                <EventDetailViewer event={selectedEvent} />
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Desktop Layout - Side by Side */}
-      <div className="hidden lg:flex flex-1 bg-white overflow-hidden">
-        {/* Left Panel - Events List */}
-        <div className="w-1/2 border-r border-gray-200 flex flex-col h-full">
-          <div className="flex-1 overflow-y-auto bg-white">
-            {query.isLoading ? (
-              <div className="flex items-center justify-center h-32">
-                <div className="animate-spin rounded-full h-6 w-6 border-2 border-slate-300 border-t-slate-600"></div>
-              </div>
-            ) : events.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="text-slate-400 mb-4">
-                  <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5zM15 17H9a4 4 0 01-4-4V8a4 4 0 014-4h6a4 4 0 014 4v5l-4 4z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-medium text-slate-900 mb-2">No events found</h3>
-                <p className="text-slate-500">No events match your current filters.</p>
-                {hasActiveFilters() && (
-                  <p className="text-xs mt-1">Try adjusting your filters</p>
-                )}
-              </div>
-            ) : (
-              events.map((event) => (
-                <EventListItem
-                  key={event.id}
-                  event={event}
-                  isSelected={selectedEvent?.id === event.id}
-                  onSelect={setSelectedEvent}
-                />
-              ))
-            )}
-          </div>
-
-          {/* Pagination */}
-          {query.data?.events?.page_info && (
-            <div className="flex items-center justify-between px-4 py-3 border-t bg-slate-50 flex-shrink-0">
-              <div className="text-sm text-slate-500">
-                Showing {events.length} events
-              </div>
-              <div className="flex space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={!query.data.events.page_info.has_previous_page}
-                  onClick={() => updateFilter({ offset: Math.max(0, (filter.offset || 0) - 20) })}
-                >
-                  Previous
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={!query.data.events.page_info.has_next_page}
-                  onClick={() => updateFilter({ offset: (filter.offset || 0) + 20 })}
-                >
-                  Next
-                </Button>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Right Panel - Event Details */}
-        <div className="w-1/2 h-full overflow-hidden">
-          <EventDetailViewer event={selectedEvent} />
-        </div>
       </div>
     </div>
   );
