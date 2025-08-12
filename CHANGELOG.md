@@ -1,3 +1,23 @@
+# Karrio 2025.5rc13
+
+## Changes
+
+### Feat
+
+- feat: upgrade ratesheet editor
+- feat: check for valid charge amount before returning selected rate
+- feat: DTDC carrier integration
+
+### Fix
+
+- fix: enforce check for admin dashboard access and enable it by default
+- fix: docker dashboard default setup
+- chore: update openapi schema and karriojs build
+
+### Docs
+
+- docs: update and cleanup supported carriers docs
+
 # Karrio 2025.5rc12
 
 ## Changes
