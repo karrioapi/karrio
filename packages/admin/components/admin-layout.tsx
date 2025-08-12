@@ -30,9 +30,7 @@ export default async function Layout({ children }: AdminLayoutProps) {
   const orgId = ((session as any)?.orgId as string) || null;
 
   if (
-    user.user &&
-    (user.user as any)?.is_staff === false &&
-    metadata.metadata?.ADMIN_DASHBOARD == false
+    !(user.user as any)?.is_staff || !metadata.metadata?.ADMIN_DASHBOARD
   ) {
     redirect(`/`);
   }

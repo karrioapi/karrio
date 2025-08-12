@@ -305,8 +305,14 @@ UPDATE_RATE_SHEET_RESPONSE = {
                 "services": [
                     {
                         "id": ANY,
-                        "service_name": "UPS Standard",
-                        "zones": [{"label": "Zone 1", "rate": 10.0}],
+                        "service_name": "Updated Service",
+                        "zones": [
+                            {
+                                "country_codes": ["US", "CA"],
+                                "label": "Updated Zone",
+                                "rate": 20.0,
+                            }
+                        ],
                     }
                 ],
             }
