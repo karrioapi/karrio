@@ -241,7 +241,7 @@ export default function DashboardPage() {
           {usageLoading ? (
             // Loading skeleton for stats cards
             Array.from({ length: 4 }).map((_, index) => (
-              <Card key={index} className="border-2 border-gray-300 shadow-none">
+              <Card key={index} className="border shadow-none">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-4">
                     <div className="w-12 h-12 bg-gray-200 rounded-lg animate-pulse"></div>
@@ -259,10 +259,10 @@ export default function DashboardPage() {
             statCards.map((stat, index) => {
               const Icon = stat.icon;
               return (
-                <Card key={index} className="border-2 border-gray-300 shadow-none bg-white">
+                <Card key={index} className="border shadow-none">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between mb-4">
-                      <div className={`p-3 rounded-lg ${stat.bgColor} border border-gray-300`}>
+                      <div className={`p-3 rounded-lg ${stat.bgColor}`}>
                         <Icon className={`h-6 w-6 ${stat.color}`} />
                       </div>
                       <BarChart3 className="h-4 w-4 text-muted-foreground" />
@@ -290,11 +290,11 @@ export default function DashboardPage() {
 
         {/* Unfulfilled Orders Alert */}
         {!!usage?.unfulfilled_orders && usage.unfulfilled_orders > 0 && (
-          <Card className="border-2 border-gray-300 bg-orange-50 shadow-none">
+          <Card className="border bg-orange-50 shadow-none">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-3 rounded-lg bg-orange-100 border border-gray-300">
+                  <div className="p-3 rounded-lg bg-orange-100">
                     <ShoppingCart className="h-6 w-6 text-orange-600" />
                   </div>
                   <div>
@@ -334,12 +334,12 @@ export default function DashboardPage() {
               return (
                 <Card
                   key={index}
-                  className="border-2 border-gray-300 shadow-none bg-white cursor-pointer hover:bg-gray-50 transition-colors"
+                  className="border shadow-none cursor-pointer hover:bg-gray-50 transition-colors"
                   onClick={() => router.push(href)}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-start gap-3">
-                      <div className={`p-3 rounded-lg ${action.bgColor} border border-gray-300 flex-shrink-0`}>
+                      <div className={`p-3 rounded-lg ${action.bgColor} flex-shrink-0`}>
                         <Icon className={`h-5 w-5 ${action.color}`} />
                       </div>
                       <div className="flex-1 min-w-0">
