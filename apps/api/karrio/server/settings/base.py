@@ -29,7 +29,7 @@ with open(BASE_DIR / "server" / "VERSION", "r") as v:
 
 config = decouple.AutoConfig(search_path=Path().resolve())
 
-if not config('SECRET_KEY', default=None):
+if not config("SECRET_KEY", default=None):
     try:
         print("> fallback .env.sample...")
         config = decouple.Config(decouple.RepositoryEnv(".env.sample"))
@@ -163,7 +163,7 @@ ALLOW_MULTI_ACCOUNT = config(
 )
 ADMIN_DASHBOARD = importlib.util.find_spec(  # type:ignore
     "karrio.server.admin"
-) is not None and config("ADMIN_DASHBOARD", default=False, cast=bool)
+) is not None and config("ADMIN_DASHBOARD", default=True, cast=bool)
 ORDERS_MANAGEMENT = (
     importlib.util.find_spec("karrio.server.orders") is not None  # type:ignore
 )
@@ -480,7 +480,7 @@ OAUTH2_PROVIDER = {
     "OIDC_ENABLED": True,
     "OIDC_RSA_PRIVATE_KEY": OIDC_RSA_PRIVATE_KEY,
     "AUTHORIZATION_CODE_EXPIRE_SECONDS": 600,  # 10 minutes
-    "ACCESS_TOKEN_EXPIRE_SECONDS": 3600,       # 1 hour
+    "ACCESS_TOKEN_EXPIRE_SECONDS": 3600,  # 1 hour
     "REFRESH_TOKEN_EXPIRE_SECONDS": 3600 * 24 * 365,  # 1 year
     "ROTATE_REFRESH_TOKEN": True,
     "SCOPES": {
@@ -593,10 +593,10 @@ LOGGING = {
         },
     },
     "loggers": {
-        'oauth2_provider': {
-            'level': 'DEBUG',
-            'handlers': ['console'],
-            'propagate': True,
+        "oauth2_provider": {
+            "level": "DEBUG",
+            "handlers": ["console"],
+            "propagate": True,
         },
         "django": {
             "handlers": ["file", "console"],

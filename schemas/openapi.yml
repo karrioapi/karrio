@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2025.5rc12`.
+    The current version is `2025.5rc13`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2025.5rc12
+  version: 2025.5rc13
 paths:
   /:
     get:
@@ -935,10 +935,10 @@ paths:
         description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia_us`,
           `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
           `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`,
-          `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `tge`, `tnt`, `ups`,
-          `usps`, `usps_international`, `zoom2u`'
+          `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
+          `generic`, `geodis`, `hay_post`, `laposte`, `locate2u`, `mydhl`, `nationex`,
+          `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
+          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
         required: true
       tags:
       - Carriers
@@ -975,10 +975,10 @@ paths:
         description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia_us`,
           `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
           `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`,
-          `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `tge`, `tnt`, `ups`,
-          `usps`, `usps_international`, `zoom2u`'
+          `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
+          `generic`, `geodis`, `hay_post`, `laposte`, `locate2u`, `mydhl`, `nationex`,
+          `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
+          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
         required: true
       tags:
       - Carriers
@@ -1026,10 +1026,10 @@ paths:
         description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia_us`,
           `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
           `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`,
-          `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `tge`, `tnt`, `ups`,
-          `usps`, `usps_international`, `zoom2u`'
+          `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
+          `generic`, `geodis`, `hay_post`, `laposte`, `locate2u`, `mydhl`, `nationex`,
+          `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
+          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
         required: true
       tags:
       - Carriers
@@ -1098,10 +1098,10 @@ paths:
         description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia_us`,
           `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
           `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`,
-          `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `tge`, `tnt`, `ups`,
-          `usps`, `usps_international`, `zoom2u`'
+          `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
+          `generic`, `geodis`, `hay_post`, `laposte`, `locate2u`, `mydhl`, `nationex`,
+          `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
+          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
       - in: query
         name: metadata_key
         schema:
@@ -1688,10 +1688,10 @@ paths:
         description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia_us`,
           `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
           `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`,
-          `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `tge`, `tnt`, `ups`,
-          `usps`, `usps_international`, `zoom2u`'
+          `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
+          `generic`, `geodis`, `hay_post`, `laposte`, `locate2u`, `mydhl`, `nationex`,
+          `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
+          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -2570,6 +2570,7 @@ paths:
           - dhl_universal
           - dicom
           - dpd
+          - dtdc
           - easypost
           - easyship
           - eshipper
@@ -2580,6 +2581,7 @@ paths:
           - hay_post
           - laposte
           - locate2u
+          - mydhl
           - nationex
           - purolator
           - roadie
@@ -2587,11 +2589,13 @@ paths:
           - sapient
           - seko
           - sendle
+          - shipengine
           - tge
           - tnt
           - ups
           - usps
           - usps_international
+          - veho
           - zoom2u
         required: true
       tags:
@@ -2659,6 +2663,7 @@ paths:
           - dhl_universal
           - dicom
           - dpd
+          - dtdc
           - easypost
           - easyship
           - eshipper
@@ -2669,6 +2674,7 @@ paths:
           - hay_post
           - laposte
           - locate2u
+          - mydhl
           - nationex
           - purolator
           - roadie
@@ -2676,11 +2682,13 @@ paths:
           - sapient
           - seko
           - sendle
+          - shipengine
           - tge
           - tnt
           - ups
           - usps
           - usps_international
+          - veho
           - zoom2u
         required: true
       tags:
@@ -2748,6 +2756,7 @@ paths:
           - dhl_universal
           - dicom
           - dpd
+          - dtdc
           - easypost
           - easyship
           - eshipper
@@ -2758,6 +2767,7 @@ paths:
           - hay_post
           - laposte
           - locate2u
+          - mydhl
           - nationex
           - purolator
           - roadie
@@ -2765,11 +2775,13 @@ paths:
           - sapient
           - seko
           - sendle
+          - shipengine
           - tge
           - tnt
           - ups
           - usps
           - usps_international
+          - veho
           - zoom2u
         required: true
       tags:
@@ -2930,6 +2942,7 @@ paths:
           - dhl_universal
           - dicom
           - dpd
+          - dtdc
           - easypost
           - easyship
           - eshipper
@@ -2940,6 +2953,7 @@ paths:
           - hay_post
           - laposte
           - locate2u
+          - mydhl
           - nationex
           - purolator
           - roadie
@@ -2947,11 +2961,13 @@ paths:
           - sapient
           - seko
           - sendle
+          - shipengine
           - tge
           - tnt
           - ups
           - usps
           - usps_international
+          - veho
           - zoom2u
         required: true
       tags:
@@ -3064,12 +3080,14 @@ paths:
           - dhl_universal
           - dicom
           - dpd
+          - dtdc
           - fedex
           - generic
           - geodis
           - hay_post
           - laposte
           - locate2u
+          - mydhl
           - nationex
           - purolator
           - roadie
@@ -3081,6 +3099,7 @@ paths:
           - ups
           - usps
           - usps_international
+          - veho
           - zoom2u
         required: true
       - in: query
@@ -3198,10 +3217,10 @@ paths:
         description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia_us`,
           `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
           `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`,
-          `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `tge`, `tnt`, `ups`,
-          `usps`, `usps_international`, `zoom2u`'
+          `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
+          `generic`, `geodis`, `hay_post`, `laposte`, `locate2u`, `mydhl`, `nationex`,
+          `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
+          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -3631,10 +3650,10 @@ paths:
         description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia_us`,
           `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
           `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`,
-          `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `tge`, `tnt`, `ups`,
-          `usps`, `usps_international`, `zoom2u`'
+          `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
+          `generic`, `geodis`, `hay_post`, `laposte`, `locate2u`, `mydhl`, `nationex`,
+          `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
+          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -3773,12 +3792,14 @@ paths:
           - dhl_universal
           - dicom
           - dpd
+          - dtdc
           - fedex
           - generic
           - geodis
           - hay_post
           - laposte
           - locate2u
+          - mydhl
           - nationex
           - purolator
           - roadie
@@ -3790,6 +3811,7 @@ paths:
           - ups
           - usps
           - usps_international
+          - veho
           - zoom2u
         required: true
       - in: query
@@ -4233,28 +4255,28 @@ components:
           nullable: true
           description: "The address city.\n        **(required for shipment purchase)**\n\
             \        "
-          maxLength: 30
+          maxLength: 50
         federal_tax_id:
           type: string
           nullable: true
           description: The party frederal tax id
-          maxLength: 20
+          maxLength: 50
         state_tax_id:
           type: string
           nullable: true
           description: The party state id
-          maxLength: 20
+          maxLength: 50
         person_name:
           type: string
           nullable: true
           description: "Attention to\n        **(required for shipment purchase)**\n\
             \        "
-          maxLength: 50
+          maxLength: 100
         company_name:
           type: string
           nullable: true
           description: The company name if the party is a company
-          maxLength: 50
+          maxLength: 100
         country_code:
           enum:
           - AC
@@ -4508,12 +4530,12 @@ components:
           type: string
           nullable: true
           description: The party phone number.
-          maxLength: 20
+          maxLength: 50
         state_code:
           type: string
           nullable: true
           description: The address state code
-          maxLength: 20
+          maxLength: 50
         residential:
           type: boolean
           nullable: true
@@ -4523,18 +4545,18 @@ components:
           type: string
           nullable: true
           description: The address street number
-          maxLength: 20
+          maxLength: 100
         address_line1:
           type: string
           nullable: true
           description: "The address line with street number <br/>\n        **(required\
             \ for shipment purchase)**\n        "
-          maxLength: 50
+          maxLength: 100
         address_line2:
           type: string
           nullable: true
           description: The address line with suite number
-          maxLength: 50
+          maxLength: 100
         validate_location:
           type: boolean
           nullable: true
@@ -4565,28 +4587,28 @@ components:
           nullable: true
           description: "The address city.\n        **(required for shipment purchase)**\n\
             \        "
-          maxLength: 30
+          maxLength: 50
         federal_tax_id:
           type: string
           nullable: true
           description: The party frederal tax id
-          maxLength: 20
+          maxLength: 50
         state_tax_id:
           type: string
           nullable: true
           description: The party state id
-          maxLength: 20
+          maxLength: 50
         person_name:
           type: string
           nullable: true
           description: "Attention to\n        **(required for shipment purchase)**\n\
             \        "
-          maxLength: 50
+          maxLength: 100
         company_name:
           type: string
           nullable: true
           description: The company name if the party is a company
-          maxLength: 50
+          maxLength: 100
         country_code:
           enum:
           - AC
@@ -4840,12 +4862,12 @@ components:
           type: string
           nullable: true
           description: The party phone number.
-          maxLength: 20
+          maxLength: 50
         state_code:
           type: string
           nullable: true
           description: The address state code
-          maxLength: 20
+          maxLength: 50
         residential:
           type: boolean
           nullable: true
@@ -4855,18 +4877,18 @@ components:
           type: string
           nullable: true
           description: The address street number
-          maxLength: 20
+          maxLength: 100
         address_line1:
           type: string
           nullable: true
           description: "The address line with street number <br/>\n        **(required\
             \ for shipment purchase)**\n        "
-          maxLength: 50
+          maxLength: 100
         address_line2:
           type: string
           nullable: true
           description: The address line with suite number
-          maxLength: 50
+          maxLength: 100
         validate_location:
           type: boolean
           nullable: true
@@ -5049,6 +5071,7 @@ components:
           - dhl_universal
           - dicom
           - dpd
+          - dtdc
           - easypost
           - easyship
           - eshipper
@@ -5059,6 +5082,7 @@ components:
           - hay_post
           - laposte
           - locate2u
+          - mydhl
           - nationex
           - purolator
           - roadie
@@ -5066,14 +5090,16 @@ components:
           - sapient
           - seko
           - sendle
+          - shipengine
           - tge
           - tnt
           - ups
           - usps
           - usps_international
+          - veho
           - zoom2u
           type: string
-          x-spec-enum-id: 5d5559b60118486d
+          x-spec-enum-id: 38c83e1761ec1bf0
           description: A carrier connection type.
         display_name:
           type: string
@@ -5139,6 +5165,7 @@ components:
           - dhl_universal
           - dicom
           - dpd
+          - dtdc
           - easypost
           - easyship
           - eshipper
@@ -5149,6 +5176,7 @@ components:
           - hay_post
           - laposte
           - locate2u
+          - mydhl
           - nationex
           - purolator
           - roadie
@@ -5156,14 +5184,16 @@ components:
           - sapient
           - seko
           - sendle
+          - shipengine
           - tge
           - tnt
           - ups
           - usps
           - usps_international
+          - veho
           - zoom2u
           type: string
-          x-spec-enum-id: 5d5559b60118486d
+          x-spec-enum-id: 38c83e1761ec1bf0
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -5237,6 +5267,7 @@ components:
           - dhl_universal
           - dicom
           - dpd
+          - dtdc
           - easypost
           - easyship
           - eshipper
@@ -5247,6 +5278,7 @@ components:
           - hay_post
           - laposte
           - locate2u
+          - mydhl
           - nationex
           - purolator
           - roadie
@@ -5254,14 +5286,16 @@ components:
           - sapient
           - seko
           - sendle
+          - shipengine
           - tge
           - tnt
           - ups
           - usps
           - usps_international
+          - veho
           - zoom2u
           type: string
-          x-spec-enum-id: 5d5559b60118486d
+          x-spec-enum-id: 38c83e1761ec1bf0
           description: Indicates a carrier (type)
         display_name:
           type: string
@@ -5479,6 +5513,7 @@ components:
           - PLN
           - PYG
           - QAR
+          - RON
           - RSD
           - RUB
           - RWF
@@ -5515,7 +5550,7 @@ components:
           - ZAR
           - null
           type: string
-          x-spec-enum-id: f0290aeafc544e9d
+          x-spec-enum-id: 75b9c0f2683aaef1
           nullable: true
           description: The currency of the commodity value amount
         origin_country:
@@ -5941,6 +5976,7 @@ components:
           - PLN
           - PYG
           - QAR
+          - RON
           - RSD
           - RUB
           - RWF
@@ -5977,7 +6013,7 @@ components:
           - ZAR
           - null
           type: string
-          x-spec-enum-id: f0290aeafc544e9d
+          x-spec-enum-id: 75b9c0f2683aaef1
           nullable: true
           description: The currency of the commodity value amount
         origin_country:
@@ -6260,6 +6296,7 @@ components:
       - $ref: '#/components/schemas/dhl_universal'
       - $ref: '#/components/schemas/dicom'
       - $ref: '#/components/schemas/dpd'
+      - $ref: '#/components/schemas/dtdc'
       - $ref: '#/components/schemas/easypost'
       - $ref: '#/components/schemas/easyship'
       - $ref: '#/components/schemas/eshipper'
@@ -6270,6 +6307,7 @@ components:
       - $ref: '#/components/schemas/hay_post'
       - $ref: '#/components/schemas/laposte'
       - $ref: '#/components/schemas/locate2u'
+      - $ref: '#/components/schemas/mydhl'
       - $ref: '#/components/schemas/nationex'
       - $ref: '#/components/schemas/purolator'
       - $ref: '#/components/schemas/roadie'
@@ -6277,11 +6315,13 @@ components:
       - $ref: '#/components/schemas/sapient'
       - $ref: '#/components/schemas/seko'
       - $ref: '#/components/schemas/sendle'
+      - $ref: '#/components/schemas/shipengine'
       - $ref: '#/components/schemas/tge'
       - $ref: '#/components/schemas/tnt'
       - $ref: '#/components/schemas/ups'
       - $ref: '#/components/schemas/usps'
       - $ref: '#/components/schemas/usps_international'
+      - $ref: '#/components/schemas/veho'
       - $ref: '#/components/schemas/zoom2u'
     Customs:
       type: object
@@ -6856,6 +6896,7 @@ components:
           - PLN
           - PYG
           - QAR
+          - RON
           - RSD
           - RUB
           - RWF
@@ -6893,7 +6934,7 @@ components:
           - ''
           - null
           type: string
-          x-spec-enum-id: f0290aeafc544e9d
+          x-spec-enum-id: 75b9c0f2683aaef1
           nullable: true
           description: The declared value currency
         declared_value:
@@ -7108,6 +7149,7 @@ components:
           - PLN
           - PYG
           - QAR
+          - RON
           - RSD
           - RUB
           - RWF
@@ -7144,7 +7186,7 @@ components:
           - ZAR
           - null
           type: string
-          x-spec-enum-id: f0290aeafc544e9d
+          x-spec-enum-id: 75b9c0f2683aaef1
           nullable: true
           description: The currency of the commodity value amount
         origin_country:
@@ -8110,28 +8152,28 @@ components:
           nullable: true
           description: "The address city.\n        **(required for shipment purchase)**\n\
             \        "
-          maxLength: 30
+          maxLength: 50
         federal_tax_id:
           type: string
           nullable: true
           description: The party frederal tax id
-          maxLength: 20
+          maxLength: 50
         state_tax_id:
           type: string
           nullable: true
           description: The party state id
-          maxLength: 20
+          maxLength: 50
         person_name:
           type: string
           nullable: true
           description: "Attention to\n        **(required for shipment purchase)**\n\
             \        "
-          maxLength: 50
+          maxLength: 100
         company_name:
           type: string
           nullable: true
           description: The company name if the party is a company
-          maxLength: 50
+          maxLength: 100
         country_code:
           enum:
           - AC
@@ -8385,12 +8427,12 @@ components:
           type: string
           nullable: true
           description: The party phone number.
-          maxLength: 20
+          maxLength: 50
         state_code:
           type: string
           nullable: true
           description: The address state code
-          maxLength: 20
+          maxLength: 50
         residential:
           type: boolean
           nullable: true
@@ -8400,18 +8442,18 @@ components:
           type: string
           nullable: true
           description: The address street number
-          maxLength: 20
+          maxLength: 100
         address_line1:
           type: string
           nullable: true
           description: "The address line with street number <br/>\n        **(required\
             \ for shipment purchase)**\n        "
-          maxLength: 50
+          maxLength: 100
         address_line2:
           type: string
           nullable: true
           description: The address line with suite number
-          maxLength: 50
+          maxLength: 100
         validate_location:
           type: boolean
           nullable: true
@@ -8437,6 +8479,7 @@ components:
           - dhl_universal
           - dicom
           - dpd
+          - dtdc
           - easypost
           - easyship
           - eshipper
@@ -8447,6 +8490,7 @@ components:
           - hay_post
           - laposte
           - locate2u
+          - mydhl
           - nationex
           - purolator
           - roadie
@@ -8454,14 +8498,16 @@ components:
           - sapient
           - seko
           - sendle
+          - shipengine
           - tge
           - tnt
           - ups
           - usps
           - usps_international
+          - veho
           - zoom2u
           type: string
-          x-spec-enum-id: 5d5559b60118486d
+          x-spec-enum-id: 38c83e1761ec1bf0
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -8786,6 +8832,7 @@ components:
           - PLN
           - PYG
           - QAR
+          - RON
           - RSD
           - RUB
           - RWF
@@ -8823,7 +8870,7 @@ components:
           - ''
           - null
           type: string
-          x-spec-enum-id: f0290aeafc544e9d
+          x-spec-enum-id: 75b9c0f2683aaef1
           nullable: true
           description: The payment amount currency
         account_number:
@@ -10408,12 +10455,14 @@ components:
           - dhl_universal
           - dicom
           - dpd
+          - dtdc
           - fedex
           - generic
           - geodis
           - hay_post
           - laposte
           - locate2u
+          - mydhl
           - nationex
           - purolator
           - roadie
@@ -10425,9 +10474,10 @@ components:
           - ups
           - usps
           - usps_international
+          - veho
           - zoom2u
           type: string
-          x-spec-enum-id: 0ea9c88f469e3f2d
+          x-spec-enum-id: bac3894e526830f2
           description: The tracking carrier
         account_number:
           type: string
@@ -11096,6 +11146,23 @@ components:
       required:
       - delis_id
       - password
+    dtdc:
+      type: object
+      properties:
+        api_key:
+          type: string
+        customer_code:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+        account_country_code:
+          type: string
+          default: IN
+      required:
+      - api_key
+      - customer_code
     easypost:
       type: object
       properties:
@@ -11234,6 +11301,21 @@ components:
         account_country_code:
           type: string
           default: AU
+    mydhl:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        account_number:
+          type: string
+        account_country_code:
+          type: string
+      required:
+      - account_number
+      - password
+      - username
     nationex:
       type: object
       properties:
@@ -11351,6 +11433,19 @@ components:
       required:
       - api_key
       - sendle_id
+    shipengine:
+      type: object
+      properties:
+        api_key:
+          type: string
+        carrier_ids:
+          type: string
+        account_number:
+          type: string
+        account_country_code:
+          type: string
+      required:
+      - api_key
     tge:
       type: object
       properties:
@@ -11471,6 +11566,17 @@ components:
       required:
       - client_id
       - client_secret
+    veho:
+      type: object
+      properties:
+        api_key:
+          type: string
+        account_number:
+          type: string
+        account_country_code:
+          type: string
+      required:
+      - api_key
     zoom2u:
       type: object
       properties:
@@ -11602,6 +11708,7 @@ tags:
     | dhl_universal | DHL Universal |
     | dicom | Dicom |
     | dpd | DPD |
+    | dtdc | DTDC |
     | easypost | EasyPost |
     | easyship | Easyship |
     | eshipper | eShipper |
@@ -11611,6 +11718,7 @@ tags:
     | hay_post | HayPost |
     | laposte | La Poste |
     | locate2u | Locate2u |
+    | mydhl | MyDHL |
     | nationex | Nationex |
     | purolator | Purolator |
     | roadie | Roadie |
@@ -11618,11 +11726,13 @@ tags:
     | sapient | SAPIENT |
     | seko | SEKO Logistics |
     | sendle | Sendle |
+    | shipengine | ShipEngine |
     | tge | TGE |
     | tnt | TNT |
     | ups | UPS |
     | usps | USPS |
     | usps_international | USPS International |
+    | veho | Veho |
     | zoom2u | Zoom2u |
 
     ---
@@ -11802,6 +11912,19 @@ tags:
     | dpd_express_12h | E12 |
     | dpd_express_18h_guarantee | E18 |
     | dpd_express_b2b_predict | B2B MSG option |
+
+    ### DTDC
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | dtdc_b2c_priority | B2C PRIORITY |
+    | dtdc_b2c_economy | B2C SMART EXPRESS |
+    | dtdc_b2c_express | B2C PREMIUM |
+    | dtdc_b2c_ground | B2C GROUND ECONOMY |
+    | dtdc_priority | PRIORITY |
+    | dtdc_ground_express | GROUND EXPRESS |
+    | dtdc_premium | PREMIUM |
+    | dtdc_economy_ground | GEC |
+    | dtdc_standard_express | STD EXP-A |
 
     ### EasyPost
     | Code         | Service Name |
@@ -12910,6 +13033,18 @@ tags:
     | ------------ | ------------ |
     | locate2u_local_delivery | Locate2u Local Delivery |
 
+    ### MyDHL
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | dhl_express_worldwide | U |
+    | dhl_express_12_00 | T |
+    | dhl_express_10_30 | K |
+    | dhl_express_09_00 | Y |
+    | dhl_express_envelope | D |
+    | dhl_economy_select | W |
+    | dhl_break_bulk_express | B |
+    | dhl_medical_express | M |
+
     ### Purolator
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -13195,6 +13330,22 @@ tags:
     | sendle_standard_dropoff | STANDARD-DROPOFF |
     | sendle_express_pickup | EXPRESS-PICKUP |
 
+    ### ShipEngine
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | shipengine_auto | ShipEngine Auto-Select |
+    | usps_ground_advantage | USPS Ground Advantage |
+    | usps_priority_mail | USPS Priority Mail |
+    | usps_priority_mail_express | USPS Priority Mail Express |
+    | fedex_ground | FedEx Ground |
+    | fedex_2day | FedEx 2Day |
+    | fedex_standard_overnight | FedEx Standard Overnight |
+    | ups_ground | UPS Ground |
+    | ups_3_day_select | UPS 3 Day Select |
+    | ups_2nd_day_air | UPS 2nd Day Air |
+    | ups_next_day_air | UPS Next Day Air |
+    | shipengine_ups_ups_ground | UPS Ground via ShipEngine |
+
     ### TGE
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -13345,6 +13496,13 @@ tags:
     | dhl_didgeridoo_box | 13.0 x 13.0 x 162.0 cm |
     | dhl_jumbo_box | 45.0 x 42.7 x 33.0 cm |
     | dhl_jumbo_box_junior | 39.9 x 34.0 x 24.1 cm |
+
+    ### MyDHL
+    | Code         | Dimensions   |
+    | ------------ | ------------ |
+    | mydhl_box_2 | 25 x 15 x 30 cm |
+    | mydhl_box_5 | 30 x 20 x 35 cm |
+    | mydhl_box_10 | 35 x 25 x 40 cm |
 
     ### Purolator
     | Code         | Dimensions   |

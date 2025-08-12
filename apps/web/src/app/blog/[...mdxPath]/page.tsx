@@ -18,7 +18,7 @@ export default async function Page(props) {
   const { default: MDXContent, toc, metadata } = result
 
   // Check if this is a draft post in production
-  const isDraft = metadata?.draft === true
+  const isDraft = (metadata as any)?.draft === true
   const isProduction = process.env.NODE_ENV === 'production'
 
   if (isDraft && isProduction) {

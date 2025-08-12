@@ -333,6 +333,24 @@ class Mutation:
         return mutations.UpdateRateSheetMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
+    def update_rate_sheet_zone_cell(
+        self, info: Info, input: inputs.UpdateRateSheetZoneCellMutationInput
+    ) -> mutations.UpdateRateSheetZoneCellMutation:
+        return mutations.UpdateRateSheetZoneCellMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def batch_update_rate_sheet_cells(
+        self, info: Info, input: inputs.BatchUpdateRateSheetCellsMutationInput
+    ) -> mutations.BatchUpdateRateSheetCellsMutation:
+        return mutations.BatchUpdateRateSheetCellsMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def delete_rate_sheet_service(
+        self, info: Info, input: inputs.DeleteRateSheetServiceMutationInput
+    ) -> mutations.DeleteRateSheetServiceMutation:
+        return mutations.DeleteRateSheetServiceMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
     def delete_rate_sheet(
         self, info: Info, input: inputs.DeleteMutationInput
     ) -> mutations.DeleteMutation:

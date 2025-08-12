@@ -1,84 +1,64 @@
-import { Dialog, DialogContent } from "./ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Button } from "./ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { Input } from "./ui/input";
 import { X } from "lucide-react";
-import { cn } from "@karrio/ui/lib/utils";
-import { RateSheetEditor } from "./rate-sheet-editor";
+import React from "react";
 
-interface RateSheetDialogProps {
+interface LinkRateSheetDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  selectedRateSheet?: any;
-  onSubmit: (values: any) => Promise<any>;
+  connection: { id: string; carrier_name: string; display_name?: string };
+  rateSheets: Array<{ id: string; name: string; carrier_name: string }>;
+  onLink: (opts: { connection_id: string; rate_sheet_id: string }) => Promise<any>;
   isLoading?: boolean;
 }
 
-export function RateSheetDialog({
+export function LinkRateSheetDialog({
   open,
   onOpenChange,
-  selectedRateSheet,
-  onSubmit,
+  connection,
+  rateSheets,
+  onLink,
   isLoading,
-}: RateSheetDialogProps) {
-  if (!open) return null;
+}: LinkRateSheetDialogProps) {
+  const [selected, setSelected] = React.useState<string>("");
 
   return (
-    <div className="fixed inset-0 z-50 bg-white">
-      <div className="flex flex-col h-full">
-        <header className="flex items-center gap-4 px-4 h-[49px] border-b bg-white sticky top-0">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 -ml-2"
-            onClick={() => onOpenChange(false)}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-
-          <div className="flex items-center gap-3 flex-1">
-            <h2 className="text-[15px] font-medium leading-none">
-              {selectedRateSheet ? "Edit rate sheet" : "Create rate sheet"}
-            </h2>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Link to existing rate sheet</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div className="text-sm text-gray-600">
+            Connection: <strong>{connection.display_name || connection.carrier_name}</strong>
           </div>
-
-          <div className="flex items-center gap-3">
+          <div>
+            <Select value={selected} onValueChange={setSelected}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a rate sheet" />
+              </SelectTrigger>
+              <SelectContent>
+                {rateSheets.map(rs => (
+                  <SelectItem key={rs.id} value={rs.id}>
+                    {rs.name} <span className="text-gray-500">({rs.carrier_name})</span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
             <Button
-              variant="ghost"
-              size="sm"
-              className="text-sm"
+              disabled={!selected || isLoading}
+              onClick={() => onLink({ connection_id: connection.id, rate_sheet_id: selected })}
             >
-              Hide preview
+              {isLoading ? 'Linking…' : 'Link rate sheet'}
             </Button>
-            <Button
-              size="sm"
-              className="bg-[#635bff] hover:bg-[#635bff]/90 text-sm"
-            >
-              Save changes
-            </Button>
-          </div>
-        </header>
-
-        <div className="flex flex-1 overflow-hidden">
-          <div className="w-[calc(100%-400px)] p-8 overflow-auto border-r">
-            <RateSheetEditor
-              sheet={selectedRateSheet}
-              onSubmit={onSubmit}
-              isLoading={isLoading}
-            />
-          </div>
-
-          <div className="w-[400px] bg-[#f7f7f7] overflow-auto">
-            <div className="p-8">
-              <div className="text-sm font-medium mb-4">Preview</div>
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                {/* Preview content will go here */}
-                <div className="text-sm text-gray-500">
-                  Rate sheet preview will be shown here
-                </div>
-              </div>
-            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

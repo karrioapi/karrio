@@ -1139,6 +1139,9 @@ class ShippingOption(utils.Enum):
     """TODO: standardize to these"""
     shipping_date = utils.OptionEnum("shipping_date")  # format: %Y-%m-%dT%H:%M
 
+    invoice_number = utils.OptionEnum("invoice_number")
+    invoice_date = utils.OptionEnum("invoice_date")
+
 
 class ShippingOptions(Options):
     """The options common processing helper"""
@@ -1230,6 +1233,14 @@ class ShippingOptions(Options):
     @property
     def recipient_instructions(self) -> utils.OptionEnum:
         return self[ShippingOption.recipient_instructions.name]
+
+    @property
+    def invoice_number(self) -> utils.OptionEnum:
+        return self[ShippingOption.invoice_number.name]
+
+    @property
+    def invoice_date(self) -> utils.OptionEnum:
+        return self[ShippingOption.invoice_date.name]
 
 
 class CustomsOption(utils.Enum):

@@ -5,7 +5,7 @@ import { GetRateSheets_rate_sheets_edges_node as RateSheet } from "@karrio/types
 import { DeleteConfirmationDialog } from "@karrio/ui/components/delete-confirmation-dialog";
 import { CarrierConnectionDialog } from "@karrio/ui/components/carrier-connection-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@karrio/ui/components/ui/card";
-import { RateSheetDialog } from "@karrio/ui/components/rate-sheet-dialog";
+import { LinkRateSheetDialog } from "@karrio/ui/components/rate-sheet-dialog";
 import { RateSheetsTable } from "@karrio/admin/components/rate-sheets-table";
 import { CarrierNameEnum } from "@karrio/types/graphql/admin/types";
 import { Button } from "@karrio/ui/components/ui/button";
@@ -512,12 +512,17 @@ function RateSheetManagement() {
           />
         )}
 
-        <RateSheetDialog
+        <LinkRateSheetDialog
           open={isEditOpen}
           onOpenChange={setIsEditOpen}
-          selectedRateSheet={selectedRateSheet}
-          onSubmit={handleUpdate}
-          isLoading={createRateSheet.isLoading || updateRateSheet.isLoading}
+          connection={{ id: selectedRateSheet?.id || '', carrier_name: selectedRateSheet?.carrier_name || '' }}
+          rateSheets={(rateSheets?.edges || []).map((e: any) => e.node)}
+          onLink={async ({ connection_id, rate_sheet_id }) => {
+            // link by updating the rate sheet carriers list
+            await updateRateSheet.mutateAsync({ id: rate_sheet_id, carriers: [connection_id] } as any);
+            setIsEditOpen(false);
+          }}
+          isLoading={updateRateSheet.isLoading}
         />
 
         <DeleteConfirmationDialog

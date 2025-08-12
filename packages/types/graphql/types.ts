@@ -3748,8 +3748,40 @@ export interface CreateRateSheetVariables {
 // GraphQL mutation operation: UpdateRateSheet
 // ====================================================
 
+export interface UpdateRateSheet_update_rate_sheet_rate_sheet_services_zones {
+  id: string | null;
+  label: string | null;
+  rate: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+  transit_days: number | null;
+  cities: string[] | null;
+  postal_codes: string[] | null;
+  country_codes: CountryCodeEnum[] | null;
+}
+
+export interface UpdateRateSheet_update_rate_sheet_rate_sheet_services {
+  id: string;
+  service_name: string | null;
+  service_code: string | null;
+  currency: CurrencyCodeEnum | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  max_width: number | null;
+  max_height: number | null;
+  max_length: number | null;
+  dimension_unit: DimensionUnitEnum | null;
+  max_weight: number | null;
+  weight_unit: WeightUnitEnum | null;
+  active: boolean | null;
+  zones: UpdateRateSheet_update_rate_sheet_rate_sheet_services_zones[];
+}
+
 export interface UpdateRateSheet_update_rate_sheet_rate_sheet {
   id: string;
+  name: string;
+  carrier_name: CarrierNameEnum;
+  services: UpdateRateSheet_update_rate_sheet_rate_sheet_services[];
 }
 
 export interface UpdateRateSheet_update_rate_sheet_errors {
@@ -3775,25 +3807,195 @@ export interface UpdateRateSheetVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: DeteRateSheet
+// GraphQL mutation operation: DeleteRateSheet
 // ====================================================
 
-export interface DeteRateSheet_delete_rate_sheet_errors {
+export interface DeleteRateSheet_delete_rate_sheet_errors {
   field: string;
   messages: string[];
 }
 
-export interface DeteRateSheet_delete_rate_sheet {
+export interface DeleteRateSheet_delete_rate_sheet {
   id: string;
-  errors: DeteRateSheet_delete_rate_sheet_errors[] | null;
+  errors: DeleteRateSheet_delete_rate_sheet_errors[] | null;
 }
 
-export interface DeteRateSheet {
-  delete_rate_sheet: DeteRateSheet_delete_rate_sheet;
+export interface DeleteRateSheet {
+  delete_rate_sheet: DeleteRateSheet_delete_rate_sheet;
 }
 
-export interface DeteRateSheetVariables {
+export interface DeleteRateSheetVariables {
   data: DeleteMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateRateSheetZoneCell
+// ====================================================
+
+export interface UpdateRateSheetZoneCell_update_rate_sheet_zone_cell_rate_sheet_services_zones {
+  id: string | null;
+  label: string | null;
+  rate: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  radius: number | null;
+  latitude: number | null;
+  longitude: number | null;
+  cities: string[] | null;
+  postal_codes: string[] | null;
+  country_codes: CountryCodeEnum[] | null;
+}
+
+export interface UpdateRateSheetZoneCell_update_rate_sheet_zone_cell_rate_sheet_services {
+  id: string;
+  service_name: string | null;
+  service_code: string | null;
+  zones: UpdateRateSheetZoneCell_update_rate_sheet_zone_cell_rate_sheet_services_zones[];
+}
+
+export interface UpdateRateSheetZoneCell_update_rate_sheet_zone_cell_rate_sheet {
+  id: string;
+  services: UpdateRateSheetZoneCell_update_rate_sheet_zone_cell_rate_sheet_services[];
+}
+
+export interface UpdateRateSheetZoneCell_update_rate_sheet_zone_cell_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UpdateRateSheetZoneCell_update_rate_sheet_zone_cell {
+  rate_sheet: UpdateRateSheetZoneCell_update_rate_sheet_zone_cell_rate_sheet | null;
+  errors: UpdateRateSheetZoneCell_update_rate_sheet_zone_cell_errors[] | null;
+}
+
+export interface UpdateRateSheetZoneCell {
+  update_rate_sheet_zone_cell: UpdateRateSheetZoneCell_update_rate_sheet_zone_cell;
+}
+
+export interface UpdateRateSheetZoneCellVariables {
+  data: UpdateRateSheetZoneCellMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: BatchUpdateRateSheetCells
+// ====================================================
+
+export interface BatchUpdateRateSheetCells_batch_update_rate_sheet_cells_rate_sheet_services_zones {
+  id: string | null;
+  label: string | null;
+  rate: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  radius: number | null;
+  latitude: number | null;
+  longitude: number | null;
+  cities: string[] | null;
+  postal_codes: string[] | null;
+  country_codes: CountryCodeEnum[] | null;
+}
+
+export interface BatchUpdateRateSheetCells_batch_update_rate_sheet_cells_rate_sheet_services {
+  id: string;
+  service_name: string | null;
+  service_code: string | null;
+  zones: BatchUpdateRateSheetCells_batch_update_rate_sheet_cells_rate_sheet_services_zones[];
+}
+
+export interface BatchUpdateRateSheetCells_batch_update_rate_sheet_cells_rate_sheet {
+  id: string;
+  services: BatchUpdateRateSheetCells_batch_update_rate_sheet_cells_rate_sheet_services[];
+}
+
+export interface BatchUpdateRateSheetCells_batch_update_rate_sheet_cells_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface BatchUpdateRateSheetCells_batch_update_rate_sheet_cells {
+  rate_sheet: BatchUpdateRateSheetCells_batch_update_rate_sheet_cells_rate_sheet | null;
+  errors: BatchUpdateRateSheetCells_batch_update_rate_sheet_cells_errors[] | null;
+}
+
+export interface BatchUpdateRateSheetCells {
+  batch_update_rate_sheet_cells: BatchUpdateRateSheetCells_batch_update_rate_sheet_cells;
+}
+
+export interface BatchUpdateRateSheetCellsVariables {
+  data: BatchUpdateRateSheetCellsMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DeleteRateSheetService
+// ====================================================
+
+export interface DeleteRateSheetService_delete_rate_sheet_service_rate_sheet_services_zones {
+  id: string | null;
+  label: string | null;
+  rate: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+  transit_days: number | null;
+  cities: string[] | null;
+  postal_codes: string[] | null;
+  country_codes: CountryCodeEnum[] | null;
+}
+
+export interface DeleteRateSheetService_delete_rate_sheet_service_rate_sheet_services {
+  id: string;
+  service_name: string | null;
+  service_code: string | null;
+  currency: CurrencyCodeEnum | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  max_width: number | null;
+  max_height: number | null;
+  max_length: number | null;
+  dimension_unit: DimensionUnitEnum | null;
+  max_weight: number | null;
+  weight_unit: WeightUnitEnum | null;
+  active: boolean | null;
+  zones: DeleteRateSheetService_delete_rate_sheet_service_rate_sheet_services_zones[];
+}
+
+export interface DeleteRateSheetService_delete_rate_sheet_service_rate_sheet {
+  id: string;
+  name: string;
+  carrier_name: CarrierNameEnum;
+  services: DeleteRateSheetService_delete_rate_sheet_service_rate_sheet_services[];
+}
+
+export interface DeleteRateSheetService_delete_rate_sheet_service_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface DeleteRateSheetService_delete_rate_sheet_service {
+  rate_sheet: DeleteRateSheetService_delete_rate_sheet_service_rate_sheet | null;
+  errors: DeleteRateSheetService_delete_rate_sheet_service_errors[] | null;
+}
+
+export interface DeleteRateSheetService {
+  delete_rate_sheet_service: DeleteRateSheetService_delete_rate_sheet_service;
+}
+
+export interface DeleteRateSheetServiceVariables {
+  data: DeleteRateSheetServiceMutationInput;
 }
 
 
@@ -3806,6 +4008,7 @@ export interface DeteRateSheetVariables {
 
 export interface GetRateSheet_rate_sheet_services_zones {
   object_type: string;
+  id: string | null;
   label: string | null;
   rate: number | null;
   min_weight: number | null;
@@ -3877,6 +4080,7 @@ export interface GetRateSheets_rate_sheets_page_info {
 }
 
 export interface GetRateSheets_rate_sheets_edges_node_services_zones {
+  id: string | null;
   label: string | null;
   rate: number | null;
   min_weight: number | null;
@@ -4951,9 +5155,6 @@ export enum WeightUnitEnum {
 }
 
 export enum CarrierNameEnum {
-  allied_express = "allied_express",
-  allied_express_local = "allied_express_local",
-  amazon_shipping = "amazon_shipping",
   aramex = "aramex",
   asendia_us = "asendia_us",
   australiapost = "australiapost",
@@ -4969,6 +5170,7 @@ export enum CarrierNameEnum {
   dhl_universal = "dhl_universal",
   dicom = "dicom",
   dpd = "dpd",
+  dtdc = "dtdc",
   easypost = "easypost",
   easyship = "easyship",
   eshipper = "eshipper",
@@ -5668,6 +5870,35 @@ export interface UpdateServiceZoneInput {
   cities?: string[] | null;
   postal_codes?: string[] | null;
   country_codes?: string[] | null;
+}
+
+// null
+export interface UpdateRateSheetZoneCellMutationInput {
+  id: string;
+  service_id: string;
+  zone_id: string;
+  field: string;
+  value: any;
+}
+
+// null
+export interface BatchUpdateRateSheetCellsMutationInput {
+  id: string;
+  updates: CellUpdate[];
+}
+
+// null
+export interface CellUpdate {
+  service_id: string;
+  zone_id: string;
+  field: string;
+  value: any;
+}
+
+// null
+export interface DeleteRateSheetServiceMutationInput {
+  rate_sheet_id: string;
+  service_id: string;
 }
 
 // null

@@ -5,6 +5,7 @@ import logging
 import datetime
 import functools
 import urllib.parse
+import urllib.error
 import karrio.core.utils as utils
 import karrio.core.units as units
 import karrio.core.models as models
@@ -672,7 +673,7 @@ def to_address(
 
 
 def to_multi_piece_rates(
-    package_rates: typing.List[typing.Tuple[str, typing.List[models.RateDetails]]]
+    package_rates: typing.List[typing.Tuple[str, typing.List[models.RateDetails]]],
 ) -> typing.List[models.RateDetails]:
     """Combine rates received separately per package into a single rate list.
 
@@ -693,7 +694,7 @@ def to_multi_piece_rates(
 
 
 def to_multi_piece_shipment(
-    package_shipments: typing.List[typing.Tuple[str, models.ShipmentDetails]]
+    package_shipments: typing.List[typing.Tuple[str, models.ShipmentDetails]],
 ) -> models.ShipmentDetails:
     """Combine shipment received separately per package into a single master shipment.
 
@@ -792,6 +793,10 @@ def request(
         timeout=timeout,
         **kwargs,
     )
+
+
+def parse_http_response(response: urllib.error.HTTPError) -> str:
+    return to_json(dict(code=str(response.code), error=response.reason))
 
 
 # endregion

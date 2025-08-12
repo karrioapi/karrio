@@ -1,9 +1,12 @@
 -r requirements.build.txt
 
+# private connectors
+-e ./ee/insiders/modules/connectors/dtdc
+
 # karrio insiders modules
--e ee/insiders/modules/cloud
--e ee/insiders/modules/apps
--e ee/insiders/modules/admin
--e ee/insiders/modules/audit
--e ee/insiders/modules/automation
--e ee/insiders/modules/orgs
+-e ./ee/insiders/modules/cloud
+-e ./ee/insiders/modules/apps
+-e ./ee/insiders/modules/admin
+-e ./ee/insiders/modules/audit
+-e ./ee/insiders/modules/automation
+-e ./ee/insiders/modules/orgs

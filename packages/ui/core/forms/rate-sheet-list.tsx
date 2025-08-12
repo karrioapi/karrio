@@ -5,7 +5,11 @@ import { ConfirmModalWrapper } from '../modals/form-modals';
 import { useAPIMetadata } from '@karrio/hooks/api-metadata';
 
 
-export const RateSheetList = (): JSX.Element => {
+interface RateSheetListProps {
+  onEdit?: (id: string) => void;
+}
+
+export const RateSheetList = ({ onEdit }: RateSheetListProps): JSX.Element => {
   const { references } = useAPIMetadata();
   const mutation = useRateSheetMutation();
   const { query: { data: { rate_sheets } = {} } } = useRateSheets();
@@ -39,17 +43,28 @@ export const RateSheetList = (): JSX.Element => {
                   </td>
                   <td className="action has-text-right is-vcentered">
                     <div className="buttons is-justify-content-end">
-                      <RateSheetModalEditor
-                        sheet={sheet as any}
-                        onSubmit={({ carrier_name, carriers, ..._ }) => mutation.updateRateSheet.mutateAsync(_)}
-                        trigger={
-                          <button className="button is-white">
-                            <span className="icon is-small">
-                              <i className="fas fa-pen"></i>
-                            </span>
-                          </button>
-                        }
-                      />
+                      {onEdit ? (
+                        <button 
+                          className="button is-white"
+                          onClick={() => onEdit(sheet.id)}
+                        >
+                          <span className="icon is-small">
+                            <i className="fas fa-pen"></i>
+                          </span>
+                        </button>
+                      ) : (
+                        <RateSheetModalEditor
+                          sheet={sheet as any}
+                          onSubmit={({ carrier_name, carriers, ..._ }) => mutation.updateRateSheet.mutateAsync(_)}
+                          trigger={
+                            <button className="button is-white">
+                              <span className="icon is-small">
+                                <i className="fas fa-pen"></i>
+                              </span>
+                            </button>
+                          }
+                        />
+                      )}
                       <ConfirmModalWrapper
                         header='Confirm rate sheet deletion'
                         onSubmit={() => mutation.deleteRateSheet.mutateAsync({ id: sheet.id })}

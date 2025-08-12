@@ -1,5 +1,9 @@
 # Karrio insiders packages
 
+# connectors
+-e ./ee/insiders/modules/connectors/dtdc
+
+# server
 -e ./ee/insiders/modules/cloud
 -e ./ee/insiders/modules/apps
 -e ./ee/insiders/modules/admin
