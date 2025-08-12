@@ -70,16 +70,39 @@ def _extract_details(
     )
     # fmt: on
 
-    charge_amount = lib.failsafe(lambda: shipment.pieceResponses[0].netChargeAmount) or lib.failsafe(lambda: shipment.pieceResponses[0].netRateAmount)
-    currency = lib.failsafe(lambda: shipment.completedShipmentDetail.shipmentRating.shipmentRateDetails[0].currency) or "USD"
-    details = lib.failsafe(lambda: shipment.completedShipmentDetail.shipmentRating.shipmentRateDetails[0])
-    charges = lib.identity([
-        ("Base Charge", lib.failsafe(lambda: details.totalBaseCharge)),
-        ("Discounts", lib.failsafe(lambda: details.totalDiscounts)),
-        *[(_.type, lib.to_money(_.amount)) for _ in (details.taxes or []) if details],
-        *[(_.description, lib.to_money(_.amount)) for _ in (details.surcharges or []) if details],
-    ] if details else [])
-    
+    charge_amount = lib.failsafe(
+        lambda: shipment.pieceResponses[0].netChargeAmount
+    ) or lib.failsafe(lambda: shipment.pieceResponses[0].netRateAmount)
+    currency = (
+        lib.failsafe(
+            lambda: shipment.completedShipmentDetail.shipmentRating.shipmentRateDetails[
+                0
+            ].currency
+        )
+        or "USD"
+    )
+    details = lib.failsafe(
+        lambda: shipment.completedShipmentDetail.shipmentRating.shipmentRateDetails[0]
+    )
+    charges = lib.identity(
+        [
+            ("Base Charge", lib.failsafe(lambda: details.totalBaseCharge)),
+            ("Discounts", lib.failsafe(lambda: details.totalDiscounts)),
+            *[
+                (_.type, lib.to_money(_.amount))
+                for _ in (details.taxes or [])
+                if details
+            ],
+            *[
+                (_.description, lib.to_money(_.amount))
+                for _ in (details.surcharges or [])
+                if details
+            ],
+        ]
+        if details
+        else []
+    )
+
     selected_rate = lib.identity(
         models.RateDetails(
             carrier_id=settings.carrier_id,
@@ -88,13 +111,17 @@ def _extract_details(
             total_charge=lib.to_money(charge_amount),
             currency=currency,
             extra_charges=[
-                models.ChargeDetails(name=name, amount=lib.to_money(amount), currency=currency)
+                models.ChargeDetails(
+                    name=name, amount=lib.to_money(amount), currency=currency
+                )
                 for name, amount in charges
                 if amount is not None and lib.to_money(amount) != 0
             ],
             meta=dict(service_name=service.name or service.name_or_key),
         )
-        if any(shipment.pieceResponses or []) and charge_amount is not None
+        if any(shipment.pieceResponses or [])
+        and charge_amount is not None
+        and charge_amount > 0
         else None
     )
 
