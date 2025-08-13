@@ -122,6 +122,7 @@ paths:
                     PERSIST_SDK_TRACING: true
                     WORKFLOW_MANAGEMENT: true
                     SHIPPING_RULES: true
+                    ADVANCED_ANALYTICS: true
           description: ''
   /api/token:
     post:
@@ -3181,6 +3182,7 @@ paths:
                     PERSIST_SDK_TRACING: true
                     WORKFLOW_MANAGEMENT: true
                     SHIPPING_RULES: true
+                    ADVANCED_ANALYTICS: true
                     ADDRESS_AUTO_COMPLETE: {}
                     countries: {}
                     currencies: {}
@@ -5354,6 +5356,10 @@ components:
           type: string
           nullable: true
           description: The charge amount currency
+        id:
+          type: string
+          nullable: true
+          description: A surcharge id
     Commodity:
       type: object
       properties:

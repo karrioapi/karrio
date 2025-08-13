@@ -22,7 +22,7 @@ import {
   AddonFilter,
   CreateAddonMutationInput,
   SurchargeTypeEnum,
-  ResourceUsageFilter,
+  UsageFilter,
 } from "@karrio/types/graphql/admin";
 import { useQueryClient } from "@tanstack/react-query";
 import { useOrganizationAccounts } from "./admin-accounts";
@@ -48,7 +48,7 @@ export interface AddonFormData {
 // -----------------------------------------------------------
 export function useAddons(
   filter: AddonFilter = {},
-  usageFilter?: ResourceUsageFilter
+  usageFilter?: UsageFilter
 ) {
   const karrio = useKarrio();
 
@@ -74,7 +74,7 @@ export function useAddons(
 // -----------------------------------------------------------
 export function useAddon(
   id: string,
-  usageFilter?: ResourceUsageFilter
+  usageFilter?: UsageFilter
 ) {
   const karrio = useKarrio();
 
@@ -109,25 +109,25 @@ export function useAddonMutation() {
   };
 
   const createAddon = useAuthenticatedMutation({
-    mutationFn: (data: CreateAddonVariables["data"]) => karrio.admin.request<CreateAddon>(
+    mutationFn: (input: CreateAddonVariables["input"]) => karrio.admin.request<CreateAddon>(
       gqlstr(CREATE_ADDON),
-      { variables: { data } }
+      { variables: { input } }
     ),
     onSuccess: invalidateCache,
   });
 
   const updateAddon = useAuthenticatedMutation({
-    mutationFn: (data: UpdateAddonVariables["data"]) => karrio.admin.request<UpdateAddon>(
+    mutationFn: (input: UpdateAddonVariables["input"]) => karrio.admin.request<UpdateAddon>(
       gqlstr(UPDATE_ADDON),
-      { variables: { data } }
+      { variables: { input } }
     ),
     onSuccess: invalidateCache,
   });
 
   const deleteAddon = useAuthenticatedMutation({
-    mutationFn: (data: DeleteAddonVariables["data"]) => karrio.admin.request<DeleteAddon>(
+    mutationFn: (input: DeleteAddonVariables["input"]) => karrio.admin.request<DeleteAddon>(
       gqlstr(DELETE_ADDON),
-      { variables: { data } }
+      { variables: { input } }
     ),
     onSuccess: invalidateCache,
   });
@@ -226,7 +226,6 @@ export function useAddonForm(initialData?: AddonType) {
     carriers: formData.carriers.length > 0 ? formData.carriers : undefined,
     services: formData.services.length > 0 ? formData.services : undefined,
     carrier_accounts: formData.carrier_accounts.length > 0 ? formData.carrier_accounts : undefined,
-    organizations: formData.organizations.length > 0 ? formData.organizations : undefined,
   });
 
   return {
