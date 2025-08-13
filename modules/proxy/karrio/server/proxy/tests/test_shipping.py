@@ -244,8 +244,8 @@ SHIPPING_RESPONSE = {
             "total_charge": 106.71,
             "transit_days": None,
             "extra_charges": [
-                {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD"},
-                {"name": "SMB Savings", "amount": -11.74, "currency": "CAD"},
+                {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD", "id": None},
+                {"name": "SMB Savings", "amount": -11.74, "currency": "CAD", "id": None},
             ],
             "meta": None,
             "test_mode": True,
@@ -261,8 +261,8 @@ SHIPPING_RESPONSE = {
             "total_charge": 27.95,
             "transit_days": None,
             "extra_charges": [
-                {"name": "Fuel surcharge", "amount": 0.71, "currency": "CAD"},
-                {"name": "SMB Savings", "amount": -3.77, "currency": "CAD"},
+                {"name": "Fuel surcharge", "amount": 0.71, "currency": "CAD", "id": None},
+                {"name": "SMB Savings", "amount": -3.77, "currency": "CAD", "id": None},
             ],
             "meta": None,
             "test_mode": True,
@@ -292,8 +292,8 @@ SHIPPING_RESPONSE = {
         "total_charge": 106.71,
         "transit_days": None,
         "extra_charges": [
-            {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD"},
-            {"name": "SMB Savings", "amount": -11.74, "currency": "CAD"},
+            {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD", "id": None},
+            {"name": "SMB Savings", "amount": -11.74, "currency": "CAD", "id": None},
         ],
         "meta": {
             "ext": "canadapost",

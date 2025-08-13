@@ -6,23 +6,21 @@ from django.db import migrations
 def fix_surcharge_types(apps, schema_editor):
     """Convert surcharge_type from symbols to enum names"""
     Surcharge = apps.get_model('pricing', 'Surcharge')
-    
+
     # Update $ to AMOUNT
     updated_amount = Surcharge.objects.filter(surcharge_type='$').update(surcharge_type='AMOUNT')
-    print(f'Updated {updated_amount} records from $ to AMOUNT')
-    
-    # Update % to PERCENTAGE  
+
+    # Update % to PERCENTAGE
     updated_percentage = Surcharge.objects.filter(surcharge_type='%').update(surcharge_type='PERCENTAGE')
-    print(f'Updated {updated_percentage} records from % to PERCENTAGE')
 
 
 def reverse_surcharge_types(apps, schema_editor):
     """Reverse the changes - convert back to symbols"""
     Surcharge = apps.get_model('pricing', 'Surcharge')
-    
+
     # Reverse AMOUNT to $
     Surcharge.objects.filter(surcharge_type='AMOUNT').update(surcharge_type='$')
-    
+
     # Reverse PERCENTAGE to %
     Surcharge.objects.filter(surcharge_type='PERCENTAGE').update(surcharge_type='%')
 

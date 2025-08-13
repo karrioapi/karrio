@@ -167,7 +167,7 @@ PICKUP_RESPONSE = {
         "carrier_id": "canadapost",
         "confirmation_number": "27241",
         "pickup_date": "2020-10-25",
-        "pickup_charge": {"name": "Pickup fees", "amount": 0.0, "currency": "CAD"},
+        "pickup_charge": {"name": "Pickup fees", "amount": 0.0, "currency": "CAD", "id": None},
         "ready_time": "13:00",
         "closing_time": "17:00",
         "test_mode": True,

@@ -460,10 +460,10 @@ function ShippersAccountDetail({ accountId }: ShippersAccountDetailProps) {
                             <div className="text-sm text-gray-500">
                               {member.last_login
                                 ? new Date(member.last_login).toLocaleDateString("en-US", {
-                                    month: "short",
-                                    day: "numeric",
-                                    year: "numeric"
-                                  })
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric"
+                                })
                                 : "Never"}
                             </div>
                           </TableCell>
@@ -815,7 +815,7 @@ function ShippersAccountDetail({ accountId }: ShippersAccountDetailProps) {
                   </TableHeader>
                   <TableBody>
                     {trackers?.edges?.map(({ node: tracker }) => {
-                      const typedTracker = tracker as SystemTrackerNode;
+                      const typedTracker = tracker as unknown as SystemTrackerNode;
                       return (
                         <TableRow key={typedTracker.id} className="hover:bg-gray-50">
                           <TableCell>

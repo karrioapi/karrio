@@ -125,7 +125,7 @@ export function CarrierConnectionDialog({
     if (open) {
       const initial = selectedConnection
         ? {
-          carrier_name: selectedConnection.carrier_name as CarrierNameEnum,
+          carrier_name: selectedConnection.carrier_name,
           carrier_id: selectedConnection.carrier_id,
           active: selectedConnection.active,
           capabilities: selectedConnection.capabilities || [],
@@ -434,8 +434,8 @@ export function CarrierConnectionDialog({
                           Carrier <span className="text-destructive">*</span>
                         </FormLabel>
                         <Select
-                          onValueChange={(value) => field.onChange(value as CarrierNameEnum)}
-          value={field.value as any}
+                          onValueChange={(value) => field.onChange(value)}
+                          value={field.value}
                           disabled={!!selectedConnection || disableCarrierSelection}
                         >
                           <FormControl>
