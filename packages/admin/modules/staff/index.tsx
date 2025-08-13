@@ -96,7 +96,10 @@ export default function Page() {
     const role = formData.get("role") as "member" | "developer" | "admin";
     const email = formData.get("email") as string;
     const fullName = formData.get("full_name") as string;
-    const dummyPassword = Math.random().toString(36).slice(-8);
+    // Generate a cryptographically secure random password
+    const array = new Uint8Array(12);
+    window.crypto.getRandomValues(array);
+    const dummyPassword = Array.from(array, b => b.toString(16).padStart(2, '0')).join('').slice(-8);
 
     createUser.mutate(
       {
