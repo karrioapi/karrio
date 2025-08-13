@@ -13,6 +13,7 @@ import { Label } from "@karrio/ui/components/ui/label";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useConfigs, useConfigMutation } from "@karrio/hooks/admin-platform";
+import { useAdminSystemUsage } from "@karrio/hooks/admin-usage";
 import { useState, useEffect } from "react";
 import {
   Dialog,
@@ -53,35 +54,6 @@ type ConfigData = {
   MULTI_ORGANIZATIONS: boolean;
 };
 
-type ConfigResponse = {
-  EMAIL_USE_TLS: boolean | null;
-  EMAIL_HOST_USER: string | null;
-  EMAIL_HOST_PASSWORD: string | null;
-  EMAIL_HOST: string | null;
-  EMAIL_PORT: number | null;
-  EMAIL_FROM_ADDRESS: string | null;
-  GOOGLE_CLOUD_API_KEY: string | null;
-  CANADAPOST_ADDRESS_COMPLETE_API_KEY: string | null;
-  ORDER_DATA_RETENTION: number | null;
-  TRACKER_DATA_RETENTION: number | null;
-  SHIPMENT_DATA_RETENTION: number | null;
-  API_LOGS_DATA_RETENTION: number | null;
-  APP_NAME: string | null;
-  APP_WEBSITE: string | null;
-  ALLOW_SIGNUP: boolean | null;
-  ALLOW_ADMIN_APPROVED_SIGNUP: boolean | null;
-  DOCUMENTS_MANAGEMENT: boolean | null;
-  DATA_IMPORT_EXPORT: boolean | null;
-  PERSIST_SDK_TRACING: boolean | null;
-  WORKFLOW_MANAGEMENT: boolean | null;
-  AUDIT_LOGGING: boolean | null;
-  ALLOW_MULTI_ACCOUNT: boolean | null;
-  ADMIN_DASHBOARD: boolean | null;
-  ORDERS_MANAGEMENT: boolean | null;
-  APPS_MANAGEMENT: boolean | null;
-  MULTI_ORGANIZATIONS: boolean | null;
-};
-
 const defaultConfig: ConfigData = {
   EMAIL_USE_TLS: false,
   EMAIL_HOST_USER: "",
@@ -117,6 +89,7 @@ export default function PlatformDetails() {
   const { toast } = useToast();
   const { metadata } = useAPIMetadata();
   const { query, configs } = useConfigs();
+  const { query: { data: { usage } = {} } } = useAdminSystemUsage();
   const [editSection, setEditSection] = useState<EditSection>(null);
 
   const { updateConfigs } = useConfigMutation();
@@ -153,6 +126,45 @@ export default function PlatformDetails() {
       </div>
 
       <div className="space-y-8">
+        {/* System Statistics Overview */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="border shadow-none">
+            <CardContent className="p-4">
+              <p className="text-sm text-gray-600">Total Users</p>
+              <p className="text-2xl font-semibold text-gray-900">
+                {usage?.user_count?.toLocaleString() || 0}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border shadow-none">
+            <CardContent className="p-4">
+              <p className="text-sm text-gray-600">Organizations</p>
+              <p className="text-2xl font-semibold text-gray-900">
+                {usage?.organization_count?.toLocaleString() || 0}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border shadow-none">
+            <CardContent className="p-4">
+              <p className="text-sm text-gray-600">Total Shipments</p>
+              <p className="text-2xl font-semibold text-gray-900">
+                {usage?.total_shipments?.toLocaleString() || 0}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border shadow-none">
+            <CardContent className="p-4">
+              <p className="text-sm text-gray-600">API Requests</p>
+              <p className="text-2xl font-semibold text-gray-900">
+                {usage?.total_requests?.toLocaleString() || 0}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Platform Config */}
         <Card>
           <CardHeader className="space-y-2">

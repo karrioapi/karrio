@@ -1,30 +1,20 @@
-import {
-  GET_ORGANIZATION,
-  get_organization,
-  get_organization_organization_usage,
-} from "@karrio/types/graphql/ee";
-import {
-  GET_SYSTEM_USAGE,
-  GetSystemUsage,
-  GetSystemUsage_system_usage,
-  GET_USAGE,
-  GetUsage,
-  GetUsage_organization_usage,
-  UsageFilter,
-} from "@karrio/types";
 import { gqlstr, insertUrlParam, isNoneOrEmpty } from "@karrio/lib";
-import { useQuery } from "@tanstack/react-query";
-import { useAPIMetadata } from "./api-metadata";
 import { useKarrio, useAuthenticatedQuery } from "./karrio";
-import { useSyncedSession } from "./session";
+import { GET_ADMIN_SYSTEM_USAGE } from "@karrio/types/graphql/admin/queries";
+import {
+  UsageFilter,
+  GetAdminSystemUsage,
+  GetAdminSystemUsage_usage,
+} from "@karrio/types/graphql/admin";
 import moment from "moment";
 import React from "react";
 
-type UsageType = get_organization_organization_usage &
-  GetSystemUsage_system_usage &
-  GetUsage_organization_usage;
+// Types
+export type AdminUsageType = GetAdminSystemUsage_usage;
 type FilterType = UsageFilter & { setVariablesToURL?: boolean };
-const USAGE_FILTERS: Record<string, UsageFilter> = {
+
+// Usage filters for different time periods
+const ADMIN_USAGE_FILTERS: Record<string, UsageFilter> = {
   "7 days": {
     date_before: moment().toISOString(),
     date_after: moment().subtract(7, "days").toISOString(),
@@ -50,7 +40,9 @@ const USAGE_FILTERS: Record<string, UsageFilter> = {
     date_after: moment().subtract(360, "days").toISOString(),
   },
 };
-const DAYS_LIST: Record<string, string[]> = {
+
+// Days lists for chart generation
+const ADMIN_DAYS_LIST: Record<string, string[]> = {
   "7 days": Array.from(Array(7))
     .map((_, i) => i)
     .reverse()
@@ -77,40 +69,26 @@ const DAYS_LIST: Record<string, string[]> = {
     .map((i) => moment().subtract(i, "days").format("MMM D")),
 };
 
-export function useAPIUsage({
+// -----------------------------------------------------------
+// Admin System Usage Hook
+// -----------------------------------------------------------
+export function useAdminSystemUsage({
   setVariablesToURL = false,
   ...initialData
 }: FilterType = {}) {
   const karrio = useKarrio();
-  const { metadata } = useAPIMetadata();
-  const { query: sessionQuery } = useSyncedSession();
-  const session = sessionQuery.data;
   const [filter, _setFilter] = React.useState<UsageFilter>({
-    ...USAGE_FILTERS["15 days"],
+    ...ADMIN_USAGE_FILTERS["15 days"],
     ...initialData,
   });
 
-  const systemUsage = () =>
-    karrio.graphql
-      .request<GetSystemUsage>(gqlstr(GET_SYSTEM_USAGE), {
-        variables: { filter },
-      })
-      .then(({ system_usage }) => ({ usage: system_usage as UsageType }));
-
-  const orgUsage = () =>
-    karrio.graphql
-      .request<GetUsage>(gqlstr(GET_USAGE), {
-        variables: { filter },
-      })
-      .then(({ organization }) => ({
-        usage: organization?.usage as UsageType,
-      }));
-
   const query = useAuthenticatedQuery({
-    queryKey: ["usage", filter],
-    queryFn: metadata.MULTI_ORGANIZATIONS == true ? orgUsage : systemUsage,
-    staleTime: 1500000,
-    enabled: metadata.MULTI_ORGANIZATIONS ? !!session?.orgId : true,
+    queryKey: ["admin_system_usage", filter],
+    queryFn: () =>
+      karrio.admin.request<GetAdminSystemUsage>(gqlstr(GET_ADMIN_SYSTEM_USAGE), {
+        variables: { filter },
+      }),
+    staleTime: 1500000, // 25 minutes
     retry: (failureCount, error) => {
       // Don't retry if it's an authentication error
       if ((error as any)?.response?.errors?.[0]?.code === "authentication_required") {
@@ -129,7 +107,7 @@ export function useAPIUsage({
           ...acc,
           [key]: options[key as keyof UsageFilter],
         };
-    }, {});
+    }, {} as UsageFilter);
 
     if (setVariablesToURL) insertUrlParam(params);
     _setFilter(params);
@@ -141,13 +119,14 @@ export function useAPIUsage({
     query,
     filter,
     setFilter,
-    DAYS_LIST,
-    USAGE_FILTERS,
+    usage: query.data?.usage,
+    DAYS_LIST: ADMIN_DAYS_LIST,
+    USAGE_FILTERS: ADMIN_USAGE_FILTERS,
     currentFilter: () =>
-      Object.keys(USAGE_FILTERS).find(
+      Object.keys(ADMIN_USAGE_FILTERS).find(
         (_: any) =>
-          USAGE_FILTERS[_].date_before == filter.date_before &&
-          USAGE_FILTERS[_].date_after == filter.date_after,
+          ADMIN_USAGE_FILTERS[_].date_before === filter.date_before &&
+          ADMIN_USAGE_FILTERS[_].date_after === filter.date_after,
       ),
   };
 }

@@ -14,6 +14,8 @@ import {
   Inbox,
   List,
   Brackets,
+  Building2,
+  BarChart3,
 } from "lucide-react"
 
 
@@ -62,8 +64,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: "/orders",
       icon: Inbox,
     }] : []),
+  ];
+
+  // Resources items (moved from submenu to main nav)
+  const productItems = [
     {
-      title: "Carriers",
+      title: "Connections",
       url: "/connections",
       icon: List,
     },
@@ -72,39 +78,34 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: metadata?.SHIPPING_RULES ? "/shipping-rules" : "/workflows",
       icon: Zap,
     }] : []),
-    {
-      title: "Settings",
-      url: "/settings/account",
-      icon: Settings,
-    },
-  ];
-
-  // Resources items (moved from submenu to main nav)
-  const resourceItems = [
-    {
-      title: "Playground",
-      url: "/resources/playground",
-      icon: Code2, // Better icon for Swagger/API playground
-    },
-    {
-      title: "GraphiQL",
-      url: "/resources/graphiql",
-      icon: Brackets, // More appropriate for GraphQL interface
-    },
-    ...(metadata?.APP_NAME?.includes("Karrio") ? [{
-      title: "Guides",
-      url: "https://karrio.io/docs",
-      icon: BookOpen, // More appropriate for documentation
-      external: true,
+    ...(metadata?.ADVANCED_ANALYTICS ? [{
+      title: "Reports",
+      url: "/reports",
+      icon: BarChart3,
     }] : []),
-  ];
-
-  // Admin and developer tools
-  const bottomItems = [
     ...(metadata?.ADMIN_DASHBOARD && user?.is_staff ? [{
-      title: "Administration",
+      title: "Control",
       url: "/admin",
       icon: Shield,
+    }] : []),
+    ...(metadata?.MULTI_ORGANIZATIONS && user?.is_superuser ? [{
+      title: "Shippers",
+      url: "/shippers",
+      icon: Building2,
+      items: [
+        {
+          title: "Overview",
+          url: "/shippers/overview",
+        },
+        {
+          title: "Accounts",
+          url: "/shippers/accounts",
+        },
+        {
+          title: "Addons",
+          url: "/shippers/addons",
+        },
+      ],
     }] : []),
   ];
 
@@ -119,21 +120,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navMain} />
-        <NavMain items={resourceItems} label="Resources" />
-        <NavMain items={bottomItems} label="Admin" />
+        {productItems.length > 0 && <NavMain items={productItems} label="Products" />}
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
-          <SidebarMenuItem>
+          <SidebarMenuItem className="hidden lg:block">
             <SidebarMenuButton
               onClick={() => {
-                // This will be handled by the provider context
                 const event = new CustomEvent('toggle-developer-tools');
                 window.dispatchEvent(event);
               }}
+              tooltip="Developer Tools"
             >
-              <Terminal />
-              <span>Developer Tools</span>
+              <Terminal className="size-4" />
+              <span>Developers</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

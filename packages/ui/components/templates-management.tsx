@@ -38,34 +38,6 @@ import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { useRouter } from "next/navigation";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 
-function TemplateDescription({ template }: { template: DocumentTemplateType }) {
-  const getTemplateTypeColor = (relatedObject: string) => {
-    const colors: Record<string, string> = {
-      order: "bg-blue-100 text-blue-800",
-      shipment: "bg-green-100 text-green-800",
-      pickup: "bg-purple-100 text-purple-800",
-      invoice: "bg-orange-100 text-orange-800",
-      default: "bg-gray-100 text-gray-800"
-    };
-    return colors[relatedObject] || colors.default;
-  };
-
-  return (
-    <div className="space-y-2">
-      <div className="text-sm text-muted-foreground">
-        {template.description && (
-          <div className="mt-1">{template.description}</div>
-        )}
-      </div>
-
-      {template.updated_at && (
-        <div className="text-xs text-muted-foreground">
-          Updated: {new Date(template.updated_at).toLocaleDateString()}
-        </div>
-      )}
-    </div>
-  );
-}
 
 export function TemplatesManagement() {
   const router = useRouter();
@@ -156,119 +128,116 @@ export function TemplatesManagement() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
+      {templates.length > 0 && (
+        <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
             Manage your document templates for shipments and labels.
           </p>
+          <Button onClick={handleCreate} className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Create Template
+          </Button>
         </div>
-        <Button onClick={handleCreate} className="flex items-center gap-2">
-          <Plus className="h-4 w-4" />
-          Create Template
-        </Button>
-      </div>
-
-      {query.isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[...Array(6)].map((_, i) => (
-            <Card key={i} className="animate-pulse">
-              <CardContent className="p-6">
-                <div className="space-y-3">
-                  <div className="h-4 bg-muted rounded w-3/4"></div>
-                  <div className="h-3 bg-muted rounded w-1/2"></div>
-                  <div className="h-3 bg-muted rounded w-full"></div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : templates.length === 0 ? (
-        <Card>
-          <CardContent className="p-12 text-center">
-            <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium mb-2">No templates found</h3>
-            <p className="text-muted-foreground mb-4">
-              Get started by creating your first document template.
+      )}
+      
+      <div>
+        {templates.length === 0 ? (
+          <div className="text-center py-12">
+            <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-muted-foreground mb-2">
+              No templates yet
+            </h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Create your first document template to get started.
             </p>
             <Button onClick={handleCreate}>
-              <Plus className="h-6 w-6 mr-2" />
+              <Plus className="h-4 w-4 mr-2" />
               Create Template
             </Button>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {templates.map(({ node: template }) => (
-            <Card key={template.id} className="group hover:shadow-md transition-shadow">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1 flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <CardTitle className="text-base font-medium truncate">
-                        {template.name}
-                      </CardTitle>
+          </div>
+        ) : (
+          <div className="border-b">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="w-12"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {templates.map(({ node: template }) => (
+                  <TableRow key={template.id}>
+                    <TableCell className="font-medium">
+                      <div className="space-y-1">
+                        <div>{template.name}</div>
+                        <div className="font-mono text-xs text-muted-foreground">
+                          {template.slug}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
                       <Badge
                         variant={template.related_object === 'shipment' ? 'default' : 'secondary'}
                         className="text-xs"
                       >
                         {template.related_object}
                       </Badge>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <span className="font-mono text-xs bg-muted px-2 py-1 rounded">
-                        {template.slug}
-                      </span>
-                    </div>
-                  </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleEdit(template)}>
-                        <Edit className="h-4 w-4 mr-2" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handlePreview(template)}>
-                        <Eye className="h-4 w-4 mr-2" />
-                        Preview
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={() => handleDelete(template)}
-                        className="text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <TemplateDescription template={template} />
-
-                <div className="flex items-center justify-between mt-4 pt-4 border-t">
-                  <div className="flex items-center gap-2">
-                    <Switch
-                      checked={template.active}
-                      onCheckedChange={() => toggleTemplate(template)}
-                    />
-                    <span className="text-sm text-muted-foreground">
-                      {template.active ? 'Active' : 'Inactive'}
-                    </span>
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    Updated {new Date(template.updated_at).toLocaleDateString()}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+                    </TableCell>
+                    <TableCell>
+                      <div className="max-w-md">
+                        <p className="text-sm text-muted-foreground truncate">
+                          {template.description || "No description"}
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Switch
+                          checked={template.active}
+                          onCheckedChange={() => toggleTemplate(template)}
+                        />
+                        <span className="text-sm text-muted-foreground">
+                          {template.active ? 'Active' : 'Inactive'}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleEdit(template)}>
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handlePreview(template)}>
+                            <Eye className="h-4 w-4 mr-2" />
+                            Preview
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={() => handleDelete(template)}
+                            className="text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </div>
 
       <ConfirmationDialog
         open={deleteConfirmOpen}

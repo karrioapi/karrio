@@ -2,9 +2,8 @@
 
 import {
   Box,
-  Building2,
+  BarChart3,
   Clock,
-  FileText,
   LayoutDashboard,
   Truck,
   Users,
@@ -32,14 +31,9 @@ const menuItems = [
     href: "/admin/carriers",
   },
   {
-    label: "Connected accounts",
-    icon: Building2,
-    href: "/admin/accounts",
-  },
-  {
-    label: "Shipping add-ons",
-    icon: FileText,
-    href: "/admin/addons",
+    label: "System reports",
+    icon: BarChart3,
+    href: "/admin/reports",
     isDisabled: true,
   },
   {

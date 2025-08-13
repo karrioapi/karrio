@@ -12,33 +12,33 @@ interface SettingsNavigationProps {
 const settingsItems = [
   {
     key: "account",
-    label: "Account",
+    label: "Account details",
     href: "/settings/account",
   },
   {
     key: "profile",
-    label: "Profile",
+    label: "Personal details",
     href: "/settings/profile",
   },
   {
     key: "organization",
-    label: "Organization",
+    label: "Team and security",
     href: "/settings/organization",
     requiresOrg: true,
   },
   {
     key: "addresses",
-    label: "Addresses",
+    label: "Location & addresses",
     href: "/settings/addresses",
   },
   {
     key: "parcels",
-    label: "Parcels",
+    label: "Parcel presets",
     href: "/settings/parcels",
   },
   {
     key: "templates",
-    label: "Templates",
+    label: "Document templates",
     href: "/settings/templates",
   },
 ];

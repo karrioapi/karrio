@@ -165,18 +165,16 @@ export default function Page() {
     );
   };
 
-  const handleRemove = async (user: User) => {
-    if (confirm("Are you sure you want to remove this user?")) {
-      removeUser.mutate(
-        {
-          id: user.id as any,
-        },
-        {
-          onSuccess: handleRemoveSuccess,
-          onError: (error) => handleError(error, "remove"),
-        },
-      );
-    }
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingUser, setPendingUser] = useState<User | null>(null);
+  const askRemove = (user: User) => { setPendingUser(user); setConfirmOpen(true); };
+  const handleRemoveConfirmed = () => {
+    if (!pendingUser) return;
+    removeUser.mutate(
+      { id: pendingUser.id as any },
+      { onSuccess: handleRemoveSuccess, onError: (error) => handleError(error, "remove") },
+    );
+    setPendingUser(null);
   };
 
   // Fix mutation status checks
@@ -293,7 +291,7 @@ export default function Page() {
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               className="text-destructive"
-                              onClick={() => handleRemove(user as unknown as User)}
+                              onClick={() => askRemove(user as unknown as User)}
                             >
                               Remove
                             </DropdownMenuItem>
@@ -330,6 +328,16 @@ export default function Page() {
                   </div>
                 </div>
               )}
+
+              {/* Confirmation dialog */}
+              <ConfirmationDialog
+                open={confirmOpen}
+                onOpenChange={setConfirmOpen}
+                title="Remove User"
+                description={`Are you sure you want to remove ${(pendingUser as any)?.full_name || 'this user'}? This action cannot be undone.`}
+                confirmLabel="Remove"
+                onConfirm={handleRemoveConfirmed}
+              />
             </>
           )}
         </CardContent>
