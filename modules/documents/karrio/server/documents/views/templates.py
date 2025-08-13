@@ -224,8 +224,9 @@ class DocumentGenerator(api.APIView):
                 )
 
         except serializers.ValidationError as e:
+            logger.error(f"Validation error: {e}")
             return Response(
-                {"errors": [{"message": str(e)}]},
+                {"errors": [{"message": "Invalid input data"}]},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
