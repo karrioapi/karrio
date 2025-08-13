@@ -984,48 +984,12 @@ export const GET_SYSTEM_SHIPMENTS = gql`
           test_mode
           meta
           options
-          payment {
-            paid_by
+          selected_rate {
+            carrier_name
+            carrier_id
+            service
+            total_charge
             currency
-            account_number
-          }
-          customs {
-            content_type
-            content_description
-            incoterm
-            invoice
-            invoice_date
-            commercial_invoice
-            certify
-            signer
-            duty {
-              paid_by
-              account_number
-              bill_to {
-                company_name
-                person_name
-                address_line1
-                city
-                state_code
-                postal_code
-                country_code
-              }
-              currency
-            }
-            options
-            commodities {
-              id
-              weight
-              quantity
-              sku
-              title
-              description
-              value_amount
-              value_currency
-              origin_country
-              parent_id
-              metadata
-            }
           }
           parcels {
             id

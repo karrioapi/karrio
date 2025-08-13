@@ -1571,55 +1571,12 @@ export interface GetSystemShipments_shipments_edges_node_shipper {
   country_code: CountryCodeEnum;
 }
 
-export interface GetSystemShipments_shipments_edges_node_payment {
-  paid_by: PaidByEnum | null;
-  currency: CurrencyCodeEnum | null;
-  account_number: string | null;
-}
-
-export interface GetSystemShipments_shipments_edges_node_customs_duty_bill_to {
-  company_name: string | null;
-  person_name: string | null;
-  address_line1: string | null;
-  city: string | null;
-  state_code: string | null;
-  postal_code: string | null;
-  country_code: CountryCodeEnum;
-}
-
-export interface GetSystemShipments_shipments_edges_node_customs_duty {
-  paid_by: PaidByEnum | null;
-  account_number: string | null;
-  bill_to: GetSystemShipments_shipments_edges_node_customs_duty_bill_to | null;
-  currency: CurrencyCodeEnum | null;
-}
-
-export interface GetSystemShipments_shipments_edges_node_customs_commodities {
-  id: string;
-  weight: number;
-  quantity: number;
-  sku: string | null;
-  title: string | null;
-  description: string | null;
-  value_amount: number | null;
-  value_currency: CurrencyCodeEnum | null;
-  origin_country: CountryCodeEnum | null;
-  parent_id: string | null;
-  metadata: any;
-}
-
-export interface GetSystemShipments_shipments_edges_node_customs {
-  content_type: CustomsContentTypeEnum | null;
-  content_description: string | null;
-  incoterm: IncotermCodeEnum | null;
-  invoice: string | null;
-  invoice_date: string | null;
-  commercial_invoice: boolean | null;
-  certify: boolean | null;
-  signer: string | null;
-  duty: GetSystemShipments_shipments_edges_node_customs_duty | null;
-  options: any | null;
-  commodities: GetSystemShipments_shipments_edges_node_customs_commodities[];
+export interface GetSystemShipments_shipments_edges_node_selected_rate {
+  carrier_name: string;
+  carrier_id: string;
+  service: string;
+  total_charge: number;
+  currency: CurrencyCodeEnum;
 }
 
 export interface GetSystemShipments_shipments_edges_node_parcels {
@@ -1667,8 +1624,7 @@ export interface GetSystemShipments_shipments_edges_node {
   test_mode: boolean;
   meta: any | null;
   options: any;
-  payment: GetSystemShipments_shipments_edges_node_payment | null;
-  customs: GetSystemShipments_shipments_edges_node_customs | null;
+  selected_rate: GetSystemShipments_shipments_edges_node_selected_rate | null;
   parcels: GetSystemShipments_shipments_edges_node_parcels[];
   messages: GetSystemShipments_shipments_edges_node_messages[];
   tracker: GetSystemShipments_shipments_edges_node_tracker | null;
@@ -2341,38 +2297,6 @@ export enum CountryCodeEnum {
   ZA = "ZA",
   ZM = "ZM",
   ZW = "ZW",
-}
-
-export enum PaidByEnum {
-  recipient = "recipient",
-  sender = "sender",
-  third_party = "third_party",
-}
-
-export enum CustomsContentTypeEnum {
-  documents = "documents",
-  gift = "gift",
-  merchandise = "merchandise",
-  other = "other",
-  return_merchandise = "return_merchandise",
-  sample = "sample",
-}
-
-export enum IncotermCodeEnum {
-  CFR = "CFR",
-  CIF = "CIF",
-  CIP = "CIP",
-  CPT = "CPT",
-  DAF = "DAF",
-  DAP = "DAP",
-  DDP = "DDP",
-  DDU = "DDU",
-  DEQ = "DEQ",
-  DES = "DES",
-  EXW = "EXW",
-  FAS = "FAS",
-  FCA = "FCA",
-  FOB = "FOB",
 }
 
 // null

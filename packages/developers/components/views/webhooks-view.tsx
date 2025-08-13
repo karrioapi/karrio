@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { ConfirmationDialog } from "@karrio/ui/components/confirmation-dialog";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@karrio/ui/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@karrio/ui/components/ui/dropdown-menu";
 import { Trash2, Plus, Copy, Settings, Eye, EyeOff, CheckCircle, XCircle, MoreHorizontal } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@karrio/ui/components/ui/table";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@karrio/ui/components/ui/dropdown-menu";
-import { useWebhooks, useWebhookMutation } from "@karrio/hooks/webhook";
 import { Card, CardContent, CardHeader, CardTitle } from "@karrio/ui/components/ui/card";
+import { ConfirmationDialog } from "@karrio/ui/components/confirmation-dialog";
+import { useWebhooks, useWebhookMutation } from "@karrio/hooks/webhook";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { Checkbox } from "@karrio/ui/components/ui/checkbox";
 import { Button } from "@karrio/ui/components/ui/button";
@@ -358,8 +358,8 @@ export function WebhooksView() {
                             <Copy className="h-4 w-4 mr-2" />
                             Copy URL
                           </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => handleDelete(webhook)}
+                          <DropdownMenuItem
+                            onClick={() => handleDeleteConfirmed()}
                             className="text-destructive"
                           >
                             <Trash2 className="h-4 w-4 mr-2" />

@@ -2,21 +2,20 @@ import GitHubProvider from "next-auth/providers/github";
 import { resend } from "@karrio/console/shared/resend";
 import { prisma } from "@karrio/console/prisma/client";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import Resend from "next-auth/providers/resend";
+import EmailProvider from "next-auth/providers/email";
 import { Session } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import NextAuth from "next-auth";
 
-export const { auth, handlers, signIn, signOut } = NextAuth({
+const authApi = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     }),
-    Resend({
+    EmailProvider({
       from: process.env.EMAIL_FROM || "no-reply@karrio.io",
-      apiKey: process.env.RESEND_API_KEY,
       async sendVerificationRequest({ identifier: email, url }) {
         await resend.emails.send({
           from: process.env.EMAIL_FROM || "no-reply@karrio.io",
@@ -81,3 +80,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     verifyRequest: "/auth/verify-request",
   },
 });
+
+export const { auth, handlers, signIn, signOut } = authApi;
+export const { GET, POST } = authApi.handlers;

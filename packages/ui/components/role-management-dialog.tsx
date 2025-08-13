@@ -62,7 +62,7 @@ export function RoleManagementDialog({
     if (member) {
       // Use user_id if available, otherwise use email as identifier
       const userId = member.user_id || member.email;
-      const roles = [];
+      const roles: string[] = [];
       if (selectedRole === "admin") {
         roles.push("admin");
       }

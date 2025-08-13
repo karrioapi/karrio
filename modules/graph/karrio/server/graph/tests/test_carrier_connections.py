@@ -9,11 +9,15 @@ class TestSystemConnections(GraphTestCase):
             """
             query get_system_connections {
               system_connections {
-                id
-                carrier_id
-                carrier_name
-                test_mode
-                active
+                edges {
+                  node {
+                    id
+                    carrier_id
+                    carrier_name
+                    active
+                    test_mode
+                  }
+                }
               }
             }
             """,
@@ -34,14 +38,18 @@ class TestUserConnections(GraphTestCase):
             """
             query get_user_connections {
                 user_connections {
+                edges {
+                  node {
                     id
                     carrier_id
                     carrier_name
-                    test_mode
                     active
+                    test_mode
                     credentials
+                  }
                 }
               }
+            }
             """,
             operation_name="get_user_connections",
         )
@@ -62,8 +70,8 @@ class TestUserConnections(GraphTestCase):
                     id
                     carrier_id
                     carrier_name
-                    test_mode
                     active
+                    test_mode
                     credentials
                 }
               }
@@ -108,54 +116,66 @@ class TestUserConnections(GraphTestCase):
 
 SYSTEM_CONNECTIONS = {
     "data": {
-        "system_connections": [
-            {
-                "active": True,
-                "carrier_id": "dhl_universal",
-                "carrier_name": "dhl_universal",
-                "id": ANY,
-                "test_mode": False,
-            },
-            {
-                "active": True,
-                "carrier_id": "fedex_express",
-                "carrier_name": "fedex",
-                "id": ANY,
-                "test_mode": False,
-            },
-        ]
+        "system_connections": {
+            "edges": [
+                {
+                    "node": {
+                        "active": True,
+                        "carrier_id": "dhl_universal",
+                        "carrier_name": "dhl_universal",
+                        "id": ANY,
+                        "test_mode": False,
+                    }
+                },
+                {
+                    "node": {
+                        "active": True,
+                        "carrier_id": "fedex_express",
+                        "carrier_name": "fedex",
+                        "id": ANY,
+                        "test_mode": False,
+                    }
+                },
+            ]
+        }
     }
 }
 
 USER_CONNECTIONS = {
     "data": {
-        "user_connections": [
-            {
-                "active": True,
-                "carrier_id": "ups_package",
-                "carrier_name": "ups",
-                "credentials": {
-                    "account_number": "000000",
-                    "client_id": "test",
-                    "client_secret": "test",
+        "user_connections": {
+            "edges": [
+                {
+                    "node": {
+                        "active": True,
+                        "carrier_id": "ups_package",
+                        "carrier_name": "ups",
+                        "credentials": {
+                            "account_number": "000000",
+                            "client_id": "test",
+                            "client_secret": "test",
+                        },
+                        "id": ANY,
+                        "test_mode": False,
+                    }
                 },
-                "id": ANY,
-                "test_mode": False,
-            },
-            {
-                "active": True,
-                "carrier_id": "canadapost",
-                "carrier_name": "canadapost",
-                "credentials": {
-                    "contract_id": "42708517",
-                    "customer_number": "2004381",
-                    "password": "0bfa9fcb9853d1f51ee57a",
-                    "username": "6e93d53968881714",
+                {
+                    "node": {
+                        "active": True,
+                        "carrier_id": "canadapost",
+                        "carrier_name": "canadapost",
+                        "credentials": {
+                            "contract_id": "42708517",
+                            "customer_number": "2004381",
+                            "password": "0bfa9fcb9853d1f51ee57a",
+                            "username": "6e93d53968881714",
+                        },
+                        "id": ANY,
+                        "test_mode": False,
+                    }
                 },
-                "id": ANY,
-                "test_mode": False,
-            },
-        ]
+            ]
+        }
     }
 }
 

@@ -9,10 +9,8 @@ import {
   DELETE_ORGANIZATION_ACCOUNT
 } from "@karrio/types/graphql/admin/queries";
 import {
-  GetAccounts,
-  GetAccountsVariables,
+  GetOrganizations,
   GetOrganizationDetails,
-  GetOrganizationDetailsVariables,
   CreateOrganizationAccount,
   CreateOrganizationAccountVariables,
   UpdateOrganizationAccount,
@@ -27,7 +25,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 
 // Types
-export type OrganizationAccountType = GetAccounts['accounts']['edges'][0]['node'];
+export type OrganizationAccountType = GetOrganizations['accounts']['edges'][0]['node'];
 
 // -----------------------------------------------------------
 // Organization Accounts List Hook
@@ -37,7 +35,7 @@ export function useOrganizationAccounts(filter: AccountFilter = {}) {
 
   const query = useAuthenticatedQuery({
     queryKey: ['admin_organization_accounts', filter],
-    queryFn: () => karrio.admin.request<GetAccounts>(gqlstr(GET_ACCOUNTS), { variables: { filter } }),
+    queryFn: () => karrio.admin.request<GetOrganizations>(gqlstr(GET_ACCOUNTS), { variables: { filter } }),
     staleTime: 5000,
   });
 
@@ -52,12 +50,12 @@ export function useOrganizationAccounts(filter: AccountFilter = {}) {
 // -----------------------------------------------------------
 export function useSystemUsageStats(usageFilter?: any) {
   const { query, accounts } = useOrganizationAccounts();
-  
+
   // Since we can't use hooks in loops, we'll work with the basic account data
   // and aggregate the usage information that's already available
   const systemStats = useMemo(() => {
     if (query.isLoading || !accounts?.edges) return null;
-    
+
     return accounts.edges.reduce((acc, { node }) => {
       const usage = node.usage || {};
       return {
@@ -121,7 +119,7 @@ export function useOrganizationAccountDetails(id: string, usageFilter?: any) {
   const query = useAuthenticatedQuery({
     queryKey: ['admin_organization_account_details', id, usageFilter],
     queryFn: () => karrio.admin.request<GetOrganizationDetails>(
-      gqlstr(GET_ORGANIZATION_DETAILS), 
+      gqlstr(GET_ORGANIZATION_DETAILS),
       { variables: { id, usageFilter } }
     ),
     enabled: !!id,

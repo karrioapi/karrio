@@ -137,7 +137,7 @@ export function TeamTable({
   };
 
   const getRoleBadges = (member: TeamMember) => {
-    const badges = [];
+    const badges: React.ReactNode[] = [];
 
     if (member.is_owner) {
       badges.push(
