@@ -46,6 +46,7 @@ import {
 import {
   GetUsers_users_edges_node as User,
 } from "@karrio/types/graphql/admin/types";
+import { ConfirmationDialog } from "@karrio/ui/components/confirmation-dialog";
 
 export default function Page() {
   const { toast } = useToast();

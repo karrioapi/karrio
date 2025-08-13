@@ -41,9 +41,9 @@ export function useConfigMutation() {
   };
 
   const updateConfigs = useAuthenticatedMutation({
-    mutationFn: (data: UpdateConfigsVariables["data"]) => karrio.admin.request<UpdateConfigs>(
+    mutationFn: (input: UpdateConfigsVariables["input"]) => karrio.admin.request<UpdateConfigs>(
       gqlstr(UPDATE_CONFIGS),
-      { variables: { data } }
+      { variables: { input } }
     ),
     onSuccess: invalidateCache,
   });

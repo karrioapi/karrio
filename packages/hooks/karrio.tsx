@@ -90,8 +90,21 @@ export function useAuthenticatedQuery<TQueryFnData = unknown, TError = unknown, 
   const sessionLoaded = sessionQuery.isFetched || sessionQuery.isSuccess;
   const shouldEnable = requireAuth ? (enabled && isAuthenticated && sessionLoaded) : enabled;
 
+  // Scope query keys by orgId and testMode to avoid cross-org cache bleed
+  const baseKey = (queryOptions as any).queryKey;
+  const scopedKey = baseKey
+    ? [
+        baseKey,
+        {
+          orgId: (sessionQuery.data as any)?.orgId,
+          testMode: (sessionQuery.data as any)?.testMode,
+        },
+      ]
+    : baseKey;
+
   return useQuery({
     ...queryOptions,
+    queryKey: scopedKey,
     enabled: shouldEnable,
     retry: (failureCount, error) => {
       // Don't retry if it's an authentication error

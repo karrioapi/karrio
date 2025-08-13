@@ -5,7 +5,7 @@ import {
   DropdownMenuTrigger,
 } from "@karrio/ui/components/ui/dropdown-menu";
 // Sheet component removed - using custom sidebar instead
-import { Loader2, LayoutGrid, AppWindow } from "lucide-react";
+import { Loader2, LayoutGrid, Blocks } from "lucide-react";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { useInstalledApps } from "@karrio/hooks";
 import { AppSheet } from "@karrio/app-store";
@@ -28,9 +28,15 @@ export const AppLauncher = (): JSX.Element => {
   const [loadingApps, setLoadingApps] = useState(true);
   const [launchedApp, setLaunchedApp] = useState<any>(null);
   const [showAppSheet, setShowAppSheet] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   // Get installed apps data using the new hook
   const { query: installedAppsQuery } = useInstalledApps();
+
+  // Set mounted state
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Load installed physical apps
   useEffect(() => {
@@ -178,14 +184,19 @@ export const AppLauncher = (): JSX.Element => {
     };
   }, [showAppSheet]);
 
+  // Don't render on server or before mounting
+  if (!mounted) {
+    return <></>;
+  }
+
   return (
     <>
       <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
           <div className="nav-item is-flex m-0">
-            <button className="button is-default mr-2" style={{ borderRadius: "50%" }}>
+            <button className="button is-default" style={{ borderRadius: "50%" }}>
               <span className="icon">
-                <AppWindow className="w-4 h-4" />
+                <Blocks className="w-4 h-4" />
               </span>
             </button>
           </div>

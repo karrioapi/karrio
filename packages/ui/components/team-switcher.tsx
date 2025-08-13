@@ -56,6 +56,22 @@ export function TeamSwitcher() {
     setLoading(true);
     try {
       await mutation.changeActiveOrganization(org.id);
+      // Soft refresh to re-render server components using new orgId
+      if (typeof window !== 'undefined') {
+        try {
+          // App Router-friendly refresh
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          if (window.next && window.next.router) {
+            // legacy fallback
+            window.location.reload();
+          } else {
+            window.location.reload();
+          }
+        } catch {
+          window.location.reload();
+        }
+      }
       setOpen(false);
     } finally {
       setLoading(false);

@@ -9,7 +9,6 @@ import {
   UPDATE_RATE_SHEET_ZONE_CELL,
   BATCH_UPDATE_RATE_SHEET_CELLS,
   DELETE_RATE_SHEET_SERVICE,
-  UPDATE_SERVICE_ZONE,
   DELETE_RATE_SHEET
 } from "@karrio/types/graphql/admin/queries";
 import {
@@ -21,8 +20,6 @@ import {
   CreateRateSheetVariables,
   UpdateRateSheet,
   UpdateRateSheetVariables,
-  UpdateServiceZone,
-  UpdateServiceZoneVariables,
   DeleteRateSheet,
   DeleteRateSheetVariables,
   RateSheetFilter,
@@ -84,57 +81,50 @@ export function useRateSheetMutation() {
   };
 
   const createRateSheet = useAuthenticatedMutation({
-    mutationFn: (data: CreateRateSheetVariables["data"]) => karrio.admin.request<CreateRateSheet>(
+    mutationFn: (input: CreateRateSheetVariables["input"]) => karrio.admin.request<CreateRateSheet>(
       gqlstr(CREATE_RATE_SHEET),
-      { variables: { data } }
+      { variables: { input } }
     ),
     onSuccess: invalidateCache,
   });
 
   const updateRateSheet = useAuthenticatedMutation({
-    mutationFn: (data: UpdateRateSheetVariables["data"]) => karrio.admin.request<UpdateRateSheet>(
+    mutationFn: (input: UpdateRateSheetVariables["input"]) => karrio.admin.request<UpdateRateSheet>(
       gqlstr(UPDATE_RATE_SHEET),
-      { variables: { data } }
+      { variables: { input } }
     ),
     onSuccess: invalidateCache,
   });
 
   const updateRateSheetZoneCell = useAuthenticatedMutation({
-    mutationFn: (data: any) => karrio.admin.request(
+    mutationFn: (input: any) => karrio.admin.request(
       gqlstr(UPDATE_RATE_SHEET_ZONE_CELL),
-      { variables: { data } }
+      { variables: { input } }
     ),
     onSuccess: invalidateCache,
   });
 
   const batchUpdateRateSheetCells = useAuthenticatedMutation({
-    mutationFn: (data: any) => karrio.admin.request(
+    mutationFn: (input: any) => karrio.admin.request(
       gqlstr(BATCH_UPDATE_RATE_SHEET_CELLS),
-      { variables: { data } }
+      { variables: { input } }
     ),
     onSuccess: invalidateCache,
   });
 
   const deleteRateSheetService = useAuthenticatedMutation({
-    mutationFn: (data: any) => karrio.admin.request(
+    mutationFn: (input: any) => karrio.admin.request(
       gqlstr(DELETE_RATE_SHEET_SERVICE),
-      { variables: { data } }
+      { variables: { input } }
     ),
     onSuccess: invalidateCache,
   });
 
-  const updateServiceZone = useAuthenticatedMutation({
-    mutationFn: (data: UpdateServiceZoneVariables["data"]) => karrio.admin.request<UpdateServiceZone>(
-      gqlstr(UPDATE_SERVICE_ZONE),
-      { variables: { data } }
-    ),
-    onSuccess: invalidateCache,
-  });
 
   const deleteRateSheet = useAuthenticatedMutation({
-    mutationFn: (data: DeleteRateSheetVariables["data"]) => karrio.admin.request<DeleteRateSheet>(
+    mutationFn: (input: DeleteRateSheetVariables["input"]) => karrio.admin.request<DeleteRateSheet>(
       gqlstr(DELETE_RATE_SHEET),
-      { variables: { data } }
+      { variables: { input } }
     ),
     onSuccess: invalidateCache,
   });
@@ -145,7 +135,6 @@ export function useRateSheetMutation() {
     updateRateSheetZoneCell,
     batchUpdateRateSheetCells,
     deleteRateSheetService,
-    updateServiceZone,
     deleteRateSheet,
   };
 }

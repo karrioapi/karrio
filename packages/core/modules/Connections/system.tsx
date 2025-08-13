@@ -29,20 +29,20 @@ export default function SystemConnectionsPage() {
   const [carrierFilter, setCarrierFilter] = useState("all");
 
   // Hooks
-  const { query: systemQuery, system_carrier_connections } = useSystemConnections();
   const { query: userQuery, user_carrier_connections } = useCarrierConnections();
+  const { query: systemQuery, system_connections } = useSystemConnections();
   const { updateSystemConnection } = useSystemConnectionMutation();
 
   const isLoading = systemQuery.isLoading || userQuery.isLoading;
 
   // Convert connections data to proper format
   const systemConnections = useMemo(() => {
-    if (!system_carrier_connections) return [];
-    return system_carrier_connections.map((connection) => ({
+    if (!system_connections) return [];
+    return system_connections.map((connection) => ({
       ...connection,
       connection_type: "system"
     }));
-  }, [system_carrier_connections]);
+  }, [system_connections]);
 
   const userConnections = useMemo(() => {
     if (!user_carrier_connections) return [];
@@ -79,11 +79,11 @@ export default function SystemConnectionsPage() {
   const handleToggleSystemConnection = (connection: any) => {
     updateSystemConnection.mutate({
       id: connection.id,
-      enable: !connection.active // Use active since that's what the current data has
+      enable: !connection.enabled
     }, {
       onSuccess: () => {
         toast({
-          title: `System connection ${!connection.active ? 'enabled' : 'disabled'} successfully`
+          title: `System connection ${!connection.enabled ? 'enabled' : 'disabled'} successfully`
         });
       },
       onError: (error: any) => {
@@ -112,9 +112,9 @@ export default function SystemConnectionsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">System Carrier Connections</h1>
+          <h1 className="text-2xl font-semibold text-gray-900">Carrier Connections</h1>
           <p className="text-sm text-gray-600 mt-1">
-            View and manage system-wide carrier integrations
+            View and manage carrier connections
           </p>
         </div>
       </div>
@@ -221,7 +221,7 @@ export default function SystemConnectionsPage() {
           <div>
             <h2 className="text-lg font-medium text-gray-900">System Connections</h2>
             <p className="text-sm text-gray-600 mt-1">
-              {filteredConnections.length} system connections available
+              {systemQuery.data?.system_connections?.page_info?.count} system connections available
             </p>
           </div>
         </div>
@@ -298,7 +298,7 @@ export default function SystemConnectionsPage() {
                         {connection.display_name || connection.carrier_name}
                       </h3>
                       <div className="flex items-center gap-1.5">
-                        <StatusBadge status={connection.active ? "active" : "inactive"} />
+                        <StatusBadge status={connection.enabled ? "active" : "inactive"} />
                         {connection.test_mode && (
                           <StatusBadge status="test" />
                         )}
@@ -351,16 +351,16 @@ export default function SystemConnectionsPage() {
                 {/* Right Side - Toggle */}
                 <div className="flex items-center space-x-3 text-right">
                   <Switch
-                    checked={connection.active}
+                    checked={connection.enabled}
                     onCheckedChange={() => handleToggleSystemConnection(connection)}
                   />
                 </div>
 
                 {/* Connection Line Indicator */}
-                <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-lg ${connection.active
+                <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-lg ${connection.enabled
                   ? connection.test_mode
                     ? "bg-yellow-500"
-                    : "bg-blue-500" // Different color for system connections
+                    : "bg-blue-500"
                   : "bg-gray-300"
                   }`} />
               </div>

@@ -102,7 +102,7 @@ export const UserConnectionList = (): JSX.Element => {
   useEffect(() => {
     if (labelModal.isActive) {
       const connection = (query.data?.user_connections || []).find(
-        (c) => c.id === labelModal.operation?.connection.id,
+        (c: any) => c.id === labelModal.operation?.connection.id,
       );
       connection &&
         labelModal.editLabelTemplate({
@@ -119,7 +119,7 @@ export const UserConnectionList = (): JSX.Element => {
   useEffect(() => {
     if (query.isFetching && !isNoneOrEmpty(modal)) {
       const connection = (query.data?.user_connections || []).find(
-        (c) => c.id === modal,
+        (c: any) => c.id === modal,
       );
       connection &&
         editConnection({
@@ -145,7 +145,7 @@ export const UserConnectionList = (): JSX.Element => {
                   <td className="action"></td>
                 </tr>
 
-                {query.data!.user_connections.map((connection) => (
+                {query.data!.user_connections.map((connection: any) => (
                   <tr key={`${connection.id}-${Date.now()}`}>
                     <td className="carrier is-vcentered pl-1">
                       <CarrierNameBadge

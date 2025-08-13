@@ -179,7 +179,7 @@ export async function loadOrgData(session: any, metadata?: Metadata, domain?: st
         } as any,
       },
     )
-    .then((res) => ({ data: res.data?.data, error: null }))
+    .then((res) => ({ data: (res.data?.data as any)?.organizations?.edges?.map((e: any) => e.node) || [], error: null }))
     .catch((e) => {
       const code = AUTH_HTTP_CODES.includes(e.response?.status)
         ? ServerErrorCode.API_AUTH_ERROR
@@ -196,7 +196,8 @@ export async function loadOrgData(session: any, metadata?: Metadata, domain?: st
       };
     });
 
-  return { ...data, error };
+  // Return a consistent shape for client providers
+  return { organizations: data, error };
 }
 
 async function getAPIURL(metadata?: Metadata, app_domain?: string) {
@@ -318,7 +319,16 @@ const ORG_DATA_QUERY = `{
   organization {
     id
   }
-  organizations {
+  organizations(filter: { is_active: true }) {
+    page_info {
+      count
+      has_next_page
+      has_previous_page
+      start_cursor
+      end_cursor
+    }
+    edges {
+      node {
     id
     name
     slug
@@ -343,9 +353,12 @@ const ORG_DATA_QUERY = `{
         modified
       }
       last_login
+      }
+      }
     }
   }
 }`;
+
 const TENANT_QUERY = `query getTenant($filter: TenantFilter!) {
   tenants(filter: $filter) {
     edges { node { schema_name api_domains } }

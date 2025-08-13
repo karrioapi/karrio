@@ -8,7 +8,7 @@ import React, { useContext } from 'react';
 import { jsonify } from '@karrio/lib';
 
 
-export const SystemConnectionList= (): JSX.Element =>  {
+export const SystemConnectionList = (): JSX.Element => {
   const { testMode } = useAppMode();
   const { notify } = useContext(Notify);
   const { query } = useSystemConnections();
@@ -38,7 +38,7 @@ export const SystemConnectionList= (): JSX.Element =>  {
                 <td className="is-size-7" colSpan={testMode ? 4 : 3}>ACCOUNTS</td>
               </tr>
 
-              {(query.data?.system_connections || []).map((connection) => (
+              {(query.data?.system_connections || []).map((connection: any) => (
 
                 <tr key={`connection-${connection.id}-${Date.now()}`}>
                   <td className="carrier is-vcentered pl-1">

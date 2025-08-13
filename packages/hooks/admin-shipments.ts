@@ -9,12 +9,9 @@ import {
   GET_ACCOUNT_CARRIER_CONNECTIONS,
 } from "@karrio/types/graphql/admin/queries";
 import {
-  GetSystemShipments,
-  GetSystemShipmentsVariables,
   GetSystemTrackers,
-  GetSystemTrackersVariables,
+  GetSystemShipments,
   GetAccountCarrierConnections,
-  GetAccountCarrierConnectionsVariables,
 } from "@karrio/types/graphql/admin";
 import { TrackingEventType } from "@karrio/types/base";
 import React from "react";
@@ -64,7 +61,7 @@ export function useSystemShipments({
   enabled = true,
 }: UseSystemShipmentsOptions) {
   const karrio = useKarrio();
-  
+
   const query = useAuthenticatedQuery({
     queryKey: ['admin_system_shipments', accountId, dateAfter, dateBefore, offset, first],
     queryFn: () => karrio.admin.request<GetSystemShipments>(
@@ -109,7 +106,7 @@ export function useSystemTrackers({
   enabled = true,
 }: UseSystemTrackersOptions) {
   const karrio = useKarrio();
-  
+
   const query = useAuthenticatedQuery({
     queryKey: ['admin_system_trackers', accountId, dateAfter, dateBefore, offset, first],
     queryFn: () => karrio.admin.request<GetSystemTrackers>(
@@ -243,9 +240,9 @@ export interface PaginationState {
 
 export function usePagination(initialPage = 1, pageSize = 20) {
   const [page, setPage] = React.useState(initialPage);
-  
+
   const offset = (page - 1) * pageSize;
-  
+
   const paginationState: PaginationState = {
     page,
     pageSize,

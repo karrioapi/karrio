@@ -37,6 +37,7 @@ import { useToast } from "@karrio/ui/hooks/use-toast";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { AppLink } from "@karrio/ui/core/components/app-link";
 import { RateSheetEditor } from "@karrio/ui/components/rate-sheet-editor";
+import { LinkRateSheetDialog } from "@karrio/ui/components/rate-sheet-dialog";
 import { useRateSheets, useRateSheetMutation, useRateSheet } from "@karrio/hooks/rate-sheet";
 import { cn } from "@karrio/ui/lib/utils";
 
@@ -51,10 +52,12 @@ export default function ConnectionsPage() {
   const [selectedConnection, setSelectedConnection] = useState<any>(null);
   const [isRateSheetDialogOpen, setIsRateSheetDialogOpen] = useState(false);
   const [selectedRateSheet, setSelectedRateSheet] = useState<any>(null);
+  const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false);
+  const [linkConnection, setLinkConnection] = useState<any>(null);
 
   // Hooks
   const { query: carrierQuery, user_carrier_connections } = useCarrierConnections();
-  const { query: systemQuery, system_carrier_connections } = useSystemConnections();
+  const { query: systemQuery, system_connections } = useSystemConnections();
   const { query: rateSheetsQuery, rate_sheets } = useRateSheets();
   const mutation = useCarrierConnectionMutation();
   const rateSheetMutation = useRateSheetMutation();
@@ -81,23 +84,23 @@ export default function ConnectionsPage() {
   }, [user_carrier_connections]);
 
   const systemConnections = useMemo(() => {
-    if (!system_carrier_connections) return [];
-    return system_carrier_connections.map((connection) => ({
+    if (!system_connections) return [];
+    return system_connections.map((connection) => ({
       ...connection,
       connection_type: "system"
     }));
-  }, [system_carrier_connections]);
+  }, [system_connections]);
 
   // Filter connections
   const filteredConnections = useMemo(() => {
     const connections = selectedTab === "connections" ? userConnections : systemConnections;
-    
+
     return connections.filter(connection => {
-      const matchesSearch = 
+      const matchesSearch =
         connection.display_name?.toLowerCase().includes(carrierSearch.toLowerCase()) ||
         connection.carrier_name.toLowerCase().includes(carrierSearch.toLowerCase()) ||
         connection.carrier_id?.toLowerCase().includes(carrierSearch.toLowerCase());
-      
+
       const matchesFilter = carrierFilter === 'all' ||
         (carrierFilter === 'active' && connection.active) ||
         (carrierFilter === 'inactive' && !connection.active);
@@ -162,13 +165,13 @@ export default function ConnectionsPage() {
   };
 
   const handleToggleConnection = (connection: any, active: boolean) => {
-    mutation.updateCarrierConnection.mutate({ 
-      id: connection.id, 
-      active 
+    mutation.updateCarrierConnection.mutate({
+      id: connection.id,
+      active
     }, {
       onSuccess: () => {
-        toast({ 
-          title: `Connection ${active ? 'enabled' : 'disabled'} successfully` 
+        toast({
+          title: `Connection ${active ? 'enabled' : 'disabled'} successfully`
         });
       },
       onError: (error: any) => {
@@ -198,7 +201,7 @@ export default function ConnectionsPage() {
       const existingSheet = rate_sheets?.edges?.find(
         ({ node }) => node.carrier_name === connection.carrier_name
       );
-      
+
       if (existingSheet) {
         setSelectedRateSheet(existingSheet.node);
       } else {
@@ -210,7 +213,7 @@ export default function ConnectionsPage() {
           carriers: [connection]
         });
       }
-      
+
       setIsRateSheetDialogOpen(true);
     } catch (error: any) {
       toast({
@@ -219,6 +222,11 @@ export default function ConnectionsPage() {
         variant: "destructive",
       });
     }
+  };
+
+  const askLinkRateSheet = (connection: any) => {
+    setLinkConnection(connection);
+    setIsLinkDialogOpen(true);
   };
 
   const handleRateSheetSubmit = async (values: any) => {
@@ -264,10 +272,10 @@ export default function ConnectionsPage() {
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">Carrier Connections</h1>
           <p className="text-sm text-gray-600 mt-1">
-            Manage your shipping carrier integrations and configurations
+            View and manage carrier connections
           </p>
         </div>
-        <Button 
+        <Button
           onClick={() => {
             setSelectedConnection(null);
             setIsConnectionDialogOpen(true);
@@ -301,8 +309,8 @@ export default function ConnectionsPage() {
             )}
             onClick={() => setSelectedTab("system")}
           >
-            <AppLink 
-              href="/connections/system" 
+            <AppLink
+              href="/connections/system"
               className="hover:text-inherit"
               onClick={(e) => {
                 e.preventDefault();
@@ -321,8 +329,8 @@ export default function ConnectionsPage() {
             )}
             onClick={() => setSelectedTab("rate-sheets")}
           >
-            <AppLink 
-              href="/connections/rate-sheets" 
+            <AppLink
+              href="/connections/rate-sheets"
               className="hover:text-inherit"
               onClick={(e) => {
                 e.preventDefault();
@@ -556,6 +564,10 @@ export default function ConnectionsPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem onClick={() => askLinkRateSheet(connection)}>
+                          <FileText className="mr-2 h-4 w-4" />
+                          Link Rate Sheet
+                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => {
                           setSelectedConnection(connection);
                           setIsConnectionDialogOpen(true);
@@ -581,13 +593,12 @@ export default function ConnectionsPage() {
                 </div>
 
                 {/* Connection Line Indicator */}
-                <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-lg ${
-                  connection.active
-                    ? connection.test_mode
-                      ? "bg-yellow-500"
-                      : "bg-green-500"
-                    : "bg-gray-300"
-                }`} />
+                <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-lg ${connection.active
+                  ? connection.test_mode
+                    ? "bg-yellow-500"
+                    : "bg-green-500"
+                  : "bg-gray-300"
+                  }`} />
               </div>
             ))}
           </div>
@@ -626,6 +637,37 @@ export default function ConnectionsPage() {
           isAdmin={false}
           useRateSheet={useRateSheet}
           useRateSheetMutation={useRateSheetMutation}
+        />
+      )}
+
+      {/* Link to existing Rate Sheet */}
+      {isLinkDialogOpen && linkConnection && (
+        <LinkRateSheetDialog
+          open={isLinkDialogOpen}
+          onOpenChange={setIsLinkDialogOpen}
+          connection={{ id: linkConnection.id, carrier_name: linkConnection.carrier_name, display_name: linkConnection.display_name }}
+          rateSheets={(rate_sheets?.edges || []).map(({ node }) => node).filter((rs) => rs.carrier_name === linkConnection.carrier_name)}
+          linkedRateSheets={(rate_sheets?.edges || []).map(({ node }) => node).filter((rs) => (rs.carriers || []).some((c: any) => c.id === linkConnection.id))}
+          onEditRateSheet={(id: string) => {
+            const rs = (rate_sheets?.edges || []).map(({ node }) => node).find((r) => r.id === id);
+            if (rs) {
+              setSelectedRateSheet(rs);
+              setIsRateSheetDialogOpen(true);
+            }
+          }}
+          onCreateNew={() => {
+            setSelectedRateSheet({ carrier_name: linkConnection.carrier_name, name: `${linkConnection.display_name || linkConnection.carrier_name} Rate Sheet`, services: [], carriers: [linkConnection] });
+            setIsRateSheetDialogOpen(true);
+          }}
+          onLink={async ({ connection_id, rate_sheet_id }) => {
+            const sheet = (rate_sheets?.edges || []).map(({ node }) => node).find((rs) => rs.id === rate_sheet_id);
+            const existing = (sheet?.carriers || []).map((c: any) => c.id);
+            const carriers = Array.from(new Set([...(existing || []), connection_id]));
+            await rateSheetMutation.updateRateSheet.mutateAsync({ id: rate_sheet_id, carriers });
+            toast({ title: "Linked to rate sheet" });
+            setIsLinkDialogOpen(false);
+            rateSheetsQuery.refetch();
+          }}
         />
       )}
     </div>
