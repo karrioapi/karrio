@@ -1,30 +1,177 @@
 import gql from "graphql-tag";
 
 // -----------------------------------------------------------
-// System Connection Operations
+// User Management Queries
 // -----------------------------------------------------------
-//#region
+export const GET_USERS = gql`
+  query GetUsers($filter: UserFilter) {
+    users(filter: $filter) {
+      edges {
+        node {
+          id
+          email
+          full_name
+          is_staff
+          is_active
+          last_login
+          date_joined
+          permissions
+        }
+      }
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
+    }
+  }
+`;
 
+export const GET_USER = gql`
+  query GetUser($email: String!) {
+    user(email: $email) {
+      id
+      email
+      full_name
+      is_staff
+      is_active
+      last_login
+      date_joined
+      permissions
+    }
+  }
+`;
+
+export const GET_PERMISSION_GROUPS = gql`
+  query GetPermissionGroups {
+    permission_groups {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
+// -----------------------------------------------------------
+// System Configuration Queries
+// -----------------------------------------------------------
+export const GET_CONFIGS = gql`
+  query GetConfigs {
+    configs {
+      APP_NAME
+      APP_WEBSITE
+      EMAIL_USE_TLS
+      EMAIL_HOST_USER
+      EMAIL_HOST_PASSWORD
+      EMAIL_HOST
+      EMAIL_PORT
+      EMAIL_FROM_ADDRESS
+      GOOGLE_CLOUD_API_KEY
+      CANADAPOST_ADDRESS_COMPLETE_API_KEY
+      ORDER_DATA_RETENTION
+      TRACKER_DATA_RETENTION
+      SHIPMENT_DATA_RETENTION
+      API_LOGS_DATA_RETENTION
+      AUDIT_LOGGING
+      ALLOW_SIGNUP
+      ALLOW_ADMIN_APPROVED_SIGNUP
+      ALLOW_MULTI_ACCOUNT
+      ADMIN_DASHBOARD
+      MULTI_ORGANIZATIONS
+      ORDERS_MANAGEMENT
+      APPS_MANAGEMENT
+      DOCUMENTS_MANAGEMENT
+      DATA_IMPORT_EXPORT
+      WORKFLOW_MANAGEMENT
+      SHIPPING_RULES
+      PERSIST_SDK_TRACING
+    }
+  }
+`;
+
+export const GET_ADMIN_SYSTEM_USAGE = gql`
+  query GetAdminSystemUsage($filter: UsageFilter) {
+    usage(filter: $filter) {
+      total_requests
+      total_trackers
+      total_shipments
+      total_shipping_spend
+      total_errors
+      order_volume
+      organization_count
+      user_count
+      total_addons_charges
+      api_requests {
+        date
+        count
+        label
+      }
+      api_errors {
+        date
+        count
+        label
+      }
+      shipment_count {
+        date
+        count
+        label
+      }
+      tracker_count {
+        date
+        count
+        label
+      }
+      order_volumes {
+        date
+        count
+        label
+      }
+      shipping_spend {
+        date
+        count
+        label
+      }
+      addons_charges {
+        date
+        amount
+      }
+    }
+  }
+`;
+
+// -----------------------------------------------------------
+// System Carrier Connections Queries
+// -----------------------------------------------------------
 export const GET_SYSTEM_CONNECTIONS = gql`
-  query GetSystemConnections($filter: CarrierFilter) {
+  query GetSystemConnections($filter: CarrierFilter, $usageFilter: UsageFilter) {
     system_carrier_connections(filter: $filter) {
       edges {
         node {
           id
-          carrier_name
           carrier_id
+          carrier_name
           display_name
-          test_mode
           active
           capabilities
           credentials
           config
           metadata
-          object_type
+          test_mode
+          usage(filter: $usageFilter) {
+            total_trackers
+            total_shipments
+            total_shipping_spend
+            total_addons_charges
+          }
         }
-        cursor
       }
       page_info {
+        count
         has_next_page
         has_previous_page
         start_cursor
@@ -38,487 +185,22 @@ export const GET_SYSTEM_CONNECTION = gql`
   query GetSystemConnection($id: String!) {
     system_carrier_connection(id: $id) {
       id
-      carrier_name
       carrier_id
+      carrier_name
       display_name
-      test_mode
       active
       capabilities
       credentials
       config
       metadata
-      object_type
+      test_mode
     }
   }
 `;
-
-export const CREATE_SYSTEM_CONNECTION = gql`
-  mutation CreateSystemConnection($data: CreateConnectionMutationInput!) {
-    create_system_carrier_connection(input: $data) {
-      errors {
-        field
-        messages
-      }
-      connection {
-        id
-        carrier_name
-        carrier_id
-        display_name
-        test_mode
-        active
-        capabilities
-        credentials
-        config
-        metadata
-        object_type
-      }
-    }
-  }
-`;
-
-export const UPDATE_SYSTEM_CONNECTION = gql`
-  mutation UpdateSystemConnection($data: UpdateConnectionMutationInput!) {
-    update_system_carrier_connection(input: $data) {
-      errors {
-        field
-        messages
-      }
-      connection {
-        id
-        carrier_name
-        carrier_id
-        display_name
-        test_mode
-        active
-        capabilities
-        credentials
-        config
-        metadata
-        object_type
-      }
-    }
-  }
-`;
-
-export const DELETE_SYSTEM_CONNECTION = gql`
-  mutation DeleteSystemConnection($data: DeleteConnectionMutationInput!) {
-    delete_system_carrier_connection(input: $data) {
-      errors {
-        field
-        messages
-      }
-      id
-    }
-  }
-`;
-
-//#endregion
 
 // -----------------------------------------------------------
-// User Operations
+// Rate Sheets Queries
 // -----------------------------------------------------------
-//#region
-
-export const GET_ME = gql`
-  query GetMe {
-    me {
-      id
-      email
-      full_name
-      is_staff
-      is_active
-      is_superuser
-      last_login
-      permissions
-    }
-  }
-`;
-
-export const GET_USER = gql`
-  query GetUser($email: String!) {
-    user(email: $email) {
-      id
-      email
-      full_name
-      is_staff
-      is_active
-      is_superuser
-      last_login
-      permissions
-    }
-  }
-`;
-
-export const GET_USERS = gql`
-  query GetUsers($filter: UserFilter) {
-    users(filter: $filter) {
-      edges {
-        node {
-          id
-          email
-          full_name
-          is_staff
-          is_active
-          is_superuser
-          last_login
-          permissions
-        }
-        cursor
-      }
-      page_info {
-        count
-        has_next_page
-        has_previous_page
-        start_cursor
-        end_cursor
-      }
-    }
-  }
-`;
-
-export const CREATE_USER = gql`
-  mutation CreateUser($data: CreateUserMutationInput!) {
-    create_user(input: $data) {
-      user {
-        id
-        email
-        full_name
-        is_staff
-        is_active
-        is_superuser
-        last_login
-        permissions
-      }
-      errors {
-        field
-        messages
-      }
-    }
-  }
-`;
-
-export const UPDATE_USER = gql`
-  mutation UpdateUser($data: UpdateUserMutationInput!) {
-    update_user(input: $data) {
-      user {
-        id
-        email
-        full_name
-        is_staff
-        is_active
-        is_superuser
-        last_login
-        permissions
-      }
-      errors {
-        field
-        messages
-      }
-    }
-  }
-`;
-
-export const REMOVE_USER = gql`
-  mutation RemoveUser($data: DeleteUserMutationInput!) {
-    remove_user(input: $data) {
-      errors {
-        field
-        messages
-      }
-      id
-    }
-  }
-`;
-
-//#endregion
-
-// -----------------------------------------------------------
-// Config Operations
-// -----------------------------------------------------------
-//#region
-export const GET_CONFIGS = gql`
-  query GetConfigs {
-    configs {
-      # Platform Config
-      APP_NAME
-      APP_WEBSITE
-
-      # Email Config
-      EMAIL_USE_TLS
-      EMAIL_HOST_USER
-      EMAIL_HOST_PASSWORD
-      EMAIL_HOST
-      EMAIL_PORT
-      EMAIL_FROM_ADDRESS
-
-      # Address Validation Service
-      GOOGLE_CLOUD_API_KEY
-      CANADAPOST_ADDRESS_COMPLETE_API_KEY
-
-      # Data Retention
-      ORDER_DATA_RETENTION
-      TRACKER_DATA_RETENTION
-      SHIPMENT_DATA_RETENTION
-      API_LOGS_DATA_RETENTION
-
-      # System Settings
-      AUDIT_LOGGING
-      ALLOW_SIGNUP
-      ALLOW_ADMIN_APPROVED_SIGNUP
-      ALLOW_MULTI_ACCOUNT
-
-      # Feature Flags
-      ADMIN_DASHBOARD
-      MULTI_ORGANIZATIONS
-      ORDERS_MANAGEMENT
-      APPS_MANAGEMENT
-      DOCUMENTS_MANAGEMENT
-      DATA_IMPORT_EXPORT
-      WORKFLOW_MANAGEMENT
-      PERSIST_SDK_TRACING
-    }
-  }
-`;
-
-export const UPDATE_CONFIGS = gql`
-  mutation UpdateConfigs($data: InstanceConfigMutationInput!) {
-    update_configs(input: $data) {
-      errors {
-        field
-        messages
-      }
-      configs {
-        # Platform Config
-        APP_NAME
-        APP_WEBSITE
-
-        # Email Config
-        EMAIL_USE_TLS
-        EMAIL_HOST_USER
-        EMAIL_HOST_PASSWORD
-        EMAIL_HOST
-        EMAIL_PORT
-        EMAIL_FROM_ADDRESS
-
-        # Address Validation Service
-        GOOGLE_CLOUD_API_KEY
-        CANADAPOST_ADDRESS_COMPLETE_API_KEY
-
-        # Data Retention
-        ORDER_DATA_RETENTION
-        TRACKER_DATA_RETENTION
-        SHIPMENT_DATA_RETENTION
-        API_LOGS_DATA_RETENTION
-
-        # System Settings
-        AUDIT_LOGGING
-        ALLOW_SIGNUP
-        ALLOW_ADMIN_APPROVED_SIGNUP
-        ALLOW_MULTI_ACCOUNT
-
-        # Feature Flags
-        ADMIN_DASHBOARD
-        MULTI_ORGANIZATIONS
-        ORDERS_MANAGEMENT
-        APPS_MANAGEMENT
-        DOCUMENTS_MANAGEMENT
-        DATA_IMPORT_EXPORT
-        WORKFLOW_MANAGEMENT
-        PERSIST_SDK_TRACING
-      }
-    }
-  }
-`;
-
-//#endregion
-
-// -----------------------------------------------------------
-// Surcharge Operations
-// -----------------------------------------------------------
-//#region
-
-export const GET_SURCHARGE = gql`
-  query GetSurcharge($id: String!) {
-    surcharge(id: $id) {
-      id
-      name
-      amount
-      surcharge_type
-      object_type
-      active
-      services
-      carriers
-      carrier_accounts {
-        id
-        active
-        carrier_id
-      }
-    }
-  }
-`;
-
-export const GET_SURCHARGES = gql`
-  query GetSurcharges($filter: SurchargeFilter) {
-    surcharges(filter: $filter) {
-      edges {
-        node {
-          id
-          name
-          amount
-          surcharge_type
-          object_type
-          active
-          services
-          carriers
-          carrier_accounts {
-            id
-            active
-            carrier_id
-          }
-        }
-        cursor
-      }
-      page_info {
-        count
-        has_next_page
-        has_previous_page
-        start_cursor
-        end_cursor
-      }
-    }
-  }
-`;
-
-export const CREATE_SURCHARGE = gql`
-  mutation CreateSurcharge($data: CreateSurchargeMutationInput!) {
-    create_surcharge(input: $data) {
-      errors {
-        field
-        messages
-      }
-      surcharge {
-        id
-        name
-        amount
-        surcharge_type
-        object_type
-        active
-        services
-        carriers
-        carrier_accounts {
-          id
-          active
-          carrier_id
-        }
-      }
-    }
-  }
-`;
-
-export const UPDATE_SURCHARGE = gql`
-  mutation UpdateSurcharge($data: UpdateSurchargeMutationInput!) {
-    update_surcharge(input: $data) {
-      errors {
-        field
-        messages
-      }
-      surcharge {
-        id
-        name
-        amount
-        surcharge_type
-        object_type
-        active
-        services
-        carriers
-        carrier_accounts {
-          id
-          active
-          carrier_id
-        }
-      }
-    }
-  }
-`;
-
-export const DELETE_SURCHARGE = gql`
-  mutation DeleteSurcharge($data: DeleteMutationInput!) {
-    delete_surcharge(input: $data) {
-      errors {
-        field
-        messages
-      }
-      id
-    }
-  }
-`;
-
-//#endregion
-
-// -----------------------------------------------------------
-// Rate Sheet Operations
-// -----------------------------------------------------------
-//#region
-
-export const GET_RATE_SHEET = gql`
-  query GetRateSheet($id: String!) {
-    rate_sheet(id: $id) {
-      id
-      name
-      slug
-      carrier_name
-      object_type
-      metadata
-      services {
-        id
-        object_type
-        service_name
-        service_code
-        carrier_service_code
-        description
-        active
-        currency
-        transit_days
-        transit_time
-        max_width
-        max_height
-        max_length
-        dimension_unit
-        max_weight
-        weight_unit
-        domicile
-        international
-        metadata
-        zones {
-          object_type
-          label
-          rate
-          min_weight
-          max_weight
-          transit_days
-          transit_time
-          radius
-          latitude
-          longitude
-          cities
-          postal_codes
-          country_codes
-        }
-      }
-      carriers {
-        id
-        carrier_id
-        carrier_name
-        display_name
-        active
-        is_system
-        test_mode
-        capabilities
-      }
-    }
-  }
-`;
-
 export const GET_RATE_SHEETS = gql`
   query GetRateSheets($filter: RateSheetFilter) {
     rate_sheets(filter: $filter) {
@@ -528,28 +210,24 @@ export const GET_RATE_SHEETS = gql`
           name
           slug
           carrier_name
-          object_type
           metadata
           services {
             id
             service_name
             service_code
-            carrier_service_code
-            description
-            active
+            zones {
+              label
+              rate
+              min_weight
+              max_weight
+            }
           }
           carriers {
             id
-            carrier_id
             carrier_name
-            display_name
             active
-            is_system
-            test_mode
-            capabilities
           }
         }
-        cursor
       }
       page_info {
         count
@@ -562,162 +240,163 @@ export const GET_RATE_SHEETS = gql`
   }
 `;
 
-export const CREATE_RATE_SHEET = gql`
-  mutation CreateRateSheet($data: CreateRateSheetMutationInput!) {
-    create_rate_sheet(input: $data) {
-      errors {
-        field
-        messages
-      }
-      rate_sheet {
-        id
-        name
-        slug
-        carrier_name
-        object_type
-        metadata
-        services {
-          id
-          service_name
-          service_code
-          carrier_service_code
-          description
-          active
-          metadata
-          zones {
-            label
-            rate
-            min_weight
-            max_weight
-            transit_days
-            transit_time
-            radius
-            latitude
-            longitude
-            cities
-            postal_codes
-            country_codes
-          }
-        }
-        carriers {
-          id
-          carrier_id
-          carrier_name
-          display_name
-          active
-          is_system
-          test_mode
-          capabilities
-        }
-      }
-    }
-  }
-`;
-
-export const UPDATE_RATE_SHEET = gql`
-  mutation UpdateRateSheet($data: UpdateRateSheetMutationInput!) {
-    update_rate_sheet(input: $data) {
-      errors {
-        field
-        messages
-      }
-      rate_sheet {
-        id
-        name
-        slug
-        carrier_name
-        object_type
-        metadata
-        services {
-          id
-          service_name
-          service_code
-          carrier_service_code
-          description
-          active
-          metadata
-          zones {
-            label
-            rate
-            min_weight
-            max_weight
-            transit_days
-            transit_time
-            radius
-            latitude
-            longitude
-            cities
-            postal_codes
-            country_codes
-          }
-        }
-        carriers {
-          id
-          carrier_id
-          carrier_name
-          display_name
-          active
-          is_system
-          test_mode
-          capabilities
-        }
-      }
-    }
-  }
-`;
-
-export const UPDATE_SERVICE_ZONE = gql`
-  mutation UpdateServiceZone($data: UpdateServiceZoneMutationInput!) {
-    update_service_zone(input: $data) {
-      errors {
-        field
-        messages
-      }
-      rate_sheet {
-        id
-        services {
-          id
-          zones {
-            label
-            rate
-            min_weight
-            max_weight
-            transit_days
-            transit_time
-            radius
-            latitude
-            longitude
-            cities
-            postal_codes
-            country_codes
-          }
-        }
-      }
-    }
-  }
-`;
-
-export const DELETE_RATE_SHEET = gql`
-  mutation DeleteRateSheet($data: DeleteMutationInput!) {
-    delete_rate_sheet(input: $data) {
-      errors {
-        field
-        messages
-      }
+export const GET_RATE_SHEET = gql`
+  query GetRateSheet($id: String!) {
+    rate_sheet(id: $id) {
       id
+      name
+      slug
+      carrier_name
+      metadata
+      services {
+        id
+        service_name
+        service_code
+        zones {
+          label
+          rate
+          min_weight
+          max_weight
+        }
+      }
+      carriers {
+        id
+        carrier_name
+        active
+      }
     }
   }
 `;
 
-//#endregion
+// -----------------------------------------------------------
+// Addons Queries
+// -----------------------------------------------------------
+export const GET_ADDONS = gql`
+  query GetAddons($filter: AddonFilter) {
+    addons(filter: $filter) {
+      edges {
+        node {
+          id
+          name
+          active
+          amount
+          surcharge_type
+          carriers
+          services
+          carrier_accounts {
+            id
+            usage {
+              total_shipments
+              total_addons_charges
+            }
+          }
+        }
+      }
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
+    }
+  }
+`;
+
+export const GET_ADDON = gql`
+  query GetAddon($id: String!) {
+    addon(id: $id) {
+      id
+      name
+      active
+      amount
+      surcharge_type
+      carriers
+      services
+      carrier_accounts {
+        id
+        usage {
+          total_shipments
+          total_addons_charges
+        }
+      }
+    }
+  }
+`;
 
 // -----------------------------------------------------------
-// Organization Operations
+// Organization Management Queries
 // -----------------------------------------------------------
-//#region
+export const GET_ORGANIZATION_DETAILS = gql`
+  query GetOrganizationDetails($id: String!, $usageFilter: OrgUsageFilter) {
+    account(id: $id) {
+      id
+      name
+      slug
+      is_active
+      created
+      modified
 
-export const GET_ACCOUNTS = gql`
-  query GetAccounts($filter: AccountFilter) {
+      # Member details
+      members {
+        email
+        is_admin
+        roles
+        is_owner
+        full_name
+        last_login
+        user_id
+      }
+
+      usage(filter: $usageFilter) {
+        members
+        total_requests
+        total_errors
+        order_volume
+        total_shipments
+        total_shipping_spend
+        unfulfilled_orders
+        total_trackers
+        total_addons_charges
+
+        # Time-series data for charts
+        api_requests {
+          date
+          count
+          label
+        }
+        api_errors {
+          date
+          count
+          label
+        }
+        shipping_spend {
+          date
+          count
+          label
+        }
+        shipment_count {
+          date
+          count
+          label
+        }
+        tracker_count {
+          date
+          count
+          label
+        }
+        order_volumes {
+          date
+          count
+          label
+        }
+      }
+    }
+  }
+`;
+
+export const GET_ORGANIZATIONS = gql`
+  query GetOrganizations($filter: AccountFilter) {
     accounts(filter: $filter) {
       edges {
         node {
@@ -729,16 +408,51 @@ export const GET_ACCOUNTS = gql`
           modified
           usage {
             members
+            total_shipments
+            total_trackers
+            total_requests
+            total_shipping_spend
+            total_addons_charges
             total_errors
             order_volume
-            total_requests
-            total_trackers
-            total_shipments
             unfulfilled_orders
-            total_shipping_spend
           }
         }
         cursor
+      }
+      page_info {
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
+    }
+  }
+`;
+
+// -----------------------------------------------------------
+// Carrier Connections (Account level)
+// -----------------------------------------------------------
+export const GET_CARRIER_CONNECTIONS = gql`
+  query GetCarrierConnections($filter: AccountCarrierConnectionFilter) {
+    carrier_connections(filter: $filter) {
+      edges {
+        node {
+          id
+          carrier_id
+          carrier_name
+          display_name
+          active
+          capabilities
+          config
+          test_mode
+          usage {
+            total_shipments
+            total_trackers
+            total_shipping_spend
+            total_addons_charges
+          }
+        }
       }
       page_info {
         count
@@ -751,11 +465,413 @@ export const GET_ACCOUNTS = gql`
   }
 `;
 
+export const GET_CARRIER_CONNECTION = gql`
+  query GetCarrierConnection($id: String!) {
+    carrier_connection(id: $id) {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      active
+      capabilities
+      config
+      test_mode
+      usage {
+        total_shipments
+        total_trackers
+        total_shipping_spend
+        total_addons_charges
+      }
+    }
+  }
+`;
+
+// -----------------------------------------------------------
+// System-wide Management Queries
+// -----------------------------------------------------------
+export const GET_SHIPMENTS = gql`
+  query GetShipments($filter: SystemShipmentFilter) {
+    shipments(filter: $filter) {
+      edges {
+        node {
+          id
+          tracking_number
+          status
+          carrier_name
+          service
+          created_at
+          updated_at
+          selected_rate {
+            id
+            service
+            total_charge
+            currency
+          }
+        }
+      }
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
+    }
+  }
+`;
+
+export const GET_TRACKERS = gql`
+  query GetTrackers($filter: SystemTrackerFilter) {
+    trackers(filter: $filter) {
+      edges {
+        node {
+          id
+          tracking_number
+          status
+          carrier_name
+          carrier_id
+          created_at
+          updated_at
+        }
+      }
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
+    }
+  }
+`;
+
+export const GET_ORDERS = gql`
+  query GetOrders($filter: SystemOrderFilter) {
+    orders(filter: $filter) {
+      edges {
+        node {
+          id
+          order_id
+          status
+          created_at
+          updated_at
+        }
+      }
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
+    }
+  }
+`;
+
+// -----------------------------------------------------------
+// User Management Mutations
+// -----------------------------------------------------------
+export const CREATE_USER = gql`
+  mutation CreateUser($input: CreateUserMutationInput!) {
+    create_user(input: $input) {
+      errors {
+        field
+        messages
+      }
+      user {
+        id
+        email
+        full_name
+        is_staff
+        is_active
+        last_login
+        date_joined
+        permissions
+      }
+    }
+  }
+`;
+
+export const UPDATE_USER = gql`
+  mutation UpdateUser($input: UpdateUserMutationInput!) {
+    update_user(input: $input) {
+      errors {
+        field
+        messages
+      }
+      user {
+        id
+        email
+        full_name
+        is_staff
+        is_active
+        last_login
+        date_joined
+        permissions
+      }
+    }
+  }
+`;
+
+export const REMOVE_USER = gql`
+  mutation RemoveUser($input: DeleteUserMutationInput!) {
+    remove_user(input: $input) {
+      errors {
+        field
+        messages
+      }
+      id
+    }
+  }
+`;
+
+// -----------------------------------------------------------
+// System Configuration Mutations
+// -----------------------------------------------------------
+export const UPDATE_CONFIGS = gql`
+  mutation UpdateConfigs($input: InstanceConfigMutationInput!) {
+    update_configs(input: $input) {
+      errors {
+        field
+        messages
+      }
+      configs {
+        ALLOW_SIGNUP
+        ALLOW_ADMIN_APPROVED_SIGNUP
+        ALLOW_MULTI_ACCOUNT
+        ADMIN_DASHBOARD
+        AUDIT_LOGGING
+        ORDERS_MANAGEMENT
+        APPS_MANAGEMENT
+        MULTI_ORGANIZATIONS
+        PERSIST_SDK_TRACING
+      }
+    }
+  }
+`;
+
+// -----------------------------------------------------------
+// System Carrier Connection Mutations
+// -----------------------------------------------------------
+export const CREATE_SYSTEM_CONNECTION = gql`
+  mutation CreateSystemConnection($input: CreateConnectionMutationInput!) {
+    create_system_carrier_connection(input: $input) {
+      errors {
+        field
+        messages
+      }
+      connection {
+        id
+        carrier_id
+        carrier_name
+        display_name
+        active
+        capabilities
+        credentials
+        config
+        metadata
+        test_mode
+      }
+    }
+  }
+`;
+
+export const UPDATE_SYSTEM_CONNECTION = gql`
+  mutation UpdateSystemConnection($input: UpdateConnectionMutationInput!) {
+    update_system_carrier_connection(input: $input) {
+      errors {
+        field
+        messages
+      }
+      connection {
+        id
+        carrier_id
+        carrier_name
+        display_name
+        active
+        capabilities
+        credentials
+        config
+        metadata
+        test_mode
+      }
+    }
+  }
+`;
+
+export const DELETE_SYSTEM_CONNECTION = gql`
+  mutation DeleteSystemConnection($input: DeleteConnectionMutationInput!) {
+    delete_system_carrier_connection(input: $input) {
+      errors {
+        field
+        messages
+      }
+      id
+    }
+  }
+`;
+
+// -----------------------------------------------------------
+// Rate Sheet Mutations
+// -----------------------------------------------------------
+export const CREATE_RATE_SHEET = gql`
+  mutation CreateRateSheet($input: CreateRateSheetMutationInput!) {
+    create_rate_sheet(input: $input) {
+      errors {
+        field
+        messages
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
+    }
+  }
+`;
+
+export const UPDATE_RATE_SHEET = gql`
+  mutation UpdateRateSheet($input: UpdateRateSheetMutationInput!) {
+    update_rate_sheet(input: $input) {
+      errors {
+        field
+        messages
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
+    }
+  }
+`;
+
+export const DELETE_RATE_SHEET = gql`
+  mutation DeleteRateSheet($input: DeleteMutationInput!) {
+    delete_rate_sheet(input: $input) {
+      errors {
+        field
+        messages
+      }
+      id
+    }
+  }
+`;
+
+export const UPDATE_RATE_SHEET_ZONE_CELL = gql`
+  mutation UpdateRateSheetZoneCell($input: UpdateRateSheetZoneCellMutationInput!) {
+    update_rate_sheet_zone_cell(input: $input) {
+      errors {
+        field
+        messages
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
+    }
+  }
+`;
+
+export const BATCH_UPDATE_RATE_SHEET_CELLS = gql`
+  mutation BatchUpdateRateSheetCells($input: BatchUpdateRateSheetCellsMutationInput!) {
+    batch_update_rate_sheet_cells(input: $input) {
+      errors {
+        field
+        messages
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
+    }
+  }
+`;
+
+export const DELETE_RATE_SHEET_SERVICE = gql`
+  mutation DeleteRateSheetService($input: DeleteRateSheetServiceMutationInput!) {
+    delete_rate_sheet_service(input: $input) {
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+// -----------------------------------------------------------
+// Addon Mutations
+// -----------------------------------------------------------
+export const CREATE_ADDON = gql`
+  mutation CreateAddon($input: CreateAddonMutationInput!) {
+    create_addon(input: $input) {
+      errors {
+        field
+        messages
+      }
+      addon {
+        id
+        name
+        active
+        amount
+        surcharge_type
+        carriers
+        services
+      }
+    }
+  }
+`;
+
+export const UPDATE_ADDON = gql`
+  mutation UpdateAddon($input: UpdateAddonMutationInput!) {
+    update_addon(input: $input) {
+      errors {
+        field
+        messages
+      }
+      addon {
+        id
+        name
+        active
+        amount
+        surcharge_type
+        carriers
+        services
+      }
+    }
+  }
+`;
+
+export const DELETE_ADDON = gql`
+  mutation DeleteAddon($input: DeleteMutationInput!) {
+    delete_addon(input: $input) {
+      errors {
+        field
+        messages
+      }
+      id
+    }
+  }
+`;
+
+// -----------------------------------------------------------
+// Organization Management Mutations
+// -----------------------------------------------------------
 export const CREATE_ORGANIZATION_ACCOUNT = gql`
   mutation CreateOrganizationAccount(
-    $data: CreateOrganizationAccountMutationInput!
+    $input: CreateOrganizationAccountMutationInput!
   ) {
-    create_organization_account(input: $data) {
+    create_organization_account(input: $input) {
       account {
         id
       }
@@ -769,9 +885,9 @@ export const CREATE_ORGANIZATION_ACCOUNT = gql`
 
 export const UPDATE_ORGANIZATION_ACCOUNT = gql`
   mutation UpdateOrganizationAccount(
-    $data: UpdateOrganizationAccountMutationInput!
+    $input: UpdateOrganizationAccountMutationInput!
   ) {
-    update_organization_account(input: $data) {
+    update_organization_account(input: $input) {
       account {
         id
       }
@@ -785,9 +901,9 @@ export const UPDATE_ORGANIZATION_ACCOUNT = gql`
 
 export const DISABLE_ORGANIZATION_ACCOUNT = gql`
   mutation DisableOrganizationAccount(
-    $data: DisableOrganizationAccountMutationInput!
+    $input: DisableOrganizationAccountMutationInput!
   ) {
-    disable_organization_account(input: $data) {
+    disable_organization_account(input: $input) {
       account {
         id
       }
@@ -801,9 +917,9 @@ export const DISABLE_ORGANIZATION_ACCOUNT = gql`
 
 export const DELETE_ORGANIZATION_ACCOUNT = gql`
   mutation DeleteOrganizationAccount(
-    $data: DeleteOrganizationAccountMutationInput!
+    $input: DeleteOrganizationAccountMutationInput!
   ) {
-    delete_organization_account(input: $data) {
+    delete_organization_account(input: $input) {
       account {
         id
       }
@@ -815,23 +931,129 @@ export const DELETE_ORGANIZATION_ACCOUNT = gql`
   }
 `;
 
-//#endregion
+export const INVITE_ORGANIZATION_USER = gql`
+  mutation InviteOrganizationUser(
+    $input: InviteOrganizationUserMutationInput!
+  ) {
+    invite_organization_user(input: $input) {
+      account {
+        id
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
 
 // -----------------------------------------------------------
-// Permission Operations
+// System Shipments and Trackers Queries
 // -----------------------------------------------------------
-//#region
-
-export const GET_PERMISSION_GROUPS = gql`
-  query GetPermissionGroups($filter: PermissionGroupFilter) {
-    permission_groups(filter: $filter) {
+export const GET_SYSTEM_SHIPMENTS = gql`
+  query GetSystemShipments($filter: SystemShipmentFilter) {
+    shipments(filter: $filter) {
       edges {
         node {
           id
-          name
-          permissions
+          tracking_number
+          recipient {
+            company_name
+            person_name
+            address_line1
+            city
+            state_code
+            postal_code
+            country_code
+          }
+          shipper {
+            company_name
+            person_name
+            address_line1
+            city
+            state_code
+            postal_code
+            country_code
+          }
+          status
+          service
+          carrier_name
+          carrier_id
+          created_at
+          updated_at
+          test_mode
+          meta
+          options
+          payment {
+            paid_by
+            currency
+            account_number
+          }
+          customs {
+            content_type
+            content_description
+            incoterm
+            invoice
+            invoice_date
+            commercial_invoice
+            certify
+            signer
+            duty {
+              paid_by
+              account_number
+              bill_to {
+                company_name
+                person_name
+                address_line1
+                city
+                state_code
+                postal_code
+                country_code
+              }
+              currency
+            }
+            options
+            commodities {
+              id
+              weight
+              quantity
+              sku
+              title
+              description
+              value_amount
+              value_currency
+              origin_country
+              parent_id
+              metadata
+            }
+          }
+          parcels {
+            id
+            weight
+            width
+            height
+            length
+            packaging_type
+          }
+          messages {
+            carrier_name
+            carrier_id
+            message
+            code
+            details
+          }
+          tracker {
+            id
+            tracking_number
+            events {
+              code
+              date
+              description
+              location
+              time
+            }
+          }
         }
-        cursor
       }
       page_info {
         count
@@ -844,4 +1066,100 @@ export const GET_PERMISSION_GROUPS = gql`
   }
 `;
 
-//#endregion
+export const GET_SYSTEM_TRACKERS = gql`
+  query GetSystemTrackers($filter: SystemTrackerFilter) {
+    trackers(filter: $filter) {
+      edges {
+        node {
+          id
+          tracking_number
+          carrier_name
+          carrier_id
+          status
+          delivered
+          test_mode
+          created_at
+          updated_at
+          info {
+            customer_name
+            expected_delivery
+            note
+            order_date
+            order_id
+            package_weight
+            shipment_package_count
+            shipment_pickup_date
+            shipment_delivery_date
+            shipment_service
+            shipment_origin_country
+            shipment_origin_postal_code
+            shipment_destination_country
+            shipment_destination_postal_code
+          }
+          meta
+          messages {
+            carrier_name
+            carrier_id
+            message
+            code
+            details
+          }
+          events {
+            code
+            date
+            description
+            location
+            time
+          }
+          shipment {
+            id
+            service
+            status
+            meta
+          }
+        }
+      }
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
+    }
+  }
+`;
+
+export const GET_ACCOUNT_CARRIER_CONNECTIONS = gql`
+  query GetAccountCarrierConnections($filter: AccountCarrierConnectionFilter, $usageFilter: UsageFilter) {
+    carrier_connections(filter: $filter) {
+      edges {
+        node {
+          id
+          carrier_id
+          carrier_name
+          display_name
+          active
+          test_mode
+          capabilities
+          config
+          created_at
+          updated_at
+          usage(filter: $usageFilter) {
+            total_shipments
+            total_trackers
+            total_shipping_spend
+            total_addons_charges
+          }
+        }
+      }
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
+    }
+  }
+`;

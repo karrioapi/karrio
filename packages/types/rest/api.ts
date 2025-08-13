@@ -1616,6 +1616,12 @@ export interface Charge {
      * @memberof Charge
      */
     'currency'?: string | null;
+    /**
+     * A surcharge id
+     * @type {string}
+     * @memberof Charge
+     */
+    'id'?: string | null;
 }
 /**
  * 

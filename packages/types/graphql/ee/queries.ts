@@ -438,8 +438,17 @@ export const GET_ORGANIZATION = gql`
 `;
 
 export const GET_ORGANIZATIONS = gql`
-  query get_organizations {
-    organizations {
+  query get_organizations($filter: OrgFilter) {
+    organizations(filter: $filter) {
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
+      edges {
+        node {
       id
       name
       slug
@@ -504,7 +513,9 @@ export const GET_ORGANIZATIONS = gql`
           date
           label
           count
+          }
         }
+      }
       }
     }
   }

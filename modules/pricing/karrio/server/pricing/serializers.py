@@ -6,8 +6,8 @@ from karrio.server.core.serializers import (
 
 
 class SurchargeType(enum.Enum):
-    AMOUNT = "$"
-    PERCENTAGE = "%"
+    AMOUNT = "AMOUNT"
+    PERCENTAGE = "PERCENTAGE"
 
 
 CARRIER_SERVICES = [
@@ -15,4 +15,4 @@ CARRIER_SERVICES = [
     for name in sorted(dataunits.REFERENCE_MODELS["services"].keys())
 ]
 SERVICES = [(code, code) for services in CARRIER_SERVICES for code in services]
-SURCHAGE_TYPE = [(c.name, c.value) for c in list(SurchargeType)]
+SURCHAGE_TYPE = [(c.name, c.name) for c in list(SurchargeType)]
