@@ -18,7 +18,8 @@ import { useSearchParams } from "next/navigation";
 import { Notify } from "../components/notifier";
 import { Spinner } from "../components/spinner";
 import { Loading } from "../components/loader";
-import { RateSheetEditor } from "@karrio/core/modules/Connections/rate-sheet-editor";
+import { RateSheetEditor } from "@karrio/ui/components/rate-sheet-editor";
+import { useRateSheet, useRateSheetMutation } from "@karrio/hooks/rate-sheet";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 
 type ConnectionUpdateType = Partial<UpdateCarrierConnectionMutationInput> & {
@@ -310,6 +311,9 @@ export const UserConnectionList = (): JSX.Element => {
             setRateSheetEditorOpen(false);
             setSelectedConnection(null);
           }}
+          isAdmin={false}
+          useRateSheet={useRateSheet}
+          useRateSheetMutation={useRateSheetMutation}
         />
       )}
     </>

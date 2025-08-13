@@ -17,6 +17,7 @@ export function useSystemConnections() {
 
   return {
     query,
+    system_carrier_connections: query.data?.system_connections,
   };
 }
 

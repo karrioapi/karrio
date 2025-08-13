@@ -13,6 +13,7 @@ import {
 import { Metadata } from "@karrio/types";
 import { redirect } from "next/navigation";
 import { Providers } from "@karrio/hooks/providers";
+import { SidebarProvider } from "@karrio/ui/components/ui/sidebar";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -48,17 +49,19 @@ export default async function Layout({ children }: AdminLayoutProps) {
   return (
     <Providers {...pageProps}>
       <div className="min-h-screen bg-[#f6f6f7]">
-        <AdminHeader />
-        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="pt-14 flex gap-x-8">
-            <aside className="hidden lg:block w-[280px] shrink-0 py-4">
-              <AdminSidebar />
-            </aside>
-            <main className="flex-1 py-4">
-              {children}
-            </main>
+        <SidebarProvider>
+          <AdminHeader />
+          <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="pt-14 flex gap-x-8">
+              <aside className="hidden lg:block w-[280px] shrink-0 py-4">
+                <AdminSidebar />
+              </aside>
+              <main className="flex-1 py-4">
+                {children}
+              </main>
+            </div>
           </div>
-        </div>
+        </SidebarProvider>
       </div>
     </Providers>
   );

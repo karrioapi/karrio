@@ -16,6 +16,7 @@ export function useCarrierConnections() {
 
   return {
     query,
+    user_carrier_connections: query.data?.user_connections,
   };
 }
 

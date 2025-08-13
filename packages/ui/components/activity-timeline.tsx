@@ -6,6 +6,11 @@ import { formatDateTime } from "@karrio/lib";
 import { StatusCode } from "@karrio/ui/core/components/status-code-badge";
 import { Spinner } from "@karrio/ui/core/components/spinner";
 import { cn } from "@karrio/ui/lib/utils";
+import CodeMirror from "@uiw/react-codemirror";
+import { json } from "@codemirror/lang-json";
+import { xml } from "@codemirror/lang-xml";
+import { Copy } from "lucide-react";
+import { Button } from "@karrio/ui/components/ui/button";
 
 type ActivityItem =
   | ({ activityType: 'api-call'; parentLog: LogType; requestContent: any; responseContent: any; })
@@ -220,20 +225,31 @@ const RawContentViewer = ({
     return { content: rawContent, type: 'text', formatted: String(rawContent) };
   };
 
+  // Helper function to get CodeMirror extension based on content type
+  const getCodeMirrorExtension = (contentType: string) => {
+    switch (contentType) {
+      case 'xml':
+        return xml();
+      case 'json':
+      default:
+        return json();
+    }
+  };
+
   const parsedContent = parseContent(content);
 
   const getBadgeStyle = (type: string) => {
     switch (type) {
       case 'json':
-        return "bg-blue-600 text-white";
+        return "bg-blue-100 text-blue-800";
       case 'xml':
-        return "bg-gray-600 text-white";
+        return "bg-gray-100 text-gray-800";
       case 'url-encoded':
-        return "bg-orange-600 text-white";
+        return "bg-orange-100 text-orange-800";
       case 'form-data':
-        return "bg-green-600 text-white";
+        return "bg-green-100 text-green-800";
       default:
-        return "bg-gray-500 text-white";
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -331,7 +347,9 @@ const RawContentViewer = ({
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
             {currentParsedContent.type === 'json' && (
-              <button
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => {
                   try {
                     const minified = JSON.stringify(currentParsedContent.content);
@@ -340,17 +358,21 @@ const RawContentViewer = ({
                     navigator.clipboard.writeText(currentParsedContent.formatted);
                   }
                 }}
-                className="text-xs text-blue-600 hover:text-blue-800 px-2 py-1 rounded hover:bg-blue-50 whitespace-nowrap"
+                className="h-7 px-2"
               >
+                <Copy className="h-3 w-3 mr-1" />
                 Copy Minified
-              </button>
+              </Button>
             )}
-            <button
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => navigator.clipboard.writeText(currentParsedContent.formatted)}
-              className="text-xs text-blue-600 hover:text-blue-800 px-2 py-1 rounded hover:bg-blue-50 whitespace-nowrap"
+              className="h-7 px-2"
             >
+              <Copy className="h-3 w-3 mr-1" />
               Copy
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -386,9 +408,26 @@ const RawContentViewer = ({
       )}
 
       <div className="flex-1 overflow-auto">
-        <pre className="p-4 text-xs font-mono leading-relaxed text-gray-800 whitespace-pre-wrap break-words overflow-x-auto">
-          {currentParsedContent.formatted}
-        </pre>
+        <div className="border rounded-md overflow-hidden">
+          <CodeMirror
+            value={currentParsedContent.formatted}
+            extensions={[getCodeMirrorExtension(currentParsedContent.type)]}
+            theme="light"
+            className="text-xs"
+            readOnly
+            basicSetup={{
+              lineNumbers: false,
+              foldGutter: true,
+              dropCursor: false,
+              allowMultipleSelections: false,
+              indentOnInput: false,
+              bracketMatching: true,
+              closeBrackets: false,
+              autocompletion: false,
+              highlightSelectionMatches: false,
+            }}
+          />
+        </div>
       </div>
     </div>
   );

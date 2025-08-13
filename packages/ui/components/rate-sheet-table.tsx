@@ -18,6 +18,7 @@ interface RateSheetTableProps {
   onAddService?: () => void;
   onRemoveService?: (serviceId: string) => void;
   onCellChange?: (serviceId: string, zoneId: string, field: string, value: any) => void;
+  onBatchUpdate?: (data: { id: string; updates: any[] }) => Promise<any>;
 }
 
 const EditableCell = React.memo(({
@@ -250,7 +251,8 @@ export const RateSheetTable = ({
   onRemoveZone,
   onAddService,
   onRemoveService,
-  onCellChange: parentOnCellChange
+  onCellChange: parentOnCellChange,
+  onBatchUpdate
 }: RateSheetTableProps) => {
   const { batchUpdateRateSheetCells } = useRateSheetCellMutation();
   const [pendingUpdates, setPendingUpdates] = React.useState<any[]>([]);
@@ -270,16 +272,17 @@ export const RateSheetTable = ({
     () => debounce((updates: any[]) => {
       if (updates.length === 0 || rateSheetId === 'new') return;
 
-      batchUpdateRateSheetCells.mutateAsync({
-        id: rateSheetId,
-        updates
-      }).then(() => {
+      const exec = onBatchUpdate
+        ? onBatchUpdate({ id: rateSheetId, updates })
+        : batchUpdateRateSheetCells.mutateAsync({ id: rateSheetId, updates });
+
+      Promise.resolve(exec).then(() => {
         setPendingUpdates([]);
       }).catch(() => {
         // Keep pending updates on error for retry
       });
     }, 800),
-    [rateSheetId, batchUpdateRateSheetCells]
+    [rateSheetId, batchUpdateRateSheetCells, onBatchUpdate]
   );
 
   const handleCellChange = React.useCallback((serviceId: string, zoneId: string, field: string, value: any) => {

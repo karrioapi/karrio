@@ -75,25 +75,25 @@ export function useSystemConnectionMutation() {
   };
 
   const createSystemConnection = useAuthenticatedMutation({
-    mutationFn: (data: CreateSystemConnectionVariables["data"]) => karrio.admin.request<CreateSystemConnection>(
+    mutationFn: (input: CreateSystemConnectionVariables["input"]) => karrio.admin.request<CreateSystemConnection>(
       gqlstr(CREATE_SYSTEM_CONNECTION),
-      { variables: { data } }
+      { variables: { input } }
     ),
     onSuccess: invalidateCache,
   });
 
   const updateSystemConnection = useAuthenticatedMutation({
-    mutationFn: (data: UpdateSystemConnectionVariables["data"]) => karrio.admin.request<UpdateSystemConnection>(
+    mutationFn: (input: UpdateSystemConnectionVariables["input"]) => karrio.admin.request<UpdateSystemConnection>(
       gqlstr(UPDATE_SYSTEM_CONNECTION),
-      { variables: { data } }
+      { variables: { input } }
     ),
     onSuccess: invalidateCache,
   });
 
   const deleteSystemConnection = useAuthenticatedMutation({
-    mutationFn: (data: DeleteSystemConnectionVariables["data"]) => karrio.admin.request<DeleteSystemConnection>(
+    mutationFn: (input: DeleteSystemConnectionVariables["input"]) => karrio.admin.request<DeleteSystemConnection>(
       gqlstr(DELETE_SYSTEM_CONNECTION),
-      { variables: { data } }
+      { variables: { input } }
     ),
     onSuccess: invalidateCache,
   });

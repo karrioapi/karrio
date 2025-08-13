@@ -350,21 +350,16 @@ export function useShippingRuleForm({ id }: { id?: string } = {}) {
 
   const deleteShippingRule = async () => {
     if (!current?.id) return;
-
-    if (confirm("Are you sure you want to delete this shipping rule?")) {
-      try {
-        loader.setLoading(true);
-        await mutation.deleteShippingRule.mutateAsync({ id: current.id });
-        notifier.notify({
-          type: NotificationType.success,
-          message: "Shipping rule deleted!",
-        });
-        router.push(p`${basePath}/automation`.replace("//", "/"));
-      } catch (error: any) {
-        notifier.notify({ type: NotificationType.error, message: error });
-      } finally {
-        loader.setLoading(false);
-      }
+    // Consumers should trigger a ConfirmationDialog before calling this
+    try {
+      loader.setLoading(true);
+      await mutation.deleteShippingRule.mutateAsync({ id: current.id });
+      notifier.notify({ type: NotificationType.success, message: "Shipping rule deleted!" });
+      router.push(p`${basePath}/automation`.replace("//", "/"));
+    } catch (error: any) {
+      notifier.notify({ type: NotificationType.error, message: error });
+    } finally {
+      loader.setLoading(false);
     }
   };
 
