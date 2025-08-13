@@ -8,17 +8,16 @@ import {
   DELETE_SYSTEM_CONNECTION
 } from "@karrio/types/graphql/admin/queries";
 import {
+  CarrierFilter,
   GetSystemConnections,
-  GetSystemConnectionsVariables,
   GetSystemConnection,
-  GetSystemConnectionVariables,
   CreateSystemConnection,
   CreateSystemConnectionVariables,
   UpdateSystemConnection,
   UpdateSystemConnectionVariables,
   DeleteSystemConnection,
   DeleteSystemConnectionVariables,
-  CarrierFilter,
+  UsageFilter,
 } from "@karrio/types/graphql/admin";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -28,12 +27,12 @@ export type SystemConnectionType = GetSystemConnections['system_carrier_connecti
 // -----------------------------------------------------------
 // System Connections List Hook
 // -----------------------------------------------------------
-export function useSystemConnections(filter: CarrierFilter = {}) {
+export function useSystemConnections(filter: CarrierFilter = {}, usageFilter?: UsageFilter) {
   const karrio = useKarrio();
 
   const query = useAuthenticatedQuery({
     queryKey: ['admin_system_connections', filter],
-    queryFn: () => karrio.admin.request<GetSystemConnections>(gqlstr(GET_SYSTEM_CONNECTIONS), { variables: { filter } }),
+    queryFn: () => karrio.admin.request<GetSystemConnections>(gqlstr(GET_SYSTEM_CONNECTIONS), { variables: { filter, usageFilter } }),
     staleTime: 5000,
   });
 

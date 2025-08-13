@@ -1,64 +1,540 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@karrio/ui/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@karrio/ui/components/ui/dialog";
-import { Plus, Search, MoreHorizontal, Edit3, Trash2, Eye, Building2, DollarSign, Percent, Zap } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@karrio/ui/components/ui/table";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@karrio/ui/components/ui/card";
-import { useAddons, useAddonMutation } from "@karrio/hooks/admin-addons";
-import { SurchargeTypeEnum } from "@karrio/types/graphql/admin/types";
-import { Switch } from "@karrio/ui/components/ui/switch";
+import { Plus, Search, MoreHorizontal, Edit3, Trash2, DollarSign, Percent, Zap, AlertCircle } from 'lucide-react';
+import { LineChart, Line, CartesianGrid, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { useAddons, useAddonMutation, useAddonForm, AddonType } from "@karrio/hooks/admin-addons";
+import { SurchargeTypeEnum } from "@karrio/types/graphql/admin";
+import { Card, CardContent } from "@karrio/ui/components/ui/card";
+import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { Button } from "@karrio/ui/components/ui/button";
-import { Input } from "@karrio/ui/components/ui/input";
-import { Badge } from "@karrio/ui/components/ui/badge";
 import { Label } from "@karrio/ui/components/ui/label";
+import { Input } from "@karrio/ui/components/ui/input";
 import { useToast } from "@karrio/ui/hooks/use-toast";
+import { useAdminSystemUsage } from "@karrio/hooks/admin-usage";
+import { Checkbox } from "@karrio/ui/components/ui/checkbox";
+import { Switch } from "@karrio/ui/components/ui/switch";
+import { Alert, AlertDescription } from "@karrio/ui/components/ui/alert";
+import { SelectField } from "@karrio/ui/core/components";
+import { cn } from "@karrio/ui/lib/utils";
+import { useSystemConnections } from "@karrio/hooks/admin-system-connections";
+import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
+import moment from "moment";
 
-// Import proper types from GraphQL schema
-import {
-  GetAddons_addons_edges_node as AddonType
-} from "@karrio/types/graphql/admin/types";
+interface CreateAddonDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSubmit: (data: any) => Promise<void>;
+}
 
-export default function AddonsPage() {
-  const [searchTerm, setSearchTerm] = React.useState('');
-  const [statusFilter, setStatusFilter] = React.useState<string>('all');
-  const [isCreateOpen, setIsCreateOpen] = React.useState(false);
+function CreateAddonDialog({ open, onOpenChange, onSubmit }: CreateAddonDialogProps) {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const {
+    formData,
+    updateFormData,
+    handleCarrierChange,
+    handleServiceChange,
+    resetForm,
+    toMutationInput,
+    availableCarriers,
+    availableServices,
+  } = useAddonForm();
 
-  // Fetch addons data
-  const { query, addons } = useAddons();
-  const isLoading = query.isLoading;
-
-  // Mutations
-  const { createAddon } = useAddonMutation();
-
-  const handleCreateAddon = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
 
-    try {
-      await createAddon.mutateAsync({
-        name: formData.get('name') as string,
-        amount: parseFloat(formData.get('amount') as string),
-        surcharge_type: formData.get('surcharge_type') as SurchargeTypeEnum,
-        active: formData.get('active') === 'on',
-        carriers: formData.get('carriers') ? (formData.get('carriers') as string).split(',').map(c => c.trim()) : [],
-        services: formData.get('services') ? (formData.get('services') as string).split(',').map(s => s.trim()) : [],
+    if (!formData.name || !formData.amount) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
       });
+      return;
+    }
 
-      toast({ title: "Addon created successfully" });
-      setIsCreateOpen(false);
-    } catch (error) {
-      toast({ title: "Failed to create addon", variant: "destructive" });
+    setIsSubmitting(true);
+    try {
+      await onSubmit(toMutationInput());
+      resetForm();
+      onOpenChange(false);
+    } catch (error: any) {
+      toast({
+        title: "Error creating addon",
+        description: error.message || "An error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  // Convert addons data to proper format
-  const addonsList: AddonType[] = React.useMemo(() => {
-    if (!addons?.edges) return [];
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[700px] max-h-[90vh] p-0 flex flex-col">
+        {/* Sticky Header */}
+        <DialogHeader className="px-4 py-3 border-b sticky top-0 bg-background z-10">
+          <DialogTitle>Create New Addon</DialogTitle>
+          <DialogDescription>
+            Configure a new addon that will be available across all organizations
+          </DialogDescription>
+        </DialogHeader>
 
+        {/* Scrollable Body */}
+        <div className="flex-1 overflow-y-auto px-4 py-3">
+          <form id="create-addon-form" onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="col-span-2">
+                <Label htmlFor="name">Addon Name *</Label>
+                <Input
+                  id="name"
+                  value={formData.name}
+                  onChange={(e) => updateFormData({ name: e.target.value })}
+                  placeholder="e.g., Fuel Surcharge, Handling Fee"
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="surcharge_type">Charge Type *</Label>
+                <Select
+                  value={formData.surcharge_type}
+                  onValueChange={(value) => updateFormData({ surcharge_type: value as SurchargeTypeEnum })}
+                >
+                  <SelectTrigger id="surcharge_type">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={SurchargeTypeEnum.AMOUNT}>Fixed Amount ($)</SelectItem>
+                    <SelectItem value={SurchargeTypeEnum.PERCENTAGE}>Percentage (%)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="amount">
+                  Amount * {formData.surcharge_type === SurchargeTypeEnum.PERCENTAGE ? '(%)' : '($)'}
+                </Label>
+                <Input
+                  id="amount"
+                  type="number"
+                  step="0.01"
+                  value={formData.amount}
+                  onChange={(e) => updateFormData({ amount: e.target.value })}
+                  placeholder={formData.surcharge_type === SurchargeTypeEnum.PERCENTAGE ? "5.00" : "10.00"}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <Label htmlFor="active">Active Status</Label>
+              <Switch
+                id="active"
+                checked={formData.active}
+                onCheckedChange={(checked) => updateFormData({ active: checked })}
+              />
+            </div>
+
+            <div>
+              <Label>Carriers (leave empty for all carriers)</Label>
+              <div className="grid grid-cols-3 gap-3 mt-2 max-h-40 overflow-y-auto border rounded-md p-3">
+                {availableCarriers.map((carrier) => (
+                  <div key={carrier} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`carrier-${carrier}`}
+                      checked={formData.carriers.includes(carrier)}
+                      onCheckedChange={(checked) => handleCarrierChange(carrier, !!checked)}
+                    />
+                    <Label
+                      htmlFor={`carrier-${carrier}`}
+                      className="text-sm font-normal cursor-pointer"
+                    >
+                      {carrier.toUpperCase()}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {formData.carriers.length > 0 && availableServices.length > 0 && (
+              <div>
+                <Label>Services (leave empty for all services)</Label>
+                <div className="grid grid-cols-2 gap-3 mt-2 max-h-40 overflow-y-auto border rounded-md p-3">
+                  {availableServices.map((service) => (
+                    <div key={service} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`service-${service}`}
+                        checked={formData.services.includes(service)}
+                        onCheckedChange={(checked) => handleServiceChange(service, !!checked)}
+                      />
+                      <Label
+                        htmlFor={`service-${service}`}
+                        className="text-sm font-normal cursor-pointer"
+                      >
+                        {service.replace(/_/g, ' ')}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+          </form>
+        </div>
+
+        {/* Sticky Footer */}
+        <DialogFooter className="px-4 py-3 border-t sticky bottom-0 bg-background">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => {
+              resetForm();
+              onOpenChange(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button type="submit" form="create-addon-form" disabled={isSubmitting}>
+            {isSubmitting ? "Creating..." : "Create Addon"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+interface EditAddonDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  addon: AddonType | null;
+  onSubmit: (data: any) => Promise<void>;
+}
+
+function EditAddonDialog({ open, onOpenChange, addon, onSubmit }: EditAddonDialogProps) {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const {
+    formData,
+    updateFormData,
+    handleCarrierChange,
+    handleServiceChange,
+    toMutationInput,
+    availableCarriers,
+    availableServices,
+  } = useAddonForm(addon || undefined);
+
+  // Ensure form is populated when an addon is provided/changed
+  React.useEffect(() => {
+    if (addon) {
+      updateFormData({
+        name: addon.name || "",
+        amount: (addon.amount as any)?.toString?.() ?? "",
+        active: !!addon.active,
+        surcharge_type: addon.surcharge_type as SurchargeTypeEnum,
+        carriers: Array.isArray(addon.carriers) ? addon.carriers : [],
+        services: Array.isArray(addon.services) ? addon.services : [],
+      } as any);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addon?.id]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formData.name || !formData.amount) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await onSubmit({ ...toMutationInput(), id: addon?.id });
+      onOpenChange(false);
+    } catch (error: any) {
+      toast({
+        title: "Error updating addon",
+        description: error.message || "An error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[700px] max-h-[90vh] p-0 flex flex-col">
+        {/* Sticky Header */}
+        <DialogHeader className="px-4 py-3 border-b sticky top-0 bg-background z-10">
+          <DialogTitle>Edit Addon</DialogTitle>
+          <DialogDescription>
+            Update addon configuration and settings
+          </DialogDescription>
+        </DialogHeader>
+
+        {/* Scrollable Body */}
+        <div className="flex-1 overflow-y-auto px-4 py-3">
+          <form id="edit-addon-form" onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="col-span-2">
+                <Label htmlFor="edit-name">Addon Name *</Label>
+                <Input
+                  id="edit-name"
+                  value={formData.name}
+                  onChange={(e) => updateFormData({ name: e.target.value })}
+                  placeholder="e.g., Fuel Surcharge, Handling Fee"
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="edit-surcharge_type">Charge Type *</Label>
+                <Select
+                  value={formData.surcharge_type}
+                  onValueChange={(value) => updateFormData({ surcharge_type: value as SurchargeTypeEnum })}
+                >
+                  <SelectTrigger id="edit-surcharge_type">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={SurchargeTypeEnum.AMOUNT}>Fixed Amount ($)</SelectItem>
+                    <SelectItem value={SurchargeTypeEnum.PERCENTAGE}>Percentage (%)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="edit-amount">
+                  Amount * {formData.surcharge_type === SurchargeTypeEnum.PERCENTAGE ? '(%)' : '($)'}
+                </Label>
+                <Input
+                  id="edit-amount"
+                  type="number"
+                  step="0.01"
+                  value={formData.amount}
+                  onChange={(e) => updateFormData({ amount: e.target.value })}
+                  placeholder={formData.surcharge_type === SurchargeTypeEnum.PERCENTAGE ? "5.00" : "10.00"}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <Label htmlFor="edit-active">Active Status</Label>
+              <Switch
+                id="edit-active"
+                checked={formData.active}
+                onCheckedChange={(checked) => updateFormData({ active: checked })}
+              />
+            </div>
+
+            <div>
+              <Label>Carriers (leave empty for all carriers)</Label>
+              <div className="grid grid-cols-3 gap-3 mt-2 max-h-40 overflow-y-auto border rounded-md p-3">
+                {availableCarriers.map((carrier) => (
+                  <div key={carrier} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`edit-carrier-${carrier}`}
+                      checked={formData.carriers.includes(carrier)}
+                      onCheckedChange={(checked) => handleCarrierChange(carrier, !!checked)}
+                    />
+                    <Label
+                      htmlFor={`edit-carrier-${carrier}`}
+                      className="text-sm font-normal cursor-pointer"
+                    >
+                      {carrier.toUpperCase()}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {formData.carriers.length > 0 && availableServices.length > 0 && (
+              <div>
+                <Label>Services (leave empty for all services)</Label>
+                <div className="grid grid-cols-2 gap-3 mt-2 max-h-40 overflow-y-auto border rounded-md p-3">
+                  {availableServices.map((service) => (
+                    <div key={service} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`edit-service-${service}`}
+                        checked={formData.services.includes(service)}
+                        onCheckedChange={(checked) => handleServiceChange(service, !!checked)}
+                      />
+                      <Label
+                        htmlFor={`edit-service-${service}`}
+                        className="text-sm font-normal cursor-pointer"
+                      >
+                        {service.replace(/_/g, ' ')}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+          </form>
+        </div>
+
+        {/* Sticky Footer */}
+        <DialogFooter className="px-4 py-3 border-t sticky bottom-0 bg-background">
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button type="submit" form="edit-addon-form" disabled={isSubmitting}>
+            {isSubmitting ? "Saving..." : "Save Changes"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+interface DeleteConfirmationDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  addon: AddonType | null;
+  onConfirm: () => Promise<void>;
+}
+
+function DeleteConfirmationDialog({ open, onOpenChange, addon, onConfirm }: DeleteConfirmationDialogProps) {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { toast } = useToast();
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await onConfirm();
+      onOpenChange(false);
+      toast({ title: "Addon deleted successfully" });
+    } catch (error: any) {
+      toast({
+        title: "Error deleting addon",
+        description: error.message || "An error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Delete Addon</DialogTitle>
+          <DialogDescription>
+            Are you sure you want to delete this addon? This action cannot be undone.
+          </DialogDescription>
+        </DialogHeader>
+
+        {addon && (
+          <div className="space-y-4">
+            <Alert>
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                You are about to delete <strong>{addon.name}</strong>.
+                This will remove the addon from all organizations and cannot be reversed.
+              </AlertDescription>
+            </Alert>
+
+            <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Name:</span>
+                <span className="text-sm font-medium">{addon.name}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Amount:</span>
+                <span className="text-sm font-medium">
+                  {addon.surcharge_type === SurchargeTypeEnum.PERCENTAGE ? `${addon.amount}%` : `$${addon.amount}`}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Status:</span>
+                <StatusBadge status={addon.active ? "active" : "inactive"} />
+              </div>
+            </div>
+          </div>
+        )}
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button
+            variant="destructive"
+            onClick={handleDelete}
+            disabled={isDeleting}
+          >
+            {isDeleting ? "Deleting..." : "Delete Addon"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export default function AddonsPage() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [selectedAddon, setSelectedAddon] = useState<AddonType | null>(null);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  // Removed view dialog per spec
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [selectedTab, setSelectedTab] = useState<'overview' | 'addons'>("overview");
+
+  const { toast } = useToast();
+
+  // Fetch data with usage and shipment filters
+  const {
+    query: { data: { usage } = {} },
+    setFilter,
+    filter,
+    USAGE_FILTERS,
+    DAYS_LIST,
+    currentFilter,
+  } = useAdminSystemUsage();
+
+  // Create filters for addon queries
+  const usageFilter = filter;
+
+  const { query: addonsQuery, addons } = useAddons({}, usageFilter);
+  const isLoading = addonsQuery.isLoading;
+
+  // Mutations
+  const { createAddon, updateAddon, deleteAddon } = useAddonMutation();
+
+  const handleCreateAddon = async (data: any) => {
+    await createAddon.mutateAsync(data);
+    toast({ title: "Addon created successfully" });
+    setIsCreateOpen(false);
+  };
+
+  const handleEditAddon = async (data: any) => {
+    await updateAddon.mutateAsync(data);
+    toast({ title: "Addon updated successfully" });
+    setIsEditOpen(false);
+    setSelectedAddon(null);
+  };
+
+  const handleDeleteAddon = async () => {
+    if (!selectedAddon) return;
+    await deleteAddon.mutateAsync({ id: selectedAddon.id });
+    setSelectedAddon(null);
+  };
+
+  // Convert addons data to proper format
+  const addonsList: AddonType[] = useMemo(() => {
+    if (!addons?.edges) return [];
     return addons.edges.map(({ node }) => node);
   }, [addons]);
 
@@ -72,16 +548,28 @@ export default function AddonsPage() {
     return matchesSearch && matchesStatus;
   });
 
-  // Calculate statistics
-  const stats = addonsList.reduce((acc, addon) => ({
-    totalAddons: acc.totalAddons + 1,
-    activeAddons: acc.activeAddons + (addon.active ? 1 : 0),
-    totalAmount: acc.totalAmount + addon.amount,
-  }), {
-    totalAddons: 0,
-    activeAddons: 0,
-    totalAmount: 0,
-  });
+  // Calculate real statistics from API
+  const stats = useMemo(() => {
+    const totalAddons = addonsList.length;
+    const activeAddons = addonsList.filter(addon => addon.active).length;
+    const totalAddonsCharges = usage?.total_addons_charges || 0;
+
+    return {
+      totalAddons,
+      activeAddons,
+      totalAddonsCharges,
+    };
+  }, [addonsList, usage]);
+
+  // Generate chart data for addons charges over time using real timeline data
+  const chartData = DAYS_LIST[currentFilter() || "15 days"].map((day) => ({
+    name: day,
+    charges: usage?.addons_charges?.find(({ date }) => moment(date).format("MMM D") === day)?.amount || 0,
+  }));
+
+  // System connections for overview page
+  const { query: sysConnQuery, system_carrier_connections } = useSystemConnections({}, usageFilter);
+  const systemConnections = useMemo(() => (system_carrier_connections?.edges || []).map(({ node }: any) => node), [system_carrier_connections]);
 
   if (isLoading) {
     return (
@@ -95,295 +583,360 @@ export default function AddonsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Shippers Addons</h1>
-          <p className="text-muted-foreground">
-            Manage addons across all organizations and track commission revenue
+          <h1 className="text-2xl font-semibold text-gray-900">Addons</h1>
+          <p className="text-sm text-gray-600 mt-1">
+            ${stats.totalAddonsCharges.toLocaleString()}
           </p>
         </div>
-        <Button onClick={() => setIsCreateOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Create Addon
-        </Button>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Addons</CardTitle>
-            <Zap className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalAddons}</div>
-            <p className="text-xs text-muted-foreground">
-              {stats.activeAddons} active
-            </p>
-          </CardContent>
-        </Card>
+      {/* Tab Navigation with Period Filter */}
+      <div className="flex items-center justify-between border-b border-gray-200">
+        <nav className="flex space-x-8 overflow-x-auto">
+          <button
+            className={cn(
+              "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors",
+              selectedTab === "overview"
+                ? "border-purple-500 text-purple-600"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+            )}
+            onClick={() => setSelectedTab("overview")}
+          >
+            Overview
+          </button>
+          <button
+            className={cn(
+              "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors",
+              selectedTab === "addons"
+                ? "border-purple-500 text-purple-600"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+            )}
+            onClick={() => setSelectedTab("addons")}
+          >
+            Addons
+          </button>
+        </nav>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Commission Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              ${(stats.totalAmount * 0.025).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              ~2.5% avg commission rate
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <Percent className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              ${stats.totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Across all organizations
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Organizations</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{addonsList.length}</div>
-            <p className="text-xs text-muted-foreground">
-              Using addons
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Addon Management</CardTitle>
-          <CardDescription>
-            Configure and manage shipping addons for marketplace organizations
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search addons..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-8"
-                />
-              </div>
-            </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Addons Table */}
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Addon</TableHead>
-                  <TableHead>Type & Amount</TableHead>
-                  <TableHead>Coverage</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredAddons.map((addon) => (
-                  <TableRow key={addon.id}>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{addon.name}</div>
-                        <div className="text-sm text-muted-foreground">{addon.id}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        {addon.surcharge_type === 'PERCENTAGE' ? (
-                          <Percent className="h-4 w-4 text-blue-500" />
-                        ) : (
-                          <DollarSign className="h-4 w-4 text-green-500" />
-                        )}
-                        <span className="font-medium">
-                          {addon.surcharge_type === 'PERCENTAGE' ? `${addon.amount}%` : `$${addon.amount}`}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-1">
-                        {addon.carriers?.slice(0, 2).map(carrier => (
-                          <Badge key={carrier} variant="outline" className="text-xs">
-                            {carrier.toUpperCase()}
-                          </Badge>
-                        ))}
-                        {addon.carriers && addon.carriers.length > 2 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{addon.carriers.length - 2}
-                          </Badge>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={addon.active ? "default" : "secondary"}>
-                        {addon.active ? "Active" : "Inactive"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem>
-                            <Eye className="mr-2 h-4 w-4" />
-                            View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Edit3 className="mr-2 h-4 w-4" />
-                            Edit Addon
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Building2 className="mr-2 h-4 w-4" />
-                            Manage Organizations
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-red-600">
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete Addon
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-
-          {filteredAddons.length === 0 && (
-            <div className="text-center py-6">
-              <p className="text-muted-foreground">No addons found matching your filters.</p>
-            </div>
+        <div className="flex items-center gap-2 py-4">
+          <SelectField
+            className="is-small"
+            value={JSON.stringify(filter)}
+            onChange={(e) => setFilter(JSON.parse(e.target.value))}
+            style={{ minWidth: "140px" }}
+          >
+            {Object.entries(USAGE_FILTERS).map(([key, value]) => (
+              <option key={key} value={JSON.stringify(value)}>
+                {key}
+              </option>
+            ))}
+          </SelectField>
+          {selectedTab === 'addons' && (
+            <Button onClick={() => setIsCreateOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Create Addon
+            </Button>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* Create Addon Modal */}
-      <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Create New Addon</DialogTitle>
-            <DialogDescription>
-              Create a new shipping addon that can be applied to shipments across organizations.
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleCreateAddon} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Addon Name</Label>
-              <Input
-                id="name"
-                name="name"
-                placeholder="e.g., Insurance Fee, Handling Charge"
-                required
-              />
-            </div>
+      {/* Overview Tab */}
+      {selectedTab === 'overview' && (
+        <div className="space-y-6">
+          {/* Summary Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card className="border shadow-none">
+              <CardContent className="p-4">
+                <p className="text-sm text-gray-600">Active Addons</p>
+                <p className="text-2xl font-semibold text-gray-900">{stats.activeAddons} / {stats.totalAddons}</p>
+              </CardContent>
+            </Card>
+            <Card className="border shadow-none">
+              <CardContent className="p-4">
+                <p className="text-sm text-gray-600">Total Charges</p>
+                <p className="text-2xl font-semibold text-gray-900">${stats.totalAddonsCharges.toLocaleString()}</p>
+              </CardContent>
+            </Card>
+            <Card className="border shadow-none">
+              <CardContent className="p-4">
+                <p className="text-sm text-gray-600">Coverage</p>
+                <p className="text-2xl font-semibold text-gray-900">{addonsList.filter(a => !a.carriers || a.carriers.length === 0).length} Universal</p>
+              </CardContent>
+            </Card>
+          </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="amount">Amount</Label>
-                <Input
-                  id="amount"
-                  name="amount"
-                  type="number"
-                  step="0.01"
-                  placeholder="0.00"
-                  required
-                />
+          {/* Chart */}
+          <div>
+            <div className="flex items-center gap-4 mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                <span className="text-sm font-medium">${stats.totalAddonsCharges.toLocaleString()} total addon charges</span>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="surcharge_type">Type</Label>
-                <Select name="surcharge_type" defaultValue={SurchargeTypeEnum.AMOUNT}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
+            </div>
+            <div style={{ width: "100%", height: "300px" }}>
+              {usage?.total_addons_charges ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '6px', color: 'white', fontSize: '12px' }} formatter={(value: any) => [`$${value.toLocaleString()}`, 'Charges']} />
+                    <Line type="linear" dataKey="charges" stroke="#3b82f6" strokeWidth={2} dot={false} name="charges" />
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="flex items-center justify-center h-full bg-gray-50 rounded">
+                  <div className="text-center">
+                    <Zap className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                    <p className="text-sm text-gray-500">No addon charges data available</p>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="text-right mt-2">
+              <span className="text-xs text-gray-500">Updated today {new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</span>
+            </div>
+          </div>
+
+          {/* System Connections List */}
+          <div className="space-y-3">
+            <h3 className="text-lg font-medium text-gray-900">System Connections</h3>
+            {(systemConnections || []).length === 0 ? (
+              <div className="text-sm text-gray-500">No system connections</div>
+            ) : (
+              <div className="space-y-3">
+                {systemConnections.map((connection: any) => (
+                  <div key={connection.id} className="group relative flex items-center justify-between p-3 rounded-lg border border-gray-200 bg-white">
+                    <div className="flex items-center space-x-3 flex-1">
+                      <CarrierImage carrier_name={connection.carrier_name} width={40} height={40} className="rounded-lg" />
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <div className="font-medium text-gray-900 truncate text-sm">{connection.display_name || connection.carrier_name}</div>
+                          <StatusBadge status={connection.active ? "active" : "inactive"} />
+                          {connection.test_mode && <StatusBadge status="test" />}
+                        </div>
+                        <div className="text-xs text-gray-600 font-mono">{connection.carrier_id || connection.id}</div>
+                      </div>
+                    </div>
+                    {/* Usage stats */}
+                    <div className="grid grid-cols-3 gap-6 text-right">
+                      <div>
+                        <div className="text-[11px] text-gray-500">Shipments</div>
+                        <div className="text-sm font-medium text-gray-900">{(connection.usage?.total_shipments || 0).toLocaleString()}</div>
+                      </div>
+                      <div>
+                        <div className="text-[11px] text-gray-500">Shipping Spend</div>
+                        <div className="text-sm font-medium text-gray-900">${(connection.usage?.total_shipping_spend || 0).toLocaleString()}</div>
+                      </div>
+                      <div>
+                        <div className="text-[11px] text-gray-500">Addons</div>
+                        <div className="text-sm font-medium text-gray-900">${(connection.usage?.total_addons_charges || 0).toLocaleString()}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Addons Tab */}
+      {selectedTab === 'addons' && (
+        <div className="space-y-6">
+          {/* Addons Management Table */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-medium text-gray-900">Addon management</h2>
+              <div className="flex gap-2">
+                <div className="relative">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search addons..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-8 w-[200px]"
+                  />
+                </div>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-[140px]">
+                    <SelectValue placeholder="Filter by status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={SurchargeTypeEnum.AMOUNT}>Fixed Amount</SelectItem>
-                    <SelectItem value={SurchargeTypeEnum.PERCENTAGE}>Percentage</SelectItem>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="carriers">Carriers (comma-separated)</Label>
-              <Input
-                id="carriers"
-                name="carriers"
-                placeholder="e.g., fedex, ups, usps"
-              />
+            <div className="border-b">
+              {filteredAddons.length === 0 ? (
+                <div className="text-center py-12">
+                  <Zap className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                  <h3 className="text-lg font-medium text-gray-500 mb-2">
+                    No addons found
+                  </h3>
+                  <p className="text-sm text-gray-400">
+                    {searchTerm || statusFilter !== 'all'
+                      ? "No addons match your current filters."
+                      : "Get started by creating your first addon."
+                    }
+                  </p>
+                  {!searchTerm && statusFilter === 'all' && (
+                    <Button className="mt-4" onClick={() => setIsCreateOpen(true)}>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Create Your First Addon
+                    </Button>
+                  )}
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Addon</TableHead>
+                      <TableHead>Type & Amount</TableHead>
+                      <TableHead>Coverage</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Applied Count</TableHead>
+                      <TableHead className="text-right">Total Charges</TableHead>
+                      <TableHead className="w-12"></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredAddons.map((addon) => (
+                      <TableRow key={addon.id}>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                              {addon.surcharge_type === SurchargeTypeEnum.PERCENTAGE ? (
+                                <Percent className="h-4 w-4 text-blue-600" />
+                              ) : (
+                                <DollarSign className="h-4 w-4 text-green-600" />
+                              )}
+                            </div>
+                            <div>
+                              <div className="font-medium text-gray-900">
+                                {addon.name}
+                              </div>
+                              <div className="text-sm text-gray-500">
+                                ID: {addon.id.slice(-8)}
+                              </div>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <span className="font-medium text-gray-900">
+                            {addon.surcharge_type === SurchargeTypeEnum.PERCENTAGE ? `${addon.amount}%` : `$${addon.amount}`}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-wrap gap-1">
+                            {addon.carriers && addon.carriers.length > 0 ? (
+                              <>
+                                {addon.carriers.slice(0, 2).map(carrier => (
+                                  <span
+                                    key={carrier}
+                                    className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-700 rounded"
+                                  >
+                                    {carrier.toUpperCase()}
+                                  </span>
+                                ))}
+                                {addon.carriers.length > 2 && (
+                                  <span className="text-xs px-1.5 py-0.5 text-gray-600">
+                                    +{addon.carriers.length - 2}
+                                  </span>
+                                )}
+                              </>
+                            ) : (
+                              <span className="text-xs text-gray-500">All carriers</span>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <StatusBadge status={addon.active ? "active" : "inactive"} />
+                        </TableCell>
+                        <TableCell className="text-right text-sm text-gray-600">
+                          {/* Show total shipments using this addon across carrier accounts */}
+                          {addon.carrier_accounts.reduce((total, account) =>
+                            total + (account.usage?.total_shipments || 0), 0
+                          ).toLocaleString()}
+                        </TableCell>
+                        <TableCell className="text-right font-medium text-gray-900">
+                          {/* Show total addon charges across carrier accounts */}
+                          ${addon.carrier_accounts.reduce((total, account) =>
+                            total + (account.usage?.total_addons_charges || 0), 0
+                          ).toLocaleString()}
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 p-0 hover:bg-muted">
+                                <MoreHorizontal className="h-4 w-4" />
+                                <span className="sr-only">Open menu</span>
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              {/* View action removed */}
+                              <DropdownMenuItem onClick={() => {
+                                setSelectedAddon(addon);
+                                setIsEditOpen(true);
+                              }}>
+                                <Edit3 className="mr-2 h-4 w-4" />
+                                Edit Addon
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                className="text-red-600"
+                                onClick={() => {
+                                  setSelectedAddon(addon);
+                                  setIsDeleteOpen(true);
+                                }}
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete Addon
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
             </div>
+          </div>
+        </div>
+      )}
 
-            <div className="space-y-2">
-              <Label htmlFor="services">Services (comma-separated)</Label>
-              <Input
-                id="services"
-                name="services"
-                placeholder="e.g., ground, express, priority"
-              />
-            </div>
+      {/* Create Addon Dialog */}
+      <CreateAddonDialog
+        open={isCreateOpen}
+        onOpenChange={setIsCreateOpen}
+        onSubmit={handleCreateAddon}
+      />
 
-            <div className="flex items-center space-x-2">
-              <Switch id="active" name="active" defaultChecked />
-              <Label htmlFor="active">Active</Label>
-            </div>
+      {/* Edit Addon Dialog */}
+      <EditAddonDialog
+        open={isEditOpen}
+        onOpenChange={setIsEditOpen}
+        addon={selectedAddon}
+        onSubmit={handleEditAddon}
+      />
 
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setIsCreateOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={createAddon.isLoading}
-              >
-                {createAddon.isLoading ? "Creating..." : "Create Addon"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmationDialog
+        open={isDeleteOpen}
+        onOpenChange={setIsDeleteOpen}
+        addon={selectedAddon}
+        onConfirm={handleDeleteAddon}
+      />
+
+      {/* View Addon Dialog removed per spec */}
     </div>
   );
 }

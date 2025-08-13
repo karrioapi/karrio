@@ -20,8 +20,8 @@ import {
   DropdownMenuTrigger,
 } from "@karrio/ui/components/ui/dropdown-menu";
 import { useOrganizationAccounts, useOrganizationAccountMutation } from "@karrio/hooks/admin-accounts";
-import { GetAccounts_accounts_edges_node as Account } from "@karrio/types/graphql/admin/types";
-import { MoreHorizontal, Building2, Users, Package, DollarSign, Eye } from "lucide-react";
+import { GetOrganizations_accounts_edges_node as Account } from "@karrio/types/graphql/admin/types";
+import { MoreHorizontal, Building2, Eye } from "lucide-react";
 import { AppLink } from "@karrio/ui/core/components/app-link";
 import { Button } from "@karrio/ui/components/ui/button";
 import { Input } from "@karrio/ui/components/ui/input";
@@ -37,9 +37,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@karrio/ui/components/ui/dialog";
-import {
-  Badge
-} from "@karrio/ui/components/ui/badge";
+import { StatusBadge } from "@karrio/ui/components/status-badge";
+import { StatusCodeBadge } from "@karrio/ui/components/status-code-badge";
 
 type Column = {
   id: string;
@@ -54,14 +53,12 @@ const COLUMNS: Column[] = [
     label: "Organization",
     accessor: (account) => (
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-          <Building2 className="h-4 w-4 text-purple-600" />
+        <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+          <Building2 className="h-4 w-4 text-gray-600" />
         </div>
         <div>
-          <div className="font-medium">{account.name}</div>
-          <div className="text-sm text-muted-foreground">
-            ID: {account.id}
-          </div>
+          <div className="font-medium text-gray-900">{account.name}</div>
+          <div className="text-sm text-gray-500">{account.slug}</div>
         </div>
       </div>
     ),
@@ -71,10 +68,7 @@ const COLUMNS: Column[] = [
     id: "members",
     label: "Members",
     accessor: (account) => (
-      <div className="flex items-center gap-2">
-        <Users className="h-4 w-4 text-purple-600" />
-        <span>{account.usage?.members || 0}</span>
-      </div>
+      <span className="text-sm text-gray-600">{account.usage?.members || 0}</span>
     ),
     defaultVisible: true,
   },
@@ -82,10 +76,7 @@ const COLUMNS: Column[] = [
     id: "total_shipments",
     label: "Shipments",
     accessor: (account) => (
-      <div className="flex items-center gap-2">
-        <Package className="h-4 w-4 text-purple-600" />
-        <span>{(account.usage?.total_shipments || 0).toLocaleString()}</span>
-      </div>
+      <span className="text-sm text-gray-600">{(account.usage?.total_shipments || 0).toLocaleString()}</span>
     ),
     defaultVisible: true,
   },
@@ -93,23 +84,24 @@ const COLUMNS: Column[] = [
     id: "total_shipping_spend",
     label: "Shipping Spend",
     accessor: (account) => (
-      <div className="flex items-center gap-2">
-        <DollarSign className="h-4 w-4 text-purple-600" />
-        <span>${(account.usage?.total_shipping_spend || 0).toLocaleString()}</span>
-      </div>
+      <span className="font-medium text-gray-900">${(account.usage?.total_shipping_spend || 0).toLocaleString()}</span>
     ),
     defaultVisible: true,
   },
   {
     id: "total_requests",
     label: "API Requests",
-    accessor: (account) => (account.usage?.total_requests || 0).toLocaleString(),
+    accessor: (account) => (
+      <span className="text-sm text-gray-600">{(account.usage?.total_requests || 0).toLocaleString()}</span>
+    ),
     defaultVisible: false,
   },
   {
     id: "total_trackers",
     label: "Trackers",
-    accessor: (account) => (account.usage?.total_trackers || 0).toLocaleString(),
+    accessor: (account) => (
+      <span className="text-sm text-gray-600">{(account.usage?.total_trackers || 0).toLocaleString()}</span>
+    ),
     defaultVisible: false,
   },
   {
@@ -118,11 +110,9 @@ const COLUMNS: Column[] = [
     accessor: (account) => {
       const unfulfilled = account.usage?.unfulfilled_orders || 0;
       return unfulfilled > 0 ? (
-        <Badge variant="secondary" className="bg-purple-100 text-purple-800">
-          {unfulfilled}
-        </Badge>
+        <StatusCodeBadge code={unfulfilled.toString()} />
       ) : (
-        <span className="text-muted-foreground">0</span>
+        <span className="text-sm text-gray-600">0</span>
       );
     },
     defaultVisible: false,
@@ -133,11 +123,9 @@ const COLUMNS: Column[] = [
     accessor: (account) => {
       const errors = account.usage?.total_errors || 0;
       return errors > 0 ? (
-        <Badge variant="destructive">
-          {errors}
-        </Badge>
+        <StatusCodeBadge code={errors.toString()} />
       ) : (
-        <span className="text-muted-foreground">0</span>
+        <span className="text-sm text-gray-600">0</span>
       );
     },
     defaultVisible: false,
@@ -146,17 +134,18 @@ const COLUMNS: Column[] = [
     id: "status",
     label: "Status",
     accessor: (account) => (
-      <Badge variant={account.is_active ? "default" : "secondary"}>
-        {account.is_active ? "Active" : "Inactive"}
-      </Badge>
+      <StatusBadge status={account.is_active ? "active" : "inactive"} />
     ),
     defaultVisible: true,
   },
   {
     id: "created",
     label: "Connected",
-    accessor: (account) =>
-      new Date(account.created || Date.now()).toLocaleDateString(),
+    accessor: (account) => (
+      <span className="text-sm text-gray-600">
+        {new Date(account.created || Date.now()).toLocaleDateString()}
+      </span>
+    ),
     defaultVisible: true,
   },
 ];
@@ -226,32 +215,11 @@ export default function ShippersAccounts() {
   };
 
   const accounts = accountsData?.edges || [];
-  const totalAccounts = accounts.length;
-  const totalPages = Math.ceil(totalAccounts / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(accounts.length / ITEMS_PER_PAGE);
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
-
-  const processedAccounts = accounts.map(({ node }) => {
-    const account: Account = {
-      ...node,
-      created: node.created || new Date().toISOString(),
-      modified: node.modified || new Date().toISOString(),
-      usage: {
-        members: node.usage?.members || 0,
-        total_errors: node.usage?.total_errors || 0,
-        order_volume: node.usage?.order_volume || 0,
-        total_requests: node.usage?.total_requests || 0,
-        total_trackers: node.usage?.total_trackers || 0,
-        total_shipments: node.usage?.total_shipments || 0,
-        unfulfilled_orders: node.usage?.unfulfilled_orders || 0,
-        total_shipping_spend: node.usage?.total_shipping_spend || 0,
-      },
-    };
-    return account;
-  });
-
-  const currentAccounts = processedAccounts.slice(startIndex, endIndex);
+  const currentAccounts = accounts.slice(startIndex, endIndex);
 
   const toggleColumn = (columnId: string) => {
     setVisibleColumns((prev) =>
@@ -317,8 +285,8 @@ export default function ShippersAccounts() {
     );
   }
 
-  // Calculate summary stats
-  const summaryStats = processedAccounts.reduce((acc, account) => ({
+  // Calculate summary stats from API data
+  const summaryStats = accounts.reduce((acc, { node: account }) => ({
     totalShipments: acc.totalShipments + (account.usage?.total_shipments || 0),
     totalSpend: acc.totalSpend + (account.usage?.total_shipping_spend || 0),
     totalMembers: acc.totalMembers + (account.usage?.members || 0),
@@ -330,10 +298,10 @@ export default function ShippersAccounts() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">
-            Connected Organizations
+            Shippers Accounts
           </h1>
           <p className="text-muted-foreground">
-            Manage and monitor all organizations using your shipping platform
+            Manage and monitor all shippers using your shipping platform
           </p>
         </div>
         <Button asChild>
@@ -344,141 +312,118 @@ export default function ShippersAccounts() {
         </Button>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border-2 shadow-none">
+      {/* Summary Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="border shadow-none">
           <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Building2 className="h-5 w-5 text-purple-600" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Organizations</p>
-                <p className="text-xl font-semibold">
-                  {summaryStats.activeOrgs} / {totalAccounts}
-                </p>
-              </div>
-            </div>
+            <p className="text-sm text-gray-600">Organizations</p>
+            <p className="text-2xl font-semibold text-gray-900">
+              {summaryStats.activeOrgs} / {accounts.length}
+            </p>
           </CardContent>
         </Card>
 
-        <Card className="border-2 shadow-none">
+        <Card className="border shadow-none">
           <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Users className="h-5 w-5 text-purple-600" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Total Members</p>
-                <p className="text-xl font-semibold">{summaryStats.totalMembers.toLocaleString()}</p>
-              </div>
-            </div>
+            <p className="text-sm text-gray-600">Total Members</p>
+            <p className="text-2xl font-semibold text-gray-900">{summaryStats.totalMembers.toLocaleString()}</p>
           </CardContent>
         </Card>
 
-        <Card className="border-2 shadow-none">
+        <Card className="border shadow-none">
           <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Package className="h-5 w-5 text-purple-600" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Total Shipments</p>
-                <p className="text-xl font-semibold">{summaryStats.totalShipments.toLocaleString()}</p>
-              </div>
-            </div>
+            <p className="text-sm text-gray-600">Total Shipments</p>
+            <p className="text-2xl font-semibold text-gray-900">{summaryStats.totalShipments.toLocaleString()}</p>
           </CardContent>
         </Card>
 
-        <Card className="border-2 shadow-none">
+        <Card className="border shadow-none">
           <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <DollarSign className="h-5 w-5 text-purple-600" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Total Spend</p>
-                <p className="text-xl font-semibold">${summaryStats.totalSpend.toLocaleString()}</p>
-              </div>
-            </div>
+            <p className="text-sm text-gray-600">Total Spend</p>
+            <p className="text-2xl font-semibold text-gray-900">${summaryStats.totalSpend.toLocaleString()}</p>
           </CardContent>
         </Card>
       </div>
 
-      <Card className="border-2 shadow-none">
-        <CardContent className="p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Organizations</h2>
-            <div className="flex items-center space-x-2">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <span className="mr-2">Columns</span>
-                    <span className="w-4 h-4">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {COLUMNS.map((column) => (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      checked={visibleColumns.includes(column.id)}
-                      onCheckedChange={() => toggleColumn(column.id)}
+      {/* Organizations Table */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-medium text-gray-900">All organizations</h2>
+          <div className="flex items-center space-x-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <span className="mr-2">Columns</span>
+                  <span className="w-4 h-4">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
                     >
-                      {column.label}
-                    </DropdownMenuCheckboxItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+                      <path
+                        fillRule="evenodd"
+                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {COLUMNS.map((column) => (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    checked={visibleColumns.includes(column.id)}
+                    onCheckedChange={() => toggleColumn(column.id)}
+                  >
+                    {column.label}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-              <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-                <DialogTrigger asChild>
-                  <Button size="sm">Add Organization</Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Create New Organization</DialogTitle>
-                    <DialogDescription>
-                      Create a new organization account on your platform.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <form onSubmit={handleCreate} className="space-y-4">
-                    <div className="space-y-2 p-4 pb-8">
-                      <Label htmlFor="name">Organization Name</Label>
-                      <Input id="name" name="name" required placeholder="Enter organization name" />
-                    </div>
-                    <DialogFooter>
-                      <Button
-                        type="submit"
-                        disabled={createOrganizationAccount.isLoading}
-                      >
-                        {createOrganizationAccount.isLoading
-                          ? "Creating..."
-                          : "Create Organization"}
-                      </Button>
-                    </DialogFooter>
-                  </form>
-                </DialogContent>
-              </Dialog>
-            </div>
+            <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm">Add Organization</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create New Organization</DialogTitle>
+                  <DialogDescription>
+                    Create a new organization account on your platform.
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleCreate} className="space-y-4">
+                  <div className="space-y-2 p-4 pb-8">
+                    <Label htmlFor="name">Organization Name</Label>
+                    <Input id="name" name="name" required placeholder="Enter organization name" />
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      type="submit"
+                      disabled={createOrganizationAccount.isLoading}
+                    >
+                      {createOrganizationAccount.isLoading
+                        ? "Creating..."
+                        : "Create Organization"}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
+        </div>
 
+        <div className="border-b">
           {currentAccounts.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <Building2 className="h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-lg font-medium text-muted-foreground mb-2">No organizations found</p>
-              <p className="text-sm text-muted-foreground">Create an organization to get started</p>
+            <div className="text-center py-12">
+              <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-500 mb-2">
+                No organizations found
+              </h3>
+              <p className="text-sm text-gray-400">
+                Create an organization to get started
+              </p>
             </div>
           ) : (
             <>
@@ -490,11 +435,11 @@ export default function ShippersAccounts() {
                         <TableHead key={column.id}>{column.label}</TableHead>
                       ),
                     )}
-                    <TableHead className="w-[50px]" />
+                    <TableHead className="w-12"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {currentAccounts.map((account) => (
+                  {currentAccounts.map(({ node: account }) => (
                     <TableRow key={account.id}>
                       {COLUMNS.filter((col) => visibleColumns.includes(col.id)).map(
                         (column) => (
@@ -506,41 +451,21 @@ export default function ShippersAccounts() {
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-slate-100">
-                              <MoreHorizontal className="h-4 w-4 p-0" />
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 p-0 hover:bg-muted"
+                            >
+                              <MoreHorizontal className="h-4 w-4" />
+                              <span className="sr-only">Open menu</span>
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem asChild>
                               <AppLink href={`/shippers/accounts/${account.id}`}>
+                                <Eye className="mr-2 h-4 w-4" />
                                 View Details
                               </AppLink>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => {
-                                setSelectedAccount(account);
-                                setIsEditOpen(true);
-                              }}
-                            >
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => {
-                                setSelectedAccount(account);
-                                setIsDisableOpen(true);
-                              }}
-                              className="text-yellow-600"
-                            >
-                              {account.is_active ? "Disable" : "Enable"}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => {
-                                setSelectedAccount(account);
-                                setIsDeleteOpen(true);
-                              }}
-                              className="text-destructive"
-                            >
-                              Delete
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -549,37 +474,39 @@ export default function ShippersAccounts() {
                   ))}
                 </TableBody>
               </Table>
-
-              <div className="mt-4 flex items-center justify-between">
-                <p className="text-sm text-muted-foreground">
-                  Showing {startIndex + 1} to {Math.min(endIndex, totalAccounts)} of{" "}
-                  {totalAccounts} organizations
-                </p>
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                  >
-                    Previous
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                    }
-                    disabled={currentPage === totalPages}
-                  >
-                    Next
-                  </Button>
-                </div>
-              </div>
             </>
           )}
-        </CardContent>
-      </Card>
+        </div>
+
+        {currentAccounts.length > 0 && (
+          <div className="flex items-center justify-between pt-4">
+            <p className="text-sm text-gray-600">
+              Showing {startIndex + 1} to {Math.min(endIndex, accounts.length)} of{" "}
+              {accounts.length} organizations
+            </p>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Dialogs for Edit, Disable, Delete remain the same as original */}
       <Dialog

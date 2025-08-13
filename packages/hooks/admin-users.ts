@@ -1,11 +1,9 @@
-import { gqlstr } from "@karrio/lib";
-import { useKarrio, useAuthenticatedQuery, useAuthenticatedMutation } from "./karrio";
 import { GET_USERS, GET_USER, CREATE_USER, UPDATE_USER, REMOVE_USER, GET_PERMISSION_GROUPS } from "@karrio/types/graphql/admin/queries";
+import { useKarrio, useAuthenticatedQuery, useAuthenticatedMutation } from "./karrio";
+import { gqlstr } from "@karrio/lib";
 import {
   GetUsers,
-  GetUsersVariables,
   GetUser,
-  GetUserVariables,
   CreateUser,
   CreateUserVariables,
   UpdateUser,
@@ -13,7 +11,6 @@ import {
   RemoveUser,
   RemoveUserVariables,
   GetPermissionGroups,
-  GetPermissionGroupsVariables,
   UserFilter,
 } from "@karrio/types/graphql/admin";
 import { useQueryClient } from "@tanstack/react-query";
@@ -72,25 +69,25 @@ export function useUserMutation() {
   };
 
   const createUser = useAuthenticatedMutation({
-    mutationFn: (data: CreateUserVariables["data"]) => karrio.admin.request<CreateUser>(
+    mutationFn: (input: CreateUserVariables["input"]) => karrio.admin.request<CreateUser>(
       gqlstr(CREATE_USER),
-      { variables: { data } }
+      { variables: { input } }
     ),
     onSuccess: invalidateCache,
   });
 
   const updateUser = useAuthenticatedMutation({
-    mutationFn: (data: UpdateUserVariables["data"]) => karrio.admin.request<UpdateUser>(
+    mutationFn: (input: UpdateUserVariables["input"]) => karrio.admin.request<UpdateUser>(
       gqlstr(UPDATE_USER),
-      { variables: { data } }
+      { variables: { input } }
     ),
     onSuccess: invalidateCache,
   });
 
   const removeUser = useAuthenticatedMutation({
-    mutationFn: (data: RemoveUserVariables["data"]) => karrio.admin.request<RemoveUser>(
+    mutationFn: (input: RemoveUserVariables["input"]) => karrio.admin.request<RemoveUser>(
       gqlstr(REMOVE_USER),
-      { variables: { data } }
+      { variables: { input } }
     ),
     onSuccess: invalidateCache,
   });

@@ -1,7 +1,7 @@
 import { gqlstr } from "@karrio/lib";
 import { useKarrio, useAuthenticatedQuery, useAuthenticatedMutation } from "./karrio";
 import {
-  GET_ACCOUNTS,
+  GET_ORGANIZATIONS as GET_ACCOUNTS,
   GET_ORGANIZATION_DETAILS,
   CREATE_ORGANIZATION_ACCOUNT,
   UPDATE_ORGANIZATION_ACCOUNT,
@@ -147,33 +147,33 @@ export function useOrganizationAccountMutation() {
   };
 
   const createOrganizationAccount = useAuthenticatedMutation({
-    mutationFn: (data: CreateOrganizationAccountVariables["data"]) => karrio.admin.request<CreateOrganizationAccount>(
+    mutationFn: (input: CreateOrganizationAccountVariables["input"]) => karrio.admin.request<CreateOrganizationAccount>(
       gqlstr(CREATE_ORGANIZATION_ACCOUNT),
-      { variables: { data } }
+      { variables: { input } }
     ),
     onSuccess: invalidateCache,
   });
 
   const updateOrganizationAccount = useAuthenticatedMutation({
-    mutationFn: (data: UpdateOrganizationAccountVariables["data"]) => karrio.admin.request<UpdateOrganizationAccount>(
+    mutationFn: (input: UpdateOrganizationAccountVariables["input"]) => karrio.admin.request<UpdateOrganizationAccount>(
       gqlstr(UPDATE_ORGANIZATION_ACCOUNT),
-      { variables: { data } }
+      { variables: { input } }
     ),
     onSuccess: invalidateCache,
   });
 
   const disableOrganizationAccount = useAuthenticatedMutation({
-    mutationFn: (data: DisableOrganizationAccountVariables["data"]) => karrio.admin.request<DisableOrganizationAccount>(
+    mutationFn: (input: DisableOrganizationAccountVariables["input"]) => karrio.admin.request<DisableOrganizationAccount>(
       gqlstr(DISABLE_ORGANIZATION_ACCOUNT),
-      { variables: { data } }
+      { variables: { input } }
     ),
     onSuccess: invalidateCache,
   });
 
   const deleteOrganizationAccount = useAuthenticatedMutation({
-    mutationFn: (data: DeleteOrganizationAccountVariables["data"]) => karrio.admin.request<DeleteOrganizationAccount>(
+    mutationFn: (input: DeleteOrganizationAccountVariables["input"]) => karrio.admin.request<DeleteOrganizationAccount>(
       gqlstr(DELETE_ORGANIZATION_ACCOUNT),
-      { variables: { data } }
+      { variables: { input } }
     ),
     onSuccess: invalidateCache,
   });

@@ -1,23 +1,26 @@
-import { get_system_connections, GET_SYSTEM_CONNECTIONS, SystemCarrierMutationInput, MUTATE_SYSTEM_CONNECTION, get_system_connections_system_connections } from "@karrio/types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { SystemCarrierMutationInput, MUTATE_SYSTEM_CONNECTION } from "@karrio/types";
+import { GET_SYSTEM_CONNECTIONS } from "@karrio/types/graphql/queries";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useKarrio, useAuthenticatedQuery, useAuthenticatedMutation } from "./karrio";
 import { gqlstr, onError } from "@karrio/lib";
-import { useKarrio, useAuthenticatedQuery } from "./karrio";
-import { useSyncedSession } from "./session";
 
-export type SystemConnectionType = get_system_connections_system_connections;
+// Using admin query shape which returns edges -> node
+export type SystemConnectionType = any;
 
-export function useSystemConnections() {
+export function useSystemConnections(usageFilter?: any) {
   const karrio = useKarrio();
 
   const query = useAuthenticatedQuery({
-    queryKey: ["system-connections"],
-    queryFn: () => karrio.graphql.request<get_system_connections>(gqlstr(GET_SYSTEM_CONNECTIONS)),
+    queryKey: ["system_connections", usageFilter],
+    queryFn: () => karrio.graphql.request<any>(gqlstr(GET_SYSTEM_CONNECTIONS), { filter: usageFilter }),
     staleTime: 5000,
   });
 
   return {
     query,
-    system_carrier_connections: query.data?.system_connections,
+    // System connections now returns a paginated connection
+    system_connections: query.data?.system_connections?.edges?.map((e: any) => e.node) || [],
+    pageInfo: query.data?.system_connections?.page_info,
   };
 }
 
@@ -28,10 +31,11 @@ export function useSystemConnectionMutation() {
   const invalidateCache = () => { queryClient.invalidateQueries(['system_connections']) };
 
   // Mutations
-  const updateSystemConnection = useMutation(
-    (data: SystemCarrierMutationInput) => karrio.graphql.request(gqlstr(MUTATE_SYSTEM_CONNECTION), { data }),
-    { onSuccess: invalidateCache, onError }
-  );
+  const updateSystemConnection = useAuthenticatedMutation({
+    mutationFn: (data: SystemCarrierMutationInput) => karrio.graphql.request(gqlstr(MUTATE_SYSTEM_CONNECTION), { data }),
+    onSuccess: invalidateCache,
+    onError,
+  });
 
   return {
     updateSystemConnection,

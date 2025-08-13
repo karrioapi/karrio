@@ -533,13 +533,12 @@ class CreateRateSheetMutation(utils.BaseMutation):
             )
 
         if any(carriers):
-            _carriers = gateway.Carriers.list(
-                context=info.context.request,
-                carrier_name=rate_sheet.carrier_name,
-            ).filter(id__in=carriers)
-            for _ in _carriers:
-                _.rate_sheet = rate_sheet
-                _.save(update_fields=["rate_sheet"])
+            (
+                providers.Carrier.access_by(info.context.request).filter(
+                    carrier_code=rate_sheet.carrier_name,
+                    id__in=carriers,
+                ).update(rate_sheet=rate_sheet)
+            )
 
         return CreateRateSheetMutation(rate_sheet=rate_sheet)
 
@@ -559,6 +558,7 @@ class UpdateRateSheetMutation(utils.BaseMutation):
             id=input["id"]
         )
         data = input.copy()
+        carriers = data.pop("carriers", [])
         serializer = serializers.RateSheetModelSerializer(
             instance,
             data=data,
@@ -577,6 +577,24 @@ class UpdateRateSheetMutation(utils.BaseMutation):
                 rate_sheet,
                 payload=data,
                 context=info.context.request,
+            )
+
+        if any(carriers):
+            # Link listed carriers to rate sheet
+            (
+                providers.Carrier.access_by(info.context.request).filter(
+                    carrier_code=rate_sheet.carrier_name,
+                    id__in=carriers,
+                ).update(rate_sheet=rate_sheet)
+            )
+            # Unlink missing carriers from rate sheet
+            (
+                providers.Carrier.access_by(info.context.request).filter(
+                    carrier_code=rate_sheet.carrier_name,
+                    rate_sheet=rate_sheet,
+                )
+                .exclude(id__in=carriers)
+                .update(rate_sheet=None)
             )
 
         return UpdateRateSheetMutation(

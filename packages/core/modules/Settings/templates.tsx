@@ -7,9 +7,7 @@ export default function TemplatesPage(pageProps: any) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto p-0">
-          <SettingsLayout
-            title="Document Templates"
-          >
+          <SettingsLayout>
             <TemplatesManagement />
           </SettingsLayout>
         </div>

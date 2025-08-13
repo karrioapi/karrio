@@ -139,6 +139,10 @@ KARRIO_CONF = [
             "module": "karrio.server.pricing",
         },
         {
+            "app": "karrio.server.analytics",
+            "module": "karrio.server.analytics",
+        },
+        {
             "app": "karrio.server.apps",
             "module": "karrio.server.apps",
         },
@@ -192,6 +196,9 @@ WORKFLOW_MANAGEMENT = (
 SHIPPING_RULES = (
     importlib.util.find_spec("karrio.server.automation") is not None  # type:ignore
 )
+ADVANCED_ANALYTICS = (
+    importlib.util.find_spec("karrio.server.analytics") is not None  # type:ignore
+) and config("ADVANCED_ANALYTICS", default=(True if DEBUG else False), cast=bool)
 
 
 # Feature flags
@@ -209,6 +216,7 @@ FEATURE_FLAGS = [
     ("PERSIST_SDK_TRACING", bool),
     ("WORKFLOW_MANAGEMENT", bool),
     ("SHIPPING_RULES", bool),
+    ("ADVANCED_ANALYTICS", bool),
 ]
 
 

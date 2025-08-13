@@ -65,6 +65,7 @@ export function Providers({
   children: React.ReactNode;
 }) {
   const queryClient = getQueryClient();
+  // props should include: session, metadata, organizations, orgId, etc.
 
   if (!(props as any).session) {
     return (

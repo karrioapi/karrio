@@ -10,13 +10,14 @@ export function useCarrierConnections() {
 
   const query = useAuthenticatedQuery({
     queryKey: ['user_connections'],
-    queryFn: () => karrio.graphql.request<get_user_connections>(gqlstr(GET_USER_CONNECTIONS)),
+    queryFn: () => karrio.graphql.request<any>(gqlstr(GET_USER_CONNECTIONS)),
     staleTime: 5000,
   });
 
   return {
     query,
-    user_carrier_connections: query.data?.user_connections,
+    user_carrier_connections: query.data?.user_connections?.edges?.map((e: any) => e.node) || [],
+    pageInfo: query.data?.user_connections?.page_info,
   };
 }
 

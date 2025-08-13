@@ -1,18 +1,16 @@
 "use client";
-import React, { useMemo, useState } from "react";
-import { RateSheetEditor } from "@karrio/ui/components/rate-sheet-editor";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@karrio/ui/components/ui/dropdown-menu";
 import { useRateSheetMutation, useRateSheet, useRateSheets } from "@karrio/hooks/rate-sheet";
+import { Plus, Search, MoreHorizontal, Edit3, Copy, Trash2 } from "lucide-react";
+import { RateSheetEditor } from "@karrio/ui/components/rate-sheet-editor";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
+import { AppLink } from "@karrio/ui/core/components/app-link";
 import { Button } from "@karrio/ui/components/ui/button";
 import { Input } from "@karrio/ui/components/ui/input";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@karrio/ui/components/ui/dropdown-menu";
-import { RateSheetType } from "@karrio/hooks/rate-sheet";
 import { useToast } from "@karrio/ui/hooks/use-toast";
-import { AppLink } from "@karrio/ui/core/components/app-link";
-import { cn } from "@karrio/ui/lib/utils";
-import { Plus, Search, MoreHorizontal, Edit3, Copy, Trash2 } from "lucide-react";
+import React, { useMemo, useState } from "react";
 
-export default function ConnectionsPage() {
+export default function RateSheetsPage() {
   const Component = (): JSX.Element => {
     const { toast } = useToast();
     const [rateSheetEditorOpen, setRateSheetEditorOpen] = useState(false);
@@ -119,7 +117,7 @@ export default function ConnectionsPage() {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className="text-red-600" onClick={() => deleteRateSheet.mutate({ id: sheet.id }, {
                       onSuccess: () => toast({ title: "Rate sheet deleted" }),
-                      onError: (e: any) => toast({ title: "Failed to delete", description: e?.message || "" , variant: "destructive" })
+                      onError: (e: any) => toast({ title: "Failed to delete", description: e?.message || "", variant: "destructive" })
                     })}>
                       <Trash2 className="mr-2 h-4 w-4" />
                       Delete

@@ -179,12 +179,15 @@ class UsageStatType:
     date: typing.Optional[str] = None
     label: typing.Optional[str] = None
     count: typing.Optional[float] = None
+    amount: typing.Optional[float] = None
+    currency: typing.Optional[str] = None
 
     @staticmethod
-    def parse(value: dict) -> "UsageStatType":
-        return UsageStatType(
+    def parse(value: dict, label: str = None) -> "UsageStatType":
+        return UsageStatType(**{
+            **(dict(label=label) if label else {}),
             **{k: v for k, v in value.items() if k in UsageStatType.__annotations__}
-        )
+        })
 
 
 @strawberry.input

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { ConfirmationDialog } from "@karrio/ui/components/confirmation-dialog";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@karrio/ui/components/ui/dialog";
 import { Trash2, Plus, Copy, Settings, Eye, EyeOff, CheckCircle, XCircle, MoreHorizontal } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@karrio/ui/components/ui/table";
@@ -90,21 +91,19 @@ export function WebhooksView() {
     }
   };
 
-  const handleDelete = async (webhook: any) => {
-    if (!confirm("Are you sure you want to delete this webhook?")) return;
-
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<any>(null);
+  const askDelete = (webhook: any) => { setPendingDelete(webhook); setConfirmOpen(true); };
+  const handleDeleteConfirmed = async () => {
+    if (!pendingDelete) return;
     try {
-      await deleteWebhook.mutateAsync({ id: webhook.id });
-      notifier.notify({
-        type: NotificationType.success,
-        message: "Webhook deleted successfully"
-      });
+      await deleteWebhook.mutateAsync({ id: pendingDelete.id });
+      notifier.notify({ type: NotificationType.success, message: "Webhook deleted successfully" });
       query.refetch();
     } catch (error: any) {
-      notifier.notify({
-        type: NotificationType.error,
-        message: error?.message || "Failed to delete webhook"
-      });
+      notifier.notify({ type: NotificationType.error, message: error?.message || "Failed to delete webhook" });
+    } finally {
+      setPendingDelete(null);
     }
   };
 
