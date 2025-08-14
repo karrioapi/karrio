@@ -6,6 +6,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "graphql-tag": "^2.12.6",
+    "next-auth": "^5.0.0-beta.29",
     "next-runtime-env": "^1.6.3"
   },
   "devDependencies": {
