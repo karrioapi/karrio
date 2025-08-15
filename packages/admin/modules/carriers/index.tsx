@@ -181,6 +181,20 @@ function CarrierConnectionManagement() {
       [key]: value === "" ? undefined : value,
     }), {});
 
+    // Handle custom carriers: if carrier_name is not a standard carrier, treat it as a generic carrier
+    const isCustomCarrier = values.carrier_name && !references?.carriers?.[values.carrier_name];
+    let finalCarrierName = values.carrier_name;
+    let finalCredentials = credentials;
+
+    if (isCustomCarrier) {
+      // For custom carriers, use "generic" as carrier_name and store the custom name in credentials
+      finalCarrierName = "generic";
+      finalCredentials = {
+        ...credentials,
+        custom_carrier_name: values.carrier_name,
+      };
+    }
+
     if (connection) {
       // Update existing connection
       await updateSystemConnection.mutateAsync({
@@ -188,18 +202,18 @@ function CarrierConnectionManagement() {
         carrier_id: values.carrier_id === "" ? undefined : values.carrier_id,
         active: values.active,
         capabilities: values.capabilities,
-        credentials,
+        credentials: finalCredentials,
         config,
         metadata,
       });
     } else {
       // Create new connection
       await createSystemConnection.mutateAsync({
-        carrier_name: values.carrier_name,
+        carrier_name: finalCarrierName,
         carrier_id: values.carrier_id === "" ? undefined : values.carrier_id,
         active: values.active,
         capabilities: values.capabilities,
-        credentials,
+        credentials: finalCredentials,
         config,
         metadata,
       });
@@ -263,7 +277,7 @@ function CarrierConnectionManagement() {
       const rateSheetCarrierName = getRateSheetCarrierName(connection);
 
       const existingSheet = rate_sheets?.edges?.find(
-        ({ node }) => node.carrier_name === rateSheetCarrierName
+        ({ node }) => node.id === connection.rate_sheet?.id
       );
 
       if (existingSheet) {
@@ -427,7 +441,7 @@ function CarrierConnectionManagement() {
               {/* Main Content */}
               <div className="flex items-center space-x-3 flex-1">
                 <div className="flex-none">
-                  <CarrierImage carrier_name={connection.carrier_name} width={40} height={40} className="rounded-lg" text_color={connection.config?.text_color} background={connection.config?.brand_color} />
+                  <CarrierImage carrier_name={connection.credentials?.custom_carrier_name || connection.carrier_name} width={40} height={40} className="rounded-lg" text_color={connection.config?.text_color} background={connection.config?.brand_color} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">

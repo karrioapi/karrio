@@ -148,10 +148,15 @@ class Carrier(core.OwnedEntity):
     @property
     def carrier_name(self):
         return (
-            self.credentials.get("custom_carrier_name")
+            "generic"
             if "custom_carrier_name" in self.credentials
             else lib.failsafe(lambda: self.carrier_code) or "generic"
         )
+        # return (
+        #     self.credentials.get("custom_carrier_name")
+        #     if "custom_carrier_name" in self.credentials
+        #     else lib.failsafe(lambda: self.carrier_code) or "generic"
+        # )
 
     @property
     def display_name(self):

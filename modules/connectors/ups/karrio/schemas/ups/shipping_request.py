@@ -11,8 +11,8 @@ class LabelImageFormatType:
 
 @attr.s(auto_attribs=True)
 class LabelStockSizeType:
-    Height: typing.Optional[str] = None
-    Width: typing.Optional[str] = None
+    Height: typing.Optional[int] = None
+    Width: typing.Optional[int] = None
 
 
 @attr.s(auto_attribs=True)
@@ -32,6 +32,7 @@ class ReceiptSpecificationType:
 @attr.s(auto_attribs=True)
 class TransactionReferenceType:
     CustomerContext: typing.Optional[str] = None
+    TransactionIdentifier: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
@@ -43,10 +44,10 @@ class RequestType:
 
 @attr.s(auto_attribs=True)
 class AlternateDeliveryAddressAddressType:
-    AddressLine: typing.Optional[str] = None
+    AddressLine: typing.Optional[typing.List[str]] = None
     City: typing.Optional[str] = None
     StateProvinceCode: typing.Optional[str] = None
-    PostalCode: typing.Optional[str] = None
+    PostalCode: typing.Optional[int] = None
     CountryCode: typing.Optional[str] = None
     ResidentialAddressIndicator: typing.Optional[str] = None
     Town: typing.Optional[str] = None
@@ -65,7 +66,7 @@ class DGSignatoryInfoType:
     Name: typing.Optional[str] = None
     Title: typing.Optional[str] = None
     Place: typing.Optional[str] = None
-    Date: typing.Optional[str] = None
+    Date: typing.Optional[int] = None
     ShipperDeclaration: typing.Optional[str] = None
     UploadOnlyIndicator: typing.Optional[str] = None
 
@@ -138,7 +139,7 @@ class CommodityType:
 @attr.s(auto_attribs=True)
 class WeightType:
     UnitOfMeasurement: typing.Optional[LabelImageFormatType] = jstruct.JStruct[LabelImageFormatType]
-    Weight: typing.Optional[str] = None
+    Weight: typing.Optional[int] = None
 
 
 @attr.s(auto_attribs=True)
@@ -153,6 +154,13 @@ class HazMatPackageInformationType:
 class CodType:
     CODFundsCode: typing.Optional[int] = None
     CODAmount: typing.Optional[InvoiceLineTotalType] = jstruct.JStruct[InvoiceLineTotalType]
+
+
+@attr.s(auto_attribs=True)
+class DeclaredValueType:
+    Type: typing.Optional[LabelImageFormatType] = jstruct.JStruct[LabelImageFormatType]
+    CurrencyCode: typing.Optional[str] = None
+    MonetaryValue: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
@@ -223,7 +231,7 @@ class PackageServiceOptionsNotificationType:
 @attr.s(auto_attribs=True)
 class PackageServiceOptionsType:
     DeliveryConfirmation: typing.Optional[PackageServiceOptionsDeliveryConfirmationType] = jstruct.JStruct[PackageServiceOptionsDeliveryConfirmationType]
-    DeclaredValue: typing.Optional[InvoiceLineTotalType] = jstruct.JStruct[InvoiceLineTotalType]
+    DeclaredValue: typing.Optional[DeclaredValueType] = jstruct.JStruct[DeclaredValueType]
     COD: typing.Optional[CodType] = jstruct.JStruct[CodType]
     AccessPointCOD: typing.Optional[InvoiceLineTotalType] = jstruct.JStruct[InvoiceLineTotalType]
     ShipperReleaseIndicator: typing.Optional[str] = None
@@ -232,9 +240,10 @@ class PackageServiceOptionsType:
     DryIce: typing.Optional[DryIceType] = jstruct.JStruct[DryIceType]
     UPSPremiumCareIndicator: typing.Optional[str] = None
     ProactiveIndicator: typing.Optional[str] = None
-    PackageIdentifier: typing.Optional[str] = None
+    PackageIdentifier: typing.Optional[int] = None
     ClinicalTrialsID: typing.Optional[str] = None
     RefrigerationIndicator: typing.Optional[str] = None
+    PackedByStoreIndicator: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
@@ -287,12 +296,22 @@ class BillReceiverType:
 
 
 @attr.s(auto_attribs=True)
+class CreditCardAddressType:
+    AddressLine: typing.Optional[str] = None
+    City: typing.Optional[str] = None
+    StateProvinceCode: typing.Optional[str] = None
+    PostalCode: typing.Optional[str] = None
+    CountryCode: typing.Optional[str] = None
+    Town: typing.Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
 class CreditCardType:
     Type: typing.Optional[str] = None
     Number: typing.Optional[str] = None
     ExpirationDate: typing.Optional[int] = None
     SecurityCode: typing.Optional[int] = None
-    Address: typing.Optional[AlternateDeliveryAddressAddressType] = jstruct.JStruct[AlternateDeliveryAddressAddressType]
+    Address: typing.Optional[CreditCardAddressType] = jstruct.JStruct[CreditCardAddressType]
 
 
 @attr.s(auto_attribs=True)
@@ -305,8 +324,13 @@ class BillShipperType:
 @attr.s(auto_attribs=True)
 class BillThirdPartyType:
     AccountNumber: typing.Optional[str] = None
+    Name: typing.Optional[str] = None
+    AttentionName: typing.Optional[str] = None
+    VatTaxID: typing.Optional[str] = None
+    TaxIDType: typing.Optional[str] = None
     CertifiedElectronicMail: typing.Optional[str] = None
     InterchangeSystemCode: typing.Optional[str] = None
+    SuppressPrintInvoiceIndicator: typing.Optional[str] = None
     Address: typing.Optional[FRSPaymentInformationAddressType] = jstruct.JStruct[FRSPaymentInformationAddressType]
 
 
@@ -321,7 +345,7 @@ class ShipmentChargeType:
 
 @attr.s(auto_attribs=True)
 class PaymentInformationType:
-    ShipmentCharge: typing.Optional[typing.List[ShipmentChargeType]] = jstruct.JList[ShipmentChargeType]
+    ShipmentCharge: typing.Optional[ShipmentChargeType] = jstruct.JStruct[ShipmentChargeType]
     SplitDutyVATIndicator: typing.Optional[str] = None
 
 
@@ -350,8 +374,11 @@ class ShipFromType:
     CompanyDisplayableName: typing.Optional[str] = None
     TaxIdentificationNumber: typing.Optional[int] = None
     TaxId: typing.Optional[LabelImageFormatType] = jstruct.JStruct[LabelImageFormatType]
+    TaxIDType: typing.Optional[LabelImageFormatType] = jstruct.JStruct[LabelImageFormatType]
     Phone: typing.Optional[ShipFromPhoneType] = jstruct.JStruct[ShipFromPhoneType]
+    ShipFromAccountNumber: typing.Optional[str] = None
     FaxNumber: typing.Optional[int] = None
+    EMailAddress: typing.Optional[str] = None
     Address: typing.Optional[AlternateDeliveryAddressAddressType] = jstruct.JStruct[AlternateDeliveryAddressAddressType]
     VendorInfo: typing.Optional[VendorInfoType] = jstruct.JStruct[VendorInfoType]
 
@@ -373,6 +400,7 @@ class ShipToType:
     EMailAddress: typing.Optional[str] = None
     Address: typing.Optional[AlternateDeliveryAddressAddressType] = jstruct.JStruct[AlternateDeliveryAddressAddressType]
     LocationID: typing.Optional[str] = None
+    Residential: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
@@ -392,27 +420,27 @@ class ShipmentServiceOptionsDeliveryConfirmationType:
 
 @attr.s(auto_attribs=True)
 class BlanketPeriodType:
-    BeginDate: typing.Optional[str] = None
-    EndDate: typing.Optional[str] = None
+    BeginDate: typing.Optional[int] = None
+    EndDate: typing.Optional[int] = None
 
 
 @attr.s(auto_attribs=True)
 class CN22ContentType:
-    CN22ContentQuantity: typing.Optional[str] = None
+    CN22ContentQuantity: typing.Optional[int] = None
     CN22ContentDescription: typing.Optional[str] = None
     CN22ContentWeight: typing.Optional[WeightType] = jstruct.JStruct[WeightType]
-    CN22ContentTotalValue: typing.Optional[str] = None
+    CN22ContentTotalValue: typing.Optional[int] = None
     CN22ContentCurrencyCode: typing.Optional[str] = None
     CN22ContentCountryOfOrigin: typing.Optional[str] = None
-    CN22ContentTariffNumber: typing.Optional[str] = None
+    CN22ContentTariffNumber: typing.Optional[int] = None
 
 
 @attr.s(auto_attribs=True)
 class CN22FormType:
-    LabelSize: typing.Optional[str] = None
-    PrintsPerPage: typing.Optional[str] = None
+    LabelSize: typing.Optional[int] = None
+    PrintsPerPage: typing.Optional[int] = None
     LabelPrintType: typing.Optional[str] = None
-    CN22Type: typing.Optional[str] = None
+    CN22Type: typing.Optional[int] = None
     CN22OtherDescription: typing.Optional[str] = None
     FoldHereText: typing.Optional[str] = None
     CN22Content: typing.Optional[CN22ContentType] = jstruct.JStruct[CN22ContentType]
@@ -428,19 +456,29 @@ class ForwardAgentType:
 @attr.s(auto_attribs=True)
 class IntermediateConsigneeType:
     CompanyName: typing.Optional[str] = None
-    Address: typing.Optional[AlternateDeliveryAddressAddressType] = jstruct.JStruct[AlternateDeliveryAddressAddressType]
+    Address: typing.Optional[CreditCardAddressType] = jstruct.JStruct[CreditCardAddressType]
 
 
 @attr.s(auto_attribs=True)
 class ProducerType:
     Option: typing.Optional[str] = None
     CompanyName: typing.Optional[str] = None
-    TaxIdentificationNumber: typing.Optional[str] = None
+    TaxIdentificationNumber: typing.Optional[int] = None
     Address: typing.Optional[AlternateDeliveryAddressAddressType] = jstruct.JStruct[AlternateDeliveryAddressAddressType]
     AttentionName: typing.Optional[str] = None
     Phone: typing.Optional[ShipToPhoneType] = jstruct.JStruct[ShipToPhoneType]
     EMailAddress: typing.Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
+class ContactsSoldToType:
     Name: typing.Optional[str] = None
+    AttentionName: typing.Optional[str] = None
+    TaxIdentificationNumber: typing.Optional[int] = None
+    Phone: typing.Optional[ShipToPhoneType] = jstruct.JStruct[ShipToPhoneType]
+    Option: typing.Optional[str] = None
+    Address: typing.Optional[AlternateDeliveryAddressAddressType] = jstruct.JStruct[AlternateDeliveryAddressAddressType]
+    EMailAddress: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
@@ -456,12 +494,12 @@ class ContactsType:
     UltimateConsignee: typing.Optional[UltimateConsigneeType] = jstruct.JStruct[UltimateConsigneeType]
     IntermediateConsignee: typing.Optional[IntermediateConsigneeType] = jstruct.JStruct[IntermediateConsigneeType]
     Producer: typing.Optional[ProducerType] = jstruct.JStruct[ProducerType]
-    SoldTo: typing.Optional[ProducerType] = jstruct.JStruct[ProducerType]
+    SoldTo: typing.Optional[ContactsSoldToType] = jstruct.JStruct[ContactsSoldToType]
 
 
 @attr.s(auto_attribs=True)
 class DiscountType:
-    MonetaryValue: typing.Optional[str] = None
+    MonetaryValue: typing.Optional[int] = None
 
 
 @attr.s(auto_attribs=True)
@@ -470,7 +508,7 @@ class ShipperFiledType:
     Description: typing.Optional[str] = None
     PreDepartureITNNumber: typing.Optional[str] = None
     ExemptionLegend: typing.Optional[str] = None
-    EEIShipmentReferenceNumber: typing.Optional[str] = None
+    EEIShipmentReferenceNumber: typing.Optional[int] = None
 
 
 @attr.s(auto_attribs=True)
@@ -480,7 +518,7 @@ class UPSFiledType:
 
 @attr.s(auto_attribs=True)
 class EEIFilingOptionType:
-    Code: typing.Optional[str] = None
+    Code: typing.Optional[int] = None
     EMailAddress: typing.Optional[str] = None
     Description: typing.Optional[str] = None
     UPSFiled: typing.Optional[UPSFiledType] = jstruct.JStruct[UPSFiledType]
@@ -488,9 +526,16 @@ class EEIFilingOptionType:
 
 
 @attr.s(auto_attribs=True)
+class InternationalFormsLicenseType:
+    Number: typing.Optional[str] = None
+    Date: typing.Optional[str] = None
+    ExceptionCode: typing.Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
 class OtherChargesType:
-    MonetaryValue: typing.Optional[str] = None
-    Description: typing.Optional[str] = None
+    MonetaryValue: typing.Optional[int] = None
+    Description: typing.Optional[int] = None
 
 
 @attr.s(auto_attribs=True)
@@ -506,7 +551,7 @@ class DDTCInformationType:
 
 
 @attr.s(auto_attribs=True)
-class LicenseType:
+class EEIInformationLicenseType:
     Number: typing.Optional[str] = None
     Code: typing.Optional[str] = None
     LicenseLineValue: typing.Optional[str] = None
@@ -516,7 +561,7 @@ class LicenseType:
 @attr.s(auto_attribs=True)
 class EEIInformationType:
     ExportInformation: typing.Optional[str] = None
-    License: typing.Optional[LicenseType] = jstruct.JStruct[LicenseType]
+    License: typing.Optional[EEIInformationLicenseType] = jstruct.JStruct[EEIInformationLicenseType]
     DDTCInformation: typing.Optional[DDTCInformationType] = jstruct.JStruct[DDTCInformationType]
 
 
@@ -528,7 +573,7 @@ class ExcludeFromFormType:
 @attr.s(auto_attribs=True)
 class PackageAssociatedType:
     PackageNumber: typing.Optional[str] = None
-    ProductAmount: typing.Optional[str] = None
+    ProductAmount: typing.Optional[int] = None
     ProductNotes: typing.Optional[str] = None
 
 
@@ -539,32 +584,32 @@ class PackingListInfoType:
 
 @attr.s(auto_attribs=True)
 class ScheduleBType:
-    Number: typing.Optional[str] = None
-    Quantity: typing.Optional[str] = None
+    Number: typing.Optional[int] = None
+    Quantity: typing.Optional[int] = None
     UnitOfMeasurement: typing.Optional[LabelImageFormatType] = jstruct.JStruct[LabelImageFormatType]
 
 
 @attr.s(auto_attribs=True)
 class UnitType:
-    Number: typing.Optional[str] = None
-    Value: typing.Optional[str] = None
+    Number: typing.Optional[int] = None
+    Value: typing.Optional[int] = None
     UnitOfMeasurement: typing.Optional[LabelImageFormatType] = jstruct.JStruct[LabelImageFormatType]
 
 
 @attr.s(auto_attribs=True)
-class ProductType:
+class InternationalFormsProductType:
     Description: typing.Optional[str] = None
     Unit: typing.Optional[UnitType] = jstruct.JStruct[UnitType]
-    CommodityCode: typing.Optional[str] = None
-    PartNumber: typing.Optional[str] = None
+    CommodityCode: typing.Optional[int] = None
+    PartNumber: typing.Optional[int] = None
     OriginCountryCode: typing.Optional[str] = None
     JointProductionIndicator: typing.Optional[str] = None
     NetCostCode: typing.Optional[str] = None
     NetCostDateRange: typing.Optional[BlanketPeriodType] = jstruct.JStruct[BlanketPeriodType]
     PreferenceCriteria: typing.Optional[str] = None
     ProducerInfo: typing.Optional[str] = None
-    MarksAndNumbers: typing.Optional[str] = None
-    NumberOfPackagesPerCommodity: typing.Optional[str] = None
+    MarksAndNumbers: typing.Optional[int] = None
+    NumberOfPackagesPerCommodity: typing.Optional[int] = None
     ProductWeight: typing.Optional[WeightType] = jstruct.JStruct[WeightType]
     VehicleID: typing.Optional[str] = None
     ScheduleB: typing.Optional[ScheduleBType] = jstruct.JStruct[ScheduleBType]
@@ -602,11 +647,12 @@ class InternationalFormsType:
     CN22Form: typing.Optional[CN22FormType] = jstruct.JStruct[CN22FormType]
     AdditionalDocumentIndicator: typing.Optional[str] = None
     FormGroupIdName: typing.Optional[str] = None
+    SEDFilingOption: typing.Optional[str] = None
     EEIFilingOption: typing.Optional[EEIFilingOptionType] = jstruct.JStruct[EEIFilingOptionType]
     Contacts: typing.Optional[ContactsType] = jstruct.JStruct[ContactsType]
-    Product: typing.Optional[typing.List[ProductType]] = jstruct.JList[ProductType]
+    Product: typing.Optional[typing.List[InternationalFormsProductType]] = jstruct.JList[InternationalFormsProductType]
     InvoiceNumber: typing.Optional[str] = None
-    InvoiceDate: typing.Optional[str] = None
+    InvoiceDate: typing.Optional[int] = None
     PurchaseOrderNumber: typing.Optional[str] = None
     TermsOfShipment: typing.Optional[str] = None
     ReasonForExport: typing.Optional[str] = None
@@ -618,10 +664,10 @@ class InternationalFormsType:
     OtherCharges: typing.Optional[OtherChargesType] = jstruct.JStruct[OtherChargesType]
     CurrencyCode: typing.Optional[str] = None
     BlanketPeriod: typing.Optional[BlanketPeriodType] = jstruct.JStruct[BlanketPeriodType]
-    ExportDate: typing.Optional[str] = None
+    ExportDate: typing.Optional[int] = None
     ExportingCarrier: typing.Optional[str] = None
     CarrierID: typing.Optional[str] = None
-    InBondCode: typing.Optional[str] = None
+    InBondCode: typing.Optional[int] = None
     EntryNumber: typing.Optional[str] = None
     PointOfOrigin: typing.Optional[str] = None
     PointOfOriginType: typing.Optional[str] = None
@@ -635,6 +681,8 @@ class InternationalFormsType:
     OverridePaperlessIndicator: typing.Optional[str] = None
     ShipperMemo: typing.Optional[str] = None
     HazardousMaterialsIndicator: typing.Optional[str] = None
+    License: typing.Optional[InternationalFormsLicenseType] = jstruct.JStruct[InternationalFormsLicenseType]
+    ECCNNumber: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
@@ -716,6 +764,7 @@ class ShipmentServiceOptionsType:
     RestrictedArticles: typing.Optional[RestrictedArticlesType] = jstruct.JStruct[RestrictedArticlesType]
     InsideDelivery: typing.Optional[str] = None
     ItemDisposal: typing.Optional[str] = None
+    MasterCartonIndicator: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
@@ -732,10 +781,96 @@ class ShipperType:
 
 
 @attr.s(auto_attribs=True)
+class ChildProductType:
+    Code: typing.Optional[str] = None
+    Description: typing.Optional[str] = None
+    UnitPrice: typing.Optional[int] = None
+    TotalValue: typing.Optional[int] = None
+    NumberOfUnits: typing.Optional[int] = None
+    ProductNumber: typing.Optional[str] = None
+    CountryOriginCode: typing.Optional[str] = None
+    UnitOfMeasure: typing.Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
+class ChildType:
+    Product: typing.Optional[typing.List[ChildProductType]] = jstruct.JList[ChildProductType]
+    Type: typing.Optional[str] = None
+    USI: typing.Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
+class NotificationBeforeDeliveryType:
+    RequestType: typing.Optional[str] = None
+    MediaTypeCode: typing.Optional[str] = None
+    Language: typing.Optional[str] = None
+    Dialect: typing.Optional[str] = None
+    ShipFromCompanyName: typing.Optional[str] = None
+    CompanyName: typing.Optional[str] = None
+    Phone: typing.Optional[ShipToPhoneType] = jstruct.JStruct[ShipToPhoneType]
+    Name: typing.Optional[str] = None
+    SubjectLine: typing.Optional[str] = None
+    Memo: typing.Optional[str] = None
+    EmailAddress: typing.Optional[str] = None
+    AlternateEmailAddress: typing.Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
+class PickupType:
+    Name: typing.Optional[str] = None
+    AttentionName: typing.Optional[str] = None
+    Phone: typing.Optional[ShipToPhoneType] = jstruct.JStruct[ShipToPhoneType]
+    Address: typing.Optional[CreditCardAddressType] = jstruct.JStruct[CreditCardAddressType]
+    EMailAddress: typing.Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
+class MasterSoldToType:
+    Name: typing.Optional[str] = None
+    AttentionName: typing.Optional[str] = None
+    CompanyDisplayableName: typing.Optional[str] = None
+    TaxIdentificationNumber: typing.Optional[int] = None
+    TaxIDType: typing.Optional[LabelImageFormatType] = jstruct.JStruct[LabelImageFormatType]
+    Phone: typing.Optional[ShipToPhoneType] = jstruct.JStruct[ShipToPhoneType]
+    FaxNumber: typing.Optional[str] = None
+    Address: typing.Optional[CreditCardAddressType] = jstruct.JStruct[CreditCardAddressType]
+    EMailAddress: typing.Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
+class TradeComplianceDetailsType:
+    TermsOfShipment: typing.Optional[str] = None
+    ReasonForExport: typing.Optional[str] = None
+    Comments: typing.Optional[str] = None
+    DeclarationStatement: typing.Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
+class MasterType:
+    SoldToSameAsShipTo: typing.Optional[str] = None
+    Pickup: typing.Optional[PickupType] = jstruct.JStruct[PickupType]
+    SoldTo: typing.Optional[MasterSoldToType] = jstruct.JStruct[MasterSoldToType]
+    TradeComplianceDetails: typing.Optional[TradeComplianceDetailsType] = jstruct.JStruct[TradeComplianceDetailsType]
+    NotificationBeforeDelivery: typing.Optional[NotificationBeforeDeliveryType] = jstruct.JStruct[NotificationBeforeDeliveryType]
+    UomType: typing.Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
+class TradeDirectType:
+    GeneralDescriptionOfGoods: typing.Optional[str] = None
+    Master: typing.Optional[MasterType] = jstruct.JStruct[MasterType]
+    Child: typing.Optional[ChildType] = jstruct.JStruct[ChildType]
+    CurrencyCode: typing.Optional[str] = None
+    ShipmentType: typing.Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
 class ShipmentType:
     Description: typing.Optional[str] = None
+    ShipmentDate: typing.Optional[int] = None
     ReturnService: typing.Optional[LabelImageFormatType] = jstruct.JStruct[LabelImageFormatType]
     DocumentsOnlyIndicator: typing.Optional[str] = None
+    TradeDirect: typing.Optional[TradeDirectType] = jstruct.JStruct[TradeDirectType]
     Shipper: typing.Optional[ShipperType] = jstruct.JStruct[ShipperType]
     ShipTo: typing.Optional[ShipToType] = jstruct.JStruct[ShipToType]
     AlternateDeliveryAddress: typing.Optional[AlternateDeliveryAddressType] = jstruct.JStruct[AlternateDeliveryAddressType]
@@ -752,14 +887,15 @@ class ShipmentType:
     Service: typing.Optional[LabelImageFormatType] = jstruct.JStruct[LabelImageFormatType]
     InvoiceLineTotal: typing.Optional[InvoiceLineTotalType] = jstruct.JStruct[InvoiceLineTotalType]
     NumOfPiecesInShipment: typing.Optional[int] = None
-    USPSEndorsement: typing.Optional[str] = None
+    USPSEndorsement: typing.Optional[int] = None
     MILabelCN22Indicator: typing.Optional[str] = None
     SubClassification: typing.Optional[str] = None
-    CostCenter: typing.Optional[str] = None
+    CostCenter: typing.Optional[int] = None
     CostCenterBarcodeIndicator: typing.Optional[str] = None
-    PackageID: typing.Optional[str] = None
+    PackageID: typing.Optional[int] = None
     PackageIDBarcodeIndicator: typing.Optional[str] = None
     IrregularIndicator: typing.Optional[str] = None
+    InformationSourceCode: typing.Optional[str] = None
     ShipmentIndicationType: typing.Optional[typing.List[LabelImageFormatType]] = jstruct.JList[LabelImageFormatType]
     MIDualReturnShipmentKey: typing.Optional[str] = None
     RatingMethodRequestedIndicator: typing.Optional[str] = None
@@ -771,7 +907,6 @@ class ShipmentType:
     MasterCartonIndicator: typing.Optional[str] = None
     BarCodeImageIndicator: typing.Optional[str] = None
     BarCodeAndLabelIndicator: typing.Optional[str] = None
-    ShipmentDate: typing.Optional[int] = None
     Package: typing.Optional[typing.List[PackageType]] = jstruct.JList[PackageType]
 
 

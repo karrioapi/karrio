@@ -24,7 +24,7 @@ class RequestType:
 
 @attr.s(auto_attribs=True)
 class AlternateDeliveryAddressAddressType:
-    AddressLine: typing.Optional[str] = None
+    AddressLine: typing.Optional[typing.List[str]] = None
     City: typing.Optional[str] = None
     StateProvinceCode: typing.Optional[str] = None
     PostalCode: typing.Optional[int] = None
@@ -41,8 +41,8 @@ class AlternateDeliveryAddressType:
 
 @attr.s(auto_attribs=True)
 class PickupType:
-    Date: typing.Optional[str] = None
-    Time: typing.Optional[str] = None
+    Date: typing.Optional[int] = None
+    Time: typing.Optional[int] = None
 
 
 @attr.s(auto_attribs=True)
@@ -195,12 +195,18 @@ class PackageServiceOptionsType:
 
 
 @attr.s(auto_attribs=True)
+class PackageShipmentRatingOptionsType:
+    TPFCNegotiatedRatesIndicator: typing.Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
 class UPSPremierType:
     Category: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
 class PackageType:
+    SimpleRate: typing.Optional[CustomerClassificationType] = jstruct.JStruct[CustomerClassificationType]
     PackagingType: typing.Optional[CustomerClassificationType] = jstruct.JStruct[CustomerClassificationType]
     Dimensions: typing.Optional[DimensionsType] = jstruct.JStruct[DimensionsType]
     DimWeight: typing.Optional[WeightType] = jstruct.JStruct[WeightType]
@@ -212,6 +218,7 @@ class PackageType:
     UPSPremier: typing.Optional[UPSPremierType] = jstruct.JStruct[UPSPremierType]
     OversizeIndicator: typing.Optional[str] = None
     MinimumBillableWeightIndicator: typing.Optional[str] = None
+    ShipmentRatingOptions: typing.Optional[PackageShipmentRatingOptionsType] = jstruct.JStruct[PackageShipmentRatingOptionsType]
 
 
 @attr.s(auto_attribs=True)
@@ -231,9 +238,21 @@ class BillShipperType:
 
 
 @attr.s(auto_attribs=True)
+class BillThirdPartyAddressType:
+    AddressLine: typing.Optional[str] = None
+    City: typing.Optional[str] = None
+    StateProvinceCode: typing.Optional[str] = None
+    PostalCode: typing.Optional[int] = None
+    CountryCode: typing.Optional[str] = None
+    ResidentialAddressIndicator: typing.Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
 class BillThirdPartyType:
+    AttentionName: typing.Optional[str] = None
+    Name: typing.Optional[str] = None
     AccountNumber: typing.Optional[str] = None
-    Address: typing.Optional[FRSPaymentInformationAddressType] = jstruct.JStruct[FRSPaymentInformationAddressType]
+    Address: typing.Optional[BillThirdPartyAddressType] = jstruct.JStruct[BillThirdPartyAddressType]
 
 
 @attr.s(auto_attribs=True)
@@ -247,7 +266,7 @@ class ShipmentChargeType:
 
 @attr.s(auto_attribs=True)
 class PaymentDetailsType:
-    ShipmentCharge: typing.Optional[ShipmentChargeType] = jstruct.JStruct[ShipmentChargeType]
+    ShipmentCharge: typing.Optional[typing.List[ShipmentChargeType]] = jstruct.JList[ShipmentChargeType]
     SplitDutyVATIndicator: typing.Optional[str] = None
 
 
@@ -259,7 +278,7 @@ class PromotionalDiscountInformationType:
 
 @attr.s(auto_attribs=True)
 class ShipFromAddressType:
-    AddressLine: typing.Optional[str] = None
+    AddressLine: typing.Optional[typing.List[str]] = None
     City: typing.Optional[str] = None
     StateProvinceCode: typing.Optional[str] = None
     PostalCode: typing.Optional[int] = None
@@ -282,7 +301,7 @@ class ShipToType:
 
 
 @attr.s(auto_attribs=True)
-class ShipmentRatingOptionsType:
+class ShipmentShipmentRatingOptionsType:
     NegotiatedRatesIndicator: typing.Optional[str] = None
     FRSShipmentIndicator: typing.Optional[str] = None
     RateChartIndicator: typing.Optional[str] = None
@@ -345,6 +364,7 @@ class ShipmentServiceOptionsType:
 @attr.s(auto_attribs=True)
 class ShipmentType:
     OriginRecordTransactionTimestamp: typing.Optional[str] = None
+    ShipmentDate: typing.Optional[int] = None
     Shipper: typing.Optional[ShipType] = jstruct.JStruct[ShipType]
     ShipTo: typing.Optional[ShipToType] = jstruct.JStruct[ShipToType]
     ShipFrom: typing.Optional[ShipType] = jstruct.JStruct[ShipType]
@@ -360,7 +380,7 @@ class ShipmentType:
     DocumentsOnlyIndicator: typing.Optional[str] = None
     Package: typing.Optional[typing.List[PackageType]] = jstruct.JList[PackageType]
     ShipmentServiceOptions: typing.Optional[ShipmentServiceOptionsType] = jstruct.JStruct[ShipmentServiceOptionsType]
-    ShipmentRatingOptions: typing.Optional[ShipmentRatingOptionsType] = jstruct.JStruct[ShipmentRatingOptionsType]
+    ShipmentRatingOptions: typing.Optional[ShipmentShipmentRatingOptionsType] = jstruct.JStruct[ShipmentShipmentRatingOptionsType]
     InvoiceLineTotal: typing.Optional[InvoiceLineTotalType] = jstruct.JStruct[InvoiceLineTotalType]
     RatingMethodRequestedIndicator: typing.Optional[str] = None
     TaxInformationIndicator: typing.Optional[str] = None

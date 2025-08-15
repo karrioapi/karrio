@@ -9,6 +9,7 @@ import { Button } from "@karrio/ui/components/ui/button";
 import { Input } from "@karrio/ui/components/ui/input";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import React, { useMemo, useState } from "react";
+import { p } from '@karrio/lib';
 
 export default function RateSheetsPage() {
   const Component = (): JSX.Element => {
@@ -52,8 +53,8 @@ export default function RateSheetsPage() {
         {/* Tabs mimic */}
         <div className="flex items-center border-b border-gray-200">
           <nav className="flex space-x-8 overflow-x-auto">
-            <AppLink href="/connections" className="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Your Accounts</AppLink>
-            <AppLink href="/connections/system" className="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">System Accounts</AppLink>
+            <AppLink href={`/connections`} className="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Your Accounts</AppLink>
+            <AppLink href={`/connections/system`} className="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">System Accounts</AppLink>
             <span className="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium border-purple-500 text-purple-600">Rate Sheets</span>
           </nav>
         </div>

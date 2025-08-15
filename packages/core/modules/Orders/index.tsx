@@ -55,12 +55,8 @@ export default function OrdersPage() {
       setVariablesToURL: true,
       preloadNextPage: true,
     });
-    const {
-      query: { data: { user_connections } = {} },
-    } = useCarrierConnections();
-    const {
-      query: { data: { system_connections } = {} },
-    } = useSystemConnections();
+    const { query: userConnQuery, user_carrier_connections: user_connections } = useCarrierConnections();
+    const { query: sysConnQuery, system_connections } = useSystemConnections();
     const {
       query: { data: { orders } = {}, ...query },
       filter,
@@ -82,14 +78,14 @@ export default function OrdersPage() {
       (shipment?.rates || [])[0] ||
       shipment;
     const getCarrier = (rate?: ShipmentType["rates"][0]) =>
-      user_connections?.find(
+      (user_connections || []).find(
         (_) =>
-          _.id === rate?.meta?.carrier_connection_id ||
+          _.id === (rate?.meta as any)?.carrier_connection_id ||
           _.carrier_id === rate?.carrier_id,
       ) ||
-      system_connections?.find(
+      (system_connections || []).find(
         (_) =>
-          _.id === rate?.meta?.carrier_connection_id ||
+          _.id === (rate?.meta as any)?.carrier_connection_id ||
           _.carrier_id === rate?.carrier_id,
       );
     const updatedSelection = (

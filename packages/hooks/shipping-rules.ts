@@ -263,21 +263,11 @@ const DEFAULT_STATE = {
   description: "",
   priority: 1,
   is_active: true,
-  conditions: {
-    destination: null,
-    carrier_id: null,
-    service: null,
-    weight: null,
-    rate_comparison: null,
-    address_type: null,
-    value: null,
-    metadata: null,
-  },
-  actions: {
-    select_service: null,
-    block_service: null,
-  },
-  metadata: null,
+  // Use empty objects instead of fields set to null so we can
+  // reliably detect which sections are actually active/populated.
+  conditions: {},
+  actions: {},
+  metadata: {},
 } as ShippingRuleDataType;
 
 export function useShippingRuleForm({ id }: { id?: string } = {}) {
