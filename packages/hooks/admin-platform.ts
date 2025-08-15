@@ -37,7 +37,11 @@ export function useConfigMutation() {
   const queryClient = useQueryClient();
 
   const invalidateCache = () => {
-    queryClient.invalidateQueries(['admin_configs']);
+    // Invalidate all related queries to ensure data refresh
+    queryClient.invalidateQueries({ queryKey: ['admin_configs'] });
+    queryClient.invalidateQueries({ queryKey: ['admin_system_usage'] });
+    // Force refetch to ensure UI updates immediately
+    queryClient.refetchQueries({ queryKey: ['admin_configs'] });
   };
 
   const updateConfigs = useAuthenticatedMutation({

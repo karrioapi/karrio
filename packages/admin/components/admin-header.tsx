@@ -17,6 +17,7 @@ import React from "react";
 
 export function AdminHeader() {
   const pathname = usePathname();
+  const { basePath } = useAppMode();
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
 
@@ -44,7 +45,7 @@ export function AdminHeader() {
             </Button>
 
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2">
+            <Link href={`${basePath}/`} className="flex items-center gap-2">
               <Image
                 src={p`/icon.svg`}
                 width={18}

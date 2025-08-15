@@ -168,7 +168,13 @@ export function useWorkflowMutation() {
   const queryClient = useQueryClient();
   const karrio = useKarrio();
   const invalidateCache = () => {
-    queryClient.invalidateQueries(["workflows"]);
+    // Invalidate all related queries to ensure data refresh
+    queryClient.invalidateQueries({ queryKey: ["workflows"] });
+    queryClient.invalidateQueries({ queryKey: ["workflow_events"] });
+    queryClient.invalidateQueries({ queryKey: ["workflow_connections"] });
+    queryClient.invalidateQueries({ queryKey: ["workflow_actions"] });
+    // Force refetch to ensure UI updates immediately
+    queryClient.refetchQueries({ queryKey: ["workflows"] });
   };
 
   // Mutations

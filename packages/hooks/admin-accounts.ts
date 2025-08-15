@@ -140,8 +140,13 @@ export function useOrganizationAccountMutation() {
   const queryClient = useQueryClient();
 
   const invalidateCache = () => {
-    queryClient.invalidateQueries(['admin_organization_accounts']);
-    queryClient.invalidateQueries(['admin_organization_account']);
+    // Invalidate all related queries to ensure data refresh
+    queryClient.invalidateQueries({ queryKey: ['admin_organization_accounts'] });
+    queryClient.invalidateQueries({ queryKey: ['admin_organization_account'] });
+    queryClient.invalidateQueries({ queryKey: ['admin_organization_account_details'] });
+    queryClient.invalidateQueries({ queryKey: ['admin_system_usage'] });
+    // Force refetch to ensure UI updates immediately
+    queryClient.refetchQueries({ queryKey: ['admin_organization_accounts'] });
   };
 
   const createOrganizationAccount = useAuthenticatedMutation({

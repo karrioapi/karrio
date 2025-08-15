@@ -55,7 +55,11 @@ export function useUserMutation() {
   const karrio = useKarrio();
   const queryClient = useQueryClient();
   const invalidateCache = () => {
-    queryClient.invalidateQueries(["user"]);
+    // Invalidate all related queries to ensure data refresh
+    queryClient.invalidateQueries({ queryKey: ["user"] });
+    queryClient.invalidateQueries({ queryKey: ["organizations"] });
+    // Force refetch to ensure UI updates immediately
+    queryClient.refetchQueries({ queryKey: ["user"] });
   };
 
   // Mutations

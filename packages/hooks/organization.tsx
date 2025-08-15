@@ -319,7 +319,10 @@ export function useOrganizationInvitation(guid?: string) {
   const karrio = useKarrio();
   const queryClient = useQueryClient();
   const invalidateCache = () => {
-    queryClient.invalidateQueries(["organizations"]);
+    // Invalidate all related queries to ensure data refresh
+    queryClient.invalidateQueries({ queryKey: ["organizations"] });
+    // Force refetch to ensure UI updates immediately
+    queryClient.refetchQueries({ queryKey: ["organizations"] });
   };
 
   // Queries

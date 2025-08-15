@@ -186,7 +186,8 @@ class UsageStatType:
     def parse(value: dict, label: str = None) -> "UsageStatType":
         return UsageStatType(**{
             **(dict(label=label) if label else {}),
-            **{k: v for k, v in value.items() if k in UsageStatType.__annotations__}
+            **{k: v for k, v in value.items() if k in UsageStatType.__annotations__},
+            "amount": lib.to_decimal(value.get("amount")),
         })
 
 
@@ -195,6 +196,7 @@ class UsageFilter(BaseInput):
     date_after: typing.Optional[str] = strawberry.UNSET
     date_before: typing.Optional[str] = strawberry.UNSET
     omit: typing.Optional[typing.List[str]] = strawberry.UNSET
+    surcharge_id: typing.Optional[str] = strawberry.UNSET
 
 
 @dataclasses.dataclass

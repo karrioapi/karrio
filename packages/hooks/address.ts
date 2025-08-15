@@ -73,8 +73,11 @@ export function useAddressTemplateMutation() {
   const karrio = useKarrio();
   const queryClient = useQueryClient();
   const invalidateCache = () => {
-    queryClient.invalidateQueries(['addresses']);
-    queryClient.invalidateQueries(['default_templates']);
+    // Invalidate all related queries to ensure data refresh
+    queryClient.invalidateQueries({ queryKey: ['addresses'] });
+    queryClient.invalidateQueries({ queryKey: ['default_templates'] });
+    // Force refetch to ensure UI updates immediately
+    queryClient.refetchQueries({ queryKey: ['addresses'] });
   };
 
   const createAddressTemplate = useAuthenticatedMutation({

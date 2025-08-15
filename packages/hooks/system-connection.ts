@@ -28,7 +28,14 @@ export function useSystemConnections(usageFilter?: any) {
 export function useSystemConnectionMutation() {
   const karrio = useKarrio();
   const queryClient = useQueryClient();
-  const invalidateCache = () => { queryClient.invalidateQueries(['system_connections']) };
+  const invalidateCache = () => {
+    // Invalidate all related queries to ensure data refresh
+    queryClient.invalidateQueries({ queryKey: ['system_connections'] });
+    queryClient.invalidateQueries({ queryKey: ['admin_system_connections'] });
+    queryClient.invalidateQueries({ queryKey: ['user_connections'] });
+    // Force refetch to ensure UI updates immediately
+    queryClient.refetchQueries({ queryKey: ['system_connections'] });
+  };
 
   // Mutations
   const updateSystemConnection = useAuthenticatedMutation({

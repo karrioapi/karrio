@@ -662,8 +662,8 @@ export default function AddonsPage() {
             </Card>
             <Card className="border shadow-none">
               <CardContent className="p-4">
-                <p className="text-sm text-gray-600">Coverage</p>
-                <p className="text-2xl font-semibold text-gray-900">{addonsList.filter(a => !a.carriers || a.carriers.length === 0).length} Universal</p>
+                <p className="text-sm text-gray-600">System Accounts</p>
+                <p className="text-2xl font-semibold text-gray-900">{system_carrier_connections?.page_info?.count || 0}</p>
               </CardContent>
             </Card>
           </div>
@@ -861,15 +861,11 @@ export default function AddonsPage() {
                         </TableCell>
                         <TableCell className="text-right text-sm text-gray-600">
                           {/* Show total shipments using this addon across carrier accounts */}
-                          {addon.carrier_accounts.reduce((total, account) =>
-                            total + (account.usage?.total_shipments || 0), 0
-                          ).toLocaleString()}
+                          {addon.usage?.total_shipments?.toLocaleString() || 0}
                         </TableCell>
                         <TableCell className="text-right font-medium text-gray-900">
                           {/* Show total addon charges across carrier accounts */}
-                          ${addon.carrier_accounts.reduce((total, account) =>
-                            total + (account.usage?.total_addons_charges || 0), 0
-                          ).toLocaleString()}
+                          ${addon.usage?.total_addons_charges?.toLocaleString() || 0}
                         </TableCell>
                         <TableCell>
                           <DropdownMenu>

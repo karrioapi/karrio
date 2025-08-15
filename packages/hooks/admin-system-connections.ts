@@ -69,8 +69,14 @@ export function useSystemConnectionMutation() {
   const queryClient = useQueryClient();
 
   const invalidateCache = () => {
-    queryClient.invalidateQueries(['admin_system_connections']);
-    queryClient.invalidateQueries(['admin_system_connection']);
+    // Invalidate all related queries to ensure data refresh
+    queryClient.invalidateQueries({ queryKey: ['admin_system_connections'] });
+    queryClient.invalidateQueries({ queryKey: ['admin_system_connection'] });
+    queryClient.invalidateQueries({ queryKey: ['admin_system_usage'] });
+    queryClient.invalidateQueries({ queryKey: ['system_connections'] });
+    // Force refetch to ensure UI updates immediately
+    queryClient.refetchQueries({ queryKey: ['admin_system_connections'] });
+    queryClient.refetchQueries({ queryKey: ['system_connections'] });
   };
 
   const createSystemConnection = useAuthenticatedMutation({

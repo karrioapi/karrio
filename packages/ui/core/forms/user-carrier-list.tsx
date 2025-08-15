@@ -13,6 +13,7 @@ import { ConfirmModalContext } from "../modals/confirm-modal";
 import { CopiableLink } from "../components/copiable-link";
 import React, { useContext, useEffect, useState } from "react";
 import { isNoneOrEmpty, jsonify } from "@karrio/lib";
+import { supportsRateSheets as checkRateSheetSupport } from "@karrio/lib/carrier-utils";
 import { useAppMode } from "@karrio/hooks/app-mode";
 import { useSearchParams } from "next/navigation";
 import { Notify } from "../components/notifier";
@@ -41,7 +42,7 @@ export const UserConnectionList = (): JSX.Element => {
   const { query } = useCarrierConnections();
   const [rateSheetEditorOpen, setRateSheetEditorOpen] = useState(false);
   const [selectedConnection, setSelectedConnection] = useState<any>(null);
-  const { metadata } = useAPIMetadata();
+  const { metadata, references } = useAPIMetadata();
   const [carrierMetadata, setCarrierMetadata] = useState<any[]>([]);
 
   // Fetch detailed carrier metadata
@@ -54,21 +55,9 @@ export const UserConnectionList = (): JSX.Element => {
     }
   }, [metadata?.HOST]);
 
-  // Dynamic function to check if carrier supports rate sheets
-  const supportsRateSheets = (carrierName: string) => {
-    // Always support rate sheets for generic and custom carriers
-    if (carrierName === 'generic') return true;
-
-    // Find carrier in metadata
-    const carrier = carrierMetadata.find(c => c.carrier_name === carrierName);
-    if (!carrier) return false;
-
-    // Check if carrier has default services with zones in connection_fields
-    const services = carrier.connection_fields?.services;
-    if (!services?.default || !Array.isArray(services.default)) return false;
-
-    // Check if any default service has zones
-    return services.default.some((service: any) => service.zones && Array.isArray(service.zones));
+  // Use centralized utility to check if carrier supports rate sheets
+  const supportsRateSheets = (connection: any) => {
+    return checkRateSheetSupport(connection, references);
   };
 
   const update =
@@ -233,8 +222,7 @@ export const UserConnectionList = (): JSX.Element => {
                               </span>
                             </button>
                           )}
-                        {(supportsRateSheets(connection.carrier_name) ||
-                          !isNoneOrEmpty((connection as any).custom_carrier_name) ||
+                        {(supportsRateSheets(connection) ||
                           !isNoneOrEmpty((connection as any).rate_sheet_id)) && (
                             <button
                               title="manage rate sheet"

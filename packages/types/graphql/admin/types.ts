@@ -424,6 +424,11 @@ export interface GetAddons_addons_edges_node_carrier_accounts {
   usage: GetAddons_addons_edges_node_carrier_accounts_usage;
 }
 
+export interface GetAddons_addons_edges_node_usage {
+  total_shipments: number | null;
+  total_addons_charges: number | null;
+}
+
 export interface GetAddons_addons_edges_node {
   id: string;
   name: string;
@@ -433,6 +438,7 @@ export interface GetAddons_addons_edges_node {
   carriers: string[];
   services: string[];
   carrier_accounts: GetAddons_addons_edges_node_carrier_accounts[];
+  usage: GetAddons_addons_edges_node_usage;
 }
 
 export interface GetAddons_addons_edges {
@@ -458,6 +464,7 @@ export interface GetAddons {
 
 export interface GetAddonsVariables {
   filter?: AddonFilter | null;
+  usageFilter?: UsageFilter | null;
 }
 
 
@@ -1491,17 +1498,13 @@ export interface DisableOrganizationAccountVariables {
 // GraphQL mutation operation: DeleteOrganizationAccount
 // ====================================================
 
-export interface DeleteOrganizationAccount_delete_organization_account_account {
-  id: string;
-}
-
 export interface DeleteOrganizationAccount_delete_organization_account_errors {
   field: string;
   messages: string[];
 }
 
 export interface DeleteOrganizationAccount_delete_organization_account {
-  account: DeleteOrganizationAccount_delete_organization_account_account | null;
+  account_id: string;
   errors: DeleteOrganizationAccount_delete_organization_account_errors[] | null;
 }
 
@@ -2316,6 +2319,7 @@ export interface UsageFilter {
   date_after?: string | null;
   date_before?: string | null;
   omit?: string[] | null;
+  surcharge_id?: string | null;
 }
 
 // null
@@ -2350,6 +2354,7 @@ export interface OrgUsageFilter {
   date_after?: string | null;
   date_before?: string | null;
   omit?: string[] | null;
+  surcharge_id?: string | null;
   id: string;
 }
 

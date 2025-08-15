@@ -81,6 +81,14 @@ const COLUMNS: Column[] = [
     defaultVisible: true,
   },
   {
+    id: "total_addons_charges",
+    label: "Addons Charges",
+    accessor: (account) => (
+      <span className="text-sm text-gray-600">${(account.usage?.total_addons_charges || 0).toLocaleString()}</span>
+    ),
+    defaultVisible: true,
+  },
+  {
     id: "total_shipping_spend",
     label: "Shipping Spend",
     accessor: (account) => (
@@ -288,10 +296,11 @@ export default function ShippersAccounts() {
   // Calculate summary stats from API data
   const summaryStats = accounts.reduce((acc, { node: account }) => ({
     totalShipments: acc.totalShipments + (account.usage?.total_shipments || 0),
+    totalAddonsCharges: acc.totalAddonsCharges + (account.usage?.total_addons_charges || 0),
     totalSpend: acc.totalSpend + (account.usage?.total_shipping_spend || 0),
     totalMembers: acc.totalMembers + (account.usage?.members || 0),
     activeOrgs: acc.activeOrgs + (account.is_active ? 1 : 0)
-  }), { totalShipments: 0, totalSpend: 0, totalMembers: 0, activeOrgs: 0 });
+  }), { totalShipments: 0, totalAddonsCharges: 0, totalSpend: 0, totalMembers: 0, activeOrgs: 0 });
 
   return (
     <div className="space-y-6">
@@ -313,7 +322,7 @@ export default function ShippersAccounts() {
       </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
         <Card className="border shadow-none">
           <CardContent className="p-4">
             <p className="text-sm text-gray-600">Organizations</p>
@@ -334,6 +343,13 @@ export default function ShippersAccounts() {
           <CardContent className="p-4">
             <p className="text-sm text-gray-600">Total Shipments</p>
             <p className="text-2xl font-semibold text-gray-900">{summaryStats.totalShipments.toLocaleString()}</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border shadow-none">
+          <CardContent className="p-4">
+            <p className="text-sm text-gray-600">Total Addons Charges</p>
+            <p className="text-2xl font-semibold text-gray-900">${summaryStats.totalAddonsCharges.toLocaleString()}</p>
           </CardContent>
         </Card>
 

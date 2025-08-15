@@ -25,6 +25,7 @@ import {
   AlertDialogTrigger,
 } from "@karrio/ui/components/ui/alert-dialog";
 import { isEqual, failsafe } from "@karrio/lib";
+import { getCarrierServiceDefaults, isGenericCarrier } from "@karrio/lib/carrier-utils";
 import CodeMirror from "@uiw/react-codemirror";
 import { jsonLanguage } from "@codemirror/lang-json";
 import React from "react";
@@ -89,10 +90,17 @@ export const RateSheetEditor = ({
     const targetCarrier = carrierName || localData?.carrier_name;
     if (!targetCarrier) return;
 
-    // First check references for service_levels (primary source)
-    const refs = references;
-    if (refs?.service_levels?.[targetCarrier]) {
-      const defaultServices = refs.service_levels[targetCarrier].map((service: any, index: number) => ({
+    // Create a mock connection object for the utility function
+    const mockConnection = {
+      carrier_name: targetCarrier === "generic" || isGenericCarrier({ carrier_name: targetCarrier }) ? "generic" : targetCarrier,
+      credentials: targetCarrier !== "generic" && targetCarrier ? { custom_carrier_name: targetCarrier } : undefined
+    };
+
+    // Use centralized utility to get service defaults
+    const defaultServicesList = getCarrierServiceDefaults(mockConnection, references);
+    
+    if (defaultServicesList && defaultServicesList.length > 0) {
+      const defaultServices = defaultServicesList.map((service: any, index: number) => ({
         ...service,
         id: `temp_${Date.now()}_${index}`,
         // Ensure zones structure is correct - remove any IDs to let backend assign them

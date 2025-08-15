@@ -32,8 +32,11 @@ export function useCustomsTemplateMutation() {
   const karrio = useKarrio();
   const queryClient = useQueryClient();
   const invalidateCache = () => {
-    queryClient.invalidateQueries(['customs_infos']);
-    queryClient.invalidateQueries(['default_templates']);
+    // Invalidate all related queries to ensure data refresh
+    queryClient.invalidateQueries({ queryKey: ['customs_infos'] });
+    queryClient.invalidateQueries({ queryKey: ['default_templates'] });
+    // Force refetch to ensure UI updates immediately
+    queryClient.refetchQueries({ queryKey: ['customs_infos'] });
   };
 
   // Mutations

@@ -110,9 +110,10 @@ function AddressEditDialog({
       onSave();
       onOpenChange(false);
     } catch (error: any) {
+      const detailed = error?.data || error?.response?.data || error;
       notifier.notify({
         type: NotificationType.error,
-        message: error.message || "Failed to save address template",
+        message: detailed || { message: error?.message || "Failed to save address template" },
       });
     }
   };
@@ -177,7 +178,7 @@ function AddressEditDialog({
           <Button variant="outline" size="sm" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button size="sm" onClick={handleSaveClick}>
+          <Button size="sm" onClick={handleSaveClick} disabled={!formData.label.trim()}>
             {addressTemplate ? "Update Template" : "Create Template"}
           </Button>
         </DialogFooter>
@@ -235,6 +236,18 @@ export function AddressesManagement() {
 
   return (
     <div className="space-y-6">
+      {addresses.length > 0 && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            Manage your address templates for shipping and billing.
+          </p>
+          <Button onClick={handleCreate} className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Create Address
+          </Button>
+        </div>
+      )}
+      
       <div>
         {addresses.length === 0 ? (
           <div className="text-center py-12">

@@ -77,7 +77,10 @@ export function useAPIKeyMutation() {
   const queryClient = useQueryClient();
   const karrio = useKarrio();
   const invalidateCache = () => {
-    queryClient.invalidateQueries(["api_keys"]);
+    // Invalidate all related queries to ensure data refresh
+    queryClient.invalidateQueries({ queryKey: ["api_keys"] });
+    // Force refetch to ensure UI updates immediately
+    queryClient.refetchQueries({ queryKey: ["api_keys"] });
   };
 
   const createAPIKey = useMutation(
