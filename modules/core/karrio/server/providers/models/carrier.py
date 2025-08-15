@@ -4,8 +4,8 @@ import django.conf as conf
 import django.forms as forms
 import django.db.models as models
 
-import karrio.sdk as karrio
 import karrio.lib as lib
+import karrio.sdk as karrio
 import karrio.core.units as units
 import django.core.cache as caching
 import karrio.api.gateway as gateway
@@ -148,10 +148,15 @@ class Carrier(core.OwnedEntity):
     @property
     def carrier_name(self):
         return (
-            self.credentials.get("custom_carrier_name")
+            "generic"
             if "custom_carrier_name" in self.credentials
             else lib.failsafe(lambda: self.carrier_code) or "generic"
         )
+        # return (
+        #     self.credentials.get("custom_carrier_name")
+        #     if "custom_carrier_name" in self.credentials
+        #     else lib.failsafe(lambda: self.carrier_code) or "generic"
+        # )
 
     @property
     def display_name(self):

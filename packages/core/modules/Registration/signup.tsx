@@ -1,17 +1,20 @@
 "use client";
+import React, { Suspense, useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useForm } from "@tanstack/react-form";
+import { useUserMutation } from "@karrio/hooks/user";
+import { p, isNoneOrEmpty } from "@karrio/lib";
 import {
   RegisterUserMutationInput,
   register_user_register_user_errors,
 } from "@karrio/types";
-import React, { FormEvent, Suspense, useEffect, useReducer, useState } from "react";
-import { LoadingProvider, useLoader } from "@karrio/ui/core/components/loader";
-import { ButtonField } from "@karrio/ui/core/components/button-field";
-import { InputField } from "@karrio/ui/core/components/input-field";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useUserMutation } from "@karrio/hooks/user";
-import { isNone, isNoneOrEmpty } from "@karrio/lib";
-import { p } from "@karrio/lib";
-import Link from "next/link";
+import { Button } from "@karrio/ui/components/ui/button";
+import { Input } from "@karrio/ui/components/ui/input";
+import { Label } from "@karrio/ui/components/ui/label";
+import { Card, CardContent } from "@karrio/ui/components/ui/card";
+import { Alert, AlertDescription } from "@karrio/ui/components/ui/alert";
+import { FieldInfo } from "@karrio/ui/core/components/field-info";
 
 const DEFAULT_VALUE: Partial<RegisterUserMutationInput> = {
   email: "",
@@ -20,193 +23,258 @@ const DEFAULT_VALUE: Partial<RegisterUserMutationInput> = {
   password2: "",
 };
 
-function reducer(
-  state: Partial<RegisterUserMutationInput>,
-  { name, value }: { name: string; value: string | object },
-) {
-  switch (name) {
-    case "full":
-      return { ...(value as object) };
-    case "partial":
-      return { ...state, ...(value as object) };
-    default:
-      return { ...state, [name]: value };
-  }
-}
-
 // Inner component that uses useSearchParams
 const SignUpForm = (): JSX.Element => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const email = searchParams.get("email") as string;
+  const emailParam = (searchParams.get("email") as string) || "";
   const mutation = useUserMutation();
-  const { loading, setLoading } = useLoader();
-  const [user, dispatch] = useReducer(
-    reducer,
-    DEFAULT_VALUE,
-    () => DEFAULT_VALUE,
-  );
-  const [errors, setErrors] = useState<register_user_register_user_errors[]>(
-    [],
-  );
+  const [errors, setErrors] = useState<register_user_register_user_errors[]>([]);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value: string = event.target.value;
-    const name: string = event.target.name;
-
-    dispatch({ name, value });
-  };
-  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      await mutation.registerUser.mutateAsync({
-        ...user,
-        redirect_url: location.origin + p`/email`,
-      } as RegisterUserMutationInput);
-      router.push(p`/signup/success`);
-    } catch (error: any) {
-      setErrors(Array.isArray(error) ? error : [error]);
-    }
-    setLoading(false);
-  };
+  const form = useForm<RegisterUserMutationInput>({
+    defaultValues: {
+      email: emailParam || DEFAULT_VALUE.email!,
+      full_name: DEFAULT_VALUE.full_name!,
+      password1: DEFAULT_VALUE.password1!,
+      password2: DEFAULT_VALUE.password2!,
+      redirect_url: "",
+    },
+    onSubmit: async ({ value }) => {
+      try {
+        setErrors([]);
+        await mutation.registerUser.mutateAsync({
+          email: value.email,
+          full_name: value.full_name,
+          password1: value.password1,
+          password2: value.password2,
+          redirect_url: location.origin + p`/email`,
+        });
+        router.push(p`/signup/success`);
+      } catch (error: any) {
+        setErrors(Array.isArray(error) ? error : [error]);
+      }
+    },
+  });
 
   useEffect(() => {
-    if (!isNoneOrEmpty(email)) {
-      dispatch({ name: "email", value: email as string });
+    if (!isNoneOrEmpty(emailParam)) {
+      // No-op: default value is already set; disable input via prop
     }
-  }, [email]);
+  }, [emailParam]);
 
   return (
     <>
-      <div className="card isolated-card">
-        <div className="card-content">
-          <p className="subtitle has-text-centered mb-6">
-            Sign up with credentials
-          </p>
+      <div className="px-4">
+        <Card className="mx-auto mt-6 w-full max-w-md md:max-w-lg lg:max-w-xl border-0 bg-transparent shadow-none sm:border sm:bg-card sm:shadow">
+          <CardContent className="p-6 sm:p-6 md:p-8">
+            <h2 className="mb-4 text-center text-xl font-semibold md:text-2xl">Create your account</h2>
 
-          {(errors as any[])
-            .filter((error) => isNone(error.field))
-            .map(({ message }, index) => (
-              <p key={index} className="has-text-danger is-size-7">
-                {message}
-              </p>
-            ))}
+            {(errors as any[])
+              .filter((error) => !error.field)
+              .map(({ message }, index) => (
+                <Alert key={index} variant="destructive" className="mb-4">
+                  <AlertDescription>{message}</AlertDescription>
+                </Alert>
+              ))}
 
-          <form method="post" onSubmit={onSubmit}>
-            <InputField
-              label="Email"
-              name="email"
-              placeholder="Email"
-              wrapperClass="mt-3"
-              onChange={handleChange}
-              value={user.email}
-              disabled={!isNoneOrEmpty(email)}
-              required
+            <form
+              method="post"
+              onSubmit={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                form.handleSubmit();
+              }}
+              className="space-y-2 py-4"
             >
-              {errors
-                .filter((error) => error.field === "email")
-                .map(({ messages }) =>
-                  messages.map((message, index) => (
-                    <p key={index} className="has-text-danger is-size-7">
-                      {message}
-                    </p>
-                  )),
+              {/* @ts-ignore */}
+              <form.Field
+                name="email"
+                validators={{
+                  onChange: ({ value }) => (!value ? "Email is required" : undefined),
+                }}
+              >
+                {(field) => (
+                  <div className="space-y-2 py-1">
+                    <Label htmlFor={field.name}>Email</Label>
+                    <Input
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      disabled={!isNoneOrEmpty(emailParam)}
+                      required
+                    />
+                    {/* Client-side validation errors */}
+                    <div className="text-sm text-red-500">
+                      <FieldInfo field={field} />
+                    </div>
+                    {/* Server field errors */}
+                    {errors
+                      .filter((error) => error.field === "email")
+                      .map(({ messages }, idx) => (
+                        <div key={idx} className="text-sm text-red-500">
+                          {messages.map((m, i) => (
+                            <p key={i}>{m}</p>
+                          ))}
+                        </div>
+                      ))}
+                  </div>
                 )}
-            </InputField>
+              </form.Field>
 
-            <InputField
-              label="Full Name"
-              name="full_name"
-              placeholder="Full Name"
-              wrapperClass="mt-3"
-              onChange={handleChange}
-              value={user.full_name as string}
-              required
-            >
-              {errors
-                .filter((error) => error.field === "full_name")
-                .map(({ messages }) =>
-                  messages.map((message, index) => (
-                    <p key={index} className="has-text-danger is-size-7">
-                      {message}
-                    </p>
-                  )),
+              {/* @ts-ignore */}
+              <form.Field
+                name="full_name"
+                validators={{
+                  onChange: ({ value }) => (!value ? "Full name is required" : undefined),
+                }}
+              >
+                {(field) => (
+                  <div className="space-y-2 py-1">
+                    <Label htmlFor={field.name}>Full Name</Label>
+                    <Input
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value as string}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      required
+                    />
+                    {/* Client-side validation errors */}
+                    <div className="text-sm text-red-500">
+                      <FieldInfo field={field} />
+                    </div>
+                    {errors
+                      .filter((error) => error.field === "full_name")
+                      .map(({ messages }, idx) => (
+                        <div key={idx} className="text-sm text-red-500">
+                          {messages.map((m, i) => (
+                            <p key={i}>{m}</p>
+                          ))}
+                        </div>
+                      ))}
+                  </div>
                 )}
-            </InputField>
+              </form.Field>
 
-            <InputField
-              label="Password"
-              name="password1"
-              type="password"
-              placeholder="Password"
-              wrapperClass="mt-3"
-              onChange={handleChange}
-              value={user.password1}
-              required
-            >
-              {errors
-                .filter((error) => error.field === "password1")
-                .map(({ messages }) =>
-                  messages.map((message, index) => (
-                    <p key={index} className="has-text-danger is-size-7">
-                      {message}
-                    </p>
-                  )),
+              {/* @ts-ignore */}
+              <form.Field
+                name="password1"
+                validators={{
+                  onChange: ({ value }) =>
+                    !value
+                      ? "Password is required"
+                      : value.length < 8
+                        ? "Password must be at least 8 characters"
+                        : undefined,
+                }}
+              >
+                {(field) => (
+                  <div className="space-y-2 py-1">
+                    <Label htmlFor={field.name}>Password</Label>
+                    <Input
+                      id={field.name}
+                      name={field.name}
+                      type="password"
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      required
+                    />
+                    {/* Client-side validation errors */}
+                    <div className="text-sm text-red-500">
+                      <FieldInfo field={field} />
+                    </div>
+                    {errors
+                      .filter((error) => error.field === "password1")
+                      .map(({ messages }, idx) => (
+                        <div key={idx} className="text-sm text-red-500">
+                          {messages.map((m, i) => (
+                            <p key={i}>{m}</p>
+                          ))}
+                        </div>
+                      ))}
+                  </div>
                 )}
-            </InputField>
+              </form.Field>
 
-            <InputField
-              label="Confirm Password"
-              name="password2"
-              type="password"
-              placeholder="Confirm Password"
-              wrapperClass="mt-3"
-              onChange={handleChange}
-              value={user.password2}
-              required
-            >
-              {errors
-                .filter((error) => error.field === "password2")
-                .map(({ messages }) =>
-                  messages.map((message, index) => (
-                    <p key={index} className="has-text-danger is-size-7">
-                      {message}
-                    </p>
-                  )),
+              {/* @ts-ignore */}
+              <form.Field
+                name="password2"
+                validators={{
+                  onChange: ({ value }) =>
+                    !value
+                      ? "Please confirm your password"
+                      : value !== (form.state.values as any).password1
+                        ? "Passwords do not match"
+                        : undefined,
+                }}
+              >
+                {(field) => (
+                  <div className="space-y-2 pt-1 pb-4">
+                    <Label htmlFor={field.name}>Confirm Password</Label>
+                    <Input
+                      id={field.name}
+                      name={field.name}
+                      type="password"
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      required
+                    />
+                    {/* Client-side validation errors */}
+                    <div className="text-sm text-red-500">
+                      <FieldInfo field={field} />
+                    </div>
+                    {/* Live mismatch indicator even if field not touched */}
+                    {/* @ts-ignore */}
+                    <form.Subscribe selector={(state) => [state.values.password1, state.values.password2]}>
+                      {([p1, p2]) => (
+                        p1 && p2 && p1 !== p2 ? (
+                          <div className="text-sm text-red-500">Passwords do not match</div>
+                        ) : null
+                      )}
+                    </form.Subscribe>
+                    {errors
+                      .filter((error) => error.field === "password2")
+                      .map(({ messages }, idx) => (
+                        <div key={idx} className="text-sm text-red-500">
+                          {messages.map((m, i) => (
+                            <p key={i}>{m}</p>
+                          ))}
+                        </div>
+                      ))}
+                  </div>
                 )}
-            </InputField>
+              </form.Field>
 
-            <ButtonField
-              type="submit"
-              disabled={loading}
-              className={`is-primary is-fullwidth mt-6`}
-              controlClass="has-text-centered"
-            >
-              <span>Create account</span>
-            </ButtonField>
-          </form>
-        </div>
+              {/* @ts-ignore */}
+              <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+                {([canSubmit, isSubmitting]) => (
+                  <div className="space-y-2">
+                    {!canSubmit && !isSubmitting && (
+                      <Alert variant="destructive">
+                        <AlertDescription>
+                          Please fix the errors above before continuing.
+                        </AlertDescription>
+                      </Alert>
+                    )}
+                    <Button type="submit" className="w-full" disabled={!canSubmit}>
+                      {isSubmitting ? "Creating account..." : "Sign up"}
+                    </Button>
+                  </div>
+                )}
+              </form.Subscribe>
+            </form>
+          </CardContent>
+        </Card>
       </div>
 
-      <div className="has-text-centered my-4 is-size-6">
-        <span>
-          Have an account?{" "}
-          <Link legacyBehavior href="/signin">
-            Sign in
-          </Link>
-        </span>
+      <div className="my-4 text-center text-sm">
+        Have an account? <Link href="/signin" className="font-semibold text-primary hover:underline">Sign in</Link>
       </div>
     </>
-  );
-};
-
-// Component with LoadingProvider
-const LoadingWrappedForm = () => {
-  return (
-    <LoadingProvider>
-      <SignUpForm />
-    </LoadingProvider>
   );
 };
 
@@ -214,13 +282,9 @@ const LoadingWrappedForm = () => {
 export default function SignUp(pageProps: any) {
   return (
     <Suspense fallback={
-      <div className="card isolated-card">
-        <div className="card-content has-text-centered">
-          <p className="subtitle">Loading...</p>
-        </div>
-      </div>
+      <Card className="mx-auto mt-6 w-full max-w-md"><CardContent className="pt-6"><p className="text-center">Loading...</p></CardContent></Card>
     }>
-      <LoadingWrappedForm />
+      <SignUpForm />
     </Suspense>
   );
 }

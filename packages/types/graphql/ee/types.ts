@@ -598,6 +598,7 @@ export interface get_organization_organization_members {
   full_name: string | null;
   is_admin: boolean;
   is_owner: boolean | null;
+  user_id: string | null;
   invitation: get_organization_organization_members_invitation | null;
   last_login: any | null;
 }
@@ -682,7 +683,15 @@ export interface get_organizationVariables {
 // GraphQL query operation: get_organizations
 // ====================================================
 
-export interface get_organizations_organizations_current_user {
+export interface get_organizations_organizations_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface get_organizations_organizations_edges_node_current_user {
   email: string;
   full_name: string | null;
   is_admin: boolean;
@@ -690,7 +699,7 @@ export interface get_organizations_organizations_current_user {
   last_login: any | null;
 }
 
-export interface get_organizations_organizations_members_invitation {
+export interface get_organizations_organizations_edges_node_members_invitation {
   id: string;
   guid: string;
   invitee_identifier: string;
@@ -698,52 +707,53 @@ export interface get_organizations_organizations_members_invitation {
   modified: any;
 }
 
-export interface get_organizations_organizations_members {
+export interface get_organizations_organizations_edges_node_members {
   email: string;
   full_name: string | null;
   is_admin: boolean;
   is_owner: boolean | null;
-  invitation: get_organizations_organizations_members_invitation | null;
+  user_id: string | null;
+  invitation: get_organizations_organizations_edges_node_members_invitation | null;
   last_login: any | null;
 }
 
-export interface get_organizations_organizations_usage_api_errors {
+export interface get_organizations_organizations_edges_node_usage_api_errors {
   label: string | null;
   count: number | null;
   date: string | null;
 }
 
-export interface get_organizations_organizations_usage_api_requests {
+export interface get_organizations_organizations_edges_node_usage_api_requests {
   date: string | null;
   label: string | null;
   count: number | null;
 }
 
-export interface get_organizations_organizations_usage_order_volumes {
+export interface get_organizations_organizations_edges_node_usage_order_volumes {
   date: string | null;
   label: string | null;
   count: number | null;
 }
 
-export interface get_organizations_organizations_usage_shipment_count {
+export interface get_organizations_organizations_edges_node_usage_shipment_count {
   date: string | null;
   label: string | null;
   count: number | null;
 }
 
-export interface get_organizations_organizations_usage_tracker_count {
+export interface get_organizations_organizations_edges_node_usage_tracker_count {
   date: string | null;
   label: string | null;
   count: number | null;
 }
 
-export interface get_organizations_organizations_usage_shipping_spend {
+export interface get_organizations_organizations_edges_node_usage_shipping_spend {
   date: string | null;
   label: string | null;
   count: number | null;
 }
 
-export interface get_organizations_organizations_usage {
+export interface get_organizations_organizations_edges_node_usage {
   members: number | null;
   order_volume: number | null;
   total_errors: number | null;
@@ -752,26 +762,39 @@ export interface get_organizations_organizations_usage {
   total_shipments: number | null;
   unfulfilled_orders: number | null;
   total_shipping_spend: number | null;
-  api_errors: get_organizations_organizations_usage_api_errors[] | null;
-  api_requests: get_organizations_organizations_usage_api_requests[] | null;
-  order_volumes: get_organizations_organizations_usage_order_volumes[] | null;
-  shipment_count: get_organizations_organizations_usage_shipment_count[] | null;
-  tracker_count: get_organizations_organizations_usage_tracker_count[] | null;
-  shipping_spend: get_organizations_organizations_usage_shipping_spend[] | null;
+  api_errors: get_organizations_organizations_edges_node_usage_api_errors[] | null;
+  api_requests: get_organizations_organizations_edges_node_usage_api_requests[] | null;
+  order_volumes: get_organizations_organizations_edges_node_usage_order_volumes[] | null;
+  shipment_count: get_organizations_organizations_edges_node_usage_shipment_count[] | null;
+  tracker_count: get_organizations_organizations_edges_node_usage_tracker_count[] | null;
+  shipping_spend: get_organizations_organizations_edges_node_usage_shipping_spend[] | null;
 }
 
-export interface get_organizations_organizations {
+export interface get_organizations_organizations_edges_node {
   id: string;
   name: string;
   slug: string;
   token: string;
-  current_user: get_organizations_organizations_current_user;
-  members: get_organizations_organizations_members[];
-  usage: get_organizations_organizations_usage;
+  current_user: get_organizations_organizations_edges_node_current_user;
+  members: get_organizations_organizations_edges_node_members[];
+  usage: get_organizations_organizations_edges_node_usage;
+}
+
+export interface get_organizations_organizations_edges {
+  node: get_organizations_organizations_edges_node;
+}
+
+export interface get_organizations_organizations {
+  page_info: get_organizations_organizations_page_info;
+  edges: get_organizations_organizations_edges[];
 }
 
 export interface get_organizations {
-  organizations: get_organizations_organizations[];
+  organizations: get_organizations_organizations;
+}
+
+export interface get_organizationsVariables {
+  filter?: OrgFilter | null;
 }
 
 
@@ -1023,6 +1046,137 @@ export interface delete_organization_invitation {
 
 export interface delete_organization_invitationVariables {
   data: DeleteMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: remove_organization_member
+// ====================================================
+
+export interface remove_organization_member_remove_organization_member_organization_members_invitation {
+  id: string;
+  guid: string;
+  invitee_identifier: string;
+  created: any;
+  modified: any;
+}
+
+export interface remove_organization_member_remove_organization_member_organization_members {
+  email: string;
+  full_name: string | null;
+  is_admin: boolean;
+  is_owner: boolean | null;
+  user_id: string | null;
+  invitation: remove_organization_member_remove_organization_member_organization_members_invitation | null;
+  last_login: any | null;
+}
+
+export interface remove_organization_member_remove_organization_member_organization {
+  id: string;
+  members: remove_organization_member_remove_organization_member_organization_members[];
+}
+
+export interface remove_organization_member_remove_organization_member_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface remove_organization_member_remove_organization_member {
+  organization: remove_organization_member_remove_organization_member_organization | null;
+  errors: remove_organization_member_remove_organization_member_errors[] | null;
+}
+
+export interface remove_organization_member {
+  remove_organization_member: remove_organization_member_remove_organization_member;
+}
+
+export interface remove_organization_memberVariables {
+  data: RemoveOrganizationMemberMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: update_member_status
+// ====================================================
+
+export interface update_member_status_update_member_status_organization_members_invitation {
+  id: string;
+  guid: string;
+  invitee_identifier: string;
+  created: any;
+  modified: any;
+}
+
+export interface update_member_status_update_member_status_organization_members {
+  email: string;
+  full_name: string | null;
+  is_admin: boolean;
+  is_owner: boolean | null;
+  user_id: string | null;
+  invitation: update_member_status_update_member_status_organization_members_invitation | null;
+  last_login: any | null;
+}
+
+export interface update_member_status_update_member_status_organization {
+  id: string;
+  members: update_member_status_update_member_status_organization_members[];
+}
+
+export interface update_member_status_update_member_status_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface update_member_status_update_member_status {
+  organization: update_member_status_update_member_status_organization | null;
+  errors: update_member_status_update_member_status_errors[] | null;
+}
+
+export interface update_member_status {
+  update_member_status: update_member_status_update_member_status;
+}
+
+export interface update_member_statusVariables {
+  data: UpdateMemberStatusMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: resend_organization_invite
+// ====================================================
+
+export interface resend_organization_invite_resend_organization_invite_invitation {
+  id: string;
+  invitee_identifier: string;
+  created: any;
+  modified: any;
+}
+
+export interface resend_organization_invite_resend_organization_invite_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface resend_organization_invite_resend_organization_invite {
+  invitation: resend_organization_invite_resend_organization_invite_invitation | null;
+  errors: resend_organization_invite_resend_organization_invite_errors[] | null;
+}
+
+export interface resend_organization_invite {
+  resend_organization_invite: resend_organization_invite_resend_organization_invite;
+}
+
+export interface resend_organization_inviteVariables {
+  data: ResendOrganizationInviteMutationInput;
 }
 
 
@@ -2949,6 +3103,17 @@ export interface UsageFilter {
 }
 
 // null
+export interface OrgFilter {
+  offset?: number | null;
+  first?: number | null;
+  id?: string | null;
+  name?: string | null;
+  slug?: string | null;
+  is_active?: boolean | null;
+  order_by?: string | null;
+}
+
+// null
 export interface DeleteOrganizationMutationInput {
   id: string;
   password: string;
@@ -2995,6 +3160,25 @@ export interface AcceptOrganizationInvitationMutationInput {
 // null
 export interface DeleteMutationInput {
   id: string;
+}
+
+// null
+export interface RemoveOrganizationMemberMutationInput {
+  org_id: string;
+  user_id: string;
+}
+
+// null
+export interface UpdateMemberStatusMutationInput {
+  org_id: string;
+  user_id: string;
+  is_active: boolean;
+}
+
+// null
+export interface ResendOrganizationInviteMutationInput {
+  invitation_id: string;
+  redirect_url: string;
 }
 
 // null

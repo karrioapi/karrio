@@ -1,17 +1,17 @@
 "use client";
 
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { useAppMode } from "@karrio/hooks/app-mode";
-import { Button } from "@karrio/ui/components/ui/button";
-import { ShortcutDropdown } from "./shortcut-dropdown";
-import { AccountDropdown } from "./account-dropdown";
-import { Search, Loader2 } from "lucide-react";
-import { TestModeToggle } from "./test-mode-toggle";
+import { ShortcutDropdown } from "@karrio/ui/components/shortcut-dropdown";
+import { TestModeToggle } from "@karrio/ui/components/test-mode-toggle";
 import { SidebarTrigger } from "@karrio/ui/components/ui/sidebar";
+import { SearchModal } from "@karrio/ui/components/search-modal";
 import { Separator } from "@karrio/ui/components/ui/separator";
+import { AppLink } from "@karrio/ui/core/components/app-link";
+import { SearchBar } from "@karrio/ui/components/search-bar";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { Button } from "@karrio/ui/components/ui/button";
+import { Search, Blocks, Settings } from "lucide-react";
+import { useAppMode } from "@karrio/hooks/app-mode";
 import React, { Suspense, useState } from "react";
-import { SearchBar } from "./search-bar";
-import { SearchModal } from "./search-modal";
 
 // Lazy load the AppLauncher component
 const AppLauncher = React.lazy(() =>
@@ -24,13 +24,11 @@ export function Navbar() {
   const { testMode } = useAppMode();
   const [showMobileSearchModal, setShowMobileSearchModal] = useState(false);
 
-
-
   return (
     <>
       {/* Main Navbar */}
       <header className={`sticky z-40 flex h-14 shrink-0 items-center gap-2 bg-white transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 ${testMode ? 'top-[4px]' : 'top-0'}`}>
-        <div className="flex items-center gap-2 w-full max-w-7xl mx-auto px-4 2xl:px-0">
+        <div className="flex items-center gap-2 w-full max-w-7xl mx-auto px-8 2xl:px-0">
           {/* Mobile Sidebar Trigger */}
           <SidebarTrigger className="-ml-1 md:hidden" />
           <Separator
@@ -65,18 +63,22 @@ export function Navbar() {
             {metadata?.APPS_MANAGEMENT && (
               <Suspense fallback={
                 <Button variant="outline" size="icon" disabled className="rounded-full">
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Blocks className="h-4 w-4 animate-spin" />
                 </Button>
               }>
                 <AppLauncher />
               </Suspense>
             )}
 
+            {/* Settings */}
+            <AppLink href="/settings">
+              <Button variant="outline" size="icon" className="rounded-full !rounded-full border-radius-50">
+                <Settings className="h-4 w-4" />
+              </Button>
+            </AppLink>
+
             {/* Shortcut Dropdown */}
             <ShortcutDropdown />
-
-            {/* Account Dropdown */}
-            <AccountDropdown />
           </div>
         </div>
 

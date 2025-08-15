@@ -9,7 +9,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@karrio/ui/components/ui/alert-dialog";
 import { useWorkflows, useWorkflowMutation } from "@karrio/hooks/workflows";
 import { Card, CardContent } from "@karrio/ui/components/ui/card";
@@ -47,8 +46,6 @@ export default function Page(pageProps: any) {
     const {
       query: { data: { workflows } = {}, ...query },
     } = useWorkflows();
-
-
 
     const handleDeleteClick = (id: string, name: string) => {
       setWorkflowToDelete({ id, name });
@@ -384,7 +381,24 @@ export default function Page(pageProps: any) {
             setSelectedTemplate(null);
           }
         }}>
-          <DialogContent className="max-w-none w-screen h-screen p-0 m-0">
+          <DialogContent
+            className="max-w-none w-screen h-screen m-0 left-0 top-0 translate-x-0 translate-y-0 rounded-none max-h-none !max-h-none !h-screen !w-screen !inset-0 [&>button]:hidden"
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              width: '100vw',
+              height: '100vh',
+              maxWidth: 'none',
+              maxHeight: 'none',
+              transform: 'none',
+              borderRadius: 0,
+              margin: 0,
+              padding: 0
+            }}
+          >
             <DialogTitle className="sr-only">
               {isCreating ? "Create Workflow" : "Edit Workflow"}
             </DialogTitle>

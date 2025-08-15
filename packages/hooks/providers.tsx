@@ -1,11 +1,11 @@
 "use client";
 
-import { CreateOrganizationModalProvider } from "@karrio/ui/core/modals/create-organization-modal";
-import { AcceptInvitationProvider } from "@karrio/ui/core/modals/accept-invitation-modal";
+import { CreateOrganizationDialogProvider } from "@karrio/ui/components/create-organization-dialog";
+import { AcceptInvitationDialogProvider } from "@karrio/ui/components/accept-invitation-dialog";
 import { ErrorBoundary } from "@karrio/ui/core/components/error-boudaries";
 
 import { LoadingProvider } from "@karrio/ui/core/components/loader";
-import { Notifier } from "@karrio/ui/core/components/notifier";
+import { Notifier } from "@karrio/ui/components/notifier";
 import { OrganizationProvider } from "./organization";
 import { SessionProvider } from "next-auth/react";
 import APIMetadataProvider from "./api-metadata";
@@ -23,8 +23,8 @@ const AuthenticatedContexts = bundleContexts([
   ClientProvider,
   APIMetadataProvider,
   AppModeProvider,
-  CreateOrganizationModalProvider,
-  AcceptInvitationProvider,
+  CreateOrganizationDialogProvider,
+  AcceptInvitationDialogProvider,
   OrganizationProvider,
   LoadingProvider,
   Notifier,
@@ -65,6 +65,7 @@ export function Providers({
   children: React.ReactNode;
 }) {
   const queryClient = getQueryClient();
+  // props should include: session, metadata, organizations, orgId, etc.
 
   if (!(props as any).session) {
     return (

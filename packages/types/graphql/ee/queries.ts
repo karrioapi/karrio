@@ -383,6 +383,7 @@ export const GET_ORGANIZATION = gql`
         full_name
         is_admin
         is_owner
+        user_id
         invitation {
           id
           guid
@@ -437,8 +438,17 @@ export const GET_ORGANIZATION = gql`
 `;
 
 export const GET_ORGANIZATIONS = gql`
-  query get_organizations {
-    organizations {
+  query get_organizations($filter: OrgFilter) {
+    organizations(filter: $filter) {
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
+      edges {
+        node {
       id
       name
       slug
@@ -455,6 +465,7 @@ export const GET_ORGANIZATIONS = gql`
         full_name
         is_admin
         is_owner
+        user_id
         invitation {
           id
           guid
@@ -502,7 +513,9 @@ export const GET_ORGANIZATIONS = gql`
           date
           label
           count
+          }
         }
+      }
       }
     }
   }
@@ -627,6 +640,85 @@ export const DELETE_ORGANIZATION_INVITES = gql`
   mutation delete_organization_invitation($data: DeleteMutationInput!) {
     delete_organization_invitation(input: $data) {
       id
+    }
+  }
+`;
+
+export const REMOVE_ORGANIZATION_MEMBER = gql`
+  mutation remove_organization_member(
+    $data: RemoveOrganizationMemberMutationInput!
+  ) {
+    remove_organization_member(input: $data) {
+      organization {
+        id
+        members {
+          email
+          full_name
+          is_admin
+          is_owner
+          user_id
+          invitation {
+            id
+            guid
+            invitee_identifier
+            created
+            modified
+          }
+          last_login
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const UPDATE_MEMBER_STATUS = gql`
+  mutation update_member_status($data: UpdateMemberStatusMutationInput!) {
+    update_member_status(input: $data) {
+      organization {
+        id
+        members {
+          email
+          full_name
+          is_admin
+          is_owner
+          user_id
+          invitation {
+            id
+            guid
+            invitee_identifier
+            created
+            modified
+          }
+          last_login
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const RESEND_ORGANIZATION_INVITE = gql`
+  mutation resend_organization_invite(
+    $data: ResendOrganizationInviteMutationInput!
+  ) {
+    resend_organization_invite(input: $data) {
+      invitation {
+        id
+        invitee_identifier
+        created
+        modified
+      }
+      errors {
+        field
+        messages
+      }
     }
   }
 `;

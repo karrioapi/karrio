@@ -7,7 +7,7 @@ import { Session } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import NextAuth from "next-auth";
 
-export const { auth, handlers, signIn, signOut } = NextAuth({
+const authApi = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
     GitHubProvider({
@@ -16,7 +16,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     }),
     Resend({
       from: process.env.EMAIL_FROM || "no-reply@karrio.io",
-      apiKey: process.env.RESEND_API_KEY,
       async sendVerificationRequest({ identifier: email, url }) {
         await resend.emails.send({
           from: process.env.EMAIL_FROM || "no-reply@karrio.io",
@@ -81,3 +80,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     verifyRequest: "/auth/verify-request",
   },
 });
+
+export const { auth, handlers, signIn, signOut } = authApi;
+export const { GET, POST } = authApi.handlers;

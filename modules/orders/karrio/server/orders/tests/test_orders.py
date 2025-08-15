@@ -546,14 +546,15 @@ ORDER_SHIPMENTS_RESPONSE = {
                     "total_charge": 106.71,
                     "transit_days": 2,
                     "extra_charges": [
-                        {"name": "Base charge", "amount": 101.83, "currency": "CAD"},
-                        {"name": "Discount", "amount": -9.04, "currency": "CAD"},
-                        {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD"},
-                        {"name": "SMB Savings", "amount": -11.74, "currency": "CAD"},
+                        {"name": "Base charge", "amount": 101.83, "currency": "CAD", "id": None},
+                        {"name": "Discount", "amount": -9.04, "currency": "CAD", "id": None},
+                        {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD", "id": None},
+                        {"name": "SMB Savings", "amount": -11.74, "currency": "CAD", "id": None},
                         {
                             "name": "Duties and taxes",
                             "amount": 13.92,
                             "currency": "CAD",
+                            "id": None,
                         },
                     ],
                     "meta": {
@@ -775,14 +776,15 @@ FULFILLED_ORDER_RESPONSE = {
                     "total_charge": 106.71,
                     "transit_days": 2,
                     "extra_charges": [
-                        {"name": "Base charge", "amount": 101.83, "currency": "CAD"},
-                        {"name": "Discount", "amount": -9.04, "currency": "CAD"},
-                        {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD"},
-                        {"name": "SMB Savings", "amount": -11.74, "currency": "CAD"},
+                        {"name": "Base charge", "amount": 101.83, "currency": "CAD", "id": None},
+                        {"name": "Discount", "amount": -9.04, "currency": "CAD", "id": None},
+                        {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD", "id": None},
+                        {"name": "SMB Savings", "amount": -11.74, "currency": "CAD", "id": None},
                         {
                             "name": "Duties and taxes",
                             "amount": 13.92,
                             "currency": "CAD",
+                            "id": None,
                         },
                     ],
                     "meta": {
@@ -989,14 +991,15 @@ PARTIAL_ORDER_RESPONSE = {
                     "total_charge": 106.71,
                     "transit_days": 2,
                     "extra_charges": [
-                        {"name": "Base charge", "amount": 101.83, "currency": "CAD"},
-                        {"name": "Discount", "amount": -9.04, "currency": "CAD"},
-                        {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD"},
-                        {"name": "SMB Savings", "amount": -11.74, "currency": "CAD"},
+                        {"name": "Base charge", "amount": 101.83, "currency": "CAD", "id": None},
+                        {"name": "Discount", "amount": -9.04, "currency": "CAD", "id": None},
+                        {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD", "id": None},
+                        {"name": "SMB Savings", "amount": -11.74, "currency": "CAD", "id": None},
                         {
                             "name": "Duties and taxes",
                             "amount": 13.92,
                             "currency": "CAD",
+                            "id": None,
                         },
                     ],
                     "meta": {

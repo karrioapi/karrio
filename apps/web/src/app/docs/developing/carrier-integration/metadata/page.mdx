@@ -11,157 +11,383 @@ For Karrio to recognize and properly utilize a carrier extension, you must defin
 
 ## Plugin Metadata (`__init__.py`)
 
-The entry point for any carrier integration is the `METADATA` object defined in `karrio/plugins/[carrier_name]/__init__.py`. This object registers your integration with Karrio's plugin system.
+Karrio supports two plugin registration structures:
+
+### New Structure (Preferred)
+**File**: `karrio/plugins/[carrier_name]/__init__.py`
 
 ```python
-# karrio/plugins/[carrier_name]/__init__.py
 from karrio.core.metadata import PluginMetadata
 from karrio.mappers.[carrier_name].mapper import Mapper
+from karrio.mappers.[carrier_name].proxy import Proxy
 from karrio.mappers.[carrier_name].settings import Settings
+import karrio.providers.[carrier_name].units as units
+import karrio.providers.[carrier_name].utils as utils
 
 METADATA = PluginMetadata(
     id="[carrier_name]",
-    label="[Carrier Name]",
+    label="[Carrier Display Name]",
+    description="[Carrier Name] shipping integration for Karrio",
 
-    # Integration Schemas
+    # Core Integration Components
     Mapper=Mapper,
+    Proxy=Proxy,
     Settings=Settings,
+
+    # Data Units
+    is_hub=False,  # True for hub carriers like Easyship, ShipEngine
+    options=units.ShippingOption,
+    services=units.ShippingService,
+    connection_configs=utils.ConnectionConfig,
+
+    # Additional Info
+    website="https://www.carrier.com",
+    documentation="https://docs.carrier.com",
 )
 ```
 
-- **`id`**: A unique, lowercase identifier for the carrier (e.g., `dhl_express`, `sendle`).
-- **`label`**: The human-readable name displayed in the Karrio Dashboard (e.g., "DHL Express", "Sendle").
-- **`Mapper`**: A reference to the `Mapper` class in `karrio/mappers/[carrier_name]/mapper.py`.
-- **`Settings`**: A reference to the `Settings` class in `karrio/mappers/[carrier_name]/settings.py`.
+### Legacy Structure
+**File**: `karrio/mappers/[carrier_name]/__init__.py`
+
+```python
+from karrio.core.metadata import Metadata
+from karrio.mappers.[carrier_name].mapper import Mapper
+from karrio.mappers.[carrier_name].proxy import Proxy
+from karrio.mappers.[carrier_name].settings import Settings
+import karrio.providers.[carrier_name].units as units
+import karrio.providers.[carrier_name].utils as utils
+
+METADATA = Metadata(
+    id="[carrier_name]",
+    label="[Carrier Display Name]",
+
+    # Core Integration Components
+    Mapper=Mapper,
+    Proxy=Proxy,
+    Settings=Settings,
+
+    # Data Units
+    is_hub=False,
+    connection_configs=utils.ConnectionConfig,
+)
+```
+
+**Key Properties:**
+- **`id`**: Unique lowercase identifier (e.g., `dhl_express`, `fedex`)
+- **`label`**: Human-readable name for UI display
+- **`is_hub`**: `False` for direct carriers, `True` for aggregators
+- **`Mapper`**: Main integration class handling request/response transformation
+- **`Proxy`**: HTTP client for API communication
+- **`Settings`**: Connection configuration class
 
 ## Connection Settings (`settings.py`)
 
-The `Settings` class defines the configuration fields required to connect to the carrier's API, such as API keys, account numbers, and passwords. This class, located in `karrio/mappers/[carrier_name]/settings.py`, directly corresponds to the connection form presented to users in the Karrio Dashboard.
+The `Settings` class defines the configuration fields required to connect to the carrier's API. This class corresponds directly to the connection form in the Karrio Dashboard.
 
-It inherits from `karrio.core.settings.Settings` and uses `attr.s` to define its attributes.
+**File**: `karrio/mappers/[carrier_name]/settings.py`
 
 ```python
-# karrio/mappers/[carrier_name]/settings.py
 import attr
-import karrio.lib as lib
-from karrio.core.settings import Settings
+import karrio.providers.[carrier_name].utils as provider_utils
 
 @attr.s(auto_attribs=True)
-class Settings(Settings):
-    """
-    [Carrier Name] connection settings.
-    """
-    # Add carrier specific api credentials and identifiers here
-    api_key: str
-    secret_key: str
-    account_number: str = None # Optional field
+class Settings(provider_utils.Settings):
+    """[Carrier Name] connection settings."""
 
-    # metadata
-    carrier_id: str = "[carrier_name]"
-    account_country_code: str = "US"
+    # Carrier-specific credentials (required fields)
+    api_key: str                    # For modern JSON APIs
+    # OR for XML/legacy APIs:
+    # username: str
+    # password: str
+
+    # Optional fields
+    account_number: str = None
+    secret_key: str = None
+
+    # Standard Karrio fields (DO NOT MODIFY)
+    id: str = None
     test_mode: bool = False
+    carrier_id: str = "[carrier_name]"
+    account_country_code: str = None
     metadata: dict = {}
     config: dict = {}
 ```
 
-Fields without a default value (e.g., `api_key`, `secret_key`) are treated as **required**. Fields with a default (e.g., `account_number = None`) are **optional**.
+**Field Requirements:**
+- Fields without defaults (e.g., `api_key: str`) are **required**
+- Fields with defaults (e.g., `account_number: str = None`) are **optional**
+- Standard Karrio fields should not be modified
 
 ## Provider Utilities (`utils.py`)
 
-While the mapper's `Settings` class defines the _structure_ of the settings, the `provider` module often needs a more functional version of these settings. In `karrio/providers/[carrier_name]/utils.py`, you define a second `Settings` class that inherits from the first one.
+The provider utilities extend the mapper settings with computed properties and helper methods.
 
-This "provider settings" class adds computed properties and helper methods that can be used throughout your provider mapping functions.
+**File**: `karrio/providers/[carrier_name]/utils.py`
 
 ```python
-# karrio/providers/[carrier_name]/utils.py
-from karrio.mappers.[carrier_name].settings import Settings as BaseSettings
+import base64
+import datetime
+import karrio.lib as lib
+import karrio.core as core
 
-class Settings(BaseSettings):
-    """
-    [Carrier Name] provider settings.
-    """
-    # add carrier specific computed properties here
+class Settings(core.Settings):
+    """[Carrier Name] provider settings."""
+
+    # Carrier-specific credentials
+    api_key: str
+    account_number: str = None
 
     @property
-    def server_url(self) -> str:
-        """
-        The server URL to use based on the test_mode flag.
-        """
+    def carrier_name(self):
+        return "[carrier_name]"
+
+    @property
+    def server_url(self):
         return (
-            "https://api.sandbox.carrier.com"
+            "https://api.sandbox.[carrier].com"
             if self.test_mode
-            else "https://api.carrier.com"
+            else "https://api.[carrier].com"
         )
 
+    # For XML/Basic Auth APIs
     @property
-    def authorization(self) -> str:
-        """
-        Compute the authorization header value.
-        """
-        import base64
-        pair = f"{self.api_key}:{self.secret_key}".encode("utf-8")
-        return base64.b64encode(pair).decode("ascii")
-```
+    def authorization(self):
+        pair = f"{self.username}:{self.password}"
+        return base64.b64encode(pair.encode("utf-8")).decode("ascii")
 
-This approach keeps the data definition (`mapper.Settings`) separate from the runtime logic (`provider.Settings`), creating a clean separation of concerns.
+    # For OAuth APIs
+    @property
+    def access_token(self):
+        """Retrieve and cache OAuth access token."""
+        cache_key = f"{self.carrier_name}|{self.api_key}|{self.secret_key}"
+        now = datetime.datetime.now() + datetime.timedelta(minutes=30)
+
+        auth = self.connection_cache.get(cache_key) or {}
+        token = auth.get("access_token")
+        expiry = lib.to_date(auth.get("expiry"), current_format="%Y-%m-%d %H:%M:%S")
+
+        if token is not None and expiry is not None and expiry > now:
+            return token
+
+        self.connection_cache.set(cache_key, lambda: login(self))
+        new_auth = self.connection_cache.get(cache_key)
+        return new_auth["access_token"]
+
+    @property
+    def connection_config(self) -> lib.units.Options:
+        return lib.to_connection_config(
+            self.config or {},
+            option_type=ConnectionConfig,
+        )
+
+# OAuth login implementation (if needed)
+def login(settings: Settings):
+    import karrio.providers.[carrier_name].error as error
+
+    result = lib.request(
+        url=f"{settings.server_url}/oauth/token",
+        method="POST",
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+        data=lib.to_query_string({
+            "grant_type": "client_credentials",
+            "client_id": settings.api_key,
+            "client_secret": settings.secret_key,
+        }),
+    )
+
+    response = lib.to_dict(result)
+    messages = error.parse_error_response(response, settings)
+
+    if any(messages):
+        raise errors.ParsedMessagesError(messages)
+
+    expiry = datetime.datetime.now() + datetime.timedelta(
+        seconds=float(response.get("expires_in", 0))
+    )
+    return {**response, "expiry": lib.fdatetime(expiry)}
+
+class ConnectionConfig(lib.Enum):
+    """Carrier-specific connection configuration options."""
+    label_type = lib.OptionEnum("label_type", str, "PDF")
+    shipping_options = lib.OptionEnum("shipping_options", list)
+    shipping_services = lib.OptionEnum("shipping_services", list)
+```
 
 ## Data Units (`units.py`)
 
-The `karrio/providers/[carrier_name]/units.py` file is where you define all carrier-specific enumerations, such as services, options, package types, and their initializers.
+The units file defines carrier-specific enumerations for services, options, and package types.
 
-### Services and Package Types
-
-Use `lib.Enum` for simple key-value pairs like services or package types.
+**File**: `karrio/providers/[carrier_name]/units.py`
 
 ```python
-# karrio/providers/[carrier_name]/units.py
 import karrio.lib as lib
+import karrio.core.units as units
 
-class ShippingService(lib.Enum):
-    """ Carrier specific services """
-    standard = "standard"
-    express = "express"
-    # key = value
+class PackagingType(lib.StrEnum):
+    """Carrier-specific packaging types."""
+    carrier_envelope = "ENVELOPE"
+    carrier_pak = "PAK"
+    carrier_box = "BOX"
+    carrier_tube = "TUBE"
 
-class PackageType(lib.Enum):
-    """ Carrier specific package types """
-    pak = "PAK"
-    tube = "TUBE"
-    # key = value
-```
+    """Unified Packaging type mapping."""
+    envelope = carrier_envelope
+    pak = carrier_pak
+    small_box = carrier_box
+    medium_box = carrier_box
+    large_box = carrier_box
+    tube = carrier_tube
+    your_packaging = carrier_box
 
-### Shipping Options
+class ShippingService(lib.StrEnum):
+    """Carrier-specific services."""
+    carrier_standard = "Standard Service"
+    carrier_express = "Express Service"
+    carrier_overnight = "Overnight Service"
+    carrier_ground = "Ground Service"
 
-Use `lib.Flag` for shipping options, as a single request can have multiple options enabled. `lib.Flag` allows for complex option types (boolean, string, integer).
+class ShippingOption(lib.Enum):
+    """Carrier-specific shipping options."""
+    carrier_insurance = lib.OptionEnum("insurance", float)
+    carrier_signature_required = lib.OptionEnum("signature_required", bool)
+    carrier_saturday_delivery = lib.OptionEnum("saturday_delivery", bool)
+    carrier_cod = lib.OptionEnum("cash_on_delivery", float)
 
-```python
-class ShippingOption(lib.Flag):
-    """ Carrier specific shipping options """
-    saturday_delivery = lib.OptionEnum("saturday_delivery")
-    insurance = lib.OptionEnum("insurance", float)
-    cash_on_delivery = lib.OptionEnum("cash_on_delivery", str)
-    # key = lib.OptionEnum("key", type)
-```
+    """Unified Option type mapping."""
+    insurance = carrier_insurance
+    signature_required = carrier_signature_required
+    saturday_delivery = carrier_saturday_delivery
+    cash_on_delivery = carrier_cod
 
-### Initializers
-
-Initializers are functions that apply default or computed values during the data mapping process. For example, a `shipping_options_initializer` can set default options or compute values based on other inputs.
-
-```python
 def shipping_options_initializer(
     options: dict,
-    package_options: lib.units.Options = None,
-) -> lib.units.Options:
-    """
-    Applies default values to the given shipping options.
-    """
-    _options = options.copy()
+    package_options: units.ShippingOptions = None,
+) -> units.ShippingOptions:
+    """Apply default values to shipping options."""
+    if package_options is not None:
+        options.update(package_options.content)
 
-    # Add carrier specific option initializations here
-    if "insurance" in _options:
-        _options.update(insurance=True)
+    def items_filter(key: str) -> bool:
+        return key in ShippingOption
 
-    return lib.units.Options(_options, ShippingOption)
+    return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
+
+class TrackingStatus(lib.Enum):
+    """Map carrier tracking statuses to Karrio unified statuses."""
+    on_hold = ["ON_HOLD", "HELD"]
+    delivered = ["DELIVERED", "COMPLETED"]
+    in_transit = ["IN_TRANSIT", "PROCESSING"]
+    delivery_failed = ["DELIVERY_FAILED", "FAILED"]
+    delivery_delayed = ["DELAYED"]
+    out_for_delivery = ["OUT_FOR_DELIVERY"]
+    ready_for_pickup = ["READY_FOR_PICKUP"]
+
+# Weight and dimension units (if carrier uses specific units)
+class WeightUnit(lib.Enum):
+    KG = "KG"
+    LB = "LB"
+
+class DimensionUnit(lib.Enum):
+    CM = "CM"
+    IN = "IN"
 ```
 
-These enums and initializers are then used by the `karrio.lib` helper functions (`lib.to_services`, `lib.to_shipping_options`, etc.) within your provider mapping functions to ensure data is correctly transformed.
+## Hub Carrier Configuration
+
+For hub carriers (multi-carrier aggregators), additional configuration is needed:
+
+```python
+# In metadata __init__.py
+METADATA = PluginMetadata(
+    # ... other fields
+    is_hub=True,  # Mark as hub carrier
+    # ... rest of configuration
+)
+
+# In units.py for hub carriers
+class ShippingService(lib.StrEnum):
+    """Hub carrier services - dynamically discovered."""
+    hub_standard = "Hub Standard"
+
+    @classmethod
+    def discover_services(cls, api_response: dict):
+        """Dynamically add services from API response."""
+        for service in api_response.get("available_services", []):
+            service_key = f"hub_{service['carrier'].lower()}_{service['code'].lower()}"
+            service_name = f"{service['carrier']} {service['name']}"
+            if not hasattr(cls, service_key):
+                setattr(cls, service_key, service_name)
+```
+
+## Configuration Validation
+
+Ensure your configuration is valid:
+
+```python
+# Test metadata imports
+python -c "
+import karrio.plugins.[carrier_name] as plugin
+print(f'Plugin ID: {plugin.METADATA.id}')
+print(f'Plugin Label: {plugin.METADATA.label}')
+print(f'Is Hub: {plugin.METADATA.is_hub}')
+"
+
+# Test settings
+python -c "
+from karrio.mappers.[carrier_name].settings import Settings
+settings = Settings(api_key='test', test_mode=True)
+print(f'Carrier: {settings.carrier_id}')
+print(f'Server URL: {settings.server_url}')
+"
+```
+
+## Best Practices
+
+1. **Use Descriptive Names**: Make service and option names clear and consistent
+2. **Map to Unified Types**: Always provide mappings from carrier-specific to unified types
+3. **Handle Authentication**: Implement appropriate authentication patterns (API key, OAuth, Basic Auth)
+4. **Provide Defaults**: Set sensible defaults for optional configuration
+5. **Use Enums**: Define all carrier-specific values as enums for type safety
+6. **Document Options**: Comment complex configuration options
+7. **Test Configuration**: Verify all imports and instantiation work correctly
+
+## Common Patterns
+
+### API Key Authentication
+```python
+class Settings(core.Settings):
+    api_key: str
+
+    @property
+    def auth_headers(self):
+        return {"Authorization": f"Bearer {self.api_key}"}
+```
+
+### Basic Authentication
+```python
+class Settings(core.Settings):
+    username: str
+    password: str
+
+    @property
+    def authorization(self):
+        pair = f"{self.username}:{self.password}"
+        return base64.b64encode(pair.encode("utf-8")).decode("ascii")
+```
+
+### Custom Headers
+```python
+class Settings(core.Settings):
+    api_key: str
+    client_id: str
+
+    @property
+    def headers(self):
+        return {
+            "X-API-Key": self.api_key,
+            "X-Client-ID": self.client_id,
+            "Content-Type": "application/json"
+        }
+```
+
+These metadata and configuration files form the foundation of your carrier integration, providing Karrio with all the information needed to interact with your carrier's API and present appropriate options to users.

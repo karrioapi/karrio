@@ -168,6 +168,7 @@ html {
   box-sizing: border-box;
 }
 
+
 /* Ensure dropdowns don't cause layout shifts */
 [data-radix-popper-content-wrapper] {
   position: fixed !important;
@@ -222,6 +223,7 @@ html {
     scrollbar-gutter: stable;
   }
 
+
   /* Responsive overflow utilities */
   .overflow-x-auto-safe {
     overflow-x: auto;
@@ -261,3 +263,14 @@ html {
     }
   }
 }
+
+/* Prefer shadcn dialog fullscreen layout over legacy bulma rules */
+.tw-dialog-fullscreen {
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+}
+
+/* IMPORTANT: Do not override Bulma modal classes globally to avoid regressions */

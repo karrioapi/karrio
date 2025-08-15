@@ -129,6 +129,15 @@ FEATURE_FLAGS_CONFIG = {
         if importlib.util.find_spec("karrio.server.automation") is not None
         else None
     ),
+    "ADVANCED_ANALYTICS": (
+        (
+            base.ADVANCED_ANALYTICS,
+            "Advanced analytics",
+            bool,
+        )
+        if importlib.util.find_spec("karrio.server.analytics") is not None
+        else None
+    ),
     "PERSIST_SDK_TRACING": (
         base.PERSIST_SDK_TRACING,
         "Persist SDK tracing",

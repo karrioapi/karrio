@@ -261,6 +261,7 @@ class ChargeDetails:
     name: str = None
     amount: float = None
     currency: str = None
+    id: str = None
 
 
 @attr.s(auto_attribs=True)

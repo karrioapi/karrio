@@ -5,18 +5,19 @@ import {
   Home,
   Truck,
   MapPin,
-  Package,
   Settings,
-  Users,
   Zap,
-  Puzzle,
+  Code2,
   Terminal,
-  Building,
   Shield,
-  Book,
+  BookOpen,
   Inbox,
   List,
+  Brackets,
+  Building2,
+  BarChart3,
 } from "lucide-react"
+
 
 import { NavMain } from "@karrio/ui/components/nav-main"
 import { TeamSwitcher } from "@karrio/ui/components/team-switcher"
@@ -26,6 +27,9 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
 } from "@karrio/ui/components/ui/sidebar"
 import { useAPIMetadata } from "@karrio/hooks/api-metadata"
 import { useUser } from "@karrio/hooks/user"
@@ -60,8 +64,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: "/orders",
       icon: Inbox,
     }] : []),
+  ];
+
+  // Resources items (moved from submenu to main nav)
+  const productItems = [
     {
-      title: "Carriers",
+      title: "Connections",
       url: "/connections",
       icon: List,
     },
@@ -70,44 +78,34 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: metadata?.SHIPPING_RULES ? "/shipping-rules" : "/workflows",
       icon: Zap,
     }] : []),
-    {
-      title: "Settings",
-      url: "/settings/account",
-      icon: Settings,
-    },
-  ];
-
-  // Separate section for developers and resources
-  const developerItems = [
-    {
-      title: "Developers",
-      url: "/developers",
-      icon: Terminal,
-    },
-    {
-      title: "Resources",
-      url: "/resources",
-      icon: Book,
-      items: [
-        {
-          title: "Playground",
-          url: "/resources/playground",
-        },
-        {
-          title: "GraphiQL",
-          url: "/resources/graphiql",
-        },
-        ...(metadata?.APP_NAME?.includes("Karrio") ? [{
-          title: "Guides",
-          url: "https://karrio.io/docs",
-          external: true,
-        }] : []),
-      ],
-    },
+    ...(metadata?.ADVANCED_ANALYTICS ? [{
+      title: "Reports",
+      url: "/reports",
+      icon: BarChart3,
+    }] : []),
     ...(metadata?.ADMIN_DASHBOARD && user?.is_staff ? [{
-      title: "Administration",
+      title: "Control",
       url: "/admin",
       icon: Shield,
+    }] : []),
+    ...(metadata?.MULTI_ORGANIZATIONS && user?.is_superuser ? [{
+      title: "Shippers",
+      url: "/shippers",
+      icon: Building2,
+      items: [
+        {
+          title: "Overview",
+          url: "/shippers/overview",
+        },
+        {
+          title: "Accounts",
+          url: "/shippers/accounts",
+        },
+        {
+          title: "Addons",
+          url: "/shippers/addons",
+        },
+      ],
     }] : []),
   ];
 
@@ -122,10 +120,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navMain} />
-        <NavMain items={developerItems} label="Resources" />
+        {productItems.length > 0 && <NavMain items={productItems} label="Products" />}
       </SidebarContent>
       <SidebarFooter>
-        {/* Footer content removed - user menu is in navbar */}
+        <SidebarMenu>
+          <SidebarMenuItem className="hidden lg:block">
+            <SidebarMenuButton
+              onClick={() => {
+                const event = new CustomEvent('toggle-developer-tools');
+                window.dispatchEvent(event);
+              }}
+              tooltip="Developer Tools"
+            >
+              <Terminal className="size-4" />
+              <span>Developers</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

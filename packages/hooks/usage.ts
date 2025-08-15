@@ -7,6 +7,9 @@ import {
   GET_SYSTEM_USAGE,
   GetSystemUsage,
   GetSystemUsage_system_usage,
+  GET_USAGE,
+  GetUsage,
+  GetUsage_organization_usage,
   UsageFilter,
 } from "@karrio/types";
 import { gqlstr, insertUrlParam, isNoneOrEmpty } from "@karrio/lib";
@@ -18,7 +21,8 @@ import moment from "moment";
 import React from "react";
 
 type UsageType = get_organization_organization_usage &
-  GetSystemUsage_system_usage;
+  GetSystemUsage_system_usage &
+  GetUsage_organization_usage;
 type FilterType = UsageFilter & { setVariablesToURL?: boolean };
 const USAGE_FILTERS: Record<string, UsageFilter> = {
   "7 days": {
@@ -29,9 +33,21 @@ const USAGE_FILTERS: Record<string, UsageFilter> = {
     date_before: moment().toISOString(),
     date_after: moment().subtract(15, "days").toISOString(),
   },
-  "30 days": {
+  "Last 30 days": {
     date_before: moment().toISOString(),
     date_after: moment().subtract(30, "days").toISOString(),
+  },
+  "Last 3 months": {
+    date_before: moment().toISOString(),
+    date_after: moment().subtract(90, "days").toISOString(),
+  },
+  "Last 6 months": {
+    date_before: moment().toISOString(),
+    date_after: moment().subtract(180, "days").toISOString(),
+  },
+  "Last year": {
+    date_before: moment().toISOString(),
+    date_after: moment().subtract(360, "days").toISOString(),
   },
 };
 const DAYS_LIST: Record<string, string[]> = {
@@ -43,7 +59,19 @@ const DAYS_LIST: Record<string, string[]> = {
     .map((_, i) => i)
     .reverse()
     .map((i) => moment().subtract(i, "days").format("MMM D")),
-  "30 days": Array.from(Array(30))
+  "Last 30 days": Array.from(Array(30))
+    .map((_, i) => i)
+    .reverse()
+    .map((i) => moment().subtract(i, "days").format("MMM D")),
+  "Last 3 months": Array.from(Array(90))
+    .map((_, i) => i)
+    .reverse()
+    .map((i) => moment().subtract(i, "days").format("MMM D")),
+  "Last 6 months": Array.from(Array(180))
+    .map((_, i) => i)
+    .reverse()
+    .map((i) => moment().subtract(i, "days").format("MMM D")),
+  "Last year": Array.from(Array(360))
     .map((_, i) => i)
     .reverse()
     .map((i) => moment().subtract(i, "days").format("MMM D")),
@@ -71,8 +99,8 @@ export function useAPIUsage({
 
   const orgUsage = () =>
     karrio.graphql
-      .request<get_organization>(gqlstr(GET_ORGANIZATION), {
-        variables: { id: session?.orgId, usage: filter },
+      .request<GetUsage>(gqlstr(GET_USAGE), {
+        variables: { filter },
       })
       .then(({ organization }) => ({
         usage: organization?.usage as UsageType,

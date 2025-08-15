@@ -613,6 +613,12 @@ class Charge(serializers.Serializer):
         allow_null=True,
         help_text="The charge amount currency",
     )
+    id = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="A surcharge id",
+    )
 
 
 @serializers.allow_model_id(

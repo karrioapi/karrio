@@ -180,7 +180,6 @@ export interface AppContext {
 
   // Current user
   user?: {
-    id: string;
     email: string;
     name: string;
   };

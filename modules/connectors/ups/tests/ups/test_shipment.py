@@ -272,7 +272,7 @@ ShipmentRequestJSON = {
             "Service": {"Code": "01", "Description": "ups_next_day_air"},
             "ShipFrom": {
                 "Address": {
-                    "AddressLine": "Address Line",
+                    "AddressLine": ["Address Line"],
                     "City": "City",
                     "CountryCode": "CountryCode",
                     "PostalCode": "PostalCode",
@@ -286,7 +286,7 @@ ShipmentRequestJSON = {
             },
             "ShipTo": {
                 "Address": {
-                    "AddressLine": "Address Line",
+                    "AddressLine": ["Address Line"],
                     "City": "City",
                     "CountryCode": "CountryCode",
                     "PostalCode": "PostalCode",
@@ -310,7 +310,7 @@ ShipmentRequestJSON = {
             },
             "Shipper": {
                 "Address": {
-                    "AddressLine": "Address Line",
+                    "AddressLine": ["Address Line"],
                     "City": "City",
                     "CountryCode": "CountryCode",
                     "PostalCode": "PostalCode",
@@ -376,7 +376,7 @@ ShipmentRequestWithPresetJSON = {
             "Service": {"Code": "01", "Description": "ups_next_day_air"},
             "ShipFrom": {
                 "Address": {
-                    "AddressLine": "Address Line",
+                    "AddressLine": ["Address Line"],
                     "City": "City",
                     "CountryCode": "CountryCode",
                     "PostalCode": "PostalCode",
@@ -390,7 +390,7 @@ ShipmentRequestWithPresetJSON = {
             },
             "ShipTo": {
                 "Address": {
-                    "AddressLine": "Address Line",
+                    "AddressLine": ["Address Line"],
                     "City": "City",
                     "CountryCode": "CountryCode",
                     "PostalCode": "PostalCode",
@@ -409,7 +409,7 @@ ShipmentRequestWithPresetJSON = {
             },
             "Shipper": {
                 "Address": {
-                    "AddressLine": "Address Line",
+                    "AddressLine": ["Address Line"],
                     "City": "City",
                     "CountryCode": "CountryCode",
                     "PostalCode": "PostalCode",

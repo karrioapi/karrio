@@ -1,0 +1,129 @@
+---
+sidebarTitle: White Label
+title: White Label Configuration
+description: Configure your platform name and website for basic white labeling
+tags: [platform, guides, white-label, branding]
+author: Karrio Team
+---
+
+# White Label Configuration
+
+Customize your Karrio instance with your own branding by configuring the platform name and website URL.
+
+## Overview
+
+White labeling in Karrio currently supports:
+- Custom platform name
+- Custom website URL
+
+## Configuration Methods
+
+### 1. Admin Dashboard
+
+The easiest way to configure white label settings:
+
+1. Navigate to **Admin** → **Platform**
+2. Click the edit icon next to **Platform Details**
+3. Configure:
+   - **Platform Name**: Your company or product name
+   - **Platform Website**: Your main website URL
+4. Click **Save Changes**
+
+![Platform Configuration](/placeholder.svg)
+
+These settings affect:
+- Browser title
+- Email sender name
+- Platform references throughout the UI
+
+### 2. Environment Variables
+
+You can also configure white label settings through environment variables:
+
+```env
+# .env file
+APP_NAME="Your Company Shipping"
+APP_WEBSITE="https://yourcompany.com"
+```
+
+After updating environment variables, restart your services:
+```bash
+docker compose restart
+```
+
+## What Gets Branded
+
+When you configure the platform name and website:
+
+1. **Dashboard Header** - Shows your platform name
+2. **Browser Title** - Uses your platform name
+3. **Email Communications** - Sent from your platform name
+4. **Login Page** - Displays your platform name
+5. **API Responses** - Include your platform information in metadata
+
+## Limitations
+
+Currently, white labeling is limited to:
+- Platform name configuration
+- Website URL configuration
+
+The following are **not** currently customizable:
+- Logo and favicon
+- Color schemes
+- CSS styling
+- Email templates
+- Custom domains (requires manual server configuration)
+
+## Future Enhancements
+
+We're working on expanding white label capabilities to include:
+- Custom logo support
+- Theme customization
+- Email template editing
+- Advanced branding options
+
+## Example Configuration
+
+Here's a simple example of white labeling for a company called "FastShip":
+
+1. **Set Platform Name**: "FastShip"
+2. **Set Website URL**: "https://fastship.com"
+
+Result:
+- Users see "FastShip" in the dashboard header
+- Browser tabs show "FastShip - Shipping Platform"
+- System emails come from "FastShip"
+
+## Frequently Asked Questions
+
+### Can I use a custom domain?
+
+Custom domains require server-level configuration and are not available through the white label settings. You'll need to:
+1. Configure your DNS
+2. Set up SSL certificates
+3. Update server configuration files
+4. Modify environment variables
+
+### Can I change the logo?
+
+Logo customization is not currently available through the admin interface. This feature is planned for a future release.
+
+### Do white label settings affect the API?
+
+White label settings are included in API metadata responses but do not change API endpoints or functionality.
+
+### Can different organizations have different branding?
+
+No, white label settings apply to the entire platform instance. Multi-tenant branding is not currently supported.
+
+## Support
+
+For white labeling support:
+- Check the [Platform Setup Guide](../../setup)
+- Visit our [Discord community](https://discord.gg/gS88uE7sEx)
+- Contact support@karrio.io (Insiders subscribers)
+
+## Next Steps
+
+- [Configure Feature Flags](../feature-flags) - Control platform capabilities
+- [Set Up Carriers](../carriers) - Add shipping providers to your platform

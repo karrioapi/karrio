@@ -1,8 +1,8 @@
-import { withSentryConfig } from "@sentry/nextjs";
-import path from "path";
 import CopyWebpackPlugin from "copy-webpack-plugin";
-import { fileURLToPath } from "url";
+import { withSentryConfig } from "@sentry/nextjs";
 import { readdirSync, statSync } from "fs";
+import { fileURLToPath } from "url";
+import path from "path";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
@@ -78,7 +78,6 @@ const nextConfig = {
     "@karrio/ui",
     "@karrio/lib",
     "@karrio/types",
-    "@karrio/trpc",
     "@karrio/admin",
     "@karrio/developers",
     "@karrio/app-store",

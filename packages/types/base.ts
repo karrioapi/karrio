@@ -247,7 +247,7 @@ export type AccountContextDataType = {
 };
 export type OrgContextDataType = {
   data: {
-    organizations?: ee.get_organizations_organizations[];
+    organizations?: ee.get_organizations_organizations;
   };
 };
 
@@ -289,6 +289,7 @@ export interface Metadata {
   TENANT_LEVEL_BILLING: boolean;
   WORKFLOW_MANAGEMENT: boolean;
   SHIPPING_RULES: boolean;
+  ADVANCED_ANALYTICS: boolean;
 }
 
 export interface References {
@@ -315,6 +316,8 @@ export interface References {
   ORG_LEVEL_BILLING: boolean;
   TENANT_LEVEL_BILLING: boolean;
   WORKFLOW_MANAGEMENT: boolean;
+  SHIPPING_RULES: boolean;
+  ADVANCED_ANALYTICS: boolean;
 
   countries: Collection;
   currencies: Collection;

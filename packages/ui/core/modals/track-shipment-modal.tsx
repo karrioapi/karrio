@@ -94,20 +94,26 @@ export const TrackerModalProvider = ({
   useEffect(() => {
     if (!references?.carriers) return;
 
-    const connections = [
-      ...(userQuery?.user_connections || []),
-      ...(systemQuery?.system_connections || []),
-    ].filter(
-      (c) =>
-        c.active &&
-        c.carrier_name in references?.carriers &&
-        c.carrier_name !== "generic" &&
-        (c as any).enabled !== false &&
-        c.capabilities.includes("tracking"),
-    );
+    const userConns: any[] = Array.isArray((userQuery as any)?.user_connections)
+      ? (userQuery as any).user_connections
+      : (userQuery as any)?.user_connections?.edges?.map((e: any) => e.node) || [];
+
+    const systemConns: any[] = Array.isArray((systemQuery as any)?.system_connections)
+      ? (systemQuery as any).system_connections
+      : (systemQuery as any)?.system_connections?.edges?.map((e: any) => e.node) || [];
+
+    const connections = [...userConns, ...systemConns]
+      .filter(Boolean)
+      .filter(
+        (c: any) =>
+          (c.active === true || c.enabled === true) &&
+          c.carrier_name in references?.carriers &&
+          c.carrier_name !== "generic" &&
+          c.capabilities?.includes?.("tracking"),
+      );
 
     setCarrierList(connections);
-  }, [userQuery?.user_connections, systemQuery?.system_connections, references?.carriers]);
+  }, [userQuery, systemQuery, references?.carriers]);
 
   return (
     <>

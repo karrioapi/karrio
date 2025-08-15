@@ -146,14 +146,14 @@ def to_decimal(
     value: typing.Union[str, float, bytes] = None,
     quant: typing.Optional[float] = None,
 ) -> typing.Optional[float]:
-    """Parse a value into a valid decimal number.
+    """Parse a value into a valid decimal number with 2 decimal places by default.
 
     Example:
         result1 = to_decimal(14.89998)
-        print(result1)  # 14.89
+        print(result1)  # 14.90
 
         result2 = to_decimal("14.89998")
-        print(result2)  # 14.89
+        print(result2)  # 14.90
 
         result3 = to_decimal(14)
         print(result3)  # 14.00
@@ -162,9 +162,12 @@ def to_decimal(
         print(result4)  # None
 
     :param value: a value that can be parsed to float.
-    :param quant: decimal places for rounding.
+    :param quant: decimal places for rounding (defaults to 2).
     :return: a valid decimal number or None.
     """
+    # Default to 2 decimal places if not specified
+    if quant is None:
+        quant = 0.01  # This will round to 2 decimal places
     return utils.NF.decimal(value, quant)
 
 
@@ -210,6 +213,39 @@ def to_money(
     try:
         return to_decimal(value)
     except:
+        return None
+
+
+def format_decimal(
+    value: typing.Union[str, float, bytes] = None,
+    decimal_places: int = 2,
+) -> typing.Optional[float]:
+    """Format a decimal number to a specific number of decimal places.
+
+    Example:
+        result1 = format_decimal(14.89998)
+        print(result1)  # 14.90
+
+        result2 = format_decimal(14.89998, 1)
+        print(result2)  # 14.9
+
+        result3 = format_decimal(14)
+        print(result3)  # 14.00
+
+    :param value: a value that can be parsed to float.
+    :param decimal_places: number of decimal places (defaults to 2).
+    :return: a formatted decimal number or None.
+    """
+    if value is None:
+        return None
+
+    try:
+        # Convert to float first
+        float_value = float(value)
+        # Round to specified decimal places
+        quant = 1.0 / (10 ** decimal_places)
+        return utils.NF.decimal(float_value, quant)
+    except (ValueError, TypeError):
         return None
 
 

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Search, Loader2, Package, MapPin, X } from "lucide-react";
+import { Search, Loader2, Package, Truck, Inbox, X, Navigation } from "lucide-react";
 import { cn } from "@karrio/ui/lib/utils";
 import {
   Command,
@@ -84,42 +84,47 @@ export const SearchBar = React.forwardRef<
     const results: SearchResult[] = [];
 
     if (data.results) {
-      data.results.forEach((item: any) => {
-        if (item.tracking_number) {
+      data.results.slice(0, 10).forEach((item: any) => {
+        // Shipments have recipient field
+        if (item.recipient) {
           results.push({
             id: item.id,
             type: 'shipment',
             title: `Shipment ${item.tracking_number || item.id}`,
-            subtitle: item.recipient ? formatAddressShort(item.recipient) : undefined,
+            subtitle: formatAddressShort(item.recipient),
             status: item.status,
             date: item.created_at,
             href: `/shipments/${item.id}`,
           });
-        } else if (item.order_id) {
+        } 
+        // Orders have shipping_to field
+        else if (item.shipping_to) {
           results.push({
             id: item.id,
             type: 'order',
             title: `Order ${item.order_id || item.id}`,
-            subtitle: item.shipping_to ? formatAddressShort(item.shipping_to) : undefined,
+            subtitle: formatAddressShort(item.shipping_to),
             status: item.status,
             date: item.created_at,
             href: `/orders/${item.id}`,
           });
-        } else if (item.carrier_tracking_number) {
+        } 
+        // Trackers have neither recipient nor shipping_to
+        else {
           results.push({
             id: item.id,
             type: 'tracker',
-            title: `Tracking ${item.carrier_tracking_number}`,
+            title: `Tracking ${item.tracking_number || item.id}`,
             subtitle: item.delivered_to ? formatAddressShort(item.delivered_to) : undefined,
             status: item.status,
             date: item.created_at,
-            href: `/trackers/${item.id}`,
+            href: `/tracking/${item.id}`, // Note: /tracking not /trackers
           });
         }
       });
     }
 
-    return results.slice(0, 8);
+    return results;
   }, [searchQuery.data, debouncedValue]);
 
   const handleInputValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -165,11 +170,11 @@ export const SearchBar = React.forwardRef<
   const getResultIcon = (type: SearchResult['type']) => {
     switch (type) {
       case 'shipment':
-        return <Package className="h-4 w-4" />;
+        return <Truck className="h-4 w-4" />; // fas fa-truck
       case 'order':
-        return <Package className="h-4 w-4" />;
+        return <Inbox className="h-4 w-4" />; // fas fa-inbox
       case 'tracker':
-        return <MapPin className="h-4 w-4" />;
+        return <Navigation className="h-4 w-4" />; // fas fa-location-arrow
       default:
         return <Package className="h-4 w-4" />;
     }

@@ -17,7 +17,6 @@
     "@auth/prisma-adapter": "^2.7.4",
     "@calcom/embed-react": "^1.5.2",
     "@karrio/core": "*",
-    "@karrio/trpc": "*",
     "@prisma/client": "^5.22.0",
     "@react-email/components": "^0.0.30",
     "@stripe/react-stripe-js": "^3.0.0",

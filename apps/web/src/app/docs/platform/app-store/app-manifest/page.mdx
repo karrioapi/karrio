@@ -1,0 +1,594 @@
+---
+title: App Manifest
+description: Learn how to configure your Karrio app with manifest files
+---
+
+# App Manifest
+
+The app manifest is the configuration file that defines your app's metadata, permissions, assets, and components. This guide covers all manifest options and best practices.
+
+## Basic Structure
+
+Every Karrio app must have a `manifest.ts` file that exports an `AppManifest` object:
+
+```typescript
+// manifest.ts
+import { AppManifest } from "@karrio/app-store/types";
+
+export const manifest: AppManifest = {
+  id: "my-app",
+  name: "My App",
+  version: "1.0.0",
+  description: "A description of what this app does",
+  author: {
+    name: "Your Name",
+    email: "you@example.com",
+    website: "https://yourwebsite.com",
+  },
+  permissions: ["manage_shipments"],
+  assets: {
+    icon: "./assets/icon.svg",
+    screenshots: ["./assets/screenshot1.png"],
+    readme: "./README.md",
+  },
+  components: {
+    main: "./component.tsx",
+  },
+};
+```
+
+## Manifest Properties
+
+### Required Fields
+
+#### `id` (string)
+
+Unique identifier for your app. Must be lowercase, alphanumeric, and may contain hyphens.
+
+```typescript
+export const manifest: AppManifest = {
+  id: "shipping-optimizer", // ✅ Good
+  // id: 'Shipping_Optimizer', // ❌ Bad: uppercase and underscore
+  // id: 'shipping optimizer', // ❌ Bad: contains space
+};
+```
+
+#### `name` (string)
+
+Human-readable name displayed in the UI.
+
+```typescript
+export const manifest: AppManifest = {
+  name: "Shipping Optimizer", // ✅ Good
+  // name: '', // ❌ Bad: empty string
+};
+```
+
+#### `version` (string)
+
+Semantic version number following semver format.
+
+```typescript
+export const manifest: AppManifest = {
+  version: "1.0.0", // ✅ Good
+  version: "1.2.3-beta.1", // ✅ Good: pre-release
+  // version: '1.0', // ❌ Bad: incomplete version
+};
+```
+
+#### `description` (string)
+
+Brief description of your app's functionality.
+
+```typescript
+export const manifest: AppManifest = {
+  description:
+    "Optimize shipping routes and reduce costs with AI-powered recommendations",
+};
+```
+
+#### `author` (object)
+
+Information about the app developer.
+
+```typescript
+export const manifest: AppManifest = {
+  author: {
+    name: "Acme Corp",
+    email: "support@acme.com",
+    website: "https://acme.com", // Optional
+  },
+};
+```
+
+### Assets Configuration
+
+#### `assets` (object)
+
+Defines static assets used by your app.
+
+```typescript
+export const manifest: AppManifest = {
+  assets: {
+    icon: "./assets/icon.svg", // Required: app icon
+    screenshots: [
+      // Optional: screenshots for app store
+      "./assets/screenshot1.png",
+      "./assets/screenshot2.png",
+      "./assets/demo.gif",
+    ],
+    readme: "./README.md", // Optional: detailed documentation
+  },
+};
+```
+
+**Asset Requirements:**
+
+- **Icon**: SVG format, 64x64px recommended
+- **Screenshots**: PNG/JPG format, 1200x800px recommended
+- **README**: Markdown format with app documentation
+
+### Components Configuration
+
+#### `components` (object)
+
+Defines React components for different app views.
+
+```typescript
+export const manifest: AppManifest = {
+  components: {
+    main: "./component.tsx", // Required: main app component
+    configuration: "./configuration.tsx", // Optional: settings component
+    widget: "./widget.tsx", // Optional: dashboard widget
+    onboarding: "./onboarding.tsx", // Optional: setup wizard
+  },
+};
+```
+
+### Permissions System
+
+#### `permissions` (array)
+
+Defines what Karrio APIs and data your app can access.
+
+```typescript
+export const manifest: AppManifest = {
+  permissions: [
+    // App management permissions
+    "manage_apps",
+
+    // Carrier management permissions
+    "manage_carriers",
+
+    // Order management permissions
+    "manage_orders",
+
+    // Team management permissions
+    "manage_team",
+
+    // Organization owner permissions
+    "manage_org_owner",
+
+    // Webhook management permissions
+    "manage_webhooks",
+
+    // Data management permissions (includes tracking, analytics)
+    "manage_data",
+
+    // Shipment management permissions (includes addresses, parcels, rates)
+    "manage_shipments",
+
+    // System management permissions (includes users, system configuration)
+    "manage_system",
+  ],
+};
+```
+
+**Permission Groups:**
+
+- `manage_apps` - Full access to app management
+- `manage_carriers` - Full access to carrier configurations
+- `manage_orders` - Full access to order management
+- `manage_team` - Full access to team member management
+- `manage_org_owner` - Organization owner permissions
+- `manage_webhooks` - Full access to webhook management
+- `manage_data` - Full access to data, analytics, and audit logs
+- `manage_shipments` - Full access to shipments, addresses, parcels, tracking
+- `manage_system` - Full administrative access to system settings and users
+
+### API Routes Configuration
+
+#### `api` (object)
+
+Defines server-side API endpoints for your app.
+
+```typescript
+export const manifest: AppManifest = {
+  api: {
+    routes: {
+      // Basic CRUD operations
+      data: "./api/data/route.ts",
+      "data/[id]": "./api/data/[id]/route.ts",
+
+      // Webhook handlers
+      "webhooks/shopify": "./api/webhooks/shopify/route.ts",
+      "webhooks/stripe": "./api/webhooks/stripe/route.ts",
+
+      // External integrations
+      "integrations/oauth": "./api/integrations/oauth/route.ts",
+      "integrations/sync": "./api/integrations/sync/route.ts",
+
+      // Background jobs
+      "jobs/sync": "./api/jobs/sync/route.ts",
+      "jobs/cleanup": "./api/jobs/cleanup/route.ts",
+    },
+  },
+};
+```
+
+### Settings Configuration
+
+#### `settings` (object)
+
+Defines configuration options for your app.
+
+```typescript
+export const manifest: AppManifest = {
+  settings: {
+    required_metafields: [
+      {
+        key: "api_key",
+        type: "password",
+        label: "API Key",
+        description: "Your external service API key",
+        is_required: true,
+      },
+      {
+        key: "webhook_url",
+        type: "url",
+        label: "Webhook URL",
+        description: "URL for receiving webhooks",
+        is_required: false,
+      },
+      {
+        key: "sync_interval",
+        type: "number",
+        label: "Sync Interval (minutes)",
+        description: "How often to sync data",
+        default: "30",
+        min: 5,
+        max: 1440,
+      },
+      {
+        key: "enabled_features",
+        type: "multi_select",
+        label: "Enabled Features",
+        description: "Select which features to enable",
+        options: [
+          { value: "auto_sync", label: "Automatic Sync" },
+          { value: "notifications", label: "Email Notifications" },
+          { value: "analytics", label: "Analytics Tracking" },
+        ],
+      },
+    ],
+    default_configuration: {
+      sync_interval: "30",
+      enabled_features: ["auto_sync"],
+    },
+  },
+};
+```
+
+**Metafield Types:**
+
+- `string` - Text input
+- `password` - Password input (encrypted)
+- `number` - Numeric input
+- `boolean` - Checkbox
+- `url` - URL validation
+- `email` - Email validation
+- `select` - Dropdown selection
+- `multi_select` - Multiple selection
+- `textarea` - Large text input
+- `json` - JSON object input
+
+### Categories and Tags
+
+#### `category` (string)
+
+Primary category for app store organization.
+
+```typescript
+export const manifest: AppManifest = {
+  category: "shipping", // Primary category
+  tags: [
+    // Additional tags for discovery
+    "optimization",
+    "automation",
+    "ai",
+    "cost-reduction",
+  ],
+};
+```
+
+**Available Categories:**
+
+- `shipping` - Shipping and logistics
+- `ecommerce` - E-commerce integrations
+- `analytics` - Analytics and reporting
+- `automation` - Workflow automation
+- `utilities` - Utility tools
+- `integrations` - Third-party integrations
+
+### Lifecycle Hooks
+
+#### `hooks` (object)
+
+Define lifecycle event handlers.
+
+```typescript
+export const manifest: AppManifest = {
+  hooks: {
+    install: "./hooks/install.ts", // Run on app installation
+    uninstall: "./hooks/uninstall.ts", // Run on app uninstallation
+    upgrade: "./hooks/upgrade.ts", // Run on app updates
+    configure: "./hooks/configure.ts", // Run on configuration changes
+  },
+};
+```
+
+### Environment Configuration
+
+#### `environment` (object)
+
+Define environment-specific settings.
+
+```typescript
+export const manifest: AppManifest = {
+  environment: {
+    development: {
+      api_base_url: "http://localhost:3000",
+      debug: true,
+    },
+    staging: {
+      api_base_url: "https://staging-api.myapp.com",
+      debug: false,
+    },
+    production: {
+      api_base_url: "https://api.myapp.com",
+      debug: false,
+    },
+  },
+};
+```
+
+## Advanced Configuration
+
+### Conditional Features
+
+Use conditional logic for complex app configurations:
+
+```typescript
+const manifest: AppManifest = {
+  id: "advanced-app",
+  name: "Advanced App",
+  version: "2.0.0",
+
+  // Conditional permissions based on app type
+  permissions: [
+    "manage_shipments",
+    ...(process.env.NODE_ENV === "development" ? ["admin:debug"] : []),
+  ],
+
+  // Dynamic component loading
+  components: {
+    main: "./component.tsx",
+    ...(process.env.FEATURE_ANALYTICS === "enabled" && {
+      analytics: "./analytics.tsx",
+    }),
+  },
+
+  // Environment-specific API routes
+  api: {
+    routes: {
+      data: "./api/data/route.ts",
+      ...(process.env.NODE_ENV !== "production" && {
+        debug: "./api/debug/route.ts",
+      }),
+    },
+  },
+};
+```
+
+### Multi-tenant Configuration
+
+Configure apps for multi-tenant scenarios:
+
+```typescript
+export const manifest: AppManifest = {
+  id: "multi-tenant-app",
+  name: "Multi-tenant App",
+  version: "1.0.0",
+
+  // Tenant-specific settings
+  settings: {
+    tenant_configuration: {
+      subdomain_required: true,
+      custom_branding: true,
+      isolated_data: true,
+    },
+    required_metafields: [
+      {
+        key: "tenant_id",
+        type: "string",
+        label: "Tenant ID",
+        description: "Unique identifier for this tenant",
+        is_required: true,
+        validation: {
+          pattern: "^[a-z0-9-]+$",
+          message: "Must be lowercase alphanumeric with hyphens",
+        },
+      },
+    ],
+  },
+};
+```
+
+### Validation and Schema
+
+Add validation to your manifest:
+
+```typescript
+import { z } from "zod";
+
+const manifestSchema = z.object({
+  id: z.string().regex(/^[a-z0-9-]+$/, "Invalid app ID format"),
+  name: z.string().min(1).max(50),
+  version: z.string().regex(/^\d+\.\d+\.\d+/, "Invalid semver format"),
+  description: z.string().min(10).max(500),
+  permissions: z.array(z.string()),
+  components: z.object({
+    main: z.string(),
+    configuration: z.string().optional(),
+  }),
+});
+
+export const manifest: AppManifest = manifestSchema.parse({
+  // Your manifest configuration
+});
+```
+
+## Best Practices
+
+### 1. Security Considerations
+
+```typescript
+export const manifest: AppManifest = {
+  // ✅ Request only necessary permissions
+  permissions: ["manage_shipments"], // Minimal permissions
+
+  // ✅ Validate sensitive configuration
+  settings: {
+    required_metafields: [
+      {
+        key: "api_key",
+        type: "password", // Automatically encrypted
+        validation: {
+          pattern: "^sk_[a-zA-Z0-9]{24}$",
+          message: "Invalid API key format",
+        },
+      },
+    ],
+  },
+};
+```
+
+### 2. Performance Optimization
+
+```typescript
+export const manifest: AppManifest = {
+  // ✅ Lazy load optional components
+  components: {
+    main: "./component.tsx",
+    analytics: "./analytics.tsx", // Loaded only when needed
+  },
+
+  // ✅ Optimize asset loading
+  assets: {
+    icon: "./assets/icon.svg", // SVG for scalability
+    screenshots: ["./assets/screenshot1.webp"], // WebP for compression
+  },
+};
+```
+
+### 3. Maintainability
+
+```typescript
+// ✅ Use constants for reusable values
+const APP_ID = "shipping-optimizer";
+const API_VERSION = "v1";
+
+export const manifest: AppManifest = {
+  id: APP_ID,
+  version: "1.0.0",
+
+  api: {
+    routes: {
+      [`${API_VERSION}/data`]: "./api/v1/data/route.ts",
+      [`${API_VERSION}/sync`]: "./api/v1/sync/route.ts",
+    },
+  },
+};
+```
+
+### 4. Documentation
+
+Always include comprehensive documentation:
+
+```typescript
+export const manifest: AppManifest = {
+  assets: {
+    readme: "./README.md", // Detailed setup and usage instructions
+  },
+
+  settings: {
+    required_metafields: [
+      {
+        key: "api_key",
+        type: "password",
+        label: "API Key",
+        description: "Get your API key from https://example.com/settings/api", // Clear instructions
+        help_url: "https://docs.example.com/api-key-setup", // Link to documentation
+      },
+    ],
+  },
+};
+```
+
+## Validation and Testing
+
+Test your manifest configuration:
+
+```typescript
+// manifest.test.ts
+import { describe, it, expect } from "vitest";
+import { manifest } from "./manifest";
+
+describe("App Manifest", () => {
+  it("has valid ID format", () => {
+    expect(manifest.id).toMatch(/^[a-z0-9-]+$/);
+  });
+
+  it("has semantic version", () => {
+    expect(manifest.version).toMatch(/^\d+\.\d+\.\d+/);
+  });
+
+  it("has required components", () => {
+    expect(manifest.components.main).toBeDefined();
+  });
+
+  it("has valid permissions", () => {
+    const validPermissions = [
+      "manage_apps",
+      "manage_carriers",
+      "manage_orders",
+      "manage_team",
+      "manage_org_owner",
+      "manage_webhooks",
+      "manage_data",
+      "manage_shipments",
+      "manage_system",
+    ];
+
+    manifest.permissions.forEach((permission) => {
+      expect(validPermissions).toContain(permission);
+    });
+  });
+});
+```
+
+## Next Steps
+
+- **[UI Components](/docs/products/app-store/ui-components)** - Build your app interface
+- **[API Integration](/docs/products/app-store/api-integration)** - Connect with Karrio APIs
+- **[Examples](/docs/products/app-store/examples)** - See complete app examples

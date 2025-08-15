@@ -94,12 +94,8 @@ export default function Page() {
     ];
     const [key, setKey] = useState<string>(`${shipment_id}-${Date.now()}`);
     const [addReturn, setAddReturn] = useState<boolean>(false);
-    const {
-      query: { data: { user_connections } = {} },
-    } = useCarrierConnections();
-    const {
-      query: { data: { system_connections } = {} },
-    } = useSystemConnections();
+    const { query: userConnQuery, user_carrier_connections: user_connections } = useCarrierConnections();
+    const { query: sysConnQuery, system_connections } = useSystemConnections();
     const {
       state: { shipment, query },
       ...mutation
@@ -132,17 +128,20 @@ export default function Page() {
         shipment.recipient.country_code !== shipment.shipper.country_code
       );
     };
-    const getCarrier = (rate: ShipmentType["rates"][0]) =>
-      user_connections?.find(
+    const getCarrier = (rate: ShipmentType["rates"][0]) => {
+      const user = (user_connections || []).find(
         (_) =>
-          _.id === rate.meta.carrier_connection_id ||
-          _.carrier_id === rate.carrier_id,
-      ) ||
-      system_connections?.find(
-        (_) =>
-          _.id === rate.meta.carrier_connection_id ||
-          _.carrier_id === rate.carrier_id,
+          _.id === (rate?.meta as any)?.carrier_connection_id ||
+          _.carrier_id === rate?.carrier_id,
       );
+      if (user) return user;
+      const sys = (system_connections || []).find(
+        (_) =>
+          _.id === (rate?.meta as any)?.carrier_connection_id ||
+          _.carrier_id === rate?.carrier_id,
+      );
+      return sys;
+    };
     const getOptions = (): any => {
       return (orders.data?.orders.edges || []).reduce(
         (acc, { node: { options } }) => ({ ...acc, ...options }),

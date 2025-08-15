@@ -30,10 +30,10 @@ class Query:
         resolver=types.SystemUsageType.resolve
     )
 
-    user_connections: typing.List[types.CarrierConnectionType] = strawberry.field(
-        resolver=types.CarrierConnectionType.resolve_list_legacy
+    user_connections: utils.Connection[types.CarrierConnectionType] = strawberry.field(
+        resolver=types.CarrierConnectionType.resolve_list
     )
-    system_connections: typing.List[types.SystemConnectionType] = strawberry.field(
+    system_connections: utils.Connection[types.SystemConnectionType] = strawberry.field(
         resolver=types.SystemConnectionType.resolve_list
     )
 

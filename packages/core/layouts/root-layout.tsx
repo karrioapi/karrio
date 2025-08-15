@@ -1,5 +1,6 @@
 import { ErrorBoundary } from "@karrio/ui/core/components/error-boudaries";
 import { loadMetadata, getCurrentDomain } from "@karrio/core/context/main";
+import { Toaster } from "@karrio/ui/components/ui/toaster";
 import { PublicEnvScript } from "next-runtime-env";
 import { ServerErrorCode } from "@karrio/lib";
 
@@ -66,6 +67,8 @@ export default async function Layout({
                 </div>
               </section>
             )}
+
+            <Toaster />
           </ErrorBoundary>
         </div>
       </body>

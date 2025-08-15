@@ -64,7 +64,7 @@ export function Auth(HOST: string) {
       return axios({
         url: url$`${HOST || ""}/graphql`,
         method: "POST",
-        data: { query: `{ organizations { id } }` },
+        data: { query: `{ organizations { edges { node { id } } } }` },
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "x-test-mode": testMode,
@@ -72,7 +72,7 @@ export function Auth(HOST: string) {
       })
         .then(({ data }) => {
           console.log("orgs data", data);
-          const organizations = data?.data?.organizations || [];
+          const organizations = data?.data?.organizations?.edges?.map((e: any) => e.node) || [];
           // First try to find the specified org
           const selectedOrg = organizations.find(({ id }: any) => id === orgId);
           if (selectedOrg) return selectedOrg;

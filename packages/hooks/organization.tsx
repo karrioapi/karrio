@@ -13,7 +13,6 @@ import {
   DELETE_ORGANIZATION_INVITES,
   get_organizations,
   GET_ORGANIZATIONS,
-  get_organizations_organizations,
   get_organization_invitation,
   GET_ORGANIZATION_INVITATION,
   SendOrganizationInvitesMutationInput,
@@ -25,6 +24,7 @@ import {
   UpdateOrganizationMutationInput,
   update_organization,
   UPDATE_ORGANIZATION,
+  get_organizations_organizations_edges_node,
 } from "@karrio/types/graphql/ee";
 import {
   UseQueryResult,
@@ -37,7 +37,7 @@ import { useSession } from "next-auth/react";
 import { useKarrio, useAuthenticatedQuery, useAuthenticatedMutation } from "./karrio";
 import React from "react";
 
-export type OrganizationType = get_organizations_organizations;
+export type OrganizationType = get_organizations_organizations_edges_node;
 type OrganizationContextType = {
   query?: UseQueryResult<get_organizations, any>;
   organization?: OrganizationType;
@@ -67,26 +67,39 @@ export const OrganizationProvider = ({
   ...props
 }: OrganizationProviderProps): JSX.Element => {
   const karrio = useKarrio();
-  const [organizations, setOrganizations] = React.useState<
-    OrganizationType[] | undefined
-  >(props.organizations);
-  const [organization, setOrganization] = React.useState<
-    OrganizationType | undefined
-  >(extractCurrent(props.organizations, props.orgId));
+  const initialOrganizations = React.useMemo<OrganizationType[] | undefined>(() => {
+    // Accept either array or connection payload; normalize to array of nodes
+    if (Array.isArray((props as any).organizations)) return (props as any).organizations as any;
+    const edges = (props as any).organizations?.edges;
+    if (Array.isArray(edges)) return edges.map((e: any) => e.node);
+    // Some logs showed props being coerced to an object with numeric keys; recover array
+    const numericKeys = Object.keys((props as any).organizations || {}).filter(k => /^\d+$/.test(k));
+    if (numericKeys.length > 0) {
+      return numericKeys
+        .sort((a, b) => Number(a) - Number(b))
+        .map((k) => (props as any).organizations[k]);
+    }
+    return undefined;
+  }, [props.organizations]);
+
+  const [organizations, setOrganizations] = React.useState<OrganizationType[] | undefined>(initialOrganizations);
+  const [organization, setOrganization] = React.useState<OrganizationType | undefined>(extractCurrent(initialOrganizations, props.orgId));
 
   const query = useAuthenticatedQuery({
     queryKey: ["organizations"],
     queryFn: () =>
       karrio.graphql
-        .request<get_organizations>(gqlstr(GET_ORGANIZATIONS))
+        .request<get_organizations>(gqlstr(GET_ORGANIZATIONS), { filter: { is_active: true } })
         .then((data) => {
-          setOrganizations(data?.organizations);
-          const current = extractCurrent(data?.organizations, props.orgId);
+          const nodes = data?.organizations?.edges?.map((e: any) => e.node) || [];
+          setOrganizations(nodes);
+          const current = extractCurrent(nodes, props.orgId);
           setOrganization(current);
           setCookie("orgId", current?.id);
           return data;
         }),
-    initialData: { organizations: props.organizations },
+    // Hydrate with normalized list when available
+    initialData: initialOrganizations ? { organizations: { edges: initialOrganizations.map((n: any) => ({ node: n })) } as any } : undefined,
     enabled: props.metadata?.MULTI_ORGANIZATIONS === true,
     refetchOnWindowFocus: false,
     staleTime: 1500000,
@@ -96,8 +109,9 @@ export const OrganizationProvider = ({
 
   React.useEffect(() => {
     if (!query.data || !query.isFetched) return;
-    setOrganizations(query.data?.organizations);
-    const current = extractCurrent(query.data?.organizations, props.orgId);
+    const nodes = query.data?.organizations?.edges?.map((e: any) => e.node) || [];
+    setOrganizations(nodes);
+    const current = extractCurrent(nodes, props.orgId);
     setOrganization(current);
   }, [props.orgId, query.data]);
 
@@ -119,7 +133,13 @@ export function useOrganizationMutation() {
   const karrio = useKarrio();
   const queryClient = useQueryClient();
   const invalidateCache = () => {
-    queryClient.invalidateQueries(["organizations"]);
+    queryClient.invalidateQueries({ queryKey: ["organizations"] });
+    // Invalidate common org-scoped caches
+    queryClient.invalidateQueries({ predicate: (q) => {
+      const key = q.queryKey as any[];
+      // If key has the session scope object with orgId, let it refetch after session.update
+      return Array.isArray(key) && key.length > 1 && typeof key[1] === 'object' && key[1] !== null && 'orgId' in key[1];
+    }});
   };
 
   const createOrganization = useAuthenticatedMutation({
@@ -184,11 +204,101 @@ export function useOrganizationMutation() {
 
   // Helpers
   const changeActiveOrganization = async (orgId: string) => {
+    // Optimistically set cookie; session.update is the source of truth
     setCookie("orgId", orgId);
-    update({ orgId });
-    insertUrlParam({});
-    setTimeout(() => location.reload(), 1000);
+    try {
+      await update({ orgId });
+      invalidateCache();
+      // Use soft refresh for App Router to re-render server comps
+      if (typeof window !== 'undefined' && 'navigation' in window) {
+        // next/navigation router.refresh isn't accessible here; fallback to hard refresh
+        // Consumer UIs can call router.refresh after awaiting this promise
+      }
+    } catch (e) {
+      // Best-effort: revert cookie on failure
+      setCookie("orgId", (karrio.pageData as any)?.orgId || "");
+      throw e;
+    }
   };
+
+  const removeOrganizationMember = useAuthenticatedMutation({
+    mutationFn: (data: { org_id: string; user_id: string }) =>
+      karrio.graphql.request(
+        `
+          mutation RemoveOrganizationMember($data: RemoveOrganizationMemberMutationInput!) {
+            remove_organization_member(input: $data) {
+              organization {
+                id
+                name
+                members {
+                  email
+                  full_name
+                  is_admin
+                  is_owner
+                  last_login
+                  invitation {
+                    id
+                    invitee_identifier
+                  }
+                }
+              }
+              errors { field messages }
+            }
+          }
+        `,
+        { data }
+      ),
+    onSuccess: invalidateCache,
+  });
+
+  const updateMemberStatus = useAuthenticatedMutation({
+    mutationFn: (data: { org_id: string; user_id: string; is_active: boolean }) =>
+      karrio.graphql.request(
+        `
+          mutation UpdateMemberStatus($data: UpdateMemberStatusMutationInput!) {
+            update_member_status(input: $data) {
+              organization {
+                id
+                name
+                members {
+                  email
+                  full_name
+                  is_admin
+                  is_owner
+                  last_login
+                  invitation {
+                    id
+                    invitee_identifier
+                  }
+                }
+              }
+              errors { field messages }
+            }
+          }
+        `,
+        { data }
+      ),
+    onSuccess: invalidateCache,
+  });
+
+  const resendOrganizationInvite = useAuthenticatedMutation({
+    mutationFn: (data: { invitation_id: string; redirect_url: string }) =>
+      karrio.graphql.request(
+        `
+          mutation ResendOrganizationInvite($data: ResendOrganizationInviteMutationInput!) {
+            resend_organization_invite(input: $data) {
+              invitation {
+                id
+                invitee_identifier
+              }
+              errors { field messages }
+            }
+          }
+        `,
+        { data }
+      ),
+    onSuccess: invalidateCache,
+  });
 
   return {
     createOrganization,
@@ -198,6 +308,9 @@ export function useOrganizationMutation() {
     setOrganizationUserRoles,
     sendOrganizationInvites,
     deleteOrganizationInvitation,
+    removeOrganizationMember,
+    updateMemberStatus,
+    resendOrganizationInvite,
     changeActiveOrganization,
   };
 }
@@ -206,7 +319,10 @@ export function useOrganizationInvitation(guid?: string) {
   const karrio = useKarrio();
   const queryClient = useQueryClient();
   const invalidateCache = () => {
-    queryClient.invalidateQueries(["organizations"]);
+    // Invalidate all related queries to ensure data refresh
+    queryClient.invalidateQueries({ queryKey: ["organizations"] });
+    // Force refetch to ensure UI updates immediately
+    queryClient.refetchQueries({ queryKey: ["organizations"] });
   };
 
   // Queries

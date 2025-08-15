@@ -151,12 +151,20 @@ def rate_request(
             CustomerClassification=None,
             Shipment=ups.ShipmentType(
                 OriginRecordTransactionTimestamp=None,
+                ShipmentDate=lib.fdatetime(
+                    options.shipment_date.state or time.strftime("%Y-%m-%d"),
+                    current_format="%Y-%m-%d",
+                    output_format="%Y%m%d",
+                ),
                 Shipper=ups.ShipType(
                     Name=shipper.name,
                     AttentionName=shipper.contact,
                     ShipperNumber=settings.account_number,
                     Address=ups.ShipFromAddressType(
-                        AddressLine=shipper.address_line,
+                        AddressLine=[
+                            lib.text(line, max=35)
+                            for line in shipper.address_lines
+                        ],
                         City=shipper.city,
                         StateProvinceCode=shipper.state_code,
                         PostalCode=shipper.postal_code,
@@ -167,7 +175,10 @@ def rate_request(
                     Name=recipient.name,
                     AttentionName=recipient.contact,
                     Address=ups.AlternateDeliveryAddressAddressType(
-                        AddressLine=recipient.address_line,
+                        AddressLine=[
+                            lib.text(line, max=35)
+                            for line in recipient.address_lines
+                        ],
                         City=recipient.city,
                         StateProvinceCode=recipient.state_code,
                         PostalCode=recipient.postal_code,
@@ -182,7 +193,10 @@ def rate_request(
                     Name=return_address.name,
                     AttentionName=return_address.contact,
                     Address=ups.ShipFromAddressType(
-                        AddressLine=return_address.address_line,
+                        AddressLine=[
+                            lib.text(line, max=35)
+                            for line in return_address.address_lines
+                        ],
                         City=return_address.city,
                         StateProvinceCode=return_address.state_code,
                         PostalCode=return_address.postal_code,
@@ -195,15 +209,17 @@ def rate_request(
                     for code in indications
                 ],
                 PaymentDetails=ups.PaymentDetailsType(
-                    ShipmentCharge=ups.ShipmentChargeType(
-                        Type="01",
-                        BillShipper=ups.BillShipperType(
-                            AccountNumber=settings.account_number,
-                        ),
-                        BillReceiver=None,
-                        BillThirdParty=None,
-                        ConsigneeBilledIndicator=None,
-                    ),
+                    ShipmentCharge=[
+                        ups.ShipmentChargeType(
+                            Type="01",
+                            BillShipper=ups.BillShipperType(
+                                AccountNumber=settings.account_number,
+                            ),
+                            BillReceiver=None,
+                            BillThirdParty=None,
+                            ConsigneeBilledIndicator=None,
+                        )
+                    ],
                     SplitDutyVATIndicator=None,
                 ),
                 FRSPaymentInformation=None,
@@ -412,6 +428,12 @@ def rate_request(
                                 TobaccoIndicator=lib.identity(
                                     "Y" if options.ups_tobacco_indicator.state else None
                                 ),
+                                ECigarettesIndicator=lib.identity(
+                                    "Y" if options.ups_ecigarettes_indicator.state else None
+                                ),
+                                HempCBDIndicator=lib.identity(
+                                    "Y" if options.ups_hemp_cbd_indicator.state else None
+                                ),
                             )
                             if options.ups_restricted_articles.state
                             else None
@@ -442,7 +464,7 @@ def rate_request(
                     if any(options.items())
                     else None
                 ),
-                ShipmentRatingOptions=ups.ShipmentRatingOptionsType(
+                ShipmentRatingOptions=ups.ShipmentShipmentRatingOptionsType(
                     NegotiatedRatesIndicator=lib.identity(
                         "Y"
                         if options.ups_negotiated_rates_indicator.state is not False

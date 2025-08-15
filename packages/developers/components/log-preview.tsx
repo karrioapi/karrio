@@ -1,3 +1,5 @@
+"use client";
+
 import { LogComponent } from "@karrio/developers/modules/log";
 import { useLocation } from "@karrio/hooks/location";
 import React, { useState } from "react";

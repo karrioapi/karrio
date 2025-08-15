@@ -72,6 +72,80 @@ export interface GetSystemUsageVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GetUsage
+// ====================================================
+
+export interface GetUsage_organization_usage_api_errors {
+  label: string | null;
+  count: number | null;
+  date: string | null;
+}
+
+export interface GetUsage_organization_usage_api_requests {
+  label: string | null;
+  count: number | null;
+  date: string | null;
+}
+
+export interface GetUsage_organization_usage_order_volumes {
+  label: string | null;
+  count: number | null;
+  date: string | null;
+}
+
+export interface GetUsage_organization_usage_shipment_count {
+  label: string | null;
+  count: number | null;
+  date: string | null;
+}
+
+export interface GetUsage_organization_usage_tracker_count {
+  label: string | null;
+  count: number | null;
+  date: string | null;
+}
+
+export interface GetUsage_organization_usage_shipping_spend {
+  label: string | null;
+  count: number | null;
+  date: string | null;
+}
+
+export interface GetUsage_organization_usage {
+  members: number | null;
+  total_errors: number | null;
+  order_volume: number | null;
+  total_requests: number | null;
+  total_trackers: number | null;
+  total_shipments: number | null;
+  unfulfilled_orders: number | null;
+  total_shipping_spend: number | null;
+  total_addons_charges: number | null;
+  api_errors: GetUsage_organization_usage_api_errors[] | null;
+  api_requests: GetUsage_organization_usage_api_requests[] | null;
+  order_volumes: GetUsage_organization_usage_order_volumes[] | null;
+  shipment_count: GetUsage_organization_usage_shipment_count[] | null;
+  tracker_count: GetUsage_organization_usage_tracker_count[] | null;
+  shipping_spend: GetUsage_organization_usage_shipping_spend[] | null;
+}
+
+export interface GetUsage_organization {
+  usage: GetUsage_organization_usage;
+}
+
+export interface GetUsage {
+  organization: GetUsage_organization | null;
+}
+
+export interface GetUsageVariables {
+  filter?: UsageFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: get_address_templates
 // ====================================================
 
@@ -1969,7 +2043,15 @@ export interface get_parcel_templatesVariables {
 // GraphQL query operation: get_system_connections
 // ====================================================
 
-export interface get_system_connections_system_connections {
+export interface get_system_connections_system_connections_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface get_system_connections_system_connections_edges_node {
   id: string;
   carrier_id: string;
   test_mode: boolean;
@@ -1978,11 +2060,25 @@ export interface get_system_connections_system_connections {
   carrier_name: string;
   display_name: string;
   enabled: boolean;
-  config: any | null;
+  created_at: any | null;
+  updated_at: any | null;
+}
+
+export interface get_system_connections_system_connections_edges {
+  node: get_system_connections_system_connections_edges_node;
+}
+
+export interface get_system_connections_system_connections {
+  page_info: get_system_connections_system_connections_page_info;
+  edges: get_system_connections_system_connections_edges[];
 }
 
 export interface get_system_connections {
-  system_connections: get_system_connections_system_connections[];
+  system_connections: get_system_connections_system_connections;
+}
+
+export interface get_system_connectionsVariables {
+  filter?: CarrierFilter | null;
 }
 
 
@@ -2323,7 +2419,15 @@ export interface GetTokenVariables {
 // GraphQL query operation: get_user_connections
 // ====================================================
 
-export interface get_user_connections_user_connections_rate_sheet {
+export interface get_user_connections_user_connections_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface get_user_connections_user_connections_edges_node_rate_sheet {
   id: string;
   name: string;
   slug: string;
@@ -2331,7 +2435,7 @@ export interface get_user_connections_user_connections_rate_sheet {
   metadata: any | null;
 }
 
-export interface get_user_connections_user_connections {
+export interface get_user_connections_user_connections_edges_node {
   id: string;
   carrier_id: string;
   carrier_name: string;
@@ -2342,11 +2446,24 @@ export interface get_user_connections_user_connections {
   credentials: any;
   metadata: any | null;
   config: any | null;
-  rate_sheet: get_user_connections_user_connections_rate_sheet | null;
+  rate_sheet: get_user_connections_user_connections_edges_node_rate_sheet | null;
+}
+
+export interface get_user_connections_user_connections_edges {
+  node: get_user_connections_user_connections_edges_node;
+}
+
+export interface get_user_connections_user_connections {
+  page_info: get_user_connections_user_connections_page_info;
+  edges: get_user_connections_user_connections_edges[];
 }
 
 export interface get_user_connections {
-  user_connections: get_user_connections_user_connections[];
+  user_connections: get_user_connections_user_connections;
+}
+
+export interface get_user_connectionsVariables {
+  filter?: CarrierFilter | null;
 }
 
 
@@ -3575,6 +3692,7 @@ export interface get_document_template_document_template {
   description: string | null;
   related_object: TemplateRelatedObject | null;
   active: boolean;
+  preview_url: string | null;
   updated_at: any | null;
 }
 
@@ -3611,6 +3729,7 @@ export interface get_document_templates_document_templates_edges_node {
   related_object: TemplateRelatedObject | null;
   active: boolean;
   updated_at: any | null;
+  preview_url: string | null;
 }
 
 export interface get_document_templates_document_templates_edges {
@@ -5369,8 +5488,8 @@ export interface ShipmentFilter {
   keyword?: string | null;
   address?: string | null;
   id?: string[] | null;
-  created_after?: any | null;
-  created_before?: any | null;
+  created_after?: string | null;
+  created_before?: string | null;
   carrier_name?: string[] | null;
   reference?: string | null;
   service?: string[] | null;
@@ -5520,8 +5639,8 @@ export interface TrackerFilter {
   offset?: number | null;
   first?: number | null;
   tracking_number?: string | null;
-  created_after?: any | null;
-  created_before?: any | null;
+  created_after?: string | null;
+  created_before?: string | null;
   carrier_name?: string[] | null;
   status?: string[] | null;
 }
@@ -5536,6 +5655,16 @@ export interface WebhookFilter {
   events?: EventTypes[] | null;
   date_after?: any | null;
   date_before?: any | null;
+}
+
+// null
+export interface CarrierFilter {
+  offset?: number | null;
+  first?: number | null;
+  active?: boolean | null;
+  metadata_key?: string | null;
+  metadata_value?: string | null;
+  carrier_name?: string[] | null;
 }
 
 // null
