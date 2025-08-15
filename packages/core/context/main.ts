@@ -319,7 +319,7 @@ const ORG_DATA_QUERY = `{
   organization {
     id
   }
-  organizations(filter: { is_active: true }) {
+  organizations(filter: {is_active: true}) {
     page_info {
       count
       has_next_page
@@ -329,31 +329,31 @@ const ORG_DATA_QUERY = `{
     }
     edges {
       node {
-    id
-    name
-    slug
-    token
-    current_user {
-      email
-      full_name
-      is_admin
-      is_owner
-      last_login
-    }
-    members {
-      email
-      full_name
-      is_admin
-      is_owner
-      invitation {
         id
-        guid
-        invitee_identifier
-        created
-        modified
-      }
-      last_login
-      }
+        name
+        slug
+        token
+        current_user {
+          email
+          full_name
+          is_admin
+          is_owner
+          last_login
+        }
+        members {
+          email
+          full_name
+          is_admin
+          is_owner
+          invitation {
+            id
+            guid
+            invitee_identifier
+            created
+            modified
+          }
+          last_login
+        }
       }
     }
   }

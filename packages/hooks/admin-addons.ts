@@ -104,8 +104,14 @@ export function useAddonMutation() {
   const queryClient = useQueryClient();
 
   const invalidateCache = () => {
-    queryClient.invalidateQueries(['admin_addons']);
-    queryClient.invalidateQueries(['admin_addon']);
+    // Invalidate all related queries to ensure data refresh
+    queryClient.invalidateQueries({ queryKey: ['admin_addons'] });
+    queryClient.invalidateQueries({ queryKey: ['admin_addon'] });
+    queryClient.invalidateQueries({ queryKey: ['admin_system_usage'] });
+    queryClient.invalidateQueries({ queryKey: ['admin_organization_accounts'] });
+    // Force refetch to ensure UI updates immediately
+    queryClient.refetchQueries({ queryKey: ['admin_addons'] });
+    queryClient.refetchQueries({ queryKey: ['admin_system_usage'] });
   };
 
   const createAddon = useAuthenticatedMutation({

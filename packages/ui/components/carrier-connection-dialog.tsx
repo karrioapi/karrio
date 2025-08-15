@@ -27,12 +27,15 @@ import {
   TabsList,
   TabsTrigger,
 } from "./ui/tabs";
+import { CountrySelect } from "./country-select";
 import { GetSystemConnections_system_carrier_connections_edges_node } from "@karrio/types/graphql/admin/types";
+import { IntegrationStatusBadge } from "@karrio/ui/core/components/integration-status-badge";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { MetadataEditor } from "./ui/metadata-editor";
-import { References } from "@karrio/types";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useToast } from "@karrio/ui/hooks/use-toast";
 import { useState, useEffect } from "react";
+import { References } from "@karrio/types";
 import { useForm } from "react-hook-form";
 import { isEqual } from "@karrio/lib";
 import { Button } from "./ui/button";
@@ -64,24 +67,27 @@ interface CarrierConnectionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   selectedConnection: Connection | null;
-  onSubmit: (values: FormData) => void;
   references?: References;
   title?: string;
   description?: string;
   disableCarrierSelection?: boolean;
+  onSuccess?: () => void;
+  onSubmit?: (values: FormData, connection: Connection | null) => Promise<void>;
 }
 
 export function CarrierConnectionDialog({
   open,
   onOpenChange,
   selectedConnection,
-  onSubmit,
   references,
   title,
   description,
   disableCarrierSelection = false,
+  onSuccess,
+  onSubmit,
 }: CarrierConnectionDialogProps) {
   const [initialValues, setInitialValues] = useState<FormData | null>(null);
+  const { toast } = useToast();
 
   const defaultValues: FormData = {
     carrier_name: "",
@@ -98,46 +104,118 @@ export function CarrierConnectionDialog({
     defaultValues,
   });
 
+  const handleSubmit = async (values: FormData) => {
+    if (!onSubmit) {
+      toast({
+        title: "Error",
+        description: "No submit handler provided",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // For generic carriers, use the custom_carrier_name as the carrier_name
+      const submitValues = {
+        ...values,
+        carrier_name: values.carrier_name === "generic" 
+          ? values.credentials.custom_carrier_name || "generic"
+          : values.carrier_name
+      };
+
+      await onSubmit(submitValues, selectedConnection);
+
+      toast({
+        title: "Success",
+        description: `Carrier connection ${selectedConnection ? 'updated' : 'created'} successfully!`,
+      });
+
+      onSuccess?.();
+      onOpenChange(false);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error?.message || error?.data?.message || `Failed to ${selectedConnection ? 'update' : 'create'} carrier connection`,
+        variant: "destructive",
+      });
+    }
+  };
+
   const { watch, setValue } = form;
 
   const formValues = watch();
-  const isDirty = initialValues ? !isEqual(formValues, initialValues) : false;
+  const isDirty = initialValues ? !isEqual(formValues, initialValues) : true; // Allow saving for new connections
 
   const areCredentialsValid = () => {
     const carrierName = watch("carrier_name");
-    if (!carrierName) return false;
+    const carrierId = watch("carrier_id");
+
+    // Basic validation - must have carrier and carrier_id
+    if (!carrierName || !carrierId) return false;
 
     const credentials = watch("credentials");
     const fields = references?.connection_fields?.[carrierName] || {};
 
-    return Object.entries(fields).every(([key, field]: [string, any]) => {
-      if (field.required) {
-        const value = credentials?.[key];
-        return value !== undefined && value !== "" && value !== null;
+    // Check account_country_code separately if required
+    const accountCountryCodeField = fields["account_country_code"];
+    if (accountCountryCodeField?.required) {
+      const accountCountryCode = credentials?.account_country_code;
+      if (!accountCountryCode || accountCountryCode === "") {
+        return false;
       }
-      return true;
-    });
+    }
+
+    // Check only required credential fields (excluding the ones we've filtered out)
+    return Object.entries(fields)
+      .filter(([key]) => ![
+        "display_name",
+        "custom_carrier_name",
+        "account_country_code", // This is handled by CountrySelect component
+        "metadata",
+        "config",
+        "label_template",
+        "services"
+      ].includes(key))
+      .every(([key, field]: [string, any]) => {
+        if (field.required) {
+          const value = credentials?.[key];
+          return value !== undefined && value !== "" && value !== null;
+        }
+        return true;
+      });
   };
 
-  const isValid = form.formState.isValid && areCredentialsValid();
+  const isValid = areCredentialsValid();
 
   useEffect(() => {
     if (open) {
       const initial = selectedConnection
         ? {
-          carrier_name: selectedConnection.carrier_name,
-          carrier_id: selectedConnection.carrier_id,
-          active: selectedConnection.active,
+          // If the connection has a custom_carrier_name in credentials, it's a generic carrier
+          carrier_name: selectedConnection.credentials?.custom_carrier_name ? "generic" : selectedConnection.carrier_name || "",
+          carrier_id: selectedConnection.carrier_id || "",
+          active: selectedConnection.active || false,
           capabilities: selectedConnection.capabilities || [],
           credentials: selectedConnection.credentials || {},
           config: selectedConnection.config || {},
           metadata: selectedConnection.metadata || {},
         }
-        : defaultValues;
+        : {
+          ...defaultValues,
+          active: true, // Set active by default for new connections
+        };
+
       form.reset(initial);
       setInitialValues(initial);
+
+      // Force re-render of the Select component
+      setTimeout(() => {
+        if (initial.carrier_name) {
+          form.setValue('carrier_name', initial.carrier_name, { shouldDirty: false });
+        }
+      }, 0);
     }
-  }, [open, selectedConnection]);
+  }, [open, selectedConnection?.id, selectedConnection?.carrier_name]);
 
 
   useEffect(() => {
@@ -153,6 +231,10 @@ export function CarrierConnectionDialog({
           {}
         );
         setValue("credentials", defaultCredentials);
+
+        // Set all capabilities as checked by default
+        const capabilities = references?.carrier_capabilities?.[carrierName] || [];
+        setValue("capabilities", capabilities);
       }
     });
     return () => subscription.unsubscribe();
@@ -175,8 +257,45 @@ export function CarrierConnectionDialog({
     if (!carrierName) return null;
     const fields = references?.connection_fields?.[carrierName] || {};
 
-    return Object.entries(fields)
-      .filter(([key]) => key !== "display_name")
+    // First render display_name and custom_carrier_name if they exist
+    const specialFields = Object.entries(fields)
+      .filter(([key]) => ["display_name", "custom_carrier_name"].includes(key))
+      .map(([key, field]: [string, any]) => (
+        <FormField
+          key={key}
+          control={form.control}
+          name={`credentials.${key}`}
+          render={({ field: formField }) => (
+            <FormItem>
+              <FormLabel>
+                {key === "display_name" ? "Display Name" : "Slug"}
+                {field.required && <span className="text-destructive">*</span>}
+              </FormLabel>
+              <FormControl>
+                <Input
+                  {...formField}
+                  value={formField.value || ""}
+                  autoComplete="off"
+                  pattern={key === "custom_carrier_name" ? "^[a-z0-9_]+$" : undefined}
+                  title={key === "custom_carrier_name" ? "Please enter a valid slug (lowercase letters, numbers, and underscores only)" : undefined}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      ));
+
+    // Then render other fields
+    const otherFields = Object.entries(fields)
+      .filter(([key]) => ![
+        "display_name",
+        "custom_carrier_name",
+        "metadata",
+        "config",
+        "label_template",
+        "services"
+      ].includes(key))
       .map(([key, field]: [string, any]) => (
         <FormField
           key={key}
@@ -189,7 +308,13 @@ export function CarrierConnectionDialog({
                 {field.required && <span className="text-destructive">*</span>}
               </FormLabel>
               <FormControl>
-                {field.type === "string" && !field.enum ? (
+                {key === "account_country_code" ? (
+                  <CountrySelect
+                    value={formField.value || ""}
+                    onValueChange={formField.onChange}
+                    placeholder="Select a country"
+                  />
+                ) : field.type === "string" && !field.enum ? (
                   <Input {...formField} value={formField.value || ""} autoComplete="off" />
                 ) : field.type === "string" && field.enum ? (
                   <Select
@@ -222,6 +347,8 @@ export function CarrierConnectionDialog({
           )}
         />
       ));
+
+    return [...specialFields, ...otherFields];
   };
 
   const renderConfigFields = () => {
@@ -320,39 +447,145 @@ export function CarrierConnectionDialog({
           <FormField
             control={form.control}
             name="config.shipping_services"
-            render={({ field }) => (
-              <FormItem className="col-span-2">
-                <FormLabel>Preferred Shipping Services</FormLabel>
-                <FormControl>
-                  <div className="rounded-md border max-h-[160px] overflow-y-auto">
-                    <div className="p-3 space-y-1.5">
-                      {Object.entries(
-                        references?.service_names?.[carrierName] || {},
-                      ).map(([value, label]) => (
-                        <div key={value} className="flex items-center space-x-2">
-                          <Switch
-                            id={`service-${value}`}
-                            checked={(field.value || []).includes(value)}
-                            onCheckedChange={(checked) => {
-                              const values = field.value || [];
-                              if (checked) {
-                                field.onChange([...values, value]);
-                              } else {
-                                field.onChange(values.filter((v: string) => v !== value));
-                              }
-                            }}
-                          />
-                          <label htmlFor={`service-${value}`} className="text-sm font-medium">
-                            {formatLabel(label as string)}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
+            render={({ field }) => {
+              const allServices = Object.keys(references?.service_names?.[carrierName] || {});
+              const selectedServices = field.value || [];
+              const isAllSelected = allServices.length > 0 && allServices.every(service => selectedServices.includes(service));
+              const isPartiallySelected = selectedServices.length > 0 && selectedServices.length < allServices.length;
+
+              return (
+                <FormItem className="col-span-2">
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Preferred Shipping Services</FormLabel>
+                    {allServices.length > 0 && (
+                      <div className="flex items-center gap-2">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 px-2 text-xs"
+                          onClick={() => {
+                            if (isAllSelected) {
+                              field.onChange([]);
+                            } else {
+                              field.onChange(allServices);
+                            }
+                          }}
+                        >
+                          {isAllSelected ? 'Uncheck All' : 'Check All'}
+                        </Button>
+                        {isPartiallySelected && (
+                          <span className="text-xs text-muted-foreground">
+                            {selectedServices.length} of {allServices.length} selected
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+                  <FormControl>
+                    <div className="rounded-md border max-h-[160px] overflow-y-auto">
+                      <div className="p-3 space-y-1.5">
+                        {Object.entries(
+                          references?.service_names?.[carrierName] || {},
+                        ).map(([value, label]) => (
+                          <div key={value} className="flex items-center space-x-2">
+                            <Switch
+                              id={`service-${value}`}
+                              checked={(field.value || []).includes(value)}
+                              onCheckedChange={(checked) => {
+                                const values = field.value || [];
+                                if (checked) {
+                                  field.onChange([...values, value]);
+                                } else {
+                                  field.onChange(values.filter((v: string) => v !== value));
+                                }
+                              }}
+                            />
+                            <label htmlFor={`service-${value}`} className="text-sm font-medium">
+                              {formatLabel(label as string)}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+        )}
+
+        {configs["shipping_options"] && (
+          <FormField
+            control={form.control}
+            name="config.shipping_options"
+            render={({ field }) => {
+              const allOptions = Object.keys(references?.option_names?.[carrierName] || {});
+              const selectedOptions = field.value || [];
+              const isAllSelected = allOptions.length > 0 && allOptions.every(option => selectedOptions.includes(option));
+              const isPartiallySelected = selectedOptions.length > 0 && selectedOptions.length < allOptions.length;
+
+              return (
+                <FormItem className="col-span-2">
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Enable Carrier Specific Shipping Options</FormLabel>
+                    {allOptions.length > 0 && (
+                      <div className="flex items-center gap-2">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 px-2 text-xs"
+                          onClick={() => {
+                            if (isAllSelected) {
+                              field.onChange([]);
+                            } else {
+                              field.onChange(allOptions);
+                            }
+                          }}
+                        >
+                          {isAllSelected ? 'Uncheck All' : 'Check All'}
+                        </Button>
+                        {isPartiallySelected && (
+                          <span className="text-xs text-muted-foreground">
+                            {selectedOptions.length} of {allOptions.length} selected
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <FormControl>
+                    <div className="rounded-md border max-h-[160px] overflow-y-auto">
+                      <div className="p-3 space-y-1.5">
+                        {Object.entries(
+                          references?.option_names?.[carrierName] || {},
+                        ).map(([value, label]) => (
+                          <div key={value} className="flex items-center space-x-2">
+                            <Switch
+                              id={`option-${value}`}
+                              checked={(field.value || []).includes(value)}
+                              onCheckedChange={(checked) => {
+                                const values = field.value || [];
+                                if (checked) {
+                                  field.onChange([...values, value]);
+                                } else {
+                                  field.onChange(values.filter((v: string) => v !== value));
+                                }
+                              }}
+                            />
+                            <label htmlFor={`option-${value}`} className="text-sm font-medium">
+                              {formatLabel(label as string)}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
           />
         )}
       </div>
@@ -420,7 +653,7 @@ export function CarrierConnectionDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col flex-1 min-h-0">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col flex-1 min-h-0">
             {/* Scrollable Body */}
             <div className="flex-1 overflow-y-auto px-4 py-3">
               <div className="space-y-6">
@@ -428,14 +661,15 @@ export function CarrierConnectionDialog({
                   <FormField
                     control={form.control}
                     name="carrier_name"
+                    key={`carrier-${selectedConnection?.id || 'new'}`}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
                           Carrier <span className="text-destructive">*</span>
                         </FormLabel>
                         <Select
-                          onValueChange={(value) => field.onChange(value)}
-                          value={field.value}
+                          onValueChange={field.onChange}
+                          value={field.value || ""}
                           disabled={!!selectedConnection || disableCarrierSelection}
                         >
                           <FormControl>
@@ -444,22 +678,51 @@ export function CarrierConnectionDialog({
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {references?.carriers &&
-                              Object.entries(references.carriers)
-                                .sort()
-                                .map(([carrier, label]) => (
-                                  <SelectItem key={carrier} value={carrier}>
-                                    <div className="flex items-center gap-2">
-                                      <CarrierImage
-                                        carrier_name={carrier}
-                                        width={20}
-                                        height={20}
-                                        className="grayscale"
-                                      />
-                                      <span>{label as string}</span>
-                                    </div>
-                                  </SelectItem>
-                                ))}
+                            {references?.carriers && (
+                              <>
+                                {/* Generic carrier first */}
+                                {Object.entries(references.carriers)
+                                  .filter(([carrier]) => carrier === "generic")
+                                  .map(([carrier, label]) => (
+                                    <SelectItem key={carrier} value={carrier}>
+                                      <div className="flex items-center gap-2">
+                                        <CarrierImage
+                                          carrier_name={carrier}
+                                          width={20}
+                                          height={20}
+                                          className="grayscale"
+                                        />
+                                        <span>{label as string}</span>
+                                      </div>
+                                    </SelectItem>
+                                  ))}
+
+                                {/* Separator */}
+                                {references.carriers.generic && (
+                                  <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                                    Shipping Carriers
+                                  </div>
+                                )}
+
+                                {/* Other carriers */}
+                                {Object.entries(references.carriers)
+                                  .filter(([carrier]) => carrier !== "generic")
+                                  .sort()
+                                  .map(([carrier, label]) => (
+                                    <SelectItem key={carrier} value={carrier}>
+                                      <div className="flex items-center gap-2">
+                                        <CarrierImage
+                                          carrier_name={carrier}
+                                          width={20}
+                                          height={20}
+                                          className="grayscale"
+                                        />
+                                        <span>{label as string}</span>
+                                      </div>
+                                    </SelectItem>
+                                  ))}
+                              </>
+                            )}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -469,6 +732,17 @@ export function CarrierConnectionDialog({
 
                   {watch("carrier_name") &&
                     <>
+                      {/* Integration Status */}
+                      {references?.integration_status && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+                          <span className="font-semibold">Integration status:</span>
+                          <IntegrationStatusBadge
+                            status={references.integration_status[watch("carrier_name")] || 'in-development'}
+                            showPrefix={false}
+                          />
+                        </div>
+                      )}
+
                       <FormField
                         control={form.control}
                         name="carrier_id"
@@ -480,6 +754,9 @@ export function CarrierConnectionDialog({
                             <FormControl>
                               <Input {...field} autoComplete="off" />
                             </FormControl>
+                            <div className="text-xs text-muted-foreground mt-1">
+                              Friendly tag. e.g: <strong>dhl-express-us, ups-ca-test...</strong>
+                            </div>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -536,7 +813,7 @@ export function CarrierConnectionDialog({
                       <MetadataEditor
                         value={watch("metadata") || {}}
                         onChange={(metadata) => {
-                          form.setValue("metadata", metadata);
+                          form.setValue("metadata", metadata, { shouldDirty: true });
                         }}
                       />
                     </TabsContent>
@@ -550,7 +827,7 @@ export function CarrierConnectionDialog({
               <Button type="button" variant="outline" onClick={handleModalClose}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={!isDirty || !isValid}>
+              <Button type="submit" disabled={!isValid}>
                 Save
               </Button>
             </DialogFooter>

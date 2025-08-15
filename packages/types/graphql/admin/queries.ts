@@ -272,7 +272,7 @@ export const GET_RATE_SHEET = gql`
 // Addons Queries
 // -----------------------------------------------------------
 export const GET_ADDONS = gql`
-  query GetAddons($filter: AddonFilter) {
+  query GetAddons($filter: AddonFilter, $usageFilter: UsageFilter) {
     addons(filter: $filter) {
       edges {
         node {
@@ -289,6 +289,10 @@ export const GET_ADDONS = gql`
               total_shipments
               total_addons_charges
             }
+          }
+          usage(filter: $usageFilter) {
+            total_shipments
+            total_addons_charges
           }
         }
       }
@@ -920,9 +924,7 @@ export const DELETE_ORGANIZATION_ACCOUNT = gql`
     $input: DeleteOrganizationAccountMutationInput!
   ) {
     delete_organization_account(input: $input) {
-      account {
-        id
-      }
+      account_id
       errors {
         field
         messages

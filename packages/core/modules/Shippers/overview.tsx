@@ -52,6 +52,8 @@ export default function ShippersOverview() {
   }));
 
   const totalSpend = usage?.total_shipping_spend || 0;
+  const totalShipments = usage?.total_shipments || 0;
+  const totalAddonsCharges = usage?.total_addons_charges || 0;
 
   return (
     <div className="space-y-8">
@@ -76,6 +78,45 @@ export default function ShippersOverview() {
               </option>
             ))}
           </SelectField>
+        </div>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div className="bg-white p-6 rounded-lg border shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Total Shipments</p>
+              <p className="text-2xl font-bold text-gray-900">{totalShipments.toLocaleString()}</p>
+            </div>
+            <div className="p-3 bg-blue-100 rounded-full">
+              <Package className="h-6 w-6 text-blue-600" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg border shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Total Addons Charges</p>
+              <p className="text-2xl font-bold text-gray-900">${totalAddonsCharges.toLocaleString()}</p>
+            </div>
+            <div className="p-3 bg-green-100 rounded-full">
+              <DollarSign className="h-6 w-6 text-green-600" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg border shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Total Spend</p>
+              <p className="text-2xl font-bold text-gray-900">${totalSpend.toLocaleString()}</p>
+            </div>
+            <div className="p-3 bg-purple-100 rounded-full">
+              <DollarSign className="h-6 w-6 text-purple-600" />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -160,7 +201,7 @@ export default function ShippersOverview() {
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Members</TableHead>
                 <TableHead className="text-right">Shipments</TableHead>
-                <TableHead className="text-right">Trackers</TableHead>
+                <TableHead className="text-right">Addon Charges</TableHead>
                 <TableHead className="text-right">API Requests</TableHead>
                 <TableHead className="text-right">Shipping Spend</TableHead>
                 <TableHead className="w-12"></TableHead>
@@ -190,7 +231,7 @@ export default function ShippersOverview() {
                     {(org.usage?.total_shipments || 0).toLocaleString()}
                   </TableCell>
                   <TableCell className="text-right text-sm text-gray-600">
-                    {(org.usage?.total_trackers || 0).toLocaleString()}
+                    ${(org.usage?.total_addons_charges || 0).toLocaleString()}
                   </TableCell>
                   <TableCell className="text-right text-sm text-gray-600">
                     {(org.usage?.total_requests || 0).toLocaleString()}

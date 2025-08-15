@@ -5,7 +5,7 @@ import { AcceptInvitationDialogProvider } from "@karrio/ui/components/accept-inv
 import { ErrorBoundary } from "@karrio/ui/core/components/error-boudaries";
 
 import { LoadingProvider } from "@karrio/ui/core/components/loader";
-import { Notifier } from "@karrio/ui/core/components/notifier";
+import { Notifier } from "@karrio/ui/components/notifier";
 import { OrganizationProvider } from "./organization";
 import { SessionProvider } from "next-auth/react";
 import APIMetadataProvider from "./api-metadata";

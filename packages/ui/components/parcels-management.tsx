@@ -90,13 +90,29 @@ function ParcelEditDialog({
       };
 
       if (parcelTemplate) {
-        await updateParcelTemplate.mutateAsync({ ...payload, id: parcelTemplate.id } as any);
+        const { update_parcel_template } = await updateParcelTemplate.mutateAsync({ ...payload, id: parcelTemplate.id } as any);
+        if (update_parcel_template.errors && update_parcel_template.errors.length > 0) {
+          const errorMessage = update_parcel_template.errors.map(e => `${e.field}: ${e.messages.join(', ')}`).join('\n');
+          notifier.notify({
+            type: NotificationType.error,
+            message: errorMessage,
+          });
+          return;
+        }
         notifier.notify({
           type: NotificationType.success,
           message: "Parcel template updated successfully!",
         });
       } else {
-        await createParcelTemplate.mutateAsync(payload as any);
+        const { create_parcel_template } = await createParcelTemplate.mutateAsync(payload as any);
+        if (create_parcel_template.errors && create_parcel_template.errors.length > 0) {
+          const errorMessage = create_parcel_template.errors.map(e => `${e.field}: ${e.messages.join(', ')}`).join('\n');
+          notifier.notify({
+            type: NotificationType.error,
+            message: errorMessage,
+          });
+          return;
+        }
         notifier.notify({
           type: NotificationType.success,
           message: "Parcel template created successfully!",
@@ -106,9 +122,10 @@ function ParcelEditDialog({
       onSave();
       onOpenChange(false);
     } catch (error: any) {
+      const detailed = error?.data || error?.response?.data || error;
       notifier.notify({
         type: NotificationType.error,
-        message: error.message || "Failed to save parcel template",
+        message: detailed || { message: error?.message || "Failed to save parcel template" },
       });
     }
   };
@@ -164,7 +181,7 @@ function ParcelEditDialog({
                 onChange={handleParcelChange}
                 onSubmit={handleSubmit}
                 showSubmitButton={false}
-                showTemplateSelector={false}
+                showTemplateSelector={true}
               />
             </div>
           </div>
@@ -174,7 +191,7 @@ function ParcelEditDialog({
           <Button variant="outline" size="sm" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button size="sm" onClick={handleSaveClick}>
+          <Button size="sm" onClick={handleSaveClick} disabled={!formData.label.trim()}>
             {parcelTemplate ? "Update Template" : "Create Template"}
           </Button>
         </DialogFooter>
@@ -258,6 +275,18 @@ export function ParcelsManagement() {
 
   return (
     <div className="space-y-6">
+      {parcels.length > 0 && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            Manage your parcel templates for shipping packages.
+          </p>
+          <Button onClick={handleCreate} className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Create Parcel
+          </Button>
+        </div>
+      )}
+      
       <div>
         {parcels.length === 0 ? (
           <div className="text-center py-12">

@@ -64,8 +64,12 @@ export function useUserMutation() {
   const queryClient = useQueryClient();
 
   const invalidateCache = () => {
-    queryClient.invalidateQueries(['admin_users']);
-    queryClient.invalidateQueries(['admin_user']);
+    // Invalidate all related queries to ensure data refresh
+    queryClient.invalidateQueries({ queryKey: ['admin_users'] });
+    queryClient.invalidateQueries({ queryKey: ['admin_user'] });
+    queryClient.invalidateQueries({ queryKey: ['admin_permission_groups'] });
+    // Force refetch to ensure UI updates immediately
+    queryClient.refetchQueries({ queryKey: ['admin_users'] });
   };
 
   const createUser = useAuthenticatedMutation({

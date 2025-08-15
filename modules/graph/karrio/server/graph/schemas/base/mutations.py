@@ -260,7 +260,14 @@ class RegisterUserMutation(utils.BaseMutation):
             )
 
         try:
-            form = user_forms.SignUpForm(input)
+            form = user_forms.SignUpForm(data=input)
+            if not form.is_valid():
+                errors = []
+                for field, messages in form.errors.items():
+                    for message in messages:
+                        errors.append(f"{field}: {message}")
+                raise Exception(". ".join(errors))
+            
             user = form.save()
 
             return RegisterUserMutation(user=user)  # type:ignore

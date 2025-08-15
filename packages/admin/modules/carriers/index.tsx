@@ -9,6 +9,7 @@ import { DeleteConfirmationDialog } from "@karrio/ui/components/delete-confirmat
 import { CarrierConnectionDialog } from "@karrio/ui/components/carrier-connection-dialog";
 import { useRateSheets, useRateSheetMutation } from "@karrio/hooks/admin-rate-sheets";
 import { RateSheetEditor } from "@karrio/ui/components/rate-sheet-editor";
+import { LinkRateSheetDialog } from "@karrio/ui/components/rate-sheet-dialog";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
@@ -45,6 +46,7 @@ import {
   FileText,
 } from 'lucide-react';
 import { cn } from "@karrio/ui/lib/utils";
+import { supportsRateSheets, getEffectiveCarrierName, isGenericCarrier } from "@karrio/lib/carrier-utils";
 
 export default function CarrierNetwork() {
   const [selectedTab, setSelectedTab] = useState("connections");
@@ -108,13 +110,25 @@ function CarrierConnectionManagement() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [carrierFilter, setCarrierFilter] = useState("all");
+  const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false);
+  const [linkConnection, setLinkConnection] = useState<Connection | null>(null);
+  const [isRateSheetEditorOpen, setIsRateSheetEditorOpen] = useState(false);
+  const [selectedRateSheet, setSelectedRateSheet] = useState<RateSheet | null>(null);
+  const [selectedRateSheetId, setSelectedRateSheetId] = useState<string | null>(null);
 
   const { query, system_carrier_connections } = useSystemConnections({});
+  const { query: rateSheetsQuery, rate_sheets } = useRateSheets({});
   const connections = system_carrier_connections?.edges || [];
   const isLoading = query.isLoading;
   const { references } = useAPIMetadata();
 
   const { createSystemConnection, updateSystemConnection, deleteSystemConnection } = useSystemConnectionMutation();
+  const rateSheetMutation = useRateSheetMutation();
+
+  // Helper function to get the correct carrier name for rate sheets
+  const getRateSheetCarrierName = (connection: Connection): string => {
+    return isGenericCarrier(connection) ? "generic" : connection.carrier_name;
+  };
 
   // Filter connections
   const filteredConnections = useMemo(() => {
@@ -134,18 +148,6 @@ function CarrierConnectionManagement() {
     });
   }, [connections, searchQuery, statusFilter, carrierFilter]);
 
-  const handleCreateSuccess = () => {
-    toast({ title: "Carrier connection created successfully" });
-    setIsEditOpen(false);
-    setSelectedConnection(null);
-  };
-
-  const handleUpdateSuccess = () => {
-    toast({ title: "Carrier connection updated successfully" });
-    setIsEditOpen(false);
-    setSelectedConnection(null);
-  };
-
   const handleDeleteSuccess = () => {
     toast({ title: "Carrier connection deleted successfully" });
     setIsDeleteOpen(false);
@@ -160,7 +162,7 @@ function CarrierConnectionManagement() {
     });
   };
 
-  const handleUpdate = (values: any) => {
+  const handleUpdate = async (values: any, connection: Connection | null) => {
     // Convert empty strings to undefined in credentials
     const credentials = Object.entries(values.credentials || {}).reduce((acc, [key, value]) => ({
       ...acc,
@@ -179,23 +181,20 @@ function CarrierConnectionManagement() {
       [key]: value === "" ? undefined : value,
     }), {});
 
-    if (selectedConnection) {
+    if (connection) {
       // Update existing connection
-      updateSystemConnection.mutate({
-        id: selectedConnection.id,
+      await updateSystemConnection.mutateAsync({
+        id: connection.id,
         carrier_id: values.carrier_id === "" ? undefined : values.carrier_id,
         active: values.active,
         capabilities: values.capabilities,
         credentials,
         config,
         metadata,
-      }, {
-        onSuccess: handleUpdateSuccess,
-        onError: (error) => handleError(error, "update")
       });
     } else {
       // Create new connection
-      createSystemConnection.mutate({
+      await createSystemConnection.mutateAsync({
         carrier_name: values.carrier_name,
         carrier_id: values.carrier_id === "" ? undefined : values.carrier_id,
         active: values.active,
@@ -203,9 +202,6 @@ function CarrierConnectionManagement() {
         credentials,
         config,
         metadata,
-      }, {
-        onSuccess: handleCreateSuccess,
-        onError: (error) => handleError(error, "create")
       });
     }
   };
@@ -244,6 +240,55 @@ function CarrierConnectionManagement() {
     setSearchQuery("");
     setStatusFilter("all");
     setCarrierFilter("all");
+  };
+
+  const askLinkRateSheet = (connection: Connection) => {
+    setLinkConnection(connection);
+    setIsLinkDialogOpen(true);
+  };
+
+  const openRateSheetEditor = async (connection: Connection) => {
+    try {
+      // Check if carrier supports rate sheets using centralized utility
+      if (!supportsRateSheets(connection, references)) {
+        toast({
+          title: "Rate sheets not available for this carrier",
+          description: "This carrier does not support custom rate sheets",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // For rate sheets, use "generic" for generic/custom carriers, otherwise use carrier_name
+      const rateSheetCarrierName = getRateSheetCarrierName(connection);
+
+      const existingSheet = rate_sheets?.edges?.find(
+        ({ node }) => node.carrier_name === rateSheetCarrierName
+      );
+
+      if (existingSheet) {
+        setSelectedRateSheetId(existingSheet.node.id);
+      } else {
+        // Create default rate sheet structure using the correct carrier name
+        const displayName = connection.display_name ||
+          (connection.credentials?.custom_carrier_name && isGenericCarrier(connection)
+            ? connection.credentials.custom_carrier_name
+            : connection.carrier_name);
+
+        setSelectedRateSheet({
+          carrier_name: rateSheetCarrierName,
+          name: `${displayName} Rate Sheet`,
+        } as RateSheet);
+        setSelectedRateSheetId('new');
+      }
+      setIsRateSheetEditorOpen(true);
+    } catch (error: any) {
+      toast({
+        title: "Error opening rate sheet",
+        description: error.message || "An error occurred",
+        variant: "destructive",
+      });
+    }
   };
 
   const hasActiveFilters = searchQuery || statusFilter !== "all" || carrierFilter !== "all";
@@ -382,7 +427,7 @@ function CarrierConnectionManagement() {
               {/* Main Content */}
               <div className="flex items-center space-x-3 flex-1">
                 <div className="flex-none">
-                  <CarrierImage carrier_name={connection.carrier_name} width={40} height={40} className="rounded-lg" />
+                  <CarrierImage carrier_name={connection.carrier_name} width={40} height={40} className="rounded-lg" text_color={connection.config?.text_color} background={connection.config?.brand_color} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
@@ -447,6 +492,19 @@ function CarrierConnectionManagement() {
                       <Edit3 className="mr-2 h-4 w-4" />
                       Edit Connection
                     </DropdownMenuItem>
+                    {/* Only show rate sheet options for compatible carriers */}
+                    {supportsRateSheets(connection, references) && (
+                      <>
+                        <DropdownMenuItem onClick={() => askLinkRateSheet(connection)}>
+                          <FileText className="mr-2 h-4 w-4" />
+                          Link Rate Sheet
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => openRateSheetEditor(connection)}>
+                          <Edit3 className="mr-2 h-4 w-4" />
+                          Edit Rate Sheet
+                        </DropdownMenuItem>
+                      </>
+                    )}
                     <DropdownMenuItem onClick={() => handleCopy(connection.id, "Connection ID copied")}>
                       <Copy className="mr-2 h-4 w-4" />
                       Copy ID
@@ -487,6 +545,10 @@ function CarrierConnectionManagement() {
         selectedConnection={selectedConnection as any}
         onSubmit={handleUpdate}
         references={references}
+        onSuccess={() => {
+          setIsEditOpen(false);
+          setSelectedConnection(null);
+        }}
       />
 
       <DeleteConfirmationDialog
@@ -505,6 +567,67 @@ function CarrierConnectionManagement() {
           }
         }}
       />
+
+      {/* Link to existing Rate Sheet */}
+      {isLinkDialogOpen && linkConnection && (
+        <LinkRateSheetDialog
+          open={isLinkDialogOpen}
+          onOpenChange={setIsLinkDialogOpen}
+          connection={{
+            id: linkConnection.id,
+            carrier_name: linkConnection.carrier_name,
+            display_name: linkConnection.display_name
+          }}
+          rateSheets={(rate_sheets?.edges || []).map(({ node }) => node).filter((rs) => {
+            // For generic/custom carriers, match with "generic" rate sheets
+            const linkCarrierName = getRateSheetCarrierName(linkConnection);
+            return rs.carrier_name === linkCarrierName;
+          })}
+          linkedRateSheets={(rate_sheets?.edges || []).map(({ node }) => node).filter((rs) => (rs.carriers || []).some((c: any) => c.id === linkConnection.id))}
+          onEditRateSheet={(id: string) => {
+            const rs = (rate_sheets?.edges || []).map(({ node }) => node).find((r) => r.id === id);
+            if (rs) {
+              setSelectedRateSheet(rs);
+              setSelectedRateSheetId(rs.id);
+              setIsRateSheetEditorOpen(true);
+              setIsLinkDialogOpen(false);
+            }
+          }}
+          onCreateNew={() => {
+            // For generic/custom carriers, use "generic" as carrier_name
+            const rateSheetCarrierName = getRateSheetCarrierName(linkConnection);
+            setSelectedRateSheet({ carrier_name: rateSheetCarrierName, name: `${linkConnection.display_name || linkConnection.carrier_name} Rate Sheet` } as RateSheet);
+            setSelectedRateSheetId('new');
+            setIsRateSheetEditorOpen(true);
+            setIsLinkDialogOpen(false);
+          }}
+          onLink={async ({ connection_id, rate_sheet_id }) => {
+            const sheet = (rate_sheets?.edges || []).map(({ node }) => node).find((rs) => rs.id === rate_sheet_id);
+            const existing = (sheet?.carriers || []).map((c: any) => c.id);
+            const carriers = Array.from(new Set([...(existing || []), connection_id]));
+            await rateSheetMutation.updateRateSheet.mutateAsync({ id: rate_sheet_id, carriers });
+            toast({ title: "Linked to rate sheet" });
+            setIsLinkDialogOpen(false);
+            rateSheetsQuery.refetch();
+          }}
+        />
+      )}
+
+      {/* Rate Sheet Editor */}
+      {isRateSheetEditorOpen && selectedRateSheetId && (
+        <RateSheetEditor
+          rateSheetId={selectedRateSheetId}
+          onClose={() => {
+            setIsRateSheetEditorOpen(false);
+            setSelectedRateSheetId(null);
+            setSelectedRateSheet(null);
+            rateSheetsQuery.refetch();
+          }}
+          isAdmin={true}
+          useRateSheet={useAdminRateSheet}
+          useRateSheetMutation={useAdminRateSheetMutation}
+        />
+      )}
     </div>
   );
 }

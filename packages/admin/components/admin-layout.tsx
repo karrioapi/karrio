@@ -14,6 +14,7 @@ import { Metadata } from "@karrio/types";
 import { redirect } from "next/navigation";
 import { Providers } from "@karrio/hooks/providers";
 import { SidebarProvider } from "@karrio/ui/components/ui/sidebar";
+import { AdminCloseButton } from "@karrio/admin/components/admin-close-button";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -51,6 +52,7 @@ export default async function Layout({ children }: AdminLayoutProps) {
       <div className="min-h-screen bg-[#f6f6f7]">
         <SidebarProvider>
           <AdminHeader />
+          <AdminCloseButton />
           <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="pt-14 flex gap-x-8">
               <aside className="hidden lg:block w-[280px] shrink-0 py-4">

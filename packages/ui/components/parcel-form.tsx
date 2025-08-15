@@ -8,6 +8,7 @@ import { ParcelType, DEFAULT_PARCEL_CONTENT, WeightUnitEnum } from "@karrio/type
 import { isEqual, formatRef } from "@karrio/lib";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useParcelTemplates } from "@karrio/hooks/parcel";
+import { useToast } from "@karrio/ui/hooks/use-toast";
 
 const WEIGHT_UNITS = ["KG", "LB"];
 const DIMENSION_UNITS = ["CM", "IN"];
@@ -42,6 +43,7 @@ export const ParcelForm = React.forwardRef<ParcelFormRef, ParcelFormProps>(({
   const [parcel, setParcel] = React.useState<Partial<ParcelType>>(value || DEFAULT_PARCEL_CONTENT);
   const [parcelType, setParcelType] = React.useState<string>("custom");
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const { toast } = useToast();
 
   React.useEffect(() => {
     setParcel(value || DEFAULT_PARCEL_CONTENT);
@@ -118,6 +120,30 @@ export const ParcelForm = React.forwardRef<ParcelFormRef, ParcelFormProps>(({
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!onSubmit) return;
+
+    // Client-side validation - only validate required fields
+    const missing = !parcel.weight || !parcel.weight_unit;
+    if (missing) {
+      toast({
+        variant: "destructive",
+        title: "Missing required fields",
+        description: [
+          !parcel.weight ? "weight is required" : null,
+          !parcel.weight_unit ? "weight_unit is required" : null,
+        ].filter(Boolean).join("\n"),
+      });
+      return;
+    }
+
+    // Additional validation for custom parcels requiring packaging_type
+    if (parcelType === "custom" && !parcel.packaging_type) {
+      toast({
+        variant: "destructive",
+        title: "Missing required fields",
+        description: "packaging_type is required for custom parcels",
+      });
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -367,7 +393,14 @@ export const ParcelForm = React.forwardRef<ParcelFormRef, ParcelFormProps>(({
         <div className="flex justify-end pt-4">
           <Button
             type="submit"
-            disabled={disabled || isSubmitting || !hasChanges}
+            disabled={
+              disabled ||
+              isSubmitting ||
+              !hasChanges ||
+              !parcel.weight ||
+              !parcel.weight_unit ||
+              (parcelType === "custom" && !parcel.packaging_type)
+            }
             className="min-w-[120px]"
           >
             {isSubmitting ? "Saving..." : submitButtonText}

@@ -76,8 +76,11 @@ export function useRateSheetMutation() {
   const queryClient = useQueryClient();
 
   const invalidateCache = () => {
-    queryClient.invalidateQueries(['admin_rate_sheets']);
-    queryClient.invalidateQueries(['admin_rate_sheet']);
+    // Invalidate all related queries to ensure data refresh
+    queryClient.invalidateQueries({ queryKey: ['admin_rate_sheets'] });
+    queryClient.invalidateQueries({ queryKey: ['admin_rate_sheet'] });
+    // Force refetch to ensure UI updates immediately
+    queryClient.refetchQueries({ queryKey: ['admin_rate_sheets'] });
   };
 
   const createRateSheet = useAuthenticatedMutation({

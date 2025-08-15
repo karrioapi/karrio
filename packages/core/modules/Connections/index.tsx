@@ -27,7 +27,7 @@ import {
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { CarrierConnectionDialog } from "@karrio/ui/components/carrier-connection-dialog";
 import { ConfirmationDialog } from "@karrio/ui/components/confirmation-dialog";
-import { useCarrierConnections, useCarrierConnectionMutation } from "@karrio/hooks/user-connection";
+import { useCarrierConnections, useCarrierConnectionMutation, useCarrierConnectionForm } from "@karrio/hooks/user-connection";
 import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { Button } from "@karrio/ui/components/ui/button";
@@ -40,6 +40,7 @@ import { RateSheetEditor } from "@karrio/ui/components/rate-sheet-editor";
 import { LinkRateSheetDialog } from "@karrio/ui/components/rate-sheet-dialog";
 import { useRateSheets, useRateSheetMutation, useRateSheet } from "@karrio/hooks/rate-sheet";
 import { cn } from "@karrio/ui/lib/utils";
+import { supportsRateSheets, getEffectiveCarrierName, isGenericCarrier } from "@karrio/lib/carrier-utils";
 
 export default function ConnectionsPage() {
   const router = useRouter();
@@ -61,6 +62,7 @@ export default function ConnectionsPage() {
   const { query: rateSheetsQuery, rate_sheets } = useRateSheets();
   const mutation = useCarrierConnectionMutation();
   const rateSheetMutation = useRateSheetMutation();
+  const { handleSubmit: submitCarrierConnection } = useCarrierConnectionForm();
   const { references } = useAPIMetadata();
 
   const isLoading = carrierQuery.isLoading || systemQuery.isLoading;
@@ -109,35 +111,10 @@ export default function ConnectionsPage() {
     });
   }, [selectedTab, userConnections, systemConnections, carrierSearch, carrierFilter]);
 
-  const handleCreateConnection = async (data: any) => {
-    try {
-      await mutation.createCarrierConnection.mutateAsync(data);
-      setIsConnectionDialogOpen(false);
-      setSelectedConnection(null);
-      toast({ title: "Carrier connection created successfully" });
-    } catch (error: any) {
-      toast({
-        title: "Error creating connection",
-        description: error.message || "An error occurred",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleUpdateConnection = async (data: any) => {
-    if (!selectedConnection) return;
-    try {
-      await mutation.updateCarrierConnection.mutateAsync({ id: selectedConnection!.id, ...data });
-      setIsConnectionDialogOpen(false);
-      setSelectedConnection(null);
-      toast({ title: "Carrier connection updated successfully" });
-    } catch (error: any) {
-      toast({
-        title: "Error updating connection",
-        description: error.message || "An error occurred",
-        variant: "destructive",
-      });
-    }
+  const handleConnectionSuccess = () => {
+    setIsConnectionDialogOpen(false);
+    setSelectedConnection(null);
+    // The cache invalidation is handled by the dialog's mutation hooks
   };
 
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -186,29 +163,29 @@ export default function ConnectionsPage() {
 
   const handleOpenRateSheet = async (connection: any) => {
     try {
-      // Gate by compatibility: only proceed if references has service_levels for the carrier
-      const isCompatible = !!references?.service_levels?.[connection.carrier_name];
-      if (!isCompatible) {
+      // Check if carrier supports rate sheets using centralized utility
+      if (!supportsRateSheets(connection, references)) {
         toast({
           title: "Rate sheets not available for this carrier",
-          description: `No service levels found in references for ${connection.carrier_name}`,
+          description: `Rate sheets are not supported for ${connection.carrier_name}`,
           variant: "destructive",
         });
         return;
       }
 
-      // Check if rate sheet exists for this carrier
+      // Check if rate sheet exists for this carrier (use effective carrier name for matching)
+      const effectiveCarrierName = getEffectiveCarrierName(connection);
       const existingSheet = rate_sheets?.edges?.find(
-        ({ node }) => node.carrier_name === connection.carrier_name
+        ({ node }) => node.carrier_name === effectiveCarrierName
       );
 
       if (existingSheet) {
         setSelectedRateSheet(existingSheet.node);
       } else {
-        // Create default rate sheet structure
+        // Create default rate sheet structure using effective carrier name
         setSelectedRateSheet({
-          carrier_name: connection.carrier_name,
-          name: `${connection.display_name || connection.carrier_name} Rate Sheet`,
+          carrier_name: effectiveCarrierName,
+          name: `${connection.display_name || effectiveCarrierName} Rate Sheet`,
           services: [],
           carriers: [connection]
         });
@@ -465,6 +442,8 @@ export default function ConnectionsPage() {
                       width={40}
                       height={40}
                       className="rounded-lg"
+                      text_color={connection.config?.text_color}
+                      background={connection.config?.brand_color}
                     />
                   </div>
 
@@ -537,7 +516,7 @@ export default function ConnectionsPage() {
                   </div>
 
                   {/* Rate Sheet Button - Only show for user connections and compatible carriers */}
-                  {connection.connection_type === "user" && !!references?.service_levels?.[connection.carrier_name] && (
+                  {connection.connection_type === "user" && supportsRateSheets(connection, references) && (
                     <Button
                       variant="ghost"
                       size="icon"
@@ -564,10 +543,13 @@ export default function ConnectionsPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => askLinkRateSheet(connection)}>
-                          <FileText className="mr-2 h-4 w-4" />
-                          Link Rate Sheet
-                        </DropdownMenuItem>
+                        {/* Only show Link Rate Sheet for compatible carriers */}
+                        {supportsRateSheets(connection, references) && (
+                          <DropdownMenuItem onClick={() => askLinkRateSheet(connection)}>
+                            <FileText className="mr-2 h-4 w-4" />
+                            Link Rate Sheet
+                          </DropdownMenuItem>
+                        )}
                         <DropdownMenuItem onClick={() => {
                           setSelectedConnection(connection);
                           setIsConnectionDialogOpen(true);
@@ -610,7 +592,8 @@ export default function ConnectionsPage() {
         open={isConnectionDialogOpen}
         onOpenChange={setIsConnectionDialogOpen}
         selectedConnection={selectedConnection}
-        onSubmit={selectedConnection ? handleUpdateConnection : handleCreateConnection}
+        onSuccess={handleConnectionSuccess}
+        onSubmit={submitCarrierConnection}
         references={references}
       />
 

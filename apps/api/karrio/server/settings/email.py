@@ -32,3 +32,8 @@ def user_verified_callback(user):
 
 
 EMAIL_VERIFIED_CALLBACK = user_verified_callback
+
+# Compatibility with django-email-verification expected settings
+# Some versions expect EMAIL_MAIL_CALLBACK to be present.
+# Reuse the same verified callback to activate the user when appropriate.
+EMAIL_MAIL_CALLBACK = user_verified_callback

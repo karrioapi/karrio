@@ -1,10 +1,12 @@
 "use client";
-import { Spinner } from "@karrio/ui/core/components/spinner";
-import { useUserMutation } from "@karrio/hooks/user";
-import { useSearchParams } from "next/navigation";
 import React, { Suspense, useEffect } from "react";
-import { isNone } from "@karrio/lib";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useUserMutation } from "@karrio/hooks/user";
+import { isNone } from "@karrio/lib";
+import { Spinner } from "@karrio/ui/core/components/spinner";
+import { Card, CardContent } from "@karrio/ui/components/ui/card";
+import { Alert, AlertDescription } from "@karrio/ui/components/ui/alert";
 
 // Inner component that uses useSearchParams
 function EmailChangeConfirmation(): JSX.Element {
@@ -38,8 +40,9 @@ function EmailChangeConfirmation(): JSX.Element {
 
   return (
     <>
-      <div className="card isolated-card my-6">
-        <div className="card-content has-text-centered ">
+      <div className="px-4">
+        <Card className="mx-auto mt-6 w-full max-w-md md:max-w-lg lg:max-w-xl border-0 bg-transparent shadow-none sm:border sm:bg-card sm:shadow">
+          <CardContent className="p-6 sm:p-6 md:p-8 text-center space-y-3">
           {loading && <Spinner />}
 
           {!loading && success === true && (
@@ -48,13 +51,18 @@ function EmailChangeConfirmation(): JSX.Element {
             </p>
           )}
           {!loading && success === false && (
-            <p>Error, invalid or expired email change token!</p>
+            <Alert variant="destructive">
+              <AlertDescription>
+                Error, invalid or expired email change token!
+              </AlertDescription>
+            </Alert>
           )}
-        </div>
+          </CardContent>
+        </Card>
       </div>
 
-      <div className="has-text-centered my-4 is-size-6">
-        <Link legacyBehavior href="/">
+      <div className="my-4 text-center text-sm">
+        <Link href="/" className="font-semibold text-primary hover:underline">
           Return Home
         </Link>
       </div>
@@ -66,11 +74,7 @@ function EmailChangeConfirmation(): JSX.Element {
 export default function Page(pageProps: any) {
   return (
     <Suspense fallback={
-      <div className="card isolated-card my-6">
-        <div className="card-content has-text-centered">
-          <Spinner />
-        </div>
-      </div>
+      <Card className="mx-auto my-6 w-full max-w-md"><CardContent className="pt-6 text-center"><Spinner /></CardContent></Card>
     }>
       <EmailChangeConfirmation />
     </Suspense>
