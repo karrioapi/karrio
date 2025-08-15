@@ -18,12 +18,17 @@
     },
     "Shipment": {
       "OriginRecordTransactionTimestamp": "2016-07-14T12:01:33.999",
+      "ShipmentDate": "20250624",
       "Shipper": {
         "Name": "ShipperName",
         "AttentionName": "ShipperName",
         "ShipperNumber": "ShipperNumber",
         "Address": {
-          "AddressLine": "ShipperAddressLine",
+          "AddressLine": [
+            "ShipperAddressLine",
+            "ShipperAddressLine",
+            "ShipperAddressLine"
+          ],
           "City": "TIMONIUM",
           "StateProvinceCode": "MD",
           "PostalCode": "21093",
@@ -34,19 +39,27 @@
         "Name": "ShipToName",
         "AttentionName": "ShipToName",
         "Address": {
-          "AddressLine": "ShipToAddressLine",
+          "AddressLine": [
+            "ShipToAddressLine",
+            "ShipToAddressLine",
+            "ShipToAddressLine"
+          ],
           "City": "Alpharetta",
           "StateProvinceCode": "GA",
           "PostalCode": "30005",
           "CountryCode": "US",
-          "ResidentialAddressIndicator": ""
+          "ResidentialAddressIndicator": "Y"
         }
       },
       "ShipFrom": {
         "Name": "ShipFromName",
         "AttentionName": "ShipFromName",
         "Address": {
-          "AddressLine": "ShipFromAddressLine",
+          "AddressLine": [
+            "ShipFromAddressLine",
+            "ShipFromAddressLine",
+            "ShipFromAddressLine"
+          ],
           "City": "TIMONIUM",
           "StateProvinceCode": "MD",
           "PostalCode": "21093",
@@ -56,7 +69,9 @@
       "AlternateDeliveryAddress": {
         "Name": "ShipFromName",
         "Address": {
-          "AddressLine": "ShipFromAddressLine",
+          "AddressLine": [
+            "ShipFromAddressLine"
+          ],
           "City": "TIMONIUM",
           "StateProvinceCode": "MD",
           "PostalCode": "21093",
@@ -72,26 +87,34 @@
         }
       ],
       "PaymentDetails": {
-        "ShipmentCharge": {
-          "Type": "01",
-          "BillShipper": {
-            "AccountNumber": "ShipperNumber"
-          },
-          "BillReceiver": {
-            "AccountNumber": "ShipperNumber",
-            "Address": {
-              "PostalCode": "21093"
-            }
-          },
-          "BillThirdParty": {
-            "AccountNumber": "ShipperNumber",
-            "Address": {
-              "PostalCode": "21093",
-              "CountryCode": "US"
-            }
-          },
-          "ConsigneeBilledIndicator": ""
-        },
+        "ShipmentCharge": [
+          {
+            "Type": "01",
+            "BillShipper": {
+              "AccountNumber": "ShipperNumber"
+            },
+            "BillReceiver": {
+              "AccountNumber": "ShipperNumber",
+              "Address": {
+                "PostalCode": "21093"
+              }
+            },
+            "BillThirdParty": {
+              "AttentionName": "Name",
+              "Name": "TR",
+              "AccountNumber": "ShipperNumber",
+              "Address": {
+                "AddressLine": "AdressLine",
+                "City": "NEW YORK",
+                "StateProvinceCode": "NY",
+                "PostalCode": "21093",
+                "CountryCode": "US",
+                "ResidentialAddressIndicator": "Y"
+              }
+            },
+            "ConsigneeBilledIndicator": ""
+          }
+        ],
         "SplitDutyVATIndicator": ""
       },
       "FRSPaymentInformation": {
@@ -150,6 +173,10 @@
       "DocumentsOnlyIndicator": "",
       "Package": [
         {
+          "SimpleRate": {
+            "Description": "SimpleRateDescription",
+            "Code": "XS"
+          },
           "PackagingType": {
             "Code": "02",
             "Description": "Packaging"
@@ -184,7 +211,7 @@
               "SubCode": ""
             }
           },
-          "LargePackageIndicator": "",
+          "LargePackageIndicator": "X",
           "PackageServiceOptions": {
             "DeliveryConfirmation": {
               "DCISType": "2"
@@ -243,13 +270,13 @@
               }
             },
             "DryIce": {
-              "RegulationSet": "",
+              "RegulationSet": "CFR",
               "DryIceWeight": {
                 "UnitOfMeasurement": {
-                  "Code": "LBS",
-                  "Description": "Pounds"
+                  "Code": "01",
+                  "Description": "LBS"
                 },
-                "Weight": "1"
+                "Weight": "5"
               },
               "MedicalUseIndicator": "",
               "AuditRequired": ""
@@ -259,8 +286,11 @@
           "UPSPremier": {
             "Category": ""
           },
-          "OversizeIndicator": "",
-          "MinimumBillableWeightIndicator": ""
+          "OversizeIndicator": "X",
+          "MinimumBillableWeightIndicator": "X",
+          "ShipmentRatingOptions": {
+            "TPFCNegotiatedRatesIndicator": "Y"
+          }
         }
       ],
       "ShipmentServiceOptions": {
@@ -322,11 +352,11 @@
         "ItemDisposalIndicator": ""
       },
       "ShipmentRatingOptions": {
-        "NegotiatedRatesIndicator": "",
+        "NegotiatedRatesIndicator": "Y",
         "FRSShipmentIndicator": "",
         "RateChartIndicator": "",
         "UserLevelDiscountIndicator": "",
-        "TPFCNegotiatedRatesIndicator": ""
+        "TPFCNegotiatedRatesIndicator": "Y"
       },
       "InvoiceLineTotal": {
         "CurrencyCode": "USD",
@@ -339,10 +369,10 @@
         "PromoAliasCode": ""
       },
       "DeliveryTimeInformation": {
-        "PackageBillType": "",
+        "PackageBillType": "03",
         "Pickup": {
-          "Date": "",
-          "Time": ""
+          "Date": "20230101",
+          "Time": "1000"
         },
         "ReturnContractServices": [
           {

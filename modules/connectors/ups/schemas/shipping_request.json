@@ -4,16 +4,105 @@
       "SubVersion": "1801",
       "RequestOption": "nonvalidate",
       "TransactionReference": {
-        "CustomerContext": ""
+        "CustomerContext": "",
+        "TransactionIdentifier": ""
       }
     },
     "Shipment": {
       "Description": "Ship WS test",
+      "ShipmentDate": "20210101",
       "ReturnService": {
         "Code": "9",
         "Description": "UPS Print and Mail (PNM)"
       },
       "DocumentsOnlyIndicator": "",
+      "TradeDirect": {
+        "GeneralDescriptionOfGoods": "Phones and Accessories",
+        "Master": {
+          "SoldToSameAsShipTo": "True",
+          "Pickup": {
+            "Name": "UPS SCS c/o FMI Logistics",
+            "AttentionName": "Origin CFS",
+            "Phone": {
+              "Number": "4103330104",
+              "Extension": "123"
+            },
+            "Address": {
+              "AddressLine": "7151-44th Street SE",
+              "City": "Calgary",
+              "StateProvinceCode": "AB",
+              "PostalCode": "T2C4E8",
+              "CountryCode": "CA"
+            },
+            "EMailAddress": "abc@ups.com"
+          },
+          "SoldTo": {
+            "Name": "Ace Levy",
+            "AttentionName": "Doc",
+            "CompanyDisplayableName": "UPS SCS",
+            "TaxIdentificationNumber": "1234",
+            "TaxIDType": {
+              "Code": "EIN",
+              "Description": "EIN"
+            },
+            "Phone": {
+              "Number": "4103330104",
+              "Extension": "123"
+            },
+            "FaxNumber": "4103334104",
+            "Address": {
+              "AddressLine": "1221 29th St NW  STE A",
+              "City": "Auburn",
+              "StateProvinceCode": "WA",
+              "PostalCode": "98001",
+              "CountryCode": "US"
+            },
+            "EMailAddress": "abc@ups.com"
+          },
+          "TradeComplianceDetails": {
+            "TermsOfShipment": "CFR",
+            "ReasonForExport": "For Sale",
+            "Comments": "Exported",
+            "DeclarationStatement": "Invoice"
+          },
+          "NotificationBeforeDelivery": {
+            "RequestType": "001",
+            "MediaTypeCode": "03",
+            "Language": "ENG",
+            "Dialect": "US",
+            "ShipFromCompanyName": "UPS SCS",
+            "CompanyName": "UPS SCS",
+            "Phone": {
+              "Number": "3103330104",
+              "Extension": "555"
+            },
+            "Name": "TD mail Notification",
+            "SubjectLine": "subnotice",
+            "Memo": "notimo",
+            "EmailAddress": "abc@ups.com",
+            "AlternateEmailAddress": "abc@ups.com"
+          },
+          "UomType": "Imperial"
+        },
+        "Child": {
+          "Product": [
+            {
+              "Code": "KGS",
+              "Description": "iPhones Apple",
+              "UnitPrice": "20",
+              "TotalValue": "100",
+              "NumberOfUnits": "5",
+              "ProductNumber": "AP78",
+              "CountryOriginCode": "US",
+              "UnitOfMeasure": "KGS"
+            }
+          ],
+          "Type": "SMALLPACKAGE",
+          "USI": ""
+        },
+        "CurrencyCode": "CAD",
+        "ShipmentType": "TRADEDIRECTCROSSBORDER"
+      },
       "Shipper": {
         "Name": "ShipperName",
         "AttentionName": "ShipperZs Attn Name",
@@ -27,7 +116,11 @@
         "FaxNumber": "8002222222",
         "EMailAddress": "",
         "Address": {
-          "AddressLine": "2311 York Rd",
+          "AddressLine": [
+            "2311 York Rd",
+            "2311 York Rd",
+            "2311 York Rd"
+          ],
           "City": "Timonium",
           "StateProvinceCode": "MD",
           "PostalCode": "21093",
@@ -46,25 +139,34 @@
         "FaxNumber": "1234567890",
         "EMailAddress": "",
         "Address": {
-          "AddressLine": "123 Main St",
+          "AddressLine": [
+            "123 Main St",
+            "123 Main St",
+            "123 Main St"
+          ],
           "City": "timonium",
           "StateProvinceCode": "MD",
           "PostalCode": "21030",
           "CountryCode": "US",
-          "ResidentialAddressIndicator": ""
+          "ResidentialAddressIndicator": "Y"
         },
-        "LocationID": ""
+        "LocationID": "",
+        "Residential": " "
       },
       "AlternateDeliveryAddress": {
         "Name": " ",
         "AttentionName": " ",
-        "UPSAccessPointID": " ",
+        "UPSAccessPointID": "GB00088",
         "Address": {
-          "AddressLine": " ",
-          "City": " ",
-          "StateProvinceCode": " ",
-          "PostalCode": " ",
-          "CountryCode": " "
+          "AddressLine": [
+            "Morris RD",
+            "Morris RD",
+            "Morris RD"
+          ],
+          "City": "Alpharetta",
+          "StateProvinceCode": "ON",
+          "PostalCode": "20999",
+          "CountryCode": "DE"
         }
       },
       "ShipFrom": {
@@ -76,12 +178,22 @@
           "Code": "123456",
           "Description": "123456"
         },
+        "TaxIDType": {
+          "Code": "EIN",
+          "Description": "EIN"
+        },
         "Phone": {
           "Number": "1234567890"
         },
+        "ShipFromAccountNumber": " ",
         "FaxNumber": "1234567890",
+        "EMailAddress": "",
         "Address": {
-          "AddressLine": "2311 York Rd",
+          "AddressLine": [
+            "2311 York Rd",
+            "2311 York Rd",
+            "2311 York Rd"
+          ],
           "City": "Alpharetta",
           "StateProvinceCode": "GA",
           "PostalCode": "30005",
@@ -94,44 +206,47 @@
         }
       },
       "PaymentInformation": {
-        "ShipmentCharge": [
-          {
-            "Type": "01",
-            "BillShipper": {
-              "AccountNumber": "ShipperNumber",
-              "CreditCard": {
-                "Type": "06",
-                "Number": "4716995287640625",
-                "ExpirationDate": "201809",
-                "SecurityCode": "123",
-                "Address": {
-                  "AddressLine": "123 Main St",
-                  "City": "timonium",
-                  "StateProvinceCode": "MD",
-                  "PostalCode": "21030",
-                  "CountryCode": "US"
-                }
-              },
-              "AlternatePaymentMethod": ""
-            },
-            "BillReceiver": {
-              "AccountNumber": "ShipperNumber",
+        "ShipmentCharge": {
+          "Type": "01",
+          "BillShipper": {
+            "AccountNumber": "ShipperNumber",
+            "CreditCard": {
+              "Type": "06",
+              "Number": "4716995287640625",
+              "ExpirationDate": "201809",
+              "SecurityCode": "123",
               "Address": {
-                "PostalCode": "21093"
-              }
-            },
-            "BillThirdParty": {
-              "AccountNumber": "ShipperNumber",
-              "CertifiedElectronicMail": "",
-              "InterchangeSystemCode": "",
-              "Address": {
-                "PostalCode": "21093",
+                "AddressLine": "123 Main St",
+                "City": "timonium",
+                "StateProvinceCode": "MD",
+                "PostalCode": "21030",
                 "CountryCode": "US"
               }
             },
-            "ConsigneeBilledIndicator": ""
-          }
-        ],
+            "AlternatePaymentMethod": ""
+          },
+          "BillReceiver": {
+            "AccountNumber": "ShipperNumber",
+            "Address": {
+              "PostalCode": "21093"
+            }
+          },
+          "BillThirdParty": {
+            "AccountNumber": "ShipperNumber",
+            "Name": " ",
+            "AttentionName": " ",
+            "VatTaxID": "1234AB",
+            "TaxIDType": "01",
+            "CertifiedElectronicMail": "abc@123.123",
+            "InterchangeSystemCode": "SDI",
+            "SuppressPrintInvoiceIndicator": " ",
+            "Address": {
+              "PostalCode": "30005",
+              "CountryCode": "US"
+            }
+          },
+          "ConsigneeBilledIndicator": ""
+        },
         "SplitDutyVATIndicator": ""
       },
       "FRSPaymentInformation": {
@@ -177,15 +292,15 @@
         "PromoAliasCode": ""
       },
       "DGSignatoryInfo": {
-        "Name": "",
-        "Title": "",
-        "Place": "",
-        "Date": "",
-        "ShipperDeclaration": "",
-        "UploadOnlyIndicator": ""
+        "Name": "DGSignatory",
+        "Title": "DGPaperImage",
+        "Place": "GA",
+        "Date": "20200112",
+        "ShipperDeclaration": "01",
+        "UploadOnlyIndicator": "Y"
       },
       "ShipmentRatingOptions": {
-        "NegotiatedRatesIndicator": "",
+        "NegotiatedRatesIndicator": "Y",
         "FRSShipmentIndicator": "",
         "RateChartIndicator": "",
         "UserLevelDiscountIndicator": "",
@@ -206,14 +321,15 @@
         "MonetaryValue": "1"
       },
       "NumOfPiecesInShipment": "1",
-      "USPSEndorsement": "",
+      "USPSEndorsement": "5",
       "MILabelCN22Indicator": "",
       "SubClassification": "",
-      "CostCenter": "",
+      "CostCenter": "123",
       "CostCenterBarcodeIndicator": "",
-      "PackageID": "",
+      "PackageID": "1",
       "PackageIDBarcodeIndicator": "",
       "IrregularIndicator": "",
+      "InformationSourceCode": "A3",
       "ShipmentIndicationType": [
         {
           "Code": "01",
@@ -258,8 +374,8 @@
               "PhoneNumber": ""
             },
             "Locale": {
-              "Language": "",
-              "Dialect": ""
+              "Language": "ENG",
+              "Dialect": "US"
             }
           }
         ],
@@ -276,7 +392,7 @@
           "LabelLinksIndicator": ""
         },
         "InternationalForms": {
-          "FormType": "",
+          "FormType": "01",
           "UserCreatedForm": [
             {
               "DocumentID": ""
@@ -292,74 +408,79 @@
             }
           },
           "CN22Form": {
-            "LabelSize": "",
-            "PrintsPerPage": "",
-            "LabelPrintType": "",
-            "CN22Type": "",
-            "CN22OtherDescription": "",
-            "FoldHereText": "",
+            "LabelSize": "6",
+            "PrintsPerPage": "1",
+            "LabelPrintType": "pdf",
+            "CN22Type": "1",
+            "CN22OtherDescription": "test cn22",
+            "FoldHereText": "fold",
             "CN22Content": {
-              "CN22ContentQuantity": "",
-              "CN22ContentDescription": "",
+              "CN22ContentQuantity": "300",
+              "CN22ContentDescription": "desc",
               "CN22ContentWeight": {
                 "UnitOfMeasurement": {
-                  "Code": "",
-                  "Description": ""
+                  "Code": "LBS",
+                  "Description": "LBS"
                 },
-                "Weight": ""
+                "Weight": "70"
               },
-              "CN22ContentTotalValue": "",
-              "CN22ContentCurrencyCode": "",
-              "CN22ContentCountryOfOrigin": "",
-              "CN22ContentTariffNumber": ""
+              "CN22ContentTotalValue": "2",
+              "CN22ContentCurrencyCode": "USD",
+              "CN22ContentCountryOfOrigin": "US",
+              "CN22ContentTariffNumber": "4565655"
             }
           },
           "AdditionalDocumentIndicator": "",
-          "FormGroupIdName": "",
+          "FormGroupIdName": "Invoice",
+          "SEDFilingOption": "",
           "EEIFilingOption": {
-            "Code": "",
+            "Code": "1",
             "EMailAddress": "",
-            "Description": "",
+            "Description": "EEI",
             "UPSFiled": {
               "POA": {
-                "Code": "",
-                "Description": ""
+                "Code": "1",
+                "Description": "POA"
               }
             },
             "ShipperFiled": {
-              "Code": "",
-              "Description": "",
+              "Code": "B",
+              "Description": "ShipperFiled",
               "PreDepartureITNNumber": "",
               "ExemptionLegend": "",
-              "EEIShipmentReferenceNumber": ""
+              "EEIShipmentReferenceNumber": "1234"
             }
           },
           "Contacts": {
             "ForwardAgent": {
-              "CompanyName": "",
-              "TaxIdentificationNumber": "",
+              "CompanyName": "UPS",
+              "TaxIdentificationNumber": "94-308351500",
               "Address": {
-                "AddressLine": "",
-                "City": "",
-                "StateProvinceCode": "",
-                "Town": "",
-                "PostalCode": "",
-                "CountryCode": ""
+                "AddressLine": [
+                  "AddressLine"
+                ],
+                "City": "Alpharetta",
+                "StateProvinceCode": "GA",
+                "Town": "Town",
+                "PostalCode": "30005",
+                "CountryCode": "US"
               }
             },
             "UltimateConsignee": {
-              "CompanyName": "",
+              "CompanyName": "UPS",
               "Address": {
-                "AddressLine": "",
-                "City": "",
-                "StateProvinceCode": "",
-                "Town": "",
-                "PostalCode": "",
-                "CountryCode": ""
+                "AddressLine": [
+                  "Address"
+                ],
+                "City": "Alpharetta",
+                "StateProvinceCode": "GA",
+                "Town": "TOWN",
+                "PostalCode": "30005",
+                "CountryCode": "US"
               },
               "UltimateConsigneeType": {
-                "Code": "",
-                "Description": ""
+                "Code": "D",
+                "Description": "Direct Consumer"
               }
             },
             "IntermediateConsignee": {
@@ -375,102 +496,105 @@
             },
             "Producer": {
               "Option": "",
-              "CompanyName": "",
-              "TaxIdentificationNumber": "",
+              "CompanyName": "ProducerCompanyName",
+              "TaxIdentificationNumber": "1234",
               "Address": {
-                "AddressLine": "",
-                "City": "",
-                "StateProvinceCode": "",
-                "Town": "",
-                "PostalCode": "",
-                "CountryCode": ""
+                "AddressLine": [
+                  "Address"
+                ],
+                "City": "Marietta",
+                "StateProvinceCode": "GA",
+                "Town": "Town",
+                "PostalCode": "166222",
+                "CountryCode": "CA"
               },
-              "AttentionName": "",
+              "AttentionName": "Name",
               "Phone": {
-                "Number": "",
-                "Extension": ""
+                "Number": "1234567890",
+                "Extension": "1234"
               },
               "EMailAddress": ""
             },
             "SoldTo": {
-              "Name": "",
-              "AttentionName": "",
-              "TaxIdentificationNumber": "",
+              "Name": "ACME Designs",
+              "AttentionName": "ACME Designs",
+              "TaxIdentificationNumber": "1234",
               "Phone": {
-                "Number": "",
-                "Extension": ""
+                "Number": "1234567890",
+                "Extension": "1234"
               },
-              "Option": "",
+              "Option": "01",
               "Address": {
-                "AddressLine": "",
-                "City": "",
+                "AddressLine": [
+                  "103 Avenue des Champs-Élysées"
+                ],
+                "City": "Paris",
                 "StateProvinceCode": "",
-                "Town": "",
-                "PostalCode": "",
-                "CountryCode": ""
+                "PostalCode": "75008",
+                "CountryCode": "FR"
               },
               "EMailAddress": ""
             }
           },
           "Product": [
             {
-              "Description": "",
+              "Description": "Widgets",
               "Unit": {
-                "Number": "",
-                "Value": "",
+                "Number": "1",
+                "Value": "1",
                 "UnitOfMeasurement": {
-                  "Code": "",
-                  "Description": ""
+                  "Code": "KGS",
+                  "Description": "LBS"
                 }
               },
-              "CommodityCode": "",
-              "PartNumber": "",
-              "OriginCountryCode": "",
+              "CommodityCode": "12345679",
+              "PartNumber": "1234",
+              "OriginCountryCode": "US",
               "JointProductionIndicator": "",
-              "NetCostCode": "",
+              "NetCostCode": "NC",
               "NetCostDateRange": {
-                "BeginDate": "",
-                "EndDate": ""
+                "BeginDate": "20220115",
+                "EndDate": "20220816"
               },
-              "PreferenceCriteria": "",
-              "ProducerInfo": "",
-              "MarksAndNumbers": "",
-              "NumberOfPackagesPerCommodity": "",
+              "PreferenceCriteria": "A",
+              "ProducerInfo": "Yes",
+              "MarksAndNumbers": "1",
+              "NumberOfPackagesPerCommodity": "1",
               "ProductWeight": {
                 "UnitOfMeasurement": {
-                  "Code": "",
-                  "Description": ""
+                  "Code": "KGS",
+                  "Description": "Description"
                 },
-                "Weight": ""
+                "Weight": "10"
               },
               "VehicleID": "",
               "ScheduleB": {
-                "Number": "",
-                "Quantity": "",
+                "Number": "12345",
+                "Quantity": "5",
                 "UnitOfMeasurement": {
-                  "Code": "",
-                  "Description": ""
+                  "Code": "PCS",
+                  "Description": "PCS"
                 }
               },
-              "ExportType": "",
-              "SEDTotalValue": "",
+              "ExportType": "D",
+              "SEDTotalValue": "123.45",
               "ExcludeFromForm": {
                 "FormType": ""
               },
               "PackingListInfo": {
                 "PackageAssociated": {
-                  "PackageNumber": "",
-                  "ProductAmount": "",
+                  "PackageNumber": "01",
+                  "ProductAmount": "147",
                   "ProductNotes": ""
                 }
               },
               "EEIInformation": {
-                "ExportInformation": "",
+                "ExportInformation": "OS",
                 "License": {
-                  "Number": "",
-                  "Code": "",
+                  "Number": "123.16B2",
+                  "Code": "C30",
                   "LicenseLineValue": "",
-                  "ECCNNumber": ""
+                  "ECCNNumber": "EAR99"
                 },
                 "DDTCInformation": {
                   "ITARExemptionNumber": "",
@@ -488,48 +612,54 @@
               }
             }
           ],
-          "InvoiceNumber": "",
-          "InvoiceDate": "",
-          "PurchaseOrderNumber": "",
-          "TermsOfShipment": "",
-          "ReasonForExport": "",
-          "Comments": "",
+          "InvoiceNumber": "asdf123",
+          "InvoiceDate": "20130410",
+          "PurchaseOrderNumber": "999jjj777",
+          "TermsOfShipment": "CFR",
+          "ReasonForExport": "Sale",
+          "Comments": "Enter in any extra information about the current shipment.",
           "DeclarationStatement": "",
           "Discount": {
-            "MonetaryValue": ""
+            "MonetaryValue": "100"
           },
           "FreightCharges": {
-            "MonetaryValue": ""
+            "MonetaryValue": "75"
           },
           "InsuranceCharges": {
-            "MonetaryValue": ""
+            "MonetaryValue": "789"
           },
           "OtherCharges": {
-            "MonetaryValue": "",
-            "Description": ""
+            "MonetaryValue": "10",
+            "Description": "10"
           },
-          "CurrencyCode": "",
+          "CurrencyCode": "USD",
           "BlanketPeriod": {
-            "BeginDate": "",
-            "EndDate": ""
+            "BeginDate": "20130420",
+            "EndDate": "20130430"
           },
-          "ExportDate": "",
-          "ExportingCarrier": "",
-          "CarrierID": "",
-          "InBondCode": "",
-          "EntryNumber": "",
-          "PointOfOrigin": "",
-          "PointOfOriginType": "",
-          "ModeOfTransport": "",
-          "PortOfExport": "",
-          "PortOfUnloading": "",
-          "LoadingPier": "",
-          "PartiesToTransaction": "",
+          "ExportDate": "20210406",
+          "ExportingCarrier": "A",
+          "CarrierID": "IATA",
+          "InBondCode": "70",
+          "EntryNumber": "1A34567876545360",
+          "PointOfOrigin": "MS",
+          "PointOfOriginType": "MS",
+          "ModeOfTransport": "Rail",
+          "PortOfExport": "Overland",
+          "PortOfUnloading": "Germany",
+          "LoadingPier": "Pier 17 Dock 31",
+          "PartiesToTransaction": "N",
           "RoutedExportTransactionIndicator": "",
           "ContainerizedIndicator": "",
           "OverridePaperlessIndicator": "",
           "ShipperMemo": "",
-          "HazardousMaterialsIndicator": ""
+          "HazardousMaterialsIndicator": "",
+          "License": {
+            "Number": "",
+            "Date": "",
+            "ExceptionCode": ""
+          },
+          "ECCNNumber": ""
         },
         "DeliveryConfirmation": {
           "DCISType": "2",
@@ -578,15 +708,15 @@
           "TobaccoIndicator": ""
         },
         "InsideDelivery": "",
-        "ItemDisposal": ""
+        "ItemDisposal": "",
+        "MasterCartonIndicator": "Y"
       },
       "Locale": "",
-      "ShipmentValueThresholdCode": "",
+      "ShipmentValueThresholdCode": "01",
       "MasterCartonID": "",
       "MasterCartonIndicator": "",
       "BarCodeImageIndicator": "",
       "BarCodeAndLabelIndicator": "",
-      "ShipmentDate": "20210101",
       "Package": [
         {
           "Description": " ",
@@ -639,8 +769,12 @@
               "DCISType": "2"
             },
             "DeclaredValue": {
-              "CurrencyCode": "USD",
-              "MonetaryValue": "1"
+              "Type": {
+                "Code": "01",
+                "Description": "Declared value"
+              },
+              "CurrencyCode": "EUR",
+              "MonetaryValue": "10.30"
             },
             "COD": {
               "CODFundsCode": "0",
@@ -697,22 +831,23 @@
               }
             },
             "DryIce": {
-              "RegulationSet": "",
+              "RegulationSet": "CFR",
               "DryIceWeight": {
                 "UnitOfMeasurement": {
-                  "Code": "LBS",
-                  "Description": "Pounds"
+                  "Code": "01",
+                  "Description": "LBS"
                 },
-                "Weight": "1"
+                "Weight": "50"
               },
               "MedicalUseIndicator": "",
               "AuditRequired": ""
             },
             "UPSPremiumCareIndicator": "",
-            "ProactiveIndicator": "",
-            "PackageIdentifier": "",
+            "ProactiveIndicator": "X",
+            "PackageIdentifier": "123",
             "ClinicalTrialsID": "",
-            "RefrigerationIndicator": ""
+            "RefrigerationIndicator": "",
+            "PackedByStoreIndicator": ""
           },
           "Commodity": {
             "FreightClass": "",
@@ -737,8 +872,8 @@
       },
       "HTTPUserAgent": "Mozilla/4.5",
       "LabelStockSize": {
-        "Height": "",
-        "Width": ""
+        "Height": "6",
+        "Width": "4"
       },
       "Instruction": [
         {

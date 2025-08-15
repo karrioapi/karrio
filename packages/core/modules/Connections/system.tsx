@@ -20,6 +20,7 @@ import { Button } from "@karrio/ui/components/ui/button";
 import { Input } from "@karrio/ui/components/ui/input";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { cn } from "@karrio/ui/lib/utils";
+import { p } from '@karrio/lib';
 
 export default function SystemConnectionsPage() {
   const router = useRouter();
@@ -132,12 +133,8 @@ export default function SystemConnectionsPage() {
             onClick={() => setSelectedTab("connections")}
           >
             <AppLink
-              href="/connections"
+              href={`/connections`}
               className="hover:text-inherit"
-              onClick={(e) => {
-                e.preventDefault();
-                router.push('/connections');
-              }}
             >
               Your Accounts ({userConnections.length})
             </AppLink>
@@ -163,12 +160,8 @@ export default function SystemConnectionsPage() {
             onClick={() => setSelectedTab("rate-sheets")}
           >
             <AppLink
-              href="/connections/rate-sheets"
+              href={`/connections/rate-sheets`}
               className="hover:text-inherit"
-              onClick={(e) => {
-                e.preventDefault();
-                router.push('/connections/rate-sheets');
-              }}
             >
               Rate Sheets
             </AppLink>

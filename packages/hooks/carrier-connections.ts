@@ -18,8 +18,8 @@ export function useConnections() {
       return;
     }
 
-    const user_connections = userConnectionsData?.user_connections || [];
-    const system_connections = systemConnectionsData?.system_connections || [];
+    const user_connections = userConnectionsData?.user_carrier_connections || [];
+    const system_connections = systemConnectionsData?.system_carrier_connections || [];
 
     const newCarrierOptions = [...user_connections, ...system_connections]
       .filter((_) => _.active && (_.config?.shipping_options || []).length > 0)

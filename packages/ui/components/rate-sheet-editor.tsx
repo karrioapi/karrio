@@ -1,18 +1,17 @@
 "use client";
 
-import { Sheet, SheetContent } from "@karrio/ui/components/ui/sheet";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@karrio/ui/components/ui/tabs";
+import { ServiceEditorModal } from "@karrio/ui/components/modals/service-editor-modal";
+import { CURRENCY_OPTIONS, DIMENSION_UNITS, WEIGHT_UNITS } from "@karrio/types";
+import { RateSheetTable } from "@karrio/ui/components/rate-sheet-table";
+import { Sheet, SheetContent } from "@karrio/ui/components/ui/sheet";
+import { Cross2Icon, TrashIcon } from "@radix-ui/react-icons";
+import { useLoader } from "@karrio/ui/core/components/loader";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { Button } from "@karrio/ui/components/ui/button";
 import { Input } from "@karrio/ui/components/ui/input";
 import { Label } from "@karrio/ui/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
-import { RateSheetTable } from "@karrio/ui/components/rate-sheet-table";
-import { ServiceEditorModal } from "@karrio/ui/components/modals/service-editor-modal";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { AppLink } from "@karrio/ui/core/components/app-link";
-import { useLoader } from "@karrio/ui/core/components/loader";
-import { CURRENCY_OPTIONS, DIMENSION_UNITS, WEIGHT_UNITS } from "@karrio/types";
-import { Cross2Icon, TrashIcon } from "@radix-ui/react-icons";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -24,10 +23,10 @@ import {
   AlertDialogAction,
   AlertDialogTrigger,
 } from "@karrio/ui/components/ui/alert-dialog";
-import { isEqual, failsafe } from "@karrio/lib";
 import { getCarrierServiceDefaults, isGenericCarrier } from "@karrio/lib/carrier-utils";
-import CodeMirror from "@uiw/react-codemirror";
 import { jsonLanguage } from "@codemirror/lang-json";
+import { isEqual, failsafe } from "@karrio/lib";
+import CodeMirror from "@uiw/react-codemirror";
 import React from "react";
 
 interface RateSheetEditorProps {
@@ -40,10 +39,10 @@ interface RateSheetEditorProps {
   useRateSheetMutation: () => any; // Pass in the appropriate mutation hook
 }
 
-export const RateSheetEditor = ({ 
-  rateSheetId, 
-  onClose, 
-  preloadCarrier, 
+export const RateSheetEditor = ({
+  rateSheetId,
+  onClose,
+  preloadCarrier,
   linkConnectionId,
   isAdmin = false,
   useRateSheet,
@@ -98,7 +97,7 @@ export const RateSheetEditor = ({
 
     // Use centralized utility to get service defaults
     const defaultServicesList = getCarrierServiceDefaults(mockConnection, references);
-    
+
     if (defaultServicesList && defaultServicesList.length > 0) {
       const defaultServices = defaultServicesList.map((service: any, index: number) => ({
         ...service,
@@ -252,31 +251,31 @@ export const RateSheetEditor = ({
           if (service.dimension_unit) cleanService.dimension_unit = service.dimension_unit;
 
           // Clean zones - zones are required for CreateServiceLevelInput
-          cleanService.zones = (service.zones && Array.isArray(service.zones) && service.zones.length > 0) 
+          cleanService.zones = (service.zones && Array.isArray(service.zones) && service.zones.length > 0)
             ? service.zones.map((zone: any) => {
-                const cleanZone: any = {
-                  // rate is required for ServiceZoneInput
-                  rate: Number(zone.rate) || 0
-                };
+              const cleanZone: any = {
+                // rate is required for ServiceZoneInput
+                rate: Number(zone.rate) || 0
+              };
 
-                // Add optional fields if they have values
-                if (zone.label) cleanZone.label = zone.label;
-                if (zone.min_weight !== null && zone.min_weight !== undefined && zone.min_weight !== '') {
-                  cleanZone.min_weight = Number(zone.min_weight);
-                }
-                if (zone.max_weight !== null && zone.max_weight !== undefined && zone.max_weight !== '') {
-                  cleanZone.max_weight = Number(zone.max_weight);
-                }
-                if (zone.transit_days !== null && zone.transit_days !== undefined && zone.transit_days !== '') {
-                  cleanZone.transit_days = Number(zone.transit_days);
-                }
-                if (zone.transit_time) cleanZone.transit_time = zone.transit_time;
-                if (zone.cities && zone.cities.length > 0) cleanZone.cities = zone.cities;
-                if (zone.postal_codes && zone.postal_codes.length > 0) cleanZone.postal_codes = zone.postal_codes;
-                if (zone.country_codes && zone.country_codes.length > 0) cleanZone.country_codes = zone.country_codes;
+              // Add optional fields if they have values
+              if (zone.label) cleanZone.label = zone.label;
+              if (zone.min_weight !== null && zone.min_weight !== undefined && zone.min_weight !== '') {
+                cleanZone.min_weight = Number(zone.min_weight);
+              }
+              if (zone.max_weight !== null && zone.max_weight !== undefined && zone.max_weight !== '') {
+                cleanZone.max_weight = Number(zone.max_weight);
+              }
+              if (zone.transit_days !== null && zone.transit_days !== undefined && zone.transit_days !== '') {
+                cleanZone.transit_days = Number(zone.transit_days);
+              }
+              if (zone.transit_time) cleanZone.transit_time = zone.transit_time;
+              if (zone.cities && zone.cities.length > 0) cleanZone.cities = zone.cities;
+              if (zone.postal_codes && zone.postal_codes.length > 0) cleanZone.postal_codes = zone.postal_codes;
+              if (zone.country_codes && zone.country_codes.length > 0) cleanZone.country_codes = zone.country_codes;
 
-                return cleanZone;
-              })
+              return cleanZone;
+            })
             : [{ rate: 0 }]; // Default zone if none exist
 
           return cleanService;
@@ -305,7 +304,7 @@ export const RateSheetEditor = ({
         } catch (err: any) {
           console.error('Create mutation failed:', err);
           console.error('Error details:', JSON.stringify(err, null, 2));
-          
+
           // Extract more specific error message
           let errorMessage = 'Failed to create rate sheet';
           if (err?.response?.errors?.[0]?.message) {
@@ -313,7 +312,7 @@ export const RateSheetEditor = ({
           } else if (err?.message) {
             errorMessage = err.message;
           }
-          
+
           throw new Error(errorMessage);
         }
         const newId = (res as any)?.create_rate_sheet?.rate_sheet?.id;
@@ -543,15 +542,6 @@ export const RateSheetEditor = ({
     carrier_name: rateSheet.carrier_name,
     services: rateSheet.services || []
   });
-
-  const isValidNew = React.useMemo(() => {
-    if (!localData) return false;
-    const hasName = !!localData.name && localData.name.trim().length > 0;
-    const hasCarrier = !!localData.carrier_name;
-    const hasService = Array.isArray(localData.services) && localData.services.length > 0;
-    const servicesValid = (localData.services || []).every((s: any) => !!s.service_name && !!s.service_code);
-    return hasName && hasCarrier && hasService && servicesValid;
-  }, [localData]);
 
   if (!localData && !isNew) {
     return null;
@@ -906,17 +896,17 @@ export const RateSheetEditor = ({
                         onRemoveZone={handleRemoveZone}
                         onAddService={handleAddService}
                         onRemoveService={handleRemoveService}
-            onCellChange={handleCellChange}
-            onBatchUpdate={isAdmin ? async ({ id, updates }) => {
-              try {
-                if (batchUpdateRateSheetCells?.mutateAsync) {
-                  await batchUpdateRateSheetCells.mutateAsync({ id, updates });
-                }
-              } catch (e) {
-                console.error(e);
-                throw e;
-              }
-            } : undefined}
+                        onCellChange={handleCellChange}
+                        onBatchUpdate={isAdmin ? async ({ id, updates }) => {
+                          try {
+                            if (batchUpdateRateSheetCells?.mutateAsync) {
+                              await batchUpdateRateSheetCells.mutateAsync({ id, updates });
+                            }
+                          } catch (e) {
+                            console.error(e);
+                            throw e;
+                          }
+                        } : undefined}
                       />
                     </div>
                   </TabsContent>
@@ -965,6 +955,13 @@ export const RateSheetEditor = ({
                                   <Label>Country Codes (comma separated)</Label>
                                   <Input
                                     value={(sample.country_codes || []).join(', ')}
+                                    inputMode="text"
+                                    onKeyDown={(e) => {
+                                      // Allow comma input - prevent any default blocking behavior
+                                      if (e.key === ',' || e.keyCode === 188) {
+                                        e.stopPropagation();
+                                      }
+                                    }}
                                     onChange={(e) => handleUpdateZoneFieldAll(i, 'country_codes', e.target.value.split(',').map(v => v.trim()).filter(Boolean))}
                                     placeholder="US, CA, MX"
                                   />
@@ -973,6 +970,13 @@ export const RateSheetEditor = ({
                                   <Label>Cities (comma separated)</Label>
                                   <Input
                                     value={(sample.cities || []).join(', ')}
+                                    inputMode="text"
+                                    onKeyDown={(e) => {
+                                      // Allow comma input - prevent any default blocking behavior
+                                      if (e.key === ',' || e.keyCode === 188) {
+                                        e.stopPropagation();
+                                      }
+                                    }}
                                     onChange={(e) => handleUpdateZoneFieldAll(i, 'cities', e.target.value.split(',').map(v => v.trim()).filter(Boolean))}
                                     placeholder="New York, Toronto"
                                   />
@@ -981,6 +985,13 @@ export const RateSheetEditor = ({
                                   <Label>Postal Codes (comma separated)</Label>
                                   <Input
                                     value={(sample.postal_codes || []).join(', ')}
+                                    inputMode="text"
+                                    onKeyDown={(e) => {
+                                      // Allow comma input - prevent any default blocking behavior
+                                      if (e.key === ',' || e.keyCode === 188) {
+                                        e.stopPropagation();
+                                      }
+                                    }}
                                     onChange={(e) => handleUpdateZoneFieldAll(i, 'postal_codes', e.target.value.split(',').map(v => v.trim()).filter(Boolean))}
                                     placeholder="10001, 94105"
                                   />
@@ -1076,26 +1087,22 @@ export const RateSheetEditor = ({
                         height="100%"
                         extensions={[jsonLanguage]}
                         value={failsafe(() => JSON.stringify(localData?.services || [], null, 2), '')}
-                        onChange={(value) => {
-                          failsafe(() => {
-                            const services = JSON.parse(value);
-                            setLocalData((prev: any) => ({ ...prev, services }));
-                          });
-                        }}
+                        editable={false}
                         basicSetup={{
                           lineNumbers: true,
                           foldGutter: true,
                           dropCursor: false,
                           allowMultipleSelections: false,
-                          autocompletion: true,
+                          autocompletion: false,
                           bracketMatching: true,
                           highlightSelectionMatches: false,
-                          searchKeymap: true,
+                          searchKeymap: false,
                         }}
                         style={{
                           fontSize: '14px',
                           height: '100%',
-                          overflow: 'auto'
+                          overflow: 'auto',
+                          background: '#fafafa'
                         }}
                       />
                     </div>

@@ -35,12 +35,8 @@ export default function Page() {
     const { references } = useAPIMetadata();
     const [allChecked, setAllChecked] = React.useState(false);
     const [selection, setSelection] = React.useState<string[]>([]);
-    const {
-      query: { data: { user_connections } = {} },
-    } = useCarrierConnections();
-    const {
-      query: { data: { system_connections } = {} },
-    } = useSystemConnections();
+    const { query: userConnQuery, user_carrier_connections: user_connections } = useCarrierConnections();
+    const { query: sysConnQuery, system_connections } = useSystemConnections();
     const {
       query: { data: { manifests } = {}, ...query },
       filter,
@@ -99,14 +95,14 @@ export default function Page() {
       }
     };
     const getCarrier = (manifest: ManifestType) =>
-      user_connections?.find(
+      (user_connections || []).find(
         (_) =>
-          _.id === manifest?.meta?.carrier ||
+          _.id === (manifest?.meta as any)?.carrier ||
           _.carrier_id === manifest?.carrier_id,
       ) ||
-      system_connections?.find(
+      (system_connections || []).find(
         (_) =>
-          _.id === manifest?.meta?.carrier ||
+          _.id === (manifest?.meta as any)?.carrier ||
           _.carrier_id === manifest?.carrier_id,
       );
 

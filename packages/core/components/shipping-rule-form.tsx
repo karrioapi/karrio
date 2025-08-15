@@ -6,6 +6,7 @@ import { useShippingRuleForm } from "@karrio/hooks/shipping-rules";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { Textarea } from "@karrio/ui/components/ui/textarea";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { Button } from "@karrio/ui/components/ui/button";
 import { Switch } from "@karrio/ui/components/ui/switch";
 import { Input } from "@karrio/ui/components/ui/input";
@@ -23,6 +24,7 @@ interface ShippingRuleFormProps {
 export function ShippingRuleForm({ ruleId, templateData, onClose, onSave }: ShippingRuleFormProps) {
   const loader = useLoader();
   const { references } = useAPIMetadata();
+  const { query: carrierQuery, user_carrier_connections: userConnections } = useCarrierConnections();
   const {
     form,
     isNew,
@@ -51,30 +53,20 @@ export function ShippingRuleForm({ ruleId, templateData, onClose, onSave }: Ship
 
   // Initialize active conditions and actions based on form state
   React.useEffect(() => {
-    const formValues = form.state.values;
+    const formValues = form.state.values as any;
     const conditions: string[] = [];
     const actions: string[] = [];
 
-    // Check for existence of condition structures, not just their values
-    if (formValues.conditions?.destination) {
-      conditions.push('destination');
-    }
-    if (formValues.conditions?.weight) {
-      conditions.push('weight');
-    }
-    if (formValues.conditions?.carrier_id !== undefined || formValues.conditions?.service !== undefined) {
-      conditions.push('carrier_service');
-    }
-    if (formValues.conditions?.rate_comparison) {
-      conditions.push('rate_comparison');
-    }
+    const hasValue = (v: any) => v !== undefined && v !== null && !(typeof v === 'object' && Object.keys(v || {}).length === 0);
 
-    if (formValues.actions?.select_service) {
-      actions.push('service_selection');
-    }
-    if (formValues.actions?.block_service !== undefined) {
-      actions.push('service_blocking');
-    }
+    if (hasValue(formValues?.conditions?.destination)) conditions.push('destination');
+    if (hasValue(formValues?.conditions?.weight)) conditions.push('weight');
+    if (hasValue(formValues?.conditions?.carrier_id) || hasValue(formValues?.conditions?.service)) conditions.push('carrier_service');
+    if (hasValue(formValues?.conditions?.rate_comparison)) conditions.push('rate_comparison');
+
+    if (hasValue(formValues?.actions?.select_service)) actions.push('service_selection');
+    // Only show blocking action when explicitly true
+    if (formValues?.actions?.block_service === true) actions.push('service_blocking');
 
     setActiveConditions(conditions);
     setActiveActions(actions);
@@ -231,14 +223,18 @@ export function ShippingRuleForm({ ruleId, templateData, onClose, onSave }: Ship
               <Label className="text-xs text-slate-700">Country Code</Label>
               <form.Field
                 name="conditions.destination.country_code"
-                children={(field) => (
-                  <Input
-                    value={field.state.value || ""}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    placeholder="CA, US, GB..."
-                    className="h-8"
-                  />
-                )}
+                children={(field) => {
+                  const CountrySelect = require("@karrio/ui/components/country-select").CountrySelect;
+                  return (
+                    <CountrySelect
+                      value={field.state.value || ""}
+                      onValueChange={(val: string) => field.handleChange(val || null)}
+                      placeholder="Select country"
+                      fieldClass="m-0"
+                      wrapperClass="m-0"
+                    />
+                  );
+                }}
               />
               <p className="text-xs text-slate-500">ISO 2-letter country code</p>
             </div>
@@ -332,22 +328,26 @@ export function ShippingRuleForm({ ruleId, templateData, onClose, onSave }: Ship
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
-                <Label className="text-xs text-slate-700">Carrier</Label>
+                <Label className="text-xs text-slate-700">Carrier Connection</Label>
                 <form.Field
                   name="conditions.carrier_id"
                   children={(field) => (
                     <Select
                       value={field.state.value || "any"}
-                      onValueChange={(value) => field.handleChange(value === "any" ? null : value)}
+                      onValueChange={(value) => {
+                        field.handleChange(value === "any" ? null : value);
+                        // If carrier changes, clear service to avoid mismatches
+                        form.setFieldValue("conditions.service" as any, null as any);
+                      }}
                     >
                       <SelectTrigger className="h-8">
-                        <SelectValue placeholder="Select carrier" />
+                        <SelectValue placeholder="Select connection" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="any">Any carrier</SelectItem>
-                        {references?.carriers && Object.entries(references.carriers).map(([key, name]) => (
-                          <SelectItem key={key} value={key}>
-                            {name as string}
+                        <SelectItem value="any">Any connection</SelectItem>
+                        {(userConnections || []).map((c: any) => (
+                          <SelectItem key={c.id} value={c.id}>
+                            {(c.display_name || c.custom_carrier_name || c.carrier_name)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -357,14 +357,37 @@ export function ShippingRuleForm({ ruleId, templateData, onClose, onSave }: Ship
               </div>
               <div className="space-y-1">
                 <Label className="text-xs text-slate-700">Service</Label>
-                <form.Field
-                  name="conditions.service"
-                  children={(field) => (
-                    <Input
-                      value={field.state.value || ""}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      placeholder="ground, express..."
-                      className="h-8"
+                <form.Subscribe
+                  selector={(state) => state.values.conditions?.carrier_id}
+                  children={(carrierId) => (
+                    <form.Field
+                      name="conditions.service"
+                      children={(field) => {
+                        // Resolve carrier_name from selected connection to list relevant services
+                        const connection = (userConnections || []).find((c: any) => c.id === carrierId);
+                        const carrierName = connection?.carrier_name;
+                        const serviceMap = references?.services || {};
+                        const servicesForCarrier = carrierName ? Object.keys(serviceMap[carrierName] || {}) : [];
+                        return (
+                          <Select
+                            value={field.state.value || ""}
+                            onValueChange={(value) => field.handleChange(value === "any" ? null : value)}
+                          >
+                            <SelectTrigger className="h-8">
+                              <SelectValue placeholder={carrierId ? "Select service" : "Select a connection first"} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {carrierId && servicesForCarrier.length > 0 ? (
+                                servicesForCarrier.map((svc) => (
+                                  <SelectItem key={svc} value={svc}>{svc}</SelectItem>
+                                ))
+                              ) : (
+                                <SelectItem value="any">Any</SelectItem>
+                              )}
+                            </SelectContent>
+                          </Select>
+                        );
+                      }}
                     />
                   )}
                 />
@@ -509,7 +532,11 @@ export function ShippingRuleForm({ ruleId, templateData, onClose, onSave }: Ship
                             children={(field) => (
                               <Select
                                 value={field.state.value || "none"}
-                                onValueChange={(value) => field.handleChange(value === "none" ? null : value)}
+                                onValueChange={(value) => {
+                                  field.handleChange(value === "none" ? null : value);
+                                  // Reset dependent fields when carrier changes
+                                  form.setFieldValue("actions.select_service.service_code" as any, null as any);
+                                }}
                               >
                                 <SelectTrigger className="h-8">
                                   <SelectValue placeholder="Select carrier" />
@@ -543,14 +570,34 @@ export function ShippingRuleForm({ ruleId, templateData, onClose, onSave }: Ship
                           </div>
                           <div className="space-y-1">
                             <Label className="text-xs text-slate-700">Service Code</Label>
-                            <form.Field
-                              name="actions.select_service.service_code"
-                              children={(field) => (
-                                <Input
-                                  value={field.state.value || ""}
-                                  onChange={(e) => field.handleChange(e.target.value)}
-                                  placeholder="Optional"
-                                  className="h-8"
+                            <form.Subscribe
+                              selector={(state) => state.values.actions?.select_service?.carrier_code}
+                              children={(carrierCode) => (
+                                <form.Field
+                                  name="actions.select_service.service_code"
+                                  children={(field) => {
+                                    const serviceMap = references?.services || {};
+                                    const servicesForCarrier = carrierCode ? Object.keys(serviceMap[carrierCode] || {}) : [];
+                                    return (
+                                      <Select
+                                        value={field.state.value || ""}
+                                        onValueChange={(value) => field.handleChange(value === "any" ? null : value)}
+                                      >
+                                        <SelectTrigger className="h-8">
+                                          <SelectValue placeholder={carrierCode ? "Select service" : "Select carrier first"} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          {carrierCode && servicesForCarrier.length > 0 ? (
+                                            servicesForCarrier.map((svc) => (
+                                              <SelectItem key={svc} value={svc}>{svc}</SelectItem>
+                                            ))
+                                          ) : (
+                                            <SelectItem value="any">Any</SelectItem>
+                                          )}
+                                        </SelectContent>
+                                      </Select>
+                                    );
+                                  }}
                                 />
                               )}
                             />
@@ -613,6 +660,15 @@ export function ShippingRuleForm({ ruleId, templateData, onClose, onSave }: Ship
           <SheetTitle className="text-lg font-semibold">
             {isNew ? "Create shipping rule" : "Edit shipping rule"}
           </SheetTitle>
+          {!isNew && current?.id && (
+            <button
+              className="text-xs px-2 py-1 border rounded hover:bg-slate-50"
+              title="Copy rule ID"
+              onClick={() => navigator.clipboard?.writeText(current.id)}
+            >
+              Copy ID
+            </button>
+          )}
         </div>
       </SheetHeader>
 

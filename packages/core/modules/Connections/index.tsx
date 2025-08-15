@@ -40,7 +40,9 @@ import { RateSheetEditor } from "@karrio/ui/components/rate-sheet-editor";
 import { LinkRateSheetDialog } from "@karrio/ui/components/rate-sheet-dialog";
 import { useRateSheets, useRateSheetMutation, useRateSheet } from "@karrio/hooks/rate-sheet";
 import { cn } from "@karrio/ui/lib/utils";
-import { supportsRateSheets, getEffectiveCarrierName, isGenericCarrier } from "@karrio/lib/carrier-utils";
+import { p } from '@karrio/lib';
+import { supportsRateSheets } from "@karrio/lib/carrier-utils";
+// Note: carrier-utils normalization removed; backend provides canonical names
 
 export default function ConnectionsPage() {
   const router = useRouter();
@@ -163,29 +165,18 @@ export default function ConnectionsPage() {
 
   const handleOpenRateSheet = async (connection: any) => {
     try {
-      // Check if carrier supports rate sheets using centralized utility
-      if (!supportsRateSheets(connection, references)) {
-        toast({
-          title: "Rate sheets not available for this carrier",
-          description: `Rate sheets are not supported for ${connection.carrier_name}`,
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Check if rate sheet exists for this carrier (use effective carrier name for matching)
-      const effectiveCarrierName = getEffectiveCarrierName(connection);
-      const existingSheet = rate_sheets?.edges?.find(
-        ({ node }) => node.carrier_name === effectiveCarrierName
-      );
+      // Prefer an explicitly linked sheet if present, otherwise find by carrier_name
+      const existingSheet = rate_sheets?.edges?.find(({ node }) => (
+        node.id === connection.rate_sheet?.id
+      ));
 
       if (existingSheet) {
         setSelectedRateSheet(existingSheet.node);
       } else {
-        // Create default rate sheet structure using effective carrier name
+        // Create default rate sheet structure using the connection carrier_name
         setSelectedRateSheet({
-          carrier_name: effectiveCarrierName,
-          name: `${connection.display_name || effectiveCarrierName} Rate Sheet`,
+          carrier_name: connection.carrier_name,
+          name: `${connection.display_name} Rate Sheet`,
           services: [],
           carriers: [connection]
         });
@@ -287,12 +278,8 @@ export default function ConnectionsPage() {
             onClick={() => setSelectedTab("system")}
           >
             <AppLink
-              href="/connections/system"
+              href={`/connections/system`}
               className="hover:text-inherit"
-              onClick={(e) => {
-                e.preventDefault();
-                router.push('/connections/system');
-              }}
             >
               System Accounts ({systemConnections.length})
             </AppLink>
@@ -307,12 +294,8 @@ export default function ConnectionsPage() {
             onClick={() => setSelectedTab("rate-sheets")}
           >
             <AppLink
-              href="/connections/rate-sheets"
+              href={`/connections/rate-sheets`}
               className="hover:text-inherit"
-              onClick={(e) => {
-                e.preventDefault();
-                router.push('/connections/rate-sheets');
-              }}
             >
               Rate Sheets
             </AppLink>
@@ -438,7 +421,7 @@ export default function ConnectionsPage() {
                   {/* Carrier Logo */}
                   <div className="flex-none">
                     <CarrierImage
-                      carrier_name={connection.carrier_name}
+                      carrier_name={connection.credentials?.custom_carrier_name || connection.carrier_name}
                       width={40}
                       height={40}
                       className="rounded-lg"
@@ -543,7 +526,6 @@ export default function ConnectionsPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        {/* Only show Link Rate Sheet for compatible carriers */}
                         {supportsRateSheets(connection, references) && (
                           <DropdownMenuItem onClick={() => askLinkRateSheet(connection)}>
                             <FileText className="mr-2 h-4 w-4" />

@@ -221,6 +221,10 @@ export interface GetAdminSystemUsageVariables {
 // GraphQL query operation: GetSystemConnections
 // ====================================================
 
+export interface GetSystemConnections_system_carrier_connections_edges_node_rate_sheet {
+  id: string;
+}
+
 export interface GetSystemConnections_system_carrier_connections_edges_node_usage {
   total_trackers: number | null;
   total_shipments: number | null;
@@ -239,6 +243,7 @@ export interface GetSystemConnections_system_carrier_connections_edges_node {
   config: any | null;
   metadata: any | null;
   test_mode: boolean;
+  rate_sheet: GetSystemConnections_system_carrier_connections_edges_node_rate_sheet | null;
   usage: GetSystemConnections_system_carrier_connections_edges_node_usage;
 }
 
@@ -276,6 +281,10 @@ export interface GetSystemConnectionsVariables {
 // GraphQL query operation: GetSystemConnection
 // ====================================================
 
+export interface GetSystemConnection_system_carrier_connection_rate_sheet {
+  id: string;
+}
+
 export interface GetSystemConnection_system_carrier_connection {
   id: string;
   carrier_id: string;
@@ -287,6 +296,7 @@ export interface GetSystemConnection_system_carrier_connection {
   config: any | null;
   metadata: any | null;
   test_mode: boolean;
+  rate_sheet: GetSystemConnection_system_carrier_connection_rate_sheet | null;
 }
 
 export interface GetSystemConnection {

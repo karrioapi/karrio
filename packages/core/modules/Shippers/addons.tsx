@@ -710,7 +710,13 @@ export default function AddonsPage() {
                 {systemConnections.map((connection: any) => (
                   <div key={connection.id} className="group relative flex items-center justify-between p-3 rounded-lg border border-gray-200 bg-white">
                     <div className="flex items-center space-x-3 flex-1">
-                      <CarrierImage carrier_name={connection.carrier_name} width={40} height={40} className="rounded-lg" />
+                      <CarrierImage
+                        carrier_name={connection.credentials?.custom_carrier_name || connection.carrier_name}
+                        width={40} height={40}
+                        className="rounded-lg"
+                        text_color={connection.config?.text_color}
+                        background={connection.config?.brand_color}
+                      />
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
                           <div className="font-medium text-gray-900 truncate text-sm">{connection.display_name || connection.carrier_name}</div>

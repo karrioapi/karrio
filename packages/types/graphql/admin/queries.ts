@@ -162,6 +162,9 @@ export const GET_SYSTEM_CONNECTIONS = gql`
           config
           metadata
           test_mode
+          rate_sheet {
+            id
+          }
           usage(filter: $usageFilter) {
             total_trackers
             total_shipments
@@ -194,6 +197,9 @@ export const GET_SYSTEM_CONNECTION = gql`
       config
       metadata
       test_mode
+      rate_sheet {
+        id
+      }
     }
   }
 `;

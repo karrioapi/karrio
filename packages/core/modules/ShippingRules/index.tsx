@@ -30,6 +30,7 @@ import {
 } from "@karrio/ui/components/ui/dropdown-menu";
 import { AppLink } from "@karrio/ui/core/components/app-link";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { ShippingRuleTemplatePicker } from "@karrio/core/components/shipping-rule-template-picker";
 import { ShippingRuleTemplate } from "@karrio/hooks/shipping-rule-templates";
 
@@ -40,6 +41,7 @@ const ContextProviders = bundleContexts([ModalProvider]);
 export default function Page(pageProps: any) {
   const Component = (): JSX.Element => {
     const { metadata } = useAPIMetadata();
+    const { query: carrierQuery, user_carrier_connections: connections } = useCarrierConnections();
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [isCreating, setIsCreating] = useState(false);
@@ -133,7 +135,9 @@ export default function Page(pageProps: any) {
         }
       }
       if (conditions.carrier_id) {
-        summary.push(`Carrier: ${conditions.carrier_id}`);
+        const conn = connections.find((c) => c.id === conditions.carrier_id);
+        const name = conn?.display_name || conn?.custom_carrier_name || conn?.carrier_name || conditions.carrier_id;
+        summary.push(`Carrier: ${name}`);
       }
       if (conditions.service) {
         summary.push(`Service: ${conditions.service}`);
@@ -331,7 +335,17 @@ export default function Page(pageProps: any) {
                         </div>
                       </div>
 
-                      <div className="ml-6">
+                        <div className="ml-6 flex items-center gap-2">
+                          {/* Copyable ID */}
+                          {rule.id && (
+                            <button
+                              className="text-xs px-2 py-1 border rounded hover:bg-slate-50"
+                              title="Copy rule ID"
+                              onClick={() => navigator.clipboard?.writeText(rule.id)}
+                            >
+                              ID
+                            </button>
+                          )}
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-slate-100">

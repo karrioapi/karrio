@@ -413,6 +413,8 @@ class ShippingOption(utils.Enum):
     ups_seeds_indicator = utils.OptionEnum("SeedsIndicator", bool)
     ups_special_exceptions_indicator = utils.OptionEnum("SpecialExceptionsIndicator", bool)
     ups_tobacco_indicator = utils.OptionEnum("TobaccoIndicator", bool)
+    ups_ecigarettes_indicator = utils.OptionEnum("ECigarettesIndicator", bool)
+    ups_hemp_cbd_indicator = utils.OptionEnum("HempCBDIndicator", bool)
 
 
     ups_negotiated_rates_indicator = utils.OptionEnum("NegotiatedRatesIndicator", bool)
@@ -556,6 +558,8 @@ def shipping_options_initializer(
         or "ups_seeds_indicator" in _options
         or "ups_special_exceptions_indicator" in _options
         or "ups_tobacco_indicator" in _options
+        or "ups_ecigarettes_indicator" in _options
+        or "ups_hemp_cbd_indicator" in _options
     )
 
     if package_options is not None:

@@ -102,8 +102,8 @@ export default function Page() {
       shipment_ids.split(",").filter((_) => !isNoneOrEmpty(_)),
     );
 
-    const carrierConnectionsQuery = useCarrierConnections();
-    const systemConnectionsQuery = useSystemConnections();
+    const { query: carrierConnectionsQuery, user_carrier_connections } = useCarrierConnections();
+    const { query: systemConnectionsQuery, system_connections } = useSystemConnections();
     const ordersQuery = useOrders({
       id: orderIds,
     });
@@ -113,8 +113,7 @@ export default function Page() {
       isDisabled: shipmentIds.length === 0,
     });
 
-    const user_connections = carrierConnectionsQuery.query?.data?.user_connections;
-    const system_connections = systemConnectionsQuery.query?.data?.system_connections;
+    const user_connections = user_carrier_connections;
     const orderList = ordersQuery.query?.data?.orders;
     const shipmentList = shipmentsQuery.query?.data?.shipments;
 
@@ -259,15 +258,15 @@ export default function Page() {
     };
     const getCarrier = (rate: ShipmentType["rates"][0]) =>
       !!rate &&
-      (user_connections?.find(
+      ((user_connections || []).find(
         (_) =>
-          _.id === rate.meta.carrier_connection_id ||
-          _.carrier_id === rate.carrier_id,
+          _.id === (rate?.meta as any)?.carrier_connection_id ||
+          _.carrier_id === rate?.carrier_id,
       ) ||
-        system_connections?.find(
+        (system_connections || []).find(
           (_) =>
-            _.id === rate.meta.carrier_connection_id ||
-            _.carrier_id === rate.carrier_id,
+            _.id === (rate?.meta as any)?.carrier_connection_id ||
+            _.carrier_id === rate?.carrier_id,
         ));
     const toggle = (id: string) => (e: React.MouseEvent) => {
       e.preventDefault();

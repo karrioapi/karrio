@@ -87,12 +87,8 @@ export default function CreateLabelPage(pageProps: any) {
     const shipment_id = searchParams.get("shipment_id") || "new";
     const [key, setKey] = useState<string>(`${shipment_id}-${Date.now()}`);
     const [addReturn, setAddReturn] = useState<boolean>(false);
-    const {
-      query: { data: { user_connections } = {} },
-    } = useCarrierConnections();
-    const {
-      query: { data: { system_connections } = {} },
-    } = useSystemConnections();
+    const { query: userConnQuery, user_carrier_connections: user_connections } = useCarrierConnections();
+    const { query: sysConnQuery, system_connections } = useSystemConnections();
     const {
       state: { shipment, query },
       ...mutation
@@ -126,17 +122,20 @@ export default function CreateLabelPage(pageProps: any) {
         shipment.recipient.country_code !== shipment.shipper.country_code
       );
     };
-    const getCarrier = (rate: ShipmentType["rates"][0]) =>
-      user_connections?.find(
+    const getCarrier = (rate: ShipmentType["rates"][0]) => {
+      const user = (user_connections || []).find(
         (_) =>
-          _.id === rate.meta.carrier_connection_id ||
-          _.carrier_id === rate.carrier_id,
-      ) ||
-      system_connections?.find(
-        (_) =>
-          _.id === rate.meta.carrier_connection_id ||
-          _.carrier_id === rate.carrier_id,
+          _.id === (rate?.meta as any)?.carrier_connection_id ||
+          _.carrier_id === rate?.carrier_id,
       );
+      if (user) return user;
+      const sys = (system_connections || []).find(
+        (_) =>
+          _.id === (rate?.meta as any)?.carrier_connection_id ||
+          _.carrier_id === rate?.carrier_id,
+      );
+      return sys;
+    };
     const getItems = () => {
       return (orders.data?.orders.edges || [])
         .map(({ node: { line_items } }) => line_items)
@@ -1566,14 +1565,44 @@ export default function CreateLabelPage(pageProps: any) {
 
                     {/* Live rates section */}
                     <div className="p-0 py-1">
-                      {!query.isFetched &&
-                        query.isFetching &&
-                        (shipment.rates || []).length === 0 && (
-                          <Spinner className="my-1 p-2 has-text-centered" />
-                        )}
+                      {/* Show spinner when fetching rates (initial load or refresh) */}
+                      {(mutation.fetchRates.isLoading || (query.isFetching && (shipment.rates || []).length === 0)) && (
+                        <div className="has-text-centered p-4">
+                          <Spinner className="my-1" />
+                          <div className="is-size-7 has-text-grey mt-2">
+                            Fetching shipping rates...
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Show loading overlay on existing rates during refresh */}
+                      {mutation.fetchRates.isLoading && (shipment.rates || []).length > 0 && (
+                        <div className="is-relative">
+                          <div className="overlay has-background-white-bis" style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            zIndex: 10,
+                            opacity: 0.8,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
+                          }}>
+                            <div className="has-text-centered">
+                              <Spinner />
+                              <div className="is-size-7 has-text-grey mt-2">
+                                Refreshing rates...
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
 
                       {query.isFetched &&
                         !query.isFetching &&
+                        !mutation.fetchRates.isLoading &&
                         (shipment.rates || []).length === 0 && (
                           <div className="notification is-default m-2 p-2 is-size-7">
                             Provide all shipping details to retrieve shipping
@@ -1581,7 +1610,7 @@ export default function CreateLabelPage(pageProps: any) {
                           </div>
                         )}
 
-                      {query.isFetched && (shipment.rates || []).length > 0 && (
+                      {(shipment.rates || []).length > 0 && (
                         <div
                           className="menu-list px-2 rates-list-box"
                           style={{ maxHeight: "16.8em" }}
@@ -1592,15 +1621,21 @@ export default function CreateLabelPage(pageProps: any) {
                               {...(rate.test_mode
                                 ? { title: "Test Mode" }
                                 : {})}
-                              className={`card m-0 mb-1 is-vcentered p-1 ${rate.service === shipment.options.preferred_service ? "has-text-grey-dark has-background-success-light" : "has-text-grey"} ${rate.id === selected_rate?.id ? "has-text-grey-dark has-background-grey-lighter" : "has-text-grey"}`}
+                              className={`card m-0 mb-1 is-vcentered p-1 ${rate.service === shipment.options.preferred_service ? "has-text-grey-dark has-background-success-light" : "has-text-grey"} ${rate.id === selected_rate?.id ? "has-text-grey-dark has-background-grey-lighter" : "has-text-grey"} ${mutation.fetchRates.isLoading ? "is-loading-cursor" : ""}`}
                               onClick={() => {
-                                setSelectedRate(rate);
-                                onChange({
-                                  options: {
-                                    ...shipment.options,
-                                    preferred_service: rate.service,
-                                  },
-                                });
+                                if (!mutation.fetchRates.isLoading) {
+                                  setSelectedRate(rate);
+                                  onChange({
+                                    options: {
+                                      ...shipment.options,
+                                      preferred_service: rate.service,
+                                    },
+                                  });
+                                }
+                              }}
+                              style={{
+                                pointerEvents: mutation.fetchRates.isLoading ? "none" : "auto",
+                                opacity: mutation.fetchRates.isLoading ? 0.6 : 1
                               }}
                             >
                               <div className="icon-text">
@@ -1679,7 +1714,14 @@ export default function CreateLabelPage(pageProps: any) {
                         query.isFetching
                       }
                     >
-                      <span className="px-6">Buy shipping label</span>
+                      {mutation.buyLabel.isLoading ? (
+                        <>
+                          <Spinner className="mr-2" size={16} />
+                          <span>Purchasing label...</span>
+                        </>
+                      ) : (
+                        <span className="px-6">Buy shipping label</span>
+                      )}
                     </ButtonField>
 
                     <div className="py-1"></div>
@@ -1693,7 +1735,14 @@ export default function CreateLabelPage(pageProps: any) {
                           query.isFetching || mutation.saveDraft.isLoading
                         }
                       >
-                        <span className="px-6">Save draft</span>
+                        {mutation.saveDraft.isLoading ? (
+                          <>
+                            <Spinner className="mr-2" size={16} />
+                            <span>Saving draft...</span>
+                          </>
+                        ) : (
+                          <span className="px-6">Save draft</span>
+                        )}
                       </ButtonField>
                     )}
 
