@@ -12,10 +12,11 @@ import {
 import { isEqual, isNone, validationMessage, validityCheck } from "@karrio/lib";
 import { CommodityType, CURRENCY_OPTIONS, WEIGHT_UNITS } from "@karrio/types";
 import React, { useContext, useReducer, useState } from "react";
-import { TextAreaField } from "../components/textarea-field";
+import { TextareaField } from "@karrio/ui/components/textarea-field";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { LineItemInput } from "../forms/line-item-input";
-import { InputField } from "../components/input-field";
+import { InputField } from "@karrio/ui/components/input-field";
+import { SelectField } from "@karrio/ui/components/select-field";
 import { CountryInput } from "../forms/country-input";
 import { Notifier } from "../components/notifier";
 import { Loading } from "../components/loader";
@@ -197,52 +198,59 @@ export const CommodityEditModalProvider = ({
                   )}
 
                   <div className="columns is-multiline mb-4 px-1">
+                    <div className="column is-12 px-2 py-1">
+                      <div className="tailwind-only">
                     <InputField
                       name="title"
                       label="Title"
                       placeholder="IPod Nano"
                       onChange={handleChange}
                       value={commodity?.title}
-                      className="is-small is-fullwidth"
-                      wrapperClass="column is-12 px-2 py-1"
-                      fieldClass="mb-0 p-0"
                       disabled={!isNone(commodity?.parent_id)}
                       max={35}
+                      labelBold={true}
                     />
+                      </div>
+                    </div>
                   </div>
 
                   <div className="columns is-multiline mb-4 px-1">
+                    <div className="column is-12 px-2 py-1">
+                      <div className="tailwind-only">
                     <InputField
                       name="hs_code"
                       label="HS code"
                       placeholder="000000"
                       onChange={handleChange}
                       value={commodity?.hs_code}
-                      className="is-small is-fullwidth"
-                      wrapperClass="column is-12 px-2 py-1"
-                      fieldClass="mb-0 p-0"
                       disabled={!isNone(commodity?.parent_id)}
                       max={35}
+                      labelBold={true}
                     />
+                      </div>
+                    </div>
                   </div>
 
                   <div className="columns is-multiline mb-4 px-1">
+                    <div className="column is-7 px-2 py-1">
+                      <div className="tailwind-only">
                     <InputField
                       name="sku"
                       label="SKU"
                       value={commodity?.sku}
                       onChange={handleChange}
-                      className="is-small is-fullwidth"
-                      wrapperClass="column is-7 px-2 py-1"
-                      fieldClass="mb-0 p-0"
                       placeholder="0000001"
                       disabled={!isNone(commodity?.parent_id)}
                       max={35}
+                      labelBold={true}
                     />
+                      </div>
+                    </div>
 
+                    <div className="column is-5 px-2 py-1">
+                      <div className="tailwind-only">
                     <CountryInput
                       label="Origin Country"
-                      className="is-small"
                       value={commodity.origin_country}
                       onValueChange={(value) =>
                         dispatch({
@@ -251,137 +259,127 @@ export const CommodityEditModalProvider = ({
                         })
                       }
                       disabled={!isNone(commodity?.parent_id)}
+                      labelBold={true}
                     />
-                  </div>
-
-                  <div className="columns is-multiline mb-4 px-1">
-                    <InputField
-                      label="Quantity"
-                      name="quantity"
-                      type="number"
-                      min="1"
-                      step="1"
-                      className="is-small"
-                      wrapperClass="column is-3 px-2 py-1"
-                      fieldClass="mb-0 p-0"
-                      onChange={handleChange}
-                      value={commodity?.quantity}
-                      onInvalid={validityCheck(
-                        validationMessage("Please enter a valid quantity"),
-                      )}
-                      {...(isNone(maxQty) ? {} : { max: maxQty as number })}
-                      required
-                    />
-
-                    <div className="column is-4 mb-0 px-2 py-1">
-                      <label
-                        className="label is-capitalized"
-                        style={{ fontSize: ".8em" }}
-                      >
-                        Weight
-                        <span className="icon is-small has-text-danger small-icon">
-                          <i
-                            className="fas fa-asterisk"
-                            style={{ fontSize: ".7em" }}
-                          ></i>
-                        </span>
-                      </label>
-                      <div className="field has-addons">
-                        <p className="control is-expanded">
-                          <input
-                            min="0"
-                            step="any"
-                            name="weight"
-                            type="number"
-                            className="input is-small"
-                            onChange={handleChange}
-                            value={commodity.weight}
-                            disabled={!isNone(commodity?.parent_id)}
-                            onInvalid={validityCheck(
-                              validationMessage("Please enter a valid weight"),
-                            )}
-                            required
-                          />
-                        </p>
-                        <p className="control">
-                          <span className="select is-small">
-                            <select
-                              name="weight_unit"
-                              onChange={handleChange}
-                              value={commodity.weight_unit || WeightUnitEnum.KG}
-                              disabled={!isNone(commodity?.parent_id)}
-                            >
-                              {WEIGHT_UNITS.map((unit) => (
-                                <option key={unit} value={unit}>
-                                  {unit}
-                                </option>
-                              ))}
-                            </select>
-                          </span>
-                        </p>
                       </div>
                     </div>
+                  </div>
 
-                    <div className="column is-5 mb-0 px-2 py-1">
-                      <label
-                        className="label is-capitalized"
-                        style={{ fontSize: ".8em" }}
-                      >
-                        Value Amount
-                      </label>
-                      <div className="field has-addons">
-                        <p className="control is-expanded">
-                          <input
-                            min="0"
-                            step="any"
+                                    <div className="px-1 mb-4">
+                    {/* Responsive Layout: Flex on desktop (side by side), stack on mobile */}
+                    <div className="tailwind-only flex flex-col sm:flex-row gap-2 items-end">
+                      {/* Quantity Field - 1 flex unit */}
+                      <div className="w-full sm:flex-1 min-w-0">
+                        <div className="tailwind-only">
+                          <InputField
+                            label="Quantity"
+                            name="quantity"
                             type="number"
-                            name="value_amount"
-                            className="input is-small"
+                            min="1"
+                            step="1"
                             onChange={handleChange}
-                            value={commodity.value_amount || ""}
-                            disabled={!isNone(commodity?.parent_id)}
+                            value={commodity?.quantity}
+                            onInvalid={validityCheck(
+                              validationMessage("Please enter a valid quantity"),
+                            )}
+                            {...(isNone(maxQty) ? {} : { max: maxQty as number })}
+                            required
+                            labelBold={true}
                           />
-                        </p>
-                        <p className="control">
-                          <span className="select is-small">
-                            <select
-                              name="value_currency"
+                        </div>
+                      </div>
+
+                      {/* Weight Field - 1.5 flex units */}
+                      <div className="w-full sm:flex-[1.5] min-w-0">
+                        <div className="tailwind-only isolate py-2 px-1">
+                          <label className="capitalize text-xs mb-1 block font-bold text-[0.8em]">
+                            Weight
+                            <span className="ml-1 text-red-500 text-xs">
+                              <i className="fas fa-asterisk text-[0.7em]"></i>
+                            </span>
+                          </label>
+                          <div className="flex">
+                            <input
+                              name="weight"
+                              type="number"
+                              min="0"
+                              step="any"
                               onChange={handleChange}
-                              value={
-                                commodity.value_currency || CurrencyCodeEnum.USD
-                              }
+                              value={commodity.weight}
+                              disabled={!isNone(commodity?.parent_id)}
+                              onInvalid={validityCheck(
+                                validationMessage("Please enter a valid weight"),
+                              )}
+                              required
+                              className="flex-1 min-w-0 h-9 rounded-l-md border border-r-0 border-input bg-transparent px-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                            />
+                            <SelectField
+                              name="weight_unit"
+                              value={commodity.weight_unit || WeightUnitEnum.KG}
+                              onChange={handleChange}
+                              options={WEIGHT_UNITS}
+                              disabled={!isNone(commodity?.parent_id)}
+                              attachedToInput={true}
+                              attachmentSide="right"
+                              width="w-24"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Value Amount Field - 2 flex units (largest) */}
+                      <div className="w-full sm:flex-[2] min-w-0">
+                        <div className="tailwind-only isolate py-2 px-1">
+                          <label className="capitalize text-xs mb-1 block font-bold text-[0.8em]">
+                            Value Amount
+                          </label>
+                          <div className="flex">
+                            <input
+                              name="value_amount"
+                              type="number"
+                              min="0"
+                              step="any"
+                              onChange={handleChange}
+                              value={commodity.value_amount || ""}
+                              disabled={!isNone(commodity?.parent_id)}
+                              className="flex-1 min-w-0 h-9 rounded-l-md border border-r-0 border-input bg-transparent px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                            />
+                            <SelectField
+                              name="value_currency"
+                              value={commodity.value_currency || CurrencyCodeEnum.USD}
+                              onChange={handleChange}
+                              options={CURRENCY_OPTIONS}
                               required={!isNone(commodity?.value_amount)}
                               disabled={!isNone(commodity?.parent_id)}
-                            >
-                              {CURRENCY_OPTIONS.map((unit) => (
-                                <option key={unit} value={unit}>
-                                  {unit}
-                                </option>
-                              ))}
-                            </select>
-                          </span>
-                        </p>
+                              attachedToInput={true}
+                              attachmentSide="right"
+                              width="w-24"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
 
                   <div className="columns is-multiline mb-0 px-1">
-                    {/* @ts-ignore */}
-                    <TextAreaField
+                    <div className="column is-12 px-2 py-1">
+                      <div className="tailwind-only">
+                        <TextareaField
                       name="description"
                       label="description"
-                      className="is-small"
-                      fieldClass="column mb-0 is-12 px-2 py-1"
                       placeholder="item description"
                       rows={2}
                       maxLength={100}
                       onChange={handleChange}
                       value={commodity?.description}
                       disabled={!isNone(commodity?.parent_id)}
+                      labelBold={true}
                     />
+                      </div>
+                    </div>
                   </div>
 
-                  <hr className="mt-1 my-3" style={{ height: "1px" }} />
+                  <hr className="mt-1 my-3 border-t border-border h-px" />
 
                   <MetadataEditor
                     id={commodity.id}
@@ -412,7 +410,7 @@ export const CommodityEditModalProvider = ({
                             </button>
                           </div>
 
-                          <hr className="mt-1 my-1" style={{ height: "1px" }} />
+                          <hr className="mt-1 my-1 border-t border-border h-px" />
                         </>
                       );
                     })()}

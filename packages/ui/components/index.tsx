@@ -27,3 +27,12 @@ export * from "./floating-developer-tools";
 
 // Rate Sheet Components
 export * from "./rate-sheet-editor";
+
+// ShadCN-based migrated components
+export * from "./input-field";
+export * from "./select-field";
+export * from "./radio-group-field";
+export * from "./button-field";
+export * from "./address-modal-editor";
+export * from "./country-input";
+export * from "./textarea-field";
