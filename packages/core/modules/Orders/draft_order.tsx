@@ -11,9 +11,11 @@ import { GoogleGeocodingScript } from "@karrio/ui/core/components/google-geocodi
 import { CommodityDescription } from "@karrio/ui/core/components/commodity-description";
 import { AddressDescription } from "@karrio/ui/core/components/address-description";
 import { formatRef, isEqual, isNone, isNoneOrEmpty } from "@karrio/lib";
-import { AddressModalEditor } from "@karrio/ui/core/modals/form-modals";
+import { AddressModalEditor } from "@karrio/ui/components/address-modal-editor";
 import { MetadataObjectTypeEnum, PaidByEnum } from "@karrio/types";
 import { InputField } from "@karrio/ui/core/components/input-field";
+import { RadioGroupField } from "@karrio/ui/components/radio-group-field";
+import { ButtonField } from "@karrio/ui/components/button-field";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { ModalProvider } from "@karrio/ui/core/modals/modal";
 import { bundleContexts } from "@karrio/hooks/utils";
@@ -78,18 +80,19 @@ export default function Page(pageProps: any) {
           <header className="px-0 pb-2 pt-4 is-flex is-justify-content-space-between">
             <span className="title is-4 my-2">{`${id === "new" ? "Create" : "Edit"} order`}</span>
             <div>
-              <button
+              <ButtonField
                 type="button"
-                className="button is-small is-success"
+                isSuccess
+                isSmall
                 onClick={() => mutation.save()}
+                loading={loader.loading}
                 disabled={
-                  loader.loading ||
                   isEqual(order, current || DEFAULT_STATE) ||
                   !order?.shipping_to?.country_code
                 }
               >
                 Save
-              </button>
+              </ButtonField>
             </div>
           </header>
 
@@ -108,21 +111,25 @@ export default function Page(pageProps: any) {
                       {/* @ts-ignore */}
                       <CommodityStateContext.Consumer>
                         {({ editCommodity }) => (
-                          <button
+                          <ButtonField
                             type="button"
-                            className="button is-small is-info is-inverted p-2"
+                            variant="link"
+                            size="sm"
                             disabled={query.isFetching}
                             onClick={() =>
                               editCommodity({
                                 onSubmit: (_) => mutation.addItem(_),
                               })
                             }
+                            leftIcon={
+                              <span className="icon is-small">
+                                <i className="fas fa-plus"></i>
+                              </span>
+                            }
+                            className="text-blue-600 hover:text-blue-800 p-2 h-auto"
                           >
-                            <span className="icon is-small">
-                              <i className="fas fa-plus"></i>
-                            </span>
-                            <span>add item</span>
-                          </button>
+                            add item
+                          </ButtonField>
                         )}
                       </CommodityStateContext.Consumer>
                     </div>
@@ -145,9 +152,10 @@ export default function Page(pageProps: any) {
                             {/* @ts-ignore */}
                             <CommodityStateContext.Consumer>
                               {({ editCommodity }) => (
-                                <button
+                                <ButtonField
                                   type="button"
-                                  className="button is-small is-white"
+                                  variant="ghost"
+                                  size="sm"
                                   onClick={() =>
                                     editCommodity({
                                       commodity: item as any,
@@ -159,12 +167,13 @@ export default function Page(pageProps: any) {
                                   <span className="icon is-small">
                                     <i className="fas fa-pen"></i>
                                   </span>
-                                </button>
+                                </ButtonField>
                               )}
                             </CommodityStateContext.Consumer>
-                            <button
+                            <ButtonField
                               type="button"
-                              className="button is-small is-white"
+                              variant="ghost"
+                              size="sm"
                               disabled={
                                 query.isFetching ||
                                 (order.line_items || []).length === 1
@@ -176,7 +185,7 @@ export default function Page(pageProps: any) {
                               <span className="icon is-small">
                                 <i className="fas fa-times"></i>
                               </span>
-                            </button>
+                            </ButtonField>
                           </div>
                         </div>
                       </React.Fragment>
@@ -255,78 +264,37 @@ export default function Page(pageProps: any) {
                   <hr className="my-1" style={{ height: "1px" }} />
 
                   <div className="p-3">
-                    <label
-                      className="label is-capitalized"
-                      style={{ fontSize: "0.8em" }}
-                    >
-                      Shipment Paid By
-                    </label>
-
-                    <div className="control">
-                      <label className="radio">
-                        <input
-                          className="mr-1"
-                          type="radio"
-                          name="paid_by"
-                          defaultChecked={
-                            order.options?.paid_by === PaidByEnum.sender
-                          }
-                          onChange={() =>
-                            handleChange({
-                              options: {
-                                ...order.options,
-                                paid_by: PaidByEnum.sender,
-                              },
-                            })
-                          }
-                        />
-                        <span className="is-size-7 has-text-weight-bold">
-                          {formatRef(PaidByEnum.sender.toString())}
-                        </span>
-                      </label>
-                      <label className="radio">
-                        <input
-                          className="mr-1"
-                          type="radio"
-                          name="paid_by"
-                          defaultChecked={
-                            order.options?.paid_by === PaidByEnum.recipient
-                          }
-                          onChange={() =>
-                            handleChange({
-                              options: {
-                                ...order.options,
-                                paid_by: PaidByEnum.recipient,
-                              },
-                            })
-                          }
-                        />
-                        <span className="is-size-7 has-text-weight-bold">
-                          {formatRef(PaidByEnum.recipient.toString())}
-                        </span>
-                      </label>
-                      <label className="radio">
-                        <input
-                          className="mr-1"
-                          type="radio"
-                          name="paid_by"
-                          defaultChecked={
-                            order.options?.paid_by === PaidByEnum.third_party
-                          }
-                          onChange={() =>
-                            handleChange({
-                              options: {
-                                ...order.options,
-                                paid_by: PaidByEnum.third_party,
-                              },
-                            })
-                          }
-                        />
-                        <span className="is-size-7 has-text-weight-bold">
-                          {formatRef(PaidByEnum.third_party.toString())}
-                        </span>
-                      </label>
-                    </div>
+                    <RadioGroupField
+                      label="Shipment Paid By"
+                      name="paid_by"
+                      value={order.options?.paid_by}
+                      onValueChange={(value) =>
+                        handleChange({
+                          options: {
+                            ...order.options,
+                            paid_by: value as PaidByEnum,
+                          },
+                        })
+                      }
+                      options={[
+                        {
+                          value: PaidByEnum.sender,
+                          label: formatRef(PaidByEnum.sender.toString()),
+                        },
+                        {
+                          value: PaidByEnum.recipient,
+                          label: formatRef(PaidByEnum.recipient.toString()),
+                        },
+                        {
+                          value: PaidByEnum.third_party,
+                          label: formatRef(PaidByEnum.third_party.toString()),
+                        },
+                      ]}
+                      orientation="horizontal"
+                      gap="gap-4"
+                      wrapperClass="p-0 mb-3"
+                      labelBold={true}
+                    />
 
                     {order.options?.paid_by &&
                       order.options?.paid_by !== PaidByEnum.sender && (
@@ -440,12 +408,14 @@ export default function Page(pageProps: any) {
                               handleChange({ shipping_to: address })
                             }
                             trigger={
-                              <button
-                                className="button is-small is-info is-text is-inverted p-1"
+                              <ButtonField
+                                variant="link"
+                                size="sm"
                                 disabled={loading}
+                                className="text-blue-600 hover:text-blue-800 p-1 h-auto"
                               >
                                 Edit address
-                              </button>
+                              </ButtonField>
                             }
                           />
                         </div>
@@ -479,12 +449,14 @@ export default function Page(pageProps: any) {
                               handleChange({ billing_address: address })
                             }
                             trigger={
-                              <button
-                                className="button is-small is-info is-text is-inverted p-1"
+                              <ButtonField
+                                variant="link"
+                                size="sm"
                                 disabled={loading}
+                                className="text-blue-600 hover:text-blue-800 p-1 h-auto"
                               >
                                 Edit billing address
-                              </button>
+                              </ButtonField>
                             }
                           />
                         </div>
@@ -523,14 +495,16 @@ export default function Page(pageProps: any) {
                                   METADATA
                                 </span>
                                 <div className="is-vcentered">
-                                  <button
+                                  <ButtonField
                                     type="button"
-                                    className="button is-small is-info is-text is-inverted p-1"
+                                    variant="link"
+                                    size="sm"
                                     disabled={isEditing}
                                     onClick={() => editMetadata()}
+                                    className="text-blue-600 hover:text-blue-800 p-1 h-auto"
                                   >
                                     <span>Edit metadata</span>
-                                  </button>
+                                  </ButtonField>
                                 </div>
                               </header>
                             </>

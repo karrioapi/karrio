@@ -11,6 +11,7 @@ interface CountryInputProps {
   label?: string;
   required?: boolean;
   disabled?: boolean;
+  labelBold?: boolean;
   className?: string;
 }
 
@@ -25,6 +26,7 @@ export const CountryInput = forwardRef<
   label,
   required = false,
   disabled = false,
+  labelBold = false,
   className,
   ...props
 }, ref) => {
