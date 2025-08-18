@@ -167,6 +167,7 @@ export const AddressForm = ({
           className="is-small"
           wrapperClass="column px-1 py-3"
           fieldClass="mb-0 p-0"
+          align="end"
           required
         />
       </div>
