@@ -167,22 +167,24 @@ export const CommodityEditModalProvider = ({
                   }}
                 >
                   {ORDERS_MANAGEMENT && (
-                    <div className="columns is-multiline mb-4 px-1">
-                      <LineItemInput
-                        name="parent_id"
-                        label="Order Line Item"
-                        value={commodity?.parent_id}
-                        onChange={loadLineItem}
-                        query={query}
-                        onReady={(_: any) => setMaxQty(_?.unfulfilled_quantity)}
-                        dropdownClass="is-small"
-                        fieldClass="mb-0 p-0"
-                        wrapperClass="column is-11 pl-2 pr-0 py-1"
-                        className="is-small is-fullwidth"
-                        placeholder="Link an order line item"
-                      />
+                    <div className="flex gap-2 items-end mb-4 px-1">
+                      <div className="flex-1">
+                        <LineItemInput
+                          name="parent_id"
+                          label="Order Line Item"
+                          value={commodity?.parent_id}
+                          onChange={loadLineItem}
+                          query={query}
+                          onReady={(_: any) => setMaxQty(_?.unfulfilled_quantity)}
+                          dropdownClass="is-small"
+                          fieldClass="mb-0 p-0"
+                          wrapperClass=""
+                          className="is-small is-fullwidth"
+                          placeholder="Link an order line item"
+                        />
+                      </div>
 
-                      <div className="column m-0 px-0 py-1 is-flex is-align-items-flex-end">
+                      <div className="flex-shrink-0">
                         <button
                           type="button"
                           className="button is-white is-small"
