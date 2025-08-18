@@ -13,6 +13,12 @@ import { useLocation } from "@karrio/hooks/location";
 import React, { useContext, useState } from "react";
 import { AddressForm } from "../forms/address-form";
 import { Loading } from "../components/loader";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@karrio/ui/components/ui/dialog";
 import { isNone } from "@karrio/lib";
 
 const DEFAULT_TEMPLATE_CONTENT = {
@@ -112,17 +118,15 @@ export const AddressEditModal = ({
         {children}
       </AddressEditContext.Provider>
 
-      <div className={`modal ${isActive ? "is-active" : ""}`} key={key}>
-        <div className="modal-background"></div>
-        <div className="modal-card">
-          <section className="modal-card-body modal-form">
-            <div className="form-floating-header p-4">
-              <span className="has-text-weight-bold is-size-6">
-                Edit address
-              </span>
-            </div>
-            <div className="p-3 my-4"></div>
+      <Dialog open={isActive} onOpenChange={(open) => !open && close()}>
+        <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold">
+              Edit address
+            </DialogTitle>
+          </DialogHeader>
 
+          <div className="mt-2 pb-4">
             {template !== undefined && (
               <AddressForm
                 name="template"
@@ -162,15 +166,9 @@ export const AddressEditModal = ({
                 </div>
               </AddressForm>
             )}
-          </section>
-        </div>
-
-        <button
-          className="modal-close is-large has-background-dark"
-          aria-label="close"
-          onClick={close}
-        ></button>
-      </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Notifier>
   );
 };

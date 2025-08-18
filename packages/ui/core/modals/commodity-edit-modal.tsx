@@ -147,18 +147,18 @@ export const CommodityEditModalProvider = ({
       </CommodityStateContext.Provider>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl max-h-[95vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold">
               {isNew ? "Add" : "Update"} commodity
             </DialogTitle>
           </DialogHeader>
           
-          <div className="mt-4 pb-6">
+          <div className="mt-2 pb-4">
             {commodity !== undefined && (
               <>
                 <div
-                  className="px-0 py-4"
+                  className="px-0 py-2"
                   key={key}
                   onChange={(e: any) => {
                     setIsInvalid(
@@ -167,7 +167,7 @@ export const CommodityEditModalProvider = ({
                   }}
                 >
                   {ORDERS_MANAGEMENT && (
-                    <div className="flex gap-2 items-end mb-4 px-1">
+                    <div className="flex gap-2 items-end mb-2 px-1">
                       <div className="flex-1">
                         <LineItemInput
                           name="parent_id"
@@ -203,8 +203,8 @@ export const CommodityEditModalProvider = ({
                     </div>
                   )}
 
-                  <div className="columns is-multiline mb-4 px-1">
-                    <div className="column is-12 px-2 py-1">
+                  <div className="columns is-multiline mb-2 px-1">
+                    <div className="column is-12 px-1 py-1">
                       <div className="tailwind-only">
                     <InputField
                       name="title"
@@ -220,8 +220,8 @@ export const CommodityEditModalProvider = ({
                     </div>
                   </div>
 
-                  <div className="columns is-multiline mb-4 px-1">
-                    <div className="column is-12 px-2 py-1">
+                  <div className="columns is-multiline mb-2 px-1">
+                    <div className="column is-12 px-1 py-1">
                       <div className="tailwind-only">
                     <InputField
                       name="hs_code"
@@ -237,8 +237,8 @@ export const CommodityEditModalProvider = ({
                     </div>
                   </div>
 
-                  <div className="columns is-multiline mb-4 px-1">
-                    <div className="column is-7 px-2 py-1">
+                  <div className="columns is-multiline mb-2 px-1">
+                    <div className="column is-7 px-1 py-1">
                       <div className="tailwind-only">
                     <InputField
                       name="sku"
@@ -253,7 +253,7 @@ export const CommodityEditModalProvider = ({
                       </div>
                     </div>
 
-                    <div className="column is-5 px-2 py-1">
+                    <div className="column is-5 px-1 py-1">
                       <div className="tailwind-only">
                     <CountryInput
                       label="Origin Country"
@@ -271,7 +271,7 @@ export const CommodityEditModalProvider = ({
                     </div>
                   </div>
 
-                                    <div className="px-1 mb-4">
+                                    <div className="px-1 mb-2">
                     {/* Responsive Layout: Flex on desktop (side by side), stack on mobile */}
                     <div className="tailwind-only flex flex-col sm:flex-row gap-2 items-end">
                       {/* Quantity Field - 1 flex unit */}
@@ -368,7 +368,7 @@ export const CommodityEditModalProvider = ({
                   </div>
 
                   <div className="columns is-multiline mb-0 px-1">
-                    <div className="column is-12 px-2 py-1">
+                    <div className="column is-12 px-1 py-1">
                       <div className="tailwind-only">
                         <TextareaField
                       name="description"
@@ -423,7 +423,7 @@ export const CommodityEditModalProvider = ({
                   </MetadataEditor>
                 </div>
 
-                <div className="flex justify-center gap-2 mt-6">
+                <div className="flex justify-center gap-2 mt-4">
                   <button
                     className="button is-default is-small"
                     onClick={close}
