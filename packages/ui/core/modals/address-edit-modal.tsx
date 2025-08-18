@@ -6,9 +6,10 @@ import {
   NotificationType,
 } from "@karrio/types";
 import { useAddressTemplateMutation } from "@karrio/hooks/address";
-import { CheckBoxField } from "../components/checkbox-field";
+import { Checkbox } from "@karrio/ui/components/ui/checkbox";
+import { Label } from "@karrio/ui/components/ui/label";
 import { Notifier, Notify } from "../components/notifier";
-import { InputField } from "../components/input-field";
+import { InputField } from "@karrio/ui/components/input-field";
 import { useLocation } from "@karrio/hooks/location";
 import React, { useContext, useState } from "react";
 import { AddressForm } from "../forms/address-form";
@@ -142,27 +143,28 @@ export const AddressEditModal = ({
                   );
                 }}
               >
-                <div className="columns mb-0">
+                <div className="w-full mb-0">
                   <InputField
                     label="label"
                     name="label"
                     onChange={handleChange}
                     defaultValue={template?.label}
-                    className="is-small"
-                    wrapperClass="column px-1 py-3"
+                    className="h-9"
+                    wrapperClass="w-full px-1 py-3"
                     fieldClass="mb-0 p-0"
                     required
                   />
                 </div>
-                <div className="columns mb-1">
-                  <CheckBoxField
+                <div className="flex items-center space-x-2 mb-4 px-2 py-3">
+                  <Checkbox
+                    id="is_default"
                     name="is_default"
-                    onChange={handleChange}
+                    onCheckedChange={(checked) => handleChange({ target: { name: 'is_default', type: 'checkbox', checked } } as any)}
                     defaultChecked={template?.is_default as boolean}
-                    fieldClass="column mb-0 px-2 pt-3 pb-2"
-                  >
-                    <span>Set as default address</span>
-                  </CheckBoxField>
+                  />
+                  <Label htmlFor="is_default" className="text-sm font-normal capitalize" style={{ fontSize: ".8em" }}>
+                    Set as default address
+                  </Label>
                 </div>
               </AddressForm>
             )}
