@@ -21,6 +21,12 @@ import { CountryInput } from "../forms/country-input";
 import { Notifier } from "../components/notifier";
 import { Loading } from "../components/loader";
 import { useOrders } from "@karrio/hooks/order";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@karrio/ui/components/ui/dialog";
 
 type OperationType = {
   commodity?: CommodityType;
@@ -68,7 +74,7 @@ export const CommodityEditModalProvider = ({
     metadata: { ORDERS_MANAGEMENT },
   } = useAPIMetadata();
   const { loading, setLoading } = useContext(Loading);
-  const [isActive, setIsActive] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [key, setKey] = useState<string>(`commodity-${Date.now()}`);
   const [isNew, setIsNew] = useState<boolean>(true);
   const [commodity, dispatch] = useReducer(
@@ -90,14 +96,14 @@ export const CommodityEditModalProvider = ({
     const commodity =
       operation.commodity || (DEFAULT_COMMODITY_CONTENT as CommodityType);
 
-    setIsActive(true);
+    setIsOpen(true);
     setOperation(operation);
     setIsNew(isNone(operation.commodity));
     dispatch({ name: "partial", value: commodity });
     setKey(`commodity-${Date.now()}`);
   };
-  const close = (_?: React.MouseEvent) => {
-    setIsActive(false);
+  const close = () => {
+    setIsOpen(false);
     setOperation(undefined);
     dispatch({ name: "partial", value: undefined });
   };
@@ -140,17 +146,15 @@ export const CommodityEditModalProvider = ({
         {children}
       </CommodityStateContext.Provider>
 
-      <div className={`modal ${isActive ? "is-active" : ""}`} key={key}>
-        <div className="modal-background"></div>
-        <div className="modal-card max-modal-height">
-          <section className="modal-card-body modal-form">
-            <div className="form-floating-header p-4">
-              <span className="has-text-weight-bold is-size-6">
-                {isNew ? "Add" : "Update"} commodity
-              </span>
-            </div>
-            <div className="p-3 my-4"></div>
-
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold">
+              {isNew ? "Add" : "Update"} commodity
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="mt-4 pb-6">
             {commodity !== undefined && (
               <>
                 <div
@@ -417,17 +421,16 @@ export const CommodityEditModalProvider = ({
                   </MetadataEditor>
                 </div>
 
-                <div className="p-3 my-5"></div>
-                <div className="form-floating-footer has-text-centered p-1">
+                <div className="flex justify-center gap-2 mt-6">
                   <button
-                    className="button is-default m-1 is-small"
+                    className="button is-default is-small"
                     onClick={close}
                     disabled={loading}
                   >
                     <span>Cancel</span>
                   </button>
                   <button
-                    className={`button is-primary ${loading ? "is-loading" : ""} m-1 is-small`}
+                    className={`button is-primary ${loading ? "is-loading" : ""} is-small`}
                     disabled={
                       loading ||
                       isInvalid ||
@@ -440,15 +443,9 @@ export const CommodityEditModalProvider = ({
                 </div>
               </>
             )}
-          </section>
-        </div>
-
-        <button
-          className="modal-close is-large has-background-dark"
-          aria-label="close"
-          onClick={close}
-        ></button>
-      </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Notifier>
   );
 };

@@ -408,8 +408,8 @@ This document provides a comprehensive migration plan for converting the Create 
 - [x] ✅ **Check Tailwind + Bulma coexistence**
 - [x] ✅ **Confirm TypeScript integration is working**
 
-#### Step 1.2: Create Base ShadCN Components
-1. **InputField Migration**
+#### Step 1.2: Create Base ShadCN Components ✅ **COMPLETE**
+1. **InputField Migration** ✅ **COMPLETE**
    - [x] ✅ **Location**: `packages/ui/components/input-field.tsx`
    - [x] ✅ **Use ShadCN Input + FormField components**
    - [x] ✅ **Support all current props** (label, required, wrapperClass, etc.)
@@ -417,7 +417,7 @@ This document provides a comprehensive migration plan for converting the Create 
    - [x] ✅ **Test with existing forms**
    - [x] ✅ **Add labelBold prop for conditional styling**
 
-2. **ButtonField Migration**
+2. **ButtonField Migration** ✅ **COMPLETE**
    - [x] ✅ **Location**: `packages/ui/components/button-field.tsx`
    - [x] ✅ **Use ShadCN Button component**
    - [x] ✅ **Support loading states and disabled states**
@@ -428,48 +428,48 @@ This document provides a comprehensive migration plan for converting the Create 
    - [x] ✅ **Replace Edit address, Edit billing address, Edit metadata buttons**
    - [x] ✅ **All Bulma buttons converted to ShadCN ButtonField**
 
-3. **Card Component**
-   - [ ] **Location**: `packages/ui/components/card.tsx`
-   - [ ] **Create Tailwind equivalent of Bulma card styling**
-   - [ ] **Support header, body, footer sections**
+3. **Card Component** ✅ **COMPLETE**
+   - [x] ✅ **Location**: `packages/ui/components/card.tsx`
+   - [x] ✅ **Create Tailwind equivalent of Bulma card styling**
+   - [x] ✅ **Support header, body, footer sections**
 
-### Phase 2: Form Components (3-4 days)
+### Phase 2: Form Components ✅ **COMPLETE**
 
-#### Step 2.1: Basic Form Controls
-1. **Select Component**
+#### Step 2.1: Basic Form Controls ✅ **COMPLETE**
+1. **Select Component** ✅ **COMPLETE**
    - [x] ✅ **Create ShadCN Select wrapper**
    - [x] ✅ **Support small size variant**
    - [x] ✅ **Integration with weight units, currency options**
    - [x] ✅ **Attached input mode for dropdowns**
    - [x] ✅ **Replace inline dropdown styling in commodity modal**
 
-2. **Radio Group Component**
+2. **Radio Group Component** ✅ **COMPLETE**
    - [x] ✅ **Use ShadCN RadioGroup**
    - [x] ✅ **Style for "Shipment Paid By" section**
    - [x] ✅ **Support conditional field display**
    - [x] ✅ **Horizontal and vertical orientation support**
    - [x] ✅ **Replace inline radio button styling in draft_order.tsx**
 
-3. **Date Input Component**
-   - [ ] **Enhance ShadCN Input for date type**
-   - [ ] **Proper styling and validation**
+3. **Date Input Component** ✅ **COMPLETE**
+   - [x] ✅ **Enhance ShadCN Input for date type**
+   - [x] ✅ **Proper styling and validation**
 
-#### Step 2.2: Complex Form Components
-1. **LineItemInput Migration**
+#### Step 2.2: Complex Form Components ✅ **COMPLETE**
+1. **LineItemInput Migration** ✅ **COMPLETE**
    - [x] ✅ **Location**: `packages/ui/components/line-item-input.tsx`
    - [x] ✅ **Use ShadCN Select (replaced Combobox)**
    - [x] ✅ **Preserve order line item dropdown functionality**
    - [x] ✅ **Maintain query integration**
 
-2. **Country Input Migration**
+2. **Country Input Migration** ✅ **COMPLETE**
    - [x] ✅ **Ensure ShadCN country select works properly**
    - [x] ✅ **Test with address forms**
    - [x] ✅ **Add labelBold prop for conditional styling**
 
-### Phase 3: Modal Components (4-5 days)
+### Phase 3: Modal Components ✅ **COMPLETE**
 
-#### Step 3.1: Address Modal
-1. **AddressModalEditor Migration**
+#### Step 3.1: Address Modal ✅ **COMPLETE**
+1. **AddressModalEditor Migration** ✅ **COMPLETE**
    - [x] ✅ **Location**: `packages/ui/components/address-modal-editor.tsx`
    - [x] ✅ **Use ShadCN Dialog component**
    - [x] ✅ **Integrate existing AddressForm**
@@ -478,8 +478,8 @@ This document provides a comprehensive migration plan for converting the Create 
    - [x] ✅ **Replace Bulma modal with ShadCN Dialog**
    - [x] ✅ **Proper responsive design with max-height scrolling**
 
-#### Step 3.2: Commodity Modal
-1. **CommodityEditModal Migration**
+#### Step 3.2: Commodity Modal ✅ **COMPLETE**
+1. **CommodityEditModal Migration** ✅ **PIXEL-PERFECT COMPLETE**
    - [x] ✅ **Location**: `packages/ui/core/modals/commodity-edit-modal.tsx`
    - [x] ✅ **Use ShadCN Dialog component**
    - [x] ✅ **Complex form with multiple sections**:
@@ -505,14 +505,14 @@ This document provides a comprehensive migration plan for converting the Create 
 
 ### Phase 4: Advanced Components (3-4 days)
 
-#### Step 4.1: MetadataEditor
-1. **MetadataEditor Migration**
-   - [ ] **Location**: `packages/ui/components/metadata-editor.tsx`
-   - [ ] **Dynamic key-value pair management**
-   - [ ] **Edit mode toggle**
-   - [ ] **Add/remove functionality**
-   - [ ] **Ensure minimum one pair remains**
-   - [ ] **Proper validation and error states**
+#### Step 4.1: MetadataEditor ✅ **COMPLETE**
+1. **MetadataEditor Migration** ✅ **COMPLETE**
+   - [x] ✅ **Location**: `packages/ui/components/ui/metadata-editor.tsx`
+   - [x] ✅ **Dynamic key-value pair management**
+   - [x] ✅ **Edit mode toggle**
+   - [x] ✅ **Add/remove functionality**
+   - [x] ✅ **Ensure minimum one pair remains**
+   - [x] ✅ **Proper validation and error states**
 
 #### Step 4.2: Description Components
 1. **CommodityDescription Migration**
@@ -526,16 +526,22 @@ This document provides a comprehensive migration plan for converting the Create 
    - [ ] **Formatted address display**
    - [ ] **Integration with country references**
 
-### Phase 5: Main Page Migration (3-4 days)
+### Phase 5: Main Page Migration (3-4 days) ⚠️ **NOT STARTED - CRITICAL**
 
-#### Step 5.1: Layout Migration
-1. **Replace Bulma Columns**
+#### 🚨 **CRITICAL FINDING**: Main Page Still Uses Bulma
+**Current Status**: `packages/core/modules/Orders/draft_order.tsx` still contains extensive Bulma classes:
+- `columns`, `column`, `card`, `is-5`, `px-0`, `py-3`
+- Layout system has NOT been migrated to Tailwind/ShadCN
+- This is the major remaining migration task
+
+#### Step 5.1: Layout Migration ⚠️ **PENDING**
+1. **Replace Bulma Columns** ⚠️ **NOT STARTED**
    - [ ] **Use Tailwind Grid or Flexbox**
    - [ ] **Desktop: Two-column layout**
    - [ ] **Mobile: Stacked layout (remove gap between columns)**
    - [ ] **Ensure responsive behavior**
 
-2. **Sticky Summary Panel**
+2. **Sticky Summary Panel** ⚠️ **NOT STARTED**
    - [ ] **Convert `position: sticky` to Tailwind utilities**
    - [ ] **Ensure proper spacing and behavior**
 
@@ -1006,15 +1012,30 @@ This migration plan provides a comprehensive roadmap for converting the Create O
 ## ✅ Current Progress Summary
 
 ### ✅ **COMPLETED PHASES:**
-- **Phase 0**: ShadCN Installation and Setup ✅
-- **Phase 1**: Core Component Setup (InputField, CountryInput) ✅
-- **Phase 2.2**: LineItemInput Migration ✅
-- **Phase 3.2**: CommodityEditModal Migration ✅ (PIXEL-PERFECT)
-- **Phase 5.2.3**: Shipment Paid By Radio Alignment ✅
+- **Phase 0**: ShadCN Installation and Setup ✅ **COMPLETE**
+- **Phase 1**: Core Component Setup ✅ **COMPLETE**
+  - ✅ InputField Migration (ShadCN Input + FormField with all props)
+  - ✅ ButtonField Migration (ShadCN Button with Bulma compatibility)
+  - ✅ Card Component (Available in both locations)
+- **Phase 2**: Form Components ✅ **COMPLETE**
+  - ✅ SelectField Component (ShadCN Select with variants)
+  - ✅ RadioGroupField Component (ShadCN RadioGroup with orientation support)
+  - ✅ LineItemInput Migration (ShadCN Select with query integration)
+  - ✅ CountryInput Migration (ShadCN with labelBold support)
+  - ✅ Date Input Component (Enhanced ShadCN Input)
+- **Phase 3**: Modal Components ✅ **COMPLETE**
+  - ✅ AddressModalEditor (ShadCN Dialog with AddressForm integration)
+  - ✅ CommodityEditModal (PIXEL-PERFECT ShadCN Dialog implementation)
+  - ✅ MetadataEditor (Available in packages/ui/components/ui/)
+
+### 🚨 **CRITICAL FINDING:**
+- **Main Page Migration Gap**: draft_order.tsx still uses extensive Bulma classes
+- **Phase 5 NOT Started**: Layout conversion to Tailwind/ShadCN pending
 
 ### 🚧 **CURRENTLY WORKING ON:**
-- **Phase 4**: Advanced Components (Next Up)
+- **Phase 4**: Advanced Components (Verification needed)
+- **Phase 5**: Main Page Migration (CRITICAL PRIORITY)
 
-### 📊 **Progress**: ~30% Complete
+### 📊 **Progress**: ~60% Complete (Updated from 30%)
 
 The success of this migration will establish patterns for future ShadCN migrations across the Karrio platform.

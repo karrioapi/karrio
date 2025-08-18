@@ -274,9 +274,9 @@ export const AddressForm = ({
       </div>
 
       {/* Advanced */}
-      <div className="columns is-multiline mb-0 pt-4">
+      <div className="is-multiline mb-0 pt-4 ml-0">
         <div
-          className="column is-12 is-size-7 has-text-weight-bold has-text-info px-2 my-1 is-clickable"
+          className="is-12 is-size-7 has-text-weight-bold has-text-info px-0 my-1 is-clickable"
           onClick={() => setAdvancedExpanded(!advancedExpanded)}
         >
           Advanced
@@ -290,33 +290,37 @@ export const AddressForm = ({
         </div>
 
         <div
-          className="columns column is-multiline mb-0 ml-6 my-1 px-2 py-0"
+          className="ml-2 my-1 px-2 py-0"
           style={{
             borderLeft: "solid 2px #ddd",
             display: `${advancedExpanded ? "block" : "none"}`,
           }}
         >
+          <div className="mb-0 pl-2">
           <InputField
             label="federal tax id"
             name="federal_tax_id"
             onChange={handleChange}
             value={address.federal_tax_id}
             className="is-small"
-            wrapperClass="px-2 py-2"
-            fieldClass="column is-7 mb-0 p-0"
+            wrapperClass="px-1 py-3"
+            fieldClass="mb-0 p-0"
             max={20}
           />
+          </div>
 
+          <div className="mb-0 pl-2">
           <InputField
             label="state tax id"
             name="state_tax_id"
             onChange={handleChange}
             value={address.state_tax_id}
             className="is-small"
-            wrapperClass="px-2 py-2"
-            fieldClass="column is-7 mb-0 p-0"
+            wrapperClass="px-1 py-3"
+            fieldClass="mb-0 p-0"
             max={20}
           />
+          </div>
         </div>
       </div>
 
@@ -324,7 +328,7 @@ export const AddressForm = ({
       <ButtonField
         type="submit"
         className={`is-primary ${loading ? "is-loading" : ""} m-0`}
-        fieldClass="form-floating-footer p-3"
+        fieldClass="p-3"
         controlClass="has-text-centered"
         disabled={computeDisableState(address)}
       >
