@@ -26,6 +26,7 @@ interface CountrySelectProps {
   className?: string;
   wrapperClass?: string;
   fieldClass?: string;
+  align?: "start" | "center" | "end";
 }
 
 export const CountrySelect = React.forwardRef<
@@ -42,6 +43,7 @@ export const CountrySelect = React.forwardRef<
   className,
   wrapperClass,
   fieldClass,
+  align = "start",
   ...props
 }, ref) => {
   const { references } = useAPIMetadata();
@@ -58,7 +60,7 @@ export const CountrySelect = React.forwardRef<
     <div className={cn("px-1 py-2", wrapperClass)}>
       {label && (
         <Label 
-          className={cn("capitalize text-xs mb-1 block font-normal")}
+          className={cn("capitalize text-xs mb-1 block font-bold")}
           style={{ fontSize: ".8em" }}
         >
           {label}
@@ -74,7 +76,7 @@ export const CountrySelect = React.forwardRef<
           <SelectTrigger ref={ref} className={cn("h-9", className)}>
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
-          <SelectContent className="w-64">
+          <SelectContent className="w-64" align={align}>
             {countryOptions.map((country) => (
               <SelectItem 
                 key={country.value} 
