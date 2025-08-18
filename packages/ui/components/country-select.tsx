@@ -74,7 +74,7 @@ export const CountrySelect = React.forwardRef<
           <SelectTrigger ref={ref} className={cn("h-9", className)}>
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="w-64">
             {countryOptions.map((country) => (
               <SelectItem 
                 key={country.value} 
