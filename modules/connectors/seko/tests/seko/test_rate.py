@@ -74,6 +74,19 @@ RatePayload = {
             "weight_unit": "KG",
             "description": "SATCHEL",
             "packaging_type": "small_box",
+            "items": [
+                {
+                    "sku": "1234567890",
+                    "title": "Bullet Punch Necklace",
+                    "weight": 0.002,
+                    "quantity": 1,
+                    "description": "Stainless steel gold plated necklace",
+                    "weight_unit": "KG",
+                    "value_amount": 180.81,
+                    "origin_country": "CN",
+                    "value_currency": "EUR",
+                },
+            ],
         }
     ],
     "options": {
@@ -121,6 +134,18 @@ ParsedRateResponse = [
 
 
 RateRequest = {
+    "Commodities": [
+        {
+            "Currency": "EUR",
+            "Description": "Stainless steel gold plated necklace",
+            "HarmonizedCode": "1234567890",
+            "UnitCostValue": 180.81,
+            "UnitKg": 0.002,
+            "UnitValue": 180.81,
+            "Units": 1,
+            "itemSKU": "1234567890",
+        }
+    ],
     "DeliveryReference": "ORDER123",
     "Destination": {
         "Address": {

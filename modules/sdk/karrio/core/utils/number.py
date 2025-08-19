@@ -17,13 +17,17 @@ class NUMBERFORMAT:
         """
         if value is None or isinstance(value, bool):
             return None
+
         if quant is not None:
             _result = float(
                 decimal.Decimal(str(value)).quantize(decimal.Decimal(str(quant)))
             )
             return _result if _result != 0 else float(decimal.Decimal(str(value)))
 
-        return round(float(value), 2)
+        _float = float(value)
+        _rounded = round(_float, 2)
+
+        return _rounded if _rounded != 0 else _float
 
     @staticmethod
     def numeric_decimal(
