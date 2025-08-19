@@ -58,7 +58,7 @@ export default function ShippersOverview() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">Shippers Overview</h1>
           <p className="text-sm text-gray-600 mt-1">
@@ -83,7 +83,7 @@ export default function ShippersOverview() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-lg border shadow-sm">
+        <div className="bg-white p-4 sm:p-6 rounded-lg border shadow-none">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Total Shipments</p>
@@ -95,7 +95,7 @@ export default function ShippersOverview() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg border shadow-sm">
+        <div className="bg-white p-4 sm:p-6 rounded-lg border shadow-none">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Total Addons Charges</p>
@@ -107,7 +107,7 @@ export default function ShippersOverview() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg border shadow-sm">
+        <div className="bg-white p-4 sm:p-6 rounded-lg border shadow-none">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Total Spend</p>

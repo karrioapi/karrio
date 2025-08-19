@@ -25,7 +25,7 @@ import React, { ChangeEvent, useContext, useEffect } from "react";
 import { StatusBadge } from "@karrio/ui/core/components/status-badge";
 import { OrdersFilter } from "@karrio/ui/core/filters/orders-filter";
 import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
-import { OrderMenu } from "@karrio/ui/core/components/order-menu";
+import { OrderMenu } from "@karrio/ui/components/order-menu";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { AppLink } from "@karrio/ui/core/components/app-link";

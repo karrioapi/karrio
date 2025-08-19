@@ -1,4 +1,4 @@
-import { CreateCarrierConnectionMutationInput, CREATE_CARRIER_CONNECTION, DELETE_CARRIER_CONNECTION, GET_USER_CONNECTIONS, get_user_connections_user_connections, UpdateCarrierConnectionMutationInput, UPDATE_CARRIER_CONNECTION } from "@karrio/types";
+import { CreateCarrierConnectionMutationInput, CREATE_CARRIER_CONNECTION, DELETE_CARRIER_CONNECTION, GET_USER_CONNECTIONS, get_user_connections_user_connections, UpdateCarrierConnectionMutationInput, UPDATE_CARRIER_CONNECTION, get_user_connections } from "@karrio/types";
 import { useKarrio, useAuthenticatedQuery, useAuthenticatedMutation } from "./karrio";
 import { useQueryClient } from "@tanstack/react-query";
 import { gqlstr } from "@karrio/lib";
@@ -10,7 +10,7 @@ export function useCarrierConnections() {
 
   const query = useAuthenticatedQuery({
     queryKey: ['user_connections'],
-    queryFn: () => karrio.graphql.request<any>(gqlstr(GET_USER_CONNECTIONS)),
+    queryFn: () => karrio.graphql.request<get_user_connections>(gqlstr(GET_USER_CONNECTIONS)),
     staleTime: 5000,
   });
 

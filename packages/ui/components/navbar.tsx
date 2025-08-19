@@ -61,11 +61,7 @@ export function Navbar() {
 
             {/* App Launcher */}
             {metadata?.APPS_MANAGEMENT && (
-              <Suspense fallback={
-                <Button variant="outline" size="icon" disabled className="rounded-full">
-                  <Blocks className="h-4 w-4 animate-spin" />
-                </Button>
-              }>
+              <Suspense fallback={<></>}>
                 <AppLauncher />
               </Suspense>
             )}

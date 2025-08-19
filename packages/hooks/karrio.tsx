@@ -92,14 +92,20 @@ export function useAuthenticatedQuery<TQueryFnData = unknown, TError = unknown, 
 
   // Scope query keys by orgId and testMode to avoid cross-org cache bleed
   const baseKey = (queryOptions as any).queryKey;
-  const scopedKey = baseKey
+  // Ensure we append scope info to the existing array key instead of nesting it
+  const keyArray = Array.isArray(baseKey)
+    ? baseKey
+    : baseKey != null
+      ? [baseKey]
+      : baseKey;
+  const scopedKey = keyArray
     ? [
-        baseKey,
-        {
-          orgId: (sessionQuery.data as any)?.orgId,
-          testMode: (sessionQuery.data as any)?.testMode,
-        },
-      ]
+      ...keyArray,
+      {
+        orgId: (sessionQuery.data as any)?.orgId,
+        testMode: (sessionQuery.data as any)?.testMode,
+      },
+    ]
     : baseKey;
 
   return useQuery({

@@ -20,7 +20,6 @@ import { Button } from "@karrio/ui/components/ui/button";
 import { Input } from "@karrio/ui/components/ui/input";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { cn } from "@karrio/ui/lib/utils";
-import { p } from '@karrio/lib';
 
 export default function SystemConnectionsPage() {
   const router = useRouter();
@@ -220,8 +219,8 @@ export default function SystemConnectionsPage() {
         </div>
 
         {/* Filters */}
-        <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
-          <div className="flex-1 relative">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-4 bg-gray-50 rounded-lg">
+          <div className="flex-1">
             <div className="flex h-9 w-full items-center rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
               <Search className="h-4 w-4 text-muted-foreground mr-2 flex-shrink-0" />
               <Input
@@ -236,7 +235,7 @@ export default function SystemConnectionsPage() {
           <div className="flex items-center gap-2">
             <Filter className="h-4 w-4 text-gray-500" />
             <Select value={carrierFilter} onValueChange={setCarrierFilter}>
-              <SelectTrigger className="w-[120px] h-9">
+              <SelectTrigger className="w-full sm:w-[120px] h-9">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -269,16 +268,16 @@ export default function SystemConnectionsPage() {
             {filteredConnections.map((connection) => (
               <div
                 key={connection.id}
-                className="group relative flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200 bg-white"
+                className="group relative flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200 bg-white gap-3"
               >
                 {/* Main Content */}
-                <div className="flex items-center space-x-3 flex-1">
+                <div className="flex items-start sm:items-center gap-3 flex-1 w-full sm:w-auto">
                   {/* Carrier Logo */}
-                  <div className="flex-none">
+                  <div className="flex-shrink-0">
                     <CarrierImage
                       carrier_name={connection.carrier_name}
-                      width={40}
-                      height={40}
+                      width={48}
+                      height={48}
                       className="rounded-lg"
                     />
                   </div>
@@ -286,8 +285,8 @@ export default function SystemConnectionsPage() {
                   {/* Carrier Details */}
                   <div className="flex-1 min-w-0">
                     {/* Row 1: Name and Status */}
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-medium text-gray-900 truncate text-sm">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
+                      <h3 className="font-medium text-gray-900 text-base">
                         {connection.display_name || connection.carrier_name}
                       </h3>
                       <div className="flex items-center gap-1.5">
@@ -299,42 +298,42 @@ export default function SystemConnectionsPage() {
                     </div>
 
                     {/* Row 2: Carrier ID and Capabilities */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-xs text-gray-600 font-mono">
+                        <span className="text-gray-600 font-mono">
                           {connection.carrier_id}
                         </span>
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-3 w-3 p-0 hover:bg-gray-100 opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="h-4 w-4 p-0 hover:bg-gray-100 opacity-0 group-hover:opacity-100 transition-opacity"
                           onClick={() => copyToClipboard(connection.carrier_id)}
                         >
-                          <Copy className="h-2.5 w-2.5" />
+                          <Copy className="h-3 w-3" />
                         </Button>
                       </div>
-                      <span className="text-gray-400">•</span>
+                      <span className="hidden sm:inline text-gray-400">•</span>
                       <div className="flex flex-wrap gap-1">
                         {connection.capabilities && connection.capabilities.length > 0 ? (
                           <>
                             {connection.capabilities.slice(0, 2).map((capability) => (
                               <span
                                 key={capability}
-                                className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-700 rounded border-0"
+                                className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded"
                               >
                                 {capability}
                               </span>
                             ))}
                             {connection.capabilities.length > 2 && (
                               <span
-                                className="text-[10px] px-1.5 py-0.5 border border-gray-300 text-gray-600 rounded"
+                                className="text-xs px-2 py-0.5 border border-gray-300 text-gray-600 rounded"
                               >
                                 +{connection.capabilities.length - 2}
                               </span>
                             )}
                           </>
                         ) : (
-                          <span className="text-[10px] text-gray-500 italic">No capabilities</span>
+                          <span className="text-xs text-gray-500 italic">No capabilities</span>
                         )}
                       </div>
                     </div>
@@ -342,7 +341,7 @@ export default function SystemConnectionsPage() {
                 </div>
 
                 {/* Right Side - Toggle */}
-                <div className="flex items-center space-x-3 text-right">
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
                   <Switch
                     checked={connection.enabled}
                     onCheckedChange={() => handleToggleSystemConnection(connection)}

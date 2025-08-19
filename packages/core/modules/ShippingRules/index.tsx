@@ -167,10 +167,10 @@ export default function Page(pageProps: any) {
     return (
       <>
         {/* Header */}
-        <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
-          <div className="title is-4">
-            <span>Automation</span>
-            <span className="tag is-warning is-size-7 has-text-weight-bold mx-2">
+        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-0 pb-0 pt-4">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl font-semibold">Automation</span>
+            <span className="inline-flex items-center px-2 py-1 text-xs font-bold text-orange-800 bg-orange-100 rounded">
               PREVIEW
             </span>
           </div>
@@ -211,17 +211,17 @@ export default function Page(pageProps: any) {
         <div className="py-4">
           {/* Shipping Rules Info Banner */}
           <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4 mb-6">
-            <div className="flex items-start gap-3">
+            <div className="flex flex-col sm:flex-row items-start gap-3">
               <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
                 <Info className="h-4 w-4 text-green-600" />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 flex-1">
                 <h3 className="text-sm font-semibold text-green-900">How Shipping Rules Work</h3>
                 <p className="text-sm text-green-700">
                   Shipping rules automatically select the best carrier and service based on your criteria.
                   Rules are evaluated by priority order, with higher numbers taking precedence.
                 </p>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-3">
                   <div className="flex items-start gap-2">
                     <Target className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
                     <div>
@@ -259,93 +259,92 @@ export default function Page(pageProps: any) {
               {(shipping_rules?.edges || []).map(({ node: rule }) => (
                 <Card key={rule.id} className="border border-slate-200 hover:border-slate-300 transition-colors rounded-lg shadow-sm hover:shadow-md">
                   <CardContent className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="mb-4">
-                          <div className="flex items-start justify-between mb-2">
-                            <div className="flex-1">
-                              <h3 className="text-lg font-semibold text-slate-900 mb-1">{rule.name}</h3>
-                              {rule.description && (
-                                <p className="text-sm text-slate-600">{rule.description}</p>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-2 ml-4">
-                              <div className="group relative">
-                                <Badge variant="outline" className="text-xs cursor-help">
-                                  Priority {rule.priority}
-                                </Badge>
-                                <div className="absolute right-0 bottom-full mb-1 w-56 bg-slate-900 text-white text-xs rounded p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity z-50">
-                                  Higher priority rules (larger numbers) are evaluated first and can override lower priority rules.
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Switch
-                                  checked={rule.is_active || false}
-                                  onCheckedChange={(checked) => handleToggleActive(rule.id, checked)}
-                                  className="h-4 w-7"
-                                />
-                                <span className="text-xs text-slate-600">
-                                  {rule.is_active ? "Active" : "Inactive"}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
+                    <div className="flex flex-col space-y-4">
+                      {/* Header Section */}
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                        <div className="flex-1">
+                          <h3 className="text-lg font-semibold text-slate-900 mb-1">{rule.name}</h3>
+                          {rule.description && (
+                            <p className="text-sm text-slate-600">{rule.description}</p>
+                          )}
                         </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div>
-                            <div className="flex items-center gap-1 mb-3">
-                              <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                              <h4 className="text-sm font-medium text-slate-700">Conditions</h4>
-                              <div className="group relative">
-                                <HelpCircle className="h-3 w-3 text-slate-400 cursor-help" />
-                                <div className="absolute left-0 bottom-full mb-1 w-48 bg-slate-900 text-white text-xs rounded p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity z-50">
-                                  Conditions determine when this rule applies. If all conditions match, the actions will be executed.
-                                </div>
-                              </div>
-                            </div>
-                            <div className="space-y-2 pl-4">
-                              {getConditionsSummary(rule).map((condition, index) => (
-                                <div key={index} className="text-sm text-slate-600">
-                                  {condition}
-                                </div>
-                              ))}
+                        <div className="flex flex-wrap items-center gap-2">
+                          <div className="group relative">
+                            <Badge variant="outline" className="text-xs cursor-help">
+                              Priority {rule.priority}
+                            </Badge>
+                            <div className="absolute right-0 bottom-full mb-1 w-56 bg-slate-900 text-white text-xs rounded p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity z-50">
+                              Higher priority rules (larger numbers) are evaluated first and can override lower priority rules.
                             </div>
                           </div>
-
-                          <div>
-                            <div className="flex items-center gap-1 mb-3">
-                              <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
-                              <h4 className="text-sm font-medium text-slate-700">Actions</h4>
-                              <div className="group relative">
-                                <HelpCircle className="h-3 w-3 text-slate-400 cursor-help" />
-                                <div className="absolute left-0 bottom-full mb-1 w-48 bg-slate-900 text-white text-xs rounded p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity z-50">
-                                  Actions define what happens when the rule conditions are met (e.g., select cheapest carrier, block certain services).
-                                </div>
-                              </div>
-                            </div>
-                            <div className="space-y-2 pl-4">
-                              {getActionsSummary(rule).map((action, index) => (
-                                <div key={index} className="text-sm text-slate-600">
-                                  {action}
-                                </div>
-                              ))}
-                            </div>
+                          <div className="flex items-center gap-2">
+                            <Switch
+                              checked={rule.is_active || false}
+                              onCheckedChange={(checked) => handleToggleActive(rule.id, checked)}
+                              className="h-4 w-7"
+                            />
+                            <span className="text-xs text-slate-600">
+                              {rule.is_active ? "Active" : "Inactive"}
+                            </span>
                           </div>
                         </div>
                       </div>
 
-                        <div className="ml-6 flex items-center gap-2">
-                          {/* Copyable ID */}
-                          {rule.id && (
-                            <button
-                              className="text-xs px-2 py-1 border rounded hover:bg-slate-50"
-                              title="Copy rule ID"
-                              onClick={() => navigator.clipboard?.writeText(rule.id)}
-                            >
-                              ID
-                            </button>
-                          )}
+                      {/* Conditions and Actions Grid */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                        <div>
+                          <div className="flex items-center gap-1 mb-3">
+                            <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                            <h4 className="text-sm font-medium text-slate-700">Conditions</h4>
+                            <div className="group relative">
+                              <HelpCircle className="h-3 w-3 text-slate-400 cursor-help" />
+                              <div className="absolute left-0 bottom-full mb-1 w-48 bg-slate-900 text-white text-xs rounded p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity z-50">
+                                Conditions determine when this rule applies. If all conditions match, the actions will be executed.
+                              </div>
+                            </div>
+                          </div>
+                          <div className="space-y-2 pl-4">
+                            {getConditionsSummary(rule).map((condition, index) => (
+                              <div key={index} className="text-sm text-slate-600">
+                                {condition}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center gap-1 mb-3">
+                            <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
+                            <h4 className="text-sm font-medium text-slate-700">Actions</h4>
+                            <div className="group relative">
+                              <HelpCircle className="h-3 w-3 text-slate-400 cursor-help" />
+                              <div className="absolute left-0 bottom-full mb-1 w-48 bg-slate-900 text-white text-xs rounded p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity z-50">
+                                Actions define what happens when the rule conditions are met (e.g., select cheapest carrier, block certain services).
+                              </div>
+                            </div>
+                          </div>
+                          <div className="space-y-2 pl-4">
+                            {getActionsSummary(rule).map((action, index) => (
+                              <div key={index} className="text-sm text-slate-600">
+                                {action}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex items-center justify-end gap-2 pt-2 border-t">
+                        {/* Copyable ID */}
+                        {rule.id && (
+                          <button
+                            className="text-xs px-2 py-1 border rounded hover:bg-slate-50"
+                            title="Copy rule ID"
+                            onClick={() => navigator.clipboard?.writeText(rule.id)}
+                          >
+                            ID
+                          </button>
+                        )}
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-slate-100">

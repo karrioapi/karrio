@@ -327,62 +327,62 @@ function CarrierConnectionManagement() {
       </div>
 
       {/* Search and Filter Bar */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search connections..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 pr-10"
-          />
-          {searchQuery && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 p-0"
-              onClick={() => setSearchQuery("")}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          )}
+      <div className="flex flex-col sm:flex-row gap-3 p-4 bg-gray-50 rounded-lg">
+        <div className="flex-1">
+          <div className="flex h-9 w-full items-center rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+            <Search className="h-4 w-4 text-muted-foreground mr-2 flex-shrink-0" />
+            <Input
+              placeholder="Search connections..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 bg-transparent border-0 px-0 py-0 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-0 focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
+              autoComplete="off"
+            />
+            {searchQuery && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0 hover:bg-transparent"
+                onClick={() => setSearchQuery("")}
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            )}
+          </div>
         </div>
 
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[140px]">
-            <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4" />
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4 text-gray-500" />
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-full sm:w-[140px] h-9">
               <SelectValue placeholder="Status" />
-            </div>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="inactive">Inactive</SelectItem>
-          </SelectContent>
-        </Select>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="inactive">Inactive</SelectItem>
+            </SelectContent>
+          </Select>
 
-        <Select value={carrierFilter} onValueChange={setCarrierFilter}>
-          <SelectTrigger className="w-[140px]">
-            <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4" />
+          <Select value={carrierFilter} onValueChange={setCarrierFilter}>
+            <SelectTrigger className="w-full sm:w-[140px] h-9">
               <SelectValue placeholder="Carrier" />
-            </div>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Carriers</SelectItem>
-            {Object.keys(references?.carriers || {}).sort().map((carrier) => (
-              <SelectItem key={carrier} value={carrier}>
-                {references?.carriers?.[carrier] || carrier}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Carriers</SelectItem>
+              {Object.keys(references?.carriers || {}).sort().map((carrier) => (
+                <SelectItem key={carrier} value={carrier}>
+                  {references?.carriers?.[carrier] || carrier}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
         {hasActiveFilters && (
-          <Button variant="ghost" onClick={clearFilters}>
+          <Button variant="ghost" size="sm" onClick={clearFilters} className="h-9">
             Reset
-            <X className="ml-2 h-4 w-4" />
+            <X className="ml-2 h-3 w-3" />
           </Button>
         )}
       </div>
@@ -436,16 +436,16 @@ function CarrierConnectionManagement() {
           {filteredConnections.map(({ node: connection }) => (
             <div
               key={connection.id}
-              className="group relative flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200 bg-white"
+              className="group relative flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200 bg-white gap-3"
             >
               {/* Main Content */}
-              <div className="flex items-center space-x-3 flex-1">
-                <div className="flex-none">
-                  <CarrierImage carrier_name={connection.credentials?.custom_carrier_name || connection.carrier_name} width={40} height={40} className="rounded-lg" text_color={connection.config?.text_color} background={connection.config?.brand_color} />
+              <div className="flex items-start sm:items-center gap-3 flex-1 w-full sm:w-auto">
+                <div className="flex-shrink-0">
+                  <CarrierImage carrier_name={connection.credentials?.custom_carrier_name || connection.carrier_name} width={48} height={48} className="rounded-lg" text_color={connection.config?.text_color} background={connection.config?.brand_color} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-medium text-gray-900 truncate text-sm">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
+                    <h3 className="font-medium text-gray-900 text-base">
                       {connection.display_name || connection.carrier_name}
                     </h3>
                     <div className="flex items-center gap-1.5">
@@ -453,35 +453,35 @@ function CarrierConnectionManagement() {
                       {connection.test_mode && <StatusBadge status="test" />}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-gray-600 font-mono">{connection.carrier_id || connection.id}</span>
+                      <span className="text-gray-600 font-mono">{connection.carrier_id || connection.id}</span>
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-3 w-3 p-0 hover:bg-gray-100 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="h-4 w-4 p-0 hover:bg-gray-100 opacity-0 group-hover:opacity-100 transition-opacity"
                         onClick={() => handleCopy(connection.id, "Connection ID copied")}
                       >
-                        <Copy className="h-2.5 w-2.5" />
+                        <Copy className="h-3 w-3" />
                       </Button>
                     </div>
-                    <span className="text-gray-400">•</span>
+                    <span className="hidden sm:inline text-gray-400">•</span>
                     <div className="flex flex-wrap gap-1">
                       {connection.capabilities && connection.capabilities.length > 0 ? (
                         <>
                           {connection.capabilities.slice(0, 2).map((capability) => (
-                            <span key={capability} className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-700 rounded border-0">
+                            <span key={capability} className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded">
                               {capability}
                             </span>
                           ))}
                           {connection.capabilities.length > 2 && (
-                            <span className="text-[10px] px-1.5 py-0.5 border border-gray-300 text-gray-600 rounded">
+                            <span className="text-xs px-2 py-0.5 border border-gray-300 text-gray-600 rounded">
                               +{connection.capabilities.length - 2}
                             </span>
                           )}
                         </>
                       ) : (
-                        <span className="text-[10px] text-gray-500 italic">No capabilities</span>
+                        <span className="text-xs text-gray-500 italic">No capabilities</span>
                       )}
                     </div>
                   </div>
@@ -489,13 +489,13 @@ function CarrierConnectionManagement() {
               </div>
 
               {/* Actions */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
                 <div className="flex items-center gap-2">
                   <Switch checked={connection.active} onCheckedChange={(checked) => handleStatusToggle(connection, checked)} />
                 </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 p-0 hover:bg-muted">
+                    <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-muted">
                       <MoreHorizontal className="h-4 w-4" />
                       <span className="sr-only">Open menu</span>
                     </Button>
@@ -740,45 +740,48 @@ function RateSheetManagement() {
       </div>
 
       {/* Search and Filter Bar */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search rate sheets..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 pr-10"
-          />
-          {searchQuery && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 p-0"
-              onClick={() => setSearchQuery("")}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          )}
+      <div className="flex flex-col sm:flex-row gap-3 p-4 bg-gray-50 rounded-lg">
+        <div className="flex-1">
+          <div className="flex h-9 w-full items-center rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+            <Search className="h-4 w-4 text-muted-foreground mr-2 flex-shrink-0" />
+            <Input
+              placeholder="Search rate sheets..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 bg-transparent border-0 px-0 py-0 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-0 focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
+              autoComplete="off"
+            />
+            {searchQuery && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0 hover:bg-transparent"
+                onClick={() => setSearchQuery("")}
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            )}
+          </div>
         </div>
 
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[140px]">
-            <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4" />
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4 text-gray-500" />
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-full sm:w-[140px] h-9">
               <SelectValue placeholder="Status" />
-            </div>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="inactive">Inactive</SelectItem>
-          </SelectContent>
-        </Select>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="inactive">Inactive</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
         {hasActiveFilters && (
-          <Button variant="ghost" onClick={clearFilters}>
+          <Button variant="ghost" size="sm" onClick={clearFilters} className="h-9">
             Reset
-            <X className="ml-2 h-4 w-4" />
+            <X className="ml-2 h-3 w-3" />
           </Button>
         )}
       </div>
@@ -829,25 +832,27 @@ function RateSheetManagement() {
           {filteredRateSheets.map(({ node: sheet }) => (
             <div
               key={sheet.id}
-              className="group relative flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200 bg-white"
+              className="group relative flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200 bg-white gap-3"
             >
-              <div className="flex items-center space-x-3 flex-1">
-                <div className="flex-none">
-                  <CarrierImage carrier_name={sheet.carrier_name} width={40} height={40} className="rounded-lg" />
+              <div className="flex items-start sm:items-center gap-3 flex-1 w-full sm:w-auto">
+                <div className="flex-shrink-0">
+                  <CarrierImage carrier_name={sheet.carrier_name} width={48} height={48} className="rounded-lg" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-medium text-gray-900 truncate text-sm">{sheet.name}</h3>
-                  <p className="text-xs text-gray-500 truncate">{sheet.carrier_name}</p>
+                  <h3 className="font-medium text-gray-900 text-base mb-1">{sheet.name}</h3>
+                  <p className="text-sm text-gray-500">{sheet.carrier_name}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="text-xs text-gray-600">
-                  {(sheet.services?.length ?? 0)} services
+              <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                <div className="flex items-center gap-3">
+                  <div className="text-sm text-gray-600">
+                    {(sheet.services?.length ?? 0)} services
+                  </div>
+                  <StatusBadge status={sheet.carriers?.some(c => c.active) ? "active" : "inactive"} />
                 </div>
-                <StatusBadge status={sheet.carriers?.some(c => c.active) ? "active" : "inactive"} />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 p-0 hover:bg-muted">
+                    <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-muted">
                       <MoreHorizontal className="h-4 w-4" />
                       <span className="sr-only">Open menu</span>
                     </Button>

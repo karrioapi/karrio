@@ -344,7 +344,7 @@ export function ProfileSettings() {
   return (
     <div className="space-y-6">
       {/* Profile Information */}
-      <Card>
+      <Card className="border shadow-none">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
@@ -389,7 +389,7 @@ export function ProfileSettings() {
       </Card>
 
       {/* Password Management */}
-      <Card>
+      <Card className="border shadow-none">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Lock className="h-5 w-5" />

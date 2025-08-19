@@ -87,8 +87,8 @@ function CreateAddonDialog({ open, onOpenChange, onSubmit }: CreateAddonDialogPr
         {/* Scrollable Body */}
         <div className="flex-1 overflow-y-auto px-4 py-3">
           <form id="create-addon-form" onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="sm:col-span-2">
                 <Label htmlFor="name">Addon Name *</Label>
                 <Input
                   id="name"
@@ -585,7 +585,7 @@ export default function AddonsPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">Addons</h1>
           <p className="text-sm text-gray-600 mt-1">
@@ -595,7 +595,7 @@ export default function AddonsPage() {
       </div>
 
       {/* Tab Navigation with Period Filter */}
-      <div className="flex items-center justify-between border-b border-gray-200">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 gap-4">
         <nav className="flex space-x-8 overflow-x-auto">
           <button
             className={cn(
@@ -621,7 +621,7 @@ export default function AddonsPage() {
           </button>
         </nav>
 
-        <div className="flex items-center gap-2 py-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 py-4">
           <SelectField
             className="is-small"
             value={JSON.stringify(filter)}
@@ -708,36 +708,40 @@ export default function AddonsPage() {
             ) : (
               <div className="space-y-3">
                 {systemConnections.map((connection: any) => (
-                  <div key={connection.id} className="group relative flex items-center justify-between p-3 rounded-lg border border-gray-200 bg-white">
-                    <div className="flex items-center space-x-3 flex-1">
-                      <CarrierImage
-                        carrier_name={connection.credentials?.custom_carrier_name || connection.carrier_name}
-                        width={40} height={40}
-                        className="rounded-lg"
-                        text_color={connection.config?.text_color}
-                        background={connection.config?.brand_color}
-                      />
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          <div className="font-medium text-gray-900 truncate text-sm">{connection.display_name || connection.carrier_name}</div>
-                          <StatusBadge status={connection.active ? "active" : "inactive"} />
-                          {connection.test_mode && <StatusBadge status="test" />}
+                  <div key={connection.id} className="group relative flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg border border-gray-200 bg-white gap-3">
+                    <div className="flex items-start sm:items-center gap-3 flex-1 w-full sm:w-auto">
+                      <div className="flex-shrink-0">
+                        <CarrierImage
+                          carrier_name={connection.credentials?.custom_carrier_name || connection.carrier_name}
+                          width={48} height={48}
+                          className="rounded-lg"
+                          text_color={connection.config?.text_color}
+                          background={connection.config?.brand_color}
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-1">
+                          <div className="font-medium text-gray-900 text-base">{connection.display_name || connection.carrier_name}</div>
+                          <div className="flex items-center gap-2">
+                            <StatusBadge status={connection.active ? "active" : "inactive"} />
+                            {connection.test_mode && <StatusBadge status="test" />}
+                          </div>
                         </div>
-                        <div className="text-xs text-gray-600 font-mono">{connection.carrier_id || connection.id}</div>
+                        <div className="text-sm text-gray-600 font-mono">{connection.carrier_id || connection.id}</div>
                       </div>
                     </div>
                     {/* Usage stats */}
-                    <div className="grid grid-cols-3 gap-6 text-right">
+                    <div className="grid grid-cols-3 gap-4 sm:gap-6 text-center sm:text-right w-full sm:w-auto">
                       <div>
-                        <div className="text-[11px] text-gray-500">Shipments</div>
+                        <div className="text-xs text-gray-500">Shipments</div>
                         <div className="text-sm font-medium text-gray-900">{(connection.usage?.total_shipments || 0).toLocaleString()}</div>
                       </div>
                       <div>
-                        <div className="text-[11px] text-gray-500">Shipping Spend</div>
+                        <div className="text-xs text-gray-500">Shipping Spend</div>
                         <div className="text-sm font-medium text-gray-900">${(connection.usage?.total_shipping_spend || 0).toLocaleString()}</div>
                       </div>
                       <div>
-                        <div className="text-[11px] text-gray-500">Addons</div>
+                        <div className="text-xs text-gray-500">Addons</div>
                         <div className="text-sm font-medium text-gray-900">${(connection.usage?.total_addons_charges || 0).toLocaleString()}</div>
                       </div>
                     </div>
@@ -754,20 +758,20 @@ export default function AddonsPage() {
         <div className="space-y-6">
           {/* Addons Management Table */}
           <div>
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
               <h2 className="text-lg font-medium text-gray-900">Addon management</h2>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <div className="relative">
                   <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Search addons..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-8 w-[200px]"
+                    className="pl-8 w-full sm:w-[200px]"
                   />
                 </div>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-[140px]">
+                  <SelectTrigger className="w-full sm:w-[140px]">
                     <SelectValue placeholder="Filter by status" />
                   </SelectTrigger>
                   <SelectContent>

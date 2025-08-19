@@ -24,6 +24,7 @@ import {
   DialogTitle,
 } from "@karrio/ui/components/ui/dialog";
 import { Pencil, Check, X, ExternalLink, Copy } from "lucide-react";
+import { url$ } from "@karrio/lib";
 
 type ConfigData = {
   EMAIL_USE_TLS: boolean;
@@ -52,6 +53,7 @@ type ConfigData = {
   ORDERS_MANAGEMENT: boolean;
   APPS_MANAGEMENT: boolean;
   MULTI_ORGANIZATIONS: boolean;
+  SHIPPING_RULES: boolean;
 };
 
 const defaultConfig: ConfigData = {
@@ -81,6 +83,7 @@ const defaultConfig: ConfigData = {
   ORDERS_MANAGEMENT: false,
   APPS_MANAGEMENT: false,
   MULTI_ORGANIZATIONS: false,
+  SHIPPING_RULES: false,
 };
 
 type EditSection = 'email' | 'administration' | 'data_retention' | 'api_keys' | 'features' | 'platform' | null;
@@ -248,6 +251,33 @@ export default function PlatformDetails() {
                   </div>
                 </div>
                 <div>
+                  <Label className="text-xs text-muted-foreground">Shipping API</Label>
+                  <div className="flex items-center gap-2 mt-1 group">
+                    <p className="text-sm font-medium">{metadata?.OPENAPI}</p>
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => {
+                          navigator.clipboard.writeText(metadata?.OPENAPI || "");
+                          toast({ title: "Copied to clipboard" });
+                        }}
+                      >
+                        <Copy className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => window.open(metadata?.OPENAPI, '_blank')}
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+                <div>
                   <Label className="text-xs text-muted-foreground">GraphQL Endpoint</Label>
                   <div className="flex items-center gap-2 mt-1 group">
                     <p className="text-sm font-medium">{metadata?.GRAPHQL}</p>
@@ -275,16 +305,16 @@ export default function PlatformDetails() {
                   </div>
                 </div>
                 <div>
-                  <Label className="text-xs text-muted-foreground">OpenAPI Endpoint</Label>
+                  <Label className="text-xs text-muted-foreground">AdminGraphQL Endpoint</Label>
                   <div className="flex items-center gap-2 mt-1 group">
-                    <p className="text-sm font-medium">{metadata?.OPENAPI}</p>
+                    <p className="text-sm font-medium">{url$`${metadata?.HOST}/admin/graphql`}</p>
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button
                         variant="ghost"
                         size="icon"
                         className="h-6 w-6"
                         onClick={() => {
-                          navigator.clipboard.writeText(metadata?.OPENAPI || "");
+                          navigator.clipboard.writeText(url$`${metadata?.HOST}/admin/graphql` || "");
                           toast({ title: "Copied to clipboard" });
                         }}
                       >
@@ -294,7 +324,7 @@ export default function PlatformDetails() {
                         variant="ghost"
                         size="icon"
                         className="h-6 w-6"
-                        onClick={() => window.open(metadata?.OPENAPI, '_blank')}
+                        onClick={() => window.open(url$`${metadata?.HOST}/admin/graphql`, '_blank')}
                       >
                         <ExternalLink className="h-3.5 w-3.5" />
                       </Button>
@@ -452,17 +482,6 @@ export default function PlatformDetails() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>Workflow Management</Label>
-                    <p className="text-sm text-muted-foreground">Enable workflow management</p>
-                  </div>
-                  {currentConfig.WORKFLOW_MANAGEMENT ? (
-                    <Check className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <X className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
                     <Label>Orders Management</Label>
                     <p className="text-sm text-muted-foreground">Enable orders management functionality</p>
                   </div>
@@ -478,6 +497,28 @@ export default function PlatformDetails() {
                     <p className="text-sm text-muted-foreground">Enable apps management functionality</p>
                   </div>
                   {currentConfig.APPS_MANAGEMENT ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <X className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Shipping Rules</Label>
+                    <p className="text-sm text-muted-foreground">Enable shipping rules functionality</p>
+                  </div>
+                  {currentConfig.SHIPPING_RULES ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <X className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Workflow Management</Label>
+                    <p className="text-sm text-muted-foreground">Enable workflow management</p>
+                  </div>
+                  {currentConfig.WORKFLOW_MANAGEMENT ? (
                     <Check className="h-4 w-4 text-green-500" />
                   ) : (
                     <X className="h-4 w-4 text-muted-foreground" />
@@ -677,6 +718,7 @@ function EditDialog({
         data.WORKFLOW_MANAGEMENT = formData.WORKFLOW_MANAGEMENT;
         data.ORDERS_MANAGEMENT = formData.ORDERS_MANAGEMENT;
         data.APPS_MANAGEMENT = formData.APPS_MANAGEMENT;
+        data.SHIPPING_RULES = formData.SHIPPING_RULES;
         break;
     }
 

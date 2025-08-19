@@ -178,7 +178,7 @@ function ShippersAccountDetail({ accountId }: ShippersAccountDetailProps) {
         </div>
 
         {/* Organization Details Row */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-6 text-sm text-gray-600">
             <div className="flex items-center gap-2">
               <span className="font-mono">{accountDetails.slug}</span>
@@ -200,7 +200,7 @@ function ShippersAccountDetail({ accountId }: ShippersAccountDetailProps) {
         </div>
 
         {/* Tab Navigation with Period Filter */}
-        <div className="flex items-center justify-between border-b border-gray-200">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 gap-4">
           <nav className="flex space-x-8 overflow-x-auto">
             <button
               className={cn(
@@ -250,7 +250,7 @@ function ShippersAccountDetail({ accountId }: ShippersAccountDetailProps) {
 
           <div className="flex items-center gap-2 py-4">
             <Select value={dateRange} onValueChange={handleDateRangeChange}>
-              <SelectTrigger className="w-[140px] h-8 text-sm">
+              <SelectTrigger className="w-full sm:w-[140px] h-8 text-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

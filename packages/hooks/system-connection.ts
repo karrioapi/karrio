@@ -1,7 +1,7 @@
-import { SystemCarrierMutationInput, MUTATE_SYSTEM_CONNECTION } from "@karrio/types";
-import { GET_SYSTEM_CONNECTIONS } from "@karrio/types/graphql/queries";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { SystemCarrierMutationInput, MUTATE_SYSTEM_CONNECTION, get_system_connections } from "@karrio/types";
 import { useKarrio, useAuthenticatedQuery, useAuthenticatedMutation } from "./karrio";
+import { GET_SYSTEM_CONNECTIONS } from "@karrio/types/graphql/queries";
+import { useQueryClient } from "@tanstack/react-query";
 import { gqlstr, onError } from "@karrio/lib";
 
 // Using admin query shape which returns edges -> node
@@ -12,7 +12,7 @@ export function useSystemConnections(usageFilter?: any) {
 
   const query = useAuthenticatedQuery({
     queryKey: ["system_connections", usageFilter],
-    queryFn: () => karrio.graphql.request<any>(gqlstr(GET_SYSTEM_CONNECTIONS), { filter: usageFilter }),
+    queryFn: () => karrio.graphql.request<get_system_connections>(gqlstr(GET_SYSTEM_CONNECTIONS), { filter: usageFilter }),
     staleTime: 5000,
   });
 

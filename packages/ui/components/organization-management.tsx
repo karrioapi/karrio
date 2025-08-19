@@ -161,7 +161,7 @@ export function OrganizationManagement() {
       />
 
       {/* Team Management */}
-      <Card>
+      <Card className="border shadow-none">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>

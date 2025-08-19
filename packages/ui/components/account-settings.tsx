@@ -247,7 +247,7 @@ export function AccountSettings() {
   return (
     <div className="space-y-6">
       {/* General Defaults */}
-      <Card>
+      <Card className="border shadow-none">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Settings className="h-5 w-5" />
@@ -393,7 +393,7 @@ export function AccountSettings() {
       </Card>
 
       {/* Tax Identifiers */}
-      <Card>
+      <Card className="border shadow-none">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
@@ -441,7 +441,7 @@ export function AccountSettings() {
       </Card>
 
       {/* Shipping Options */}
-      <Card>
+      <Card className="border shadow-none">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Package className="h-5 w-5" />
@@ -477,7 +477,7 @@ export function AccountSettings() {
       </Card>
 
       {/* Customs Settings */}
-      <Card>
+      <Card className="border shadow-none">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Globe className="h-5 w-5" />

@@ -6,7 +6,7 @@ export function AdminCloseButton() {
   const { basePath } = useAppMode();
 
   return (
-    <div className="fixed top-16 right-4 z-10">
+    <div className="fixed top-16 right-4 md:right-8 z-10">
       <a
         href={basePath}
         className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm border hover:bg-gray-50 text-gray-600 hover:text-gray-800"

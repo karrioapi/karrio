@@ -55,27 +55,25 @@ export function SettingsNavigation({ showOrganization }: SettingsNavigationProps
   );
 
   return (
-    <div className="border-b border-border">
-      <nav className="flex space-x-8 overflow-x-auto">
-        {filteredItems.map((item) => {
-          const isActive = pathname === item.href;
+    <nav className="flex space-x-8 overflow-x-auto">
+      {filteredItems.map((item) => {
+        const isActive = pathname === item.href;
 
-          return (
-            <Link
-              key={item.key}
-              href={item.href}
-              className={cn(
-                "whitespace-nowrap border-b-2 py-4 px-1 text-md font-bold transition-colors",
-                isActive
-                  ? "border-primary text-primary"
-                  : "border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground"
-              )}
-            >
-              {item.label}
-            </Link>
-          );
-        })}
-      </nav>
-    </div>
+        return (
+          <Link
+            key={item.key}
+            href={item.href}
+            className={cn(
+              "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors",
+              isActive
+                ? "border-purple-500 text-purple-600"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+            )}
+          >
+            {item.label}
+          </Link>
+        );
+      })}
+    </nav>
   );
 }

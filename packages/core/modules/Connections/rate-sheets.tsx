@@ -60,47 +60,45 @@ export default function RateSheetsPage() {
         </div>
 
         {/* Search */}
-        <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
-          <div className="flex-1 relative">
-            <div className="flex h-9 w-full items-center rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
-              <Search className="h-4 w-4 text-muted-foreground mr-2 flex-shrink-0" />
-              <Input
-                placeholder="Search rate sheets..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="flex-1 bg-transparent border-0 px-0 py-0 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-0 focus-visible:ring-0"
-                autoComplete="off"
-              />
-            </div>
+        <div className="p-4 bg-gray-50 rounded-lg">
+          <div className="flex h-9 w-full items-center rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+            <Search className="h-4 w-4 text-muted-foreground mr-2 flex-shrink-0" />
+            <Input
+              placeholder="Search rate sheets..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="flex-1 bg-transparent border-0 px-0 py-0 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-0 focus-visible:ring-0"
+              autoComplete="off"
+            />
           </div>
         </div>
 
         {/* List */}
         <div className="space-y-3">
           {filtered.map(({ node: sheet }) => (
-            <div key={sheet.id} className="group relative flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200 bg-white">
-              <div className="flex items-center space-x-3 flex-1">
-                <div className="flex-none">
-                  <CarrierImage carrier_name={sheet.carrier_name} width={40} height={40} className="rounded-lg" />
+            <div key={sheet.id} className="group relative flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200 bg-white gap-3">
+              <div className="flex items-start sm:items-center gap-3 flex-1 w-full sm:w-auto">
+                <div className="flex-shrink-0">
+                  <CarrierImage carrier_name={sheet.carrier_name} width={48} height={48} className="rounded-lg" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-medium text-gray-900 truncate text-sm">{sheet.name}</h3>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
+                    <h3 className="font-medium text-gray-900 text-base">{sheet.name}</h3>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-600 font-mono">{sheet.carrier_name}</span>
-                    <span className="text-gray-400">•</span>
-                    <div className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-700 rounded border-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm">
+                    <span className="text-gray-600 font-mono">{sheet.carrier_name}</span>
+                    <span className="hidden sm:inline text-gray-400">•</span>
+                    <div className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded inline-block">
                       {(sheet.services?.length ?? 0)} services
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 p-0 hover:bg-muted">
+                    <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-muted">
                       <MoreHorizontal className="h-4 w-4" />
                       <span className="sr-only">Open menu</span>
                     </Button>
