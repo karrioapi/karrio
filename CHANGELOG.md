@@ -1,3 +1,33 @@
+
+# Karrio 2025.5rc15
+
+## Changes
+
+### Feat
+
+- feat: integrate new shippers addons management page
+- feat: building the new dedicated karrio dev tools in a drawer
+- feat: update and improve carrier connection management for both users and admins
+- feat: improve DHL customs commodities data mapping
+- feat: clean up deprecated carrier connections, custom models
+- feat: build integration guide for AI agents piloted with Claude code and Gemini CLI
+- feat: update and improve account and organization management + migrate the Settings pages to shadcn+tailwindcss
+
+### Fix
+
+- fix: ratesheet loading mechanism regression
+- fix: canadapost shipment response parsing regression
+- fix: computed decimal values turned to 0.00 for float with a lower value
+
+### Chore
+
+- chore: QA and testing corrections for the release
+- chore: clean up new components with minimal responsive design
+- chore: refactor the karrio admin dashboard, removing trpc to work like the other pages
+- chore: fix conflicting next-auth dependencies version and platform build
+- chore: update the integration tests for GraphQL queries and mutation breaking changes + fix dashboard build
+- refactor: dashboard with `shadcn` upgrade and introducing Karrio Shippers product for multi-tenant instance manager
+
 # Karrio 2025.5rc14
 
 ## Changes
