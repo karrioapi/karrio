@@ -12,12 +12,11 @@ import { MoreHorizontal } from "lucide-react";
 import {
   GetUsers_users_edges_node as User,
 } from "@karrio/types/graphql/admin/types";
+import { useUser } from "@karrio/hooks/user";
 
 interface StaffActionsMenuProps {
   user: User;
   onEdit: (user: User) => void;
-  onResetPassword: (user: User) => void;
-  onResendInvitation: (user: User) => void;
   onToggleStatus: (user: User) => void;
   onRemove: (user: User) => void;
 }
@@ -25,11 +24,20 @@ interface StaffActionsMenuProps {
 export function StaffActionsMenu({
   user,
   onEdit,
-  onResetPassword,
-  onResendInvitation,
   onToggleStatus,
   onRemove,
 }: StaffActionsMenuProps) {
+  const { query: userQuery } = useUser();
+  const currentUser = userQuery.data?.user;
+  
+  // Check if this is the current user
+  const isCurrentUser = currentUser?.email === user.email;
+  
+  // Don't show menu for current user
+  if (isCurrentUser) {
+    return null;
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -46,15 +54,6 @@ export function StaffActionsMenu({
         <DropdownMenuItem onClick={() => onEdit(user)}>
           <span>Edit Details</span>
         </DropdownMenuItem>
-        {user.last_login ? (
-          <DropdownMenuItem onClick={() => onResetPassword(user)}>
-            <span>Reset Password</span>
-          </DropdownMenuItem>
-        ) : (
-          <DropdownMenuItem onClick={() => onResendInvitation(user)}>
-            <span>Resend Invitation</span>
-          </DropdownMenuItem>
-        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => onToggleStatus(user)}>
           <span>{user.is_active ? "Disable Account" : "Enable Account"}</span>

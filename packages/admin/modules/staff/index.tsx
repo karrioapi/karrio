@@ -30,7 +30,7 @@ export default function Page() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [cursor, setCursor] = useState<string | undefined>(undefined);
-  
+
   // Additional modals and confirmation states
   const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
   const [isDisableConfirmOpen, setIsDisableConfirmOpen] = useState(false);
@@ -72,57 +72,28 @@ export default function Page() {
     });
   };
 
-  const handleInvite = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const role = formData.get("role") as "member" | "developer" | "admin";
-    const email = formData.get("email") as string;
-    const fullName = formData.get("full_name") as string;
-    // Generate a cryptographically secure random password
-    const array = new Uint8Array(12);
-    window.crypto.getRandomValues(array);
-    const dummyPassword = Array.from(array, b => b.toString(16).padStart(2, '0')).join('').slice(-8);
-
+  const handleInvite = async (data: any) => {
     createUser.mutate(
       {
-        email,
-        full_name: fullName,
-        password1: dummyPassword,
-        password2: dummyPassword,
-        redirect_url: window.location.origin,
-        is_staff: role === "admin",
-        is_active: true,
+        email: data.email,
+        full_name: data.full_name,
+        password1: data.password1,
+        password2: data.password2,
+        is_staff: data.is_staff,
+        is_active: data.is_active,
+        is_superuser: data.is_superuser,
+        permissions: data.permissions,
       },
       {
-        onSuccess: () => {
-          toast({ title: "User invited successfully" });
+        onSuccess: (response) => {
+          // Check if user already existed by looking for typical creation vs update indicators
+          toast({
+            title: "User added successfully",
+            description: "User has been configured with the specified permissions and access level."
+          });
           setIsInviteOpen(false);
         },
-        onError: (error) => handleError(error, "invite"),
-      },
-    );
-  };
-
-  const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const permissions = Array.from(formData.getAll("permissions")) as string[];
-    const dummyPassword = Math.random().toString(36).slice(-8);
-
-    createUser.mutate(
-      {
-        email: formData.get("email") as string,
-        full_name: formData.get("full_name") as string,
-        password1: dummyPassword,
-        password2: dummyPassword,
-        redirect_url: window.location.origin,
-        is_staff: formData.get("is_staff") === "on",
-        is_active: true,
-        permissions,
-      },
-      {
-        onSuccess: handleCreateSuccess,
-        onError: (error) => handleError(error, "create"),
+        onError: (error) => handleError(error, "add"),
       },
     );
   };
@@ -142,6 +113,7 @@ export default function Page() {
         full_name: formData.get("full_name") as string,
         is_staff: formData.get("is_staff") === "on",
         is_active: formData.get("is_active") === "on",
+        is_superuser: formData.get("is_superuser") === "on",
         permissions,
       },
       {
@@ -164,32 +136,6 @@ export default function Page() {
     setPendingUser(null);
   };
 
-  // Additional action handlers
-  const handleResetPassword = (user: User) => {
-    setPendingActionUser(user);
-    setIsResetPasswordOpen(true);
-  };
-
-  const handleResetPasswordConfirmed = () => {
-    if (!pendingActionUser) return;
-    
-    // For now, simulate password reset (would need backend implementation)
-    toast({
-      title: "Password reset email sent",
-      description: `Reset instructions sent to ${pendingActionUser.email}`,
-    });
-    
-    setIsResetPasswordOpen(false);
-    setPendingActionUser(null);
-  };
-
-  const handleResendInvitation = (user: User) => {
-    // Simulate resend invitation
-    toast({
-      title: "Invitation resent",
-      description: `New invitation sent to ${user.email}`,
-    });
-  };
 
   const handleToggleAccountStatus = (user: User) => {
     const newStatus = !user.is_active;
@@ -235,7 +181,7 @@ export default function Page() {
         </div>
         {selectedTab === "staff" && (
           <Button onClick={() => setIsInviteOpen(true)}>
-            Invite Staff Member
+            Add User
           </Button>
         )}
       </div>
@@ -288,8 +234,6 @@ export default function Page() {
                       setSelectedUser(user);
                       setIsEditOpen(true);
                     }}
-                    onResetPassword={handleResetPassword}
-                    onResendInvitation={handleResendInvitation}
                     onToggleStatus={handleToggleAccountStatus}
                     onRemove={askRemove}
                   />
@@ -343,21 +287,13 @@ export default function Page() {
         onConfirm={handleRemoveConfirmed}
       />
 
-      <ConfirmationDialog
-        open={isResetPasswordOpen}
-        onOpenChange={setIsResetPasswordOpen}
-        title="Reset Password"
-        description={`Send a password reset email to ${(pendingActionUser as any)?.full_name || 'this user'}? They will receive instructions to create a new password.`}
-        confirmLabel="Send Reset Email"
-        onConfirm={handleResetPasswordConfirmed}
-      />
-
       {/* Modals */}
       <StaffInviteModal
         open={isInviteOpen}
         onOpenChange={setIsInviteOpen}
         onSubmit={handleInvite}
         isLoading={isInviting}
+        permissionGroups={permissionGroups.map(({ node }) => node) as any}
       />
 
       <StaffEditModal

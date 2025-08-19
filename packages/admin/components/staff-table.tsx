@@ -18,8 +18,6 @@ import { StaffActionsMenu } from "./staff-actions-menu";
 interface StaffTableProps {
   users: Array<{ node: User }>;
   onEdit: (user: User) => void;
-  onResetPassword: (user: User) => void;
-  onResendInvitation: (user: User) => void;
   onToggleStatus: (user: User) => void;
   onRemove: (user: User) => void;
 }
@@ -27,8 +25,6 @@ interface StaffTableProps {
 export function StaffTable({
   users,
   onEdit,
-  onResetPassword,
-  onResendInvitation,
   onToggleStatus,
   onRemove,
 }: StaffTableProps) {
@@ -78,8 +74,6 @@ export function StaffTable({
               <StaffActionsMenu
                 user={user as unknown as User}
                 onEdit={onEdit}
-                onResetPassword={onResetPassword}
-                onResendInvitation={onResendInvitation}
                 onToggleStatus={onToggleStatus}
                 onRemove={onRemove}
               />

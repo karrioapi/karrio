@@ -12,6 +12,7 @@ import {
 import { Button } from "@karrio/ui/components/ui/button";
 import { Input } from "@karrio/ui/components/ui/input";
 import { Label } from "@karrio/ui/components/ui/label";
+import { Switch } from "@karrio/ui/components/ui/switch";
 import { Checkbox } from "@karrio/ui/components/ui/checkbox";
 import {
   GetUsers_users_edges_node as User,
@@ -35,174 +36,219 @@ export function StaffEditModal({
   permissionGroups,
   isLoading,
 }: StaffEditModalProps) {
-  const [selectedGroups, setSelectedGroups] = useState<Set<string>>(new Set());
+  const [formData, setFormData] = useState({
+    full_name: "",
+    is_active: true,
+    is_staff: false,
+    is_superuser: false,
+    permissions: [] as string[],
+  });
 
-  // Initialize selected groups when user changes or modal opens
+  // Initialize form data when user changes or modal opens
   useEffect(() => {
-    if (user?.permissions) {
-      setSelectedGroups(new Set(user.permissions));
-    } else {
-      setSelectedGroups(new Set());
+    if (user) {
+      setFormData({
+        full_name: user.full_name || "",
+        is_active: user.is_active ?? true,
+        is_staff: user.is_staff ?? false,
+        is_superuser: user.is_superuser ?? false,
+        permissions: user.permissions || [],
+      });
     }
   }, [user, open]);
 
-  const handleGroupToggle = (groupId: string, checked: boolean) => {
-    const newSelected = new Set(selectedGroups);
-    if (checked) {
-      newSelected.add(groupId);
-    } else {
-      newSelected.delete(groupId);
-    }
-    setSelectedGroups(newSelected);
-  };
-
-  const handleSelectAll = () => {
-    if (selectedGroups.size === permissionGroups.length) {
-      // If all are selected, deselect all
-      setSelectedGroups(new Set());
-    } else {
-      // Select all groups
-      setSelectedGroups(new Set(permissionGroups.map(g => String(g.id))));
-    }
+  const handlePermissionChange = (groupName: string, checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      permissions: checked 
+        ? [...prev.permissions, groupName]
+        : prev.permissions.filter(p => p !== groupName)
+    }));
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    // Add selected groups to form data
+    e.preventDefault();
     const form = e.currentTarget;
-    // Remove existing permission_groups checkboxes
-    const existingCheckboxes = form.querySelectorAll('input[name="permission_groups"]');
-    existingCheckboxes.forEach(cb => {
-      (cb as HTMLInputElement).checked = selectedGroups.has((cb as HTMLInputElement).value);
+    
+    // Create hidden inputs for the form data
+    Object.entries(formData).forEach(([key, value]) => {
+      if (key === 'permissions') {
+        // Handle permissions array
+        (value as string[]).forEach(permission => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'permission_groups';
+          input.value = permission;
+          form.appendChild(input);
+        });
+      } else if (typeof value === 'boolean') {
+        // Handle boolean values
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = value ? 'on' : '';
+        form.appendChild(input);
+      } else {
+        // Handle string values
+        const existingInput = form.querySelector(`input[name="${key}"]`);
+        if (!existingInput) {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = key;
+          input.value = value as string;
+          form.appendChild(input);
+        }
+      }
     });
+    
     onSubmit(e);
   };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] p-0 flex flex-col">
+      <DialogContent className="max-w-lg max-h-[90vh] p-0 flex flex-col">
         {/* Sticky Header */}
         <DialogHeader className="px-4 py-3 border-b sticky top-0 bg-background z-10">
           <DialogTitle>
-            Edit Staff Member
+            Edit User
           </DialogTitle>
           <DialogDescription>
-            Update user details, permissions, and access levels for {user?.full_name || user?.email}.
+            Update user details and permissions for {user?.email}
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
           {/* Scrollable Body */}
           <div className="flex-1 overflow-y-auto px-4 py-3">
-            <div className="space-y-6">
-              {/* Personal Information */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Personal Information</h3>
-                <div className="grid gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="edit_full_name">Full Name</Label>
-                    <Input
-                      id="edit_full_name"
-                      name="full_name"
-                      defaultValue={user?.full_name || ""}
-                      placeholder="Enter full name"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Email Address</Label>
-                    <Input
-                      value={user?.email || ""}
-                      disabled
-                      className="bg-muted"
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Email addresses cannot be changed for security reasons
-                    </p>
-                  </div>
+            <div className="space-y-4">
+              {/* Basic Information */}
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <Label htmlFor="edit_full_name">Full Name</Label>
+                  <Input
+                    id="edit_full_name"
+                    name="full_name"
+                    value={formData.full_name}
+                    onChange={(e) => setFormData(prev => ({ ...prev, full_name: e.target.value }))}
+                    placeholder="Enter full name"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Email Address</Label>
+                  <Input
+                    value={user?.email || ""}
+                    disabled
+                    className="bg-muted"
+                  />
                 </div>
               </div>
 
-              {/* Account Status */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Account Status</h3>
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3 p-4 rounded-lg border">
-                    <Checkbox
+              {/* Account Status - Compact switches */}
+              <div className="space-y-3">
+                <h3 className="text-sm font-medium">Account Settings</h3>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between py-1">
+                    <Label htmlFor="edit_is_active" className="flex flex-col cursor-pointer">
+                      <span className="text-sm">Active Account</span>
+                      <span className="text-xs text-muted-foreground font-normal">User can log in</span>
+                    </Label>
+                    <Switch
                       id="edit_is_active"
-                      name="is_active"
-                      defaultChecked={user?.is_active}
+                      checked={formData.is_active}
+                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_active: checked }))}
                     />
-                    <div className="space-y-1">
-                      <Label htmlFor="edit_is_active" className="text-sm font-medium">
-                        Active Account
-                      </Label>
-                      <p className="text-xs text-muted-foreground">
-                        User can sign in and access the platform
-                      </p>
-                    </div>
                   </div>
-                </div>
-              </div>
-
-              {/* Role & Permissions */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Role & Permissions</h3>
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3 p-4 rounded-lg border">
-                    <Checkbox
+                  <div className="flex items-center justify-between py-1">
+                    <Label htmlFor="edit_is_staff" className="flex flex-col cursor-pointer">
+                      <span className="text-sm">Staff Status</span>
+                      <span className="text-xs text-muted-foreground font-normal">Access admin interface</span>
+                    </Label>
+                    <Switch
                       id="edit_is_staff"
-                      name="is_staff"
-                      defaultChecked={user?.is_staff}
+                      checked={formData.is_staff}
+                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_staff: checked }))}
                     />
-                    <div className="space-y-1">
-                      <Label htmlFor="edit_is_staff" className="text-sm font-medium">
-                        Administrator Access
-                      </Label>
-                      <p className="text-xs text-muted-foreground">
-                        Full access to admin console and system management
-                      </p>
-                    </div>
                   </div>
-
-                  {permissionGroups.length > 0 && (
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <Label className="text-sm font-medium">Permission Groups</Label>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={handleSelectAll}
-                          className="h-auto py-1 px-2 text-xs"
-                        >
-                          {selectedGroups.size === permissionGroups.length ? "Deselect All" : "Select All"}
-                        </Button>
-                      </div>
-                      <div className="space-y-2 max-h-32 overflow-y-auto border rounded-lg p-3">
-                        {permissionGroups.map((group) => (
-                          <div key={group.id} className="flex items-center space-x-3">
-                            <Checkbox
-                              id={`edit_permission_${group.id}`}
-                              name="permission_groups"
-                              value={String(group.id)}
-                              checked={selectedGroups.has(String(group.id))}
-                              onCheckedChange={(checked) => handleGroupToggle(String(group.id), !!checked)}
-                            />
-                            <Label 
-                              htmlFor={`edit_permission_${group.id}`}
-                              className="text-sm cursor-pointer"
-                            >
-                              {group.name}
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Select specific permission groups for granular access control
-                      </p>
-                    </div>
-                  )}
+                  <div className="flex items-center justify-between py-1">
+                    <Label htmlFor="edit_is_superuser" className="flex flex-col cursor-pointer">
+                      <span className="text-sm">Superuser</span>
+                      <span className="text-xs text-muted-foreground font-normal">All permissions</span>
+                    </Label>
+                    <Switch
+                      id="edit_is_superuser"
+                      checked={formData.is_superuser}
+                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_superuser: checked }))}
+                    />
+                  </div>
                 </div>
               </div>
+
+              {/* Permission Groups - Only show if not superuser */}
+              {permissionGroups.length > 0 && !formData.is_superuser && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-medium">Permission Groups</h3>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (formData.permissions.length === permissionGroups.length) {
+                          setFormData(prev => ({ ...prev, permissions: [] }));
+                        } else {
+                          setFormData(prev => ({ 
+                            ...prev, 
+                            permissions: permissionGroups.map(g => g.name) 
+                          }));
+                        }
+                      }}
+                      className="text-xs text-primary hover:underline"
+                    >
+                      {formData.permissions.length === permissionGroups.length ? 'Clear All' : 'Select All'}
+                    </button>
+                  </div>
+                  <div className="border rounded-md">
+                    <div className="max-h-40 overflow-y-auto p-3 space-y-2">
+                      {permissionGroups.map((group) => (
+                        <div key={group.id} className="flex items-center space-x-2 hover:bg-muted/50 rounded px-1 py-0.5">
+                          <Checkbox
+                            id={`edit_perm_${group.id}`}
+                            checked={formData.permissions.includes(group.name)}
+                            onCheckedChange={(checked) => handlePermissionChange(group.name, checked as boolean)}
+                            disabled={formData.is_superuser}
+                          />
+                          <Label
+                            htmlFor={`edit_perm_${group.id}`}
+                            className="text-sm font-normal cursor-pointer flex-1 py-1"
+                          >
+                            {group.name}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                    {formData.permissions.length > 0 && (
+                      <div className="px-3 py-2 bg-muted/50 border-t text-xs text-muted-foreground">
+                        {formData.permissions.length} of {permissionGroups.length} selected
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* User Metadata */}
+              {user && (
+                <div className="pt-2 border-t">
+                  <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+                    <div>
+                      <span className="font-medium">Created:</span> {new Date(user.date_joined).toLocaleDateString()}
+                    </div>
+                    {user.last_login && (
+                      <div>
+                        <span className="font-medium">Last login:</span> {new Date(user.last_login).toLocaleDateString()}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -222,7 +268,7 @@ export function StaffEditModal({
                   Updating...
                 </>
               ) : (
-                "Update User"
+                "Save Changes"
               )}
             </Button>
           </DialogFooter>

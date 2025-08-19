@@ -13,6 +13,7 @@ export interface GetUsers_users_edges_node {
   full_name: string;
   is_staff: boolean;
   is_active: boolean;
+  is_superuser: boolean | null;
   last_login: any | null;
   date_joined: any;
   permissions: string[] | null;
@@ -57,6 +58,7 @@ export interface GetUser_user {
   full_name: string;
   is_staff: boolean;
   is_active: boolean;
+  is_superuser: boolean | null;
   last_login: any | null;
   date_joined: any;
   permissions: string[] | null;
@@ -2448,7 +2450,7 @@ export interface CreateUserMutationInput {
   email: string;
   password1: string;
   password2: string;
-  redirect_url: string;
+  redirect_url?: string | null;
   full_name?: string | null;
   is_staff?: boolean | null;
   is_active?: boolean | null;

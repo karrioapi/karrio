@@ -13,6 +13,7 @@ export const GET_USERS = gql`
           full_name
           is_staff
           is_active
+          is_superuser
           last_login
           date_joined
           permissions
@@ -37,6 +38,7 @@ export const GET_USER = gql`
       full_name
       is_staff
       is_active
+      is_superuser
       last_login
       date_joined
       permissions
