@@ -192,7 +192,7 @@ export default function Page(pageProps: any) {
                     ))}
 
                     {(order.line_items || []).length === 0 && (
-                      <div className="m-2 bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-2 rounded text-sm">
+                      <div className="m-2 bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-2 rounded text-xs">
                         Add one or more product to create a order.
                       </div>
                     )}
@@ -395,7 +395,7 @@ export default function Page(pageProps: any) {
                   )}
 
                   {/* Address section */}
-                  <div className="rounded-xl border bg-card text-card-foreground shadow px-0 py-3">
+                  <div className="rounded-xl border bg-card text-card-foreground shadow px-0 py-1">
                     <div className="p-3">
                       <header className="flex justify-between">
                         <span className="text-xs font-bold uppercase tracking-wide text-gray-700 flex items-center my-2">
@@ -429,12 +429,12 @@ export default function Page(pageProps: any) {
                       )}
 
                       {Object.values(order.shipping_to || {}).length === 0 && (
-                        <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 my-2 py-2 px-4 text-xs rounded">
+                        <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 mt-2 mb-5 py-2 px-4 text-xs rounded">
                           Please specify the customer address.
                         </div>
                       )}
 
-                      <hr className="my-4" style={{ height: "1px" }} />
+                      <hr className="my-0 mb-3" style={{ height: "1px" }} />
 
                       <header className="flex justify-between">
                         <span className="text-xs font-bold uppercase tracking-wide text-gray-700 flex items-center my-2">
@@ -478,7 +478,7 @@ export default function Page(pageProps: any) {
                   </div>
 
                   {/* Metadata section */}
-                  <div className="rounded-xl border bg-card text-card-foreground shadow px-0 py-3 mt-5">
+                  <div className="rounded-xl border bg-card text-card-foreground shadow px-2 py-1 mt-5">
                     <div className="p-1 pb-4">
                       <MetadataEditor
                         object_type={MetadataObjectTypeEnum.order}
