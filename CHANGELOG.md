@@ -1,3 +1,12 @@
+# Karrio 2025.5rc14
+
+## Changes
+
+### Fix
+
+- fix: sapient address mapping max charaters length.
+- feat: DTDC shipping_date parsing issue.
+
 # Karrio 2025.5rc13
 
 ## Changes
