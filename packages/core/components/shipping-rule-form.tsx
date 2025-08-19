@@ -24,7 +24,7 @@ interface ShippingRuleFormProps {
 export function ShippingRuleForm({ ruleId, templateData, onClose, onSave }: ShippingRuleFormProps) {
   const loader = useLoader();
   const { references } = useAPIMetadata();
-  const { query: carrierQuery, user_carrier_connections: userConnections } = useCarrierConnections();
+  const { user_connections } = useCarrierConnections();
   const {
     form,
     isNew,
@@ -345,7 +345,7 @@ export function ShippingRuleForm({ ruleId, templateData, onClose, onSave }: Ship
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="any">Any connection</SelectItem>
-                        {(userConnections || []).map((c: any) => (
+                        {(user_connections || []).map((c: any) => (
                           <SelectItem key={c.id} value={c.id}>
                             {(c.display_name || c.custom_carrier_name || c.carrier_name)}
                           </SelectItem>
@@ -364,7 +364,7 @@ export function ShippingRuleForm({ ruleId, templateData, onClose, onSave }: Ship
                       name="conditions.service"
                       children={(field) => {
                         // Resolve carrier_name from selected connection to list relevant services
-                        const connection = (userConnections || []).find((c: any) => c.id === carrierId);
+                        const connection = (user_connections || []).find((c: any) => c.id === carrierId);
                         const carrierName = connection?.carrier_name;
                         const serviceMap = references?.services || {};
                         const servicesForCarrier = carrierName ? Object.keys(serviceMap[carrierName] || {}) : [];

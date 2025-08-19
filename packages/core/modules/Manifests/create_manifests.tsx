@@ -38,12 +38,8 @@ export default function Page() {
     const { metadata } = useAPIMetadata();
     const [allChecked, setAllChecked] = React.useState(false);
     const [selection, setSelection] = React.useState<string[]>([]);
-    const {
-      query: { data: { user_connections } = {} },
-    } = useCarrierConnections();
-    const {
-      query: { data: { system_connections } = {} },
-    } = useSystemConnections();
+    const { user_connections } = useCarrierConnections();
+    const { system_connections } = useSystemConnections();
     const context = useShipments({
       status: ["purchased"] as any,
       meta_key: "manifest_required",
@@ -70,12 +66,12 @@ export default function Page() {
       (shipment?.rates || [])[0] ||
       shipment;
     const getCarrier = (rate?: ShipmentType["rates"][0]) =>
-      user_connections?.find(
+      (user_connections || [])?.find(
         (_) =>
           _.id === rate?.meta?.carrier_connection_id ||
           _.carrier_id === rate?.carrier_id,
       ) ||
-      system_connections?.find(
+      (system_connections || [])?.find(
         (_) =>
           _.id === rate?.meta?.carrier_connection_id ||
           _.carrier_id === rate?.carrier_id,

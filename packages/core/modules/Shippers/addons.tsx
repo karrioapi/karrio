@@ -568,8 +568,8 @@ export default function AddonsPage() {
   }));
 
   // System connections for overview page
-  const { query: sysConnQuery, system_carrier_connections } = useSystemConnections({}, usageFilter);
-  const systemConnections = useMemo(() => (system_carrier_connections?.edges || []).map(({ node }: any) => node), [system_carrier_connections]);
+  const { query: sysConnQuery } = useSystemConnections({}, usageFilter);
+  const systemConnections = useMemo(() => (sysConnQuery.data?.system_carrier_connections?.edges || []).map(({ node }: any) => node), [sysConnQuery.data?.system_carrier_connections?.edges]);
 
   if (isLoading) {
     return (
@@ -663,7 +663,7 @@ export default function AddonsPage() {
             <Card className="border shadow-none">
               <CardContent className="p-4">
                 <p className="text-sm text-gray-600">System Accounts</p>
-                <p className="text-2xl font-semibold text-gray-900">{system_carrier_connections?.page_info?.count || 0}</p>
+                <p className="text-2xl font-semibold text-gray-900">{sysConnQuery.data?.system_carrier_connections?.page_info?.count || 0}</p>
               </CardContent>
             </Card>
           </div>

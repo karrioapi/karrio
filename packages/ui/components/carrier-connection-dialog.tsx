@@ -118,7 +118,7 @@ export function CarrierConnectionDialog({
       // For generic carriers, use the custom_carrier_name as the carrier_name
       const submitValues = {
         ...values,
-        carrier_name: values.carrier_name === "generic" 
+        carrier_name: values.carrier_name === "generic"
           ? values.credentials.custom_carrier_name || "generic"
           : values.carrier_name
       };
@@ -678,12 +678,12 @@ export function CarrierConnectionDialog({
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {references?.carriers && (
+                            {references?.connection_fields && (
                               <>
                                 {/* Generic carrier first */}
-                                {Object.entries(references.carriers)
-                                  .filter(([carrier]) => carrier === "generic")
-                                  .map(([carrier, label]) => (
+                                {Object.keys(references.connection_fields)
+                                  .filter((carrier) => carrier === "generic")
+                                  .map((carrier) => (
                                     <SelectItem key={carrier} value={carrier}>
                                       <div className="flex items-center gap-2">
                                         <CarrierImage
@@ -692,7 +692,7 @@ export function CarrierConnectionDialog({
                                           height={20}
                                           className="grayscale"
                                         />
-                                        <span>{label as string}</span>
+                                        <span>{references.carriers[carrier] as string}</span>
                                       </div>
                                     </SelectItem>
                                   ))}
@@ -705,10 +705,10 @@ export function CarrierConnectionDialog({
                                 )}
 
                                 {/* Other carriers */}
-                                {Object.entries(references.carriers)
-                                  .filter(([carrier]) => carrier !== "generic")
+                                {Object.keys(references.connection_fields)
+                                  .filter((carrier) => carrier !== "generic")
                                   .sort()
-                                  .map(([carrier, label]) => (
+                                  .map((carrier) => (
                                     <SelectItem key={carrier} value={carrier}>
                                       <div className="flex items-center gap-2">
                                         <CarrierImage
@@ -717,7 +717,7 @@ export function CarrierConnectionDialog({
                                           height={20}
                                           className="grayscale"
                                         />
-                                        <span>{label as string}</span>
+                                        <span>{references.carriers[carrier] as string}</span>
                                       </div>
                                     </SelectItem>
                                   ))}

@@ -39,7 +39,7 @@ export const UserConnectionList = (): JSX.Element => {
   const { confirm: confirmDeletion } = useContext(ConfirmModalContext);
   const { editConnection } = useContext(ConnectProviderModalContext);
   const mutation = useCarrierConnectionMutation();
-  const { query, user_carrier_connections } = useCarrierConnections();
+  const { query, user_connections } = useCarrierConnections();
   const [rateSheetEditorOpen, setRateSheetEditorOpen] = useState(false);
   const [selectedConnection, setSelectedConnection] = useState<any>(null);
   const { metadata, references } = useAPIMetadata();
@@ -90,7 +90,7 @@ export const UserConnectionList = (): JSX.Element => {
   });
   useEffect(() => {
     if (labelModal.isActive) {
-      const connection = (user_carrier_connections || []).find(
+      const connection = (user_connections || []).find(
         (c: any) => c.id === labelModal.operation?.connection.id,
       );
       connection &&
@@ -104,10 +104,10 @@ export const UserConnectionList = (): JSX.Element => {
             } as any)(),
         });
     }
-  }, [user_carrier_connections]);
+  }, [user_connections]);
   useEffect(() => {
     if (query.isFetching && !isNoneOrEmpty(modal)) {
-      const connection = (user_carrier_connections || []).find(
+      const connection = (user_connections || []).find(
         (c: any) => c.id === modal,
       );
       connection &&
@@ -116,13 +116,13 @@ export const UserConnectionList = (): JSX.Element => {
           update: mutation.updateCarrierConnection.mutateAsync,
         });
     }
-  }, [modal, user_carrier_connections]);
+  }, [modal, user_connections]);
 
   return (
     <>
       {query.isFetching && !query.isFetched && <Spinner />}
 
-      {query.isFetched && (user_carrier_connections || []).length > 0 && (
+      {query.isFetched && (user_connections || []).length > 0 && (
         <>
           <div className="table-container">
             <table className="table is-fullwidth">
@@ -134,7 +134,7 @@ export const UserConnectionList = (): JSX.Element => {
                   <td className="action"></td>
                 </tr>
 
-                {(user_carrier_connections || []).map((connection: any) => (
+                {(user_connections || []).map((connection: any) => (
                   <tr key={`${connection.id}-${Date.now()}`}>
                     <td className="carrier is-vcentered pl-1">
                       <CarrierNameBadge
@@ -277,7 +277,7 @@ export const UserConnectionList = (): JSX.Element => {
         </>
       )}
 
-      {query.isFetched && (user_carrier_connections || []).length == 0 && (
+      {query.isFetched && (user_connections || []).length == 0 && (
         <div className="card my-6">
           <div className="card-content has-text-centered">
             <p>No carriers connected yet.</p>

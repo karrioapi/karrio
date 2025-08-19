@@ -94,8 +94,8 @@ export default function Page() {
     ];
     const [key, setKey] = useState<string>(`${shipment_id}-${Date.now()}`);
     const [addReturn, setAddReturn] = useState<boolean>(false);
-    const { query: userConnQuery, user_carrier_connections: user_connections } = useCarrierConnections();
-    const { query: sysConnQuery, system_connections } = useSystemConnections();
+    const { user_connections } = useCarrierConnections();
+    const { system_connections } = useSystemConnections();
     const {
       state: { shipment, query },
       ...mutation

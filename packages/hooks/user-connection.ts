@@ -16,7 +16,7 @@ export function useCarrierConnections() {
 
   return {
     query,
-    user_carrier_connections: query.data?.user_connections?.edges?.map((e: any) => e.node) || [],
+    user_connections: query.data?.user_connections?.edges?.map((e: any) => e.node) || [],
     pageInfo: query.data?.user_connections?.page_info,
   };
 }

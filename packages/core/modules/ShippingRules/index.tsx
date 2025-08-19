@@ -41,7 +41,7 @@ const ContextProviders = bundleContexts([ModalProvider]);
 export default function Page(pageProps: any) {
   const Component = (): JSX.Element => {
     const { metadata } = useAPIMetadata();
-    const { query: carrierQuery, user_carrier_connections: connections } = useCarrierConnections();
+    const { user_connections } = useCarrierConnections();
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [isCreating, setIsCreating] = useState(false);
@@ -135,7 +135,7 @@ export default function Page(pageProps: any) {
         }
       }
       if (conditions.carrier_id) {
-        const conn = connections.find((c) => c.id === conditions.carrier_id);
+        const conn = user_connections?.find((c) => c.id === conditions.carrier_id);
         const name = conn?.display_name || conn?.custom_carrier_name || conn?.carrier_name || conditions.carrier_id;
         summary.push(`Carrier: ${name}`);
       }

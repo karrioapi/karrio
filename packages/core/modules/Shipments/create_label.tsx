@@ -35,6 +35,7 @@ import {
   MetadataEditor,
   MetadataEditorContext,
 } from "@karrio/ui/core/forms/metadata-editor";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@karrio/ui/components/ui/collapsible";
 import { CustomsInfoDescription } from "@karrio/ui/core/components/customs-info-description";
 import { GoogleGeocodingScript } from "@karrio/ui/core/components/google-geocoding-script";
 import { CommodityDescription } from "@karrio/ui/core/components/commodity-description";
@@ -43,15 +44,15 @@ import { AddressDescription } from "@karrio/ui/core/components/address-descripti
 import { ParcelDescription } from "@karrio/ui/core/components/parcel-description";
 import { CommoditySummary } from "@karrio/ui/core/components/commodity-summary";
 import { RateDescription } from "@karrio/ui/core/components/rate-description";
-import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { LineItemSelector } from "@karrio/ui/core/forms/line-item-selector";
-import { useCarrierConnections } from "@karrio/hooks/user-connection";
-import { useDefaultTemplates } from "@karrio/hooks/default-template";
 import { CheckBoxField } from "@karrio/ui/core/components/checkbox-field";
 import { TextAreaField } from "@karrio/ui/core/components/textarea-field";
+import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
+import { useSystemConnections } from "@karrio/hooks/system-connection";
+import { useCarrierConnections } from "@karrio/hooks/user-connection";
+import { useDefaultTemplates } from "@karrio/hooks/default-template";
 import { useWorkspaceConfig } from "@karrio/hooks/workspace-config";
 import { useConnections } from "@karrio/hooks/carrier-connections";
-import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { ButtonField } from "@karrio/ui/core/components/button-field";
 import { SelectField } from "@karrio/ui/core/components/select-field";
 import { useLabelDataMutation } from "@karrio/hooks/label-data";
@@ -60,13 +61,12 @@ import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { ModalProvider } from "@karrio/ui/core/modals/modal";
 import { Spinner } from "@karrio/ui/core/components/spinner";
+import React, { useEffect, useState, useRef } from "react";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { useLocation } from "@karrio/hooks/location";
 import { useAppMode } from "@karrio/hooks/app-mode";
-import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { useOrders } from "@karrio/hooks/order";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@karrio/ui/components/ui/collapsible";
 
 const ContextProviders = bundleContexts([
   CommodityEditModalProvider,
@@ -87,7 +87,7 @@ export default function CreateLabelPage(pageProps: any) {
     const shipment_id = searchParams.get("shipment_id") || "new";
     const [key, setKey] = useState<string>(`${shipment_id}-${Date.now()}`);
     const [addReturn, setAddReturn] = useState<boolean>(false);
-    const { query: userConnQuery, user_carrier_connections: user_connections } = useCarrierConnections();
+    const { query: userConnQuery, user_connections: user_connections } = useCarrierConnections();
     const { query: sysConnQuery, system_connections } = useSystemConnections();
     const {
       state: { shipment, query },

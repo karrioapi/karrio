@@ -43,8 +43,8 @@ export default function Page(pageProps: any) {
     const [initialized, setInitialized] = React.useState(false);
     const [selection, setSelection] = React.useState<string[]>([]);
     const { previewShipment } = useContext(ShipmentPreviewContext);
-    const { query: userConnQuery, user_carrier_connections: user_connections } = useCarrierConnections();
-    const { query: sysConnQuery, system_connections } = useSystemConnections();
+    const { user_connections } = useCarrierConnections();
+    const { system_connections } = useSystemConnections();
     const context = useShipments({
       status: [
         "purchased",

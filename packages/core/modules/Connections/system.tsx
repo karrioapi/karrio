@@ -29,7 +29,7 @@ export default function SystemConnectionsPage() {
   const [carrierFilter, setCarrierFilter] = useState("all");
 
   // Hooks
-  const { query: userQuery, user_carrier_connections } = useCarrierConnections();
+  const { query: userQuery, user_connections } = useCarrierConnections();
   const { query: systemQuery, system_connections } = useSystemConnections();
   const { updateSystemConnection } = useSystemConnectionMutation();
 
@@ -45,12 +45,12 @@ export default function SystemConnectionsPage() {
   }, [system_connections]);
 
   const userConnections = useMemo(() => {
-    if (!user_carrier_connections) return [];
-    return user_carrier_connections.map((connection) => ({
+    if (!user_connections) return [];
+    return user_connections.map((connection) => ({
       ...connection,
       connection_type: "user"
     }));
-  }, [user_carrier_connections]);
+  }, [user_connections]);
 
   // Filter connections
   const filteredConnections = useMemo(() => {

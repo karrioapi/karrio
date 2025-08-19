@@ -38,7 +38,7 @@ export function useSystemConnections(filter: CarrierFilter = {}, usageFilter?: U
 
   return {
     query,
-    system_carrier_connections: query.data?.system_carrier_connections,
+    system_connections: (query.data?.system_carrier_connections?.edges?.map((e: any) => e.node) || []) as SystemConnectionType[],
   };
 }
 
@@ -57,7 +57,7 @@ export function useSystemConnection(id: string) {
 
   return {
     query,
-    system_carrier_connection: query.data?.system_carrier_connection,
+    system_connection: (query.data?.system_carrier_connection as SystemConnectionType) || null,
   };
 }
 

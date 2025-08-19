@@ -23,7 +23,7 @@ export default function CarrierConnections() {
   const [selectedConnection, setSelectedConnection] = useState<Connection | null>(null);
   const [page, setPage] = useState(1);
 
-  const { query, system_carrier_connections: connectionsData } = useSystemConnections({});
+  const { query: { data: { system_carrier_connections: connections } = {} } } = useSystemConnections({});
   const { updateSystemConnection, deleteSystemConnection } = useSystemConnectionMutation();
 
   const handleUpdateSuccess = () => {
@@ -52,8 +52,6 @@ export default function CarrierConnections() {
       onError: (error) => handleError(error, "update"),
     });
   };
-
-  const connections = connectionsData;
 
   return (
     <div className="p-6">
@@ -111,7 +109,7 @@ export default function CarrierConnections() {
         open={isEditOpen}
         onOpenChange={setIsEditOpen}
         selectedConnection={selectedConnection as any}
-        onSubmit={handleUpdate}
+        onSubmit={handleUpdate as any}
       />
 
       <DeleteConfirmationDialog

@@ -40,7 +40,6 @@ import { RateSheetEditor } from "@karrio/ui/components/rate-sheet-editor";
 import { LinkRateSheetDialog } from "@karrio/ui/components/rate-sheet-dialog";
 import { useRateSheets, useRateSheetMutation, useRateSheet } from "@karrio/hooks/rate-sheet";
 import { cn } from "@karrio/ui/lib/utils";
-import { p } from '@karrio/lib';
 import { supportsRateSheets } from "@karrio/lib/carrier-utils";
 // Note: carrier-utils normalization removed; backend provides canonical names
 
@@ -59,7 +58,7 @@ export default function ConnectionsPage() {
   const [linkConnection, setLinkConnection] = useState<any>(null);
 
   // Hooks
-  const { query: carrierQuery, user_carrier_connections } = useCarrierConnections();
+  const { query: carrierQuery, user_connections } = useCarrierConnections();
   const { query: systemQuery, system_connections } = useSystemConnections();
   const { query: rateSheetsQuery, rate_sheets } = useRateSheets();
   const mutation = useCarrierConnectionMutation();
@@ -80,12 +79,12 @@ export default function ConnectionsPage() {
 
   // Convert connections data to proper format
   const userConnections = useMemo(() => {
-    if (!user_carrier_connections) return [];
-    return user_carrier_connections.map((connection) => ({
+    if (!user_connections) return [];
+    return user_connections.map((connection) => ({
       ...connection,
       connection_type: "user"
     }));
-  }, [user_carrier_connections]);
+  }, [user_connections]);
 
   const systemConnections = useMemo(() => {
     if (!system_connections) return [];

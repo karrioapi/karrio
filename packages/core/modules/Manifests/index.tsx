@@ -35,8 +35,8 @@ export default function Page() {
     const { references } = useAPIMetadata();
     const [allChecked, setAllChecked] = React.useState(false);
     const [selection, setSelection] = React.useState<string[]>([]);
-    const { query: userConnQuery, user_carrier_connections: user_connections } = useCarrierConnections();
-    const { query: sysConnQuery, system_connections } = useSystemConnections();
+    const { user_connections } = useCarrierConnections();
+    const { system_connections } = useSystemConnections();
     const {
       query: { data: { manifests } = {}, ...query },
       filter,

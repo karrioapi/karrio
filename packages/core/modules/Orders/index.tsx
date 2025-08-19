@@ -55,8 +55,8 @@ export default function OrdersPage() {
       setVariablesToURL: true,
       preloadNextPage: true,
     });
-    const { query: userConnQuery, user_carrier_connections: user_connections } = useCarrierConnections();
-    const { query: sysConnQuery, system_connections } = useSystemConnections();
+    const { user_connections } = useCarrierConnections();
+    const { system_connections } = useSystemConnections();
     const {
       query: { data: { orders } = {}, ...query },
       filter,

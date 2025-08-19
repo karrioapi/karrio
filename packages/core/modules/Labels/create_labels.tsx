@@ -102,7 +102,7 @@ export default function Page() {
       shipment_ids.split(",").filter((_) => !isNoneOrEmpty(_)),
     );
 
-    const { query: carrierConnectionsQuery, user_carrier_connections } = useCarrierConnections();
+    const { query: carrierConnectionsQuery, user_connections: user_carrier_connections } = useCarrierConnections();
     const { query: systemConnectionsQuery, system_connections } = useSystemConnections();
     const ordersQuery = useOrders({
       id: orderIds,

@@ -116,10 +116,9 @@ function CarrierConnectionManagement() {
   const [selectedRateSheet, setSelectedRateSheet] = useState<RateSheet | null>(null);
   const [selectedRateSheetId, setSelectedRateSheetId] = useState<string | null>(null);
 
-  const { query, system_carrier_connections } = useSystemConnections({});
+  const { query: connectionsQuery, system_connections } = useSystemConnections({});
   const { query: rateSheetsQuery, rate_sheets } = useRateSheets({});
-  const connections = system_carrier_connections?.edges || [];
-  const isLoading = query.isLoading;
+  const isLoading = connectionsQuery.isLoading || rateSheetsQuery.isLoading;
   const { references } = useAPIMetadata();
 
   const { createSystemConnection, updateSystemConnection, deleteSystemConnection } = useSystemConnectionMutation();
@@ -132,7 +131,7 @@ function CarrierConnectionManagement() {
 
   // Filter connections
   const filteredConnections = useMemo(() => {
-    return connections.filter(({ node: connection }) => {
+    return system_connections.filter((connection) => {
       const matchesSearch =
         connection.display_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         connection.carrier_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -146,7 +145,7 @@ function CarrierConnectionManagement() {
 
       return matchesSearch && matchesStatus && matchesCarrier;
     });
-  }, [connections, searchQuery, statusFilter, carrierFilter]);
+  }, [system_connections, searchQuery, statusFilter, carrierFilter]);
 
   const handleDeleteSuccess = () => {
     toast({ title: "Carrier connection deleted successfully" });
@@ -433,7 +432,7 @@ function CarrierConnectionManagement() {
       {/* Connections List (aligned with user connections design) */}
       {!isLoading && filteredConnections.length > 0 && (
         <div className="space-y-3">
-          {filteredConnections.map(({ node: connection }) => (
+          {filteredConnections.map((connection) => (
             <div
               key={connection.id}
               className="group relative flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200 bg-white gap-3"
@@ -542,7 +541,7 @@ function CarrierConnectionManagement() {
       {!isLoading && filteredConnections.length > 0 && (
         <div className="flex items-center justify-between text-sm text-gray-600">
           <span>
-            Showing {filteredConnections.length} of {connections.length} connections
+            Showing {filteredConnections.length} of {connectionsQuery.data?.system_carrier_connections?.edges?.length || 0} connections
           </span>
           {hasActiveFilters && (
             <Button variant="ghost" size="sm" onClick={clearFilters}>
