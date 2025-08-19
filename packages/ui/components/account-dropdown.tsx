@@ -17,7 +17,7 @@ export function AccountDropdown() {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon" className="rounded-full !rounded-full border-radius-50">
+        <Button variant="outline" size="icon" className="rounded-full">
           <Settings className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
