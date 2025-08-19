@@ -13,7 +13,7 @@ import { AddressDescription } from "@karrio/ui/core/components/address-descripti
 import { formatRef, isEqual, isNone, isNoneOrEmpty } from "@karrio/lib";
 import { AddressModalEditor } from "@karrio/ui/components/address-modal-editor";
 import { MetadataObjectTypeEnum, PaidByEnum } from "@karrio/types";
-import { InputField } from "@karrio/ui/core/components/input-field";
+import { InputField } from "@karrio/ui/components/input-field";
 import { RadioGroupField } from "@karrio/ui/components/radio-group-field";
 import { ButtonField } from "@karrio/ui/components/button-field";
 import { useLoader } from "@karrio/ui/core/components/loader";
@@ -217,6 +217,7 @@ export default function Page(pageProps: any) {
                       type="date"
                       className="is-small"
                       fieldClass="column mb-0 is-4 p-0 mb-2"
+                      labelBold={true}
                       defaultValue={order.order_date || ""}
                       onChange={(e) =>
                         handleChange({ order_date: e.target.value })
@@ -231,6 +232,7 @@ export default function Page(pageProps: any) {
                       className="is-small"
                       autoComplete="off"
                       fieldClass="column mb-0 is-4 p-0 mb-2"
+                      labelBold={true}
                       defaultValue={order.options?.invoice_number || ""}
                       onChange={(e) =>
                         handleChange({
@@ -249,6 +251,7 @@ export default function Page(pageProps: any) {
                       type="date"
                       className="is-small"
                       fieldClass="column mb-0 is-4 p-0 mb-2"
+                      labelBold={true}
                       defaultValue={order.options?.invoice_date || ""}
                       onChange={(e) =>
                         handleChange({
@@ -305,6 +308,7 @@ export default function Page(pageProps: any) {
                           <InputField
                             label="account number"
                             className="is-small"
+                            labelBold={true}
                             defaultValue={
                               order?.options?.account_number as string
                             }
