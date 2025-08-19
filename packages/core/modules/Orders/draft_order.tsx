@@ -20,7 +20,6 @@ import { useLoader } from "@karrio/ui/core/components/loader";
 import { ModalProvider } from "@karrio/ui/core/modals/modal";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { Spinner } from "@karrio/ui/core/components";
-import { Card, CardHeaderSection, CardBody, CardFooter, CardSectionTitle } from "@karrio/ui/components/card";
 import { useOrderForm } from "@karrio/hooks/order";
 import React, { useEffect, useState } from "react";
 import { AddressType } from "@karrio/types";
@@ -103,12 +102,12 @@ export default function Page(pageProps: any) {
             <div className="flex gap-6 pb-6">
               <div className="flex-[7] px-0" style={{ minHeight: "850px" }}>
                 {/* Line Items */}
-                <div className="card px-0 py-3">
-                  <header className="px-3 is-flex is-justify-content-space-between">
-                    <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
+                <div className="rounded-xl border bg-card text-card-foreground shadow px-0 py-3">
+                  <header className="px-3 flex justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wide text-gray-700 flex items-center my-2">
                       LINE ITEMS
                     </span>
-                    <div className="is-vcentered">
+                    <div className="flex items-center">
                       {/* @ts-ignore */}
                       <CommodityStateContext.Consumer>
                         {({ editCommodity }) => (
@@ -144,9 +143,9 @@ export default function Page(pageProps: any) {
                         {index > 0 && (
                           <hr className="my-1" style={{ height: "1px" }} />
                         )}
-                        <div className="is-flex is-justify-content-space-between is-vcentered">
+                        <div className="flex justify-between items-center">
                           <CommodityDescription
-                            className="is-flex-grow-1 pr-2"
+                            className="flex-grow pr-2"
                             commodity={item as any}
                           />
                           <div>
@@ -193,7 +192,7 @@ export default function Page(pageProps: any) {
                     ))}
 
                     {(order.line_items || []).length === 0 && (
-                      <div className="m-2 notification is-warning is-light is-default is-size-7">
+                      <div className="m-2 bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-2 rounded text-sm">
                         Add one or more product to create a order.
                       </div>
                     )}
@@ -201,9 +200,9 @@ export default function Page(pageProps: any) {
                 </div>
 
                 {/* Order options section */}
-                <div className="card px-0 py-3 mt-5">
-                  <header className="px-3 is-flex is-justify-content-space-between">
-                    <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
+                <div className="rounded-xl border bg-card text-card-foreground shadow px-0 py-3 mt-5">
+                  <header className="px-3 flex justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wide text-gray-700 flex items-center my-2">
                       OPTIONS
                     </span>
                   </header>
@@ -303,8 +302,7 @@ export default function Page(pageProps: any) {
                     {order.options?.paid_by &&
                       order.options?.paid_by !== PaidByEnum.sender && (
                         <div
-                          className="columns m-1 px-2 py-0"
-                          style={{ borderLeft: "solid 2px #ddd" }}
+                          className="ml-1 px-2 py-0 border-l-2 border-gray-300"
                         >
                           <InputField
                             label="account number"
@@ -334,20 +332,20 @@ export default function Page(pageProps: any) {
                 >
                   {/* Summary section */}
                   {!isNone(order.line_items) && (
-                    <div className="card px-0 mb-5">
-                      <header className="px-3 py-2 is-flex is-justify-content-space-between">
-                        <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
+                    <div className="rounded-xl border bg-card text-card-foreground shadow px-0 py-3 mb-5">
+                      <header className="px-3 flex justify-between">
+                        <span className="text-xs font-bold uppercase tracking-wide text-gray-700 flex items-center my-2">
                           SUMMARY
                         </span>
                       </header>
 
                       <div className="p-0 pb-1">
-                        <p className="is-title is-size-7 px-3 has-text-weight-semibold">
+                        <p className="text-xs font-semibold px-3 uppercase tracking-wide text-gray-700">
                           {`ITEMS (${(order.line_items || []).reduce((_, { quantity }) => _ + (isNone(quantity) ? 1 : (quantity as any)), 0)})`}
                         </p>
 
                         <div
-                          className="menu-list px-3 py-1"
+                          className="px-3 py-1"
                           style={{ maxHeight: "14em", overflow: "auto" }}
                         >
                           {(order.line_items || []).map((item, index) => (
@@ -360,7 +358,7 @@ export default function Page(pageProps: any) {
                       </div>
 
                       <footer className="px-3 py-1">
-                        <p className="has-text-weight-semibold is-size-7">
+                        <p className="font-semibold text-xs">
                           TOTAL:{" "}
                           {
                             <span>
@@ -377,7 +375,7 @@ export default function Page(pageProps: any) {
                             </span>
                           }
                         </p>
-                        <p className="has-text-weight-semibold is-size-7">
+                        <p className="font-semibold text-xs">
                           TOTAL WEIGHT:{" "}
                           {
                             <span>
@@ -397,13 +395,13 @@ export default function Page(pageProps: any) {
                   )}
 
                   {/* Address section */}
-                  <div className="card p-0">
+                  <div className="rounded-xl border bg-card text-card-foreground shadow px-0 py-3">
                     <div className="p-3">
-                      <header className="is-flex is-justify-content-space-between">
-                        <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
+                      <header className="flex justify-between">
+                        <span className="text-xs font-bold uppercase tracking-wide text-gray-700 flex items-center my-2">
                           Customer
                         </span>
-                        <div className="is-vcentered">
+                        <div className="flex items-center">
                           <AddressModalEditor
                             shipment={order as any}
                             address={order.shipping_to as AddressType}
@@ -431,20 +429,18 @@ export default function Page(pageProps: any) {
                       )}
 
                       {Object.values(order.shipping_to || {}).length === 0 && (
-                        <div className="notification is-warning is-light my-2 py-2 px-4 is-size-7">
+                        <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 my-2 py-2 px-4 text-xs rounded">
                           Please specify the customer address.
                         </div>
                       )}
-                    </div>
 
-                    <hr className="my-1" style={{ height: "1px" }} />
+                      <hr className="my-4" style={{ height: "1px" }} />
 
-                    <div className="p-3">
-                      <header className="is-flex is-justify-content-space-between">
-                        <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
+                      <header className="flex justify-between">
+                        <span className="text-xs font-bold uppercase tracking-wide text-gray-700 flex items-center my-2">
                           Billing Address
                         </span>
-                        <div className="is-vcentered">
+                        <div className="flex items-center">
                           <AddressModalEditor
                             shipment={order as any}
                             address={order.billing_address as AddressType}
@@ -474,7 +470,7 @@ export default function Page(pageProps: any) {
 
                       {Object.values(order.billing_address || {}).length ===
                         0 && (
-                          <div className="notification my-2 py-2 px-4 is-size-7">
+                          <div className="bg-gray-50 border border-gray-200 text-gray-700 my-2 py-2 px-4 text-xs rounded">
                             Same as shipping address.
                           </div>
                         )}
@@ -482,7 +478,7 @@ export default function Page(pageProps: any) {
                   </div>
 
                   {/* Metadata section */}
-                  <div className="card px-0 mt-5">
+                  <div className="rounded-xl border bg-card text-card-foreground shadow px-0 py-3 mt-5">
                     <div className="p-1 pb-4">
                       <MetadataEditor
                         object_type={MetadataObjectTypeEnum.order}
@@ -493,11 +489,11 @@ export default function Page(pageProps: any) {
                         <MetadataEditorContext.Consumer>
                           {({ isEditing, editMetadata }) => (
                             <>
-                              <header className="is-flex is-justify-content-space-between p-2">
-                                <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
+                              <header className="flex justify-between p-2">
+                                <span className="text-xs font-bold uppercase tracking-wide text-gray-700 flex items-center my-2">
                                   METADATA
                                 </span>
-                                <div className="is-vcentered">
+                                <div className="flex items-center">
                                   <ButtonField
                                     type="button"
                                     variant="link"
