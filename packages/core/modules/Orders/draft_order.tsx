@@ -8,8 +8,8 @@ import {
   MetadataEditorContext,
 } from "@karrio/ui/core/forms/metadata-editor";
 import { GoogleGeocodingScript } from "@karrio/ui/core/components/google-geocoding-script";
-import { CommodityDescription } from "@karrio/ui/core/components/commodity-description";
-import { AddressDescription } from "@karrio/ui/core/components/address-description";
+import { CommodityDescription } from "@karrio/ui/components/commodity-description";
+import { AddressDescription } from "@karrio/ui/components/address-description";
 import { formatRef, isEqual, isNone, isNoneOrEmpty } from "@karrio/lib";
 import { AddressModalEditor } from "@karrio/ui/components/address-modal-editor";
 import { MetadataObjectTypeEnum, PaidByEnum } from "@karrio/types";
