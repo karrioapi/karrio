@@ -37,7 +37,7 @@ djangorestframework==3.16.1
 djangorestframework_simplejwt==5.5.1
 drf-api-tracking==1.8.4
 drf-spectacular==0.28.0
-fonttools==4.59.0
+fonttools==4.59.1
 graphql-core==3.2.6
 gunicorn==23.0.0
 h11==0.16.0
@@ -47,7 +47,7 @@ idna==3.10
 inflection==0.5.1
 Jinja2==3.1.6
 jsonfield==3.2.0
-jsonschema==4.25.0
+jsonschema==4.25.1
 jsonschema-specifications==2025.4.1
 jstruct==2021.11
 jwcrypto==1.5.6
@@ -99,9 +99,9 @@ MarkupSafe==3.0.2
 more-itertools==10.7.0
 oauthlib==3.3.1
 packaging==25.0
-phonenumbers==9.0.11
+phonenumbers==9.0.12
 pillow==11.3.0
-posthog==6.5.0
+posthog==6.6.0
 psutil==7.0.0
 psycopg2-binary==2.9.10
 py-soap==2020.3.2
@@ -120,9 +120,9 @@ pyzint==0.1.10
 qrcode==7.4.2
 redis==6.4.0
 referencing==0.36.2
-requests==2.32.4
+requests==2.32.5
 rpds-py==0.27.0
-sentry-sdk==2.34.1
+sentry-sdk==2.35.0
 six==1.17.0
 sqlparse==0.5.3
 strawberry-graphql==0.278.1
