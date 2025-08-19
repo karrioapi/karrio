@@ -126,7 +126,8 @@ function CarrierConnectionManagement() {
 
   // Helper function to get the correct carrier name for rate sheets
   const getRateSheetCarrierName = (connection: Connection): string => {
-    return isGenericCarrier(connection) ? "generic" : connection.carrier_name;
+    // Freeze to the connection's own carrier_name; generic stays "generic"
+    return connection.carrier_name;
   };
 
   // Filter connections
@@ -272,7 +273,7 @@ function CarrierConnectionManagement() {
         return;
       }
 
-      // For rate sheets, use "generic" for generic/custom carriers, otherwise use carrier_name
+      // Freeze to the connection's carrier_name and preload this in the editor
       const rateSheetCarrierName = getRateSheetCarrierName(connection);
 
       const existingSheet = rate_sheets?.edges?.find(
@@ -291,6 +292,8 @@ function CarrierConnectionManagement() {
         setSelectedRateSheet({
           carrier_name: rateSheetCarrierName,
           name: `${displayName} Rate Sheet`,
+          // carry the connection id so the editor can link it on create
+          carriers: [{ id: connection.id }] as any,
         } as RateSheet);
         setSelectedRateSheetId('new');
       }
@@ -607,9 +610,13 @@ function CarrierConnectionManagement() {
             }
           }}
           onCreateNew={() => {
-            // For generic/custom carriers, use "generic" as carrier_name
+            // Freeze to the connection's carrier_name and preload defaults
             const rateSheetCarrierName = getRateSheetCarrierName(linkConnection);
-            setSelectedRateSheet({ carrier_name: rateSheetCarrierName, name: `${linkConnection.display_name || linkConnection.carrier_name} Rate Sheet` } as RateSheet);
+            setSelectedRateSheet({
+              carrier_name: rateSheetCarrierName,
+              name: `${linkConnection.display_name || linkConnection.carrier_name} Rate Sheet`,
+              carriers: [{ id: linkConnection.id }] as any,
+            } as RateSheet);
             setSelectedRateSheetId('new');
             setIsRateSheetEditorOpen(true);
             setIsLinkDialogOpen(false);
@@ -639,6 +646,9 @@ function CarrierConnectionManagement() {
           isAdmin={true}
           useRateSheet={useAdminRateSheet}
           useRateSheetMutation={useAdminRateSheetMutation}
+          // Freeze and preload defaults based on the launching connection's carrier
+          preloadCarrier={selectedRateSheet?.carrier_name}
+          linkConnectionId={(selectedRateSheet as any)?.carriers?.[0]?.id}
         />
       )}
     </div>

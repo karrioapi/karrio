@@ -134,6 +134,7 @@ export default function RateSheetsPage() {
           <RateSheetEditor
             rateSheetId={selectedRateSheetId}
             onClose={() => { setRateSheetEditorOpen(false); setSelectedRateSheetId(null); listQuery.refetch(); }}
+            // No connection context here; editor will default to 'generic' for new, and user selects carrier
             isAdmin={false}
             useRateSheet={useRateSheet}
             useRateSheetMutation={useRateSheetMutation}

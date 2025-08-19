@@ -172,7 +172,7 @@ export default function ConnectionsPage() {
       if (existingSheet) {
         setSelectedRateSheet(existingSheet.node);
       } else {
-        // Create default rate sheet structure using the connection carrier_name
+        // Freeze carrier_name to the connection's carrier and preload defaults
         setSelectedRateSheet({
           carrier_name: connection.carrier_name,
           name: `${connection.display_name} Rate Sheet`,
@@ -571,6 +571,7 @@ export default function ConnectionsPage() {
             setSelectedRateSheet(null);
             rateSheetsQuery.refetch();
           }}
+          // Freeze selector and preload defaults for the launching connection
           preloadCarrier={selectedRateSheet?.carrier_name}
           linkConnectionId={selectedRateSheet?.carriers?.[0]?.id}
           isAdmin={false}
@@ -595,7 +596,13 @@ export default function ConnectionsPage() {
             }
           }}
           onCreateNew={() => {
-            setSelectedRateSheet({ carrier_name: linkConnection.carrier_name, name: `${linkConnection.display_name || linkConnection.carrier_name} Rate Sheet`, services: [], carriers: [linkConnection] });
+            // Freeze to connection carrier and pass id for auto-link on create
+            setSelectedRateSheet({
+              carrier_name: linkConnection.carrier_name,
+              name: `${linkConnection.display_name || linkConnection.carrier_name} Rate Sheet`,
+              services: [],
+              carriers: [linkConnection]
+            });
             setIsRateSheetDialogOpen(true);
           }}
           onLink={async ({ connection_id, rate_sheet_id }) => {

@@ -23,7 +23,7 @@ import {
   AlertDialogAction,
   AlertDialogTrigger,
 } from "@karrio/ui/components/ui/alert-dialog";
-import { getCarrierServiceDefaults, isGenericCarrier } from "@karrio/lib/carrier-utils";
+// import { getCarrierServiceDefaults, isGenericCarrier } from "@karrio/lib/carrier-utils";
 import { jsonLanguage } from "@codemirror/lang-json";
 import { isEqual, failsafe } from "@karrio/lib";
 import CodeMirror from "@uiw/react-codemirror";
@@ -89,24 +89,16 @@ export const RateSheetEditor = ({
     const targetCarrier = carrierName || localData?.carrier_name;
     if (!targetCarrier) return;
 
-    // Create a mock connection object for the utility function
-    const mockConnection = {
-      carrier_name: targetCarrier === "generic" || isGenericCarrier({ carrier_name: targetCarrier }) ? "generic" : targetCarrier,
-      credentials: targetCarrier !== "generic" && targetCarrier ? { custom_carrier_name: targetCarrier } : undefined
-    };
+    // Load defaults strictly from api-metadata service_levels
+    const defaultServicesList = references?.service_levels?.[targetCarrier] || [];
 
-    // Use centralized utility to get service defaults
-    const defaultServicesList = getCarrierServiceDefaults(mockConnection, references);
-
-    if (defaultServicesList && defaultServicesList.length > 0) {
+    if (defaultServicesList.length > 0) {
       const defaultServices = defaultServicesList.map((service: any, index: number) => ({
         ...service,
         id: `temp_${Date.now()}_${index}`,
-        // Ensure zones structure is correct - remove any IDs to let backend assign them
         zones: (service.zones || [{ label: 'Zone 1', rate: 0 }]).map((zone: any, zoneIndex: number) => ({
           label: zone.label || `Zone ${zoneIndex + 1}`,
-          rate: zone.rate || 0
-          // No ID field - let backend assign
+          rate: zone.rate ?? 0
         }))
       }));
 
@@ -117,27 +109,8 @@ export const RateSheetEditor = ({
       return;
     }
 
-    // Fallback to carrier metadata if available
-    const carrierMeta = carrierMetadata.find(c => c.carrier_name === targetCarrier);
-    if (carrierMeta?.connection_fields?.services?.default) {
-      const defaultServices = carrierMeta.connection_fields.services.default.map((service: any, index: number) => ({
-        ...service,
-        id: `temp_${Date.now()}_${index}`,
-        zones: (service.zones || [{ rate: 0 }]).map((zone: any, zoneIndex: number) => ({
-          label: zone.label || `Zone ${zoneIndex + 1}`,
-          rate: zone.rate || 0
-        }))
-      }));
-
-      setLocalData((prev: any) => ({
-        ...prev,
-        services: defaultServices
-      }));
-      return;
-    }
-
-    console.warn(`No default services found for ${targetCarrier}`);
-  }, [carrierMetadata, references, localData?.carrier_name]);
+    console.warn(`No default services found in service_levels for ${targetCarrier}`);
+  }, [references?.service_levels, localData?.carrier_name]);
 
   React.useEffect(() => {
     if (rateSheet && !localData) {
