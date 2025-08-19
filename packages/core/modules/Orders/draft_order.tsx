@@ -6,7 +6,7 @@ import {
 import {
   MetadataEditor,
   MetadataEditorContext,
-} from "@karrio/ui/core/forms/metadata-editor";
+} from "@karrio/ui/components/metadata-editor";
 import { GoogleGeocodingScript } from "@karrio/ui/core/components/google-geocoding-script";
 import { CommodityDescription } from "@karrio/ui/components/commodity-description";
 import { AddressDescription } from "@karrio/ui/components/address-description";
@@ -20,6 +20,7 @@ import { useLoader } from "@karrio/ui/core/components/loader";
 import { ModalProvider } from "@karrio/ui/core/modals/modal";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { Spinner } from "@karrio/ui/core/components";
+import { Card, CardHeaderSection, CardBody, CardFooter, CardSectionTitle } from "@karrio/ui/components/card";
 import { useOrderForm } from "@karrio/hooks/order";
 import React, { useEffect, useState } from "react";
 import { AddressType } from "@karrio/types";
@@ -77,8 +78,8 @@ export default function Page(pageProps: any) {
     return (
       <>
         <CommodityEditModalProvider orderFilter={{ isDisabled: true }}>
-          <header className="px-0 pb-2 pt-4 is-flex is-justify-content-space-between">
-            <span className="title is-4 my-2">{`${id === "new" ? "Create" : "Edit"} order`}</span>
+          <header className="px-0 pb-2 pt-4 flex justify-between items-center">
+            <span className="text-2xl font-semibold my-2">{`${id === "new" ? "Create" : "Edit"} order`}</span>
             <div>
               <ButtonField
                 type="button"
@@ -99,8 +100,8 @@ export default function Page(pageProps: any) {
           {!ready && <Spinner />}
 
           {ready && (
-            <div className="columns pb-6 m-0">
-              <div className="column px-0" style={{ minHeight: "850px" }}>
+            <div className="flex gap-6 pb-6">
+              <div className="flex-[7] px-0" style={{ minHeight: "850px" }}>
                 {/* Line Items */}
                 <div className="card px-0 py-3">
                   <header className="px-3 is-flex is-justify-content-space-between">
@@ -327,9 +328,7 @@ export default function Page(pageProps: any) {
                 </div>
               </div>
 
-              <div className="p-2"></div>
-
-              <div className="column is-5 px-0 pb-6 is-relative">
+              <div className="flex-[5] px-0 pb-6 relative">
                 <div
                   style={{ position: "sticky", top: "8.5%", right: 0, left: 0 }}
                 >
@@ -503,11 +502,11 @@ export default function Page(pageProps: any) {
                                     type="button"
                                     variant="link"
                                     size="sm"
-                                    disabled={isEditing}
+                                    disabled={loading}
                                     onClick={() => editMetadata()}
                                     className="text-blue-600 hover:text-blue-800 p-1 h-auto"
                                   >
-                                    <span>Edit metadata</span>
+                                    Edit metadata
                                   </ButtonField>
                                 </div>
                               </header>
