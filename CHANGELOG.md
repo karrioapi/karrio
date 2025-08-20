@@ -1,3 +1,10 @@
+# Karrio 2025.5rc16
+
+## Changes
+
+### Fix
+
+- hotfix: document generation backward compatibility and improve document template editor
 
 # Karrio 2025.5rc15
 
