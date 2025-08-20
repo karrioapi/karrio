@@ -1,28 +1,23 @@
 import {
   GET_ORGANIZATION,
   get_organization,
-  get_organization_organization_usage,
+  get_organization_organization_usage
 } from "@karrio/types/graphql/ee";
 import {
   GET_SYSTEM_USAGE,
   GetSystemUsage,
   GetSystemUsage_system_usage,
-  GET_USAGE,
-  GetUsage,
-  GetUsage_organization_usage,
   UsageFilter,
 } from "@karrio/types";
 import { gqlstr, insertUrlParam, isNoneOrEmpty } from "@karrio/lib";
-import { useQuery } from "@tanstack/react-query";
-import { useAPIMetadata } from "./api-metadata";
 import { useKarrio, useAuthenticatedQuery } from "./karrio";
+import { useAPIMetadata } from "./api-metadata";
 import { useSyncedSession } from "./session";
 import moment from "moment";
 import React from "react";
 
-type UsageType = get_organization_organization_usage &
-  GetSystemUsage_system_usage &
-  GetUsage_organization_usage;
+type UsageType = GetSystemUsage_system_usage &
+  get_organization_organization_usage;
 type FilterType = UsageFilter & { setVariablesToURL?: boolean };
 const USAGE_FILTERS: Record<string, UsageFilter> = {
   "7 days": {
@@ -99,8 +94,8 @@ export function useAPIUsage({
 
   const orgUsage = () =>
     karrio.graphql
-      .request<GetUsage>(gqlstr(GET_USAGE), {
-        variables: { filter },
+      .request<get_organization>(gqlstr(GET_ORGANIZATION), {
+        variables: { id: session?.orgId, usage: filter },
       })
       .then(({ organization }) => ({
         usage: organization?.usage as UsageType,

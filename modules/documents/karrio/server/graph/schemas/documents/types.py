@@ -21,6 +21,8 @@ class DocumentTemplateType:
     active: bool
     description: typing.Optional[str]
     related_object: typing.Optional[inputs.TemplateRelatedObjectEnum]
+    metadata: typing.Optional[utils.JSON]
+    options: typing.Optional[utils.JSON]
     created_at: typing.Optional[datetime.datetime]
     updated_at: typing.Optional[datetime.datetime]
     created_by: typing.Optional[base.UserType]
