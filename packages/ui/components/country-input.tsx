@@ -18,7 +18,7 @@ export interface CountryInputComponent {
   align?: "start" | "center" | "end";
 }
 
-export const CountryInput = React.forwardRef<HTMLInputElement, CountryInputComponent>(
+export const CountryInput = React.forwardRef<HTMLButtonElement, CountryInputComponent>(
   ({
     label = "Country",
     required,
