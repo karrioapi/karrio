@@ -23,6 +23,7 @@ import { Spinner } from "@karrio/ui/core/components";
 import { useOrderForm } from "@karrio/hooks/order";
 import React, { useEffect, useState } from "react";
 import { AddressType } from "@karrio/types";
+import { Plus, Edit, X } from "lucide-react";
 
 const ContextProviders = bundleContexts([
   CommodityEditModalProvider,
@@ -121,11 +122,7 @@ export default function Page(pageProps: any) {
                                 onSubmit: (_) => mutation.addItem(_),
                               })
                             }
-                            leftIcon={
-                              <span className="icon is-small">
-                                <i className="fas fa-plus"></i>
-                              </span>
-                            }
+                            leftIcon={<Plus className="h-4 w-4" />}
                             className="text-blue-600 hover:text-blue-800 p-2 h-auto"
                           >
                             add item
@@ -164,9 +161,7 @@ export default function Page(pageProps: any) {
                                     })
                                   }
                                 >
-                                  <span className="icon is-small">
-                                    <i className="fas fa-pen"></i>
-                                  </span>
+                                  <Edit className="h-4 w-4" />
                                 </ButtonField>
                               )}
                             </CommodityStateContext.Consumer>
@@ -182,9 +177,7 @@ export default function Page(pageProps: any) {
                                 mutation.deleteItem(index, item?.id)()
                               }
                             >
-                              <span className="icon is-small">
-                                <i className="fas fa-times"></i>
-                              </span>
+                              <X className="h-4 w-4" />
                             </ButtonField>
                           </div>
                         </div>
