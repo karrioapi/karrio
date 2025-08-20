@@ -14,6 +14,7 @@ import { formatRef, isEqual, isNone, isNoneOrEmpty } from "@karrio/lib";
 import { AddressModalEditor } from "@karrio/ui/components/address-modal-editor";
 import { MetadataObjectTypeEnum, PaidByEnum } from "@karrio/types";
 import { InputField } from "@karrio/ui/components/input-field";
+import { DateInput } from "@karrio/ui/components/date-input";
 import { RadioGroupField } from "@karrio/ui/components/radio-group-field";
 import { ButtonField } from "@karrio/ui/components/button-field";
 import { useLoader } from "@karrio/ui/core/components/loader";
@@ -204,11 +205,10 @@ export default function Page(pageProps: any) {
 
                   <div className="p-3 pb-0">
                     {/* order date */}
-                    <InputField
+                    <DateInput
                       name="order_date"
                       label="order date"
-                      type="date"
-                      wrapperClass="w-1/3 mb-2"
+                      wrapperClass="w-full sm:w-1/3 mb-2"
                       labelBold={true}
                       defaultValue={order.order_date || ""}
                       onChange={(e) =>
@@ -236,11 +236,10 @@ export default function Page(pageProps: any) {
                     />
 
                     {/* invoice date */}
-                    <InputField
+                    <DateInput
                       name="invoice_date"
                       label="invoice date"
-                      type="date"
-                      wrapperClass="w-1/3 mb-2"
+                      wrapperClass="w-full sm:w-1/3 mb-2"
                       labelBold={true}
                       defaultValue={order.options?.invoice_date || ""}
                       onChange={(e) =>
