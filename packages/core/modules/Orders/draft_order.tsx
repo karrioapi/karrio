@@ -215,8 +215,7 @@ export default function Page(pageProps: any) {
                       name="order_date"
                       label="order date"
                       type="date"
-                      className="is-small"
-                      fieldClass="column mb-0 is-4 p-0 mb-2"
+                      wrapperClass="w-1/3 mb-2"
                       labelBold={true}
                       defaultValue={order.order_date || ""}
                       onChange={(e) =>
@@ -229,9 +228,8 @@ export default function Page(pageProps: any) {
                       label="invoice number"
                       name="invoice_number"
                       placeholder="invoice number"
-                      className="is-small"
                       autoComplete="off"
-                      fieldClass="column mb-0 is-4 p-0 mb-2"
+                      wrapperClass="w-1/3 mb-2"
                       labelBold={true}
                       defaultValue={order.options?.invoice_number || ""}
                       onChange={(e) =>
@@ -249,8 +247,7 @@ export default function Page(pageProps: any) {
                       name="invoice_date"
                       label="invoice date"
                       type="date"
-                      className="is-small"
-                      fieldClass="column mb-0 is-4 p-0 mb-2"
+                      wrapperClass="w-1/3 mb-2"
                       labelBold={true}
                       defaultValue={order.options?.invoice_date || ""}
                       onChange={(e) =>
@@ -306,7 +303,6 @@ export default function Page(pageProps: any) {
                         >
                           <InputField
                             label="account number"
-                            className="is-small"
                             labelBold={true}
                             defaultValue={
                               order?.options?.account_number as string
