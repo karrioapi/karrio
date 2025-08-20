@@ -222,7 +222,7 @@ export default function Page(pageProps: any) {
                       name="invoice_number"
                       placeholder="invoice number"
                       autoComplete="off"
-                      wrapperClass="w-1/3 mb-2"
+                      wrapperClass="w-full sm:w-1/3 mb-2"
                       labelBold={true}
                       defaultValue={order.options?.invoice_number || ""}
                       onChange={(e) =>
