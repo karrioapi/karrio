@@ -71,20 +71,13 @@ class Documents:
 
         # For generic contexts, include the full data structure
         generic_contexts = data.get("generic_context") or lib.identity(
-            [data] if related_object is None else []
+            [{"data": data}] if related_object is None else []
         )
 
         # If no specific contexts are provided but we have a related_object, create a context with the data
         if not shipment_contexts and not order_contexts and not generic_contexts:
-            if related_object == "shipment" and data:
-                # For shipment templates, ensure we have the expected structure
-                generic_contexts = [data]
-            elif related_object == "order" and data:
-                # For order templates, ensure we have the expected structure
-                generic_contexts = [data]
-            else:
-                # Default fallback
-                generic_contexts = [data]
+            # For fallback cases, always wrap data to maintain legacy behavior
+            generic_contexts = [{"data": data}]
 
         filename = lib.identity(
             dict(filename=kwargs.get("doc_name")) if kwargs.get("doc_name") else {}
@@ -96,6 +89,7 @@ class Documents:
             for key, value in options.get("prefetch", {}).items():
                 try:
                     template_obj = jinja2.Template(value)
+                    print(ctx, "<<<<<<<<, ctx")
                     rendered = template_obj.render(
                         **ctx,
                         metadata=metadata,
@@ -122,7 +116,7 @@ class Documents:
 
         # If no contexts are available, create a default one
         if not all_contexts:
-            all_contexts = [data or {}]
+            all_contexts = [{"data": data} if data else {}]
 
         rendered_pages = []
         for ctx in all_contexts:

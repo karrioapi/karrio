@@ -72,80 +72,6 @@ export interface GetSystemUsageVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GetUsage
-// ====================================================
-
-export interface GetUsage_organization_usage_api_errors {
-  label: string | null;
-  count: number | null;
-  date: string | null;
-}
-
-export interface GetUsage_organization_usage_api_requests {
-  label: string | null;
-  count: number | null;
-  date: string | null;
-}
-
-export interface GetUsage_organization_usage_order_volumes {
-  label: string | null;
-  count: number | null;
-  date: string | null;
-}
-
-export interface GetUsage_organization_usage_shipment_count {
-  label: string | null;
-  count: number | null;
-  date: string | null;
-}
-
-export interface GetUsage_organization_usage_tracker_count {
-  label: string | null;
-  count: number | null;
-  date: string | null;
-}
-
-export interface GetUsage_organization_usage_shipping_spend {
-  label: string | null;
-  count: number | null;
-  date: string | null;
-}
-
-export interface GetUsage_organization_usage {
-  members: number | null;
-  total_errors: number | null;
-  order_volume: number | null;
-  total_requests: number | null;
-  total_trackers: number | null;
-  total_shipments: number | null;
-  unfulfilled_orders: number | null;
-  total_shipping_spend: number | null;
-  total_addons_charges: number | null;
-  api_errors: GetUsage_organization_usage_api_errors[] | null;
-  api_requests: GetUsage_organization_usage_api_requests[] | null;
-  order_volumes: GetUsage_organization_usage_order_volumes[] | null;
-  shipment_count: GetUsage_organization_usage_shipment_count[] | null;
-  tracker_count: GetUsage_organization_usage_tracker_count[] | null;
-  shipping_spend: GetUsage_organization_usage_shipping_spend[] | null;
-}
-
-export interface GetUsage_organization {
-  usage: GetUsage_organization_usage;
-}
-
-export interface GetUsage {
-  organization: GetUsage_organization | null;
-}
-
-export interface GetUsageVariables {
-  filter?: UsageFilter | null;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL query operation: get_address_templates
 // ====================================================
 
@@ -3692,6 +3618,8 @@ export interface get_document_template_document_template {
   description: string | null;
   related_object: TemplateRelatedObject | null;
   active: boolean;
+  metadata: any | null;
+  options: any | null;
   preview_url: string | null;
   updated_at: any | null;
 }
@@ -3728,6 +3656,8 @@ export interface get_document_templates_document_templates_edges_node {
   description: string | null;
   related_object: TemplateRelatedObject | null;
   active: boolean;
+  metadata: any | null;
+  options: any | null;
   updated_at: any | null;
   preview_url: string | null;
 }
@@ -5274,6 +5204,9 @@ export enum WeightUnitEnum {
 }
 
 export enum CarrierNameEnum {
+  allied_express = "allied_express",
+  allied_express_local = "allied_express_local",
+  amazon_shipping = "amazon_shipping",
   aramex = "aramex",
   asendia_us = "asendia_us",
   australiapost = "australiapost",
@@ -5289,7 +5222,6 @@ export enum CarrierNameEnum {
   dhl_universal = "dhl_universal",
   dicom = "dicom",
   dpd = "dpd",
-  dtdc = "dtdc",
   easypost = "easypost",
   easyship = "easyship",
   eshipper = "eshipper",
@@ -5421,6 +5353,7 @@ export interface UsageFilter {
   date_after?: string | null;
   date_before?: string | null;
   omit?: string[] | null;
+  surcharge_id?: string | null;
 }
 
 // null
@@ -5890,6 +5823,7 @@ export interface CreateDocumentTemplateMutationInput {
   description?: string | null;
   metadata?: any | null;
   related_object?: TemplateRelatedObject | null;
+  options?: any | null;
 }
 
 // null
@@ -5900,7 +5834,9 @@ export interface UpdateDocumentTemplateMutationInput {
   template?: string | null;
   active?: boolean | null;
   description?: string | null;
+  metadata?: any | null;
   related_object?: TemplateRelatedObject | null;
+  options?: any | null;
 }
 
 // null

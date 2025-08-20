@@ -39,13 +39,16 @@ import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useSearchParams } from "next/navigation";
 import CodeMirror from "@uiw/react-codemirror";
 import { html } from "@codemirror/lang-html";
+import { json } from "@codemirror/lang-json";
 import { useKarrio } from "@karrio/hooks/karrio";
 import { Badge } from "@karrio/ui/components/ui/badge";
+import { EnhancedMetadataEditor } from "./enhanced-metadata-editor";
 
 type stateValue = string | boolean | string[] | Partial<TemplateType>;
 const DEFAULT_STATE = {
   related_object: "order",
   template: DEFAULT_DOCUMENT_TEMPLATE,
+  metadata: {},
 };
 
 function reducer(
@@ -75,6 +78,9 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
   const [previewLoading, setPreviewLoading] = React.useState(false);
   const [previewError, setPreviewError] = React.useState<string | null>(null);
   const [pdfUrl, setPdfUrl] = React.useState<string | null>(null);
+  const [sampleData, setSampleData] = React.useState<string>("");
+  const [metadata, setMetadata] = React.useState<string>("{}");
+  const [options, setOptions] = React.useState<string>("{}");
 
   const { references } = useAPIMetadata();
   const { documents } = useKarrio();
@@ -85,9 +91,7 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
   const id = templateId || searchParams.get("id") as string;
   const mutation = useDocumentTemplateMutation();
   const {
-    query: { data: { document_template } = {}, ...query },
-    docId: currentDocId,
-    setDocId,
+    query: { data: { document_template } = {} },
   } = useDocumentTemplate({
     setVariablesToURL: true,
     id: id as string,
@@ -121,9 +125,21 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
       evt?.preventDefault();
       loader.setLoading(true);
 
+      const { preview_url, updated_at, ...templateData } = template as any;
+
+      // Parse options from editor
+      let parsedOptions = {};
+      try {
+        parsedOptions = options ? JSON.parse(options) : {};
+      } catch (error) {
+        console.warn('Invalid options JSON, using empty object:', error);
+        parsedOptions = {};
+      }
+
       const data = {
-        ...(template as any),
+        ...templateData,
         active: template.active as boolean,
+        options: parsedOptions,
       };
 
       if (isNew) {
@@ -186,15 +202,45 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
     setPreviewContent("");
 
     try {
-      // Generate sample data based on related object
-      const sampleData = generateSampleData(template.related_object);
+      // Parse sample data, metadata, and options
+      let currentSampleData, currentMetadata, currentOptions;
+      let hasParseError = false;
+
+      try {
+        currentSampleData = sampleData ? JSON.parse(sampleData) : generateSampleData(template.related_object);
+      } catch (parseError) {
+        currentSampleData = generateSampleData(template.related_object);
+        setPreviewError("Sample data has invalid JSON format. Using default data for preview.");
+        hasParseError = true;
+      }
+
+      try {
+        currentMetadata = template.metadata || (metadata ? JSON.parse(metadata) : {});
+      } catch (parseError) {
+        currentMetadata = template.metadata || {};
+        if (!hasParseError) {
+          setPreviewError("Metadata has invalid JSON format. Using empty metadata for preview.");
+          hasParseError = true;
+        }
+      }
+
+      try {
+        currentOptions = options ? JSON.parse(options) : {};
+      } catch (parseError) {
+        currentOptions = {};
+        if (!hasParseError) {
+          setPreviewError("Options has invalid JSON format. Using empty options for preview.");
+          hasParseError = true;
+        }
+      }
 
       const response = await documents.generateDocument({
         documentData: {
           template: template.template,
           doc_format: 'pdf',
           doc_name: template.name || 'preview',
-          data: sampleData,
+          data: currentSampleData,
+          options: currentOptions,
         }
       });
 
@@ -292,78 +338,200 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
     switch (relatedObject) {
       case 'shipment':
         return {
-          object: {
-            id: 'shp_sample123',
-            tracking_number: 'TRK123456789',
-            created: new Date().toISOString(),
-            updated: new Date().toISOString(),
-          },
           shipment: {
-            tracking_number: 'TRK123456789',
-            recipient: {
-              name: 'John Doe',
-              address_line1: '123 Main St',
-              city: 'New York',
-              state_code: 'NY',
-              postal_code: '10001',
-              country_code: 'US',
-            },
+            id: 'shp_f49473b250ae45bcb7e2a671f54f40ca',
+            object_type: 'shipment',
+            tracking_url: '/v1/trackers/tst_overland/0000000135',
+            tracking_number: '0000000135',
+            tracking_numbers: ['0000000135', '0000000134'],
             shipper: {
-              name: 'Sample Company',
-              address_line1: '456 Business Ave',
-              city: 'Los Angeles',
-              state_code: 'CA',
-              postal_code: '90210',
-              country_code: 'US',
+              id: 'adr_77cf815a63904280acb908b9357b727b',
+              postal_code: 'E1C4Z8',
+              city: 'Moncton',
+              federal_tax_id: null,
+              state_tax_id: null,
+              person_name: 'John Doe',
+              company_name: 'A corp.',
+              country_code: 'CA',
+              email: null,
+              phone_number: '+1 514-000-0000',
+              state_code: 'NB',
+              street_number: null,
+              residential: false,
+              address_line1: '125 Church St',
+              address_line2: null,
+              validate_location: null,
+              object_type: 'address',
+              validation: null,
             },
-            service: 'Standard Shipping',
-            carrier_name: 'Sample Carrier',
+            recipient: {
+              id: 'adr_470c247fbd6441aaaaf3c282d8e80637',
+              postal_code: 'V6M2V9',
+              city: 'Vancouver',
+              federal_tax_id: null,
+              state_tax_id: null,
+              person_name: 'Jane Doe',
+              company_name: 'B corp.',
+              country_code: 'CA',
+              email: null,
+              phone_number: '+1 514-000-0000',
+              state_code: 'BC',
+              street_number: null,
+              residential: true,
+              address_line1: '5840 Oak St',
+              address_line2: null,
+              validate_location: false,
+              object_type: 'address',
+              validation: null,
+            },
+            parcels: [
+              {
+                id: 'pcl_00baac55ac8347718342fdc32f6104f5',
+                weight: 1,
+                width: 33.7,
+                height: 18.2,
+                length: 10,
+                packaging_type: 'medium_box',
+                package_preset: null,
+                description: null,
+                content: null,
+                is_document: false,
+                weight_unit: 'KG',
+                dimension_unit: 'CM',
+                items: [
+                  {
+                    id: 'cdt_2e947981ee1c4cec995573bc16386f96',
+                    weight: 0.75,
+                    weight_unit: 'KG',
+                    description: null,
+                    title: 'Violet Suede Shoes',
+                    quantity: 1,
+                    sku: null,
+                    value_amount: 85.95,
+                    value_currency: 'USD',
+                    origin_country: null,
+                    parent_id: 'cdt_4b80710300ea4e22b67f6a488e588a34',
+                    metadata: {},
+                    object_type: 'commodity',
+                  }
+                ],
+                freight_class: null,
+                reference_number: '0000000135',
+                object_type: 'parcel',
+              }
+            ],
+            services: [],
+            options: { shipment_date: new Date().toISOString().split('T')[0] },
+            payment: { paid_by: 'sender', currency: null, account_number: null },
+            customs: null,
+            rates: [
+              {
+                id: 'rat_1640580c8c5a454b865f68e8f236d6d9',
+                object_type: 'rate',
+                carrier_name: 'tst_overland',
+                carrier_id: 'tst-overland',
+                currency: 'CAD',
+                estimated_delivery: null,
+                service: 'standard_service',
+                discount: null,
+                base_charge: 200,
+                total_charge: 200,
+                duties_and_taxes: null,
+                transit_days: null,
+                extra_charges: [],
+                meta: {
+                  service_name: 'STANDARD SERVICE',
+                  rate_provider: 'tst_overland',
+                  carrier_connection_id: 'car_9dac728533e841b09ec453178de5b3c3',
+                },
+                test_mode: true,
+              }
+            ],
+            reference: 'Order #1073459962,394873849374',
+            label_type: 'PDF',
+            carrier_ids: [],
+            tracker_id: null,
+            created_at: new Date().toISOString(),
+            metadata: { order_ids: '1073459962,394873849374' },
+            messages: [],
+            status: 'purchased',
+            carrier_name: 'generic',
+            carrier_id: 'tst-overland',
           }
         };
       case 'order':
         return {
-          object: {
-            id: 'ord_sample123',
-            order_id: 'ORD-2024-001',
-            created: new Date().toISOString(),
-            updated: new Date().toISOString(),
-          },
           order: {
-            order_id: 'ORD-2024-001',
+            id: 'ord_028e5cb83814487a9546d0690260f0ee',
+            object_type: 'order',
+            order_id: '1073459962',
+            order_date: new Date().toISOString().split('T')[0],
+            source: 'shopify',
+            status: 'unfulfilled',
             shipping_to: {
-              name: 'Jane Smith',
-              address_line1: '789 Customer Lane',
-              city: 'Chicago',
-              state_code: 'IL',
-              postal_code: '60601',
-              country_code: 'US',
+              id: 'adr_4e038ec1bf4448d284069d0dfd761fb3',
+              postal_code: 'E1C4Z8',
+              city: 'Moncton',
+              federal_tax_id: null,
+              state_tax_id: null,
+              person_name: 'John Doe',
+              company_name: 'A corp.',
+              country_code: 'CA',
+              email: null,
+              phone_number: '+1 514-000-0000',
+              state_code: 'NB',
+              street_number: null,
+              residential: false,
+              address_line1: '125 Church St',
+              address_line2: null,
+              validate_location: false,
+              object_type: 'address',
+              validation: null,
             },
-            shipping_from: {
-              name: 'Sample Store',
-              address_line1: '321 Store Street',
-              city: 'Miami',
-              state_code: 'FL',
-              postal_code: '33101',
-              country_code: 'US',
-            },
+            shipping_from: null,
             line_items: [
               {
-                title: 'Sample Product',
-                quantity: 2,
-                value_amount: 29.99,
+                id: 'cdt_cd32372be5524a2fa492c4af598b7679',
+                weight: 0.75,
+                weight_unit: 'KG',
+                description: null,
+                title: 'Violet Suede Shoes',
+                quantity: 1,
+                unfulfilled_quantity: 1,
+                sku: null,
+                value_amount: 85.95,
                 value_currency: 'USD',
-              }
-            ]
+                origin_country: null,
+                parent_id: null,
+                metadata: {},
+                object_type: 'commodity',
+              },
+              {
+                id: 'cdt_71ef30b72d4c4b94882337b44e0d3fb9',
+                weight: 1.7,
+                weight_unit: 'KG',
+                description: null,
+                title: 'Purple Leather Coat',
+                quantity: 1,
+                unfulfilled_quantity: 1,
+                sku: null,
+                value_amount: 129.99,
+                value_currency: 'USD',
+                origin_country: null,
+                parent_id: null,
+                metadata: {},
+                object_type: 'commodity',
+              },
+            ],
+            options: {},
+            metadata: {},
+            shipments: [],
+            test_mode: true,
+            created_at: new Date().toISOString(),
           }
         };
       default:
-        return {
-          object: {
-            id: 'obj_sample123',
-            created: new Date().toISOString(),
-            updated: new Date().toISOString(),
-          }
-        };
+        return {};
     }
   };
 
@@ -378,6 +546,31 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
       dispatch({ name: "partial", value: document_template as any });
     }
   }, [document_template]);
+
+  // Initialize metadata and options from loaded template
+  React.useEffect(() => {
+    if (document_template && docId !== "new") {
+      // Initialize options from template
+      if (document_template.options) {
+        try {
+          setOptions(JSON.stringify(document_template.options, null, 2));
+        } catch (error) {
+          console.warn('Failed to parse template options:', error);
+          setOptions("{}");
+        }
+      } else {
+        setOptions("{}");
+      }
+    }
+  }, [document_template, docId]);
+
+  // Initialize sample data when template or related_object changes
+  React.useEffect(() => {
+    if (template.related_object) {
+      const defaultSampleData = generateSampleData(template.related_object);
+      setSampleData(JSON.stringify(defaultSampleData, null, 2));
+    }
+  }, [template.related_object]);
 
   // Cleanup PDF URL on unmount (only for object URLs, not data URLs)
   React.useEffect(() => {
@@ -526,6 +719,15 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
                 />
               </div>
 
+              <div className="space-y-1 lg:space-y-2">
+                <EnhancedMetadataEditor
+                  value={template.metadata || {}}
+                  onChange={(metadata) => dispatch({ name: "metadata", value: metadata })}
+                  className="border-0"
+                  maxHeight="200px"
+                />
+              </div>
+
               <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
@@ -600,6 +802,32 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
               </div>
             </button>
             <button
+              onClick={() => setActiveTab("data")}
+              className={`px-2 lg:px-4 py-2 lg:py-3 text-xs lg:text-sm font-medium border-b-2 transition-colors ${activeTab === "data"
+                ? "border-blue-500 text-blue-600 bg-blue-50/50"
+                : "border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300"
+                }`}
+            >
+              <div className="flex items-center gap-1 lg:gap-2">
+                <FileText className="h-3 w-3 lg:h-4 lg:w-4" />
+                <span className="hidden sm:inline">Sample Data</span>
+                <span className="sm:hidden">Data</span>
+              </div>
+            </button>
+            <button
+              onClick={() => setActiveTab("options")}
+              className={`px-2 lg:px-4 py-2 lg:py-3 text-xs lg:text-sm font-medium border-b-2 transition-colors ${activeTab === "options"
+                ? "border-blue-500 text-blue-600 bg-blue-50/50"
+                : "border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300"
+                }`}
+            >
+              <div className="flex items-center gap-1 lg:gap-2">
+                <FileText className="h-3 w-3 lg:h-4 lg:w-4" />
+                <span className="hidden sm:inline">Options</span>
+                <span className="sm:hidden">Options</span>
+              </div>
+            </button>
+            <button
               onClick={() => {
                 setActiveTab("preview");
                 if (!previewContent && !previewError && template.template) {
@@ -625,13 +853,14 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
           {/* Tab Content */}
           <div className="flex-1 overflow-hidden min-h-0">
             {activeTab === "code" && (
-              <div className="h-full w-full">
+              <div className="h-full w-full overflow-auto">
                 <CodeMirror
                   value={template.template as string || DEFAULT_DOCUMENT_TEMPLATE}
                   onChange={handleCodeChange}
                   extensions={[html()]}
                   theme="light"
-                  className="h-full w-full text-xs lg:text-sm"
+                  height="100%"
+                  className="text-xs lg:text-sm"
                   basicSetup={{
                     lineNumbers: true,
                     foldGutter: true,
@@ -644,6 +873,106 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
                     highlightSelectionMatches: false,
                   }}
                 />
+              </div>
+            )}
+
+            {activeTab === "data" && (
+              <div className="h-full flex flex-col bg-white min-h-0">
+                <div className="flex items-center justify-between p-2 lg:p-3 border-b border-slate-200 flex-shrink-0">
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <h3 className="text-xs lg:text-sm font-medium truncate">Sample Data</h3>
+                    {template.related_object && (
+                      <Badge variant="outline" className="text-xs flex-shrink-0">
+                        {template.related_object} template
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-1 lg:gap-2 flex-shrink-0">
+                    <Button
+                      onClick={() => {
+                        const defaultSampleData = generateSampleData(template.related_object || 'shipment');
+                        setSampleData(JSON.stringify(defaultSampleData, null, 2));
+                      }}
+                      variant="outline"
+                      size="sm"
+                      className="h-6 lg:h-7 px-1 lg:px-2 text-xs"
+                    >
+                      <RefreshCw className="h-3 w-3 lg:mr-1" />
+                      <span className="hidden lg:inline">Reset</span>
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="flex-1 overflow-auto">
+                  <CodeMirror
+                    value={sampleData}
+                    onChange={(value) => setSampleData(value)}
+                    extensions={[json()]}
+                    theme="light"
+                    height="100%"
+                    className="text-xs lg:text-sm"
+                    basicSetup={{
+                      lineNumbers: true,
+                      foldGutter: true,
+                      dropCursor: false,
+                      allowMultipleSelections: false,
+                      indentOnInput: true,
+                      bracketMatching: true,
+                      closeBrackets: true,
+                      autocompletion: true,
+                      highlightSelectionMatches: false,
+                    }}
+                  />
+                </div>
+
+                <div className="border-t border-slate-200 p-2 lg:p-3 text-xs text-slate-500 flex-shrink-0">
+                  <p>Edit the sample data above to customize the preview. Data must be valid JSON.</p>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "options" && (
+              <div className="h-full flex flex-col bg-white min-h-0">
+                <div className="flex items-center justify-between p-2 lg:p-3 border-b border-slate-200 flex-shrink-0">
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <h3 className="text-xs lg:text-sm font-medium truncate">Template Options</h3>
+                  </div>
+                  <div className="flex items-center gap-1 lg:gap-2 flex-shrink-0">
+                    <Button
+                      onClick={() => setOptions("{}")}
+                      variant="outline"
+                      size="sm"
+                      className="h-6 lg:h-7 px-1 lg:px-2 text-xs"
+                    >
+                      <RefreshCw className="h-3 w-3 lg:mr-1" />
+                      <span className="hidden lg:inline">Clear</span>
+                    </Button>
+                  </div>
+                </div>
+                <div className="flex-1 overflow-auto">
+                  <CodeMirror
+                    value={options}
+                    onChange={(value) => setOptions(value)}
+                    extensions={[json()]}
+                    theme="light"
+                    height="100%"
+                    className="text-xs lg:text-sm"
+                    basicSetup={{
+                      lineNumbers: true,
+                      foldGutter: true,
+                      dropCursor: false,
+                      allowMultipleSelections: false,
+                      indentOnInput: true,
+                      bracketMatching: true,
+                      closeBrackets: true,
+                      autocompletion: true,
+                      highlightSelectionMatches: false,
+                    }}
+                  />
+                </div>
+                <div className="border-t border-slate-200 p-2 lg:p-3 text-xs text-slate-500 flex-shrink-0">
+                  <p>Configure template options as JSON. These will be available in the template as variables.</p>
+                </div>
               </div>
             )}
 

@@ -44,54 +44,6 @@ export const GET_SYSTEM_USAGE = gql`
   }
 `;
 
-export const GET_USAGE = gql`
-  query GetUsage($filter: UsageFilter) {
-    organization {
-      usage(filter: $filter) {
-        members
-        total_errors
-        order_volume
-        total_requests
-        total_trackers
-        total_shipments
-        unfulfilled_orders
-        total_shipping_spend
-        total_addons_charges
-        api_errors {
-          label
-          count
-          date
-        }
-        api_requests {
-          label
-          count
-          date
-        }
-        order_volumes {
-          label
-          count
-          date
-        }
-        shipment_count {
-          label
-          count
-          date
-        }
-        tracker_count {
-          label
-          count
-          date
-        }
-        shipping_spend {
-          label
-          count
-          date
-        }
-      }
-    }
-  }
-`;
-
 export const GET_ADDRESS_TEMPLATES = gql`
   query get_address_templates($filter: AddressFilter) {
     address_templates(filter: $filter) {
@@ -2637,6 +2589,8 @@ export const GET_DOCUMENT_TEMPLATE = gql`
       description
       related_object
       active
+      metadata
+      options
       preview_url
       updated_at
     }
@@ -2662,6 +2616,8 @@ export const GET_DOCUMENT_TEMPLATES = gql`
           description
           related_object
           active
+          metadata
+          options
           updated_at
           preview_url
         }
