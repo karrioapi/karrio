@@ -43,7 +43,7 @@ export const InputField = React.forwardRef<HTMLInputElement, InputFieldComponent
     };
 
     return (
-      <div className={cn("px-1 py-2", wrapperClass)}>
+      <div className={cn(wrapperClass || "px-1 py-2")}>
         {label !== undefined && (
           <Label 
             className={cn("capitalize text-xs mb-1 block", labelBold ? "font-bold" : "font-normal")}

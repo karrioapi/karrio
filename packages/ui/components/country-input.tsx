@@ -15,6 +15,7 @@ export interface CountryInputComponent {
   wrapperClass?: string;
   disabled?: boolean;
   labelBold?: boolean;
+  align?: "start" | "center" | "end";
 }
 
 export const CountryInput = React.forwardRef<HTMLInputElement, CountryInputComponent>(
@@ -30,10 +31,11 @@ export const CountryInput = React.forwardRef<HTMLInputElement, CountryInputCompo
     wrapperClass,
     disabled,
     labelBold = false,
+    align = "start",
     ...props
   }, ref) => {
     return (
-      <div className={cn("px-1 py-2", wrapperClass)} {...props}>
+      <div className={cn(wrapperClass || "px-1 py-2")} {...props}>
         {label !== undefined && (
           <Label 
             className={cn("capitalize text-xs mb-1 block", labelBold ? "font-bold" : "font-normal")}
@@ -56,6 +58,8 @@ export const CountryInput = React.forwardRef<HTMLInputElement, CountryInputCompo
               onValueChange={onValueChange}
               placeholder={placeholder}
               disabled={disabled}
+              align={align}
+              noWrapper={true}
               className={cn("h-9", className)} // Match small input height
             />
           </div>

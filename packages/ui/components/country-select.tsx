@@ -27,6 +27,7 @@ interface CountrySelectProps {
   wrapperClass?: string;
   fieldClass?: string;
   align?: "start" | "center" | "end";
+  noWrapper?: boolean;
 }
 
 export const CountrySelect = React.forwardRef<
@@ -44,6 +45,7 @@ export const CountrySelect = React.forwardRef<
   wrapperClass,
   fieldClass,
   align = "start",
+  noWrapper = false,
   ...props
 }, ref) => {
   const { references } = useAPIMetadata();
@@ -55,6 +57,30 @@ export const CountrySelect = React.forwardRef<
       label: name as string,
     }));
   }, [references?.countries]);
+
+  if (noWrapper) {
+    return (
+      <Select value={value} onValueChange={onValueChange} disabled={disabled} name={name} {...props}>
+        <SelectTrigger ref={ref} className={cn("h-9", className)}>
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent className="w-64" align={align}>
+            {countryOptions.map((country) => (
+              <SelectItem 
+                key={country.value} 
+                value={country.value}
+                className="text-sm"
+              >
+                <div className="flex items-center gap-2">
+                  <span>{country.label}</span>
+                  <span className="text-xs text-muted-foreground">({country.value})</span>
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      );
+    }
 
   return (
     <div className={cn("px-1 py-2", wrapperClass)}>
