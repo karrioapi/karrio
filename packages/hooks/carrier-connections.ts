@@ -7,19 +7,18 @@ export function useConnections() {
     Record<string, string[]>
   >({});
   const {
-    query: { data: userConnectionsData, isFetched: isUserFetched },
+    query: { isFetched: isUserFetched },
+    user_connections,
   } = useCarrierConnections();
   const {
-    query: { data: systemConnectionsData, isFetched: isSystemFetched },
+    query: { isFetched: isSystemFetched },
+    system_connections,
   } = useSystemConnections();
 
   React.useEffect(() => {
     if (!isUserFetched || !isSystemFetched) {
       return;
     }
-
-    const user_connections = userConnectionsData?.user_connections || [];
-    const system_connections = systemConnectionsData?.system_connections || [];
 
     const newCarrierOptions = [...user_connections, ...system_connections]
       .filter((_) => _.active && (_.config?.shipping_options || []).length > 0)
@@ -37,7 +36,7 @@ export function useConnections() {
       );
 
     setCarrierOptions(newCarrierOptions);
-  }, [isUserFetched, isSystemFetched, userConnectionsData, systemConnectionsData]);
+  }, [isUserFetched, isSystemFetched, user_connections, system_connections]);
 
   return {
     carrierOptions,

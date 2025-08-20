@@ -8,7 +8,7 @@ import React, { useContext } from 'react';
 import { jsonify } from '@karrio/lib';
 
 
-export const SystemConnectionList= (): JSX.Element =>  {
+export const SystemConnectionList = (): JSX.Element => {
   const { testMode } = useAppMode();
   const { notify } = useContext(Notify);
   const { query } = useSystemConnections();
@@ -29,7 +29,7 @@ export const SystemConnectionList= (): JSX.Element =>  {
   return (
     <>
 
-      {((query.data?.system_connections || []).length > 0) && <>
+      {((query.data?.system_connections.edges || []).length > 0) && <>
         <div className="table-container">
           <table className="table is-fullwidth">
 
@@ -38,7 +38,7 @@ export const SystemConnectionList= (): JSX.Element =>  {
                 <td className="is-size-7" colSpan={testMode ? 4 : 3}>ACCOUNTS</td>
               </tr>
 
-              {(query.data?.system_connections || []).map((connection) => (
+              {(query.data?.system_connections.edges || []).map(({ node: connection }: any) => (
 
                 <tr key={`connection-${connection.id}-${Date.now()}`}>
                   <td className="carrier is-vcentered pl-1">
@@ -75,7 +75,7 @@ export const SystemConnectionList= (): JSX.Element =>  {
         </div>
       </>}
 
-      {((query.data?.system_connections || []).length == 0) && <div className="card my-6">
+      {((query.data?.system_connections.edges || []).length == 0) && <div className="card my-6">
 
         <div className="card-content has-text-centered">
           <p>The administrators have not provided any system wide carrier connections.</p>

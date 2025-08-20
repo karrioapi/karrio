@@ -75,8 +75,11 @@ export function useParcelTemplateMutation() {
   const karrio = useKarrio();
   const queryClient = useQueryClient();
   const invalidateCache = () => {
-    queryClient.invalidateQueries(['parcels']);
-    queryClient.invalidateQueries(['default_templates']);
+    // Invalidate all related queries to ensure data refresh
+    queryClient.invalidateQueries({ queryKey: ['parcels'] });
+    queryClient.invalidateQueries({ queryKey: ['default_templates'] });
+    // Force refetch to ensure UI updates immediately
+    queryClient.refetchQueries({ queryKey: ['parcels'] });
   };
 
   // Mutations

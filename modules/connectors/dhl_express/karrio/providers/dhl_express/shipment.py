@@ -41,13 +41,13 @@ def _extract_shipment(
     invoice = next(
         (item for item in multilabels if item.DocName == "CustomInvoiceImage"), None
     )
-    
+
     pricing_data = {
         "package_charge": lib.find_element("PackageCharge", shipment_node, first=True),
         "shipping_charge": lib.find_element("ShippingCharge", shipment_node, first=True),
         "currency": lib.find_element("QtdSInAdCur/CurrencyCode", shipment_node, first=True),
     }
-    
+
     charges = [
         ("Package Charge", lib.failsafe(lambda: pricing_data["package_charge"].text)),
         ("Shipping Charge", lib.failsafe(lambda: pricing_data["shipping_charge"].text)),
@@ -114,19 +114,14 @@ def shipment_request(
         or packages.compatible_units
     )
     package_type = provider_units.PackageType.map(packages.package_type).value
-    label_format, label_template = provider_units.LabelType[
+    label_format, label_template = provider_units.LabelType.map(
         payload.label_type or "PDF_6x4"
-    ].value
+    ).value_or_key
     payment = payload.payment or models.Payment(
         paid_by="sender",
         account_number=settings.account_number,
     )
-    customs = lib.to_customs_info(
-        payload.customs,
-        shipper=payload.shipper,
-        recipient=payload.recipient,
-        weight_unit=weight_unit.value,
-    )
+
     is_document = all(p.parcel.is_document for p in packages)
     is_international = shipper.country_code != recipient.country_code
     is_from_EU = payload.shipper.country_code in units.EUCountry
@@ -141,6 +136,32 @@ def shipment_request(
     option_items = [
         option for _, option in options.items() if option.state is not False
     ]
+    default_currency = lib.identity(
+        options.currency.state
+        or units.CountryCurrency.map(payload.shipper.country_code).value
+    )
+    customs = lib.to_customs_info(
+        payload.customs,
+        shipper=payload.shipper,
+        recipient=payload.recipient,
+        weight_unit=weight_unit.value,
+    )
+    commodities = lib.identity(
+        (customs.commodities if any(customs.commodities) else packages.items)
+        if any(packages.items) or any(customs.commodities)
+        else units.Products(
+            [
+                models.Commodity(
+                    sku="0000",
+                    quantity=1,
+                    weight=packages.weight.value,
+                    weight_unit=packages.weight_unit,
+                    value_amount=options.declared_value.state or 1.0,
+                    value_currency=default_currency,
+                )
+            ]
+        )
+    )
     duty = customs.duty or models.Duty(paid_by="sender")
     content = lib.identity(
         options.dhl_shipment_content.state
@@ -219,7 +240,7 @@ def shipment_request(
         ),
         Dutiable=lib.identity(
             dhl_global.Dutiable(
-                DeclaredValue=(
+                DeclaredValue=lib.identity(
                     duty.declared_value or options.declared_value.state or 1.0
                 ),
                 DeclaredCurrency=(duty.currency or currency),
@@ -231,7 +252,7 @@ def shipment_request(
                 ShipperIDType=None,
                 TermsOfTrade=customs.incoterm or "DDP",
                 CommerceLicensed=None,
-                Filing=(
+                Filing=lib.identity(
                     dhl_global.Filing(
                         FilingType=dhl_global.FilingType.AES_4.value,
                         FTSR=None,
@@ -258,9 +279,9 @@ def shipment_request(
                 SignatureName=customs.signer,
                 SignatureTitle=None,
                 ExportReason=customs.content_type,
-                ExportReasonCode=provider_units.ExportReasonCode[
+                ExportReasonCode=provider_units.ExportReasonCode.map(
                     customs.content_type or "other"
-                ].value,
+                ).value,
                 SedNumber=None,
                 SedNumberType=None,
                 MxStateCode=None,
@@ -269,7 +290,7 @@ def shipment_request(
                 Remarks=customs.content_description,
                 DestinationPort=None,
                 TermsOfPayment=None,
-                PayerGSTVAT=(
+                PayerGSTVAT=lib.identity(
                     customs.options.vat_registration_number.state
                     or customs.duty_billing_address.state_tax_id
                 ),
@@ -316,13 +337,13 @@ def shipment_request(
                         ItemReferences=None,
                         CustomsPaperworks=None,
                     )
-                    for (index, item) in enumerate(customs.commodities, start=1)
+                    for (index, item) in enumerate(commodities, start=1)
                 ],
                 ShipmentDocument=None,
                 InvoiceInstructions=customs.content_description,
                 CustomerDataTextEntries=None,
                 PlaceOfIncoterm="N/A",
-                ShipmentPurpose=(
+                ShipmentPurpose=lib.identity(
                     "COMMERCIAL" if customs.commercial_invoice else "PERSONAL"
                 ),
                 DocumentFunction=None,
@@ -468,7 +489,7 @@ def shipment_request(
             )
             for svc in option_items
         ],
-        Notification=(
+        Notification=lib.identity(
             dhl.Notification(
                 EmailAddress=options.email_notification_to.state or recipient.email
             )
@@ -481,7 +502,7 @@ def shipment_request(
         Place=None,
         EProcShip=None,
         Airwaybill=None,
-        DocImages=(
+        DocImages=lib.identity(
             dhl.DocImages(
                 DocImage=[
                     dhl.DocImage(

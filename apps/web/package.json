@@ -29,6 +29,7 @@
     "next-view-transitions": "^0.3.4",
     "nextra": "^4.2.16",
     "prism-react-renderer": "^2.4.1",
+    "react-flow": "^1.0.3",
     "react-syntax-highlighter": "^15.6.1",
     "url-loader": "^4.1.1"
   },

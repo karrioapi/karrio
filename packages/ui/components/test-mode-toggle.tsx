@@ -7,7 +7,7 @@ export function TestModeToggle() {
   const { testMode, switchMode } = useAppMode();
 
   return (
-    <div className="flex items-center gap-2 rounded-lg px-3 py-1.5 hover:bg-gray-50">
+    <div className="flex items-center gap-2 rounded-lg px-3 py-1.5 border border-gray-200 hover:bg-gray-50 rounded-full !rounded-full border-radius-50">
       <span className={`hidden sm:block text-sm font-medium ${testMode ? 'text-[#C15517]' : 'text-gray-700'}`}>
         Test mode
       </span>

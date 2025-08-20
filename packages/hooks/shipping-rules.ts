@@ -263,21 +263,11 @@ const DEFAULT_STATE = {
   description: "",
   priority: 1,
   is_active: true,
-  conditions: {
-    destination: null,
-    carrier_id: null,
-    service: null,
-    weight: null,
-    rate_comparison: null,
-    address_type: null,
-    value: null,
-    metadata: null,
-  },
-  actions: {
-    select_service: null,
-    block_service: null,
-  },
-  metadata: null,
+  // Use empty objects instead of fields set to null so we can
+  // reliably detect which sections are actually active/populated.
+  conditions: {},
+  actions: {},
+  metadata: {},
 } as ShippingRuleDataType;
 
 export function useShippingRuleForm({ id }: { id?: string } = {}) {
@@ -350,21 +340,16 @@ export function useShippingRuleForm({ id }: { id?: string } = {}) {
 
   const deleteShippingRule = async () => {
     if (!current?.id) return;
-
-    if (confirm("Are you sure you want to delete this shipping rule?")) {
-      try {
-        loader.setLoading(true);
-        await mutation.deleteShippingRule.mutateAsync({ id: current.id });
-        notifier.notify({
-          type: NotificationType.success,
-          message: "Shipping rule deleted!",
-        });
-        router.push(p`${basePath}/automation`.replace("//", "/"));
-      } catch (error: any) {
-        notifier.notify({ type: NotificationType.error, message: error });
-      } finally {
-        loader.setLoading(false);
-      }
+    // Consumers should trigger a ConfirmationDialog before calling this
+    try {
+      loader.setLoading(true);
+      await mutation.deleteShippingRule.mutateAsync({ id: current.id });
+      notifier.notify({ type: NotificationType.success, message: "Shipping rule deleted!" });
+      router.push(p`${basePath}/automation`.replace("//", "/"));
+    } catch (error: any) {
+      notifier.notify({ type: NotificationType.error, message: error });
+    } finally {
+      loader.setLoading(false);
     }
   };
 

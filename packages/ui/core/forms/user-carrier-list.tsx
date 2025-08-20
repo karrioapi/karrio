@@ -13,12 +13,14 @@ import { ConfirmModalContext } from "../modals/confirm-modal";
 import { CopiableLink } from "../components/copiable-link";
 import React, { useContext, useEffect, useState } from "react";
 import { isNoneOrEmpty, jsonify } from "@karrio/lib";
+import { supportsRateSheets as checkRateSheetSupport } from "@karrio/lib/carrier-utils";
 import { useAppMode } from "@karrio/hooks/app-mode";
 import { useSearchParams } from "next/navigation";
 import { Notify } from "../components/notifier";
 import { Spinner } from "../components/spinner";
 import { Loading } from "../components/loader";
-import { RateSheetEditor } from "@karrio/core/modules/Connections/rate-sheet-editor";
+import { RateSheetEditor } from "@karrio/ui/components/rate-sheet-editor";
+import { useRateSheet, useRateSheetMutation } from "@karrio/hooks/rate-sheet";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 
 type ConnectionUpdateType = Partial<UpdateCarrierConnectionMutationInput> & {
@@ -37,10 +39,10 @@ export const UserConnectionList = (): JSX.Element => {
   const { confirm: confirmDeletion } = useContext(ConfirmModalContext);
   const { editConnection } = useContext(ConnectProviderModalContext);
   const mutation = useCarrierConnectionMutation();
-  const { query } = useCarrierConnections();
+  const { query, user_connections } = useCarrierConnections();
   const [rateSheetEditorOpen, setRateSheetEditorOpen] = useState(false);
   const [selectedConnection, setSelectedConnection] = useState<any>(null);
-  const { metadata } = useAPIMetadata();
+  const { metadata, references } = useAPIMetadata();
   const [carrierMetadata, setCarrierMetadata] = useState<any[]>([]);
 
   // Fetch detailed carrier metadata
@@ -53,21 +55,9 @@ export const UserConnectionList = (): JSX.Element => {
     }
   }, [metadata?.HOST]);
 
-  // Dynamic function to check if carrier supports rate sheets
-  const supportsRateSheets = (carrierName: string) => {
-    // Always support rate sheets for generic and custom carriers
-    if (carrierName === 'generic') return true;
-
-    // Find carrier in metadata
-    const carrier = carrierMetadata.find(c => c.carrier_name === carrierName);
-    if (!carrier) return false;
-
-    // Check if carrier has default services with zones in connection_fields
-    const services = carrier.connection_fields?.services;
-    if (!services?.default || !Array.isArray(services.default)) return false;
-
-    // Check if any default service has zones
-    return services.default.some((service: any) => service.zones && Array.isArray(service.zones));
+  // Use centralized utility to check if carrier supports rate sheets
+  const supportsRateSheets = (connection: any) => {
+    return checkRateSheetSupport(connection, references);
   };
 
   const update =
@@ -100,8 +90,8 @@ export const UserConnectionList = (): JSX.Element => {
   });
   useEffect(() => {
     if (labelModal.isActive) {
-      const connection = (query.data?.user_connections || []).find(
-        (c) => c.id === labelModal.operation?.connection.id,
+      const connection = (user_connections || []).find(
+        (c: any) => c.id === labelModal.operation?.connection.id,
       );
       connection &&
         labelModal.editLabelTemplate({
@@ -114,11 +104,11 @@ export const UserConnectionList = (): JSX.Element => {
             } as any)(),
         });
     }
-  }, [query.data?.user_connections]);
+  }, [user_connections]);
   useEffect(() => {
     if (query.isFetching && !isNoneOrEmpty(modal)) {
-      const connection = (query.data?.user_connections || []).find(
-        (c) => c.id === modal,
+      const connection = (user_connections || []).find(
+        (c: any) => c.id === modal,
       );
       connection &&
         editConnection({
@@ -126,13 +116,13 @@ export const UserConnectionList = (): JSX.Element => {
           update: mutation.updateCarrierConnection.mutateAsync,
         });
     }
-  }, [modal, query.data?.user_connections]);
+  }, [modal, user_connections]);
 
   return (
     <>
       {query.isFetching && !query.isFetched && <Spinner />}
 
-      {query.isFetched && (query.data?.user_connections || []).length > 0 && (
+      {query.isFetched && (user_connections || []).length > 0 && (
         <>
           <div className="table-container">
             <table className="table is-fullwidth">
@@ -144,7 +134,7 @@ export const UserConnectionList = (): JSX.Element => {
                   <td className="action"></td>
                 </tr>
 
-                {query.data!.user_connections.map((connection) => (
+                {(user_connections || []).map((connection: any) => (
                   <tr key={`${connection.id}-${Date.now()}`}>
                     <td className="carrier is-vcentered pl-1">
                       <CarrierNameBadge
@@ -232,8 +222,7 @@ export const UserConnectionList = (): JSX.Element => {
                               </span>
                             </button>
                           )}
-                        {(supportsRateSheets(connection.carrier_name) ||
-                          !isNoneOrEmpty((connection as any).custom_carrier_name) ||
+                        {(supportsRateSheets(connection) ||
                           !isNoneOrEmpty((connection as any).rate_sheet_id)) && (
                             <button
                               title="manage rate sheet"
@@ -288,7 +277,7 @@ export const UserConnectionList = (): JSX.Element => {
         </>
       )}
 
-      {query.isFetched && (query.data?.user_connections || []).length == 0 && (
+      {query.isFetched && (user_connections || []).length == 0 && (
         <div className="card my-6">
           <div className="card-content has-text-centered">
             <p>No carriers connected yet.</p>
@@ -310,6 +299,9 @@ export const UserConnectionList = (): JSX.Element => {
             setRateSheetEditorOpen(false);
             setSelectedConnection(null);
           }}
+          isAdmin={false}
+          useRateSheet={useRateSheet}
+          useRateSheetMutation={useRateSheetMutation}
         />
       )}
     </>

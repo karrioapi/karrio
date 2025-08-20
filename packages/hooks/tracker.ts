@@ -55,15 +55,15 @@ export function useTrackers({
         : {
           ...acc,
           [key]: ["carrier_name", "status"].includes(key)
-            ? []
-              .concat(options[key as keyof TrackerFilter])
+            ? ([] as string[])
+              .concat(options[key as keyof TrackerFilter] as any)
               .reduce(
-                (acc, item: string) =>
-                  [].concat(acc, item.split(",") as any),
-                [],
+                (acc: string[], item: string) =>
+                  ([] as string[]).concat(acc, item.split(",") as string[]),
+                [] as string[],
               )
             : ["offset", "first"].includes(key)
-              ? parseInt(options[key as keyof TrackerFilter])
+              ? parseInt(options[key as keyof TrackerFilter] as string)
               : options[key as keyof TrackerFilter],
         };
     }, PAGINATION);

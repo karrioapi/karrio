@@ -169,6 +169,11 @@ class Proxy(proxy.Proxy):
                             "Authorization": f"Basic {self.settings.authorization}",
                             "Accept-language": f"{self.settings.language}-CA",
                         },
+                        decoder=lambda _: (
+                            _
+                            if lib.text(_)
+                            else '<message>Shipment cancelled</message>'
+                        ),
                     )
                     if payload["refunded"]
                     else payload["response"]
@@ -188,7 +193,8 @@ class Proxy(proxy.Proxy):
         )
 
         return lib.Deserializable(
-            responses, lambda ___: [(_, lib.to_element(__)) for _, __ in ___]
+            responses,
+            lambda ___: [(_, lib.to_element(__)) for _, __ in ___],
         )
 
     def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable:

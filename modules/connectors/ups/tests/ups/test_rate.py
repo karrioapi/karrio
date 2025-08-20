@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, ANY
 import karrio.lib as lib
 import karrio.core.models as models
 from .fixture import gateway
@@ -13,6 +13,7 @@ class TestUPSRating(unittest.TestCase):
 
     def test_create_rate_request(self):
         request = gateway.mapper.create_rate_request(self.RateRequest)
+
         self.assertEqual(request.serialize(), RateRequestData)
 
     def test_create_rate_with_package_preset_request(self):
@@ -84,6 +85,7 @@ RatePayload = {
         "state_code": "BC",
         "residential": True,
         "address_line1": "5840 Oak St",
+        "address_line2": "Apt 1 lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
     },
     "recipient": {
         "postal_code": "E1C4Z8",
@@ -508,16 +510,21 @@ RateRequestData = {
                 }
             ],
             "PaymentDetails": {
-                "ShipmentCharge": {
-                    "BillShipper": {"AccountNumber": "Your Account Number"},
-                    "Type": "01",
-                }
+                "ShipmentCharge": [
+                    {
+                        "BillShipper": {"AccountNumber": "Your Account Number"},
+                        "Type": "01",
+                    }
+                ]
             },
             "RatingMethodRequestedIndicator": "Y",
             "Service": {"Code": "11", "Description": "Weight"},
             "ShipFrom": {
                 "Address": {
-                    "AddressLine": "5840 Oak St",
+                    "AddressLine": [
+                        "5840 Oak St",
+                        "Apt 1 lorem ipsum dolor sit amet co",
+                    ],
                     "City": "Vancouver",
                     "CountryCode": "CA",
                     "PostalCode": "V6M2V9",
@@ -526,21 +533,26 @@ RateRequestData = {
             },
             "ShipTo": {
                 "Address": {
-                    "AddressLine": "125 Church St",
+                    "AddressLine": ["125 Church St"],
                     "City": "Moncton",
                     "CountryCode": "CA",
                     "PostalCode": "E1C4Z8",
                     "StateProvinceCode": "NB",
                 }
             },
+            "ShipmentDate": ANY,
             "ShipmentRatingOptions": {"NegotiatedRatesIndicator": "Y"},
+            "ShipmentServiceOptions": {"AvailableServicesOption": "3"},
             "ShipmentTotalWeight": {
                 "UnitOfMeasurement": {"Code": "KGS", "Description": "Dimension"},
                 "Weight": "0.5",
             },
             "Shipper": {
                 "Address": {
-                    "AddressLine": "5840 Oak St",
+                    "AddressLine": [
+                        "5840 Oak St",
+                        "Apt 1 lorem ipsum dolor sit amet co",
+                    ],
                     "City": "Vancouver",
                     "CountryCode": "CA",
                     "PostalCode": "V6M2V9",
@@ -549,7 +561,6 @@ RateRequestData = {
                 "ShipperNumber": "Your Account Number",
             },
             "TaxInformationIndicator": "Y",
-            "ShipmentServiceOptions": {"AvailableServicesOption": "3"},
         },
     }
 }
@@ -564,7 +575,7 @@ RateRequestWithPackagePresetData = {
         "Shipment": {
             "DeliveryTimeInformation": {
                 "PackageBillType": "03",
-                "Pickup": {"Date": "20230227"},
+                "Pickup": {"Date": ANY},
             },
             "InvoiceLineTotal": {"CurrencyCode": "USD", "MonetaryValue": "1.0"},
             "Package": [
@@ -583,16 +594,18 @@ RateRequestWithPackagePresetData = {
                 }
             ],
             "PaymentDetails": {
-                "ShipmentCharge": {
-                    "BillShipper": {"AccountNumber": "Your Account Number"},
-                    "Type": "01",
-                }
+                "ShipmentCharge": [
+                    {
+                        "BillShipper": {"AccountNumber": "Your Account Number"},
+                        "Type": "01",
+                    }
+                ]
             },
             "RatingMethodRequestedIndicator": "Y",
             "Service": {"Code": "11", "Description": "Weight"},
             "ShipFrom": {
                 "Address": {
-                    "AddressLine": "Address Line",
+                    "AddressLine": ["Address Line"],
                     "City": "Montreal",
                     "CountryCode": "CA",
                     "PostalCode": "H3N1S4",
@@ -601,7 +614,7 @@ RateRequestWithPackagePresetData = {
             },
             "ShipTo": {
                 "Address": {
-                    "AddressLine": "Address Line",
+                    "AddressLine": ["Address Line"],
                     "City": "Las Vegas",
                     "CountryCode": "US",
                     "PostalCode": "89109",
@@ -609,6 +622,7 @@ RateRequestWithPackagePresetData = {
                 },
                 "AttentionName": "Ship To Name",
             },
+            "ShipmentDate": ANY,
             "ShipmentRatingOptions": {"NegotiatedRatesIndicator": "Y"},
             "ShipmentTotalWeight": {
                 "UnitOfMeasurement": {"Code": "LBS", "Description": "Dimension"},
@@ -616,7 +630,7 @@ RateRequestWithPackagePresetData = {
             },
             "Shipper": {
                 "Address": {
-                    "AddressLine": "Address Line",
+                    "AddressLine": ["Address Line"],
                     "City": "Montreal",
                     "CountryCode": "CA",
                     "PostalCode": "H3N1S4",

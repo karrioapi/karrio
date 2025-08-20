@@ -121,6 +121,7 @@ class Surcharge(core.Entity):
                         name=typing.cast(str, self.name),
                         amount=amount,
                         currency=rate.currency,
+                        id=self.id,
                     )
                 ]
 

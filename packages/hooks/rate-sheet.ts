@@ -60,6 +60,7 @@ export function useRateSheets({ setVariablesToURL = false, ...initialData }: Fil
     query,
     get filter() { return filter; },
     setFilter,
+    rate_sheets: query.data?.rate_sheets,
   };
 }
 
@@ -68,24 +69,24 @@ type Args = { id?: string, setVariablesToURL?: boolean };
 
 export function useRateSheet({ id, setVariablesToURL = false }: Args = {}) {
   const karrio = useKarrio();
-  const [workflowActionId, _setRateSheetId] = React.useState<string>(id || 'new');
+  const [rateSheetId, _setRateSheetId] = React.useState<string>(id || 'new');
 
   // Queries
   const query = useAuthenticatedQuery({
-    queryKey: ['rate-sheets', id],
-    queryFn: () => karrio.graphql.request<GetRateSheet>(gqlstr(GET_RATE_SHEET), { variables: { id: workflowActionId } }),
-    enabled: (workflowActionId !== 'new'),
+    queryKey: ['rate-sheets', rateSheetId],
+    queryFn: () => karrio.graphql.request<GetRateSheet>(gqlstr(GET_RATE_SHEET), { variables: { id: rateSheetId } }),
+    enabled: (rateSheetId !== 'new'),
     onError,
   });
 
-  function setRateSheetId(workflowActionId: string) {
-    if (setVariablesToURL) insertUrlParam({ id: workflowActionId });
-    _setRateSheetId(workflowActionId);
+  function setRateSheetId(id: string) {
+    if (setVariablesToURL) insertUrlParam({ id });
+    _setRateSheetId(id);
   }
 
   return {
     query,
-    workflowActionId,
+    rateSheetId,
     setRateSheetId,
   };
 }

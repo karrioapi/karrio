@@ -177,7 +177,16 @@ class WorkspaceConfigType:
     @staticmethod
     @utils.authentication_required
     def resolve(info) -> typing.Optional["WorkspaceConfigType"]:
-        return auth.WorkspaceConfig.access_by(info.context.request).first()
+        workspace_config = auth.WorkspaceConfig.access_by(info.context.request).first()
+
+        # Create a default workspace config if none exists
+        if workspace_config is None:
+            workspace_config = auth.WorkspaceConfig.objects.create(
+                created_by=info.context.request.user,
+                config={}
+            )
+
+        return workspace_config
 
 
 @strawberry.type
@@ -277,7 +286,8 @@ class SystemUsageType:
             .qs.annotate(date=functions.TruncDay("created_at"))
             .values("date")
             .annotate(
-                count=models.Sum(
+                count=models.Count("id"),
+                amount=models.Sum(
                     functions.Cast("selected_rate__total_charge", models.FloatField())
                 )
             )
@@ -301,9 +311,11 @@ class SystemUsageType:
         total_requests = sum([item["count"] for item in api_requests], 0)
         total_trackers = sum([item["count"] for item in tracker_count], 0)
         total_shipments = sum([item["count"] for item in shipment_count], 0)
-        order_volume = lib.to_money(sum([item["count"] for item in order_volumes], 0.0))
-        total_shipping_spend = lib.to_money(
-            sum([item["count"] for item in shipping_spend], 0.0)
+        order_volume = lib.to_decimal(
+            sum([item["count"] for item in order_volumes if item["count"] is not None], 0.0)
+        )
+        total_shipping_spend = lib.to_decimal(
+            sum([item["amount"] for item in shipping_spend if item["amount"] is not None], 0.0)
         )
         user_count = User.objects.count()
         organization_count = 1
@@ -314,20 +326,20 @@ class SystemUsageType:
             organization_count = orgs.Organization.objects.count()
 
         return SystemUsageType(
+            user_count=user_count,
             order_volume=order_volume,
             total_errors=total_errors,
             total_requests=total_requests,
             total_trackers=total_trackers,
             total_shipments=total_shipments,
             organization_count=organization_count,
-            user_count=user_count,
             total_shipping_spend=total_shipping_spend,
-            api_errors=[utils.UsageStatType.parse(item) for item in api_errors],
-            api_requests=[utils.UsageStatType.parse(item) for item in api_requests],
-            order_volumes=[utils.UsageStatType.parse(item) for item in order_volumes],
-            shipment_count=[utils.UsageStatType.parse(item) for item in shipment_count],
-            shipping_spend=[utils.UsageStatType.parse(item) for item in shipping_spend],
-            tracker_count=[utils.UsageStatType.parse(item) for item in tracker_count],
+            api_errors=[utils.UsageStatType.parse(item, label="api_errors") for item in api_errors],
+            api_requests=[utils.UsageStatType.parse(item, label="api_requests") for item in api_requests],
+            order_volumes=[utils.UsageStatType.parse(item, label="order_volumes") for item in order_volumes],
+            shipment_count=[utils.UsageStatType.parse(item, label="shipment_count") for item in shipment_count],
+            shipping_spend=[utils.UsageStatType.parse(item, label="shipping_spend") for item in shipping_spend],
+            tracker_count=[utils.UsageStatType.parse(item, label="tracker_count") for item in tracker_count],
         )
 
 
@@ -566,6 +578,7 @@ class ChargeType:
     name: typing.Optional[str] = None
     amount: typing.Optional[float] = None
     currency: utils.CurrencyCodeEnum = None
+    id: typing.Optional[str] = None
 
     @staticmethod
     def parse(charge: dict):
@@ -1273,7 +1286,7 @@ class SystemConnectionType:
     def resolve_list(
         info,
         filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,
-    ) -> typing.List["SystemConnectionType"]:
+    ) -> utils.Connection["SystemConnectionType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()
         connections = filters.CarrierFilters(
             _filter.to_dict(),
@@ -1282,7 +1295,7 @@ class SystemConnectionType:
                 test_mode=getattr(info.context.request, "test_mode", False),
             ),
         ).qs
-        return connections
+        return utils.paginated_connection(connections, **_filter.pagination())
 
 
 @strawberry.type

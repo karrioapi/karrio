@@ -4,7 +4,7 @@ import { POSTHOG_HOST, POSTHOG_KEY } from "@karrio/lib";
 import { PostHogProvider } from "posthog-js/react";
 import posthog from "posthog-js";
 
-if (typeof window !== "undefined") {
+if (typeof window !== "undefined" && POSTHOG_KEY) {
   posthog.init(POSTHOG_KEY as string, {
     api_host: POSTHOG_HOST,
     capture_pageview: false,

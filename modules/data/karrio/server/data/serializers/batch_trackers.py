@@ -2,11 +2,10 @@ from django.db import transaction
 
 import karrio.lib as lib
 import karrio.server.conf as conf
-import karrio.server.core.utils as utils
 import karrio.server.core.gateway as gateway
-import karrio.server.core.exceptions as exceptions
-import karrio.server.serializers as serializers
 import karrio.server.manager.models as models
+import karrio.server.serializers as serializers
+import karrio.server.core.exceptions as exceptions
 import karrio.server.manager.serializers as manager
 import karrio.server.data.serializers.base as base
 

@@ -13,51 +13,37 @@ The `Proxy` class is responsible for handling all communication with the carrier
 
 The `Proxy` class is implemented in `karrio/mappers/[carrier_name]/proxy.py` and extends the base `karrio.api.proxy.Proxy` class. Its primary role is to make HTTP requests and return a `lib.Deserializable` object containing the raw response from the carrier.
 
-Here is a template for a `proxy.py` file, which you can adapt for your integration.
+**File**: `karrio/mappers/[carrier_name]/proxy.py`
 
 ```python
-# karrio/mappers/[carrier_name]/proxy.py
 import karrio.lib as lib
 import karrio.api.proxy as proxy
 import karrio.mappers.[carrier_name].settings as provider_settings
-
-# IMPLEMENTATION INSTRUCTIONS:
-# 1. Import the schema types specific to your carrier API if needed for type hinting
-# 2. Uncomment and adapt the request examples below to work with your carrier API
-# 3. Replace the stub responses with actual API calls once you've tested with the example data
-# 4. Update URLs, headers, and authentication methods as required by your carrier API
 
 class Proxy(proxy.Proxy):
     settings: provider_settings.Settings
 
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        """
-        Request shipping rates from the carrier's API.
-        """
-        # DEVELOPMENT ONLY: This is a stub response.
-        # Replace it with the actual API call below.
-        # response = "{}" # For JSON APIs
-        # response = "<RateResponse></RateResponse>" # For XML APIs
+        """Request shipping rates from the carrier's API."""
 
         response = lib.request(
-            url=f"{self.settings.server_url}/rating/v1/rates",
-            data=lib.to_json(request.serialize()), # use request.serialize() for XML
-            trace=self.trace_as("json"), # use "xml" for XML APIs
+            url=f"{self.settings.server_url}/rates",
+            data=lib.to_json(request.serialize()),  # Use request.serialize() for XML
+            trace=self.trace_as("json"),             # Use "xml" for XML APIs
             method="POST",
             headers={
-                "Content-Type": "application/json", # use "text/xml" for XML APIs
-                "Authorization": f"Bearer {self.settings.api_key}" # Or other auth method
+                "Content-Type": "application/json",  # Use "text/xml" for XML APIs
+                "Authorization": f"Bearer {self.settings.api_key}"  # Or access_token
             },
         )
 
-        return lib.Deserializable(response, lib.to_dict) # use lib.to_element for XML
+        return lib.Deserializable(response, lib.to_dict)  # Use lib.to_element for XML
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        """
-        Create a shipment and request a shipping label from the carrier's API.
-        """
+        """Create a shipment and request a shipping label."""
+
         response = lib.request(
-            url=f"{self.settings.server_url}/shipping/v1/shipments",
+            url=f"{self.settings.server_url}/shipments",
             data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="POST",
@@ -69,25 +55,18 @@ class Proxy(proxy.Proxy):
 
         return lib.Deserializable(response, lib.to_dict)
 
-    def get_tracking(
-        self, request: lib.Serializable
-    ) -> lib.Deserializable:
-        """
-        Retrieve tracking details for one or more shipments.
-        Some carriers offer a bulk tracking endpoint, while others require
-        one request per tracking number.
-        """
-        # A helper function to make a single tracking request
+    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable:
+        """Retrieve tracking details for one or more shipments."""
+
         def _get_tracking(tracking_number: str):
-            return lib.request(
-                url=f"{self.settings.server_url}/tracking/v1/{tracking_number}",
+            return tracking_number, lib.request(
+                url=f"{self.settings.server_url}/tracking/{tracking_number}",
                 trace=self.trace_as("json"),
                 method="GET",
                 headers={"Authorization": f"Bearer {self.settings.api_key}"},
             )
-            return tracking_number, "{}"
 
-        # Use run_concurently to make parallel requests for each tracking number
+        # Use concurrent requests for multiple tracking numbers
         responses = lib.run_concurently(_get_tracking, request.serialize())
 
         return lib.Deserializable(
@@ -97,19 +76,33 @@ class Proxy(proxy.Proxy):
             ],
         )
 
-    # ... other methods for cancel_shipment, schedule_pickup, etc.
+    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        """Cancel a shipment."""
+
+        response = lib.request(
+            url=f"{self.settings.server_url}/shipments/cancel",
+            data=lib.to_json(request.serialize()),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {self.settings.api_key}"
+            },
+        )
+
+        return lib.Deserializable(response, lib.to_dict)
 ```
 
 ## HTTP Requests with `lib.request`
 
-The `lib.request` function is a wrapper around Python's `requests` library that provides a unified way to make HTTP calls. It handles:
+The `lib.request` function is a wrapper around Python's `requests` library that provides:
 
-- HTTP method (e.g., `POST`, `GET`, `DELETE`)
-- Request headers and body
+- HTTP method handling (`POST`, `GET`, `DELETE`)
+- Request headers and body management
 - Tracing for debugging
-- Basic error handling (e.g., for network issues)
+- Basic error handling for network issues
 
-The result of `lib.request` is typically passed into a `lib.Deserializable` object, which holds the raw response string and a parsing function (`lib.to_dict` for JSON, `lib.to_element` for XML) to be evaluated later by the `Mapper`.
+The result is passed into a `lib.Deserializable` object with a parsing function (`lib.to_dict` for JSON, `lib.to_element` for XML).
 
 ### JSON API Example
 
@@ -130,109 +123,363 @@ def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
 
 ### XML/SOAP API Example
 
-For XML/SOAP APIs, the pattern is similar, but you serialize the request directly to an XML string and use `lib.to_element` to parse the response.
-
 ```python
 def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
-    # The request object's serialize() method should produce the correct XML string,
-    # often without needing to manually wrap it in a SOAP envelope.
     response = lib.request(
         url=f"{self.settings.server_url}/rates",
-        data=request.serialize(),
+        data=request.serialize(),  # XML string from generated schema
         trace=self.trace_as("xml"),
         method="POST",
         headers={
             "Content-Type": "text/xml",
-            "SOAPAction": "getRates"
+            "SOAPAction": "getRates",
+            "Authorization": f"Basic {self.settings.authorization}"
         },
     )
     return lib.Deserializable(response, lib.to_element)
 ```
 
+## Authentication Patterns
+
+Authentication logic is defined in the `Settings` class in `karrio/providers/[carrier_name]/utils.py`.
+
+### API Key Authentication (Bearer Token)
+
+```python
+class Settings(core.Settings):
+    api_key: str
+
+    @property
+    def auth_headers(self):
+        return {"Authorization": f"Bearer {self.api_key}"}
+```
+
+**Usage in Proxy:**
+```python
+headers={
+    "Content-Type": "application/json",
+    "Authorization": f"Bearer {self.settings.api_key}"
+}
+```
+
+### Basic Authentication
+
+```python
+class Settings(core.Settings):
+    username: str
+    password: str
+
+    @property
+    def authorization(self):
+        pair = f"{self.username}:{self.password}"
+        return base64.b64encode(pair.encode("utf-8")).decode("ascii")
+```
+
+**Usage in Proxy:**
+```python
+headers={
+    "Content-Type": "application/json",
+    "Authorization": f"Basic {self.settings.authorization}"
+}
+```
+
+### OAuth 2.0 Authentication
+
+```python
+class Settings(core.Settings):
+    client_id: str
+    client_secret: str
+
+    @property
+    def access_token(self):
+        """Retrieve and cache OAuth access token."""
+        cache_key = f"{self.carrier_name}|{self.client_id}|{self.client_secret}"
+        now = datetime.datetime.now() + datetime.timedelta(minutes=30)
+
+        auth = self.connection_cache.get(cache_key) or {}
+        token = auth.get("access_token")
+        expiry = lib.to_date(auth.get("expiry"), current_format="%Y-%m-%d %H:%M:%S")
+
+        if token is not None and expiry is not None and expiry > now:
+            return token
+
+        # Token expired or doesn't exist, get new one
+        self.connection_cache.set(cache_key, lambda: login(self))
+        new_auth = self.connection_cache.get(cache_key)
+        return new_auth["access_token"]
+```
+
+**Usage in Proxy:**
+```python
+headers={
+    "Content-Type": "application/json",
+    "Authorization": f"Bearer {self.settings.access_token}"
+}
+```
+
 ## Tracing and Debugging
 
-Karrio includes a built-in tracing mechanism to help debug API calls. The `trace_as` method on the `Proxy` class sets up tracing for a particular format:
+Karrio includes built-in tracing to help debug API calls:
 
 ```python
 trace=self.trace_as("json")  # For JSON APIs
 trace=self.trace_as("xml")   # For XML APIs
 ```
 
-This allows Karrio to record and display the full request and response for each API call, which is invaluable for debugging your integration.
-
-## Authentication
-
-Authentication logic is typically defined within the `Settings` class in `karrio/providers/[carrier_name]/utils.py`. This keeps the `Proxy` class clean and focused on making requests.
-
-Common patterns include:
-
-- **API Key**: A simple `api_key` property on the `Settings` class.
-- **Basic Auth**: An `authorization` property that base64-encodes a username and password.
-- **OAuth**: An `access_token` property that handles retrieving and caching a token.
-
-Refer to the `PROVIDER_UTILS_TEMPLATE` in `karrio_cli/templates/sdk.py` for detailed examples of how to implement these patterns.
+This records and displays the full request and response for each API call, invaluable for debugging.
 
 ## Error Handling
 
-The `Proxy` is only responsible for making the request and returning the response. It does not parse the content of the response to look for business logic errors.
+The `Proxy` class only handles HTTP communication. It does **not** parse response content for business logic errors.
 
-Instead, error parsing is handled within the provider's `error.py` module, specifically in the `parse_error_response` function. This function is called by the `Mapper`'s response parsing methods (e.g., `parse_rate_response`, `parse_shipment_response`) after the response has been deserialized. This separation of concerns ensures that all response parsing, both for successful and failed requests, happens in the provider layer.
+Error parsing is handled in the provider's `error.py` module:
+
+**File**: `karrio/providers/[carrier_name]/error.py`
 
 ```python
-# karrio/providers/[carrier_name]/error.py
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.[carrier_name].utils as provider_utils
 
-def parse_error_response(response: dict, settings: Settings) -> List[Message]:
-    """Parse a carrier's error response into a list of Karrio Messages."""
-    errors = []
-    # ... logic to extract error details from the response ...
-    return errors
+def parse_error_response(
+    response: dict,  # Use lib.Element for XML APIs
+    settings: provider_utils.Settings,
+    **kwargs,
+) -> typing.List[models.Message]:
+    """Parse carrier error response into Karrio Messages."""
+
+    # Extract errors based on carrier API structure
+    errors = response.get("errors", []) if hasattr(response, 'get') else []
+
+    # For XML APIs:
+    # errors = response.xpath("//error") if hasattr(response, 'xpath') else []
+
+    return [
+        models.Message(
+            carrier_id=settings.carrier_id,
+            carrier_name=settings.carrier_name,
+            code=error.get("code", ""),
+            message=error.get("message", ""),
+            details={**kwargs, "details": error.get("details", "")},
+        )
+        for error in errors
+    ]
+```
+
+## Common API Patterns
+
+### Single Request APIs
+
+```python
+def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    response = lib.request(
+        url=f"{self.settings.server_url}/rates",
+        data=lib.to_json(request.serialize()),
+        trace=self.trace_as("json"),
+        method="POST",
+        headers=self.settings.auth_headers,
+    )
+    return lib.Deserializable(response, lib.to_dict)
+```
+
+### Bulk Request APIs
+
+```python
+def get_tracking(self, request: lib.Serializable) -> lib.Deserializable:
+    response = lib.request(
+        url=f"{self.settings.server_url}/tracking/bulk",
+        data=lib.to_json({"tracking_numbers": request.serialize()}),
+        trace=self.trace_as("json"),
+        method="POST",
+        headers=self.settings.auth_headers,
+    )
+    return lib.Deserializable(response, lib.to_dict)
+```
+
+### Concurrent Individual Requests
+
+```python
+def get_tracking(self, request: lib.Serializable) -> lib.Deserializable:
+    def _get_tracking(tracking_number: str):
+        return tracking_number, lib.request(
+            url=f"{self.settings.server_url}/tracking/{tracking_number}",
+            trace=self.trace_as("json"),
+            method="GET",
+            headers=self.settings.auth_headers,
+        )
+
+    responses = lib.run_concurently(_get_tracking, request.serialize())
+
+    return lib.Deserializable(
+        responses,
+        lambda res: [
+            (num, lib.to_dict(track)) for num, track in res if any(track.strip())
+        ],
+    )
+```
+
+### File Upload APIs
+
+```python
+def upload_document(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    data = request.serialize()
+
+    response = lib.request(
+        url=f"{self.settings.server_url}/documents",
+        files={"document": ("document.pdf", data["content"], "application/pdf")},
+        data={"metadata": lib.to_json(data["metadata"])},
+        trace=self.trace_as("json"),
+        method="POST",
+        headers={"Authorization": f"Bearer {self.settings.api_key}"},
+    )
+
+    return lib.Deserializable(response, lib.to_dict)
 ```
 
 ## API Request Flow
 
-The typical flow of an API request in Karrio is:
-
-1. A request is made to Karrio's unified API.
-2. The request is routed to the correct carrier `Mapper`.
-3. The `Mapper`'s request creation method (e.g., `create_rate_request`) transforms the unified request into a carrier-specific `Serializable` object.
-4. The `Mapper` calls the corresponding method on the `Proxy` (e.g., `get_rates`).
-5. The `Proxy` makes the HTTP request to the carrier's API and returns a `Deserializable` object.
-6. The `Mapper`'s response parsing method (e.g., `parse_rate_response`) deserializes the response and parses it, along with any errors, into Karrio's unified models.
-7. The unified response is returned.
-
 ```mermaid
 sequenceDiagram
-    participant Karrio
     participant Mapper
     participant Proxy
     participant Carrier
 
-    Karrio->>Mapper: create_rate_request(payload)
-    Mapper->>Mapper: provider.rate_request(payload) -> serializable_request
-    Mapper->>Proxy: get_rates(serializable_request)
+    Mapper->>Proxy: Method call with lib.Serializable
+    Proxy->>Proxy: Build HTTP request
     Proxy->>Carrier: HTTP Request
     Carrier->>Proxy: HTTP Response
-    Proxy-->>Mapper: returns deserializable_response
-    Mapper->>Mapper: provider.parse_rate_response(deserializable_response)
-    Mapper-->>Karrio: returns [RateDetails], [Messages]
+    Proxy->>Proxy: Wrap in lib.Deserializable
+    Proxy->>Mapper: Return lib.Deserializable
+    Mapper->>Mapper: Parse response in provider
 ```
 
 ## Best Practices
 
-- **Keep it Simple**: The `Proxy` should only be concerned with the transport layer (making HTTP calls). All data transformation and business logic belongs in the `Mapper` and `provider` modules.
-- **Use `self.settings`**: All necessary configuration, including credentials and server URLs, should be accessed via `self.settings`.
-- **Implement Stubs First**: Use stubbed responses during initial development to test the request/response cycle without making live API calls.
-- **Leverage Concurrent Execution**: For operations like tracking that may involve multiple requests, use `lib.run_concurently` to improve performance.
+1. **Keep it Simple**: The `Proxy` should only handle HTTP communication
+2. **Use Settings Properties**: Access all configuration via `self.settings`
+3. **Implement Stubs First**: Use stubbed responses during development
+4. **Handle Timeouts**: Set appropriate timeout values for different operations
+5. **Use Concurrent Requests**: For operations involving multiple requests
+6. **Proper Error Handling**: Let provider layer handle business logic errors
+7. **Trace Everything**: Use `trace_as()` for debugging all requests
 
-## Common API Operations
+## Testing Proxy Implementation
 
-Most carrier integrations implement some or all of these common operations:
+```python
+# Test with stubbed responses during development
+def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    # DEVELOPMENT ONLY: Replace with actual API call
+    stubbed_response = {
+        "rates": [
+            {
+                "serviceCode": "standard",
+                "serviceName": "Standard Service",
+                "totalCharge": 10.50,
+                "currency": "USD"
+            }
+        ]
+    }
 
-- **Rating**: Get shipping rates for a package
-- **Shipping**: Create shipments and purchase labels
-- **Tracking**: Track shipments by tracking number
-- **Address Validation**: Validate and normalize shipping addresses
-- **Pickup**: Schedule, cancel, or update pickups
-- **Customs**: Generate customs documentation for international shipments
+    return lib.Deserializable(lib.to_json(stubbed_response), lib.to_dict)
+```
 
-In the next section, we'll cover how to implement data mapping between Karrio's unified format and carrier-specific formats.
+## Testing Proxy Implementation
+
+**CRITICAL**: Every proxy method must be tested with exact patterns:
+
+### 1. Endpoint Verification Test
+```python
+def test_get_rates(self):
+    """Test that proxy calls correct API endpoint."""
+    with patch("karrio.mappers.[carrier_id].proxy.lib.request") as mock:
+        mock.return_value = "{}"  # Use "<r></r>" for XML APIs
+        karrio.Rating.fetch(self.RateRequest).from_(gateway)
+
+        print(f"Called URL: {mock.call_args[1]['url']}")
+        self.assertEqual(
+            mock.call_args[1]["url"],
+            f"{gateway.settings.server_url}/rates"  # Adapt to actual endpoint
+        )
+```
+
+### 2. Authentication Header Test
+```python
+def test_authentication_headers(self):
+    """Verify correct authentication headers are sent."""
+    with patch("karrio.mappers.[carrier_id].proxy.lib.request") as mock:
+        mock.return_value = "{}"
+        karrio.Rating.fetch(self.RateRequest).from_(gateway)
+
+        headers = mock.call_args[1]["headers"]
+        print(f"Headers sent: {headers}")
+        self.assertIn("Authorization", headers)
+        # For API key auth:
+        self.assertTrue(headers["Authorization"].startswith("Bearer "))
+        # For Basic auth:
+        # self.assertTrue(headers["Authorization"].startswith("Basic "))
+```
+
+### 3. Request Data Format Test
+```python
+def test_request_data_format(self):
+    """Verify request data is properly formatted."""
+    with patch("karrio.mappers.[carrier_id].proxy.lib.request") as mock:
+        mock.return_value = "{}"
+        karrio.Rating.fetch(self.RateRequest).from_(gateway)
+
+        sent_data = mock.call_args[1]["data"]
+        print(f"Sent data: {sent_data}")
+
+        # For JSON APIs:
+        self.assertIsInstance(sent_data, str)
+        parsed_data = lib.to_dict(sent_data)
+        self.assertIn("shipper", parsed_data)  # Verify structure
+
+        # For XML APIs:
+        # self.assertTrue(sent_data.startswith("<?xml"))
+```
+
+### 4. Concurrent Request Test (for tracking)
+```python
+def test_concurrent_tracking_requests(self):
+    """Test concurrent tracking requests work correctly."""
+    with patch("karrio.mappers.[carrier_id].proxy.lib.request") as mock:
+        mock.return_value = '{"status": "delivered"}'
+
+        request = models.TrackingRequest(tracking_numbers=["123", "456"])
+        response = karrio.Tracking.fetch(request).from_(gateway).parse()
+
+        print(f"Number of API calls: {mock.call_count}")
+        # Verify one call per tracking number
+        self.assertEqual(mock.call_count, len(request.tracking_numbers))
+```
+
+### 5. Development Stub Testing
+During development, test with stubbed responses:
+```python
+def test_stubbed_rates_response(self):
+    """Test parsing works with stubbed response (development phase)."""
+    # Use stubbed response during development
+    stubbed_response = {
+        "rates": [{"serviceCode": "std", "totalCharge": 10.50}]
+    }
+
+    with patch("karrio.mappers.[carrier_id].proxy.lib.request") as mock:
+        mock.return_value = lib.to_json(stubbed_response)
+        response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
+
+        print(f"Stubbed response parsed: {lib.to_dict(response)}")
+        self.assertEqual(len(response[0]), 1)  # One rate returned
+        self.assertEqual(response[0][0].service, "std")
+```
+
+### Proxy Testing Rules
+- **Mock all HTTP calls**: Never make real API calls in tests
+- **Test exact URLs**: Verify endpoints match carrier documentation
+- **Verify authentication**: Ensure correct headers are sent
+- **Test data format**: Verify JSON/XML structure is correct
+- **Use stubbed data**: Test with realistic carrier response formats
+- **Debug prints**: Always add print statements before assertions
+
+The `Proxy` class forms the communication bridge between Karrio's unified interface and the carrier's specific API, handling all the technical details of HTTP communication while keeping business logic in the provider layer.

@@ -1,18 +1,14 @@
 export default {
-  "karrio-admin": {
-    title: 'Karrio Admin',
+  "index": {
+    title: 'Control Plane',
     type: 'page'
   },
-  "shipments-management": {
-    title: 'Shipments Management',
+  "feature-flags": {
+    title: 'Feature Flags',
     type: 'page'
   },
-  "trackers-management": {
-    title: 'Trackers Management',
-    type: 'page'
-  },
-  "document-generation": {
-    title: 'Document Generation',
+  "white-label": {
+    title: 'White Label',
     type: 'page'
   },
 }

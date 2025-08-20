@@ -1,0 +1,178 @@
+"use client";
+
+import {
+  DocumentTemplateType,
+  OrderType,
+  OrderStatusEnum,
+} from "@karrio/types";
+import { useDocumentTemplates } from "@karrio/hooks/document-template";
+import { ConfirmModalContext } from "../core/modals/confirm-modal";
+import React, { useContext } from "react";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { useOrderMutation } from "@karrio/hooks/order";
+import { useRouter } from "next/navigation";
+import { useAppMode } from "@karrio/hooks/app-mode";
+import { AppLink } from "../core/components/app-link";
+import { url$ } from "@karrio/lib";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { Button } from "./ui/button";
+import { MoreHorizontal } from "lucide-react";
+
+interface OrderMenuComponent extends React.InputHTMLAttributes<HTMLDivElement> {
+  order: OrderType;
+  templates?: DocumentTemplateType[];
+  isViewing?: boolean;
+}
+
+export const OrderMenu = ({
+  order,
+  isViewing,
+}: OrderMenuComponent): JSX.Element => {
+  const router = useRouter();
+  const { basePath } = useAppMode();
+  const { references } = useAPIMetadata();
+  const mutation = useOrderMutation();
+  const { confirm: confirmCancellation } = useContext(ConfirmModalContext);
+  const {
+    query: { data: { document_templates } = {} },
+  } = useDocumentTemplates({
+    related_object: "order",
+    active: true,
+  } as any);
+
+  const displayDetails = (_: React.MouseEvent) => {
+    router.push(basePath + "/orders/" + order.id);
+  };
+
+  const cancelOrder = (order: OrderType) => async () => {
+    await mutation.cancelOrder.mutateAsync(order);
+  };
+
+  const computeShipmentId = (order: OrderType) => {
+    return order.shipments.find((s) => s.status === "draft")?.id || "new";
+  };
+
+  return (
+    <div key={`menu-${order.id}`}>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 p-0 hover:bg-muted"
+          >
+            <MoreHorizontal className="h-4 w-4" />
+            <span className="sr-only">Open menu</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          align="end"
+          className="w-56"
+          id={`order-menu-${order.id}`}
+          role="menu"
+        >
+          {["unfulfilled", "partial"].includes(order?.status) && (
+            <DropdownMenuItem asChild>
+              <AppLink
+                href={`/orders/create_label?shipment_id=${computeShipmentId(order)}&order_id=${order?.id}`}
+              >
+                <span>Create label</span>
+              </AppLink>
+            </DropdownMenuItem>
+          )}
+
+          {order.shipments.filter(
+            (s) => !["cancelled", "draft"].includes(s.status),
+          ).length > 0 && (
+            <DropdownMenuItem asChild>
+              <a
+                href={url$`${references.HOST}/documents/orders/label.${
+                  order.shipments.filter((s) => !["cancelled", "draft"].includes(s.status))[0].label_type
+                }?orders=${order.id}`}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center"
+              >
+                <span>{`Print Label${
+                  order.shipments.filter((s) => !["cancelled", "draft"].includes(s.status)).length > 1 ? "s" : ""
+                }`}</span>
+              </a>
+            </DropdownMenuItem>
+          )}
+
+          {!isViewing && (
+            <DropdownMenuItem onClick={displayDetails}>
+              <span>View order</span>
+            </DropdownMenuItem>
+          )}
+
+          {order.source === "draft" && order.shipments.length === 0 && (
+            <>
+              <DropdownMenuItem asChild>
+                <AppLink
+                  href={`/draft_orders/${order?.id}`}
+                >
+                  <span>Edit order</span>
+                </AppLink>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() =>
+                  confirmCancellation({
+                    identifier: order.id as string,
+                    label: `Delete order`,
+                    action: "Submit",
+                    onConfirm: () =>
+                      mutation.deleteOrder.mutateAsync({ id: order.id }),
+                  })
+                }
+                className="text-destructive focus:text-destructive"
+              >
+                <span>Delete order</span>
+              </DropdownMenuItem>
+            </>
+          )}
+
+          {order.status === OrderStatusEnum.Unfulfilled && (
+            <DropdownMenuItem
+              onClick={() =>
+                confirmCancellation({
+                  identifier: order.id as string,
+                  label: `Cancel order`,
+                  action: "Submit",
+                  onConfirm: cancelOrder(order),
+                })
+              }
+              className="text-destructive focus:text-destructive"
+            >
+              <span>Cancel order</span>
+            </DropdownMenuItem>
+          )}
+
+          {(document_templates?.edges || []).length > 0 &&
+            !["fulfilled", "partial", "delivered", "cancelled"].includes(
+              order?.status,
+            ) && <DropdownMenuSeparator />}
+
+          {(document_templates?.edges || []).map(({ node: template }) => (
+            <DropdownMenuItem asChild key={template.id}>
+              <a
+                href={url$`${references.HOST}/documents/templates/${template.id}.${template.slug}?orders=${order.id}`}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center"
+              >
+                <span>Download {template.name}</span>
+              </a>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  );
+};

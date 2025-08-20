@@ -44,6 +44,54 @@ export const GET_SYSTEM_USAGE = gql`
   }
 `;
 
+export const GET_USAGE = gql`
+  query GetUsage($filter: UsageFilter) {
+    organization {
+      usage(filter: $filter) {
+        members
+        total_errors
+        order_volume
+        total_requests
+        total_trackers
+        total_shipments
+        unfulfilled_orders
+        total_shipping_spend
+        total_addons_charges
+        api_errors {
+          label
+          count
+          date
+        }
+        api_requests {
+          label
+          count
+          date
+        }
+        order_volumes {
+          label
+          count
+          date
+        }
+        shipment_count {
+          label
+          count
+          date
+        }
+        tracker_count {
+          label
+          count
+          date
+        }
+        shipping_spend {
+          label
+          count
+          date
+        }
+      }
+    }
+  }
+`;
+
 export const GET_ADDRESS_TEMPLATES = gql`
   query get_address_templates($filter: AddressFilter) {
     address_templates(filter: $filter) {
@@ -1475,17 +1523,29 @@ export const GET_PARCEL_TEMPLATES = gql`
 `;
 
 export const GET_SYSTEM_CONNECTIONS = gql`
-  query get_system_connections {
-    system_connections {
-      id
-      carrier_id
-      test_mode
-      active
-      capabilities
-      carrier_name
-      display_name
-      enabled
-      config
+  query get_system_connections($filter: CarrierFilter) {
+    system_connections(filter: $filter) {
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
+      edges {
+        node {
+          id
+          carrier_id
+          test_mode
+          active
+          capabilities
+          carrier_name
+          display_name
+          enabled
+          created_at
+          updated_at
+        }
+      }
     }
   }
 `;
@@ -1637,24 +1697,35 @@ export const GET_API_TOKEN = gql`
 `;
 
 export const GET_USER_CONNECTIONS = gql`
-  query get_user_connections {
-    user_connections {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      capabilities
-      credentials
-      metadata
-      config
-      rate_sheet {
-        id
-        name
-        slug
-        carrier_name
-        metadata
+  query get_user_connections($filter: CarrierFilter) {
+    user_connections(filter: $filter) {
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
+      edges {
+        node {
+          id
+          carrier_id
+          carrier_name
+          display_name
+          test_mode
+          active
+          capabilities
+          credentials
+          metadata
+          config
+          rate_sheet {
+            id
+            name
+            slug
+            carrier_name
+            metadata
+          }
+        }
       }
     }
   }
@@ -2566,6 +2637,7 @@ export const GET_DOCUMENT_TEMPLATE = gql`
       description
       related_object
       active
+      preview_url
       updated_at
     }
   }
@@ -2591,6 +2663,7 @@ export const GET_DOCUMENT_TEMPLATES = gql`
           related_object
           active
           updated_at
+          preview_url
         }
       }
     }
@@ -3277,5 +3350,3 @@ export const SEARCH_DATA = gql`
     }
   }
 `;
-
-

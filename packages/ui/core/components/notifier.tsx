@@ -6,60 +6,34 @@ import {
   RequestError,
   ErrorType,
 } from "@karrio/types";
-import React, { useState } from "react";
+import React from "react";
+import { toast as shadcnToast } from "@karrio/ui/hooks/use-toast";
 
 interface LoadingNotifier {
   notify: (notification: Notification) => void;
 }
 
-export const Notify = React.createContext<LoadingNotifier>(
-  {} as LoadingNotifier,
-);
-
-export const Notifier = ({
-  children,
-}: {
-  children?: React.ReactNode;
-}): JSX.Element => {
-  const [notification, setNotification] = useState<Notification>();
-  const [timer, setTimer] = useState<NodeJS.Timeout | number>();
-
-  const dismiss = (evt?: React.MouseEvent) => {
-    evt?.preventDefault();
-    evt?.stopPropagation();
-    setNotification(undefined);
-    timer && clearTimeout(timer as NodeJS.Timeout);
-  };
-  const notify = (notification: Notification) => {
-    dismiss();
-    setNotification(notification);
-    setTimer(
-      setTimeout(() => {
-        dismiss();
-      }, 10000),
+const shadcnNotify = (notification: Notification) => {
+  const variant = mapVariant(notification?.type);
+  const parsed = parseMessage(notification?.message);
+  if (Array.isArray(parsed)) {
+    parsed.forEach(({ title, description, variant: v }) =>
+      shadcnToast({ title, description, variant: v || variant }),
     );
-  };
-
-  return (
-    <Notify.Provider value={{ notify }}>
-      {notification !== undefined && (
-        <div
-          className={`notification px-2 py-4 ${notification?.type || NotificationType.info} karrio-notifier is-size-6`}
-        >
-          <progress
-            className={`progress karrio-notification-loader ${notification?.type || NotificationType.info}`}
-            max="100"
-          >
-            50%
-          </progress>
-          <button className="delete" onClick={dismiss}></button>
-          {formatMessage(notification?.message || "")}
-        </div>
-      )}
-      {children}
-    </Notify.Provider>
-  );
+  } else {
+    shadcnToast({ variant, description: parsed as any });
+  }
 };
+
+export const Notify = React.createContext<LoadingNotifier>({
+  notify: shadcnNotify,
+});
+
+export const Notifier = ({ children }: { children?: React.ReactNode }): JSX.Element => (
+  <Notify.Provider value={{ notify: shadcnNotify }}>
+    {children}
+  </Notify.Provider>
+);
 
 export function formatMessage(msg: Notification["message"]) {
   try {
@@ -95,6 +69,41 @@ export function formatMessage(msg: Notification["message"]) {
     console.error(e);
     return "Uh Oh! An uncaught error occured...";
   }
+}
+
+// Parse GraphQL-style errors into toast payloads
+function parseMessage(msg: any):
+  | string
+  | Array<{ title?: string; description?: string; variant?: "default" | "destructive" }>
+{
+  try {
+    if (!msg) return "";
+    if (msg?.errors && Array.isArray(msg.errors)) {
+      return msg.errors.map((err: any) => {
+        const validation = err.validation || {};
+        const details = Object.entries(validation)
+          .map(([field, messages]) => `${field}: ${(messages as string[]).join(" ")}`)
+          .join("\n");
+        return { title: err.message || "Error", description: details || undefined, variant: "destructive" };
+      });
+    }
+    if (msg?.message && msg?.validation) {
+      const details = Object.entries(msg.validation)
+        .map(([field, messages]) => `${field}: ${(messages as string[]).join(" ")}`)
+        .join("\n");
+      return [{ title: msg.message, description: details, variant: "destructive" }];
+    }
+    if (msg?.message) return [{ title: "Error", description: msg.message, variant: "destructive" }];
+    return formatMessage(msg);
+  } catch {
+    return formatMessage(msg);
+  }
+}
+
+function mapVariant(type?: NotificationType | string): "default" | "destructive" {
+  const t = String(type || "").toLowerCase();
+  if (t.includes("danger") || t.includes("error") || t.includes("warning")) return "destructive";
+  return "default";
 }
 
 function renderError(msg: any, _: number): any {

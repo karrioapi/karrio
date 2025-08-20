@@ -3,161 +3,99 @@
 import {
   Card,
   CardContent,
+  CardHeader,
+  CardTitle,
 } from "@karrio/ui/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@karrio/ui/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@karrio/ui/components/ui/dialog";
 import { Button } from "@karrio/ui/components/ui/button";
-import { Input } from "@karrio/ui/components/ui/input";
-import { Label } from "@karrio/ui/components/ui/label";
-import { Checkbox } from "@karrio/ui/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@karrio/ui/components/ui/select";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { useState } from "react";
-import { trpc } from "@karrio/trpc/client";
-import { format } from "date-fns";
-import { MoreHorizontal } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@karrio/ui/components/ui/dropdown-menu";
+import { useUsers, useUserMutation, usePermissionGroups } from "@karrio/hooks/admin-users";
 import {
   GetUsers_users_edges_node as User,
 } from "@karrio/types/graphql/admin/types";
+import { ConfirmationDialog } from "@karrio/ui/components/confirmation-dialog";
+
+// Import our extracted components
+import { StaffInviteModal } from "@karrio/admin/components/staff-invite-modal";
+import { StaffEditModal } from "@karrio/admin/components/staff-edit-modal";
+import { StaffTable } from "@karrio/admin/components/staff-table";
+import { StaffEmptyState } from "@karrio/admin/components/staff-empty-state";
+import { PermissionsTable } from "@karrio/admin/components/permissions-table";
+import { cn } from "@karrio/ui/lib/utils";
 
 export default function Page() {
   const { toast } = useToast();
+  const [selectedTab, setSelectedTab] = useState("staff");
   const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [cursor, setCursor] = useState<string | undefined>(undefined);
-  const utils = trpc.useContext();
+
+  // Additional modals and confirmation states
+  const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
+  const [isDisableConfirmOpen, setIsDisableConfirmOpen] = useState(false);
+  const [isResendInviteOpen, setIsResendInviteOpen] = useState(false);
+  const [pendingActionUser, setPendingActionUser] = useState<User | null>(null);
 
   // Fetch users and permission groups
-  const { data: usersData, isLoading: isLoadingUsers } =
-    trpc.admin.users.list.useQuery({
-      filter: {
-        is_active: true,
-        after: cursor,
-      },
-    });
-  const { data: permissionGroupsData, isLoading: isLoadingPermissions } =
-    trpc.admin.permission_groups.list.useQuery({});
+  const { query: usersQuery, users: usersData } = useUsers({
+    is_active: true,
+  });
+  const { query: permissionGroupsQuery, permission_groups: permissionGroupsData } = usePermissionGroups();
   const users = usersData?.edges || [];
   const permissionGroups = permissionGroupsData?.edges || [];
+  const isLoadingUsers = usersQuery.isLoading;
+  const isLoadingPermissions = permissionGroupsQuery.isLoading;
 
   // Mutations
-  const createUser = trpc.admin.users.create.useMutation({
-    onSuccess: () => {
-      toast({ title: "User created successfully" });
-      setIsInviteOpen(false);
-      utils.admin.users.list.invalidate();
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to create user",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  const { createUser, updateUser, removeUser } = useUserMutation();
 
-  const updateUser = trpc.admin.users.update.useMutation({
-    onSuccess: () => {
-      toast({ title: "User updated successfully" });
-      setIsEditOpen(false);
-      utils.admin.users.list.invalidate();
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to update user",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  const handleCreateSuccess = () => {
+    toast({ title: "User created successfully" });
+    setIsInviteOpen(false);
+  };
 
-  const removeUser = trpc.admin.users.remove.useMutation({
-    onSuccess: () => {
-      toast({ title: "User removed successfully" });
-      utils.admin.users.list.invalidate();
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to remove user",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  const handleUpdateSuccess = () => {
+    toast({ title: "User updated successfully" });
+    setIsEditOpen(false);
+  };
 
-  const inviteUser = trpc.admin.users.create.useMutation({
-    onSuccess: () => {
-      toast({ title: "User invited successfully" });
-      setIsInviteOpen(false);
-      utils.admin.users.list.invalidate();
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to invite user",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  const handleRemoveSuccess = () => {
+    toast({ title: "User removed successfully" });
+  };
 
-  const handleInvite = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const role = formData.get("role") as "member" | "developer" | "admin";
-
-    inviteUser.mutate({
-      data: {
-        email: formData.get("email") as string,
-        full_name: formData.get("full_name") as string,
-        is_staff: role === "admin",
-        is_active: true,
-        permissions: [],
-      },
+  const handleError = (error: any, action: string) => {
+    toast({
+      title: `Failed to ${action} user`,
+      description: error.message || "An error occurred",
+      variant: "destructive",
     });
   };
 
-  const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const permissions = Array.from(formData.getAll("permissions")) as string[];
-
-    createUser.mutate({
-      data: {
-        email: formData.get("email") as string,
-        full_name: formData.get("full_name") as string,
-        is_staff: formData.get("is_staff") === "on",
-        is_active: true,
-        permissions,
+  const handleInvite = async (data: any) => {
+    createUser.mutate(
+      {
+        email: data.email,
+        full_name: data.full_name,
+        password1: data.password1,
+        password2: data.password2,
+        is_staff: data.is_staff,
+        is_active: data.is_active,
+        is_superuser: data.is_superuser,
+        permissions: data.permissions,
       },
-    });
+      {
+        onSuccess: (response) => {
+          // Check if user already existed by looking for typical creation vs update indicators
+          toast({
+            title: "User added successfully",
+            description: "User has been configured with the specified permissions and access level."
+          });
+          setIsInviteOpen(false);
+        },
+        onError: (error) => handleError(error, "add"),
+      },
+    );
   };
 
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -169,31 +107,59 @@ export default function Page() {
 
     if (!selectedUser) return;
 
-    updateUser.mutate({
-      data: {
-        id: String(selectedUser.id),
+    updateUser.mutate(
+      {
+        id: selectedUser.id as any,
         full_name: formData.get("full_name") as string,
         is_staff: formData.get("is_staff") === "on",
         is_active: formData.get("is_active") === "on",
+        is_superuser: formData.get("is_superuser") === "on",
         permissions,
       },
-    });
+      {
+        onSuccess: handleUpdateSuccess,
+        onError: (error) => handleError(error, "update"),
+      },
+    );
   };
 
-  const handleRemove = async (user: User) => {
-    if (confirm("Are you sure you want to remove this user?")) {
-      removeUser.mutate({
-        data: {
-          id: String(user.id),
+  // Remove user confirmation
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingUser, setPendingUser] = useState<User | null>(null);
+  const askRemove = (user: User) => { setPendingUser(user); setConfirmOpen(true); };
+  const handleRemoveConfirmed = () => {
+    if (!pendingUser) return;
+    removeUser.mutate(
+      { id: pendingUser.id as any },
+      { onSuccess: handleRemoveSuccess, onError: (error) => handleError(error, "remove") },
+    );
+    setPendingUser(null);
+  };
+
+
+  const handleToggleAccountStatus = (user: User) => {
+    const newStatus = !user.is_active;
+    updateUser.mutate(
+      {
+        id: user.id as any,
+        is_active: newStatus,
+      },
+      {
+        onSuccess: () => {
+          toast({
+            title: `Account ${newStatus ? 'enabled' : 'disabled'}`,
+            description: `${user.full_name || user.email} has been ${newStatus ? 'enabled' : 'disabled'}`,
+          });
         },
-      });
-    }
+        onError: (error) => handleError(error, newStatus ? "enable" : "disable"),
+      },
+    );
   };
 
   // Fix mutation status checks
-  const isInviting = inviteUser.status === "loading";
-  const isUpdating = updateUser.status === "loading";
-  const isRemoving = removeUser.status === "loading";
+  const isInviting = createUser.isLoading;
+  const isUpdating = updateUser.isLoading;
+  const isRemoving = removeUser.isLoading;
 
   if (isLoadingUsers || isLoadingPermissions) {
     return (
@@ -204,204 +170,140 @@ export default function Page() {
   }
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          User Management
-        </h1>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Staff & Permissions</h1>
+          <p className="text-muted-foreground">
+            Manage your team members and their access permissions
+          </p>
+        </div>
+        {selectedTab === "staff" && (
+          <Button onClick={() => setIsInviteOpen(true)}>
+            Add User
+          </Button>
+        )}
       </div>
 
-      <Card>
-        <CardContent className="p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Users</h2>
-            <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
-              <DialogTrigger asChild>
-                <Button>Invite User</Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Invite New User</DialogTitle>
-                  <DialogDescription>
-                    Send an invitation to join your organization.
-                  </DialogDescription>
-                </DialogHeader>
-                <form onSubmit={handleInvite} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" name="email" type="email" required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="role">Role</Label>
-                    <Select name="role" defaultValue="member">
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="member">Member</SelectItem>
-                        <SelectItem value="developer">Developer</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <DialogFooter>
-                    <Button type="submit" disabled={isInviting}>
-                      {isInviting ? "Sending..." : "Send Invitation"}
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
-          </div>
+      {/* Tab Navigation */}
+      <div className="border-b">
+        <nav className="flex space-x-8">
+          <button
+            className={cn(
+              "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors",
+              selectedTab === "staff"
+                ? "border-purple-500 text-purple-600"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+            )}
+            onClick={() => setSelectedTab("staff")}
+          >
+            Staff Members
+          </button>
+          <button
+            className={cn(
+              "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors",
+              selectedTab === "permissions"
+                ? "border-purple-500 text-purple-600"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+            )}
+            onClick={() => setSelectedTab("permissions")}
+          >
+            Permissions & Groups
+          </button>
+        </nav>
+      </div>
 
-          {users.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <p className="text-sm text-muted-foreground">No users found</p>
-              <p className="text-sm text-muted-foreground">Invite a user to get started</p>
-            </div>
-          ) : (
-            <>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>MEMBER</TableHead>
-                    <TableHead>EMAIL</TableHead>
-                    <TableHead>ROLE</TableHead>
-                    <TableHead>LAST LOGIN</TableHead>
-                    <TableHead className="w-[50px]"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {users.map(({ node: user }) => (
-                    <TableRow key={user.id}>
-                      <TableCell>{user.full_name}</TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell>
-                        {user.is_staff ? "Admin" : user.is_active ? "Member" : "Inactive"}
-                      </TableCell>
-                      <TableCell>
-                        {user.last_login ? format(new Date(user.last_login), "MMM d, yyyy") : "Never"}
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={() => {
-                                setSelectedUser(user as unknown as User);
-                                setIsEditOpen(true);
-                              }}
-                            >
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              className="text-destructive"
-                              onClick={() => handleRemove(user as unknown as User)}
-                            >
-                              Remove
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+      {/* Content */}
+      <div className="mt-6">
+        {selectedTab === "staff" && (
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                Team Members ({users.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {users.length === 0 ? (
+                <StaffEmptyState onInvite={() => setIsInviteOpen(true)} />
+              ) : (
+                <>
+                  <StaffTable
+                    users={users}
+                    onEdit={(user) => {
+                      setSelectedUser(user);
+                      setIsEditOpen(true);
+                    }}
+                    onToggleStatus={handleToggleAccountStatus}
+                    onRemove={askRemove}
+                  />
 
-              {usersData?.page_info && (
-                <div className="mt-4 flex items-center justify-between">
-                  <p className="text-sm text-muted-foreground">
-                    Showing {users.length} of {usersData.page_info.count} users
-                  </p>
-                  <div className="flex items-center space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCursor(usersData.page_info.start_cursor || undefined)}
-                      disabled={!usersData.page_info.has_previous_page}
-                    >
-                      Previous
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCursor(usersData.page_info.end_cursor || undefined)}
-                      disabled={!usersData.page_info.has_next_page}
-                    >
-                      Next
-                    </Button>
-                  </div>
-                </div>
+                  {usersData?.page_info && (
+                    <div className="mt-4 flex items-center justify-between">
+                      <p className="text-sm text-muted-foreground">
+                        Showing {users.length} of {usersData.page_info.count} users
+                      </p>
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setCursor(usersData.page_info.start_cursor || undefined)}
+                          disabled={!usersData.page_info.has_previous_page}
+                        >
+                          Previous
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setCursor(usersData.page_info.end_cursor || undefined)}
+                          disabled={!usersData.page_info.has_next_page}
+                        >
+                          Next
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
-            </>
-          )}
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        )}
 
-      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit User</DialogTitle>
-            <DialogDescription>
-              Update user details and permissions.
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleUpdate} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="full_name">Full Name</Label>
-              <Input
-                id="full_name"
-                name="full_name"
-                defaultValue={selectedUser?.full_name}
-                required
-              />
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="is_staff"
-                name="is_staff"
-                defaultChecked={selectedUser?.is_staff}
-              />
-              <Label htmlFor="is_staff">Admin Access</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="is_active"
-                name="is_active"
-                defaultChecked={selectedUser?.is_active}
-              />
-              <Label htmlFor="is_active">Active</Label>
-            </div>
-            <div className="space-y-2">
-              <Label>Permission Groups</Label>
-              <div className="space-y-2">
-                {permissionGroups.map(({ node: group }) => (
-                  <div key={group.id} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`permission_${group.id}`}
-                      name="permission_groups"
-                      value={String(group.id)}
-                      defaultChecked={selectedUser?.permissions?.includes(String(group.id))}
-                    />
-                    <Label htmlFor={`permission_${group.id}`}>
-                      {group.name}
-                    </Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="submit" disabled={isUpdating}>
-                {isUpdating ? "Updating..." : "Update User"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+        {selectedTab === "permissions" && (
+          <PermissionsTable
+            permissionGroups={permissionGroups}
+            isLoading={isLoadingPermissions}
+          />
+        )}
+      </div>
+
+      {/* Confirmation dialogs */}
+      <ConfirmationDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title="Remove User"
+        description={`Are you sure you want to remove ${(pendingUser as any)?.full_name || 'this user'}? This action cannot be undone.`}
+        confirmLabel="Remove"
+        onConfirm={handleRemoveConfirmed}
+      />
+
+      {/* Modals */}
+      <StaffInviteModal
+        open={isInviteOpen}
+        onOpenChange={setIsInviteOpen}
+        onSubmit={handleInvite}
+        isLoading={isInviting}
+        permissionGroups={permissionGroups.map(({ node }) => node) as any}
+      />
+
+      <StaffEditModal
+        open={isEditOpen}
+        onOpenChange={setIsEditOpen}
+        onSubmit={handleUpdate}
+        user={selectedUser}
+        permissionGroups={permissionGroups.map(({ node }) => node)}
+        isLoading={isUpdating}
+      />
     </div>
   );
 }

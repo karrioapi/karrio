@@ -4,239 +4,6 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GetSystemConnections
-// ====================================================
-
-export interface GetSystemConnections_system_carrier_connections_edges_node {
-  id: string;
-  carrier_name: string;
-  carrier_id: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  capabilities: string[];
-  credentials: any;
-  config: any | null;
-  metadata: any | null;
-  object_type: string | null;
-}
-
-export interface GetSystemConnections_system_carrier_connections_edges {
-  node: GetSystemConnections_system_carrier_connections_edges_node;
-  cursor: string;
-}
-
-export interface GetSystemConnections_system_carrier_connections_page_info {
-  has_next_page: boolean;
-  has_previous_page: boolean;
-  start_cursor: string | null;
-  end_cursor: string | null;
-}
-
-export interface GetSystemConnections_system_carrier_connections {
-  edges: GetSystemConnections_system_carrier_connections_edges[];
-  page_info: GetSystemConnections_system_carrier_connections_page_info;
-}
-
-export interface GetSystemConnections {
-  system_carrier_connections: GetSystemConnections_system_carrier_connections;
-}
-
-export interface GetSystemConnectionsVariables {
-  filter?: CarrierFilter | null;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: GetSystemConnection
-// ====================================================
-
-export interface GetSystemConnection_system_carrier_connection {
-  id: string;
-  carrier_name: string;
-  carrier_id: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  capabilities: string[];
-  credentials: any;
-  config: any | null;
-  metadata: any | null;
-  object_type: string | null;
-}
-
-export interface GetSystemConnection {
-  system_carrier_connection: GetSystemConnection_system_carrier_connection | null;
-}
-
-export interface GetSystemConnectionVariables {
-  id: string;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: CreateSystemConnection
-// ====================================================
-
-export interface CreateSystemConnection_create_system_carrier_connection_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface CreateSystemConnection_create_system_carrier_connection_connection {
-  id: string;
-  carrier_name: string;
-  carrier_id: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  capabilities: string[];
-  credentials: any;
-  config: any | null;
-  metadata: any | null;
-  object_type: string | null;
-}
-
-export interface CreateSystemConnection_create_system_carrier_connection {
-  errors: CreateSystemConnection_create_system_carrier_connection_errors[] | null;
-  connection: CreateSystemConnection_create_system_carrier_connection_connection | null;
-}
-
-export interface CreateSystemConnection {
-  create_system_carrier_connection: CreateSystemConnection_create_system_carrier_connection;
-}
-
-export interface CreateSystemConnectionVariables {
-  data: CreateConnectionMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: UpdateSystemConnection
-// ====================================================
-
-export interface UpdateSystemConnection_update_system_carrier_connection_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface UpdateSystemConnection_update_system_carrier_connection_connection {
-  id: string;
-  carrier_name: string;
-  carrier_id: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  capabilities: string[];
-  credentials: any;
-  config: any | null;
-  metadata: any | null;
-  object_type: string | null;
-}
-
-export interface UpdateSystemConnection_update_system_carrier_connection {
-  errors: UpdateSystemConnection_update_system_carrier_connection_errors[] | null;
-  connection: UpdateSystemConnection_update_system_carrier_connection_connection | null;
-}
-
-export interface UpdateSystemConnection {
-  update_system_carrier_connection: UpdateSystemConnection_update_system_carrier_connection;
-}
-
-export interface UpdateSystemConnectionVariables {
-  data: UpdateConnectionMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: DeleteSystemConnection
-// ====================================================
-
-export interface DeleteSystemConnection_delete_system_carrier_connection_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface DeleteSystemConnection_delete_system_carrier_connection {
-  errors: DeleteSystemConnection_delete_system_carrier_connection_errors[] | null;
-  id: string;
-}
-
-export interface DeleteSystemConnection {
-  delete_system_carrier_connection: DeleteSystemConnection_delete_system_carrier_connection;
-}
-
-export interface DeleteSystemConnectionVariables {
-  data: DeleteConnectionMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: GetMe
-// ====================================================
-
-export interface GetMe_me {
-  id: number;
-  email: string;
-  full_name: string;
-  is_staff: boolean;
-  is_active: boolean;
-  is_superuser: boolean | null;
-  last_login: any | null;
-  permissions: string[] | null;
-}
-
-export interface GetMe {
-  me: GetMe_me;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: GetUser
-// ====================================================
-
-export interface GetUser_user {
-  id: number;
-  email: string;
-  full_name: string;
-  is_staff: boolean;
-  is_active: boolean;
-  is_superuser: boolean | null;
-  last_login: any | null;
-  permissions: string[] | null;
-}
-
-export interface GetUser {
-  user: GetUser_user | null;
-}
-
-export interface GetUserVariables {
-  email: string;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL query operation: GetUsers
 // ====================================================
 
@@ -248,12 +15,12 @@ export interface GetUsers_users_edges_node {
   is_active: boolean;
   is_superuser: boolean | null;
   last_login: any | null;
+  date_joined: any;
   permissions: string[] | null;
 }
 
 export interface GetUsers_users_edges {
   node: GetUsers_users_edges_node;
-  cursor: string;
 }
 
 export interface GetUsers_users_page_info {
@@ -282,10 +49,10 @@ export interface GetUsersVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: CreateUser
+// GraphQL query operation: GetUser
 // ====================================================
 
-export interface CreateUser_create_user_user {
+export interface GetUser_user {
   id: number;
   email: string;
   full_name: string;
@@ -293,62 +60,16 @@ export interface CreateUser_create_user_user {
   is_active: boolean;
   is_superuser: boolean | null;
   last_login: any | null;
+  date_joined: any;
   permissions: string[] | null;
 }
 
-export interface CreateUser_create_user_errors {
-  field: string;
-  messages: string[];
+export interface GetUser {
+  user: GetUser_user | null;
 }
 
-export interface CreateUser_create_user {
-  user: CreateUser_create_user_user | null;
-  errors: CreateUser_create_user_errors[] | null;
-}
-
-export interface CreateUser {
-  create_user: CreateUser_create_user;
-}
-
-export interface CreateUserVariables {
-  data: CreateUserMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: UpdateUser
-// ====================================================
-
-export interface UpdateUser_update_user_user {
-  id: number;
+export interface GetUserVariables {
   email: string;
-  full_name: string;
-  is_staff: boolean;
-  is_active: boolean;
-  is_superuser: boolean | null;
-  last_login: any | null;
-  permissions: string[] | null;
-}
-
-export interface UpdateUser_update_user_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface UpdateUser_update_user {
-  user: UpdateUser_update_user_user | null;
-  errors: UpdateUser_update_user_errors[] | null;
-}
-
-export interface UpdateUser {
-  update_user: UpdateUser_update_user;
-}
-
-export interface UpdateUserVariables {
-  data: UpdateUserMutationInput;
 }
 
 
@@ -356,25 +77,24 @@ export interface UpdateUserVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: RemoveUser
+// GraphQL query operation: GetPermissionGroups
 // ====================================================
 
-export interface RemoveUser_remove_user_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface RemoveUser_remove_user {
-  errors: RemoveUser_remove_user_errors[] | null;
+export interface GetPermissionGroups_permission_groups_edges_node {
   id: number;
+  name: string;
 }
 
-export interface RemoveUser {
-  remove_user: RemoveUser_remove_user;
+export interface GetPermissionGroups_permission_groups_edges {
+  node: GetPermissionGroups_permission_groups_edges_node;
 }
 
-export interface RemoveUserVariables {
-  data: DeleteUserMutationInput;
+export interface GetPermissionGroups_permission_groups {
+  edges: GetPermissionGroups_permission_groups_edges[];
+}
+
+export interface GetPermissionGroups {
+  permission_groups: GetPermissionGroups_permission_groups;
 }
 
 
@@ -411,6 +131,7 @@ export interface GetConfigs_configs {
   DOCUMENTS_MANAGEMENT: boolean | null;
   DATA_IMPORT_EXPORT: boolean | null;
   WORKFLOW_MANAGEMENT: boolean | null;
+  SHIPPING_RULES: boolean | null;
   PERSIST_SDK_TRACING: boolean | null;
 }
 
@@ -423,54 +144,75 @@ export interface GetConfigs {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: UpdateConfigs
+// GraphQL query operation: GetAdminSystemUsage
 // ====================================================
 
-export interface UpdateConfigs_update_configs_errors {
-  field: string;
-  messages: string[];
+export interface GetAdminSystemUsage_usage_api_requests {
+  date: string | null;
+  count: number | null;
+  label: string | null;
 }
 
-export interface UpdateConfigs_update_configs_configs {
-  APP_NAME: string | null;
-  APP_WEBSITE: string | null;
-  EMAIL_USE_TLS: boolean | null;
-  EMAIL_HOST_USER: string | null;
-  EMAIL_HOST_PASSWORD: string | null;
-  EMAIL_HOST: string | null;
-  EMAIL_PORT: number | null;
-  EMAIL_FROM_ADDRESS: string | null;
-  GOOGLE_CLOUD_API_KEY: string | null;
-  CANADAPOST_ADDRESS_COMPLETE_API_KEY: string | null;
-  ORDER_DATA_RETENTION: number | null;
-  TRACKER_DATA_RETENTION: number | null;
-  SHIPMENT_DATA_RETENTION: number | null;
-  API_LOGS_DATA_RETENTION: number | null;
-  AUDIT_LOGGING: boolean | null;
-  ALLOW_SIGNUP: boolean | null;
-  ALLOW_ADMIN_APPROVED_SIGNUP: boolean | null;
-  ALLOW_MULTI_ACCOUNT: boolean | null;
-  ADMIN_DASHBOARD: boolean | null;
-  MULTI_ORGANIZATIONS: boolean | null;
-  ORDERS_MANAGEMENT: boolean | null;
-  APPS_MANAGEMENT: boolean | null;
-  DOCUMENTS_MANAGEMENT: boolean | null;
-  DATA_IMPORT_EXPORT: boolean | null;
-  WORKFLOW_MANAGEMENT: boolean | null;
-  PERSIST_SDK_TRACING: boolean | null;
+export interface GetAdminSystemUsage_usage_api_errors {
+  date: string | null;
+  count: number | null;
+  label: string | null;
 }
 
-export interface UpdateConfigs_update_configs {
-  errors: UpdateConfigs_update_configs_errors[] | null;
-  configs: UpdateConfigs_update_configs_configs | null;
+export interface GetAdminSystemUsage_usage_shipment_count {
+  date: string | null;
+  count: number | null;
+  label: string | null;
 }
 
-export interface UpdateConfigs {
-  update_configs: UpdateConfigs_update_configs;
+export interface GetAdminSystemUsage_usage_tracker_count {
+  date: string | null;
+  count: number | null;
+  label: string | null;
 }
 
-export interface UpdateConfigsVariables {
-  data: InstanceConfigMutationInput;
+export interface GetAdminSystemUsage_usage_order_volumes {
+  date: string | null;
+  count: number | null;
+  label: string | null;
+}
+
+export interface GetAdminSystemUsage_usage_shipping_spend {
+  date: string | null;
+  count: number | null;
+  label: string | null;
+}
+
+export interface GetAdminSystemUsage_usage_addons_charges {
+  date: string | null;
+  amount: number | null;
+}
+
+export interface GetAdminSystemUsage_usage {
+  total_requests: number | null;
+  total_trackers: number | null;
+  total_shipments: number | null;
+  total_shipping_spend: number | null;
+  total_errors: number | null;
+  order_volume: number | null;
+  organization_count: number | null;
+  user_count: number | null;
+  total_addons_charges: number | null;
+  api_requests: GetAdminSystemUsage_usage_api_requests[] | null;
+  api_errors: GetAdminSystemUsage_usage_api_errors[] | null;
+  shipment_count: GetAdminSystemUsage_usage_shipment_count[] | null;
+  tracker_count: GetAdminSystemUsage_usage_tracker_count[] | null;
+  order_volumes: GetAdminSystemUsage_usage_order_volumes[] | null;
+  shipping_spend: GetAdminSystemUsage_usage_shipping_spend[] | null;
+  addons_charges: GetAdminSystemUsage_usage_addons_charges[] | null;
+}
+
+export interface GetAdminSystemUsage {
+  usage: GetAdminSystemUsage_usage;
+}
+
+export interface GetAdminSystemUsageVariables {
+  filter?: UsageFilter | null;
 }
 
 
@@ -478,67 +220,40 @@ export interface UpdateConfigsVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GetSurcharge
+// GraphQL query operation: GetSystemConnections
 // ====================================================
 
-export interface GetSurcharge_surcharge_carrier_accounts {
+export interface GetSystemConnections_system_carrier_connections_edges_node_rate_sheet {
   id: string;
-  active: boolean;
+}
+
+export interface GetSystemConnections_system_carrier_connections_edges_node_usage {
+  total_trackers: number | null;
+  total_shipments: number | null;
+  total_shipping_spend: number | null;
+  total_addons_charges: number | null;
+}
+
+export interface GetSystemConnections_system_carrier_connections_edges_node {
+  id: string;
   carrier_id: string;
-}
-
-export interface GetSurcharge_surcharge {
-  id: string;
-  name: string;
-  amount: number;
-  surcharge_type: string;
-  object_type: string;
+  carrier_name: string;
+  display_name: string;
   active: boolean;
-  services: string[];
-  carriers: string[];
-  carrier_accounts: GetSurcharge_surcharge_carrier_accounts[];
+  capabilities: string[];
+  credentials: any;
+  config: any | null;
+  metadata: any | null;
+  test_mode: boolean;
+  rate_sheet: GetSystemConnections_system_carrier_connections_edges_node_rate_sheet | null;
+  usage: GetSystemConnections_system_carrier_connections_edges_node_usage;
 }
 
-export interface GetSurcharge {
-  surcharge: GetSurcharge_surcharge | null;
+export interface GetSystemConnections_system_carrier_connections_edges {
+  node: GetSystemConnections_system_carrier_connections_edges_node;
 }
 
-export interface GetSurchargeVariables {
-  id: string;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: GetSurcharges
-// ====================================================
-
-export interface GetSurcharges_surcharges_edges_node_carrier_accounts {
-  id: string;
-  active: boolean;
-  carrier_id: string;
-}
-
-export interface GetSurcharges_surcharges_edges_node {
-  id: string;
-  name: string;
-  amount: number;
-  surcharge_type: string;
-  object_type: string;
-  active: boolean;
-  services: string[];
-  carriers: string[];
-  carrier_accounts: GetSurcharges_surcharges_edges_node_carrier_accounts[];
-}
-
-export interface GetSurcharges_surcharges_edges {
-  node: GetSurcharges_surcharges_edges_node;
-  cursor: string;
-}
-
-export interface GetSurcharges_surcharges_page_info {
+export interface GetSystemConnections_system_carrier_connections_page_info {
   count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
@@ -546,61 +261,18 @@ export interface GetSurcharges_surcharges_page_info {
   end_cursor: string | null;
 }
 
-export interface GetSurcharges_surcharges {
-  edges: GetSurcharges_surcharges_edges[];
-  page_info: GetSurcharges_surcharges_page_info;
+export interface GetSystemConnections_system_carrier_connections {
+  edges: GetSystemConnections_system_carrier_connections_edges[];
+  page_info: GetSystemConnections_system_carrier_connections_page_info;
 }
 
-export interface GetSurcharges {
-  surcharges: GetSurcharges_surcharges;
+export interface GetSystemConnections {
+  system_carrier_connections: GetSystemConnections_system_carrier_connections;
 }
 
-export interface GetSurchargesVariables {
-  filter?: SurchargeFilter | null;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: CreateSurcharge
-// ====================================================
-
-export interface CreateSurcharge_create_surcharge_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface CreateSurcharge_create_surcharge_surcharge_carrier_accounts {
-  id: string;
-  active: boolean;
-  carrier_id: string;
-}
-
-export interface CreateSurcharge_create_surcharge_surcharge {
-  id: string;
-  name: string;
-  amount: number;
-  surcharge_type: string;
-  object_type: string;
-  active: boolean;
-  services: string[];
-  carriers: string[];
-  carrier_accounts: CreateSurcharge_create_surcharge_surcharge_carrier_accounts[];
-}
-
-export interface CreateSurcharge_create_surcharge {
-  errors: CreateSurcharge_create_surcharge_errors[] | null;
-  surcharge: CreateSurcharge_create_surcharge_surcharge | null;
-}
-
-export interface CreateSurcharge {
-  create_surcharge: CreateSurcharge_create_surcharge;
-}
-
-export interface CreateSurchargeVariables {
-  data: CreateSurchargeMutationInput;
+export interface GetSystemConnectionsVariables {
+  filter?: CarrierFilter | null;
+  usageFilter?: UsageFilter | null;
 }
 
 
@@ -608,145 +280,32 @@ export interface CreateSurchargeVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: UpdateSurcharge
+// GraphQL query operation: GetSystemConnection
 // ====================================================
 
-export interface UpdateSurcharge_update_surcharge_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface UpdateSurcharge_update_surcharge_surcharge_carrier_accounts {
-  id: string;
-  active: boolean;
-  carrier_id: string;
-}
-
-export interface UpdateSurcharge_update_surcharge_surcharge {
-  id: string;
-  name: string;
-  amount: number;
-  surcharge_type: string;
-  object_type: string;
-  active: boolean;
-  services: string[];
-  carriers: string[];
-  carrier_accounts: UpdateSurcharge_update_surcharge_surcharge_carrier_accounts[];
-}
-
-export interface UpdateSurcharge_update_surcharge {
-  errors: UpdateSurcharge_update_surcharge_errors[] | null;
-  surcharge: UpdateSurcharge_update_surcharge_surcharge | null;
-}
-
-export interface UpdateSurcharge {
-  update_surcharge: UpdateSurcharge_update_surcharge;
-}
-
-export interface UpdateSurchargeVariables {
-  data: UpdateSurchargeMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: DeleteSurcharge
-// ====================================================
-
-export interface DeleteSurcharge_delete_surcharge_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface DeleteSurcharge_delete_surcharge {
-  errors: DeleteSurcharge_delete_surcharge_errors[] | null;
+export interface GetSystemConnection_system_carrier_connection_rate_sheet {
   id: string;
 }
 
-export interface DeleteSurcharge {
-  delete_surcharge: DeleteSurcharge_delete_surcharge;
-}
-
-export interface DeleteSurchargeVariables {
-  data: DeleteMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: GetRateSheet
-// ====================================================
-
-export interface GetRateSheet_rate_sheet_services_zones {
-  object_type: string;
-  label: string | null;
-  rate: number | null;
-  min_weight: number | null;
-  max_weight: number | null;
-  transit_days: number | null;
-  transit_time: number | null;
-  radius: number | null;
-  latitude: number | null;
-  longitude: number | null;
-  cities: string[] | null;
-  postal_codes: string[] | null;
-  country_codes: CountryCodeEnum[] | null;
-}
-
-export interface GetRateSheet_rate_sheet_services {
-  id: string;
-  object_type: string;
-  service_name: string | null;
-  service_code: string | null;
-  carrier_service_code: string | null;
-  description: string | null;
-  active: boolean | null;
-  currency: CurrencyCodeEnum | null;
-  transit_days: number | null;
-  transit_time: number | null;
-  max_width: number | null;
-  max_height: number | null;
-  max_length: number | null;
-  dimension_unit: DimensionUnitEnum | null;
-  max_weight: number | null;
-  weight_unit: WeightUnitEnum | null;
-  domicile: boolean | null;
-  international: boolean | null;
-  metadata: any | null;
-  zones: GetRateSheet_rate_sheet_services_zones[];
-}
-
-export interface GetRateSheet_rate_sheet_carriers {
+export interface GetSystemConnection_system_carrier_connection {
   id: string;
   carrier_id: string;
   carrier_name: string;
   display_name: string;
   active: boolean;
-  is_system: boolean;
-  test_mode: boolean;
   capabilities: string[];
-}
-
-export interface GetRateSheet_rate_sheet {
-  id: string;
-  name: string;
-  slug: string;
-  carrier_name: CarrierNameEnum;
-  object_type: string;
+  credentials: any;
+  config: any | null;
   metadata: any | null;
-  services: GetRateSheet_rate_sheet_services[];
-  carriers: GetRateSheet_rate_sheet_carriers[];
+  test_mode: boolean;
+  rate_sheet: GetSystemConnection_system_carrier_connection_rate_sheet | null;
 }
 
-export interface GetRateSheet {
-  rate_sheet: GetRateSheet_rate_sheet | null;
+export interface GetSystemConnection {
+  system_carrier_connection: GetSystemConnection_system_carrier_connection | null;
 }
 
-export interface GetRateSheetVariables {
+export interface GetSystemConnectionVariables {
   id: string;
 }
 
@@ -758,24 +317,24 @@ export interface GetRateSheetVariables {
 // GraphQL query operation: GetRateSheets
 // ====================================================
 
+export interface GetRateSheets_rate_sheets_edges_node_services_zones {
+  label: string | null;
+  rate: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+}
+
 export interface GetRateSheets_rate_sheets_edges_node_services {
   id: string;
   service_name: string | null;
   service_code: string | null;
-  carrier_service_code: string | null;
-  description: string | null;
-  active: boolean | null;
+  zones: GetRateSheets_rate_sheets_edges_node_services_zones[];
 }
 
 export interface GetRateSheets_rate_sheets_edges_node_carriers {
   id: string;
-  carrier_id: string;
   carrier_name: string;
-  display_name: string;
   active: boolean;
-  is_system: boolean;
-  test_mode: boolean;
-  capabilities: string[];
 }
 
 export interface GetRateSheets_rate_sheets_edges_node {
@@ -783,7 +342,6 @@ export interface GetRateSheets_rate_sheets_edges_node {
   name: string;
   slug: string;
   carrier_name: CarrierNameEnum;
-  object_type: string;
   metadata: any | null;
   services: GetRateSheets_rate_sheets_edges_node_services[];
   carriers: GetRateSheets_rate_sheets_edges_node_carriers[];
@@ -791,7 +349,6 @@ export interface GetRateSheets_rate_sheets_edges_node {
 
 export interface GetRateSheets_rate_sheets_edges {
   node: GetRateSheets_rate_sheets_edges_node;
-  cursor: string;
 }
 
 export interface GetRateSheets_rate_sheets_page_info {
@@ -820,6 +377,761 @@ export interface GetRateSheetsVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GetRateSheet
+// ====================================================
+
+export interface GetRateSheet_rate_sheet_services_zones {
+  label: string | null;
+  rate: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+}
+
+export interface GetRateSheet_rate_sheet_services {
+  id: string;
+  service_name: string | null;
+  service_code: string | null;
+  zones: GetRateSheet_rate_sheet_services_zones[];
+}
+
+export interface GetRateSheet_rate_sheet_carriers {
+  id: string;
+  carrier_name: string;
+  active: boolean;
+}
+
+export interface GetRateSheet_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
+  services: GetRateSheet_rate_sheet_services[];
+  carriers: GetRateSheet_rate_sheet_carriers[];
+}
+
+export interface GetRateSheet {
+  rate_sheet: GetRateSheet_rate_sheet | null;
+}
+
+export interface GetRateSheetVariables {
+  id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetAddons
+// ====================================================
+
+export interface GetAddons_addons_edges_node_carrier_accounts_usage {
+  total_shipments: number | null;
+  total_addons_charges: number | null;
+}
+
+export interface GetAddons_addons_edges_node_carrier_accounts {
+  id: string;
+  usage: GetAddons_addons_edges_node_carrier_accounts_usage;
+}
+
+export interface GetAddons_addons_edges_node_usage {
+  total_shipments: number | null;
+  total_addons_charges: number | null;
+}
+
+export interface GetAddons_addons_edges_node {
+  id: string;
+  name: string;
+  active: boolean;
+  amount: number;
+  surcharge_type: string;
+  carriers: string[];
+  services: string[];
+  carrier_accounts: GetAddons_addons_edges_node_carrier_accounts[];
+  usage: GetAddons_addons_edges_node_usage;
+}
+
+export interface GetAddons_addons_edges {
+  node: GetAddons_addons_edges_node;
+}
+
+export interface GetAddons_addons_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetAddons_addons {
+  edges: GetAddons_addons_edges[];
+  page_info: GetAddons_addons_page_info;
+}
+
+export interface GetAddons {
+  addons: GetAddons_addons;
+}
+
+export interface GetAddonsVariables {
+  filter?: AddonFilter | null;
+  usageFilter?: UsageFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetAddon
+// ====================================================
+
+export interface GetAddon_addon_carrier_accounts_usage {
+  total_shipments: number | null;
+  total_addons_charges: number | null;
+}
+
+export interface GetAddon_addon_carrier_accounts {
+  id: string;
+  usage: GetAddon_addon_carrier_accounts_usage;
+}
+
+export interface GetAddon_addon {
+  id: string;
+  name: string;
+  active: boolean;
+  amount: number;
+  surcharge_type: string;
+  carriers: string[];
+  services: string[];
+  carrier_accounts: GetAddon_addon_carrier_accounts[];
+}
+
+export interface GetAddon {
+  addon: GetAddon_addon | null;
+}
+
+export interface GetAddonVariables {
+  id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetOrganizationDetails
+// ====================================================
+
+export interface GetOrganizationDetails_account_members {
+  email: string;
+  is_admin: boolean;
+  roles: UserRole[] | null;
+  is_owner: boolean | null;
+  full_name: string | null;
+  last_login: any | null;
+  user_id: string | null;
+}
+
+export interface GetOrganizationDetails_account_usage_api_requests {
+  date: string | null;
+  count: number | null;
+  label: string | null;
+}
+
+export interface GetOrganizationDetails_account_usage_api_errors {
+  date: string | null;
+  count: number | null;
+  label: string | null;
+}
+
+export interface GetOrganizationDetails_account_usage_shipping_spend {
+  date: string | null;
+  count: number | null;
+  label: string | null;
+}
+
+export interface GetOrganizationDetails_account_usage_shipment_count {
+  date: string | null;
+  count: number | null;
+  label: string | null;
+}
+
+export interface GetOrganizationDetails_account_usage_tracker_count {
+  date: string | null;
+  count: number | null;
+  label: string | null;
+}
+
+export interface GetOrganizationDetails_account_usage_order_volumes {
+  date: string | null;
+  count: number | null;
+  label: string | null;
+}
+
+export interface GetOrganizationDetails_account_usage {
+  members: number | null;
+  total_requests: number | null;
+  total_errors: number | null;
+  order_volume: number | null;
+  total_shipments: number | null;
+  total_shipping_spend: number | null;
+  unfulfilled_orders: number | null;
+  total_trackers: number | null;
+  total_addons_charges: number | null;
+  api_requests: GetOrganizationDetails_account_usage_api_requests[] | null;
+  api_errors: GetOrganizationDetails_account_usage_api_errors[] | null;
+  shipping_spend: GetOrganizationDetails_account_usage_shipping_spend[] | null;
+  shipment_count: GetOrganizationDetails_account_usage_shipment_count[] | null;
+  tracker_count: GetOrganizationDetails_account_usage_tracker_count[] | null;
+  order_volumes: GetOrganizationDetails_account_usage_order_volumes[] | null;
+}
+
+export interface GetOrganizationDetails_account {
+  id: string;
+  name: string;
+  slug: string;
+  is_active: boolean;
+  created: any;
+  modified: any;
+  members: GetOrganizationDetails_account_members[];
+  usage: GetOrganizationDetails_account_usage;
+}
+
+export interface GetOrganizationDetails {
+  account: GetOrganizationDetails_account | null;
+}
+
+export interface GetOrganizationDetailsVariables {
+  id: string;
+  usageFilter?: OrgUsageFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetOrganizations
+// ====================================================
+
+export interface GetOrganizations_accounts_edges_node_usage {
+  members: number | null;
+  total_shipments: number | null;
+  total_trackers: number | null;
+  total_requests: number | null;
+  total_shipping_spend: number | null;
+  total_addons_charges: number | null;
+  total_errors: number | null;
+  order_volume: number | null;
+  unfulfilled_orders: number | null;
+}
+
+export interface GetOrganizations_accounts_edges_node {
+  id: string;
+  name: string;
+  slug: string;
+  is_active: boolean;
+  created: any;
+  modified: any;
+  usage: GetOrganizations_accounts_edges_node_usage;
+}
+
+export interface GetOrganizations_accounts_edges {
+  node: GetOrganizations_accounts_edges_node;
+  cursor: string;
+}
+
+export interface GetOrganizations_accounts_page_info {
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetOrganizations_accounts {
+  edges: GetOrganizations_accounts_edges[];
+  page_info: GetOrganizations_accounts_page_info;
+}
+
+export interface GetOrganizations {
+  accounts: GetOrganizations_accounts;
+}
+
+export interface GetOrganizationsVariables {
+  filter?: AccountFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetCarrierConnections
+// ====================================================
+
+export interface GetCarrierConnections_carrier_connections_edges_node_usage {
+  total_shipments: number | null;
+  total_trackers: number | null;
+  total_shipping_spend: number | null;
+  total_addons_charges: number | null;
+}
+
+export interface GetCarrierConnections_carrier_connections_edges_node {
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  active: boolean;
+  capabilities: string[];
+  config: any | null;
+  test_mode: boolean;
+  usage: GetCarrierConnections_carrier_connections_edges_node_usage;
+}
+
+export interface GetCarrierConnections_carrier_connections_edges {
+  node: GetCarrierConnections_carrier_connections_edges_node;
+}
+
+export interface GetCarrierConnections_carrier_connections_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetCarrierConnections_carrier_connections {
+  edges: GetCarrierConnections_carrier_connections_edges[];
+  page_info: GetCarrierConnections_carrier_connections_page_info;
+}
+
+export interface GetCarrierConnections {
+  carrier_connections: GetCarrierConnections_carrier_connections;
+}
+
+export interface GetCarrierConnectionsVariables {
+  filter?: AccountCarrierConnectionFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetCarrierConnection
+// ====================================================
+
+export interface GetCarrierConnection_carrier_connection_usage {
+  total_shipments: number | null;
+  total_trackers: number | null;
+  total_shipping_spend: number | null;
+  total_addons_charges: number | null;
+}
+
+export interface GetCarrierConnection_carrier_connection {
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  active: boolean;
+  capabilities: string[];
+  config: any | null;
+  test_mode: boolean;
+  usage: GetCarrierConnection_carrier_connection_usage;
+}
+
+export interface GetCarrierConnection {
+  carrier_connection: GetCarrierConnection_carrier_connection | null;
+}
+
+export interface GetCarrierConnectionVariables {
+  id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetShipments
+// ====================================================
+
+export interface GetShipments_shipments_edges_node_selected_rate {
+  id: string;
+  service: string;
+  total_charge: number;
+  currency: CurrencyCodeEnum;
+}
+
+export interface GetShipments_shipments_edges_node {
+  id: string;
+  tracking_number: string | null;
+  status: ShipmentStatusEnum;
+  carrier_name: string | null;
+  service: string | null;
+  created_at: any;
+  updated_at: any;
+  selected_rate: GetShipments_shipments_edges_node_selected_rate | null;
+}
+
+export interface GetShipments_shipments_edges {
+  node: GetShipments_shipments_edges_node;
+}
+
+export interface GetShipments_shipments_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetShipments_shipments {
+  edges: GetShipments_shipments_edges[];
+  page_info: GetShipments_shipments_page_info;
+}
+
+export interface GetShipments {
+  shipments: GetShipments_shipments;
+}
+
+export interface GetShipmentsVariables {
+  filter?: SystemShipmentFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetTrackers
+// ====================================================
+
+export interface GetTrackers_trackers_edges_node {
+  id: string;
+  tracking_number: string;
+  status: TrackerStatusEnum;
+  carrier_name: string;
+  carrier_id: string;
+  created_at: any;
+  updated_at: any;
+}
+
+export interface GetTrackers_trackers_edges {
+  node: GetTrackers_trackers_edges_node;
+}
+
+export interface GetTrackers_trackers_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetTrackers_trackers {
+  edges: GetTrackers_trackers_edges[];
+  page_info: GetTrackers_trackers_page_info;
+}
+
+export interface GetTrackers {
+  trackers: GetTrackers_trackers;
+}
+
+export interface GetTrackersVariables {
+  filter?: SystemTrackerFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetOrders
+// ====================================================
+
+export interface GetOrders_orders_edges_node {
+  id: string;
+  order_id: string;
+  status: OrderStatus;
+  created_at: any;
+  updated_at: any;
+}
+
+export interface GetOrders_orders_edges {
+  node: GetOrders_orders_edges_node;
+}
+
+export interface GetOrders_orders_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetOrders_orders {
+  edges: GetOrders_orders_edges[];
+  page_info: GetOrders_orders_page_info;
+}
+
+export interface GetOrders {
+  orders: GetOrders_orders;
+}
+
+export interface GetOrdersVariables {
+  filter?: SystemOrderFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: CreateUser
+// ====================================================
+
+export interface CreateUser_create_user_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface CreateUser_create_user_user {
+  id: number;
+  email: string;
+  full_name: string;
+  is_staff: boolean;
+  is_active: boolean;
+  last_login: any | null;
+  date_joined: any;
+  permissions: string[] | null;
+}
+
+export interface CreateUser_create_user {
+  errors: CreateUser_create_user_errors[] | null;
+  user: CreateUser_create_user_user | null;
+}
+
+export interface CreateUser {
+  create_user: CreateUser_create_user;
+}
+
+export interface CreateUserVariables {
+  input: CreateUserMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateUser
+// ====================================================
+
+export interface UpdateUser_update_user_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UpdateUser_update_user_user {
+  id: number;
+  email: string;
+  full_name: string;
+  is_staff: boolean;
+  is_active: boolean;
+  last_login: any | null;
+  date_joined: any;
+  permissions: string[] | null;
+}
+
+export interface UpdateUser_update_user {
+  errors: UpdateUser_update_user_errors[] | null;
+  user: UpdateUser_update_user_user | null;
+}
+
+export interface UpdateUser {
+  update_user: UpdateUser_update_user;
+}
+
+export interface UpdateUserVariables {
+  input: UpdateUserMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: RemoveUser
+// ====================================================
+
+export interface RemoveUser_remove_user_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface RemoveUser_remove_user {
+  errors: RemoveUser_remove_user_errors[] | null;
+  id: number;
+}
+
+export interface RemoveUser {
+  remove_user: RemoveUser_remove_user;
+}
+
+export interface RemoveUserVariables {
+  input: DeleteUserMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateConfigs
+// ====================================================
+
+export interface UpdateConfigs_update_configs_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UpdateConfigs_update_configs_configs {
+  ALLOW_SIGNUP: boolean | null;
+  ALLOW_ADMIN_APPROVED_SIGNUP: boolean | null;
+  ALLOW_MULTI_ACCOUNT: boolean | null;
+  ADMIN_DASHBOARD: boolean | null;
+  AUDIT_LOGGING: boolean | null;
+  ORDERS_MANAGEMENT: boolean | null;
+  APPS_MANAGEMENT: boolean | null;
+  MULTI_ORGANIZATIONS: boolean | null;
+  PERSIST_SDK_TRACING: boolean | null;
+}
+
+export interface UpdateConfigs_update_configs {
+  errors: UpdateConfigs_update_configs_errors[] | null;
+  configs: UpdateConfigs_update_configs_configs | null;
+}
+
+export interface UpdateConfigs {
+  update_configs: UpdateConfigs_update_configs;
+}
+
+export interface UpdateConfigsVariables {
+  input: InstanceConfigMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: CreateSystemConnection
+// ====================================================
+
+export interface CreateSystemConnection_create_system_carrier_connection_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface CreateSystemConnection_create_system_carrier_connection_connection {
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  active: boolean;
+  capabilities: string[];
+  credentials: any;
+  config: any | null;
+  metadata: any | null;
+  test_mode: boolean;
+}
+
+export interface CreateSystemConnection_create_system_carrier_connection {
+  errors: CreateSystemConnection_create_system_carrier_connection_errors[] | null;
+  connection: CreateSystemConnection_create_system_carrier_connection_connection | null;
+}
+
+export interface CreateSystemConnection {
+  create_system_carrier_connection: CreateSystemConnection_create_system_carrier_connection;
+}
+
+export interface CreateSystemConnectionVariables {
+  input: CreateConnectionMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateSystemConnection
+// ====================================================
+
+export interface UpdateSystemConnection_update_system_carrier_connection_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UpdateSystemConnection_update_system_carrier_connection_connection {
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  active: boolean;
+  capabilities: string[];
+  credentials: any;
+  config: any | null;
+  metadata: any | null;
+  test_mode: boolean;
+}
+
+export interface UpdateSystemConnection_update_system_carrier_connection {
+  errors: UpdateSystemConnection_update_system_carrier_connection_errors[] | null;
+  connection: UpdateSystemConnection_update_system_carrier_connection_connection | null;
+}
+
+export interface UpdateSystemConnection {
+  update_system_carrier_connection: UpdateSystemConnection_update_system_carrier_connection;
+}
+
+export interface UpdateSystemConnectionVariables {
+  input: UpdateConnectionMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DeleteSystemConnection
+// ====================================================
+
+export interface DeleteSystemConnection_delete_system_carrier_connection_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface DeleteSystemConnection_delete_system_carrier_connection {
+  errors: DeleteSystemConnection_delete_system_carrier_connection_errors[] | null;
+  id: string;
+}
+
+export interface DeleteSystemConnection {
+  delete_system_carrier_connection: DeleteSystemConnection_delete_system_carrier_connection;
+}
+
+export interface DeleteSystemConnectionVariables {
+  input: DeleteConnectionMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL mutation operation: CreateRateSheet
 // ====================================================
 
@@ -828,52 +1140,12 @@ export interface CreateRateSheet_create_rate_sheet_errors {
   messages: string[];
 }
 
-export interface CreateRateSheet_create_rate_sheet_rate_sheet_services_zones {
-  label: string | null;
-  rate: number | null;
-  min_weight: number | null;
-  max_weight: number | null;
-  transit_days: number | null;
-  transit_time: number | null;
-  radius: number | null;
-  latitude: number | null;
-  longitude: number | null;
-  cities: string[] | null;
-  postal_codes: string[] | null;
-  country_codes: CountryCodeEnum[] | null;
-}
-
-export interface CreateRateSheet_create_rate_sheet_rate_sheet_services {
-  id: string;
-  service_name: string | null;
-  service_code: string | null;
-  carrier_service_code: string | null;
-  description: string | null;
-  active: boolean | null;
-  metadata: any | null;
-  zones: CreateRateSheet_create_rate_sheet_rate_sheet_services_zones[];
-}
-
-export interface CreateRateSheet_create_rate_sheet_rate_sheet_carriers {
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  active: boolean;
-  is_system: boolean;
-  test_mode: boolean;
-  capabilities: string[];
-}
-
 export interface CreateRateSheet_create_rate_sheet_rate_sheet {
   id: string;
   name: string;
   slug: string;
   carrier_name: CarrierNameEnum;
-  object_type: string;
   metadata: any | null;
-  services: CreateRateSheet_create_rate_sheet_rate_sheet_services[];
-  carriers: CreateRateSheet_create_rate_sheet_rate_sheet_carriers[];
 }
 
 export interface CreateRateSheet_create_rate_sheet {
@@ -886,7 +1158,7 @@ export interface CreateRateSheet {
 }
 
 export interface CreateRateSheetVariables {
-  data: CreateRateSheetMutationInput;
+  input: CreateRateSheetMutationInput;
 }
 
 
@@ -902,52 +1174,12 @@ export interface UpdateRateSheet_update_rate_sheet_errors {
   messages: string[];
 }
 
-export interface UpdateRateSheet_update_rate_sheet_rate_sheet_services_zones {
-  label: string | null;
-  rate: number | null;
-  min_weight: number | null;
-  max_weight: number | null;
-  transit_days: number | null;
-  transit_time: number | null;
-  radius: number | null;
-  latitude: number | null;
-  longitude: number | null;
-  cities: string[] | null;
-  postal_codes: string[] | null;
-  country_codes: CountryCodeEnum[] | null;
-}
-
-export interface UpdateRateSheet_update_rate_sheet_rate_sheet_services {
-  id: string;
-  service_name: string | null;
-  service_code: string | null;
-  carrier_service_code: string | null;
-  description: string | null;
-  active: boolean | null;
-  metadata: any | null;
-  zones: UpdateRateSheet_update_rate_sheet_rate_sheet_services_zones[];
-}
-
-export interface UpdateRateSheet_update_rate_sheet_rate_sheet_carriers {
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  active: boolean;
-  is_system: boolean;
-  test_mode: boolean;
-  capabilities: string[];
-}
-
 export interface UpdateRateSheet_update_rate_sheet_rate_sheet {
   id: string;
   name: string;
   slug: string;
   carrier_name: CarrierNameEnum;
-  object_type: string;
   metadata: any | null;
-  services: UpdateRateSheet_update_rate_sheet_rate_sheet_services[];
-  carriers: UpdateRateSheet_update_rate_sheet_rate_sheet_carriers[];
 }
 
 export interface UpdateRateSheet_update_rate_sheet {
@@ -960,58 +1192,7 @@ export interface UpdateRateSheet {
 }
 
 export interface UpdateRateSheetVariables {
-  data: UpdateRateSheetMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: UpdateServiceZone
-// ====================================================
-
-export interface UpdateServiceZone_update_service_zone_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface UpdateServiceZone_update_service_zone_rate_sheet_services_zones {
-  label: string | null;
-  rate: number | null;
-  min_weight: number | null;
-  max_weight: number | null;
-  transit_days: number | null;
-  transit_time: number | null;
-  radius: number | null;
-  latitude: number | null;
-  longitude: number | null;
-  cities: string[] | null;
-  postal_codes: string[] | null;
-  country_codes: CountryCodeEnum[] | null;
-}
-
-export interface UpdateServiceZone_update_service_zone_rate_sheet_services {
-  id: string;
-  zones: UpdateServiceZone_update_service_zone_rate_sheet_services_zones[];
-}
-
-export interface UpdateServiceZone_update_service_zone_rate_sheet {
-  id: string;
-  services: UpdateServiceZone_update_service_zone_rate_sheet_services[];
-}
-
-export interface UpdateServiceZone_update_service_zone {
-  errors: UpdateServiceZone_update_service_zone_errors[] | null;
-  rate_sheet: UpdateServiceZone_update_service_zone_rate_sheet | null;
-}
-
-export interface UpdateServiceZone {
-  update_service_zone: UpdateServiceZone_update_service_zone;
-}
-
-export interface UpdateServiceZoneVariables {
-  data: UpdateServiceZoneMutationInput;
+  input: UpdateRateSheetMutationInput;
 }
 
 
@@ -1037,7 +1218,7 @@ export interface DeleteRateSheet {
 }
 
 export interface DeleteRateSheetVariables {
-  data: DeleteMutationInput;
+  input: DeleteMutationInput;
 }
 
 
@@ -1045,54 +1226,190 @@ export interface DeleteRateSheetVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GetAccounts
+// GraphQL mutation operation: UpdateRateSheetZoneCell
 // ====================================================
 
-export interface GetAccounts_accounts_edges_node_usage {
-  members: number | null;
-  total_errors: number | null;
-  order_volume: number | null;
-  total_requests: number | null;
-  total_trackers: number | null;
-  total_shipments: number | null;
-  unfulfilled_orders: number | null;
-  total_shipping_spend: number | null;
+export interface UpdateRateSheetZoneCell_update_rate_sheet_zone_cell_errors {
+  field: string;
+  messages: string[];
 }
 
-export interface GetAccounts_accounts_edges_node {
+export interface UpdateRateSheetZoneCell_update_rate_sheet_zone_cell_rate_sheet {
   id: string;
   name: string;
   slug: string;
-  is_active: boolean;
-  created: any;
-  modified: any;
-  usage: GetAccounts_accounts_edges_node_usage;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
 }
 
-export interface GetAccounts_accounts_edges {
-  node: GetAccounts_accounts_edges_node;
-  cursor: string;
+export interface UpdateRateSheetZoneCell_update_rate_sheet_zone_cell {
+  errors: UpdateRateSheetZoneCell_update_rate_sheet_zone_cell_errors[] | null;
+  rate_sheet: UpdateRateSheetZoneCell_update_rate_sheet_zone_cell_rate_sheet | null;
 }
 
-export interface GetAccounts_accounts_page_info {
-  count: number;
-  has_next_page: boolean;
-  has_previous_page: boolean;
-  start_cursor: string | null;
-  end_cursor: string | null;
+export interface UpdateRateSheetZoneCell {
+  update_rate_sheet_zone_cell: UpdateRateSheetZoneCell_update_rate_sheet_zone_cell;
 }
 
-export interface GetAccounts_accounts {
-  edges: GetAccounts_accounts_edges[];
-  page_info: GetAccounts_accounts_page_info;
+export interface UpdateRateSheetZoneCellVariables {
+  input: UpdateRateSheetZoneCellMutationInput;
 }
 
-export interface GetAccounts {
-  accounts: GetAccounts_accounts;
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: BatchUpdateRateSheetCells
+// ====================================================
+
+export interface BatchUpdateRateSheetCells_batch_update_rate_sheet_cells_errors {
+  field: string;
+  messages: string[];
 }
 
-export interface GetAccountsVariables {
-  filter?: AccountFilter | null;
+export interface BatchUpdateRateSheetCells_batch_update_rate_sheet_cells_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
+}
+
+export interface BatchUpdateRateSheetCells_batch_update_rate_sheet_cells {
+  errors: BatchUpdateRateSheetCells_batch_update_rate_sheet_cells_errors[] | null;
+  rate_sheet: BatchUpdateRateSheetCells_batch_update_rate_sheet_cells_rate_sheet | null;
+}
+
+export interface BatchUpdateRateSheetCells {
+  batch_update_rate_sheet_cells: BatchUpdateRateSheetCells_batch_update_rate_sheet_cells;
+}
+
+export interface BatchUpdateRateSheetCellsVariables {
+  input: BatchUpdateRateSheetCellsMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DeleteRateSheetService
+// ====================================================
+
+export interface DeleteRateSheetService_delete_rate_sheet_service_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface DeleteRateSheetService_delete_rate_sheet_service {
+  errors: DeleteRateSheetService_delete_rate_sheet_service_errors[] | null;
+}
+
+export interface DeleteRateSheetService {
+  delete_rate_sheet_service: DeleteRateSheetService_delete_rate_sheet_service;
+}
+
+export interface DeleteRateSheetServiceVariables {
+  input: DeleteRateSheetServiceMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: CreateAddon
+// ====================================================
+
+export interface CreateAddon_create_addon_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface CreateAddon_create_addon_addon {
+  id: string;
+  name: string;
+  active: boolean;
+  amount: number;
+  surcharge_type: string;
+  carriers: string[];
+  services: string[];
+}
+
+export interface CreateAddon_create_addon {
+  errors: CreateAddon_create_addon_errors[] | null;
+  addon: CreateAddon_create_addon_addon | null;
+}
+
+export interface CreateAddon {
+  create_addon: CreateAddon_create_addon;
+}
+
+export interface CreateAddonVariables {
+  input: CreateAddonMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateAddon
+// ====================================================
+
+export interface UpdateAddon_update_addon_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UpdateAddon_update_addon_addon {
+  id: string;
+  name: string;
+  active: boolean;
+  amount: number;
+  surcharge_type: string;
+  carriers: string[];
+  services: string[];
+}
+
+export interface UpdateAddon_update_addon {
+  errors: UpdateAddon_update_addon_errors[] | null;
+  addon: UpdateAddon_update_addon_addon | null;
+}
+
+export interface UpdateAddon {
+  update_addon: UpdateAddon_update_addon;
+}
+
+export interface UpdateAddonVariables {
+  input: UpdateAddonMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DeleteAddon
+// ====================================================
+
+export interface DeleteAddon_delete_addon_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface DeleteAddon_delete_addon {
+  errors: DeleteAddon_delete_addon_errors[] | null;
+  id: string;
+}
+
+export interface DeleteAddon {
+  delete_addon: DeleteAddon_delete_addon;
+}
+
+export interface DeleteAddonVariables {
+  input: DeleteMutationInput;
 }
 
 
@@ -1122,7 +1439,7 @@ export interface CreateOrganizationAccount {
 }
 
 export interface CreateOrganizationAccountVariables {
-  data: CreateOrganizationAccountMutationInput;
+  input: CreateOrganizationAccountMutationInput;
 }
 
 
@@ -1152,7 +1469,7 @@ export interface UpdateOrganizationAccount {
 }
 
 export interface UpdateOrganizationAccountVariables {
-  data: UpdateOrganizationAccountMutationInput;
+  input: UpdateOrganizationAccountMutationInput;
 }
 
 
@@ -1182,7 +1499,7 @@ export interface DisableOrganizationAccount {
 }
 
 export interface DisableOrganizationAccountVariables {
-  data: DisableOrganizationAccountMutationInput;
+  input: DisableOrganizationAccountMutationInput;
 }
 
 
@@ -1193,17 +1510,13 @@ export interface DisableOrganizationAccountVariables {
 // GraphQL mutation operation: DeleteOrganizationAccount
 // ====================================================
 
-export interface DeleteOrganizationAccount_delete_organization_account_account {
-  id: string;
-}
-
 export interface DeleteOrganizationAccount_delete_organization_account_errors {
   field: string;
   messages: string[];
 }
 
 export interface DeleteOrganizationAccount_delete_organization_account {
-  account: DeleteOrganizationAccount_delete_organization_account_account | null;
+  account_id: string;
   errors: DeleteOrganizationAccount_delete_organization_account_errors[] | null;
 }
 
@@ -1212,7 +1525,7 @@ export interface DeleteOrganizationAccount {
 }
 
 export interface DeleteOrganizationAccountVariables {
-  data: DeleteOrganizationAccountMutationInput;
+  input: DeleteOrganizationAccountMutationInput;
 }
 
 
@@ -1220,21 +1533,123 @@ export interface DeleteOrganizationAccountVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GetPermissionGroups
+// GraphQL mutation operation: InviteOrganizationUser
 // ====================================================
 
-export interface GetPermissionGroups_permission_groups_edges_node {
-  id: number;
-  name: string;
-  permissions: string[] | null;
+export interface InviteOrganizationUser_invite_organization_user_account {
+  id: string;
 }
 
-export interface GetPermissionGroups_permission_groups_edges {
-  node: GetPermissionGroups_permission_groups_edges_node;
-  cursor: string;
+export interface InviteOrganizationUser_invite_organization_user_errors {
+  field: string;
+  messages: string[];
 }
 
-export interface GetPermissionGroups_permission_groups_page_info {
+export interface InviteOrganizationUser_invite_organization_user {
+  account: InviteOrganizationUser_invite_organization_user_account | null;
+  errors: InviteOrganizationUser_invite_organization_user_errors[] | null;
+}
+
+export interface InviteOrganizationUser {
+  invite_organization_user: InviteOrganizationUser_invite_organization_user;
+}
+
+export interface InviteOrganizationUserVariables {
+  input: InviteOrganizationUserMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetSystemShipments
+// ====================================================
+
+export interface GetSystemShipments_shipments_edges_node_recipient {
+  company_name: string | null;
+  person_name: string | null;
+  address_line1: string | null;
+  city: string | null;
+  state_code: string | null;
+  postal_code: string | null;
+  country_code: CountryCodeEnum;
+}
+
+export interface GetSystemShipments_shipments_edges_node_shipper {
+  company_name: string | null;
+  person_name: string | null;
+  address_line1: string | null;
+  city: string | null;
+  state_code: string | null;
+  postal_code: string | null;
+  country_code: CountryCodeEnum;
+}
+
+export interface GetSystemShipments_shipments_edges_node_selected_rate {
+  carrier_name: string;
+  carrier_id: string;
+  service: string;
+  total_charge: number;
+  currency: CurrencyCodeEnum;
+}
+
+export interface GetSystemShipments_shipments_edges_node_parcels {
+  id: string;
+  weight: number | null;
+  width: number | null;
+  height: number | null;
+  length: number | null;
+  packaging_type: string | null;
+}
+
+export interface GetSystemShipments_shipments_edges_node_messages {
+  carrier_name: string | null;
+  carrier_id: string | null;
+  message: string | null;
+  code: string | null;
+  details: any | null;
+}
+
+export interface GetSystemShipments_shipments_edges_node_tracker_events {
+  code: string | null;
+  date: string | null;
+  description: string | null;
+  location: string | null;
+  time: string | null;
+}
+
+export interface GetSystemShipments_shipments_edges_node_tracker {
+  id: string;
+  tracking_number: string;
+  events: GetSystemShipments_shipments_edges_node_tracker_events[];
+}
+
+export interface GetSystemShipments_shipments_edges_node {
+  id: string;
+  tracking_number: string | null;
+  recipient: GetSystemShipments_shipments_edges_node_recipient;
+  shipper: GetSystemShipments_shipments_edges_node_shipper;
+  status: ShipmentStatusEnum;
+  service: string | null;
+  carrier_name: string | null;
+  carrier_id: string | null;
+  created_at: any;
+  updated_at: any;
+  test_mode: boolean;
+  meta: any | null;
+  options: any;
+  selected_rate: GetSystemShipments_shipments_edges_node_selected_rate | null;
+  parcels: GetSystemShipments_shipments_edges_node_parcels[];
+  messages: GetSystemShipments_shipments_edges_node_messages[];
+  tracker: GetSystemShipments_shipments_edges_node_tracker | null;
+}
+
+export interface GetSystemShipments_shipments_edges {
+  node: GetSystemShipments_shipments_edges_node;
+}
+
+export interface GetSystemShipments_shipments_page_info {
   count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
@@ -1242,17 +1657,162 @@ export interface GetPermissionGroups_permission_groups_page_info {
   end_cursor: string | null;
 }
 
-export interface GetPermissionGroups_permission_groups {
-  edges: GetPermissionGroups_permission_groups_edges[];
-  page_info: GetPermissionGroups_permission_groups_page_info;
+export interface GetSystemShipments_shipments {
+  edges: GetSystemShipments_shipments_edges[];
+  page_info: GetSystemShipments_shipments_page_info;
 }
 
-export interface GetPermissionGroups {
-  permission_groups: GetPermissionGroups_permission_groups;
+export interface GetSystemShipments {
+  shipments: GetSystemShipments_shipments;
 }
 
-export interface GetPermissionGroupsVariables {
-  filter?: PermissionGroupFilter | null;
+export interface GetSystemShipmentsVariables {
+  filter?: SystemShipmentFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetSystemTrackers
+// ====================================================
+
+export interface GetSystemTrackers_trackers_edges_node_info {
+  customer_name: string | null;
+  expected_delivery: string | null;
+  note: string | null;
+  order_date: string | null;
+  order_id: string | null;
+  package_weight: string | null;
+  shipment_package_count: string | null;
+  shipment_pickup_date: string | null;
+  shipment_delivery_date: string | null;
+  shipment_service: string | null;
+  shipment_origin_country: string | null;
+  shipment_origin_postal_code: string | null;
+  shipment_destination_country: string | null;
+  shipment_destination_postal_code: string | null;
+}
+
+export interface GetSystemTrackers_trackers_edges_node_messages {
+  carrier_name: string | null;
+  carrier_id: string | null;
+  message: string | null;
+  code: string | null;
+  details: any | null;
+}
+
+export interface GetSystemTrackers_trackers_edges_node_events {
+  code: string | null;
+  date: string | null;
+  description: string | null;
+  location: string | null;
+  time: string | null;
+}
+
+export interface GetSystemTrackers_trackers_edges_node_shipment {
+  id: string;
+  service: string | null;
+  status: ShipmentStatusEnum;
+  meta: any | null;
+}
+
+export interface GetSystemTrackers_trackers_edges_node {
+  id: string;
+  tracking_number: string;
+  carrier_name: string;
+  carrier_id: string;
+  status: TrackerStatusEnum;
+  delivered: boolean | null;
+  test_mode: boolean;
+  created_at: any;
+  updated_at: any;
+  info: GetSystemTrackers_trackers_edges_node_info | null;
+  meta: any | null;
+  messages: GetSystemTrackers_trackers_edges_node_messages[];
+  events: GetSystemTrackers_trackers_edges_node_events[];
+  shipment: GetSystemTrackers_trackers_edges_node_shipment | null;
+}
+
+export interface GetSystemTrackers_trackers_edges {
+  node: GetSystemTrackers_trackers_edges_node;
+}
+
+export interface GetSystemTrackers_trackers_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetSystemTrackers_trackers {
+  edges: GetSystemTrackers_trackers_edges[];
+  page_info: GetSystemTrackers_trackers_page_info;
+}
+
+export interface GetSystemTrackers {
+  trackers: GetSystemTrackers_trackers;
+}
+
+export interface GetSystemTrackersVariables {
+  filter?: SystemTrackerFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetAccountCarrierConnections
+// ====================================================
+
+export interface GetAccountCarrierConnections_carrier_connections_edges_node_usage {
+  total_shipments: number | null;
+  total_trackers: number | null;
+  total_shipping_spend: number | null;
+  total_addons_charges: number | null;
+}
+
+export interface GetAccountCarrierConnections_carrier_connections_edges_node {
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  active: boolean;
+  test_mode: boolean;
+  capabilities: string[];
+  config: any | null;
+  created_at: any | null;
+  updated_at: any | null;
+  usage: GetAccountCarrierConnections_carrier_connections_edges_node_usage;
+}
+
+export interface GetAccountCarrierConnections_carrier_connections_edges {
+  node: GetAccountCarrierConnections_carrier_connections_edges_node;
+}
+
+export interface GetAccountCarrierConnections_carrier_connections_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetAccountCarrierConnections_carrier_connections {
+  edges: GetAccountCarrierConnections_carrier_connections_edges[];
+  page_info: GetAccountCarrierConnections_carrier_connections_page_info;
+}
+
+export interface GetAccountCarrierConnections {
+  carrier_connections: GetAccountCarrierConnections_carrier_connections;
+}
+
+export interface GetAccountCarrierConnectionsVariables {
+  filter?: AccountCarrierConnectionFilter | null;
+  usageFilter?: UsageFilter | null;
 }
 
 /* tslint:disable */
@@ -1278,6 +1838,7 @@ export enum CarrierNameEnum {
   dhl_universal = "dhl_universal",
   dicom = "dicom",
   dpd = "dpd",
+  dtdc = "dtdc",
   easypost = "easypost",
   easyship = "easyship",
   eshipper = "eshipper",
@@ -1288,6 +1849,7 @@ export enum CarrierNameEnum {
   hay_post = "hay_post",
   laposte = "laposte",
   locate2u = "locate2u",
+  mydhl = "mydhl",
   nationex = "nationex",
   purolator = "purolator",
   roadie = "roadie",
@@ -1295,17 +1857,37 @@ export enum CarrierNameEnum {
   sapient = "sapient",
   seko = "seko",
   sendle = "sendle",
+  shipengine = "shipengine",
   tge = "tge",
   tnt = "tnt",
   ups = "ups",
   usps = "usps",
   usps_international = "usps_international",
+  veho = "veho",
   zoom2u = "zoom2u",
 }
 
 export enum SurchargeTypeEnum {
   AMOUNT = "AMOUNT",
   PERCENTAGE = "PERCENTAGE",
+}
+
+export enum UserRole {
+  admin = "admin",
+  developer = "developer",
+  member = "member",
+}
+
+export enum ShipmentStatusEnum {
+  cancelled = "cancelled",
+  delivered = "delivered",
+  delivery_failed = "delivery_failed",
+  draft = "draft",
+  in_transit = "in_transit",
+  needs_attention = "needs_attention",
+  out_for_delivery = "out_for_delivery",
+  purchased = "purchased",
+  shipped = "shipped",
 }
 
 export enum CurrencyCodeEnum {
@@ -1413,6 +1995,7 @@ export enum CurrencyCodeEnum {
   PLN = "PLN",
   PYG = "PYG",
   QAR = "QAR",
+  RON = "RON",
   RSD = "RSD",
   RUB = "RUB",
   RWF = "RWF",
@@ -1452,6 +2035,28 @@ export enum CurrencyCodeEnum {
   XPF = "XPF",
   YER = "YER",
   ZAR = "ZAR",
+}
+
+export enum TrackerStatusEnum {
+  cancelled = "cancelled",
+  delivered = "delivered",
+  delivery_delayed = "delivery_delayed",
+  delivery_failed = "delivery_failed",
+  in_transit = "in_transit",
+  on_hold = "on_hold",
+  out_for_delivery = "out_for_delivery",
+  pending = "pending",
+  ready_for_pickup = "ready_for_pickup",
+  return_to_sender = "return_to_sender",
+  unknown = "unknown",
+}
+
+export enum OrderStatus {
+  cancelled = "cancelled",
+  delivered = "delivered",
+  fulfilled = "fulfilled",
+  partial = "partial",
+  unfulfilled = "unfulfilled",
 }
 
 export enum DimensionUnitEnum {
@@ -1710,43 +2315,6 @@ export enum CountryCodeEnum {
 }
 
 // null
-export interface CarrierFilter {
-  offset?: number | null;
-  first?: number | null;
-  active?: boolean | null;
-  metadata_key?: string | null;
-  metadata_value?: string | null;
-  carrier_name?: string[] | null;
-}
-
-// null
-export interface CreateConnectionMutationInput {
-  carrier_name: CarrierNameEnum;
-  carrier_id: string;
-  credentials: any;
-  active?: boolean | null;
-  config?: any | null;
-  metadata?: any | null;
-  capabilities?: string[] | null;
-}
-
-// null
-export interface UpdateConnectionMutationInput {
-  id: string;
-  active?: boolean | null;
-  carrier_id?: string | null;
-  credentials?: any | null;
-  config?: any | null;
-  metadata?: any | null;
-  capabilities?: string[] | null;
-}
-
-// null
-export interface DeleteConnectionMutationInput {
-  id: string;
-}
-
-// null
 export interface UserFilter {
   offset?: number | null;
   first?: number | null;
@@ -1759,11 +2327,130 @@ export interface UserFilter {
 }
 
 // null
+export interface UsageFilter {
+  date_after?: string | null;
+  date_before?: string | null;
+  omit?: string[] | null;
+  surcharge_id?: string | null;
+}
+
+// null
+export interface CarrierFilter {
+  offset?: number | null;
+  first?: number | null;
+  active?: boolean | null;
+  metadata_key?: string | null;
+  metadata_value?: string | null;
+  carrier_name?: string[] | null;
+}
+
+// null
+export interface RateSheetFilter {
+  offset?: number | null;
+  first?: number | null;
+  keyword?: string | null;
+}
+
+// null
+export interface AddonFilter {
+  offset?: number | null;
+  first?: number | null;
+  id?: string | null;
+  name?: string | null;
+  active?: boolean | null;
+  surcharge_type?: SurchargeTypeEnum | null;
+}
+
+// null
+export interface OrgUsageFilter {
+  date_after?: string | null;
+  date_before?: string | null;
+  omit?: string[] | null;
+  surcharge_id?: string | null;
+  id: string;
+}
+
+// null
+export interface AccountFilter {
+  offset?: number | null;
+  first?: number | null;
+  id?: string | null;
+  name?: string | null;
+  slug?: string | null;
+  is_active?: boolean | null;
+  order_by?: string | null;
+}
+
+// null
+export interface AccountCarrierConnectionFilter {
+  offset?: number | null;
+  first?: number | null;
+  active?: boolean | null;
+  metadata_key?: string | null;
+  metadata_value?: string | null;
+  carrier_name?: string[] | null;
+  account_id?: string | null;
+}
+
+// null
+export interface SystemShipmentFilter {
+  offset?: number | null;
+  first?: number | null;
+  keyword?: string | null;
+  address?: string | null;
+  id?: string[] | null;
+  created_after?: string | null;
+  created_before?: string | null;
+  carrier_name?: string[] | null;
+  reference?: string | null;
+  service?: string[] | null;
+  status?: ShipmentStatusEnum[] | null;
+  option_key?: string | null;
+  option_value?: any | null;
+  metadata_key?: string | null;
+  metadata_value?: any | null;
+  meta_key?: string | null;
+  meta_value?: any | null;
+  has_tracker?: boolean | null;
+  has_manifest?: boolean | null;
+  account_id?: string | null;
+}
+
+// null
+export interface SystemTrackerFilter {
+  offset?: number | null;
+  first?: number | null;
+  tracking_number?: string | null;
+  created_after?: string | null;
+  created_before?: string | null;
+  carrier_name?: string[] | null;
+  status?: string[] | null;
+  account_id?: string | null;
+}
+
+// null
+export interface SystemOrderFilter {
+  offset?: number | null;
+  first?: number | null;
+  id?: string[] | null;
+  keyword?: string | null;
+  source?: string[] | null;
+  order_id?: string[] | null;
+  ontion_key?: string[] | null;
+  address?: string[] | null;
+  ontion_value?: string[] | null;
+  metadata_key?: string[] | null;
+  metadata_value?: string[] | null;
+  status?: OrderStatus[] | null;
+  account_id?: string | null;
+}
+
+// null
 export interface CreateUserMutationInput {
   email: string;
   password1: string;
   password2: string;
-  redirect_url: string;
+  redirect_url?: string | null;
   full_name?: string | null;
   is_staff?: boolean | null;
   is_active?: boolean | null;
@@ -1837,6 +2524,7 @@ export interface InstanceConfigMutationInput {
   DHL_UNIVERSAL_ENABLED?: boolean | null;
   DICOM_ENABLED?: boolean | null;
   DPD_ENABLED?: boolean | null;
+  DTDC_ENABLED?: boolean | null;
   EASYPOST_ENABLED?: boolean | null;
   EASYSHIP_ENABLED?: boolean | null;
   ESHIPPER_ENABLED?: boolean | null;
@@ -1848,6 +2536,7 @@ export interface InstanceConfigMutationInput {
   HAY_POST_ENABLED?: boolean | null;
   LAPOSTE_ENABLED?: boolean | null;
   LOCATE2U_ENABLED?: boolean | null;
+  MYDHL_ENABLED?: boolean | null;
   NATIONEX_ENABLED?: boolean | null;
   PUROLATOR_ENABLED?: boolean | null;
   ROADIE_ENABLED?: boolean | null;
@@ -1855,59 +2544,41 @@ export interface InstanceConfigMutationInput {
   SAPIENT_ENABLED?: boolean | null;
   SEKO_ENABLED?: boolean | null;
   SENDLE_ENABLED?: boolean | null;
+  SHIPENGINE_ENABLED?: boolean | null;
   TGE_ENABLED?: boolean | null;
   TNT_ENABLED?: boolean | null;
   UPS_ENABLED?: boolean | null;
   USPS_ENABLED?: boolean | null;
   USPS_INTERNATIONAL_ENABLED?: boolean | null;
+  VEHO_ENABLED?: boolean | null;
   ZOOM2U_ENABLED?: boolean | null;
 }
 
 // null
-export interface SurchargeFilter {
-  offset?: number | null;
-  first?: number | null;
-  id?: string | null;
-  name?: string | null;
+export interface CreateConnectionMutationInput {
+  carrier_name: CarrierNameEnum;
+  carrier_id: string;
+  credentials: any;
   active?: boolean | null;
-  surcharge_type?: SurchargeTypeEnum | null;
+  config?: any | null;
+  metadata?: any | null;
+  capabilities?: string[] | null;
 }
 
 // null
-export interface CreateSurchargeMutationInput {
-  name: string;
-  amount: number;
-  surcharge_type: SurchargeTypeEnum;
-  active?: boolean | null;
-  carriers?: string[] | null;
-  services?: string[] | null;
-  organizations?: string[] | null;
-  carrier_accounts?: string[] | null;
-}
-
-// null
-export interface UpdateSurchargeMutationInput {
-  name?: string | null;
-  amount?: number | null;
-  surcharge_type?: SurchargeTypeEnum | null;
-  active?: boolean | null;
-  carriers?: string[] | null;
-  services?: string[] | null;
-  organizations?: string[] | null;
-  carrier_accounts?: string[] | null;
+export interface UpdateConnectionMutationInput {
   id: string;
+  active?: boolean | null;
+  carrier_id?: string | null;
+  credentials?: any | null;
+  config?: any | null;
+  metadata?: any | null;
+  capabilities?: string[] | null;
 }
 
 // null
-export interface DeleteMutationInput {
+export interface DeleteConnectionMutationInput {
   id: string;
-}
-
-// null
-export interface RateSheetFilter {
-  offset?: number | null;
-  first?: number | null;
-  keyword?: string | null;
 }
 
 // null
@@ -2009,22 +2680,62 @@ export interface UpdateServiceZoneInput {
 }
 
 // null
-export interface UpdateServiceZoneMutationInput {
+export interface DeleteMutationInput {
   id: string;
-  service_id: string;
-  zone_index: number;
-  zone: UpdateServiceZoneInput;
 }
 
 // null
-export interface AccountFilter {
-  offset?: number | null;
-  first?: number | null;
-  id?: string | null;
+export interface UpdateRateSheetZoneCellMutationInput {
+  id: string;
+  service_id: string;
+  zone_id: string;
+  field: string;
+  value: any;
+}
+
+// null
+export interface BatchUpdateRateSheetCellsMutationInput {
+  id: string;
+  updates: CellUpdate[];
+}
+
+// null
+export interface CellUpdate {
+  service_id: string;
+  zone_id: string;
+  field: string;
+  value: any;
+}
+
+// null
+export interface DeleteRateSheetServiceMutationInput {
+  rate_sheet_id: string;
+  service_id: string;
+}
+
+// null
+export interface CreateAddonMutationInput {
+  name: string;
+  amount: number;
+  surcharge_type: SurchargeTypeEnum;
+  active?: boolean | null;
+  carriers?: string[] | null;
+  services?: string[] | null;
+  organizations?: string[] | null;
+  carrier_accounts?: string[] | null;
+}
+
+// null
+export interface UpdateAddonMutationInput {
   name?: string | null;
-  slug?: string | null;
-  is_active?: boolean | null;
-  order_by?: string | null;
+  amount?: number | null;
+  surcharge_type?: SurchargeTypeEnum | null;
+  active?: boolean | null;
+  carriers?: string[] | null;
+  services?: string[] | null;
+  organizations?: string[] | null;
+  carrier_accounts?: string[] | null;
+  id: string;
 }
 
 // null
@@ -2053,9 +2764,10 @@ export interface DeleteOrganizationAccountMutationInput {
 }
 
 // null
-export interface PermissionGroupFilter {
-  offset?: number | null;
-  first?: number | null;
+export interface InviteOrganizationUserMutationInput {
+  email: string;
+  roles: UserRole[];
+  is_owner: boolean;
 }
 
 //==============================================================

@@ -542,7 +542,7 @@ export default function AppStorePage(pageProps: any) {
               </DialogHeader>
 
               {appToInstall && (
-                <div className="space-y-4">
+                <div className="space-y-4 p-4 pb-8">
                   {/* App Info */}
                   <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
                     <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
@@ -654,7 +654,7 @@ export default function AppStorePage(pageProps: any) {
               </DialogHeader>
 
               {appToUninstall && (
-                <div className="space-y-4">
+                <div className="space-y-4 p-4 pb-8">
                   {/* App Info */}
                   <div className="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-200">
                     <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">

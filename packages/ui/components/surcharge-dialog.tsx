@@ -104,7 +104,7 @@ export function SurchargeDialog({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-4"
+            className="space-y-4 p-4 pb-8"
           >
             <FormField
               control={form.control}

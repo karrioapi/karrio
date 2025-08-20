@@ -246,7 +246,6 @@ function AppRenderer({
       name: context.workspace?.name || "Default Workspace",
     },
     user: session?.user ? {
-      id: session.user.id || 'unknown',
       email: session.user.email || '',
       name: session.user.name || session.user.email || '',
     } : context.user,
@@ -283,11 +282,11 @@ function AppRenderer({
 
   // Set global context for JWT authentication if user and workspace are available
   React.useEffect(() => {
-    if (typeof window !== 'undefined' && appContext.user?.id && appContext.workspace?.id) {
-      (window as any).__KARRIO_USER_ID__ = appContext.user.id;
+    if (typeof window !== 'undefined' && appContext.user?.email && appContext.workspace?.id) {
+      (window as any).__KARRIO_USER_ID__ = appContext.user.email;
       (window as any).__KARRIO_ORG_ID__ = appContext.workspace.id;
     }
-  }, [appContext.user?.id, appContext.workspace?.id]);
+  }, [appContext.user?.email, appContext.workspace?.id]);
 
   // Handle app actions
   const handleAction = (action: any) => {

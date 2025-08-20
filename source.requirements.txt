@@ -112,7 +112,7 @@ rpds-py==0.27.0
 sentry-sdk==2.35.0
 six==1.17.0
 sqlparse==0.5.3
-strawberry-graphql==0.278.1
+strawberry-graphql==0.280.0
 tablib==3.8.0
 tinycss2==1.4.0
 tinyhtml5==2.0.0

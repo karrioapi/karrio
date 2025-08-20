@@ -9,4 +9,4 @@ fi
 source "${ROOT}/bin/activate-env" >/dev/null 2>&1
 
 # Run karrio cli
-python3 "${ROOT}/modules/cli/karrio_cli" "${@}"
+PYTHONPATH="${ROOT}/modules/cli:${PYTHONPATH}" python3 -m karrio_cli "${@}"

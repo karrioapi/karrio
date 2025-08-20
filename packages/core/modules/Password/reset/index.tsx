@@ -1,32 +1,22 @@
 "use client";
-import React, { FormEvent, Suspense, useEffect, useReducer } from "react";
-import { LoadingProvider, useLoader } from "@karrio/ui/core/components/loader";
-import { ConfirmPasswordResetMutationInput } from "@karrio/types";
-import { ButtonField } from "@karrio/ui/core/components/button-field";
-import { InputField } from "@karrio/ui/core/components/input-field";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useUserMutation } from "@karrio/hooks/user";
+import React, { Suspense, useEffect } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useForm } from "@tanstack/react-form";
+import { ConfirmPasswordResetMutationInput } from "@karrio/types";
+import { useUserMutation } from "@karrio/hooks/user";
+import { Card, CardContent } from "@karrio/ui/components/ui/card";
+import { Label } from "@karrio/ui/components/ui/label";
+import { Input } from "@karrio/ui/components/ui/input";
+import { Button } from "@karrio/ui/components/ui/button";
+import { Alert, AlertDescription } from "@karrio/ui/components/ui/alert";
+import { FieldInfo } from "@karrio/ui/core/components/field-info";
 
 
 const DEFAULT_VALUE: Partial<ConfirmPasswordResetMutationInput> = {
   new_password1: "",
   new_password2: "",
 };
-
-function reducer(
-  state: Partial<ConfirmPasswordResetMutationInput>,
-  { name, value }: { name: string; value: string | object },
-) {
-  switch (name) {
-    case "full":
-      return { ...(value as object) };
-    case "partial":
-      return { ...state, ...(value as object) };
-    default:
-      return { ...state, [name]: value };
-  }
-}
 
 // Inner component that uses useSearchParams
 const PasswordResetForm = (): JSX.Element => {
@@ -36,117 +26,139 @@ const PasswordResetForm = (): JSX.Element => {
     searchParams.get("uidb64") as string,
     searchParams.get("token") as string,
   ];
-  const { loading, setLoading } = useLoader();
-  const [data, dispatch] = useReducer(
-    reducer,
-    DEFAULT_VALUE,
-    () => DEFAULT_VALUE,
-  );
   const {
     confirmPasswordReset: { error, mutateAsync },
   } = useUserMutation();
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value: string = event.target.value;
-    const name: string = event.target.name;
-
-    dispatch({ name, value });
-  };
-  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      await mutateAsync(data as ConfirmPasswordResetMutationInput);
+  const form = useForm<ConfirmPasswordResetMutationInput>({
+    defaultValues: {
+      uid: uidb64 || "",
+      token: token || "",
+      new_password1: DEFAULT_VALUE.new_password1!,
+      new_password2: DEFAULT_VALUE.new_password2!,
+    },
+    onSubmit: async ({ value }) => {
+      await mutateAsync(value);
       router.push("/password/reset/done");
-    } catch (error: any) {
-      console.log(error);
-    }
-    setLoading(false);
-  };
-  const renderFieldError = (check: CallableFunction, errorData: any) => {
-    const validation = (errorData?.data?.errors || [])[0]?.validation || {};
-    return (
-      <>
-        {Object.entries(validation)
-          .filter(([key, _]) => check(key))
-          .map(([_, messages]: any) =>
-            messages.map((message: string, index: number) => (
-              <p key={index} className="has-text-danger is-size-7 my-1">
-                {message}
-              </p>
-            )),
-          )}
-      </>
-    );
-  };
+    },
+  });
 
   useEffect(() => {
-    dispatch({ name: "partial", value: { uid: uidb64, token } });
+    (form as any).setFieldValue("uid", uidb64 || "");
+    (form as any).setFieldValue("token", token || "");
   }, [uidb64, token]);
+
+  const apiErrors = ((error as any)?.data?.errors || []) as any[];
+  const validation = (apiErrors[0]?.validation || {}) as Record<string, string[]>;
 
   return (
     <>
-      <div className="card isolated-card">
-        <div className="card-content">
-          <p className="subtitle has-text-centered mb-4">New Password</p>
-          <p className="has-text-centered mb-4">
+      <Card className="mx-auto mt-6 w-full max-w-md">
+        <CardContent className="pt-6">
+          <h2 className="mb-2 text-center text-xl font-semibold">New Password</h2>
+          <p className="mb-4 text-center text-sm text-muted-foreground">
             Enter your new email and password.
           </p>
 
-          {((error as any)?.data?.errors || []).map((_: any, index: number) => (
-            <>
-              <p key={index} className="has-text-danger is-size-7 my-1">
-                {_.message}
-              </p>
-            </>
+          {apiErrors.map((e, i) => (
+            <Alert key={i} variant="destructive" className="mb-3">
+              <AlertDescription>{e.message}</AlertDescription>
+            </Alert>
           ))}
 
-          <form method="post" onSubmit={onSubmit}>
-            <InputField
-              label="Password"
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              form.handleSubmit();
+            }}
+            className="space-y-4"
+          >
+            {/* @ts-ignore */}
+            <form.Field
               name="new_password1"
-              type="password"
-              placeholder="New Password"
-              wrapperClass="mt-3"
-              onChange={handleChange}
-              value={data.new_password1}
-              required
+              validators={{
+                onChange: ({ value }) =>
+                  !value
+                    ? "Password is required"
+                    : value.length < 8
+                    ? "Password must be at least 8 characters"
+                    : undefined,
+              }}
             >
-              {renderFieldError((_: string) => _ === "new_password1", error)}
-            </InputField>
+              {(field) => (
+                <div className="space-y-2">
+                  <Label htmlFor={field.name}>Password</Label>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    type="password"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    required
+                  />
+                  <div className="text-sm text-red-500">
+                    <FieldInfo field={field} />
+                  </div>
+                  {(validation["new_password1"] || []).map((m, i) => (
+                    <div key={i} className="text-sm text-red-500">{m}</div>
+                  ))}
+                </div>
+              )}
+            </form.Field>
 
-            <InputField
-              label="Confirm Password"
+            {/* @ts-ignore */}
+            <form.Field
               name="new_password2"
-              type="password"
-              placeholder="Confirm Password"
-              wrapperClass="mt-3"
-              onChange={handleChange}
-              value={data.new_password2}
-              required
+              validators={{
+                onChange: ({ value }) =>
+                  !value
+                    ? "Please confirm your password"
+                    : value !== (form.state.values as any).new_password1
+                    ? "Passwords do not match"
+                    : undefined,
+              }}
             >
-              {renderFieldError((_: string) => _ === "new_password2", error)}
-            </InputField>
+              {(field) => (
+                <div className="space-y-2">
+                  <Label htmlFor={field.name}>Confirm Password</Label>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    type="password"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    required
+                  />
+                  <div className="text-sm text-red-500">
+                    <FieldInfo field={field} />
+                  </div>
+                  {(validation["new_password2"] || []).map((m, i) => (
+                    <div key={i} className="text-sm text-red-500">{m}</div>
+                  ))}
+                </div>
+              )}
+            </form.Field>
 
-            <ButtonField
-              type="submit"
-              disabled={loading}
-              className={`is-primary is-fullwidth mt-6`}
-              controlClass="has-text-centered"
-            >
-              <span>Change my password</span>
-            </ButtonField>
+            {/* @ts-ignore */}
+            <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+              {([canSubmit, isSubmitting]) => (
+                <Button type="submit" className="w-full" disabled={!canSubmit}>
+                  {isSubmitting ? "Saving..." : "Change my password"}
+                </Button>
+              )}
+            </form.Subscribe>
           </form>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
-      <div className="has-text-centered my-4 is-size-6">
-        <span>
-          Return to{" "}
-          <Link legacyBehavior href="/signin">
-            Sign in
-          </Link>
-        </span>
+      <div className="my-4 text-center text-sm">
+        Return to {" "}
+        <Link href="/signin" className="font-semibold text-primary hover:underline">
+          Sign in
+        </Link>
       </div>
     </>
   );
@@ -154,22 +166,14 @@ const PasswordResetForm = (): JSX.Element => {
 
 // Component with LoadingProvider
 const LoadingWrappedComponent = () => {
-  return (
-    <LoadingProvider>
-      <PasswordResetForm />
-    </LoadingProvider>
-  );
+  return <PasswordResetForm />;
 };
 
 // Exported component with Suspense
 export default function Page() {
   return (
     <Suspense fallback={
-      <div className="card isolated-card">
-        <div className="card-content has-text-centered">
-          <p className="subtitle">Loading...</p>
-        </div>
-      </div>
+      <Card className="mx-auto mt-6 w-full max-w-md"><CardContent className="pt-6 text-center"><p>Loading...</p></CardContent></Card>
     }>
       <LoadingWrappedComponent />
     </Suspense>

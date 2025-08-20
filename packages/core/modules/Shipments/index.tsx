@@ -43,12 +43,8 @@ export default function Page(pageProps: any) {
     const [initialized, setInitialized] = React.useState(false);
     const [selection, setSelection] = React.useState<string[]>([]);
     const { previewShipment } = useContext(ShipmentPreviewContext);
-    const {
-      query: { data: { user_connections } = {} },
-    } = useCarrierConnections();
-    const {
-      query: { data: { system_connections } = {} },
-    } = useSystemConnections();
+    const { user_connections } = useCarrierConnections();
+    const { system_connections } = useSystemConnections();
     const context = useShipments({
       status: [
         "purchased",
@@ -150,14 +146,14 @@ export default function Page(pageProps: any) {
       (shipment?.rates || [])[0] ||
       shipment;
     const getCarrier = (rate?: ShipmentType["rates"][0]) =>
-      user_connections?.find(
+      (user_connections || []).find(
         (_) =>
-          _.id === rate?.meta?.carrier_connection_id ||
+          _.id === (rate?.meta as any)?.carrier_connection_id ||
           _.carrier_id === rate?.carrier_id,
       ) ||
-      system_connections?.find(
+      (system_connections || []).find(
         (_) =>
-          _.id === rate?.meta?.carrier_connection_id ||
+          _.id === (rate?.meta as any)?.carrier_connection_id ||
           _.carrier_id === rate?.carrier_id,
       );
 

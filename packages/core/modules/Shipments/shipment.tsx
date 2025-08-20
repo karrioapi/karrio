@@ -667,9 +667,9 @@ export const ShipmentComponent = ({
   );
 };
 
-export default function Page(pageProps: any) {
+export default function Page(pageProps: { params: Promise<{ id?: string }> }) {
   const Component = (): JSX.Element => {
-    const params = pageProps.params || {};
+    const params = React.use(pageProps.params);
     const { id } = params;
 
     if (!id) return <></>;

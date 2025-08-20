@@ -808,6 +808,7 @@ def add_extension(
         f"{datetime.datetime.now().strftime('%Y.%-m')}", prompt=True
     ),
     is_xml_api: typing.Optional[bool] = typer.Option(False, prompt="Is XML API?"),
+    confirm: typing.Optional[bool] = typer.Option(False, "--confirm", help="Skip confirmation prompt"),
 ):
     # Resolve the provided path for confirmation
     full_path = pathlib.Path(path).resolve() / carrier_slug.lower()
@@ -821,7 +822,8 @@ def add_extension(
     )
 
     typer.echo(confirmation_text)
-    typer.confirm("Do you want to proceed?", abort=True)
+    if not confirm:
+        typer.confirm("Do you want to proceed?", abort=True)
 
     _add_extension(
         carrier_slug.lower(),
@@ -850,6 +852,7 @@ def add_features(
     ),
     is_xml_api: typing.Optional[bool] = typer.Option(False, prompt="Is XML API?"),
     path: str = typer.Option(..., "--path", "-p", help="Path where the features will be created"),
+    confirm: typing.Optional[bool] = typer.Option(False, "--confirm", help="Skip confirmation prompt"),
 ):
     # Resolve the provided path for confirmation
     full_path = pathlib.Path(path).resolve() / carrier_slug.lower()
@@ -863,7 +866,8 @@ def add_features(
     )
 
     typer.echo(confirmation_text)
-    typer.confirm("Do you want to proceed?", abort=True)
+    if not confirm:
+        typer.confirm("Do you want to proceed?", abort=True)
 
     features = features.split(",")
     features = [feature.strip() for feature in features]
