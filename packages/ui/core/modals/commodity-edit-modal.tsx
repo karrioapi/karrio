@@ -17,7 +17,8 @@ import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { LineItemInput } from "../forms/line-item-input";
 import { InputField } from "@karrio/ui/components/input-field";
 import { SelectField } from "@karrio/ui/components/select-field";
-import { CountryInput } from "../forms/country-input";
+import { ButtonField } from "@karrio/ui/components/button-field";
+import { CountryInput } from "@karrio/ui/components/country-input";
 import { Notifier } from "../components/notifier";
 import { Loading } from "../components/loader";
 import { useOrders } from "@karrio/hooks/order";
@@ -185,27 +186,25 @@ export const CommodityEditModalProvider = ({
                       </div>
 
                       <div className="flex-shrink-0">
-                        <button
+                        <ButtonField
                           type="button"
-                          className="button is-white is-small"
+                          variant="outline"
+                          size="sm"
                           disabled={isNone(commodity?.parent_id)}
                           title="unlink order line item"
                           onClick={() => {
                             dispatch({ name: "parent_id", value: null });
                             setMaxQty(undefined);
                           }}
+                          className="h-9 w-9 p-0"
                         >
-                          <span className="icon is-small">
-                            <i className="fas fa-unlink"></i>
-                          </span>
-                        </button>
+                          <i className="fas fa-unlink text-sm"></i>
+                        </ButtonField>
                       </div>
                     </div>
                   )}
 
-                  <div className="columns is-multiline mb-2 px-1">
-                    <div className="column is-12 px-1 py-1">
-                      <div className="tailwind-only">
+                  <div className="mb-2 px-1">
                     <InputField
                       name="title"
                       label="Title"
@@ -216,13 +215,9 @@ export const CommodityEditModalProvider = ({
                       max={35}
                       labelBold={true}
                     />
-                      </div>
-                    </div>
                   </div>
 
-                  <div className="columns is-multiline mb-2 px-1">
-                    <div className="column is-12 px-1 py-1">
-                      <div className="tailwind-only">
+                  <div className="mb-2 px-1">
                     <InputField
                       name="hs_code"
                       label="HS code"
@@ -233,50 +228,46 @@ export const CommodityEditModalProvider = ({
                       max={35}
                       labelBold={true}
                     />
-                      </div>
-                    </div>
                   </div>
 
-                  <div className="columns is-multiline mb-2 px-1">
-                    <div className="column is-7 px-1 py-1">
-                      <div className="tailwind-only">
-                    <InputField
-                      name="sku"
-                      label="SKU"
-                      value={commodity?.sku}
-                      onChange={handleChange}
-                      placeholder="0000001"
-                      disabled={!isNone(commodity?.parent_id)}
-                      max={35}
-                      labelBold={true}
-                    />
-                      </div>
+                  <div className="flex flex-col sm:flex-row gap-2 mb-2 px-1 sm:items-start">
+                    <div className="w-full sm:flex-[2] min-w-0">
+                      <InputField
+                        name="sku"
+                        label="SKU"
+                        value={commodity?.sku}
+                        onChange={handleChange}
+                        placeholder="0000001"
+                        disabled={!isNone(commodity?.parent_id)}
+                        max={35}
+                        labelBold={true}
+                        wrapperClass=""
+                      />
                     </div>
 
-                    <div className="column is-5 px-1 py-1">
-                      <div className="tailwind-only">
-                    <CountryInput
-                      label="Origin Country"
-                      value={commodity.origin_country}
-                      onValueChange={(value) =>
-                        dispatch({
-                          name: "origin_country",
-                          value: value as string,
-                        })
-                      }
-                      disabled={!isNone(commodity?.parent_id)}
-                      labelBold={true}
-                    />
-                      </div>
+                    <div className="w-full sm:flex-[1] min-w-0">
+                      <CountryInput
+                        label="Origin Country"
+                        value={commodity.origin_country}
+                        onValueChange={(value) =>
+                          dispatch({
+                            name: "origin_country",
+                            value: value as string,
+                          })
+                        }
+                        disabled={!isNone(commodity?.parent_id)}
+                        labelBold={true}
+                        align="end"
+                        wrapperClass=""
+                      />
                     </div>
                   </div>
 
                                     <div className="px-1 mb-2">
                     {/* Responsive Layout: Flex on desktop (side by side), stack on mobile */}
-                    <div className="tailwind-only flex flex-col sm:flex-row gap-2 items-end">
+                    <div className="flex flex-col sm:flex-row gap-2 items-end">
                       {/* Quantity Field - 1 flex unit */}
                       <div className="w-full sm:flex-1 min-w-0">
-                        <div className="tailwind-only">
                           <InputField
                             label="Quantity"
                             name="quantity"
@@ -292,12 +283,11 @@ export const CommodityEditModalProvider = ({
                             required
                             labelBold={true}
                           />
-                        </div>
                       </div>
 
                       {/* Weight Field - 1.5 flex units */}
                       <div className="w-full sm:flex-[1.5] min-w-0">
-                        <div className="tailwind-only isolate py-2 px-1">
+                        <div className="isolate py-2 px-1">
                           <label className="capitalize text-xs mb-1 block font-bold text-[0.8em]">
                             Weight
                             <span className="ml-1 text-red-500 text-xs">
@@ -335,7 +325,7 @@ export const CommodityEditModalProvider = ({
 
                       {/* Value Amount Field - 2 flex units (largest) */}
                       <div className="w-full sm:flex-[2] min-w-0">
-                        <div className="tailwind-only isolate py-2 px-1">
+                        <div className="isolate py-2 px-1">
                           <label className="capitalize text-xs mb-1 block font-bold text-[0.8em]">
                             Value Amount
                           </label>
@@ -367,10 +357,8 @@ export const CommodityEditModalProvider = ({
                     </div>
                   </div>
 
-                  <div className="columns is-multiline mb-0 px-1">
-                    <div className="column is-12 px-1 py-1">
-                      <div className="tailwind-only">
-                        <TextareaField
+                  <div className="mb-0 px-1">
+                    <TextareaField
                       name="description"
                       label="description"
                       placeholder="item description"
@@ -381,8 +369,6 @@ export const CommodityEditModalProvider = ({
                       disabled={!isNone(commodity?.parent_id)}
                       labelBold={true}
                     />
-                      </div>
-                    </div>
                   </div>
 
                   <hr className="mt-1 my-3 border-t border-border h-px" />
@@ -400,20 +386,19 @@ export const CommodityEditModalProvider = ({
 
                       return (
                         <>
-                          <div className="is-flex is-justify-content-space-between">
-                            <h2 className="title is-6 my-3">Metadata</h2>
+                          <div className="flex justify-between">
+                            <h2 className="text-lg font-semibold my-3">Metadata</h2>
 
-                            <button
+                            <ButtonField
                               type="button"
-                              className="button is-default is-small is-align-self-center"
+                              variant="link"
+                              size="sm"
                               disabled={isEditing}
                               onClick={() => editMetadata()}
+                              className="text-blue-600 hover:text-blue-800 p-1 h-auto"
                             >
-                              <span className="icon is-small">
-                                <i className="fas fa-pen"></i>
-                              </span>
-                              <span>Edit metadata</span>
-                            </button>
+                              Edit metadata
+                            </ButtonField>
                           </div>
 
                           <hr className="mt-1 my-1 border-t border-border h-px" />
@@ -424,15 +409,20 @@ export const CommodityEditModalProvider = ({
                 </div>
 
                 <div className="flex justify-center gap-2 mt-4">
-                  <button
-                    className="button is-default is-small"
+                  <ButtonField
+                    type="button"
+                    variant="outline"
+                    size="sm"
                     onClick={close}
                     disabled={loading}
                   >
-                    <span>Cancel</span>
-                  </button>
-                  <button
-                    className={`button is-primary ${loading ? "is-loading" : ""} is-small`}
+                    Cancel
+                  </ButtonField>
+                  <ButtonField
+                    type="button"
+                    variant="default"
+                    size="sm"
+                    loading={loading}
                     disabled={
                       loading ||
                       isInvalid ||
@@ -440,8 +430,8 @@ export const CommodityEditModalProvider = ({
                     }
                     onClick={handleSubmit}
                   >
-                    <span>{isNew ? "Add" : "Save"}</span>
-                  </button>
+                    {isNew ? "Add" : "Save"}
+                  </ButtonField>
                 </div>
               </>
             )}
