@@ -6,7 +6,7 @@ import {
 import {
   MetadataEditor,
   MetadataEditorContext,
-} from "@karrio/ui/components/metadata-editor";
+} from "@karrio/ui/core/forms/metadata-editor";
 import { GoogleGeocodingScript } from "@karrio/ui/core/components/google-geocoding-script";
 import { CommodityDescription } from "@karrio/ui/components/commodity-description";
 import { AddressDescription } from "@karrio/ui/components/address-description";
