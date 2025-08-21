@@ -58,7 +58,7 @@ export const AddressModalEditor = ({
             </DialogTitle>
           </DialogHeader>
           
-          <div className="mt-4 pb-6">
+          <div className="mt-4 pb-6 px-6">
             <AddressForm
               value={currentAddress}
               onChange={handleChange}
