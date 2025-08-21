@@ -138,12 +138,12 @@ export default function Page(pageProps: any) {
                         {index > 0 && (
                           <hr className="my-1" style={{ height: "1px" }} />
                         )}
-                        <div className="flex justify-between items-center">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                           <CommodityDescription
-                            className="flex-grow pr-2"
+                            className="flex-1 min-w-0"
                             commodity={item as any}
                           />
-                          <div>
+                          <div className="flex justify-end sm:justify-start gap-1 flex-shrink-0">
                             {/* @ts-ignore */}
                             <CommodityStateContext.Consumer>
                               {({ editCommodity }) => (

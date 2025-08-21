@@ -19,13 +19,13 @@ export const CommodityDescription = ({
   ...props
 }: CommodityDescriptionComponent): JSX.Element => {
   return (
-    <div className={cn("flex", className)} {...props}>
-      <div className="flex-grow p-0 truncate">
-        <p className="text-xs my-1 font-semibold">
+    <div className={cn("flex items-center", className)} {...props}>
+      <div className="flex-1 min-w-0 p-0">
+        <p className="text-xs my-1 font-semibold truncate">
           {prefix} {`${commodity.title || commodity.description || "Item"}`}{" "}
           {suffix}
         </p>
-        <p className="text-xs my-1 font-semibold text-muted-foreground">
+        <p className="text-xs my-1 font-semibold text-muted-foreground truncate">
           {isNoneOrEmpty(commodity.sku)
             ? " SKU: 0000000"
             : ` SKU: ${commodity.sku}`}
@@ -35,16 +35,13 @@ export const CommodityDescription = ({
         </p>
       </div>
 
-      <div
-        className="flex-shrink-0 p-0 text-right"
-        style={{ minWidth: "90px" }}
-      >
-        <p className="text-xs my-1 font-semibold">
+      <div className="flex-shrink-0 p-0 text-right ml-2 min-w-fit">
+        <p className="text-xs my-1 font-semibold whitespace-nowrap">
           {commodity.quantity}
           {" x "}
           {formatWeight(commodity)}
         </p>
-        <p className="text-xs my-1 font-semibold text-blue-600">
+        <p className="text-xs my-1 font-semibold text-blue-600 truncate">
           {comments}
         </p>
       </div>
