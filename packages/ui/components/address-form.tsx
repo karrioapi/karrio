@@ -70,7 +70,14 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
 
   const isPostalRequired = COUNTRY_WITH_POSTAL_CODE.includes(address.country_code || "");
   const isStateRequired = Object.keys(references.states || {}).includes(address.country_code || "");
-  const hasChanges = !isEqual(value, address);
+  
+  const missingRequired = !address.person_name || !address.country_code || !address.address_line1 || !address.city || (isPostalRequired && !address.postal_code) || (isStateRequired && !address.state_code);
+  
+  // Allow saving if there are changes OR if address has meaningful content (for new addresses)
+  const hasChanges = !isEqual(value, address) || (
+    address.person_name || address.country_code || address.address_line1 || address.city
+  );
+
 
   // Enhanced postal code validation
   const validatePostalCode = (postal: string, country: string) => {
@@ -108,7 +115,6 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
     return phone; // Return original if no formatting applied
   };
 
-  const missingRequired = !address.person_name || !address.country_code || !address.address_line1 || !address.city || (isPostalRequired && !address.postal_code) || (isStateRequired && !address.state_code);
 
   return (
     <form onSubmit={handleSubmit} className={`space-y-4 ${className}`}>
@@ -160,17 +166,25 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
           <Label htmlFor="address_line1" className="text-xs text-slate-700 font-bold">
             Street Address <span className="text-red-500">*</span>
           </Label>
-          <div className="relative">
-            <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-            <AddressCombobox
-              value={address.address_line1 || ""}
-              onValueChange={(addressData) => handleChange("address_line1", addressData.address_line1 || "")}
-              placeholder="Start typing your address..."
-              required
-              disabled={disabled}
-              className="pl-10 h-8"
-              wrapperClass="p-0"
-            />
+          <div className="flex items-center gap-2">
+            <div className="flex-shrink-0">
+              <MapPin className="h-4 w-4 text-gray-400" />
+            </div>
+            <div className="flex-1">
+              <AddressCombobox
+                value={address.address_line1 || ""}
+                onValueChange={(addressData) => {
+                  // Handle both person_name updates and address_line1 updates
+                  const addressValue = addressData.address_line1 || addressData.person_name || "";
+                  handleChange("address_line1", addressValue);
+                }}
+                placeholder="Start typing your address..."
+                required
+                disabled={disabled}
+                className="h-8"
+                wrapperClass="p-0"
+              />
+            </div>
           </div>
           <p className="text-xs text-muted-foreground">
             💡 Tip: For best results, include street number and name
