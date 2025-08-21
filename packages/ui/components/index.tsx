@@ -40,6 +40,7 @@ export * from "./country-select";
 export * from "./address-combobox";
 export * from "./enhanced-select";
 export * from "./date-input";
+export * from "./enhanced-metadata-editor";
 
 
 

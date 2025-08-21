@@ -3,16 +3,13 @@ import {
   CommodityEditModalProvider,
   CommodityStateContext,
 } from "@karrio/ui/core/modals/commodity-edit-modal";
-import {
-  MetadataEditor,
-  MetadataEditorContext,
-} from "@karrio/ui/core/forms/metadata-editor";
+import { EnhancedMetadataEditor } from "@karrio/ui/components/enhanced-metadata-editor";
 import { GoogleGeocodingScript } from "@karrio/ui/core/components/google-geocoding-script";
 import { CommodityDescription } from "@karrio/ui/components/commodity-description";
 import { AddressDescription } from "@karrio/ui/components/address-description";
 import { formatRef, isEqual, isNone, isNoneOrEmpty } from "@karrio/lib";
 import { AddressModalEditor } from "@karrio/ui/components/address-modal-editor";
-import { MetadataObjectTypeEnum, PaidByEnum } from "@karrio/types";
+import { PaidByEnum } from "@karrio/types";
 import { InputField } from "@karrio/ui/components/input-field";
 import { DateInput } from "@karrio/ui/components/date-input";
 import { RadioGroupField } from "@karrio/ui/components/radio-group-field";
@@ -472,37 +469,17 @@ export default function Page(pageProps: any) {
 
                   {/* Metadata section */}
                   <div className="rounded-xl border bg-card text-card-foreground shadow px-2 py-1 mt-5">
-                    <div className="p-1 pb-4">
-                      <MetadataEditor
-                        object_type={MetadataObjectTypeEnum.order}
-                        metadata={order.metadata}
+                    <div className="p-2 pb-3">
+                      <EnhancedMetadataEditor
+                        value={order.metadata || {}}
                         onChange={(metadata) => handleChange({ metadata })}
-                      >
-                        {/* @ts-ignore */}
-                        <MetadataEditorContext.Consumer>
-                          {({ isEditing, editMetadata }) => (
-                            <>
-                              <header className="flex justify-between p-2">
-                                <span className="text-xs font-bold uppercase tracking-wide text-gray-700 flex items-center my-2">
-                                  METADATA
-                                </span>
-                                <div className="flex items-center">
-                                  <ButtonField
-                                    type="button"
-                                    variant="link"
-                                    size="sm"
-                                    disabled={loading}
-                                    onClick={() => editMetadata()}
-                                    className="text-blue-600 hover:text-blue-800 p-1 h-auto"
-                                  >
-                                    Edit metadata
-                                  </ButtonField>
-                                </div>
-                              </header>
-                            </>
-                          )}
-                        </MetadataEditorContext.Consumer>
-                      </MetadataEditor>
+                        className="w-full"
+                        placeholder="No metadata configured"
+                        emptyStateMessage="Add key-value pairs to configure order metadata"
+                        allowEdit={!loading}
+                        showTypeInference={true}
+                        maxHeight="300px"
+                      />
                     </div>
                   </div>
                 </div>
