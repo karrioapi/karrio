@@ -12,13 +12,20 @@ import {
 import { isEqual, isNone, validationMessage, validityCheck } from "@karrio/lib";
 import { CommodityType, CURRENCY_OPTIONS, WEIGHT_UNITS } from "@karrio/types";
 import React, { useContext, useReducer, useState } from "react";
-import { TextareaField } from "@karrio/ui/components/textarea-field";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { LineItemInput } from "../forms/line-item-input";
 import { InputField } from "@karrio/ui/components/input-field";
 import { SelectField } from "@karrio/ui/components/select-field";
 import { ButtonField } from "@karrio/ui/components/button-field";
 import { CountryInput } from "@karrio/ui/components/country-input";
+import { TextareaField } from "@karrio/ui/components/textarea-field";
+import { Button } from "@karrio/ui/components/ui/button";
+import { Input } from "@karrio/ui/components/ui/input";
+import { Label } from "@karrio/ui/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
+import { Textarea } from "@karrio/ui/components/ui/textarea";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@karrio/ui/components/ui/collapsible";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { Notifier } from "../components/notifier";
 import { Loading } from "../components/loader";
 import { useOrders } from "@karrio/hooks/order";
@@ -73,6 +80,7 @@ export const CommodityEditModalProvider = ({
 }: CommodityEditModalComponent): JSX.Element => {
   const {
     metadata: { ORDERS_MANAGEMENT },
+    references,
   } = useAPIMetadata();
   const { loading, setLoading } = useContext(Loading);
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -155,21 +163,21 @@ export const CommodityEditModalProvider = ({
             </DialogTitle>
           </DialogHeader>
           
-          <div className="mt-2 pb-4">
+          <div className="mt-4 pb-6 px-6">
             {commodity !== undefined && (
-              <>
-                <div
-                  className="px-0 py-2"
-                  key={key}
-                  onChange={(e: any) => {
-                    setIsInvalid(
-                      e.currentTarget.querySelectorAll(".is-danger").length > 0,
-                    );
-                  }}
-                >
+              <form
+                className="space-y-4"
+                key={key}
+                onChange={(e: any) => {
+                  setIsInvalid(
+                    e.currentTarget.querySelectorAll(".is-danger").length > 0,
+                  );
+                }}
+                onSubmit={handleSubmit}
+              >
                   {ORDERS_MANAGEMENT && (
-                    <div className="flex gap-2 items-end mb-2 px-1">
-                      <div className="flex-1">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                      <div className="md:col-span-3 space-y-2">
                         <LineItemInput
                           name="parent_id"
                           label="Order Line Item"
@@ -185,8 +193,8 @@ export const CommodityEditModalProvider = ({
                         />
                       </div>
 
-                      <div className="flex-shrink-0">
-                        <ButtonField
+                      <div className="flex items-end">
+                        <Button
                           type="button"
                           variant="outline"
                           size="sm"
@@ -196,59 +204,64 @@ export const CommodityEditModalProvider = ({
                             dispatch({ name: "parent_id", value: null });
                             setMaxQty(undefined);
                           }}
-                          className="h-9 w-9 p-0"
+                          className="h-8 w-full"
                         >
                           <i className="fas fa-unlink text-sm"></i>
-                        </ButtonField>
+                        </Button>
                       </div>
                     </div>
                   )}
 
-                  <div className="mb-2 px-1">
-                    <InputField
+                  <div className="space-y-2">
+                    <Label htmlFor="title" className="text-xs text-slate-700 font-bold">
+                      Title <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="title"
                       name="title"
-                      label="Title"
                       placeholder="IPod Nano"
                       onChange={handleChange}
-                      value={commodity?.title}
+                      value={commodity?.title || ""}
                       disabled={!isNone(commodity?.parent_id)}
-                      max={35}
-                      labelBold={true}
+                      maxLength={35}
+                      required
+                      className="h-8"
                     />
                   </div>
 
-                  <div className="mb-2 px-1">
-                    <InputField
+                  <div className="space-y-2">
+                    <Label htmlFor="hs_code" className="text-xs text-slate-700 font-bold">HS Code</Label>
+                    <Input
+                      id="hs_code"
                       name="hs_code"
-                      label="HS code"
                       placeholder="000000"
                       onChange={handleChange}
-                      value={commodity?.hs_code}
+                      value={commodity?.hs_code || ""}
                       disabled={!isNone(commodity?.parent_id)}
-                      max={35}
-                      labelBold={true}
+                      maxLength={35}
+                      className="h-8"
                     />
                   </div>
 
-                  <div className="flex flex-col sm:flex-row gap-2 mb-2 px-1 sm:items-start">
-                    <div className="w-full sm:flex-[2] min-w-0">
-                      <InputField
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="sku" className="text-xs text-slate-700 font-bold">SKU</Label>
+                      <Input
+                        id="sku"
                         name="sku"
-                        label="SKU"
-                        value={commodity?.sku}
+                        value={commodity?.sku || ""}
                         onChange={handleChange}
                         placeholder="0000001"
                         disabled={!isNone(commodity?.parent_id)}
-                        max={35}
-                        labelBold={true}
-                        wrapperClass=""
+                        maxLength={35}
+                        className="h-8"
                       />
                     </div>
 
-                    <div className="w-full sm:flex-[1] min-w-0">
-                      <CountryInput
-                        label="Origin Country"
-                        value={commodity.origin_country}
+                    <div className="space-y-2">
+                      <Label htmlFor="origin_country" className="text-xs text-slate-700 font-bold">Origin Country</Label>
+                      <Select
+                        value={commodity.origin_country || ""}
                         onValueChange={(value) =>
                           dispatch({
                             name: "origin_country",
@@ -256,184 +269,216 @@ export const CommodityEditModalProvider = ({
                           })
                         }
                         disabled={!isNone(commodity?.parent_id)}
-                        labelBold={true}
-                        align="end"
-                        wrapperClass=""
+                      >
+                        <SelectTrigger className="h-8">
+                          <SelectValue placeholder="Select country" />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-60 overflow-y-auto">
+                          {Object.entries(references.countries || {}).map(([code, name]) => (
+                            <SelectItem key={code} value={code}>
+                              {name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="quantity" className="text-xs text-slate-700 font-bold">
+                        Quantity <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="quantity"
+                        name="quantity"
+                        type="number"
+                        min="1"
+                        step="1"
+                        onChange={handleChange}
+                        value={commodity?.quantity || ""}
+                        onInvalid={validityCheck(
+                          validationMessage("Please enter a valid quantity"),
+                        )}
+                        {...(isNone(maxQty) ? {} : { max: maxQty as number })}
+                        required
+                        className="h-8"
                       />
                     </div>
-                  </div>
 
-                                    <div className="px-1 mb-2">
-                    {/* Responsive Layout: Flex on desktop (side by side), stack on mobile */}
-                    <div className="flex flex-col sm:flex-row gap-2 items-end">
-                      {/* Quantity Field - 1 flex unit */}
-                      <div className="w-full sm:flex-1 min-w-0">
-                          <InputField
-                            label="Quantity"
-                            name="quantity"
-                            type="number"
-                            min="1"
-                            step="1"
-                            onChange={handleChange}
-                            value={commodity?.quantity}
-                            onInvalid={validityCheck(
-                              validationMessage("Please enter a valid quantity"),
-                            )}
-                            {...(isNone(maxQty) ? {} : { max: maxQty as number })}
-                            required
-                            labelBold={true}
-                          />
+                    <div className="space-y-2">
+                      <Label htmlFor="weight" className="text-xs text-slate-700 font-bold">
+                        Weight <span className="text-red-500">*</span>
+                      </Label>
+                      <div className="flex">
+                        <Input
+                          id="weight"
+                          name="weight"
+                          type="number"
+                          min="0"
+                          step="any"
+                          onChange={handleChange}
+                          value={commodity.weight || ""}
+                          disabled={!isNone(commodity?.parent_id)}
+                          onInvalid={validityCheck(
+                            validationMessage("Please enter a valid weight"),
+                          )}
+                          required
+                          className="h-8 rounded-r-none border-r-0"
+                        />
+                        <Select
+                          value={commodity.weight_unit || WeightUnitEnum.KG}
+                          onValueChange={(value) =>
+                            dispatch({
+                              name: "weight_unit",
+                              value: value as WeightUnitEnum,
+                            })
+                          }
+                          disabled={!isNone(commodity?.parent_id)}
+                        >
+                          <SelectTrigger className="h-8 w-20 rounded-l-none border-l-0">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-60 overflow-y-auto">
+                            {WEIGHT_UNITS.map((unit) => (
+                              <SelectItem key={unit} value={unit}>
+                                {unit}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
+                    </div>
 
-                      {/* Weight Field - 1.5 flex units */}
-                      <div className="w-full sm:flex-[1.5] min-w-0">
-                        <div className="isolate py-2 px-1">
-                          <label className="capitalize text-xs mb-1 block font-bold text-[0.8em]">
-                            Weight
-                            <span className="ml-1 text-red-500 text-xs">
-                              <i className="fas fa-asterisk text-[0.7em]"></i>
-                            </span>
-                          </label>
-                          <div className="flex">
-                            <input
-                              name="weight"
-                              type="number"
-                              min="0"
-                              step="any"
-                              onChange={handleChange}
-                              value={commodity.weight}
-                              disabled={!isNone(commodity?.parent_id)}
-                              onInvalid={validityCheck(
-                                validationMessage("Please enter a valid weight"),
-                              )}
-                              required
-                              className="flex-1 min-w-0 h-9 rounded-l-md border border-r-0 border-input bg-transparent px-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                            />
-                            <SelectField
-                              name="weight_unit"
-                              value={commodity.weight_unit || WeightUnitEnum.KG}
-                              onChange={handleChange}
-                              options={WEIGHT_UNITS}
-                              disabled={!isNone(commodity?.parent_id)}
-                              attachedToInput={true}
-                              attachmentSide="right"
-                              width="w-24"
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Value Amount Field - 2 flex units (largest) */}
-                      <div className="w-full sm:flex-[2] min-w-0">
-                        <div className="isolate py-2 px-1">
-                          <label className="capitalize text-xs mb-1 block font-bold text-[0.8em]">
-                            Value Amount
-                          </label>
-                          <div className="flex">
-                            <input
-                              name="value_amount"
-                              type="number"
-                              min="0"
-                              step="any"
-                              onChange={handleChange}
-                              value={commodity.value_amount || ""}
-                              disabled={!isNone(commodity?.parent_id)}
-                              className="flex-1 min-w-0 h-9 rounded-l-md border border-r-0 border-input bg-transparent px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                            />
-                            <SelectField
-                              name="value_currency"
-                              value={commodity.value_currency || CurrencyCodeEnum.USD}
-                              onChange={handleChange}
-                              options={CURRENCY_OPTIONS}
-                              required={!isNone(commodity?.value_amount)}
-                              disabled={!isNone(commodity?.parent_id)}
-                              attachedToInput={true}
-                              attachmentSide="right"
-                              width="w-24"
-                            />
-                          </div>
-                        </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="value_amount" className="text-xs text-slate-700 font-bold">
+                        Value Amount
+                      </Label>
+                      <div className="flex">
+                        <Input
+                          id="value_amount"
+                          name="value_amount"
+                          type="number"
+                          min="0"
+                          step="any"
+                          onChange={handleChange}
+                          value={commodity.value_amount || ""}
+                          disabled={!isNone(commodity?.parent_id)}
+                          className="h-8 rounded-r-none border-r-0"
+                        />
+                        <Select
+                          value={commodity.value_currency || CurrencyCodeEnum.USD}
+                          onValueChange={(value) =>
+                            dispatch({
+                              name: "value_currency",
+                              value: value as CurrencyCodeEnum,
+                            })
+                          }
+                          disabled={!isNone(commodity?.parent_id)}
+                        >
+                          <SelectTrigger className="h-8 w-20 rounded-l-none border-l-0">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-60 overflow-y-auto">
+                            {CURRENCY_OPTIONS.map((currency) => (
+                              <SelectItem key={currency} value={currency}>
+                                {currency}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                   </div>
 
-                  <div className="mb-0 px-1">
-                    <TextareaField
+                  <div className="space-y-2">
+                    <Label htmlFor="description" className="text-xs text-slate-700 font-bold">Description</Label>
+                    <Textarea
+                      id="description"
                       name="description"
-                      label="description"
-                      placeholder="item description"
+                      placeholder="Item description"
                       rows={2}
                       maxLength={100}
                       onChange={handleChange}
-                      value={commodity?.description}
+                      value={commodity?.description || ""}
                       disabled={!isNone(commodity?.parent_id)}
-                      labelBold={true}
+                      className="resize-none"
                     />
                   </div>
 
-                  <hr className="mt-1 my-3 border-t border-border h-px" />
+                  {/* Advanced Fields */}
+                  <Collapsible>
+                    <CollapsibleTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        className="flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 p-0 h-auto"
+                      >
+                        Advanced Options
+                        <ChevronDown className="h-4 w-4" />
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="space-y-6 mt-6 pl-4 border-l-2 border-gray-200">
+                      <MetadataEditor
+                        id={commodity.id}
+                        object_type={MetadataObjectTypeEnum.commodity}
+                        metadata={commodity.metadata}
+                        onChange={(value) => dispatch({ name: "metadata", value })}
+                      >
+                        {(() => {
+                          const { isEditing, editMetadata } = useContext(
+                            MetadataEditorContext,
+                          );
 
-                  <MetadataEditor
-                    id={commodity.id}
-                    object_type={MetadataObjectTypeEnum.commodity}
-                    metadata={commodity.metadata}
-                    onChange={(value) => dispatch({ name: "metadata", value })}
-                  >
-                    {(() => {
-                      const { isEditing, editMetadata } = useContext(
-                        MetadataEditorContext,
-                      );
+                          return (
+                            <>
+                              <div className="flex justify-between">
+                                <Label className="text-xs font-bold uppercase tracking-wide text-gray-700">Metadata</Label>
 
-                      return (
-                        <>
-                          <div className="flex justify-between">
-                            <h2 className="text-lg font-semibold my-3">Metadata</h2>
+                                <Button
+                                  type="button"
+                                  variant="link"
+                                  size="sm"
+                                  disabled={isEditing}
+                                  onClick={() => editMetadata()}
+                                  className="text-blue-600 hover:text-blue-800 p-1 h-auto"
+                                >
+                                  Edit metadata
+                                </Button>
+                              </div>
+                            </>
+                          );
+                        })()}
+                      </MetadataEditor>
+                    </CollapsibleContent>
+                  </Collapsible>
 
-                            <ButtonField
-                              type="button"
-                              variant="link"
-                              size="sm"
-                              disabled={isEditing}
-                              onClick={() => editMetadata()}
-                              className="text-blue-600 hover:text-blue-800 p-1 h-auto"
-                            >
-                              Edit metadata
-                            </ButtonField>
-                          </div>
-
-                          <hr className="mt-1 my-1 border-t border-border h-px" />
-                        </>
-                      );
-                    })()}
-                  </MetadataEditor>
-                </div>
-
-                <div className="flex justify-center gap-2 mt-4">
-                  <ButtonField
+                {/* Action Buttons */}
+                <div className="flex justify-center gap-3">
+                  <Button
                     type="button"
                     variant="outline"
-                    size="sm"
                     onClick={close}
                     disabled={loading}
+                    className="min-w-[100px]"
                   >
                     Cancel
-                  </ButtonField>
-                  <ButtonField
+                  </Button>
+                  <Button
                     type="button"
                     variant="default"
-                    size="sm"
-                    loading={loading}
+                    onClick={handleSubmit}
                     disabled={
                       loading ||
                       isInvalid ||
                       isEqual(operation?.commodity, commodity)
                     }
-                    onClick={handleSubmit}
+                    className="min-w-[100px]"
                   >
-                    {isNew ? "Add" : "Save"}
-                  </ButtonField>
+                    {loading ? "Saving..." : (isNew ? "Add" : "Save")}
+                  </Button>
                 </div>
-              </>
+              </form>
             )}
           </div>
         </DialogContent>
