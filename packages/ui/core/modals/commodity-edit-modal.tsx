@@ -9,11 +9,10 @@ import {
   MetadataEditor,
   MetadataEditorContext,
 } from "../forms/metadata-editor";
-import { isEqual, isNone, validationMessage, validityCheck } from "@karrio/lib";
+import { isEqual, isNone, validationMessage, validityCheck, formatOrderLineItem } from "@karrio/lib";
 import { CommodityType, CURRENCY_OPTIONS, WEIGHT_UNITS } from "@karrio/types";
 import React, { useContext, useReducer, useState } from "react";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { LineItemInput } from "../forms/line-item-input";
 import { InputField } from "@karrio/ui/components/input-field";
 import { SelectField } from "@karrio/ui/components/select-field";
 import { ButtonField } from "@karrio/ui/components/button-field";
@@ -25,7 +24,10 @@ import { Label } from "@karrio/ui/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
 import { Textarea } from "@karrio/ui/components/ui/textarea";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@karrio/ui/components/ui/collapsible";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Check, ChevronsUpDown } from "lucide-react";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@karrio/ui/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@karrio/ui/components/ui/popover";
+import { cn } from "@karrio/ui/lib/utils";
 import { Notifier } from "../components/notifier";
 import { Loading } from "../components/loader";
 import { useOrders } from "@karrio/hooks/order";
@@ -94,6 +96,7 @@ export const CommodityEditModalProvider = ({
   const [operation, setOperation] = useState<OperationType | undefined>();
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
   const [maxQty, setMaxQty] = useState<number | null | undefined>();
+  const [popoverOpen, setPopoverOpen] = useState<boolean>(false);
   const { query } = useOrders({
     first: 10,
     status: ["unfulfilled", "partial"] as any,
@@ -176,35 +179,94 @@ export const CommodityEditModalProvider = ({
                 onSubmit={handleSubmit}
               >
                   {ORDERS_MANAGEMENT && (
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                      <div className="md:col-span-3 space-y-2">
-                        <LineItemInput
-                          name="parent_id"
-                          label="Order Line Item"
-                          value={commodity?.parent_id}
-                          onChange={loadLineItem}
-                          query={query}
-                          onReady={(_: any) => setMaxQty(_?.unfulfilled_quantity)}
-                          dropdownClass="is-small"
-                          fieldClass="mb-0 p-0"
-                          wrapperClass=""
-                          className="is-small is-fullwidth"
-                          placeholder="Link an order line item"
-                        />
-                      </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="parent_id" className="text-xs text-slate-700 font-bold">Order Line Item</Label>
+                      <div className="flex gap-2">
+                        <div className="flex-1">
+                          <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                role="combobox"
+                                className={cn(
+                                  "h-8 w-full justify-between",
+                                  !commodity?.parent_id && "text-muted-foreground"
+                                )}
+                              >
+                                {commodity?.parent_id
+                                  ? (() => {
+                                      const allItems = (query.data?.orders.edges || []).map(({ node: order }) => order.line_items).flat();
+                                      const selectedItem = allItems.find(item => item.id === commodity.parent_id);
+                                      const order = (query.data?.orders.edges || []).find(({ node: order }) => 
+                                        order.line_items.some(item => item.id === commodity.parent_id)
+                                      )?.node;
+                                      const itemIndex = order?.line_items.findIndex(item => item.id === commodity.parent_id) || 0;
+                                      return selectedItem && order ? formatOrderLineItem(order as any, selectedItem as any, itemIndex) : "Select order line item...";
+                                    })()
+                                  : "Link an order line item"}
+                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="p-2" align="start" style={{ width: 'var(--radix-popover-trigger-width)', minWidth: '400px' }}>
+                              <Command>
+                                <CommandInput placeholder="Search order line items..." className="h-8" />
+                                <CommandEmpty>No order line items found.</CommandEmpty>
+                                <CommandGroup className="max-h-60 overflow-y-auto">
+                                  <CommandItem
+                                    value=""
+                                    onSelect={() => {
+                                      dispatch({ name: "parent_id", value: null });
+                                      setMaxQty(undefined);
+                                      setPopoverOpen(false);
+                                    }}
+                                  >
+                                    <Check
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        !commodity?.parent_id ? "opacity-100" : "opacity-0"
+                                      )}
+                                    />
+                                    ---
+                                  </CommandItem>
+                                  {(query.data?.orders.edges || []).map(({ node: order }) =>
+                                    order.line_items.map((item, index) => {
+                                      const displayValue = formatOrderLineItem(order as any, item as any, index);
+                                      return (
+                                        <CommandItem
+                                          key={item.id}
+                                          value={displayValue}
+                                          onSelect={() => {
+                                            loadLineItem(item);
+                                            setPopoverOpen(false);
+                                          }}
+                                        >
+                                          <Check
+                                            className={cn(
+                                              "mr-2 h-4 w-4",
+                                              commodity?.parent_id === item.id ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                          {displayValue}
+                                        </CommandItem>
+                                      );
+                                    })
+                                  )}
+                                </CommandGroup>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
+                        </div>
 
-                      <div className="flex items-end">
                         <Button
                           type="button"
                           variant="outline"
-                          size="sm"
                           disabled={isNone(commodity?.parent_id)}
                           title="unlink order line item"
                           onClick={() => {
                             dispatch({ name: "parent_id", value: null });
                             setMaxQty(undefined);
                           }}
-                          className="h-8 w-full"
+                          className="h-8 w-10 px-0 py-0"
                         >
                           <i className="fas fa-unlink text-sm"></i>
                         </Button>
