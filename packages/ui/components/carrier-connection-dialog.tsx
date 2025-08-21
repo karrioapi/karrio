@@ -31,7 +31,7 @@ import { CountrySelect } from "./country-select";
 import { GetSystemConnections_system_carrier_connections_edges_node } from "@karrio/types/graphql/admin/types";
 import { IntegrationStatusBadge } from "@karrio/ui/core/components/integration-status-badge";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
-import { MetadataEditor } from "./ui/metadata-editor";
+import { MetadataEditor } from "./metadata-editor";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { useState, useEffect } from "react";

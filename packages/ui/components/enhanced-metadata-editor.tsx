@@ -247,7 +247,7 @@ export function EnhancedMetadataEditor({
             ))}
           </div>
         ) : (
-          <div className="text-center py-8 text-slate-500">
+          <div className="text-center py-4 text-slate-500">
             <div className="text-sm">{placeholder}</div>
             <div className="text-xs mt-1 text-slate-400">{emptyStateMessage}</div>
           </div>
