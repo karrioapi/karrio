@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from "@karrio/ui/components/ui/dialog";
 import { AddressType, ShipmentType } from "@karrio/types";
-import { AddressForm } from "@karrio/ui/core/forms/address-form";
+import { AddressForm } from "@karrio/ui/components/address-form";
 
 export interface AddressModalEditorProps {
   header?: string;
@@ -24,15 +24,24 @@ export const AddressModalEditor = ({
   onSubmit,
 }: AddressModalEditorProps): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
+  const [currentAddress, setCurrentAddress] = useState<Partial<AddressType>>(address || {});
 
-  const handleSubmit = async (data: AddressType) => {
+  React.useEffect(() => {
+    setCurrentAddress(address || {});
+  }, [address]);
+
+  const handleSubmit = async (data: Partial<AddressType>) => {
     try {
-      await onSubmit(data);
+      await onSubmit(data as AddressType);
       setIsOpen(false);
     } catch (error) {
       // Error is handled by the AddressForm component
       console.error("Address submission error:", error);
     }
+  };
+
+  const handleChange = (updatedAddress: Partial<AddressType>) => {
+    setCurrentAddress(updatedAddress);
   };
 
   return (
@@ -51,10 +60,11 @@ export const AddressModalEditor = ({
           
           <div className="mt-4 pb-6">
             <AddressForm
-              name="template"
-              value={address}
-              shipment={shipment}
+              value={currentAddress}
+              onChange={handleChange}
               onSubmit={handleSubmit}
+              showSubmitButton={true}
+              submitButtonText="Save Address"
             />
           </div>
         </DialogContent>
