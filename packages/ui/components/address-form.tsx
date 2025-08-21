@@ -111,11 +111,11 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
   const missingRequired = !address.person_name || !address.country_code || !address.address_line1 || !address.city || (isPostalRequired && !address.postal_code) || (isStateRequired && !address.state_code);
 
   return (
-    <form onSubmit={handleSubmit} className={`space-y-3 ${className}`}>
+    <form onSubmit={handleSubmit} className={`space-y-4 ${className}`}>
       {/* Contact Information */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <div className="space-y-1">
-          <Label htmlFor="person_name" className="text-xs text-slate-700">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="person_name" className="text-xs text-slate-700 font-bold">
             Contact Person <span className="text-red-500">*</span>
           </Label>
           <Input
@@ -128,8 +128,8 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
             className="h-8"
           />
         </div>
-        <div className="space-y-1">
-          <Label htmlFor="company_name" className="text-xs text-slate-700">Company</Label>
+        <div className="space-y-2">
+          <Label htmlFor="company_name" className="text-xs text-slate-700 font-bold">Company</Label>
           <Input
             id="company_name"
             value={address.company_name || ""}
@@ -143,20 +143,21 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
 
       {/* Country */}
       <div className="space-y-1">
-        <Label htmlFor="country_code" className="text-xs text-slate-700">
+        <Label htmlFor="country_code" className="text-xs text-slate-700 font-bold">
           Country <span className="text-red-500">*</span>
         </Label>
         <CountrySelect
           value={address.country_code || ""}
           onValueChange={(value) => handleChange("country_code", value)}
           disabled={disabled}
+          noWrapper={true}
         />
       </div>
 
       {/* Address Lines */}
-      <div className="space-y-3">
-        <div className="space-y-1">
-          <Label htmlFor="address_line1" className="text-xs text-slate-700">
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="address_line1" className="text-xs text-slate-700 font-bold">
             Street Address <span className="text-red-500">*</span>
           </Label>
           <div className="relative">
@@ -168,14 +169,15 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
               required
               disabled={disabled}
               className="pl-10 h-8"
+              wrapperClass="p-0"
             />
           </div>
           <p className="text-xs text-muted-foreground">
             💡 Tip: For best results, include street number and name
           </p>
         </div>
-        <div className="space-y-1">
-          <Label htmlFor="address_line2" className="text-xs text-slate-700">Address Line 2</Label>
+        <div className="space-y-2">
+          <Label htmlFor="address_line2" className="text-xs text-slate-700 font-bold">Address Line 2</Label>
           <Input
             id="address_line2"
             value={address.address_line2 || ""}
@@ -188,9 +190,9 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
       </div>
 
       {/* City, State, Postal */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <div className="space-y-1">
-          <Label htmlFor="city" className="text-xs text-slate-700">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="city" className="text-xs text-slate-700 font-bold">
             City <span className="text-red-500">*</span>
           </Label>
           <Input
@@ -203,8 +205,8 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
             className="h-8"
           />
         </div>
-        <div className="space-y-1">
-          <Label htmlFor="state_code" className="text-xs text-slate-700">
+        <div className="space-y-2">
+          <Label htmlFor="state_code" className="text-xs text-slate-700 font-bold">
             State/Province {isStateRequired && <span className="text-red-500">*</span>}
           </Label>
           {address.country_code && references.states?.[address.country_code] ? (
@@ -236,8 +238,8 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
             />
           )}
         </div>
-        <div className="space-y-1">
-          <Label htmlFor="postal_code" className="text-xs text-slate-700">
+        <div className="space-y-2">
+          <Label htmlFor="postal_code" className="text-xs text-slate-700 font-bold">
             Postal Code {isPostalRequired && <span className="text-red-500">*</span>}
           </Label>
           <div className="relative">
@@ -265,7 +267,7 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
       {/* Contact Details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email" className="text-xs text-slate-700 font-bold">Email</Label>
           <Input
             id="email"
             type="email"
@@ -273,10 +275,11 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
             onChange={(e) => handleChange("email", e.target.value)}
             placeholder="contact@company.com"
             disabled={disabled}
+            className="h-8"
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="phone_number">Phone</Label>
+          <Label htmlFor="phone_number" className="text-xs text-slate-700 font-bold">Phone</Label>
           <Input
             id="phone_number"
             value={address.phone_number || ""}
@@ -286,12 +289,13 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
             }}
             placeholder="+1 (555) 123-4567"
             disabled={disabled}
+            className="h-8"
           />
         </div>
       </div>
 
       {/* Residential Checkbox */}
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-2 pt-4">
         <Checkbox
           id="residential"
           checked={address.residential || false}
@@ -317,10 +321,10 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
             )}
           </Button>
         </CollapsibleTrigger>
-        <CollapsibleContent className="space-y-4 mt-4 pl-4 border-l-2 border-gray-200">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="federal_tax_id">Federal Tax ID</Label>
+        <CollapsibleContent className="space-y-6 mt-2 pl-4 border-l-2 border-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-1">
+              <Label htmlFor="federal_tax_id" className="text-xs text-slate-700 font-bold">Federal Tax ID</Label>
               <Input
                 id="federal_tax_id"
                 value={address.federal_tax_id || ""}
@@ -330,8 +334,8 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
                 disabled={disabled}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="state_tax_id">State Tax ID</Label>
+            <div className="space-y-1">
+              <Label htmlFor="state_tax_id" className="text-xs text-slate-700 font-bold">State Tax ID</Label>
               <Input
                 id="state_tax_id"
                 value={address.state_tax_id || ""}
@@ -347,7 +351,7 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
 
       {/* Submit Button */}
       {showSubmitButton && (
-        <div className="flex justify-end pt-4">
+        <div className="flex justify-center mt-5">
           <Button
             type="submit"
             disabled={disabled || isSubmitting || !hasChanges || missingRequired || (Boolean(address.postal_code) && !validatePostalCode(address.postal_code || "", address.country_code || ""))}
