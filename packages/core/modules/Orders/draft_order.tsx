@@ -207,9 +207,14 @@ export default function Page(pageProps: any) {
                       label="order date"
                       wrapperClass="w-full sm:w-1/3 mb-2"
                       labelBold={true}
-                      defaultValue={order.order_date || ""}
+                      defaultValue={order.options?.order_date || ""}
                       onChange={(e) =>
-                        handleChange({ order_date: e.target.value })
+                        handleChange({
+                          options: {
+                            ...order.options,
+                            order_date: e.target.value,
+                          },
+                        })
                       }
                     />
 
