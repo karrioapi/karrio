@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
+import { Button } from "@karrio/ui/components/ui/button";
 import { Label } from "@karrio/ui/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@karrio/ui/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@karrio/ui/components/ui/command";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@karrio/ui/lib/utils";
 import { formatOrderLineItem, isNone } from '@karrio/lib';
 import { useOrders } from '@karrio/hooks/order';
@@ -10,15 +13,13 @@ interface LineItemInputComponent {
   label?: string;
   required?: boolean;
   placeholder?: string;
-  value?: string;
-  onChange?: (value?: CommodityType) => void;
-  onReady?: (value?: CommodityType) => void;
+  value?: string | null;
+  onValueChange?: (value: string | null) => void;
+  onUnlink?: () => void;
   query: ReturnType<typeof useOrders>['query'];
   className?: string;
-  fieldClass?: string;
-  controlClass?: string;
-  wrapperClass?: string;
   disabled?: boolean;
+  showUnlinkButton?: boolean;
 }
 
 export const LineItemInput = React.forwardRef<HTMLButtonElement, LineItemInputComponent>(
@@ -27,29 +28,30 @@ export const LineItemInput = React.forwardRef<HTMLButtonElement, LineItemInputCo
     required,
     placeholder = "Link an order line item",
     value,
-    onChange,
-    onReady,
+    onValueChange,
+    onUnlink,
     query,
     className,
-    fieldClass,
-    controlClass,
-    wrapperClass,
     disabled,
+    showUnlinkButton = true,
     ...props
   }, ref) => {
-    const [lineItems, setLineItems] = useState<CommodityType[]>([]);
     const [items, setItems] = useState<Array<{ value: string; label: string }>>([]);
-    const [selectedValue, setSelectedValue] = useState<string>(value || "");
+    const [popoverOpen, setPopoverOpen] = useState<boolean>(false);
 
-    const handleChange = (newValue: string) => {
-      setSelectedValue(newValue);
-      const item = lineItems.find(item => item.id === newValue);
-      onChange && onChange(item);
+    const handleSelect = (newValue: string) => {
+      const selectedValue = newValue === "" ? null : newValue;
+      onValueChange?.(selectedValue);
+      setPopoverOpen(false);
+    };
+
+    const handleUnlink = () => {
+      onValueChange?.(null);
+      onUnlink?.();
     };
 
     useEffect(() => {
       if (query.isFetched && !isNone(query.data?.orders)) {
-        const allItems = (query.data?.orders.edges || []).map(({ node: order }) => order.line_items).flat();
         const dropdownItems = (query.data?.orders.edges || [])
           .map(({ node: order }) => order.line_items.map(
             (item, index) => ({
@@ -58,23 +60,18 @@ export const LineItemInput = React.forwardRef<HTMLButtonElement, LineItemInputCo
             })
           )).flat();
 
-        setLineItems(allItems);
         setItems(dropdownItems);
-
-        if (!!value && !!onReady) {
-          const selected = allItems.find(({ id }) => id === value);
-          onReady(selected);
-        }
       }
-    }, [query.isFetched, value, onReady]);
+    }, [query.isFetched]);
+
+    // Find selected item display value
+    const selectedItem = items.find(item => item.value === value);
+    const displayValue = selectedItem?.label || placeholder;
 
     return (
-      <div className={cn("px-1 py-2", wrapperClass)} {...props}>
-        {label !== undefined && (
-          <Label 
-            className="capitalize text-xs font-normal mb-1 block"
-            style={{ fontSize: ".8em" }}
-          >
+      <div className="space-y-2" {...props}>
+        {label && (
+          <Label className="text-xs text-slate-700 font-bold">
             {label}
             {required && (
               <span className="ml-1 text-red-500 text-xs">
@@ -84,30 +81,75 @@ export const LineItemInput = React.forwardRef<HTMLButtonElement, LineItemInputCo
           </Label>
         )}
 
-        <div className={cn("relative", fieldClass)}>
-          <Select
-            value={selectedValue}
-            onValueChange={handleChange}
-            disabled={disabled}
-          >
-            <SelectTrigger 
-              ref={ref}
-              className={cn("h-9", className)} // Match small input height
-            >
-              <SelectValue placeholder={placeholder} />
-            </SelectTrigger>
-            <SelectContent>
-              {items.map((item) => (
-                <SelectItem 
-                  key={item.value} 
-                  value={item.value}
-                  className="text-sm"
+        <div className="flex gap-2">
+          <div className="flex-1 min-w-0">
+            <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  ref={ref}
+                  variant="outline"
+                  role="combobox"
+                  className={cn(
+                    "h-8 w-full justify-between",
+                    !value && "text-muted-foreground",
+                    className
+                  )}
+                  disabled={disabled}
                 >
-                  {item.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+                  <span className="truncate">{displayValue}</span>
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="p-2" align="start" style={{ width: 'var(--radix-popover-trigger-width)', minWidth: '400px' }}>
+                <Command>
+                  <CommandInput placeholder="Search order line items..." className="h-8" />
+                  <CommandEmpty>No order line items found.</CommandEmpty>
+                  <CommandGroup className="max-h-60 overflow-y-auto">
+                    <CommandItem
+                      value=""
+                      onSelect={() => handleSelect("")}
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          !value ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                      ---
+                    </CommandItem>
+                    {items.map((item) => (
+                      <CommandItem
+                        key={item.value}
+                        value={item.label}
+                        onSelect={() => handleSelect(item.value)}
+                      >
+                        <Check
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            value === item.value ? "opacity-100" : "opacity-0"
+                          )}
+                        />
+                        {item.label}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          </div>
+
+          {showUnlinkButton && (
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isNone(value)}
+              title="unlink order line item"
+              onClick={handleUnlink}
+              className="h-8 w-10 px-0 py-0 flex-shrink-0"
+            >
+              <i className="fas fa-unlink text-sm"></i>
+            </Button>
+          )}
         </div>
       </div>
     );
