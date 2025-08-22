@@ -19,18 +19,38 @@ import karrio.server.core.serializers as serializers
 
 class AddressManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().defer("validation")
+        return (
+            super()
+            .get_queryset()
+            .defer("validation")
+            .prefetch_related(
+                *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
+            )
+        )
 
 
 class ParcelManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().prefetch_related("items")
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related(
+                "items",
+                *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
+            )
+        )
 
 
 class CommodityManager(models.Manager):
     def get_queryset(self):
         return (
-            super().get_queryset().select_related("parent").prefetch_related("children")
+            super()
+            .get_queryset()
+            .select_related("parent")
+            .prefetch_related(
+                "children",
+                *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
+            )
         )
 
 
@@ -40,7 +60,10 @@ class CustomsManager(models.Manager):
             super()
             .get_queryset()
             .select_related("duty_billing_address")
-            .prefetch_related("commodities")
+            .prefetch_related(
+                "commodities",
+                *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
+            )
         )
 
 
@@ -50,7 +73,10 @@ class PickupManager(models.Manager):
             super()
             .get_queryset()
             .select_related("pickup_carrier")
-            .prefetch_related("shipments")
+            .prefetch_related(
+                "shipments",
+                *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
+            )
         )
 
 
@@ -74,6 +100,7 @@ class ShipmentManager(models.Manager):
             .prefetch_related(
                 "parcels",
                 "carriers",
+                *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
             )
         )
 
@@ -90,19 +117,35 @@ class TrackingManager(models.Manager):
                 "shipment__recipient",
                 "shipment__shipper",
             )
+            .prefetch_related(
+                *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
+            )
         )
 
 
 class DocumentUploadRecordManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().select_related("upload_carrier")
+        return (
+            super()
+            .get_queryset()
+            .select_related("upload_carrier")
+            .prefetch_related(
+                *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
+            )
+        )
 
 
 class ManifestManager(models.Manager):
     def get_queryset(self):
         # Load manifest details and associated carrier data efficiently
         return (
-            super().get_queryset().select_related("manifest_carrier").defer("manifest")
+            super()
+            .get_queryset()
+            .select_related("manifest_carrier")
+            .defer("manifest")
+            .prefetch_related(
+                *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
+            )
         )
 
 

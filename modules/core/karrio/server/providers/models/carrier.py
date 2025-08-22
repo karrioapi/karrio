@@ -35,7 +35,14 @@ class Manager(models.Manager):
 
 class CarrierManager(Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(is_system=False)
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related(
+                *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
+            )
+            .filter(is_system=False)
+        )
 
 
 class SystemCarrierManager(models.Manager):
@@ -45,6 +52,7 @@ class SystemCarrierManager(models.Manager):
             .get_queryset()
             .prefetch_related(
                 "configs",
+                *(("active_orgs",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
             )
             .select_related(
                 "created_by",
