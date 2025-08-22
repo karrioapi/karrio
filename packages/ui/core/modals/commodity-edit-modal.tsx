@@ -327,7 +327,7 @@ export const CommodityEditModalProvider = ({
                           <SelectTrigger className="h-8 w-20 rounded-l-none border-l-0">
                             <SelectValue />
                           </SelectTrigger>
-                          <SelectContent className="max-h-60 overflow-y-auto">
+                          <SelectContent>
                             {WEIGHT_UNITS.map((unit) => (
                               <SelectItem key={unit} value={unit}>
                                 {unit}
@@ -367,7 +367,7 @@ export const CommodityEditModalProvider = ({
                           <SelectTrigger className="h-8 w-20 rounded-l-none border-l-0">
                             <SelectValue />
                           </SelectTrigger>
-                          <SelectContent className="max-h-60 overflow-y-auto">
+                          <SelectContent>
                             {CURRENCY_OPTIONS.map((currency) => (
                               <SelectItem key={currency} value={currency}>
                                 {currency}
