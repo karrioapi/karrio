@@ -14,7 +14,7 @@ import { CommodityType, CURRENCY_OPTIONS, WEIGHT_UNITS } from "@karrio/types";
 import React, { useContext, useReducer, useState } from "react";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { InputField } from "@karrio/ui/components/input-field";
-import { SelectField } from "@karrio/ui/components/select-field";
+import { SelectField } from "@karrio/ui/core/components";
 import { ButtonField } from "@karrio/ui/components/button-field";
 import { CountryInput } from "@karrio/ui/components/country-input";
 import { TextareaField } from "@karrio/ui/components/textarea-field";

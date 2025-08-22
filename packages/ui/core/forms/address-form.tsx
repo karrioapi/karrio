@@ -26,7 +26,7 @@ import { NameInput } from "../components/name-input";
 import { Notify } from "../components/notifier";
 // import { CountryInput } from "./country-input";
 import { Loading } from "../components/loader";
-import { SelectField } from "@karrio/ui/components/select-field";
+import { EnhancedSelect } from "@karrio/ui/components/enhanced-select";
 import { CountrySelect } from "@karrio/ui/components/country-select";
 
 interface AddressFormComponent {
@@ -244,15 +244,13 @@ export const AddressForm = ({
           required
         />
 
-        <SelectField
+        <EnhancedSelect
           label="province or state"
           onValueChange={(value) =>
             dispatch({ name: "state_code", value: value as string })
           }
           value={address.state_code}
           className="h-9"
-          wrapperClass="w-full px-1 py-3"
-          fieldClass="mb-0 p-0"
           options={Object.entries(references.states?.[address.country_code] || {}).map(([code, name]) => ({
             value: code,
             label: name
