@@ -631,12 +631,52 @@ class UploadDocumentType(utils.StrEnum):
 
 
 class TrackingStatus(utils.Enum):
-    on_hold = ["X"]
-    pending = ["MP"]
-    delivered = ["D"]
-    in_transit = [""]
-    delivery_failed = ["RS"]
-    out_for_delivery = ["OT"]
+    # Based on UPS API documentation - Status types and codes
+    # D = delivery information, I = in-progress, M/MV = manifest, U = update, X = exception
+    
+    # Delivered statuses
+    delivered = ["D", "FS", "KB", "F4"]  # D=delivered type, FS=final status, KB=delivered, F4=delivered code
+    
+    # In-transit/processing statuses
+    in_transit = ["I", "OR", "DP", "AA", "AR", "AF", "AL", "OD", "DS", "IH", "AP"]
+    # I=in-progress, OR=origin scan, DP=departure scan, AA=arrival scan, AR=arrival scan
+    # AF=arrival facility, AL=arrival location, OD=on delivery vehicle, DS=departure scan
+    # IH=in-transit hub, AP=arrival at post office
+    
+    # Pending/manifest statuses  
+    pending = ["M", "MV", "MP", "XD", "OA", "DD"]  # M=manifest, MV=manifest void, MP=manifest pickup
+    # XD=signature required, OA=order assigned, DD=data downloaded
+    
+    # Out for delivery
+    out_for_delivery = ["OT", "OD", "OF", "DL"]  # OT=out for delivery, OD=on delivery vehicle
+    # OF=out for final delivery, DL=delivery in progress
+    
+    # On hold/exception statuses
+    on_hold = ["X", "EX", "HX", "HD", "HI", "HS", "HU", "NH"]  # X=exception type
+    # EX=exception, HX=hold exception, HD=hold at depot, HI=hold instruction
+    # HS=hold at station, HU=hold until, NH=no such number
+    
+    # Delivery failed/returned statuses
+    delivery_failed = ["RS", "RT", "RF", "RH", "UR", "UF", "CC"]  # RS=return to sender
+    # RT=return to, RF=refused, RH=return home, UR=undeliverable return
+    # UF=unable to forward, CC=call center
+    
+    # Cancelled/void statuses  
+    cancelled = ["VD", "CA", "CN", "CV"]  # VD=void, CA=cancelled, CN=cancel, CV=cancel void
+    
+    # Ready for pickup
+    ready_for_pickup = ["RP", "UU", "PU", "AC", "WC"]  # RP=ready for pickup, UU=unable to deliver
+    # PU=pickup, AC=available for collection, WC=will call
+    
+    # Delivery delayed
+    delivery_delayed = ["DY", "DE", "DD", "SD"]  # DY=delay, DE=delayed, DD=delivery date, SD=service delay
+    
+    # Return to sender  
+    return_to_sender = ["RS", "RT", "RH", "RU"]  # RS=return to sender, RT=return to
+    # RH=return home, RU=return undeliverable
+    
+    # Unknown/unrecognized statuses
+    unknown = []  # For any unrecognized status codes
 
 
 # from https://developer.ups.com/api/reference/rating/appendix?loc=en_US
