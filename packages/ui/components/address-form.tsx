@@ -4,6 +4,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Checkbox } from "./ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { EnhancedSelect } from "./enhanced-select";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 import { ChevronDown, ChevronUp, MapPin } from "lucide-react";
 import { AddressType, DEFAULT_ADDRESS_CONTENT } from "@karrio/types";
@@ -219,39 +220,38 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
             className="h-8"
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="state_code" className="text-xs text-slate-700 font-bold">
-            State/Province {isStateRequired && <span className="text-red-500">*</span>}
-          </Label>
           {address.country_code && references.states?.[address.country_code] ? (
-            <Select
+            <EnhancedSelect
+              name="state_code"
+              label="State/Province"
               value={address.state_code || ""}
               onValueChange={(value) => handleChange("state_code", value)}
-              disabled={disabled}
-            >
-              <SelectTrigger className="h-8">
-                <SelectValue placeholder="Select state" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(references.states[address.country_code]).map(([code, name]) => (
-                  <SelectItem key={code} value={code}>
-                    {name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          ) : (
-            <Input
-              id="state_code"
-              value={address.state_code || ""}
-              onChange={(e) => handleChange("state_code", e.target.value)}
-              placeholder="State/Province"
+              placeholder="Select state"
               required={isStateRequired}
               disabled={disabled}
               className="h-8"
+              labelClassName="text-xs text-slate-700 font-bold"
+              options={Object.entries(references.states[address.country_code] || {}).map(([code, name]) => ({
+                value: code,
+                label: String(name)
+              }))}
             />
+          ) : (
+            <div className="space-y-2">
+              <Label htmlFor="state_code" className="text-xs text-slate-700 font-bold">
+                State/Province {isStateRequired && <span className="text-red-500">*</span>}
+              </Label>
+              <Input
+                id="state_code"
+                value={address.state_code || ""}
+                onChange={(e) => handleChange("state_code", e.target.value)}
+                placeholder="State/Province"
+                required={isStateRequired}
+                disabled={disabled}
+                className="h-8"
+              />
+            </div>
           )}
-        </div>
         <div className="space-y-2">
           <Label htmlFor="postal_code" className="text-xs text-slate-700 font-bold">
             Postal Code {isPostalRequired && <span className="text-red-500">*</span>}
