@@ -52,7 +52,7 @@ services:
 
   dashboard:
     container_name: karrio.dashboard
-    image: karrio/dashboard:2024.12rc
+    image: karrio/dashboard:$KARRIO_TAG
     restart: unless-stopped
     ports:
       - ${DASHBOARD_PORT:-3002}:${DASHBOARD_PORT:-3002}/tcp
