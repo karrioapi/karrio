@@ -83,12 +83,12 @@ class TrackingManager(models.Manager):
         return (
             super()
             .get_queryset()
-            .defer("shipment")
-            .prefetch_related(
-                "tracking_carrier",
-            )
             .select_related(
                 "created_by",
+                "tracking_carrier",
+                "shipment",
+                "shipment__recipient",
+                "shipment__shipper",
             )
         )
 
