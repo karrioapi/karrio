@@ -17,7 +17,7 @@ import { AddressAutocompleteInput } from "./address-autocomplete-input";
 import { Checkbox } from "@karrio/ui/components/ui/checkbox";
 import { Label } from "@karrio/ui/components/ui/label";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { ButtonField } from "@karrio/ui/components/button-field";
+import { ButtonField } from "@karrio/ui/core/components/button-field";
 // import { PostalInput } from "../components/postal-input";
 import { InputField } from "@karrio/ui/components/input-field";
 // import { PhoneInput } from "../components/phone-input";
