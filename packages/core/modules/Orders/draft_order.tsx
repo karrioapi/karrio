@@ -280,9 +280,7 @@ export default function Page(pageProps: any) {
                         },
                       ]}
                       orientation="horizontal"
-                      gap="gap-4"
-                      wrapperClass="p-0 mb-3"
-                      labelBold={true}
+                      className="p-0 mb-3"
                     />
 
                     {order.options?.paid_by &&
