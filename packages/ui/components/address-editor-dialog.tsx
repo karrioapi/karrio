@@ -8,7 +8,7 @@ import {
 import { AddressType, ShipmentType } from "@karrio/types";
 import { AddressForm } from "@karrio/ui/components/address-form";
 
-export interface AddressModalEditorProps {
+export interface AddressEditorDialogProps {
   header?: string;
   shipment?: ShipmentType;
   address: AddressType | ShipmentType["recipient"] | ShipmentType["shipper"];
@@ -16,13 +16,13 @@ export interface AddressModalEditorProps {
   trigger: React.ReactElement;
 }
 
-export const AddressModalEditor = ({
+export const AddressEditorDialog = ({
   trigger,
   header,
   shipment,
   address,
   onSubmit,
-}: AddressModalEditorProps): JSX.Element => {
+}: AddressEditorDialogProps): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentAddress, setCurrentAddress] = useState<Partial<AddressType>>(address || {});
 
@@ -73,4 +73,4 @@ export const AddressModalEditor = ({
   );
 };
 
-AddressModalEditor.displayName = "AddressModalEditor";
+AddressEditorDialog.displayName = "AddressEditorDialog";
