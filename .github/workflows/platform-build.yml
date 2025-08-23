@@ -45,8 +45,8 @@ jobs:
           echo ${{ secrets.GH_PAT }} | docker login ghcr.io -u USERNAME --password-stdin
           EDITION=platform \
           KARRIO_IMAGE=ghcr.io/karrioapi/cloud \
-          ./bin/build-insiders-image ${{ steps.get_tag.outputs.tag }}-patch-1 &&
-          docker push ghcr.io/karrioapi/cloud:${{ steps.get_tag.outputs.tag }}-patch-1 || exit 1
+          ./bin/build-insiders-image ${{ steps.get_tag.outputs.tag }} &&
+          docker push ghcr.io/karrioapi/cloud:${{ steps.get_tag.outputs.tag }} || exit 1
 
   platform-ecr-publish:
     needs: platform-server-build
@@ -58,7 +58,7 @@ jobs:
       - name: Pull platform server image
         run: |
           echo ${{ secrets.GH_PAT }} | docker login ghcr.io -u USERNAME --password-stdin
-          docker pull ghcr.io/karrioapi/cloud:${{ needs.platform-server-build.outputs.version }}-patch-1
+          docker pull ghcr.io/karrioapi/cloud:${{ needs.platform-server-build.outputs.version }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -75,8 +75,8 @@ jobs:
 
       - name: Tag and push to AWS ECR
         run: |
-          docker tag ghcr.io/karrioapi/cloud:${{ needs.platform-server-build.outputs.version }}-patch-1 563562701692.dkr.ecr.us-east-1.amazonaws.com/karrio/api:${{ needs.platform-server-build.outputs.version }}-patch-1
-          docker push 563562701692.dkr.ecr.us-east-1.amazonaws.com/karrio/api:${{ needs.platform-server-build.outputs.version }}-patch-1
+          docker tag ghcr.io/karrioapi/cloud:${{ needs.platform-server-build.outputs.version }} 563562701692.dkr.ecr.us-east-1.amazonaws.com/karrio/api:${{ needs.platform-server-build.outputs.version }}
+          docker push 563562701692.dkr.ecr.us-east-1.amazonaws.com/karrio/api:${{ needs.platform-server-build.outputs.version }}
 
   platform-infra-deploy:
     needs: [platform-server-build, platform-ecr-publish]

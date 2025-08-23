@@ -42,12 +42,25 @@ build_insiders_wheels() {
         return 0
     fi
 
-    # Build each insiders package
+    # Collect all insiders packages (direct modules and connectors)
+    declare -a packages=()
+    
+    # Add direct modules in ee/insiders/modules/
     for package_dir in ee/insiders/modules/*/; do
-        if [ ! -d "$package_dir" ] || [ ! -f "$package_dir/pyproject.toml" ]; then
-            continue
+        if [ -d "$package_dir" ] && [ -f "$package_dir/pyproject.toml" ]; then
+            packages+=("$package_dir")
         fi
+    done
+    
+    # Add connectors in ee/insiders/modules/connectors/
+    for connector_dir in ee/insiders/modules/connectors/*/; do
+        if [ -d "$connector_dir" ] && [ -f "$connector_dir/pyproject.toml" ]; then
+            packages+=("$connector_dir")
+        fi
+    done
 
+    # Build each insiders package
+    for package_dir in "${packages[@]}"; do
         package_name=$(basename "$package_dir")
         log_info "Building $package_name in $package_dir"
 
