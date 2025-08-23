@@ -51,14 +51,14 @@ export const AddressEditorDialog = ({
       })}
       
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-3xl max-h-[95vh] overflow-y-auto">
-          <DialogHeader>
+        <DialogContent className="max-w-3xl max-h-[95vh] flex flex-col">
+          <DialogHeader className="sticky top-0 bg-white z-10 pb-4 border-b">
             <DialogTitle className="text-lg font-semibold">
               {header || "Edit address"}
             </DialogTitle>
           </DialogHeader>
           
-          <div className="mt-4 pb-6 px-6">
+          <div className="flex-1 overflow-y-auto mt-4 pb-6 px-4">
             <AddressForm
               value={currentAddress}
               onChange={handleChange}
