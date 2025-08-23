@@ -64,6 +64,8 @@ class Event(core.OwnedEntity):
                 condition=models.Q(data__id__isnull=False),
                 name="event_object_idx",
             ),
+            # Index for archiving queries based on creation date
+            models.Index(fields=["created_at"], name="event_created_at_idx"),
         ]
 
     id = models.CharField(

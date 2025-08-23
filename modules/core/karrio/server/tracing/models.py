@@ -46,6 +46,8 @@ class TracingRecord(OwnedEntity):
                 condition=models.Q(meta__workflow_id__isnull=False),
                 name="workflow_idx",
             ),
+            # Index for archiving queries based on creation date
+            models.Index(fields=["created_at"], name="tracing_created_at_idx"),
         ]
 
     id = models.CharField(

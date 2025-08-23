@@ -41,7 +41,9 @@ update_package_version() {
             # Linux
             sed -i "s/^version = \".*\"/version = \"$new_version\"/" "$pyproject_file"
         fi
-        log_info "Updated version to $new_version in $pyproject_file"
+        # Clean up path display (remove double slashes)
+        clean_path=$(echo "$pyproject_file" | sed 's|//|/|g')
+        log_info "Updated version to $new_version in $clean_path"
     fi
 }
 
@@ -92,9 +94,25 @@ main() {
     done
     # Add insiders packages if ee/insiders/modules exists
     if [ -d "ee/insiders/modules" ]; then
+        # Add direct modules in ee/insiders/modules/
         for insiders_dir in ee/insiders/modules/*/; do
             if [ -d "$insiders_dir" ] && [ -f "$insiders_dir/pyproject.toml" ]; then
                 packages+=("$insiders_dir")
+            fi
+        done
+        # Add connectors in ee/insiders/modules/connectors/
+        for connector_dir in ee/insiders/modules/connectors/*/; do
+            if [ -d "$connector_dir" ] && [ -f "$connector_dir/pyproject.toml" ]; then
+                packages+=("$connector_dir")
+            fi
+        done
+    fi
+    
+    # Add platform packages if ee/platform/modules exists
+    if [ -d "ee/platform/modules" ]; then
+        for platform_dir in ee/platform/modules/*/; do
+            if [ -d "$platform_dir" ] && [ -f "$platform_dir/pyproject.toml" ]; then
+                packages+=("$platform_dir")
             fi
         done
     fi
@@ -126,7 +144,9 @@ main() {
             update_package_version "$pyproject_file" "$TARGET_VERSION"
             ((updated_count++))
         else
-            log_info "Version already up to date in $package_dir"
+            # Clean up path display (remove double slashes)
+            clean_path=$(echo "$package_dir" | sed 's|//|/|g')
+            log_info "Version already up to date in $clean_path"
         fi
     done
 

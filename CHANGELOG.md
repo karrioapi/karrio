@@ -1,3 +1,23 @@
+# Karrio 2025.5rc17
+
+## Changes
+
+### Fix
+
+- fix: resolved module import error for karrio.server.admin.schemas.orgs in tenant GraphQL schema
+- fix: enhanced UPS tracking status codes with comprehensive API documentation mapping
+- fix: optimize N+1 query issues in tracking/shipment GraphQL resolvers with proper relationship prefetching
+- fix: optimize N+1 query issues in constance configuration loading with bulk database operations
+- fix: optimize N+1 query issues in data archiving tasks with bulk deletion for organization links
+- fix: optimize N+1 query issues in carrier/organization access filtering for proxy endpoints
+- fix: optimize N+1 query issues in tenant domain/client lookups with relationship prefetching
+- fix: enhance all manager model querysets with organization relationship prefetching for multi-tenant mode
+- fix: improve archiving query performance with optimized existence checks and batch processing
+- fix: add database indexes for archiving date-based filters to reduce query execution time
+- fix: refactor workflow scheduler error handling with cleaner diagnostic functions
+- fix: add workflow-trigger table diagnostic migration for production database issues
+- fix: resolve APILog proxy model index conflicts in Django migrations
+
 # Karrio 2025.5rc16
 
 ## Changes
