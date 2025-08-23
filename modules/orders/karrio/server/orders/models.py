@@ -74,6 +74,10 @@ class Order(OwnedEntity):
         verbose_name = "Order"
         verbose_name_plural = "Orders"
         ordering = ["-created_at"]
+        indexes = [
+            # Index for archiving queries based on creation date
+            models.Index(fields=["created_at"], name="order_created_at_idx"),
+        ]
 
     id = models.CharField(
         max_length=50,

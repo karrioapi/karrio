@@ -24,35 +24,45 @@ def run_data_archiving(*args, **kwargs):
         days=conf.settings.TRACKER_DATA_RETENTION
     )
 
-    shipping_data = manager.Shipment.objects.filter(created_at__lt=shipment_retention)
-    tracking_Data = manager.Tracking.objects.filter(created_at__lt=tracker_retention)
-    tracing_data = tracing.TracingRecord.objects.filter(created_at__lt=log_retention)
-    api_log_data = core.APILog.objects.filter(requested_at__lt=log_retention)
-    order_data = orders.Order.objects.filter(created_at__lt=order_retention)
-    event_data = events.Event.objects.filter(created_at__lt=log_retention)
+    # Use efficient existence checks and batch processing
+    BATCH_SIZE = 1000  # Process in batches to avoid memory issues
+    
+    # Optimize querysets by only selecting required fields for existence checks
+    tracing_exists = tracing.TracingRecord.objects.filter(created_at__lt=log_retention).exists()
+    event_exists = events.Event.objects.filter(created_at__lt=log_retention).exists()
+    api_log_exists = core.APILog.objects.filter(requested_at__lt=log_retention).exists()
+    tracking_exists = manager.Tracking.objects.filter(created_at__lt=tracker_retention).exists()
+    shipping_exists = manager.Shipment.objects.filter(created_at__lt=shipment_retention).exists()
+    order_exists = orders.Order.objects.filter(created_at__lt=order_retention).exists()
 
-    if any(tracing_data):
+    if tracing_exists:
         logger.info(">> archiving SDK tracing backlog...")
+        tracing_data = tracing.TracingRecord.objects.filter(created_at__lt=log_retention)
         utils.failsafe(lambda: _bulk_delete_tracing_data(tracing_data))
 
-    if any(event_data):
+    if event_exists:
         logger.info(">> archiving events backlog...")
+        event_data = events.Event.objects.filter(created_at__lt=log_retention)
         utils.failsafe(lambda: event_data.delete())
 
-    if any(api_log_data):
+    if api_log_exists:
         logger.info(">> archiving API request logs backlog...")
+        api_log_data = core.APILog.objects.filter(requested_at__lt=log_retention)
         utils.failsafe(lambda: api_log_data.delete())
 
-    if any(tracking_Data):
+    if tracking_exists:
         logger.info(">> archiving tracking data backlog...")
-        utils.failsafe(lambda: _bulk_delete_tracking_data(tracking_Data))
+        tracking_data = manager.Tracking.objects.filter(created_at__lt=tracker_retention)
+        utils.failsafe(lambda: _bulk_delete_tracking_data(tracking_data))
 
-    if any(shipping_data):
+    if shipping_exists:
         logger.info(">> archiving shipping data backlog...")
+        shipping_data = manager.Shipment.objects.filter(created_at__lt=shipment_retention)
         utils.failsafe(lambda: _bulk_delete_shipment_data(shipping_data))
 
-    if any(order_data):
+    if order_exists:
         logger.info(">> archiving order data backlog...")
+        order_data = orders.Order.objects.filter(created_at__lt=order_retention)
         utils.failsafe(lambda: _bulk_delete_order_data(order_data))
 
     logger.info("> ending scheduled backlog archiving!")
@@ -60,23 +70,43 @@ def run_data_archiving(*args, **kwargs):
 
 def _bulk_delete_tracing_data(tracing_queryset):
     """Bulk delete tracing data to avoid N+1 queries with organization links."""
-    # Check if organizations module is available
+    BATCH_SIZE = 1000
+    
     try:
         from karrio.server.orgs.models import TracingRecordLink
-
-        # Get the tracing record IDs that will be deleted
-        tracing_ids = list(tracing_queryset.values_list('id', flat=True))
-
-        if tracing_ids:
+        
+        # Process in batches to avoid memory issues
+        total_deleted = 0
+        while True:
+            # Get a batch of IDs to delete
+            batch_ids = list(tracing_queryset.values_list('id', flat=True)[:BATCH_SIZE])
+            
+            if not batch_ids:
+                break
+                
             # Bulk delete TracingRecordLink entries first to avoid CASCADE N+1 queries
-            TracingRecordLink.objects.filter(item_id__in=tracing_ids).delete()
-
-        # Now delete the tracing records themselves
-        tracing_queryset.delete()
-
+            TracingRecordLink.objects.filter(item_id__in=batch_ids).delete()
+            
+            # Delete the tracing records in this batch
+            deleted_count = tracing_queryset.filter(id__in=batch_ids).delete()[0]
+            total_deleted += deleted_count
+            
+            logger.info(f"Deleted {deleted_count} tracing records (total: {total_deleted})")
+            
     except ImportError:
-        # Organizations module not installed, just delete normally
-        tracing_queryset.delete()
+        # Organizations module not installed, just delete in batches
+        total_deleted = 0
+        while True:
+            # Get a batch to delete
+            batch_ids = list(tracing_queryset.values_list('id', flat=True)[:BATCH_SIZE])
+            
+            if not batch_ids:
+                break
+                
+            deleted_count = tracing_queryset.filter(id__in=batch_ids).delete()[0]
+            total_deleted += deleted_count
+            
+            logger.info(f"Deleted {deleted_count} tracing records (total: {total_deleted})")
 
 
 def _bulk_delete_tracking_data(tracking_queryset):

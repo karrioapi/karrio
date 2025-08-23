@@ -579,6 +579,10 @@ class Tracking(core.OwnedEntity):
         verbose_name = "Tracking Status"
         verbose_name_plural = "Tracking Statuses"
         ordering = ["-created_at"]
+        indexes = [
+            # Index for archiving queries based on creation date
+            models.Index(fields=["created_at"], name="tracking_created_at_idx"),
+        ]
 
     id = models.CharField(
         max_length=50,
@@ -719,6 +723,8 @@ class Shipment(core.OwnedEntity):
                 condition=models.Q(meta__object_id__isnull=False),
                 name="shipment_service_idx",
             ),
+            # Index for archiving queries based on creation date
+            models.Index(fields=["created_at"], name="shipment_created_at_idx"),
         ]
 
     id = models.CharField(
