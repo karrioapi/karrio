@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from "@karrio/ui/components/ui/button";
 import { Label } from "@karrio/ui/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@karrio/ui/components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@karrio/ui/components/ui/command";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@karrio/ui/components/ui/command";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@karrio/ui/lib/utils";
 import { formatOrderLineItem, isNone } from '@karrio/lib';
@@ -103,36 +103,38 @@ export const LineItemInput = React.forwardRef<HTMLButtonElement, LineItemInputCo
               <PopoverContent className="p-2" align="start" style={{ width: 'var(--radix-popover-trigger-width)', minWidth: '400px' }}>
                 <Command>
                   <CommandInput placeholder="Search order line items..." className="h-8" />
-                  <CommandEmpty>No order line items found.</CommandEmpty>
-                  <CommandGroup className="max-h-60 overflow-y-auto">
-                    <CommandItem
-                      value=""
-                      onSelect={() => handleSelect("")}
-                    >
-                      <Check
-                        className={cn(
-                          "mr-2 h-4 w-4",
-                          !value ? "opacity-100" : "opacity-0"
-                        )}
-                      />
-                      ---
-                    </CommandItem>
-                    {items.map((item) => (
+                  <CommandList>
+                    <CommandEmpty>No order line items found.</CommandEmpty>
+                    <CommandGroup>
                       <CommandItem
-                        key={item.value}
-                        value={item.label}
-                        onSelect={() => handleSelect(item.value)}
+                        value=""
+                        onSelect={() => handleSelect("")}
                       >
                         <Check
                           className={cn(
                             "mr-2 h-4 w-4",
-                            value === item.value ? "opacity-100" : "opacity-0"
+                            !value ? "opacity-100" : "opacity-0"
                           )}
                         />
-                        {item.label}
+                        ---
                       </CommandItem>
-                    ))}
-                  </CommandGroup>
+                      {items.map((item) => (
+                        <CommandItem
+                          key={item.value}
+                          value={item.label}
+                          onSelect={() => handleSelect(item.value)}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              value === item.value ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          {item.label}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
                 </Command>
               </PopoverContent>
             </Popover>
