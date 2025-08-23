@@ -59,7 +59,7 @@ karrio_dhl_parcel_de @ file://${PWD}/modules/connectors/dhl_parcel_de
 karrio_dhl_poland @ file://${PWD}/modules/connectors/dhl_poland
 karrio_dhl_universal @ file://${PWD}/modules/connectors/dhl_universal
 karrio_dpd @ file://${PWD}/community/plugins/dpd
-karrio_dtdc @ file://${PWD}/ee/insiders/modules/connectors/dtdc
+karrio_dtdc @ file://${PWD}/modules/connectors/dtdc
 karrio_easypost @ file://${PWD}/community/plugins/easypost
 karrio_easyship @ file://${PWD}/community/plugins/easyship
 karrio_eshipper @ file://${PWD}/community/plugins/eshipper
@@ -72,11 +72,11 @@ karrio_sapient @ file://${PWD}/community/plugins/sapient
 karrio_seko @ file://${PWD}/modules/connectors/seko
 karrio_sendle @ file://${PWD}/modules/connectors/sendle
 karrio_server @ file://${PWD}/apps/api
-karrio_server_admin @ file://${PWD}/ee/insiders/modules/admin
-karrio_server_apps @ file://${PWD}/ee/insiders/modules/apps
-karrio_server_audit @ file://${PWD}/ee/insiders/modules/audit
-karrio_server_automation @ file://${PWD}/ee/insiders/modules/automation
-karrio_server_cloud @ file://${PWD}/ee/insiders/modules/cloud
+karrio_server_admin @ file://${PWD}/modules/admin
+karrio_server_apps @ file://${PWD}/modules/apps
+karrio_server_audit @ file://${PWD}/modules/audit
+karrio_server_automation @ file://${PWD}/modules/automation
+karrio_server_cloud @ file://${PWD}/modules/cloud
 karrio_server_core @ file://${PWD}/modules/core
 karrio_server_data @ file://${PWD}/modules/data
 karrio_server_documents @ file://${PWD}/modules/documents
@@ -84,7 +84,7 @@ karrio_server_events @ file://${PWD}/modules/events
 karrio_server_graph @ file://${PWD}/modules/graph
 karrio_server_manager @ file://${PWD}/modules/manager
 karrio_server_orders @ file://${PWD}/modules/orders
-karrio_server_orgs @ file://${PWD}/ee/insiders/modules/orgs
+karrio_server_orgs @ file://${PWD}/modules/orgs
 karrio_server_pricing @ file://${PWD}/modules/pricing
 karrio_server_proxy @ file://${PWD}/modules/proxy
 karrio_ups @ file://${PWD}/modules/connectors/ups
@@ -99,7 +99,7 @@ oauthlib==3.3.1
 packaging==25.0
 phonenumbers==9.0.12
 pillow==11.3.0
-posthog==6.6.0
+posthog==6.6.1
 psutil==7.0.0
 psycopg2-binary==2.9.10
 py-soap==2020.3.2
