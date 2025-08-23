@@ -16,7 +16,6 @@ import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { InputField } from "@karrio/ui/components/input-field";
 import { SelectField } from "@karrio/ui/core/components";
 import { ButtonField } from "@karrio/ui/components/button-field";
-import { CountryInput } from "@karrio/ui/components/country-input";
 import { TextareaField } from "@karrio/ui/components/textarea-field";
 import { LineItemInput } from "@karrio/ui/components/line-item-input";
 import { Button } from "@karrio/ui/components/ui/button";
