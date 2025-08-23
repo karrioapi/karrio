@@ -122,7 +122,7 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
       {/* Contact Information */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="person_name" className="text-xs text-slate-700 font-bold">
+          <Label htmlFor="person_name">
             Contact Person <span className="text-red-500">*</span>
           </Label>
           <Input
@@ -136,7 +136,7 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="company_name" className="text-xs text-slate-700 font-bold">Company</Label>
+          <Label htmlFor="company_name">Company</Label>
           <Input
             id="company_name"
             value={address.company_name || ""}
@@ -150,7 +150,7 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
 
       {/* Country */}
       <div className="space-y-1">
-        <Label htmlFor="country_code" className="text-xs text-slate-700 font-bold">
+        <Label htmlFor="country_code">
           Country <span className="text-red-500">*</span>
         </Label>
         <CountrySelect
@@ -164,7 +164,7 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
       {/* Address Lines */}
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="address_line1" className="text-xs text-slate-700 font-bold">
+          <Label htmlFor="address_line1">
             Street Address <span className="text-red-500">*</span>
           </Label>
           <AddressCombobox
@@ -182,7 +182,7 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="address_line2" className="text-xs text-slate-700 font-bold">Address Line 2</Label>
+          <Label htmlFor="address_line2">Address Line 2</Label>
           <Input
             id="address_line2"
             value={address.address_line2 || ""}
@@ -197,7 +197,7 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
       {/* City, State, Postal */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="city" className="text-xs text-slate-700 font-bold">
+          <Label htmlFor="city">
             City <span className="text-red-500">*</span>
           </Label>
           <Input
@@ -220,7 +220,7 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
               required={isStateRequired}
               disabled={disabled}
               className="h-8"
-              labelClassName="text-xs text-slate-700 font-bold"
+              labelClassName=""
               options={Object.entries(references.states[address.country_code] || {}).map(([code, name]) => ({
                 value: code,
                 label: String(name)
@@ -228,7 +228,7 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
             />
           ) : (
             <div className="space-y-2">
-              <Label htmlFor="state_code" className="text-xs text-slate-700 font-bold">
+              <Label htmlFor="state_code">
                 State/Province {isStateRequired && <span className="text-red-500">*</span>}
               </Label>
               <Input
@@ -243,7 +243,7 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
             </div>
           )}
         <div className="space-y-2">
-          <Label htmlFor="postal_code" className="text-xs text-slate-700 font-bold">
+          <Label htmlFor="postal_code">
             Postal Code {isPostalRequired && <span className="text-red-500">*</span>}
           </Label>
           <div className="relative">
@@ -271,7 +271,7 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
       {/* Contact Details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-xs text-slate-700 font-bold">Email</Label>
+          <Label htmlFor="email">Email</Label>
           <Input
             id="email"
             type="email"
@@ -283,7 +283,7 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="phone_number" className="text-xs text-slate-700 font-bold">Phone</Label>
+          <Label htmlFor="phone_number">Phone</Label>
           <Input
             id="phone_number"
             value={address.phone_number || ""}
@@ -328,7 +328,7 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
         <CollapsibleContent className="space-y-6 mt-2 pl-4 border-l-2 border-gray-200">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1">
-              <Label htmlFor="federal_tax_id" className="text-xs text-slate-700 font-bold">Federal Tax ID</Label>
+              <Label htmlFor="federal_tax_id">Federal Tax ID</Label>
               <Input
                 id="federal_tax_id"
                 value={address.federal_tax_id || ""}
@@ -339,7 +339,7 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
               />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="state_tax_id" className="text-xs text-slate-700 font-bold">State Tax ID</Label>
+              <Label htmlFor="state_tax_id">State Tax ID</Label>
               <Input
                 id="state_tax_id"
                 value={address.state_tax_id || ""}
