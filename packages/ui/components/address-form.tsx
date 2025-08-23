@@ -353,18 +353,6 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
         </CollapsibleContent>
       </Collapsible>
 
-      {/* Submit Button */}
-      {showSubmitButton && (
-        <div className="flex justify-center mt-5">
-          <Button
-            type="submit"
-            disabled={disabled || isSubmitting || !hasChanges || missingRequired || (Boolean(address.postal_code) && !validatePostalCode(address.postal_code || "", address.country_code || ""))}
-            className="min-w-[120px]"
-          >
-            {isSubmitting ? "Saving..." : submitButtonText}
-          </Button>
-        </div>
-      )}
     </form>
   );
 });
