@@ -45,7 +45,6 @@ In regard to development philosophy, Karrio has a relaxed, open & positive appro
 git clone --depth 1 https://github.com/karrioapi/karrio
 cd karrio
 git submodule update --init community
-git submodule update --init ee/insiders
 cd docker
 docker compose up
 ```
