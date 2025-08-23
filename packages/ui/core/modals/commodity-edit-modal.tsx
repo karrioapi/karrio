@@ -32,6 +32,8 @@ import { useOrders } from "@karrio/hooks/order";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@karrio/ui/components/ui/dialog";
@@ -156,17 +158,18 @@ export const CommodityEditModalProvider = ({
       </CommodityStateContext.Provider>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-3xl max-h-[95vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-lg font-semibold">
+        <DialogContent className="max-w-2xl max-h-[90vh] p-0 flex flex-col">
+          {/* Sticky Header */}
+          <DialogHeader className="px-4 py-3 border-b sticky top-0 bg-background z-5">
+            <DialogTitle>
               {isNew ? "Add" : "Update"} commodity
             </DialogTitle>
           </DialogHeader>
-          
-          <div className="mt-4 pb-6 px-6">
+
+          <div className="flex flex-col flex-1 min-h-0">
             {commodity !== undefined && (
               <form
-                className="space-y-4"
+                className="flex flex-col flex-1 min-h-0"
                 key={key}
                 onChange={(e: any) => {
                   setIsInvalid(
@@ -175,6 +178,9 @@ export const CommodityEditModalProvider = ({
                 }}
                 onSubmit={handleSubmit}
               >
+                {/* Scrollable Body */}
+                <div className="flex-1 overflow-y-auto px-4 py-3">
+                  <div className="space-y-6">
                   {ORDERS_MANAGEMENT && (
                     <LineItemInput
                       label="Order Line Item"
@@ -200,8 +206,8 @@ export const CommodityEditModalProvider = ({
                   )}
 
                   <div className="space-y-2">
-                    <Label htmlFor="title" className="text-xs text-slate-700 font-bold">
-                      Title <span className="text-red-500">*</span>
+                    <Label htmlFor="title" className="text-sm font-medium">
+                      Title <span className="text-destructive">*</span>
                     </Label>
                     <Input
                       id="title"
@@ -217,7 +223,7 @@ export const CommodityEditModalProvider = ({
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="hs_code" className="text-xs text-slate-700 font-bold">HS Code</Label>
+                    <Label htmlFor="hs_code" className="text-sm font-medium">HS Code</Label>
                     <Input
                       id="hs_code"
                       name="hs_code"
@@ -232,7 +238,7 @@ export const CommodityEditModalProvider = ({
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="sku" className="text-xs text-slate-700 font-bold">SKU</Label>
+                      <Label htmlFor="sku" className="text-sm font-medium">SKU</Label>
                       <Input
                         id="sku"
                         name="sku"
@@ -246,7 +252,7 @@ export const CommodityEditModalProvider = ({
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="origin_country" className="text-xs text-slate-700 font-bold">Origin Country</Label>
+                      <Label htmlFor="origin_country" className="text-sm font-medium">Origin Country</Label>
                       <Select
                         value={commodity.origin_country || ""}
                         onValueChange={(value) =>
@@ -273,8 +279,8 @@ export const CommodityEditModalProvider = ({
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="quantity" className="text-xs text-slate-700 font-bold">
-                        Quantity <span className="text-red-500">*</span>
+                      <Label htmlFor="quantity" className="text-sm font-medium">
+                        Quantity <span className="text-destructive">*</span>
                       </Label>
                       <Input
                         id="quantity"
@@ -294,8 +300,8 @@ export const CommodityEditModalProvider = ({
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="weight" className="text-xs text-slate-700 font-bold">
-                        Weight <span className="text-red-500">*</span>
+                      <Label htmlFor="weight" className="text-sm font-medium">
+                        Weight <span className="text-destructive">*</span>
                       </Label>
                       <div className="flex">
                         <Input
@@ -338,7 +344,7 @@ export const CommodityEditModalProvider = ({
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="value_amount" className="text-xs text-slate-700 font-bold">
+                      <Label htmlFor="value_amount" className="text-sm font-medium">
                         Value Amount
                       </Label>
                       <div className="flex">
@@ -379,7 +385,7 @@ export const CommodityEditModalProvider = ({
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="description" className="text-xs text-slate-700 font-bold">Description</Label>
+                    <Label htmlFor="description" className="text-sm font-medium">Description</Label>
                     <Textarea
                       id="description"
                       name="description"
@@ -420,7 +426,7 @@ export const CommodityEditModalProvider = ({
                           return (
                             <>
                               <div className="flex justify-between">
-                                <Label className="text-xs font-bold uppercase tracking-wide text-gray-700">Metadata</Label>
+                                <Label className="text-sm font-medium">Metadata</Label>
 
                                 <Button
                                   type="button"
@@ -440,31 +446,30 @@ export const CommodityEditModalProvider = ({
                     </CollapsibleContent>
                   </Collapsible>
 
-                {/* Action Buttons */}
-                <div className="flex justify-center gap-3">
+                  </div>
+                </div>
+
+                {/* Sticky Footer */}
+                <DialogFooter className="px-4 py-3 border-t sticky bottom-0 bg-background z-5">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={close}
                     disabled={loading}
-                    className="min-w-[100px]"
                   >
                     Cancel
                   </Button>
                   <Button
-                    type="button"
-                    variant="default"
-                    onClick={handleSubmit}
+                    type="submit"
                     disabled={
                       loading ||
                       isInvalid ||
                       isEqual(operation?.commodity, commodity)
                     }
-                    className="min-w-[100px]"
                   >
                     {loading ? "Saving..." : (isNew ? "Add" : "Save")}
                   </Button>
-                </div>
+                </DialogFooter>
               </form>
             )}
           </div>
