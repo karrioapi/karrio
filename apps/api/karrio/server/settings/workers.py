@@ -51,3 +51,19 @@ else:
         filename=WORKER_DB_FILE_NAME,
         **({"immediate": WORKER_IMMEDIATE_MODE} if WORKER_IMMEDIATE_MODE else {}),
     )
+
+
+# Apply OpenTelemetry instrumentation to Huey if enabled
+OTEL_ENABLED = decouple.config("OTEL_ENABLED", default=False, cast=bool)
+OTEL_EXPORTER_OTLP_ENDPOINT = decouple.config("OTEL_EXPORTER_OTLP_ENDPOINT", default=None)
+
+if OTEL_ENABLED and OTEL_EXPORTER_OTLP_ENDPOINT:
+    try:
+        # Import and apply instrumentation to the Huey instance
+        from karrio.server.lib.otel_huey import HueyInstrumentor
+        instrumentor = HueyInstrumentor()
+        instrumentor.instrument(HUEY)
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.warning(f"Failed to instrument Huey in worker settings: {e}")

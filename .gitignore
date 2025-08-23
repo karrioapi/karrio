@@ -122,8 +122,10 @@ node_modules
 .vercel
 
 # karrio stuff:
+!apps/api/karrio/server/lib
 !apps/dashboard/src/lib
 !packages/lib
+
 
 .bash_history
 

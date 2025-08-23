@@ -40,7 +40,6 @@ For a quick start with minimal configuration, our one-click installation script 
 ```
 
 3. When prompted, provide:
-
    - The release tag you want to use (or accept the default)
    - Your domain name (for production deployment)
 
@@ -309,6 +308,57 @@ docker-compose down
 docker-compose up -d
 ```
 
+## Monitoring and Observability
+
+Karrio includes built-in support for OpenTelemetry, providing comprehensive observability with distributed tracing, metrics collection, and log correlation.
+
+### Quick Setup Options
+
+#### Option 1: Simple Tracing with Jaeger
+
+```bash
+# Start Karrio with Jaeger tracing
+docker compose -f docker-compose.yml -f observability/docker-compose.otel.yml up -d
+```
+
+- **Jaeger UI**: http://localhost:16686
+- **What you get**: Distributed tracing across API and worker services
+
+#### Option 2: Prometheus Metrics
+
+```bash
+# Start Karrio with Prometheus metrics
+docker compose -f docker-compose.yml -f observability/docker-compose.prometheus.yml up -d
+```
+
+- **Prometheus**: http://localhost:9090 - Metrics collection and storage
+- **What you get**: Custom application metrics and performance monitoring
+
+#### Option 3: Complete Observability Stack
+
+```bash
+# Start Karrio with full observability stack
+docker compose -f docker-compose.yml -f observability/docker-compose.observability.yml up -d
+```
+
+- **Grafana**: http://localhost:3000 (admin/admin) - Unified dashboards
+- **Prometheus**: http://localhost:9090 - Metrics and alerting
+- **Tempo**: http://localhost:3200 - Distributed tracing
+- **Loki**: http://localhost:3100 - Log aggregation
+
+### Configuration
+
+Enable observability by setting environment variables:
+
+```bash
+# Basic configuration
+OTEL_ENABLED=true
+OTEL_SERVICE_NAME=karrio-api
+OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+```
+
+For detailed setup instructions, configuration files, and advanced options, see the [observability README](https://github.com/karrioapi/karrio/blob/main/docker/observability/README.md).
+
 ## Managing Data
 
 ### Data Persistence
@@ -360,3 +410,4 @@ To restart a specific service:
 ```bash
 docker-compose restart <service_name>
 ```
+
