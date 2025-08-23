@@ -14,8 +14,6 @@ import { InputField } from "@karrio/ui/components/input-field";
 import { DateInput } from "@karrio/ui/components/date-input";
 import { RadioGroupField } from "@karrio/ui/components/radio-group-field";
 import { ButtonField } from "@karrio/ui/components/button-field";
-import { Checkbox } from "@karrio/ui/components/ui/checkbox";
-import { Label } from "@karrio/ui/components/ui/label";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { ModalProvider } from "@karrio/ui/core/modals/modal";
 import { bundleContexts } from "@karrio/hooks/utils";
@@ -453,26 +451,9 @@ export default function Page(pageProps: any) {
 
                       {Object.values(order.billing_address || {}).length >
                         0 && (
-                          <>
-                            <AddressDescription
-                              address={order.billing_address as AddressType}
-                            />
-                            <div className="flex items-center space-x-2 mt-2">
-                              <Checkbox
-                                id="same_as_shipping"
-                                checked={false}
-                                onCheckedChange={(checked) => {
-                                  if (checked) {
-                                    handleChange({ billing_address: {} });
-                                  }
-                                }}
-                                disabled={loading}
-                              />
-                              <Label htmlFor="same_as_shipping" className="text-sm">
-                                Make it same as shipping address
-                              </Label>
-                            </div>
-                          </>
+                          <AddressDescription
+                            address={order.billing_address as AddressType}
+                          />
                         )}
 
                       {Object.values(order.billing_address || {}).length ===
