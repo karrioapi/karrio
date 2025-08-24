@@ -1,8 +1,8 @@
 "use client";
 import {
-  CommodityEditModalProvider,
+  CommodityEditDialogProvider,
   CommodityStateContext,
-} from "@karrio/ui/core/modals/commodity-edit-modal";
+} from "@karrio/ui/components/commodity-edit-dialog";
 import { EnhancedMetadataEditor } from "@karrio/ui/components/enhanced-metadata-editor";
 import { GoogleGeocodingScript } from "@karrio/ui/core/components/google-geocoding-script";
 import { CommodityDescription } from "@karrio/ui/components/commodity-description";
@@ -24,7 +24,7 @@ import { AddressType } from "@karrio/types";
 import { Plus, Edit, X } from "lucide-react";
 
 const ContextProviders = bundleContexts([
-  CommodityEditModalProvider,
+  CommodityEditDialogProvider,
   ModalProvider,
 ]);
 
@@ -75,7 +75,7 @@ export default function Page(pageProps: any) {
 
     return (
       <>
-        <CommodityEditModalProvider orderFilter={{ isDisabled: true }}>
+        <CommodityEditDialogProvider orderFilter={{ isDisabled: true }}>
           <header className="px-0 pb-2 pt-4 flex justify-between items-center">
             <span className="text-2xl font-semibold my-2">{`${id === "new" ? "Create" : "Edit"} order`}</span>
             <div>
@@ -489,7 +489,7 @@ export default function Page(pageProps: any) {
               </div>
             </div>
           )}
-        </CommodityEditModalProvider>
+        </CommodityEditDialogProvider>
       </>
     );
   };
