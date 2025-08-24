@@ -9,35 +9,17 @@ import {
   MetadataEditor,
   MetadataEditorContext,
 } from "../forms/metadata-editor";
-import { isEqual, isNone, validationMessage, validityCheck, formatOrderLineItem } from "@karrio/lib";
+import { isEqual, isNone, validationMessage, validityCheck } from "@karrio/lib";
 import { CommodityType, CURRENCY_OPTIONS, WEIGHT_UNITS } from "@karrio/types";
 import React, { useContext, useReducer, useState } from "react";
+import { TextAreaField } from "../components/textarea-field";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { InputField } from "@karrio/ui/components/input-field";
-import { SelectField } from "@karrio/ui/core/components";
-import { ButtonField } from "@karrio/ui/components/button-field";
-import { TextareaField } from "@karrio/ui/components/textarea-field";
-import { LineItemInput } from "@karrio/ui/components/line-item-input";
-import { Button } from "@karrio/ui/components/ui/button";
-import { Input } from "@karrio/ui/components/ui/input";
-import { Label } from "@karrio/ui/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
-import { CountrySelect } from "@karrio/ui/components/country-select";
-import { Textarea } from "@karrio/ui/components/ui/textarea";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@karrio/ui/components/ui/collapsible";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import { cn } from "@karrio/ui/lib/utils";
+import { LineItemInput } from "../forms/line-item-input";
+import { InputField } from "../components/input-field";
+import { CountryInput } from "../forms/country-input";
 import { Notifier } from "../components/notifier";
 import { Loading } from "../components/loader";
 import { useOrders } from "@karrio/hooks/order";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@karrio/ui/components/ui/dialog";
 
 type OperationType = {
   commodity?: CommodityType;
@@ -83,10 +65,9 @@ export const CommodityEditModalProvider = ({
 }: CommodityEditModalComponent): JSX.Element => {
   const {
     metadata: { ORDERS_MANAGEMENT },
-    references,
   } = useAPIMetadata();
   const { loading, setLoading } = useContext(Loading);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isActive, setIsActive] = useState<boolean>(false);
   const [key, setKey] = useState<string>(`commodity-${Date.now()}`);
   const [isNew, setIsNew] = useState<boolean>(true);
   const [commodity, dispatch] = useReducer(
@@ -108,14 +89,14 @@ export const CommodityEditModalProvider = ({
     const commodity =
       operation.commodity || (DEFAULT_COMMODITY_CONTENT as CommodityType);
 
-    setIsOpen(true);
+    setIsActive(true);
     setOperation(operation);
     setIsNew(isNone(operation.commodity));
     dispatch({ name: "partial", value: commodity });
     setKey(`commodity-${Date.now()}`);
   };
-  const close = () => {
-    setIsOpen(false);
+  const close = (_?: React.MouseEvent) => {
+    setIsActive(false);
     setOperation(undefined);
     dispatch({ name: "partial", value: undefined });
   };
@@ -158,317 +139,318 @@ export const CommodityEditModalProvider = ({
         {children}
       </CommodityStateContext.Provider>
 
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] p-0 flex flex-col">
-          {/* Sticky Header */}
-          <DialogHeader className="px-4 py-3 border-b sticky top-0 bg-background z-5">
-            <DialogTitle>
-              {isNew ? "Add" : "Update"} commodity
-            </DialogTitle>
-          </DialogHeader>
+      <div className={`modal ${isActive ? "is-active" : ""}`} key={key}>
+        <div className="modal-background"></div>
+        <div className="modal-card max-modal-height">
+          <section className="modal-card-body modal-form">
+            <div className="form-floating-header p-4">
+              <span className="has-text-weight-bold is-size-6">
+                {isNew ? "Add" : "Update"} commodity
+              </span>
+            </div>
+            <div className="p-3 my-4"></div>
 
-          <div className="flex flex-col flex-1 min-h-0">
             {commodity !== undefined && (
-              <form
-                className="flex flex-col flex-1 min-h-0"
-                key={key}
-                onChange={(e: any) => {
-                  setIsInvalid(
-                    e.currentTarget.querySelectorAll(".is-danger").length > 0,
-                  );
-                }}
-                onSubmit={handleSubmit}
-              >
-                {/* Scrollable Body */}
-                <div className="flex-1 overflow-y-auto px-4 py-3">
-                  <div className="space-y-6">
+              <>
+                <div
+                  className="px-0 py-4"
+                  key={key}
+                  onChange={(e: any) => {
+                    setIsInvalid(
+                      e.currentTarget.querySelectorAll(".is-danger").length > 0,
+                    );
+                  }}
+                >
                   {ORDERS_MANAGEMENT && (
-                    <LineItemInput
-                      label="Order Line Item"
-                      value={commodity?.parent_id || null}
-                      onValueChange={(value) => {
-                        dispatch({ name: "parent_id", value });
-                        if (!value) setMaxQty(undefined);
-                        else {
-                          // Find and load the selected line item
-                          const allItems = (query.data?.orders.edges || []).map(({ node: order }) => order.line_items).flat();
-                          const selectedItem = allItems.find(item => item.id === value);
-                          if (selectedItem) loadLineItem(selectedItem);
-                        }
-                      }}
-                      onUnlink={() => {
-                        dispatch({ name: "parent_id", value: null });
-                        setMaxQty(undefined);
-                      }}
-                      query={query}
-                      showUnlinkButton={true}
-                      placeholder="Link an order line item"
-                    />
+                    <div className="columns is-multiline mb-4 px-1">
+                      <LineItemInput
+                        name="parent_id"
+                        label="Order Line Item"
+                        value={commodity?.parent_id}
+                        onChange={loadLineItem}
+                        query={query}
+                        onReady={(_: any) => setMaxQty(_?.unfulfilled_quantity)}
+                        dropdownClass="is-small"
+                        fieldClass="mb-0 p-0"
+                        wrapperClass="column is-11 pl-2 pr-0 py-1"
+                        className="is-small is-fullwidth"
+                        placeholder="Link an order line item"
+                      />
+
+                      <div className="column m-0 px-0 py-1 is-flex is-align-items-flex-end">
+                        <button
+                          type="button"
+                          className="button is-white is-small"
+                          disabled={isNone(commodity?.parent_id)}
+                          title="unlink order line item"
+                          onClick={() => {
+                            dispatch({ name: "parent_id", value: null });
+                            setMaxQty(undefined);
+                          }}
+                        >
+                          <span className="icon is-small">
+                            <i className="fas fa-unlink"></i>
+                          </span>
+                        </button>
+                      </div>
+                    </div>
                   )}
 
-                  <div className="space-y-2">
-                    <Label htmlFor="title" className="text-sm font-medium">
-                      Title <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                      id="title"
+                  <div className="columns is-multiline mb-4 px-1">
+                    <InputField
                       name="title"
+                      label="Title"
                       placeholder="IPod Nano"
                       onChange={handleChange}
-                      value={commodity?.title || ""}
+                      value={commodity?.title}
+                      className="is-small is-fullwidth"
+                      wrapperClass="column is-12 px-2 py-1"
+                      fieldClass="mb-0 p-0"
                       disabled={!isNone(commodity?.parent_id)}
-                      maxLength={35}
-                      required
-                      className="h-8"
+                      max={35}
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="hs_code" className="text-sm font-medium">HS Code</Label>
-                    <Input
-                      id="hs_code"
+                  <div className="columns is-multiline mb-4 px-1">
+                    <InputField
                       name="hs_code"
+                      label="HS code"
                       placeholder="000000"
                       onChange={handleChange}
-                      value={commodity?.hs_code || ""}
+                      value={commodity?.hs_code}
+                      className="is-small is-fullwidth"
+                      wrapperClass="column is-12 px-2 py-1"
+                      fieldClass="mb-0 p-0"
                       disabled={!isNone(commodity?.parent_id)}
-                      maxLength={35}
-                      className="h-8"
+                      max={35}
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="sku" className="text-sm font-medium">SKU</Label>
-                      <Input
-                        id="sku"
-                        name="sku"
-                        value={commodity?.sku || ""}
-                        onChange={handleChange}
-                        placeholder="0000001"
-                        disabled={!isNone(commodity?.parent_id)}
-                        maxLength={35}
-                        className="h-8"
-                      />
-                    </div>
+                  <div className="columns is-multiline mb-4 px-1">
+                    <InputField
+                      name="sku"
+                      label="SKU"
+                      value={commodity?.sku}
+                      onChange={handleChange}
+                      className="is-small is-fullwidth"
+                      wrapperClass="column is-7 px-2 py-1"
+                      fieldClass="mb-0 p-0"
+                      placeholder="0000001"
+                      disabled={!isNone(commodity?.parent_id)}
+                      max={35}
+                    />
 
-                    <div className="space-y-2">
-                      <Label htmlFor="origin_country" className="text-sm font-medium">Origin Country</Label>
-                      <CountrySelect
-                        name="origin_country"
-                        value={commodity.origin_country || ""}
-                        onValueChange={(value) =>
-                          dispatch({
-                            name: "origin_country",
-                            value: value as string,
-                          })
-                        }
-                        placeholder="Select country"
-                        disabled={!isNone(commodity?.parent_id)}
-                        className="h-8"
-                        noWrapper={true}
-                      />
-                    </div>
+                    <CountryInput
+                      label="Origin Country"
+                      className="is-small"
+                      value={commodity.origin_country}
+                      onValueChange={(value) =>
+                        dispatch({
+                          name: "origin_country",
+                          value: value as string,
+                        })
+                      }
+                      disabled={!isNone(commodity?.parent_id)}
+                    />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="quantity" className="text-sm font-medium">
-                        Quantity <span className="text-destructive">*</span>
-                      </Label>
-                      <Input
-                        id="quantity"
-                        name="quantity"
-                        type="number"
-                        min="1"
-                        step="1"
-                        onChange={handleChange}
-                        value={commodity?.quantity || ""}
-                        onInvalid={validityCheck(
-                          validationMessage("Please enter a valid quantity"),
-                        )}
-                        {...(isNone(maxQty) ? {} : { max: maxQty as number })}
-                        required
-                        className="h-8"
-                      />
-                    </div>
+                  <div className="columns is-multiline mb-4 px-1">
+                    <InputField
+                      label="Quantity"
+                      name="quantity"
+                      type="number"
+                      min="1"
+                      step="1"
+                      className="is-small"
+                      wrapperClass="column is-3 px-2 py-1"
+                      fieldClass="mb-0 p-0"
+                      onChange={handleChange}
+                      value={commodity?.quantity}
+                      onInvalid={validityCheck(
+                        validationMessage("Please enter a valid quantity"),
+                      )}
+                      {...(isNone(maxQty) ? {} : { max: maxQty as number })}
+                      required
+                    />
 
-                    <div className="space-y-2">
-                      <Label htmlFor="weight" className="text-sm font-medium">
-                        Weight <span className="text-destructive">*</span>
-                      </Label>
-                      <div className="flex">
-                        <Input
-                          id="weight"
-                          name="weight"
-                          type="number"
-                          min="0"
-                          step="any"
-                          onChange={handleChange}
-                          value={commodity.weight || ""}
-                          disabled={!isNone(commodity?.parent_id)}
-                          onInvalid={validityCheck(
-                            validationMessage("Please enter a valid weight"),
-                          )}
-                          required
-                          className="h-8 rounded-r-none border-r-0"
-                        />
-                        <Select
-                          value={commodity.weight_unit || WeightUnitEnum.KG}
-                          onValueChange={(value) =>
-                            dispatch({
-                              name: "weight_unit",
-                              value: value as WeightUnitEnum,
-                            })
-                          }
-                          disabled={!isNone(commodity?.parent_id)}
-                        >
-                          <SelectTrigger className="h-8 w-20 rounded-l-none border-l-0">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {WEIGHT_UNITS.map((unit) => (
-                              <SelectItem key={unit} value={unit}>
-                                {unit}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                    <div className="column is-4 mb-0 px-2 py-1">
+                      <label
+                        className="label is-capitalized"
+                        style={{ fontSize: ".8em" }}
+                      >
+                        Weight
+                        <span className="icon is-small has-text-danger small-icon">
+                          <i
+                            className="fas fa-asterisk"
+                            style={{ fontSize: ".7em" }}
+                          ></i>
+                        </span>
+                      </label>
+                      <div className="field has-addons">
+                        <p className="control is-expanded">
+                          <input
+                            min="0"
+                            step="any"
+                            name="weight"
+                            type="number"
+                            className="input is-small"
+                            onChange={handleChange}
+                            value={commodity.weight}
+                            disabled={!isNone(commodity?.parent_id)}
+                            onInvalid={validityCheck(
+                              validationMessage("Please enter a valid weight"),
+                            )}
+                            required
+                          />
+                        </p>
+                        <p className="control">
+                          <span className="select is-small">
+                            <select
+                              name="weight_unit"
+                              onChange={handleChange}
+                              value={commodity.weight_unit || WeightUnitEnum.KG}
+                              disabled={!isNone(commodity?.parent_id)}
+                            >
+                              {WEIGHT_UNITS.map((unit) => (
+                                <option key={unit} value={unit}>
+                                  {unit}
+                                </option>
+                              ))}
+                            </select>
+                          </span>
+                        </p>
                       </div>
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="value_amount" className="text-sm font-medium">
+                    <div className="column is-5 mb-0 px-2 py-1">
+                      <label
+                        className="label is-capitalized"
+                        style={{ fontSize: ".8em" }}
+                      >
                         Value Amount
-                      </Label>
-                      <div className="flex">
-                        <Input
-                          id="value_amount"
-                          name="value_amount"
-                          type="number"
-                          min="0"
-                          step="any"
-                          onChange={handleChange}
-                          value={commodity.value_amount || ""}
-                          disabled={!isNone(commodity?.parent_id)}
-                          className="h-8 rounded-r-none border-r-0"
-                        />
-                        <Select
-                          value={commodity.value_currency || CurrencyCodeEnum.USD}
-                          onValueChange={(value) =>
-                            dispatch({
-                              name: "value_currency",
-                              value: value as CurrencyCodeEnum,
-                            })
-                          }
-                          disabled={!isNone(commodity?.parent_id)}
-                        >
-                          <SelectTrigger className="h-8 w-20 rounded-l-none border-l-0">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {CURRENCY_OPTIONS.map((currency) => (
-                              <SelectItem key={currency} value={currency}>
-                                {currency}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                      </label>
+                      <div className="field has-addons">
+                        <p className="control is-expanded">
+                          <input
+                            min="0"
+                            step="any"
+                            type="number"
+                            name="value_amount"
+                            className="input is-small"
+                            onChange={handleChange}
+                            value={commodity.value_amount || ""}
+                            disabled={!isNone(commodity?.parent_id)}
+                          />
+                        </p>
+                        <p className="control">
+                          <span className="select is-small">
+                            <select
+                              name="value_currency"
+                              onChange={handleChange}
+                              value={
+                                commodity.value_currency || CurrencyCodeEnum.USD
+                              }
+                              required={!isNone(commodity?.value_amount)}
+                              disabled={!isNone(commodity?.parent_id)}
+                            >
+                              {CURRENCY_OPTIONS.map((unit) => (
+                                <option key={unit} value={unit}>
+                                  {unit}
+                                </option>
+                              ))}
+                            </select>
+                          </span>
+                        </p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="description" className="text-sm font-medium">Description</Label>
-                    <Textarea
-                      id="description"
+                  <div className="columns is-multiline mb-0 px-1">
+                    {/* @ts-ignore */}
+                    <TextAreaField
                       name="description"
-                      placeholder="Item description"
+                      label="description"
+                      className="is-small"
+                      fieldClass="column mb-0 is-12 px-2 py-1"
+                      placeholder="item description"
                       rows={2}
                       maxLength={100}
                       onChange={handleChange}
-                      value={commodity?.description || ""}
+                      value={commodity?.description}
                       disabled={!isNone(commodity?.parent_id)}
-                      className="resize-none"
                     />
                   </div>
 
-                  {/* Advanced Fields */}
-                  <Collapsible>
-                    <CollapsibleTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        className="flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 p-0 h-auto"
-                      >
-                        Advanced Options
-                        <ChevronDown className="h-4 w-4" />
-                      </Button>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="space-y-6 mt-6 pl-4 border-l-2 border-gray-200">
-                      <MetadataEditor
-                        id={commodity.id}
-                        object_type={MetadataObjectTypeEnum.commodity}
-                        metadata={commodity.metadata}
-                        onChange={(value) => dispatch({ name: "metadata", value })}
-                      >
-                        {(() => {
-                          const { isEditing, editMetadata } = useContext(
-                            MetadataEditorContext,
-                          );
+                  <hr className="mt-1 my-3" style={{ height: "1px" }} />
 
-                          return (
-                            <>
-                              <div className="flex justify-between">
-                                <Label className="text-sm font-medium">Metadata</Label>
+                  <MetadataEditor
+                    id={commodity.id}
+                    object_type={MetadataObjectTypeEnum.commodity}
+                    metadata={commodity.metadata}
+                    onChange={(value) => dispatch({ name: "metadata", value })}
+                  >
+                    {(() => {
+                      const { isEditing, editMetadata } = useContext(
+                        MetadataEditorContext,
+                      );
 
-                                <Button
-                                  type="button"
-                                  variant="link"
-                                  size="sm"
-                                  disabled={isEditing}
-                                  onClick={() => editMetadata()}
-                                  className="text-blue-600 hover:text-blue-800 p-1 h-auto"
-                                >
-                                  Edit metadata
-                                </Button>
-                              </div>
-                            </>
-                          );
-                        })()}
-                      </MetadataEditor>
-                    </CollapsibleContent>
-                  </Collapsible>
+                      return (
+                        <>
+                          <div className="is-flex is-justify-content-space-between">
+                            <h2 className="title is-6 my-3">Metadata</h2>
 
-                  </div>
+                            <button
+                              type="button"
+                              className="button is-default is-small is-align-self-center"
+                              disabled={isEditing}
+                              onClick={() => editMetadata()}
+                            >
+                              <span className="icon is-small">
+                                <i className="fas fa-pen"></i>
+                              </span>
+                              <span>Edit metadata</span>
+                            </button>
+                          </div>
+
+                          <hr className="mt-1 my-1" style={{ height: "1px" }} />
+                        </>
+                      );
+                    })()}
+                  </MetadataEditor>
                 </div>
 
-                {/* Sticky Footer */}
-                <DialogFooter className="px-4 py-3 border-t sticky bottom-0 bg-background z-5">
-                  <Button
-                    type="button"
-                    variant="outline"
+                <div className="p-3 my-5"></div>
+                <div className="form-floating-footer has-text-centered p-1">
+                  <button
+                    className="button is-default m-1 is-small"
                     onClick={close}
                     disabled={loading}
                   >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
+                    <span>Cancel</span>
+                  </button>
+                  <button
+                    className={`button is-primary ${loading ? "is-loading" : ""} m-1 is-small`}
                     disabled={
                       loading ||
                       isInvalid ||
                       isEqual(operation?.commodity, commodity)
                     }
+                    onClick={handleSubmit}
                   >
-                    {loading ? "Saving..." : (isNew ? "Add" : "Save")}
-                  </Button>
-                </DialogFooter>
-              </form>
+                    <span>{isNew ? "Add" : "Save"}</span>
+                  </button>
+                </div>
+              </>
             )}
-          </div>
-        </DialogContent>
-      </Dialog>
+          </section>
+        </div>
+
+        <button
+          className="modal-close is-large has-background-dark"
+          aria-label="close"
+          onClick={close}
+        ></button>
+      </div>
     </Notifier>
   );
 };
