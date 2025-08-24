@@ -13,9 +13,6 @@ import React, {
 import { ADDRESS_AUTO_COMPLETE_SERVICE, ADDRESS_AUTO_COMPLETE_SERVICE_KEY } from "@karrio/lib";
 import { InputFieldComponent } from "../components/input-field";
 import { Address } from "@karrio/types/rest/api";
-import { Input } from "@karrio/ui/components/ui/input";
-import { Label } from "@karrio/ui/components/ui/label";
-import { cn } from "@karrio/ui/lib/utils";
 
 interface AddressAutocompleteInputComponent extends InputFieldComponent {
   onValueChange: (value: Partial<Address>) => void;
@@ -103,44 +100,43 @@ export const AddressAutocompleteInput = ({
   }, [props.value]);
 
   return (
-    <div className={cn("px-1 py-2", wrapperClass)}>
+    <div className={wrapperClass || ""}>
       {label !== undefined && (
-        <Label 
-          className={cn("capitalize text-xs mb-1 block font-normal")}
-          style={{ fontSize: ".8em" }}
-        >
+        <label className="label is-capitalized" style={{ fontSize: ".8em" }}>
           {label}
           {required && (
-            <span className="ml-1 text-red-500 text-xs">
-              <i className="fas fa-asterisk text-[0.7em]"></i>
+            <span className="icon is-small has-text-danger small-icon">
+              <i className="fas fa-asterisk" style={{ fontSize: ".7em" }}></i>
             </span>
           )}
-        </Label>
+        </label>
       )}
 
-      <div className={cn("relative", fieldClass)}>
-        <Input
-          name={name}
-          value={inputValue}
-          onChange={handleInputChange}
-          onInput={handleInputSelect}
-          className={cn("w-full", className)}
-          list={config.is_enabled && predictions.length > 0 ? datalistId : undefined}
-          autoComplete="street-address"
-          {...Props}
-        />
-        {config.is_enabled && predictions.length > 0 && (
-          <datalist id={datalistId}>
-            {predictions.map((prediction) => (
-              <option
-                key={prediction.id}
-                value={prediction.description}
-              >
-                {prediction.description}
-              </option>
-            ))}
-          </datalist>
-        )}
+      <div className={`field ${fieldClass || ""}`}>
+        <div className={`control ${controlClass || ""}`}>
+          <input
+            name={name}
+            value={inputValue}
+            onChange={handleInputChange}
+            onInput={handleInputSelect}
+            className={`input is-fullwidth ${className || ""}`}
+            list={config.is_enabled && predictions.length > 0 ? datalistId : undefined}
+            autoComplete="street-address"
+            {...Props}
+          />
+          {config.is_enabled && predictions.length > 0 && (
+            <datalist id={datalistId}>
+              {predictions.map((prediction) => (
+                <option
+                  key={prediction.id}
+                  value={prediction.description}
+                >
+                  {prediction.description}
+                </option>
+              ))}
+            </datalist>
+          )}
+        </div>
       </div>
     </div>
   );
