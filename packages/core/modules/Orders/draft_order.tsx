@@ -1,8 +1,5 @@
 "use client";
-import {
-  CommodityEditDialogProvider,
-  CommodityStateContext,
-} from "@karrio/ui/components/commodity-edit-dialog";
+import { CommodityEditDialog } from "@karrio/ui/components/commodity-edit-dialog";
 import { EnhancedMetadataEditor } from "@karrio/ui/components/enhanced-metadata-editor";
 import { GoogleGeocodingScript } from "@karrio/ui/core/components/google-geocoding-script";
 import { CommodityDescription } from "@karrio/ui/components/commodity-description";
@@ -24,7 +21,6 @@ import { AddressType } from "@karrio/types";
 import { Plus, Edit, X } from "lucide-react";
 
 const ContextProviders = bundleContexts([
-  CommodityEditDialogProvider,
   ModalProvider,
 ]);
 
@@ -75,7 +71,6 @@ export default function Page(pageProps: any) {
 
     return (
       <>
-        <CommodityEditDialogProvider orderFilter={{ isDisabled: true }}>
           <header className="px-0 pb-2 pt-4 flex justify-between items-center">
             <span className="text-2xl font-semibold my-2">{`${id === "new" ? "Create" : "Edit"} order`}</span>
             <div>
@@ -107,26 +102,21 @@ export default function Page(pageProps: any) {
                       LINE ITEMS
                     </span>
                     <div className="flex items-center">
-                      {/* @ts-ignore */}
-                      <CommodityStateContext.Consumer>
-                        {({ editCommodity }) => (
+                      <CommodityEditDialog
+                        trigger={
                           <ButtonField
                             type="button"
                             variant="link"
                             size="sm"
                             disabled={query.isFetching}
-                            onClick={() =>
-                              editCommodity({
-                                onSubmit: (_) => mutation.addItem(_),
-                              })
-                            }
                             leftIcon={<Plus className="h-4 w-4" />}
                             className="text-blue-600 hover:text-blue-800 p-2 h-auto"
                           >
                             add item
                           </ButtonField>
-                        )}
-                      </CommodityStateContext.Consumer>
+                        }
+                        onSubmit={(_) => mutation.addItem(_)}
+                      />
                     </div>
                   </header>
 
@@ -144,25 +134,19 @@ export default function Page(pageProps: any) {
                             commodity={item as any}
                           />
                           <div className="flex justify-end sm:justify-start gap-1 flex-shrink-0">
-                            {/* @ts-ignore */}
-                            <CommodityStateContext.Consumer>
-                              {({ editCommodity }) => (
+                            <CommodityEditDialog
+                              trigger={
                                 <ButtonField
                                   type="button"
                                   variant="ghost"
                                   size="sm"
-                                  onClick={() =>
-                                    editCommodity({
-                                      commodity: item as any,
-                                      onSubmit: (_) =>
-                                        mutation.updateItem(index, item.id)(_),
-                                    })
-                                  }
                                 >
                                   <Edit className="h-4 w-4" />
                                 </ButtonField>
-                              )}
-                            </CommodityStateContext.Consumer>
+                              }
+                              commodity={item as any}
+                              onSubmit={(_) => mutation.updateItem(index, item.id)(_)}
+                            />
                             <ButtonField
                               type="button"
                               variant="ghost"
@@ -489,7 +473,6 @@ export default function Page(pageProps: any) {
               </div>
             </div>
           )}
-        </CommodityEditDialogProvider>
       </>
     );
   };
