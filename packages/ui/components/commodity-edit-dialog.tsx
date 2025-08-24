@@ -95,8 +95,9 @@ export const CommodityEditDialogProvider = ({
     () => DEFAULT_COMMODITY_CONTENT,
   );
   const [operation, setOperation] = useState<OperationType | undefined>();
-  const [isInvalid, setIsInvalid] = useState<boolean>(false);
   const [maxQty, setMaxQty] = useState<number | null | undefined>();
+  const [advancedExpanded, setAdvancedExpanded] = useState(false);
+  
   const { query } = useOrders({
     first: 10,
     status: ["unfulfilled", "partial"] as any,
@@ -114,34 +115,34 @@ export const CommodityEditDialogProvider = ({
     dispatch({ name: "partial", value: commodity });
     setKey(`commodity-${Date.now()}`);
   };
+  
   const close = () => {
     setIsOpen(false);
     setOperation(undefined);
     dispatch({ name: "partial", value: undefined });
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement | any>) => {
-    event.preventDefault();
-    const target = event.target;
-    let name: string = target.name;
-    let value: stateValue =
-      target.type === "checkbox" ? target.checked : target.value;
+  const handleChange = (field: string, fieldValue: string | number | boolean | null) => {
+    dispatch({ name: field, value: fieldValue });
+  };
 
-    dispatch({
-      name,
-      value: target.type === "number" ? parseFloat(value as string) : value,
-    });
-  };
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (!operation?.onSubmit) return;
+
     commodity.id && setLoading(true);
-    operation?.onSubmit &&
-      (await operation?.onSubmit(commodity as CommodityType));
-    setTimeout(() => {
-      commodity.id && setLoading(false);
-      close();
-    }, 500);
+    try {
+      await operation.onSubmit(commodity as CommodityType);
+      setTimeout(() => {
+        commodity.id && setLoading(false);
+        close();
+      }, 500);
+    } catch (error) {
+      setLoading(false);
+      console.error('Commodity submission error:', error);
+    }
   };
+  
   const loadLineItem = (item?: CommodityType | any) => {
     const {
       id: parent_id,
@@ -151,6 +152,15 @@ export const CommodityEditDialogProvider = ({
     setMaxQty(quantity);
     dispatch({ name: "partial", value: { ...content, parent_id, quantity } });
   };
+
+  // Validation logic similar to address form
+  const missingRequired = !commodity?.title || !commodity?.quantity || !commodity?.weight;
+  const hasChanges = !isEqual(operation?.commodity, commodity) || (
+    commodity?.title || commodity?.quantity || commodity?.weight
+  );
+  
+  // Quantity validation
+  const isQuantityValid = !maxQty || !commodity?.quantity || commodity.quantity <= maxQty;
 
   return (
     <Notifier>
@@ -172,11 +182,6 @@ export const CommodityEditDialogProvider = ({
               <form
                 className="flex flex-col flex-1 min-h-0"
                 key={key}
-                onChange={(e: any) => {
-                  setIsInvalid(
-                    e.currentTarget.querySelectorAll(".is-danger").length > 0,
-                  );
-                }}
                 onSubmit={handleSubmit}
               >
                 {/* Scrollable Body */}
@@ -187,7 +192,7 @@ export const CommodityEditDialogProvider = ({
                       label="Order Line Item"
                       value={commodity?.parent_id || null}
                       onValueChange={(value) => {
-                        dispatch({ name: "parent_id", value });
+                        handleChange("parent_id", value);
                         if (!value) setMaxQty(undefined);
                         else {
                           // Find and load the selected line item
@@ -197,7 +202,7 @@ export const CommodityEditDialogProvider = ({
                         }
                       }}
                       onUnlink={() => {
-                        dispatch({ name: "parent_id", value: null });
+                        handleChange("parent_id", null);
                         setMaxQty(undefined);
                       }}
                       query={query}
@@ -208,14 +213,13 @@ export const CommodityEditDialogProvider = ({
 
                   <div className="space-y-2">
                     <Label htmlFor="title" className="text-sm font-medium">
-                      Title <span className="text-destructive">*</span>
+                      Title <span className="text-red-500">*</span>
                     </Label>
                     <Input
                       id="title"
-                      name="title"
                       placeholder="IPod Nano"
-                      onChange={handleChange}
                       value={commodity?.title || ""}
+                      onChange={(e) => handleChange("title", e.target.value)}
                       disabled={!isNone(commodity?.parent_id)}
                       maxLength={35}
                       required
@@ -227,10 +231,9 @@ export const CommodityEditDialogProvider = ({
                     <Label htmlFor="hs_code" className="text-sm font-medium">HS Code</Label>
                     <Input
                       id="hs_code"
-                      name="hs_code"
                       placeholder="000000"
-                      onChange={handleChange}
                       value={commodity?.hs_code || ""}
+                      onChange={(e) => handleChange("hs_code", e.target.value)}
                       disabled={!isNone(commodity?.parent_id)}
                       maxLength={35}
                       className="h-8"
@@ -242,9 +245,8 @@ export const CommodityEditDialogProvider = ({
                       <Label htmlFor="sku" className="text-sm font-medium">SKU</Label>
                       <Input
                         id="sku"
-                        name="sku"
                         value={commodity?.sku || ""}
-                        onChange={handleChange}
+                        onChange={(e) => handleChange("sku", e.target.value)}
                         placeholder="0000001"
                         disabled={!isNone(commodity?.parent_id)}
                         maxLength={35}
@@ -255,14 +257,8 @@ export const CommodityEditDialogProvider = ({
                     <div className="space-y-2">
                       <Label htmlFor="origin_country" className="text-sm font-medium">Origin Country</Label>
                       <CountrySelect
-                        name="origin_country"
-                        value={commodity.origin_country || ""}
-                        onValueChange={(value) =>
-                          dispatch({
-                            name: "origin_country",
-                            value: value as string,
-                          })
-                        }
+                        value={commodity?.origin_country || ""}
+                        onValueChange={(value) => handleChange("origin_country", value)}
                         placeholder="Select country"
                         disabled={!isNone(commodity?.parent_id)}
                         className="h-8"
@@ -274,53 +270,45 @@ export const CommodityEditDialogProvider = ({
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="quantity" className="text-sm font-medium">
-                        Quantity <span className="text-destructive">*</span>
+                        Quantity <span className="text-red-500">*</span>
                       </Label>
                       <Input
                         id="quantity"
-                        name="quantity"
                         type="number"
                         min="1"
                         step="1"
-                        onChange={handleChange}
                         value={commodity?.quantity || ""}
-                        onInvalid={validityCheck(
-                          validationMessage("Please enter a valid quantity"),
-                        )}
+                        onChange={(e) => handleChange("quantity", Number(e.target.value))}
                         {...(isNone(maxQty) ? {} : { max: maxQty as number })}
                         required
-                        className="h-8"
+                        className={`h-8 ${!isQuantityValid ? "border-red-500 focus:border-red-500" : ""}`}
                       />
+                      {!isQuantityValid && maxQty && (
+                        <p className="text-xs text-red-500 mt-1">
+                          Quantity cannot exceed {maxQty}
+                        </p>
+                      )}
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="weight" className="text-sm font-medium">
-                        Weight <span className="text-destructive">*</span>
+                        Weight <span className="text-red-500">*</span>
                       </Label>
                       <div className="flex">
                         <Input
                           id="weight"
-                          name="weight"
                           type="number"
                           min="0"
                           step="any"
-                          onChange={handleChange}
-                          value={commodity.weight || ""}
+                          value={commodity?.weight || ""}
+                          onChange={(e) => handleChange("weight", Number(e.target.value))}
                           disabled={!isNone(commodity?.parent_id)}
-                          onInvalid={validityCheck(
-                            validationMessage("Please enter a valid weight"),
-                          )}
                           required
                           className="h-8 rounded-r-none border-r-0"
                         />
                         <Select
-                          value={commodity.weight_unit || WeightUnitEnum.KG}
-                          onValueChange={(value) =>
-                            dispatch({
-                              name: "weight_unit",
-                              value: value as WeightUnitEnum,
-                            })
-                          }
+                          value={commodity?.weight_unit || WeightUnitEnum.KG}
+                          onValueChange={(value) => handleChange("weight_unit", value)}
                           disabled={!isNone(commodity?.parent_id)}
                         >
                           <SelectTrigger className="h-8 w-20 rounded-l-none border-l-0">
@@ -344,23 +332,17 @@ export const CommodityEditDialogProvider = ({
                       <div className="flex">
                         <Input
                           id="value_amount"
-                          name="value_amount"
                           type="number"
                           min="0"
                           step="any"
-                          onChange={handleChange}
-                          value={commodity.value_amount || ""}
+                          value={commodity?.value_amount || ""}
+                          onChange={(e) => handleChange("value_amount", Number(e.target.value))}
                           disabled={!isNone(commodity?.parent_id)}
                           className="h-8 rounded-r-none border-r-0"
                         />
                         <Select
-                          value={commodity.value_currency || CurrencyCodeEnum.USD}
-                          onValueChange={(value) =>
-                            dispatch({
-                              name: "value_currency",
-                              value: value as CurrencyCodeEnum,
-                            })
-                          }
+                          value={commodity?.value_currency || CurrencyCodeEnum.USD}
+                          onValueChange={(value) => handleChange("value_currency", value)}
                           disabled={!isNone(commodity?.parent_id)}
                         >
                           <SelectTrigger className="h-8 w-20 rounded-l-none border-l-0">
@@ -382,19 +364,18 @@ export const CommodityEditDialogProvider = ({
                     <Label htmlFor="description" className="text-sm font-medium">Description</Label>
                     <Textarea
                       id="description"
-                      name="description"
                       placeholder="Item description"
                       rows={2}
                       maxLength={100}
-                      onChange={handleChange}
                       value={commodity?.description || ""}
+                      onChange={(e) => handleChange("description", e.target.value)}
                       disabled={!isNone(commodity?.parent_id)}
                       className="resize-none"
                     />
                   </div>
 
                   {/* Advanced Fields */}
-                  <Collapsible>
+                  <Collapsible open={advancedExpanded} onOpenChange={setAdvancedExpanded}>
                     <CollapsibleTrigger asChild>
                       <Button
                         type="button"
@@ -402,15 +383,19 @@ export const CommodityEditDialogProvider = ({
                         className="flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 p-0 h-auto"
                       >
                         Advanced Options
-                        <ChevronDown className="h-4 w-4" />
+                        {advancedExpanded ? (
+                          <ChevronUp className="h-4 w-4" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4" />
+                        )}
                       </Button>
                     </CollapsibleTrigger>
                     <CollapsibleContent className="space-y-6 mt-6 pl-4 border-l-2 border-gray-200">
                       <MetadataEditor
-                        id={commodity.id}
+                        id={commodity?.id}
                         object_type={MetadataObjectTypeEnum.commodity}
-                        metadata={commodity.metadata}
-                        onChange={(value) => dispatch({ name: "metadata", value })}
+                        metadata={commodity?.metadata}
+                        onChange={(value) => handleChange("metadata", value)}
                       >
                         {(() => {
                           const { isEditing, editMetadata } = useContext(
@@ -457,8 +442,9 @@ export const CommodityEditDialogProvider = ({
                     type="submit"
                     disabled={
                       loading ||
-                      isInvalid ||
-                      isEqual(operation?.commodity, commodity)
+                      !hasChanges ||
+                      missingRequired ||
+                      !isQuantityValid
                     }
                   >
                     {loading ? "Saving..." : (isNew ? "Add" : "Save")}
