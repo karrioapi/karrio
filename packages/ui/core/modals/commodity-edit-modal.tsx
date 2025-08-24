@@ -22,6 +22,7 @@ import { Button } from "@karrio/ui/components/ui/button";
 import { Input } from "@karrio/ui/components/ui/input";
 import { Label } from "@karrio/ui/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
+import { CountrySelect } from "@karrio/ui/components/country-select";
 import { Textarea } from "@karrio/ui/components/ui/textarea";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@karrio/ui/components/ui/collapsible";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -253,7 +254,8 @@ export const CommodityEditModalProvider = ({
 
                     <div className="space-y-2">
                       <Label htmlFor="origin_country" className="text-sm font-medium">Origin Country</Label>
-                      <Select
+                      <CountrySelect
+                        name="origin_country"
                         value={commodity.origin_country || ""}
                         onValueChange={(value) =>
                           dispatch({
@@ -261,19 +263,11 @@ export const CommodityEditModalProvider = ({
                             value: value as string,
                           })
                         }
+                        placeholder="Select country"
                         disabled={!isNone(commodity?.parent_id)}
-                      >
-                        <SelectTrigger className="h-8">
-                          <SelectValue placeholder="Select country" />
-                        </SelectTrigger>
-                        <SelectContent className="max-h-60 overflow-y-auto">
-                          {Object.entries(references.countries || {}).map(([code, name]) => (
-                            <SelectItem key={code} value={code}>
-                              {name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        className="h-8"
+                        noWrapper={true}
+                      />
                     </div>
                   </div>
 
