@@ -14,19 +14,17 @@ import React, {
 } from "react";
 import { COUNTRY_WITH_POSTAL_CODE, isEqual, isNone } from "@karrio/lib";
 import { AddressAutocompleteInput } from "./address-autocomplete-input";
-import { Checkbox } from "@karrio/ui/components/ui/checkbox";
-import { Label } from "@karrio/ui/components/ui/label";
+import { CheckBoxField } from "../components/checkbox-field";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { ButtonField } from "@karrio/ui/core/components/button-field";
-// import { PostalInput } from "../components/postal-input";
-import { InputField } from "@karrio/ui/components/input-field";
-// import { PhoneInput } from "../components/phone-input";
-import parsePhoneNumber, { AsYouType, PhoneNumber } from 'libphonenumber-js';
+import { ButtonField } from "../components/button-field";
+import { PostalInput } from "../components/postal-input";
+import { InputField } from "../components/input-field";
+import { PhoneInput } from "../components/phone-input";
 import { NameInput } from "../components/name-input";
 import { Notify } from "../components/notifier";
 // import { CountryInput } from "./country-input";
 import { Loading } from "../components/loader";
-import { EnhancedSelect } from "@karrio/ui/components/enhanced-select";
+import { StateInput } from "./state-input";
 import { CountrySelect } from "@karrio/ui/components/country-select";
 
 interface AddressFormComponent {
@@ -51,25 +49,6 @@ function reducer(
     default:
       return { ...state, [name]: value };
   }
-}
-
-// Postal code formatting functions
-function formatPostalCode(postal_code: string, country_code?: string): [string, boolean] {
-  if (country_code === 'CA') return [
-    postal_code.toLocaleUpperCase(),
-    (/^([A-Za-z]\d[A-Za-z][-\s]?\d[A-Za-z]\d)/).test(postal_code)
-  ];
-  if (country_code === 'US') return [
-    postal_code.trim(),
-    (/^[0-9]{5}(?:-[0-9]{4})?$/).test(postal_code)
-  ];
-  return [postal_code, true];
-}
-
-// Phone number formatting functions
-function formatPhoneNumber(phoneNumber: string): [string, boolean] {
-  const phone = parsePhoneNumber(phoneNumber) as PhoneNumber;
-  return [new AsYouType().input(phoneNumber), phone?.isValid() || true];
 }
 
 export const AddressForm = ({
@@ -104,20 +83,6 @@ export const AddressForm = ({
     const name: string = target.name;
 
     dispatch({ name, value });
-  };
-  
-  const handlePostalChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const target = event.target;
-    const [formatted, isValid] = formatPostalCode(target.value, address.country_code);
-    if (formatted !== target.value) target.value = formatted;
-    dispatch({ name: "postal_code", value: formatted });
-  };
-  
-  const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const target = event.target;
-    const [formatted, isValid] = formatPhoneNumber(target.value);
-    if (formatted !== target.value) target.value = formatted;
-    dispatch({ name: "phone_number", value: formatted });
   };
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -163,12 +128,12 @@ export const AddressForm = ({
     <form className="px-1 py-2" onSubmit={handleSubmit} key={key} ref={form}>
       {children}
 
-      <div className="w-full mb-0">
+      <div className="columns mb-0">
         <NameInput
           label="name"
-          className="h-9"
+          className="is-small"
           value={address.person_name}
-          wrapperClass="w-full px-1 py-3"
+          wrapperClass="column px-1 py-3"
           fieldClass="mb-0 p-0"
           disableSuggestion={isNone(shipment)}
           onValueChange={(value, refresh) => {
@@ -179,56 +144,55 @@ export const AddressForm = ({
         />
       </div>
 
-      <div className="w-full mb-0">
+      <div className="columns mb-0">
         <InputField
           label="company"
           name="company_name"
           onChange={handleChange}
           value={address.company_name}
-          className="h-9"
-          wrapperClass="w-full px-1 py-3"
+          className="is-small"
+          wrapperClass="column px-1 py-3"
           fieldClass="mb-0 p-0"
           max={30}
         />
       </div>
 
-      <div className="w-full mb-0">
+      <div className="columns mb-0">
         <CountrySelect
           label="country"
           onValueChange={(value) =>
             dispatch({ name: "country_code", value: value as string })
           }
           value={address.country_code}
-          className="h-9"
-          wrapperClass="w-full px-1 py-3"
+          className="is-small"
+          wrapperClass="column px-1 py-3"
           fieldClass="mb-0 p-0"
-          align="end"
           required
         />
       </div>
 
-      <div className="w-full mb-0">
+      <div className="columns mb-0">
         <AddressAutocompleteInput
           label="Street (Line 1)"
           name="address_line1"
           onValueChange={(value) => dispatch({ name: "partial", value })}
           value={address.address_line1}
           country_code={address.country_code}
-          className="h-9"
-          wrapperClass="w-full px-1 py-3"
+          className="is-small"
+          wrapperClass="column px-1 py-3"
           fieldClass="mb-0 p-0"
           required
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-0 mb-0">
+      <div className="columns is-multiline mb-0">
         <InputField
           label="Unit (Line 2)"
           name="address_line2"
           onChange={handleChange}
           value={address.address_line2}
-          className="h-9"
-          wrapperClass="w-full px-1 py-3"
+          className="is-small"
+          wrapperClass="column px-1 py-3"
           fieldClass="mb-0 p-0"
           max={50}
         />
@@ -238,86 +202,85 @@ export const AddressForm = ({
           name="city"
           onChange={handleChange}
           value={address.city}
-          className="h-9"
-          wrapperClass="w-full px-1 py-3"
+          className="is-small"
+          wrapperClass="column is-6 px-1 py-3"
           fieldClass="mb-0 p-0"
           required
         />
 
-        <EnhancedSelect
+        <StateInput
           label="province or state"
           onValueChange={(value) =>
             dispatch({ name: "state_code", value: value as string })
           }
           value={address.state_code}
-          className="h-9"
-          options={Object.entries(references.states?.[address.country_code] || {}).map(([code, name]) => ({
-            value: code,
-            label: name
-          }))}
-          placeholder="Select state/province"
+          className="is-small"
+          wrapperClass="column is-6 px-1 py-3"
+          fieldClass="mb-0 p-0"
+          country_code={address.country_code}
           required={Object.keys(references.states || {}).includes(
             address.country_code,
           )}
         />
 
-        <InputField
+        <PostalInput
           label="postal code"
-          name="postal_code"
-          onChange={handlePostalChange}
+          onValueChange={(value: string) =>
+            dispatch({ name: "postal_code", value })
+          }
           value={address.postal_code}
-          className="h-9"
-          wrapperClass="w-full px-1 py-3"
+          country={address.country_code}
+          className="is-small"
+          wrapperClass="column is-6 px-1 py-3"
           fieldClass="mb-0 p-0"
           required={COUNTRY_WITH_POSTAL_CODE.includes(address.country_code)}
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-0 mb-0">
+      <div className="columns mb-0">
         <InputField
           label="email"
           name="email"
           onChange={handleChange}
           value={address.email}
-          className="h-9"
-          wrapperClass="w-full px-1 py-3"
+          className="is-small"
+          wrapperClass="column px-1 py-3"
           fieldClass="mb-0 p-0"
           type="email"
         />
 
-        <InputField
+        <PhoneInput
           label="phone"
-          name="phone_number"
-          onChange={handlePhoneChange}
-          onClick={(e: React.MouseEvent<HTMLInputElement>) => e.currentTarget.select()}
+          onValueChange={(value: string) =>
+            dispatch({ name: "phone_number", value })
+          }
           value={address.phone_number}
-          type="tel"
-          className="h-9"
-          wrapperClass="w-full px-1 py-3"
+          country={address.country_code}
+          className="is-small"
+          wrapperClass="column px-1 py-3"
           fieldClass="mb-0 p-0"
         />
       </div>
 
-      <div className="flex items-center space-x-2 mb-0 py-2 px-2">
-        <Checkbox
-          id="residential"
+      <div className="columns mb-0 py-2">
+        <CheckBoxField
           name="residential"
-          onCheckedChange={(checked) => handleChange({ target: { name: 'residential', type: 'checkbox', checked } } as any)}
+          onChange={handleChange}
           defaultChecked={address.residential}
-        />
-        <Label htmlFor="residential" className="text-sm font-normal capitalize" style={{ fontSize: ".8em" }}>
-          Residential address
-        </Label>
+          fieldClass="column mb-0 is-12 px-2 py-3"
+        >
+          <span>Residential address</span>
+        </CheckBoxField>
       </div>
 
       {/* Advanced */}
-      <div className="w-full mb-0 pt-4 ml-0">
+      <div className="columns is-multiline mb-0 pt-4">
         <div
-          className="w-full text-xs font-bold text-blue-600 px-0 my-1 cursor-pointer flex items-center"
+          className="column is-12 is-size-7 has-text-weight-bold has-text-info px-2 my-1 is-clickable"
           onClick={() => setAdvancedExpanded(!advancedExpanded)}
         >
           Advanced
-          <span className="ml-2 text-sm">
+          <span className="icon is-small">
             {advancedExpanded ? (
               <i className="fas fa-chevron-down"></i>
             ) : (
@@ -327,44 +290,41 @@ export const AddressForm = ({
         </div>
 
         <div
-          className="ml-2 my-1 px-2 py-0 border-l-2 border-gray-300"
+          className="columns column is-multiline mb-0 ml-6 my-1 px-2 py-0"
           style={{
+            borderLeft: "solid 2px #ddd",
             display: `${advancedExpanded ? "block" : "none"}`,
           }}
         >
-          <div className="mb-0 pl-2">
-            <InputField
-              label="federal tax id"
-              name="federal_tax_id"
-              onChange={handleChange}
-              value={address.federal_tax_id}
-              className="h-9"
-              wrapperClass="px-1 py-3"
-              fieldClass="mb-0 p-0"
-              max={20}
-            />
-          </div>
+          <InputField
+            label="federal tax id"
+            name="federal_tax_id"
+            onChange={handleChange}
+            value={address.federal_tax_id}
+            className="is-small"
+            wrapperClass="px-2 py-2"
+            fieldClass="column is-7 mb-0 p-0"
+            max={20}
+          />
 
-          <div className="mb-0 pl-2">
-            <InputField
-              label="state tax id"
-              name="state_tax_id"
-              onChange={handleChange}
-              value={address.state_tax_id}
-              className="h-9"
-              wrapperClass="px-1 py-3"
-              fieldClass="mb-0 p-0"
-              max={20}
-            />
-          </div>
+          <InputField
+            label="state tax id"
+            name="state_tax_id"
+            onChange={handleChange}
+            value={address.state_tax_id}
+            className="is-small"
+            wrapperClass="px-2 py-2"
+            fieldClass="column is-7 mb-0 p-0"
+            max={20}
+          />
         </div>
       </div>
 
       <div className="p-3 my-5"></div>
       <ButtonField
         type="submit"
-        className={`bg-blue-600 text-white hover:bg-blue-700 ${loading ? "opacity-50 cursor-not-allowed" : ""} m-0`}
-        fieldClass="p-3"
+        className={`is-primary ${loading ? "is-loading" : ""} m-0`}
+        fieldClass="form-floating-footer p-3"
         controlClass="has-text-centered"
         disabled={computeDisableState(address)}
       >
