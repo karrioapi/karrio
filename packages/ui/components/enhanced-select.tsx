@@ -18,6 +18,7 @@ interface EnhancedSelectProps {
   required?: boolean;
   disabled?: boolean;
   className?: string;
+  labelClassName?: string;
   children?: React.ReactNode;
   options?: Array<{
     value: string;
@@ -47,6 +48,7 @@ export const EnhancedSelect = React.forwardRef<
   required = false,
   disabled = false,
   className,
+  labelClassName = "text-sm font-medium",
   children,
   options = [],
   groups = [],

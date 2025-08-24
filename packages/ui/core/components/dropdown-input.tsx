@@ -126,19 +126,6 @@ export const DropdownInput = ({
               style={{ height: "100%" }}
               {...props}
             />
-            <input
-              style={{
-                zIndex: -1,
-                position: "absolute",
-                left: "20px",
-                bottom: "0",
-              }}
-              name={name}
-              value={selected || ""}
-              onChange={onRefChange}
-              tabIndex={-1}
-              required={required}
-            />
 
             <div
               className="dropdown-menu py-0"

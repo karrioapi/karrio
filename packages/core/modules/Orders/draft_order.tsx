@@ -1,19 +1,16 @@
 "use client";
-import {
-  CommodityEditModalProvider,
-  CommodityStateContext,
-} from "@karrio/ui/core/modals/commodity-edit-modal";
-import {
-  MetadataEditor,
-  MetadataEditorContext,
-} from "@karrio/ui/core/forms/metadata-editor";
+import { CommodityEditDialog } from "@karrio/ui/components/commodity-edit-dialog";
+import { EnhancedMetadataEditor } from "@karrio/ui/components/enhanced-metadata-editor";
 import { GoogleGeocodingScript } from "@karrio/ui/core/components/google-geocoding-script";
-import { CommodityDescription } from "@karrio/ui/core/components/commodity-description";
-import { AddressDescription } from "@karrio/ui/core/components/address-description";
+import { CommodityDescription } from "@karrio/ui/components/commodity-description";
+import { AddressDescription } from "@karrio/ui/components/address-description";
 import { formatRef, isEqual, isNone, isNoneOrEmpty } from "@karrio/lib";
-import { AddressModalEditor } from "@karrio/ui/core/modals/form-modals";
-import { MetadataObjectTypeEnum, PaidByEnum } from "@karrio/types";
-import { InputField } from "@karrio/ui/core/components/input-field";
+import { AddressEditDialog } from "@karrio/ui/components/address-edit-dialog";
+import { PaidByEnum } from "@karrio/types";
+import { InputField } from "@karrio/ui/components/input-field";
+import { DateInput } from "@karrio/ui/components/date-input";
+import { RadioGroupField } from "@karrio/ui/components/radio-group-field";
+import { ButtonField } from "@karrio/ui/components/button-field";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { ModalProvider } from "@karrio/ui/core/modals/modal";
 import { bundleContexts } from "@karrio/hooks/utils";
@@ -21,9 +18,9 @@ import { Spinner } from "@karrio/ui/core/components";
 import { useOrderForm } from "@karrio/hooks/order";
 import React, { useEffect, useState } from "react";
 import { AddressType } from "@karrio/types";
+import { Plus, Edit, X } from "lucide-react";
 
 const ContextProviders = bundleContexts([
-  CommodityEditModalProvider,
   ModalProvider,
 ]);
 
@@ -74,57 +71,52 @@ export default function Page(pageProps: any) {
 
     return (
       <>
-        <CommodityEditModalProvider orderFilter={{ isDisabled: true }}>
-          <header className="px-0 pb-2 pt-4 is-flex is-justify-content-space-between">
-            <span className="title is-4 my-2">{`${id === "new" ? "Create" : "Edit"} order`}</span>
+          <header className="px-0 pb-2 pt-4 flex justify-between items-center">
+            <span className="text-2xl font-semibold my-2">{`${id === "new" ? "Create" : "Edit"} order`}</span>
             <div>
-              <button
+              <ButtonField
                 type="button"
-                className="button is-small is-success"
+                isSuccess
+                isSmall
                 onClick={() => mutation.save()}
+                loading={loader.loading}
                 disabled={
-                  loader.loading ||
                   isEqual(order, current || DEFAULT_STATE) ||
                   !order?.shipping_to?.country_code
                 }
               >
                 Save
-              </button>
+              </ButtonField>
             </div>
           </header>
 
           {!ready && <Spinner />}
 
           {ready && (
-            <div className="columns pb-6 m-0">
-              <div className="column px-0" style={{ minHeight: "850px" }}>
+            <div className="flex flex-col lg:flex-row gap-6 pb-6">
+              <div className="flex-1 lg:flex-[7] px-0 lg:min-h-[850px]">
                 {/* Line Items */}
-                <div className="card px-0 py-3">
-                  <header className="px-3 is-flex is-justify-content-space-between">
-                    <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
+                <div className="rounded-xl border bg-card text-card-foreground shadow px-0 py-3">
+                  <header className="px-3 flex justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wide text-gray-700 flex items-center my-2">
                       LINE ITEMS
                     </span>
-                    <div className="is-vcentered">
-                      {/* @ts-ignore */}
-                      <CommodityStateContext.Consumer>
-                        {({ editCommodity }) => (
-                          <button
+                    <div className="flex items-center">
+                      <CommodityEditDialog
+                        trigger={
+                          <ButtonField
                             type="button"
-                            className="button is-small is-info is-inverted p-2"
+                            variant="link"
+                            size="sm"
                             disabled={query.isFetching}
-                            onClick={() =>
-                              editCommodity({
-                                onSubmit: (_) => mutation.addItem(_),
-                              })
-                            }
+                            leftIcon={<Plus className="h-4 w-4" />}
+                            className="text-blue-600 hover:text-blue-800 p-2 h-auto"
                           >
-                            <span className="icon is-small">
-                              <i className="fas fa-plus"></i>
-                            </span>
-                            <span>add item</span>
-                          </button>
-                        )}
-                      </CommodityStateContext.Consumer>
+                            add item
+                          </ButtonField>
+                        }
+                        onSubmit={(_) => mutation.addItem(_)}
+                      />
                     </div>
                   </header>
 
@@ -136,35 +128,29 @@ export default function Page(pageProps: any) {
                         {index > 0 && (
                           <hr className="my-1" style={{ height: "1px" }} />
                         )}
-                        <div className="is-flex is-justify-content-space-between is-vcentered">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                           <CommodityDescription
-                            className="is-flex-grow-1 pr-2"
+                            className="flex-1 min-w-0"
                             commodity={item as any}
                           />
-                          <div>
-                            {/* @ts-ignore */}
-                            <CommodityStateContext.Consumer>
-                              {({ editCommodity }) => (
-                                <button
+                          <div className="flex justify-end sm:justify-start gap-1 flex-shrink-0">
+                            <CommodityEditDialog
+                              trigger={
+                                <ButtonField
                                   type="button"
-                                  className="button is-small is-white"
-                                  onClick={() =>
-                                    editCommodity({
-                                      commodity: item as any,
-                                      onSubmit: (_) =>
-                                        mutation.updateItem(index, item.id)(_),
-                                    })
-                                  }
+                                  variant="ghost"
+                                  size="sm"
                                 >
-                                  <span className="icon is-small">
-                                    <i className="fas fa-pen"></i>
-                                  </span>
-                                </button>
-                              )}
-                            </CommodityStateContext.Consumer>
-                            <button
+                                  <Edit className="h-4 w-4" />
+                                </ButtonField>
+                              }
+                              commodity={item as any}
+                              onSubmit={(_) => mutation.updateItem(index, item.id)(_)}
+                            />
+                            <ButtonField
                               type="button"
-                              className="button is-small is-white"
+                              variant="ghost"
+                              size="sm"
                               disabled={
                                 query.isFetching ||
                                 (order.line_items || []).length === 1
@@ -173,17 +159,15 @@ export default function Page(pageProps: any) {
                                 mutation.deleteItem(index, item?.id)()
                               }
                             >
-                              <span className="icon is-small">
-                                <i className="fas fa-times"></i>
-                              </span>
-                            </button>
+                              <X className="h-4 w-4" />
+                            </ButtonField>
                           </div>
                         </div>
                       </React.Fragment>
                     ))}
 
                     {(order.line_items || []).length === 0 && (
-                      <div className="m-2 notification is-warning is-light is-default is-size-7">
+                      <div className="m-2 bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-2 rounded text-xs">
                         Add one or more product to create a order.
                       </div>
                     )}
@@ -191,9 +175,9 @@ export default function Page(pageProps: any) {
                 </div>
 
                 {/* Order options section */}
-                <div className="card px-0 py-3 mt-5">
-                  <header className="px-3 is-flex is-justify-content-space-between">
-                    <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
+                <div className="rounded-xl border bg-card text-card-foreground shadow px-0 py-3 mt-5">
+                  <header className="px-3 flex justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wide text-gray-700 flex items-center my-2">
                       OPTIONS
                     </span>
                   </header>
@@ -202,15 +186,19 @@ export default function Page(pageProps: any) {
 
                   <div className="p-3 pb-0">
                     {/* order date */}
-                    <InputField
+                    <DateInput
                       name="order_date"
                       label="order date"
-                      type="date"
-                      className="is-small"
-                      fieldClass="column mb-0 is-4 p-0 mb-2"
-                      defaultValue={order.order_date || ""}
+                      wrapperClass="w-full sm:w-1/3 mb-2"
+                      labelBold={true}
+                      defaultValue={order.options?.order_date || ""}
                       onChange={(e) =>
-                        handleChange({ order_date: e.target.value })
+                        handleChange({
+                          options: {
+                            ...order.options,
+                            order_date: e.target.value,
+                          },
+                        })
                       }
                     />
 
@@ -219,9 +207,9 @@ export default function Page(pageProps: any) {
                       label="invoice number"
                       name="invoice_number"
                       placeholder="invoice number"
-                      className="is-small"
                       autoComplete="off"
-                      fieldClass="column mb-0 is-4 p-0 mb-2"
+                      wrapperClass="w-full sm:w-1/3 mb-2"
+                      labelBold={true}
                       defaultValue={order.options?.invoice_number || ""}
                       onChange={(e) =>
                         handleChange({
@@ -234,12 +222,11 @@ export default function Page(pageProps: any) {
                     />
 
                     {/* invoice date */}
-                    <InputField
+                    <DateInput
                       name="invoice_date"
                       label="invoice date"
-                      type="date"
-                      className="is-small"
-                      fieldClass="column mb-0 is-4 p-0 mb-2"
+                      wrapperClass="w-full sm:w-1/3 mb-2"
+                      labelBold={true}
                       defaultValue={order.options?.invoice_date || ""}
                       onChange={(e) =>
                         handleChange({
@@ -255,88 +242,44 @@ export default function Page(pageProps: any) {
                   <hr className="my-1" style={{ height: "1px" }} />
 
                   <div className="p-3">
-                    <label
-                      className="label is-capitalized"
-                      style={{ fontSize: "0.8em" }}
-                    >
-                      Shipment Paid By
-                    </label>
-
-                    <div className="control">
-                      <label className="radio">
-                        <input
-                          className="mr-1"
-                          type="radio"
-                          name="paid_by"
-                          defaultChecked={
-                            order.options?.paid_by === PaidByEnum.sender
-                          }
-                          onChange={() =>
-                            handleChange({
-                              options: {
-                                ...order.options,
-                                paid_by: PaidByEnum.sender,
-                              },
-                            })
-                          }
-                        />
-                        <span className="is-size-7 has-text-weight-bold">
-                          {formatRef(PaidByEnum.sender.toString())}
-                        </span>
-                      </label>
-                      <label className="radio">
-                        <input
-                          className="mr-1"
-                          type="radio"
-                          name="paid_by"
-                          defaultChecked={
-                            order.options?.paid_by === PaidByEnum.recipient
-                          }
-                          onChange={() =>
-                            handleChange({
-                              options: {
-                                ...order.options,
-                                paid_by: PaidByEnum.recipient,
-                              },
-                            })
-                          }
-                        />
-                        <span className="is-size-7 has-text-weight-bold">
-                          {formatRef(PaidByEnum.recipient.toString())}
-                        </span>
-                      </label>
-                      <label className="radio">
-                        <input
-                          className="mr-1"
-                          type="radio"
-                          name="paid_by"
-                          defaultChecked={
-                            order.options?.paid_by === PaidByEnum.third_party
-                          }
-                          onChange={() =>
-                            handleChange({
-                              options: {
-                                ...order.options,
-                                paid_by: PaidByEnum.third_party,
-                              },
-                            })
-                          }
-                        />
-                        <span className="is-size-7 has-text-weight-bold">
-                          {formatRef(PaidByEnum.third_party.toString())}
-                        </span>
-                      </label>
-                    </div>
+                    <RadioGroupField
+                      label="Shipment Paid By"
+                      name="paid_by"
+                      value={order.options?.paid_by}
+                      onValueChange={(value) =>
+                        handleChange({
+                          options: {
+                            ...order.options,
+                            paid_by: value as PaidByEnum,
+                          },
+                        })
+                      }
+                      options={[
+                        {
+                          value: PaidByEnum.sender,
+                          label: formatRef(PaidByEnum.sender.toString()),
+                        },
+                        {
+                          value: PaidByEnum.recipient,
+                          label: formatRef(PaidByEnum.recipient.toString()),
+                        },
+                        {
+                          value: PaidByEnum.third_party,
+                          label: formatRef(PaidByEnum.third_party.toString()),
+                        },
+                      ]}
+                      orientation="horizontal"
+                      className="p-0 mb-3"
+                    />
 
                     {order.options?.paid_by &&
                       order.options?.paid_by !== PaidByEnum.sender && (
                         <div
-                          className="columns m-1 px-2 py-0"
-                          style={{ borderLeft: "solid 2px #ddd" }}
+                          className="ml-1 px-2 py-0 border-l-2 border-gray-300"
                         >
                           <InputField
                             label="account number"
-                            className="is-small"
+                            labelBold={true}
                             defaultValue={
                               order?.options?.account_number as string
                             }
@@ -355,28 +298,26 @@ export default function Page(pageProps: any) {
                 </div>
               </div>
 
-              <div className="p-2"></div>
-
-              <div className="column is-5 px-0 pb-6 is-relative">
+              <div className="flex-1 lg:flex-[5] px-0 pb-6 relative">
                 <div
                   style={{ position: "sticky", top: "8.5%", right: 0, left: 0 }}
                 >
                   {/* Summary section */}
                   {!isNone(order.line_items) && (
-                    <div className="card px-0 mb-5">
-                      <header className="px-3 py-2 is-flex is-justify-content-space-between">
-                        <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
+                    <div className="rounded-xl border bg-card text-card-foreground shadow px-0 py-3 mb-5">
+                      <header className="px-3 flex justify-between">
+                        <span className="text-xs font-bold uppercase tracking-wide text-gray-700 flex items-center my-2">
                           SUMMARY
                         </span>
                       </header>
 
                       <div className="p-0 pb-1">
-                        <p className="is-title is-size-7 px-3 has-text-weight-semibold">
+                        <p className="text-xs font-semibold px-3 uppercase tracking-wide text-gray-700">
                           {`ITEMS (${(order.line_items || []).reduce((_, { quantity }) => _ + (isNone(quantity) ? 1 : (quantity as any)), 0)})`}
                         </p>
 
                         <div
-                          className="menu-list px-3 py-1"
+                          className="px-3 py-1"
                           style={{ maxHeight: "14em", overflow: "auto" }}
                         >
                           {(order.line_items || []).map((item, index) => (
@@ -389,7 +330,7 @@ export default function Page(pageProps: any) {
                       </div>
 
                       <footer className="px-3 py-1">
-                        <p className="has-text-weight-semibold is-size-7">
+                        <p className="font-semibold text-xs">
                           TOTAL:{" "}
                           {
                             <span>
@@ -406,7 +347,7 @@ export default function Page(pageProps: any) {
                             </span>
                           }
                         </p>
-                        <p className="has-text-weight-semibold is-size-7">
+                        <p className="font-semibold text-xs">
                           TOTAL WEIGHT:{" "}
                           {
                             <span>
@@ -426,26 +367,28 @@ export default function Page(pageProps: any) {
                   )}
 
                   {/* Address section */}
-                  <div className="card p-0">
+                  <div className="rounded-xl border bg-card text-card-foreground shadow px-0 py-1">
                     <div className="p-3">
-                      <header className="is-flex is-justify-content-space-between">
-                        <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
+                      <header className="flex justify-between">
+                        <span className="text-xs font-bold uppercase tracking-wide text-gray-700 flex items-center my-2">
                           Customer
                         </span>
-                        <div className="is-vcentered">
-                          <AddressModalEditor
+                        <div className="flex items-center">
+                          <AddressEditDialog
                             shipment={order as any}
                             address={order.shipping_to as AddressType}
                             onSubmit={(address) =>
                               handleChange({ shipping_to: address })
                             }
                             trigger={
-                              <button
-                                className="button is-small is-info is-text is-inverted p-1"
+                              <ButtonField
+                                variant="link"
+                                size="sm"
                                 disabled={loading}
+                                className="text-blue-600 hover:text-blue-800 p-1 h-auto"
                               >
                                 Edit address
-                              </button>
+                              </ButtonField>
                             }
                           />
                         </div>
@@ -458,33 +401,33 @@ export default function Page(pageProps: any) {
                       )}
 
                       {Object.values(order.shipping_to || {}).length === 0 && (
-                        <div className="notification is-warning is-light my-2 py-2 px-4 is-size-7">
+                        <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 mt-2 mb-5 py-2 px-4 text-xs rounded">
                           Please specify the customer address.
                         </div>
                       )}
-                    </div>
 
-                    <hr className="my-1" style={{ height: "1px" }} />
+                      <hr className="my-0 mb-3" style={{ height: "1px" }} />
 
-                    <div className="p-3">
-                      <header className="is-flex is-justify-content-space-between">
-                        <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
+                      <header className="flex justify-between">
+                        <span className="text-xs font-bold uppercase tracking-wide text-gray-700 flex items-center my-2">
                           Billing Address
                         </span>
-                        <div className="is-vcentered">
-                          <AddressModalEditor
+                        <div className="flex items-center">
+                          <AddressEditDialog
                             shipment={order as any}
                             address={order.billing_address as AddressType}
                             onSubmit={(address) =>
                               handleChange({ billing_address: address })
                             }
                             trigger={
-                              <button
-                                className="button is-small is-info is-text is-inverted p-1"
+                              <ButtonField
+                                variant="link"
+                                size="sm"
                                 disabled={loading}
+                                className="text-blue-600 hover:text-blue-800 p-1 h-auto"
                               >
                                 Edit billing address
-                              </button>
+                              </ButtonField>
                             }
                           />
                         </div>
@@ -499,51 +442,37 @@ export default function Page(pageProps: any) {
 
                       {Object.values(order.billing_address || {}).length ===
                         0 && (
-                          <div className="notification my-2 py-2 px-4 is-size-7">
-                            Same as shipping address.
-                          </div>
+                          <>
+                            <div className="mt-2 mb-4 bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-2 rounded text-xs">
+                              The shipping address will be used for billing. Click <span className="font-semibold">Edit billing address</span> if the billing address is different.
+                            </div>
+                            <div className="bg-gray-50 border border-gray-200 text-gray-700 my-2 py-2 px-4 text-xs rounded">
+                              Same as shipping address.
+                            </div>
+                          </>
                         )}
                     </div>
                   </div>
 
                   {/* Metadata section */}
-                  <div className="card px-0 mt-5">
-                    <div className="p-1 pb-4">
-                      <MetadataEditor
-                        object_type={MetadataObjectTypeEnum.order}
-                        metadata={order.metadata}
+                  <div className="rounded-xl border bg-card text-card-foreground shadow px-2 py-1 mt-5">
+                    <div className="p-2 pb-3">
+                      <EnhancedMetadataEditor
+                        value={order.metadata || {}}
                         onChange={(metadata) => handleChange({ metadata })}
-                      >
-                        {/* @ts-ignore */}
-                        <MetadataEditorContext.Consumer>
-                          {({ isEditing, editMetadata }) => (
-                            <>
-                              <header className="is-flex is-justify-content-space-between p-2">
-                                <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">
-                                  METADATA
-                                </span>
-                                <div className="is-vcentered">
-                                  <button
-                                    type="button"
-                                    className="button is-small is-info is-text is-inverted p-1"
-                                    disabled={isEditing}
-                                    onClick={() => editMetadata()}
-                                  >
-                                    <span>Edit metadata</span>
-                                  </button>
-                                </div>
-                              </header>
-                            </>
-                          )}
-                        </MetadataEditorContext.Consumer>
-                      </MetadataEditor>
+                        className="w-full"
+                        placeholder="No metadata configured"
+                        emptyStateMessage="Add key-value pairs to configure order metadata"
+                        allowEdit={!loading}
+                        showTypeInference={true}
+                        maxHeight="300px"
+                      />
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           )}
-        </CommodityEditModalProvider>
       </>
     );
   };

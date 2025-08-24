@@ -145,24 +145,75 @@ export const AddressCombobox = React.forwardRef<
   if (disableSuggestion) {
     // Simple input when suggestions are disabled
     return (
-      <div className={wrapperClass || "space-y-2"}>
+      <div className={cn("px-1 py-2", wrapperClass)}>
         {label && (
-          <label className="label is-capitalized" style={{ fontSize: ".8em" }}>
+          <Label 
+            className={cn("capitalize text-xs mb-1 block font-normal")}
+            style={{ fontSize: ".8em" }}
+          >
             {label}
             {required && (
-              <span className="icon is-small has-text-danger small-icon">
-                <i className="fas fa-asterisk" style={{ fontSize: ".7em" }}></i>
+              <span className="ml-1 text-red-500 text-xs">
+                <i className="fas fa-asterisk text-[0.7em]"></i>
               </span>
             )}
-          </label>
+          </Label>
         )}
-        <div className={`field ${fieldClass || ""}`}>
-          <div className="control relative">
+        <div className={cn("relative", fieldClass)}>
+          <Input
+            ref={inputRef}
+            name={name}
+            value={inputValue}
+            onChange={handleInputValueChange}
+            placeholder={placeholder}
+            required={required}
+            disabled={disabled}
+            className={cn("w-full pr-8", className)}
+            autoComplete="off"
+            data-lpignore="true"
+            data-form-type="other"
+            {...props}
+          />
+          {inputValue && !disabled && (
+            <button
+              type="button"
+              onClick={handleClear}
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded-full transition-colors"
+              tabIndex={-1}
+            >
+              <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={cn("px-1 py-2", wrapperClass)}>
+      {label && (
+        <Label 
+          className={cn("capitalize text-xs mb-1 block font-normal")}
+          style={{ fontSize: ".8em" }}
+        >
+          {label}
+          {required && (
+            <span className="ml-1 text-red-500 text-xs">
+              <i className="fas fa-asterisk text-[0.7em]"></i>
+            </span>
+          )}
+        </Label>
+      )}
+      <div className={cn("relative", fieldClass)}>
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverAnchor asChild>
             <Input
               ref={inputRef}
               name={name}
               value={inputValue}
               onChange={handleInputValueChange}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
               placeholder={placeholder}
               required={required}
               disabled={disabled}
@@ -172,107 +223,58 @@ export const AddressCombobox = React.forwardRef<
               data-form-type="other"
               {...props}
             />
-            {inputValue && !disabled && (
-              <button
-                type="button"
-                onClick={handleClear}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded-full transition-colors"
-                tabIndex={-1}
-              >
-                <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className={wrapperClass || "space-y-2"}>
-      {label && (
-        <label className="label is-capitalized" style={{ fontSize: ".8em" }}>
-          {label}
-          {required && (
-            <span className="icon is-small has-text-danger small-icon">
-              <i className="fas fa-asterisk" style={{ fontSize: ".7em" }}></i>
-            </span>
-          )}
-        </label>
-      )}
-      <div className={`field ${fieldClass || ""}`}>
-        <div className="control relative">
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverAnchor asChild>
-              <Input
-                ref={inputRef}
-                name={name}
-                value={inputValue}
-                onChange={handleInputValueChange}
-                onFocus={handleInputFocus}
-                onBlur={handleInputBlur}
-                placeholder={placeholder}
-                required={required}
-                disabled={disabled}
-                className={cn("w-full pr-8", className)}
-                autoComplete="off"
-                data-lpignore="true"
-                data-form-type="other"
-                {...props}
-              />
-            </PopoverAnchor>
-            <PopoverContent
-              className="w-full p-0"
-              align="start"
-              onOpenAutoFocus={(e) => e.preventDefault()}
-              style={{ width: 'var(--radix-popover-trigger-width)' }}
-            >
-              <Command shouldFilter={false}>
-                <CommandList>
-                  {filteredTemplates.length === 0 ? (
-                    <CommandEmpty>
-                      {inputValue ? `Use "${inputValue}" as new name` : "Start typing to search templates"}
-                    </CommandEmpty>
-                  ) : (
-                    <CommandGroup>
-                      {filteredTemplates.map((template, index) => (
-                        <CommandItem
-                          key={`${template.value}-${index}`}
-                          value={template.value}
-                          onSelect={() => handleTemplateSelect(template)}
-                          onMouseDown={(e) => e.preventDefault()}
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              inputValue === template.value ? "opacity-100" : "opacity-0"
-                            )}
-                          />
-                          <div className="flex flex-col">
-                            <span className="font-medium">{template.label}</span>
-                            <span className="text-xs text-muted-foreground">
-                              {formatAddress(template.address)}
-                            </span>
-                          </div>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  )}
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
-          {inputValue && !disabled && (
-            <button
-              type="button"
-              onClick={handleClear}
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded-full transition-colors z-10"
-              tabIndex={-1}
-            >
-              <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />
-            </button>
-          )}
-        </div>
+          </PopoverAnchor>
+          <PopoverContent
+            className="w-full p-0"
+            align="start"
+            onOpenAutoFocus={(e) => e.preventDefault()}
+            style={{ width: 'var(--radix-popover-trigger-width)' }}
+          >
+            <Command shouldFilter={false}>
+              <CommandList>
+                {filteredTemplates.length === 0 ? (
+                  <CommandEmpty>
+                    {inputValue ? `Use "${inputValue}" as new name` : "Start typing to search templates"}
+                  </CommandEmpty>
+                ) : (
+                  <CommandGroup>
+                    {filteredTemplates.map((template, index) => (
+                      <CommandItem
+                        key={`${template.value}-${index}`}
+                        value={template.value}
+                        onSelect={() => handleTemplateSelect(template)}
+                        onMouseDown={(e) => e.preventDefault()}
+                      >
+                        <Check
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            inputValue === template.value ? "opacity-100" : "opacity-0"
+                          )}
+                        />
+                        <div className="flex flex-col">
+                          <span className="font-medium">{template.label}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {formatAddress(template.address)}
+                          </span>
+                        </div>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                )}
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
+        {inputValue && !disabled && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded-full transition-colors z-10"
+            tabIndex={-1}
+          >
+            <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+          </button>
+        )}
       </div>
     </div>
   );
