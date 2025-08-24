@@ -12,7 +12,7 @@ import { Button } from "@karrio/ui/components/ui/button";
 import { COUNTRY_WITH_POSTAL_CODE, isEqual } from "@karrio/lib";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 
-export interface AddressEditorDialogProps {
+export interface AddressEditDialogProps {
   header?: string;
   shipment?: ShipmentType;
   address: AddressType | ShipmentType["recipient"] | ShipmentType["shipper"];
@@ -20,13 +20,13 @@ export interface AddressEditorDialogProps {
   trigger: React.ReactElement;
 }
 
-export const AddressEditorDialog = ({
+export const AddressEditDialog = ({
   trigger,
   header,
   shipment,
   address,
   onSubmit,
-}: AddressEditorDialogProps): JSX.Element => {
+}: AddressEditDialogProps): JSX.Element => {
   const { references } = useAPIMetadata();
   const [isOpen, setIsOpen] = useState(false);
   const [currentAddress, setCurrentAddress] = useState<Partial<AddressType>>(address || {});
@@ -139,4 +139,4 @@ export const AddressEditorDialog = ({
   );
 };
 
-AddressEditorDialog.displayName = "AddressEditorDialog";
+AddressEditDialog.displayName = "AddressEditDialog";

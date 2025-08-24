@@ -8,7 +8,7 @@ import { GoogleGeocodingScript } from "@karrio/ui/core/components/google-geocodi
 import { CommodityDescription } from "@karrio/ui/components/commodity-description";
 import { AddressDescription } from "@karrio/ui/components/address-description";
 import { formatRef, isEqual, isNone, isNoneOrEmpty } from "@karrio/lib";
-import { AddressEditorDialog } from "@karrio/ui/components/address-editor-dialog";
+import { AddressEditDialog } from "@karrio/ui/components/address-edit-dialog";
 import { PaidByEnum } from "@karrio/types";
 import { InputField } from "@karrio/ui/components/input-field";
 import { DateInput } from "@karrio/ui/components/date-input";
@@ -390,7 +390,7 @@ export default function Page(pageProps: any) {
                           Customer
                         </span>
                         <div className="flex items-center">
-                          <AddressEditorDialog
+                          <AddressEditDialog
                             shipment={order as any}
                             address={order.shipping_to as AddressType}
                             onSubmit={(address) =>
@@ -429,7 +429,7 @@ export default function Page(pageProps: any) {
                           Billing Address
                         </span>
                         <div className="flex items-center">
-                          <AddressEditorDialog
+                          <AddressEditDialog
                             shipment={order as any}
                             address={order.billing_address as AddressType}
                             onSubmit={(address) =>
