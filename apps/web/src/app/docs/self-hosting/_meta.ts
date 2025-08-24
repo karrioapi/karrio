@@ -47,10 +47,10 @@ export default {
     title: 'Environment',
     type: 'page'
   },
-  // "white-labeling": {
-  //   title: 'White Labeling',
-  //   type: 'page'
-  // },
+  "opentelemetry": {
+    title: 'OpenTelemetry',
+    type: 'page'
+  },
   "custom-builds": {
     title: 'Custom Builds',
     type: 'page'

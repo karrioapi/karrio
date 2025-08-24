@@ -107,6 +107,22 @@ These variables enable advanced features and optimizations.
 | `THROTTLE_RATE`        | API throttle rate (requests/minute)          | `None`  | No       |
 | `CACHE_TIMEOUT`        | Cache timeout in seconds                     | `300`   | No       |
 
+## Observability Configuration (OpenTelemetry)
+
+Karrio supports OpenTelemetry for distributed tracing, metrics, and logging. This allows you to monitor your Karrio deployment's performance and troubleshoot issues across services.
+
+| Variable                      | Description                                                                | Default       | Required                     |
+| ----------------------------- | -------------------------------------------------------------------------- | ------------- | ---------------------------- |
+| `OTEL_ENABLED`                | Enable OpenTelemetry instrumentation                                       | `False`       | No                           |
+| `OTEL_SERVICE_NAME`           | Service name for traces and metrics                                        | `karrio-api`  | No                           |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | OTLP exporter endpoint (e.g., `http://jaeger:4317`)                       | None          | Yes (if `OTEL_ENABLED=True`) |
+| `OTEL_EXPORTER_OTLP_PROTOCOL` | Protocol for OTLP exporter (`grpc` or `http`)                             | `grpc`        | No                           |
+| `OTEL_EXPORTER_OTLP_HEADERS`  | Headers for OTLP exporter (comma-separated `key=value` pairs)              | None          | No                           |
+| `OTEL_ENVIRONMENT`            | Environment name for telemetry data (e.g., `production`, `staging`)        | `production`  | No                           |
+| `OTEL_RESOURCE_ATTRIBUTES`    | Additional resource attributes (comma-separated `key=value` pairs)         | None          | No                           |
+
+For detailed setup instructions, supported backends, and configuration examples, see the [OpenTelemetry documentation](/docs/self-hosting/opentelemetry).
+
 ## Example .env File
 
 Here's a complete example of a `.env` file for a production deployment:

@@ -1,3 +1,15 @@
+# Karrio 2025.5rc18
+
+## Changes
+
+### Feat
+
+- feat: add support for OpenTelemetry to Karrio server
+
+### Fix
+
+- fix: missing workflow-trigger table migrations
+
 # Karrio 2025.5rc17
 
 ## Changes

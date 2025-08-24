@@ -1,0 +1,86 @@
+# OpenTelemetry Collector configuration for Karrio observability stack
+# Routes telemetry data from Karrio to Grafana Stack (Tempo + Loki + Prometheus)
+
+receivers:
+  # OTLP receiver for traces, metrics, and logs
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  # Memory limiter prevents out of memory issues
+  memory_limiter:
+    limit_mib: 512
+
+  # Batch processor improves performance
+  batch:
+    send_batch_size: 1024
+    timeout: 1s
+
+  # Resource processor adds additional metadata
+  resource:
+    attributes:
+      - key: service.namespace
+        value: karrio
+        action: upsert
+      - key: deployment.environment
+        from_attribute: environment
+        action: upsert
+
+exporters:
+  # Tempo for distributed tracing
+  otlp/tempo:
+    endpoint: http://tempo:4317
+    tls:
+      insecure: true
+
+  # Prometheus for metrics
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+    namespace: karrio
+    const_labels:
+      environment: docker
+
+  # Loki for logs
+  loki:
+    endpoint: http://loki:3100/loki/api/v1/push
+    labels:
+      attributes:
+        service.name: "service_name"
+        service.namespace: "service_namespace"
+      resource:
+        environment: "environment"
+
+  # Debug logging (optional)
+  logging:
+    loglevel: info
+
+service:
+  pipelines:
+    # Traces pipeline: OTLP → Tempo
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, batch]
+      exporters: [otlp/tempo, logging]
+
+    # Metrics pipeline: OTLP → Prometheus
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, batch]
+      exporters: [prometheus, logging]
+
+    # Logs pipeline: OTLP → Loki
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, batch]
+      exporters: [loki, logging]
+
+  extensions: [memory_ballast]
+
+extensions:
+  # Memory ballast helps with memory usage stability
+  memory_ballast:
+    size_mib: 64
