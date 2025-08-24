@@ -71,7 +71,7 @@ const PRICING_PLANS: Record<string, { cloud: PricingPlan; selfHosted?: PricingPl
     cloud: {
       name: "Scale",
       description: "High-volume enterprise features. Premium support included. Enterprise-grade security.",
-      price: "$2,999",
+      price: "$5,000",
       priceDetail: "/month",
       limitedSpots: true,
       button: {
@@ -84,7 +84,7 @@ const PRICING_PLANS: Record<string, { cloud: PricingPlan; selfHosted?: PricingPl
         { text: "120,000 labels/trackers a month" },
         { text: "$0.02 overage beyond" },
         { text: "One-on-one developer calls" },
-        { text: "Up to 5 new carrier integrations/month" },
+        { text: "Up to 4 new carrier integrations/month" },
         { text: "Expedited features and integrations" },
         { text: "SLA (99.999% uptime)" },
         { text: "Compliance Check SOC2, HIPAA", soon: true },
@@ -93,7 +93,7 @@ const PRICING_PLANS: Record<string, { cloud: PricingPlan; selfHosted?: PricingPl
     selfHosted: {
       name: "Scale",
       description: "High-volume enterprise features. Premium support included. Enterprise-grade security.",
-      price: "$2,999",
+      price: "$5,000",
       priceDetail: "/month",
       limitedSpots: true,
       button: {
@@ -106,7 +106,7 @@ const PRICING_PLANS: Record<string, { cloud: PricingPlan; selfHosted?: PricingPl
         { text: "Unlimited labels/trackers a month" },
         { text: "No overages" },
         { text: "One-on-one developer calls" },
-        { text: "Up to 5 new carrier integrations/month" },
+        { text: "Up to 4 new carrier integrations/month" },
         { text: "Expedited features and integrations" },
         { text: "SLA (99.999% uptime)" },
         { text: "Compliance Check SOC2, HIPAA", soon: true },
@@ -212,7 +212,7 @@ export function PricingSection() {
           </p>
         </div>
 
-        {/* Deployment type selector commented out
+        {/* Deployment type selector commented out */}
         <div className="flex justify-center mb-8">
           <div className="inline-flex items-center gap-4 bg-white/5 rounded-lg p-2">
             <button
@@ -235,7 +235,7 @@ export function PricingSection() {
             </button>
           </div>
         </div>
-        */}
+
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 md:gap-12 justify-items-center max-w-5xl mx-auto">
           {Object.entries(PRICING_PLANS).map(([key, { cloud, selfHosted: selfHosted }]) => {
