@@ -23,6 +23,14 @@ import { ShipmentsFilter } from "@karrio/ui/core/filters/shipments-filter";
 import { AddressType, RateType, ShipmentType } from "@karrio/types";
 import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
 import { ShipmentFiltersCard } from "@karrio/ui/components/shipment-filters-card";
+import { 
+  Table, 
+  TableHeader, 
+  TableBody, 
+  TableHead, 
+  TableRow, 
+  TableCell 
+} from "@karrio/ui/components/ui/table";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { StatusBadge } from "@karrio/ui/core/components/status-badge";
 import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
@@ -239,116 +247,116 @@ export default function Page(pageProps: any) {
 
         {query.isFetched && (shipments?.edges || []).length > 0 && (
           <>
-            <div className="table-container">
-              <table className="shipments-table table is-fullwidth">
-                <tbody>
-                  <tr>
-                    <td
-                      className="selector has-text-centered p-0 control is-vcentered"
-                      onClick={preventPropagation}
-                    >
-                      <label className="checkbox p-2">
+            <Table className="shipments-table">
+              <TableHeader>
+                <TableRow>
+                  <TableHead
+                    className="selector has-text-centered p-0 control is-vcentered"
+                    onClick={preventPropagation}
+                  >
+                    <label className="checkbox p-2">
+                      <input
+                        name="all"
+                        type="checkbox"
+                        onChange={handleSelection}
+                        checked={allChecked}
+                      />
+                    </label>
+                  </TableHead>
+
+                  {selection.length > 0 && (
+                    <TableHead className="p-1 is-vcentered" colSpan={6}>
+                      <div className="buttons has-addons">
+                        {/* <AppLink
+                          className={`button is-small is-default px-3 ${draftSelection(selection) ? "" : "is-static"}`}
+                          href={`/shipments/create_labels?shipment_ids=${selection.join(",")}`}
+                        >
+                          <span className="has-text-weight-semibold">
+                            Create labels
+                          </span>
+                        </AppLink> */}
+                        <a
+                          href={url$`${references.HOST}/documents/shipments/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?shipments=${selection.join(",")}`}
+                          className={`button is-small is-default px-3 ${compatibleTypeSelection(selection) ? "" : "is-static"}`}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          <span className="has-text-weight-semibold">
+                            Print Labels
+                          </span>
+                        </a>
+                        <a
+                          href={url$`${references.HOST}/documents/shipments/invoice.pdf?shipments=${selection.join(",")}`}
+                          className={`button is-small is-default px-3`}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          <span className="has-text-weight-semibold">
+                            Print Invoices
+                          </span>
+                        </a>
+                        {(document_templates?.edges || []).map(
+                          ({ node: template }) => (
+                            <a
+                              key={template.id}
+                              href={url$`${references.HOST}/documents/templates/${template.id}.${template.slug}?shipments=${selection.join(",")}`}
+                              className="button is-small is-default px-3"
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              <span className="has-text-weight-semibold">
+                                Print {template.name}
+                              </span>
+                            </a>
+                          ),
+                        )}
+                      </div>
+                    </TableHead>
+                  )}
+
+                  {selection.length === 0 && (
+                    <>
+                      <TableHead className="service is-size-7 is-vcentered">
+                        SHIPPING SERVICE
+                      </TableHead>
+                      <TableHead className="status is-vcentered"></TableHead>
+                      <TableHead className="recipient is-size-7 is-vcentered">
+                        RECIPIENT
+                      </TableHead>
+                      <TableHead className="reference is-size-7 is-vcentered">
+                        REFERENCE
+                      </TableHead>
+                      <TableHead className="date is-size-7 is-vcentered">DATE</TableHead>
+                      <TableHead className="action"></TableHead>
+                    </>
+                  )}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {(shipments?.edges || []).map(({ node: shipment }) => (
+                  <TableRow key={shipment.id} className="items is-clickable">
+                    <TableCell className="selector has-text-centered is-vcentered p-0">
+                      <label className="checkbox py-3 px-2">
                         <input
-                          name="all"
                           type="checkbox"
+                          name={shipment.id}
                           onChange={handleSelection}
-                          checked={allChecked}
+                          checked={selection.includes(shipment.id)}
                         />
                       </label>
-                    </td>
-
-                    {selection.length > 0 && (
-                      <td className="p-1 is-vcentered" colSpan={6}>
-                        <div className="buttons has-addons">
-                          {/* <AppLink
-                            className={`button is-small is-default px-3 ${draftSelection(selection) ? "" : "is-static"}`}
-                            href={`/shipments/create_labels?shipment_ids=${selection.join(",")}`}
-                          >
-                            <span className="has-text-weight-semibold">
-                              Create labels
-                            </span>
-                          </AppLink> */}
-                          <a
-                            href={url$`${references.HOST}/documents/shipments/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?shipments=${selection.join(",")}`}
-                            className={`button is-small is-default px-3 ${compatibleTypeSelection(selection) ? "" : "is-static"}`}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            <span className="has-text-weight-semibold">
-                              Print Labels
-                            </span>
-                          </a>
-                          <a
-                            href={url$`${references.HOST}/documents/shipments/invoice.pdf?shipments=${selection.join(",")}`}
-                            className={`button is-small is-default px-3`}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            <span className="has-text-weight-semibold">
-                              Print Invoices
-                            </span>
-                          </a>
-                          {(document_templates?.edges || []).map(
-                            ({ node: template }) => (
-                              <a
-                                key={template.id}
-                                href={url$`${references.HOST}/documents/templates/${template.id}.${template.slug}?shipments=${selection.join(",")}`}
-                                className="button is-small is-default px-3"
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                <span className="has-text-weight-semibold">
-                                  Print {template.name}
-                                </span>
-                              </a>
-                            ),
-                          )}
-                        </div>
-                      </td>
-                    )}
-
-                    {selection.length === 0 && (
-                      <>
-                        <td className="service is-size-7 is-vcentered">
-                          SHIPPING SERVICE
-                        </td>
-                        <td className="status is-vcentered"></td>
-                        <td className="recipient is-size-7 is-vcentered">
-                          RECIPIENT
-                        </td>
-                        <td className="reference is-size-7 is-vcentered">
-                          REFERENCE
-                        </td>
-                        <td className="date is-size-7 is-vcentered">DATE</td>
-                        <td className="action"></td>
-                      </>
-                    )}
-                  </tr>
-
-                  {(shipments?.edges || []).map(({ node: shipment }) => (
-                    <tr key={shipment.id} className="items is-clickable">
-                      <td className="selector has-text-centered is-vcentered p-0">
-                        <label className="checkbox py-3 px-2">
-                          <input
-                            type="checkbox"
-                            name={shipment.id}
-                            onChange={handleSelection}
-                            checked={selection.includes(shipment.id)}
-                          />
-                        </label>
-                      </td>
-                      <td
-                        className="service is-vcentered py-1 px-0 is-size-7 has-text-weight-bold has-text-grey"
-                        onClick={() => previewShipment(shipment.id)}
-                        title={
-                          isNone(getRate(shipment))
-                            ? "UNFULFILLED"
-                            : formatRef(
-                              ((shipment.meta as any)?.service_name ||
-                                getRate(shipment).service) as string,
-                            )
-                        }
-                      >
+                    </TableCell>
+                    <TableCell
+                      className="service is-vcentered py-1 px-0 is-size-7 has-text-weight-bold has-text-grey"
+                      onClick={() => previewShipment(shipment.id)}
+                      title={
+                        isNone(getRate(shipment))
+                          ? "UNFULFILLED"
+                          : formatRef(
+                            ((shipment.meta as any)?.service_name ||
+                              getRate(shipment).service) as string,
+                          )
+                      }
+                    >
                         <div className="icon-text">
                           <CarrierImage
                             carrier_name={
@@ -398,20 +406,20 @@ export default function Page(pageProps: any) {
                             </span>
                           </div>
                         </div>
-                      </td>
-                      <td
-                        className="status is-vcentered"
-                        onClick={() => previewShipment(shipment.id)}
-                      >
-                        <StatusBadge
-                          status={shipment.status as string}
-                          style={{ width: "100%" }}
-                        />
-                      </td>
-                      <td
-                        className="recipient is-vcentered is-size-7 has-text-weight-bold has-text-grey is-relative"
-                        onClick={() => previewShipment(shipment.id)}
-                      >
+                    </TableCell>
+                    <TableCell
+                      className="status is-vcentered"
+                      onClick={() => previewShipment(shipment.id)}
+                    >
+                      <StatusBadge
+                        status={shipment.status as string}
+                        style={{ width: "100%" }}
+                      />
+                    </TableCell>
+                    <TableCell
+                      className="recipient is-vcentered is-size-7 has-text-weight-bold has-text-grey is-relative"
+                      onClick={() => previewShipment(shipment.id)}
+                    >
                         <div
                           className="p-2"
                           style={{
@@ -437,32 +445,31 @@ export default function Page(pageProps: any) {
                             )}
                           </p>
                         </div>
-                      </td>
-                      <td
-                        className="reference is-vcentered is-size-7 has-text-weight-bold has-text-grey text-ellipsis"
-                        onClick={() => previewShipment(shipment.id)}
-                      >
-                        <span>{shipment.reference || ""}</span>
-                      </td>
-                      <td
-                        className="date is-vcentered px-1"
-                        onClick={() => previewShipment(shipment.id)}
-                      >
-                        <p className="is-size-7 has-text-weight-semibold has-text-grey">
-                          {formatDateTime(shipment.created_at)}
-                        </p>
-                      </td>
-                      <td className="action is-vcentered px-0">
-                        <ShipmentMenu
-                          shipment={shipment as any}
-                          className="is-fullwidth"
-                        />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                    </TableCell>
+                    <TableCell
+                      className="reference is-vcentered is-size-7 has-text-weight-bold has-text-grey text-ellipsis"
+                      onClick={() => previewShipment(shipment.id)}
+                    >
+                      <span>{shipment.reference || ""}</span>
+                    </TableCell>
+                    <TableCell
+                      className="date is-vcentered px-1"
+                      onClick={() => previewShipment(shipment.id)}
+                    >
+                      <p className="is-size-7 has-text-weight-semibold has-text-grey">
+                        {formatDateTime(shipment.created_at)}
+                      </p>
+                    </TableCell>
+                    <TableCell className="action is-vcentered px-0">
+                      <ShipmentMenu
+                        shipment={shipment as any}
+                        className="is-fullwidth"
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
 
             <div className="px-2 py-2 is-vcentered">
               <span className="is-size-7 has-text-weight-semibold">
