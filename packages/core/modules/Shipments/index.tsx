@@ -23,6 +23,7 @@ import { ShipmentsFilter } from "@karrio/ui/core/filters/shipments-filter";
 import { AddressType, RateType, ShipmentType } from "@karrio/types";
 import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
 import { ShipmentFiltersCard } from "@karrio/ui/components/shipment-filters-card";
+import { ShipmentPagination } from "@karrio/ui/components/shipment-pagination";
 import { 
   Table, 
   TableHeader, 
@@ -471,32 +472,13 @@ export default function Page(pageProps: any) {
               </TableBody>
             </Table>
 
-            <div className="px-2 py-2 is-vcentered">
-              <span className="is-size-7 has-text-weight-semibold">
-                {(shipments?.edges || []).length} results
-              </span>
-
-              <div className="buttons has-addons is-centered is-pulled-right">
-                <button
-                  className="button is-small"
-                  onClick={() =>
-                    updateFilter({ offset: (filter.offset as number) - 20 })
-                  }
-                  disabled={filter.offset == 0}
-                >
-                  Previous
-                </button>
-                <button
-                  className="button is-small"
-                  onClick={() =>
-                    updateFilter({ offset: (filter.offset as number) + 20 })
-                  }
-                  disabled={!shipments?.page_info.has_next_page}
-                >
-                  Next
-                </button>
-              </div>
-            </div>
+            <ShipmentPagination
+              currentOffset={filter.offset as number || 0}
+              pageSize={20}
+              totalCount={shipments?.page_info?.count || 0}
+              hasNextPage={shipments?.page_info?.has_next_page || false}
+              onPageChange={(offset) => updateFilter({ offset })}
+            />
           </>
         )}
 

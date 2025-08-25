@@ -140,20 +140,20 @@ Since the draft order PR is not merged yet, we need to separate components by th
 - [x] Plan new component structure in `/packages/ui/components`
 
 ### **Phase 2: Shipments-Specific Components (Priority 1)**  
-- [ ] Replace Bulma header layout with Tailwind flex
+- [x] Replace Bulma header layout with Tailwind flex ✅ COMPLETED
 - [ ] Migrate ShipmentsFilter to Shadcn Popover + Form components
-- [ ] Convert tab navigation to card-style filters
+- [x] Convert tab navigation to card-style filters ✅ COMPLETED (ShipmentFiltersCard)
 - [ ] Create Bulk Actions Toolbar component
 - [ ] Update ShipmentPreview to use Shadcn Dialog
 - [ ] Convert basic Bulma classes (columns, containers, etc.)
 
 ### **Phase 3: Table Structure & Enhanced Features**
-- [ ] Replace `<table className="table is-fullwidth">` with Shadcn Table
-- [ ] Implement TableHeader, TableBody, TableRow, TableCell components
+- [x] Replace `<table className="table is-fullwidth">` with Shadcn Table ✅ COMPLETED
+- [x] Implement TableHeader, TableBody, TableRow, TableCell components ✅ COMPLETED
 - [ ] Add sticky positioning for checkbox and actions columns
-- [ ] Create enhanced pagination with row count display
+- [x] Create enhanced pagination with row count display ✅ COMPLETED (ShipmentPagination)
 - [ ] Implement sticky column behavior with StickyTableWrapper
-- [ ] Maintain existing click handlers and selection logic
+- [x] Maintain existing click handlers and selection logic ✅ COMPLETED
 - [ ] Preserve row hover and selection states
 
 ### **Phase 4: Shipments-Specific Styling (Priority 2)**
@@ -185,13 +185,13 @@ Since the draft order PR is not merged yet, we need to separate components by th
 
 ## **New Components to Create**
 
-### **1. ShipmentFiltersCard** 
+### **1. ShipmentFiltersCard** ✅ COMPLETED
 **Location**: `/packages/ui/components/shipment-filters-card.tsx`
 ```typescript
 interface ShipmentFiltersCardProps {
   filters: FilterOption[];
-  activeFilter: string;
-  onFilterChange: (filter: string) => void;
+  activeFilter: string[];
+  onFilterChange: (filter: string[]) => void;
 }
 ```
 
@@ -216,7 +216,7 @@ interface BulkActionsToolbarProps {
 }
 ```
 
-### **4. ShipmentPagination**
+### **4. ShipmentPagination** ✅ COMPLETED
 **Location**: `/packages/ui/components/shipment-pagination.tsx`
 ```typescript
 interface ShipmentPaginationProps {
