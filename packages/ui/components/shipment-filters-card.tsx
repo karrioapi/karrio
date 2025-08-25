@@ -27,7 +27,7 @@ export const ShipmentFiltersCard: React.FC<ShipmentFiltersCardProps> = ({
   };
 
   return (
-    <div className={cn("grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6", className)}>
+    <div className={cn("grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-5 mt-4", className)}>
       {filters.map((filter, index) => (
         <Card
           key={index}
