@@ -34,6 +34,12 @@
    - Whenever this page is tagged or the next step is taken, always keep these points in mind
    - Achieve 100% Shadcn + Tailwind implementation
 
+6. **📁 Component Organization & Legacy Preservation**
+   - All new shadcn equivalent components must be stored in `/packages/ui/components`
+   - Legacy components should not be changed at all during migration
+   - Create new shadcn components alongside existing legacy ones
+   - Maintain clear separation between old and new implementations
+
 ### **Before Each Step Checklist**
 - [ ] Review the current step in the migration plan
 - [ ] Examine existing code and components being modified
@@ -74,24 +80,31 @@
 
 ## **Component Migration Priority**
 
-### **Priority 1: Core UI Components**
-1. **StatusBadge** → shadcn Badge ✅ (Already available)
-2. **Spinner** → shadcn Skeleton
-3. **AppLink** → shadcn Button styling
-4. **Main table structure** → shadcn Table components
+### **⚠️ IMPORTANT: Component Categorization**
+Since the draft order PR is not merged yet, we need to separate components by their usage:
 
-### **Priority 2: Complex Components**  
-5. **ShipmentsFilter** → shadcn Popover + Form + Checkbox + Input + Button
-6. **Tab filters** → Custom Card-style components (per reference images)
-7. **Pagination** → Enhanced shadcn component with row count display
+### **Priority 1: Shipments-Specific Components (Start Here)**
+1. **ShipmentsFilter** → shadcn Popover + Form + Checkbox + Input + Button
+2. **Tab/Card filters** → Custom Card-style components (per reference images)  
+3. **ShipmentPreview** → shadcn Dialog
+4. **Bulk Actions Toolbar** → Custom shadcn component
+5. **Main table structure** → shadcn Table components
+6. **Enhanced Pagination** → shadcn component with row count display
+7. **Sticky Table Wrapper** → Custom CSS + shadcn Table
 
-### **Priority 3: Modal Components**
-8. **ShipmentPreview** → shadcn Dialog
-9. **ConfirmModal** → shadcn AlertDialog
+### **Priority 2: Shipments-Specific Styling (No New Components)**
+8. **CarrierImage**: Minimal styling updates for consistency
+9. **Table layout and structure**: Bulma to Tailwind conversion
+
+### **Priority 3: Shared Components (Defer Until Draft Order PR Merges)**
+10. **StatusBadge** → shadcn Badge (shared with draft order)
+11. **Spinner** → shadcn Skeleton (shared with draft order)
+12. **AppLink** → shadcn Button styling (shared with draft order)
+13. **ConfirmModal** → shadcn AlertDialog (shared with draft order)
 
 ### **No Migration Needed ✅**
 - **ShipmentMenu**: Already uses shadcn DropdownMenu
-- **CarrierImage**: Minimal changes needed
+- **useLoader**: Hook usage, no component migration needed
 
 ## **New Features Implementation**
 
@@ -123,43 +136,47 @@
 
 ### **Phase 1: Environment Setup**
 - [x] Review current Shadcn components available
-- [x] Identify reusable patterns from draft_order.tsx migration
+- [x] Analyze shipments-specific components and requirements
 - [x] Plan new component structure in `/packages/ui/components`
 
-### **Phase 2: Basic Component Migration**  
+### **Phase 2: Shipments-Specific Components (Priority 1)**  
 - [ ] Replace Bulma header layout with Tailwind flex
-- [ ] Convert StatusBadge if needed (check current implementation)
-- [ ] Replace Spinner with Shadcn Skeleton  
-- [ ] Update AppLink styling to use Shadcn Button patterns
+- [ ] Migrate ShipmentsFilter to Shadcn Popover + Form components
+- [ ] Convert tab navigation to card-style filters
+- [ ] Create Bulk Actions Toolbar component
+- [ ] Update ShipmentPreview to use Shadcn Dialog
 - [ ] Convert basic Bulma classes (columns, containers, etc.)
 
-### **Phase 3: Table Structure Overhaul**
+### **Phase 3: Table Structure & Enhanced Features**
 - [ ] Replace `<table className="table is-fullwidth">` with Shadcn Table
 - [ ] Implement TableHeader, TableBody, TableRow, TableCell components
 - [ ] Add sticky positioning for checkbox and actions columns
+- [ ] Create enhanced pagination with row count display
+- [ ] Implement sticky column behavior with StickyTableWrapper
 - [ ] Maintain existing click handlers and selection logic
 - [ ] Preserve row hover and selection states
 
-### **Phase 4: Filter System Migration**
-- [ ] Convert tab navigation to card-style filters
-- [ ] Migrate ShipmentsFilter to Shadcn Popover + Form components
-- [ ] Maintain existing filter logic and URL synchronization
-- [ ] Ensure proper active state styling
-
-### **Phase 5: Enhanced Features**
-- [ ] Create enhanced pagination with row count display
-- [ ] Implement sticky column behavior
+### **Phase 4: Shipments-Specific Styling (Priority 2)**
+- [ ] Update CarrierImage styling for consistency
+- [ ] Convert remaining Bulma table layout to Tailwind
 - [ ] Add mobile responsiveness improvements
 - [ ] Optimize scrolling experience
 - [ ] Test horizontal scroll with sticky columns
 
-### **Phase 6: Modal System Migration**
-- [ ] Update ShipmentPreview to use Shadcn Dialog
-- [ ] Convert ConfirmModal to Shadcn AlertDialog  
-- [ ] Maintain existing modal trigger logic
-- [ ] Test modal interactions and state management
+### **Phase 5: Integration & Testing (Shipments-Specific)**
+- [ ] Verify all shipments-specific functionality preserved
+- [ ] Test bulk selection and actions
+- [ ] Validate responsive behavior across devices
+- [ ] Check loading states and error handling
+- [ ] Performance testing with large datasets
 
-### **Phase 7: Integration & Testing**
+### **Phase 6: Shared Components (Deferred Until Draft Order PR Merges)**
+- [ ] Replace StatusBadge with shadcn Badge (when available from draft order)
+- [ ] Replace Spinner with Shadcn Skeleton (when available from draft order)  
+- [ ] Update AppLink styling to use Shadcn Button patterns (when available from draft order)
+- [ ] Convert ConfirmModal to Shadcn AlertDialog (when available from draft order)
+
+### **Phase 7: Final Integration & Testing**
 - [ ] Verify all existing functionality preserved
 - [ ] Test bulk selection and actions
 - [ ] Validate responsive behavior across devices
@@ -296,6 +313,13 @@ interface StickyTableWrapperProps {
 
 ## **Implementation Notes**
 
+### **⚠️ Draft Order PR Strategy**
+- The draft order migration PR is not merged yet, so we cannot reference its components
+- We start with shipments-specific components to avoid duplicating work
+- Shared components (StatusBadge, Spinner, AppLink, ConfirmModal) are deferred to Phase 6
+- Once draft order PR merges, we can reuse those migrated components
+- This strategy ensures efficient development and avoids conflicts
+
 ### **Reference Screenshots Analysis**
 1. **rows count feature.png**: Shows "Viewing 1–20 of 42 results" at bottom left with Previous/Next buttons at bottom right
 2. **sticky left select column and right edit column.png**: Demonstrates checkbox column staying fixed on left and three-dot menu column staying fixed on right during horizontal scroll
@@ -311,12 +335,13 @@ interface StickyTableWrapperProps {
 - **Shipment menu**: `/packages/ui/components/shipment-menu.tsx` (Already Shadcn ✅)
 
 ### **Migration Timeline**
-- **Phase 1-2**: 1-2 hours (Basic component migration)
-- **Phase 3**: 2-3 hours (Table structure overhaul)  
-- **Phase 4**: 2-3 hours (Filter system migration)
-- **Phase 5**: 2-3 hours (Enhanced features)
-- **Phase 6**: 1-2 hours (Modal system migration)
-- **Phase 7**: 2-3 hours (Integration & testing)
-- **Total Estimated Time**: 10-16 hours
+- **Phase 1**: 1 hour (Environment setup)
+- **Phase 2**: 3-4 hours (Shipments-specific components)
+- **Phase 3**: 3-4 hours (Table structure & enhanced features)  
+- **Phase 4**: 2-3 hours (Shipments-specific styling)
+- **Phase 5**: 2-3 hours (Integration & testing - shipments-specific)
+- **Phase 6**: 1-2 hours (Shared components - when draft order PR merges)
+- **Phase 7**: 1-2 hours (Final integration & testing)
+- **Total Estimated Time**: 13-19 hours (11-15 hours before draft order PR merge)
 
 This plan ensures a systematic, feature-complete migration from Bulma to Shadcn + Tailwind while adding the requested enhancements and maintaining full functionality.

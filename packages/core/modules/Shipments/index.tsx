@@ -22,6 +22,7 @@ import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { ShipmentsFilter } from "@karrio/ui/core/filters/shipments-filter";
 import { AddressType, RateType, ShipmentType } from "@karrio/types";
 import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
+import { ShipmentFiltersCard } from "@karrio/ui/components/shipment-filters-card";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { StatusBadge } from "@karrio/ui/core/components/status-badge";
 import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
@@ -156,6 +157,34 @@ export default function Page(pageProps: any) {
           _.id === (rate?.meta as any)?.carrier_connection_id ||
           _.carrier_id === rate?.carrier_id,
       );
+    
+    // Define filter options for the cards
+    const getFilterOptions = () => [
+      {
+        label: "All",
+        value: ["purchased", "delivered", "in_transit", "cancelled", "needs_attention", "out_for_delivery", "delivery_failed"]
+      },
+      {
+        label: "Purchased", 
+        value: ["purchased", "in_transit", "out_for_delivery"]
+      },
+      {
+        label: "Delivered",
+        value: ["delivered"]
+      },
+      {
+        label: "Exception",
+        value: ["needs_attention", "delivery_failed"]
+      },
+      {
+        label: "Cancelled", 
+        value: ["cancelled"]
+      },
+      {
+        label: "Draft",
+        value: ["draft"]
+      }
+    ];
 
     useEffect(() => {
       updateFilter();
@@ -200,94 +229,11 @@ export default function Page(pageProps: any) {
           </div>
         </header>
 
-        <div className="tabs">
-          <ul>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${isListEqual(filter?.status || [], ["purchased", "delivered", "in_transit", "cancelled", "needs_attention", "out_for_delivery", "delivery_failed"]) ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  updateFilter({
-                    status: [
-                      "purchased",
-                      "delivered",
-                      "in_transit",
-                      "cancelled",
-                      "needs_attention",
-                      "out_for_delivery",
-                      "delivery_failed",
-                    ],
-                    offset: 0,
-                  })
-                }
-              >
-                all
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${isListEqual(filter?.status || [], ["purchased", "in_transit", "out_for_delivery"]) ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  updateFilter({
-                    status: ["purchased", "in_transit", "out_for_delivery"],
-                    offset: 0,
-                  })
-                }
-              >
-                purchased
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${filter?.status?.includes("delivered" as any) && filter?.status?.length === 1 ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  updateFilter({ status: ["delivered"], offset: 0 })
-                }
-              >
-                delivered
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${filter?.status?.includes("needs_attention" as any) && filter?.status?.length === 2 ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  updateFilter({
-                    status: ["needs_attention", "delivery_failed"],
-                    offset: 0,
-                  })
-                }
-              >
-                exception
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${filter?.status?.includes("cancelled" as any) && filter?.status?.length === 1 ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  updateFilter({ status: ["cancelled"], offset: 0 })
-                }
-              >
-                cancelled
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${filter?.status?.includes("draft" as any) && filter?.status?.length === 1 ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !filter?.status?.includes("draft" as any) &&
-                  updateFilter({ status: ["draft"], offset: 0 })
-                }
-              >
-                draft
-              </a>
-            </li>
-          </ul>
-        </div>
+        <ShipmentFiltersCard
+          filters={getFilterOptions()}
+          activeFilter={filter?.status || []}
+          onFilterChange={(status) => updateFilter({ status, offset: 0 })}
+        />
 
         {!query.isFetched && <Spinner />}
 
