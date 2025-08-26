@@ -91,6 +91,33 @@
 - **New reality**: Full shadcn library available, accelerate all migrations
 - **Timeline impact**: Reduced from 13-19 hours to 8-12 hours
 
+## **⚠️ CURRENT STATUS: PARTIAL MIGRATION COMPLETED**
+
+### **✅ What IS Using Shadcn (COMPLETED)**
+1. **Buttons**: All converted to shadcn Button components
+2. **Table Structure**: Using shadcn Table, TableHeader, TableBody, TableCell
+3. **Filter**: ShipmentsFilter uses shadcn Popover + Form + Checkbox + Input
+4. **Pagination**: ShipmentPagination uses shadcn Button components
+5. **Layout**: Header converted to Tailwind, card filters using shadcn
+6. **Styling**: All Bulma classes converted to Tailwind equivalents
+
+### **❌ What is NOT Using Shadcn (REMAINING WORK)**
+
+#### **A. Raw HTML Form Elements**
+- **Checkboxes**: Lines 257-264 (header), 344-351 (rows)
+- **Current**: `<input type="checkbox">` with `<label className="checkbox">`
+- **Should be**: shadcn Checkbox components
+
+#### **B. Legacy Components Still in Use**  
+- **StatusBadge**: `/ui/core/components/status-badge` (should use shadcn Badge)
+- **CarrierImage**: `/ui/core/components/carrier-image` (needs shadcn equivalent)
+- **ConfirmModal**: `/ui/core/modals/confirm-modal` (should use shadcn AlertDialog)
+- **Spinner**: `/ui/core/components/spinner` (should use shadcn Skeleton)
+- **AppLink**: `/ui/core/components/app-link` (needs shadcn button styling)
+
+#### **C. Already Shadcn ✅**
+- **ShipmentMenu**: Already uses shadcn DropdownMenu (no change needed)
+
 ## **Component Migration Priority**
 
 ### **⚠️ IMPORTANT: Component Categorization UPDATED**
@@ -156,9 +183,11 @@ With full shadcn library available, we can now proceed with all migrations simul
 - [x] Replace Bulma header layout with Tailwind flex ✅ COMPLETED
 - [x] Migrate ShipmentsFilter to Shadcn Popover + Form components ✅ COMPLETED
 - [x] Convert tab navigation to card-style filters ✅ COMPLETED (ShipmentFiltersCard)
-- [ ] Create Bulk Actions Toolbar component (using available shadcn Button)
-- [ ] Update ShipmentPreview to use Shadcn Dialog (using available shadcn Dialog)
-- [ ] Convert basic Bulma classes (columns, containers, etc.)
+- [x] Convert all buttons to shadcn Button components ✅ COMPLETED
+- [x] Convert Bulma styling classes to Tailwind ✅ COMPLETED
+- [ ] ⚠️ SKIPPED: Bulk Actions Toolbar component (determined as over-engineering)
+- [ ] Convert raw checkboxes to shadcn Checkbox components
+- [ ] Update ShipmentPreview to use Shadcn Dialog
 
 ### **Phase 3: Table Structure & Enhanced Features**
 - [x] Replace `<table className="table is-fullwidth">` with Shadcn Table ✅ COMPLETED
@@ -186,10 +215,11 @@ With full shadcn library available, we can now proceed with all migrations simul
 
 ### **Phase 6: Shared Components (ACCELERATED - Full Shadcn Library Available)**
 **🎉 DISCOVERY: Complete shadcn UI library available at `/packages/ui/components/ui/`**
-- [ ] Replace StatusBadge with shadcn Badge (available now)
-- [ ] Replace Spinner with Shadcn Skeleton (available now)  
-- [ ] Update AppLink styling to use Shadcn Button patterns (available now)
-- [ ] Convert ConfirmModal to Shadcn AlertDialog (available now)
+- [ ] Replace StatusBadge with shadcn Badge (legacy component still in use)
+- [ ] Replace Spinner with Shadcn Skeleton (legacy component still in use)  
+- [ ] Update AppLink styling to use Shadcn Button patterns (legacy styling still in use)
+- [ ] Convert ConfirmModal to Shadcn AlertDialog (legacy modal still in use)
+- [ ] Replace CarrierImage with shadcn equivalent (legacy component still in use)
 
 ### **Phase 7: Final Integration & Testing**
 - [ ] Verify all existing functionality preserved
@@ -357,12 +387,12 @@ interface StickyTableWrapperProps {
 
 ### **Migration Timeline (UPDATED)**
 - **Phase 1**: ✅ 1 hour (Environment setup) - COMPLETED
-- **Phase 2**: 🔄 2-3 hours (Shipments-specific components) - IN PROGRESS (ShipmentsFilter ✅, Bulk Actions pending)
-- **Phase 3**: 🔄 2-3 hours (Table structure & enhanced features) - PARTIALLY COMPLETED (Sticky footer ✅, Sticky columns pending)  
-- **Phase 4**: 1-2 hours (Shipments-specific styling)
+- **Phase 2**: ✅ 3 hours (Shipments-specific components) - MOSTLY COMPLETED (Buttons ✅, Styling ✅, Checkboxes pending)
+- **Phase 3**: 🔄 2-3 hours (Table structure & enhanced features) - PARTIALLY COMPLETED (Table ✅, Sticky footer ✅, Sticky columns pending)  
+- **Phase 4**: 1-2 hours (Shipments-specific styling) - ✅ COMPLETED
 - **Phase 5**: 1-2 hours (Integration & testing - shipments-specific)
-- **Phase 6**: ⚡ 1-2 hours (Shared components - ACCELERATED with full shadcn library)
+- **Phase 6**: ⚡ 2-3 hours (Legacy component migration - StatusBadge, Spinner, etc.)
 - **Phase 7**: 1 hour (Final integration & testing)
-- **Updated Total Time**: 8-12 hours (reduced from 13-19 hours due to shadcn library availability)
+- **Remaining Time**: 5-8 hours (mostly legacy component migrations)
 
 This plan ensures a systematic, feature-complete migration from Bulma to Shadcn + Tailwind while adding the requested enhancements and maintaining full functionality.

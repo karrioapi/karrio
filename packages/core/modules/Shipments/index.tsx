@@ -413,7 +413,7 @@ export default function Page(pageProps: any) {
                         </div>
                     </TableCell>
                     <TableCell
-                      className="status is-vcentered"
+                      className="status items-center"
                       onClick={() => previewShipment(shipment.id)}
                     >
                       <StatusBadge
@@ -422,7 +422,7 @@ export default function Page(pageProps: any) {
                       />
                     </TableCell>
                     <TableCell
-                      className="recipient is-vcentered is-size-7 has-text-weight-bold has-text-grey is-relative"
+                      className="recipient items-center text-xs font-bold text-gray-600 relative"
                       onClick={() => previewShipment(shipment.id)}
                     >
                         <div
@@ -444,7 +444,7 @@ export default function Page(pageProps: any) {
                               shipment.recipient as AddressType,
                             )}
                           </p>
-                          <p className="has-text-weight-medium">
+                          <p className="font-medium">
                             {formatAddressLocationShort(
                               shipment.recipient as AddressType,
                             )}
@@ -452,23 +452,23 @@ export default function Page(pageProps: any) {
                         </div>
                     </TableCell>
                     <TableCell
-                      className="reference is-vcentered is-size-7 has-text-weight-bold has-text-grey text-ellipsis"
+                      className="reference items-center text-xs font-bold text-gray-600 text-ellipsis"
                       onClick={() => previewShipment(shipment.id)}
                     >
                       <span>{shipment.reference || ""}</span>
                     </TableCell>
                     <TableCell
-                      className="date is-vcentered px-1"
+                      className="date items-center px-1"
                       onClick={() => previewShipment(shipment.id)}
                     >
-                      <p className="is-size-7 has-text-weight-semibold has-text-grey">
+                      <p className="text-xs font-semibold text-gray-600">
                         {formatDateTime(shipment.created_at)}
                       </p>
                     </TableCell>
-                    <TableCell className="action is-vcentered px-0">
+                    <TableCell className="action items-center px-0">
                       <ShipmentMenu
                         shipment={shipment as any}
-                        className="is-fullwidth"
+                        className="w-full"
                       />
                     </TableCell>
                   </TableRow>
@@ -493,8 +493,8 @@ export default function Page(pageProps: any) {
         )}
 
         {query.isFetched && (shipments?.edges || []).length == 0 && (
-          <div className="card my-6">
-            <div className="card-content has-text-centered">
+          <div className="bg-white rounded-lg shadow-sm border my-6">
+            <div className="p-6 text-center">
               <p>No shipment found.</p>
             </div>
           </div>
