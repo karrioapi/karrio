@@ -35,7 +35,7 @@ import {
 import { Button } from "@karrio/ui/components/ui/button";
 import { Checkbox } from "@karrio/ui/components/ui/checkbox";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
-import { StatusBadge } from "@karrio/ui/core/components/status-badge";
+import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useLoader } from "@karrio/ui/core/components/loader";
@@ -337,7 +337,14 @@ export default function Page(pageProps: any) {
               </TableHeader>
               <TableBody>
                 {(shipments?.edges || []).map(({ node: shipment }) => (
-                  <TableRow key={shipment.id} className="items cursor-pointer">
+                  <TableRow 
+                    key={shipment.id} 
+                    className={`items cursor-pointer transition-colors duration-150 ease-in-out ${
+                      selection.includes(shipment.id) 
+                        ? 'bg-blue-50 hover:bg-blue-100' 
+                        : 'hover:bg-gray-50'
+                    }`}
+                  >
                     <TableCell className="selector text-center items-center p-0">
                       <div className="py-3 px-2">
                         <Checkbox
@@ -414,7 +421,7 @@ export default function Page(pageProps: any) {
                     >
                       <StatusBadge
                         status={shipment.status as string}
-                        style={{ width: "100%" }}
+                        className="w-full text-center"
                       />
                     </TableCell>
                     <TableCell
