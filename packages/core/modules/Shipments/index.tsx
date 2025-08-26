@@ -33,6 +33,7 @@ import {
   TableCell 
 } from "@karrio/ui/components/ui/table";
 import { Button } from "@karrio/ui/components/ui/button";
+import { Checkbox } from "@karrio/ui/components/ui/checkbox";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { StatusBadge } from "@karrio/ui/core/components/status-badge";
 import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
@@ -110,8 +111,7 @@ export default function Page(pageProps: any) {
         setSelection(selection);
       }
     };
-    const handleSelection = (e: React.ChangeEvent) => {
-      const { checked, name } = e.target as HTMLInputElement;
+    const handleCheckboxChange = (checked: boolean, name: string) => {
       if (name === "all") {
         setSelection(
           !checked
@@ -254,14 +254,12 @@ export default function Page(pageProps: any) {
                     className="selector text-center p-0 control items-center"
                     onClick={preventPropagation}
                   >
-                    <label className="checkbox p-2">
-                      <input
-                        name="all"
-                        type="checkbox"
-                        onChange={handleSelection}
+                    <div className="p-2">
+                      <Checkbox
                         checked={allChecked}
+                        onCheckedChange={(checked) => handleCheckboxChange(checked as boolean, "all")}
                       />
-                    </label>
+                    </div>
                   </TableHead>
 
                   {selection.length > 0 && (
@@ -341,14 +339,12 @@ export default function Page(pageProps: any) {
                 {(shipments?.edges || []).map(({ node: shipment }) => (
                   <TableRow key={shipment.id} className="items cursor-pointer">
                     <TableCell className="selector text-center items-center p-0">
-                      <label className="checkbox py-3 px-2">
-                        <input
-                          type="checkbox"
-                          name={shipment.id}
-                          onChange={handleSelection}
+                      <div className="py-3 px-2">
+                        <Checkbox
                           checked={selection.includes(shipment.id)}
+                          onCheckedChange={(checked) => handleCheckboxChange(checked as boolean, shipment.id)}
                         />
-                      </label>
+                      </div>
                     </TableCell>
                     <TableCell
                       className="service items-center py-1 px-0 text-xs font-bold text-gray-600"
