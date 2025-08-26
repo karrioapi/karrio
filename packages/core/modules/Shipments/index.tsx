@@ -32,6 +32,7 @@ import {
   TableRow, 
   TableCell 
 } from "@karrio/ui/components/ui/table";
+import { Button } from "@karrio/ui/components/ui/button";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { StatusBadge } from "@karrio/ui/core/components/status-badge";
 import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
@@ -222,18 +223,16 @@ export default function Page(pageProps: any) {
             <h1 className="text-2xl font-semibold text-gray-900">Shipments</h1>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-1">
-            <AppLink
-              href="/create_label?shipment_id=new"
-              className="button is-primary is-small mx-1"
-            >
-              <span>Create Label</span>
-            </AppLink>
-            <AppLink
-              href="/manifests/create_manifests"
-              className="button is-primary is-small mx-1"
-            >
-              <span>Manage manifests</span>
-            </AppLink>
+            <Button asChild size="sm" className="mx-1">
+              <AppLink href="/create_label?shipment_id=new">
+                Create Label
+              </AppLink>
+            </Button>
+            <Button asChild size="sm" className="mx-1">
+              <AppLink href="/manifests/create_manifests">
+                Manage manifests
+              </AppLink>
+            </Button>
             <ShipmentsFilter context={context} />
           </div>
         </header>
@@ -252,7 +251,7 @@ export default function Page(pageProps: any) {
               <TableHeader>
                 <TableRow>
                   <TableHead
-                    className="selector has-text-centered p-0 control is-vcentered"
+                    className="selector text-center p-0 control items-center"
                     onClick={preventPropagation}
                   >
                     <label className="checkbox p-2">
@@ -266,49 +265,54 @@ export default function Page(pageProps: any) {
                   </TableHead>
 
                   {selection.length > 0 && (
-                    <TableHead className="p-1 is-vcentered" colSpan={6}>
-                      <div className="buttons has-addons">
-                        {/* <AppLink
-                          className={`button is-small is-default px-3 ${draftSelection(selection) ? "" : "is-static"}`}
-                          href={`/shipments/create_labels?shipment_ids=${selection.join(",")}`}
+                    <TableHead className="p-2" colSpan={6}>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Button
+                          asChild
+                          variant="outline"
+                          size="sm"
+                          disabled={!compatibleTypeSelection(selection)}
+                          className="px-3"
                         >
-                          <span className="has-text-weight-semibold">
-                            Create labels
-                          </span>
-                        </AppLink> */}
-                        <a
-                          href={url$`${references.HOST}/documents/shipments/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?shipments=${selection.join(",")}`}
-                          className={`button is-small is-default px-3 ${compatibleTypeSelection(selection) ? "" : "is-static"}`}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          <span className="has-text-weight-semibold">
+                          <a
+                            href={url$`${references.HOST}/documents/shipments/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?shipments=${selection.join(",")}`}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
                             Print Labels
-                          </span>
-                        </a>
-                        <a
-                          href={url$`${references.HOST}/documents/shipments/invoice.pdf?shipments=${selection.join(",")}`}
-                          className={`button is-small is-default px-3`}
-                          target="_blank"
-                          rel="noreferrer"
+                          </a>
+                        </Button>
+                        <Button
+                          asChild
+                          variant="outline"
+                          size="sm"
+                          className="px-3"
                         >
-                          <span className="has-text-weight-semibold">
+                          <a
+                            href={url$`${references.HOST}/documents/shipments/invoice.pdf?shipments=${selection.join(",")}`}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
                             Print Invoices
-                          </span>
-                        </a>
+                          </a>
+                        </Button>
                         {(document_templates?.edges || []).map(
                           ({ node: template }) => (
-                            <a
+                            <Button
                               key={template.id}
-                              href={url$`${references.HOST}/documents/templates/${template.id}.${template.slug}?shipments=${selection.join(",")}`}
-                              className="button is-small is-default px-3"
-                              target="_blank"
-                              rel="noreferrer"
+                              asChild
+                              variant="outline"
+                              size="sm"
+                              className="px-3"
                             >
-                              <span className="has-text-weight-semibold">
+                              <a
+                                href={url$`${references.HOST}/documents/templates/${template.id}.${template.slug}?shipments=${selection.join(",")}`}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
                                 Print {template.name}
-                              </span>
-                            </a>
+                              </a>
+                            </Button>
                           ),
                         )}
                       </div>
@@ -317,17 +321,17 @@ export default function Page(pageProps: any) {
 
                   {selection.length === 0 && (
                     <>
-                      <TableHead className="service is-size-7 is-vcentered">
+                      <TableHead className="service text-xs items-center">
                         SHIPPING SERVICE
                       </TableHead>
-                      <TableHead className="status is-vcentered"></TableHead>
-                      <TableHead className="recipient is-size-7 is-vcentered">
+                      <TableHead className="status items-center"></TableHead>
+                      <TableHead className="recipient text-xs items-center">
                         RECIPIENT
                       </TableHead>
-                      <TableHead className="reference is-size-7 is-vcentered">
+                      <TableHead className="reference text-xs items-center">
                         REFERENCE
                       </TableHead>
-                      <TableHead className="date is-size-7 is-vcentered">DATE</TableHead>
+                      <TableHead className="date text-xs items-center">DATE</TableHead>
                       <TableHead className="action"></TableHead>
                     </>
                   )}
@@ -335,8 +339,8 @@ export default function Page(pageProps: any) {
               </TableHeader>
               <TableBody>
                 {(shipments?.edges || []).map(({ node: shipment }) => (
-                  <TableRow key={shipment.id} className="items is-clickable">
-                    <TableCell className="selector has-text-centered is-vcentered p-0">
+                  <TableRow key={shipment.id} className="items cursor-pointer">
+                    <TableCell className="selector text-center items-center p-0">
                       <label className="checkbox py-3 px-2">
                         <input
                           type="checkbox"
@@ -347,7 +351,7 @@ export default function Page(pageProps: any) {
                       </label>
                     </TableCell>
                     <TableCell
-                      className="service is-vcentered py-1 px-0 is-size-7 has-text-weight-bold has-text-grey"
+                      className="service items-center py-1 px-0 text-xs font-bold text-gray-600"
                       onClick={() => previewShipment(shipment.id)}
                       title={
                         isNone(getRate(shipment))
@@ -386,7 +390,7 @@ export default function Page(pageProps: any) {
                             className="text-ellipsis"
                             style={{ maxWidth: "190px", lineHeight: "16px" }}
                           >
-                            <span className="has-text-info has-text-weight-bold">
+                            <span className="text-blue-600 font-bold">
                               {!isNone(shipment.tracking_number) && (
                                 <span>{shipment.tracking_number}</span>
                               )}
