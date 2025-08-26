@@ -34,13 +34,13 @@ import {
 } from "@karrio/ui/components/ui/table";
 import { Button } from "@karrio/ui/components/ui/button";
 import { Checkbox } from "@karrio/ui/components/ui/checkbox";
+import { Skeleton } from "@karrio/ui/components/ui/skeleton";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { AppLink } from "@karrio/ui/core/components/app-link";
-import { Spinner } from "@karrio/ui/core/components/spinner";
 import { useShipments } from "@karrio/hooks/shipment";
 import React, { useContext, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
@@ -243,7 +243,23 @@ export default function Page(pageProps: any) {
           onFilterChange={(status) => updateFilter({ status, offset: 0 })}
         />
 
-        {!query.isFetched && <Spinner />}
+        {!query.isFetched && (
+          <div className="bg-white rounded-lg shadow-sm border my-6 p-6">
+            <div className="space-y-4">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="flex items-center space-x-4">
+                  <Skeleton className="h-4 w-4" />
+                  <Skeleton className="h-4 w-[100px]" />
+                  <Skeleton className="h-4 w-[80px]" />
+                  <Skeleton className="h-4 w-[120px]" />
+                  <Skeleton className="h-4 w-[100px]" />
+                  <Skeleton className="h-4 w-[80px]" />
+                  <Skeleton className="h-4 w-6" />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {query.isFetched && (shipments?.edges || []).length > 0 && (
           <>
