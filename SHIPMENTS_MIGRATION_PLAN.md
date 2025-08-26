@@ -230,8 +230,9 @@ With full shadcn library available, we can now proceed with all migrations simul
 
 ## **New Components to Create**
 
-### **1. ShipmentFiltersCard** ✅ COMPLETED
-**Location**: `/packages/ui/components/shipment-filters-card.tsx`
+### **1. FiltersCard** ✅ COMPLETED (Renamed from ShipmentFiltersCard)
+**Location**: `/packages/ui/components/filters-card.tsx`
+**Renamed**: Made generic for reusability across Orders, Trackers, and other list pages
 
 ### **2. ShipmentsFilter** ✅ COMPLETED  
 **Location**: `/packages/ui/components/shipments-filter.tsx`
@@ -266,11 +267,12 @@ interface BulkActionsToolbarProps {
 }
 ```
 
-### **4. ShipmentPagination** ✅ COMPLETED
-**Location**: `/packages/ui/components/shipment-pagination.tsx`
+### **4. ListPagination** ✅ COMPLETED (Renamed from ShipmentPagination)
+**Location**: `/packages/ui/components/list-pagination.tsx`
 **Enhancement**: Added sticky footer with mobile FloatingDeveloperTools optimization
+**Renamed**: Made generic for reusability across Orders, Trackers, and other list pages
 ```typescript
-interface ShipmentPaginationProps {
+interface ListPaginationProps {
   currentOffset: number;
   pageSize: number;
   totalCount: number;

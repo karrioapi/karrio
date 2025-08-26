@@ -9,14 +9,14 @@ interface FilterOption {
   value: string[];
 }
 
-interface ShipmentFiltersCardProps {
+interface FiltersCardProps {
   filters: FilterOption[];
   activeFilter: string[];
   onFilterChange: (filter: string[]) => void;
   className?: string;
 }
 
-export const ShipmentFiltersCard: React.FC<ShipmentFiltersCardProps> = ({
+export const FiltersCard: React.FC<FiltersCardProps> = ({
   filters,
   activeFilter,
   onFilterChange,

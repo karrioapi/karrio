@@ -4,7 +4,7 @@ import React from "react";
 import { Button } from "@karrio/ui/components/ui/button";
 import { cn } from "@karrio/ui/lib/utils";
 
-interface ShipmentPaginationProps {
+interface ListPaginationProps {
   currentOffset: number;
   pageSize: number;
   totalCount: number;
@@ -13,7 +13,7 @@ interface ShipmentPaginationProps {
   className?: string;
 }
 
-export const ShipmentPagination: React.FC<ShipmentPaginationProps> = ({
+export const ListPagination: React.FC<ListPaginationProps> = ({
   currentOffset,
   pageSize,
   totalCount,

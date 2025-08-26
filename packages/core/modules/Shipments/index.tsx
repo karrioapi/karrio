@@ -22,8 +22,8 @@ import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { ShipmentsFilter } from "@karrio/ui/components/shipments-filter";
 import { AddressType, RateType, ShipmentType } from "@karrio/types";
 import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
-import { ShipmentFiltersCard } from "@karrio/ui/components/shipment-filters-card";
-import { ShipmentPagination } from "@karrio/ui/components/shipment-pagination";
+import { FiltersCard } from "@karrio/ui/components/filters-card";
+import { ListPagination } from "@karrio/ui/components/list-pagination";
 import { 
   Table, 
   TableHeader, 
@@ -237,7 +237,7 @@ export default function Page(pageProps: any) {
           </div>
         </header>
 
-        <ShipmentFiltersCard
+        <FiltersCard
           filters={getFilterOptions()}
           activeFilter={filter?.status || []}
           onFilterChange={(status) => updateFilter({ status, offset: 0 })}
@@ -479,7 +479,7 @@ export default function Page(pageProps: any) {
             {/* Sticky Footer */}
             <div className="sticky bottom-0 left-0 right-0 z-10 bg-white border-t border-gray-200 shadow-lg">
               <div className="mr-16 md:mr-0">
-                <ShipmentPagination
+                <ListPagination
                   currentOffset={filter.offset as number || 0}
                   pageSize={20}
                   totalCount={shipments?.page_info?.count || 0}
