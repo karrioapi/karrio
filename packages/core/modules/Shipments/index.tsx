@@ -24,6 +24,7 @@ import { AddressType, RateType, ShipmentType } from "@karrio/types";
 import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
 import { FiltersCard } from "@karrio/ui/components/filters-card";
 import { ListPagination } from "@karrio/ui/components/list-pagination";
+import { StickyTableWrapper } from "@karrio/ui/components/sticky-table-wrapper";
 import { 
   Table, 
   TableHeader, 
@@ -263,14 +264,15 @@ export default function Page(pageProps: any) {
 
         {query.isFetched && (shipments?.edges || []).length > 0 && (
           <>
-            <Table className="shipments-table">
+            <StickyTableWrapper>
+              <Table className="shipments-table">
               <TableHeader>
                 <TableRow>
                   <TableHead
-                    className="selector text-center p-0 control items-center"
+                    className="selector text-center p-0 control items-center sticky-left"
                     onClick={preventPropagation}
                   >
-                    <div className="p-2">
+                    <div className="py-2 pl-2 pr-4">
                       <Checkbox
                         checked={allChecked}
                         onCheckedChange={(checked) => handleCheckboxChange(checked as boolean, "all")}
@@ -346,7 +348,7 @@ export default function Page(pageProps: any) {
                         REFERENCE
                       </TableHead>
                       <TableHead className="date text-xs items-center">DATE</TableHead>
-                      <TableHead className="action"></TableHead>
+                      <TableHead className="action sticky-right"></TableHead>
                     </>
                   )}
                 </TableRow>
@@ -361,8 +363,8 @@ export default function Page(pageProps: any) {
                         : 'hover:bg-gray-50'
                     }`}
                   >
-                    <TableCell className="selector text-center items-center p-0">
-                      <div className="py-3 px-2">
+                    <TableCell className="selector text-center items-center p-0 sticky-left">
+                      <div className="py-3 pl-2 pr-4">
                         <Checkbox
                           checked={selection.includes(shipment.id)}
                           onCheckedChange={(checked) => handleCheckboxChange(checked as boolean, shipment.id)}
@@ -484,7 +486,7 @@ export default function Page(pageProps: any) {
                         {formatDateTime(shipment.created_at)}
                       </p>
                     </TableCell>
-                    <TableCell className="action items-center px-0">
+                    <TableCell className="action items-center px-0 sticky-right">
                       <ShipmentMenu
                         shipment={shipment as any}
                         className="w-full"
@@ -493,7 +495,8 @@ export default function Page(pageProps: any) {
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
+              </Table>
+            </StickyTableWrapper>
 
             {/* Sticky Footer */}
             <div className="sticky bottom-0 left-0 right-0 z-10 bg-white border-t border-gray-200 shadow-lg">
