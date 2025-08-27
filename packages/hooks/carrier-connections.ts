@@ -15,12 +15,15 @@ export function useConnections() {
     system_connections,
   } = useSystemConnections();
 
+  const memoizedUserConnections = React.useMemo(() => user_connections, [JSON.stringify(user_connections)]);
+  const memoizedSystemConnections = React.useMemo(() => system_connections, [JSON.stringify(system_connections)]);
+
   React.useEffect(() => {
     if (!isUserFetched || !isSystemFetched) {
       return;
     }
 
-    const newCarrierOptions = [...user_connections, ...system_connections]
+    const newCarrierOptions = [...memoizedUserConnections, ...memoizedSystemConnections]
       .filter((_) => _.active && (_.config?.shipping_options || []).length > 0)
       .reduce(
         (acc, _) => ({
@@ -36,7 +39,7 @@ export function useConnections() {
       );
 
     setCarrierOptions(newCarrierOptions);
-  }, [isUserFetched, isSystemFetched, user_connections, system_connections]);
+  }, [isUserFetched, isSystemFetched, memoizedUserConnections, memoizedSystemConnections]);
 
   return {
     carrierOptions,
