@@ -153,7 +153,7 @@ class AddressData(validators.AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=10,
+        max_length=20,
         help_text="""The address postal code
         **(required for shipment purchase)**
         """,
@@ -372,7 +372,7 @@ class ParcelData(validators.PresetSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=50,
+        max_length=100,
         help_text=f"""The parcel's packaging type.<br/>
         **Note that the packaging is optional when using a package preset.**<br/>
         values: <br/>
@@ -384,7 +384,7 @@ class ParcelData(validators.PresetSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=50,
+        max_length=100,
         help_text="""The parcel's package preset.<br/>
         For carrier specific package presets, please consult the reference.
         """,

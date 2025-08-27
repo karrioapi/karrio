@@ -9,6 +9,7 @@
 ### Fix
 
 - fix: rendering loop issue in create_label form (by @Ansh-Dev-Nagar)
+- fix: inconsistent max text length between models and serializers
 
 # Karrio 2025.5rc18
 
