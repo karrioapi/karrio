@@ -137,7 +137,7 @@ RateRequest = {
     "Commodities": [
         {
             "Currency": "EUR",
-            "Description": "Stainless steel gold plated necklace",
+            "Description": "Bullet Punch Necklace - Stainless steel gold plated necklace",
             "HarmonizedCode": "1234567890",
             "UnitCostValue": 180.81,
             "UnitKg": 0.002,

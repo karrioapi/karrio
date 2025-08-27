@@ -185,7 +185,9 @@ def shipment_request(
         Commodities=[
             seko.CommodityType(
                 Description=lib.identity(
-                    lib.text(commodity.description or commodity.title, max=200)
+                    lib.text(
+                        commodity.title, commodity.description, separator=" - ", max=200
+                    )
                     or "item"
                 ),
                 HarmonizedCode=commodity.hs_code or "0000.00.00",

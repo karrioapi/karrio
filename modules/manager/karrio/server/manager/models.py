@@ -190,12 +190,14 @@ class Address(core.OwnedEntity):
         max_length=20, choices=serializers.COUNTRIES, db_index=True
     )
     email = models.EmailField(null=True, blank=True, db_index=True)
-    city = models.CharField(max_length=30, null=True, blank=True, db_index=True)
-    federal_tax_id = models.CharField(max_length=20, null=True, blank=True)
-    state_tax_id = models.CharField(max_length=20, null=True, blank=True)
-    person_name = models.CharField(max_length=50, null=True, blank=True, db_index=True)
-    company_name = models.CharField(max_length=50, null=True, blank=True, db_index=True)
-    phone_number = models.CharField(max_length=50, null=True, blank=True)
+    city = models.CharField(max_length=100, null=True, blank=True, db_index=True)
+    federal_tax_id = models.CharField(max_length=100, null=True, blank=True)
+    state_tax_id = models.CharField(max_length=100, null=True, blank=True)
+    person_name = models.CharField(max_length=250, null=True, blank=True, db_index=True)
+    company_name = models.CharField(
+        max_length=250, null=True, blank=True, db_index=True
+    )
+    phone_number = models.CharField(max_length=250, null=True, blank=True)
     street_number = models.CharField(
         max_length=20, null=True, blank=True, db_index=True
     )
@@ -205,8 +207,8 @@ class Address(core.OwnedEntity):
     address_line2 = models.CharField(
         max_length=100, null=True, blank=True, db_index=True
     )
-    state_code = models.CharField(max_length=20, null=True, blank=True, db_index=True)
-    suburb = models.CharField(max_length=20, null=True, blank=True)
+    state_code = models.CharField(max_length=100, null=True, blank=True, db_index=True)
+    suburb = models.CharField(max_length=100, null=True, blank=True)
     residential = models.BooleanField(null=True)
 
     validate_location = models.BooleanField(null=True)
@@ -271,13 +273,13 @@ class Parcel(core.OwnedEntity):
     width = models.FloatField(blank=True, null=True)
     height = models.FloatField(blank=True, null=True)
     length = models.FloatField(blank=True, null=True)
-    packaging_type = models.CharField(max_length=50, null=True, blank=True)
-    package_preset = models.CharField(max_length=50, null=True, blank=True)
+    packaging_type = models.CharField(max_length=100, null=True, blank=True)
+    package_preset = models.CharField(max_length=100, null=True, blank=True)
     is_document = models.BooleanField(default=False, blank=True, null=True)
-    description = models.CharField(max_length=35, null=True, blank=True)
-    content = models.CharField(max_length=35, null=True, blank=True)
+    description = models.CharField(max_length=250, null=True, blank=True)
+    content = models.CharField(max_length=250, null=True, blank=True)
     reference_number = models.CharField(
-        max_length=50, null=True, blank=True, db_index=True
+        max_length=100, null=True, blank=True, db_index=True
     )
     weight_unit = models.CharField(
         max_length=2, choices=serializers.WEIGHT_UNIT, null=True, blank=True
@@ -331,10 +333,10 @@ class Commodity(core.OwnedEntity):
 
     weight = models.FloatField(blank=True, null=True)
     quantity = models.IntegerField(blank=True, null=True)
-    title = models.CharField(max_length=35, null=True, blank=True)
-    description = models.CharField(max_length=100, null=True, blank=True)
-    sku = models.CharField(max_length=35, null=True, blank=True, db_index=True)
-    hs_code = models.CharField(max_length=35, null=True, blank=True, db_index=True)
+    title = models.CharField(max_length=250, null=True, blank=True)
+    description = models.CharField(max_length=250, null=True, blank=True)
+    sku = models.CharField(max_length=250, null=True, blank=True, db_index=True)
+    hs_code = models.CharField(max_length=250, null=True, blank=True, db_index=True)
     value_amount = models.FloatField(blank=True, null=True)
     weight_unit = models.CharField(
         max_length=2, choices=serializers.WEIGHT_UNIT, null=True, blank=True
@@ -429,14 +431,16 @@ class Customs(core.OwnedEntity):
 
     certify = models.BooleanField(null=True)
     commercial_invoice = models.BooleanField(null=True)
-    content_type = models.CharField(max_length=50, null=True, blank=True, db_index=True)
+    content_type = models.CharField(
+        max_length=100, null=True, blank=True, db_index=True
+    )
     content_description = models.CharField(max_length=250, null=True, blank=True)
     incoterm = models.CharField(
-        max_length=20, choices=serializers.INCOTERMS, db_index=True
+        max_length=50, choices=serializers.INCOTERMS, db_index=True
     )
-    invoice = models.CharField(max_length=50, null=True, blank=True)
-    invoice_date = models.CharField(max_length=50, null=True, blank=True)
-    signer = models.CharField(max_length=50, null=True, blank=True)
+    invoice = models.CharField(max_length=100, null=True, blank=True)
+    invoice_date = models.CharField(max_length=100, null=True, blank=True)
+    signer = models.CharField(max_length=100, null=True, blank=True)
 
     duty = models.JSONField(
         blank=True, null=True, default=functools.partial(utils.identity, value=None)
@@ -502,13 +506,13 @@ class Pickup(core.OwnedEntity):
         default=functools.partial(core.uuid, prefix="pck_"),
         editable=False,
     )
-    confirmation_number = models.CharField(max_length=50, blank=False, db_index=True)
+    confirmation_number = models.CharField(max_length=100, blank=False, db_index=True)
     test_mode = models.BooleanField(null=False)
     pickup_date = models.DateField(blank=False)
     ready_time = models.CharField(max_length=5, blank=False)
     closing_time = models.CharField(max_length=5, blank=False)
-    instruction = models.CharField(max_length=200, null=True, blank=True)
-    package_location = models.CharField(max_length=200, null=True, blank=True)
+    instruction = models.CharField(max_length=250, null=True, blank=True)
+    package_location = models.CharField(max_length=250, null=True, blank=True)
 
     options = models.JSONField(
         blank=True, null=True, default=functools.partial(utils.identity, value={})
@@ -597,9 +601,9 @@ class Tracking(core.OwnedEntity):
         default=serializers.TRACKER_STATUS[0][0],
         db_index=True,
     )
-    tracking_number = models.CharField(max_length=50, db_index=True)
-    account_number = models.CharField(max_length=35, null=True, blank=True)
-    reference = models.CharField(max_length=35, null=True, blank=True)
+    tracking_number = models.CharField(max_length=100, db_index=True)
+    account_number = models.CharField(max_length=100, null=True, blank=True)
+    reference = models.CharField(max_length=100, null=True, blank=True)
     info = models.JSONField(
         blank=True, null=True, default=functools.partial(utils.identity, value={})
     )
@@ -760,9 +764,9 @@ class Shipment(core.OwnedEntity):
     )
     label_type = models.CharField(max_length=25, null=True, blank=True)
     tracking_number = models.CharField(
-        max_length=50, null=True, blank=True, db_index=True
+        max_length=100, null=True, blank=True, db_index=True
     )
-    shipment_identifier = models.CharField(max_length=50, null=True, blank=True)
+    shipment_identifier = models.CharField(max_length=100, null=True, blank=True)
     tracking_url = models.TextField(max_length=None, null=True, blank=True)
     test_mode = models.BooleanField(null=False)
     customs = models.OneToOneField(
@@ -775,7 +779,7 @@ class Shipment(core.OwnedEntity):
 
     label = models.TextField(max_length=None, null=True, blank=True)
     invoice = models.TextField(max_length=None, null=True, blank=True)
-    reference = models.CharField(max_length=35, null=True, blank=True)
+    reference = models.CharField(max_length=100, null=True, blank=True)
     selected_rate = models.JSONField(blank=True, null=True)
     payment = models.JSONField(
         blank=True, null=True, default=functools.partial(utils.identity, value=None)

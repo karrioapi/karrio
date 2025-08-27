@@ -72,7 +72,9 @@ def rate_request(
         recipient=payload.recipient,
         weight_unit="KG",
     )
-    commodities = lib.identity(customs.commodities if any(customs.commodities) else packages.items)
+    commodities = lib.identity(
+        customs.commodities if any(customs.commodities) else packages.items
+    )
 
     # map data to convert karrio model to seko specific type
     request = seko.RatingRequestType(
@@ -120,7 +122,9 @@ def rate_request(
         DangerousGoods=None,
         Commodities=[
             seko.CommodityType(
-                Description=commodity.description,
+                Description=lib.text(
+                    commodity.title, commodity.description, separator=" - ", max=200
+                ),
                 HarmonizedCode=commodity.sku,
                 Units=commodity.quantity,
                 UnitValue=commodity.value_amount,
