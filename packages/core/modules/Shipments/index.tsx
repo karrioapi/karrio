@@ -269,7 +269,7 @@ export default function Page(pageProps: any) {
               <TableHeader>
                 <TableRow>
                   <TableHead
-                    className="selector text-center p-0 control items-center sticky-left"
+                    className="selector text-center p-0 items-center sticky-left"
                     onClick={preventPropagation}
                   >
                     <div className="py-2 pl-2 pr-4">
@@ -383,7 +383,7 @@ export default function Page(pageProps: any) {
                           )
                       }
                     >
-                        <div className="icon-text">
+                        <div className="flex items-center">
                           <CarrierImage
                             carrier_name={
                               shipment.meta?.carrier ||
