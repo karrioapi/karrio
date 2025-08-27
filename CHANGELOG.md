@@ -1,3 +1,15 @@
+# Karrio 2025.5rc19
+
+## Changes
+
+### Feat
+
+- feat: combine title and description for a more exhaustive seko commodity descriptions for customs declaration
+
+### Fix
+
+- fix: rendering loop issue in create_label form (by @Ansh-Dev-Nagar)
+
 # Karrio 2025.5rc18
 
 ## Changes
