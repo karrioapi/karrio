@@ -38,7 +38,6 @@ import { Checkbox } from "@karrio/ui/components/ui/checkbox";
 import { Skeleton } from "@karrio/ui/components/ui/skeleton";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
-import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { AppLink } from "@karrio/ui/core/components/app-link";
@@ -528,9 +527,7 @@ export default function Page(pageProps: any) {
   return (
     <>
       <ShipmentPreview>
-        <ConfirmModal>
-          <Component />
-        </ConfirmModal>
+        <Component />
       </ShipmentPreview>
     </>
   );
