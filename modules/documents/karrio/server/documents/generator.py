@@ -39,6 +39,7 @@ UNITS = {
 
 class TemplateRenderingError(Exception):
     """Custom exception for template rendering errors"""
+
     def __init__(self, message, line_number=None, template_error=None):
         self.message = message
         self.line_number = line_number
@@ -89,7 +90,6 @@ class Documents:
             for key, value in options.get("prefetch", {}).items():
                 try:
                     template_obj = jinja2.Template(value)
-                    print(ctx, "<<<<<<<<, ctx")
                     rendered = template_obj.render(
                         **ctx,
                         metadata=metadata,
@@ -109,7 +109,7 @@ class Documents:
             raise TemplateRenderingError(
                 f"Template syntax error: {e.message}",
                 line_number=e.lineno,
-                template_error=e
+                template_error=e,
             )
 
         all_contexts = shipment_contexts + order_contexts + generic_contexts
@@ -122,10 +122,7 @@ class Documents:
         for ctx in all_contexts:
             try:
                 # Add prefetch data safely
-                ctx_with_prefetch = {
-                    **ctx,
-                    "prefetch": safe_render_prefetch(ctx)
-                }
+                ctx_with_prefetch = {**ctx, "prefetch": safe_render_prefetch(ctx)}
 
                 rendered_page = jinja_template.render(
                     **ctx_with_prefetch,
@@ -138,24 +135,24 @@ class Documents:
             except jinja2.UndefinedError as e:
                 raise TemplateRenderingError(
                     f"Template variable error: {str(e)}. Available variables: {list(ctx.keys())}",
-                    template_error=e
+                    template_error=e,
                 )
             except jinja2.TemplateRuntimeError as e:
                 raise TemplateRenderingError(
                     f"Template runtime error: {str(e)}",
-                    line_number=getattr(e, 'lineno', None),
-                    template_error=e
+                    line_number=getattr(e, "lineno", None),
+                    template_error=e,
                 )
             except jinja2.TemplateError as e:
                 raise TemplateRenderingError(
                     f"Template error: {str(e)}",
-                    line_number=getattr(e, 'lineno', None),
-                    template_error=e
+                    line_number=getattr(e, "lineno", None),
+                    template_error=e,
                 )
             except Exception as e:
                 raise TemplateRenderingError(
                     f"Unexpected error during template rendering: {str(e)}",
-                    template_error=e
+                    template_error=e,
                 )
 
         content = PAGE_SEPARATOR.join(rendered_pages)
@@ -173,8 +170,7 @@ class Documents:
             return buffer
         except Exception as e:
             raise TemplateRenderingError(
-                f"PDF generation error: {str(e)}",
-                template_error=e
+                f"PDF generation error: {str(e)}", template_error=e
             )
 
     @staticmethod
