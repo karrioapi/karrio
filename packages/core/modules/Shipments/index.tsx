@@ -222,13 +222,13 @@ export default function Page(pageProps: any) {
           <div className="mb-4 sm:mb-0">
             <h1 className="text-2xl font-semibold text-gray-900">Shipments</h1>
           </div>
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-1">
-            <Button asChild size="sm" className="mx-1">
+          <div className="flex flex-row items-center gap-1 flex-wrap">
+            <Button asChild size="sm" className="mx-1 w-auto">
               <AppLink href="/create_label?shipment_id=new">
                 Create Label
               </AppLink>
             </Button>
-            <Button asChild size="sm" className="mx-1">
+            <Button asChild size="sm" className="mx-1 w-auto">
               <AppLink href="/manifests/create_manifests">
                 Manage manifests
               </AppLink>
