@@ -32,11 +32,11 @@ export const FiltersCard: React.FC<FiltersCardProps> = ({
         <Card
           key={index}
           className={cn(
-            "cursor-pointer transition-all duration-200 hover:shadow-sm border",
+            "cursor-pointer transition-all duration-200 hover:border-gray-300 hover:shadow-sm border shadow-none",
             "p-3 text-center min-h-[60px] flex flex-col justify-center",
             isActive(filter.value)
               ? "border-blue-500 bg-blue-50 shadow-sm"
-              : "border-gray-200 hover:border-gray-300 bg-white"
+              : "border-gray-200 bg-white"
           )}
           onClick={() => onFilterChange(filter.value)}
         >
