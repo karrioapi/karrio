@@ -436,10 +436,12 @@ export default function Page(pageProps: any) {
                       className="status items-center"
                       onClick={() => previewShipment(shipment.id)}
                     >
-                      <StatusBadge
-                        status={shipment.status as string}
-                        className="w-full text-center"
-                      />
+                      <div style={{ paddingLeft: '7px', paddingRight: '7px' }}>
+                        <StatusBadge
+                          status={shipment.status as string}
+                          className="w-full justify-center text-center  !py-0.5 !text-[10px]"
+                        />
+                      </div>
                     </TableCell>
                     <TableCell
                       className="recipient items-center text-xs font-bold text-gray-600 relative"
