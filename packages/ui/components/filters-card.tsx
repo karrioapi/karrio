@@ -27,13 +27,14 @@ export const FiltersCard: React.FC<FiltersCardProps> = ({
   };
 
   return (
-    <div className={cn("grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-5 mt-4", className)}>
+    <div className={cn("flex gap-2 overflow-x-auto pb-2 sm:grid sm:grid-cols-3 lg:grid-cols-6 sm:gap-3 mb-5 mt-4", className)}>
       {filters.map((filter, index) => (
         <Card
           key={index}
           className={cn(
             "cursor-pointer transition-all duration-200 hover:border-gray-300 hover:shadow-sm border shadow-none",
-            "p-3 text-center min-h-[60px] flex flex-col justify-center",
+            "text-center min-h-[60px] flex flex-col justify-center",
+            "px-2 py-3 flex-shrink-0 min-w-[80px] sm:p-3 sm:flex-shrink sm:min-w-0",
             isActive(filter.value)
               ? "border-blue-500 bg-blue-50 shadow-sm"
               : "border-gray-200 bg-white"
@@ -41,7 +42,7 @@ export const FiltersCard: React.FC<FiltersCardProps> = ({
           onClick={() => onFilterChange(filter.value)}
         >
           <div className={cn(
-            "text-sm font-medium capitalize",
+            "text-sm font-medium capitalize whitespace-nowrap sm:whitespace-normal",
             isActive(filter.value) ? "text-blue-700" : "text-gray-700"
           )}>
             {filter.label}
