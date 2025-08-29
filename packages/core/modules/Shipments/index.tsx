@@ -500,17 +500,15 @@ export default function Page(pageProps: any) {
             </StickyTableWrapper>
 
             {/* Sticky Footer */}
-            <div className="sticky bottom-0 left-0 right-0 z-10 bg-white border-t border-gray-200">
-              <div className="mr-16 md:mr-0">
-                <ListPagination
-                  currentOffset={filter.offset as number || 0}
-                  pageSize={20}
-                  totalCount={shipments?.page_info?.count || 0}
-                  hasNextPage={shipments?.page_info?.has_next_page || false}
-                  onPageChange={(offset) => updateFilter({ offset })}
-                  className="px-2 py-3"
-                />
-              </div>
+            <div className="sticky bottom-0 left-0 right-0 z-10 bg-white border-t border-gray-200 pb-16 md:pb-0">
+              <ListPagination
+                currentOffset={filter.offset as number || 0}
+                pageSize={20}
+                totalCount={shipments?.page_info?.count || 0}
+                hasNextPage={shipments?.page_info?.has_next_page || false}
+                onPageChange={(offset) => updateFilter({ offset })}
+                className="px-2 py-3"
+              />
             </div>
           </>
         )}
