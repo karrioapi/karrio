@@ -279,37 +279,37 @@ export default function ConnectionsPage() {
 
       <div className="space-y-6">
         {/* Summary Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="border shadow-none">
+        <div className="flex gap-4 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-6">
+          <Card className="border shadow-none flex-shrink-0 min-w-[200px] sm:flex-shrink sm:min-w-0">
             <CardContent className="p-4">
-              <p className="text-sm text-gray-600">Total Connections</p>
+              <p className="text-sm text-gray-600 whitespace-nowrap sm:whitespace-normal">Total Connections</p>
               <p className="text-2xl font-semibold text-gray-900">
                 {filteredConnections.length}
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border shadow-none">
+          <Card className="border shadow-none flex-shrink-0 min-w-[200px] sm:flex-shrink sm:min-w-0">
             <CardContent className="p-4">
-              <p className="text-sm text-gray-600">Active Connections</p>
+              <p className="text-sm text-gray-600 whitespace-nowrap sm:whitespace-normal">Active Connections</p>
               <p className="text-2xl font-semibold text-gray-900">
                 {filteredConnections.filter(c => c.active).length}
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border shadow-none">
+          <Card className="border shadow-none flex-shrink-0 min-w-[200px] sm:flex-shrink sm:min-w-0">
             <CardContent className="p-4">
-              <p className="text-sm text-gray-600">Test Mode</p>
+              <p className="text-sm text-gray-600 whitespace-nowrap sm:whitespace-normal">Test Mode</p>
               <p className="text-2xl font-semibold text-gray-900">
                 {filteredConnections.filter(c => c.test_mode).length}
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border shadow-none">
+          <Card className="border shadow-none flex-shrink-0 min-w-[200px] sm:flex-shrink sm:min-w-0">
             <CardContent className="p-4">
-              <p className="text-sm text-gray-600">Unique Carriers</p>
+              <p className="text-sm text-gray-600 whitespace-nowrap sm:whitespace-normal">Unique Carriers</p>
               <p className="text-2xl font-semibold text-gray-900">
                 {new Set(filteredConnections.map(c => c.carrier_name)).size}
               </p>
