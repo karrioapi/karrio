@@ -37,7 +37,7 @@ import { Button } from "@karrio/ui/components/ui/button";
 import { Checkbox } from "@karrio/ui/components/ui/checkbox";
 import { Skeleton } from "@karrio/ui/components/ui/skeleton";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
-import { StatusBadge } from "@karrio/ui/components/status-badge";
+import { ShipmentsStatusBadge } from "@karrio/ui/components/shipments-status-badge";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { AppLink } from "@karrio/ui/core/components/app-link";
@@ -437,9 +437,9 @@ export default function Page(pageProps: any) {
                       onClick={() => previewShipment(shipment.id)}
                     >
                       <div style={{ paddingLeft: '7px', paddingRight: '7px' }}>
-                        <StatusBadge
+                        <ShipmentsStatusBadge
                           status={shipment.status as string}
-                          className="w-full justify-center text-center  !py-0.5 !text-[10px]"
+                          className="w-full justify-center text-center"
                         />
                       </div>
                     </TableCell>
