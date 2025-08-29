@@ -139,7 +139,7 @@ export const ShipmentsFilter = ({ context }: ShipmentsFilterComponent): JSX.Elem
               </div>
               
               {!isNone(filters?.address) && (
-                <div className="ml-6 p-2 bg-gray-50 rounded">
+                <div className="ml-5 p-2 bg-gray-50 rounded">
                   <Input
                     value={filters?.address || ''}
                     onChange={(e) => handleChange('address', e.target.value)}
@@ -166,7 +166,7 @@ export const ShipmentsFilter = ({ context }: ShipmentsFilterComponent): JSX.Elem
               </div>
               
               {(!isNone(filters?.created_before) || !isNone(filters?.created_after)) && (
-                <div className="ml-6 p-2 bg-gray-50 rounded space-y-2">
+                <div className="ml-5 p-2 bg-gray-50 rounded space-y-2">
                   <div>
                     <Label htmlFor="created_after" className="text-xs text-gray-600 mb-1 block">
                       After
@@ -213,7 +213,7 @@ export const ShipmentsFilter = ({ context }: ShipmentsFilterComponent): JSX.Elem
               </div>
               
               {!isNone(filters?.reference) && (
-                <div className="ml-6 p-2 bg-gray-50 rounded">
+                <div className="ml-5 p-2 bg-gray-50 rounded">
                   <Input
                     value={filters?.reference || ''}
                     onChange={(e) => handleChange('reference', e.target.value)}
@@ -240,7 +240,7 @@ export const ShipmentsFilter = ({ context }: ShipmentsFilterComponent): JSX.Elem
               </div>
               
               {!isNone(filters?.service) && (
-                <div className="ml-6 p-2 bg-gray-50 rounded">
+                <div className="ml-5 p-2 bg-gray-50 rounded">
                   <Input
                     value={filters?.service || ''}
                     onChange={(e) => handleChange('service', e.target.value)}
@@ -267,9 +267,9 @@ export const ShipmentsFilter = ({ context }: ShipmentsFilterComponent): JSX.Elem
               </div>
               
               {!isNone(filters?.carrier_name) && (
-                <div className="ml-6 p-2 bg-gray-50 rounded space-y-1">
+                <div className="ml-5 bg-gray-50 rounded">
                   {CARRIER_NAMES.map((carrier_name: string, index) => (
-                    <div key={index} className="flex items-center space-x-2 py-0.5">
+                    <div key={index} className="flex items-center space-x-2 py-0.5 px-2">
                       <Checkbox
                         id={`carrier_${index}`}
                         checked={filters?.carrier_name?.includes(carrier_name) || false}
@@ -302,9 +302,9 @@ export const ShipmentsFilter = ({ context }: ShipmentsFilterComponent): JSX.Elem
               </div>
               
               {!isNone(filters?.status) && (
-                <div className="ml-6 p-2 bg-gray-50 rounded space-y-1">
+                <div className="ml-5 bg-gray-50 rounded">
                   {SHIPMENT_STATUSES.map((status: string, index) => (
-                    <div key={index} className="flex items-center space-x-2 py-0.5">
+                    <div key={index} className="flex items-center space-x-2 py-0.5 px-2">
                       <Checkbox
                         id={`status_${index}`}
                         checked={filters?.status?.includes(status) || false}
