@@ -14,6 +14,7 @@ import React, { useState } from "react";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useRouter } from "next/navigation";
 import { useAppMode } from "@karrio/hooks/app-mode";
+import { useToast } from "@karrio/ui/hooks/use-toast";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,7 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Loader2 } from "lucide-react";
 
 interface ShipmentMenuComponent
   extends React.InputHTMLAttributes<HTMLDivElement> {
@@ -39,6 +40,7 @@ export const ShipmentMenu = ({
   const { basePath } = useAppMode();
   const { references } = useAPIMetadata();
   const mutation = useShipmentMutation();
+  const { toast } = useToast();
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState<{
     title: string;
@@ -54,6 +56,11 @@ export const ShipmentMenu = ({
   } as any);
 
   const createLabel = (_: React.MouseEvent) => {
+    toast({
+      title: "Opening create label page...",
+      description: "Taking you to create a label for this shipment.",
+    });
+
     if (!!shipment.meta?.orders) {
       router.push(
         p`${basePath}/orders/create_label?shipment_id=${shipment.id}&order_id=${shipment.meta.orders}`,
@@ -78,13 +85,33 @@ export const ShipmentMenu = ({
       };
 
   const duplicateShipment = async (_: React.MouseEvent) => {
-    console.log("> duplicating shipment...");
-    const duplicatedShipment =
-      await mutation.duplicateShipment.mutateAsync(shipment);
-    console.log("> shipment duplicate created successfully!");
-    router.push(
-      p`${basePath}/create_label?shipment_id=${duplicatedShipment.id}`,
-    );
+    toast({
+      title: "Creating duplicate shipment...",
+      description: "Please wait while we duplicate your shipment.",
+    });
+
+    try {
+      console.log("> duplicating shipment...");
+      const duplicatedShipment =
+        await mutation.duplicateShipment.mutateAsync(shipment);
+      console.log("> shipment duplicate created successfully!");
+      
+      toast({
+        title: "Shipment duplicated successfully!",
+        description: "Opening create label page for the new shipment.",
+      });
+
+      router.push(
+        p`${basePath}/create_label?shipment_id=${duplicatedShipment.id}`,
+      );
+    } catch (error) {
+      console.error("Failed to duplicate shipment:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to duplicate shipment",
+        description: "Please try again or contact support if the issue persists.",
+      });
+    }
   };
 
   const handleConfirm = async () => {
