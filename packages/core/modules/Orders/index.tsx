@@ -35,6 +35,7 @@ import { bundleContexts } from "@karrio/hooks/utils";
 import { useSearchParams } from "next/navigation";
 import { useOrders } from "@karrio/hooks/order";
 import { Button } from "@karrio/ui/components/ui/button";
+import { FiltersCard } from "@karrio/ui/components/filters-card";
 
 const ContextProviders = bundleContexts([
   OrderPreview,
@@ -68,6 +69,26 @@ export default function OrdersPage() {
     } = useDocumentTemplates({
       related_object: "order" as any,
     });
+
+    // Define filter options for the cards
+    const getFilterOptions = () => [
+      {
+        label: "All",
+        value: []
+      },
+      {
+        label: "Unfulfilled", 
+        value: ["unfulfilled", "partial"]
+      },
+      {
+        label: "Fulfilled",
+        value: ["fulfilled", "delivered"]
+      },
+      {
+        label: "Cancelled", 
+        value: ["cancelled"]
+      }
+    ];
 
     const preventPropagation = (e: React.MouseEvent) => e.stopPropagation();
     const getRate = (shipment: any, default_rate?: any) =>
@@ -282,83 +303,11 @@ export default function OrdersPage() {
           </div>
         </header>
 
-        <div className="tabs">
-          <ul>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${isNone(filter?.status) && isNone(filter?.source) ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !isNone(filter?.status) &&
-                  isNone(filter?.source) &&
-                  updateFilter({ status: null, source: null, offset: 0 })
-                }
-              >
-                all
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${isListEqual(filter?.status || [], ["unfulfilled", "partial"]) ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !filter?.status?.includes("unfulfilled" as any) &&
-                  updateFilter({
-                    status: ["unfulfilled", "partial"],
-                    source: null,
-                    offset: 0,
-                  })
-                }
-              >
-                unfulfilled
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${isListEqual(filter?.status || [], ["fulfilled", "delivered"]) ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !filter?.status?.includes("fulfilled" as any) &&
-                  updateFilter({
-                    status: ["fulfilled", "delivered"],
-                    source: null,
-                    offset: 0,
-                  })
-                }
-              >
-                fulfilled
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${filter?.status?.includes("cancelled" as any) && filter?.status?.length === 1 ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !filter?.status?.includes("cancelled" as any) &&
-                  updateFilter({
-                    status: ["cancelled"],
-                    source: null,
-                    offset: 0,
-                  })
-                }
-              >
-                cancelled
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${(filter?.source as any) === "draft" ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !((filter?.source as any) === "draft") &&
-                  updateFilter({ status: null, source: "draft", offset: 0 })
-                }
-              >
-                drafts
-              </a>
-            </li>
-          </ul>
-        </div>
+        <FiltersCard
+          filters={getFilterOptions()}
+          activeFilter={filter?.status || []}
+          onFilterChange={(status) => updateFilter({ status, source: null, offset: 0 })}
+        />
 
         {!query.isFetched && <Spinner />}
 
