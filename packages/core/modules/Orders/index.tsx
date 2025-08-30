@@ -31,7 +31,6 @@ import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { AppLink } from "@karrio/ui/core/components/app-link";
 import { ModalProvider } from "@karrio/ui/core/modals/modal";
-import { Spinner } from "@karrio/ui/core/components/spinner";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { useSearchParams } from "next/navigation";
 import { useOrders } from "@karrio/hooks/order";
@@ -367,12 +366,18 @@ export default function OrdersPage() {
                           variant="outline"
                           size="sm"
                           disabled={!compatibleTypeSelection(selection)}
-                          className="px-3"
+                          className={`px-3 ${!compatibleTypeSelection(selection) ? 'opacity-40 pointer-events-none' : ''}`}
                         >
                           <a
-                            href={url$`${references.HOST}/documents/orders/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?orders=${selection.join(",")}`}
-                            target="_blank"
-                            rel="noreferrer"
+                            href={compatibleTypeSelection(selection) ? url$`${references.HOST}/documents/orders/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?orders=${selection.join(",")}` : undefined}
+                            target={compatibleTypeSelection(selection) ? "_blank" : undefined}
+                            rel={compatibleTypeSelection(selection) ? "noreferrer" : undefined}
+                            onClick={(e) => {
+                              if (!compatibleTypeSelection(selection)) {
+                                e.preventDefault();
+                                return false;
+                              }
+                            }}
                           >
                             Print Labels
                           </a>
