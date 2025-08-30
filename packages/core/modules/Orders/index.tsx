@@ -37,6 +37,7 @@ import { useSearchParams } from "next/navigation";
 import { useOrders } from "@karrio/hooks/order";
 import { Button } from "@karrio/ui/components/ui/button";
 import { FiltersCard } from "@karrio/ui/components/filters-card";
+import { ListPagination } from "@karrio/ui/components/list-pagination";
 import { Skeleton } from "@karrio/ui/components/ui/skeleton";
 import { StickyTableWrapper } from "@karrio/ui/components/sticky-table-wrapper";
 import { 
@@ -563,31 +564,16 @@ export default function OrdersPage() {
               </Table>
             </StickyTableWrapper>
 
-            <div className="px-2 py-2 flex items-center justify-between">
-              <span className="text-xs font-semibold">
-                {(orders?.edges || []).length} results
-              </span>
-
-              <div className="flex gap-0">
-                <button
-                  className="px-3 py-1 text-sm border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-l"
-                  onClick={() =>
-                    updateFilter({ offset: (filter.offset as number) - 20 })
-                  }
-                  disabled={filter.offset == 0}
-                >
-                  Previous
-                </button>
-                <button
-                  className="px-3 py-1 text-sm border border-l-0 border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-r"
-                  onClick={() =>
-                    updateFilter({ offset: (filter.offset as number) + 20 })
-                  }
-                  disabled={!orders?.page_info.has_next_page}
-                >
-                  Next
-                </button>
-              </div>
+            {/* Sticky Footer */}
+            <div className="sticky bottom-0 left-0 right-0 z-10 bg-white border-t border-gray-200 pb-16 md:pb-0">
+              <ListPagination
+                currentOffset={filter.offset as number || 0}
+                pageSize={20}
+                totalCount={orders?.page_info?.count || 0}
+                hasNextPage={orders?.page_info?.has_next_page || false}
+                onPageChange={(offset) => updateFilter({ offset })}
+                className="px-2 py-3"
+              />
             </div>
           </>
         )}
