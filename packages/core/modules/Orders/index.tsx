@@ -34,6 +34,7 @@ import { Spinner } from "@karrio/ui/core/components/spinner";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { useSearchParams } from "next/navigation";
 import { useOrders } from "@karrio/hooks/order";
+import { Button } from "@karrio/ui/components/ui/button";
 
 const ContextProviders = bundleContexts([
   OrderPreview,
@@ -262,23 +263,21 @@ export default function OrdersPage() {
 
     return (
       <>
-        <header className="columns px-0 pb-0 pt-4">
-          <div className="column">
-            <span className="title is-4">Orders</span>
+        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-0 pb-0 pt-4 mb-2">
+          <div className="mb-4 sm:mb-0">
+            <h1 className="text-2xl font-semibold text-gray-900">Orders</h1>
           </div>
-          <div className="column has-text-right-desktop">
-            <AppLink
-              href="/draft_orders/new"
-              className="button is-primary is-small mx-1"
-            >
-              <span>Create order</span>
-            </AppLink>
-            <AppLink
-              href="/manifests"
-              className="button is-primary is-small mx-1"
-            >
-              <span>Manage manifests</span>
-            </AppLink>
+          <div className="flex flex-row items-center gap-1 flex-wrap">
+            <Button asChild size="sm" className="mx-1 w-auto">
+              <AppLink href="/draft_orders/new">
+                Create order
+              </AppLink>
+            </Button>
+            <Button asChild size="sm" className="mx-1 w-auto">
+              <AppLink href="/manifests">
+                Manage manifests
+              </AppLink>
+            </Button>
             <OrdersFilter context={context} />
           </div>
         </header>
