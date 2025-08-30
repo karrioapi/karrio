@@ -36,6 +36,7 @@ import { useSearchParams } from "next/navigation";
 import { useOrders } from "@karrio/hooks/order";
 import { Button } from "@karrio/ui/components/ui/button";
 import { FiltersCard } from "@karrio/ui/components/filters-card";
+import { Skeleton } from "@karrio/ui/components/ui/skeleton";
 
 const ContextProviders = bundleContexts([
   OrderPreview,
@@ -309,7 +310,23 @@ export default function OrdersPage() {
           onFilterChange={(status) => updateFilter({ status, source: null, offset: 0 })}
         />
 
-        {!query.isFetched && <Spinner />}
+        {!query.isFetched && (
+          <div className="bg-white rounded-lg shadow-sm border my-6 p-6">
+            <div className="space-y-4">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="flex items-center space-x-4">
+                  <Skeleton className="h-4 w-4" />
+                  <Skeleton className="h-4 w-[100px]" />
+                  <Skeleton className="h-4 w-[80px]" />
+                  <Skeleton className="h-4 w-[120px]" />
+                  <Skeleton className="h-4 w-[100px]" />
+                  <Skeleton className="h-4 w-[80px]" />
+                  <Skeleton className="h-4 w-6" />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {query.isFetched && (orders?.edges || []).length > 0 && (
           <>
