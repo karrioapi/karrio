@@ -24,7 +24,7 @@ import { AddressType, RateType, ShipmentType } from "@karrio/types";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import React, { useContext, useEffect } from "react";
 import { ShipmentsStatusBadge } from "@karrio/ui/components/shipments-status-badge";
-import { OrdersFilter } from "@karrio/ui/core/filters/orders-filter";
+import { OrdersFilter } from "@karrio/ui/components/orders-filter";
 import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
 import { OrderMenu } from "@karrio/ui/components/order-menu";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
