@@ -6,8 +6,8 @@ import {
   OrderStatusEnum,
 } from "@karrio/types";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
-import { ConfirmModalContext } from "../core/modals/confirm-modal";
-import React, { useContext } from "react";
+import { ConfirmationDialog } from "./confirmation-dialog";
+import React, { useState } from "react";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useOrderMutation } from "@karrio/hooks/order";
 import { useRouter } from "next/navigation";
@@ -37,7 +37,13 @@ export const OrderMenu = ({
   const { basePath } = useAppMode();
   const { references } = useAPIMetadata();
   const mutation = useOrderMutation();
-  const { confirm: confirmCancellation } = useContext(ConfirmModalContext);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{
+    title: string;
+    description: string;
+    confirmLabel: string;
+    onConfirm: () => Promise<any>;
+  } | null>(null);
   const {
     query: { data: { document_templates } = {} },
   } = useDocumentTemplates({
@@ -59,6 +65,19 @@ export const OrderMenu = ({
 
   const cancelOrder = (order: OrderType) => async () => {
     await mutation.cancelOrder.mutateAsync(order);
+  };
+
+  const handleConfirm = async () => {
+    if (!confirmAction) return;
+    
+    try {
+      await confirmAction.onConfirm();
+      setConfirmDialogOpen(false);
+      setConfirmAction(null);
+    } catch (error) {
+      console.error('Confirmation action failed:', error);
+      // Dialog stays open for retry
+    }
   };
 
   const computeShipmentId = (order: OrderType) => {
@@ -121,15 +140,15 @@ export const OrderMenu = ({
                 <span>Edit order</span>
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() =>
-                  confirmCancellation({
-                    identifier: order.id as string,
-                    label: `Delete order`,
-                    action: "Submit",
-                    onConfirm: () =>
-                      mutation.deleteOrder.mutateAsync({ id: order.id }),
-                  })
-                }
+                onClick={() => {
+                  setConfirmAction({
+                    title: "Delete Order",
+                    description: `Are you sure you want to delete order ${order.id}? This action cannot be undone.`,
+                    confirmLabel: "Submit",
+                    onConfirm: () => mutation.deleteOrder.mutateAsync({ id: order.id }),
+                  });
+                  setConfirmDialogOpen(true);
+                }}
                 className="text-destructive focus:text-destructive cursor-pointer"
               >
                 <span>Delete order</span>
@@ -139,14 +158,15 @@ export const OrderMenu = ({
 
           {order.status === OrderStatusEnum.Unfulfilled && (
             <DropdownMenuItem
-              onClick={() =>
-                confirmCancellation({
-                  identifier: order.id as string,
-                  label: `Cancel order`,
-                  action: "Submit",
+              onClick={() => {
+                setConfirmAction({
+                  title: "Cancel Order",
+                  description: `Are you sure you want to cancel order ${order.id}? This action cannot be undone.`,
+                  confirmLabel: "Submit",
                   onConfirm: cancelOrder(order),
-                })
-              }
+                });
+                setConfirmDialogOpen(true);
+              }}
               className="text-destructive focus:text-destructive cursor-pointer"
             >
               <span>Cancel order</span>
@@ -172,6 +192,17 @@ export const OrderMenu = ({
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {confirmAction && (
+        <ConfirmationDialog
+          open={confirmDialogOpen}
+          onOpenChange={setConfirmDialogOpen}
+          title={confirmAction.title}
+          description={confirmAction.description}
+          confirmLabel={confirmAction.confirmLabel}
+          onConfirm={handleConfirm}
+        />
+      )}
     </div>
   );
 };
