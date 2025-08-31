@@ -12,7 +12,6 @@ import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useOrderMutation } from "@karrio/hooks/order";
 import { useRouter } from "next/navigation";
 import { useAppMode } from "@karrio/hooks/app-mode";
-import { AppLink } from "../core/components/app-link";
 import { url$ } from "@karrio/lib";
 import {
   DropdownMenu,
@@ -50,6 +49,14 @@ export const OrderMenu = ({
     router.push(basePath + "/orders/" + order.id);
   };
 
+  const navigateToCreateLabel = (_: React.MouseEvent) => {
+    router.push(`${basePath}/orders/create_label?shipment_id=${computeShipmentId(order)}&order_id=${order?.id}`);
+  };
+
+  const navigateToEditOrder = (_: React.MouseEvent) => {
+    router.push(`${basePath}/draft_orders/${order?.id}`);
+  };
+
   const cancelOrder = (order: OrderType) => async () => {
     await mutation.cancelOrder.mutateAsync(order);
   };
@@ -78,12 +85,8 @@ export const OrderMenu = ({
           role="menu"
         >
           {["unfulfilled", "partial"].includes(order?.status) && (
-            <DropdownMenuItem asChild>
-              <AppLink
-                href={`/orders/create_label?shipment_id=${computeShipmentId(order)}&order_id=${order?.id}`}
-              >
-                <span>Create label</span>
-              </AppLink>
+            <DropdownMenuItem onClick={navigateToCreateLabel} className="cursor-pointer">
+              <span>Create label</span>
             </DropdownMenuItem>
           )}
 
@@ -97,7 +100,7 @@ export const OrderMenu = ({
                 }?orders=${order.id}`}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center"
+                className="flex items-center w-full"
               >
                 <span>{`Print Label${
                   order.shipments.filter((s) => !["cancelled", "draft"].includes(s.status)).length > 1 ? "s" : ""
@@ -107,19 +110,15 @@ export const OrderMenu = ({
           )}
 
           {!isViewing && (
-            <DropdownMenuItem onClick={displayDetails}>
+            <DropdownMenuItem onClick={displayDetails} className="cursor-pointer">
               <span>View order</span>
             </DropdownMenuItem>
           )}
 
           {order.source === "draft" && order.shipments.length === 0 && (
             <>
-              <DropdownMenuItem asChild>
-                <AppLink
-                  href={`/draft_orders/${order?.id}`}
-                >
-                  <span>Edit order</span>
-                </AppLink>
+              <DropdownMenuItem onClick={navigateToEditOrder} className="cursor-pointer">
+                <span>Edit order</span>
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() =>
@@ -131,7 +130,7 @@ export const OrderMenu = ({
                       mutation.deleteOrder.mutateAsync({ id: order.id }),
                   })
                 }
-                className="text-destructive focus:text-destructive"
+                className="text-destructive focus:text-destructive cursor-pointer"
               >
                 <span>Delete order</span>
               </DropdownMenuItem>
@@ -148,7 +147,7 @@ export const OrderMenu = ({
                   onConfirm: cancelOrder(order),
                 })
               }
-              className="text-destructive focus:text-destructive"
+              className="text-destructive focus:text-destructive cursor-pointer"
             >
               <span>Cancel order</span>
             </DropdownMenuItem>
@@ -165,7 +164,7 @@ export const OrderMenu = ({
                 href={url$`${references.HOST}/documents/templates/${template.id}.${template.slug}?orders=${order.id}`}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center"
+                className="flex items-center w-full"
               >
                 <span>Download {template.name}</span>
               </a>
