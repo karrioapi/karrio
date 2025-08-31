@@ -25,13 +25,10 @@ import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import React, { useContext, useEffect } from "react";
 import { ShipmentsStatusBadge } from "@karrio/ui/components/shipments-status-badge";
 import { OrdersFilter } from "@karrio/ui/components/orders-filter";
-import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
 import { OrderMenu } from "@karrio/ui/components/order-menu";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { AppLink } from "@karrio/ui/core/components/app-link";
-import { ModalProvider } from "@karrio/ui/core/modals/modal";
-import { bundleContexts } from "@karrio/hooks/utils";
 import { useSearchParams } from "next/navigation";
 import { useOrders } from "@karrio/hooks/order";
 import { Button } from "@karrio/ui/components/ui/button";
@@ -49,11 +46,6 @@ import {
 } from "@karrio/ui/components/ui/table";
 import { Checkbox } from "@karrio/ui/components/ui/checkbox";
 
-const ContextProviders = bundleContexts([
-  OrderPreview,
-  ConfirmModal,
-  ModalProvider,
-]);
 
 export default function OrdersPage() {
   const Component = (): JSX.Element => {
@@ -227,7 +219,7 @@ export default function OrdersPage() {
               className="text-ellipsis"
               style={{ maxWidth: "190px", lineHeight: "15px" }}
             >
-              <span className="has-text-info has-text-weight-bold">
+              <span className="text-blue-600 font-bold">
                 <span>{` - `}</span>
               </span>
               <br />
@@ -262,7 +254,7 @@ export default function OrdersPage() {
             className="text-ellipsis"
             style={{ maxWidth: "190px", lineHeight: "15px" }}
           >
-            <span className="has-text-info has-text-weight-bold">
+            <span className="text-blue-600 font-bold">
               {!isNone(shipment.carrier_name) && (
                 <span>{shipment.tracking_number}</span>
               )}
@@ -599,9 +591,9 @@ export default function OrdersPage() {
   return (
     <>
       <GoogleGeocodingScript />
-      <ContextProviders>
+      <OrderPreview>
         <Component />
-      </ContextProviders>
+      </OrderPreview>
     </>
   );
 }

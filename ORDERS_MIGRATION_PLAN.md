@@ -16,7 +16,7 @@ This document provides a comprehensive step-by-step plan to migrate the Orders l
 | `<table className="table is-fullwidth">` | `<Table>` in `<StickyTableWrapper>` | ✅ **COMPLETED** | Shipments page table |
 | `<input type="checkbox">` | `<Checkbox>` | ✅ **COMPLETED** | Shipments page checkboxes |
 | `<StatusBadge>` (Bulma-based) | `<ShipmentsStatusBadge>` (reused shadcn) | ✅ **COMPLETED** | Reused existing shadcn component |
-| `<OrdersFilter>` (Bulma-based) | `<OrdersFilter>` (kept existing) | ✅ **COMPLETED** | Used existing component |
+| `<OrdersFilter>` (Bulma-based) | `<OrdersFilter>` (new ShadCN version) | ✅ **COMPLETED** | Migrated to ShadCN Popover |
 | `<Spinner>` (loading) | `<Skeleton>` | ✅ **COMPLETED** | Shipments page loading |
 | Bulma pagination buttons | Custom Tailwind buttons | ✅ **COMPLETED** | Custom pagination implemented |
 | `<ConfirmModal>` | `<ConfirmationDialog>` | ✅ **COMPLETED** | ShipmentMenu component |
@@ -26,6 +26,7 @@ This document provides a comprehensive step-by-step plan to migrate the Orders l
 #### OrderMenu Component Status
 - **Modern Version**: `/packages/ui/components/order-menu.tsx` 
   - ✅ Already migrated to shadcn/ui (uses DropdownMenu, Button, etc.)
+  - ✅ **FIXED**: Hover issues resolved by converting AppLink items to onClick handlers
   - ❌ Minor issue: Still uses old `ConfirmModalContext` - should use `ConfirmationDialog` pattern like ShipmentMenu
   - ✅ **Currently used by Orders list page** - no changes needed for our migration
 
@@ -41,10 +42,46 @@ This document provides a comprehensive step-by-step plan to migrate the Orders l
 - **Reason**: Identical color mappings and status support
 - **No new component needed**: Avoids code duplication
 
-#### 2. OrdersFilter Component  
-- **Path**: `/packages/ui/components/orders-filter.tsx`
+#### 2. OrdersFilter Component ✅ **COMPLETED**
+- **Path**: `/packages/ui/components/orders-filter.tsx` 
 - **Based on**: `/packages/ui/components/shipments-filter.tsx`
 - **Purpose**: Advanced filtering for orders with shadcn/ui components
+- **Status**: Successfully created with ShadCN Popover, Button, Checkbox, Input, and Label components
+
+---
+
+## Recent Migration Work Completed
+
+### OrdersFilter ShadCN Migration ✅ **COMPLETED**
+**Date**: Recently completed
+**File Created**: `/packages/ui/components/orders-filter.tsx`
+
+**Technical Implementation**:
+- **Framework**: Built using ShadCN UI components (Popover, Button, Checkbox, Input, Label)
+- **Design Pattern**: Followed shipments-filter.tsx structure for consistency
+- **Filter Fields Implemented**:
+  - Address filter with text input
+  - Order ID filter with comma-separated support
+  - Source filter with comma-separated support (shopify, erp, etc.)
+  - Date range filter (created_before, created_after)
+  - Status multi-select using ORDER_STATUSES from @karrio/types
+- **Features**: Clear/Done buttons, loading states, proper form validation
+- **Integration**: Successfully imported and used in orders module
+
+### OrderMenu Hover Issues Fix ✅ **COMPLETED**  
+**Date**: Recently completed
+**File Modified**: `/packages/ui/components/order-menu.tsx`
+
+**Technical Solution**:
+- **Problem**: AppLink components with `asChild` prop not inheriting ShadCN hover styles
+- **Root Cause**: AppLink's nested `Link > a` structure preventing hover state propagation
+- **Solution**: Converted AppLink items to onClick handlers (matching ShipmentMenu pattern)
+- **Changes Made**:
+  - Created `navigateToCreateLabel()` and `navigateToEditOrder()` functions using router.push()
+  - Replaced `<DropdownMenuItem asChild><AppLink>` with `<DropdownMenuItem onClick={handler}>`
+  - Removed unused AppLink import
+  - Added proper cursor-pointer classes
+- **Result**: All menu items now have consistent hover effects
 
 ---
 
@@ -381,28 +418,28 @@ import { OrdersFilter } from "@karrio/ui/components/orders-filter";
 - Already supports all order status types
 - Maintains consistency across the application
 
-#### Step 10.2: Create OrdersFilter Component
+#### Step 10.2: Create OrdersFilter Component ✅ **COMPLETED**
 **File**: `/packages/ui/components/orders-filter.tsx`
 
-**Tasks**:
-- Copy ShipmentsFilter component structure
-- Replace filter fields to match order requirements:
-  - **Address**: Keep same as shipments (filter by shipping address)
-  - **Date**: Keep same as shipments (created_before, created_after)
-  - **Order ID**: Replace "Reference" field (filter by order_id)
-  - **Source**: Replace "Service" field (filter by order source: shopify, erp, etc.)
-  - **Status**: Use `ORDER_STATUSES` from `@karrio/types` instead of `SHIPMENT_STATUSES`
-  - **Remove**: Carrier filter (not applicable to orders)
-- Update reducer logic for order-specific fields
-- Update form validation and placeholder text
-- Test filter combinations
+**Tasks Completed**:
+- ✅ Copied ShipmentsFilter component structure using ShadCN Popover
+- ✅ Replaced filter fields to match order requirements:
+  - **Address**: Filter by shipping address (same as shipments)
+  - **Order ID**: Multi-input field for filtering by order_id
+  - **Source**: Multi-input field for filtering by order source (shopify, erp, etc.)
+  - **Date**: Date range with created_before, created_after (same as shipments)
+  - **Status**: Uses `ORDER_STATUSES` from `@karrio/types` with checkbox multi-select
+- ✅ Updated reducer logic for order-specific fields
+- ✅ Updated form validation and placeholder text
+- ✅ Implemented proper ShadCN styling with hover states
+- ✅ Successfully integrated with orders module
 
 #### Step 10.3: Update Orders Page to Use ShipmentsStatusBadge ✅ **COMPLETED**
 **Tasks Completed**:
 - ✅ Replaced `StatusBadge` import with `ShipmentsStatusBadge`
 - ✅ Updated component usage in table rows
 - ✅ Verified identical color mappings
-- ⏳ OrdersFilter migration (separate task, outside this status badge migration)
+- ✅ OrdersFilter migration completed successfully
 
 ### Phase 11: Testing & Validation
 
@@ -447,9 +484,9 @@ import { OrdersFilter } from "@karrio/ui/components/orders-filter";
 
 ## Files Summary
 
-### Files to Create:
-1. `/packages/ui/components/orders-status-badge.tsx`
-2. `/packages/ui/components/orders-filter.tsx`
+### Files Created:
+1. ~~`/packages/ui/components/orders-status-badge.tsx`~~ (Not needed - reused ShipmentsStatusBadge)
+2. ✅ `/packages/ui/components/orders-filter.tsx` - **COMPLETED**
 
 ### Files to Modify:
 1. `/packages/core/modules/Orders/index.tsx` (complete migration)
