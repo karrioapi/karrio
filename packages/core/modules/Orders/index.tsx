@@ -23,7 +23,7 @@ import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { AddressType, RateType, ShipmentType } from "@karrio/types";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import React, { useContext, useEffect } from "react";
-import { StatusBadge } from "@karrio/ui/core/components/status-badge";
+import { ShipmentsStatusBadge } from "@karrio/ui/components/shipments-status-badge";
 import { OrdersFilter } from "@karrio/ui/core/filters/orders-filter";
 import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
 import { OrderMenu } from "@karrio/ui/components/order-menu";
@@ -476,10 +476,12 @@ export default function OrdersPage() {
                       className="status items-center"
                       onClick={() => previewOrder(order.id)}
                     >
-                      <StatusBadge
-                        status={order.status as string}
-                        style={{ width: "100%" }}
-                      />
+                      <div style={{ paddingLeft: '7px', paddingRight: '7px' }}>
+                        <ShipmentsStatusBadge
+                          status={order.status as string}
+                          className="w-full justify-center text-center"
+                        />
+                      </div>
                     </TableCell>
                     <TableCell
                       className="line-items text-xs items-center relative"

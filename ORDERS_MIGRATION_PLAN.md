@@ -15,7 +15,7 @@ This document provides a comprehensive step-by-step plan to migrate the Orders l
 | `<div className="tabs">` | `<FiltersCard>` | ✅ **COMPLETED** | Shipments page filters |
 | `<table className="table is-fullwidth">` | `<Table>` in `<StickyTableWrapper>` | ✅ **COMPLETED** | Shipments page table |
 | `<input type="checkbox">` | `<Checkbox>` | ✅ **COMPLETED** | Shipments page checkboxes |
-| `<StatusBadge>` (current) | `<StatusBadge>` (kept existing) | ✅ **COMPLETED** | Used existing component |
+| `<StatusBadge>` (Bulma-based) | `<ShipmentsStatusBadge>` (reused shadcn) | ✅ **COMPLETED** | Reused existing shadcn component |
 | `<OrdersFilter>` (Bulma-based) | `<OrdersFilter>` (kept existing) | ✅ **COMPLETED** | Used existing component |
 | `<Spinner>` (loading) | `<Skeleton>` | ✅ **COMPLETED** | Shipments page loading |
 | Bulma pagination buttons | Custom Tailwind buttons | ✅ **COMPLETED** | Custom pagination implemented |
@@ -36,10 +36,10 @@ This document provides a comprehensive step-by-step plan to migrate the Orders l
 
 ### Components Needing Creation
 
-#### 1. OrdersStatusBadge Component
-- **Path**: `/packages/ui/components/orders-status-badge.tsx`
-- **Based on**: `/packages/ui/components/shipments-status-badge.tsx`
-- **Purpose**: Display order status badges with proper colors
+#### 1. StatusBadge Migration ✅ **COMPLETED**
+- **Solution**: Reuse existing `ShipmentsStatusBadge` component
+- **Reason**: Identical color mappings and status support
+- **No new component needed**: Avoids code duplication
 
 #### 2. OrdersFilter Component  
 - **Path**: `/packages/ui/components/orders-filter.tsx`
@@ -219,7 +219,7 @@ const getFilterOptions = () => [
 - Replace `<tr>` with `<TableRow>`
 - Replace `<td>` with `<TableCell>`
 - Update checkbox column with shadcn/ui Checkbox component
-- Replace `StatusBadge` with new `OrdersStatusBadge`
+- Replace `StatusBadge` with `ShipmentsStatusBadge`
 - Keep all existing logic for:
   - Order ID and source display
   - Line items calculation
@@ -254,16 +254,16 @@ const handleCheckboxChange = (checked: boolean, name: string) => {
 };
 ```
 
-### Phase 5: Pagination Migration
+### Phase 5: Pagination Migration ✅ **COMPLETED**
 
-#### Step 5.1: Remove Bulma Pagination
+#### Step 5.1: Remove Bulma Pagination ✅ **COMPLETED**
 **Target Section**: Lines 604-629 in Orders/index.tsx
 
 **Tasks**:
-- Remove entire Bulma pagination structure
-- Remove manual Previous/Next button handlers
+- ✅ Remove entire Bulma pagination structure
+- ✅ Remove manual Previous/Next button handlers
 
-#### Step 5.2: Add Sticky Footer with ListPagination
+#### Step 5.2: Add Sticky Footer with ListPagination ✅ **COMPLETED**
 **Add after table closing tag**:
 
 ```jsx
@@ -338,7 +338,7 @@ import {
 import { Button } from "@karrio/ui/components/ui/button";
 import { Checkbox } from "@karrio/ui/components/ui/checkbox";
 import { Skeleton } from "@karrio/ui/components/ui/skeleton";
-import { OrdersStatusBadge } from "@karrio/ui/components/orders-status-badge";
+import { ShipmentsStatusBadge } from "@karrio/ui/components/shipments-status-badge";
 import { OrdersFilter } from "@karrio/ui/components/orders-filter";
 ```
 
@@ -366,20 +366,20 @@ import { OrdersFilter } from "@karrio/ui/components/orders-filter";
 
 ### Phase 10: Create Missing Components
 
-#### Step 10.1: Create OrdersStatusBadge Component
-**File**: `/packages/ui/components/orders-status-badge.tsx`
+#### Step 10.1: Reuse ShipmentsStatusBadge Component ✅ **COMPLETED**
+**Approach**: Direct reuse instead of creating new component
 
-**Tasks**:
-- Copy ShipmentsStatusBadge component structure
-- Update status color mappings for order statuses:
-  - `unfulfilled` → purple/violet (`bg-violet-50 text-violet-500`)
-  - `partial` → cyan (`bg-cyan-50 text-cyan-500`)
+**Benefits**:
+- No code duplication
+- Identical color mappings already exist:
+  - `unfulfilled` → violet (`bg-violet-50 text-violet-500`)
+  - `partial` → cyan (`bg-cyan-50 text-cyan-500`) 
   - `fulfilled` → green (`bg-green-50 text-green-500`)
   - `delivered` → green (`bg-green-50 text-green-500`)
   - `cancelled` → gray (`bg-gray-50 text-gray-500`)
   - `draft` → violet (`bg-violet-50 text-violet-500`)
-- Replace `ShipmentStatusEnum` with order status types
-- Test component with different status values
+- Already supports all order status types
+- Maintains consistency across the application
 
 #### Step 10.2: Create OrdersFilter Component
 **File**: `/packages/ui/components/orders-filter.tsx`
@@ -397,11 +397,12 @@ import { OrdersFilter } from "@karrio/ui/components/orders-filter";
 - Update form validation and placeholder text
 - Test filter combinations
 
-#### Step 10.3: Update Orders Page to Use New Components
-**Tasks**:
-- Replace `StatusBadge` with new `OrdersStatusBadge` in table rows
-- Replace old `OrdersFilter` import with new shadcn-based version
-- Test all status badge colors and filter functionality
+#### Step 10.3: Update Orders Page to Use ShipmentsStatusBadge ✅ **COMPLETED**
+**Tasks Completed**:
+- ✅ Replaced `StatusBadge` import with `ShipmentsStatusBadge`
+- ✅ Updated component usage in table rows
+- ✅ Verified identical color mappings
+- ⏳ OrdersFilter migration (separate task, outside this status badge migration)
 
 ### Phase 11: Testing & Validation
 
