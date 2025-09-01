@@ -209,9 +209,9 @@ export default function TrackersPage(pageProps: any) {
                           />
                         </div>
                       </TableCell>
-                      <TableCell className="last-event items-center py-1 text-xs font-bold text-gray-600 text-ellipsis">
+                      <TableCell className="last-event items-center py-1 text-xs font-bold text-gray-600 md:text-ellipsis">
                         <span
-                          className="text-ellipsis"
+                          className="md:text-ellipsis break-words"
                           title={
                             isNoneOrEmpty(tracker?.events)
                               ? ""
