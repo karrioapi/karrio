@@ -7,7 +7,7 @@ import {
   TrackingPreview,
   useTrackingPreview,
 } from "@karrio/core/components/tracking-preview";
-import { ConfirmModal, useConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
+import { DeleteConfirmationDialog } from "@karrio/ui/components/delete-confirmation-dialog";
 import {
   formatRef,
   getURLSearchParams,
@@ -35,7 +35,7 @@ import { useLoader } from "@karrio/ui/core/components/loader";
 import { Spinner } from "@karrio/ui/core/components/spinner";
 import { TrackingEvent } from "@karrio/types/rest/api";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 
 export default function TrackersPage(pageProps: any) {
@@ -46,7 +46,8 @@ export default function TrackersPage(pageProps: any) {
     const mutation = useTrackerMutation();
     const { addTracker } = useTrackerModal();
     const { previewTracker } = useTrackingPreview();
-    const { confirm: confirmDeletion } = useConfirmModal();
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [trackerToDelete, setTrackerToDelete] = useState<string | null>(null);
     const [initialized, setInitialized] = React.useState(false);
     const context = useTrackers({
       setVariablesToURL: true,
@@ -243,11 +244,8 @@ export default function TrackersPage(pageProps: any) {
                           className="ml-auto"
                           onClick={(e) => {
                             e.stopPropagation();
-                            confirmDeletion({
-                              label: "Delet Shipment Tracker",
-                              identifier: tracker.id as string,
-                              onConfirm: remove(tracker.id),
-                            });
+                            setTrackerToDelete(tracker.id);
+                            setDeleteDialogOpen(true);
                           }}
                         >
                           <span className="icon is-small">
@@ -282,6 +280,20 @@ export default function TrackersPage(pageProps: any) {
             </div>
           </div>
         )}
+
+        <DeleteConfirmationDialog
+          open={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+          title="Delete Tracker"
+          description="Are you sure you want to delete this tracker? This action cannot be undone."
+          onConfirm={async () => {
+            if (trackerToDelete) {
+              await remove(trackerToDelete)();
+              setDeleteDialogOpen(false);
+              setTrackerToDelete(null);
+            }
+          }}
+        />
       </>
     );
   };
@@ -290,9 +302,7 @@ export default function TrackersPage(pageProps: any) {
     <>
       <TrackerModalProvider>
         <TrackingPreview>
-          <ConfirmModal>
-            <Component />
-          </ConfirmModal>
+          <Component />
         </TrackingPreview>
       </TrackerModalProvider>
     </>
