@@ -24,9 +24,9 @@ const ContextProviders = bundleContexts([
   ModalProvider,
 ]);
 
-export default function Page(pageProps: any) {
+export default function Page(pageProps: { params: Promise<{ id?: string }> }) {
   const Component = (): JSX.Element => {
-    const params = pageProps.params || {};
+    const params = React.use(pageProps.params || Promise.resolve({}));
     const { id } = params;
     const loader = useLoader();
     const [ready, setReady] = useState<boolean>(false);
