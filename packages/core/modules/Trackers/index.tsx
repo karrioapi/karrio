@@ -2,7 +2,7 @@
 import {
   TrackerModalProvider,
   useTrackerModal,
-} from "@karrio/ui/core/modals/track-shipment-modal";
+} from "@karrio/ui/components/track-shipment-dialog";
 import {
   TrackingPreview,
   useTrackingPreview,
@@ -125,12 +125,13 @@ export default function TrackersPage(pageProps: any) {
           </div>
           <div className="flex flex-row items-center gap-1 flex-wrap">
             <TrackersFilter context={context} />
-            <button
-              className="button is-small is-primary ml-1"
+            <Button 
+              size="sm" 
+              className="mx-1 w-auto"
               onClick={() => addTracker({ onChange: updateFilter })}
             >
-              <span>Track a Shipment</span>
-            </button>
+              Track a Shipment
+            </Button>
           </div>
         </header>
 
