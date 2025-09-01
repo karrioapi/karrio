@@ -19,6 +19,7 @@ import { useTrackerMutation, useTrackers } from "@karrio/hooks/tracker";
 import { TrackersFilter } from "@karrio/ui/core/filters/trackers-filter";
 import { FiltersCard } from "@karrio/ui/components/filters-card";
 import { StickyTableWrapper } from "@karrio/ui/components/sticky-table-wrapper";
+import { ListPagination } from "@karrio/ui/components/list-pagination";
 import { 
   Table, 
   TableHeader, 
@@ -260,31 +261,16 @@ export default function TrackersPage(pageProps: any) {
               </Table>
             </StickyTableWrapper>
 
-            <div className="px-2 py-2 is-vcentered">
-              <span className="is-size-7 has-text-weight-semibold">
-                {(trackers?.edges || []).length} results
-              </span>
-
-              <div className="buttons has-addons is-centered is-pulled-right">
-                <button
-                  className="button is-small"
-                  onClick={() =>
-                    updateFilter({ offset: (filter.offset as number) - 20 })
-                  }
-                  disabled={filter.offset == 0}
-                >
-                  Previous
-                </button>
-                <button
-                  className="button is-small"
-                  onClick={() =>
-                    updateFilter({ offset: (filter.offset as number) + 20 })
-                  }
-                  disabled={!trackers?.page_info.has_next_page}
-                >
-                  Next
-                </button>
-              </div>
+            {/* Sticky Footer */}
+            <div className="sticky bottom-0 left-0 right-0 z-10 bg-white border-t border-gray-200 pb-16 md:pb-0">
+              <ListPagination
+                currentOffset={filter.offset as number || 0}
+                pageSize={20}
+                totalCount={trackers?.page_info?.count || 0}
+                hasNextPage={trackers?.page_info?.has_next_page || false}
+                onPageChange={(offset) => updateFilter({ offset })}
+                className="px-2 py-3"
+              />
             </div>
           </>
         )}
