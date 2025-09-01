@@ -16,7 +16,7 @@ import {
   preventPropagation,
 } from "@karrio/lib";
 import { useTrackerMutation, useTrackers } from "@karrio/hooks/tracker";
-import { TrackersFilter } from "@karrio/ui/core/filters/trackers-filter";
+import { TrackersFilter } from "@karrio/ui/components/trackers-filter";
 import { FiltersCard } from "@karrio/ui/components/filters-card";
 import { StickyTableWrapper } from "@karrio/ui/components/sticky-table-wrapper";
 import { ListPagination } from "@karrio/ui/components/list-pagination";
