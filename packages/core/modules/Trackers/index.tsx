@@ -77,9 +77,11 @@ export default function TrackersPage(pageProps: any) {
 
     return (
       <>
-        <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
-          <span className="title is-4">Trackers</span>
-          <div>
+        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-0 pb-0 pt-4 mb-2">
+          <div className="mb-4 sm:mb-0">
+            <h1 className="text-2xl font-semibold text-gray-900">Trackers</h1>
+          </div>
+          <div className="flex flex-row items-center gap-1 flex-wrap">
             <TrackersFilter context={context} />
             <button
               className="button is-small is-primary ml-1"
