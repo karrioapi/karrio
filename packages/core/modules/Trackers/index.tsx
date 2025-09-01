@@ -16,6 +16,7 @@ import {
 } from "@karrio/lib";
 import { useTrackerMutation, useTrackers } from "@karrio/hooks/tracker";
 import { TrackersFilter } from "@karrio/ui/core/filters/trackers-filter";
+import { FiltersCard } from "@karrio/ui/components/filters-card";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { StatusBadge } from "@karrio/ui/core/components/status-badge";
 import { useLoader } from "@karrio/ui/core/components/loader";
@@ -57,6 +58,34 @@ export default function TrackersPage(pageProps: any) {
 
       setFilter(query);
     };
+    
+    // Define filter options for the cards
+    const getFilterOptions = () => [
+      {
+        label: "All",
+        value: []
+      },
+      {
+        label: "In-Transit", 
+        value: ["in_transit", "on_hold", "out_for_delivery", "ready_for_pickup"]
+      },
+      {
+        label: "Pending",
+        value: ["pending"]
+      },
+      {
+        label: "Exception",
+        value: ["delivery_delayed", "delivery_failed", "on_hold"]
+      },
+      {
+        label: "Delivered",
+        value: ["delivered"]
+      },
+      {
+        label: "Failed",
+        value: ["delivery_failed", "unknown"]
+      }
+    ];
 
     useEffect(() => {
       updateFilter();
@@ -92,96 +121,11 @@ export default function TrackersPage(pageProps: any) {
           </div>
         </header>
 
-        <div className="tabs">
-          <ul>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${isNone(filter?.status) ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !isNone(filter?.status) &&
-                  updateFilter({ status: null, offset: 0 })
-                }
-              >
-                all
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${filter?.status?.includes("in_transit") ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !filter?.status?.includes("in_transit") &&
-                  updateFilter({
-                    status: [
-                      "in_transit",
-                      "on_hold",
-                      "out_for_delivery",
-                      "ready_for_pickup",
-                    ],
-                    offset: 0,
-                  })
-                }
-              >
-                in-transit
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${filter?.status?.includes("pending") ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !filter?.status?.includes("pending") &&
-                  updateFilter({ status: ["pending"], offset: 0 })
-                }
-              >
-                pending
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${filter?.status?.includes("delivery_delayed") ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !filter?.status?.includes("delivery_delayed") &&
-                  updateFilter({
-                    status: ["delivery_delayed", "delivery_failed", "on_hold"],
-                    offset: 0,
-                  })
-                }
-              >
-                exception
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${filter?.status?.includes("delivered") ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !filter?.status?.includes("delivered") &&
-                  updateFilter({ status: ["delivered"], offset: 0 })
-                }
-              >
-                delivered
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${filter?.status?.includes("unknown") ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !filter?.status?.includes("unknown") &&
-                  updateFilter({
-                    status: ["delivery_failed", "unknown"],
-                    offset: 0,
-                  })
-                }
-              >
-                failed
-              </a>
-            </li>
-          </ul>
-        </div>
+        <FiltersCard
+          filters={getFilterOptions()}
+          activeFilter={filter?.status || []}
+          onFilterChange={(status) => updateFilter({ status: status.length > 0 ? status : null, offset: 0 })}
+        />
 
         {!query.isFetched && query.isFetching && <Spinner />}
 
