@@ -13,10 +13,21 @@ import {
   getURLSearchParams,
   isNone,
   isNoneOrEmpty,
+  preventPropagation,
 } from "@karrio/lib";
 import { useTrackerMutation, useTrackers } from "@karrio/hooks/tracker";
 import { TrackersFilter } from "@karrio/ui/core/filters/trackers-filter";
 import { FiltersCard } from "@karrio/ui/components/filters-card";
+import { StickyTableWrapper } from "@karrio/ui/components/sticky-table-wrapper";
+import { 
+  Table, 
+  TableHeader, 
+  TableBody, 
+  TableHead, 
+  TableRow, 
+  TableCell 
+} from "@karrio/ui/components/ui/table";
+import { Button } from "@karrio/ui/components/ui/button";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { StatusBadge } from "@karrio/ui/core/components/status-badge";
 import { useLoader } from "@karrio/ui/core/components/loader";
@@ -131,25 +142,31 @@ export default function TrackersPage(pageProps: any) {
 
         {query.isFetched && (trackers?.edges || []).length > 0 && (
           <>
-            <div className="table-container pb-3">
-              <table className="trackers-table table is-fullwidth">
-                <tbody className="trackers-table">
-                  <tr>
-                    <td className="service is-size-7">SHIPPING SERVICE</td>
-                    <td className="status"></td>
-                    <td className="last-event is-size-7">LAST EVENT</td>
-                    <td className="date is-size-7"></td>
-                    <td className="action"></td>
-                  </tr>
+            <StickyTableWrapper>
+              <Table className="trackers-table">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="service text-xs items-center">
+                      SHIPPING SERVICE
+                    </TableHead>
+                    <TableHead className="status items-center"></TableHead>
+                    <TableHead className="last-event text-xs items-center">
+                      LAST EVENT
+                    </TableHead>
+                    <TableHead className="date text-xs items-center">DATE</TableHead>
+                    <TableHead className="action sticky-right"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
 
                   {(trackers?.edges || []).map(({ node: tracker }) => (
-                    <tr
+                    <TableRow
                       key={tracker.id}
-                      className="items"
+                      className="items cursor-pointer transition-colors duration-150 ease-in-out hover:bg-gray-50"
                       onClick={() => previewTracker(tracker)}
                     >
-                      <td className="service is-vcentered py-1 px-0 is-size-7 has-text-weight-bold has-text-grey">
-                        <div className="icon-text">
+                      <TableCell className="service items-center py-1 px-0 text-xs font-bold text-gray-600">
+                        <div className="flex items-center">
                           <CarrierImage
                             carrier_name={
                               tracker.meta?.carrier || tracker.carrier_name
@@ -168,7 +185,7 @@ export default function TrackersPage(pageProps: any) {
                             className="text-ellipsis"
                             style={{ maxWidth: "190px", lineHeight: "16px" }}
                           >
-                            <span className="has-text-info has-text-weight-bold">
+                            <span className="text-blue-600 font-bold">
                               {tracker.tracking_number}
                             </span>
                             <br />
@@ -182,14 +199,14 @@ export default function TrackersPage(pageProps: any) {
                             </span>
                           </div>
                         </div>
-                      </td>
-                      <td className="status is-vcentered">
+                      </TableCell>
+                      <TableCell className="status items-center">
                         <StatusBadge
                           status={tracker.status as string}
                           style={{ width: "100%" }}
                         />
-                      </td>
-                      <td className="last-event is-vcentered py-1 last-event is-size-7 has-text-weight-bold has-text-grey text-ellipsis">
+                      </TableCell>
+                      <TableCell className="last-event items-center py-1 text-xs font-bold text-gray-600 text-ellipsis">
                         <span
                           className="text-ellipsis"
                           title={
@@ -206,19 +223,21 @@ export default function TrackersPage(pageProps: any) {
                               (tracker?.events as TrackingEvent[])[0],
                             )}
                         </span>
-                      </td>
-                      <td className="date is-vcentered has-text-right">
-                        <p className="is-size-7 has-text-weight-semibold has-text-grey">
+                      </TableCell>
+                      <TableCell className="date items-center text-right">
+                        <p className="text-xs font-semibold text-gray-600">
                           {isNoneOrEmpty(tracker?.events)
                             ? ""
                             : formatEventDate(
                               (tracker?.events as TrackingEvent[])[0],
                             )}
                         </p>
-                      </td>
-                      <td className="action is-vcentered p-1">
-                        <button
-                          className="button is-white is-pulled-right"
+                      </TableCell>
+                      <TableCell className="action items-center p-1 sticky-right">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="ml-auto"
                           onClick={(e) => {
                             e.stopPropagation();
                             confirmDeletion({
@@ -231,13 +250,13 @@ export default function TrackersPage(pageProps: any) {
                           <span className="icon is-small">
                             <i className="fas fa-trash"></i>
                           </span>
-                        </button>
-                      </td>
-                    </tr>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
-            </div>
+                </TableBody>
+              </Table>
+            </StickyTableWrapper>
 
             <div className="px-2 py-2 is-vcentered">
               <span className="is-size-7 has-text-weight-semibold">
