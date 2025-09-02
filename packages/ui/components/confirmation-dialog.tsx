@@ -44,7 +44,7 @@ export function ConfirmationDialog({
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
+        <AlertDialogFooter className="!flex-row !justify-center gap-3 sm:!justify-end">
           <AlertDialogCancel disabled={isLoading}>
             {cancelLabel}
           </AlertDialogCancel>
