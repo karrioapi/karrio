@@ -35,6 +35,7 @@ import { useLoader } from "@karrio/ui/core/components/loader";
 import { Spinner } from "@karrio/ui/core/components/spinner";
 import { TrackingEvent } from "@karrio/types/rest/api";
 import { useSearchParams } from "next/navigation";
+import { Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 
@@ -249,9 +250,7 @@ export default function TrackersPage(pageProps: any) {
                             setDeleteDialogOpen(true);
                           }}
                         >
-                          <span className="icon is-small">
-                            <i className="fas fa-trash"></i>
-                          </span>
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -275,8 +274,8 @@ export default function TrackersPage(pageProps: any) {
         )}
 
         {query.isFetched && (trackers?.edges || []).length == 0 && (
-          <div className="card my-6">
-            <div className="card-content has-text-centered">
+          <div className="bg-white rounded-lg shadow-sm border my-6">
+            <div className="p-6 text-center">
               <p>No shipment trackers found.</p>
             </div>
           </div>
