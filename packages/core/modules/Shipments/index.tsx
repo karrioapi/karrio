@@ -19,16 +19,28 @@ import {
 import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
-import { ShipmentsFilter } from "@karrio/ui/core/filters/shipments-filter";
+import { ShipmentsFilter } from "@karrio/ui/components/shipments-filter";
 import { AddressType, RateType, ShipmentType } from "@karrio/types";
 import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
+import { FiltersCard } from "@karrio/ui/components/filters-card";
+import { ListPagination } from "@karrio/ui/components/list-pagination";
+import { StickyTableWrapper } from "@karrio/ui/components/sticky-table-wrapper";
+import { 
+  Table, 
+  TableHeader, 
+  TableBody, 
+  TableHead, 
+  TableRow, 
+  TableCell 
+} from "@karrio/ui/components/ui/table";
+import { Button } from "@karrio/ui/components/ui/button";
+import { Checkbox } from "@karrio/ui/components/ui/checkbox";
+import { Skeleton } from "@karrio/ui/components/ui/skeleton";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
-import { StatusBadge } from "@karrio/ui/core/components/status-badge";
-import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
+import { ShipmentsStatusBadge } from "@karrio/ui/components/shipments-status-badge";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { AppLink } from "@karrio/ui/core/components/app-link";
-import { Spinner } from "@karrio/ui/core/components/spinner";
 import { useShipments } from "@karrio/hooks/shipment";
 import React, { useContext, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
@@ -99,8 +111,7 @@ export default function Page(pageProps: any) {
         setSelection(selection);
       }
     };
-    const handleSelection = (e: React.ChangeEvent) => {
-      const { checked, name } = e.target as HTMLInputElement;
+    const handleCheckboxChange = (checked: boolean, name: string) => {
       if (name === "all") {
         setSelection(
           !checked
@@ -156,6 +167,34 @@ export default function Page(pageProps: any) {
           _.id === (rate?.meta as any)?.carrier_connection_id ||
           _.carrier_id === rate?.carrier_id,
       );
+    
+    // Define filter options for the cards
+    const getFilterOptions = () => [
+      {
+        label: "All",
+        value: ["purchased", "delivered", "in_transit", "cancelled", "needs_attention", "out_for_delivery", "delivery_failed"]
+      },
+      {
+        label: "Purchased", 
+        value: ["purchased", "in_transit", "out_for_delivery"]
+      },
+      {
+        label: "Delivered",
+        value: ["delivered"]
+      },
+      {
+        label: "Exception",
+        value: ["needs_attention", "delivery_failed"]
+      },
+      {
+        label: "Cancelled", 
+        value: ["cancelled"]
+      },
+      {
+        label: "Draft",
+        value: ["draft"]
+      }
+    ];
 
     useEffect(() => {
       updateFilter();
@@ -179,231 +218,171 @@ export default function Page(pageProps: any) {
 
     return (
       <>
-        <header className="columns px-0 pb-0 pt-4">
-          <div className="column">
-            <span className="title is-4">Shipments</span>
+        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-0 pb-0 pt-4 mb-2">
+          <div className="mb-4 sm:mb-0">
+            <h1 className="text-2xl font-semibold text-gray-900">Shipments</h1>
           </div>
-          <div className="column has-text-right">
-            <AppLink
-              href="/create_label?shipment_id=new"
-              className="button is-primary is-small mx-1"
-            >
-              <span>Create Label</span>
-            </AppLink>
-            <AppLink
-              href="/manifests/create_manifests"
-              className="button is-primary is-small mx-1"
-            >
-              <span>Manage manifests</span>
-            </AppLink>
+          <div className="flex flex-row items-center gap-1 flex-wrap">
+            <Button asChild size="sm" className="mx-1 w-auto">
+              <AppLink href="/create_label?shipment_id=new">
+                Create Label
+              </AppLink>
+            </Button>
+            <Button asChild size="sm" className="mx-1 w-auto">
+              <AppLink href="/manifests/create_manifests">
+                Manage manifests
+              </AppLink>
+            </Button>
             <ShipmentsFilter context={context} />
           </div>
         </header>
 
-        <div className="tabs">
-          <ul>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${isListEqual(filter?.status || [], ["purchased", "delivered", "in_transit", "cancelled", "needs_attention", "out_for_delivery", "delivery_failed"]) ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  updateFilter({
-                    status: [
-                      "purchased",
-                      "delivered",
-                      "in_transit",
-                      "cancelled",
-                      "needs_attention",
-                      "out_for_delivery",
-                      "delivery_failed",
-                    ],
-                    offset: 0,
-                  })
-                }
-              >
-                all
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${isListEqual(filter?.status || [], ["purchased", "in_transit", "out_for_delivery"]) ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  updateFilter({
-                    status: ["purchased", "in_transit", "out_for_delivery"],
-                    offset: 0,
-                  })
-                }
-              >
-                purchased
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${filter?.status?.includes("delivered" as any) && filter?.status?.length === 1 ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  updateFilter({ status: ["delivered"], offset: 0 })
-                }
-              >
-                delivered
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${filter?.status?.includes("needs_attention" as any) && filter?.status?.length === 2 ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  updateFilter({
-                    status: ["needs_attention", "delivery_failed"],
-                    offset: 0,
-                  })
-                }
-              >
-                exception
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${filter?.status?.includes("cancelled" as any) && filter?.status?.length === 1 ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  updateFilter({ status: ["cancelled"], offset: 0 })
-                }
-              >
-                cancelled
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${filter?.status?.includes("draft" as any) && filter?.status?.length === 1 ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !filter?.status?.includes("draft" as any) &&
-                  updateFilter({ status: ["draft"], offset: 0 })
-                }
-              >
-                draft
-              </a>
-            </li>
-          </ul>
-        </div>
+        <FiltersCard
+          filters={getFilterOptions()}
+          activeFilter={filter?.status || []}
+          onFilterChange={(status) => updateFilter({ status, offset: 0 })}
+        />
 
-        {!query.isFetched && <Spinner />}
+        {!query.isFetched && (
+          <div className="bg-white rounded-lg shadow-sm border my-6 p-6">
+            <div className="space-y-4">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="flex items-center space-x-4">
+                  <Skeleton className="h-4 w-4" />
+                  <Skeleton className="h-4 w-[100px]" />
+                  <Skeleton className="h-4 w-[80px]" />
+                  <Skeleton className="h-4 w-[120px]" />
+                  <Skeleton className="h-4 w-[100px]" />
+                  <Skeleton className="h-4 w-[80px]" />
+                  <Skeleton className="h-4 w-6" />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {query.isFetched && (shipments?.edges || []).length > 0 && (
           <>
-            <div className="table-container">
-              <table className="shipments-table table is-fullwidth">
-                <tbody>
-                  <tr>
-                    <td
-                      className="selector has-text-centered p-0 control is-vcentered"
-                      onClick={preventPropagation}
-                    >
-                      <label className="checkbox p-2">
-                        <input
-                          name="all"
-                          type="checkbox"
-                          onChange={handleSelection}
-                          checked={allChecked}
-                        />
-                      </label>
-                    </td>
+            <StickyTableWrapper>
+              <Table className="shipments-table">
+              <TableHeader>
+                <TableRow>
+                  <TableHead
+                    className="selector text-center p-0 items-center sticky-left"
+                    onClick={preventPropagation}
+                  >
+                    <div className="py-2 pl-2 pr-4">
+                      <Checkbox
+                        checked={allChecked}
+                        onCheckedChange={(checked) => handleCheckboxChange(checked as boolean, "all")}
+                      />
+                    </div>
+                  </TableHead>
 
-                    {selection.length > 0 && (
-                      <td className="p-1 is-vcentered" colSpan={6}>
-                        <div className="buttons has-addons">
-                          {/* <AppLink
-                            className={`button is-small is-default px-3 ${draftSelection(selection) ? "" : "is-static"}`}
-                            href={`/shipments/create_labels?shipment_ids=${selection.join(",")}`}
-                          >
-                            <span className="has-text-weight-semibold">
-                              Create labels
-                            </span>
-                          </AppLink> */}
+                  {selection.length > 0 && (
+                    <TableHead className="p-2" colSpan={6}>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Button
+                          asChild
+                          variant="outline"
+                          size="sm"
+                          disabled={!compatibleTypeSelection(selection)}
+                          className="px-3"
+                        >
                           <a
                             href={url$`${references.HOST}/documents/shipments/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?shipments=${selection.join(",")}`}
-                            className={`button is-small is-default px-3 ${compatibleTypeSelection(selection) ? "" : "is-static"}`}
                             target="_blank"
                             rel="noreferrer"
                           >
-                            <span className="has-text-weight-semibold">
-                              Print Labels
-                            </span>
+                            Print Labels
                           </a>
+                        </Button>
+                        <Button
+                          asChild
+                          variant="outline"
+                          size="sm"
+                          className="px-3"
+                        >
                           <a
                             href={url$`${references.HOST}/documents/shipments/invoice.pdf?shipments=${selection.join(",")}`}
-                            className={`button is-small is-default px-3`}
                             target="_blank"
                             rel="noreferrer"
                           >
-                            <span className="has-text-weight-semibold">
-                              Print Invoices
-                            </span>
+                            Print Invoices
                           </a>
-                          {(document_templates?.edges || []).map(
-                            ({ node: template }) => (
+                        </Button>
+                        {(document_templates?.edges || []).map(
+                          ({ node: template }) => (
+                            <Button
+                              key={template.id}
+                              asChild
+                              variant="outline"
+                              size="sm"
+                              className="px-3"
+                            >
                               <a
-                                key={template.id}
                                 href={url$`${references.HOST}/documents/templates/${template.id}.${template.slug}?shipments=${selection.join(",")}`}
-                                className="button is-small is-default px-3"
                                 target="_blank"
                                 rel="noreferrer"
                               >
-                                <span className="has-text-weight-semibold">
-                                  Print {template.name}
-                                </span>
+                                Print {template.name}
                               </a>
-                            ),
-                          )}
-                        </div>
-                      </td>
-                    )}
+                            </Button>
+                          ),
+                        )}
+                      </div>
+                    </TableHead>
+                  )}
 
-                    {selection.length === 0 && (
-                      <>
-                        <td className="service is-size-7 is-vcentered">
-                          SHIPPING SERVICE
-                        </td>
-                        <td className="status is-vcentered"></td>
-                        <td className="recipient is-size-7 is-vcentered">
-                          RECIPIENT
-                        </td>
-                        <td className="reference is-size-7 is-vcentered">
-                          REFERENCE
-                        </td>
-                        <td className="date is-size-7 is-vcentered">DATE</td>
-                        <td className="action"></td>
-                      </>
-                    )}
-                  </tr>
-
-                  {(shipments?.edges || []).map(({ node: shipment }) => (
-                    <tr key={shipment.id} className="items is-clickable">
-                      <td className="selector has-text-centered is-vcentered p-0">
-                        <label className="checkbox py-3 px-2">
-                          <input
-                            type="checkbox"
-                            name={shipment.id}
-                            onChange={handleSelection}
-                            checked={selection.includes(shipment.id)}
-                          />
-                        </label>
-                      </td>
-                      <td
-                        className="service is-vcentered py-1 px-0 is-size-7 has-text-weight-bold has-text-grey"
-                        onClick={() => previewShipment(shipment.id)}
-                        title={
-                          isNone(getRate(shipment))
-                            ? "UNFULFILLED"
-                            : formatRef(
-                              ((shipment.meta as any)?.service_name ||
-                                getRate(shipment).service) as string,
-                            )
-                        }
-                      >
-                        <div className="icon-text">
+                  {selection.length === 0 && (
+                    <>
+                      <TableHead className="service text-xs items-center">
+                        SHIPPING SERVICE
+                      </TableHead>
+                      <TableHead className="status items-center"></TableHead>
+                      <TableHead className="recipient text-xs items-center">
+                        RECIPIENT
+                      </TableHead>
+                      <TableHead className="reference text-xs items-center">
+                        REFERENCE
+                      </TableHead>
+                      <TableHead className="date text-xs items-center">DATE</TableHead>
+                      <TableHead className="action sticky-right"></TableHead>
+                    </>
+                  )}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {(shipments?.edges || []).map(({ node: shipment }) => (
+                  <TableRow 
+                    key={shipment.id} 
+                    className={`items cursor-pointer transition-colors duration-150 ease-in-out ${
+                      selection.includes(shipment.id) 
+                        ? 'bg-blue-50 hover:bg-blue-100' 
+                        : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    <TableCell className="selector text-center items-center p-0 sticky-left">
+                      <div className="py-3 pl-2 pr-4">
+                        <Checkbox
+                          checked={selection.includes(shipment.id)}
+                          onCheckedChange={(checked) => handleCheckboxChange(checked as boolean, shipment.id)}
+                        />
+                      </div>
+                    </TableCell>
+                    <TableCell
+                      className="service items-center py-1 px-0 text-xs font-bold text-gray-600"
+                      onClick={() => previewShipment(shipment.id)}
+                      title={
+                        isNone(getRate(shipment))
+                          ? "UNFULFILLED"
+                          : formatRef(
+                            ((shipment.meta as any)?.service_name ||
+                              getRate(shipment).service) as string,
+                          )
+                      }
+                    >
+                        <div className="flex items-center">
                           <CarrierImage
                             carrier_name={
                               shipment.meta?.carrier ||
@@ -431,7 +410,7 @@ export default function Page(pageProps: any) {
                             className="text-ellipsis"
                             style={{ maxWidth: "190px", lineHeight: "16px" }}
                           >
-                            <span className="has-text-info has-text-weight-bold">
+                            <span className="text-blue-600 font-bold">
                               {!isNone(shipment.tracking_number) && (
                                 <span>{shipment.tracking_number}</span>
                               )}
@@ -452,20 +431,22 @@ export default function Page(pageProps: any) {
                             </span>
                           </div>
                         </div>
-                      </td>
-                      <td
-                        className="status is-vcentered"
-                        onClick={() => previewShipment(shipment.id)}
-                      >
-                        <StatusBadge
+                    </TableCell>
+                    <TableCell
+                      className="status items-center"
+                      onClick={() => previewShipment(shipment.id)}
+                    >
+                      <div style={{ paddingLeft: '7px', paddingRight: '7px' }}>
+                        <ShipmentsStatusBadge
                           status={shipment.status as string}
-                          style={{ width: "100%" }}
+                          className="w-full justify-center text-center"
                         />
-                      </td>
-                      <td
-                        className="recipient is-vcentered is-size-7 has-text-weight-bold has-text-grey is-relative"
-                        onClick={() => previewShipment(shipment.id)}
-                      >
+                      </div>
+                    </TableCell>
+                    <TableCell
+                      className="recipient items-center text-xs font-bold text-gray-600 relative"
+                      onClick={() => previewShipment(shipment.id)}
+                    >
                         <div
                           className="p-2"
                           style={{
@@ -485,71 +466,56 @@ export default function Page(pageProps: any) {
                               shipment.recipient as AddressType,
                             )}
                           </p>
-                          <p className="has-text-weight-medium">
+                          <p className="font-medium">
                             {formatAddressLocationShort(
                               shipment.recipient as AddressType,
                             )}
                           </p>
                         </div>
-                      </td>
-                      <td
-                        className="reference is-vcentered is-size-7 has-text-weight-bold has-text-grey text-ellipsis"
-                        onClick={() => previewShipment(shipment.id)}
-                      >
-                        <span>{shipment.reference || ""}</span>
-                      </td>
-                      <td
-                        className="date is-vcentered px-1"
-                        onClick={() => previewShipment(shipment.id)}
-                      >
-                        <p className="is-size-7 has-text-weight-semibold has-text-grey">
-                          {formatDateTime(shipment.created_at)}
-                        </p>
-                      </td>
-                      <td className="action is-vcentered px-0">
-                        <ShipmentMenu
-                          shipment={shipment as any}
-                          className="is-fullwidth"
-                        />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                    </TableCell>
+                    <TableCell
+                      className="reference items-center text-xs font-bold text-gray-600 text-ellipsis"
+                      onClick={() => previewShipment(shipment.id)}
+                    >
+                      <span>{shipment.reference || ""}</span>
+                    </TableCell>
+                    <TableCell
+                      className="date items-center px-1"
+                      onClick={() => previewShipment(shipment.id)}
+                    >
+                      <p className="text-xs font-semibold text-gray-600">
+                        {formatDateTime(shipment.created_at)}
+                      </p>
+                    </TableCell>
+                    <TableCell className="action items-center px-0 sticky-right">
+                      <ShipmentMenu
+                        shipment={shipment as any}
+                        className="w-full"
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+              </Table>
+            </StickyTableWrapper>
 
-            <div className="px-2 py-2 is-vcentered">
-              <span className="is-size-7 has-text-weight-semibold">
-                {(shipments?.edges || []).length} results
-              </span>
-
-              <div className="buttons has-addons is-centered is-pulled-right">
-                <button
-                  className="button is-small"
-                  onClick={() =>
-                    updateFilter({ offset: (filter.offset as number) - 20 })
-                  }
-                  disabled={filter.offset == 0}
-                >
-                  Previous
-                </button>
-                <button
-                  className="button is-small"
-                  onClick={() =>
-                    updateFilter({ offset: (filter.offset as number) + 20 })
-                  }
-                  disabled={!shipments?.page_info.has_next_page}
-                >
-                  Next
-                </button>
-              </div>
+            {/* Sticky Footer */}
+            <div className="sticky bottom-0 left-0 right-0 z-10 bg-white border-t border-gray-200 pb-16 md:pb-0">
+              <ListPagination
+                currentOffset={filter.offset as number || 0}
+                pageSize={20}
+                totalCount={shipments?.page_info?.count || 0}
+                hasNextPage={shipments?.page_info?.has_next_page || false}
+                onPageChange={(offset) => updateFilter({ offset })}
+                className="px-2 py-3"
+              />
             </div>
           </>
         )}
 
         {query.isFetched && (shipments?.edges || []).length == 0 && (
-          <div className="card my-6">
-            <div className="card-content has-text-centered">
+          <div className="bg-white rounded-lg shadow-sm border my-6">
+            <div className="p-6 text-center">
               <p>No shipment found.</p>
             </div>
           </div>
@@ -561,9 +527,7 @@ export default function Page(pageProps: any) {
   return (
     <>
       <ShipmentPreview>
-        <ConfirmModal>
-          <Component />
-        </ConfirmModal>
+        <Component />
       </ShipmentPreview>
     </>
   );
