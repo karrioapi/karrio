@@ -6,7 +6,7 @@ import {
   OrderStatusEnum,
 } from "@karrio/types";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
-import { ConfirmationDialog } from "./confirmation-dialog";
+import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 import React, { useState } from "react";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useOrderMutation } from "@karrio/hooks/order";
@@ -211,12 +211,13 @@ export const OrderMenu = ({
       </DropdownMenu>
 
       {confirmAction && (
-        <ConfirmationDialog
+        <DeleteConfirmationDialog
           open={confirmDialogOpen}
           onOpenChange={setConfirmDialogOpen}
           title={confirmAction.title}
           description={confirmAction.description}
-          confirmLabel={confirmAction.confirmLabel}
+          confirmLabel={confirmAction.title === "Cancel Order" ? "Cancel" : undefined}
+          cancelLabel={confirmAction.title === "Cancel Order" ? "Go Back" : undefined}
           onConfirm={handleConfirm}
         />
       )}
