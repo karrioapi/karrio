@@ -9,7 +9,7 @@ import {
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
 import { formatRef, isNone, isNoneOrEmpty, p, url$ } from "@karrio/lib";
 import { useShipmentMutation } from "@karrio/hooks/shipment";
-import { ConfirmationDialog } from "./confirmation-dialog";
+import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 import React, { useState } from "react";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useRouter } from "next/navigation";
@@ -328,12 +328,13 @@ export const ShipmentMenu = ({
       </DropdownMenu>
 
       {confirmAction && (
-        <ConfirmationDialog
+        <DeleteConfirmationDialog
           open={confirmDialogOpen}
           onOpenChange={setConfirmDialogOpen}
           title={confirmAction.title}
           description={confirmAction.description}
-          confirmLabel={confirmAction.confirmLabel}
+          confirmLabel={confirmAction.title === "Cancel Shipment" ? "Cancel" : confirmAction.confirmLabel}
+          cancelLabel={confirmAction.title === "Cancel Shipment" ? "Go Back" : "Cancel"}
           onConfirm={handleConfirm}
         />
       )}
