@@ -35,7 +35,7 @@ export function DeleteConfirmationDialog({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
-        <DialogFooter className="shrink-0">
+        <DialogFooter className="!flex-row !justify-center gap-3 sm:!justify-end shrink-0">
           <Button
             type="button"
             variant="outline"
