@@ -120,7 +120,7 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
   return (
     <form onSubmit={handleSubmit} className={`space-y-4 ${className}`}>
       {/* Contact Information */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="person_name">
             Contact Person <span className="text-red-500">*</span>
