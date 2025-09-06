@@ -471,6 +471,19 @@ export const CommodityEditDialog = ({
     setCommodity(initialCommodity || DEFAULT_COMMODITY_CONTENT);
   }, [initialCommodity]);
 
+  // always provide fresh state for new operations
+  React.useEffect(() => {
+    if (isOpen) {
+      // always set commodity state when opening
+      const commodityData = initialCommodity || DEFAULT_COMMODITY_CONTENT;
+      setCommodity(commodityData);
+      // Reset maxQty for new operations
+      if (!initialCommodity) {
+        setMaxQty(undefined);
+      }
+    }
+  }, [isOpen, initialCommodity]);
+
   const handleChange = (field: string, value: string | number | boolean | null) => {
     const updatedCommodity = { ...commodity, [field]: value };
     
