@@ -6,7 +6,7 @@ import { CommodityDescription } from "@karrio/ui/components/commodity-descriptio
 import { AddressDescription } from "@karrio/ui/components/address-description";
 import { formatRef, isEqual, isNone, isNoneOrEmpty } from "@karrio/lib";
 import { AddressEditDialog } from "@karrio/ui/components/address-edit-dialog";
-import { PaidByEnum } from "@karrio/types";
+import { PaidByEnum, WeightUnitEnum } from "@karrio/types";
 import { InputField } from "@karrio/ui/components/input-field";
 import { DateInput } from "@karrio/ui/components/date-input";
 import { RadioGroupField } from "@karrio/ui/components/radio-group-field";
@@ -23,6 +23,28 @@ import { Plus, Edit, X } from "lucide-react";
 const ContextProviders = bundleContexts([
   ModalProvider,
 ]);
+
+// Helper function to validate weight units
+const hasValidWeightUnits = (lineItems: any[]) => {
+  if (!lineItems || lineItems.length === 0) return true;
+
+  // Get all unique weight units
+  const weightUnits = Array.from(new Set(
+    lineItems.map(item => item.weight_unit).filter(unit => !isNone(unit))
+  ));
+
+  // If all items have same unit or no units, valid
+  if (weightUnits.length <= 1) return true;
+
+  // Check for KG + G combination (allowed)
+  const hasKG = weightUnits.includes(WeightUnitEnum.KG);
+  const hasG = weightUnits.includes(WeightUnitEnum.G);
+  
+  if (hasKG && hasG && weightUnits.length === 2) return true;
+
+  // All other combinations are invalid
+  return false;
+};
 
 export default function Page(pageProps: { params: Promise<{ id?: string }> }) {
   const Component = (): JSX.Element => {
@@ -82,7 +104,8 @@ export default function Page(pageProps: { params: Promise<{ id?: string }> }) {
                 loading={loader.loading}
                 disabled={
                   isEqual(order, current || DEFAULT_STATE) ||
-                  !order?.shipping_to?.country_code
+                  !order?.shipping_to?.country_code ||
+                  !hasValidWeightUnits(order.line_items || [])
                 }
               >
                 Save
@@ -350,16 +373,53 @@ export default function Page(pageProps: { params: Promise<{ id?: string }> }) {
                         <p className="font-semibold text-xs">
                           TOTAL WEIGHT:{" "}
                           {
-                            <span>
-                              {(order.line_items || []).reduce(
-                                (_, { quantity, weight }) =>
-                                  _ +
-                                  (isNone(quantity) ? 1 : (quantity as any)) *
-                                  (isNone(weight) ? 1.0 : (weight as any)),
-                                0.0,
-                              )}{" "}
-                              {(order.line_items || [])[0]?.weight_unit}
-                            </span>
+                            (() => {
+                              const items = order.line_items || [];
+                              if (items.length === 0) return <span>0</span>;
+
+                              // Get all unique weight units
+                              const weightUnits = Array.from(new Set(
+                                items.map(item => item.weight_unit).filter(unit => !isNone(unit))
+                              ));
+
+                              // If all items have same unit or no units, use simple sum
+                              if (weightUnits.length <= 1) {
+                                const totalWeight = items.reduce(
+                                  (total, { quantity, weight }) =>
+                                    total +
+                                    (isNone(quantity) ? 1 : (quantity as any)) *
+                                    (isNone(weight) ? 1.0 : (weight as any)),
+                                  0.0,
+                                );
+                                return <span>{totalWeight} {weightUnits[0] || items[0]?.weight_unit}</span>;
+                              }
+
+                              // Check for KG + G combination (convert G to KG)
+                              const hasKG = weightUnits.includes(WeightUnitEnum.KG);
+                              const hasG = weightUnits.includes(WeightUnitEnum.G);
+                              
+                              if (hasKG && hasG && weightUnits.length === 2) {
+                                const totalWeightInKG = items.reduce(
+                                  (total, { quantity, weight, weight_unit }) => {
+                                    const qty = isNone(quantity) ? 1 : (quantity as any);
+                                    const wt = isNone(weight) ? 1.0 : (weight as any);
+                                    const itemWeight = qty * wt;
+                                    
+                                    // Convert G to KG if needed
+                                    return total + (weight_unit === WeightUnitEnum.G ? itemWeight / 1000 : itemWeight);
+                                  },
+                                  0.0,
+                                );
+                                return <span>{parseFloat(totalWeightInKG.toFixed(3))} KG</span>;
+                              }
+
+                              // For incompatible combinations, show warning
+                              return (
+                                <span className="text-yellow-600">
+                                  Mixed units ({weightUnits.join(', ')}) - Please standardize
+                                </span>
+                              );
+                            })()
                           }
                         </p>
                       </footer>
