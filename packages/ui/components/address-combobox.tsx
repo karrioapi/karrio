@@ -22,7 +22,7 @@ import { AddressType } from "@karrio/types";
 interface AddressComboboxProps {
   name?: string;
   value?: string;
-  onValueChange?: (value: Partial<AddressType>, refresh?: boolean) => void;
+  onValueChange?: (value: Partial<AddressType>, isTemplateSelection?: boolean) => void;
   placeholder?: string;
   label?: string;
   required?: boolean;
