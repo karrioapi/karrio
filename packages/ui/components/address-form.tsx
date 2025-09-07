@@ -122,17 +122,30 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
       {/* Contact Information */}
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="person_name">
-            Contact Person <span className="text-red-500">*</span>
-          </Label>
-          <Input
-            id="person_name"
+          <AddressCombobox
+            name="person_name"
+            label="Contact Person"
             value={address.person_name || ""}
-            onChange={(e) => handleChange("person_name", e.target.value)}
+            onValueChange={(addressData, isTemplateSelection) => {
+              if (isTemplateSelection) {
+                // Full address template selected, populate all fields
+                Object.entries(addressData).forEach(([field, value]) => {
+                  if (value !== undefined && value !== null && value !== "") {
+                    handleChange(field, String(value));
+                  }
+                });
+              } else {
+                // User typed in the field, only update person_name
+                if (addressData.person_name !== undefined) {
+                  handleChange("person_name", addressData.person_name || "");
+                }
+              }
+            }}
             placeholder="Full name"
             required
             disabled={disabled}
             className="h-8"
+            wrapperClass="p-0"
           />
         </div>
         <div className="space-y-2">
