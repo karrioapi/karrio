@@ -46,7 +46,8 @@ def _extract_details(
     ]
     total_charge = lib.to_money(
         details.totalNetChargeWithDutiesAndTaxes
-        or details.totalNetCharge
+        if details.totalNetChargeWithDutiesAndTaxes is not None
+        else details.totalNetCharge
     )
     estimated_delivery = lib.to_date(getattr(rate.operationalDetail, "commitDate", None), "%Y-%m-%dT%H:%M:%S")
     shipping_date = lib.to_date(ctx.get("shipment_date") or datetime.datetime.now())
