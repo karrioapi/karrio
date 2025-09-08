@@ -51,7 +51,7 @@ export const CommodityEditDialog = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [advancedExpanded, setAdvancedExpanded] = useState(false);
   const [maxQty, setMaxQty] = useState<number | null | undefined>();
-  
+
   const { query } = useOrders({
     first: 10,
     status: ["unfulfilled", "partial"] as any,
@@ -63,14 +63,22 @@ export const CommodityEditDialog = ({
     setCommodity(initialCommodity || DEFAULT_COMMODITY_CONTENT);
   }, [initialCommodity]);
 
+  React.useEffect(() => {
+    if (isOpen && !initialCommodity) {
+      setCommodity(DEFAULT_COMMODITY_CONTENT);
+      setMaxQty(undefined);
+      setAdvancedExpanded(false);
+    }
+  }, [isOpen, initialCommodity]);
+
   const handleChange = (field: string, value: string | number | boolean | null) => {
     const updatedCommodity = { ...commodity, [field]: value };
-    
+
     // Handle value_amount special case
     if (field === "value_amount") {
       updatedCommodity.value_currency = updatedCommodity.value_currency || CurrencyCodeEnum.USD;
     }
-    
+
     setCommodity(updatedCommodity);
   };
 
@@ -97,13 +105,13 @@ export const CommodityEditDialog = ({
       setMaxQty(undefined);
       return;
     }
-    
+
     const {
       id: parent_id,
       unfulfilled_quantity: quantity,
       ...content
     } = item;
-    
+
     setMaxQty(quantity);
     setCommodity({
       ...commodity,
@@ -127,7 +135,7 @@ export const CommodityEditDialog = ({
       {React.cloneElement(trigger, {
         onClick: () => setIsOpen(true),
       })}
-      
+
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] p-0 flex flex-col">
           {/* Sticky Header */}
@@ -171,7 +179,7 @@ export const CommodityEditDialog = ({
                   </Label>
                   <Input
                     id="title"
-                    placeholder="IPod Nano"
+                    placeholder="Product Name"
                     value={commodity?.title || ""}
                     onChange={(e) => handleChange("title", e.target.value)}
                     disabled={!isNone(commodity?.parent_id)}
@@ -184,7 +192,7 @@ export const CommodityEditDialog = ({
                   <Label htmlFor="hs_code" className="text-sm font-medium">HS Code</Label>
                   <Input
                     id="hs_code"
-                    placeholder="000000"
+                    placeholder="0000.00.00.00"
                     value={commodity?.hs_code || ""}
                     onChange={(e) => handleChange("hs_code", e.target.value)}
                     disabled={!isNone(commodity?.parent_id)}
@@ -380,9 +388,9 @@ export const CommodityEditDialog = ({
 
             {/* Sticky Footer */}
             <DialogFooter className="px-4 py-3 border-t sticky bottom-0 bg-background">
-              <Button 
-                type="button" 
-                variant="outline" 
+              <Button
+                type="button"
+                variant="outline"
                 onClick={() => setIsOpen(false)}
               >
                 Cancel

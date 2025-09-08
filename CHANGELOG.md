@@ -1,3 +1,21 @@
+# Karrio 2025.5rc20
+
+## Changes
+
+### Feat
+
+- feat: improve the new shadcn based notifier error parsing
+- feat: add tracing to connectors with oauth suppport
+- feat: improve ups proxy auth error parsing
+- feat: migrate draft order form to shadcn and improve state management
+- feat: migrate shipments list and page to shadcn
+- feat: migrate orders list and page to shadcn
+- feat: migrate trackers list and page to shadcn
+
+### Fix
+
+- fix: fedex rates parsing condition to use explicit None check
+
 # Karrio 2025.5rc19
 
 ## Changes

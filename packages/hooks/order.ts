@@ -294,7 +294,7 @@ export function useOrderForm({ id = "new" }: { id?: string }) {
         item.parent_id === data.parent_id ||
         item.sku === data.sku ||
         item.hs_code === data.hs_code ||
-        item.id === data.id,
+        (item.id && data.id && item.id === data.id),
     );
     const update = {
       line_items: !item
@@ -303,7 +303,7 @@ export function useOrderForm({ id = "new" }: { id?: string }) {
           item.parent_id === data.parent_id ||
             item.sku === data.sku ||
             item.hs_code === data.hs_code ||
-            item.id === data.id
+            (item.id && data.id && item.id === data.id)
             ? { ...item, ...data }
             : item,
         ),
@@ -315,7 +315,7 @@ export function useOrderForm({ id = "new" }: { id?: string }) {
       async (data: OrderDataType["line_items"][0], change?: ChangeType) => {
         const update = {
           line_items: order.line_items.map(({ ...item }, idx) =>
-            item.id === item_id || idx === index ? data : item,
+            (item.id && item_id && item.id === item_id) || idx === index ? data : item,
           ),
         };
         updateOrder(update as any, change);
