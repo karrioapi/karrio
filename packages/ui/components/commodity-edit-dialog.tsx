@@ -9,13 +9,9 @@ import {
 import {
   CurrencyCodeEnum,
   DEFAULT_COMMODITY_CONTENT,
-  MetadataObjectTypeEnum,
   WeightUnitEnum,
 } from "@karrio/types";
-import {
-  MetadataEditor,
-  MetadataEditorContext,
-} from "@karrio/ui/core/forms/metadata-editor";
+import { EnhancedMetadataEditor } from "@karrio/ui/components/enhanced-metadata-editor";
 import { isEqual, isNone } from "@karrio/lib";
 import { CommodityType, CURRENCY_OPTIONS, WEIGHT_UNITS } from "@karrio/types";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
@@ -26,8 +22,6 @@ import { Label } from "@karrio/ui/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
 import { CountrySelect } from "@karrio/ui/components/country-select";
 import { Textarea } from "@karrio/ui/components/ui/textarea";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@karrio/ui/components/ui/collapsible";
-import { ChevronDown, ChevronUp } from "lucide-react";
 import { useOrders } from "@karrio/hooks/order";
 
 export interface CommodityEditDialogProps {
@@ -36,6 +30,11 @@ export interface CommodityEditDialogProps {
   onSubmit: (commodity: CommodityType) => Promise<any>;
   orderFilter?: any;
 }
+
+// Helper function to check if parent_id represents a real linked item vs temporary unlinked item
+const isRealLinkedItem = (parent_id?: string | null): boolean => {
+  return !isNone(parent_id) && !parent_id?.startsWith('unlinked_');
+};
 
 export const CommodityEditDialog = ({
   trigger,
@@ -49,7 +48,6 @@ export const CommodityEditDialog = ({
     initialCommodity || DEFAULT_COMMODITY_CONTENT
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [advancedExpanded, setAdvancedExpanded] = useState(false);
   const [maxQty, setMaxQty] = useState<number | null | undefined>();
 
   const { query } = useOrders({
@@ -63,11 +61,16 @@ export const CommodityEditDialog = ({
     setCommodity(initialCommodity || DEFAULT_COMMODITY_CONTENT);
   }, [initialCommodity]);
 
+  // always provide fresh state for new operations
   React.useEffect(() => {
-    if (isOpen && !initialCommodity) {
-      setCommodity(DEFAULT_COMMODITY_CONTENT);
-      setMaxQty(undefined);
-      setAdvancedExpanded(false);
+    if (isOpen) {
+      // always set commodity state when opening
+      const commodityData = initialCommodity || DEFAULT_COMMODITY_CONTENT;
+      setCommodity(commodityData);
+      // Reset maxQty for new operations
+      if (!initialCommodity) {
+        setMaxQty(undefined);
+      }
     }
   }, [isOpen, initialCommodity]);
 
@@ -164,7 +167,18 @@ export const CommodityEditDialog = ({
                       }
                     }}
                     onUnlink={() => {
-                      handleChange("parent_id", null);
+                      const timestamp = Date.now();
+                      const randomId = Math.random().toString(36).substr(2, 9);
+                      const tempParentId = `unlinked_${timestamp}_${randomId}`;
+
+                      // Create updated commodity object with both changes
+                      const updates: any = { parent_id: tempParentId };
+                      if (!commodity?.id) {
+                        updates.id = `temp_${timestamp}_${randomId}`;
+                      }
+
+                      // Single state update with all changes
+                      setCommodity({ ...commodity, ...updates });
                       setMaxQty(undefined);
                     }}
                     query={query}
@@ -179,10 +193,10 @@ export const CommodityEditDialog = ({
                   </Label>
                   <Input
                     id="title"
-                    placeholder="Product Name"
+                    placeholder="IPod Nano"
                     value={commodity?.title || ""}
                     onChange={(e) => handleChange("title", e.target.value)}
-                    disabled={!isNone(commodity?.parent_id)}
+                    disabled={isRealLinkedItem(commodity?.parent_id)}
                     maxLength={35}
                     className="h-8"
                   />
@@ -192,10 +206,10 @@ export const CommodityEditDialog = ({
                   <Label htmlFor="hs_code" className="text-sm font-medium">HS Code</Label>
                   <Input
                     id="hs_code"
-                    placeholder="0000.00.00.00"
+                    placeholder="000000"
                     value={commodity?.hs_code || ""}
                     onChange={(e) => handleChange("hs_code", e.target.value)}
-                    disabled={!isNone(commodity?.parent_id)}
+                    disabled={isRealLinkedItem(commodity?.parent_id)}
                     maxLength={35}
                     className="h-8"
                   />
@@ -209,7 +223,7 @@ export const CommodityEditDialog = ({
                       value={commodity?.sku || ""}
                       onChange={(e) => handleChange("sku", e.target.value)}
                       placeholder="0000001"
-                      disabled={!isNone(commodity?.parent_id)}
+                      disabled={isRealLinkedItem(commodity?.parent_id)}
                       maxLength={35}
                       className="h-8"
                     />
@@ -221,7 +235,7 @@ export const CommodityEditDialog = ({
                       value={commodity?.origin_country || ""}
                       onValueChange={(value) => handleChange("origin_country", value)}
                       placeholder="Select country"
-                      disabled={!isNone(commodity?.parent_id)}
+                      disabled={isRealLinkedItem(commodity?.parent_id)}
                       className="h-8"
                       noWrapper={true}
                     />
@@ -262,13 +276,13 @@ export const CommodityEditDialog = ({
                         step="any"
                         value={commodity?.weight || ""}
                         onChange={(e) => handleChange("weight", Number(e.target.value))}
-                        disabled={!isNone(commodity?.parent_id)}
+                        disabled={isRealLinkedItem(commodity?.parent_id)}
                         className="h-8 rounded-r-none border-r-0"
                       />
                       <Select
                         value={commodity?.weight_unit || WeightUnitEnum.KG}
                         onValueChange={(value) => handleChange("weight_unit", value)}
-                        disabled={!isNone(commodity?.parent_id)}
+                        disabled={isRealLinkedItem(commodity?.parent_id)}
                       >
                         <SelectTrigger className="h-8 w-20 rounded-l-none border-l-0">
                           <SelectValue />
@@ -296,13 +310,13 @@ export const CommodityEditDialog = ({
                         step="any"
                         value={commodity?.value_amount || ""}
                         onChange={(e) => handleChange("value_amount", Number(e.target.value))}
-                        disabled={!isNone(commodity?.parent_id)}
+                        disabled={isRealLinkedItem(commodity?.parent_id)}
                         className="h-8 rounded-r-none border-r-0"
                       />
                       <Select
                         value={commodity?.value_currency || CurrencyCodeEnum.USD}
                         onValueChange={(value) => handleChange("value_currency", value)}
-                        disabled={!isNone(commodity?.parent_id)}
+                        disabled={isRealLinkedItem(commodity?.parent_id)}
                       >
                         <SelectTrigger className="h-8 w-20 rounded-l-none border-l-0">
                           <SelectValue />
@@ -328,61 +342,22 @@ export const CommodityEditDialog = ({
                     maxLength={100}
                     value={commodity?.description || ""}
                     onChange={(e) => handleChange("description", e.target.value)}
-                    disabled={!isNone(commodity?.parent_id)}
+                    disabled={isRealLinkedItem(commodity?.parent_id)}
                     className="resize-none"
                   />
                 </div>
 
-                {/* Advanced Fields */}
-                <Collapsible open={advancedExpanded} onOpenChange={setAdvancedExpanded}>
-                  <CollapsibleTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      className="flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 p-0 h-auto"
-                    >
-                      Advanced Options
-                      {advancedExpanded ? (
-                        <ChevronUp className="h-4 w-4" />
-                      ) : (
-                        <ChevronDown className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="space-y-6 mt-6 pl-4 border-l-2 border-gray-200">
-                    <MetadataEditor
-                      id={commodity?.id}
-                      object_type={MetadataObjectTypeEnum.commodity}
-                      metadata={commodity?.metadata}
-                      onChange={(value) => handleChange("metadata", value)}
-                    >
-                      {(() => {
-                        const { isEditing, editMetadata } = React.useContext(
-                          MetadataEditorContext,
-                        );
-
-                        return (
-                          <>
-                            <div className="flex justify-between">
-                              <Label className="text-sm font-medium">Metadata</Label>
-
-                              <Button
-                                type="button"
-                                variant="link"
-                                size="sm"
-                                disabled={isEditing}
-                                onClick={() => editMetadata()}
-                                className="text-blue-600 hover:text-blue-800 p-1 h-auto"
-                              >
-                                Edit metadata
-                              </Button>
-                            </div>
-                          </>
-                        );
-                      })()}
-                    </MetadataEditor>
-                  </CollapsibleContent>
-                </Collapsible>
+                {/* Metadata Editor */}
+                <EnhancedMetadataEditor
+                  value={commodity?.metadata || {}}
+                  onChange={(metadata) => setCommodity({ ...commodity, metadata })}
+                  className="w-full"
+                  placeholder="No metadata configured"
+                  emptyStateMessage="Add key-value pairs to configure commodity metadata"
+                  allowEdit={!isRealLinkedItem(commodity?.parent_id)}
+                  showTypeInference={true}
+                  maxHeight="300px"
+                />
               </div>
             </div>
 

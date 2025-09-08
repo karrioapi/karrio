@@ -99,7 +99,7 @@ export const AddressEditDialog = ({
       })}
       
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-3xl max-h-[95vh] flex flex-col">
+        <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col">
           <DialogHeader className="sticky top-0 bg-white z-10 pb-4 border-b">
             <DialogTitle className="text-lg font-semibold">
               {header || "Edit address"}

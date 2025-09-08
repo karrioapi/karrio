@@ -46,7 +46,6 @@ export const LineItemInput = React.forwardRef<HTMLButtonElement, LineItemInputCo
     };
 
     const handleUnlink = () => {
-      onValueChange?.(null);
       onUnlink?.();
     };
 
@@ -144,7 +143,7 @@ export const LineItemInput = React.forwardRef<HTMLButtonElement, LineItemInputCo
             <Button
               type="button"
               variant="outline"
-              disabled={isNone(value)}
+              disabled={isNone(value) || value?.startsWith('unlinked_')}
               title="unlink order line item"
               onClick={handleUnlink}
               className="h-8 w-10 px-0 py-0 flex-shrink-0"

@@ -22,7 +22,7 @@ import { AddressType } from "@karrio/types";
 interface AddressComboboxProps {
   name?: string;
   value?: string;
-  onValueChange?: (value: Partial<AddressType>, refresh?: boolean) => void;
+  onValueChange?: (value: Partial<AddressType>, isTemplateSelection?: boolean) => void;
   placeholder?: string;
   label?: string;
   required?: boolean;
@@ -118,18 +118,49 @@ export const AddressCombobox = React.forwardRef<
     }, 0);
   };
 
-  const handleInputFocus = () => {
-    if (!disableSuggestion && filteredTemplates.length > 0) {
+  const handleInputClick = () => {
+    // Open dropdown on click/touch - simple and reliable
+    if (!disableSuggestion && templateOptions.length > 0) {
       setOpen(true);
     }
   };
 
+  const handleInputKeyDown = (e: React.KeyboardEvent) => {
+    if (disableSuggestion) return;
+
+    switch (e.key) {
+      case 'Tab':
+        // Tab shows dropdown for keyboard navigation
+        if (templateOptions.length > 0) {
+          setOpen(true);
+        }
+        break;
+      case 'Escape':
+        // Escape closes dropdown
+        e.preventDefault();
+        setOpen(false);
+        break;
+    }
+  };
+
+  const [isSelectingOption, setIsSelectingOption] = React.useState(false);
+
   const handleInputBlur = (e: React.FocusEvent) => {
-    // Only close if focus is not moving to the popover content
-    const relatedTarget = e.relatedTarget as HTMLElement;
-    if (!relatedTarget || !relatedTarget.closest('[data-radix-popper-content-wrapper]')) {
+    // Don't close if we're selecting an option
+    if (!isSelectingOption) {
       setOpen(false);
     }
+  };
+
+  const handleOptionMouseDown = (e: React.MouseEvent) => {
+    // Prevent blur immediately - works for desktop and mobile
+    e.preventDefault();
+    setIsSelectingOption(true);
+  };
+
+  const handleOptionSelect = (template: any) => {
+    setIsSelectingOption(false);
+    handleTemplateSelect(template);
   };
 
   // Update input value when prop changes
@@ -138,6 +169,13 @@ export const AddressCombobox = React.forwardRef<
       setInputValue(value);
     }
   }, [value, inputValue]);
+
+  // Cleanup on unmount
+  React.useEffect(() => {
+    return () => {
+      setIsSelectingOption(false);
+    };
+  }, []);
 
   // Combine refs
   React.useImperativeHandle(ref, () => inputRef.current!, []);
@@ -165,6 +203,9 @@ export const AddressCombobox = React.forwardRef<
             name={name}
             value={inputValue}
             onChange={handleInputValueChange}
+            onBlur={handleInputBlur}
+            onClick={handleInputClick}
+            onKeyDown={handleInputKeyDown}
             placeholder={placeholder}
             required={required}
             disabled={disabled}
@@ -212,8 +253,9 @@ export const AddressCombobox = React.forwardRef<
               name={name}
               value={inputValue}
               onChange={handleInputValueChange}
-              onFocus={handleInputFocus}
               onBlur={handleInputBlur}
+              onClick={handleInputClick}
+              onKeyDown={handleInputKeyDown}
               placeholder={placeholder}
               required={required}
               disabled={disabled}
@@ -242,8 +284,9 @@ export const AddressCombobox = React.forwardRef<
                       <CommandItem
                         key={`${template.value}-${index}`}
                         value={template.value}
-                        onSelect={() => handleTemplateSelect(template)}
-                        onMouseDown={(e) => e.preventDefault()}
+                        onSelect={() => handleOptionSelect(template)}
+                        onMouseDown={handleOptionMouseDown}
+                        className="cursor-pointer"
                       >
                         <Check
                           className={cn(

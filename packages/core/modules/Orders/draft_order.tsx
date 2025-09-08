@@ -24,6 +24,37 @@ const ContextProviders = bundleContexts([
   ModalProvider,
 ]);
 
+// Weight conversion rates to KG
+const convertToKG = (weight: number, unit: string): number => {
+  switch (unit) {
+    case 'G': return weight / 1000;
+    case 'KG': return weight;
+    case 'LB': return weight * 0.453592;
+    case 'OZ': return weight * 0.0283495;
+    default: return weight; // fallback
+  }
+};
+
+// Simplified utility to analyze weight units
+const analyzeWeightUnits = (lineItems: any[]) => {
+  if (!lineItems || lineItems.length === 0) {
+    return { units: [], type: 'empty' };
+  }
+
+  const weightUnits = Array.from(new Set(
+    lineItems.map(item => item.weight_unit).filter(unit => !isNone(unit))
+  ));
+
+  // Same unit or no units
+  if (weightUnits.length <= 1) {
+    return { units: weightUnits, type: 'single' };
+  }
+
+  // Any mixed units - convert all to KG
+  return { units: weightUnits, type: 'mixed' };
+};
+
+
 export default function Page(pageProps: { params: Promise<{ id?: string }> }) {
   const Component = (): JSX.Element => {
     const params = React.use(pageProps.params || Promise.resolve({}));
@@ -68,6 +99,7 @@ export default function Page(pageProps: { params: Promise<{ id?: string }> }) {
         setKey(`order-${id}-${Date.now()}`);
       }
     }, [ready]);
+
 
     return (
       <>
@@ -350,16 +382,43 @@ export default function Page(pageProps: { params: Promise<{ id?: string }> }) {
                         <p className="font-semibold text-xs">
                           TOTAL WEIGHT:{" "}
                           {
-                            <span>
-                              {(order.line_items || []).reduce(
-                                (_, { quantity, weight }) =>
-                                  _ +
-                                  (isNone(quantity) ? 1 : (quantity as any)) *
-                                  (isNone(weight) ? 1.0 : (weight as any)),
-                                0.0,
-                              )}{" "}
-                              {(order.line_items || [])[0]?.weight_unit}
-                            </span>
+                            (() => {
+                              const items = order.line_items || [];
+                              if (items.length === 0) return <span>0</span>;
+
+                              const { type, units } = analyzeWeightUnits(items);
+
+                              // Same unit or no units - keep original unit
+                              if (type === 'single' || type === 'empty') {
+                                const totalWeight = items.reduce(
+                                  (total, { quantity, weight }) =>
+                                    total +
+                                    (isNone(quantity) ? 1 : (quantity as any)) *
+                                    (isNone(weight) ? 1.0 : (weight as any)),
+                                  0.0,
+                                );
+                                return <span>{totalWeight} {units[0] || items[0]?.weight_unit}</span>;
+                              }
+
+                              // Mixed units - convert all to KG
+                              if (type === 'mixed') {
+                                const totalWeightInKG = items.reduce(
+                                  (total, { quantity, weight, weight_unit }) => {
+                                    const qty = isNone(quantity) ? 1 : (quantity as any);
+                                    const wt = isNone(weight) ? 1.0 : (weight as any);
+                                    const itemWeight = qty * wt;
+                                    
+                                    // Convert to KG using universal converter
+                                    return total + convertToKG(itemWeight, weight_unit || 'KG');
+                                  },
+                                  0.0,
+                                );
+                                return <span>{parseFloat(totalWeightInKG.toFixed(3))} KG</span>;
+                              }
+
+                              // Fallback
+                              return <span>0</span>;
+                            })()
                           }
                         </p>
                       </footer>

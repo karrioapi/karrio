@@ -41,6 +41,7 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
   const [address, setAddress] = React.useState<Partial<AddressType>>(value || DEFAULT_ADDRESS_CONTENT);
   const [advancedExpanded, setAdvancedExpanded] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [formKey, setFormKey] = React.useState<string>(`form-${Date.now()}`);
   const { toast } = useToast();
 
   React.useEffect(() => {
@@ -118,21 +119,33 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
 
 
   return (
-    <form onSubmit={handleSubmit} className={`space-y-4 ${className}`}>
+    <form key={formKey} onSubmit={handleSubmit} className={`space-y-4 ${className}`}>
       {/* Contact Information */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="person_name">
-            Contact Person <span className="text-red-500">*</span>
-          </Label>
-          <Input
-            id="person_name"
+          <AddressCombobox
+            name="person_name"
+            label="Contact Person"
             value={address.person_name || ""}
-            onChange={(e) => handleChange("person_name", e.target.value)}
+            onValueChange={(addressData, isTemplateSelection) => {
+              if (isTemplateSelection) {
+                // Full address template selected, populate all fields atomically
+                const updatedAddress = { ...address, ...addressData };
+                setAddress(updatedAddress);
+                onChange?.(updatedAddress);
+                setFormKey(`form-${Date.now()}`);
+              } else {
+                // User typed in the field, only update person_name
+                if (addressData.person_name !== undefined) {
+                  handleChange("person_name", addressData.person_name || "");
+                }
+              }
+            }}
             placeholder="Full name"
             required
             disabled={disabled}
             className="h-8"
+            wrapperClass="p-0"
           />
         </div>
         <div className="space-y-2">
@@ -167,18 +180,14 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
           <Label htmlFor="address_line1">
             Street Address <span className="text-red-500">*</span>
           </Label>
-          <AddressCombobox
+          <Input
+            id="address_line1"
             value={address.address_line1 || ""}
-            onValueChange={(addressData) => {
-              // Handle both person_name updates and address_line1 updates
-              const addressValue = addressData.address_line1 || addressData.person_name || "";
-              handleChange("address_line1", addressValue);
-            }}
+            onChange={(e) => handleChange("address_line1", e.target.value)}
             placeholder="Start typing your address..."
             required
             disabled={disabled}
             className="h-8"
-            wrapperClass="p-0"
           />
         </div>
         <div className="space-y-2">
