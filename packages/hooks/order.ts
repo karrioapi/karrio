@@ -151,6 +151,10 @@ export function useOrderMutation(id?: string) {
       if (cleaned.id?.startsWith('temp_')) delete cleaned.id;
       // Convert unlinked parent_ids to null for server
       if (cleaned.parent_id?.startsWith('unlinked_')) cleaned.parent_id = null;
+      // Handle empty string enum values - convert to null
+      if (cleaned.origin_country === '') cleaned.origin_country = null;
+      if (cleaned.weight_unit === '') cleaned.weight_unit = null;
+      if (cleaned.value_currency === '') cleaned.value_currency = null;
       return cleaned;
     };
 
@@ -312,18 +316,18 @@ export function useOrderForm({ id = "new" }: { id?: string }) {
   const addItem = async (data: OrderDataType["line_items"][0]) => {
     const item = order.line_items.find(
       (item) =>
-        item.parent_id === data.parent_id ||
-        item.sku === data.sku ||
-        item.hs_code === data.hs_code ||
+        (item.parent_id && data.parent_id && item.parent_id === data.parent_id) ||
+        (item.sku && data.sku && item.sku === data.sku) ||
+        (item.hs_code && data.hs_code && item.hs_code === data.hs_code) ||
         (item.id && data.id && item.id === data.id),
     );
     const update = {
       line_items: !item
         ? [...order.line_items, data]
         : order.line_items.map((item) =>
-          item.parent_id === data.parent_id ||
-            item.sku === data.sku ||
-            item.hs_code === data.hs_code ||
+          (item.parent_id && data.parent_id && item.parent_id === data.parent_id) ||
+            (item.sku && data.sku && item.sku === data.sku) ||
+            (item.hs_code && data.hs_code && item.hs_code === data.hs_code) ||
             (item.id && data.id && item.id === data.id)
             ? { ...item, ...data }
             : item,
@@ -336,7 +340,7 @@ export function useOrderForm({ id = "new" }: { id?: string }) {
       async (data: OrderDataType["line_items"][0], change?: ChangeType) => {
         const update = {
           line_items: order.line_items.map(({ ...item }, idx) =>
-            (item.id && item_id && item.id === item_id) || idx === index ? data : item,
+            ((item.id && item_id && item.id === item_id) || idx === index) ? data : item,
           ),
         };
         updateOrder(update as any, change);
@@ -369,6 +373,7 @@ export function useOrderForm({ id = "new" }: { id?: string }) {
           type: NotificationType.success,
           message: "Order saved!",
         });
+        loader.setLoading(false);
         router.push(
           p`${basePath}/draft_orders/${order?.id}`.replace("//", "/"),
         );
@@ -381,9 +386,22 @@ export function useOrderForm({ id = "new" }: { id?: string }) {
           type: NotificationType.success,
           message: "Order saved!",
         });
+        loader.setLoading(false);
       }
     } catch (error: any) {
-      notifier.notify({ type: NotificationType.error, message: error });
+      // Parse GraphQL validation errors
+      let errorMessage = "Failed to save order";
+      
+      if (error?.response?.errors && Array.isArray(error.response.errors)) {
+        const messages = error.response.errors.map((err: any) => err.message).join('; ');
+        errorMessage = messages;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
+      
+      notifier.notify({ type: NotificationType.error, message: errorMessage });
       loader.setLoading(false);
     }
   };
