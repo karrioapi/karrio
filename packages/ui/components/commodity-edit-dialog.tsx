@@ -586,14 +586,14 @@ export const CommodityEditDialog = ({
                       const randomId = Math.random().toString(36).substr(2, 9);
                       const tempParentId = `unlinked_${timestamp}_${randomId}`;
                       
-                      handleChange("parent_id", tempParentId);
-                      
-                      // Also assign temp item ID if item doesn't have a real ID
+                      // Create updated commodity object with both changes
+                      const updates: any = { parent_id: tempParentId };
                       if (!commodity?.id) {
-                        const tempItemId = `temp_${timestamp}_${randomId}`;
-                        handleChange("id", tempItemId);
+                        updates.id = `temp_${timestamp}_${randomId}`;
                       }
                       
+                      // Single state update with all changes
+                      setCommodity({ ...commodity, ...updates });
                       setMaxQty(undefined);
                     }}
                     query={query}

@@ -46,7 +46,6 @@ export const LineItemInput = React.forwardRef<HTMLButtonElement, LineItemInputCo
     };
 
     const handleUnlink = () => {
-      onValueChange?.(null);
       onUnlink?.();
     };
 
