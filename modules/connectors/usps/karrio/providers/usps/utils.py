@@ -113,6 +113,7 @@ def oauth2_login(settings: Settings):
     ]
     result = lib.request(
         url=f"{settings.server_url}/oauth2/v3/token",
+        trace=settings.trace_as("json"),
         method="POST",
         headers={"content-Type": "application/x-www-form-urlencoded"},
         data=lib.to_query_string(
@@ -143,6 +144,7 @@ def payment_auth(settings: Settings):
 
     result = lib.request(
         url=f"{settings.server_url}/payments/v3/payment-authorization",
+        trace=settings.trace_as("json"),
         method="POST",
         headers={
             "content-Type": "application/json",
@@ -312,6 +314,7 @@ def parse_error_response(response) -> dict:
             message=response.strip(),
         )
     )
+
 
 def parse_phone_number(number: str) -> typing.Optional[str]:
     if number is None:

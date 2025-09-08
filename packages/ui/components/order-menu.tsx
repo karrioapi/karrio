@@ -6,13 +6,13 @@ import {
   OrderStatusEnum,
 } from "@karrio/types";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
-import { ConfirmModalContext } from "../core/modals/confirm-modal";
-import React, { useContext } from "react";
+import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
+import React, { useState } from "react";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useOrderMutation } from "@karrio/hooks/order";
 import { useRouter } from "next/navigation";
 import { useAppMode } from "@karrio/hooks/app-mode";
-import { AppLink } from "../core/components/app-link";
+import { useToast } from "@karrio/ui/hooks/use-toast";
 import { url$ } from "@karrio/lib";
 import {
   DropdownMenu,
@@ -38,7 +38,14 @@ export const OrderMenu = ({
   const { basePath } = useAppMode();
   const { references } = useAPIMetadata();
   const mutation = useOrderMutation();
-  const { confirm: confirmCancellation } = useContext(ConfirmModalContext);
+  const { toast } = useToast();
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{
+    title: string;
+    description: string;
+    confirmLabel: string;
+    onConfirm: () => Promise<any>;
+  } | null>(null);
   const {
     query: { data: { document_templates } = {} },
   } = useDocumentTemplates({
@@ -47,11 +54,47 @@ export const OrderMenu = ({
   } as any);
 
   const displayDetails = (_: React.MouseEvent) => {
+    toast({
+      title: "Opening order details...",
+      description: "Taking you to view order details.",
+    });
+    
     router.push(basePath + "/orders/" + order.id);
+  };
+
+  const navigateToCreateLabel = (_: React.MouseEvent) => {
+    toast({
+      title: "Opening create label page...",
+      description: "Taking you to create a label for this order.",
+    });
+    
+    router.push(`${basePath}/orders/create_label?shipment_id=${computeShipmentId(order)}&order_id=${order?.id}`);
+  };
+
+  const navigateToEditOrder = (_: React.MouseEvent) => {
+    toast({
+      title: "Opening edit order page...",
+      description: "Taking you to edit this draft order.",
+    });
+    
+    router.push(`${basePath}/draft_orders/${order?.id}`);
   };
 
   const cancelOrder = (order: OrderType) => async () => {
     await mutation.cancelOrder.mutateAsync(order);
+  };
+
+  const handleConfirm = async () => {
+    if (!confirmAction) return;
+    
+    try {
+      await confirmAction.onConfirm();
+      setConfirmDialogOpen(false);
+      setConfirmAction(null);
+    } catch (error) {
+      console.error('Confirmation action failed:', error);
+      // Dialog stays open for retry
+    }
   };
 
   const computeShipmentId = (order: OrderType) => {
@@ -78,12 +121,8 @@ export const OrderMenu = ({
           role="menu"
         >
           {["unfulfilled", "partial"].includes(order?.status) && (
-            <DropdownMenuItem asChild>
-              <AppLink
-                href={`/orders/create_label?shipment_id=${computeShipmentId(order)}&order_id=${order?.id}`}
-              >
-                <span>Create label</span>
-              </AppLink>
+            <DropdownMenuItem onClick={navigateToCreateLabel} className="cursor-pointer">
+              <span>Create label</span>
             </DropdownMenuItem>
           )}
 
@@ -97,7 +136,7 @@ export const OrderMenu = ({
                 }?orders=${order.id}`}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center"
+                className="flex items-center w-full"
               >
                 <span>{`Print Label${
                   order.shipments.filter((s) => !["cancelled", "draft"].includes(s.status)).length > 1 ? "s" : ""
@@ -107,31 +146,27 @@ export const OrderMenu = ({
           )}
 
           {!isViewing && (
-            <DropdownMenuItem onClick={displayDetails}>
+            <DropdownMenuItem onClick={displayDetails} className="cursor-pointer">
               <span>View order</span>
             </DropdownMenuItem>
           )}
 
           {order.source === "draft" && order.shipments.length === 0 && (
             <>
-              <DropdownMenuItem asChild>
-                <AppLink
-                  href={`/draft_orders/${order?.id}`}
-                >
-                  <span>Edit order</span>
-                </AppLink>
+              <DropdownMenuItem onClick={navigateToEditOrder} className="cursor-pointer">
+                <span>Edit order</span>
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() =>
-                  confirmCancellation({
-                    identifier: order.id as string,
-                    label: `Delete order`,
-                    action: "Submit",
-                    onConfirm: () =>
-                      mutation.deleteOrder.mutateAsync({ id: order.id }),
-                  })
-                }
-                className="text-destructive focus:text-destructive"
+                onClick={() => {
+                  setConfirmAction({
+                    title: "Delete Order",
+                    description: `Are you sure you want to delete order ${order.id}? This action cannot be undone.`,
+                    confirmLabel: "Submit",
+                    onConfirm: () => mutation.deleteOrder.mutateAsync({ id: order.id }),
+                  });
+                  setConfirmDialogOpen(true);
+                }}
+                className="text-destructive focus:text-destructive cursor-pointer"
               >
                 <span>Delete order</span>
               </DropdownMenuItem>
@@ -140,15 +175,16 @@ export const OrderMenu = ({
 
           {order.status === OrderStatusEnum.Unfulfilled && (
             <DropdownMenuItem
-              onClick={() =>
-                confirmCancellation({
-                  identifier: order.id as string,
-                  label: `Cancel order`,
-                  action: "Submit",
+              onClick={() => {
+                setConfirmAction({
+                  title: "Cancel Order",
+                  description: `Are you sure you want to cancel order ${order.id}? This action cannot be undone.`,
+                  confirmLabel: "Submit",
                   onConfirm: cancelOrder(order),
-                })
-              }
-              className="text-destructive focus:text-destructive"
+                });
+                setConfirmDialogOpen(true);
+              }}
+              className="text-destructive focus:text-destructive cursor-pointer"
             >
               <span>Cancel order</span>
             </DropdownMenuItem>
@@ -165,7 +201,7 @@ export const OrderMenu = ({
                 href={url$`${references.HOST}/documents/templates/${template.id}.${template.slug}?orders=${order.id}`}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center"
+                className="flex items-center w-full"
               >
                 <span>Download {template.name}</span>
               </a>
@@ -173,6 +209,18 @@ export const OrderMenu = ({
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {confirmAction && (
+        <DeleteConfirmationDialog
+          open={confirmDialogOpen}
+          onOpenChange={setConfirmDialogOpen}
+          title={confirmAction.title}
+          description={confirmAction.description}
+          confirmLabel={confirmAction.title === "Cancel Order" ? "Cancel" : undefined}
+          cancelLabel={confirmAction.title === "Cancel Order" ? "Go Back" : undefined}
+          onConfirm={handleConfirm}
+        />
+      )}
     </div>
   );
 };

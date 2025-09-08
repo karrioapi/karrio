@@ -8,12 +8,13 @@ import {
 } from "@karrio/types";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
 import { formatRef, isNone, isNoneOrEmpty, p, url$ } from "@karrio/lib";
-import { ConfirmModalContext } from "../core/modals/confirm-modal";
 import { useShipmentMutation } from "@karrio/hooks/shipment";
-import React, { useContext } from "react";
+import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
+import React, { useState } from "react";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useRouter } from "next/navigation";
 import { useAppMode } from "@karrio/hooks/app-mode";
+import { useToast } from "@karrio/ui/hooks/use-toast";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,7 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Loader2 } from "lucide-react";
 
 interface ShipmentMenuComponent
   extends React.InputHTMLAttributes<HTMLDivElement> {
@@ -39,7 +40,14 @@ export const ShipmentMenu = ({
   const { basePath } = useAppMode();
   const { references } = useAPIMetadata();
   const mutation = useShipmentMutation();
-  const { confirm: confirmCancellation } = useContext(ConfirmModalContext);
+  const { toast } = useToast();
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{
+    title: string;
+    description: string;
+    confirmLabel: string;
+    onConfirm: () => Promise<any>;
+  } | null>(null);
   const {
     query: { data: { document_templates } = {} },
   } = useDocumentTemplates({
@@ -48,6 +56,11 @@ export const ShipmentMenu = ({
   } as any);
 
   const createLabel = (_: React.MouseEvent) => {
+    toast({
+      title: "Opening create label page...",
+      description: "Taking you to create a label for this shipment.",
+    });
+
     if (!!shipment.meta?.orders) {
       router.push(
         p`${basePath}/orders/create_label?shipment_id=${shipment.id}&order_id=${shipment.meta.orders}`,
@@ -72,13 +85,46 @@ export const ShipmentMenu = ({
       };
 
   const duplicateShipment = async (_: React.MouseEvent) => {
-    console.log("> duplicating shipment...");
-    const duplicatedShipment =
-      await mutation.duplicateShipment.mutateAsync(shipment);
-    console.log("> shipment duplicate created successfully!");
-    router.push(
-      p`${basePath}/create_label?shipment_id=${duplicatedShipment.id}`,
-    );
+    toast({
+      title: "Creating duplicate shipment...",
+      description: "Please wait while we duplicate your shipment.",
+    });
+
+    try {
+      console.log("> duplicating shipment...");
+      const duplicatedShipment =
+        await mutation.duplicateShipment.mutateAsync(shipment);
+      console.log("> shipment duplicate created successfully!");
+      
+      toast({
+        title: "Shipment duplicated successfully!",
+        description: "Opening create label page for the new shipment.",
+      });
+
+      router.push(
+        p`${basePath}/create_label?shipment_id=${duplicatedShipment.id}`,
+      );
+    } catch (error) {
+      console.error("Failed to duplicate shipment:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to duplicate shipment",
+        description: "Please try again or contact support if the issue persists.",
+      });
+    }
+  };
+
+  const handleConfirm = async () => {
+    if (!confirmAction) return;
+    
+    try {
+      await confirmAction.onConfirm();
+      setConfirmDialogOpen(false);
+      setConfirmAction(null);
+    } catch (error) {
+      console.error('Confirmation action failed:', error);
+      // Dialog stays open for retry
+    }
   };
 
   return (
@@ -135,14 +181,15 @@ export const ShipmentMenu = ({
             ShipmentStatusEnum.delivered,
           ].includes(shipment.status as any) && (
               <DropdownMenuItem
-                onClick={() =>
-                  confirmCancellation({
-                    identifier: shipment.id as string,
-                    label: `Cancel Shipment`,
-                    action: "Submit",
+                onClick={() => {
+                  setConfirmAction({
+                    title: "Cancel Shipment",
+                    description: `Are you sure you want to cancel shipment ${shipment.id}? This action cannot be undone.`,
+                    confirmLabel: "Submit",
                     onConfirm: cancelShipment(shipment),
-                  })
-                }
+                  });
+                  setConfirmDialogOpen(true);
+                }}
                 className="text-destructive focus:text-destructive"
               >
                 <span>Cancel Shipment</span>
@@ -174,17 +221,18 @@ export const ShipmentMenu = ({
 
                 {shipment.status === ShipmentStatusEnum.purchased && (
                   <DropdownMenuItem
-                    onClick={() =>
-                      confirmCancellation({
-                        identifier: shipment.id as string,
-                        label: `Mark shipment as ${formatRef(ManualShipmentStatusEnum.in_transit.toString())}`,
-                        action: "Apply",
+                    onClick={() => {
+                      setConfirmAction({
+                        title: "Update Shipment Status",
+                        description: `Mark shipment ${shipment.id} as ${formatRef(ManualShipmentStatusEnum.in_transit.toString())}?`,
+                        confirmLabel: "Apply",
                         onConfirm: changeStatus(
                           shipment,
                           ManualShipmentStatusEnum.in_transit,
                         ),
-                      })
-                    }
+                      });
+                      setConfirmDialogOpen(true);
+                    }}
                   >
                     <span>Mark as {formatRef(ManualShipmentStatusEnum.in_transit.toString())}</span>
                   </DropdownMenuItem>
@@ -195,17 +243,18 @@ export const ShipmentMenu = ({
                   ShipmentStatusEnum.in_transit,
                 ].includes(shipment.status as any) && (
                     <DropdownMenuItem
-                      onClick={() =>
-                        confirmCancellation({
-                          identifier: shipment.id as string,
-                          label: `Mark shipment as ${formatRef(ManualShipmentStatusEnum.needs_attention.toString())}`,
-                          action: "Save",
+                      onClick={() => {
+                        setConfirmAction({
+                          title: "Update Shipment Status",
+                          description: `Mark shipment ${shipment.id} as ${formatRef(ManualShipmentStatusEnum.needs_attention.toString())}?`,
+                          confirmLabel: "Save",
                           onConfirm: changeStatus(
                             shipment,
                             ManualShipmentStatusEnum.needs_attention,
                           ),
-                        })
-                      }
+                        });
+                        setConfirmDialogOpen(true);
+                      }}
                     >
                       <span>Mark as {formatRef(ManualShipmentStatusEnum.needs_attention.toString())}</span>
                     </DropdownMenuItem>
@@ -217,17 +266,18 @@ export const ShipmentMenu = ({
                   ShipmentStatusEnum.needs_attention,
                 ].includes(shipment.status as any) && (
                     <DropdownMenuItem
-                      onClick={() =>
-                        confirmCancellation({
-                          identifier: shipment.id as string,
-                          label: `Mark shipment as ${formatRef(ManualShipmentStatusEnum.delivery_failed.toString())}`,
-                          action: "Save",
+                      onClick={() => {
+                        setConfirmAction({
+                          title: "Update Shipment Status",
+                          description: `Mark shipment ${shipment.id} as ${formatRef(ManualShipmentStatusEnum.delivery_failed.toString())}?`,
+                          confirmLabel: "Save",
                           onConfirm: changeStatus(
                             shipment,
                             ManualShipmentStatusEnum.delivery_failed,
                           ),
-                        })
-                      }
+                        });
+                        setConfirmDialogOpen(true);
+                      }}
                     >
                       <span>Mark as {formatRef(ManualShipmentStatusEnum.delivery_failed.toString())}</span>
                     </DropdownMenuItem>
@@ -239,17 +289,18 @@ export const ShipmentMenu = ({
                   ShipmentStatusEnum.needs_attention,
                 ].includes(shipment.status as any) && (
                     <DropdownMenuItem
-                      onClick={() =>
-                        confirmCancellation({
-                          identifier: shipment.id as string,
-                          label: `Mark shipment as ${formatRef(ManualShipmentStatusEnum.delivered.toString())}`,
-                          action: "Save",
+                      onClick={() => {
+                        setConfirmAction({
+                          title: "Update Shipment Status",
+                          description: `Mark shipment ${shipment.id} as ${formatRef(ManualShipmentStatusEnum.delivered.toString())}?`,
+                          confirmLabel: "Save",
                           onConfirm: changeStatus(
                             shipment,
                             ManualShipmentStatusEnum.delivered,
                           ),
-                        })
-                      }
+                        });
+                        setConfirmDialogOpen(true);
+                      }}
                     >
                       <span>Mark as {formatRef(ManualShipmentStatusEnum.delivered.toString())}</span>
                     </DropdownMenuItem>
@@ -275,6 +326,18 @@ export const ShipmentMenu = ({
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {confirmAction && (
+        <DeleteConfirmationDialog
+          open={confirmDialogOpen}
+          onOpenChange={setConfirmDialogOpen}
+          title={confirmAction.title}
+          description={confirmAction.description}
+          confirmLabel={confirmAction.title === "Cancel Shipment" ? "Cancel" : confirmAction.confirmLabel}
+          cancelLabel={confirmAction.title === "Cancel Shipment" ? "Go Back" : "Cancel"}
+          onConfirm={handleConfirm}
+        />
+      )}
     </div>
   );
 };

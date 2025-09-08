@@ -2,27 +2,41 @@
 import {
   TrackerModalProvider,
   useTrackerModal,
-} from "@karrio/ui/core/modals/track-shipment-modal";
+} from "@karrio/ui/components/track-shipment-dialog";
 import {
   TrackingPreview,
   useTrackingPreview,
 } from "@karrio/core/components/tracking-preview";
-import { ConfirmModal, useConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
+import { DeleteConfirmationDialog } from "@karrio/ui/components/delete-confirmation-dialog";
 import {
   formatRef,
   getURLSearchParams,
   isNone,
   isNoneOrEmpty,
+  preventPropagation,
 } from "@karrio/lib";
 import { useTrackerMutation, useTrackers } from "@karrio/hooks/tracker";
-import { TrackersFilter } from "@karrio/ui/core/filters/trackers-filter";
+import { TrackersFilter } from "@karrio/ui/components/trackers-filter";
+import { FiltersCard } from "@karrio/ui/components/filters-card";
+import { StickyTableWrapper } from "@karrio/ui/components/sticky-table-wrapper";
+import { ListPagination } from "@karrio/ui/components/list-pagination";
+import { 
+  Table, 
+  TableHeader, 
+  TableBody, 
+  TableHead, 
+  TableRow, 
+  TableCell 
+} from "@karrio/ui/components/ui/table";
+import { Button } from "@karrio/ui/components/ui/button";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
-import { StatusBadge } from "@karrio/ui/core/components/status-badge";
+import { ShipmentsStatusBadge } from "@karrio/ui/components/shipments-status-badge";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { Spinner } from "@karrio/ui/core/components/spinner";
 import { TrackingEvent } from "@karrio/types/rest/api";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect } from "react";
+import { Trash2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
 
 
 export default function TrackersPage(pageProps: any) {
@@ -33,7 +47,8 @@ export default function TrackersPage(pageProps: any) {
     const mutation = useTrackerMutation();
     const { addTracker } = useTrackerModal();
     const { previewTracker } = useTrackingPreview();
-    const { confirm: confirmDeletion } = useConfirmModal();
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [trackerToDelete, setTrackerToDelete] = useState<string | null>(null);
     const [initialized, setInitialized] = React.useState(false);
     const context = useTrackers({
       setVariablesToURL: true,
@@ -57,6 +72,34 @@ export default function TrackersPage(pageProps: any) {
 
       setFilter(query);
     };
+    
+    // Define filter options for the cards
+    const getFilterOptions = () => [
+      {
+        label: "All",
+        value: []
+      },
+      {
+        label: "In-Transit", 
+        value: ["in_transit", "on_hold", "out_for_delivery", "ready_for_pickup"]
+      },
+      {
+        label: "Pending",
+        value: ["pending"]
+      },
+      {
+        label: "Exception",
+        value: ["delivery_delayed", "delivery_failed", "on_hold"]
+      },
+      {
+        label: "Delivered",
+        value: ["delivered"]
+      },
+      {
+        label: "Failed",
+        value: ["delivery_failed", "unknown"]
+      }
+    ];
 
     useEffect(() => {
       updateFilter();
@@ -77,133 +120,57 @@ export default function TrackersPage(pageProps: any) {
 
     return (
       <>
-        <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
-          <span className="title is-4">Trackers</span>
-          <div>
+        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-0 pb-0 pt-4 mb-2">
+          <div className="mb-4 sm:mb-0">
+            <h1 className="text-2xl font-semibold text-gray-900">Trackers</h1>
+          </div>
+          <div className="flex flex-row items-center gap-1 flex-wrap">
             <TrackersFilter context={context} />
-            <button
-              className="button is-small is-primary ml-1"
+            <Button 
+              size="sm" 
+              className="mx-1 w-auto"
               onClick={() => addTracker({ onChange: updateFilter })}
             >
-              <span>Track a Shipment</span>
-            </button>
+              Track a Shipment
+            </Button>
           </div>
         </header>
 
-        <div className="tabs">
-          <ul>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${isNone(filter?.status) ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !isNone(filter?.status) &&
-                  updateFilter({ status: null, offset: 0 })
-                }
-              >
-                all
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${filter?.status?.includes("in_transit") ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !filter?.status?.includes("in_transit") &&
-                  updateFilter({
-                    status: [
-                      "in_transit",
-                      "on_hold",
-                      "out_for_delivery",
-                      "ready_for_pickup",
-                    ],
-                    offset: 0,
-                  })
-                }
-              >
-                in-transit
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${filter?.status?.includes("pending") ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !filter?.status?.includes("pending") &&
-                  updateFilter({ status: ["pending"], offset: 0 })
-                }
-              >
-                pending
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${filter?.status?.includes("delivery_delayed") ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !filter?.status?.includes("delivery_delayed") &&
-                  updateFilter({
-                    status: ["delivery_delayed", "delivery_failed", "on_hold"],
-                    offset: 0,
-                  })
-                }
-              >
-                exception
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${filter?.status?.includes("delivered") ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !filter?.status?.includes("delivered") &&
-                  updateFilter({ status: ["delivered"], offset: 0 })
-                }
-              >
-                delivered
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${filter?.status?.includes("unknown") ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !filter?.status?.includes("unknown") &&
-                  updateFilter({
-                    status: ["delivery_failed", "unknown"],
-                    offset: 0,
-                  })
-                }
-              >
-                failed
-              </a>
-            </li>
-          </ul>
-        </div>
+        <FiltersCard
+          filters={getFilterOptions()}
+          activeFilter={filter?.status || []}
+          onFilterChange={(status) => updateFilter({ status: status.length > 0 ? status : null, offset: 0 })}
+        />
 
         {!query.isFetched && query.isFetching && <Spinner />}
 
         {query.isFetched && (trackers?.edges || []).length > 0 && (
           <>
-            <div className="table-container pb-3">
-              <table className="trackers-table table is-fullwidth">
-                <tbody className="trackers-table">
-                  <tr>
-                    <td className="service is-size-7">SHIPPING SERVICE</td>
-                    <td className="status"></td>
-                    <td className="last-event is-size-7">LAST EVENT</td>
-                    <td className="date is-size-7"></td>
-                    <td className="action"></td>
-                  </tr>
+            <StickyTableWrapper>
+              <Table className="trackers-table">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="service text-xs items-center">
+                      SHIPPING SERVICE
+                    </TableHead>
+                    <TableHead className="status items-center"></TableHead>
+                    <TableHead className="last-event text-xs items-center">
+                      LAST EVENT
+                    </TableHead>
+                    <TableHead className="date text-xs items-center">DATE</TableHead>
+                    <TableHead className="action sticky-right"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
 
                   {(trackers?.edges || []).map(({ node: tracker }) => (
-                    <tr
+                    <TableRow
                       key={tracker.id}
-                      className="items"
+                      className="items cursor-pointer transition-colors duration-150 ease-in-out hover:bg-gray-50"
                       onClick={() => previewTracker(tracker)}
                     >
-                      <td className="service is-vcentered py-1 px-0 is-size-7 has-text-weight-bold has-text-grey">
-                        <div className="icon-text">
+                      <TableCell className="service items-center py-1 px-0 text-xs font-bold text-gray-600">
+                        <div className="flex items-center">
                           <CarrierImage
                             carrier_name={
                               tracker.meta?.carrier || tracker.carrier_name
@@ -222,7 +189,7 @@ export default function TrackersPage(pageProps: any) {
                             className="text-ellipsis"
                             style={{ maxWidth: "190px", lineHeight: "16px" }}
                           >
-                            <span className="has-text-info has-text-weight-bold">
+                            <span className="text-blue-600 font-bold">
                               {tracker.tracking_number}
                             </span>
                             <br />
@@ -236,16 +203,18 @@ export default function TrackersPage(pageProps: any) {
                             </span>
                           </div>
                         </div>
-                      </td>
-                      <td className="status is-vcentered">
-                        <StatusBadge
-                          status={tracker.status as string}
-                          style={{ width: "100%" }}
-                        />
-                      </td>
-                      <td className="last-event is-vcentered py-1 last-event is-size-7 has-text-weight-bold has-text-grey text-ellipsis">
+                      </TableCell>
+                      <TableCell className="status items-center">
+                        <div style={{ paddingLeft: '7px', paddingRight: '7px' }}>
+                          <ShipmentsStatusBadge
+                            status={tracker.status as string}
+                            className="w-full justify-center text-center"
+                          />
+                        </div>
+                      </TableCell>
+                      <TableCell className="last-event items-center py-1 text-xs font-bold text-gray-600 md:text-ellipsis">
                         <span
-                          className="text-ellipsis"
+                          className="md:text-ellipsis break-words"
                           title={
                             isNoneOrEmpty(tracker?.events)
                               ? ""
@@ -260,75 +229,71 @@ export default function TrackersPage(pageProps: any) {
                               (tracker?.events as TrackingEvent[])[0],
                             )}
                         </span>
-                      </td>
-                      <td className="date is-vcentered has-text-right">
-                        <p className="is-size-7 has-text-weight-semibold has-text-grey">
+                      </TableCell>
+                      <TableCell className="date items-center text-right">
+                        <p className="text-xs font-semibold text-gray-600">
                           {isNoneOrEmpty(tracker?.events)
                             ? ""
                             : formatEventDate(
                               (tracker?.events as TrackingEvent[])[0],
                             )}
                         </p>
-                      </td>
-                      <td className="action is-vcentered p-1">
-                        <button
-                          className="button is-white is-pulled-right"
+                      </TableCell>
+                      <TableCell className="action items-center p-1 sticky-right">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="ml-auto"
                           onClick={(e) => {
                             e.stopPropagation();
-                            confirmDeletion({
-                              label: "Delet Shipment Tracker",
-                              identifier: tracker.id as string,
-                              onConfirm: remove(tracker.id),
-                            });
+                            setTrackerToDelete(tracker.id);
+                            setDeleteDialogOpen(true);
                           }}
                         >
-                          <span className="icon is-small">
-                            <i className="fas fa-trash"></i>
-                          </span>
-                        </button>
-                      </td>
-                    </tr>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
-            </div>
+                </TableBody>
+              </Table>
+            </StickyTableWrapper>
 
-            <div className="px-2 py-2 is-vcentered">
-              <span className="is-size-7 has-text-weight-semibold">
-                {(trackers?.edges || []).length} results
-              </span>
-
-              <div className="buttons has-addons is-centered is-pulled-right">
-                <button
-                  className="button is-small"
-                  onClick={() =>
-                    updateFilter({ offset: (filter.offset as number) - 20 })
-                  }
-                  disabled={filter.offset == 0}
-                >
-                  Previous
-                </button>
-                <button
-                  className="button is-small"
-                  onClick={() =>
-                    updateFilter({ offset: (filter.offset as number) + 20 })
-                  }
-                  disabled={!trackers?.page_info.has_next_page}
-                >
-                  Next
-                </button>
-              </div>
+            {/* Sticky Footer */}
+            <div className="sticky bottom-0 left-0 right-0 z-10 bg-white border-t border-gray-200 pb-16 md:pb-0">
+              <ListPagination
+                currentOffset={filter.offset as number || 0}
+                pageSize={20}
+                totalCount={trackers?.page_info?.count || 0}
+                hasNextPage={trackers?.page_info?.has_next_page || false}
+                onPageChange={(offset) => updateFilter({ offset })}
+                className="px-2 py-3"
+              />
             </div>
           </>
         )}
 
         {query.isFetched && (trackers?.edges || []).length == 0 && (
-          <div className="card my-6">
-            <div className="card-content has-text-centered">
+          <div className="bg-white rounded-lg shadow-sm border my-6">
+            <div className="p-6 text-center">
               <p>No shipment trackers found.</p>
             </div>
           </div>
         )}
+
+        <DeleteConfirmationDialog
+          open={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+          title="Delete Tracker"
+          description="Are you sure you want to delete this tracker? This action cannot be undone."
+          onConfirm={async () => {
+            if (trackerToDelete) {
+              await remove(trackerToDelete)();
+              setDeleteDialogOpen(false);
+              setTrackerToDelete(null);
+            }
+          }}
+        />
       </>
     );
   };
@@ -337,9 +302,7 @@ export default function TrackersPage(pageProps: any) {
     <>
       <TrackerModalProvider>
         <TrackingPreview>
-          <ConfirmModal>
-            <Component />
-          </ConfirmModal>
+          <Component />
         </TrackingPreview>
       </TrackerModalProvider>
     </>

@@ -42,6 +42,47 @@ class TestOrders(TestOrderFixture):
         # The second request should fail with a conflict error
         self.assertEqual(response2.status_code, status.HTTP_409_CONFLICT)
 
+    def test_multiple_orders_with_different_order_ids(self):
+        # Create first order
+        response1, _ = self.create_order()
+        self.assertEqual(response1.status_code, status.HTTP_201_CREATED)
+
+        # Create second order with different order_id (should succeed)
+        url = reverse("karrio.server.orders:order-list")
+        data_2 = {**ORDER_DATA, "order_id": "1073459963"}
+        response2 = self.client.post(url, data_2)
+        self.assertEqual(response2.status_code, status.HTTP_201_CREATED)
+
+        # Create third order with different order_id (should succeed)
+        data_3 = {**ORDER_DATA, "order_id": "1073459964"}  
+        response3 = self.client.post(url, data_3)
+        self.assertEqual(response3.status_code, status.HTTP_201_CREATED)
+
+        # Verify all three orders exist
+        self.assertEqual(models.Order.objects.count(), 3)
+
+    def test_same_order_id_different_sources_allowed(self):
+        # Create first order with shopify source
+        response1, _ = self.create_order()
+        self.assertEqual(response1.status_code, status.HTTP_201_CREATED)
+
+        # Create second order with same order_id but different source (should succeed)
+        url = reverse("karrio.server.orders:order-list")
+        data_woocommerce = {**ORDER_DATA, "source": "woocommerce"}
+        response2 = self.client.post(url, data_woocommerce)
+        self.assertEqual(response2.status_code, status.HTTP_201_CREATED)
+
+        # Attempt to create duplicate with same order_id + source as first (should fail)
+        response3 = self.client.post(url, ORDER_DATA)
+        self.assertEqual(response3.status_code, status.HTTP_409_CONFLICT)
+
+        # Attempt to create duplicate with same order_id + source as second (should fail)
+        response4 = self.client.post(url, data_woocommerce)
+        self.assertEqual(response4.status_code, status.HTTP_409_CONFLICT)
+
+        # Verify only two orders exist (duplicates were rejected)
+        self.assertEqual(models.Order.objects.count(), 2)
+
 
 class TestOrderDetails(TestOrderFixture):
     def test_retrieve_order(self):

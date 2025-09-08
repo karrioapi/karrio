@@ -84,6 +84,7 @@ def login(settings: Settings):
     merchant_id = settings.connection_config.merchant_id.state
     result = lib.request(
         url=f"{settings.server_url}/security/v1/oauth/token",
+        trace=settings.trace_as("json"),
         data="grant_type=client_credentials",
         method="POST",
         headers={

@@ -9,6 +9,7 @@ import {
   isListEqual,
   isNone,
   isNoneOrEmpty,
+  preventPropagation,
   url$,
 } from "@karrio/lib";
 import {
@@ -21,25 +22,30 @@ import { useDocumentTemplates } from "@karrio/hooks/document-template";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { AddressType, RateType, ShipmentType } from "@karrio/types";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
-import React, { ChangeEvent, useContext, useEffect } from "react";
-import { StatusBadge } from "@karrio/ui/core/components/status-badge";
-import { OrdersFilter } from "@karrio/ui/core/filters/orders-filter";
-import { ConfirmModal } from "@karrio/ui/core/modals/confirm-modal";
+import React, { useContext, useEffect } from "react";
+import { ShipmentsStatusBadge } from "@karrio/ui/components/shipments-status-badge";
+import { OrdersFilter } from "@karrio/ui/components/orders-filter";
 import { OrderMenu } from "@karrio/ui/components/order-menu";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { AppLink } from "@karrio/ui/core/components/app-link";
-import { ModalProvider } from "@karrio/ui/core/modals/modal";
-import { Spinner } from "@karrio/ui/core/components/spinner";
-import { bundleContexts } from "@karrio/hooks/utils";
 import { useSearchParams } from "next/navigation";
 import { useOrders } from "@karrio/hooks/order";
+import { Button } from "@karrio/ui/components/ui/button";
+import { FiltersCard } from "@karrio/ui/components/filters-card";
+import { ListPagination } from "@karrio/ui/components/list-pagination";
+import { Skeleton } from "@karrio/ui/components/ui/skeleton";
+import { StickyTableWrapper } from "@karrio/ui/components/sticky-table-wrapper";
+import { 
+  Table, 
+  TableHeader, 
+  TableBody, 
+  TableHead, 
+  TableRow, 
+  TableCell 
+} from "@karrio/ui/components/ui/table";
+import { Checkbox } from "@karrio/ui/components/ui/checkbox";
 
-const ContextProviders = bundleContexts([
-  OrderPreview,
-  ConfirmModal,
-  ModalProvider,
-]);
 
 export default function OrdersPage() {
   const Component = (): JSX.Element => {
@@ -67,6 +73,26 @@ export default function OrdersPage() {
     } = useDocumentTemplates({
       related_object: "order" as any,
     });
+
+    // Define filter options for the cards
+    const getFilterOptions = () => [
+      {
+        label: "All",
+        value: []
+      },
+      {
+        label: "Unfulfilled", 
+        value: ["unfulfilled", "partial"]
+      },
+      {
+        label: "Fulfilled",
+        value: ["fulfilled", "delivered"]
+      },
+      {
+        label: "Cancelled", 
+        value: ["cancelled"]
+      }
+    ];
 
     const preventPropagation = (e: React.MouseEvent) => e.stopPropagation();
     const getRate = (shipment: any, default_rate?: any) =>
@@ -112,11 +138,12 @@ export default function OrdersPage() {
 
       setFilter(query);
     };
-    const handleSelection = (e: ChangeEvent) => {
-      const { checked, name } = e.target as HTMLInputElement;
+    const handleCheckboxChange = (checked: boolean, name: string) => {
       if (name === "all") {
         setSelection(
-          !checked ? [] : (orders?.edges || []).map(({ node: { id } }) => id),
+          !checked
+            ? []
+            : (orders?.edges || []).map(({ node: { id } }) => id),
         );
       } else {
         setSelection(
@@ -192,7 +219,7 @@ export default function OrdersPage() {
               className="text-ellipsis"
               style={{ maxWidth: "190px", lineHeight: "15px" }}
             >
-              <span className="has-text-info has-text-weight-bold">
+              <span className="text-blue-600 font-bold">
                 <span>{` - `}</span>
               </span>
               <br />
@@ -227,7 +254,7 @@ export default function OrdersPage() {
             className="text-ellipsis"
             style={{ maxWidth: "190px", lineHeight: "15px" }}
           >
-            <span className="has-text-info has-text-weight-bold">
+            <span className="text-blue-600 font-bold">
               {!isNone(shipment.carrier_name) && (
                 <span>{shipment.tracking_number}</span>
               )}
@@ -262,308 +289,243 @@ export default function OrdersPage() {
 
     return (
       <>
-        <header className="columns px-0 pb-0 pt-4">
-          <div className="column">
-            <span className="title is-4">Orders</span>
+        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-0 pb-0 pt-4 mb-2">
+          <div className="mb-4 sm:mb-0">
+            <h1 className="text-2xl font-semibold text-gray-900">Orders</h1>
           </div>
-          <div className="column has-text-right-desktop">
-            <AppLink
-              href="/draft_orders/new"
-              className="button is-primary is-small mx-1"
-            >
-              <span>Create order</span>
-            </AppLink>
-            <AppLink
-              href="/manifests"
-              className="button is-primary is-small mx-1"
-            >
-              <span>Manage manifests</span>
-            </AppLink>
+          <div className="flex flex-row items-center gap-1 flex-wrap">
+            <Button asChild size="sm" className="mx-1 w-auto">
+              <AppLink href="/draft_orders/new">
+                Create order
+              </AppLink>
+            </Button>
+            <Button asChild size="sm" className="mx-1 w-auto">
+              <AppLink href="/manifests">
+                Manage manifests
+              </AppLink>
+            </Button>
             <OrdersFilter context={context} />
           </div>
         </header>
 
-        <div className="tabs">
-          <ul>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${isNone(filter?.status) && isNone(filter?.source) ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !isNone(filter?.status) &&
-                  isNone(filter?.source) &&
-                  updateFilter({ status: null, source: null, offset: 0 })
-                }
-              >
-                all
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${isListEqual(filter?.status || [], ["unfulfilled", "partial"]) ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !filter?.status?.includes("unfulfilled" as any) &&
-                  updateFilter({
-                    status: ["unfulfilled", "partial"],
-                    source: null,
-                    offset: 0,
-                  })
-                }
-              >
-                unfulfilled
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${isListEqual(filter?.status || [], ["fulfilled", "delivered"]) ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !filter?.status?.includes("fulfilled" as any) &&
-                  updateFilter({
-                    status: ["fulfilled", "delivered"],
-                    source: null,
-                    offset: 0,
-                  })
-                }
-              >
-                fulfilled
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${filter?.status?.includes("cancelled" as any) && filter?.status?.length === 1 ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !filter?.status?.includes("cancelled" as any) &&
-                  updateFilter({
-                    status: ["cancelled"],
-                    source: null,
-                    offset: 0,
-                  })
-                }
-              >
-                cancelled
-              </a>
-            </li>
-            <li
-              className={`is-capitalized has-text-weight-semibold ${(filter?.source as any) === "draft" ? "is-active" : ""}`}
-            >
-              <a
-                onClick={() =>
-                  !((filter?.source as any) === "draft") &&
-                  updateFilter({ status: null, source: "draft", offset: 0 })
-                }
-              >
-                drafts
-              </a>
-            </li>
-          </ul>
-        </div>
+        <FiltersCard
+          filters={getFilterOptions()}
+          activeFilter={filter?.status || []}
+          onFilterChange={(status) => updateFilter({ status, source: null, offset: 0 })}
+        />
 
-        {!query.isFetched && <Spinner />}
+        {!query.isFetched && (
+          <div className="bg-white rounded-lg shadow-sm border my-6 p-6">
+            <div className="space-y-4">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="flex items-center space-x-4">
+                  <Skeleton className="h-4 w-4" />
+                  <Skeleton className="h-4 w-[100px]" />
+                  <Skeleton className="h-4 w-[80px]" />
+                  <Skeleton className="h-4 w-[120px]" />
+                  <Skeleton className="h-4 w-[100px]" />
+                  <Skeleton className="h-4 w-[80px]" />
+                  <Skeleton className="h-4 w-6" />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {query.isFetched && (orders?.edges || []).length > 0 && (
           <>
-            <div className="table-container">
-              <table className="orders-table table is-fullwidth">
-                <tbody>
-                  <tr>
-                    <td
-                      className="selector has-text-centered p-0 control"
-                      onClick={preventPropagation}
-                    >
-                      <label className="checkbox p-2">
-                        <input
-                          name="all"
-                          type="checkbox"
-                          onChange={handleSelection}
-                          checked={allChecked}
-                        />
-                      </label>
-                    </td>
+            <StickyTableWrapper>
+              <Table className="orders-table">
+              <TableHeader>
+                <TableRow>
+                  <TableHead
+                    className="selector text-center p-0 items-center sticky-left"
+                    onClick={preventPropagation}
+                  >
+                    <div className="py-2 pl-2 pr-4">
+                      <Checkbox
+                        checked={allChecked}
+                        onCheckedChange={(checked) => handleCheckboxChange(checked as boolean, "all")}
+                      />
+                    </div>
+                  </TableHead>
 
-                    {selection.length > 0 && (
-                      <td className="p-1 is-vcentered" colSpan={8}>
-                        <div className="buttons has-addons ">
-                          {/* <AppLink
-                            className={`button is-small is-default px-3 ${unfulfilledSelection(selection) ? "" : "is-static"}`}
-                            href={`/orders/create_labels?order_ids=${selection.join(",")}`}
-                          >
-                            <span className="has-text-weight-semibold">
-                              Create labels
-                            </span>
-                          </AppLink> */}
+                  {selection.length > 0 && (
+                    <TableHead className="p-2" colSpan={6}>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Button
+                          asChild
+                          variant="outline"
+                          size="sm"
+                          disabled={!compatibleTypeSelection(selection)}
+                          className={`px-3 ${!compatibleTypeSelection(selection) ? 'opacity-40 pointer-events-none' : ''}`}
+                        >
                           <a
-                            href={url$`${references.HOST}/documents/orders/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?orders=${selection.join(",")}`}
-                            className={`button is-small is-default px-3 ${compatibleTypeSelection(selection) ? "" : "is-static"}`}
-                            target="_blank"
-                            rel="noreferrer"
+                            href={compatibleTypeSelection(selection) ? url$`${references.HOST}/documents/orders/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?orders=${selection.join(",")}` : undefined}
+                            target={compatibleTypeSelection(selection) ? "_blank" : undefined}
+                            rel={compatibleTypeSelection(selection) ? "noreferrer" : undefined}
+                            onClick={(e) => {
+                              if (!compatibleTypeSelection(selection)) {
+                                e.preventDefault();
+                                return false;
+                              }
+                            }}
                           >
-                            <span className="has-text-weight-semibold">
-                              Print Labels
-                            </span>
+                            Print Labels
                           </a>
+                        </Button>
+                        <Button
+                          asChild
+                          variant="outline"
+                          size="sm"
+                          className="px-3"
+                        >
                           <a
                             href={url$`${references.HOST}/documents/orders/invoice.pdf?orders=${selection.join(",")}`}
-                            className={`button is-small is-default px-3`}
                             target="_blank"
                             rel="noreferrer"
                           >
-                            <span className="has-text-weight-semibold">
-                              Print Invoices
-                            </span>
+                            Print Invoices
                           </a>
-                          {(document_templates?.edges || []).map(
-                            ({ node: template }) => (
+                        </Button>
+                        {(document_templates?.edges || []).map(
+                          ({ node: template }) => (
+                            <Button
+                              key={template.id}
+                              asChild
+                              variant="outline"
+                              size="sm"
+                              className="px-3"
+                            >
                               <a
-                                key={template.id}
                                 href={url$`${references.HOST}/documents/templates/${template.id}.${template.slug}?orders=${selection.join(",")}`}
-                                className="button is-small is-default px-3"
                                 target="_blank"
                                 rel="noreferrer"
                               >
-                                <span className="has-text-weight-semibold">
-                                  Print {template.name}
-                                </span>
+                                Print {template.name}
                               </a>
-                            ),
-                          )}
-                        </div>
-                      </td>
-                    )}
+                            </Button>
+                          ),
+                        )}
+                      </div>
+                    </TableHead>
+                  )}
 
-                    {selection.length === 0 && (
-                      <>
-                        <td className="order is-size-7 is-vcentered">
-                          ORDER #
-                        </td>
-                        <td className="status"></td>
-                        <td className="line-items is-size-7 is-vcentered">
-                          ITEMS
-                        </td>
-                        <td className="customer is-size-7 is-vcentered">
-                          SHIP TO
-                        </td>
-                        <td className="total is-size-7 is-vcentered">TOTAL</td>
-                        <td className="date is-size-7 is-vcentered">DATE</td>
-                        <td className="service is-size-7 is-vcentered">
-                          SHIPPING SERVICE
-                        </td>
-                        <td className="action"></td>
-                      </>
-                    )}
-                  </tr>
-
-                  {(orders?.edges || []).map(({ node: order }) => (
-                    <tr key={order.id} className="items">
-                      <td className="selector has-text-centered is-vcentered p-0">
-                        <label className="checkbox py-3 px-2">
-                          <input
-                            type="checkbox"
-                            name={order.id}
-                            onChange={handleSelection}
-                            checked={selection.includes(order.id)}
-                          />
-                        </label>
-                      </td>
-                      <td
-                        className="order is-vcentered is-clickable is-relative"
-                        onClick={() => previewOrder(order.id)}
-                      >
-                        <div
-                          className="p-2"
-                          style={{
-                            position: "absolute",
-                            maxWidth: "100%",
-                            top: 0,
-                            left: 0,
-                          }}
-                        >
-                          <p className="is-size-7 has-text-weight-bold has-text-grey-dark text-ellipsis">
-                            {order.order_id}
-                          </p>
-                          <p className="is-size-7 has-text-grey is-lowercase text-ellipsis">
-                            {order.source}
-                          </p>
-                        </div>
-                      </td>
-                      <td
-                        className="status is-vcentered is-clickable"
-                        onClick={() => previewOrder(order.id)}
-                      >
-                        <StatusBadge
-                          status={order.status as string}
-                          style={{ width: "100%" }}
+                  {selection.length === 0 && (
+                    <>
+                      <TableHead className="order text-xs items-center">
+                        ORDER #
+                      </TableHead>
+                      <TableHead className="status items-center"></TableHead>
+                      <TableHead className="line-items text-xs items-center">
+                        ITEMS
+                      </TableHead>
+                      <TableHead className="customer text-xs items-center">
+                        SHIP TO
+                      </TableHead>
+                      <TableHead className="total text-xs items-center">TOTAL</TableHead>
+                      <TableHead className="date text-xs items-center">DATE</TableHead>
+                      <TableHead className="service text-xs items-center">
+                        SHIPPING SERVICE
+                      </TableHead>
+                      <TableHead className="action sticky-right"></TableHead>
+                    </>
+                  )}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {(orders?.edges || []).map(({ node: order }) => (
+                  <TableRow 
+                    key={order.id} 
+                    className={`items cursor-pointer transition-colors duration-150 ease-in-out ${
+                      selection.includes(order.id) 
+                        ? 'bg-blue-50 hover:bg-blue-100' 
+                        : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    <TableCell className="selector text-center items-center p-0 sticky-left">
+                      <div className="py-2 pl-2 pr-4">
+                        <Checkbox
+                          checked={selection.includes(order.id)}
+                          onCheckedChange={(checked) => handleCheckboxChange(checked as boolean, order.id)}
                         />
-                      </td>
-                      <td
-                        className="line-items is-vcentered is-clickable is-relative"
-                        onClick={() => previewOrder(order.id)}
-                      >
-                        <div
-                          className="p-2"
-                          style={{
-                            position: "absolute",
-                            maxWidth: "100%",
-                            top: 0,
-                            left: 0,
-                          }}
+                      </div>
+                    </TableCell>
+                    <TableCell
+                      className="order text-xs items-center relative"
+                      onClick={() => previewOrder(order.id)}
+                    >
+                      <div className="py-1 px-2">
+                        <p className="text-xs font-bold text-gray-700 text-ellipsis">
+                          {order.order_id}
+                        </p>
+                        <p className="text-xs text-gray-600 lowercase text-ellipsis">
+                          {order.source}
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell
+                      className="status items-center"
+                      onClick={() => previewOrder(order.id)}
+                    >
+                      <div style={{ paddingLeft: '7px', paddingRight: '7px' }}>
+                        <ShipmentsStatusBadge
+                          status={order.status as string}
+                          className="w-full justify-center text-center"
+                        />
+                      </div>
+                    </TableCell>
+                    <TableCell
+                      className="line-items text-xs items-center relative"
+                      onClick={() => previewOrder(order.id)}
+                    >
+                      <div className="py-1 px-2">
+                        <p className="text-xs font-bold text-gray-600 text-ellipsis">
+                          {((items: number): any =>
+                            `${items} item${items === 1 ? "" : "s"}`)(
+                              order.line_items.reduce(
+                                (acc, item) =>
+                                  acc + (item.quantity as number) || 1,
+                                0,
+                              ),
+                            )}
+                        </p>
+                        <p className="text-xs text-gray-600 text-ellipsis">
+                          {order.line_items.length > 1
+                            ? "(Multiple)"
+                            : order.line_items[0].title ||
+                            order.line_items[0].description ||
+                            order.line_items[0].sku}
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell
+                      className="customer text-xs items-center font-bold text-gray-600 relative"
+                      onClick={() => previewOrder(order.id)}
+                    >
+                      <div className="py-1 px-2">
+                        <p
+                          className="text-ellipsis"
+                          title={formatAddressShort(
+                            order.shipping_to as AddressType,
+                          )}
                         >
-                          <p className="is-size-7 has-text-weight-bold has-text-grey text-ellipsis">
-                            {((items: number): any =>
-                              `${items} item${items === 1 ? "" : "s"}`)(
-                                order.line_items.reduce(
-                                  (acc, item) =>
-                                    acc + (item.quantity as number) || 1,
-                                  0,
-                                ),
-                              )}
-                          </p>
-                          <p className="is-size-7 has-text-grey text-ellipsis">
-                            {order.line_items.length > 1
-                              ? "(Multiple)"
-                              : order.line_items[0].title ||
-                              order.line_items[0].description ||
-                              order.line_items[0].sku}
-                          </p>
-                        </div>
-                      </td>
-                      <td
-                        className="customer is-vcentered is-clickable is-size-7 has-text-weight-bold has-text-grey is-relative"
+                          {formatAddressShort(
+                            order.shipping_to as AddressType,
+                          )}
+                        </p>
+                        <p className="font-medium">
+                          {formatAddressLocationShort(
+                            order.shipping_to as AddressType,
+                          )}
+                        </p>
+                      </div>
+                    </TableCell>
+                      <TableCell
+                        className="total items-center px-1 cursor-pointer"
                         onClick={() => previewOrder(order.id)}
                       >
-                        <div
-                          className="p-2"
-                          style={{
-                            position: "absolute",
-                            maxWidth: "100%",
-                            top: 0,
-                            left: 0,
-                          }}
-                        >
-                          <p
-                            className="text-ellipsis"
-                            title={formatAddressShort(
-                              order.shipping_to as AddressType,
-                            )}
-                          >
-                            {formatAddressShort(
-                              order.shipping_to as AddressType,
-                            )}
-                          </p>
-                          <p className="has-text-weight-medium">
-                            {formatAddressLocationShort(
-                              order.shipping_to as AddressType,
-                            )}
-                          </p>
-                        </div>
-                      </td>
-                      <td
-                        className="total px-1 is-clickable"
-                        onClick={() => previewOrder(order.id)}
-                      >
-                        <p className="is-size-7 has-text-weight-semibold has-text-grey">
+                        <p className="text-xs font-semibold text-gray-600">
                           {order.line_items.reduce(
                             (acc, item) =>
                               acc +
@@ -575,64 +537,49 @@ export default function OrdersPage() {
                           {order.options.currency ||
                             order.line_items[0].value_currency}
                         </p>
-                      </td>
-                      <td
-                        className="date px-1 is-clickable"
+                      </TableCell>
+                      <TableCell
+                        className="date items-center px-1 cursor-pointer"
                         onClick={() => previewOrder(order.id)}
                       >
-                        <p className="is-size-7 has-text-weight-semibold has-text-grey">
+                        <p className="text-xs font-semibold text-gray-600">
                           {formatDateTime(order.created_at)}
                         </p>
-                      </td>
-                      <td className="service is-vcentered p-1 is-size-7 has-text-weight-bold has-text-grey">
-                        <div className="icon-text">
+                      </TableCell>
+                      <TableCell className="service items-center py-1 px-0 text-xs font-bold text-gray-600">
+                        <div className="flex items-center">
                           {computeOrderService(order)}
                         </div>
-                      </td>
-                      <td className="action is-vcentered px-0">
+                      </TableCell>
+                      <TableCell className="action items-center px-0 sticky-right">
                         <OrderMenu
                           order={order as any}
-                          className="is-fullwidth"
+                          className="w-full"
                         />
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
-            </div>
+              </TableBody>
+              </Table>
+            </StickyTableWrapper>
 
-            <div className="px-2 py-2 is-vcentered">
-              <span className="is-size-7 has-text-weight-semibold">
-                {(orders?.edges || []).length} results
-              </span>
-
-              <div className="buttons has-addons is-centered is-pulled-right">
-                <button
-                  className="button is-small"
-                  onClick={() =>
-                    updateFilter({ offset: (filter.offset as number) - 20 })
-                  }
-                  disabled={filter.offset == 0}
-                >
-                  Previous
-                </button>
-                <button
-                  className="button is-small"
-                  onClick={() =>
-                    updateFilter({ offset: (filter.offset as number) + 20 })
-                  }
-                  disabled={!orders?.page_info.has_next_page}
-                >
-                  Next
-                </button>
-              </div>
+            {/* Sticky Footer */}
+            <div className="sticky bottom-0 left-0 right-0 z-10 bg-white border-t border-gray-200 pb-16 md:pb-0">
+              <ListPagination
+                currentOffset={filter.offset as number || 0}
+                pageSize={20}
+                totalCount={orders?.page_info?.count || 0}
+                hasNextPage={orders?.page_info?.has_next_page || false}
+                onPageChange={(offset) => updateFilter({ offset })}
+                className="px-2 py-3"
+              />
             </div>
           </>
         )}
 
         {query.isFetched && (orders?.edges || []).length == 0 && (
-          <div className="card my-6">
-            <div className="card-content has-text-centered">
+          <div className="bg-white rounded-lg shadow-sm border my-6">
+            <div className="p-6 text-center">
               <p>No order found.</p>
             </div>
           </div>
@@ -644,9 +591,9 @@ export default function OrdersPage() {
   return (
     <>
       <GoogleGeocodingScript />
-      <ContextProviders>
+      <OrderPreview>
         <Component />
-      </ContextProviders>
+      </OrderPreview>
     </>
   );
 }

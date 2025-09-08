@@ -4,6 +4,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Checkbox } from "./ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { EnhancedSelect } from "./enhanced-select";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 import { ChevronDown, ChevronUp, MapPin } from "lucide-react";
 import { AddressType, DEFAULT_ADDRESS_CONTENT } from "@karrio/types";
@@ -40,6 +41,7 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
   const [address, setAddress] = React.useState<Partial<AddressType>>(value || DEFAULT_ADDRESS_CONTENT);
   const [advancedExpanded, setAdvancedExpanded] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [formKey, setFormKey] = React.useState<string>(`form-${Date.now()}`);
   const { toast } = useToast();
 
   React.useEffect(() => {
@@ -70,7 +72,14 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
 
   const isPostalRequired = COUNTRY_WITH_POSTAL_CODE.includes(address.country_code || "");
   const isStateRequired = Object.keys(references.states || {}).includes(address.country_code || "");
-  const hasChanges = !isEqual(value, address);
+  
+  const missingRequired = !address.person_name || !address.country_code || !address.address_line1 || !address.city || (isPostalRequired && !address.postal_code) || (isStateRequired && !address.state_code);
+  
+  // Allow saving if there are changes OR if address has meaningful content (for new addresses)
+  const hasChanges = !isEqual(value, address) || (
+    address.person_name || address.country_code || address.address_line1 || address.city
+  );
+
 
   // Enhanced postal code validation
   const validatePostalCode = (postal: string, country: string) => {
@@ -108,28 +117,39 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
     return phone; // Return original if no formatting applied
   };
 
-  const missingRequired = !address.person_name || !address.country_code || !address.address_line1 || !address.city || (isPostalRequired && !address.postal_code) || (isStateRequired && !address.state_code);
 
   return (
-    <form onSubmit={handleSubmit} className={`space-y-3 ${className}`}>
+    <form key={formKey} onSubmit={handleSubmit} className={`space-y-4 ${className}`}>
       {/* Contact Information */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <div className="space-y-1">
-          <Label htmlFor="person_name" className="text-xs text-slate-700">
-            Contact Person <span className="text-red-500">*</span>
-          </Label>
-          <Input
-            id="person_name"
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <AddressCombobox
+            name="person_name"
+            label="Contact Person"
             value={address.person_name || ""}
-            onChange={(e) => handleChange("person_name", e.target.value)}
+            onValueChange={(addressData, isTemplateSelection) => {
+              if (isTemplateSelection) {
+                // Full address template selected, populate all fields atomically
+                const updatedAddress = { ...address, ...addressData };
+                setAddress(updatedAddress);
+                onChange?.(updatedAddress);
+                setFormKey(`form-${Date.now()}`);
+              } else {
+                // User typed in the field, only update person_name
+                if (addressData.person_name !== undefined) {
+                  handleChange("person_name", addressData.person_name || "");
+                }
+              }
+            }}
             placeholder="Full name"
             required
             disabled={disabled}
             className="h-8"
+            wrapperClass="p-0"
           />
         </div>
-        <div className="space-y-1">
-          <Label htmlFor="company_name" className="text-xs text-slate-700">Company</Label>
+        <div className="space-y-2">
+          <Label htmlFor="company_name">Company</Label>
           <Input
             id="company_name"
             value={address.company_name || ""}
@@ -143,39 +163,35 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
 
       {/* Country */}
       <div className="space-y-1">
-        <Label htmlFor="country_code" className="text-xs text-slate-700">
+        <Label htmlFor="country_code">
           Country <span className="text-red-500">*</span>
         </Label>
         <CountrySelect
           value={address.country_code || ""}
           onValueChange={(value) => handleChange("country_code", value)}
           disabled={disabled}
+          noWrapper={true}
         />
       </div>
 
       {/* Address Lines */}
-      <div className="space-y-3">
-        <div className="space-y-1">
-          <Label htmlFor="address_line1" className="text-xs text-slate-700">
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="address_line1">
             Street Address <span className="text-red-500">*</span>
           </Label>
-          <div className="relative">
-            <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-            <AddressCombobox
-              value={address.address_line1 || ""}
-              onValueChange={(addressData) => handleChange("address_line1", addressData.address_line1 || "")}
-              placeholder="Start typing your address..."
-              required
-              disabled={disabled}
-              className="pl-10 h-8"
-            />
-          </div>
-          <p className="text-xs text-muted-foreground">
-            💡 Tip: For best results, include street number and name
-          </p>
+          <Input
+            id="address_line1"
+            value={address.address_line1 || ""}
+            onChange={(e) => handleChange("address_line1", e.target.value)}
+            placeholder="Start typing your address..."
+            required
+            disabled={disabled}
+            className="h-8"
+          />
         </div>
-        <div className="space-y-1">
-          <Label htmlFor="address_line2" className="text-xs text-slate-700">Address Line 2</Label>
+        <div className="space-y-2">
+          <Label htmlFor="address_line2">Address Line 2</Label>
           <Input
             id="address_line2"
             value={address.address_line2 || ""}
@@ -188,9 +204,9 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
       </div>
 
       {/* City, State, Postal */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <div className="space-y-1">
-          <Label htmlFor="city" className="text-xs text-slate-700">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="city">
             City <span className="text-red-500">*</span>
           </Label>
           <Input
@@ -203,41 +219,40 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
             className="h-8"
           />
         </div>
-        <div className="space-y-1">
-          <Label htmlFor="state_code" className="text-xs text-slate-700">
-            State/Province {isStateRequired && <span className="text-red-500">*</span>}
-          </Label>
           {address.country_code && references.states?.[address.country_code] ? (
-            <Select
+            <EnhancedSelect
+              name="state_code"
+              label="State/Province"
               value={address.state_code || ""}
               onValueChange={(value) => handleChange("state_code", value)}
-              disabled={disabled}
-            >
-              <SelectTrigger className="h-8">
-                <SelectValue placeholder="Select state" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(references.states[address.country_code]).map(([code, name]) => (
-                  <SelectItem key={code} value={code}>
-                    {name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          ) : (
-            <Input
-              id="state_code"
-              value={address.state_code || ""}
-              onChange={(e) => handleChange("state_code", e.target.value)}
-              placeholder="State/Province"
+              placeholder="Select state"
               required={isStateRequired}
               disabled={disabled}
               className="h-8"
+              labelClassName=""
+              options={Object.entries(references.states[address.country_code] || {}).map(([code, name]) => ({
+                value: code,
+                label: String(name)
+              }))}
             />
+          ) : (
+            <div className="space-y-2">
+              <Label htmlFor="state_code">
+                State/Province {isStateRequired && <span className="text-red-500">*</span>}
+              </Label>
+              <Input
+                id="state_code"
+                value={address.state_code || ""}
+                onChange={(e) => handleChange("state_code", e.target.value)}
+                placeholder="State/Province"
+                required={isStateRequired}
+                disabled={disabled}
+                className="h-8"
+              />
+            </div>
           )}
-        </div>
-        <div className="space-y-1">
-          <Label htmlFor="postal_code" className="text-xs text-slate-700">
+        <div className="space-y-2">
+          <Label htmlFor="postal_code">
             Postal Code {isPostalRequired && <span className="text-red-500">*</span>}
           </Label>
           <div className="relative">
@@ -273,6 +288,7 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
             onChange={(e) => handleChange("email", e.target.value)}
             placeholder="contact@company.com"
             disabled={disabled}
+            className="h-8"
           />
         </div>
         <div className="space-y-2">
@@ -286,12 +302,13 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
             }}
             placeholder="+1 (555) 123-4567"
             disabled={disabled}
+            className="h-8"
           />
         </div>
       </div>
 
       {/* Residential Checkbox */}
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-2 pt-4">
         <Checkbox
           id="residential"
           checked={address.residential || false}
@@ -317,9 +334,9 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
             )}
           </Button>
         </CollapsibleTrigger>
-        <CollapsibleContent className="space-y-4 mt-4 pl-4 border-l-2 border-gray-200">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
+        <CollapsibleContent className="space-y-6 mt-2 pl-4 border-l-2 border-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-1">
               <Label htmlFor="federal_tax_id">Federal Tax ID</Label>
               <Input
                 id="federal_tax_id"
@@ -330,7 +347,7 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
                 disabled={disabled}
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label htmlFor="state_tax_id">State Tax ID</Label>
               <Input
                 id="state_tax_id"
@@ -345,18 +362,6 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
         </CollapsibleContent>
       </Collapsible>
 
-      {/* Submit Button */}
-      {showSubmitButton && (
-        <div className="flex justify-end pt-4">
-          <Button
-            type="submit"
-            disabled={disabled || isSubmitting || !hasChanges || missingRequired || (Boolean(address.postal_code) && !validatePostalCode(address.postal_code || "", address.country_code || ""))}
-            className="min-w-[120px]"
-          >
-            {isSubmitting ? "Saving..." : submitButtonText}
-          </Button>
-        </div>
-      )}
     </form>
   );
 });

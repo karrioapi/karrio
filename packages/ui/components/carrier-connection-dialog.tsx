@@ -31,7 +31,7 @@ import { CountrySelect } from "./country-select";
 import { GetSystemConnections_system_carrier_connections_edges_node } from "@karrio/types/graphql/admin/types";
 import { IntegrationStatusBadge } from "@karrio/ui/core/components/integration-status-badge";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
-import { MetadataEditor } from "./ui/metadata-editor";
+import { EnhancedMetadataEditor } from "./enhanced-metadata-editor";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { useState, useEffect } from "react";
@@ -810,7 +810,7 @@ export function CarrierConnectionDialog({
                       </div>
                     </TabsContent>
                     <TabsContent value="metadata" className="pt-6">
-                      <MetadataEditor
+                      <EnhancedMetadataEditor
                         value={watch("metadata") || {}}
                         onChange={(metadata) => {
                           form.setValue("metadata", metadata, { shouldDirty: true });

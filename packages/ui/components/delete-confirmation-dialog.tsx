@@ -14,6 +14,8 @@ interface DeleteConfirmationDialogProps {
   title: string;
   description: string;
   onConfirm: () => void;
+  confirmLabel?: string;
+  cancelLabel?: string;
 }
 
 export function DeleteConfirmationDialog({
@@ -22,6 +24,8 @@ export function DeleteConfirmationDialog({
   title,
   description,
   onConfirm,
+  confirmLabel = "Delete",
+  cancelLabel = "Cancel",
 }: DeleteConfirmationDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -31,16 +35,16 @@ export function DeleteConfirmationDialog({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
-        <DialogFooter className="shrink-0">
+        <DialogFooter className="!flex-row !justify-center gap-3 sm:!justify-end shrink-0">
           <Button
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
           >
-            Cancel
+            {cancelLabel}
           </Button>
           <Button type="button" variant="destructive" onClick={onConfirm}>
-            Delete
+            {confirmLabel}
           </Button>
         </DialogFooter>
       </DialogContent>

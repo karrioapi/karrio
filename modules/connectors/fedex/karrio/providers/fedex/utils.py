@@ -121,6 +121,7 @@ def login(settings: Settings, client_id: str = None, client_secret: str = None):
 
     result = lib.request(
         url=f"{settings.server_url}/oauth/token",
+        trace=settings.trace_as("json"),
         method="POST",
         headers={
             "content-Type": "application/x-www-form-urlencoded",
@@ -166,6 +167,7 @@ def get_proof_of_delivery(tracking_number: str, settings: Settings):
     response = lib.to_dict(
         lib.request(
             url=f"{settings.server_url}/track/v1/trackingdocuments",
+            trace=settings.trace_as("json"),
             data=lib.to_json(request),
             method="POST",
             decoder=parse_response,
