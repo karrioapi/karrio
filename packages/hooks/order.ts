@@ -143,6 +143,23 @@ export function useOrderMutation(id?: string) {
     queryClient.invalidateQueries(["orders", id]);
   };
 
+  // Helper function to clean order data for server submission
+  const cleanOrderForServer = (data: any) => {
+    const cleanLineItem = (item: any) => {
+      const cleaned = { ...item };
+      // Remove temporary IDs (start with 'temp_')
+      if (cleaned.id?.startsWith('temp_')) delete cleaned.id;
+      // Convert unlinked parent_ids to null for server
+      if (cleaned.parent_id?.startsWith('unlinked_')) cleaned.parent_id = null;
+      return cleaned;
+    };
+
+    return {
+      ...data,
+      line_items: (data.line_items || []).map(cleanLineItem)
+    };
+  };
+
   // Mutations
   // REST requests
   const cancelOrder = useMutation(
@@ -151,13 +168,17 @@ export function useOrderMutation(id?: string) {
     { onSuccess: invalidateCache, onError },
   );
   const createOrder = useMutation(
-    (data: CreateOrderMutationInput) =>
-      karrio.graphql.request<CreateOrder>(gqlstr(CREATE_ORDER), { data }),
+    (data: CreateOrderMutationInput) => {
+      const cleanedData = cleanOrderForServer(data);
+      return karrio.graphql.request<CreateOrder>(gqlstr(CREATE_ORDER), { data: cleanedData });
+    },
     { onSuccess: invalidateCache, onError },
   );
   const updateOrder = useMutation(
-    (data: UpdateOrderMutationInput) =>
-      karrio.graphql.request<UpdateOrder>(gqlstr(UPDATE_ORDER), { data }),
+    (data: UpdateOrderMutationInput) => {
+      const cleanedData = cleanOrderForServer(data);
+      return karrio.graphql.request<UpdateOrder>(gqlstr(UPDATE_ORDER), { data: cleanedData });
+    },
     { onSuccess: invalidateCache, onError },
   );
   const deleteOrder = useMutation(
