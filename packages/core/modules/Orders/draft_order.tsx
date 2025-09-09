@@ -70,6 +70,43 @@ export default function Page(pageProps: { params: Promise<{ id?: string }> }) {
       setKey(`${id}-${Date.now()}`);
     };
 
+    // Helper function to analyze currencies in line items
+    const analyzeCurrencies = () => {
+      if (!order?.line_items || order.line_items.length === 0) {
+        return { currencies: [], hasMixedCurrencies: false, hasValues: false };
+      }
+      
+      const itemsWithValues = order.line_items.filter(
+        item => item.value_currency && item.value_amount && item.value_amount > 0
+      );
+      
+      if (itemsWithValues.length === 0) {
+        return { currencies: [], hasMixedCurrencies: false, hasValues: false };
+      }
+      
+      const currencies = Array.from(new Set(
+        itemsWithValues.map(item => item.value_currency)
+      ));
+      
+      return {
+        currencies,
+        hasMixedCurrencies: currencies.length > 1,
+        hasValues: true
+      };
+    };
+
+    // Currency validation logic
+    const getCurrencyValidationErrors = () => {
+      const errors: string[] = [];
+      const { hasMixedCurrencies } = analyzeCurrencies();
+      
+      if (hasMixedCurrencies) {
+        errors.push("Please standardize currency - your order contains items with different currencies");
+      }
+      
+      return errors;
+    };
+
     // Validation logic
     const getValidationErrors = () => {
       const errors: string[] = [];
@@ -102,7 +139,7 @@ export default function Page(pageProps: { params: Promise<{ id?: string }> }) {
       return errors;
     };
 
-    const validationErrors = getValidationErrors();
+    const validationErrors = [...getValidationErrors(), ...getCurrencyValidationErrors()];
     useEffect(() => {
       if (
         !ready &&
@@ -416,18 +453,30 @@ export default function Page(pageProps: { params: Promise<{ id?: string }> }) {
                       <p className="font-semibold text-xs">
                         TOTAL:{" "}
                         {
-                          <span>
-                            {(order.line_items || []).reduce(
-                              (_, { quantity, value_amount }) =>
-                                _ +
+                          (() => {
+                            const { hasMixedCurrencies, hasValues, currencies } = analyzeCurrencies();
+                            
+                            // If no items have values, show 0
+                            if (!hasValues) {
+                              return <span>0</span>;
+                            }
+                            
+                            // If mixed currencies, show warning message
+                            if (hasMixedCurrencies) {
+                              return <span className="text-yellow-600">Mixed currencies</span>;
+                            }
+                            
+                            // Single currency - calculate normally
+                            const total = (order.line_items || []).reduce(
+                              (sum, { quantity, value_amount }) =>
+                                sum +
                                 (isNone(quantity) ? 1 : (quantity as any)) *
-                                (isNone(value_amount)
-                                  ? 1.0
-                                  : (value_amount as any)),
+                                (isNone(value_amount) ? 0 : (value_amount as any)),
                               0.0,
-                            )}{" "}
-                            {(order.line_items || [])[0]?.value_currency}
-                          </span>
+                            );
+                            
+                            return <span>{total} {currencies[0]}</span>;
+                          })()
                         }
                       </p>
                       <p className="font-semibold text-xs">
