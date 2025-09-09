@@ -32,10 +32,6 @@ export interface CommodityEditDialogProps {
   disableOrderLinking?: boolean;
 }
 
-// Helper function to check if parent_id represents a real linked item vs temporary unlinked item
-const isRealLinkedItem = (parent_id?: string | null): boolean => {
-  return !isNone(parent_id) && !parent_id?.startsWith('unlinked_');
-};
 
 export const CommodityEditDialog = ({
   trigger,
@@ -180,18 +176,7 @@ export const CommodityEditDialog = ({
                       }
                     }}
                     onUnlink={() => {
-                      const timestamp = Date.now();
-                      const randomId = Math.random().toString(36).substr(2, 9);
-                      const tempParentId = `unlinked_${timestamp}_${randomId}`;
-
-                      // Create updated commodity object with both changes
-                      const updates: any = { parent_id: tempParentId };
-                      if (!commodity?.id) {
-                        updates.id = `temp_${timestamp}_${randomId}`;
-                      }
-
-                      // Single state update with all changes
-                      setCommodity({ ...commodity, ...updates });
+                      handleChange("parent_id", null);
                       setMaxQty(undefined);
                     }}
                     query={query}
@@ -209,7 +194,7 @@ export const CommodityEditDialog = ({
                     placeholder="Product Name"
                     value={commodity?.title || ""}
                     onChange={(e) => handleChange("title", e.target.value)}
-                    disabled={isRealLinkedItem(commodity?.parent_id)}
+                    disabled={!isNone(commodity?.parent_id)}
                     maxLength={35}
                     className="h-8"
                   />
@@ -222,7 +207,7 @@ export const CommodityEditDialog = ({
                     placeholder="0000.00.00.00"
                     value={commodity?.hs_code || ""}
                     onChange={(e) => handleChange("hs_code", e.target.value)}
-                    disabled={isRealLinkedItem(commodity?.parent_id)}
+                    disabled={!isNone(commodity?.parent_id)}
                     maxLength={35}
                     className="h-8"
                   />
@@ -236,7 +221,7 @@ export const CommodityEditDialog = ({
                       value={commodity?.sku || ""}
                       onChange={(e) => handleChange("sku", e.target.value)}
                       placeholder="0000001"
-                      disabled={isRealLinkedItem(commodity?.parent_id)}
+                      disabled={!isNone(commodity?.parent_id)}
                       maxLength={35}
                       className="h-8"
                     />
@@ -248,7 +233,7 @@ export const CommodityEditDialog = ({
                       value={commodity?.origin_country || ""}
                       onValueChange={(value) => handleChange("origin_country", value)}
                       placeholder="Select country"
-                      disabled={isRealLinkedItem(commodity?.parent_id)}
+                      disabled={!isNone(commodity?.parent_id)}
                       className="h-8"
                       noWrapper={true}
                     />
@@ -289,13 +274,13 @@ export const CommodityEditDialog = ({
                         step="any"
                         value={commodity?.weight || ""}
                         onChange={(e) => handleChange("weight", Number(e.target.value))}
-                        disabled={isRealLinkedItem(commodity?.parent_id)}
+                        disabled={!isNone(commodity?.parent_id)}
                         className="h-8 rounded-r-none border-r-0"
                       />
                       <Select
                         value={commodity?.weight_unit || WeightUnitEnum.KG}
                         onValueChange={(value) => handleChange("weight_unit", value)}
-                        disabled={isRealLinkedItem(commodity?.parent_id)}
+                        disabled={!isNone(commodity?.parent_id)}
                       >
                         <SelectTrigger className="h-8 w-20 rounded-l-none border-l-0">
                           <SelectValue />
@@ -323,13 +308,13 @@ export const CommodityEditDialog = ({
                         step="any"
                         value={commodity?.value_amount || ""}
                         onChange={(e) => handleChange("value_amount", Number(e.target.value))}
-                        disabled={isRealLinkedItem(commodity?.parent_id)}
+                        disabled={!isNone(commodity?.parent_id)}
                         className="h-8 rounded-r-none border-r-0"
                       />
                       <Select
                         value={commodity?.value_currency || CurrencyCodeEnum.USD}
                         onValueChange={(value) => handleChange("value_currency", value)}
-                        disabled={isRealLinkedItem(commodity?.parent_id)}
+                        disabled={!isNone(commodity?.parent_id)}
                       >
                         <SelectTrigger className="h-8 w-20 rounded-l-none border-l-0">
                           <SelectValue />
@@ -355,7 +340,7 @@ export const CommodityEditDialog = ({
                     maxLength={100}
                     value={commodity?.description || ""}
                     onChange={(e) => handleChange("description", e.target.value)}
-                    disabled={isRealLinkedItem(commodity?.parent_id)}
+                    disabled={!isNone(commodity?.parent_id)}
                     className="resize-none"
                   />
                 </div>
@@ -367,7 +352,6 @@ export const CommodityEditDialog = ({
                   className="w-full"
                   placeholder="No metadata configured"
                   emptyStateMessage="Add key-value pairs to configure commodity metadata"
-                  allowEdit={!isRealLinkedItem(commodity?.parent_id)}
                   showTypeInference={true}
                   maxHeight="300px"
                 />
