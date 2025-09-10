@@ -153,29 +153,25 @@ export const ShipmentComponent = ({
             </div>
           </div>
 
-          <hr className="mt-1 mb-2" style={{ height: "1px" }} />
+          <hr className="mt-1 mb-0" style={{ height: "1px" }} />
 
           {/* Reference and highlights section */}
-          <div className="columns mb-4">
+          <div className="flex flex-col md:flex-row md:flex-wrap gap-0 mb-4">
             <div className="p-4 mr-4">
-              <span className="subtitle is-size-7 my-4">Date</span>
+              <span className="text-xs text-gray-600 my-4">Date</span>
               <br />
-              <span className="subtitle is-size-7 mt-1 has-text-weight-semibold">
+              <span className="text-xs mt-1 font-semibold">
                 {formatDateTime(shipment.created_at)}
               </span>
             </div>
 
             {!isNone(shipment.service) && (
               <>
-                <div
-                  className="my-2"
-                  style={{ width: "1px", backgroundColor: "#ddd" }}
-                ></div>
+                <div className="hidden md:block w-px bg-gray-300 my-1"></div>
                 <div className="p-4 mr-4">
-                  <span className="subtitle is-size-7 my-4">Courier</span>
+                  <span className="text-xs text-gray-600 my-4">Courier</span>
                   <br />
                   <CarrierBadge
-                    className="has-background-primary has-text-centered has-text-weight-bold has-text-white-bis is-size-7"
                     carrier_name={shipment.meta.carrier as string}
                     text_color={
                       shipment.selected_rate_carrier?.config?.text_color
@@ -186,14 +182,11 @@ export const ShipmentComponent = ({
                   />
                 </div>
 
-                <div
-                  className="my-2"
-                  style={{ width: "1px", backgroundColor: "#ddd" }}
-                ></div>
+                <div className="hidden md:block w-px bg-gray-300 my-1"></div>
                 <div className="p-4 mr-4">
-                  <span className="subtitle is-size-7 my-4">Service Level</span>
+                  <span className="text-xs text-gray-600 my-4">Service Level</span>
                   <br />
-                  <span className="subtitle is-size-7 mt-1 has-text-weight-semibold">
+                  <span className="text-xs mt-1 font-semibold">
                     {formatRef(
                       ((shipment.meta as any)?.service_name ||
                         shipment.service) as string,
@@ -205,14 +198,11 @@ export const ShipmentComponent = ({
 
             {!isNone(shipment.reference) && (
               <>
-                <div
-                  className="my-2"
-                  style={{ width: "1px", backgroundColor: "#ddd" }}
-                ></div>
+                <div className="hidden md:block w-px bg-gray-300 my-1"></div>
                 <div className="p-4 mr-4">
-                  <span className="subtitle is-size-7 my-4">Reference</span>
+                  <span className="text-xs text-gray-600 my-4">Reference</span>
                   <br />
-                  <span className="subtitle is-size-7 has-text-weight-semibold">
+                  <span className="text-xs font-semibold">
                     {shipment.reference}
                   </span>
                 </div>

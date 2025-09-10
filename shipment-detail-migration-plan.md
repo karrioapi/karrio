@@ -106,7 +106,7 @@ Migrate shipment details and preview from Bulma modal to shadcn Sheet component 
 
 ---
 
-### Step 2: Reference and Highlights Section (Lines 152-215)
+### Step 2: Reference and Highlights Section (Lines 152-215) ✅ **COMPLETED**
 **Current Bulma Structure:**
 ```typescript
 <div className="columns mb-4">
@@ -137,27 +137,68 @@ Migrate shipment details and preview from Bulma modal to shadcn Sheet component 
 </div>
 ```
 
-**Convert to Shadcn/Tailwind:**
-- `columns mb-4` → `flex flex-wrap gap-0 mb-4` (maintaining tight spacing)
-- `p-4 mr-4` → `px-4 py-2`
-- Vertical dividers: `w-px bg-gray-300 my-2` (maintaining exact 1px width and #ddd color)
-- `subtitle is-size-7` → `text-sm text-gray-600`
-- `has-text-weight-semibold` → `font-semibold`
-- `my-4` → `my-4` (preserve exact spacing)
+**Final Implementation:**
+```typescript
+<hr className="mt-1 mb-0" style={{ height: "1px" }} />
+
+{/* Reference and highlights section */}
+<div className="flex flex-col md:flex-row md:flex-wrap gap-0 mb-4">
+  <div className="p-4 mr-4">
+    <span className="text-xs text-gray-600 my-4">Date</span>
+    <br />
+    <span className="text-xs mt-1 font-semibold">
+      {formatDateTime(shipment.created_at)}
+    </span>
+  </div>
+
+  {!isNone(shipment.service) && (
+    <>
+      <div className="hidden md:block w-px bg-gray-300 my-1"></div>
+      <div className="p-4 mr-4">
+        <span className="text-xs text-gray-600 my-4">Courier</span>
+        <br />
+        <CarrierBadge
+          carrier_name={shipment.meta.carrier as string}
+          text_color={shipment.selected_rate_carrier?.config?.text_color}
+          background={shipment.selected_rate_carrier?.config?.brand_color}
+        />
+      </div>
+      {/* Similar pattern for Service Level and Reference */}
+    </>
+  )}
+</div>
+```
+
+**Key Changes from Original Plan:**
+- ✅ `columns mb-4` → `flex flex-col md:flex-row md:flex-wrap gap-0 mb-4`
+- ✅ `subtitle is-size-7` → `text-xs text-gray-600` (corrected from text-sm)
+- ✅ Vertical dividers: `w-px bg-gray-300 my-1` (adjusted from my-2 for better spacing)
+- ✅ Mobile responsive: `flex-col` stacks items, `hidden md:block` hides dividers on mobile
+- ✅ Horizontal rule: `mb-2` → `mb-0` for better spacing alignment
+- ✅ CarrierBadge confirmed compatible (no className changes needed)
 
 **Component Checks:**
-- Check if `CarrierBadge` is already shadcn compatible
-- Verify custom carrier colors still work
+- ✅ `CarrierBadge` is compatible (removed unnecessary className props)
+- ✅ Custom carrier colors work correctly
 
 **🧪 Test Checklist:**
-- [ ] Horizontal layout with proper spacing
-- [ ] Date section displays correctly
-- [ ] Vertical dividers appear as thin gray lines
-- [ ] Courier badge shows with proper brand colors
-- [ ] Service level text matches original styling
-- [ ] Reference displays (if exists)
-- [ ] Conditional rendering works (only shows sections that exist)
-- [ ] **Mobile responsive**: Maintains existing mobile layout behavior
+- [x] Horizontal layout with proper spacing on desktop
+- [x] Vertical stacking on mobile (no dividers)
+- [x] Date section displays correctly with proper text size
+- [x] Vertical dividers properly spaced (`my-1`)
+- [x] Courier badge shows with proper brand colors
+- [x] Service level text matches original styling
+- [x] Reference displays when exists
+- [x] Conditional rendering works for all sections
+- [x] **Mobile responsive**: Perfect mobile stacking behavior maintained
+
+**✅ MIGRATION COMPLETED:**
+- ✅ Converted Bulma columns to responsive Tailwind flex layout
+- ✅ Maintained exact text sizes with `text-xs` (matching `is-size-7`)
+- ✅ Perfect mobile stacking behavior (vertical on mobile, horizontal on desktop)
+- ✅ Proper vertical divider spacing with `my-1`
+- ✅ All conditional rendering preserved (service, reference sections)
+- ✅ CarrierBadge custom colors working correctly
 
 ---
 
