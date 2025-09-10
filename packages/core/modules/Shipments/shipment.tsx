@@ -15,12 +15,13 @@ import { ParcelDescription } from "@karrio/ui/core/components/parcel-description
 import { formatDateTime, formatDayDate, formatRef, isNone } from "@karrio/lib";
 import { ActivityTimeline } from "@karrio/ui/components/activity-timeline";
 import { CustomsType, NotificationType, ParcelType } from "@karrio/types";
-import { CopiableLink } from "@karrio/ui/core/components/copiable-link";
+import { CopiableLink } from "@karrio/ui/components/copiable-link";
 import { CarrierBadge } from "@karrio/ui/core/components/carrier-badge";
-import { ShipmentMenu } from "@karrio/ui/core/components/shipment-menu";
+import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
 import { SelectField } from "@karrio/ui/core/components/select-field";
-import { StatusBadge } from "@karrio/ui/core/components/status-badge";
+import { ShipmentsStatusBadge } from "@karrio/ui/components/shipments-status-badge";
 import { InputField } from "@karrio/ui/core/components/input-field";
+import { Button } from "@karrio/ui/components/ui/button";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { DocumentUploadData } from "@karrio/types/rest/api";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
@@ -38,9 +39,11 @@ type FileDataType = DocumentUploadData["document_files"][0];
 export const ShipmentComponent = ({
   shipmentId,
   isPreview,
+  isSheet,
 }: {
   shipmentId: string;
   isPreview?: boolean;
+  isSheet?: boolean;
 }): JSX.Element => {
   const notifier = useNotifier();
   const { setLoading } = useLoader();
@@ -111,38 +114,41 @@ export const ShipmentComponent = ({
       {shipment && (
         <>
           {/* Header Section */}
-          <div className="columns my-1">
-            <div className="column is-6">
-              <span className="subtitle is-size-7 has-text-weight-semibold">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-1">
+            <div className="space-y-2">
+              <span className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
                 SHIPMENT
               </span>
-              <br />
-              <span className="title is-4 mr-2">
-                {shipment.tracking_number || "UNFULFILLED"}
-              </span>
-              <StatusBadge status={shipment.status} />
+              <div className="flex items-center gap-2">
+                <span className="text-2xl font-semibold">
+                  {shipment.tracking_number || "UNFULFILLED"}
+                </span>
+                <ShipmentsStatusBadge status={shipment.status} />
+              </div>
             </div>
 
-            <div className="column is-6 pb-0">
-              <div className="is-flex is-justify-content-right">
+            <div className="space-y-2">
+              <div className="flex justify-end">
                 <CopiableLink text={shipment.id as string} title="Copy ID" />
               </div>
-              <div className="is-flex is-justify-content-right">
+              <div className="flex justify-end items-center gap-1">
                 {isPreview && (
-                  <AppLink
-                    href={`/shipments/${shipmentId}`}
-                    target="_blank"
-                    className="button is-white has-text-info is-small mx-1"
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    asChild
+                    className="h-8"
                   >
-                    <span className="icon">
-                      <i className="fas fa-external-link-alt"></i>
-                    </span>
-                  </AppLink>
+                    <AppLink
+                      href={`/shipments/${shipmentId}`}
+                      target="_blank"
+                    >
+                      <i className="fas fa-external-link-alt text-xs"></i>
+                    </AppLink>
+                  </Button>
                 )}
 
-                <div style={{ display: "inline-flex" }}>
-                  <ShipmentMenu shipment={shipment as any} isViewing />
-                </div>
+                <ShipmentMenu shipment={shipment as any} isViewing />
               </div>
             </div>
           </div>
