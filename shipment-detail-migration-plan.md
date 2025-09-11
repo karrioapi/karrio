@@ -248,13 +248,13 @@ Migrate shipment details and preview from Bulma modal to shadcn Sheet component 
       {/* Similar for Courier, Rate */}
       <div className="grid grid-cols-3 gap-2 my-0">
         <div className="text-xs py-1">Rate Provider</div>
-        <div className="col-span-2 text-xs has-text-info font-semibold py-1">
+        <div className="col-span-2 text-xs text-blue-600 font-semibold py-1">
           {formatRef(shipment.meta.ext as string)}
         </div>
       </div>
       <div className="grid grid-cols-3 gap-2 my-0">
         <div className="text-xs py-1">Tracking Number</div>
-        <div className="col-span-2 has-text-info py-1">
+        <div className="col-span-2 text-blue-600 py-1">
           <span className="text-xs font-semibold">{shipment.tracking_number}</span>
         </div>
       </div>
@@ -277,6 +277,7 @@ Migrate shipment details and preview from Bulma modal to shadcn Sheet component 
 - ✅ `is-size-6` → `text-base` (Service, Courier, Rate)
 - ✅ `is-size-7` → `text-xs` (Rate Provider, Tracking Number) - **CORRECTED**
 - ✅ `has-text-weight-semibold` → `font-semibold`
+- ✅ `has-text-info` → `text-blue-600` (Rate Provider, Tracking Number) - **CORRECTED**
 - ✅ `is-title is-size-6 my-2 has-text-weight-semibold` → `text-base font-semibold uppercase tracking-wide my-2`
 - ✅ Charges section: `columns m-0` → `flex justify-between items-center m-0`
 
@@ -286,8 +287,8 @@ Migrate shipment details and preview from Bulma modal to shadcn Sheet component 
 - [x] Two-column layout matches original (service info left, charges right)
 - [x] Service info rows align correctly (label left, value right)
 - [x] Service, Courier, Rate values display correctly with `text-base`
-- [x] Rate Provider text appears smaller with `text-xs` and original blue/info color
-- [x] Tracking number displays smaller with `text-xs` and blue/info color
+- [x] Rate Provider text appears smaller with `text-xs` and `text-blue-600` color
+- [x] Tracking number displays smaller with `text-xs` and `text-blue-600` color
 - [x] Charges section displays properly with flex layout
 - [x] All currency and rate values show correctly
 - [x] Conditional rendering works for charges section
@@ -296,7 +297,7 @@ Migrate shipment details and preview from Bulma modal to shadcn Sheet component 
 **✅ MIGRATION COMPLETED:**
 - ✅ Converted Bulma grid system to Tailwind CSS Grid layout
 - ✅ Fixed text sizing: `text-base` for main fields, `text-xs` for Rate Provider/Tracking Number
-- ✅ Preserved original Bulma `has-text-info` color classes for blue text
+- ✅ Converted Bulma `has-text-info` to Tailwind `text-blue-600` for consistent styling
 - ✅ Maintained responsive behavior with `grid-cols-1 md:grid-cols-2`
 - ✅ All functionality and conditional rendering preserved
 
@@ -406,7 +407,7 @@ Migrate shipment details and preview from Bulma modal to shadcn Sheet component 
 
 ---
 
-### Step 5: Shipment Details Section (Lines 377-498)
+### Step 5: Shipment Details Section (Lines 377-498) ✅ **COMPLETED**
 **Current Bulma Structure:**
 ```typescript
 <h2 className="title is-5 my-4">Shipment Details</h2>
@@ -477,33 +478,106 @@ Migrate shipment details and preview from Bulma modal to shadcn Sheet component 
 </div>
 ```
 
-**Convert to Shadcn/Tailwind:**
-- Grid layouts for ADDRESS and OPTIONS
-- Parcels section with proper spacing
-- Items listing with scroll area using shadcn `ScrollArea` component
-- Customs declaration and commodities sections
-- `menu-list` with scroll → shadcn `ScrollArea` with `max-h-[40rem] overflow-auto`
+**Final Implementation:**
+```typescript
+<h2 className="text-xl font-semibold my-4">Shipment Details</h2>
+<hr className="mt-1 mb-2" style={{ height: "1px" }} />
 
-**Component Checks Required:**
-- Check if `AddressDescription` is shadcn compatible
-- Check if `OptionsDescription` is shadcn compatible  
-- Check if `ParcelDescription` is shadcn compatible
-- Check if `CommodityDescription` is shadcn compatible
-- Check if `CustomsInfoDescription` is shadcn compatible
+<div className="mt-3 mb-6">
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-0">
+    {/* Recipient Address section */}
+    <div className="text-base py-1">
+      <p className="text-base font-semibold uppercase tracking-wide my-2">ADDRESS</p>
+      <AddressDescription address={shipment.recipient} />
+    </div>
+
+    {/* Options section */}
+    {Object.values(shipment.options as object).length > 0 && (
+      <div className="text-base py-1">
+        <p className="text-base font-semibold uppercase tracking-wide my-2">OPTIONS</p>
+        <OptionsDescription options={shipment.options} />
+      </div>
+    )}
+  </div>
+
+  {/* Parcels section */}
+  <div className="mt-6 mb-0">
+    <p className="text-base font-semibold uppercase tracking-wide my-2">
+      PARCEL{shipment.parcels.length > 1 && "S"}
+    </p>
+
+    {shipment.parcels.map((parcel, index) => (
+      <React.Fragment key={index + "parcel-info"}>
+        <hr className="my-4" style={{ height: "1px" }} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-0">
+          {/* Parcel details */}
+          <div className="text-base py-1">
+            <ParcelDescription parcel={parcel} />
+          </div>
+          {/* Parcel items */}
+          {(parcel.items || []).length > 0 && (
+            <div className="text-base py-1">
+              <p className="text-base font-semibold uppercase tracking-wide my-2">
+                ITEMS <span className="text-xs">({totalQuantity})</span>
+              </p>
+              <div className="py-2 pr-1 max-h-[40rem] overflow-auto">
+                {parcel.items.map((item, index) => (
+                  <React.Fragment key={index + "item-info"}>
+                    <hr className="mt-1 mb-2" style={{ height: "1px" }} />
+                    <CommodityDescription commodity={item} />
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </React.Fragment>
+    ))}
+  </div>
+
+  {/* Customs section */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 mb-0">
+    {!isNone(shipment.customs) && (
+      <div className="text-base py-1">
+        <p className="text-base font-semibold uppercase tracking-wide my-2">CUSTOMS DECLARATION</p>
+        <CustomsInfoDescription customs={shipment.customs} />
+      </div>
+    )}
+    {/* Customs commodities similar structure */}
+  </div>
+</div>
+```
+
+**Key Changes Applied:**
+- ✅ `title is-5` → `text-xl font-semibold`
+- ✅ `columns my-0` → `grid grid-cols-1 md:grid-cols-2 gap-6 my-0`
+- ✅ `columns mb-0 is-multiline` → `grid grid-cols-1 md:grid-cols-2 gap-6 mb-0`
+- ✅ `column is-6 is-size-6` → `text-base` (container size)
+- ✅ `is-title is-size-6 my-2 has-text-weight-semibold` → `text-base font-semibold uppercase tracking-wide my-2`
+- ✅ `is-size-7` (quantity counts) → `text-xs`
+- ✅ `menu-list py-2 pr-1` with scroll → `py-2 pr-1 max-h-[40rem] overflow-auto`
 
 **🧪 Test Checklist:**
-- [ ] "Shipment Details" header styling matches
-- [ ] Address section displays correctly
-- [ ] Options section shows all shipping options (if exists)
-- [ ] Parcel(s) header handles singular/plural correctly
-- [ ] Each parcel information displays properly
-- [ ] Items list scrolls properly with 40em max height
-- [ ] Items quantity count shows correctly in parentheses
-- [ ] Customs declaration shows (for international shipments)
-- [ ] Customs commodities list displays correctly
-- [ ] All spacing and alignment matches original
-- [ ] Conditional rendering works for all sections
-- [ ] **Mobile responsive**: Maintains existing mobile layout and stacking behavior
+- [x] "Shipment Details" header styling matches
+- [x] Address section displays correctly
+- [x] Options section shows all shipping options (if exists)
+- [x] Parcel(s) header handles singular/plural correctly
+- [x] Each parcel information displays properly
+- [x] Items list scrolls properly with 40rem max height
+- [x] Items quantity count shows correctly in parentheses with `text-xs`
+- [x] Customs declaration shows (for international shipments)
+- [x] Customs commodities list displays correctly
+- [x] All spacing and alignment matches original
+- [x] Conditional rendering works for all sections
+- [x] **Mobile responsive**: Maintains existing mobile layout and stacking behavior
+
+**✅ MIGRATION COMPLETED:**
+- ✅ Converted Bulma grid system to Tailwind CSS Grid layout
+- ✅ All section headers use consistent `text-base font-semibold uppercase tracking-wide my-2`
+- ✅ Maintained responsive behavior with `grid-cols-1 md:grid-cols-2`
+- ✅ All description components preserved (`AddressDescription`, `OptionsDescription`, etc.)
+- ✅ Scroll areas converted to Tailwind classes with proper max-height
+- ✅ All conditional rendering and quantity calculations preserved
 
 ---
 

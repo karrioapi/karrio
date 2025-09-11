@@ -246,7 +246,7 @@ export const ShipmentComponent = ({
                       <div className="text-xs py-1">
                         Rate Provider
                       </div>
-                      <div className="col-span-2 text-xs has-text-info font-semibold py-1">
+                      <div className="col-span-2 text-xs text-blue-600 font-semibold py-1">
                         {formatRef(shipment.meta.ext as string)}
                       </div>
                     </div>
@@ -254,7 +254,7 @@ export const ShipmentComponent = ({
                       <div className="text-xs py-1">
                         Tracking Number
                       </div>
-                      <div className="col-span-2 has-text-info py-1">
+                      <div className="col-span-2 text-blue-600 py-1">
                         <span className="text-xs font-semibold">
                           {shipment.tracking_number as string}
                         </span>
@@ -371,14 +371,14 @@ export const ShipmentComponent = ({
           )}
 
           {/* Shipment details section */}
-          <h2 className="title is-5 my-4">Shipment Details</h2>
+          <h2 className="text-xl font-semibold my-4">Shipment Details</h2>
           <hr className="mt-1 mb-2" style={{ height: "1px" }} />
 
           <div className="mt-3 mb-6">
-            <div className="columns my-0">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-0">
               {/* Recipient Address section */}
-              <div className="column is-6 is-size-6 py-1">
-                <p className="is-title is-size-6 my-2 has-text-weight-semibold">
+              <div className="text-base py-1">
+                <p className="text-base font-semibold uppercase tracking-wide my-2">
                   ADDRESS
                 </p>
 
@@ -387,8 +387,8 @@ export const ShipmentComponent = ({
 
               {/* Options section */}
               {Object.values(shipment.options as object).length > 0 && (
-                <div className="column is-6 is-size-6 py-1">
-                  <p className="is-title is-size-6 my-2 has-text-weight-semibold">
+                <div className="text-base py-1">
+                  <p className="text-base font-semibold uppercase tracking-wide my-2">
                     OPTIONS
                   </p>
 
@@ -399,7 +399,7 @@ export const ShipmentComponent = ({
 
             {/* Parcels section */}
             <div className="mt-6 mb-0">
-              <p className="is-title is-size-6 my-2 has-text-weight-semibold">
+              <p className="text-base font-semibold uppercase tracking-wide my-2">
                 PARCEL{shipment.parcels.length > 1 && "S"}
               </p>
 
@@ -407,18 +407,18 @@ export const ShipmentComponent = ({
                 <React.Fragment key={index + "parcel-info"}>
                   <hr className="my-4" style={{ height: "1px" }} />
 
-                  <div className="columns mb-0 is-multiline">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-0">
                     {/* Parcel details */}
-                    <div className="column is-6 is-size-6 py-1">
+                    <div className="text-base py-1">
                       <ParcelDescription parcel={parcel} />
                     </div>
 
                     {/* Parcel items */}
                     {(parcel.items || []).length > 0 && (
-                      <div className="column is-6 is-size-6 py-1">
-                        <p className="is-title is-size-6 my-2 has-text-weight-semibold">
+                      <div className="text-base py-1">
+                        <p className="text-base font-semibold uppercase tracking-wide my-2">
                           ITEMS{" "}
-                          <span className="is-size-7">
+                          <span className="text-xs">
                             (
                             {(parcel.items || []).reduce(
                               (acc, { quantity }) => acc + (quantity || 0),
@@ -429,8 +429,7 @@ export const ShipmentComponent = ({
                         </p>
 
                         <div
-                          className="menu-list py-2 pr-1"
-                          style={{ maxHeight: "40em", overflow: "auto" }}
+                          className="py-2 pr-1 max-h-[40rem] overflow-auto"
                         >
                           {(parcel.items || []).map((item, index) => (
                             <React.Fragment key={index + "item-info"}>
@@ -450,11 +449,11 @@ export const ShipmentComponent = ({
             </div>
 
             {/* Customs section */}
-            <div className="columns mt-6 mb-0 is-multiline">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 mb-0">
               {/* Customs details */}
               {!isNone(shipment.customs) && (
-                <div className="column is-6 is-size-6 py-1">
-                  <p className="is-title is-size-6 my-2 has-text-weight-semibold">
+                <div className="text-base py-1">
+                  <p className="text-base font-semibold uppercase tracking-wide my-2">
                     CUSTOMS DECLARATION
                   </p>
 
@@ -467,10 +466,10 @@ export const ShipmentComponent = ({
               {/* Customs commodities */}
               {!isNone(shipment.customs) &&
                 (shipment.customs?.commodities || []).length > 0 && (
-                  <div className="column is-6 is-size-6 py-1">
-                    <p className="is-title is-size-6 my-2 has-text-weight-semibold">
+                  <div className="text-base py-1">
+                    <p className="text-base font-semibold uppercase tracking-wide my-2">
                       COMMODITIES{" "}
-                      <span className="is-size-7">
+                      <span className="text-xs">
                         (
                         {(shipment.customs?.commodities || []).reduce(
                           (acc, { quantity }) => acc + (quantity || 0),
