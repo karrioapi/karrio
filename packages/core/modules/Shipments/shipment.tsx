@@ -18,10 +18,12 @@ import { CustomsType, NotificationType, ParcelType } from "@karrio/types";
 import { CopiableLink } from "@karrio/ui/components/copiable-link";
 import { CarrierBadge } from "@karrio/ui/core/components/carrier-badge";
 import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
-import { SelectField } from "@karrio/ui/core/components/select-field";
 import { ShipmentsStatusBadge } from "@karrio/ui/components/shipments-status-badge";
-import { InputField } from "@karrio/ui/core/components/input-field";
 import { Button } from "@karrio/ui/components/ui/button";
+import { Input } from "@karrio/ui/components/ui/input";
+import { Badge } from "@karrio/ui/components/ui/badge";
+import { Table, TableBody, TableCell, TableRow } from "@karrio/ui/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { DocumentUploadData } from "@karrio/types/rest/api";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
@@ -498,7 +500,7 @@ export const ShipmentComponent = ({
           ).includes("paperless") &&
             "paperless_trade" in shipment.options && (
               <>
-                <h2 className="title is-5 my-4">Paperless Trade Documents</h2>
+                <h2 className="text-xl font-semibold my-4">Paperless Trade Documents</h2>
 
                 {!documents.isFetched && documents.isFetching && <Spinner />}
 
@@ -515,78 +517,83 @@ export const ShipmentComponent = ({
                 {documents.isFetched &&
                   [...(uploads || []), ...(shipment.options.doc_files || [])]
                     .length > 0 && (
-                    <div className="table-container">
-                      <table className="related-item-table table is-hoverable is-fullwidth">
-                        <tbody>
+                    <div className="w-full">
+                      <Table>
+                        <TableBody>
                           {(uploads || []).map((upload) => (
                             <React.Fragment key={shipment.id}>
                               {(upload.documents || []).map((doc) => (
-                                <tr key={doc.doc_id} className="items">
-                                  <td className="description is-vcentered p-0">
+                                <TableRow key={doc.doc_id}>
+                                  <TableCell className="p-0">
                                     <span>{doc.file_name}</span>
-                                  </td>
-                                  <td className="status is-vcentered p-0">
-                                    <span className="tag is-success my-2">
+                                  </TableCell>
+                                  <TableCell className="p-0">
+                                    <Badge variant="default" className="my-2">
                                       uploaded
-                                    </span>
-                                  </td>
-                                </tr>
+                                    </Badge>
+                                  </TableCell>
+                                </TableRow>
                               ))}
                             </React.Fragment>
                           ))}
                           {(shipment.options.doc_files || []).map(
                             (doc: any, idx: number) => (
-                              <tr
+                              <TableRow
                                 key={`${new Date()}-${idx}`}
-                                className="items"
                               >
-                                <td className="description is-vcentered p-0">
+                                <TableCell className="p-0">
                                   <span>{doc.doc_name}</span>
-                                </td>
-                                <td className="status is-vcentered p-0">
-                                  <span className="tag is-success my-2">
+                                </TableCell>
+                                <TableCell className="p-0">
+                                  <Badge variant="default" className="my-2">
                                     uploaded
-                                  </span>
-                                </td>
-                              </tr>
+                                  </Badge>
+                                </TableCell>
+                              </TableRow>
                             ),
                           )}
-                        </tbody>
-                      </table>
+                        </TableBody>
+                      </Table>
                     </div>
                   )}
 
-                <div className="is-flex is-justify-content-space-between">
-                  <div className="is-flex">
-                    <SelectField
-                      onChange={(e) =>
-                        setFileData({ ...fileData, doc_type: e.target.value })
+                <div className="flex justify-between">
+                  <div className="flex">
+                    <Select
+                      onValueChange={(value) =>
+                        setFileData({ ...fileData, doc_type: value })
                       }
                       defaultValue="other"
-                      className="is-small is-fullwidth"
                     >
-                      <option value="other">other</option>
-                      <option value="commercial_invoice">
-                        Commercial invoice
-                      </option>
-                      <option value="pro_forma_invoice">
-                        Pro forma invoice
-                      </option>
-                      <option value="packing_list">Packing list</option>
-                      <option value="certificate_of_origin">
-                        Certificate of origin
-                      </option>
-                    </SelectField>
-                    <InputField
-                      className="is-small mx-2"
+                      <SelectTrigger className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="other">other</SelectItem>
+                        <SelectItem value="commercial_invoice">
+                          Commercial invoice
+                        </SelectItem>
+                        <SelectItem value="pro_forma_invoice">
+                          Pro forma invoice
+                        </SelectItem>
+                        <SelectItem value="packing_list">Packing list</SelectItem>
+                        <SelectItem value="certificate_of_origin">
+                          Certificate of origin
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Input
+                      className="mx-2"
                       type="file"
                       onChange={handleFileChange}
                     />
                   </div>
 
-                  <button
+                  <Button
                     type="button"
-                    className="button is-default is-small is-align-self-center"
+                    variant="outline"
+                    size="sm"
+                    className="self-center"
                     disabled={
                       (uploads || [])?.length > 4 ||
                       !fileData.doc_file ||
@@ -599,7 +606,7 @@ export const ShipmentComponent = ({
                       <i className="fas fa-upload"></i>
                     </span>
                     <span>Upload</span>
-                  </button>
+                  </Button>
                 </div>
 
                 <div className="my-3 pt-1"></div>
