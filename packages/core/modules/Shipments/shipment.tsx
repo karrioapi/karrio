@@ -635,7 +635,7 @@ export const ShipmentComponent = ({
                     }
                     onClick={() => uploadCustomsDocument()}
                   >
-                    <span className="icon is-small">
+                    <span className="inline-flex items-center justify-center w-4 h-4">
                       <i className="fas fa-upload"></i>
                     </span>
                     <span>Upload</span>
@@ -647,6 +647,9 @@ export const ShipmentComponent = ({
             )}
 
           {/* Metadata section */}
+          <h2 className="text-xl font-semibold my-4">Metadata</h2>
+          <hr className="mt-1 mb-2" style={{ height: "1px" }} />
+          
           <div className="my-4">
             <EnhancedMetadataEditor
               value={shipment.metadata || {}}
@@ -662,7 +665,7 @@ export const ShipmentComponent = ({
           <div className="my-6 pt-1"></div>
 
           {/* Activity Timeline section */}
-          <h2 className="title is-5 my-4">Activity</h2>
+          <h2 className="text-xl font-semibold my-4">Activity</h2>
 
           <ActivityTimeline
             logs={logs}
@@ -672,8 +675,8 @@ export const ShipmentComponent = ({
       )}
 
       {query.isFetched && isNone(shipment) && (
-        <div className="card my-6">
-          <div className="card-content has-text-centered">
+        <div className="bg-white border border-gray-200 rounded-lg shadow-sm my-6">
+          <div className="p-6 text-center">
             <p>Uh Oh!</p>
             <p>{"We couldn't find any shipment with that reference"}</p>
           </div>
