@@ -1,8 +1,6 @@
 "use client";
-import {
-  MetadataEditor,
-  MetadataEditorContext,
-} from "@karrio/ui/core/forms/metadata-editor";
+import { EnhancedMetadataEditor } from "@karrio/ui/components/enhanced-metadata-editor";
+import { useMetadataMutation } from "@karrio/hooks/metadata";
 import {
   useUploadRecordMutation,
   useUploadRecords,
@@ -14,7 +12,7 @@ import { AddressDescription } from "@karrio/ui/core/components/address-descripti
 import { ParcelDescription } from "@karrio/ui/core/components/parcel-description";
 import { formatDateTime, formatDayDate, formatRef, isNone } from "@karrio/lib";
 import { ActivityTimeline } from "@karrio/ui/components/activity-timeline";
-import { CustomsType, NotificationType, ParcelType } from "@karrio/types";
+import { CustomsType, NotificationType, ParcelType, MetadataObjectTypeEnum } from "@karrio/types";
 import { CopiableLink } from "@karrio/ui/components/copiable-link";
 import { CarrierBadge } from "@karrio/ui/core/components/carrier-badge";
 import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
@@ -30,8 +28,7 @@ import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { AppLink } from "@karrio/ui/core/components/app-link";
 import { Spinner } from "@karrio/ui/core/components/spinner";
-import { MetadataObjectTypeEnum } from "@karrio/types";
-import { useShipment } from "@karrio/hooks/shipment";
+import { useShipment, useShipmentMutation } from "@karrio/hooks/shipment";
 import { useEvents } from "@karrio/hooks/event";
 import { useLogs } from "@karrio/hooks/log";
 import React from "react";
@@ -61,6 +58,11 @@ export const ShipmentComponent = ({
     query: { data: { shipment } = {}, ...query },
   } = useShipment(entity_id);
   const { uploadDocument } = useUploadRecordMutation();
+  const { updateShipment } = useShipmentMutation(entity_id);
+  const { updateMetadata } = useMetadataMutation([
+    "shipments",
+    entity_id,
+  ]);
   const {
     query: { data: { results: uploads } = {}, ...documents },
   } = useUploadRecords({ shipmentId: entity_id });
@@ -102,6 +104,37 @@ export const ShipmentComponent = ({
       if (!!$fileSelectInput.current) $fileSelectInput.current.value = "other";
     } catch (message: any) {
       notifier.notify({ type: NotificationType.error, message });
+    }
+  };
+
+  const handleMetadataChange = async (newMetadata: any) => {
+    try {
+      const currentMetadata = shipment?.metadata || {};
+      
+      // Calculate added_values (new or changed metadata)
+      const added_values = { ...newMetadata };
+      
+      // Calculate discarded_keys (keys that were removed)
+      const discarded_keys = Object.keys(currentMetadata).filter(
+        key => !(key in newMetadata)
+      );
+      
+      await updateMetadata.mutateAsync({
+        id: entity_id,
+        object_type: MetadataObjectTypeEnum.shipment,
+        discarded_keys,
+        added_values,
+      });
+      
+      notifier.notify({
+        type: NotificationType.success,
+        message: "Metadata updated successfully",
+      });
+    } catch (error) {
+      notifier.notify({
+        type: NotificationType.error,
+        message: "Failed to update metadata",
+      });
     }
   };
 
@@ -614,36 +647,17 @@ export const ShipmentComponent = ({
             )}
 
           {/* Metadata section */}
-          <MetadataEditor
-            id={shipment.id}
-            object_type={MetadataObjectTypeEnum.shipment}
-            metadata={shipment.metadata}
-          >
-            {/* @ts-ignore */}
-            <MetadataEditorContext.Consumer>
-              {({ isEditing, editMetadata }) => (
-                <>
-                  <div className="is-flex is-justify-content-space-between">
-                    <h2 className="title is-5 my-4">Metadata</h2>
-
-                    <button
-                      type="button"
-                      className="button is-default is-small is-align-self-center"
-                      disabled={isEditing}
-                      onClick={() => editMetadata()}
-                    >
-                      <span className="icon is-small">
-                        <i className="fas fa-pen"></i>
-                      </span>
-                      <span>Edit metadata</span>
-                    </button>
-                  </div>
-
-                  <hr className="mt-1 mb-2" style={{ height: "1px" }} />
-                </>
-              )}
-            </MetadataEditorContext.Consumer>
-          </MetadataEditor>
+          <div className="my-4">
+            <EnhancedMetadataEditor
+              value={shipment.metadata || {}}
+              onChange={handleMetadataChange}
+              placeholder="No metadata configured"
+              emptyStateMessage="Add key-value pairs to configure metadata"
+              allowEdit={true}
+              showTypeInference={true}
+              maxHeight="300px"
+            />
+          </div>
 
           <div className="my-6 pt-1"></div>
 
