@@ -300,10 +300,10 @@ export const ShipmentComponent = ({
 
           {!isNone(shipment.tracker) && (
             <>
-              <h2 className="title is-5 my-4">
+              <h2 className="text-xl font-semibold my-4">
                 <span>Tracking Details</span>
                 <a
-                  className="p-0 mx-2 my-0 is-size-6 has-text-weight-semibold"
+                  className="p-0 mx-2 my-0 text-base font-semibold"
                   href={`/tracking/${shipment.tracker_id}`}
                   target="_blank"
                   rel="noreferrer"
@@ -315,28 +315,28 @@ export const ShipmentComponent = ({
               </h2>
               <hr className="mt-1 mb-2" style={{ height: "1px" }} />
               <div className="mt-3 mb-6">
-                <div className="columns my-0 py-1">
-                  <div className="column is-6 is-size-7">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-1">
+                  <div className="text-sm">
                     {!isNone(shipment.tracker?.estimated_delivery) && (
-                      <div className="columns my-0">
-                        <div className="column is-4 is-size-6 py-0">
+                      <div className="grid grid-cols-3 gap-2 my-0">
+                        <div className="text-base py-0">
                           {shipment.tracker?.delivered
                             ? "Delivered"
                             : "Estimated Delivery"}
                         </div>
-                        <div className="column has-text-weight-semibold py-1">
+                        <div className="col-span-2 text-xs font-semibold py-1">
                           {formatDayDate(
                             shipment.tracker!.estimated_delivery as string,
                           )}
                         </div>
                       </div>
                     )}
-                    <div className="columns my-0">
-                      <div className="column is-4 is-size-6 py-0">
+                    <div className="grid grid-cols-3 gap-2 my-0">
+                      <div className="text-base py-0">
                         Last event
                       </div>
-                      <div className="column has-text-weight-semibold py-1">
-                        <p className="is-capitalized">
+                      <div className="col-span-2 text-xs font-semibold py-1">
+                        <p className="capitalize">
                           {formatDayDate(
                             (shipment.tracker?.events || [])[0]?.date as string,
                           )}{" "}
@@ -347,9 +347,9 @@ export const ShipmentComponent = ({
                       </div>
                     </div>
                     {!isNone((shipment.tracker?.events || [])[0]?.location) && (
-                      <div className="columns my-0">
-                        <div className="column is-4"></div>
-                        <div className="column has-text-weight-semibold py-1">
+                      <div className="grid grid-cols-3 gap-2 my-0">
+                        <div></div>
+                        <div className="col-span-2 text-xs font-semibold py-1">
                           {(shipment.tracker?.events || [])[0]?.location}
                         </div>
                       </div>
@@ -357,9 +357,9 @@ export const ShipmentComponent = ({
                     {!isNone(
                       (shipment.tracker?.events || [])[0]?.description,
                     ) && (
-                        <div className="columns my-0">
-                          <div className="column is-4"></div>
-                          <div className="column has-text-weight-semibold py-1">
+                        <div className="grid grid-cols-3 gap-2 my-0">
+                          <div></div>
+                          <div className="col-span-2 text-xs font-semibold py-1">
                             {(shipment.tracker?.events || [])[0]?.description}
                           </div>
                         </div>
