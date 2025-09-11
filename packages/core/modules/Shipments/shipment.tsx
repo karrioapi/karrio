@@ -212,50 +212,50 @@ export const ShipmentComponent = ({
 
           {!isNone(shipment.selected_rate) && (
             <>
-              <h2 className="title is-5 my-4">Service Details</h2>
+              <h2 className="text-xl font-semibold my-4">Service Details</h2>
               <hr className="mt-1 mb-2" style={{ height: "1px" }} />
 
               <div className="mt-3 mb-6">
-                <div className="columns my-0 py-1">
-                  <div className="column is-6 is-size-6">
-                    <div className="columns my-0">
-                      <div className="column is-4 is-size-6 py-1">Service</div>
-                      <div className="column is-size-6 has-text-weight-semibold py-1">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-1">
+                  <div className="text-base">
+                    <div className="grid grid-cols-3 gap-2 my-0">
+                      <div className="text-base py-1">Service</div>
+                      <div className="col-span-2 text-base font-semibold py-1">
                         {formatRef(
                           ((shipment.meta as any)?.service_name ||
                             shipment.service) as string,
                         )}
                       </div>
                     </div>
-                    <div className="columns my-0">
-                      <div className="column is-4 is-size-6 py-1">Courier</div>
-                      <div className="column is-size-6 has-text-weight-semibold py-1">
+                    <div className="grid grid-cols-3 gap-2 my-0">
+                      <div className="text-base py-1">Courier</div>
+                      <div className="col-span-2 text-base font-semibold py-1">
                         {formatRef(shipment.meta.carrier as string)}
                       </div>
                     </div>
-                    <div className="columns my-0">
-                      <div className="column is-4 is-size-6 py-1">Rate</div>
-                      <div className="column is-size-6 py-1">
-                        <span className="has-text-weight-semibold mr-1">
+                    <div className="grid grid-cols-3 gap-2 my-0">
+                      <div className="text-base py-1">Rate</div>
+                      <div className="col-span-2 text-base py-1">
+                        <span className="font-semibold mr-1">
                           {shipment.selected_rate?.total_charge}
                         </span>
                         <span>{shipment.selected_rate?.currency}</span>
                       </div>
                     </div>
-                    <div className="columns my-0">
-                      <div className="column is-4 is-size-7 py-1">
+                    <div className="grid grid-cols-3 gap-2 my-0">
+                      <div className="text-xs py-1">
                         Rate Provider
                       </div>
-                      <div className="column is-size-7 has-text-info has-text-weight-semibold py-1">
+                      <div className="col-span-2 text-xs has-text-info font-semibold py-1">
                         {formatRef(shipment.meta.ext as string)}
                       </div>
                     </div>
-                    <div className="columns my-0">
-                      <div className="column is-4 is-size-7 py-1">
+                    <div className="grid grid-cols-3 gap-2 my-0">
+                      <div className="text-xs py-1">
                         Tracking Number
                       </div>
-                      <div className="column has-text-info py-1">
-                        <span className="is-size-7 has-text-weight-semibold">
+                      <div className="col-span-2 has-text-info py-1">
+                        <span className="text-xs font-semibold">
                           {shipment.tracking_number as string}
                         </span>
                       </div>
@@ -264,22 +264,22 @@ export const ShipmentComponent = ({
 
                   {(shipment.selected_rate?.extra_charges || []).length > 0 && (
                     <>
-                      <div className="column is-6 is-size-6 py-1">
-                        <p className="is-title is-size-6 my-2 has-text-weight-semibold">
+                      <div className="text-base py-1">
+                        <p className="text-base font-semibold uppercase tracking-wide my-2">
                           CHARGES
                         </p>
                         <hr className="mt-1 mb-2" style={{ height: "1px" }} />
 
                         {(shipment.selected_rate?.extra_charges || []).map(
                           (charge, index) => (
-                            <div key={index} className="columns m-0">
-                              <div className="column is-5 is-size-7 px-0 py-1">
-                                <span className="is-uppercase">
+                            <div key={index} className="flex justify-between items-center m-0">
+                              <div className="text-sm px-0 py-1">
+                                <span className="uppercase">
                                   {charge?.name?.toLocaleLowerCase()}
                                 </span>
                               </div>
                               <div
-                                className="is-size-7 py-1 has-text-grey has-text-right"
+                                className="text-sm py-1 text-gray-500 text-right"
                                 style={{ minWidth: "100px" }}
                               >
                                 <span className="mr-1">{charge?.amount}</span>
