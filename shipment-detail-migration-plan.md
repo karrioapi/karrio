@@ -202,7 +202,7 @@ Migrate shipment details and preview from Bulma modal to shadcn Sheet component 
 
 ---
 
-### Step 3: Service Details Section (Lines 217-303)
+### Step 3: Service Details Section (Lines 217-303) ✅ **COMPLETED**
 **Current Bulma Structure:**
 ```typescript
 <h2 className="title is-5 my-4">Service Details</h2>
@@ -231,28 +231,74 @@ Migrate shipment details and preview from Bulma modal to shadcn Sheet component 
 </div>
 ```
 
-**Convert to Shadcn/Tailwind:**
-- `title is-5` → `text-xl font-semibold`
-- `hr` with custom height → `border-t border-gray-200`
-- `columns my-0 py-1` → `grid grid-cols-1 md:grid-cols-2 gap-6 py-1`
-- `column is-6` → Grid column spans
-- `column is-4` → `w-1/3` (maintaining 4/12 ratio)
-- `is-size-6` → `text-base`
-- `has-text-weight-semibold` → `font-semibold`
-- `is-title is-size-6 my-2 has-text-weight-semibold` → `text-base font-semibold uppercase tracking-wide my-2`
+**Final Implementation:**
+```typescript
+<h2 className="text-xl font-semibold my-4">Service Details</h2>
+<hr className="mt-1 mb-2" style={{ height: "1px" }} />
+
+<div className="mt-3 mb-6">
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-1">
+    <div className="text-base">
+      <div className="grid grid-cols-3 gap-2 my-0">
+        <div className="text-base py-1">Service</div>
+        <div className="col-span-2 text-base font-semibold py-1">
+          {formatRef(((shipment.meta as any)?.service_name || shipment.service))}
+        </div>
+      </div>
+      {/* Similar for Courier, Rate */}
+      <div className="grid grid-cols-3 gap-2 my-0">
+        <div className="text-xs py-1">Rate Provider</div>
+        <div className="col-span-2 text-xs has-text-info font-semibold py-1">
+          {formatRef(shipment.meta.ext as string)}
+        </div>
+      </div>
+      <div className="grid grid-cols-3 gap-2 my-0">
+        <div className="text-xs py-1">Tracking Number</div>
+        <div className="col-span-2 has-text-info py-1">
+          <span className="text-xs font-semibold">{shipment.tracking_number}</span>
+        </div>
+      </div>
+    </div>
+
+    {/* Charges section */}
+    <div className="text-base py-1">
+      <p className="text-base font-semibold uppercase tracking-wide my-2">CHARGES</p>
+      <hr className="mt-1 mb-2" style={{ height: "1px" }} />
+      {/* Charge items with flex layout */}
+    </div>
+  </div>
+</div>
+```
+
+**Key Changes from Original Plan:**
+- ✅ `title is-5` → `text-xl font-semibold`
+- ✅ `columns my-0 py-1` → `grid grid-cols-1 md:grid-cols-2 gap-6 py-1`
+- ✅ `column is-4` → `grid grid-cols-3 gap-2` with `col-span-2` for values
+- ✅ `is-size-6` → `text-base` (Service, Courier, Rate)
+- ✅ `is-size-7` → `text-xs` (Rate Provider, Tracking Number) - **CORRECTED**
+- ✅ `has-text-weight-semibold` → `font-semibold`
+- ✅ `is-title is-size-6 my-2 has-text-weight-semibold` → `text-base font-semibold uppercase tracking-wide my-2`
+- ✅ Charges section: `columns m-0` → `flex justify-between items-center m-0`
 
 **🧪 Test Checklist:**
-- [ ] "Service Details" header looks identical (size, weight, spacing)
-- [ ] Horizontal rule below header matches
-- [ ] Two-column layout matches original (service info left, charges right)
-- [ ] Service info rows align correctly (label left, value right)
-- [ ] Service, Courier, Rate values display correctly
-- [ ] Rate Provider text appears in blue/info color
-- [ ] Tracking number displays correctly
-- [ ] Charges section displays properly (if exists)
-- [ ] All currency and rate values show correctly
-- [ ] Conditional rendering works for charges section
-- [ ] **Mobile responsive**: Maintains existing mobile layout and stacking behavior
+- [x] "Service Details" header looks identical (size, weight, spacing)
+- [x] Horizontal rule below header matches
+- [x] Two-column layout matches original (service info left, charges right)
+- [x] Service info rows align correctly (label left, value right)
+- [x] Service, Courier, Rate values display correctly with `text-base`
+- [x] Rate Provider text appears smaller with `text-xs` and original blue/info color
+- [x] Tracking number displays smaller with `text-xs` and blue/info color
+- [x] Charges section displays properly with flex layout
+- [x] All currency and rate values show correctly
+- [x] Conditional rendering works for charges section
+- [x] **Mobile responsive**: Maintains existing mobile layout and stacking behavior
+
+**✅ MIGRATION COMPLETED:**
+- ✅ Converted Bulma grid system to Tailwind CSS Grid layout
+- ✅ Fixed text sizing: `text-base` for main fields, `text-xs` for Rate Provider/Tracking Number
+- ✅ Preserved original Bulma `has-text-info` color classes for blue text
+- ✅ Maintained responsive behavior with `grid-cols-1 md:grid-cols-2`
+- ✅ All functionality and conditional rendering preserved
 
 ---
 
