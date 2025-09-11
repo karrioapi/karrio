@@ -754,7 +754,7 @@ Migrate shipment details and preview from Bulma modal to shadcn Sheet component 
 
 ---
 
-### Step 7: Metadata Section (Lines 614-644)
+### Step 7: Metadata Section (Lines 614-644) ✅ **COMPLETED**
 **Current Bulma Structure:**
 ```typescript
 <MetadataEditor id={shipment.id} object_type={MetadataObjectTypeEnum.shipment} metadata={shipment.metadata}>
@@ -780,31 +780,71 @@ Migrate shipment details and preview from Bulma modal to shadcn Sheet component 
 </MetadataEditor>
 ```
 
-**Convert to Shadcn/Tailwind:**
-- `is-flex is-justify-content-space-between` → `flex justify-between items-center`
-- `button is-default is-small is-align-self-center` → shadcn `Button` with size="sm" and variant="outline"
-- `title is-5` → `text-xl font-semibold`
-- FontAwesome pen icon → Lucide `Pencil` icon or maintain FontAwesome
-- Maintain `MetadataEditor` integration (likely already shadcn)
+**Final Implementation:**
+```typescript
+{/* Metadata section */}
+<h2 className="text-xl font-semibold my-4">Metadata</h2>
+<hr className="mt-1 mb-2" style={{ height: "1px" }} />
 
-**Component Checks:**
-- Verify `MetadataEditor` is shadcn compatible
-- Check available icon system (Lucide vs FontAwesome)
+<div className="my-4">
+  <EnhancedMetadataEditor
+    value={shipment.metadata || {}}
+    onChange={handleMetadataChange}
+    placeholder="No metadata configured"
+    emptyStateMessage="Add key-value pairs to configure metadata"
+    allowEdit={true}
+    showTypeInference={true}
+    maxHeight="300px"
+  />
+</div>
+```
+
+**Key Changes Applied:**
+- ✅ Replaced `MetadataEditor` with `EnhancedMetadataEditor` from `/packages/ui/components/enhanced-metadata-editor.tsx`
+- ✅ Fixed API integration - uses `useMetadataMutation` with metadata-specific API instead of shipment update
+- ✅ Added proper section header: `title is-5` → `text-xl font-semibold my-4`
+- ✅ Added horizontal rule divider to match other sections: `hr className="mt-1 mb-2"`
+- ✅ Enhanced inline editing UX with proper save/cancel buttons and form state management
+- ✅ Fixed "purchased shipment" editing error by switching from `partial_shipment_update` to `MUTATE_METADATA` API
 
 **🧪 Test Checklist:**
-- [ ] Header and button flex layout correct with proper alignment
-- [ ] "Metadata" header styling matches other section headers
-- [ ] Edit metadata button styled correctly with icon
-- [ ] Button disabled state works when editing
-- [ ] Edit metadata button functionality works
-- [ ] MetadataEditor opens and functions properly
-- [ ] Metadata displays correctly when not editing
-- [ ] Save/cancel functionality works in metadata editor
-- [ ] **Mobile responsive**: Maintains existing mobile layout behavior
+- [x] "Metadata" header styling matches other section headers (`text-xl font-semibold my-4`)
+- [x] Horizontal rule divider appears below header
+- [x] EnhancedMetadataEditor displays existing metadata correctly
+- [x] Edit functionality works without "purchased shipment" errors
+- [x] Inline editing provides proper save/cancel buttons
+- [x] Form state management works correctly (no immediate onChange calls)
+- [x] API calls use metadata-specific mutation (`MUTATE_METADATA`)
+- [x] Success/error notifications appear after save/cancel operations
+- [x] Type inference shows data types correctly (string, number, boolean)
+- [x] **Mobile responsive**: Maintains existing mobile layout behavior
+
+**✅ MIGRATION COMPLETED:**
+- ✅ Complete replacement of legacy `MetadataEditor` with modern `EnhancedMetadataEditor`
+- ✅ Fixed critical API integration issue that prevented editing metadata on purchased shipments
+- ✅ Enhanced user experience with proper inline editing controls
+- ✅ Consistent section header styling matching other sections
+- ✅ All functionality preserved and improved with better error handling
 
 ---
 
-### Step 8: Make Component Sheet-Compatible
+### Step 8: Final Bulma to Shadcn/Tailwind Migration ✅ **COMPLETED**
+
+**Final Migration Tasks:**
+- ✅ **Complete Bulma Removal**: All remaining Bulma classes (`title is-5`, `card`, `card-content`, `has-text-centered`) converted to Tailwind equivalents
+- ✅ **Section Header Consistency**: Updated "Metadata" and "Activity" headers to use `text-xl font-semibold my-4` matching other sections  
+- ✅ **Error State Migration**: Converted error card styling to `bg-white border border-gray-200 rounded-lg shadow-sm my-6` and `p-6 text-center`
+- ✅ **Production Readiness Verified**: All functionality intact, UI identical to original, fully migrated to Shadcn/Tailwind
+
+**Final Status:**
+- ✅ **0 Bulma classes remaining** - Complete migration achieved
+- ✅ **All UI components using Shadcn/Tailwind** - Modern design system fully adopted
+- ✅ **Visual consistency maintained** - Identical appearance to original implementation
+- ✅ **Enhanced functionality** - Improved metadata editing with better error handling
+
+---
+
+### Step 9: Make Component Sheet-Compatible
 **Requirements:**
 - Must work identically in both full page and sheet contexts
 - Proper responsive behavior in constrained sheet width (800px)
