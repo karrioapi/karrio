@@ -59,7 +59,7 @@ export const ShipmentPreviewSheet = ({ children }: ShipmentPreviewSheetComponent
             <SheetHeader className="sticky top-0 z-10 bg-white px-4 py-3 border-b">
               <div className="flex items-center justify-between">
                 <SheetTitle className="text-lg font-semibold">
-                  Shipment Details
+                  Shipment Preview
                 </SheetTitle>
                 <SheetClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
                   <X className="h-4 w-4" />
