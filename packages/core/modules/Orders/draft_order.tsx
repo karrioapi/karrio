@@ -187,9 +187,9 @@ export default function Page(pageProps: { params: Promise<{ id?: string }> }) {
           </div>
         </header>
 
-        {/* Error Summary - Sticky Message Box */}
+        {/* Error Summary - Message Box */}
         {ready && validationErrors.length > 0 && (
-          <div className="sticky top-4 z-50 mb-4">
+          <div className="mb-4">
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 backdrop-blur-sm">
               <div className="flex items-start gap-3">
                 <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
