@@ -169,7 +169,7 @@ export default function Page(pageProps: { params: Promise<{ id?: string }> }) {
     return (
       <>
         <header className="px-0 pb-2 pt-4 flex justify-between items-center">
-          <span className="text-2xl font-semibold my-2">{`${id === "new" ? "Create" : "Edit"} order`}</span>
+          <span className="text-2xl font-semibold my-2">{`${id === "new" ? "Draft" : "Edit"} order`}</span>
           <div>
             <ButtonField
               type="button"

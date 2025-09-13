@@ -296,7 +296,7 @@ export default function OrdersPage() {
           <div className="flex flex-row items-center gap-1 flex-wrap">
             <Button asChild size="sm" className="mx-1 w-auto">
               <AppLink href="/draft_orders/new">
-                Create order
+                Draft order
               </AppLink>
             </Button>
             <Button asChild size="sm" className="mx-1 w-auto">
