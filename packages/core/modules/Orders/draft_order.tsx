@@ -57,7 +57,7 @@ export default function Page(pageProps: { params: Promise<{ id?: string }> }) {
     const [ready, setReady] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [key, setKey] = useState<string>(`order-${Date.now()}`);
-
+    const [errorsExpanded, setErrorsExpanded] = useState<boolean>(false);
 
     const { order, current, isNew, DEFAULT_STATE, query, ...mutation } =
       useOrderForm({ id });
@@ -190,20 +190,56 @@ export default function Page(pageProps: { params: Promise<{ id?: string }> }) {
         {/* Error Summary - Message Box */}
         {ready && validationErrors.length > 0 && (
           <div className="mb-4">
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 backdrop-blur-sm">
-              <div className="flex items-start gap-3">
-                <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-medium text-yellow-800 mb-2">
-                    Please address the following errors before saving:
-                  </h3>
-                  <ul className="text-sm text-yellow-700 space-y-1 list-disc list-inside">
-                    {validationErrors.map((error, index) => (
-                      <li key={index}>{error}</li>
-                    ))}
-                  </ul>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg backdrop-blur-sm overflow-hidden">
+              <div className="p-4">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-medium text-yellow-800 mb-2">
+                      Please address the following errors before saving:
+                    </h3>
+                    <ul className={`text-sm text-yellow-700 space-y-1 list-disc list-inside ${
+                      errorsExpanded || validationErrors.length <= 3 
+                        ? '' 
+                        : 'max-h-16 overflow-y-auto'
+                    }`}>
+                      {validationErrors.map((error, index) => (
+                        <li key={index}>{error}</li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
+              {(!errorsExpanded && validationErrors.length > 3) && (
+                <div 
+                  className="bg-yellow-100 border-t border-yellow-200 px-4 py-1.5 cursor-pointer hover:bg-yellow-150 transition-colors"
+                  onClick={() => setErrorsExpanded(!errorsExpanded)}
+                >
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-yellow-700">
+                      {`${validationErrors.length - 3} more error${validationErrors.length - 3 > 1 ? 's' : ''} - Click to view all`}
+                    </span>
+                    <span className="text-yellow-700 text-xs">
+                      ▼
+                    </span>
+                  </div>
+                </div>
+              )}
+              {errorsExpanded && validationErrors.length > 3 && (
+                <div 
+                  className="bg-yellow-100 border-t border-yellow-200 px-4 py-1.5 cursor-pointer hover:bg-yellow-150 transition-colors"
+                  onClick={() => setErrorsExpanded(!errorsExpanded)}
+                >
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-yellow-700">
+                      Click to collapse errors
+                    </span>
+                    <span className="text-yellow-700 text-xs">
+                      ▲
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
