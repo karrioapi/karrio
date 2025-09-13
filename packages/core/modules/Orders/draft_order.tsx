@@ -211,8 +211,8 @@ export default function Page(pageProps: { params: Promise<{ id?: string }> }) {
         {!ready && <Spinner />}
 
         {ready && (
-          <div className="flex flex-col lg:flex-row gap-6 pb-6">
-            <div className="flex-1 lg:flex-[7] px-0 lg:min-h-[850px]">
+          <div className="flex flex-col lg:flex-row gap-6 pb-5">
+            <div className="flex-1 lg:flex-[7] px-0">
               {/* Line Items */}
               <div className="rounded-xl border bg-card text-card-foreground shadow px-0 py-3">
                 <header className="px-3 flex justify-between">
@@ -419,9 +419,6 @@ export default function Page(pageProps: { params: Promise<{ id?: string }> }) {
             </div>
 
             <div className="flex-1 lg:flex-[5] px-0 pb-6 relative">
-              <div
-                style={{ position: "sticky", top: "8.5%", right: 0, left: 0 }}
-              >
                 {/* Summary section */}
                 {!isNone(order.line_items) && (
                   <div className="rounded-xl border bg-card text-card-foreground shadow px-0 py-3 mb-5">
@@ -628,7 +625,6 @@ export default function Page(pageProps: { params: Promise<{ id?: string }> }) {
                     />
                   </div>
                 </div>
-              </div>
             </div>
           </div>
         )}
