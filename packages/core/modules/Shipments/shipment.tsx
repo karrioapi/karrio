@@ -147,9 +147,80 @@ export const ShipmentComponent = ({
       {!query.isFetched && query.isFetching && <Spinner />}
 
       {shipment && (
-        <>
-          {/* Header Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-1">
+        <div className="flex flex-col lg:grid lg:grid-cols-4 gap-6">
+          {/* Service Details Section - Desktop ONLY: RIGHT sidebar */}
+          {!isNone(shipment.selected_rate) && (
+            <div className="hidden lg:block lg:order-2 lg:col-span-1 lg:col-start-4">
+              <h3 className="text-xl lg:text-lg font-semibold my-4 lg:mb-4 lg:mt-0">
+                <span className="lg:hidden">Service Details</span>
+                <span className="hidden lg:block">Details</span>
+              </h3>
+              <hr className="mt-1 mb-2 lg:hidden" style={{ height: "1px" }} />
+              
+              <div className="mt-3 mb-6 lg:mt-0 space-y-3">
+                <div>
+                  <div className="text-xs text-gray-600 mb-1">Shipment ID</div>
+                  <div className="text-sm font-medium">{shipment.id}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-600 mb-1">Service method</div>
+                  <div className="text-sm">
+                    {formatRef(
+                      ((shipment.meta as any)?.service_name ||
+                        shipment.service) as string,
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-600 mb-1">Courier</div>
+                  <div className="text-sm">{formatRef(shipment.meta.carrier as string)}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-600 mb-1">Rate</div>
+                  <div className="text-sm">
+                    <span className="font-medium mr-1">
+                      {shipment.selected_rate?.total_charge}
+                    </span>
+                    <span>{shipment.selected_rate?.currency}</span>
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-600 mb-1">Tracking Number</div>
+                  <div className="text-sm font-medium text-blue-600">
+                    {shipment.tracking_number as string}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-600 mb-1">Rate Provider</div>
+                  <div className="text-sm text-blue-600 font-medium">
+                    {formatRef(shipment.meta.ext as string)}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-600 mb-1">Last updated</div>
+                  <div className="text-sm">{formatDateTime(shipment.created_at)}</div>
+                </div>
+                
+                {/* Metadata Section - Part of sidebar on desktop, separate on mobile */}
+                <div className="hidden lg:block mt-6">
+                  <EnhancedMetadataEditor
+                    value={shipment.metadata || {}}
+                    onChange={handleMetadataChange}
+                    placeholder="No metadata configured"
+                    emptyStateMessage="Add key-value pairs to configure metadata"
+                    allowEdit={true}
+                    showTypeInference={true}
+                    maxHeight="300px"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Left Column - Main Content */}
+          <div className="lg:col-span-3 lg:col-start-1 space-y-6 order-1 lg:order-1">
+            {/* Header Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-1">
             <div className="space-y-2">
               <span className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
                 SHIPMENT
@@ -245,92 +316,57 @@ export const ShipmentComponent = ({
             )}
           </div>
 
+          {/* Service Details - Mobile ONLY: positioned before tracking */}
           {!isNone(shipment.selected_rate) && (
-            <>
+            <div className="lg:hidden">
               <h2 className="text-xl font-semibold my-4">Service Details</h2>
               <hr className="mt-1 mb-2" style={{ height: "1px" }} />
-
-              <div className="mt-3 mb-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-1">
-                  <div className="text-base">
-                    <div className="grid grid-cols-3 gap-2 my-0">
-                      <div className="text-base py-1">Service</div>
-                      <div className="col-span-2 text-base font-semibold py-1">
-                        {formatRef(
-                          ((shipment.meta as any)?.service_name ||
-                            shipment.service) as string,
-                        )}
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2 my-0">
-                      <div className="text-base py-1">Courier</div>
-                      <div className="col-span-2 text-base font-semibold py-1">
-                        {formatRef(shipment.meta.carrier as string)}
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2 my-0">
-                      <div className="text-base py-1">Rate</div>
-                      <div className="col-span-2 text-base py-1">
-                        <span className="font-semibold mr-1">
-                          {shipment.selected_rate?.total_charge}
-                        </span>
-                        <span>{shipment.selected_rate?.currency}</span>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2 my-0">
-                      <div className="text-xs py-1">
-                        Rate Provider
-                      </div>
-                      <div className="col-span-2 text-xs text-blue-600 font-semibold py-1">
-                        {formatRef(shipment.meta.ext as string)}
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2 my-0">
-                      <div className="text-xs py-1">
-                        Tracking Number
-                      </div>
-                      <div className="col-span-2 text-blue-600 py-1">
-                        <span className="text-xs font-semibold">
-                          {shipment.tracking_number as string}
-                        </span>
-                      </div>
-                    </div>
+              
+              <div className="mt-3 mb-6 space-y-3">
+                <div>
+                  <div className="text-xs text-gray-600 mb-1">Shipment ID</div>
+                  <div className="text-sm font-medium">{shipment.id}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-600 mb-1">Service method</div>
+                  <div className="text-sm">
+                    {formatRef(
+                      ((shipment.meta as any)?.service_name ||
+                        shipment.service) as string,
+                    )}
                   </div>
-
-                  {(shipment.selected_rate?.extra_charges || []).length > 0 && (
-                    <>
-                      <div className="text-base py-1">
-                        <p className="text-base font-semibold uppercase tracking-wide my-2">
-                          CHARGES
-                        </p>
-                        <hr className="mt-1 mb-2" style={{ height: "1px" }} />
-
-                        {(shipment.selected_rate?.extra_charges || []).map(
-                          (charge, index) => (
-                            <div key={index} className="flex justify-between items-center m-0">
-                              <div className="text-sm px-0 py-1">
-                                <span className="uppercase">
-                                  {charge?.name?.toLocaleLowerCase()}
-                                </span>
-                              </div>
-                              <div
-                                className="text-sm py-1 text-gray-500 text-right"
-                                style={{ minWidth: "100px" }}
-                              >
-                                <span className="mr-1">{charge?.amount}</span>
-                                {!isNone(charge?.currency) && (
-                                  <span>{charge?.currency}</span>
-                                )}
-                              </div>
-                            </div>
-                          ),
-                        )}
-                      </div>
-                    </>
-                  )}
+                </div>
+                <div>
+                  <div className="text-xs text-gray-600 mb-1">Courier</div>
+                  <div className="text-sm">{formatRef(shipment.meta.carrier as string)}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-600 mb-1">Rate</div>
+                  <div className="text-sm">
+                    <span className="font-medium mr-1">
+                      {shipment.selected_rate?.total_charge}
+                    </span>
+                    <span>{shipment.selected_rate?.currency}</span>
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-600 mb-1">Tracking Number</div>
+                  <div className="text-sm font-medium text-blue-600">
+                    {shipment.tracking_number as string}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-600 mb-1">Rate Provider</div>
+                  <div className="text-sm text-blue-600 font-medium">
+                    {formatRef(shipment.meta.ext as string)}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-600 mb-1">Last updated</div>
+                  <div className="text-sm">{formatDateTime(shipment.created_at)}</div>
                 </div>
               </div>
-            </>
+            </div>
           )}
 
           {!isNone(shipment.tracker) && (
@@ -646,32 +682,34 @@ export const ShipmentComponent = ({
               </>
             )}
 
-          {/* Metadata section */}
-          <h2 className="text-xl font-semibold my-4">Metadata</h2>
-          <hr className="mt-1 mb-2" style={{ height: "1px" }} />
-          
-          <div className="my-4">
-            <EnhancedMetadataEditor
-              value={shipment.metadata || {}}
-              onChange={handleMetadataChange}
-              placeholder="No metadata configured"
-              emptyStateMessage="Add key-value pairs to configure metadata"
-              allowEdit={true}
-              showTypeInference={true}
-              maxHeight="300px"
-            />
+          {/* Metadata Section - Mobile only, positioned before timeline */}
+          <div className="lg:hidden">
+            <h2 className="text-xl font-semibold my-4">Metadata</h2>
+            <hr className="mt-1 mb-2" style={{ height: "1px" }} />
+            
+            <div className="my-4">
+              <EnhancedMetadataEditor
+                value={shipment.metadata || {}}
+                onChange={handleMetadataChange}
+                placeholder="No metadata configured"
+                emptyStateMessage="Add key-value pairs to configure metadata"
+                allowEdit={true}
+                showTypeInference={true}
+                maxHeight="300px"
+              />
+            </div>
           </div>
-
-          <div className="my-6 pt-1"></div>
 
           {/* Activity Timeline section */}
           <h2 className="text-xl font-semibold my-4">Activity</h2>
 
-          <ActivityTimeline
-            logs={logs}
-            events={events}
-          />
-        </>
+            <ActivityTimeline
+              logs={logs}
+              events={events}
+            />
+          </div>
+
+        </div>
       )}
 
       {query.isFetched && isNone(shipment) && (
