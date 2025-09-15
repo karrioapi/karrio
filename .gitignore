@@ -139,6 +139,7 @@ packages/karriojs/api/generated
 
 # Karrio plugins
 plugins/*
+docker/plugins
 !plugins/README.md
 !plugins/addresscomplete
 !plugins/googlegeocoding

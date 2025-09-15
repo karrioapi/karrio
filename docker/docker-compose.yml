@@ -30,6 +30,9 @@ services:
       OTEL_EXPORTER_OTLP_HEADERS: ${OTEL_EXPORTER_OTLP_HEADERS:-}
       OTEL_RESOURCE_ATTRIBUTES: ${OTEL_RESOURCE_ATTRIBUTES:-}
       OTEL_ENVIRONMENT: ${OTEL_ENVIRONMENT:-development}
+
+    volumes:
+      - ${KARRIO_PLUGINS:-./plugins}:/karrio/plugins
     healthcheck:
       test: curl --fail http://api:5002/ || exit 1
       interval: 40s
@@ -64,6 +67,10 @@ services:
       OTEL_EXPORTER_OTLP_HEADERS: ${OTEL_EXPORTER_OTLP_HEADERS:-}
       OTEL_RESOURCE_ATTRIBUTES: ${OTEL_RESOURCE_ATTRIBUTES:-}
       OTEL_ENVIRONMENT: ${OTEL_ENVIRONMENT:-development}
+
+    volumes:
+      - ${KARRIO_PLUGINS:-./plugins}:/karrio/plugins
+
     command: "/bin/bash ./worker"
 
   dashboard:

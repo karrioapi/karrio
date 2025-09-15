@@ -24,6 +24,7 @@ services:
       ENABLE_ALL_PLUGINS_BY_DEFAULT: "True"
     volumes:
       - karrio-static:/karrio/static
+      - ${KARRIO_PLUGINS:-./plugins}:/karrio/plugins
 
   worker:
     container_name: karrio.worker
@@ -45,6 +46,8 @@ services:
       DATABASE_USERNAME: ${DATABASE_USERNAME:-postgres}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD:-postgres}
       ENABLE_ALL_PLUGINS_BY_DEFAULT: "True"
+    volumes:
+      - ${KARRIO_PLUGINS:-./plugins}:/karrio/plugins
 
   dashboard:
     container_name: karrio.dashboard
