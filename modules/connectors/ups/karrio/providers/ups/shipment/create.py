@@ -193,8 +193,7 @@ def shipment_request(
                     EMailAddress=shipper.email,
                     Address=ups.AlternateDeliveryAddressAddressType(
                         AddressLine=[
-                            lib.text(line, max=35)
-                            for line in shipper.address_lines
+                            lib.text(line, max=35) for line in shipper.address_lines
                         ],
                         City=shipper.city,
                         StateProvinceCode=shipper.state_code,
@@ -218,8 +217,7 @@ def shipment_request(
                     EMailAddress=recipient.email,
                     Address=ups.AlternateDeliveryAddressAddressType(
                         AddressLine=[
-                            lib.text(line, max=35)
-                            for line in recipient.address_lines
+                            lib.text(line, max=35) for line in recipient.address_lines
                         ],
                         City=recipient.city,
                         StateProvinceCode=recipient.state_code,
@@ -447,9 +445,14 @@ def shipment_request(
                         InternationalForms=lib.identity(
                             ups.InternationalFormsType(
                                 FormType=lib.identity(
-                                    "07" if options.paperless_trade.state and any(options.doc_references.state or [])
-                                    else "03" if options.paperless_trade.state  # API-generated commercial invoice
-                                    else "01"  # Traditional paper forms
+                                    "07"
+                                    if options.paperless_trade.state
+                                    and any(options.doc_references.state or [])
+                                    else (
+                                        "03"
+                                        if options.paperless_trade.state  # API-generated commercial invoice
+                                        else "01"
+                                    )  # Traditional paper forms
                                 ),
                                 UserCreatedForm=[
                                     ups.UserCreatedFormType(DocumentID=doc["doc_id"])
@@ -466,10 +469,9 @@ def shipment_request(
                                         UltimateConsignee=None,
                                         IntermediateConsignee=None,
                                         Producer=None,
-                                        SoldTo=ups.ProducerType(
+                                        SoldTo=ups.ContactsSoldToType(
                                             Option=None,
-                                            CompanyName=recipient.company_name,
-                                            Name=recipient.contact,
+                                            Name=recipient.company_name,
                                             AttentionName=recipient.contact,
                                             TaxIdentificationNumber=recipient.tax_id,
                                             Phone=ups.ShipToPhoneType(
@@ -503,7 +505,7 @@ def shipment_request(
                                     else None
                                 ),
                                 Product=[
-                                    ups.ProductType(
+                                    ups.InternationalFormsProductType(
                                         Description=lib.text(
                                             item.title or item.description,
                                             max=35,
@@ -570,7 +572,9 @@ def shipment_request(
                                 Discount=None,
                                 FreightCharges=None,
                                 InsuranceCharges=lib.identity(
-                                    ups.DiscountType(MonetaryValue=options.insurance.state)
+                                    ups.DiscountType(
+                                        MonetaryValue=options.insurance.state
+                                    )
                                     if options.insurance.state is not None
                                     else None
                                 ),
