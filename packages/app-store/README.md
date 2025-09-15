@@ -443,7 +443,7 @@ Apps are automatically deployed when:
 - [Documentation](https://docs.karrio.io/apps)
 - [Community Forum](https://community.karrio.io)
 - [GitHub Issues](https://github.com/karrioapi/karrio/issues)
-- [Discord](https://discord.gg/karrio)
+- [Discord](https://discord.gg/gS88uE7sEx)
 
 ## License
 

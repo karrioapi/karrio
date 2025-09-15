@@ -1442,37 +1442,12 @@ export default function Page() {
 
                     {/* Live rates section */}
                     <div className="p-0 py-1">
-                      {/* Show spinner when fetching rates (initial load or refresh) */}
+                      {/* Show spinner when fetching rates */}
                       {(mutation.fetchRates.isLoading || (loading && (shipment.rates || []).length === 0)) && (
                         <div className="has-text-centered p-4">
                           <Spinner className="my-1" />
                           <div className="is-size-7 has-text-grey mt-2">
-                            Fetching shipping rates...
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Show loading overlay on existing rates during refresh */}
-                      {mutation.fetchRates.isLoading && (shipment.rates || []).length > 0 && (
-                        <div className="is-relative">
-                          <div className="overlay has-background-white-bis" style={{
-                            position: "absolute",
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            zIndex: 10,
-                            opacity: 0.8,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center"
-                          }}>
-                            <div className="has-text-centered">
-                              <Spinner />
-                              <div className="is-size-7 has-text-grey mt-2">
-                                Refreshing rates...
-                              </div>
-                            </div>
+                            {(shipment.rates || []).length > 0 ? "Refreshing rates..." : "Fetching shipping rates..."}
                           </div>
                         </div>
                       )}
@@ -1535,44 +1510,7 @@ export default function Page() {
                       )}
                     </div>
 
-                    <hr className="my-1" style={{ height: "1px" }} />
-
-                    <div className="p-3 has-text-centered">
-                      <div className="control">
-                        <label className="radio">
-                          <input
-                            className="mr-1"
-                            type="radio"
-                            name="label_type"
-                            defaultChecked={
-                              shipment.label_type === LabelTypeEnum.PDF
-                            }
-                            onChange={() =>
-                              onChange({ label_type: LabelTypeEnum.PDF })
-                            }
-                          />
-                          <span className="is-size-7 has-text-weight-bold">
-                            {LabelTypeEnum.PDF}
-                          </span>
-                        </label>
-                        <label className="radio">
-                          <input
-                            className="mr-1"
-                            type="radio"
-                            name="label_type"
-                            defaultChecked={
-                              shipment.label_type === LabelTypeEnum.ZPL
-                            }
-                            onChange={() =>
-                              onChange({ label_type: LabelTypeEnum.ZPL })
-                            }
-                          />
-                          <span className="is-size-7 has-text-weight-bold">
-                            {LabelTypeEnum.ZPL}
-                          </span>
-                        </label>
-                      </div>
-                    </div>
+                    <hr className="my-2" style={{ height: "1px" }} />
 
                     <ButtonField
                       onClick={() =>

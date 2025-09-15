@@ -1,16 +1,16 @@
-import { CustomsInfoDescription } from '../components/customs-info-description';
+import { CustomsInfoDescription } from '@karrio/ui/core/components/customs-info-description';
+import { AddressDescription } from '@karrio/ui/core/components/address-description';
+import { OptionsDescription } from '@karrio/ui/core/components/options-description';
+import { ParcelDescription } from '@karrio/ui/core/components/parcel-description';
+import { RateDescription } from '@karrio/ui/core/components/rate-description';
 import { CustomsType, PaymentType, ShipmentType } from '@karrio/types';
-import { AddressDescription } from '../components/address-description';
-import { OptionsDescription } from '../components/options-description';
-import { ParcelDescription } from '../components/parcel-description';
-import { RateDescription } from '../components/rate-description';
+import { ButtonField } from '@karrio/ui/core/components/button-field';
+import { InputField } from '@karrio/ui/core/components/input-field';
 import { useLabelDataMutation } from '@karrio/hooks/label-data';
 import React, { useContext, useEffect, useState } from 'react';
-import { LabelTypeEnum, PaidByEnum } from '@karrio/types';
-import { ButtonField } from '../components/button-field';
-import { InputField } from '../components/input-field';
+import { Loading } from '@karrio/ui/core/components/loader';
 import { formatRef, isNone } from '@karrio/lib';
-import { Loading } from '../components/loader';
+import { PaidByEnum } from '@karrio/types';
 
 interface LiveRatesComponent {
   shipment: ShipmentType;
@@ -18,7 +18,7 @@ interface LiveRatesComponent {
 
 const DEFAULT_PAYMENT: Partial<PaymentType> = { paid_by: PaidByEnum.sender };
 
-export const LiveRates= ({ shipment }): JSX.Element =>  {
+export const LiveRates = ({ shipment }: LiveRatesComponent): JSX.Element => {
   const { loading } = useContext(Loading);
   const mutation = useLabelDataMutation(shipment.id);
   const [payment, setPayment] = useState<Partial<PaymentType>>(DEFAULT_PAYMENT);
@@ -46,7 +46,7 @@ export const LiveRates= ({ shipment }): JSX.Element =>  {
           <span className="title is-5">Shipment Details</span>
 
           <button className={`button is-small is-outlined is-info is-pulled-right ${loading ? 'is-loading' : ''}`}
-            onClick={mutation.fetchRates} disabled={computeDisabled(shipment)}>
+            onClick={() => mutation.fetchRates.mutate()} disabled={computeDisabled(shipment)}>
             <span>Fetch Rates</span>
           </button>
         </div>
@@ -111,33 +111,6 @@ export const LiveRates= ({ shipment }): JSX.Element =>  {
 
         </div>
 
-        <div className="column is-12 py-2" style={{ display: `${(shipment.rates || []).length === 0 ? 'none' : 'block'}` }}>
-
-          <h6 className="is-title is-size-6 mt-1 mb-2 has-text-weight-semibold">Select your label type</h6>
-          <div className="control">
-            <label className="radio">
-              <input
-                className="mr-1"
-                type="radio"
-                name="label_type"
-                defaultChecked={shipment.label_type === LabelTypeEnum.PDF}
-                onChange={() => mutation.updateShipment({ label_type: LabelTypeEnum.PDF })}
-              />
-              <span className="is-size-7 has-text-weight-bold">{LabelTypeEnum.PDF}</span>
-            </label>
-            <label className="radio">
-              <input
-                className="mr-1"
-                type="radio"
-                name="label_type"
-                defaultChecked={shipment.label_type === LabelTypeEnum.ZPL}
-                onChange={() => mutation.updateShipment({ label_type: LabelTypeEnum.ZPL })}
-              />
-              <span className="is-size-7 has-text-weight-bold">{LabelTypeEnum.ZPL}</span>
-            </label>
-          </div>
-
-        </div>
 
         <div className="column is-12 py-2" style={{ display: `${(shipment.rates || []).length === 0 ? 'none' : 'block'}` }}>
 
@@ -190,12 +163,12 @@ export const LiveRates= ({ shipment }): JSX.Element =>  {
 
       </div>
 
-      <hr className='my-1' style={{ height: '1px' }} />
+      <hr className='my-2' style={{ height: '1px' }} />
 
       <ButtonField
         className={`is-success`}
-        fieldClass="has-text-centered mt-3 p-3"
-        onClick={() => mutation.buyLabel(selected_rate as any)}
+        fieldClass="has-text-centered mt-4 p-3"
+        onClick={() => mutation.buyLabel.mutate(selected_rate as any)}
         disabled={((shipment.rates || []).filter(r => r.id === selected_rate?.id).length === 0) || loading}
       >
         <span className="px-6">Buy shipping label</span>
