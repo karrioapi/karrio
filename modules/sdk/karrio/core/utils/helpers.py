@@ -16,7 +16,7 @@ from typing import List, TypeVar, Callable, Optional, Any, cast
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 logger = logging.getLogger(__name__)
-ssl._create_default_https_context = ssl._create_unverified_context
+ssl._create_default_https_context = ssl._create_unverified_context  # type: ignore
 PIL.ImageFile.LOAD_TRUNCATED_IMAGES = True
 T = TypeVar("T")
 S = TypeVar("S")
