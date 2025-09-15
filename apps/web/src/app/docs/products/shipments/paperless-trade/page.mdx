@@ -24,9 +24,9 @@ Paperless trade eliminates physical customs documentation by allowing electronic
 
 ### Supported Carriers
 
-| Carrier | Implementation | Document Workflows |
-|---------|----------------|-------------------|
-| **UPS** | UPS Paperless Documents API v1 | User-created forms with document references |
+| Carrier   | Implementation                         | Document Workflows                             |
+| --------- | -------------------------------------- | ---------------------------------------------- |
+| **UPS**   | UPS Paperless Documents API v1         | User-created forms with document references    |
 | **FedEx** | FedEx Electronic Trade Documents (ETD) | Pre-shipment and post-shipment document upload |
 
 ### Supported Document Types
@@ -342,12 +342,12 @@ flowchart TD
 
 ### Common Issues
 
-| Error | Cause | Solution |
-|-------|-------|----------|
-| `Invalid document format` | Document not base64 encoded | Ensure proper base64 encoding |
-| `Document size exceeds limit` | File too large | Compress or split documents |
-| `Missing customs information` | Incomplete customs data | Provide complete commodity details |
-| `Carrier authentication failed` | Invalid credentials | Verify carrier account setup |
+| Error                           | Cause                       | Solution                           |
+| ------------------------------- | --------------------------- | ---------------------------------- |
+| `Invalid document format`       | Document not base64 encoded | Ensure proper base64 encoding      |
+| `Document size exceeds limit`   | File too large              | Compress or split documents        |
+| `Missing customs information`   | Incomplete customs data     | Provide complete commodity details |
+| `Carrier authentication failed` | Invalid credentials         | Verify carrier account setup       |
 
 ### Response Validation
 
@@ -369,4 +369,4 @@ Always check the response `messages` array:
 
 ---
 
-**Need help?** Join our [community Discord](https://discord.gg/karrio) or contact our support team.
+**Need help?** Join our [community Discord](https://discord.gg/gS88uE7sEx) or contact our support team.

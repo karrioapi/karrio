@@ -21,12 +21,15 @@ Karrio's document generation system provides template-based document creation fo
 ## Core Features
 
 ### Template Management
+
 Create, update, and manage document templates with full version control and preview capabilities.
 
 ### Document Generation
+
 Generate documents using templates with dynamic data injection and multiple output formats.
 
 ### GS1 Label Support
+
 Specialized support for GS1 barcode labels with compliant formatting and encoding.
 
 <div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-4 my-6">
@@ -39,7 +42,9 @@ Specialized support for GS1 barcode labels with compliant formatting and encodin
     </div>
   </div>
   <div className="text-sm text-blue-700 dark:text-blue-300">
-    Shipping labels are automatically generated when creating shipments and don't require the document generation API. They support PDF, PNG, and ZPL formats.
+    Shipping labels are automatically generated when creating shipments and
+    don't require the document generation API. They support PDF, PNG, and ZPL
+    formats.
   </div>
 </div>
 
@@ -206,6 +211,7 @@ curl -X DELETE "https://api.karrio.io/v1/documents/templates/tpl_1234567890" \
 ## Template System
 
 ### Template Engine
+
 Karrio uses a powerful template engine that supports:
 
 - **Variable Substitution**: `{{variable_name}}`
@@ -216,6 +222,7 @@ Karrio uses a powerful template engine that supports:
 ### Template Types
 
 #### Related Objects
+
 Templates can be associated with different object types:
 
 - **shipment**: Templates for shipment-related documents
@@ -223,6 +230,7 @@ Templates can be associated with different object types:
 - **other**: General-purpose templates
 
 #### Data Binding
+
 Templates receive data through the `data` parameter in generation requests:
 
 ```json
@@ -231,8 +239,8 @@ Templates receive data through the `data` parameter in generation requests:
     "company_name": "ACME Corp",
     "invoice_number": "INV-2024-001",
     "items": [
-      {"name": "Product A", "quantity": 2, "price": 25.00},
-      {"name": "Product B", "quantity": 1, "price": 50.00}
+      { "name": "Product A", "quantity": 2, "price": 25.0 },
+      { "name": "Product B", "quantity": 1, "price": 50.0 }
     ]
   }
 }
@@ -241,18 +249,22 @@ Templates receive data through the `data` parameter in generation requests:
 ### Format Support
 
 #### PDF Output
+
 Professional PDF documents with:
+
 - Vector graphics support
 - Print-ready formatting
 - Searchable text
 - Embedded fonts
 
 #### Other Formats
+
 The system supports various output formats specified via the `doc_format` parameter.
 
 ## Common Use Cases
 
 ### GS1 Labels
+
 Generate compliant GS1 barcode labels for product identification:
 
 ```bash
@@ -273,6 +285,7 @@ curl -X POST "https://api.karrio.io/v1/documents/generate" \
 ```
 
 ### Custom Invoices
+
 Create branded invoice documents:
 
 ```bash
@@ -315,6 +328,7 @@ curl -X POST "https://api.karrio.io/v1/documents/generate" \
 ```
 
 ### Business Documents
+
 Generate various business documents using templates:
 
 - **Packing Lists**: Detailed item lists for shipments
@@ -325,18 +339,21 @@ Generate various business documents using templates:
 ## Best Practices
 
 ### Template Design
+
 - Use semantic HTML structure for better rendering
 - Include CSS for professional styling
 - Test templates with sample data before production use
 - Use meaningful variable names for clarity
 
 ### Data Management
+
 - Validate data before sending to generation API
 - Use consistent data structures across templates
 - Include error handling for missing variables
 - Consider data security for sensitive information
 
 ### Performance
+
 - Cache frequently used templates
 - Use template IDs instead of inline templates for better performance
 - Optimize template complexity for faster rendering
@@ -357,4 +374,4 @@ Generate various business documents using templates:
 
 ---
 
-**Need help with document generation?** Join our [community Discord](https://discord.gg/karrio) or check our template examples.
+**Need help with document generation?** Join our [community Discord](https://discord.gg/gS88uE7sEx) or check our template examples.

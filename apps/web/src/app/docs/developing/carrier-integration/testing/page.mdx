@@ -102,13 +102,13 @@ if __name__ == "__main__":
 
 ## Required Test Methods by Feature
 
-| Feature | Test Method Names (EXACT) |
-|---------|---------------------------|
-| **Rating** | `test_create_rate_request`, `test_get_rates`, `test_parse_rate_response`, `test_parse_error_response` |
-| **Shipment** | `test_create_shipment_request`, `test_create_shipment`, `test_parse_shipment_response`, `test_parse_error_response` |
-| **Tracking** | `test_create_tracking_request`, `test_get_tracking`, `test_parse_tracking_response`, `test_parse_error_response` |
-| **Pickup** | `test_create_pickup_request`, `test_schedule_pickup`, `test_parse_pickup_response`, `test_parse_error_response` |
-| **Address** | `test_create_address_validation_request`, `test_validate_address`, `test_parse_address_validation_response`, `test_parse_error_response` |
+| Feature      | Test Method Names (EXACT)                                                                                                                |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| **Rating**   | `test_create_rate_request`, `test_get_rates`, `test_parse_rate_response`, `test_parse_error_response`                                    |
+| **Shipment** | `test_create_shipment_request`, `test_create_shipment`, `test_parse_shipment_response`, `test_parse_error_response`                      |
+| **Tracking** | `test_create_tracking_request`, `test_get_tracking`, `test_parse_tracking_response`, `test_parse_error_response`                         |
+| **Pickup**   | `test_create_pickup_request`, `test_schedule_pickup`, `test_parse_pickup_response`, `test_parse_error_response`                          |
+| **Address**  | `test_create_address_validation_request`, `test_validate_address`, `test_parse_address_validation_response`, `test_parse_error_response` |
 
 ## Mandatory Test Data Structure
 
@@ -250,6 +250,7 @@ gateway = karrio.gateway["[carrier_id]"].create(
 ## Response Format Patterns
 
 ### Success Response Pattern
+
 ```python
 [
     [data_objects],  # List of successful results
@@ -258,6 +259,7 @@ gateway = karrio.gateway["[carrier_id]"].create(
 ```
 
 ### Error Response Pattern
+
 ```python
 [
     [],              # Empty or partial data
@@ -266,6 +268,7 @@ gateway = karrio.gateway["[carrier_id]"].create(
 ```
 
 ### Mixed Response Pattern
+
 ```python
 [
     [partial_data],     # Some successful data
@@ -276,6 +279,7 @@ gateway = karrio.gateway["[carrier_id]"].create(
 ## Testing Checklist
 
 ### Phase 1: Test Structure Validation
+
 - [ ] **Test files named correctly**: `test_rate.py`, `test_shipment.py`, etc.
 - [ ] **Test classes named correctly**: `Test[CarrierName][Feature]`
 - [ ] **All 4 test methods present** for each feature
@@ -283,6 +287,7 @@ gateway = karrio.gateway["[carrier_id]"].create(
 - [ ] **Proper imports** from fixture and required modules
 
 ### Phase 2: Test Data Validation
+
 - [ ] **All 6 data structures present** at end of each test file
 - [ ] **Realistic test data** that matches carrier API requirements
 - [ ] **Mock responses** in actual carrier API format
@@ -290,12 +295,14 @@ gateway = karrio.gateway["[carrier_id]"].create(
 - [ ] **Error scenarios** properly mocked and tested
 
 ### Phase 3: Test Execution
+
 - [ ] **All tests pass**: `python -m unittest discover -v -f [path]/tests`
 - [ ] **No real API calls**: All HTTP requests properly mocked
 - [ ] **Debug output present**: Print statements show actual vs expected data
 - [ ] **Assertions use correct methods**: `assertEqual`, `assertListEqual`
 
 ### Phase 4: Integration Validation
+
 - [ ] **SDK tests still pass**: `./bin/run-sdk-tests` succeeds
 - [ ] **Plugin registration**: Tests verify plugin appears correctly
 - [ ] **Schema imports**: Generated types import without errors
@@ -304,6 +311,7 @@ gateway = karrio.gateway["[carrier_id]"].create(
 ## Running Tests
 
 ### Development Testing
+
 ```bash
 # Test single feature
 python -m unittest tests.[carrier_name].test_rate.Test[CarrierName]Rating -v
@@ -318,6 +326,7 @@ python -m unittest tests.[carrier_name].test_rate.Test[CarrierName]Rating.test_p
 ```
 
 ### Integration Testing
+
 ```bash
 # MANDATORY: Ensure all SDK tests still pass
 source ./bin/activate-env && ./bin/run-sdk-tests
@@ -330,6 +339,7 @@ source ./bin/activate-env && ./bin/run-sdk-tests
 ## Common Testing Mistakes
 
 ### ❌ Wrong Patterns
+
 - Using pytest instead of unittest
 - Missing debug print statements
 - Using `assert` instead of `self.assertXXX`
@@ -338,6 +348,7 @@ source ./bin/activate-env && ./bin/run-sdk-tests
 - Incorrect data structure format
 
 ### ✅ Correct Patterns
+
 - Always use `unittest.TestCase`
 - Include `print()` statements before assertions
 - Use `self.assertListEqual` for response parsing
@@ -357,6 +368,7 @@ source ./bin/activate-env && ./bin/run-sdk-tests
 ## Debugging Failed Tests
 
 ### When Tests Fail
+
 1. **Check Debug Prints**: Look at the printed request/response data
 2. **Verify Mock Data**: Ensure mock responses match carrier API format
 3. **Validate Transformations**: Check that mapping functions work correctly
@@ -364,6 +376,7 @@ source ./bin/activate-env && ./bin/run-sdk-tests
 5. **Regenerate Schemas**: Ensure generated types are up-to-date
 
 ### Common Debug Patterns
+
 ```python
 # Add more detailed debugging
 def test_parse_rate_response(self):
@@ -389,4 +402,4 @@ Your integration testing is complete when:
 5. **Both success and error paths** are tested
 6. **All test patterns followed** exactly as specified
 
-Remember: Testing is not optional. It's the primary way Karrio ensures consistency across 50+ carrier integrations.
+Remember: Testing is not optional. It's the primary way Karrio ensures consistency across 30+ carrier integrations.

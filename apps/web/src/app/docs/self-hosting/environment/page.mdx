@@ -93,6 +93,7 @@ These variables configure where files are stored.
 | `LOG_DIR`         | Directory for log files        | `/karrio/log`    | No       |
 | `WORKER_DB_DIR`   | Directory for worker databases | `/karrio/data`   | No       |
 | `STATIC_ROOT_DIR` | Directory for static files     | `/karrio/static` | No       |
+| `KARRIO_PLUGINS`  | Host path for mounting plugins | `./plugins`      | No       |
 
 ## Advanced Configuration
 
@@ -167,6 +168,9 @@ DEFAULT_FROM_EMAIL=karrio@yourdomain.com
 # Admin account
 ADMIN_EMAIL=admin@yourdomain.com
 ADMIN_PASSWORD=your_secure_admin_password
+
+# Plugin mounting
+KARRIO_PLUGINS=./plugins
 
 # Carrier credentials - USPS example
 USPS_USERNAME=your_usps_username

@@ -27,109 +27,51 @@ type PricingPlan = {
 };
 
 const PRICING_PLANS: Record<string, { cloud: PricingPlan; selfHosted?: PricingPlan }> = {
-  // insiders: {
-  //   cloud: {
-  //     name: "Insiders",
-  //     description: "Advanced features included. Dedicated support team. Scale your operations.",
-  //     price: "$299",
-  //     priceDetail: "/month",
-  //     popular: true,
-  //     button: {
-  //       text: "Join Waitlist",
-  //     },
-  //     features: [
-  //       { text: "10,000 labels/trackers a month" },
-  //       { text: "$0.04 overage beyond" },
-  //       { text: "Multi-tenant & User management" },
-  //       { text: "Email & Slack support" },
-  //       { text: "Customizable dashboard", soon: true },
-  //       { text: "Platform Admin dashboard" },
-  //       { text: "Platform APIs" },
-  //     ],
-  //   },
-  //   selfHosted: {
-  //     name: "Insiders",
-  //     description: "Advanced features included. Dedicated support team. Scale your operations.",
-  //     price: "$299",
-  //     priceDetail: "/month",
-  //     popular: true,
-  //     button: {
-  //       text: "Join Now",
-  //     },
-  //     features: [
-  //       { text: "Unlimited labels/trackers a month" },
-  //       { text: "No overages" },
-  //       { text: "Multi-tenant & User management" },
-  //       { text: "Email & Slack support" },
-  //       { text: "Customizable dashboard", soon: true },
-  //       { text: "Platform Admin dashboard" },
-  //       { text: "Platform APIs" },
-  //     ],
-  //   },
-  // },
   scale: {
     cloud: {
       name: "Scale",
-      description: "High-volume enterprise features. Premium support included. Enterprise-grade security.",
-      price: "$5,000",
-      priceDetail: "/month",
+      description: "Pay-as-you-go managed platform. Perfect for growing businesses that need reliable shipping infrastructure.",
+      price: "$499",
+      priceDetail: "/month base + usage",
+      popular: true,
       limitedSpots: true,
       button: {
-        text: "Get Started",
+        text: "Join Waitlist",
         variant: "outline",
         href: "https://share.hsforms.com/1xRE12oYoRFWUR8LvOW2Eqwcvwq2",
         target: "_blank"
       },
       features: [
-        { text: "120,000 labels/trackers a month" },
-        { text: "$0.02 overage beyond" },
-        { text: "One-on-one developer calls" },
-        { text: "Up to 4 new carrier integrations/month" },
-        { text: "Expedited features and integrations" },
-        { text: "SLA (99.999% uptime)" },
-        { text: "Compliance Check SOC2, HIPAA", soon: true },
-      ],
-    },
-    selfHosted: {
-      name: "Scale",
-      description: "High-volume enterprise features. Premium support included. Enterprise-grade security.",
-      price: "$5,000",
-      priceDetail: "/month",
-      limitedSpots: true,
-      button: {
-        text: "Get Started",
-        variant: "outline",
-        href: "https://share.hsforms.com/1xRE12oYoRFWUR8LvOW2Eqwcvwq2",
-        target: "_blank"
-      },
-      features: [
-        { text: "Unlimited labels/trackers a month" },
-        { text: "No overages" },
-        { text: "One-on-one developer calls" },
-        { text: "Up to 4 new carrier integrations/month" },
-        { text: "Expedited features and integrations" },
-        { text: "SLA (99.999% uptime)" },
-        { text: "Compliance Check SOC2, HIPAA", soon: true },
+        { text: "Pay-as-you-go pricing model" },
+        { text: "$0.03 per label/tracker" },
+        { text: "Managed infrastructure" },
+        { text: "Email & Slack support" },
+        { text: "Multi-tenant support" },
+        { text: "Platform APIs" },
+        { text: "Real-time tracking", soon: true },
+        { text: "Custom integrations", soon: true },
       ],
     },
   },
   enterprise: {
     cloud: {
       name: "Enterprise",
-      description: "Custom-tailored solution. Unlimited shipping volume. Dedicated enterprise support.",
+      description: "Self-hosted solution with full control. Custom-tailored for enterprise needs with dedicated support.",
       price: "Contact us",
       button: {
         text: "Contact Sales",
         variant: "outline",
+        href: "https://share.hsforms.com/1xRE12oYoRFWUR8LvOW2Eqwcvwq2",
+        target: "_blank"
       },
       features: [
-        { text: "Unlimited labels/trackers a month" },
-        { text: "No overages" },
+        { text: "Self-hosted deployment" },
+        { text: "Unlimited labels/trackers" },
+        { text: "Full source code access" },
         { text: "One-on-one developer calls" },
         { text: "Dedicated carrier onboarding support" },
-        { text: "Expedited features and integrations" },
+        { text: "Custom integrations" },
         { text: "SLA (99.999% uptime)" },
-        { text: "Volume Discount" },
         { text: "Compliance Check SOC2, HIPAA", soon: true },
       ],
     },
@@ -208,7 +150,8 @@ export function PricingSection() {
             Simple, transparent pricing
           </h2>
           <p className="text-base text-white/60 max-w-2xl mx-auto">
-            Choose the plan that best fits your business needs. All plans include access to our core features.
+            Choose between our managed Scale platform or self-hosted Enterprise solution. 
+            Scale is coming soon with pay-as-you-go pricing.
           </p>
         </div>
 
@@ -237,7 +180,7 @@ export function PricingSection() {
         </div>
 
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 md:gap-12 justify-items-center max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 justify-items-center max-w-5xl mx-auto">
           {Object.entries(PRICING_PLANS).map(([key, { cloud, selfHosted: selfHosted }]) => {
             const plan = deploymentType === "cloud" ? cloud : (selfHosted ?? cloud);
             return (

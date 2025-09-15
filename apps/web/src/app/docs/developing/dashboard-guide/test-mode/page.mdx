@@ -1,0 +1,425 @@
+---
+sidebarTitle: Live vs Test Mode
+title: Live vs Test Mode
+description: Switch between production and development environments safely
+tags: ["test-mode", "live-mode", "development", "sandbox", "production"]
+---
+
+# Live vs Test Mode
+
+<div className="flex gap-2 mb-6">
+  <div className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-400/10 dark:text-green-400 dark:ring-green-400/30">
+    <span className="text-xs">Community Edition</span>
+  </div>
+  <div className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30">
+    <span className="text-xs">Essential Feature</span>
+  </div>
+</div>
+
+Karrio provides separate test and live environments to help you develop and test integrations safely before processing real shipments. The mode switcher in the dashboard allows seamless transitions between sandbox and production operations.
+
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    Mode Switcher Interface
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border overflow-hidden">
+    <img
+      src="/docs/karrio-mode-switcher.png"
+      alt="Dashboard showing test mode toggle and live mode indicator"
+      className="w-full h-auto"
+    />
+  </div>
+</div>
+
+## Test Mode
+
+Test mode uses carrier sandbox APIs and test credentials, allowing you to:
+
+### Safe Development
+
+- **No Real Charges**: All transactions are simulated
+- **Test Data**: Use sample tracking numbers and addresses
+- **Full Functionality**: Access all features without financial risk
+- **Sandbox APIs**: Connect to carrier testing environments
+
+### Testing Scenarios
+
+- **Rate Shopping**: Compare carrier pricing with test data
+- **Label Generation**: Create sample labels for integration testing
+- **Tracking**: Monitor simulated package deliveries
+- **Error Handling**: Test edge cases and error scenarios
+
+<div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-blue-700 dark:text-blue-300 mb-2">
+    💡 Test Mode Indicators
+  </div>
+  <p className="text-sm text-blue-600 dark:text-blue-400">
+    Test mode is clearly indicated throughout the dashboard with visual cues
+    including orange badges, test data watermarks, and sandbox API endpoints.
+  </p>
+</div>
+
+### Test Mode Features
+
+#### Rate Comparison
+
+```bash
+# Test mode uses sandbox endpoints
+GET /v1/proxy/rates
+# Returns simulated rates from carrier test APIs
+```
+
+#### Label Creation
+
+- Generate test labels with sample tracking numbers
+- No actual carrier pickup or delivery
+- Test label formats and customizations
+
+#### Order Processing
+
+- Create test orders with simulated line items
+- Practice fulfillment workflows
+- Test batch operations
+
+## Behind the Scenes: API Request Headers
+
+When switching between test and live modes, Karrio automatically adjusts API request headers and endpoints to ensure requests are routed to the appropriate environment.
+
+### Test Mode API Requests
+
+In test mode, requests include specific headers to indicate sandbox usage:
+
+```http
+POST /v1/proxy/rates HTTP/1.1
+Host: api.karrio.io
+Authorization: Token YOUR_API_KEY
+Content-Type: application/json
+X-Test-Mode: true
+X-Environment: sandbox
+
+{
+  "shipper": {
+    "postal_code": "10001",
+    "country_code": "US"
+  },
+  "recipient": {
+    "postal_code": "90210",
+    "country_code": "US"
+  },
+  "parcels": [{
+    "weight": 2.5,
+    "weight_unit": "LB"
+  }]
+}
+```
+
+### Live Mode API Requests
+
+In live mode, the same request uses production headers:
+
+```http
+POST /v1/proxy/rates HTTP/1.1
+Host: api.karrio.io
+Authorization: Token YOUR_API_KEY
+Content-Type: application/json
+X-Test-Mode: false
+X-Environment: production
+
+{
+  "shipper": {
+    "postal_code": "10001",
+    "country_code": "US"
+  },
+  "recipient": {
+    "postal_code": "90210",
+    "country_code": "US"
+  },
+  "parcels": [{
+    "weight": 2.5,
+    "weight_unit": "LB"
+  }]
+}
+```
+
+### Carrier API Routing
+
+Based on the mode headers, Karrio routes requests to different carrier endpoints:
+
+#### Test Mode Routing
+
+```javascript
+// FedEx Test Environment
+const fedexTestEndpoint = "https://wsbeta.fedex.com:443/web-services";
+
+// UPS Sandbox
+const upsTestEndpoint = "https://wwwcie.ups.com/webservices";
+
+// DHL Test API
+const dhlTestEndpoint = "https://express.api.dhl.com/mydhlapi/test";
+```
+
+#### Live Mode Routing
+
+```javascript
+// FedEx Production
+const fedexProdEndpoint = "https://ws.fedex.com:443/web-services";
+
+// UPS Production
+const upsProdEndpoint = "https://onlinetools.ups.com/webservices";
+
+// DHL Production API
+const dhlProdEndpoint = "https://express.api.dhl.com/mydhlapi";
+```
+
+### Authentication Context
+
+The system maintains separate authentication contexts:
+
+```javascript
+// Test mode credentials
+const testConfig = {
+  fedex: {
+    key: "TEST_FEDEX_KEY",
+    password: "TEST_PASSWORD",
+    account: "TEST_ACCOUNT",
+    meter: "TEST_METER",
+  },
+  ups: {
+    username: "TEST_USERNAME",
+    password: "TEST_PASSWORD",
+    access_key: "TEST_ACCESS_KEY",
+  },
+};
+
+// Production credentials
+const prodConfig = {
+  fedex: {
+    key: "PROD_FEDEX_KEY",
+    password: "PROD_PASSWORD",
+    account: "PROD_ACCOUNT",
+    meter: "PROD_METER",
+  },
+  ups: {
+    username: "PROD_USERNAME",
+    password: "PROD_PASSWORD",
+    access_key: "PROD_ACCESS_KEY",
+  },
+};
+```
+
+### Database Context Switching
+
+Mode switching also affects database queries to maintain data separation:
+
+```sql
+-- Test mode data queries
+SELECT * FROM shipments
+WHERE organization_id = ?
+  AND test_mode = true;
+
+-- Live mode data queries
+SELECT * FROM shipments
+WHERE organization_id = ?
+  AND test_mode = false;
+```
+
+## Live Mode
+
+Live mode connects to production carrier APIs for real shipping operations:
+
+### Production Features
+
+- **Real Transactions**: Actual charges to carrier accounts
+- **Live Rates**: Current pricing from carrier APIs
+- **True Tracking**: Actual package monitoring
+- **Production APIs**: Connect to carrier production endpoints
+
+### Business Operations
+
+- **Customer Shipments**: Process real orders and deliveries
+- **Financial Transactions**: Charges appear on carrier invoices
+- **Tracking Updates**: Real delivery status notifications
+- **Label Printing**: Functional shipping labels
+
+<div className="bg-orange-50 dark:bg-orange-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-orange-700 dark:text-orange-300 mb-2">
+    ⚠️ Production Considerations
+  </div>
+  <p className="text-sm text-orange-600 dark:text-orange-400">
+    Live mode processes real transactions. Ensure your integrations are
+    thoroughly tested in test mode before switching to live operations.
+  </p>
+</div>
+
+## Switching Between Modes
+
+### Mode Switcher Location
+
+The mode switcher is located in the dashboard header:
+
+1. **Test Mode Button**: Click "View test data" to enter test mode
+2. **Live Mode Indicator**: Default state shows live production data
+3. **Visual Confirmation**: Mode is clearly indicated throughout the interface
+
+### What Changes
+
+When switching modes, the dashboard updates:
+
+#### Data Separation
+
+- **Independent Datasets**: Test and live data are completely separate
+- **Different APIs**: Sandbox vs production carrier endpoints
+- **Isolated Settings**: Separate configurations for each mode
+
+#### Visual Indicators
+
+- **Mode Badges**: Clear labeling of current environment
+- **Color Coding**: Different themes for test vs live
+- **Watermarks**: Test mode indicators on generated documents
+
+## Development Workflow
+
+### Recommended Process
+
+1. **Start in Test Mode**
+   - Set up carrier connections with sandbox credentials
+   - Configure addresses and package defaults
+   - Test rate shopping and label creation
+
+2. **Integration Testing**
+   - Verify API integrations work correctly
+   - Test error handling and edge cases
+   - Validate webhook configurations
+
+3. **User Acceptance Testing**
+   - Have business users test workflows
+   - Verify document templates and customizations
+   - Test batch operations and reporting
+
+4. **Production Deployment**
+   - Switch to live mode
+   - Update carrier connections with production credentials
+   - Process initial test shipments with real addresses
+
+### Common Test Scenarios
+
+#### Rate Shopping
+
+```javascript
+// Test different scenarios
+const testCases = [
+  { origin: "US", destination: "US", domestic: true },
+  { origin: "US", destination: "CA", international: true },
+  { origin: "US", destination: "UK", customs: true },
+];
+```
+
+#### Error Conditions
+
+- Invalid addresses
+- Overweight packages
+- Restricted items
+- Carrier service outages
+
+## Carrier Connections
+
+### Test Credentials
+
+Most carriers provide sandbox credentials for testing:
+
+- **FedEx**: Separate test account and credentials
+- **UPS**: Developer API keys for sandbox
+- **DHL**: Test environment access
+- **USPS**: Sandbox API endpoints
+
+### Production Setup
+
+When ready for live operations:
+
+1. **Update Credentials**: Replace test credentials with production keys
+2. **Verify Accounts**: Ensure carrier accounts are active
+3. **Test Transactions**: Process small test shipments first
+4. **Monitor Usage**: Check carrier invoices for charges
+
+## Data Management
+
+### Test Data Characteristics
+
+Test mode generates sample data:
+
+- **Tracking Numbers**: Follow carrier format but are simulated
+- **Addresses**: Use carrier-approved test addresses
+- **Rates**: Reflect actual pricing structures
+- **Delivery Times**: Realistic transit estimates
+
+### Production Data
+
+Live mode uses real information:
+
+- **Customer Addresses**: Actual delivery locations
+- **Real Tracking**: Functional tracking numbers
+- **Accurate Rates**: Current carrier pricing
+- **Live Updates**: Real delivery status changes
+
+## Best Practices
+
+### Development Guidelines
+
+1. **Thorough Testing**: Complete all test scenarios before going live
+2. **Credential Management**: Keep test and production credentials separate
+3. **Data Validation**: Verify all integrations work in both modes
+4. **Error Handling**: Test failure scenarios extensively
+
+### Production Readiness
+
+Before switching to live mode:
+
+- [ ] All integrations tested successfully
+- [ ] Carrier accounts configured and funded
+- [ ] Production credentials verified
+- [ ] Monitoring and alerting configured
+- [ ] Team trained on live operations
+
+## Troubleshooting
+
+### Common Issues
+
+#### Mode Confusion
+
+- **Problem**: Unsure which mode is active
+- **Solution**: Check the mode indicator in the dashboard header
+
+#### Missing Data
+
+- **Problem**: Data doesn't appear after switching modes
+- **Solution**: Remember test and live data are completely separate
+
+#### API Errors
+
+- **Problem**: API calls fail after mode switch
+- **Solution**: Verify correct credentials are configured for the current mode
+
+#### Tracking Issues
+
+- **Problem**: Tracking numbers don't work
+- **Solution**: Test mode tracking numbers are simulated; live mode provides real tracking
+
+## Next Steps
+
+Now that you understand mode switching:
+
+1. **[Label Creation](/docs/developing/dashboard-guide/label-creation)** - Learn to create shipping labels
+2. **[Tracker Management](/docs/developing/dashboard-guide/trackers)** - Set up shipment monitoring
+3. **[Order Management](/docs/developing/dashboard-guide/orders)** - Process orders efficiently
+4. **[Document Templates](/docs/developing/dashboard-guide/document-templates)** - Customize business documents
+
+### Additional Resources
+
+- Set up [carrier connections](/docs/products/carrier-connections) for both modes
+- Configure [webhooks](/docs/products/events) for real-time updates
+- Learn about [API integration](/docs/products/api-logs) best practices
+- Explore [shipping workflows](/docs/products/workflows) automation
+
+---
+
+**Need help?** Join our [community Discord](https://discord.gg/gS88uE7sEx) or contact our support team.

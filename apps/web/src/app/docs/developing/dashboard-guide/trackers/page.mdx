@@ -1,0 +1,387 @@
+---
+sidebarTitle: Tracker Management
+title: Tracker Management from Dashboard
+description: Monitor shipments with real-time tracking updates and comprehensive status information
+tags: ["tracking", "shipments", "delivery", "status", "monitoring"]
+---
+
+# Tracker Management from Dashboard
+
+<div className="flex gap-2 mb-6">
+  <div className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-400/10 dark:text-green-400 dark:ring-green-400/30">
+    <span className="text-xs">Community Edition</span>
+  </div>
+  <div className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30">
+    <span className="text-xs">Core Feature</span>
+  </div>
+</div>
+
+The tracker management interface provides comprehensive shipment monitoring with real-time status updates, event history, and delivery notifications. Track packages from multiple carriers in one unified dashboard.
+
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    Trackers Dashboard
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border overflow-hidden">
+    <img
+      src="/docs/karrio-trackers-dashboard.png"
+      alt="Trackers dashboard showing list of shipments with status badges and tracking information"
+      className="w-full h-auto"
+    />
+  </div>
+</div>
+
+## Tracker Overview
+
+### Automatic Tracking Setup
+
+Trackers are automatically created when you:
+
+- **Purchase Labels**: Shipping labels automatically generate trackers
+- **Import Orders**: Orders with tracking numbers create tracker entries
+- **API Integration**: Shipments created via API include tracking
+- **Webhook Updates**: External systems can create trackers
+
+### Manual Tracker Creation
+
+Add tracking for shipments not created in Karrio:
+
+1. **Navigation**: Go to Trackers → "Track a Shipment"
+2. **Tracking Number**: Enter the carrier tracking number
+3. **Carrier Selection**: Choose the shipping provider
+4. **Automatic Monitoring**: System begins status polling
+
+## Tracker Dashboard Features
+
+### Main Tracker List
+
+The dashboard displays all active trackers with:
+
+#### Status Overview
+
+- **Visual Status Badges**: Color-coded delivery status indicators
+- **Carrier Information**: Shipping provider and service type
+- **Tracking Numbers**: Clickable tracking identifiers
+- **Last Event**: Most recent tracking update
+- **Date Information**: Last update timestamp
+
+#### Filter Options
+
+Organize trackers by status:
+
+- **All**: Complete tracker list
+- **In-Transit**: Packages currently moving
+- **Pending**: Awaiting pickup or processing
+- **Exception**: Delivery issues or delays
+- **Delivered**: Successfully completed shipments
+- **Failed**: Undeliverable or returned packages
+
+### Tracking Details
+
+Click any tracker to view comprehensive information:
+
+#### Shipment Information
+
+- **Origin and Destination**: Complete address details
+- **Package Details**: Weight, dimensions, and contents
+- **Service Information**: Carrier service level and features
+- **Reference Numbers**: Internal and carrier reference codes
+
+#### Event Timeline
+
+- **Complete History**: All tracking events in chronological order
+- **Event Descriptions**: Detailed status descriptions
+- **Location Information**: Tracking event locations
+- **Time Stamps**: Precise event timing
+
+#### Status Updates
+
+- **Current Status**: Real-time delivery status
+- **Expected Delivery**: Estimated delivery date and time
+- **Delivery Confirmation**: Proof of delivery information
+- **Exception Details**: Problem descriptions and resolution
+
+## Adding New Trackers
+
+### Manual Tracker Entry
+
+To add tracking for external shipments:
+
+1. **Access Form**: Click "Track a Shipment" button
+2. **Enter Details**:
+   - Tracking number from shipping label or receipt
+   - Select carrier from dropdown list
+   - Optionally add reference information
+3. **Submit**: System immediately begins tracking
+
+### Supported Carriers
+
+Karrio supports tracking from major carriers:
+
+- **FedEx**: Express, Ground, and international services
+- **UPS**: Ground, Air, and worldwide services
+- **DHL**: Express and international delivery
+- **USPS**: Priority, Ground, and international mail
+- **Canada Post**: Domestic and international services
+- **And many more**: Regional and specialty carriers
+
+<div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-blue-700 dark:text-blue-300 mb-2">
+    💡 Smart Carrier Detection
+  </div>
+  <p className="text-sm text-blue-600 dark:text-blue-400">
+    Karrio can often detect the carrier automatically based on tracking number
+    format, making the tracking setup process faster and more accurate.
+  </p>
+</div>
+
+## Tracking Status Codes
+
+### Standard Status Categories
+
+#### Pending
+
+- **Label Created**: Shipping label generated but not yet picked up
+- **Awaiting Pickup**: Package ready for carrier collection
+- **Processing**: Package received by carrier, preparing for transit
+
+#### In-Transit
+
+- **Picked Up**: Package collected from shipper
+- **In Transit**: Moving through carrier network
+- **On Hold**: Temporary delay or processing hold
+- **Out for Delivery**: Final delivery attempt in progress
+- **Ready for Pickup**: Available at pickup location
+
+#### Delivered
+
+- **Delivered**: Successfully delivered to recipient
+- **Left at Door**: Package left at delivery address
+- **Signed For**: Recipient signature obtained
+- **Delivered to Agent**: Given to authorized representative
+
+#### Exceptions
+
+- **Delivery Delayed**: Unexpected delay in delivery
+- **Delivery Failed**: Unsuccessful delivery attempt
+- **Address Error**: Invalid or incomplete address
+- **Damaged**: Package damage reported
+- **Lost**: Package cannot be located
+- **Returned**: Package returning to sender
+
+## Tracking Event Details
+
+### Event Information
+
+Each tracking event includes:
+
+#### Basic Details
+
+- **Event Type**: Status category (pickup, transit, delivery, etc.)
+- **Description**: Human-readable event description
+- **Date and Time**: When the event occurred
+- **Location**: City, state, and facility information
+
+#### Additional Context
+
+- **Facility Details**: Specific carrier facility information
+- **Next Steps**: Expected next events or actions
+- **Estimated Delivery**: Updated delivery predictions
+- **Special Instructions**: Carrier-specific notes
+
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    Tracking Event Timeline
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border overflow-hidden">
+    <img
+      src="/docs/karrio-tracking-events.png"
+      alt="Detailed tracking event timeline showing package journey"
+      className="w-full h-auto"
+    />
+  </div>
+</div>
+
+## Notification and Updates
+
+### Automatic Updates
+
+Karrio continuously monitors tracking status:
+
+- **Polling Schedule**: Regular status checks with carrier APIs
+- **Real-time Updates**: Immediate notification of status changes
+- **Event History**: Complete record of all tracking events
+- **Status Changes**: Automatic status badge updates
+
+### Webhook Integration
+
+For real-time notifications:
+
+- **Status Webhooks**: Automatic notifications on status changes
+- **Custom Endpoints**: Send updates to your systems
+- **Event Filtering**: Choose which events trigger notifications
+- **Retry Logic**: Reliable delivery of webhook events
+
+## Bulk Tracker Management
+
+### Multiple Tracker Operations
+
+Handle multiple trackers efficiently:
+
+#### Adding Multiple Trackers
+
+- **Bulk Import**: Upload CSV files with tracking numbers
+- **API Integration**: Batch create trackers via API
+- **Order Processing**: Automatic creation from order fulfillment
+
+#### Monitoring Multiple Shipments
+
+- **Dashboard Overview**: See all trackers at a glance
+- **Status Filtering**: Focus on specific status categories
+- **Search Function**: Find specific trackers quickly
+- **Export Options**: Download tracking data for analysis
+
+## Integration with Shipments
+
+### Automatic Association
+
+Trackers automatically link with:
+
+#### Karrio Shipments
+
+- **Label Creation**: New labels automatically create trackers
+- **Shipment Details**: Full shipment information available
+- **Document Access**: Original labels and documents linked
+- **Customer Information**: Sender and recipient details
+
+#### Order Management
+
+- **Order Fulfillment**: Track order completion status
+- **Multiple Packages**: Handle split shipments per order
+- **Customer Updates**: Automatic tracking notifications
+- **Delivery Confirmation**: Order completion tracking
+
+<div className="bg-orange-50 dark:bg-orange-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-orange-700 dark:text-orange-300 mb-2">
+    ⚠️ Tracking Limitations
+  </div>
+  <p className="text-sm text-orange-600 dark:text-orange-400">
+    Tracking accuracy depends on carrier data quality and update frequency. Some
+    carriers provide more detailed information than others, and rural deliveries
+    may have fewer tracking events.
+  </p>
+</div>
+
+## Analytics and Reporting
+
+### Delivery Performance
+
+Monitor shipping performance:
+
+#### Key Metrics
+
+- **On-Time Delivery**: Percentage of shipments delivered as promised
+- **Average Transit Time**: Time from pickup to delivery
+- **Exception Rate**: Percentage of shipments with delivery issues
+- **Carrier Performance**: Compare different shipping providers
+
+#### Geographic Analysis
+
+- **Delivery Zones**: Performance by destination region
+- **Distance Impact**: How distance affects delivery times
+- **Urban vs Rural**: Delivery performance differences
+- **International Tracking**: Cross-border shipment monitoring
+
+### Business Intelligence
+
+Use tracking data for insights:
+
+- **Customer Communication**: Proactive delivery notifications
+- **Inventory Planning**: Understand delivery patterns
+- **Carrier Selection**: Choose providers based on performance
+- **Cost Optimization**: Balance speed vs cost based on tracking data
+
+## Troubleshooting
+
+### Common Tracking Issues
+
+#### No Tracking Information
+
+- **Recent Labels**: New tracking numbers may take time to appear
+- **Carrier Delays**: Some carriers have delayed tracking updates
+- **Invalid Numbers**: Verify tracking number accuracy
+- **Service Type**: Some services don't provide detailed tracking
+
+#### Tracking Stops Updating
+
+- **Delivered Packages**: Tracking ends after successful delivery
+- **International Customs**: Delays at border processing
+- **Carrier Issues**: System outages or data problems
+- **Return Shipments**: Different tracking for returned packages
+
+#### Status Discrepancies
+
+- **Multiple Sources**: Different systems may show different status
+- **Update Frequency**: Carriers update at different intervals
+- **Time Zone Differences**: Event times may vary by location
+- **Manual vs Automated**: Human entry vs automatic scanning
+
+## Best Practices
+
+### Effective Tracking Management
+
+#### Organization
+
+- **Consistent Naming**: Use clear reference codes
+- **Status Monitoring**: Regular review of exception cases
+- **Customer Communication**: Proactive delivery updates
+- **Data Retention**: Archive old tracking records appropriately
+
+#### Performance Optimization
+
+- **Carrier Selection**: Choose carriers with good tracking
+- **Service Levels**: Balance cost with tracking detail needed
+- **Notification Setup**: Configure appropriate alert thresholds
+- **Integration Planning**: Connect tracking with customer systems
+
+### Customer Experience
+
+#### Communication Strategy
+
+- **Tracking Sharing**: Provide tracking numbers to customers
+- **Status Notifications**: Automated delivery updates
+- **Exception Handling**: Proactive problem communication
+- **Delivery Confirmation**: Confirm successful deliveries
+
+## Advanced Features
+
+### Custom Tracking Pages
+
+For customer-facing tracking:
+
+- **Branded Pages**: Custom tracking pages with your branding
+- **Direct Links**: Trackable URLs for customer communication
+- **Status Widgets**: Embeddable tracking status displays
+- **Mobile Optimization**: Mobile-friendly tracking interfaces
+
+### API Integration
+
+Programmatic tracker management:
+
+- **Create Trackers**: Add tracking via API calls
+- **Status Polling**: Regular status checks via API
+- **Webhook Subscriptions**: Real-time status notifications
+- **Bulk Operations**: Manage multiple trackers efficiently
+
+## Next Steps
+
+Now that you understand tracker management:
+
+1. **[Order Management](/docs/developing/dashboard-guide/orders)** - Process orders for fulfillment
+2. **[Document Templates](/docs/developing/dashboard-guide/document-templates)** - Customize tracking communications
+3. **[Developer Tools](/docs/developing/dashboard-guide/developer-tools)** - Automate tracking with APIs
+4. **[Label Creation](/docs/developing/dashboard-guide/label-creation)** - Create shipments with automatic tracking
+
+---
+
+**Need help?** Join our [community Discord](https://discord.gg/gS88uE7sEx) or contact our support team.

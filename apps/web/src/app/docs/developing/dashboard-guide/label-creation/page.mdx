@@ -1,0 +1,357 @@
+---
+sidebarTitle: Label Creation
+title: Label Creation from Dashboard
+description: Create shipping labels with real-time rate comparison and intuitive forms
+tags: ["labels", "shipping", "rates", "carriers", "dashboard"]
+---
+
+# Label Creation from Dashboard
+
+<div className="flex gap-2 mb-6">
+  <div className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-400/10 dark:text-green-400 dark:ring-green-400/30">
+    <span className="text-xs">Community Edition</span>
+  </div>
+  <div className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30">
+    <span className="text-xs">Core Feature</span>
+  </div>
+</div>
+
+The label creation interface provides a comprehensive workflow for generating shipping labels with real-time rate comparison across multiple carriers. The intuitive form guides you through address entry, package details, and service selection.
+
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    Label Creation Interface
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border overflow-hidden">
+    <img
+      src="/docs/karrio-label-creation.png"
+      alt="Label creation form showing address entry, package details, and rate comparison"
+      className="w-full h-auto"
+    />
+  </div>
+</div>
+
+## Getting Started
+
+### Accessing Label Creation
+
+Start creating labels from multiple locations in the dashboard:
+
+1. **Dashboard Quick Actions**: Click "Print a test label" from the homepage
+2. **Main Navigation**: Use the "Create" dropdown → "Shipping label"
+3. **Direct URL**: Navigate to `/create_label` for new labels
+
+### Initial Setup Requirements
+
+Before creating labels, ensure you have:
+
+- **Carrier Connections**: At least one carrier account configured
+- **Default Addresses**: Shipper address set up in Settings
+- **Package Defaults**: Standard parcel dimensions configured
+
+## Step-by-Step Label Creation
+
+### 1. Address Information
+
+#### Recipient Address
+
+The form starts with recipient (delivery) address entry:
+
+- **Name**: Contact person at delivery location
+- **Address**: Street address with line 1 and optional line 2
+- **Location**: City, state/province, postal code, country
+- **Contact**: Phone number and email (optional)
+
+#### Shipper Address
+
+Configure the origin address:
+
+- **Auto-populate**: Uses default address from settings
+- **Edit Options**: Modify for specific shipments
+- **Return Address**: Optional separate return location
+- **Tax IDs**: Federal and state tax identification numbers
+
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    Address Entry Form
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border overflow-hidden">
+    <img
+      src="/docs/karrio-address-form.png"
+      alt="Address entry form with recipient and shipper information"
+      className="w-full h-auto"
+    />
+  </div>
+</div>
+
+### 2. Package Details
+
+#### Package Configuration
+
+Define your shipment packages:
+
+- **Dimensions**: Length, width, height in inches or centimeters
+- **Weight**: Package weight in pounds or kilograms
+- **Package Type**: Envelope, box, tube, or custom
+- **Multiple Packages**: Add additional packages as needed
+
+#### Items and Contents
+
+Add items to packages for customs and tracking:
+
+- **Item Details**: Name, SKU, description, quantity
+- **Value Information**: Unit value and currency
+- **Weight**: Individual item weight
+- **Origin Country**: Manufacturing location for customs
+
+### 3. Shipping Options
+
+#### Basic Options
+
+Configure shipping preferences:
+
+- **Shipping Date**: When the package will be sent
+- **Currency**: Transaction currency for charges
+- **Reference**: Internal tracking reference
+- **Instructions**: Special handling notes
+
+#### Advanced Services
+
+Add optional services:
+
+- **Signature Confirmation**: Require signature on delivery
+- **Insurance**: Coverage for package value
+- **Cash on Delivery**: Collect payment on delivery
+- **Declared Value**: Custom value declaration
+- **Hold at Location**: Delivery to pickup location
+
+<div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-blue-700 dark:text-blue-300 mb-2">
+    💡 Smart Defaults
+  </div>
+  <p className="text-sm text-blue-600 dark:text-blue-400">
+    The form remembers your preferences and automatically populates common
+    options like currency, shipping date, and package types based on your
+    previous shipments.
+  </p>
+</div>
+
+### 4. Rate Comparison
+
+#### Automatic Rate Fetching
+
+Once addresses and package details are complete:
+
+- **Live Rates**: Real-time pricing from all connected carriers
+- **Service Options**: Ground, express, overnight, and international services
+- **Delivery Estimates**: Expected delivery dates for each service
+- **Carrier Information**: Clear identification of shipping providers
+
+#### Rate Selection
+
+Choose your preferred service:
+
+- **Price Comparison**: Sort by cost, delivery time, or carrier
+- **Service Details**: View included features and restrictions
+- **Carrier Branding**: Visual carrier identification
+- **Rate Validity**: Real-time rate expiration tracking
+
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    Rate Comparison Display
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border overflow-hidden">
+    <img
+      src="/docs/karrio-rate-comparison.png"
+      alt="Rate comparison showing multiple carrier options with prices and delivery times"
+      className="w-full h-auto"
+    />
+  </div>
+</div>
+
+### 5. Label Purchase and Generation
+
+#### Purchase Process
+
+Complete the label creation:
+
+1. **Rate Selection**: Choose preferred carrier service
+2. **Label Format**: Select PDF or ZPL format
+3. **Purchase Confirmation**: Review charges and service details
+4. **Label Generation**: Immediate label creation and download
+
+#### Label Formats
+
+Choose the appropriate format:
+
+- **PDF Labels**: Standard format for desktop printing
+- **ZPL Labels**: Direct thermal printer format
+- **Multiple Copies**: Generate multiple labels if needed
+
+## International Shipments
+
+### Customs Declaration
+
+For international shipments, provide customs information:
+
+#### Required Information
+
+- **Content Type**: Documents, merchandise, or gift
+- **Incoterm**: Shipping terms (DDP, DDU, etc.)
+- **Total Value**: Combined value of all items
+- **Reason for Export**: Commercial, personal, or other
+
+#### Commodity Details
+
+For each item in the shipment:
+
+- **Description**: Detailed item description
+- **HS Code**: Harmonized system classification
+- **Quantity**: Number of items
+- **Unit Value**: Price per item
+- **Origin Country**: Country of manufacture
+
+<div className="bg-orange-50 dark:bg-orange-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-orange-700 dark:text-orange-300 mb-2">
+    ⚠️ Customs Accuracy
+  </div>
+  <p className="text-sm text-orange-600 dark:text-orange-400">
+    Accurate customs information is required for international shipments.
+    Incorrect declarations can cause delays, additional fees, or customs holds.
+  </p>
+</div>
+
+## Payment and Billing
+
+### Payment Methods
+
+Configure how shipping charges are paid:
+
+- **Sender**: Your account pays all charges (default)
+- **Recipient**: Delivery address pays charges
+- **Third Party**: Different account pays charges
+
+### Billing Address
+
+When using third-party billing:
+
+- **Account Number**: Third-party account identifier
+- **Billing Address**: Payment account address
+- **Contact Information**: Account holder details
+
+## Label Management
+
+### After Label Creation
+
+Once purchased, labels provide:
+
+- **Tracking Number**: Unique shipment identifier
+- **Label Document**: Downloadable PDF or ZPL file
+- **Shipment Details**: Complete record of transaction
+- **Tracking Setup**: Automatic monitoring activation
+
+### Shipment Actions
+
+Available actions for created shipments:
+
+- **Print Label**: Download and print shipping label
+- **Track Package**: Monitor delivery progress
+- **Void Shipment**: Cancel unused labels (time restrictions apply)
+- **Reprint Label**: Generate additional copies
+
+## Advanced Features
+
+### Carrier-Specific Options
+
+Some carriers offer additional services:
+
+- **FedEx**: Saturday delivery, hold at FedEx location
+- **UPS**: Adult signature, carbon neutral shipping
+- **DHL**: Express worldwide, duty payment options
+- **USPS**: Certified mail, return receipt
+
+### Metadata and Custom Fields
+
+Add business-specific information:
+
+- **Custom References**: Internal tracking codes
+- **Customer IDs**: Link to customer records
+- **Order Numbers**: Connect to order management
+- **Project Codes**: Departmental tracking
+
+## Troubleshooting
+
+### Common Issues
+
+#### Rate Fetching Problems
+
+- **No Rates Available**: Check address accuracy and package dimensions
+- **Carrier Errors**: Verify carrier account status and credentials
+- **Service Restrictions**: Some services unavailable for destination
+
+#### Label Generation Issues
+
+- **Payment Failures**: Verify carrier account funding
+- **Address Validation**: Ensure addresses are deliverable
+- **Package Limitations**: Check weight and size restrictions
+
+#### International Complications
+
+- **Customs Errors**: Verify commodity descriptions and values
+- **Document Requirements**: Some destinations need additional forms
+- **Prohibited Items**: Check carrier and country restrictions
+
+## Best Practices
+
+### Efficient Workflow
+
+- **Address Books**: Save frequently used addresses
+- **Package Templates**: Create standard package configurations
+- **Default Settings**: Configure common options to reduce entry time
+- **Batch Processing**: Use order management for multiple shipments
+
+### Cost Optimization
+
+- **Rate Shopping**: Always compare multiple carrier options
+- **Service Selection**: Choose appropriate speed vs cost balance
+- **Package Optimization**: Right-size packages to minimize dimensional weight
+- **Zone Skipping**: Consider consolidation services for volume
+
+### Quality Control
+
+- **Address Validation**: Verify delivery addresses before purchase
+- **Package Contents**: Accurately describe items and values
+- **Service Requirements**: Match service level to customer expectations
+- **Documentation**: Keep records of all shipments
+
+## Integration with Orders
+
+### Order Fulfillment
+
+When processing orders through the dashboard:
+
+- **Order Link**: Labels automatically connect to orders
+- **Item Fulfillment**: Track which items are shipped
+- **Partial Fulfillment**: Handle orders with multiple shipments
+- **Customer Communication**: Automatic tracking notifications
+
+### Inventory Management
+
+For businesses with inventory tracking:
+
+- **Stock Updates**: Reduce available inventory on shipment
+- **Serial Numbers**: Track specific items through fulfillment
+- **Location Tracking**: Multi-warehouse shipping support
+
+## Next Steps
+
+Now that you understand label creation:
+
+1. **[Tracker Management](/docs/developing/dashboard-guide/trackers)** - Monitor shipment deliveries
+2. **[Order Management](/docs/developing/dashboard-guide/orders)** - Process orders for fulfillment
+3. **[Document Templates](/docs/developing/dashboard-guide/document-templates)** - Customize shipping documents
+4. **[Developer Tools](/docs/developing/dashboard-guide/developer-tools)** - Automate with APIs
+
+---
+
+**Need help?** Join our [community Discord](https://discord.gg/gS88uE7sEx) or contact our support team.

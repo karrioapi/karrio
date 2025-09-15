@@ -47,6 +47,10 @@ export default {
     title: 'Environment',
     type: 'page'
   },
+  "plugin-mounting": {
+    title: 'Plugin Mounting',
+    type: 'page'
+  },
   "opentelemetry": {
     title: 'OpenTelemetry',
     type: 'page'

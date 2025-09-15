@@ -30,6 +30,7 @@ You need a valid subscription and GitHub Personal Access Token with `read:packag
 ### What white labeling options are available?
 
 Currently, you can customize:
+
 - Platform name
 - Website URL
 
@@ -37,7 +38,7 @@ Advanced customization (logos, colors, themes) requires self-hosting and code mo
 
 ### Which carriers are supported?
 
-Karrio supports 50+ carriers including FedEx, UPS, DHL, USPS, Canada Post, and many regional carriers. You can enable/disable specific carriers through the admin panel.
+Karrio supports 30+ carriers including FedEx, UPS, DHL, USPS, Canada Post, and many regional carriers. You can enable/disable specific carriers through the admin panel.
 
 ### Can I use my own domain?
 
@@ -55,6 +56,7 @@ Yes, but it requires manual server configuration including DNS setup, SSL certif
 ### How do I manage feature flags?
 
 Feature flags can be managed through:
+
 1. Admin dashboard: Admin → Platform → Features
 2. Environment variables
 3. Django settings (for self-hosted deployments)
@@ -62,6 +64,7 @@ Feature flags can be managed through:
 ### How do I backup my data?
 
 For self-hosted deployments:
+
 - Use PostgreSQL's `pg_dump` for database backups
 - Back up uploaded files and static assets
 - Save environment variables and configurations
@@ -71,6 +74,7 @@ For self-hosted deployments:
 ### Services won't start after installation
 
 Check:
+
 1. Docker is running
 2. GitHub authentication is working
 3. Ports 3000 and 5002 are available
@@ -79,6 +83,7 @@ Check:
 ### Can't access admin dashboard
 
 Ensure:
+
 1. You're logged in as a staff user
 2. `ADMIN_DASHBOARD` feature flag is enabled
 3. Your user has `is_staff=True` permission

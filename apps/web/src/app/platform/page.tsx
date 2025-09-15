@@ -49,6 +49,13 @@ export default async function LandingPage() {
                 variant="outline"
                 className="border-[#79e5dd] text-[#79e5dd] hover:bg-[#79e5dd]/10"
               >
+                <Link href="/platform/embed">Embed Into Your Platform</Link>
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white/20 text-white/80 hover:bg-white/10"
+              >
                 <Link href="/docs/self-hosting">Deploy Open Source</Link>
               </Button>
             </div>
@@ -621,9 +628,9 @@ shipment = karrio.shipments.create({
                 </p>
               </div>
               <div className="bg-white/5 rounded-lg p-6 backdrop-blur-sm border border-white/10">
-                <h3 className="text-lg font-semibold mb-2">Can I self-host?</h3>
+                <h3 className="text-lg font-semibold mb-2">Can I embed Karrio into my platform?</h3>
                 <p className="text-white/60">
-                  Yes. The open-source version of Karrio can be deployed with Docker. This is a great option if you want full control over your infrastructure. See our self-hosting docs to get started.
+                  Yes! Our commercial license allows you to white-label Karrio and embed it directly into your platform. This includes custom branding, domain support, and unlimited usage starting at $50,000/year.
                 </p>
               </div>
             </div>
@@ -631,13 +638,13 @@ shipment = karrio.shipments.create({
               <div className="bg-white/5 rounded-lg p-6 backdrop-blur-sm border border-white/10">
                 <h3 className="text-lg font-semibold mb-2">How much does Karrio cost?</h3>
                 <p className="text-white/60">
-                  Karrio is free to use if you self-host our open-source version. For our managed Karrio Platform, we have scalable, transparent pricing based on usage. See our pricing page for details.
+                  Karrio is free to use if you self-host our open-source version. Our managed Scale platform starts at $499/month with pay-as-you-go pricing. For embedding into your platform, our commercial license starts at $50,000/year.
                 </p>
               </div>
               <div className="bg-white/5 rounded-lg p-6 backdrop-blur-sm border border-white/10">
                 <h3 className="text-lg font-semibold mb-2">What kind of support do you offer?</h3>
                 <p className="text-white/60">
-                  We offer community support via GitHub. Platform customers get priority email support, with options for dedicated support channels for enterprise plans.
+                  We offer community support via GitHub. Scale platform customers get email and Slack support. Enterprise and commercial license customers get dedicated account management, priority support with SLA, and one-on-one developer calls.
                 </p>
               </div>
               <div className="bg-white/5 rounded-lg p-6 backdrop-blur-sm border border-white/10">

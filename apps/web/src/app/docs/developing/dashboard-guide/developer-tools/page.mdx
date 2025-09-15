@@ -1,0 +1,648 @@
+---
+sidebarTitle: Developer Tools
+title: Developer Tools Navigation
+description: Access API documentation, webhooks, logs, and integration tools from the dashboard
+tags: ["api", "webhooks", "integration", "developers", "tools"]
+---
+
+# Developer Tools Navigation
+
+<div className="flex gap-2 mb-6">
+  <div className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-400/10 dark:text-green-400 dark:ring-green-400/30">
+    <span className="text-xs">Community Edition</span>
+  </div>
+  <div className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10 dark:bg-purple-400/10 dark:text-purple-400 dark:ring-purple-400/30">
+    <span className="text-xs">Developer Feature</span>
+  </div>
+</div>
+
+The Developer Tools section provides comprehensive access to APIs, webhooks, logs, and integration resources. Built for developers and technical teams, it offers everything needed to integrate Karrio with your applications and monitor system performance.
+
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    Developer Tools Overview
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border overflow-hidden">
+    <img
+      src="/docs/karrio-developer-tools.png"
+      alt="Developer tools dashboard showing API usage statistics and navigation menu"
+      className="w-full h-auto"
+    />
+  </div>
+</div>
+
+## Developer Tools Overview
+
+### Main Navigation
+
+The developer section is organized into key areas:
+
+#### API Management
+
+- **Overview**: API usage statistics and integration health
+- **API Keys**: Authentication token management
+- **Apps**: OAuth applications and integrations (Enterprise)
+- **Documentation**: Interactive API explorer and reference
+
+#### Monitoring and Debugging
+
+- **Logs**: Request/response monitoring and debugging
+- **Events**: System event tracking and analysis
+- **Webhooks**: Real-time notification configuration
+- **Performance**: API usage metrics and analytics
+
+#### Integration Resources
+
+- **Playground**: Interactive API testing environment
+- **GraphiQL**: GraphQL query interface
+- **Code Examples**: Integration samples and SDKs
+- **Documentation**: Comprehensive API reference
+
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    Developer Navigation Menu
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border overflow-hidden">
+    <img
+      src="/docs/karrio-developer-navigation.png"
+      alt="Developer navigation menu showing all available tools and sections"
+      className="w-full h-auto"
+    />
+  </div>
+</div>
+
+## API Overview Dashboard
+
+### Integration Health Monitor
+
+The main developer dashboard provides integration insights:
+
+#### API Usage Statistics
+
+Real-time API usage metrics:
+
+- **Total Requests**: Complete request count for selected period
+- **API Errors**: Error rate and failure analysis
+- **Request Volume**: Traffic patterns over time
+- **Performance Metrics**: Response times and throughput
+
+#### Visual Analytics
+
+- **Usage Charts**: Line graphs showing API usage trends
+- **Error Tracking**: Error rate monitoring over time
+- **Peak Analysis**: High-traffic period identification
+- **Growth Metrics**: Integration usage growth patterns
+
+#### System Information
+
+Key integration details:
+
+```javascript
+// API Configuration Details
+{
+  "api_version": "v1",
+  "rest_endpoint": "https://api.karrio.io",
+  "graphql_endpoint": "https://api.karrio.io/graphql",
+  "authentication": "Token-based",
+  "rate_limits": "1000 requests/minute"
+}
+```
+
+### Quick Access Tools
+
+Direct links to common developer tasks:
+
+- **Generate API Key**: Create new authentication tokens
+- **Test Endpoints**: Quick API endpoint testing
+- **View Documentation**: Access comprehensive API docs
+- **Check Logs**: Monitor recent API activity
+- **Configure Webhooks**: Set up event notifications
+
+<div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-blue-700 dark:text-blue-300 mb-2">
+    💡 Developer Dashboard Benefits
+  </div>
+  <p className="text-sm text-blue-600 dark:text-blue-400">
+    The developer dashboard provides real-time visibility into your integration
+    health, helping you monitor performance, debug issues, and optimize your
+    implementation.
+  </p>
+</div>
+
+## API Keys Management
+
+### Token Administration
+
+Manage authentication tokens securely:
+
+#### Key Generation
+
+- **Create Keys**: Generate new API authentication tokens
+- **Permission Scopes**: Set specific access permissions per key
+- **Expiration Dates**: Configure key lifecycle management
+- **Usage Tracking**: Monitor key-specific usage patterns
+
+#### Security Features
+
+- **Token Rotation**: Regular key rotation for security
+- **Access Control**: Restrict key permissions and scope
+- **IP Restrictions**: Limit access by IP address
+- **Rate Limiting**: Control request volume per key
+
+#### Key Management Interface
+
+```javascript
+// API Key Configuration
+{
+  "key_id": "key_123456789",
+  "name": "Production Integration",
+  "scopes": ["shipments", "tracking", "rates"],
+  "created_at": "2024-01-15T10:30:00Z",
+  "expires_at": "2025-01-15T10:30:00Z",
+  "last_used": "2024-01-20T14:22:33Z",
+  "requests_count": 15420,
+  "rate_limit": "1000/min"
+}
+```
+
+### Key Usage Analytics
+
+Monitor API key performance:
+
+#### Usage Metrics
+
+- **Request Volume**: Calls per key over time
+- **Error Rates**: Failed requests by authentication key
+- **Endpoint Usage**: Most frequently accessed endpoints
+- **Geographic Distribution**: Request origin analysis
+
+#### Security Monitoring
+
+- **Unusual Activity**: Detect abnormal usage patterns
+- **Failed Authentication**: Monitor invalid key usage attempts
+- **Rate Limit Violations**: Track and alert on limit breaches
+- **Access Patterns**: Analyze usage timing and frequency
+
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    API Key Management Interface
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border overflow-hidden">
+    <img
+      src="/docs/karrio-api-keys.png"
+      alt="API key management showing active keys with usage statistics"
+      className="w-full h-auto"
+    />
+  </div>
+</div>
+
+## Webhook Configuration
+
+### Event Notification Setup
+
+Configure real-time notifications:
+
+#### Webhook Endpoints
+
+- **Endpoint URLs**: Target URLs for webhook delivery
+- **Event Selection**: Choose which events trigger notifications
+- **Security Settings**: Configure authentication and verification
+- **Delivery Options**: Retry policies and failure handling
+
+#### Supported Events
+
+- **Shipment Events**: Label creation, status updates, delivery confirmation
+- **Order Events**: Order creation, fulfillment, cancellation
+- **Tracking Events**: Package movement, delivery updates, exceptions
+- **System Events**: API errors, rate limiting, maintenance notifications
+
+#### Webhook Configuration
+
+```javascript
+// Webhook Configuration Example
+{
+  "webhook_id": "wh_987654321",
+  "name": "Order Fulfillment Notifications",
+  "url": "https://myapp.com/webhooks/karrio",
+  "events": [
+    "order.created",
+    "order.fulfilled",
+    "shipment.created",
+    "tracking.updated"
+  ],
+  "secret": "whsec_...",
+  "active": true,
+  "delivery_attempts": 3,
+  "timeout": 30
+}
+```
+
+### Event Management
+
+Handle webhook events effectively:
+
+#### Event Types
+
+- **order.created**: New order received
+- **order.fulfilled**: Order completely fulfilled
+- **shipment.created**: Shipping label generated
+- **shipment.delivered**: Package delivered successfully
+- **tracking.updated**: Tracking status changed
+- **payment.processed**: Payment completed
+- **exception.occurred**: System error or warning
+
+#### Payload Structure
+
+```json
+{
+  "event": "shipment.created",
+  "timestamp": "2024-01-20T15:30:00Z",
+  "data": {
+    "id": "shp_123456789",
+    "tracking_number": "1Z999AA1234567890",
+    "carrier_name": "ups",
+    "service": "ups_ground",
+    "status": "created",
+    "label_url": "https://api.karrio.io/documents/label_123.pdf",
+    "order_id": "ord_987654321"
+  },
+  "test": false
+}
+```
+
+<div className="bg-orange-50 dark:bg-orange-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-orange-700 dark:text-orange-300 mb-2">
+    ⚠️ Webhook Security
+  </div>
+  <p className="text-sm text-orange-600 dark:text-orange-400">
+    Always validate webhook signatures to ensure events come from Karrio. Store
+    webhook secrets securely and use HTTPS endpoints for receiving
+    notifications.
+  </p>
+</div>
+
+## API Logs and Monitoring
+
+### Request/Response Tracking
+
+Monitor API interactions in detail:
+
+#### Log Information
+
+- **Request Details**: Method, URL, headers, payload
+- **Response Data**: Status codes, response body, timing
+- **Error Information**: Detailed error messages and stack traces
+- **Metadata**: IP addresses, user agents, authentication info
+
+#### Log Categories
+
+- **Successful Requests**: Completed API calls
+- **Failed Requests**: Errors and exceptions
+- **Rate Limited**: Requests blocked by rate limiting
+- **Authentication Failures**: Invalid or expired tokens
+
+#### Log Interface
+
+```javascript
+// API Log Entry Example
+{
+  "log_id": "log_456789123",
+  "timestamp": "2024-01-20T16:45:22Z",
+  "method": "POST",
+  "endpoint": "/v1/shipments",
+  "status_code": 201,
+  "response_time": 1.2,
+  "api_key": "key_***456789",
+  "request_size": 1024,
+  "response_size": 2048,
+  "user_agent": "MyApp/1.0",
+  "ip_address": "192.168.1.100",
+  "error": null
+}
+```
+
+### Performance Analysis
+
+Analyze integration performance:
+
+#### Performance Metrics
+
+- **Response Times**: Average and percentile response times
+- **Throughput**: Requests per second capacity
+- **Error Rates**: Percentage of failed requests
+- **Endpoint Performance**: Performance by specific endpoint
+
+#### Optimization Insights
+
+- **Slow Endpoints**: Identify performance bottlenecks
+- **Error Patterns**: Common failure modes
+- **Usage Patterns**: Peak usage times and trends
+- **Resource Utilization**: API capacity planning
+
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    API Logs Dashboard
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border overflow-hidden">
+    <img
+      src="/docs/karrio-api-logs.png"
+      alt="API logs dashboard showing request history with detailed information"
+      className="w-full h-auto"
+    />
+  </div>
+</div>
+
+## Events and System Monitoring
+
+### System Event Tracking
+
+Monitor system-wide events and activities:
+
+#### Event Categories
+
+- **System Events**: API status changes, maintenance windows
+- **Integration Events**: Third-party service updates, carrier changes
+- **Security Events**: Authentication failures, suspicious activity
+- **Performance Events**: Rate limiting triggers, capacity warnings
+
+#### Event Details
+
+```javascript
+// System Event Example
+{
+  "event_id": "evt_789123456",
+  "type": "system.maintenance",
+  "severity": "info",
+  "timestamp": "2024-01-20T02:00:00Z",
+  "message": "Scheduled maintenance window started",
+  "details": {
+    "maintenance_type": "database_upgrade",
+    "expected_duration": "2 hours",
+    "affected_services": ["api", "webhooks"],
+    "status_page": "https://status.karrio.io"
+  }
+}
+```
+
+#### Event Filtering and Search
+
+- **Event Type Filtering**: Focus on specific event categories
+- **Date Range Selection**: View events within time periods
+- **Severity Levels**: Filter by importance (info, warning, error)
+- **Full Text Search**: Search event descriptions and details
+
+### Alerting and Notifications
+
+Stay informed about important events:
+
+#### Alert Configuration
+
+- **Event-based Alerts**: Notifications for specific events
+- **Threshold Alerts**: Warnings when metrics exceed limits
+- **Custom Rules**: Business-specific alert conditions
+- **Multi-channel Delivery**: Email, SMS, webhook notifications
+
+## Interactive API Testing
+
+### API Playground
+
+Test endpoints directly from the dashboard:
+
+#### Testing Environment
+
+- **Interactive Forms**: Fill out API parameters easily
+- **Live Testing**: Real API calls with actual responses
+- **Authentication**: Automatic token handling
+- **Response Inspection**: Detailed response analysis
+
+#### Request Builder
+
+```javascript
+// Example API Request in Playground
+{
+  "endpoint": "/v1/proxy/rates",
+  "method": "POST",
+  "headers": {
+    "Authorization": "Token your-api-key",
+    "Content-Type": "application/json"
+  },
+  "body": {
+    "shipper": {
+      "postal_code": "10001",
+      "country_code": "US"
+    },
+    "recipient": {
+      "postal_code": "90210",
+      "country_code": "US"
+    },
+    "parcels": [{
+      "weight": 2.5,
+      "weight_unit": "LB"
+    }]
+  }
+}
+```
+
+### GraphQL Interface
+
+Use GraphiQL for GraphQL query testing:
+
+#### Query Builder
+
+- **Schema Explorer**: Browse available queries and mutations
+- **Auto-completion**: Intelligent query building
+- **Query Validation**: Real-time syntax checking
+- **Result Formatting**: Pretty-printed JSON responses
+
+#### Example GraphQL Query
+
+```graphql
+query GetShipments($first: Int!, $status: [ShipmentStatusEnum]) {
+  shipments(first: $first, status: $status) {
+    edges {
+      node {
+        id
+        trackingNumber
+        status
+        carrierName
+        service
+        createdAt
+        selectedRate {
+          totalCharge
+          currency
+        }
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+```
+
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    GraphiQL Interface
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border overflow-hidden">
+    <img
+      src="/docs/karrio-graphiql.png"
+      alt="GraphiQL interface showing query builder and response viewer"
+      className="w-full h-auto"
+    />
+  </div>
+</div>
+
+## Integration Resources
+
+### Code Examples and SDKs
+
+Access implementation resources:
+
+#### Language Support
+
+- **JavaScript/Node.js**: NPM package and examples
+- **Python**: PyPI package with comprehensive docs
+- **PHP**: Composer package and Laravel integration
+- **Ruby**: Gem with Rails integration examples
+- **Go**: Module with complete implementation guide
+
+#### Quick Start Examples
+
+```javascript
+// JavaScript SDK Example
+import { KarrioClient } from "@karrio/javascript-sdk";
+
+const karrio = new KarrioClient({
+  apiKey: "your-api-key",
+  baseUrl: "https://api.karrio.io",
+});
+
+// Get shipping rates
+const rates = await karrio.rates.get({
+  shipper: { postal_code: "10001", country_code: "US" },
+  recipient: { postal_code: "90210", country_code: "US" },
+  parcels: [{ weight: 2.5, weight_unit: "LB" }],
+});
+
+// Create shipment
+const shipment = await karrio.shipments.create({
+  service: "fedex_ground",
+  // ... shipment details
+});
+```
+
+#### Integration Guides
+
+- **E-commerce Platforms**: Shopify, WooCommerce, Magento guides
+- **Custom Applications**: Step-by-step integration tutorials
+- **Webhook Implementation**: Event handling best practices
+- **Error Handling**: Comprehensive error management strategies
+
+### Documentation Access
+
+Complete API documentation:
+
+#### Documentation Sections
+
+- **API Reference**: Complete endpoint documentation
+- **Schema Definitions**: Data models and structures
+- **Authentication Guide**: Token management and security
+- **Rate Limiting**: Usage limits and best practices
+- **Webhooks**: Event types and payload structures
+- **Error Codes**: Complete error reference
+
+#### Interactive Documentation
+
+- **Try It Now**: Test endpoints directly from docs
+- **Code Samples**: Multiple language examples
+- **Response Schemas**: Expected response formats
+- **Parameter Validation**: Input requirements and constraints
+
+## Troubleshooting and Support
+
+### Common Developer Issues
+
+#### Authentication Problems
+
+- **Invalid API Keys**: Verify key validity and permissions
+- **Expired Tokens**: Check key expiration dates
+- **Permission Errors**: Verify scope settings
+- **Rate Limiting**: Monitor usage against limits
+
+#### Integration Issues
+
+- **Webhook Failures**: Check endpoint accessibility and response codes
+- **Data Format Errors**: Validate request/response schemas
+- **Timeout Issues**: Optimize request size and complexity
+- **Network Problems**: Verify connectivity and DNS resolution
+
+### Debug Tools
+
+Built-in debugging assistance:
+
+#### Request Inspection
+
+- **Raw Request/Response**: Complete HTTP transaction details
+- **Header Analysis**: Authentication and content-type verification
+- **Payload Validation**: Schema compliance checking
+- **Error Diagnostics**: Detailed error explanation and solutions
+
+#### Performance Optimization
+
+- **Request Timing**: Identify slow operations
+- **Payload Size Analysis**: Optimize data transmission
+- **Endpoint Efficiency**: Choose optimal API endpoints
+- **Batch Processing**: Reduce API call overhead
+
+<div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-blue-700 dark:text-blue-300 mb-2">
+    💡 Developer Best Practices
+  </div>
+  <p className="text-sm text-blue-600 dark:text-blue-400">
+    Use the developer tools regularly to monitor integration health, debug
+    issues proactively, and optimize performance. Set up appropriate alerts and
+    monitoring to catch issues before they impact users.
+  </p>
+</div>
+
+## API Usage Optimization
+
+### Performance Best Practices
+
+Optimize integration performance:
+
+#### Request Optimization
+
+- **Batch Requests**: Combine multiple operations
+- **Caching**: Cache frequently accessed data
+- **Pagination**: Handle large result sets efficiently
+- **Compression**: Use gzip for large payloads
+
+#### Error Handling
+
+- **Retry Logic**: Implement exponential backoff
+- **Circuit Breakers**: Handle service outages gracefully
+- **Timeout Management**: Set appropriate request timeouts
+- **Error Recovery**: Graceful degradation strategies
+
+#### Monitoring and Alerting
+
+- **Usage Tracking**: Monitor API consumption patterns
+- **Performance Metrics**: Track response times and error rates
+- **Health Checks**: Regular integration testing
+- **Capacity Planning**: Prepare for traffic growth
+
+## Next Steps
+
+Now that you understand the developer tools:
+
+1. **[Live vs Test Mode](/docs/developing/dashboard-guide/test-mode)** - Use developer tools in both environments
+2. **[Label Creation](/docs/developing/dashboard-guide/label-creation)** - Integrate label creation APIs
+3. **[Order Management](/docs/developing/dashboard-guide/orders)** - Automate order processing
+4. **[Tracker Management](/docs/developing/dashboard-guide/trackers)** - Implement tracking webhooks
+
+---
+
+**Need help?** Join our [community Discord](https://discord.gg/gS88uE7sEx) or contact our support team.

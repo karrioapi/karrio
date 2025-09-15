@@ -8,170 +8,88 @@ author: Karrio Team
 
 # GCP Deployment
 
-This guide will walk you through deploying Karrio on Google Cloud Platform (GCP).
+Deploy Karrio on Google Cloud Platform (GCP).
 
 ## Prerequisites
 
-1. A Google Cloud Platform account
-2. GCP project with billing enabled
-3. Basic knowledge of GCP, Docker, and Docker Compose
+- Google Cloud Platform account
+- GCP project with billing enabled
+- Basic knowledge of Docker and Docker Compose
 
 ## Step 1: Create a Compute Engine VM Instance
 
-1. Log into the Google Cloud Console
+1. Log into Google Cloud Console
 2. Navigate to "Compute Engine" > "VM Instances"
 3. Click "Create Instance"
-4. Configure your instance:
+4. Configure:
    - **Name**: `karrio-server`
-   - **Region/Zone**: Choose a region close to your users
-   - **Machine Type**:
-     - For production: At least `e2-medium` (2 vCPU, 4 GB RAM)
-     - For development/testing: `e2-small` (2 vCPU, 2 GB RAM)
-   - **Boot Disk**:
-     - OS: `Ubuntu 22.04 LTS`
-     - Size: At least 20 GB SSD Persistent Disk
-   - **Firewall**:
-     - Allow HTTP traffic
-     - Allow HTTPS traffic
-5. Advanced options:
-   - Networking > Network Interfaces:
-     - Configure network tags for firewall rules
-6. Click "Create"
+   - **Machine Type**: `e2-medium` (production) or `e2-small` (development)
+   - **Boot Disk**: Ubuntu 22.04 LTS, 20 GB SSD
+   - **Firewall**: Allow HTTP and HTTPS traffic
+5. Click "Create"
 
 ## Step 2: Set Up Firewall Rules
 
-Ensure you have the following firewall rules:
-
 1. Navigate to "VPC Network" > "Firewall"
-2. Create or verify rules for:
+2. Create rules for:
    - Allow HTTP (port 80)
    - Allow HTTPS (port 443)
    - Allow SSH (port 22)
 
 ## Step 3: Connect to Your VM
 
-Connect to your VM instance using SSH:
-
 ```bash
 gcloud compute ssh karrio-server --zone=your-zone
 ```
 
-Alternatively, you can use the SSH button in the Google Cloud Console.
+Or use the SSH button in the Google Cloud Console.
 
 ## Step 4: Install Docker and Docker Compose
 
 ```bash
-# Update system packages
-sudo apt update
-sudo apt upgrade -y
-
-# Install prerequisites
+sudo apt update && sudo apt upgrade -y
 sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
-
-# Add Docker repository
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-
-# Install Docker
 sudo apt update
 sudo apt install -y docker-ce
 sudo systemctl enable docker
 sudo systemctl start docker
 sudo usermod -aG docker $USER
-
-# Install Docker Compose
 sudo curl -L "https://github.com/docker/compose/releases/download/v2.18.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
-
-# Verify installations
-docker --version
-docker-compose --version
-
-# Log out and log back in for group changes to take effect
 exit
 ```
 
 ## Step 5: Deploy Karrio
 
-1. Reconnect to your VM after logging out
-2. Deploy Karrio using one of the following methods:
+Reconnect to your VM after logging out.
 
 ### Option 1: One-Click Hobby Deployment
-
-This is the simplest method for a quick setup:
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/deploy-hobby)"
 ```
 
-When prompted, enter your domain name (e.g., `karrio.yourdomain.com`).
+When prompted, enter your domain name.
 
 ### Option 2: Manual Deployment
 
-For more control over the deployment:
-
 ```bash
-# Create a directory for Karrio
 mkdir -p ~/karrio
 cd ~/karrio
-
-# Download the docker-compose file
-curl -O https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/docker-compose.hobby.yml
-mv docker-compose.hobby.yml docker-compose.yml
-
-# Create the .env file
-cat > .env << EOL
-# Database settings
-DATABASE_ENGINE=postgresql_psycopg2
-DATABASE_NAME=db
-DATABASE_USERNAME=postgres
-DATABASE_PASSWORD=postgres
-DATABASE_HOST=db
-DATABASE_PORT=5432
-
-# Redis settings
-REDIS_HOST=redis
-REDIS_PORT=6379
-
-# Karrio settings
-SECRET_KEY=$(openssl rand -base64 32)
-JWT_SECRET=$(openssl rand -base64 32)
-KARRIO_TAG=latest
-
-# Domain settings
-DOMAIN=your-domain.com
-DASHBOARD_URL=https://app.your-domain.com
-KARRIO_PUBLIC_URL=https://api.your-domain.com
-EOL
-
-# Create the Caddyfile for reverse proxy
-cat > Caddyfile << EOL
-{
-  email your-email@example.com
-}
-
-api.your-domain.com {
-  reverse_proxy karrio.api:5002
-}
-
-app.your-domain.com {
-  reverse_proxy karrio.dashboard:3002
-}
-EOL
-
-# Start the containers
+curl -O https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/docker-compose.yml
+curl -O https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/.env
 docker-compose up -d
 ```
 
-Remember to replace `your-domain.com`, `app.your-domain.com`, `api.your-domain.com`, and `your-email@example.com` with your actual domain and email details.
+Edit `.env` with your configuration. Set up your preferred webserver for HTTPS and domain routing.
 
 ## Step 6: Set Up a Static External IP
 
-To ensure your Karrio instance remains accessible with the same IP:
-
-1. In the Google Cloud Console, navigate to "VPC Network" > "External IP addresses"
+1. Navigate to "VPC Network" > "External IP addresses"
 2. Click "Reserve Static Address"
-3. Configure the static IP:
+3. Configure:
    - **Name**: `karrio-static-ip`
    - **Network Service Tier**: Premium
    - **IP Version**: IPv4
@@ -182,39 +100,30 @@ To ensure your Karrio instance remains accessible with the same IP:
 
 ## Step 7: Configure DNS
 
-1. In your domain registrar or DNS provider, add the following records:
-
-   - Type: `A`, Name: `api`, Value: Your VM's static IP
-   - Type: `A`, Name: `app`, Value: Your VM's static IP
-
-2. Wait for DNS propagation (can take up to 24-48 hours, but often much quicker)
+Add DNS records:
+- Type: `A`, Name: `api`, Value: Your VM's static IP
+- Type: `A`, Name: `app`, Value: Your VM's static IP
 
 ## Step 8: Access Your Karrio Instance
-
-After DNS propagation:
 
 - Dashboard: `https://app.your-domain.com`
 - API: `https://api.your-domain.com`
 
-Default login credentials: `admin@example.com` / `demo`
+Default login: `admin@example.com` / `demo`
 
 ## Setting Up a Load Balancer (Optional)
 
-For high-availability deployments:
-
-1. In the Google Cloud Console, navigate to "Network Services" > "Load Balancing"
+1. Navigate to "Network Services" > "Load Balancing"
 2. Click "Create Load Balancer"
 3. Choose "HTTP(S) Load Balancing"
-4. Configure your load balancer:
-   - Backend configuration: Create a backend service pointing to your VM
-   - Frontend configuration: Set up HTTPS with your SSL certificates
-5. Update your DNS records to point to the load balancer's IP address
+4. Configure:
+   - Backend: Create backend service pointing to your VM
+   - Frontend: Set up HTTPS with SSL certificates
+5. Update DNS records to point to the load balancer's IP address
 
 ## Backup and Restore
 
-### Setting Up Automated Backups
-
-1. Create a simple backup script:
+### Automated Backups
 
 ```bash
 cat > ~/backup_karrio.sh << 'EOL'
@@ -222,62 +131,27 @@ cat > ~/backup_karrio.sh << 'EOL'
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 BACKUP_DIR=~/karrio-backups
 mkdir -p $BACKUP_DIR
-
-# Backup database
 cd ~/karrio
 docker-compose exec -T db pg_dump -U postgres -d db > $BACKUP_DIR/karrio_db_$TIMESTAMP.sql
-
-# Backup configuration files
 cp ~/karrio/.env $BACKUP_DIR/env_$TIMESTAMP
 cp ~/karrio/Caddyfile $BACKUP_DIR/Caddyfile_$TIMESTAMP
-
-# Upload to Google Cloud Storage (optional)
-# gsutil cp $BACKUP_DIR/karrio_db_$TIMESTAMP.sql gs://your-bucket/karrio-backups/
-# gsutil cp $BACKUP_DIR/env_$TIMESTAMP gs://your-bucket/karrio-backups/
-# gsutil cp $BACKUP_DIR/Caddyfile_$TIMESTAMP gs://your-bucket/karrio-backups/
 EOL
-
 chmod +x ~/backup_karrio.sh
-```
-
-2. Schedule the backup script with cron:
-
-```bash
 (crontab -l 2>/dev/null; echo "0 2 * * * ~/backup_karrio.sh") | crontab -
 ```
 
-### Setting Up Google Cloud Storage for Backups (Optional)
+### Google Cloud Storage (Optional)
 
-1. Create a Storage Bucket:
-
-   - In the Google Cloud Console, navigate to "Storage" > "Browser"
-   - Click "Create Bucket"
-   - Name your bucket (e.g., `karrio-backups-YOUR-PROJECT`)
-   - Configure other settings as needed
-   - Click "Create"
-
-2. Install gsutil (if not already installed):
-
-```bash
-sudo apt-get install -y google-cloud-sdk-gsutil
-```
-
-3. Uncomment the gsutil commands in the backup script to enable cloud storage backups
+1. Create Storage Bucket in "Storage" > "Browser"
+2. Install gsutil: `sudo apt-get install -y google-cloud-sdk-gsutil`
+3. Uncomment gsutil commands in backup script
 
 ## Monitoring
 
-For basic monitoring, you can use:
+- Google Cloud Monitoring
+- Container logs: `cd ~/karrio && docker-compose logs -f`
 
-1. Google Cloud Monitoring
-2. Container logs:
-   ```bash
-   cd ~/karrio
-   docker-compose logs -f
-   ```
-
-## Updating Karrio
-
-To update your Karrio instance:
+## Updating
 
 ```bash
 cd ~/karrio
@@ -288,19 +162,14 @@ cd ~/karrio
 
 ### SSL Certificate Issues
 
-If SSL certificates aren't being issued:
+```bash
+cd ~/karrio
+docker-compose logs caddy
+```
 
-1. Check that your DNS records are correctly set up
-2. Verify that ports 80 and 443 are open in your firewall rules
-3. Check the Caddy logs:
-   ```bash
-   cd ~/karrio
-   docker-compose logs caddy
-   ```
+Check: DNS records, ports 80/443 open in firewall rules
 
 ### Container Issues
-
-If containers aren't starting properly:
 
 ```bash
 cd ~/karrio
@@ -310,22 +179,11 @@ docker-compose logs <service_name>
 
 ### Instance Resources
 
-If your VM is running out of resources:
-
-1. Check resource usage:
-   ```bash
-   top
-   ```
-2. Consider upgrading to a larger machine type:
-   - Stop your VM in the Google Cloud Console
-   - Edit the machine type
-   - Restart your VM
+Check usage with `top`. Upgrade machine type in Google Cloud Console if needed.
 
 ## Optimizing Costs
 
-To optimize your GCP costs:
-
-1. Use Compute Engine sustained use discounts (automatic)
-2. Consider using preemptible VMs for non-production environments
-3. Right-size your VM instance based on actual usage
-4. Set up budget alerts in the Google Cloud Console
+- Use Compute Engine sustained use discounts (automatic)
+- Consider preemptible VMs for non-production
+- Right-size VM instance based on usage
+- Set up budget alerts in Google Cloud Console

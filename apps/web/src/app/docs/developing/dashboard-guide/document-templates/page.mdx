@@ -1,0 +1,753 @@
+---
+sidebarTitle: Document Templates
+title: Document Template Management
+description: Design and manage custom document templates for invoices, labels, and business forms
+tags: ["templates", "documents", "customization", "branding", "forms"]
+---
+
+# Document Template Management
+
+<div className="flex gap-2 mb-6">
+  <div className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-400/10 dark:text-green-400 dark:ring-green-400/30">
+    <span className="text-xs">Community Edition</span>
+  </div>
+  <div className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10 dark:bg-purple-400/10 dark:text-purple-400 dark:ring-purple-400/30">
+    <span className="text-xs">Advanced Feature</span>
+  </div>
+</div>
+
+The document template system allows you to create custom business documents including invoices, packing slips, shipping labels, and custom forms. Use the visual template designer to build branded documents that match your business needs.
+
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    Template Designer Interface
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border overflow-hidden">
+    <img
+      src="/docs/karrio-template-designer.png"
+      alt="Document template designer showing drag-and-drop interface with formatting options"
+      className="w-full h-auto"
+    />
+  </div>
+</div>
+
+## Template System Overview
+
+### Document Types
+
+Karrio supports various document templates:
+
+#### Business Documents
+
+- **Invoices**: Customer billing documents
+- **Packing Slips**: Order fulfillment documentation
+- **Commercial Invoices**: International shipping forms
+- **Certificates of Origin**: Export documentation
+- **Custom Forms**: Business-specific documents
+
+#### Shipping Documents
+
+- **Shipping Labels**: Carrier-specific label formats
+- **Return Labels**: Customer return documentation
+- **Manifest Documents**: Batch shipping summaries
+- **Customs Forms**: International trade documentation
+
+### Template Features
+
+#### Visual Designer
+
+- **Drag-and-Drop Interface**: Intuitive document building
+- **WYSIWYG Editor**: See results as you design
+- **Grid Layout**: Precise element positioning
+- **Real-time Preview**: Instant design feedback
+
+#### Dynamic Content
+
+- **Variable Substitution**: Automatic data population
+- **Conditional Logic**: Show/hide based on data
+- **Calculated Fields**: Automatic calculations
+- **Multi-language Support**: Localized documents
+
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    Template Elements Library
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border overflow-hidden">
+    <img
+      src="/docs/karrio-template-elements.png"
+      alt="Template elements library showing available components and formatting options"
+      className="w-full h-auto"
+    />
+  </div>
+</div>
+
+## Accessing Templates
+
+### Navigation
+
+Access template management:
+
+1. **Settings Menu**: Navigate to Settings → Templates
+2. **Template Editor**: Use the visual designer interface
+3. **Template List**: View and manage existing templates
+4. **Quick Access**: Template shortcuts in relevant workflows
+
+### Template Categories
+
+Templates are organized by purpose:
+
+#### Order Templates
+
+- **Order Confirmation**: Customer order acknowledgment
+- **Packing Slips**: Fulfillment documentation
+- **Shipping Labels**: Order-specific labels
+- **Return Forms**: Customer return documentation
+
+#### Invoice Templates
+
+- **Sales Invoices**: Customer billing
+- **Commercial Invoices**: International shipping
+- **Credit Notes**: Refund documentation
+- **Statements**: Account summaries
+
+#### Shipping Templates
+
+- **Carrier Labels**: FedEx, UPS, DHL specific formats
+- **Customs Forms**: International documentation
+- **Manifest Reports**: Batch shipping summaries
+- **Tracking Notifications**: Customer communications
+
+## Creating New Templates
+
+### Template Creation Process
+
+Build templates with the visual designer:
+
+1. **Choose Template Type**: Select document category
+2. **Start with Base**: Use blank or existing template
+3. **Add Elements**: Drag components to canvas
+4. **Configure Properties**: Set element attributes
+5. **Preview and Test**: Verify with sample data
+6. **Save and Deploy**: Make template available
+
+### Design Elements
+
+#### Text Elements
+
+- **Static Text**: Fixed labels and headers
+- **Dynamic Fields**: Variable content from data
+- **Rich Text**: Formatted text with styling
+- **Multi-line Text**: Paragraphs and descriptions
+
+#### Layout Components
+
+- **Headers**: Document titles and branding
+- **Footers**: Contact information and disclaimers
+- **Tables**: Structured data display
+- **Sections**: Grouped content areas
+- **Dividers**: Visual content separation
+
+#### Data Fields
+
+- **Order Information**: Order numbers, dates, status
+- **Customer Data**: Names, addresses, contact info
+- **Product Details**: Items, quantities, prices
+- **Shipping Info**: Carriers, services, tracking
+- **Company Details**: Business information
+
+<div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-blue-700 dark:text-blue-300 mb-2">
+    💡 Template Variables
+  </div>
+  <p className="text-sm text-blue-600 dark:text-blue-400">
+    Use template variables like `{order.order_id}` or `{customer.name}` to
+    dynamically populate document content. The system automatically replaces
+    these with actual data when generating documents.
+  </p>
+</div>
+
+## Template Designer Features
+
+### Visual Editor Tools
+
+#### Element Manipulation
+
+- **Drag and Drop**: Move elements visually
+- **Resize Handles**: Adjust element dimensions
+- **Alignment Guides**: Precise positioning
+- **Layer Management**: Control element stacking
+
+#### Formatting Options
+
+- **Typography**: Fonts, sizes, colors, alignment
+- **Borders**: Element borders and styling
+- **Background**: Colors and patterns
+- **Spacing**: Margins and padding
+- **Visibility**: Show/hide conditions
+
+### Property Configuration
+
+#### Element Properties
+
+- **Position**: X, Y coordinates and sizing
+- **Content**: Text content and variables
+- **Style**: Font, color, and appearance
+- **Behavior**: Conditional display rules
+- **Data Binding**: Link to data sources
+
+#### Template Settings
+
+- **Page Size**: A4, Letter, custom dimensions
+- **Margins**: Document edge spacing
+- **Orientation**: Portrait or landscape
+- **Units**: Inches, centimeters, pixels
+- **Color Mode**: RGB, CMYK for printing
+
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    Property Panel
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border overflow-hidden">
+    <img
+      src="/docs/karrio-template-properties.png"
+      alt="Template property panel showing formatting and configuration options"
+      className="w-full h-auto"
+    />
+  </div>
+</div>
+
+## Template Variables and Data
+
+### Available Data Sources
+
+Templates can access various data:
+
+#### Order Data
+
+```handlebars
+<!-- Order Information -->
+{{order.order_id}}
+{{order.created_at}}
+{{order.status}}
+{{order.total_value}}
+{{order.currency}}
+
+<!-- Line Items -->
+{{#each order.line_items}}
+  {{title}}
+  - Qty:
+  {{quantity}}
+  - Price:
+  {{value_amount}}
+{{/each}}
+```
+
+#### Customer Information
+
+```handlebars
+<!-- Shipping Address -->
+{{order.shipping_to.person_name}}
+{{order.shipping_to.address_line1}}
+{{order.shipping_to.city}},
+{{order.shipping_to.state_code}}
+{{order.shipping_to.postal_code}}
+
+<!-- Contact Details -->
+{{order.shipping_to.email}}
+{{order.shipping_to.phone_number}}
+```
+
+#### Company Details
+
+```handlebars
+<!-- Business Information -->
+{{company.name}}
+{{company.address}}
+{{company.phone}}
+{{company.email}}
+{{company.website}}
+{{company.logo_url}}
+```
+
+#### Shipment Data
+
+```handlebars
+<!-- Shipping Information -->
+{{shipment.tracking_number}}
+{{shipment.carrier_name}}
+{{shipment.service}}
+{{shipment.estimated_delivery}}
+{{shipment.shipping_cost}}
+```
+
+### Conditional Logic
+
+Show content based on conditions:
+
+```handlebars
+<!-- Show only for international orders -->
+{{#if order.is_international}}
+  <div>Customs Declaration Required</div>
+{{/if}}
+
+<!-- Display different content by status -->
+{{#switch order.status}}
+  {{#case "fulfilled"}}
+    <div>Order Complete</div>
+  {{/case}}
+  {{#case "partial"}}
+    <div>Partially Fulfilled</div>
+  {{/case}}
+  {{#default}}
+    <div>Processing Order</div>
+  {{/default}}
+{{/switch}}
+```
+
+### Calculations and Formatting
+
+#### Numeric Formatting
+
+```handlebars
+<!-- Currency formatting -->
+{{formatCurrency order.total_value order.currency}}
+
+<!-- Number formatting -->
+{{formatNumber item.quantity 0}}
+
+<!-- Percentage -->
+{{formatPercent discount_rate 2}}
+```
+
+#### Date Formatting
+
+```handlebars
+<!-- Date formats -->
+{{formatDate order.created_at "MM/DD/YYYY"}}
+{{formatDate shipment.estimated_delivery "MMMM Do, YYYY"}}
+{{formatTime shipment.pickup_time "h:mm A"}}
+```
+
+<div className="bg-orange-50 dark:bg-orange-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-orange-700 dark:text-orange-300 mb-2">
+    ⚠️ Data Availability
+  </div>
+  <p className="text-sm text-orange-600 dark:text-orange-400">
+    Template variables depend on the context where the template is used. Not all
+    data is available in every situation. Test templates thoroughly with
+    different data scenarios.
+  </p>
+</div>
+
+## Template Management
+
+### Template Organization
+
+#### Categories and Tags
+
+- **Organize by Type**: Group related templates
+- **Tag System**: Label templates for easy finding
+- **Search Function**: Find templates quickly
+- **Favorite Templates**: Mark frequently used templates
+
+#### Version Control
+
+- **Template Versions**: Track template changes
+- **Revision History**: See template evolution
+- **Rollback Options**: Revert to previous versions
+- **Change Tracking**: Monitor template modifications
+
+### Template Deployment
+
+#### Activation Process
+
+1. **Design Template**: Create using visual editor
+2. **Test with Sample Data**: Verify with real data
+3. **Review Output**: Check generated documents
+4. **Activate Template**: Make available for use
+5. **Monitor Usage**: Track template performance
+
+#### Usage Integration
+
+- **Order Processing**: Automatic template selection
+- **Manual Generation**: On-demand document creation
+- **Batch Processing**: Multiple document generation
+- **API Integration**: Programmatic template usage
+
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    Template Testing Interface
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border overflow-hidden">
+    <img
+      src="/docs/karrio-template-testing.png"
+      alt="Template testing interface showing preview with sample data"
+      className="w-full h-auto"
+    />
+  </div>
+</div>
+
+## Branding and Customization
+
+### Brand Identity Integration
+
+#### Visual Branding
+
+- **Logo Placement**: Company logo positioning
+- **Color Schemes**: Brand color consistency
+- **Typography**: Brand font selection
+- **Layout Design**: Professional document appearance
+
+#### Business Information
+
+- **Company Details**: Name, address, contact information
+- **Legal Information**: Registration numbers, tax IDs
+- **Terms and Conditions**: Standard business terms
+- **Disclaimers**: Legal and service disclaimers
+
+### Multi-language Support
+
+#### Localization Features
+
+- **Language Selection**: Template language variants
+- **Content Translation**: Multi-language text
+- **Regional Formatting**: Date, currency, address formats
+- **Cultural Adaptation**: Local business practices
+
+#### Implementation
+
+```handlebars
+<!-- Language-specific content -->
+{{#if language.en}}
+  <div>Thank you for your order</div>
+{{/if}}
+{{#if language.es}}
+  <div>Gracias por su pedido</div>
+{{/if}}
+{{#if language.fr}}
+  <div>Merci pour votre commande</div>
+{{/if}}
+```
+
+## Document Generation
+
+### Generation Triggers
+
+Templates generate documents automatically:
+
+#### Order Events
+
+- **Order Creation**: Confirmation documents
+- **Fulfillment**: Packing slips and labels
+- **Shipping**: Carrier documentation
+- **Delivery**: Completion certificates
+
+#### Manual Generation
+
+- **On-Demand**: Generate specific documents
+- **Batch Processing**: Multiple document creation
+- **Custom Triggers**: Business-specific events
+- **API Requests**: Programmatic generation
+
+### Output Formats
+
+#### Supported Formats
+
+- **PDF**: Professional document format
+- **HTML**: Web-displayable format
+- **PNG**: Image format for labels
+- **SVG**: Scalable vector graphics
+
+#### Optimization Options
+
+- **Print Quality**: High-resolution for printing
+- **Screen Display**: Optimized for viewing
+- **Email Delivery**: Compressed for transmission
+- **Archive Format**: Long-term storage
+
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    Document Output Examples
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border overflow-hidden">
+    <img
+      src="/docs/karrio-template-outputs.png"
+      alt="Examples of generated documents including invoices and packing slips"
+      className="w-full h-auto"
+    />
+  </div>
+</div>
+
+## Advanced Template Features
+
+### Dynamic Tables
+
+Create tables with variable row counts:
+
+```handlebars
+<!-- Order items table -->
+<table>
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>Quantity</th>
+      <th>Price</th>
+      <th>Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each order.line_items}}
+    <tr>
+      <td>{{title}}</td>
+      <td>{{quantity}}</td>
+      <td>{{formatCurrency value_amount ../order.currency}}</td>
+      <td>{{formatCurrency (multiply quantity value_amount) ../order.currency}}</td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+```
+
+### Conditional Sections
+
+Show sections based on data:
+
+```handlebars
+<!-- International shipping section -->
+{{#if order.is_international}}
+<div class="customs-section">
+  <h3>Customs Information</h3>
+  <p>Customs Value: {{formatCurrency order.declared_value order.currency}}</p>
+  <p>Country of Origin: {{order.origin_country}}</p>
+
+  {{#each order.customs_items}}
+  <div>
+    <span>{{description}}: {{quantity}} x {{formatCurrency unit_value ../order.currency}}</span>
+  </div>
+  {{/each}}
+</div>
+{{/if}}
+```
+
+### Custom Styling
+
+Apply CSS styles to elements:
+
+```css
+/* Template-specific styles */
+.header {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.company-logo {
+  max-height: 60px;
+  float: left;
+  margin-right: 20px;
+}
+
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.order-table th,
+.order-table td {
+  border: 1px solid #dee2e6;
+  padding: 8px;
+  text-align: left;
+}
+
+.total-row {
+  font-weight: bold;
+  background-color: #f8f9fa;
+}
+```
+
+## Integration with Orders and Shipments
+
+### Automatic Template Selection
+
+The system automatically selects appropriate templates:
+
+#### Selection Logic
+
+- **Document Type**: Invoice, packing slip, label
+- **Order Source**: Different templates per source
+- **Customer Preferences**: Custom template requirements
+- **Business Rules**: Automated template assignment
+
+#### Template Mapping
+
+```javascript
+// Template assignment rules
+const templateRules = {
+  order_confirmation: {
+    default: "standard_confirmation",
+    wholesale: "wholesale_confirmation",
+    international: "international_confirmation",
+  },
+  packing_slip: {
+    default: "standard_packing",
+    fragile: "fragile_packing",
+    multi_package: "split_packing",
+  },
+  invoice: {
+    default: "standard_invoice",
+    tax_exempt: "tax_exempt_invoice",
+    international: "commercial_invoice",
+  },
+};
+```
+
+### Batch Document Generation
+
+Generate multiple documents efficiently:
+
+#### Bulk Operations
+
+- **Select Multiple Orders**: Choose orders for processing
+- **Template Selection**: Pick appropriate templates
+- **Generate All**: Create documents in batch
+- **Download Archive**: Get all documents together
+
+#### Processing Workflow
+
+1. **Order Selection**: Choose orders to process
+2. **Template Validation**: Verify template compatibility
+3. **Data Preparation**: Gather order information
+4. **Document Generation**: Create PDF/HTML files
+5. **Archive Creation**: Package documents for download
+
+## Troubleshooting
+
+### Common Template Issues
+
+#### Design Problems
+
+- **Element Positioning**: Objects not aligning correctly
+- **Data Missing**: Variables not displaying values
+- **Formatting Issues**: Text or numbers displaying incorrectly
+- **Layout Problems**: Elements overlapping or misplaced
+
+#### Data Issues
+
+- **Variable Errors**: Template variables not resolving
+- **Missing Information**: Required data not available
+- **Formatting Problems**: Dates, numbers, currency display issues
+- **Conditional Logic**: If/then statements not working
+
+#### Generation Failures
+
+- **Template Errors**: Syntax or logic problems
+- **Data Access**: Cannot retrieve order/shipment information
+- **Output Problems**: PDF generation failures
+- **Performance Issues**: Slow document generation
+
+### Debugging Templates
+
+#### Testing Approach
+
+1. **Use Sample Data**: Test with known good data
+2. **Check Variables**: Verify all variables resolve correctly
+3. **Validate Logic**: Test conditional statements
+4. **Review Output**: Check generated document quality
+5. **Performance Testing**: Verify generation speed
+
+#### Common Solutions
+
+- **Variable Syntax**: Ensure correct Handlebars syntax
+- **Data Availability**: Check data exists in context
+- **CSS Conflicts**: Resolve styling issues
+- **Template Structure**: Verify proper HTML structure
+
+## Best Practices
+
+### Template Design Guidelines
+
+#### Design Principles
+
+- **Clean Layout**: Simple, professional appearance
+- **Consistent Branding**: Match company visual identity
+- **Clear Hierarchy**: Logical information organization
+- **Readable Typography**: Appropriate fonts and sizes
+- **Print Compatibility**: Ensure documents print correctly
+
+#### Content Organization
+
+- **Essential Information First**: Most important data prominent
+- **Logical Grouping**: Related information together
+- **White Space**: Adequate spacing for readability
+- **Clear Labels**: Obvious field identification
+- **Contact Information**: Easy to find business details
+
+### Performance Optimization
+
+#### Efficient Templates
+
+- **Minimize Elements**: Use only necessary components
+- **Optimize Images**: Compress logos and graphics
+- **Efficient Logic**: Streamline conditional statements
+- **Cache Static Content**: Reuse common elements
+- **Test Performance**: Monitor generation times
+
+#### Scalability Considerations
+
+- **Bulk Generation**: Optimize for multiple documents
+- **Large Orders**: Handle orders with many line items
+- **Complex Data**: Efficiently process detailed information
+- **Resource Usage**: Monitor server performance
+
+## API Integration
+
+### Programmatic Template Management
+
+Manage templates via API:
+
+#### Template Operations
+
+```javascript
+// Get available templates
+const templates = await karrio.templates.list({
+  type: "invoice",
+  active: true,
+});
+
+// Generate document
+const document = await karrio.documents.generate({
+  template_id: "invoice_template_123",
+  order_id: "order_456",
+  format: "pdf",
+});
+
+// Download generated document
+const documentUrl = document.document_url;
+```
+
+#### Batch Generation
+
+```javascript
+// Generate multiple documents
+const batchRequest = {
+  template_id: "packing_slip_template",
+  orders: ["order_1", "order_2", "order_3"],
+  format: "pdf",
+};
+
+const batchResult = await karrio.documents.batchGenerate(batchRequest);
+```
+
+## Next Steps
+
+Now that you understand document templates:
+
+1. **[Developer Tools](../developer-tools)** - Access APIs for template automation
+2. **[Label Creation](../label-creation)** - Use templates in shipping workflows
+3. **[Order Management](../orders)** - Generate order documents automatically
+4. **[Live vs Test Mode](../live-vs-test)** - Test templates safely
+
+---
+
+**Need help?** Join our [community Discord](https://discord.gg/gS88uE7sEx) or contact our support team.
