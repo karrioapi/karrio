@@ -190,6 +190,12 @@ export const ShipmentComponent = ({
                     </div>
                   </div>
                 </div>
+                <div>
+                  <div className="text-xs text-gray-600 mb-1">Date</div>
+                  <div className="text-sm font-medium">
+                    {formatDateTime(shipment.created_at)}
+                  </div>
+                </div>
                 {!isNone(shipment.reference) && (
                   <div>
                     <div className="text-xs text-gray-600 mb-1">Reference</div>
@@ -199,12 +205,12 @@ export const ShipmentComponent = ({
                   </div>
                 )}
                 <div>
-                  <div className="text-xs text-gray-600 mb-1">Rate</div>
-                  <div className="text-sm">
-                    <span className="font-medium mr-1">
-                      {shipment.selected_rate?.total_charge}
-                    </span>
-                    <span>{shipment.selected_rate?.currency}</span>
+                  <div className="text-xs text-gray-600 mb-1">Service Level</div>
+                  <div className="text-sm font-medium">
+                    {formatRef(
+                      ((shipment.meta as any)?.service_name ||
+                        shipment.service) as string,
+                    )}
                   </div>
                 </div>
                 <div>
@@ -298,50 +304,6 @@ export const ShipmentComponent = ({
             </div>
           </div>
 
-          <hr className="mt-1 mb-0" style={{ height: "1px" }} />
-
-          {/* Reference and highlights section */}
-          <div className="flex flex-col md:flex-row md:flex-wrap gap-0 mb-4">
-            <div className="p-4 mr-4">
-              <span className="text-xs text-gray-600 my-4">Date</span>
-              <br />
-              <span className="text-xs mt-1 font-semibold">
-                {formatDateTime(shipment.created_at)}
-              </span>
-            </div>
-
-            {!isNone(shipment.service) && (
-              <>
-                <div className="hidden md:block w-px bg-gray-300 my-1"></div>
-                <div className="p-4 mr-4">
-                  <span className="text-xs text-gray-600 my-4">Courier</span>
-                  <br />
-                  <CarrierBadge
-                    carrier_name={shipment.meta.carrier as string}
-                    text_color={
-                      shipment.selected_rate_carrier?.config?.text_color
-                    }
-                    background={
-                      shipment.selected_rate_carrier?.config?.brand_color
-                    }
-                  />
-                </div>
-
-                <div className="hidden md:block w-px bg-gray-300 my-1"></div>
-                <div className="p-4 mr-4">
-                  <span className="text-xs text-gray-600 my-4">Service Level</span>
-                  <br />
-                  <span className="text-xs mt-1 font-semibold">
-                    {formatRef(
-                      ((shipment.meta as any)?.service_name ||
-                        shipment.service) as string,
-                    )}
-                  </span>
-                </div>
-              </>
-            )}
-
-          </div>
 
           {/* Service Details - Mobile ONLY: positioned before tracking */}
           {!isNone(shipment.selected_rate) && (
@@ -382,6 +344,12 @@ export const ShipmentComponent = ({
                     </div>
                   </div>
                 </div>
+                <div>
+                  <div className="text-xs text-gray-600 mb-1">Date</div>
+                  <div className="text-sm font-medium">
+                    {formatDateTime(shipment.created_at)}
+                  </div>
+                </div>
                 {!isNone(shipment.reference) && (
                   <div>
                     <div className="text-xs text-gray-600 mb-1">Reference</div>
@@ -391,12 +359,12 @@ export const ShipmentComponent = ({
                   </div>
                 )}
                 <div>
-                  <div className="text-xs text-gray-600 mb-1">Rate</div>
-                  <div className="text-sm">
-                    <span className="font-medium mr-1">
-                      {shipment.selected_rate?.total_charge}
-                    </span>
-                    <span>{shipment.selected_rate?.currency}</span>
+                  <div className="text-xs text-gray-600 mb-1">Service Level</div>
+                  <div className="text-sm font-medium">
+                    {formatRef(
+                      ((shipment.meta as any)?.service_name ||
+                        shipment.service) as string,
+                    )}
                   </div>
                 </div>
                 <div>
