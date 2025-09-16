@@ -222,9 +222,12 @@ export const ShipmentComponent = ({
             {/* Header Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-1">
             <div className="space-y-2">
-              <span className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
-                SHIPMENT
-              </span>
+              <AppLink 
+                href="/shipments"
+                className="text-sm font-semibold text-blue-600 tracking-wide hover:text-blue-800 transition-colors duration-150 flex items-center gap-1"
+              >
+                Shipments <i className="fas fa-chevron-right text-xs"></i>
+              </AppLink>
               <div className="flex items-center gap-2">
                 <span className="text-2xl font-semibold">
                   {shipment.tracking_number || "UNFULFILLED"}
