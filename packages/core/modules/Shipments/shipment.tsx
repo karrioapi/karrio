@@ -190,6 +190,14 @@ export const ShipmentComponent = ({
                     </div>
                   </div>
                 </div>
+                {!isNone(shipment.reference) && (
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Reference</div>
+                    <div className="text-sm font-medium">
+                      {shipment.reference}
+                    </div>
+                  </div>
+                )}
                 <div>
                   <div className="text-xs text-gray-600 mb-1">Rate</div>
                   <div className="text-sm">
@@ -213,7 +221,7 @@ export const ShipmentComponent = ({
                 </div>
                 <div>
                   <div className="text-xs text-gray-600 mb-1">Last updated</div>
-                  <div className="text-sm">{formatDateTime(shipment.created_at)}</div>
+                  <div className="text-sm">{formatDateTime(shipment.updated_at)}</div>
                 </div>
                 
                 {/* Metadata Section - Part of sidebar on desktop, separate on mobile */}
@@ -333,18 +341,6 @@ export const ShipmentComponent = ({
               </>
             )}
 
-            {!isNone(shipment.reference) && (
-              <>
-                <div className="hidden md:block w-px bg-gray-300 my-1"></div>
-                <div className="p-4 mr-4">
-                  <span className="text-xs text-gray-600 my-4">Reference</span>
-                  <br />
-                  <span className="text-xs font-semibold">
-                    {shipment.reference}
-                  </span>
-                </div>
-              </>
-            )}
           </div>
 
           {/* Service Details - Mobile ONLY: positioned before tracking */}
@@ -386,6 +382,14 @@ export const ShipmentComponent = ({
                     </div>
                   </div>
                 </div>
+                {!isNone(shipment.reference) && (
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Reference</div>
+                    <div className="text-sm font-medium">
+                      {shipment.reference}
+                    </div>
+                  </div>
+                )}
                 <div>
                   <div className="text-xs text-gray-600 mb-1">Rate</div>
                   <div className="text-sm">
@@ -409,7 +413,7 @@ export const ShipmentComponent = ({
                 </div>
                 <div>
                   <div className="text-xs text-gray-600 mb-1">Last updated</div>
-                  <div className="text-sm">{formatDateTime(shipment.created_at)}</div>
+                  <div className="text-sm">{formatDateTime(shipment.updated_at)}</div>
                 </div>
               </div>
             </div>
