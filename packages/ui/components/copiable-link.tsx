@@ -48,12 +48,12 @@ export const CopiableLink: React.FC<CopiableLinkProps> = ({
       className={cn("h-8 px-3 gap-2", className)}
       title={title}
     >
-      <span className="text-[10px] font-mono">{text}</span>
       {copied ? (
         <Check className="h-3 w-3 text-green-600" />
       ) : (
         <Copy className="h-3 w-3" />
       )}
+      <span className="text-[10px] font-mono">{text}</span>
     </Button>
   );
 };

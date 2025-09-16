@@ -152,15 +152,14 @@ export const ShipmentComponent = ({
           {!isNone(shipment.selected_rate) && (
             <div className="hidden lg:block lg:order-2 lg:col-span-1 lg:col-start-4">
               <h3 className="text-xl lg:text-lg font-semibold my-4 lg:mb-4 lg:mt-0">
-                <span className="lg:hidden">Service Details</span>
-                <span className="hidden lg:block">Details</span>
+                Details
               </h3>
               <hr className="mt-1 mb-2 lg:hidden" style={{ height: "1px" }} />
               
               <div className="mt-3 mb-6 lg:mt-0 space-y-3">
                 <div>
                   <div className="text-xs text-gray-600 mb-1">Shipment ID</div>
-                  <div className="text-sm font-medium">{shipment.id}</div>
+                  <CopiableLink text={shipment.id as string} title="Copy ID" variant="outline" />
                 </div>
                 <div>
                   <div className="text-xs text-gray-600 mb-1">Service method</div>
@@ -246,9 +245,6 @@ export const ShipmentComponent = ({
             </div>
 
             <div className="space-y-2">
-              <div className="flex justify-end">
-                <CopiableLink text={shipment.id as string} title="Copy ID" />
-              </div>
               <div className="flex justify-end items-center gap-1">
                 {isPreview && (
                   <Button
@@ -331,13 +327,13 @@ export const ShipmentComponent = ({
           {/* Service Details - Mobile ONLY: positioned before tracking */}
           {!isNone(shipment.selected_rate) && (
             <div className="lg:hidden">
-              <h2 className="text-xl font-semibold my-4">Service Details</h2>
+              <h2 className="text-xl font-semibold my-4">Details</h2>
               <hr className="mt-1 mb-2" style={{ height: "1px" }} />
               
               <div className="mt-3 mb-6 space-y-3">
                 <div>
                   <div className="text-xs text-gray-600 mb-1">Shipment ID</div>
-                  <div className="text-sm font-medium">{shipment.id}</div>
+                  <CopiableLink text={shipment.id as string} title="Copy ID" variant="outline" />
                 </div>
                 <div>
                   <div className="text-xs text-gray-600 mb-1">Service method</div>
