@@ -242,6 +242,10 @@ export const ShipmentComponent = ({
                 </div>
                 <ShipmentsStatusBadge status={shipment.status} />
               </div>
+              {/* Mobile ShipmentMenu - positioned after cost/currency line */}
+              <div className="flex justify-start md:hidden">
+                <ShipmentMenu shipment={shipment as any} isViewing variant="outline" />
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -262,7 +266,10 @@ export const ShipmentComponent = ({
                   </Button>
                 )}
 
-                <ShipmentMenu shipment={shipment as any} isViewing />
+                {/* Desktop ShipmentMenu - hidden on mobile */}
+                <div className="hidden md:block">
+                  <ShipmentMenu shipment={shipment as any} isViewing variant="outline" />
+                </div>
               </div>
             </div>
           </div>
