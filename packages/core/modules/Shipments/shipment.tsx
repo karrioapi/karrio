@@ -15,6 +15,7 @@ import { ActivityTimeline } from "@karrio/ui/components/activity-timeline";
 import { CustomsType, NotificationType, ParcelType, MetadataObjectTypeEnum } from "@karrio/types";
 import { CopiableLink } from "@karrio/ui/components/copiable-link";
 import { CarrierBadge } from "@karrio/ui/core/components/carrier-badge";
+import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
 import { ShipmentsStatusBadge } from "@karrio/ui/components/shipments-status-badge";
 import { Button } from "@karrio/ui/components/ui/button";
@@ -162,17 +163,32 @@ export const ShipmentComponent = ({
                   <CopiableLink text={shipment.id as string} title="Copy ID" variant="outline" />
                 </div>
                 <div>
-                  <div className="text-xs text-gray-600 mb-1">Service method</div>
-                  <div className="text-sm">
-                    {formatRef(
-                      ((shipment.meta as any)?.service_name ||
-                        shipment.service) as string,
-                    )}
+                  <div className="text-xs text-gray-600 mb-1">Shipment method</div>
+                  <div className="flex items-center">
+                    <CarrierImage
+                      carrier_name={shipment.meta.carrier as string}
+                      containerClassName="mt-1 ml-1 mr-2"
+                      height={28}
+                      width={28}
+                    />
+                    <div className="text-ellipsis text-xs" style={{ maxWidth: "190px", lineHeight: "16px" }}>
+                      <span className="text-blue-600 font-bold">
+                        {!isNone(shipment.tracking_number) && (
+                          <span>{shipment.tracking_number}</span>
+                        )}
+                        {isNone(shipment.tracking_number) && (
+                          <span>-</span>
+                        )}
+                      </span>
+                      <br />
+                      <span className="text-ellipsis">
+                        {formatRef(
+                          ((shipment.meta as any)?.service_name ||
+                            shipment.service) as string,
+                        )}
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <div className="text-xs text-gray-600 mb-1">Courier</div>
-                  <div className="text-sm">{formatRef(shipment.meta.carrier as string)}</div>
                 </div>
                 <div>
                   <div className="text-xs text-gray-600 mb-1">Rate</div>
@@ -229,13 +245,13 @@ export const ShipmentComponent = ({
               </AppLink>
               <div className="flex items-center gap-2">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-bold">
+                  <span className="text-3xl font-bold">
                     {shipment.selected_rate?.total_charge !== undefined && shipment.selected_rate?.total_charge !== null
                       ? Number(shipment.selected_rate.total_charge).toFixed(2)
                       : (shipment.status === "purchased" ? "0.00" : "UNFULFILLED")}
                   </span>
                   {shipment.selected_rate?.currency && (
-                    <span className="text-2xl text-gray-600">
+                    <span className="text-3xl text-gray-600">
                       {shipment.selected_rate?.currency}
                     </span>
                   )}
@@ -343,17 +359,32 @@ export const ShipmentComponent = ({
                   <CopiableLink text={shipment.id as string} title="Copy ID" variant="outline" />
                 </div>
                 <div>
-                  <div className="text-xs text-gray-600 mb-1">Service method</div>
-                  <div className="text-sm">
-                    {formatRef(
-                      ((shipment.meta as any)?.service_name ||
-                        shipment.service) as string,
-                    )}
+                  <div className="text-xs text-gray-600 mb-1">Shipment method</div>
+                  <div className="flex items-center">
+                    <CarrierImage
+                      carrier_name={shipment.meta.carrier as string}
+                      containerClassName="mt-1 ml-1 mr-2"
+                      height={28}
+                      width={28}
+                    />
+                    <div className="text-ellipsis text-xs" style={{ maxWidth: "190px", lineHeight: "16px" }}>
+                      <span className="text-blue-600 font-bold">
+                        {!isNone(shipment.tracking_number) && (
+                          <span>{shipment.tracking_number}</span>
+                        )}
+                        {isNone(shipment.tracking_number) && (
+                          <span>-</span>
+                        )}
+                      </span>
+                      <br />
+                      <span className="text-ellipsis">
+                        {formatRef(
+                          ((shipment.meta as any)?.service_name ||
+                            shipment.service) as string,
+                        )}
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <div className="text-xs text-gray-600 mb-1">Courier</div>
-                  <div className="text-sm">{formatRef(shipment.meta.carrier as string)}</div>
                 </div>
                 <div>
                   <div className="text-xs text-gray-600 mb-1">Rate</div>
