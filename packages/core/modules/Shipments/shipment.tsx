@@ -229,9 +229,18 @@ export const ShipmentComponent = ({
                 Shipments <i className="fas fa-chevron-right text-xs"></i>
               </AppLink>
               <div className="flex items-center gap-2">
-                <span className="text-2xl font-semibold">
-                  {shipment.tracking_number || "UNFULFILLED"}
-                </span>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-2xl font-bold">
+                    {shipment.selected_rate?.total_charge !== undefined && shipment.selected_rate?.total_charge !== null
+                      ? Number(shipment.selected_rate.total_charge).toFixed(2)
+                      : (shipment.status === "purchased" ? "0.00" : "UNFULFILLED")}
+                  </span>
+                  {shipment.selected_rate?.currency && (
+                    <span className="text-2xl text-gray-600">
+                      {shipment.selected_rate?.currency}
+                    </span>
+                  )}
+                </div>
                 <ShipmentsStatusBadge status={shipment.status} />
               </div>
             </div>
