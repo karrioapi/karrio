@@ -765,7 +765,7 @@ def shipment_request(
                             ups.ReferenceNumberType(
                                 Value=package.parcel.reference_number,
                             )
-                            if (country_pair not in ["US/US", "PR/PR"])
+                            if (country_pair in ["US/US", "PR/PR"])
                             and any(package.parcel.reference_number or "")
                             else None
                         ),
