@@ -10,8 +10,9 @@ import { CommodityDescription } from "@karrio/ui/core/components/commodity-descr
 import { OptionsDescription } from "@karrio/ui/core/components/options-description";
 import { AddressDescription } from "@karrio/ui/core/components/address-description";
 import { ParcelDescription } from "@karrio/ui/core/components/parcel-description";
-import { formatDateTime, formatDayDate, formatRef, isNone } from "@karrio/lib";
+import { formatDateTime, formatRef, isNone } from "@karrio/lib";
 import { ActivityTimeline } from "@karrio/ui/components/activity-timeline";
+import { RecentActivity } from "@karrio/ui/components/recent-activity";
 import { CustomsType, NotificationType, ParcelType, MetadataObjectTypeEnum } from "@karrio/types";
 import { CopiableLink } from "@karrio/ui/components/copiable-link";
 import { CarrierBadge } from "@karrio/ui/core/components/carrier-badge";
@@ -304,71 +305,23 @@ export const ShipmentComponent = ({
 
           {!isNone(shipment.tracker) && (
             <>
-              <h2 className="text-xl font-semibold my-4">
-                <span>Tracking Details</span>
-                <a
-                  className="p-0 mx-2 my-0 text-base font-semibold"
-                  href={`/tracking/${shipment.tracker_id}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <span>
-                    <i className="fas fa-external-link-alt"></i>
-                  </span>
-                </a>
-              </h2>
+              <h2 className="text-xl font-semibold my-4">Recent Activity</h2>
               <hr className="mt-1 mb-2" style={{ height: "1px" }} />
               <div className="mt-3 mb-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-1">
-                  <div className="text-sm">
-                    {!isNone(shipment.tracker?.estimated_delivery) && (
-                      <div className="grid grid-cols-3 gap-2 my-0">
-                        <div className="text-base py-0">
-                          {shipment.tracker?.delivered
-                            ? "Delivered"
-                            : "Estimated Delivery"}
-                        </div>
-                        <div className="col-span-2 text-xs font-semibold py-1">
-                          {formatDayDate(
-                            shipment.tracker!.estimated_delivery as string,
-                          )}
-                        </div>
-                      </div>
-                    )}
-                    <div className="grid grid-cols-3 gap-2 my-0">
-                      <div className="text-base py-0">
-                        Last event
-                      </div>
-                      <div className="col-span-2 text-xs font-semibold py-1">
-                        <p className="capitalize">
-                          {formatDayDate(
-                            (shipment.tracker?.events || [])[0]?.date as string,
-                          )}{" "}
-                          <code>
-                            {(shipment.tracker?.events || [])[0]?.time}
-                          </code>
-                        </p>
-                      </div>
-                    </div>
-                    {!isNone((shipment.tracker?.events || [])[0]?.location) && (
-                      <div className="grid grid-cols-3 gap-2 my-0">
-                        <div></div>
-                        <div className="col-span-2 text-xs font-semibold py-1">
-                          {(shipment.tracker?.events || [])[0]?.location}
-                        </div>
-                      </div>
-                    )}
-                    {!isNone(
-                      (shipment.tracker?.events || [])[0]?.description,
-                    ) && (
-                        <div className="grid grid-cols-3 gap-2 my-0">
-                          <div></div>
-                          <div className="col-span-2 text-xs font-semibold py-1">
-                            {(shipment.tracker?.events || [])[0]?.description}
-                          </div>
-                        </div>
-                      )}
-                  </div>
+                <RecentActivity
+                  tracker={shipment.tracker}
+                />
+                {/* External link to full tracking page */}
+                <div className="mt-4">
+                  <a
+                    className="text-sm text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1"
+                    href={`/tracking/${shipment.tracker_id}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    View tracking details
+                    <i className="fas fa-external-link-alt text-xs"></i>
+                  </a>
                 </div>
               </div>
             </>
