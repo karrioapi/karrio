@@ -305,24 +305,23 @@ export const ShipmentComponent = ({
 
           {!isNone(shipment.tracker) && (
             <>
-              <h2 className="text-xl font-semibold my-4">Recent Activity</h2>
+              <div className="flex justify-between items-center my-4">
+                <h2 className="text-xl font-semibold">Recent Activity</h2>
+                <a
+                  className="text-xs text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1"
+                  href={`/tracking/${shipment.tracker_id}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                   Tracking details
+                  <i className="fas fa-external-link-alt text-xs"></i>
+                </a>
+              </div>
               <hr className="mt-1 mb-2" style={{ height: "1px" }} />
               <div className="mt-3 mb-6">
                 <RecentActivity
                   tracker={shipment.tracker}
                 />
-                {/* External link to full tracking page */}
-                <div className="mt-4">
-                  <a
-                    className="text-sm text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1"
-                    href={`/tracking/${shipment.tracker_id}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    View tracking details
-                    <i className="fas fa-external-link-alt text-xs"></i>
-                  </a>
-                </div>
               </div>
             </>
           )}
