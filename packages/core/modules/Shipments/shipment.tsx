@@ -374,6 +374,61 @@ export const ShipmentComponent = ({
             </>
           )}
 
+          {/* Charges section */}
+          {!isNone(shipment.selected_rate) &&
+           (shipment.selected_rate?.extra_charges || []).length > 0 && (
+            <>
+              <h2 className="text-xl font-semibold my-4">Charges breakdown</h2>
+              <hr className="mt-1 mb-2" style={{ height: "1px" }} />
+
+              <div className="mt-3 mb-6">
+                <div className="max-w-md">
+                  {/* Extra charges items */}
+                  {(shipment.selected_rate?.extra_charges || []).map(
+                    (charge, index) => (
+                      <div key={index}>
+                        <div className="flex justify-between items-center py-3">
+                          <span className="text-sm text-gray-900">
+                            {charge?.name || 'Charge'}
+                          </span>
+                          <div className="text-sm text-gray-900 text-right">
+                            <span className="mr-1">{charge?.amount}</span>
+                            {!isNone(charge?.currency) && (
+                              <span>{charge?.currency}</span>
+                            )}
+                          </div>
+                        </div>
+                        {index < (shipment.selected_rate?.extra_charges || []).length - 1 && (
+                          <hr className="border-gray-200" />
+                        )}
+                      </div>
+                    )
+                  )}
+
+                  {/* Separator before total */}
+                  {(shipment.selected_rate?.extra_charges || []).length > 0 && (
+                    <hr className="border-gray-200 my-1" />
+                  )}
+
+                  {/* Total line */}
+                  <div className="flex justify-between items-center py-3">
+                    <span className="text-sm font-semibold text-gray-900">
+                      Total
+                    </span>
+                    <div className="text-sm font-semibold text-gray-900 text-right">
+                      <span className="mr-1">
+                        {Number(shipment.selected_rate?.total_charge).toFixed(2)}
+                      </span>
+                      {shipment.selected_rate?.currency && (
+                        <span>{shipment.selected_rate?.currency}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
           {/* Shipment details section */}
           <h2 className="text-xl font-semibold my-4">Shipment Details</h2>
           <hr className="mt-1 mb-2" style={{ height: "1px" }} />
