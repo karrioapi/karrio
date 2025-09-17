@@ -206,16 +206,16 @@ export const ShipmentComponent = ({
             {/* Right Sidebar - Details Section */}
             {!isNone(shipment.selected_rate) && (
               <div className="lg:order-2 lg:col-span-1 lg:col-start-4">
-                <h3 className="text-xl lg:text-lg font-semibold my-4 lg:mb-4 lg:mt-0">
+                <h3 className="text-xl font-semibold my-4 lg:mb-4 lg:mt-0">
                   Details
                 </h3>
                 <div className="space-y-3">
                   <div>
-                    <div className="text-xs text-gray-600 mb-1">Shipment ID</div>
+                    <div className="text-xs mb-1 font-bold">Shipment ID</div>
                     <CopiableLink text={shipment.id as string} title="Copy ID" variant="outline" />
                   </div>
                   <div>
-                    <div className="text-xs text-gray-600 mb-1">Shipment method</div>
+                    <div className="text-xs mb-1 font-bold">Shipment method</div>
                     <div className="flex items-center">
                       <CarrierImage
                         carrier_name={shipment.meta.carrier as string}
@@ -243,21 +243,21 @@ export const ShipmentComponent = ({
                     </div>
                   </div>
                   <div>
-                    <div className="text-xs text-gray-600 mb-1">Date</div>
+                    <div className="text-xs mb-1 font-bold">Date</div>
                     <div className="text-sm font-medium">
                       {formatDateTime(shipment.created_at)}
                     </div>
                   </div>
                   {!isNone(shipment.reference) && (
                     <div>
-                      <div className="text-xs text-gray-600 mb-1">Reference</div>
+                      <div className="text-xs mb-1 font-bold">Reference</div>
                       <div className="text-sm font-medium">
                         {shipment.reference}
                       </div>
                     </div>
                   )}
                   <div>
-                    <div className="text-xs text-gray-600 mb-1">Service Level</div>
+                    <div className="text-xs mb-1 font-bold">Service Level</div>
                     <div className="text-sm font-medium">
                       {formatRef(
                         ((shipment.meta as any)?.service_name ||
@@ -266,25 +266,25 @@ export const ShipmentComponent = ({
                     </div>
                   </div>
                   <div>
-                    <div className="text-xs text-gray-600 mb-1">Tracking Number</div>
+                    <div className="text-xs mb-1 font-bold">Tracking Number</div>
                     <div className="text-sm font-medium text-blue-600">
                       {shipment.tracking_number as string}
                     </div>
                   </div>
                   <div>
-                    <div className="text-xs text-gray-600 mb-1">Rate Provider</div>
+                    <div className="text-xs mb-1 font-bold">Rate Provider</div>
                     <div className="text-sm text-blue-600 font-medium">
                       {formatRef(shipment.meta.ext as string)}
                     </div>
                   </div>
                   <div>
-                    <div className="text-xs text-gray-600 mb-1">Last updated</div>
+                    <div className="text-xs mb-1 font-bold">Last updated</div>
                     <div className="text-sm">{formatDateTime(shipment.updated_at)}</div>
                   </div>
 
                   {/* Metadata Section - Part of sidebar on desktop only */}
                   <div className="hidden lg:block mt-6">
-                    <h4 className="text-base font-semibold mb-3">Metadata</h4>
+                    <h4 className="text-xl font-semibold mb-3">Metadata</h4>
                     <EnhancedMetadataEditor
                       value={shipment.metadata || {}}
                       onChange={handleMetadataChange}
@@ -300,7 +300,7 @@ export const ShipmentComponent = ({
             )}
 
             {/* Left Column - Main Content */}
-            <div className="lg:col-span-3 lg:col-start-1 space-y-6 order-1 lg:order-1">
+            <div className="lg:col-span-3 lg:col-start-1 space-y-6 order-1 lg:order-1 mr-5">
 
           {!isNone(shipment.tracker) && (
             <>
