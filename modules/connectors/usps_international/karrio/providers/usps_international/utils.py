@@ -5,6 +5,7 @@ import datetime
 import karrio.lib as lib
 import karrio.core as core
 import karrio.core.errors as errors
+from karrio.core.utils.caching import ThreadSafeTokenManager
 
 AccountType = lib.units.create_enum(
     "AccountType",
@@ -49,19 +50,12 @@ class Settings(core.Settings):
         or collect it from the cache if an unexpired access_token exist.
         """
         cache_key = f"access|{self.carrier_name}|{self.client_id}|{self.client_secret}"
-        now = datetime.datetime.now() + datetime.timedelta(minutes=30)
 
-        auth = self.connection_cache.get(cache_key) or {}
-        token = auth.get("access_token")
-        expiry = lib.to_date(auth.get("expiry"), current_format="%Y-%m-%d %H:%M:%S")
-
-        if token is not None and expiry is not None and expiry > now:
-            return token
-
-        self.connection_cache.set(cache_key, lambda: oauth2_login(self))
-        new_auth = self.connection_cache.get(cache_key)
-
-        return new_auth["access_token"]
+        return self.connection_cache.thread_safe(
+            refresh_func=lambda: oauth2_login(self),
+            cache_key=cache_key,
+            buffer_minutes=30,
+        ).get_state()
 
     @property
     def payment_token(self):
@@ -69,19 +63,13 @@ class Settings(core.Settings):
         or collect it from the cache if an unexpired paymentAuthorizationToken exist.
         """
         cache_key = f"payment|{self.carrier_name}|{self.client_id}|{self.client_secret}"
-        now = datetime.datetime.now() + datetime.timedelta(minutes=30)
 
-        auth = self.connection_cache.get(cache_key) or {}
-        token = auth.get("paymentAuthorizationToken")
-        expiry = lib.to_date(auth.get("expiry"), current_format="%Y-%m-%d %H:%M:%S")
-
-        if token is not None and expiry is not None and expiry > now:
-            return token
-
-        self.connection_cache.set(cache_key, lambda: payment_auth(self))
-        new_auth = self.connection_cache.get(cache_key)
-
-        return new_auth["paymentAuthorizationToken"]
+        return self.connection_cache.thread_safe(
+            refresh_func=lambda: payment_auth(self),
+            cache_key=cache_key,
+            buffer_minutes=30,
+            token_field="paymentAuthorizationToken",
+        ).get_state()
 
 
 class ConnectionConfig(lib.Enum):
