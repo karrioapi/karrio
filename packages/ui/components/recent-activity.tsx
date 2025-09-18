@@ -28,77 +28,31 @@ interface RecentActivityProps {
 const getActivityIcon = (status?: TrackerStatusEnum, delivered?: boolean | null) => {
   // Check delivered flag first
   if (delivered) {
-    return (
-      <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-green-600 text-xs">
-        <i className="fas fa-check"></i>
-      </div>
-    );
+    return <i className="fas fa-circle text-green-600 text-xs" />;
   }
 
   // Use structured status
   switch (status) {
-    // Success States (Green)
-    case TrackerStatusEnum.delivered:
-      return (
-        <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-green-600 text-xs">
-          <i className="fas fa-check"></i>
-        </div>
-      );
-
-    // Active Delivery States (Blue)
-    case TrackerStatusEnum.out_for_delivery:
-      return (
-        <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-blue-600 text-xs">
-          <i className="fas fa-truck"></i>
-        </div>
-      );
-
-    case TrackerStatusEnum.in_transit:
-      return (
-        <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-blue-600 text-xs">
-          <i className="fas fa-shipping-fast"></i>
-        </div>
-      );
-
-    // Pickup States (Orange)
-    case TrackerStatusEnum.ready_for_pickup:
-      return (
-        <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-orange-600 text-xs">
-          <i className="fas fa-hand-holding"></i>
-        </div>
-      );
-
-    // Initial/Processing States (Purple)
-    case TrackerStatusEnum.pending:
-      return (
-        <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-purple-600 text-xs">
-          <i className="fas fa-tag"></i>
-        </div>
-      );
-
     // Problem/Error States (Red)
-    case TrackerStatusEnum.cancelled:
     case TrackerStatusEnum.delivery_failed:
     case TrackerStatusEnum.return_to_sender:
-      return (
-        <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-red-600 text-xs">
-          <i className="fas fa-exclamation-triangle"></i>
-        </div>
-      );
+      return <i className="fas fa-circle text-red-600 text-xs" />;
 
-    // Delay/Hold States (Yellow)
+    // Cancelled/Unknown States (Gray)
+    case TrackerStatusEnum.cancelled:
+    case TrackerStatusEnum.unknown:
+      return <i className="fas fa-circle text-gray-400 text-xs" />;
+
+    // All other states (Green)
+    case TrackerStatusEnum.delivered:
+    case TrackerStatusEnum.out_for_delivery:
+    case TrackerStatusEnum.in_transit:
+    case TrackerStatusEnum.ready_for_pickup:
+    case TrackerStatusEnum.pending:
     case TrackerStatusEnum.delivery_delayed:
     case TrackerStatusEnum.on_hold:
-      return (
-        <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-yellow-600 text-xs">
-          <i className="fas fa-clock"></i>
-        </div>
-      );
-
-    // Unknown States (Gray)
-    case TrackerStatusEnum.unknown:
     default:
-      return <i className="fas fa-circle text-gray-400" />;
+      return <i className="fas fa-circle text-green-600 text-xs" />;
   }
 };
 
