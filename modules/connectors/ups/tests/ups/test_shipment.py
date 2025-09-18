@@ -10,10 +10,8 @@ import karrio.sdk as karrio
 class TestUPSShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.ShipmentRequest = ShipmentRequest(**package_shipment_data)
-        self.ShipmentCancelRequest = ShipmentCancelRequest(
-            **shipment_cancel_request_data
-        )
+        self.ShipmentRequest = ShipmentRequest(**PackageShipmentData)
+        self.ShipmentCancelRequest = ShipmentCancelRequest(**ShipmentCancelRequestData)
 
     def test_create_package_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -31,13 +29,13 @@ class TestUPSShipment(unittest.TestCase):
 
     def test_create_package_shipment_with_package_preset_request(self):
         request = gateway.mapper.create_shipment_request(
-            ShipmentRequest(**package_shipment_with_package_preset_data)
+            ShipmentRequest(**PackageShipmentWithPackagePresetData)
         )
         self.assertEqual(request.serialize(), ShipmentRequestWithPresetJSON)
 
     def test_create_international_shipment_request(self):
         request = gateway.mapper.create_shipment_request(
-            ShipmentRequest(**international_shipment_data)
+            ShipmentRequest(**InternationalShipmentData)
         )
         self.assertEqual(request.serialize(), InternationalShipmentRequestJSON)
 
@@ -85,7 +83,7 @@ if __name__ == "__main__":
 
 
 # International shipment test data
-international_shipment_data = {
+InternationalShipmentData = {
     "shipper": {
         "company_name": "US Exporter Corp",
         "person_name": "John Exporter",
@@ -232,7 +230,7 @@ InternationalShipmentRequestJSON = {
                 "Name": "International Buyer Corp",
                 "Phone": {"Number": "555-123-4567"},
             },
-            "ShipmentDate": "2025-09-15",
+            "ShipmentDate": ANY,
             "ShipmentRatingOptions": {"NegotiatedRatesIndicator": "Y"},
             "ShipmentServiceOptions": {
                 "DeliveryConfirmation": {"DCISType": "1"},
@@ -311,9 +309,9 @@ InternationalShipmentRequestJSON = {
     }
 }
 
-shipment_cancel_request_data = {"shipment_identifier": "1ZWA82900191640782"}
+ShipmentCancelRequestData = {"shipment_identifier": "1ZWA82900191640782"}
 
-package_shipment_data = {
+PackageShipmentData = {
     "shipper": {
         "company_name": "Shipper Name",
         "person_name": "Shipper Attn Name",
@@ -356,7 +354,7 @@ package_shipment_data = {
     "reference": "Your Customer Context",
 }
 
-package_shipment_with_package_preset_data = {
+PackageShipmentWithPackagePresetData = {
     "shipper": {
         "company_name": "Shipper Name",
         "person_name": "Shipper Attn Name",
