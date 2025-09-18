@@ -26,34 +26,13 @@ interface RecentActivityProps {
 }
 
 const getActivityIcon = (status?: TrackerStatusEnum, delivered?: boolean | null) => {
-  // Check delivered flag first
+  // Green for delivered, gray for everything else
   if (delivered) {
     return <i className="fas fa-circle text-green-600 text-xs" />;
   }
 
-  // Use structured status
-  switch (status) {
-    // Problem/Error States (Red)
-    case TrackerStatusEnum.delivery_failed:
-    case TrackerStatusEnum.return_to_sender:
-      return <i className="fas fa-circle text-red-600 text-xs" />;
-
-    // Cancelled/Unknown States (Gray)
-    case TrackerStatusEnum.cancelled:
-    case TrackerStatusEnum.unknown:
-      return <i className="fas fa-circle text-gray-400 text-xs" />;
-
-    // All other states (Green)
-    case TrackerStatusEnum.delivered:
-    case TrackerStatusEnum.out_for_delivery:
-    case TrackerStatusEnum.in_transit:
-    case TrackerStatusEnum.ready_for_pickup:
-    case TrackerStatusEnum.pending:
-    case TrackerStatusEnum.delivery_delayed:
-    case TrackerStatusEnum.on_hold:
-    default:
-      return <i className="fas fa-circle text-green-600 text-xs" />;
-  }
+  // Gray for all other cases
+  return <i className="fas fa-circle text-gray-400 text-xs" />;
 };
 
 export const RecentActivity: React.FC<RecentActivityProps> = ({
@@ -133,9 +112,9 @@ export const RecentActivity: React.FC<RecentActivityProps> = ({
 
               {/* Connecting Line */}
               {index < recentActivities.length - 1 && (
-                <div className="flex">
-                  <div className="w-6 flex justify-center">
-                    <div className="w-px h-4 bg-gray-300"></div>
+                <div className="flex -my-2">
+                  <div className="w-6 flex justify-start pl-1">
+                    <div className="w-px h-8 bg-gray-300"></div>
                   </div>
                 </div>
               )}
