@@ -381,6 +381,48 @@ export const ShipmentComponent = ({
             </>
           )}
 
+          {/* Connection details section */}
+          <h2 className="text-xl font-semibold my-4">Connection Details</h2>
+          <hr className="mt-1 mb-2" style={{ height: "1px" }} />
+
+          <div className="mt-3 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-0">
+              <div className="space-y-2">
+                {/* Connection ID */}
+                <div className="flex items-center">
+                  <div className="text-xs font-bold w-32">Connection ID</div>
+                  <div className="text-sm font-medium">
+                    {shipment.carrier_id || '-'}
+                  </div>
+                </div>
+
+                {/* Carrier ID */}
+                <div className="flex items-center">
+                  <div className="text-xs font-bold w-32">Carrier ID</div>
+                  <div className="text-sm font-medium">
+                    {shipment.selected_rate?.carrier_id || '-'}
+                  </div>
+                </div>
+
+                {/* Type */}
+                <div className="flex items-center">
+                  <div className="text-xs font-bold w-32">Type</div>
+                  <div className="text-sm font-medium">
+                    {shipment.carrier_name || shipment.selected_rate?.carrier_name || '-'}
+                  </div>
+                </div>
+
+                {/* Provider */}
+                <div className="flex items-center">
+                  <div className="text-xs font-bold w-32">Provider</div>
+                  <div className="text-sm font-medium">
+                    {(shipment.selected_rate_carrier as any)?.display_name || shipment.carrier_name || shipment.selected_rate?.carrier_name || '-'}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Shipment details section */}
           <h2 className="text-xl font-semibold my-4">Shipment Details</h2>
           <hr className="mt-1 mb-2" style={{ height: "1px" }} />
