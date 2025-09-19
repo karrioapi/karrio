@@ -425,21 +425,9 @@ def shipping_options_initializer(
     Apply default values to the given options.
     """
     _options = options.copy()
-    _add_signature = "fedex_signature_option" not in options
 
     if package_options is not None:
         _options.update(package_options.content)
-
-    if _add_signature:
-        _options.update(
-            dict(
-                fedex_signature_option=(
-                    "ADULT"
-                    if _options.get("signature_confirmation")
-                    else "SERVICE_DEFAULT"
-                )
-            )
-        )
 
     def items_filter(key: str) -> bool:
         return key in ShippingOption and key not in ["doc_files", "doc_references"]  # type: ignore

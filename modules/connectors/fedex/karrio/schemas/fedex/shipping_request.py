@@ -19,13 +19,13 @@ class AddressType:
 
 
 @attr.s(auto_attribs=True)
-class BrokerContactType:
+class ContactType:
     personName: typing.Optional[str] = None
     emailAddress: typing.Optional[str] = None
-    phoneNumber: typing.Optional[int] = None
-    phoneExtension: typing.Optional[int] = None
+    phoneNumber: typing.Optional[str] = None
+    phoneExtension: typing.Optional[str] = None
     companyName: typing.Optional[str] = None
-    faxNumber: typing.Optional[int] = None
+    faxNumber: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
@@ -38,17 +38,17 @@ class TinType:
 
 
 @attr.s(auto_attribs=True)
-class BrokerBrokerType:
+class ShipperType:
     address: typing.Optional[AddressType] = jstruct.JStruct[AddressType]
-    contact: typing.Optional[BrokerContactType] = jstruct.JStruct[BrokerContactType]
+    contact: typing.Optional[ContactType] = jstruct.JStruct[ContactType]
     accountNumber: typing.Optional[AccountNumberType] = jstruct.JStruct[AccountNumberType]
     tins: typing.Optional[typing.List[TinType]] = jstruct.JList[TinType]
     deliveryInstructions: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
-class BrokerElementType:
-    broker: typing.Optional[BrokerBrokerType] = jstruct.JStruct[BrokerBrokerType]
+class BrokerType:
+    broker: typing.Optional[ShipperType] = jstruct.JStruct[ShipperType]
     type: typing.Optional[str] = None
 
 
@@ -160,26 +160,8 @@ class BillingDetailsType:
 
 
 @attr.s(auto_attribs=True)
-class ResponsiblePartyContactType:
-    personName: typing.Optional[str] = None
-    emailAddress: typing.Optional[str] = None
-    phoneNumber: typing.Optional[str] = None
-    phoneExtension: typing.Optional[str] = None
-    companyName: typing.Optional[str] = None
-    faxNumber: typing.Optional[str] = None
-
-
-@attr.s(auto_attribs=True)
-class ResponsiblePartyType:
-    address: typing.Optional[AddressType] = jstruct.JStruct[AddressType]
-    contact: typing.Optional[ResponsiblePartyContactType] = jstruct.JStruct[ResponsiblePartyContactType]
-    accountNumber: typing.Optional[AccountNumberType] = jstruct.JStruct[AccountNumberType]
-    tins: typing.Optional[typing.List[TinType]] = jstruct.JList[TinType]
-
-
-@attr.s(auto_attribs=True)
 class PayorType:
-    responsibleParty: typing.Optional[ResponsiblePartyType] = jstruct.JStruct[ResponsiblePartyType]
+    responsibleParty: typing.Optional[ShipperType] = jstruct.JStruct[ShipperType]
 
 
 @attr.s(auto_attribs=True)
@@ -205,15 +187,6 @@ class ExportDetailType:
 
 
 @attr.s(auto_attribs=True)
-class ShipperType:
-    address: typing.Optional[AddressType] = jstruct.JStruct[AddressType]
-    contact: typing.Optional[ResponsiblePartyContactType] = jstruct.JStruct[ResponsiblePartyContactType]
-    accountNumber: typing.Optional[AccountNumberType] = jstruct.JStruct[AccountNumberType]
-    tins: typing.Optional[typing.List[TinType]] = jstruct.JList[TinType]
-    deliveryInstructions: typing.Optional[str] = None
-
-
-@attr.s(auto_attribs=True)
 class RecipientCustomsIDType:
     type: typing.Optional[str] = None
     value: typing.Optional[int] = None
@@ -222,7 +195,7 @@ class RecipientCustomsIDType:
 @attr.s(auto_attribs=True)
 class CustomsClearanceDetailType:
     regulatoryControls: typing.Optional[str] = None
-    brokers: typing.Optional[typing.List[BrokerElementType]] = jstruct.JList[BrokerElementType]
+    brokers: typing.Optional[typing.List[BrokerType]] = jstruct.JList[BrokerType]
     commercialInvoice: typing.Optional[CommercialInvoiceType] = jstruct.JStruct[CommercialInvoiceType]
     freightOnValue: typing.Optional[str] = None
     dutiesPayment: typing.Optional[DutiesPaymentType] = jstruct.JStruct[DutiesPaymentType]
@@ -314,7 +287,7 @@ class CustomerSpecifiedDetailType:
 @attr.s(auto_attribs=True)
 class OriginType:
     address: typing.Optional[AddressType] = jstruct.JStruct[AddressType]
-    contact: typing.Optional[ResponsiblePartyContactType] = jstruct.JStruct[ResponsiblePartyContactType]
+    contact: typing.Optional[ContactType] = jstruct.JStruct[ContactType]
 
 
 @attr.s(auto_attribs=True)

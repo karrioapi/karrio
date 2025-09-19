@@ -268,16 +268,17 @@ RateRequest = {
     },
     "requestedShipment": {
         "customsClearanceDetail": {
+            "commercialInvoice": {"shipmentPurpose": "SOLD"},
             "commodities": [
                 {
-                    "name": "test",
+                    "customsValue": {"amount": 1.0, "currency": "USD"},
                     "description": "test",
                     "harmonizedCode": "00339BB",
+                    "name": "test",
                     "numberOfPieces": 1,
                     "quantity": 1,
                     "quantityUnits": "PCS",
                     "weight": {"units": "LB", "value": 10.0},
-                    "customsValue": {"amount": 1.0, "currency": "USD"},
                 }
             ],
             "dutiesPayment": {
@@ -295,6 +296,7 @@ RateRequest = {
         },
         "requestedPackageLineItems": [
             {
+                "declaredValue": {"amount": 0.0, "currency": "USD"},
                 "dimensions": {
                     "height": 3.0,
                     "length": 10.0,
@@ -302,15 +304,11 @@ RateRequest = {
                     "width": 3.0,
                 },
                 "groupPackageCount": 1,
-                "packageSpecialServices": {
-                    "signatureOptionType": "SERVICE_DEFAULT",
-                    "specialServiceTypes": ["SIGNATURE_OPTION"],
-                },
                 "subPackagingType": "OTHER",
                 "weight": {"units": "LB", "value": 4.0},
             }
         ],
-        "shipDateStamp": "2024-02-15",
+        "shipDateStamp": ANY,
         "shipmentSpecialServices": {"specialServiceTypes": ["FEDEX_ONE_RATE"]},
         "shipper": {
             "address": {
