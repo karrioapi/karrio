@@ -391,33 +391,33 @@ export const ShipmentComponent = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-0">
               <div className="space-y-2">
                 {/* Connection ID */}
-                <div className="flex items-center">
-                  <div className="text-xs font-bold w-32">Connection ID</div>
-                  <div className="text-sm font-medium">
+                <div className="flex flex-col xl:flex-row xl:items-center">
+                  <div className="text-xs font-bold xl:w-32 mb-1 xl:mb-0">Connection ID</div>
+                  <div className="text-sm font-medium break-all">
                     {shipment.selected_rate_carrier?.id || '-'}
                   </div>
                 </div>
 
                 {/* Carrier ID */}
-                <div className="flex items-center">
-                  <div className="text-xs font-bold w-32">Carrier ID</div>
-                  <div className="text-sm font-medium">
+                <div className="flex flex-col xl:flex-row xl:items-center">
+                  <div className="text-xs font-bold xl:w-32 mb-1 xl:mb-0">Carrier ID</div>
+                  <div className="text-sm font-medium break-all">
                     {shipment.selected_rate_carrier?.carrier_id || '-'}
                   </div>
                 </div>
 
                 {/* Type */}
-                <div className="flex items-center">
-                  <div className="text-xs font-bold w-32">Type</div>
-                  <div className="text-sm font-medium">
+                <div className="flex flex-col xl:flex-row xl:items-center">
+                  <div className="text-xs font-bold xl:w-32 mb-1 xl:mb-0">Type</div>
+                  <div className="text-sm font-medium break-all">
                     {shipment.selected_rate_carrier?.carrier_name || '-'}
                   </div>
                 </div>
 
                 {/* Provider */}
-                <div className="flex items-center">
-                  <div className="text-xs font-bold w-32">Provider</div>
-                  <div className="text-sm font-medium">
+                <div className="flex flex-col xl:flex-row xl:items-center">
+                  <div className="text-xs font-bold xl:w-32 mb-1 xl:mb-0">Provider</div>
+                  <div className="text-sm font-medium break-all">
                     {shipment.selected_rate_carrier?.display_name || '-'}
                   </div>
                 </div>
