@@ -14,7 +14,7 @@ export function PlatformSubnav() {
     { label: "LSPs", href: "/platform/use-cases/logistics-providers" },
     { label: "Platforms", href: "/platform/use-cases/platforms" },
     { label: "Enterprises", href: "/platform/use-cases/enterprise-solutions" },
-    { label: "Pricing", href: "/platform/#pricing" },
+    // { label: "Pricing", href: "/platform/#pricing" },
   ];
 
   // Ensure horizontal scrolling still works with no scrollbars

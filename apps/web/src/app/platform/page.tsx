@@ -47,13 +47,6 @@ export default async function LandingPage() {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-[#79e5dd] text-[#79e5dd] hover:bg-[#79e5dd]/10"
-              >
-                <Link href="/platform/embed">Embed Into Your Platform</Link>
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
                 className="border-white/20 text-white/80 hover:bg-white/10"
               >
                 <Link href="/docs/self-hosting">Deploy Open Source</Link>
@@ -594,9 +587,6 @@ shipment = karrio.shipments.create({
 
       {/* Roadmap Section */}
       <RoadmapSection />
-
-      {/* Pricing Section */}
-      <PricingSection />
 
       {/* FAQ Section */}
       <section className="py-24 relative">
