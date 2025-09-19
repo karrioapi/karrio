@@ -392,7 +392,7 @@ export const ShipmentComponent = ({
                 <div className="flex items-center">
                   <div className="text-xs font-bold w-32">Connection ID</div>
                   <div className="text-sm font-medium">
-                    {shipment.carrier_id || '-'}
+                    {shipment.selected_rate_carrier?.id || '-'}
                   </div>
                 </div>
 
@@ -400,7 +400,7 @@ export const ShipmentComponent = ({
                 <div className="flex items-center">
                   <div className="text-xs font-bold w-32">Carrier ID</div>
                   <div className="text-sm font-medium">
-                    {shipment.selected_rate?.carrier_id || '-'}
+                    {shipment.selected_rate_carrier?.carrier_id || '-'}
                   </div>
                 </div>
 
@@ -408,7 +408,7 @@ export const ShipmentComponent = ({
                 <div className="flex items-center">
                   <div className="text-xs font-bold w-32">Type</div>
                   <div className="text-sm font-medium">
-                    {shipment.carrier_name || shipment.selected_rate?.carrier_name || '-'}
+                    {shipment.selected_rate_carrier?.carrier_name || '-'}
                   </div>
                 </div>
 
@@ -416,7 +416,7 @@ export const ShipmentComponent = ({
                 <div className="flex items-center">
                   <div className="text-xs font-bold w-32">Provider</div>
                   <div className="text-sm font-medium">
-                    {(shipment.selected_rate_carrier as any)?.display_name || shipment.carrier_name || shipment.selected_rate?.carrier_name || '-'}
+                    {shipment.selected_rate_carrier?.display_name || '-'}
                   </div>
                 </div>
               </div>
