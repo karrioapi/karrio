@@ -175,13 +175,13 @@ export const ShipmentComponent = ({
                 <ShipmentsStatusBadge status={shipment.status} />
               </div>
               {/* Mobile ShipmentMenu - positioned after cost/currency line */}
-              <div className="flex justify-start md:hidden">
+              <div className={`flex justify-start ${isSheet ? '' : 'md:hidden'}`}>
                 <ShipmentMenu shipment={shipment as any} isViewing variant="outline" />
               </div>
             </div>
 
             {/* Desktop ShipmentMenu - positioned in top-right corner */}
-            <div className="hidden md:flex items-center gap-1">
+            <div className={`${isSheet ? 'hidden' : 'hidden md:flex'} items-center gap-1`}>
               {isPreview && (
                 <Button
                   variant="ghost"
@@ -203,11 +203,11 @@ export const ShipmentComponent = ({
 
 
           {/* Main Content with Sidebar Layout */}
-          <div className="flex flex-col lg:grid lg:grid-cols-4 gap-6">
+          <div className={`flex flex-col ${isSheet ? '' : 'lg:grid lg:grid-cols-4'} gap-6`}>
             {/* Right Sidebar - Details Section */}
             {!isNone(shipment.selected_rate) && (
-              <div className="lg:order-2 lg:col-span-1 lg:col-start-4">
-                <h3 className="text-xl font-semibold my-4 lg:mb-4 lg:mt-0">
+              <div className={isSheet ? '' : 'lg:order-2 lg:col-span-1 lg:col-start-4'}>
+                <h3 className={`text-xl font-semibold my-4 ${isSheet ? '' : 'lg:mb-4 lg:mt-0'}`}>
                   Details
                 </h3>
                 <div className="space-y-3">
@@ -284,7 +284,7 @@ export const ShipmentComponent = ({
                   </div>
 
                   {/* Metadata Section - Part of sidebar on desktop only */}
-                  <div className="hidden lg:block mt-6">
+                  <div className={isSheet ? "hidden" : "hidden lg:block mt-6"}>
                     <h4 className="text-xl font-semibold mb-3">Metadata</h4>
                     <EnhancedMetadataEditor
                       value={shipment.metadata || {}}
@@ -301,7 +301,7 @@ export const ShipmentComponent = ({
             )}
 
             {/* Left Column - Main Content */}
-            <div className="lg:col-span-3 lg:col-start-1 space-y-6 order-1 lg:order-1 mr-5">
+            <div className={`space-y-6 order-1 mr-5 ${isSheet ? '' : 'lg:col-span-3 lg:col-start-1 lg:order-1'}`}>
 
           {!isNone(shipment.tracker) && (
             <>
@@ -388,7 +388,7 @@ export const ShipmentComponent = ({
           <hr className="mt-1 mb-2" style={{ height: "1px" }} />
 
           <div className="mt-3 mb-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-0">
+            <div className={`grid grid-cols-1 ${isSheet ? '' : 'md:grid-cols-2'} gap-6 my-0`}>
               <div className="space-y-2">
                 {/* Connection ID */}
                 <div className="flex flex-col xl:flex-row xl:items-center">
@@ -462,7 +462,7 @@ export const ShipmentComponent = ({
               <React.Fragment key={index + "parcel-info"}>
                 {index > 0 && <hr className="my-4" style={{ height: "1px" }} />}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-0">
+                <div className={`grid grid-cols-1 ${isSheet ? '' : 'md:grid-cols-2'} gap-6 mb-0`}>
                   {/* Parcel details */}
                   <div className="text-base py-1">
                     <ParcelDescription parcel={parcel} />
@@ -669,7 +669,7 @@ export const ShipmentComponent = ({
             )}
 
           {/* Metadata Section - Mobile only, positioned before timeline */}
-          <div className="lg:hidden">
+          <div className={isSheet ? "" : "lg:hidden"}>
             <h2 className="text-xl font-semibold my-4">Metadata</h2>
             <hr className="mt-1 mb-2" style={{ height: "1px" }} />
 
