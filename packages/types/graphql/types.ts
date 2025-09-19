@@ -676,8 +676,10 @@ export interface get_shipment_shipment_messages {
 }
 
 export interface get_shipment_shipment_selected_rate_carrier {
+  id: string;
   carrier_id: string;
   carrier_name: string;
+  display_name: string;
   config: any | null;
 }
 

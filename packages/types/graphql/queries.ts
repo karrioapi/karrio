@@ -508,8 +508,10 @@ export const GET_SHIPMENT = gql`
         details
       }
       selected_rate_carrier {
+        id
         carrier_id
         carrier_name
+        display_name
         config
       }
       tracker {
