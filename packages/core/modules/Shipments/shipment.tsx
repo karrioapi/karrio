@@ -5,11 +5,11 @@ import {
   useUploadRecordMutation,
   useUploadRecords,
 } from "@karrio/hooks/upload-record";
-import { CustomsInfoDescription } from "@karrio/ui/core/components/customs-info-description";
-import { CommodityDescription } from "@karrio/ui/core/components/commodity-description";
+import { CustomsInfoDescription } from "@karrio/ui/components/customs-info-description";
+import { CommodityDescription } from "@karrio/ui/components/commodity-description";
 import { OptionsDescription } from "@karrio/ui/core/components/options-description";
-import { AddressDescription } from "@karrio/ui/core/components/address-description";
-import { ParcelDescription } from "@karrio/ui/core/components/parcel-description";
+import { AddressDescription } from "@karrio/ui/components/address-description";
+import { ParcelDescription } from "@karrio/ui/components/parcel-description";
 import { formatDateTime, formatRef, isNone } from "@karrio/lib";
 import { ActivityTimeline } from "@karrio/ui/components/activity-timeline";
 import { RecentActivity } from "@karrio/ui/components/recent-activity";
