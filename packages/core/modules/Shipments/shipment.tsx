@@ -449,101 +449,103 @@ export const ShipmentComponent = ({
                 </div>
               )}
             </div>
+          </div>
 
-            {/* Parcels section */}
-            <div className="mt-6 mb-0">
-              <p className="text-base font-semibold uppercase tracking-wide my-2">
-                PARCEL{shipment.parcels.length > 1 && "S"}
-              </p>
+          {/* Parcels section */}
+          <h2 className="text-xl font-semibold my-4">Parcels</h2>
+          <hr className="mt-1 mb-2" style={{ height: "1px" }} />
 
-              {shipment.parcels.map((parcel: ParcelType, index) => (
-                <React.Fragment key={index + "parcel-info"}>
-                  <hr className="my-4" style={{ height: "1px" }} />
+          <div className="mt-3 mb-6">
+            {shipment.parcels.map((parcel: ParcelType, index) => (
+              <React.Fragment key={index + "parcel-info"}>
+                {index > 0 && <hr className="my-4" style={{ height: "1px" }} />}
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-0">
-                    {/* Parcel details */}
-                    <div className="text-base py-1">
-                      <ParcelDescription parcel={parcel} />
-                    </div>
-
-                    {/* Parcel items */}
-                    {(parcel.items || []).length > 0 && (
-                      <div className="text-base py-1">
-                        <p className="text-base font-semibold uppercase tracking-wide my-2">
-                          ITEMS{" "}
-                          <span className="text-xs">
-                            (
-                            {(parcel.items || []).reduce(
-                              (acc, { quantity }) => acc + (quantity || 0),
-                              0,
-                            )}
-                            )
-                          </span>
-                        </p>
-
-                        <div
-                          className="py-2 pr-1 max-h-[40rem] overflow-auto"
-                        >
-                          {(parcel.items || []).map((item, index) => (
-                            <React.Fragment key={index + "item-info"}>
-                              <hr
-                                className="mt-1 mb-2"
-                                style={{ height: "1px" }}
-                              />
-                              <CommodityDescription commodity={item} />
-                            </React.Fragment>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-0">
+                  {/* Parcel details */}
+                  <div className="text-base py-1">
+                    <ParcelDescription parcel={parcel} />
                   </div>
-                </React.Fragment>
-              ))}
-            </div>
 
-            {/* Customs section */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 mb-0">
-              {/* Customs details */}
-              {!isNone(shipment.customs) && (
+                  {/* Parcel items */}
+                  {(parcel.items || []).length > 0 && (
+                    <div className="text-base py-1">
+                      <p className="text-base font-semibold uppercase tracking-wide my-2">
+                        ITEMS{" "}
+                        <span className="text-xs">
+                          (
+                          {(parcel.items || []).reduce(
+                            (acc, { quantity }) => acc + (quantity || 0),
+                            0,
+                          )}
+                          )
+                        </span>
+                      </p>
+
+                      <div
+                        className="py-2 pr-1 max-h-[40rem] overflow-auto"
+                      >
+                        {(parcel.items || []).map((item, index) => (
+                          <React.Fragment key={index + "item-info"}>
+                            <hr
+                              className="mt-1 mb-2"
+                              style={{ height: "1px" }}
+                            />
+                            <CommodityDescription commodity={item} />
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </React.Fragment>
+            ))}
+          </div>
+
+          {/* Customs Declaration section */}
+          {!isNone(shipment.customs) && (
+            <>
+              <h2 className="text-xl font-semibold my-4">Customs Declaration</h2>
+              <hr className="mt-1 mb-2" style={{ height: "1px" }} />
+
+              <div className="mt-3 mb-6">
                 <div className="text-base py-1">
-                  <p className="text-base font-semibold uppercase tracking-wide my-2">
-                    CUSTOMS DECLARATION
-                  </p>
-
                   <CustomsInfoDescription
                     customs={shipment.customs as CustomsType}
                   />
                 </div>
-              )}
+              </div>
+            </>
+          )}
 
-              {/* Customs commodities */}
-              {!isNone(shipment.customs) &&
-                (shipment.customs?.commodities || []).length > 0 && (
-                  <div className="text-base py-1">
-                    <p className="text-base font-semibold uppercase tracking-wide my-2">
-                      COMMODITIES{" "}
-                      <span className="text-xs">
-                        (
-                        {(shipment.customs?.commodities || []).reduce(
-                          (acc, { quantity }) => acc + (quantity || 0),
-                          0,
-                        )}
-                        )
-                      </span>
-                    </p>
-
-                    {(shipment.customs?.commodities || []).map(
-                      (commodity, index) => (
-                        <React.Fragment key={index + "parcel-info"}>
-                          <hr className="mt-1 mb-2" style={{ height: "1px" }} />
-                          <CommodityDescription commodity={commodity} />
-                        </React.Fragment>
-                      ),
+          {/* Commodities section */}
+          {!isNone(shipment.customs) &&
+            (shipment.customs?.commodities || []).length > 0 && (
+              <>
+                <h2 className="text-xl font-semibold my-4">
+                  Commodities{" "}
+                  <span className="text-lg">
+                    (
+                    {(shipment.customs?.commodities || []).reduce(
+                      (acc, { quantity }) => acc + (quantity || 0),
+                      0,
                     )}
-                  </div>
-                )}
-            </div>
-          </div>
+                    )
+                  </span>
+                </h2>
+                <hr className="mt-1 mb-2" style={{ height: "1px" }} />
+
+                <div className="mt-3 mb-6">
+                  {(shipment.customs?.commodities || []).map(
+                    (commodity, index) => (
+                      <React.Fragment key={index + "parcel-info"}>
+                        {index > 0 && <hr className="mt-1 mb-2" style={{ height: "1px" }} />}
+                        <CommodityDescription commodity={commodity} />
+                      </React.Fragment>
+                    ),
+                  )}
+                </div>
+              </>
+            )}
 
           {/* Document section */}
           {(
