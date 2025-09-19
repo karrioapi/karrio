@@ -331,15 +331,14 @@ export const ShipmentComponent = ({
            (shipment.selected_rate?.extra_charges || []).length > 0 && (
             <>
               <h2 className="text-xl font-semibold my-4">Charges breakdown</h2>
-              <hr className="mt-1 mb-2" style={{ height: "1px" }} />
 
-              <div className="mt-3 mb-6">
-                <div className="max-w-md">
+              <div className="mt-1 mb-6">
+                <div className="space-y-2">
                   {/* Extra charges items */}
                   {(shipment.selected_rate?.extra_charges || []).map(
                     (charge, index) => (
                       <div key={index}>
-                        <div className="flex justify-between items-center py-3">
+                        <div className="flex justify-between items-center">
                           <span className="text-sm text-gray-900">
                             {charge?.name || 'Charge'}
                           </span>
@@ -351,7 +350,7 @@ export const ShipmentComponent = ({
                           </div>
                         </div>
                         {index < (shipment.selected_rate?.extra_charges || []).length - 1 && (
-                          <hr className="border-gray-200" />
+                          <hr className="border-gray-200 mt-2" style={{ height: "1px" }} />
                         )}
                       </div>
                     )
@@ -359,11 +358,11 @@ export const ShipmentComponent = ({
 
                   {/* Separator before total */}
                   {(shipment.selected_rate?.extra_charges || []).length > 0 && (
-                    <hr className="border-gray-200 my-1" />
+                    <hr className="border-gray-200" style={{ height: "1px" }} />
                   )}
 
                   {/* Total line */}
-                  <div className="flex justify-between items-center py-3">
+                  <div className="flex justify-between items-center">
                     <span className="text-sm font-semibold text-gray-900">
                       Total
                     </span>
@@ -376,6 +375,9 @@ export const ShipmentComponent = ({
                       )}
                     </div>
                   </div>
+
+                  {/* Line below total */}
+                  <hr className="border-gray-200 mt-1" style={{ height: "1px" }} />
                 </div>
               </div>
             </>
