@@ -423,29 +423,29 @@ export const ShipmentComponent = ({
             </div>
           </div>
 
-          {/* Shipment details section */}
-          <h2 className="text-xl font-semibold my-4">Shipment Details</h2>
+          {/* Summary section */}
+          <h2 className="text-xl font-semibold my-4">Summary</h2>
           <hr className="mt-1 mb-2" style={{ height: "1px" }} />
 
           <div className="mt-3 mb-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-0">
-              {/* Recipient Address section */}
+            <div className="space-y-3">
+              {/* Shipping To section */}
               <div className="text-base py-1">
-                <p className="text-base font-semibold uppercase tracking-wide my-2">
-                  ADDRESS
+                <p className="text-base font-semibold tracking-wide my-2">
+                  Shipped To
                 </p>
 
                 <AddressDescription address={shipment.recipient} />
               </div>
 
-              {/* Options section */}
-              {Object.values(shipment.options as object).length > 0 && (
+              {/* Shipped From section */}
+              {!isNone(shipment.shipper) && (
                 <div className="text-base py-1">
-                  <p className="text-base font-semibold uppercase tracking-wide my-2">
-                    OPTIONS
+                  <p className="text-base font-semibold tracking-wide my-2">
+                    Shipped From
                   </p>
 
-                  <OptionsDescription options={shipment.options} />
+                  <AddressDescription address={shipment.shipper} />
                 </div>
               )}
             </div>
