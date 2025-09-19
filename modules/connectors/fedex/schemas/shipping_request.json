@@ -438,9 +438,9 @@
               "personName": "John Taylor",
               "emailAddress": "sample@company.com",
               "phoneNumber": "1234567890",
-              "phoneExtension": 91,
+              "phoneExtension": "91",
               "companyName": "Fedex",
-              "faxNumber": 1234567
+              "faxNumber": "1234567"
             },
             "accountNumber": {
               "value": "Your account number"

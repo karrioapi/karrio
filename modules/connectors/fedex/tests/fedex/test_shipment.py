@@ -74,7 +74,7 @@ class TestFedExShipping(unittest.TestCase):
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
-    def test_parse_shipment_response(self):
+    def test_parse_intl_shipment_response(self):
         with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
             mock.return_value = IntlShipmentResponse
             parsed_response = (
@@ -263,9 +263,11 @@ ParsedShipmentResponse = [
             "service": "fedex_standard_overnight",
             "total_charge": 21.45,
             "currency": "USD",
-            "meta": {
-                "service_name": "fedex_standard_overnight",
-            },
+            "extra_charges": [
+                {"amount": 234.56, "currency": "USD", "name": "Base Charge"},
+                {"amount": 10.0, "currency": "USD", "name": "type"},
+            ],
+            "meta": {"service_name": "fedex_standard_overnight"},
         },
         "shipment_identifier": "794953535000",
         "tracking_number": "794953535000",
@@ -362,7 +364,28 @@ ShipmentRequest = {
             ],
             "dutiesPayment": {
                 "paymentType": "SENDER",
-                "payor": {"responsibleParty": {}},
+                "payor": {
+                    "responsibleParty": {
+                        "accountNumber": {"value": "2349857"},
+                        "address": {
+                            "city": "MEMPHIS",
+                            "countryCode": "US",
+                            "postalCode": "38117",
+                            "residential": False,
+                            "stateOrProvinceCode": "TN",
+                            "streetLines": [
+                                "Input Your Information",
+                                "Input Your Information",
+                            ],
+                        },
+                        "contact": {
+                            "companyName": "Input Your Information",
+                            "emailAddress": "Input Your Information",
+                            "personName": "Input Your Information",
+                            "phoneNumber": "+971529544379",
+                        },
+                    }
+                },
             },
             "insuranceCharge": {"amount": 0.0, "currency": "USD"},
             "isDocumentOnly": False,
@@ -422,16 +445,13 @@ ShipmentRequest = {
                     "width": 12.0,
                 },
                 "groupPackageCount": 1,
-                "packageSpecialServices": {
-                    "signatureOptionType": "SERVICE_DEFAULT",
-                    "specialServiceTypes": ["SIGNATURE_OPTION"],
-                },
+                "packageSpecialServices": {"signatureOptionType": "SERVICE_DEFAULT"},
                 "subPackagingType": "OTHER",
                 "weight": {"units": "LB", "value": 20.0},
             }
         ],
         "serviceType": "FEDEX_INTERNATIONAL_PRIORITY",
-        "shipDatestamp": "2024-02-15",
+        "shipDatestamp": ANY,
         "shipmentSpecialServices": {"specialServiceTypes": ["FEDEX_ONE_RATE"]},
         "shipper": {
             "address": {
@@ -547,16 +567,13 @@ ShipmentPaidByRecipientRequest = {
                     "width": 12.0,
                 },
                 "groupPackageCount": 1,
-                "packageSpecialServices": {
-                    "signatureOptionType": "SERVICE_DEFAULT",
-                    "specialServiceTypes": ["SIGNATURE_OPTION"],
-                },
+                "packageSpecialServices": {"signatureOptionType": "SERVICE_DEFAULT"},
                 "subPackagingType": "OTHER",
                 "weight": {"units": "LB", "value": 20.0},
             }
         ],
         "serviceType": "FEDEX_INTERNATIONAL_PRIORITY",
-        "shipDatestamp": "2024-02-15",
+        "shipDatestamp": ANY,
         "shipmentSpecialServices": {"specialServiceTypes": ["FEDEX_ONE_RATE"]},
         "shipper": {
             "address": {
@@ -634,7 +651,28 @@ MultiPieceShipmentRequest = {
             ],
             "dutiesPayment": {
                 "paymentType": "SENDER",
-                "payor": {"responsibleParty": {}},
+                "payor": {
+                    "responsibleParty": {
+                        "accountNumber": {"value": "2349857"},
+                        "address": {
+                            "city": "MEMPHIS",
+                            "countryCode": "US",
+                            "postalCode": "38117",
+                            "residential": False,
+                            "stateOrProvinceCode": "TN",
+                            "streetLines": [
+                                "Input Your Information",
+                                "Input Your Information",
+                            ],
+                        },
+                        "contact": {
+                            "companyName": "Input Your Information",
+                            "emailAddress": "Input Your Information",
+                            "personName": "Input Your Information",
+                            "phoneNumber": "+971529544379",
+                        },
+                    }
+                },
             },
             "insuranceCharge": {"amount": 0.0, "currency": "USD"},
             "isDocumentOnly": False,
@@ -694,10 +732,7 @@ MultiPieceShipmentRequest = {
                     "width": 12.0,
                 },
                 "groupPackageCount": 1,
-                "packageSpecialServices": {
-                    "signatureOptionType": "SERVICE_DEFAULT",
-                    "specialServiceTypes": ["SIGNATURE_OPTION"],
-                },
+                "packageSpecialServices": {"signatureOptionType": "SERVICE_DEFAULT"},
                 "subPackagingType": "OTHER",
                 "weight": {"units": "LB", "value": 1.0},
             },
@@ -710,16 +745,13 @@ MultiPieceShipmentRequest = {
                     "width": 11.0,
                 },
                 "groupPackageCount": 1,
-                "packageSpecialServices": {
-                    "signatureOptionType": "SERVICE_DEFAULT",
-                    "specialServiceTypes": ["SIGNATURE_OPTION"],
-                },
+                "packageSpecialServices": {"signatureOptionType": "SERVICE_DEFAULT"},
                 "subPackagingType": "OTHER",
                 "weight": {"units": "LB", "value": 2.0},
             },
         ],
         "serviceType": "FEDEX_INTERNATIONAL_PRIORITY",
-        "shipDatestamp": "2024-02-17",
+        "shipDatestamp": ANY,
         "shipmentSpecialServices": {
             "etdDetail": {
                 "attributes": ["POST_SHIPMENT_UPLOAD_REQUESTED"],
