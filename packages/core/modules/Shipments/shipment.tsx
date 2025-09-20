@@ -175,13 +175,28 @@ export const ShipmentComponent = ({
                 <ShipmentsStatusBadge status={shipment.status} />
               </div>
               {/* Mobile ShipmentMenu - positioned after cost/currency line */}
-              <div className={`flex justify-start md:hidden`}>
+              <div className={`flex justify-start items-center gap-1 md:hidden`}>
+                {isPreview && isSheet && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    asChild
+                    className="h-8"
+                  >
+                    <AppLink
+                      href={`/shipments/${shipmentId}`}
+                      target="_blank"
+                    >
+                      <i className="fas fa-external-link-alt text-xs"></i>
+                    </AppLink>
+                  </Button>
+                )}
                 <ShipmentMenu shipment={shipment as any} isViewing variant="outline" />
               </div>
             </div>
 
             {/* Desktop ShipmentMenu - positioned in top-right corner */}
-            <div className={`${isSheet ? 'flex' : 'hidden md:flex'} items-center gap-1`}>
+            <div className={`${isSheet ? 'hidden md:flex' : 'hidden md:flex'} items-center gap-1`}>
               {isPreview && (
                 <Button
                   variant="ghost"
@@ -210,7 +225,7 @@ export const ShipmentComponent = ({
                 <h3 className={`text-xl font-semibold my-4 ${isSheet ? '' : 'lg:mb-4 lg:mt-0'}`}>
                   Details
                 </h3>
-                <div className={isSheet ? 'grid grid-cols-2 gap-4' : 'space-y-3'}>
+                <div className={isSheet ? 'grid grid-cols-1 md:grid-cols-2 gap-4' : 'space-y-3'}>
                   <div className="space-y-3">
                     <div>
                       <div className="text-xs mb-1 font-bold">Shipment ID</div>
