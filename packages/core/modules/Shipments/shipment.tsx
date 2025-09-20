@@ -405,46 +405,53 @@ export const ShipmentComponent = ({
           )}
 
           {/* Connection details section */}
-          <h2 className="text-xl font-semibold my-4">Connection Details</h2>
-          <hr className="mt-1 mb-2" style={{ height: "1px" }} />
+          {(shipment.selected_rate_carrier?.id ||
+            shipment.selected_rate_carrier?.carrier_id ||
+            shipment.selected_rate_carrier?.carrier_name ||
+            shipment.selected_rate_carrier?.display_name) && (
+            <>
+              <h2 className="text-xl font-semibold my-4">Connection Details</h2>
+              <hr className="mt-1 mb-2" style={{ height: "1px" }} />
 
-          <div className="mt-3 mb-6">
-            <div className={`grid grid-cols-1 ${isSheet ? '' : 'md:grid-cols-2'} gap-6 my-0`}>
-              <div className="space-y-2">
-                {/* Connection ID */}
-                <div className="flex flex-col xl:flex-row xl:items-center">
-                  <div className="text-xs font-bold xl:w-32 mb-1 xl:mb-0">Connection ID</div>
-                  <div className="text-sm font-medium break-all">
-                    {shipment.selected_rate_carrier?.id || '-'}
-                  </div>
-                </div>
+              <div className="mt-3 mb-6">
+                <div className={`grid grid-cols-1 ${isSheet ? '' : 'md:grid-cols-2'} gap-6 my-0`}>
+                  <div className="space-y-2">
+                    {/* Connection ID */}
+                    <div className="flex flex-col xl:flex-row xl:items-center">
+                      <div className="text-xs font-bold xl:w-32 mb-1 xl:mb-0">Connection ID</div>
+                      <div className="text-sm font-medium break-all">
+                        {shipment.selected_rate_carrier?.id || '-'}
+                      </div>
+                    </div>
 
-                {/* Carrier ID */}
-                <div className="flex flex-col xl:flex-row xl:items-center">
-                  <div className="text-xs font-bold xl:w-32 mb-1 xl:mb-0">Carrier ID</div>
-                  <div className="text-sm font-medium break-all">
-                    {shipment.selected_rate_carrier?.carrier_id || '-'}
-                  </div>
-                </div>
+                    {/* Carrier ID */}
+                    <div className="flex flex-col xl:flex-row xl:items-center">
+                      <div className="text-xs font-bold xl:w-32 mb-1 xl:mb-0">Carrier ID</div>
+                      <div className="text-sm font-medium break-all">
+                        {shipment.selected_rate_carrier?.carrier_id || '-'}
+                      </div>
+                    </div>
 
-                {/* Type */}
-                <div className="flex flex-col xl:flex-row xl:items-center">
-                  <div className="text-xs font-bold xl:w-32 mb-1 xl:mb-0">Type</div>
-                  <div className="text-sm font-medium break-all">
-                    {shipment.selected_rate_carrier?.carrier_name || '-'}
-                  </div>
-                </div>
+                    {/* Type */}
+                    <div className="flex flex-col xl:flex-row xl:items-center">
+                      <div className="text-xs font-bold xl:w-32 mb-1 xl:mb-0">Type</div>
+                      <div className="text-sm font-medium break-all">
+                        {shipment.selected_rate_carrier?.carrier_name || '-'}
+                      </div>
+                    </div>
 
-                {/* Provider */}
-                <div className="flex flex-col xl:flex-row xl:items-center">
-                  <div className="text-xs font-bold xl:w-32 mb-1 xl:mb-0">Provider</div>
-                  <div className="text-sm font-medium break-all">
-                    {shipment.selected_rate_carrier?.display_name || '-'}
+                    {/* Provider */}
+                    <div className="flex flex-col xl:flex-row xl:items-center">
+                      <div className="text-xs font-bold xl:w-32 mb-1 xl:mb-0">Provider</div>
+                      <div className="text-sm font-medium break-all">
+                        {shipment.selected_rate_carrier?.display_name || '-'}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
+            </>
+          )}
 
           {/* Summary section */}
           <h2 className="text-xl font-semibold my-4">Summary</h2>
