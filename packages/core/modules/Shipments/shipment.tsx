@@ -164,7 +164,9 @@ export const ShipmentComponent = ({
                   <span className="text-3xl font-bold">
                     {shipment.selected_rate?.total_charge !== undefined && shipment.selected_rate?.total_charge !== null
                       ? Number(shipment.selected_rate.total_charge).toFixed(2)
-                      : (shipment.status === "purchased" ? "0.00" : "UNFULFILLED")}
+                      : (shipment.status === "purchased" ? "0.00"
+                         : shipment.status === "draft" ? "DRAFT"
+                         : "UNFULFILLED")}
                   </span>
                   {shipment.selected_rate?.currency && (
                     <span className="text-3xl text-gray-600">
