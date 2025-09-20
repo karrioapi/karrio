@@ -175,13 +175,13 @@ export const ShipmentComponent = ({
                 <ShipmentsStatusBadge status={shipment.status} />
               </div>
               {/* Mobile ShipmentMenu - positioned after cost/currency line */}
-              <div className={`flex justify-start ${isSheet ? '' : 'md:hidden'}`}>
+              <div className={`flex justify-start md:hidden`}>
                 <ShipmentMenu shipment={shipment as any} isViewing variant="outline" />
               </div>
             </div>
 
             {/* Desktop ShipmentMenu - positioned in top-right corner */}
-            <div className={`${isSheet ? 'hidden' : 'hidden md:flex'} items-center gap-1`}>
+            <div className={`${isSheet ? 'flex' : 'hidden md:flex'} items-center gap-1`}>
               {isPreview && (
                 <Button
                   variant="ghost"
@@ -210,92 +210,96 @@ export const ShipmentComponent = ({
                 <h3 className={`text-xl font-semibold my-4 ${isSheet ? '' : 'lg:mb-4 lg:mt-0'}`}>
                   Details
                 </h3>
-                <div className="space-y-3">
-                  <div>
-                    <div className="text-xs mb-1 font-bold">Shipment ID</div>
-                    <CopiableLink text={shipment.id as string} title="Copy ID" variant="outline" />
-                  </div>
-                  <div>
-                    <div className="text-xs mb-1 font-bold">Shipment method</div>
-                    <div className="flex items-center">
-                      <CarrierImage
-                        carrier_name={shipment.meta.carrier as string}
-                        containerClassName="mt-1 ml-1 mr-2"
-                        height={28}
-                        width={28}
-                      />
-                      <div className="text-ellipsis text-xs" style={{ maxWidth: "190px", lineHeight: "16px" }}>
-                        <span className="text-blue-600 font-bold">
-                          {!isNone(shipment.tracking_number) && (
-                            <span>{shipment.tracking_number}</span>
-                          )}
-                          {isNone(shipment.tracking_number) && (
-                            <span>-</span>
-                          )}
-                        </span>
-                        <br />
-                        <span className="text-ellipsis">
-                          {formatRef(
-                            ((shipment.meta as any)?.service_name ||
-                              shipment.service) as string,
-                          )}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-xs mb-1 font-bold">Date</div>
-                    <div className="text-sm font-medium">
-                      {formatDateTime(shipment.created_at)}
-                    </div>
-                  </div>
-                  {!isNone(shipment.reference) && (
+                <div className={isSheet ? 'grid grid-cols-2 gap-4' : 'space-y-3'}>
+                  <div className="space-y-3">
                     <div>
-                      <div className="text-xs mb-1 font-bold">Reference</div>
-                      <div className="text-sm font-medium">
-                        {shipment.reference}
+                      <div className="text-xs mb-1 font-bold">Shipment ID</div>
+                      <CopiableLink text={shipment.id as string} title="Copy ID" variant="outline" />
+                    </div>
+                    <div>
+                      <div className="text-xs mb-1 font-bold">Shipment method</div>
+                      <div className="flex items-center">
+                        <CarrierImage
+                          carrier_name={shipment.meta.carrier as string}
+                          containerClassName="mt-1 ml-1 mr-2"
+                          height={28}
+                          width={28}
+                        />
+                        <div className="text-ellipsis text-xs" style={{ maxWidth: "190px", lineHeight: "16px" }}>
+                          <span className="text-blue-600 font-bold">
+                            {!isNone(shipment.tracking_number) && (
+                              <span>{shipment.tracking_number}</span>
+                            )}
+                            {isNone(shipment.tracking_number) && (
+                              <span>-</span>
+                            )}
+                          </span>
+                          <br />
+                          <span className="text-ellipsis">
+                            {formatRef(
+                              ((shipment.meta as any)?.service_name ||
+                                shipment.service) as string,
+                            )}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  )}
-                  <div>
-                    <div className="text-xs mb-1 font-bold">Service Level</div>
-                    <div className="text-sm font-medium">
-                      {formatRef(
-                        ((shipment.meta as any)?.service_name ||
-                          shipment.service) as string,
-                      )}
+                    <div>
+                      <div className="text-xs mb-1 font-bold">Date</div>
+                      <div className="text-sm font-medium">
+                        {formatDateTime(shipment.created_at)}
+                      </div>
+                    </div>
+                    {!isNone(shipment.reference) && (
+                      <div>
+                        <div className="text-xs mb-1 font-bold">Reference</div>
+                        <div className="text-sm font-medium">
+                          {shipment.reference}
+                        </div>
+                      </div>
+                    )}
+                    <div>
+                      <div className="text-xs mb-1 font-bold">Service Level</div>
+                      <div className="text-sm font-medium">
+                        {formatRef(
+                          ((shipment.meta as any)?.service_name ||
+                            shipment.service) as string,
+                        )}
+                      </div>
                     </div>
                   </div>
-                  <div>
-                    <div className="text-xs mb-1 font-bold">Tracking Number</div>
-                    <div className="text-sm font-medium text-blue-600">
-                      {shipment.tracking_number as string}
+                  <div className="space-y-3">
+                    <div>
+                      <div className="text-xs mb-1 font-bold">Tracking Number</div>
+                      <div className="text-sm font-medium text-blue-600">
+                        {shipment.tracking_number as string}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs mb-1 font-bold">Rate Provider</div>
+                      <div className="text-sm text-blue-600 font-medium">
+                        {formatRef(shipment.meta.ext as string)}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs mb-1 font-bold">Last updated</div>
+                      <div className="text-sm">{formatDateTime(shipment.updated_at)}</div>
                     </div>
                   </div>
-                  <div>
-                    <div className="text-xs mb-1 font-bold">Rate Provider</div>
-                    <div className="text-sm text-blue-600 font-medium">
-                      {formatRef(shipment.meta.ext as string)}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-xs mb-1 font-bold">Last updated</div>
-                    <div className="text-sm">{formatDateTime(shipment.updated_at)}</div>
-                  </div>
+                </div>
 
-                  {/* Metadata Section - Part of sidebar on desktop only */}
-                  <div className={isSheet ? "hidden" : "hidden lg:block mt-6"}>
-                    <h4 className="text-xl font-semibold mb-3">Metadata</h4>
-                    <EnhancedMetadataEditor
-                      value={shipment.metadata || {}}
-                      onChange={handleMetadataChange}
-                      placeholder="No metadata configured"
-                      emptyStateMessage="Add key-value pairs to configure metadata"
-                      allowEdit={true}
-                      showTypeInference={true}
-                      maxHeight="300px"
-                    />
-                  </div>
+                {/* Metadata Section - Part of sidebar on desktop only */}
+                <div className={isSheet ? "hidden" : "hidden lg:block mt-6"}>
+                  <h4 className="text-xl font-semibold mb-3">Metadata</h4>
+                  <EnhancedMetadataEditor
+                    value={shipment.metadata || {}}
+                    onChange={handleMetadataChange}
+                    placeholder="No metadata configured"
+                    emptyStateMessage="Add key-value pairs to configure metadata"
+                    allowEdit={true}
+                    showTypeInference={true}
+                    maxHeight="300px"
+                  />
                 </div>
               </div>
             )}
