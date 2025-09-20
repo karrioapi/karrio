@@ -48,8 +48,8 @@ export const ShipmentComponent = ({
 }): JSX.Element => {
   const notifier = useNotifier();
   const { setLoading } = useLoader();
-  const $fileInput = React.useRef<HTMLInputElement>(undefined);
-  const $fileSelectInput = React.useRef<HTMLSelectElement>(undefined);
+  const $fileInput = React.useRef<HTMLInputElement>(null);
+  const [selectValue, setSelectValue] = React.useState<string>("other");
   const {
     references: { carrier_capabilities = {} },
   } = useAPIMetadata();
@@ -103,7 +103,7 @@ export const ShipmentComponent = ({
         message: `document updloaded successfully`,
       });
       if (!!$fileInput.current) $fileInput.current.value = "";
-      if (!!$fileSelectInput.current) $fileSelectInput.current.value = "other";
+      setSelectValue("other");
     } catch (message: any) {
       notifier.notify({ type: NotificationType.error, message });
     }
@@ -583,8 +583,8 @@ export const ShipmentComponent = ({
                   [...(uploads || []), ...(shipment.options.doc_files || [])]
                     .length == 0 && (
                     <>
-                      <hr className="mt-1 mb-3" style={{ height: "1px" }} />
-                      <div className="pb-3">No documents uploaded</div>
+                      <hr className="mt-1 mb-2" style={{ height: "1px" }} />
+                      <div className="mt-3 mb-6 text-gray-600">No documents uploaded</div>
                     </>
                   )}
 
@@ -631,56 +631,71 @@ export const ShipmentComponent = ({
                     </div>
                   )}
 
-                <div className="flex justify-between">
-                  <div className="flex">
-                    <Select
-                      onValueChange={(value) =>
-                        setFileData({ ...fileData, doc_type: value })
-                      }
-                      defaultValue="other"
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="other">other</SelectItem>
-                        <SelectItem value="commercial_invoice">
-                          Commercial invoice
-                        </SelectItem>
-                        <SelectItem value="pro_forma_invoice">
-                          Pro forma invoice
-                        </SelectItem>
-                        <SelectItem value="packing_list">Packing list</SelectItem>
-                        <SelectItem value="certificate_of_origin">
-                          Certificate of origin
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Input
-                      className="mx-2"
-                      type="file"
-                      onChange={handleFileChange}
-                    />
+                <div className="space-y-3">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:items-end">
+                    <div className="max-w-xs md:max-w-none">
+                      <label className="text-xs font-bold mb-2 block">Document Type</label>
+                      <Select
+                        value={selectValue}
+                        onValueChange={(value) => {
+                          setSelectValue(value);
+                          setFileData({ ...fileData, doc_type: value });
+                        }}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="other">Other</SelectItem>
+                          <SelectItem value="commercial_invoice">
+                            Commercial Invoice
+                          </SelectItem>
+                          <SelectItem value="pro_forma_invoice">
+                            Pro Forma Invoice
+                          </SelectItem>
+                          <SelectItem value="packing_list">Packing List</SelectItem>
+                          <SelectItem value="certificate_of_origin">
+                            Certificate of Origin
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="max-w-xs md:max-w-none">
+                      <label className="text-xs font-bold mb-2 block">Choose File</label>
+                      <Input
+                        ref={$fileInput}
+                        type="file"
+                        onChange={handleFileChange}
+                        className="file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100"
+                      />
+                    </div>
+
+                    <div className="md:pb-0 max-w-xs md:max-w-none">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="w-auto px-4"
+                        disabled={
+                          (uploads || [])?.length > 4 ||
+                          !fileData.doc_file ||
+                          documents.isFetching ||
+                          uploadDocument.isLoading
+                        }
+                        onClick={() => uploadCustomsDocument()}
+                      >
+                        <i className="fas fa-upload mr-2 text-xs"></i>
+                        Upload
+                      </Button>
+                    </div>
                   </div>
 
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="self-center"
-                    disabled={
-                      (uploads || [])?.length > 4 ||
-                      !fileData.doc_file ||
-                      documents.isFetching ||
-                      uploadDocument.isLoading
-                    }
-                    onClick={() => uploadCustomsDocument()}
-                  >
-                    <span className="inline-flex items-center justify-center w-4 h-4">
-                      <i className="fas fa-upload"></i>
-                    </span>
-                    <span>Upload</span>
-                  </Button>
+                  {fileData.doc_name && (
+                    <div className="text-xs text-green-600 font-medium truncate max-w-md">
+                      Selected: {fileData.doc_name}
+                    </div>
+                  )}
                 </div>
 
                 <div className="my-3 pt-1"></div>
