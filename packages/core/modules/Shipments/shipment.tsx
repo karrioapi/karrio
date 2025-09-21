@@ -575,7 +575,7 @@ export const ShipmentComponent = ({
               </>
             )}
 
-          {/* Document section */}
+          {/* Document section - Temporarily hidden for testing
           {(
             (carrier_capabilities[shipment.carrier_name as string] || []) as any
           ).includes("paperless") &&
@@ -708,6 +708,7 @@ export const ShipmentComponent = ({
                 <div className="my-3 pt-1"></div>
               </>
             )}
+          */}
 
           {/* Metadata Section - Mobile only, positioned before timeline */}
           <div className={isSheet ? "" : "lg:hidden"}>
