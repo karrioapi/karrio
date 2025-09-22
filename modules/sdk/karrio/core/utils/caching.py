@@ -12,7 +12,7 @@ class AbstractCache:
         pass
 
 
-class Cache:
+class Cache(AbstractCache):
     def __init__(self, cache: typing.Optional[AbstractCache] = None, **kwargs) -> None:
         self._cache = cache  # system cache
         self._values: typing.Dict[str, futures.Future] = {}  # shallow cache
@@ -41,7 +41,7 @@ class Cache:
 
         return _result
 
-    def set(self, key: str, value: typing.Any, timeout: int = 86400):
+    def set(self, key: str, value: typing.Any, timeout: int = 86400, **kwargs):
         def _save():
             if isinstance(value, typing.Callable):
                 return value()

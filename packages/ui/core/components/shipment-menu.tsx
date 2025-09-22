@@ -118,6 +118,17 @@ export const ShipmentMenu = ({
             </a>
           )}
 
+          {!isNone(shipment.invoice_url) && (
+            <a
+              className="dropdown-item"
+              href={url$`${references.HOST}/${shipment.invoice_url}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Print Invoice
+            </a>
+          )}
+
           {!isViewing && (
             <a className="dropdown-item" onClick={displayDetails}>
               View Shipment
@@ -146,17 +157,6 @@ export const ShipmentMenu = ({
                 Cancel Shipment
               </a>
             )}
-
-          {!isNone(shipment.invoice_url) && (
-            <a
-              className="dropdown-item"
-              href={url$`${references.HOST}/${shipment.invoice_url}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Print Invoice
-            </a>
-          )}
 
           {shipment.carrier_name &&
             isNoneOrEmpty(shipment.tracker_id) &&
