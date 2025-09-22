@@ -31,7 +31,7 @@ Before you begin, make sure you have the following installed:
 >
 > Windows users are strongly recommended to use [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/en-us/windows/wsl/install) for the best development experience. Windows versions before Windows 10 are not officially supported.
 
-## Manual Setup (Recommended)
+## Setting up karrio Server
 
 Follow these steps to set up your development environment manually:
 
@@ -55,6 +55,7 @@ Install the required system dependencies:
 > [!NOTE]
 >
 > This script installs system dependencies based on your operating system:
+>
 > - On macOS: `gcc`, `libffi`, and `zint`
 > - On Linux: `libpango1.0-0`, `libpangoft2-1.0-0`, `gcc`, and `zint`
 >
@@ -75,6 +76,7 @@ source ./bin/setup-server-env
 ```
 
 This command will:
+
 - Create a new Python virtual environment
 - Install server development requirements
 - Install insiders development requirements (if available)
@@ -93,26 +95,27 @@ karrio migrate
 <details>
   <summary>**Using PostgreSQL Instead**</summary>
 
-  If you prefer PostgreSQL, modify your environment configuration:
+If you prefer PostgreSQL, modify your environment configuration:
 
-  ```diff filename=".env"
-  - DATABASE_ENGINE=sqlite3
-  - # DATABASE_ENGINE=postgresql_psycopg2
-  - # DATABASE_USERNAME=postgres
-  - # DATABASE_PASSWORD=postgres
-  - # DATABASE_NAME=db
-  + # DATABASE_ENGINE=sqlite3
-  + DATABASE_ENGINE=postgresql_psycopg2
-  + DATABASE_USERNAME=postgres
-  + DATABASE_PASSWORD=postgres
-  + DATABASE_NAME=db
-  ```
+```diff filename=".env"
+- DATABASE_ENGINE=sqlite3
+- # DATABASE_ENGINE=postgresql_psycopg2
+- # DATABASE_USERNAME=postgres
+- # DATABASE_PASSWORD=postgres
+- # DATABASE_NAME=db
++ # DATABASE_ENGINE=sqlite3
++ DATABASE_ENGINE=postgresql_psycopg2
++ DATABASE_USERNAME=postgres
++ DATABASE_PASSWORD=postgres
++ DATABASE_NAME=db
+```
 
-  Then start the PostgreSQL container:
+Then start the PostgreSQL container:
 
-  ```bash filename="Terminal"
-  docker compose -f docker/docker-compose.yml up -d db
-  ```
+```bash filename="Terminal"
+docker compose -f docker/docker-compose.yml up -d db
+```
+
 </details>
 
 ### 5. Collect Static Assets
@@ -140,10 +143,38 @@ karrio createsuperuser
 Launch the Karrio server:
 
 ```bash filename="Terminal"
-./bin/start
+karrio runserver
 ```
 
-## Docker-based Setup (Alternative)
+## Setting Up karrio Dashboard
+
+The Karrio dashboard is now part of the monorepo structure. To set it up:
+
+### 1. Install Node Dependencies
+
+At the root of the repository:
+
+```bash filename="Terminal"
+npm i
+```
+
+### 2. Configure Environment
+
+Copy the sample environment file:
+
+```bash filename="Terminal"
+cp apps/dashboard/.env.sample apps/dashboard/.env
+```
+
+### 3. Start the Dashboard
+
+Launch the development server:
+
+```bash filename="Terminal"
+npm run dev -w apps/dashboard
+```
+
+## Docker-based Development Setup (Alternative)
 
 If you prefer using Docker for development, here's how to set it up:
 
@@ -189,41 +220,15 @@ exec       Execute command in docker dev environment.
 ### Example Docker Commands
 
 Run server tests:
+
 ```bash filename="Terminal"
 ./bin/docker-env exec './bin/run-server-tests'
 ```
 
 Run tests for a specific carrier:
+
 ```bash filename="Terminal"
 ./bin/docker-env exec 'python -m unittest discover -v -f modules/connectors/dhl_express/tests'
-```
-
-## Setting Up the Dashboard
-
-The Karrio dashboard is now part of the monorepo structure. To set it up:
-
-### 1. Install Node Dependencies
-
-At the root of the repository:
-
-```bash filename="Terminal"
-npm i
-```
-
-### 2. Configure Environment
-
-Copy the sample environment file:
-
-```bash filename="Terminal"
-cp apps/dashboard/.env.sample apps/dashboard/.env
-```
-
-### 3. Start the Dashboard
-
-Launch the development server:
-
-```bash filename="Terminal"
-npm run dev
 ```
 
 ## Development Workflows
@@ -376,6 +381,7 @@ For a detailed guide, see [Adding a New Carrier](/docs/developing/http://localho
 > **Permission Denied Errors**
 >
 > If you encounter permission errors when running shell scripts, try making them executable:
+>
 > ```bash
 > chmod +x ./bin/*
 > ```
@@ -385,6 +391,7 @@ For a detailed guide, see [Adding a New Carrier](/docs/developing/http://localho
 > **Missing Styles/JavaScript**
 >
 > If the UI appears broken, ensure you've run the collectstatic command:
+>
 > ```bash
 > karrio collectstatic --noinput
 > ```
@@ -394,7 +401,7 @@ For a detailed guide, see [Adding a New Carrier](/docs/developing/http://localho
 > **Database Connection Issues**
 >
 > If you're using PostgreSQL and encounter connection errors, check that the database container is running:
+>
 > ```bash
 > docker compose -f docker/docker-compose.yml ps
 > ```
-

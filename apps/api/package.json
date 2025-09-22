@@ -1,9 +1,5 @@
 {
   "name": "@karrio/api",
   "version": "1.0.0",
-  "scripts": {
-    "dev": "cd ../..; ./bin/start-server",
-    "dev:oss": "cd ../..; ./bin/start-server",
-    "dev:platform": "cd ../..; ./bin/start-server"
-  }
+  "scripts": {}
 }
