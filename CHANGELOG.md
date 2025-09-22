@@ -1,3 +1,38 @@
+# Karrio 2025.5rc21
+
+## Changes
+
+### Feat
+
+- feat: add support for thread lock caching and oauth access_token retrieval
+- feat: remove selected_rate extraction on buy label for FedEx
+- feat: improve live rate components and remove label type selection in label creation forms
+- feat: set up `./plugins` dir at the root of the Docker-Compose templates files to provide a default mounting point
+- feat: added warning for mixed currencies in multiple items
+
+### Fix
+
+- fix: FedEx default invoice generation behaviour and accountNumber data mapping
+- fix: FedEx regression due to signature options handling behaviour change
+- fix: for package level reference numbers (by @mazzarito)
+- fix: generated type mismatch post schema regeneration for UPS
+- fix: replaced create order with draft order
+- fix: sync scrolling of left and right sections of draft-order page
+- fix: removed unnecessary line-item unlinking mechanisms
+- fix: dashboard-guide docs missing screenshots
+- fix: removed sticky property of warning box
+
+### Docs
+
+- docs: add open new terminal instructions
+- docs: add missing screenshots for dashboard-guide docs
+- docs: update docs to improve dashboard navigation guide and plugins mounting setup
+
+### Chore
+
+- chore: ensure proper CSP setup for dashboard and website
+- devX: update local development commands for starting the server
+
 # Karrio 2025.5rc20
 
 ## Changes

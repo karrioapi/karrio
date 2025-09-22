@@ -588,6 +588,12 @@ ShipmentPaidByRecipientRequest = {
                 }
             },
         },
+        "shippingDocumentSpecification": {
+            "commercialInvoiceDetail": {
+                "documentFormat": {"docType": "PDF", "stockType": "PAPER_LETTER"}
+            },
+            "shippingDocumentTypes": ["COMMERCIAL_INVOICE"],
+        },
         "totalPackageCount": 1,
         "totalWeight": 20.0,
     },
@@ -771,6 +777,12 @@ MultiPieceShipmentRequest = {
                     },
                 }
             },
+        },
+        "shippingDocumentSpecification": {
+            "commercialInvoiceDetail": {
+                "documentFormat": {"docType": "PDF", "stockType": "PAPER_LETTER"}
+            },
+            "shippingDocumentTypes": ["COMMERCIAL_INVOICE"],
         },
         "totalPackageCount": 2,
         "totalWeight": 3.0,
