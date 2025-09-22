@@ -13,9 +13,9 @@ import {
   preventPropagation,
 } from "@karrio/lib";
 import {
-  ShipmentPreview,
-  ShipmentPreviewContext,
-} from "@karrio/core/components/shipment-preview";
+  ShipmentPreviewSheet,
+  ShipmentPreviewSheetContext,
+} from "@karrio/ui/components/shipment-preview-sheet";
 import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
@@ -54,7 +54,7 @@ export default function Page(pageProps: any) {
     const [allChecked, setAllChecked] = React.useState(false);
     const [initialized, setInitialized] = React.useState(false);
     const [selection, setSelection] = React.useState<string[]>([]);
-    const { previewShipment } = useContext(ShipmentPreviewContext);
+    const { previewShipment } = useContext(ShipmentPreviewSheetContext);
     const { user_connections } = useCarrierConnections();
     const { system_connections } = useSystemConnections();
     const context = useShipments({
@@ -526,9 +526,9 @@ export default function Page(pageProps: any) {
 
   return (
     <>
-      <ShipmentPreview>
+      <ShipmentPreviewSheet>
         <Component />
-      </ShipmentPreview>
+      </ShipmentPreviewSheet>
     </>
   );
 }

@@ -1,34 +1,34 @@
 "use client";
-import {
-  MetadataEditor,
-  MetadataEditorContext,
-} from "@karrio/ui/core/forms/metadata-editor";
+import { EnhancedMetadataEditor } from "@karrio/ui/components/enhanced-metadata-editor";
+import { useMetadataMutation } from "@karrio/hooks/metadata";
 import {
   useUploadRecordMutation,
   useUploadRecords,
 } from "@karrio/hooks/upload-record";
-import { CustomsInfoDescription } from "@karrio/ui/core/components/customs-info-description";
-import { CommodityDescription } from "@karrio/ui/core/components/commodity-description";
-import { OptionsDescription } from "@karrio/ui/core/components/options-description";
-import { AddressDescription } from "@karrio/ui/core/components/address-description";
-import { ParcelDescription } from "@karrio/ui/core/components/parcel-description";
-import { formatDateTime, formatDayDate, formatRef, isNone } from "@karrio/lib";
+import { CustomsInfoDescription } from "@karrio/ui/components/customs-info-description";
+import { CommodityDescription } from "@karrio/ui/components/commodity-description";
+import { AddressDescription } from "@karrio/ui/components/address-description";
+import { ParcelDescription } from "@karrio/ui/components/parcel-description";
+import { formatDateTime, formatRef, isNone } from "@karrio/lib";
 import { ActivityTimeline } from "@karrio/ui/components/activity-timeline";
-import { CustomsType, NotificationType, ParcelType } from "@karrio/types";
-import { CopiableLink } from "@karrio/ui/core/components/copiable-link";
-import { CarrierBadge } from "@karrio/ui/core/components/carrier-badge";
-import { ShipmentMenu } from "@karrio/ui/core/components/shipment-menu";
-import { SelectField } from "@karrio/ui/core/components/select-field";
-import { StatusBadge } from "@karrio/ui/core/components/status-badge";
-import { InputField } from "@karrio/ui/core/components/input-field";
+import { RecentActivity } from "@karrio/ui/components/recent-activity";
+import { CustomsType, NotificationType, ParcelType, MetadataObjectTypeEnum } from "@karrio/types";
+import { CopiableLink } from "@karrio/ui/components/copiable-link";
+import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
+import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
+import { ShipmentsStatusBadge } from "@karrio/ui/components/shipments-status-badge";
+import { Button } from "@karrio/ui/components/ui/button";
+import { Input } from "@karrio/ui/components/ui/input";
+import { Badge } from "@karrio/ui/components/ui/badge";
+import { Table, TableBody, TableCell, TableRow } from "@karrio/ui/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { DocumentUploadData } from "@karrio/types/rest/api";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { AppLink } from "@karrio/ui/core/components/app-link";
-import { Spinner } from "@karrio/ui/core/components/spinner";
-import { MetadataObjectTypeEnum } from "@karrio/types";
-import { useShipment } from "@karrio/hooks/shipment";
+import { Spinner } from "@karrio/ui/components/spinner";
+import { useShipment, useShipmentMutation } from "@karrio/hooks/shipment";
 import { useEvents } from "@karrio/hooks/event";
 import { useLogs } from "@karrio/hooks/log";
 import React from "react";
@@ -38,14 +38,16 @@ type FileDataType = DocumentUploadData["document_files"][0];
 export const ShipmentComponent = ({
   shipmentId,
   isPreview,
+  isSheet,
 }: {
   shipmentId: string;
   isPreview?: boolean;
+  isSheet?: boolean;
 }): JSX.Element => {
   const notifier = useNotifier();
   const { setLoading } = useLoader();
-  const $fileInput = React.useRef<HTMLInputElement>(undefined);
-  const $fileSelectInput = React.useRef<HTMLSelectElement>(undefined);
+  const $fileInput = React.useRef<HTMLInputElement>(null);
+  const [selectValue, setSelectValue] = React.useState<string>("other");
   const {
     references: { carrier_capabilities = {} },
   } = useAPIMetadata();
@@ -56,6 +58,11 @@ export const ShipmentComponent = ({
     query: { data: { shipment } = {}, ...query },
   } = useShipment(entity_id);
   const { uploadDocument } = useUploadRecordMutation();
+  const { updateShipment } = useShipmentMutation(entity_id);
+  const { updateMetadata } = useMetadataMutation([
+    "shipments",
+    entity_id,
+  ]);
   const {
     query: { data: { results: uploads } = {}, ...documents },
   } = useUploadRecords({ shipmentId: entity_id });
@@ -94,9 +101,40 @@ export const ShipmentComponent = ({
         message: `document updloaded successfully`,
       });
       if (!!$fileInput.current) $fileInput.current.value = "";
-      if (!!$fileSelectInput.current) $fileSelectInput.current.value = "other";
+      setSelectValue("other");
     } catch (message: any) {
       notifier.notify({ type: NotificationType.error, message });
+    }
+  };
+
+  const handleMetadataChange = async (newMetadata: any) => {
+    try {
+      const currentMetadata = shipment?.metadata || {};
+      
+      // Calculate added_values (new or changed metadata)
+      const added_values = { ...newMetadata };
+      
+      // Calculate discarded_keys (keys that were removed)
+      const discarded_keys = Object.keys(currentMetadata).filter(
+        key => !(key in newMetadata)
+      );
+      
+      await updateMetadata.mutateAsync({
+        id: entity_id,
+        object_type: MetadataObjectTypeEnum.shipment,
+        discarded_keys,
+        added_values,
+      });
+      
+      notifier.notify({
+        type: NotificationType.success,
+        message: "Metadata updated successfully",
+      });
+    } catch (error) {
+      notifier.notify({
+        type: NotificationType.error,
+        message: "Failed to update metadata",
+      });
     }
   };
 
@@ -109,401 +147,441 @@ export const ShipmentComponent = ({
       {!query.isFetched && query.isFetching && <Spinner />}
 
       {shipment && (
-        <>
-          {/* Header Section */}
-          <div className="columns my-1">
-            <div className="column is-6">
-              <span className="subtitle is-size-7 has-text-weight-semibold">
-                SHIPMENT
-              </span>
-              <br />
-              <span className="title is-4 mr-2">
-                {shipment.tracking_number || "UNFULFILLED"}
-              </span>
-              <StatusBadge status={shipment.status} />
+        <div className="space-y-4">
+          {/* Header Section - Full Width */}
+          <div className="flex justify-between items-start gap-4">
+            <div className="space-y-2 flex-1">
+              <AppLink
+                href="/shipments"
+                className="text-sm font-semibold text-blue-600 tracking-wide hover:text-blue-800 transition-colors duration-150 flex items-center gap-1"
+              >
+                Shipments <i className="fas fa-chevron-right text-xs"></i>
+              </AppLink>
+              <div className="flex items-center gap-2">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-bold">
+                    {shipment.selected_rate?.total_charge !== undefined && shipment.selected_rate?.total_charge !== null
+                      ? Number(shipment.selected_rate.total_charge).toFixed(2)
+                      : (shipment.status === "purchased" ? "0.00"
+                         : shipment.status === "draft" ? "DRAFT"
+                         : "UNFULFILLED")}
+                  </span>
+                  {shipment.selected_rate?.currency && (
+                    <span className="text-3xl text-gray-600">
+                      {shipment.selected_rate?.currency}
+                    </span>
+                  )}
+                </div>
+                <ShipmentsStatusBadge status={shipment.status} />
+              </div>
+              {/* Mobile ShipmentMenu - positioned after cost/currency line */}
+              <div className={`flex justify-start items-center gap-1 md:hidden`}>
+                {isPreview && isSheet && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    asChild
+                    className="h-8"
+                  >
+                    <AppLink
+                      href={`/shipments/${shipmentId}`}
+                      target="_blank"
+                    >
+                      <i className="fas fa-external-link-alt text-xs"></i>
+                    </AppLink>
+                  </Button>
+                )}
+                <ShipmentMenu shipment={shipment as any} isViewing variant="outline" />
+              </div>
             </div>
 
-            <div className="column is-6 pb-0">
-              <div className="is-flex is-justify-content-right">
-                <CopiableLink text={shipment.id as string} title="Copy ID" />
-              </div>
-              <div className="is-flex is-justify-content-right">
-                {isPreview && (
+            {/* Desktop ShipmentMenu - positioned in top-right corner */}
+            <div className={`${isSheet ? 'hidden md:flex' : 'hidden md:flex'} items-center gap-1`}>
+              {isPreview && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  asChild
+                  className="h-8"
+                >
                   <AppLink
                     href={`/shipments/${shipmentId}`}
                     target="_blank"
-                    className="button is-white has-text-info is-small mx-1"
                   >
-                    <span className="icon">
-                      <i className="fas fa-external-link-alt"></i>
-                    </span>
+                    <i className="fas fa-external-link-alt text-xs"></i>
                   </AppLink>
-                )}
-
-                <div style={{ display: "inline-flex" }}>
-                  <ShipmentMenu shipment={shipment as any} isViewing />
-                </div>
-              </div>
+                </Button>
+              )}
+              <ShipmentMenu shipment={shipment as any} isViewing variant="outline" />
             </div>
           </div>
 
-          <hr className="mt-1 mb-2" style={{ height: "1px" }} />
 
-          {/* Reference and highlights section */}
-          <div className="columns mb-4">
-            <div className="p-4 mr-4">
-              <span className="subtitle is-size-7 my-4">Date</span>
-              <br />
-              <span className="subtitle is-size-7 mt-1 has-text-weight-semibold">
-                {formatDateTime(shipment.created_at)}
-              </span>
-            </div>
-
-            {!isNone(shipment.service) && (
-              <>
-                <div
-                  className="my-2"
-                  style={{ width: "1px", backgroundColor: "#ddd" }}
-                ></div>
-                <div className="p-4 mr-4">
-                  <span className="subtitle is-size-7 my-4">Courier</span>
-                  <br />
-                  <CarrierBadge
-                    className="has-background-primary has-text-centered has-text-weight-bold has-text-white-bis is-size-7"
-                    carrier_name={shipment.meta.carrier as string}
-                    text_color={
-                      shipment.selected_rate_carrier?.config?.text_color
-                    }
-                    background={
-                      shipment.selected_rate_carrier?.config?.brand_color
-                    }
-                  />
-                </div>
-
-                <div
-                  className="my-2"
-                  style={{ width: "1px", backgroundColor: "#ddd" }}
-                ></div>
-                <div className="p-4 mr-4">
-                  <span className="subtitle is-size-7 my-4">Service Level</span>
-                  <br />
-                  <span className="subtitle is-size-7 mt-1 has-text-weight-semibold">
-                    {formatRef(
-                      ((shipment.meta as any)?.service_name ||
-                        shipment.service) as string,
+          {/* Main Content with Sidebar Layout */}
+          <div className={`flex flex-col ${isSheet ? '' : 'lg:grid lg:grid-cols-4'} gap-6`}>
+            {/* Right Sidebar - Details Section */}
+            {!isNone(shipment.selected_rate) && (
+              <div className={isSheet ? '' : 'lg:order-2 lg:col-span-1 lg:col-start-4'}>
+                <h3 className={`text-xl font-semibold my-4 ${isSheet ? '' : 'lg:mb-4 lg:mt-0'}`}>
+                  Details
+                </h3>
+                <div className={isSheet ? 'grid grid-cols-1 md:grid-cols-2 gap-4' : 'space-y-3'}>
+                  <div className="space-y-3">
+                    <div>
+                      <div className="text-xs mb-1 font-bold">Shipment ID</div>
+                      <CopiableLink text={shipment.id as string} title="Copy ID" variant="outline" />
+                    </div>
+                    <div>
+                      <div className="text-xs mb-1 font-bold">Shipment method</div>
+                      <div className="flex items-center">
+                        <CarrierImage
+                          carrier_name={shipment.meta.carrier as string}
+                          containerClassName="mt-1 ml-1 mr-2"
+                          height={28}
+                          width={28}
+                        />
+                        <div className="text-ellipsis text-xs" style={{ maxWidth: "190px", lineHeight: "16px" }}>
+                          <span className="text-blue-600 font-bold">
+                            {!isNone(shipment.tracking_number) && (
+                              <span>{shipment.tracking_number}</span>
+                            )}
+                            {isNone(shipment.tracking_number) && (
+                              <span>-</span>
+                            )}
+                          </span>
+                          <br />
+                          <span className="text-ellipsis">
+                            {formatRef(
+                              ((shipment.meta as any)?.service_name ||
+                                shipment.service) as string,
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs mb-1 font-bold">Date</div>
+                      <div className="text-sm font-medium">
+                        {formatDateTime(shipment.created_at)}
+                      </div>
+                    </div>
+                    {!isNone(shipment.reference) && (
+                      <div>
+                        <div className="text-xs mb-1 font-bold">Reference</div>
+                        <div className="text-sm font-medium">
+                          {shipment.reference}
+                        </div>
+                      </div>
                     )}
-                  </span>
-                </div>
-              </>
-            )}
-
-            {!isNone(shipment.reference) && (
-              <>
-                <div
-                  className="my-2"
-                  style={{ width: "1px", backgroundColor: "#ddd" }}
-                ></div>
-                <div className="p-4 mr-4">
-                  <span className="subtitle is-size-7 my-4">Reference</span>
-                  <br />
-                  <span className="subtitle is-size-7 has-text-weight-semibold">
-                    {shipment.reference}
-                  </span>
-                </div>
-              </>
-            )}
-          </div>
-
-          {!isNone(shipment.selected_rate) && (
-            <>
-              <h2 className="title is-5 my-4">Service Details</h2>
-              <hr className="mt-1 mb-2" style={{ height: "1px" }} />
-
-              <div className="mt-3 mb-6">
-                <div className="columns my-0 py-1">
-                  <div className="column is-6 is-size-6">
-                    <div className="columns my-0">
-                      <div className="column is-4 is-size-6 py-1">Service</div>
-                      <div className="column is-size-6 has-text-weight-semibold py-1">
+                    <div>
+                      <div className="text-xs mb-1 font-bold">Service Level</div>
+                      <div className="text-sm font-medium">
                         {formatRef(
                           ((shipment.meta as any)?.service_name ||
                             shipment.service) as string,
                         )}
                       </div>
                     </div>
-                    <div className="columns my-0">
-                      <div className="column is-4 is-size-6 py-1">Courier</div>
-                      <div className="column is-size-6 has-text-weight-semibold py-1">
-                        {formatRef(shipment.meta.carrier as string)}
+                  </div>
+                  <div className="space-y-3">
+                    <div>
+                      <div className="text-xs mb-1 font-bold">Tracking Number</div>
+                      <div className="text-sm font-medium text-blue-600">
+                        {shipment.tracking_number as string}
                       </div>
                     </div>
-                    <div className="columns my-0">
-                      <div className="column is-4 is-size-6 py-1">Rate</div>
-                      <div className="column is-size-6 py-1">
-                        <span className="has-text-weight-semibold mr-1">
-                          {shipment.selected_rate?.total_charge}
-                        </span>
-                        <span>{shipment.selected_rate?.currency}</span>
-                      </div>
-                    </div>
-                    <div className="columns my-0">
-                      <div className="column is-4 is-size-7 py-1">
-                        Rate Provider
-                      </div>
-                      <div className="column is-size-7 has-text-info has-text-weight-semibold py-1">
+                    <div>
+                      <div className="text-xs mb-1 font-bold">Rate Provider</div>
+                      <div className="text-sm text-blue-600 font-medium">
                         {formatRef(shipment.meta.ext as string)}
                       </div>
                     </div>
-                    <div className="columns my-0">
-                      <div className="column is-4 is-size-7 py-1">
-                        Tracking Number
-                      </div>
-                      <div className="column has-text-info py-1">
-                        <span className="is-size-7 has-text-weight-semibold">
-                          {shipment.tracking_number as string}
-                        </span>
-                      </div>
+                    <div>
+                      <div className="text-xs mb-1 font-bold">Last updated</div>
+                      <div className="text-sm">{formatDateTime(shipment.updated_at)}</div>
                     </div>
                   </div>
+                </div>
 
-                  {(shipment.selected_rate?.extra_charges || []).length > 0 && (
-                    <>
-                      <div className="column is-6 is-size-6 py-1">
-                        <p className="is-title is-size-6 my-2 has-text-weight-semibold">
-                          CHARGES
-                        </p>
-                        <hr className="mt-1 mb-2" style={{ height: "1px" }} />
-
-                        {(shipment.selected_rate?.extra_charges || []).map(
-                          (charge, index) => (
-                            <div key={index} className="columns m-0">
-                              <div className="column is-5 is-size-7 px-0 py-1">
-                                <span className="is-uppercase">
-                                  {charge?.name?.toLocaleLowerCase()}
-                                </span>
-                              </div>
-                              <div
-                                className="is-size-7 py-1 has-text-grey has-text-right"
-                                style={{ minWidth: "100px" }}
-                              >
-                                <span className="mr-1">{charge?.amount}</span>
-                                {!isNone(charge?.currency) && (
-                                  <span>{charge?.currency}</span>
-                                )}
-                              </div>
-                            </div>
-                          ),
-                        )}
-                      </div>
-                    </>
-                  )}
+                {/* Metadata Section - Part of sidebar on desktop only */}
+                <div className={isSheet ? "hidden" : "hidden lg:block mt-6"}>
+                  <h4 className="text-xl font-semibold mb-3">Metadata</h4>
+                  <EnhancedMetadataEditor
+                    value={shipment.metadata || {}}
+                    onChange={handleMetadataChange}
+                    placeholder="No metadata configured"
+                    emptyStateMessage="Add key-value pairs to configure metadata"
+                    allowEdit={true}
+                    showTypeInference={true}
+                    maxHeight="300px"
+                  />
                 </div>
               </div>
-            </>
-          )}
+            )}
+
+            {/* Left Column - Main Content */}
+            <div className={`space-y-6 order-1 mr-5 ${isSheet ? '' : 'lg:col-span-3 lg:col-start-1 lg:order-1'}`}>
 
           {!isNone(shipment.tracker) && (
             <>
-              <h2 className="title is-5 my-4">
-                <span>Tracking Details</span>
+              <div className="flex justify-between items-center my-4">
+                <h2 className="text-xl font-semibold">Recent Activity</h2>
                 <a
-                  className="p-0 mx-2 my-0 is-size-6 has-text-weight-semibold"
+                  className="text-xs text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1"
                   href={`/tracking/${shipment.tracker_id}`}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <span>
-                    <i className="fas fa-external-link-alt"></i>
-                  </span>
+                   Tracking details
+                  <i className="fas fa-external-link-alt text-xs"></i>
                 </a>
-              </h2>
+              </div>
               <hr className="mt-1 mb-2" style={{ height: "1px" }} />
               <div className="mt-3 mb-6">
-                <div className="columns my-0 py-1">
-                  <div className="column is-6 is-size-7">
-                    {!isNone(shipment.tracker?.estimated_delivery) && (
-                      <div className="columns my-0">
-                        <div className="column is-4 is-size-6 py-0">
-                          {shipment.tracker?.delivered
-                            ? "Delivered"
-                            : "Estimated Delivery"}
-                        </div>
-                        <div className="column has-text-weight-semibold py-1">
-                          {formatDayDate(
-                            shipment.tracker!.estimated_delivery as string,
-                          )}
-                        </div>
-                      </div>
-                    )}
-                    <div className="columns my-0">
-                      <div className="column is-4 is-size-6 py-0">
-                        Last event
-                      </div>
-                      <div className="column has-text-weight-semibold py-1">
-                        <p className="is-capitalized">
-                          {formatDayDate(
-                            (shipment.tracker?.events || [])[0]?.date as string,
-                          )}{" "}
-                          <code>
-                            {(shipment.tracker?.events || [])[0]?.time}
-                          </code>
-                        </p>
-                      </div>
-                    </div>
-                    {!isNone((shipment.tracker?.events || [])[0]?.location) && (
-                      <div className="columns my-0">
-                        <div className="column is-4"></div>
-                        <div className="column has-text-weight-semibold py-1">
-                          {(shipment.tracker?.events || [])[0]?.location}
-                        </div>
-                      </div>
-                    )}
-                    {!isNone(
-                      (shipment.tracker?.events || [])[0]?.description,
-                    ) && (
-                        <div className="columns my-0">
-                          <div className="column is-4"></div>
-                          <div className="column has-text-weight-semibold py-1">
-                            {(shipment.tracker?.events || [])[0]?.description}
+                <RecentActivity
+                  tracker={shipment.tracker}
+                />
+              </div>
+            </>
+          )}
+
+          {/* Charges section */}
+          {!isNone(shipment.selected_rate) &&
+           (shipment.selected_rate?.extra_charges || []).length > 0 && (
+            <>
+              <h2 className="text-xl font-semibold my-4">Charges breakdown</h2>
+
+              <div className="mt-1 mb-6">
+                <div className="space-y-2">
+                  {/* Extra charges items */}
+                  {(shipment.selected_rate?.extra_charges || []).map(
+                    (charge, index) => (
+                      <div key={index}>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-900">
+                            {charge?.name || 'Charge'}
+                          </span>
+                          <div className="text-sm text-gray-900 text-right">
+                            <span className="mr-1">{charge?.amount}</span>
+                            {!isNone(charge?.currency) && (
+                              <span>{charge?.currency}</span>
+                            )}
                           </div>
                         </div>
+                        {index < (shipment.selected_rate?.extra_charges || []).length - 1 && (
+                          <hr className="border-gray-200 mt-2" style={{ height: "1px" }} />
+                        )}
+                      </div>
+                    )
+                  )}
+
+                  {/* Separator before total */}
+                  {(shipment.selected_rate?.extra_charges || []).length > 0 && (
+                    <hr className="border-gray-200" style={{ height: "1px" }} />
+                  )}
+
+                  {/* Total line */}
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-semibold text-gray-900">
+                      Total
+                    </span>
+                    <div className="text-sm font-semibold text-gray-900 text-right">
+                      <span className="mr-1">
+                        {Number(shipment.selected_rate?.total_charge).toFixed(2)}
+                      </span>
+                      {shipment.selected_rate?.currency && (
+                        <span>{shipment.selected_rate?.currency}</span>
                       )}
+                    </div>
+                  </div>
+
+                  {/* Line below total */}
+                  <hr className="border-gray-200 mt-1" style={{ height: "1px" }} />
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Connection details section */}
+          {(shipment.selected_rate_carrier?.id ||
+            shipment.selected_rate_carrier?.carrier_id ||
+            shipment.selected_rate_carrier?.carrier_name ||
+            shipment.selected_rate_carrier?.display_name) && (
+            <>
+              <h2 className="text-xl font-semibold my-4">Connection Details</h2>
+              <hr className="mt-1 mb-2" style={{ height: "1px" }} />
+
+              <div className="mt-3 mb-6">
+                <div className={`grid grid-cols-1 ${isSheet ? '' : 'md:grid-cols-2'} gap-6 my-0`}>
+                  <div className="space-y-2">
+                    {/* Connection ID */}
+                    <div className="flex flex-col xl:flex-row xl:items-center">
+                      <div className="text-xs font-bold xl:w-32 mb-1 xl:mb-0">Connection ID</div>
+                      <div className="text-sm font-medium break-all">
+                        {shipment.selected_rate_carrier?.id || '-'}
+                      </div>
+                    </div>
+
+                    {/* Carrier ID */}
+                    <div className="flex flex-col xl:flex-row xl:items-center">
+                      <div className="text-xs font-bold xl:w-32 mb-1 xl:mb-0">Carrier ID</div>
+                      <div className="text-sm font-medium break-all">
+                        {shipment.selected_rate_carrier?.carrier_id || '-'}
+                      </div>
+                    </div>
+
+                    {/* Type */}
+                    <div className="flex flex-col xl:flex-row xl:items-center">
+                      <div className="text-xs font-bold xl:w-32 mb-1 xl:mb-0">Type</div>
+                      <div className="text-sm font-medium break-all">
+                        {shipment.selected_rate_carrier?.carrier_name || '-'}
+                      </div>
+                    </div>
+
+                    {/* Provider */}
+                    <div className="flex flex-col xl:flex-row xl:items-center">
+                      <div className="text-xs font-bold xl:w-32 mb-1 xl:mb-0">Provider</div>
+                      <div className="text-sm font-medium break-all">
+                        {shipment.selected_rate_carrier?.display_name || '-'}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </>
           )}
 
-          {/* Shipment details section */}
-          <h2 className="title is-5 my-4">Shipment Details</h2>
+          {/* Summary section */}
+          <h2 className="text-xl font-semibold my-4">Summary</h2>
           <hr className="mt-1 mb-2" style={{ height: "1px" }} />
 
           <div className="mt-3 mb-6">
-            <div className="columns my-0">
-              {/* Recipient Address section */}
-              <div className="column is-6 is-size-6 py-1">
-                <p className="is-title is-size-6 my-2 has-text-weight-semibold">
-                  ADDRESS
+            <div className="space-y-3">
+              {/* Shipping To section */}
+              <div className="text-base py-1">
+                <p className="text-base font-semibold tracking-wide my-2">
+                  Shipped To
                 </p>
 
                 <AddressDescription address={shipment.recipient} />
               </div>
 
-              {/* Options section */}
-              {Object.values(shipment.options as object).length > 0 && (
-                <div className="column is-6 is-size-6 py-1">
-                  <p className="is-title is-size-6 my-2 has-text-weight-semibold">
-                    OPTIONS
+              {/* Shipped From section */}
+              {!isNone(shipment.shipper) && (
+                <div className="text-base py-1">
+                  <p className="text-base font-semibold tracking-wide my-2">
+                    Shipped From
                   </p>
 
-                  <OptionsDescription options={shipment.options} />
+                  <AddressDescription address={shipment.shipper} />
                 </div>
               )}
             </div>
+          </div>
 
-            {/* Parcels section */}
-            <div className="mt-6 mb-0">
-              <p className="is-title is-size-6 my-2 has-text-weight-semibold">
-                PARCEL{shipment.parcels.length > 1 && "S"}
-              </p>
+          {/* Parcels section */}
+          <h2 className="text-xl font-semibold my-4">Parcels</h2>
+          <hr className="mt-1 mb-2" style={{ height: "1px" }} />
 
-              {shipment.parcels.map((parcel: ParcelType, index) => (
-                <React.Fragment key={index + "parcel-info"}>
-                  <hr className="my-4" style={{ height: "1px" }} />
+          <div className="mt-3 mb-6">
+            {shipment.parcels.map((parcel: ParcelType, index) => (
+              <React.Fragment key={index + "parcel-info"}>
+                {index > 0 && <hr className="my-4" style={{ height: "1px" }} />}
 
-                  <div className="columns mb-0 is-multiline">
-                    {/* Parcel details */}
-                    <div className="column is-6 is-size-6 py-1">
-                      <ParcelDescription parcel={parcel} />
-                    </div>
-
-                    {/* Parcel items */}
-                    {(parcel.items || []).length > 0 && (
-                      <div className="column is-6 is-size-6 py-1">
-                        <p className="is-title is-size-6 my-2 has-text-weight-semibold">
-                          ITEMS{" "}
-                          <span className="is-size-7">
-                            (
-                            {(parcel.items || []).reduce(
-                              (acc, { quantity }) => acc + (quantity || 0),
-                              0,
-                            )}
-                            )
-                          </span>
-                        </p>
-
-                        <div
-                          className="menu-list py-2 pr-1"
-                          style={{ maxHeight: "40em", overflow: "auto" }}
-                        >
-                          {(parcel.items || []).map((item, index) => (
-                            <React.Fragment key={index + "item-info"}>
-                              <hr
-                                className="mt-1 mb-2"
-                                style={{ height: "1px" }}
-                              />
-                              <CommodityDescription commodity={item} />
-                            </React.Fragment>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                <div className={`grid grid-cols-1 ${isSheet ? '' : 'md:grid-cols-2'} gap-6 mb-0`}>
+                  {/* Parcel details */}
+                  <div className="text-base py-1">
+                    <ParcelDescription parcel={parcel} />
                   </div>
-                </React.Fragment>
-              ))}
-            </div>
 
-            {/* Customs section */}
-            <div className="columns mt-6 mb-0 is-multiline">
-              {/* Customs details */}
-              {!isNone(shipment.customs) && (
-                <div className="column is-6 is-size-6 py-1">
-                  <p className="is-title is-size-6 my-2 has-text-weight-semibold">
-                    CUSTOMS DECLARATION
-                  </p>
+                  {/* Parcel items */}
+                  {(parcel.items || []).length > 0 && (
+                    <div className="text-base py-1">
+                      <p className="text-base font-semibold uppercase tracking-wide my-2">
+                        ITEMS{" "}
+                        <span className="text-xs">
+                          (
+                          {(parcel.items || []).reduce(
+                            (acc, { quantity }) => acc + (quantity || 0),
+                            0,
+                          )}
+                          )
+                        </span>
+                      </p>
 
+                      <div
+                        className="py-2 pr-1 max-h-[40rem] overflow-auto"
+                      >
+                        {(parcel.items || []).map((item, index) => (
+                          <React.Fragment key={index + "item-info"}>
+                            <hr
+                              className="mt-1 mb-2"
+                              style={{ height: "1px" }}
+                            />
+                            <CommodityDescription commodity={item} />
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </React.Fragment>
+            ))}
+          </div>
+
+          {/* Customs Declaration section */}
+          {!isNone(shipment.customs) && (
+            <>
+              <h2 className="text-xl font-semibold my-4">Customs Declaration</h2>
+              <hr className="mt-1 mb-2" style={{ height: "1px" }} />
+
+              <div className="mt-3 mb-6">
+                <div className="text-base py-1">
                   <CustomsInfoDescription
                     customs={shipment.customs as CustomsType}
                   />
                 </div>
-              )}
+              </div>
+            </>
+          )}
 
-              {/* Customs commodities */}
-              {!isNone(shipment.customs) &&
-                (shipment.customs?.commodities || []).length > 0 && (
-                  <div className="column is-6 is-size-6 py-1">
-                    <p className="is-title is-size-6 my-2 has-text-weight-semibold">
-                      COMMODITIES{" "}
-                      <span className="is-size-7">
-                        (
-                        {(shipment.customs?.commodities || []).reduce(
-                          (acc, { quantity }) => acc + (quantity || 0),
-                          0,
-                        )}
-                        )
-                      </span>
-                    </p>
-
-                    {(shipment.customs?.commodities || []).map(
-                      (commodity, index) => (
-                        <React.Fragment key={index + "parcel-info"}>
-                          <hr className="mt-1 mb-2" style={{ height: "1px" }} />
-                          <CommodityDescription commodity={commodity} />
-                        </React.Fragment>
-                      ),
+          {/* Commodities section */}
+          {!isNone(shipment.customs) &&
+            (shipment.customs?.commodities || []).length > 0 && (
+              <>
+                <h2 className="text-xl font-semibold my-4">
+                  Commodities{" "}
+                  <span className="text-lg">
+                    (
+                    {(shipment.customs?.commodities || []).reduce(
+                      (acc, { quantity }) => acc + (quantity || 0),
+                      0,
                     )}
-                  </div>
-                )}
-            </div>
-          </div>
+                    )
+                  </span>
+                </h2>
+                <hr className="mt-1 mb-2" style={{ height: "1px" }} />
 
-          {/* Document section */}
+                <div className="mt-3 mb-6">
+                  {(shipment.customs?.commodities || []).map(
+                    (commodity, index) => (
+                      <React.Fragment key={index + "parcel-info"}>
+                        {index > 0 && <hr className="mt-1 mb-2" style={{ height: "1px" }} />}
+                        <CommodityDescription commodity={commodity} />
+                      </React.Fragment>
+                    ),
+                  )}
+                </div>
+              </>
+            )}
+
+          {/* Document section - Temporarily hidden for testing
           {(
             (carrier_capabilities[shipment.carrier_name as string] || []) as any
           ).includes("paperless") &&
             "paperless_trade" in shipment.options && (
               <>
-                <h2 className="title is-5 my-4">Paperless Trade Documents</h2>
+                <h2 className="text-xl font-semibold my-4">Paperless Trade Documents</h2>
 
                 {!documents.isFetched && documents.isFetching && <Spinner />}
 
@@ -512,152 +590,158 @@ export const ShipmentComponent = ({
                   [...(uploads || []), ...(shipment.options.doc_files || [])]
                     .length == 0 && (
                     <>
-                      <hr className="mt-1 mb-3" style={{ height: "1px" }} />
-                      <div className="pb-3">No documents uploaded</div>
+                      <hr className="mt-1 mb-2" style={{ height: "1px" }} />
+                      <div className="mt-3 mb-6 text-gray-600">No documents uploaded</div>
                     </>
                   )}
 
                 {documents.isFetched &&
                   [...(uploads || []), ...(shipment.options.doc_files || [])]
                     .length > 0 && (
-                    <div className="table-container">
-                      <table className="related-item-table table is-hoverable is-fullwidth">
-                        <tbody>
+                    <div className="w-full">
+                      <Table>
+                        <TableBody>
                           {(uploads || []).map((upload) => (
                             <React.Fragment key={shipment.id}>
                               {(upload.documents || []).map((doc) => (
-                                <tr key={doc.doc_id} className="items">
-                                  <td className="description is-vcentered p-0">
+                                <TableRow key={doc.doc_id}>
+                                  <TableCell className="p-0">
                                     <span>{doc.file_name}</span>
-                                  </td>
-                                  <td className="status is-vcentered p-0">
-                                    <span className="tag is-success my-2">
+                                  </TableCell>
+                                  <TableCell className="p-0">
+                                    <Badge variant="default" className="my-2">
                                       uploaded
-                                    </span>
-                                  </td>
-                                </tr>
+                                    </Badge>
+                                  </TableCell>
+                                </TableRow>
                               ))}
                             </React.Fragment>
                           ))}
                           {(shipment.options.doc_files || []).map(
                             (doc: any, idx: number) => (
-                              <tr
+                              <TableRow
                                 key={`${new Date()}-${idx}`}
-                                className="items"
                               >
-                                <td className="description is-vcentered p-0">
+                                <TableCell className="p-0">
                                   <span>{doc.doc_name}</span>
-                                </td>
-                                <td className="status is-vcentered p-0">
-                                  <span className="tag is-success my-2">
+                                </TableCell>
+                                <TableCell className="p-0">
+                                  <Badge variant="default" className="my-2">
                                     uploaded
-                                  </span>
-                                </td>
-                              </tr>
+                                  </Badge>
+                                </TableCell>
+                              </TableRow>
                             ),
                           )}
-                        </tbody>
-                      </table>
+                        </TableBody>
+                      </Table>
                     </div>
                   )}
 
-                <div className="is-flex is-justify-content-space-between">
-                  <div className="is-flex">
-                    <SelectField
-                      onChange={(e) =>
-                        setFileData({ ...fileData, doc_type: e.target.value })
-                      }
-                      defaultValue="other"
-                      className="is-small is-fullwidth"
-                    >
-                      <option value="other">other</option>
-                      <option value="commercial_invoice">
-                        Commercial invoice
-                      </option>
-                      <option value="pro_forma_invoice">
-                        Pro forma invoice
-                      </option>
-                      <option value="packing_list">Packing list</option>
-                      <option value="certificate_of_origin">
-                        Certificate of origin
-                      </option>
-                    </SelectField>
-                    <InputField
-                      className="is-small mx-2"
-                      type="file"
-                      onChange={handleFileChange}
-                    />
+                <div className="space-y-3">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:items-end">
+                    <div className="max-w-xs md:max-w-none">
+                      <label className="text-xs font-bold mb-2 block">Document Type</label>
+                      <Select
+                        value={selectValue}
+                        onValueChange={(value) => {
+                          setSelectValue(value);
+                          setFileData({ ...fileData, doc_type: value });
+                        }}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="other">Other</SelectItem>
+                          <SelectItem value="commercial_invoice">
+                            Commercial Invoice
+                          </SelectItem>
+                          <SelectItem value="pro_forma_invoice">
+                            Pro Forma Invoice
+                          </SelectItem>
+                          <SelectItem value="packing_list">Packing List</SelectItem>
+                          <SelectItem value="certificate_of_origin">
+                            Certificate of Origin
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="max-w-xs md:max-w-none">
+                      <label className="text-xs font-bold mb-2 block">Choose File</label>
+                      <Input
+                        ref={$fileInput}
+                        type="file"
+                        onChange={handleFileChange}
+                        className="file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100"
+                      />
+                    </div>
+
+                    <div className="md:pb-0 max-w-xs md:max-w-none">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="w-auto px-4"
+                        disabled={
+                          (uploads || [])?.length > 4 ||
+                          !fileData.doc_file ||
+                          documents.isFetching ||
+                          uploadDocument.isLoading
+                        }
+                        onClick={() => uploadCustomsDocument()}
+                      >
+                        <i className="fas fa-upload mr-2 text-xs"></i>
+                        Upload
+                      </Button>
+                    </div>
                   </div>
 
-                  <button
-                    type="button"
-                    className="button is-default is-small is-align-self-center"
-                    disabled={
-                      (uploads || [])?.length > 4 ||
-                      !fileData.doc_file ||
-                      documents.isFetching ||
-                      uploadDocument.isLoading
-                    }
-                    onClick={() => uploadCustomsDocument()}
-                  >
-                    <span className="icon is-small">
-                      <i className="fas fa-upload"></i>
-                    </span>
-                    <span>Upload</span>
-                  </button>
+                  {fileData.doc_name && (
+                    <div className="text-xs text-green-600 font-medium truncate max-w-md">
+                      Selected: {fileData.doc_name}
+                    </div>
+                  )}
                 </div>
 
                 <div className="my-3 pt-1"></div>
               </>
             )}
+          */}
 
-          {/* Metadata section */}
-          <MetadataEditor
-            id={shipment.id}
-            object_type={MetadataObjectTypeEnum.shipment}
-            metadata={shipment.metadata}
-          >
-            {/* @ts-ignore */}
-            <MetadataEditorContext.Consumer>
-              {({ isEditing, editMetadata }) => (
-                <>
-                  <div className="is-flex is-justify-content-space-between">
-                    <h2 className="title is-5 my-4">Metadata</h2>
+          {/* Metadata Section - Mobile only, positioned before timeline */}
+          <div className={isSheet ? "" : "lg:hidden"}>
+            <h2 className="text-xl font-semibold my-4">Metadata</h2>
+            <hr className="mt-1 mb-2" style={{ height: "1px" }} />
 
-                    <button
-                      type="button"
-                      className="button is-default is-small is-align-self-center"
-                      disabled={isEditing}
-                      onClick={() => editMetadata()}
-                    >
-                      <span className="icon is-small">
-                        <i className="fas fa-pen"></i>
-                      </span>
-                      <span>Edit metadata</span>
-                    </button>
-                  </div>
-
-                  <hr className="mt-1 mb-2" style={{ height: "1px" }} />
-                </>
-              )}
-            </MetadataEditorContext.Consumer>
-          </MetadataEditor>
-
-          <div className="my-6 pt-1"></div>
+            <div className="my-4">
+              <EnhancedMetadataEditor
+                value={shipment.metadata || {}}
+                onChange={handleMetadataChange}
+                placeholder="No metadata configured"
+                emptyStateMessage="Add key-value pairs to configure metadata"
+                allowEdit={true}
+                showTypeInference={true}
+                maxHeight="300px"
+              />
+            </div>
+          </div>
 
           {/* Activity Timeline section */}
-          <h2 className="title is-5 my-4">Activity</h2>
-
+          <h2 className="text-xl font-semibold my-4">Activity</h2>
           <ActivityTimeline
             logs={logs}
             events={events}
           />
-        </>
+            </div>
+          </div>
+        </div>
       )}
 
       {query.isFetched && isNone(shipment) && (
-        <div className="card my-6">
-          <div className="card-content has-text-centered">
+        <div className="bg-white border border-gray-200 rounded-lg shadow-sm my-6">
+          <div className="p-6 text-center">
             <p>Uh Oh!</p>
             <p>{"We couldn't find any shipment with that reference"}</p>
           </div>
