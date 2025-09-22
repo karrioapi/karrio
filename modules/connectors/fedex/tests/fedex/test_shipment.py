@@ -74,7 +74,7 @@ class TestFedExShipping(unittest.TestCase):
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
-    def test_parse_shipment_response(self):
+    def test_parse_intl_shipment_response(self):
         with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
             mock.return_value = IntlShipmentResponse
             parsed_response = (
@@ -257,16 +257,6 @@ ParsedShipmentResponse = [
             "trackingIdType": "FEDEX",
             "fedex_carrier_code": "FDXE",
         },
-        "selected_rate": {
-            "carrier_id": "fedex",
-            "carrier_name": "fedex",
-            "service": "fedex_standard_overnight",
-            "total_charge": 21.45,
-            "currency": "USD",
-            "meta": {
-                "service_name": "fedex_standard_overnight",
-            },
-        },
         "shipment_identifier": "794953535000",
         "tracking_number": "794953535000",
     },
@@ -291,22 +281,6 @@ ParsedIntlShipmentResponse = [
             "carrier_tracking_link": "https://www.fedex.com/fedextrack/?trknbr=794791341818",
             "service_name": "fedex_international_priority_express",
             "fedex_carrier_code": "FDXE",
-        },
-        "selected_rate": {
-            "carrier_id": "fedex",
-            "carrier_name": "fedex",
-            "service": "fedex_international_priority_express",
-            "total_charge": 4448.19,
-            "currency": "USD",
-            "extra_charges": [
-                {"amount": 4178.82, "currency": "USD", "name": "Base Charge"},
-                {"amount": 6.15, "currency": "USD", "name": "Residential delivery"},
-                {"amount": 51.4, "currency": "USD", "name": "Demand Surcharge"},
-                {"amount": 211.82, "currency": "USD", "name": "Fuel"},
-            ],
-            "meta": {
-                "service_name": "fedex_international_priority_express",
-            },
         },
         "shipment_identifier": "794791341818",
         "tracking_number": "794791341818",
@@ -362,7 +336,28 @@ ShipmentRequest = {
             ],
             "dutiesPayment": {
                 "paymentType": "SENDER",
-                "payor": {"responsibleParty": {}},
+                "payor": {
+                    "responsibleParty": {
+                        "accountNumber": {"value": "2349857"},
+                        "address": {
+                            "city": "MEMPHIS",
+                            "countryCode": "US",
+                            "postalCode": "38117",
+                            "residential": False,
+                            "stateOrProvinceCode": "TN",
+                            "streetLines": [
+                                "Input Your Information",
+                                "Input Your Information",
+                            ],
+                        },
+                        "contact": {
+                            "companyName": "Input Your Information",
+                            "emailAddress": "Input Your Information",
+                            "personName": "Input Your Information",
+                            "phoneNumber": "+971529544379",
+                        },
+                    }
+                },
             },
             "insuranceCharge": {"amount": 0.0, "currency": "USD"},
             "isDocumentOnly": False,
@@ -422,16 +417,13 @@ ShipmentRequest = {
                     "width": 12.0,
                 },
                 "groupPackageCount": 1,
-                "packageSpecialServices": {
-                    "signatureOptionType": "SERVICE_DEFAULT",
-                    "specialServiceTypes": ["SIGNATURE_OPTION"],
-                },
+                "packageSpecialServices": {"signatureOptionType": "SERVICE_DEFAULT"},
                 "subPackagingType": "OTHER",
                 "weight": {"units": "LB", "value": 20.0},
             }
         ],
         "serviceType": "FEDEX_INTERNATIONAL_PRIORITY",
-        "shipDatestamp": "2024-02-15",
+        "shipDatestamp": ANY,
         "shipmentSpecialServices": {"specialServiceTypes": ["FEDEX_ONE_RATE"]},
         "shipper": {
             "address": {
@@ -547,16 +539,13 @@ ShipmentPaidByRecipientRequest = {
                     "width": 12.0,
                 },
                 "groupPackageCount": 1,
-                "packageSpecialServices": {
-                    "signatureOptionType": "SERVICE_DEFAULT",
-                    "specialServiceTypes": ["SIGNATURE_OPTION"],
-                },
+                "packageSpecialServices": {"signatureOptionType": "SERVICE_DEFAULT"},
                 "subPackagingType": "OTHER",
                 "weight": {"units": "LB", "value": 20.0},
             }
         ],
         "serviceType": "FEDEX_INTERNATIONAL_PRIORITY",
-        "shipDatestamp": "2024-02-15",
+        "shipDatestamp": ANY,
         "shipmentSpecialServices": {"specialServiceTypes": ["FEDEX_ONE_RATE"]},
         "shipper": {
             "address": {
@@ -599,6 +588,12 @@ ShipmentPaidByRecipientRequest = {
                 }
             },
         },
+        "shippingDocumentSpecification": {
+            "commercialInvoiceDetail": {
+                "documentFormat": {"docType": "PDF", "stockType": "PAPER_LETTER"}
+            },
+            "shippingDocumentTypes": ["COMMERCIAL_INVOICE"],
+        },
         "totalPackageCount": 1,
         "totalWeight": 20.0,
     },
@@ -634,7 +629,28 @@ MultiPieceShipmentRequest = {
             ],
             "dutiesPayment": {
                 "paymentType": "SENDER",
-                "payor": {"responsibleParty": {}},
+                "payor": {
+                    "responsibleParty": {
+                        "accountNumber": {"value": "2349857"},
+                        "address": {
+                            "city": "MEMPHIS",
+                            "countryCode": "US",
+                            "postalCode": "38117",
+                            "residential": False,
+                            "stateOrProvinceCode": "TN",
+                            "streetLines": [
+                                "Input Your Information",
+                                "Input Your Information",
+                            ],
+                        },
+                        "contact": {
+                            "companyName": "Input Your Information",
+                            "emailAddress": "Input Your Information",
+                            "personName": "Input Your Information",
+                            "phoneNumber": "+971529544379",
+                        },
+                    }
+                },
             },
             "insuranceCharge": {"amount": 0.0, "currency": "USD"},
             "isDocumentOnly": False,
@@ -694,10 +710,7 @@ MultiPieceShipmentRequest = {
                     "width": 12.0,
                 },
                 "groupPackageCount": 1,
-                "packageSpecialServices": {
-                    "signatureOptionType": "SERVICE_DEFAULT",
-                    "specialServiceTypes": ["SIGNATURE_OPTION"],
-                },
+                "packageSpecialServices": {"signatureOptionType": "SERVICE_DEFAULT"},
                 "subPackagingType": "OTHER",
                 "weight": {"units": "LB", "value": 1.0},
             },
@@ -710,16 +723,13 @@ MultiPieceShipmentRequest = {
                     "width": 11.0,
                 },
                 "groupPackageCount": 1,
-                "packageSpecialServices": {
-                    "signatureOptionType": "SERVICE_DEFAULT",
-                    "specialServiceTypes": ["SIGNATURE_OPTION"],
-                },
+                "packageSpecialServices": {"signatureOptionType": "SERVICE_DEFAULT"},
                 "subPackagingType": "OTHER",
                 "weight": {"units": "LB", "value": 2.0},
             },
         ],
         "serviceType": "FEDEX_INTERNATIONAL_PRIORITY",
-        "shipDatestamp": "2024-02-17",
+        "shipDatestamp": ANY,
         "shipmentSpecialServices": {
             "etdDetail": {
                 "attributes": ["POST_SHIPMENT_UPLOAD_REQUESTED"],
@@ -767,6 +777,12 @@ MultiPieceShipmentRequest = {
                     },
                 }
             },
+        },
+        "shippingDocumentSpecification": {
+            "commercialInvoiceDetail": {
+                "documentFormat": {"docType": "PDF", "stockType": "PAPER_LETTER"}
+            },
+            "shippingDocumentTypes": ["COMMERCIAL_INVOICE"],
         },
         "totalPackageCount": 2,
         "totalWeight": 3.0,

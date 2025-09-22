@@ -107,7 +107,10 @@ def rate_request(
         shipping_options_initializer=provider_units.shipping_options_initializer,
     )
 
-    is_intl = shipper.country_code != recipient.country_code
+    is_intl = lib.identity(
+        shipper.country_code != recipient.country_code
+        or (shipper.country_code == "IN" and recipient.country_code == "IN")
+    )
     default_currency = lib.identity(
         options.currency.state
         or settings.default_currency
@@ -216,7 +219,14 @@ def rate_request(
                     ),
                     groupPackageCount=1,
                     contentRecord=[],
-                    declaredValue=package.options.declared_value.state,
+                    declaredValue=fedex.FixedValueType(
+                        amount=lib.identity(
+                            lib.to_money(package.total_value)
+                            or lib.to_money(package.options.declared_value.state)
+                            or 0.0
+                        ),
+                        currency=default_currency,
+                    ),
                     weight=fedex.WeightType(
                         units=package.weight.unit,
                         value=package.weight.value,
@@ -245,22 +255,29 @@ def rate_request(
                         else None
                     ),
                     variableHandlingChargeDetail=None,
-                    packageSpecialServices=fedex.PackageSpecialServicesType(
-                        specialServiceTypes=[
-                            option.code for option in package_options(package.options)
-                        ],
-                        signatureOptionType=lib.identity(
-                            provider_units.SignatureOptionType.map(
-                                package.options.fedex_signature_option.state
-                            ).value
-                            or "SERVICE_DEFAULT"
-                        ),
-                        alcoholDetail=None,
-                        dangerousGoodsDetail=None,
-                        packageCODDetail=None,
-                        pieceCountVerificationBoxCount=None,
-                        batteryDetails=[],
-                        dryIceWeight=None,
+                    packageSpecialServices=lib.identity(
+                        fedex.PackageSpecialServicesType(
+                            specialServiceTypes=[
+                                option.code
+                                for option in package_options(package.options)
+                            ],
+                            signatureOptionType=[
+                                lib.identity(
+                                    provider_units.SignatureOptionType.map(
+                                        package.options.fedex_signature_option.state
+                                    ).value
+                                    or "SERVICE_DEFAULT"
+                                )
+                            ],
+                            alcoholDetail=None,
+                            dangerousGoodsDetail=None,
+                            packageCODDetail=None,
+                            pieceCountVerificationBoxCount=None,
+                            batteryDetails=[],
+                            dryIceWeight=None,
+                        )
+                        if any(package_options(package.options))
+                        else None
                     ),
                 )
                 for package in packages
@@ -294,7 +311,11 @@ def rate_request(
             customsClearanceDetail=lib.identity(
                 fedex.CustomsClearanceDetailType(
                     brokers=[],
-                    commercialInvoice=None,
+                    commercialInvoice=fedex.CommercialInvoiceType(
+                        shipmentPurpose=provider_units.PurposeType.map(
+                            customs.content_type or "sold"
+                        ).value
+                    ),
                     freightOnValue=None,
                     dutiesPayment=fedex.DutiesPaymentType(
                         payor=fedex.PayorType(

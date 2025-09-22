@@ -6,6 +6,7 @@ import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.errors as errors
 from karrio.core import Settings as BaseSettings
+from karrio.core.utils.caching import ThreadSafeTokenManager
 
 
 class Settings(BaseSettings):
@@ -63,19 +64,12 @@ class Settings(BaseSettings):
         or collect it from the cache if an unexpired access_token exist.
         """
         cache_key = f"{self.carrier_name}|{self.client_id}|{self.client_secret}"
-        now = datetime.datetime.now() + datetime.timedelta(minutes=30)
 
-        auth = self.connection_cache.get(cache_key) or {}
-        token = auth.get("access_token")
-        expiry = lib.to_date(auth.get("expiry"), current_format="%Y-%m-%d %H:%M:%S")
-
-        if token is not None and expiry is not None and expiry > now:
-            return token
-
-        self.connection_cache.set(cache_key, lambda: login(self))
-        new_auth = self.connection_cache.get(cache_key)
-
-        return new_auth["access_token"]
+        return self.connection_cache.thread_safe(
+            refresh_func=lambda: login(self),
+            cache_key=cache_key,
+            buffer_minutes=30,
+        ).get_state()
 
 
 def login(settings: Settings):

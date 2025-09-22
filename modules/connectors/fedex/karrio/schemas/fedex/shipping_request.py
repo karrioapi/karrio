@@ -19,13 +19,13 @@ class AddressType:
 
 
 @attr.s(auto_attribs=True)
-class BrokerContactType:
+class ContactType:
     personName: typing.Optional[str] = None
     emailAddress: typing.Optional[str] = None
-    phoneNumber: typing.Optional[int] = None
-    phoneExtension: typing.Optional[int] = None
+    phoneNumber: typing.Optional[str] = None
+    phoneExtension: typing.Optional[str] = None
     companyName: typing.Optional[str] = None
-    faxNumber: typing.Optional[int] = None
+    faxNumber: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
@@ -38,17 +38,19 @@ class TinType:
 
 
 @attr.s(auto_attribs=True)
-class BrokerBrokerType:
+class ShipperType:
     address: typing.Optional[AddressType] = jstruct.JStruct[AddressType]
-    contact: typing.Optional[BrokerContactType] = jstruct.JStruct[BrokerContactType]
-    accountNumber: typing.Optional[AccountNumberType] = jstruct.JStruct[AccountNumberType]
+    contact: typing.Optional[ContactType] = jstruct.JStruct[ContactType]
+    accountNumber: typing.Optional[AccountNumberType] = jstruct.JStruct[
+        AccountNumberType
+    ]
     tins: typing.Optional[typing.List[TinType]] = jstruct.JList[TinType]
     deliveryInstructions: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
-class BrokerElementType:
-    broker: typing.Optional[BrokerBrokerType] = jstruct.JStruct[BrokerBrokerType]
+class BrokerType:
+    broker: typing.Optional[ShipperType] = jstruct.JStruct[ShipperType]
     type: typing.Optional[str] = None
 
 
@@ -75,17 +77,29 @@ class TotalDeclaredValueType:
 class CommercialInvoiceType:
     originatorName: typing.Optional[str] = None
     comments: typing.Optional[typing.List[str]] = None
-    customerReferences: typing.Optional[typing.List[CustomerReferenceType]] = jstruct.JList[CustomerReferenceType]
-    taxesOrMiscellaneousCharge: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[TotalDeclaredValueType]
+    customerReferences: typing.Optional[typing.List[CustomerReferenceType]] = (
+        jstruct.JList[CustomerReferenceType]
+    )
+    taxesOrMiscellaneousCharge: typing.Optional[TotalDeclaredValueType] = (
+        jstruct.JStruct[TotalDeclaredValueType]
+    )
     taxesOrMiscellaneousChargeType: typing.Optional[str] = None
-    freightCharge: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[TotalDeclaredValueType]
-    packingCosts: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[TotalDeclaredValueType]
-    handlingCosts: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[TotalDeclaredValueType]
+    freightCharge: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[
+        TotalDeclaredValueType
+    ]
+    packingCosts: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[
+        TotalDeclaredValueType
+    ]
+    handlingCosts: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[
+        TotalDeclaredValueType
+    ]
     declarationStatement: typing.Optional[str] = None
     termsOfSale: typing.Optional[str] = None
     specialInstructions: typing.Optional[str] = None
     shipmentPurpose: typing.Optional[str] = None
-    emailNotificationDetail: typing.Optional[CommercialInvoiceEmailNotificationDetailType] = jstruct.JStruct[CommercialInvoiceEmailNotificationDetailType]
+    emailNotificationDetail: typing.Optional[
+        CommercialInvoiceEmailNotificationDetailType
+    ] = jstruct.JStruct[CommercialInvoiceEmailNotificationDetailType]
 
 
 @attr.s(auto_attribs=True)
@@ -113,8 +127,12 @@ class WeightType:
 
 @attr.s(auto_attribs=True)
 class CommodityType:
-    unitPrice: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[TotalDeclaredValueType]
-    additionalMeasures: typing.Optional[typing.List[AdditionalMeasureType]] = jstruct.JList[AdditionalMeasureType]
+    unitPrice: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[
+        TotalDeclaredValueType
+    ]
+    additionalMeasures: typing.Optional[typing.List[AdditionalMeasureType]] = (
+        jstruct.JList[AdditionalMeasureType]
+    )
     numberOfPieces: typing.Optional[int] = None
     quantity: typing.Optional[int] = None
     quantityUnits: typing.Optional[str] = None
@@ -146,7 +164,9 @@ class UsmcaLowValueStatementDetailType:
 
 @attr.s(auto_attribs=True)
 class DeclarationStatementDetailType:
-    usmcaLowValueStatementDetail: typing.Optional[UsmcaLowValueStatementDetailType] = jstruct.JStruct[UsmcaLowValueStatementDetailType]
+    usmcaLowValueStatementDetail: typing.Optional[UsmcaLowValueStatementDetailType] = (
+        jstruct.JStruct[UsmcaLowValueStatementDetailType]
+    )
 
 
 @attr.s(auto_attribs=True)
@@ -160,32 +180,16 @@ class BillingDetailsType:
 
 
 @attr.s(auto_attribs=True)
-class ResponsiblePartyContactType:
-    personName: typing.Optional[str] = None
-    emailAddress: typing.Optional[str] = None
-    phoneNumber: typing.Optional[str] = None
-    phoneExtension: typing.Optional[str] = None
-    companyName: typing.Optional[str] = None
-    faxNumber: typing.Optional[str] = None
-
-
-@attr.s(auto_attribs=True)
-class ResponsiblePartyType:
-    address: typing.Optional[AddressType] = jstruct.JStruct[AddressType]
-    contact: typing.Optional[ResponsiblePartyContactType] = jstruct.JStruct[ResponsiblePartyContactType]
-    accountNumber: typing.Optional[AccountNumberType] = jstruct.JStruct[AccountNumberType]
-    tins: typing.Optional[typing.List[TinType]] = jstruct.JList[TinType]
-
-
-@attr.s(auto_attribs=True)
 class PayorType:
-    responsibleParty: typing.Optional[ResponsiblePartyType] = jstruct.JStruct[ResponsiblePartyType]
+    responsibleParty: typing.Optional[ShipperType] = jstruct.JStruct[ShipperType]
 
 
 @attr.s(auto_attribs=True)
 class DutiesPaymentType:
     payor: typing.Optional[PayorType] = jstruct.JStruct[PayorType]
-    billingDetails: typing.Optional[BillingDetailsType] = jstruct.JStruct[BillingDetailsType]
+    billingDetails: typing.Optional[BillingDetailsType] = jstruct.JStruct[
+        BillingDetailsType
+    ]
     paymentType: typing.Optional[str] = None
 
 
@@ -198,19 +202,12 @@ class DestinationControlDetailType:
 
 @attr.s(auto_attribs=True)
 class ExportDetailType:
-    destinationControlDetail: typing.Optional[DestinationControlDetailType] = jstruct.JStruct[DestinationControlDetailType]
+    destinationControlDetail: typing.Optional[DestinationControlDetailType] = (
+        jstruct.JStruct[DestinationControlDetailType]
+    )
     b13AFilingOption: typing.Optional[str] = None
     exportComplianceStatement: typing.Optional[str] = None
     permitNumber: typing.Optional[int] = None
-
-
-@attr.s(auto_attribs=True)
-class ShipperType:
-    address: typing.Optional[AddressType] = jstruct.JStruct[AddressType]
-    contact: typing.Optional[ResponsiblePartyContactType] = jstruct.JStruct[ResponsiblePartyContactType]
-    accountNumber: typing.Optional[AccountNumberType] = jstruct.JStruct[AccountNumberType]
-    tins: typing.Optional[typing.List[TinType]] = jstruct.JList[TinType]
-    deliveryInstructions: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
@@ -222,21 +219,37 @@ class RecipientCustomsIDType:
 @attr.s(auto_attribs=True)
 class CustomsClearanceDetailType:
     regulatoryControls: typing.Optional[str] = None
-    brokers: typing.Optional[typing.List[BrokerElementType]] = jstruct.JList[BrokerElementType]
-    commercialInvoice: typing.Optional[CommercialInvoiceType] = jstruct.JStruct[CommercialInvoiceType]
+    brokers: typing.Optional[typing.List[BrokerType]] = jstruct.JList[BrokerType]
+    commercialInvoice: typing.Optional[CommercialInvoiceType] = jstruct.JStruct[
+        CommercialInvoiceType
+    ]
     freightOnValue: typing.Optional[str] = None
-    dutiesPayment: typing.Optional[DutiesPaymentType] = jstruct.JStruct[DutiesPaymentType]
-    commodities: typing.Optional[typing.List[CommodityType]] = jstruct.JList[CommodityType]
+    dutiesPayment: typing.Optional[DutiesPaymentType] = jstruct.JStruct[
+        DutiesPaymentType
+    ]
+    commodities: typing.Optional[typing.List[CommodityType]] = jstruct.JList[
+        CommodityType
+    ]
     isDocumentOnly: typing.Optional[bool] = None
-    recipientCustomsId: typing.Optional[RecipientCustomsIDType] = jstruct.JStruct[RecipientCustomsIDType]
-    customsOption: typing.Optional[CustomsOptionType] = jstruct.JStruct[CustomsOptionType]
+    recipientCustomsId: typing.Optional[RecipientCustomsIDType] = jstruct.JStruct[
+        RecipientCustomsIDType
+    ]
+    customsOption: typing.Optional[CustomsOptionType] = jstruct.JStruct[
+        CustomsOptionType
+    ]
     importerOfRecord: typing.Optional[ShipperType] = jstruct.JStruct[ShipperType]
     generatedDocumentLocale: typing.Optional[str] = None
     exportDetail: typing.Optional[ExportDetailType] = jstruct.JStruct[ExportDetailType]
-    totalCustomsValue: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[TotalDeclaredValueType]
+    totalCustomsValue: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[
+        TotalDeclaredValueType
+    ]
     partiesToTransactionAreRelated: typing.Optional[bool] = None
-    declarationStatementDetail: typing.Optional[DeclarationStatementDetailType] = jstruct.JStruct[DeclarationStatementDetailType]
-    insuranceCharge: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[TotalDeclaredValueType]
+    declarationStatementDetail: typing.Optional[DeclarationStatementDetailType] = (
+        jstruct.JStruct[DeclarationStatementDetailType]
+    )
+    insuranceCharge: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[
+        TotalDeclaredValueType
+    ]
 
 
 @attr.s(auto_attribs=True)
@@ -253,7 +266,9 @@ class EmailNotificationRecipientType:
 @attr.s(auto_attribs=True)
 class RequestedShipmentEmailNotificationDetailType:
     aggregationType: typing.Optional[str] = None
-    emailNotificationRecipients: typing.Optional[typing.List[EmailNotificationRecipientType]] = jstruct.JList[EmailNotificationRecipientType]
+    emailNotificationRecipients: typing.Optional[
+        typing.List[EmailNotificationRecipientType]
+    ] = jstruct.JList[EmailNotificationRecipientType]
     personalMessage: typing.Optional[str] = None
 
 
@@ -282,12 +297,16 @@ class SpecificationType:
 @attr.s(auto_attribs=True)
 class BarcodedType:
     symbology: typing.Optional[str] = None
-    specification: typing.Optional[SpecificationType] = jstruct.JStruct[SpecificationType]
+    specification: typing.Optional[SpecificationType] = jstruct.JStruct[
+        SpecificationType
+    ]
 
 
 @attr.s(auto_attribs=True)
 class Zone001Type:
-    docTabZoneSpecifications: typing.Optional[typing.List[SpecificationType]] = jstruct.JList[SpecificationType]
+    docTabZoneSpecifications: typing.Optional[typing.List[SpecificationType]] = (
+        jstruct.JList[SpecificationType]
+    )
 
 
 @attr.s(auto_attribs=True)
@@ -306,22 +325,30 @@ class RegulatoryLabelType:
 @attr.s(auto_attribs=True)
 class CustomerSpecifiedDetailType:
     maskedData: typing.Optional[typing.List[str]] = None
-    regulatoryLabels: typing.Optional[typing.List[RegulatoryLabelType]] = jstruct.JList[RegulatoryLabelType]
-    additionalLabels: typing.Optional[typing.List[AdditionalLabelType]] = jstruct.JList[AdditionalLabelType]
-    docTabContent: typing.Optional[DocTabContentType] = jstruct.JStruct[DocTabContentType]
+    regulatoryLabels: typing.Optional[typing.List[RegulatoryLabelType]] = jstruct.JList[
+        RegulatoryLabelType
+    ]
+    additionalLabels: typing.Optional[typing.List[AdditionalLabelType]] = jstruct.JList[
+        AdditionalLabelType
+    ]
+    docTabContent: typing.Optional[DocTabContentType] = jstruct.JStruct[
+        DocTabContentType
+    ]
 
 
 @attr.s(auto_attribs=True)
 class OriginType:
     address: typing.Optional[AddressType] = jstruct.JStruct[AddressType]
-    contact: typing.Optional[ResponsiblePartyContactType] = jstruct.JStruct[ResponsiblePartyContactType]
+    contact: typing.Optional[ContactType] = jstruct.JStruct[ContactType]
 
 
 @attr.s(auto_attribs=True)
 class LabelSpecificationType:
     labelFormatType: typing.Optional[str] = None
     labelOrder: typing.Optional[str] = None
-    customerSpecifiedDetail: typing.Optional[CustomerSpecifiedDetailType] = jstruct.JStruct[CustomerSpecifiedDetailType]
+    customerSpecifiedDetail: typing.Optional[CustomerSpecifiedDetailType] = (
+        jstruct.JStruct[CustomerSpecifiedDetailType]
+    )
     printedLabelOrigin: typing.Optional[OriginType] = jstruct.JStruct[OriginType]
     labelStockType: typing.Optional[str] = None
     labelRotation: typing.Optional[str] = None
@@ -376,7 +403,9 @@ class DangerousGoodsDetailType:
 
 @attr.s(auto_attribs=True)
 class PackageCODDetailType:
-    codCollectionAmount: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[TotalDeclaredValueType]
+    codCollectionAmount: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[
+        TotalDeclaredValueType
+    ]
 
 
 @attr.s(auto_attribs=True)
@@ -394,13 +423,25 @@ class SignatureOptionDetailType:
 class PackageSpecialServicesType:
     specialServiceTypes: typing.Optional[typing.List[str]] = None
     signatureOptionType: typing.Optional[str] = None
-    priorityAlertDetail: typing.Optional[PriorityAlertDetailType] = jstruct.JStruct[PriorityAlertDetailType]
-    signatureOptionDetail: typing.Optional[SignatureOptionDetailType] = jstruct.JStruct[SignatureOptionDetailType]
-    alcoholDetail: typing.Optional[AlcoholDetailType] = jstruct.JStruct[AlcoholDetailType]
-    dangerousGoodsDetail: typing.Optional[DangerousGoodsDetailType] = jstruct.JStruct[DangerousGoodsDetailType]
-    packageCODDetail: typing.Optional[PackageCODDetailType] = jstruct.JStruct[PackageCODDetailType]
+    priorityAlertDetail: typing.Optional[PriorityAlertDetailType] = jstruct.JStruct[
+        PriorityAlertDetailType
+    ]
+    signatureOptionDetail: typing.Optional[SignatureOptionDetailType] = jstruct.JStruct[
+        SignatureOptionDetailType
+    ]
+    alcoholDetail: typing.Optional[AlcoholDetailType] = jstruct.JStruct[
+        AlcoholDetailType
+    ]
+    dangerousGoodsDetail: typing.Optional[DangerousGoodsDetailType] = jstruct.JStruct[
+        DangerousGoodsDetailType
+    ]
+    packageCODDetail: typing.Optional[PackageCODDetailType] = jstruct.JStruct[
+        PackageCODDetailType
+    ]
     pieceCountVerificationBoxCount: typing.Optional[int] = None
-    batteryDetails: typing.Optional[typing.List[BatteryDetailType]] = jstruct.JList[BatteryDetailType]
+    batteryDetails: typing.Optional[typing.List[BatteryDetailType]] = jstruct.JList[
+        BatteryDetailType
+    ]
     dryIceWeight: typing.Optional[WeightType] = jstruct.JStruct[WeightType]
 
 
@@ -409,7 +450,9 @@ class VariableHandlingChargeDetailType:
     rateType: typing.Optional[str] = None
     percentValue: typing.Optional[float] = None
     rateLevelType: typing.Optional[str] = None
-    fixedValue: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[TotalDeclaredValueType]
+    fixedValue: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[
+        TotalDeclaredValueType
+    ]
     rateElementBasis: typing.Optional[str] = None
 
 
@@ -417,16 +460,26 @@ class VariableHandlingChargeDetailType:
 class RequestedPackageLineItemType:
     sequenceNumber: typing.Optional[int] = None
     subPackagingType: typing.Optional[str] = None
-    customerReferences: typing.Optional[typing.List[CustomerReferenceType]] = jstruct.JList[CustomerReferenceType]
-    declaredValue: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[TotalDeclaredValueType]
+    customerReferences: typing.Optional[typing.List[CustomerReferenceType]] = (
+        jstruct.JList[CustomerReferenceType]
+    )
+    declaredValue: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[
+        TotalDeclaredValueType
+    ]
     weight: typing.Optional[WeightType] = jstruct.JStruct[WeightType]
     dimensions: typing.Optional[DimensionsType] = jstruct.JStruct[DimensionsType]
     groupPackageCount: typing.Optional[int] = None
     itemDescriptionForClearance: typing.Optional[str] = None
-    contentRecord: typing.Optional[typing.List[ContentRecordType]] = jstruct.JList[ContentRecordType]
+    contentRecord: typing.Optional[typing.List[ContentRecordType]] = jstruct.JList[
+        ContentRecordType
+    ]
     itemDescription: typing.Optional[str] = None
-    variableHandlingChargeDetail: typing.Optional[VariableHandlingChargeDetailType] = jstruct.JStruct[VariableHandlingChargeDetailType]
-    packageSpecialServices: typing.Optional[PackageSpecialServicesType] = jstruct.JStruct[PackageSpecialServicesType]
+    variableHandlingChargeDetail: typing.Optional[VariableHandlingChargeDetailType] = (
+        jstruct.JStruct[VariableHandlingChargeDetailType]
+    )
+    packageSpecialServices: typing.Optional[PackageSpecialServicesType] = (
+        jstruct.JStruct[PackageSpecialServicesType]
+    )
     trackingNumber: typing.Optional[int] = None
 
 
@@ -446,7 +499,9 @@ class AttachedDocumentType:
 @attr.s(auto_attribs=True)
 class EtdDetailType:
     attributes: typing.Optional[typing.List[str]] = None
-    attachedDocuments: typing.Optional[typing.List[AttachedDocumentType]] = jstruct.JList[AttachedDocumentType]
+    attachedDocuments: typing.Optional[typing.List[AttachedDocumentType]] = (
+        jstruct.JList[AttachedDocumentType]
+    )
     requestedDocumentTypes: typing.Optional[typing.List[str]] = None
 
 
@@ -494,14 +549,18 @@ class ProcessingOptionsType:
 @attr.s(auto_attribs=True)
 class RecipientType:
     emailAddress: typing.Optional[str] = None
-    optionsRequested: typing.Optional[ProcessingOptionsType] = jstruct.JStruct[ProcessingOptionsType]
+    optionsRequested: typing.Optional[ProcessingOptionsType] = jstruct.JStruct[
+        ProcessingOptionsType
+    ]
     role: typing.Optional[str] = None
     locale: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
 class EmailLabelDetailType:
-    recipients: typing.Optional[typing.List[RecipientType]] = jstruct.JList[RecipientType]
+    recipients: typing.Optional[typing.List[RecipientType]] = jstruct.JList[
+        RecipientType
+    ]
     message: typing.Optional[str] = None
 
 
@@ -513,10 +572,18 @@ class RecommendedDocumentSpecificationType:
 @attr.s(auto_attribs=True)
 class PendingShipmentDetailType:
     pendingShipmentType: typing.Optional[str] = None
-    processingOptions: typing.Optional[ProcessingOptionsType] = jstruct.JStruct[ProcessingOptionsType]
-    recommendedDocumentSpecification: typing.Optional[RecommendedDocumentSpecificationType] = jstruct.JStruct[RecommendedDocumentSpecificationType]
-    emailLabelDetail: typing.Optional[EmailLabelDetailType] = jstruct.JStruct[EmailLabelDetailType]
-    attachedDocuments: typing.Optional[typing.List[AttachedDocumentType]] = jstruct.JList[AttachedDocumentType]
+    processingOptions: typing.Optional[ProcessingOptionsType] = jstruct.JStruct[
+        ProcessingOptionsType
+    ]
+    recommendedDocumentSpecification: typing.Optional[
+        RecommendedDocumentSpecificationType
+    ] = jstruct.JStruct[RecommendedDocumentSpecificationType]
+    emailLabelDetail: typing.Optional[EmailLabelDetailType] = jstruct.JStruct[
+        EmailLabelDetailType
+    ]
+    attachedDocuments: typing.Optional[typing.List[AttachedDocumentType]] = (
+        jstruct.JList[AttachedDocumentType]
+    )
     expirationTimeStamp: typing.Optional[str] = None
 
 
@@ -539,9 +606,13 @@ class RmaType:
 
 @attr.s(auto_attribs=True)
 class ReturnShipmentDetailType:
-    returnEmailDetail: typing.Optional[ReturnEmailDetailType] = jstruct.JStruct[ReturnEmailDetailType]
+    returnEmailDetail: typing.Optional[ReturnEmailDetailType] = jstruct.JStruct[
+        ReturnEmailDetailType
+    ]
     rma: typing.Optional[RmaType] = jstruct.JStruct[RmaType]
-    returnAssociationDetail: typing.Optional[ReturnAssociationDetailType] = jstruct.JStruct[ReturnAssociationDetailType]
+    returnAssociationDetail: typing.Optional[ReturnAssociationDetailType] = (
+        jstruct.JStruct[ReturnAssociationDetailType]
+    )
     returnType: typing.Optional[str] = None
 
 
@@ -555,14 +626,22 @@ class AddTransportationChargesDetailType:
 
 @attr.s(auto_attribs=True)
 class ShipmentCODDetailType:
-    addTransportationChargesDetail: typing.Optional[AddTransportationChargesDetailType] = jstruct.JStruct[AddTransportationChargesDetailType]
+    addTransportationChargesDetail: typing.Optional[
+        AddTransportationChargesDetailType
+    ] = jstruct.JStruct[AddTransportationChargesDetailType]
     codRecipient: typing.Optional[ShipperType] = jstruct.JStruct[ShipperType]
     remitToName: typing.Optional[str] = None
     codCollectionType: typing.Optional[str] = None
-    financialInstitutionContactAndAddress: typing.Optional[OriginType] = jstruct.JStruct[OriginType]
-    codCollectionAmount: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[TotalDeclaredValueType]
+    financialInstitutionContactAndAddress: typing.Optional[OriginType] = (
+        jstruct.JStruct[OriginType]
+    )
+    codCollectionAmount: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[
+        TotalDeclaredValueType
+    ]
     returnReferenceIndicatorType: typing.Optional[str] = None
-    shipmentCodAmount: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[TotalDeclaredValueType]
+    shipmentCodAmount: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[
+        TotalDeclaredValueType
+    ]
 
 
 @attr.s(auto_attribs=True)
@@ -575,15 +654,33 @@ class ShipmentDryIceDetailType:
 class ShipmentSpecialServicesType:
     specialServiceTypes: typing.Optional[typing.List[str]] = None
     etdDetail: typing.Optional[EtdDetailType] = jstruct.JStruct[EtdDetailType]
-    returnShipmentDetail: typing.Optional[ReturnShipmentDetailType] = jstruct.JStruct[ReturnShipmentDetailType]
-    deliveryOnInvoiceAcceptanceDetail: typing.Optional[DeliveryOnInvoiceAcceptanceDetailType] = jstruct.JStruct[DeliveryOnInvoiceAcceptanceDetailType]
-    internationalTrafficInArmsRegulationsDetail: typing.Optional[InternationalTrafficInArmsRegulationsDetailType] = jstruct.JStruct[InternationalTrafficInArmsRegulationsDetailType]
-    pendingShipmentDetail: typing.Optional[PendingShipmentDetailType] = jstruct.JStruct[PendingShipmentDetailType]
-    holdAtLocationDetail: typing.Optional[HoldAtLocationDetailType] = jstruct.JStruct[HoldAtLocationDetailType]
-    shipmentCODDetail: typing.Optional[ShipmentCODDetailType] = jstruct.JStruct[ShipmentCODDetailType]
-    shipmentDryIceDetail: typing.Optional[ShipmentDryIceDetailType] = jstruct.JStruct[ShipmentDryIceDetailType]
-    internationalControlledExportDetail: typing.Optional[InternationalControlledExportDetailType] = jstruct.JStruct[InternationalControlledExportDetailType]
-    homeDeliveryPremiumDetail: typing.Optional[HomeDeliveryPremiumDetailType] = jstruct.JStruct[HomeDeliveryPremiumDetailType]
+    returnShipmentDetail: typing.Optional[ReturnShipmentDetailType] = jstruct.JStruct[
+        ReturnShipmentDetailType
+    ]
+    deliveryOnInvoiceAcceptanceDetail: typing.Optional[
+        DeliveryOnInvoiceAcceptanceDetailType
+    ] = jstruct.JStruct[DeliveryOnInvoiceAcceptanceDetailType]
+    internationalTrafficInArmsRegulationsDetail: typing.Optional[
+        InternationalTrafficInArmsRegulationsDetailType
+    ] = jstruct.JStruct[InternationalTrafficInArmsRegulationsDetailType]
+    pendingShipmentDetail: typing.Optional[PendingShipmentDetailType] = jstruct.JStruct[
+        PendingShipmentDetailType
+    ]
+    holdAtLocationDetail: typing.Optional[HoldAtLocationDetailType] = jstruct.JStruct[
+        HoldAtLocationDetailType
+    ]
+    shipmentCODDetail: typing.Optional[ShipmentCODDetailType] = jstruct.JStruct[
+        ShipmentCODDetailType
+    ]
+    shipmentDryIceDetail: typing.Optional[ShipmentDryIceDetailType] = jstruct.JStruct[
+        ShipmentDryIceDetailType
+    ]
+    internationalControlledExportDetail: typing.Optional[
+        InternationalControlledExportDetailType
+    ] = jstruct.JStruct[InternationalControlledExportDetailType]
+    homeDeliveryPremiumDetail: typing.Optional[HomeDeliveryPremiumDetailType] = (
+        jstruct.JStruct[HomeDeliveryPremiumDetailType]
+    )
 
 
 @attr.s(auto_attribs=True)
@@ -607,7 +704,9 @@ class EMailRecipientType:
 
 @attr.s(auto_attribs=True)
 class EMailDetailType:
-    eMailRecipients: typing.Optional[typing.List[EMailRecipientType]] = jstruct.JList[EMailRecipientType]
+    eMailRecipients: typing.Optional[typing.List[EMailRecipientType]] = jstruct.JList[
+        EMailRecipientType
+    ]
     locale: typing.Optional[str] = None
     grouping: typing.Optional[str] = None
 
@@ -621,35 +720,51 @@ class DispositionType:
 @attr.s(auto_attribs=True)
 class DocumentFormatType:
     provideInstructions: typing.Optional[bool] = None
-    optionsRequested: typing.Optional[ProcessingOptionsType] = jstruct.JStruct[ProcessingOptionsType]
+    optionsRequested: typing.Optional[ProcessingOptionsType] = jstruct.JStruct[
+        ProcessingOptionsType
+    ]
     stockType: typing.Optional[str] = None
-    dispositions: typing.Optional[typing.List[DispositionType]] = jstruct.JList[DispositionType]
+    dispositions: typing.Optional[typing.List[DispositionType]] = jstruct.JList[
+        DispositionType
+    ]
     locale: typing.Optional[str] = None
     docType: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
 class CertificateOfOriginType:
-    customerImageUsages: typing.Optional[typing.List[CustomerImageUsageType]] = jstruct.JList[CustomerImageUsageType]
-    documentFormat: typing.Optional[DocumentFormatType] = jstruct.JStruct[DocumentFormatType]
+    customerImageUsages: typing.Optional[typing.List[CustomerImageUsageType]] = (
+        jstruct.JList[CustomerImageUsageType]
+    )
+    documentFormat: typing.Optional[DocumentFormatType] = jstruct.JStruct[
+        DocumentFormatType
+    ]
 
 
 @attr.s(auto_attribs=True)
 class GeneralAgencyAgreementDetailType:
-    documentFormat: typing.Optional[DocumentFormatType] = jstruct.JStruct[DocumentFormatType]
+    documentFormat: typing.Optional[DocumentFormatType] = jstruct.JStruct[
+        DocumentFormatType
+    ]
 
 
 @attr.s(auto_attribs=True)
 class Op900DetailType:
-    customerImageUsages: typing.Optional[typing.List[CustomerImageUsageType]] = jstruct.JList[CustomerImageUsageType]
+    customerImageUsages: typing.Optional[typing.List[CustomerImageUsageType]] = (
+        jstruct.JList[CustomerImageUsageType]
+    )
     signatureName: typing.Optional[str] = None
-    documentFormat: typing.Optional[DocumentFormatType] = jstruct.JStruct[DocumentFormatType]
+    documentFormat: typing.Optional[DocumentFormatType] = jstruct.JStruct[
+        DocumentFormatType
+    ]
 
 
 @attr.s(auto_attribs=True)
 class ReturnInstructionsDetailType:
     customText: typing.Optional[str] = None
-    documentFormat: typing.Optional[DocumentFormatType] = jstruct.JStruct[DocumentFormatType]
+    documentFormat: typing.Optional[DocumentFormatType] = jstruct.JStruct[
+        DocumentFormatType
+    ]
 
 
 @attr.s(auto_attribs=True)
@@ -660,26 +775,44 @@ class BlanketPeriodType:
 
 @attr.s(auto_attribs=True)
 class UsmcaCCertificationOfOriginDetailType:
-    customerImageUsages: typing.Optional[typing.List[CustomerImageUsageType]] = jstruct.JList[CustomerImageUsageType]
-    documentFormat: typing.Optional[DocumentFormatType] = jstruct.JStruct[DocumentFormatType]
+    customerImageUsages: typing.Optional[typing.List[CustomerImageUsageType]] = (
+        jstruct.JList[CustomerImageUsageType]
+    )
+    documentFormat: typing.Optional[DocumentFormatType] = jstruct.JStruct[
+        DocumentFormatType
+    ]
     certifierSpecification: typing.Optional[str] = None
     importerSpecification: typing.Optional[str] = None
     producerSpecification: typing.Optional[str] = None
     producer: typing.Optional[ShipperType] = jstruct.JStruct[ShipperType]
-    blanketPeriod: typing.Optional[BlanketPeriodType] = jstruct.JStruct[BlanketPeriodType]
+    blanketPeriod: typing.Optional[BlanketPeriodType] = jstruct.JStruct[
+        BlanketPeriodType
+    ]
     certifierJobTitle: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
 class ShippingDocumentSpecificationType:
-    generalAgencyAgreementDetail: typing.Optional[GeneralAgencyAgreementDetailType] = jstruct.JStruct[GeneralAgencyAgreementDetailType]
-    returnInstructionsDetail: typing.Optional[ReturnInstructionsDetailType] = jstruct.JStruct[ReturnInstructionsDetailType]
+    generalAgencyAgreementDetail: typing.Optional[GeneralAgencyAgreementDetailType] = (
+        jstruct.JStruct[GeneralAgencyAgreementDetailType]
+    )
+    returnInstructionsDetail: typing.Optional[ReturnInstructionsDetailType] = (
+        jstruct.JStruct[ReturnInstructionsDetailType]
+    )
     op900Detail: typing.Optional[Op900DetailType] = jstruct.JStruct[Op900DetailType]
-    usmcaCertificationOfOriginDetail: typing.Optional[UsmcaCCertificationOfOriginDetailType] = jstruct.JStruct[UsmcaCCertificationOfOriginDetailType]
-    usmcaCommercialInvoiceCertificationOfOriginDetail: typing.Optional[UsmcaCCertificationOfOriginDetailType] = jstruct.JStruct[UsmcaCCertificationOfOriginDetailType]
+    usmcaCertificationOfOriginDetail: typing.Optional[
+        UsmcaCCertificationOfOriginDetailType
+    ] = jstruct.JStruct[UsmcaCCertificationOfOriginDetailType]
+    usmcaCommercialInvoiceCertificationOfOriginDetail: typing.Optional[
+        UsmcaCCertificationOfOriginDetailType
+    ] = jstruct.JStruct[UsmcaCCertificationOfOriginDetailType]
     shippingDocumentTypes: typing.Optional[typing.List[str]] = None
-    certificateOfOrigin: typing.Optional[CertificateOfOriginType] = jstruct.JStruct[CertificateOfOriginType]
-    commercialInvoiceDetail: typing.Optional[CertificateOfOriginType] = jstruct.JStruct[CertificateOfOriginType]
+    certificateOfOrigin: typing.Optional[CertificateOfOriginType] = jstruct.JStruct[
+        CertificateOfOriginType
+    ]
+    commercialInvoiceDetail: typing.Optional[CertificateOfOriginType] = jstruct.JStruct[
+        CertificateOfOriginType
+    ]
 
 
 @attr.s(auto_attribs=True)
@@ -693,7 +826,9 @@ class SmartPostInfoDetailType:
 @attr.s(auto_attribs=True)
 class RequestedShipmentType:
     shipDatestamp: typing.Optional[str] = None
-    totalDeclaredValue: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[TotalDeclaredValueType]
+    totalDeclaredValue: typing.Optional[TotalDeclaredValueType] = jstruct.JStruct[
+        TotalDeclaredValueType
+    ]
     shipper: typing.Optional[ShipperType] = jstruct.JStruct[ShipperType]
     soldTo: typing.Optional[ShipperType] = jstruct.JStruct[ShipperType]
     recipients: typing.Optional[typing.List[ShipperType]] = jstruct.JList[ShipperType]
@@ -703,29 +838,55 @@ class RequestedShipmentType:
     packagingType: typing.Optional[str] = None
     totalWeight: typing.Optional[float] = None
     origin: typing.Optional[OriginType] = jstruct.JStruct[OriginType]
-    shippingChargesPayment: typing.Optional[ShippingChargesPaymentType] = jstruct.JStruct[ShippingChargesPaymentType]
-    shipmentSpecialServices: typing.Optional[ShipmentSpecialServicesType] = jstruct.JStruct[ShipmentSpecialServicesType]
-    emailNotificationDetail: typing.Optional[RequestedShipmentEmailNotificationDetailType] = jstruct.JStruct[RequestedShipmentEmailNotificationDetailType]
-    expressFreightDetail: typing.Optional[ExpressFreightDetailType] = jstruct.JStruct[ExpressFreightDetailType]
-    variableHandlingChargeDetail: typing.Optional[VariableHandlingChargeDetailType] = jstruct.JStruct[VariableHandlingChargeDetailType]
-    customsClearanceDetail: typing.Optional[CustomsClearanceDetailType] = jstruct.JStruct[CustomsClearanceDetailType]
-    smartPostInfoDetail: typing.Optional[SmartPostInfoDetailType] = jstruct.JStruct[SmartPostInfoDetailType]
+    shippingChargesPayment: typing.Optional[ShippingChargesPaymentType] = (
+        jstruct.JStruct[ShippingChargesPaymentType]
+    )
+    shipmentSpecialServices: typing.Optional[ShipmentSpecialServicesType] = (
+        jstruct.JStruct[ShipmentSpecialServicesType]
+    )
+    emailNotificationDetail: typing.Optional[
+        RequestedShipmentEmailNotificationDetailType
+    ] = jstruct.JStruct[RequestedShipmentEmailNotificationDetailType]
+    expressFreightDetail: typing.Optional[ExpressFreightDetailType] = jstruct.JStruct[
+        ExpressFreightDetailType
+    ]
+    variableHandlingChargeDetail: typing.Optional[VariableHandlingChargeDetailType] = (
+        jstruct.JStruct[VariableHandlingChargeDetailType]
+    )
+    customsClearanceDetail: typing.Optional[CustomsClearanceDetailType] = (
+        jstruct.JStruct[CustomsClearanceDetailType]
+    )
+    smartPostInfoDetail: typing.Optional[SmartPostInfoDetailType] = jstruct.JStruct[
+        SmartPostInfoDetailType
+    ]
     blockInsightVisibility: typing.Optional[bool] = None
-    labelSpecification: typing.Optional[LabelSpecificationType] = jstruct.JStruct[LabelSpecificationType]
-    shippingDocumentSpecification: typing.Optional[ShippingDocumentSpecificationType] = jstruct.JStruct[ShippingDocumentSpecificationType]
+    labelSpecification: typing.Optional[LabelSpecificationType] = jstruct.JStruct[
+        LabelSpecificationType
+    ]
+    shippingDocumentSpecification: typing.Optional[
+        ShippingDocumentSpecificationType
+    ] = jstruct.JStruct[ShippingDocumentSpecificationType]
     rateRequestType: typing.Optional[typing.List[str]] = None
     preferredCurrency: typing.Optional[str] = None
     totalPackageCount: typing.Optional[int] = None
-    masterTrackingId: typing.Optional[MasterTrackingIDType] = jstruct.JStruct[MasterTrackingIDType]
-    requestedPackageLineItems: typing.Optional[typing.List[RequestedPackageLineItemType]] = jstruct.JList[RequestedPackageLineItemType]
+    masterTrackingId: typing.Optional[MasterTrackingIDType] = jstruct.JStruct[
+        MasterTrackingIDType
+    ]
+    requestedPackageLineItems: typing.Optional[
+        typing.List[RequestedPackageLineItemType]
+    ] = jstruct.JList[RequestedPackageLineItemType]
 
 
 @attr.s(auto_attribs=True)
 class ShippingRequestType:
     mergeLabelDocOption: typing.Optional[str] = None
-    requestedShipment: typing.Optional[RequestedShipmentType] = jstruct.JStruct[RequestedShipmentType]
+    requestedShipment: typing.Optional[RequestedShipmentType] = jstruct.JStruct[
+        RequestedShipmentType
+    ]
     labelResponseOptions: typing.Optional[str] = None
-    accountNumber: typing.Optional[AccountNumberType] = jstruct.JStruct[AccountNumberType]
+    accountNumber: typing.Optional[AccountNumberType] = jstruct.JStruct[
+        AccountNumberType
+    ]
     shipAction: typing.Optional[str] = None
     processingOptionType: typing.Optional[str] = None
     oneLabelAtATime: typing.Optional[bool] = None

@@ -95,7 +95,7 @@ export const ShipmentMenu = ({
       const duplicatedShipment =
         await mutation.duplicateShipment.mutateAsync(shipment);
       console.log("> shipment duplicate created successfully!");
-      
+
       toast({
         title: "Shipment duplicated successfully!",
         description: "Opening create label page for the new shipment.",
@@ -116,7 +116,7 @@ export const ShipmentMenu = ({
 
   const handleConfirm = async () => {
     if (!confirmAction) return;
-    
+
     try {
       await confirmAction.onConfirm();
       setConfirmDialogOpen(false);
@@ -146,6 +146,13 @@ export const ShipmentMenu = ({
           id={`shipment-menu-${shipment.id}`}
           role="menu"
         >
+
+          {!isViewing && (
+            <DropdownMenuItem onClick={displayDetails}>
+              <span>View Shipment</span>
+            </DropdownMenuItem>
+          )}
+
           {isNone(shipment.label_url) &&
             shipment.status === ShipmentStatusEnum.draft && (
               <DropdownMenuItem onClick={createLabel}>
@@ -166,9 +173,16 @@ export const ShipmentMenu = ({
             </DropdownMenuItem>
           )}
 
-          {!isViewing && (
-            <DropdownMenuItem onClick={displayDetails}>
-              <span>View Shipment</span>
+          {!isNone(shipment.invoice_url) && (
+            <DropdownMenuItem asChild>
+              <a
+                href={url$`${references.HOST}/${shipment.invoice_url}`}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center"
+              >
+                <span>Print Invoice</span>
+              </a>
             </DropdownMenuItem>
           )}
 
@@ -195,19 +209,6 @@ export const ShipmentMenu = ({
                 <span>Cancel Shipment</span>
               </DropdownMenuItem>
             )}
-
-          {!isNone(shipment.invoice_url) && (
-            <DropdownMenuItem asChild>
-              <a
-                href={url$`${references.HOST}/${shipment.invoice_url}`}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center"
-              >
-                <span>Print Invoice</span>
-              </a>
-            </DropdownMenuItem>
-          )}
 
           {shipment.carrier_name &&
             isNoneOrEmpty(shipment.tracker_id) &&

@@ -10,10 +10,8 @@ import karrio.sdk as karrio
 class TestUPSShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.ShipmentRequest = ShipmentRequest(**package_shipment_data)
-        self.ShipmentCancelRequest = ShipmentCancelRequest(
-            **shipment_cancel_request_data
-        )
+        self.ShipmentRequest = ShipmentRequest(**PackageShipmentData)
+        self.ShipmentCancelRequest = ShipmentCancelRequest(**ShipmentCancelRequestData)
 
     def test_create_package_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -31,9 +29,15 @@ class TestUPSShipment(unittest.TestCase):
 
     def test_create_package_shipment_with_package_preset_request(self):
         request = gateway.mapper.create_shipment_request(
-            ShipmentRequest(**package_shipment_with_package_preset_data)
+            ShipmentRequest(**PackageShipmentWithPackagePresetData)
         )
         self.assertEqual(request.serialize(), ShipmentRequestWithPresetJSON)
+
+    def test_create_international_shipment_request(self):
+        request = gateway.mapper.create_shipment_request(
+            ShipmentRequest(**InternationalShipmentData)
+        )
+        self.assertEqual(request.serialize(), InternationalShipmentRequestJSON)
 
     @patch("karrio.mappers.ups.proxy.lib.request", return_value="{}")
     def test_create_shipment(self, http_mock):
@@ -78,9 +82,236 @@ if __name__ == "__main__":
     unittest.main()
 
 
-shipment_cancel_request_data = {"shipment_identifier": "1ZWA82900191640782"}
+# International shipment test data
+InternationalShipmentData = {
+    "shipper": {
+        "company_name": "US Exporter Corp",
+        "person_name": "John Exporter",
+        "federal_tax_id": "123456789",
+        "phone_number": "555-987-6543",
+        "email": "exporter@usexporter.com",
+        "address_line1": "123 Export Street",
+        "city": "New York",
+        "state_code": "NY",
+        "postal_code": "10001",
+        "country_code": "US",
+        "residential": False,
+    },
+    "recipient": {
+        "company_name": "International Buyer Corp",
+        "person_name": "John Buyer",
+        "phone_number": "555-123-4567",
+        "email": "buyer@internationalbuyer.com",
+        "address_line1": "123 International Street",
+        "city": "Toronto",
+        "state_code": "ON",
+        "postal_code": "M5V 3A8",
+        "country_code": "CA",
+        "residential": False,
+    },
+    "parcels": [
+        {
+            "dimension_unit": "IN",
+            "weight_unit": "LB",
+            "packaging_type": "ups_customer_supplied_package",
+            "description": "Electronics Components",
+            "length": 10,
+            "width": 8,
+            "height": 4,
+            "weight": 2.5,
+        }
+    ],
+    "service": "ups_worldwide_express",
+    "options": {
+        "email_notification_to": "buyer@internationalbuyer.com",
+        "signature_confirmation": True,
+    },
+    "payment": {"paid_by": "sender"},
+    "reference": "INT-2024-001",
+    "customs": {
+        "commodities": [
+            {
+                "title": "Electronics Components",
+                "description": "Electronic circuit components",
+                "quantity": 1,
+                "hs_code": "8541.40.20.00",
+                "value_amount": 150.00,
+                "value_currency": "USD",
+                "weight": 2.5,
+                "weight_unit": "LB",
+                "origin_country": "US",
+            }
+        ],
+        "content_type": "merchandise",
+        "content_description": "Electronic components for industrial use",
+        "incoterm": "DAP",
+        "invoice": "INV-2024-001",
+        "invoice_date": "2024-01-15",
+        "duty": {
+            "paid_by": "sender",
+            "currency": "USD",
+            "declared_value": 150.00,
+        },
+    },
+}
 
-package_shipment_data = {
+InternationalShipmentRequestJSON = {
+    "ShipmentRequest": {
+        "LabelSpecification": {
+            "LabelImageFormat": {"Code": "PNG", "Description": "lable format"},
+            "LabelStockSize": {"Height": "6", "Width": "4"},
+        },
+        "Request": {
+            "RequestOption": "validate",
+            "SubVersion": "v2409",
+            "TransactionReference": {"CustomerContext": "INT-2024-001"},
+        },
+        "Shipment": {
+            "Description": "Electronics Components",
+            "InvoiceLineTotal": {"CurrencyCode": "USD", "MonetaryValue": "1.0"},
+            "NumOfPiecesInShipment": "0",
+            "Package": [
+                {
+                    "Description": "Electronics Components",
+                    "Dimensions": {
+                        "Height": "4.0",
+                        "Length": "10.0",
+                        "UnitOfMeasurement": {"Code": "IN", "Description": "Dimension"},
+                        "Width": "8.0",
+                    },
+                    "PackageWeight": {
+                        "UnitOfMeasurement": {"Code": "LBS", "Description": "Weight"},
+                        "Weight": "2.5",
+                    },
+                    "Packaging": {"Code": "02", "Description": "Packaging Type"},
+                }
+            ],
+            "PaymentInformation": {
+                "ShipmentCharge": [
+                    {
+                        "BillShipper": {"AccountNumber": "Your Account Number"},
+                        "Type": "01",
+                    },
+                    {
+                        "BillShipper": {"AccountNumber": "Your Account Number"},
+                        "Type": "02",
+                    },
+                ]
+            },
+            "RatingMethodRequestedIndicator": "Y",
+            "ReferenceNumber": {"Value": "INT-2024-001"},
+            "Service": {"Code": "07", "Description": "ups_express"},
+            "ShipFrom": {
+                "Address": {
+                    "AddressLine": ["123 Export Street"],
+                    "City": "New York",
+                    "CountryCode": "US",
+                    "PostalCode": "10001",
+                    "StateProvinceCode": "NY",
+                },
+                "AttentionName": "John Exporter",
+                "CompanyDisplayableName": "US Exporter Corp",
+                "EMailAddress": "exporter@usexporter.com",
+                "Name": "US Exporter Corp",
+                "Phone": {"Number": "555-987-6543"},
+                "TaxIdentificationNumber": "123456789",
+            },
+            "ShipTo": {
+                "Address": {
+                    "AddressLine": ["123 International Street"],
+                    "City": "Toronto",
+                    "CountryCode": "CA",
+                    "PostalCode": "M5V 3A8",
+                    "StateProvinceCode": "ON",
+                },
+                "AttentionName": "John Buyer",
+                "CompanyDisplayableName": "International Buyer Corp",
+                "EMailAddress": "buyer@internationalbuyer.com",
+                "Name": "International Buyer Corp",
+                "Phone": {"Number": "555-123-4567"},
+            },
+            "ShipmentDate": ANY,
+            "ShipmentRatingOptions": {"NegotiatedRatesIndicator": "Y"},
+            "ShipmentServiceOptions": {
+                "DeliveryConfirmation": {"DCISType": "1"},
+                "InternationalForms": {
+                    "Contacts": {
+                        "SoldTo": {
+                            "Address": {
+                                "AddressLine": ["123 International Street"],
+                                "City": "Toronto",
+                                "CountryCode": "CA",
+                                "PostalCode": "M5V 3A8",
+                                "StateProvinceCode": "ON",
+                            },
+                            "AttentionName": "John Buyer",
+                            "EMailAddress": "buyer@internationalbuyer.com",
+                            "Name": "International Buyer Corp",
+                            "Phone": {"Number": "555-123-4567"},
+                        }
+                    },
+                    "CurrencyCode": "USD",
+                    "DeclarationStatement": "I hereby certify that the information on this invoice is true and correct and the contents and value of this shipment is as stated above.",
+                    "FormType": "01",
+                    "InvoiceDate": "20240115",
+                    "InvoiceNumber": "INV-2024-001",
+                    "Product": [
+                        {
+                            "CommodityCode": "8541.40.20.00",
+                            "Description": "Electronics Components",
+                            "ExportType": "F",
+                            "NumberOfPackagesPerCommodity": "1",
+                            "OriginCountryCode": "US",
+                            "ProductWeight": {
+                                "UnitOfMeasurement": {
+                                    "Code": "LBS",
+                                    "Description": "weight unit",
+                                },
+                                "Weight": "2.5",
+                            },
+                            "Unit": {
+                                "Number": "1",
+                                "UnitOfMeasurement": {
+                                    "Code": "PCS",
+                                    "Description": "PCS",
+                                },
+                                "Value": "150.0",
+                            },
+                        }
+                    ],
+                    "ReasonForExport": "SALE",
+                },
+                "Notification": [
+                    {
+                        "EMail": {"EMailAddress": "buyer@internationalbuyer.com"},
+                        "NotificationCode": "8",
+                    }
+                ],
+            },
+            "Shipper": {
+                "Address": {
+                    "AddressLine": ["123 Export Street"],
+                    "City": "New York",
+                    "CountryCode": "US",
+                    "PostalCode": "10001",
+                    "StateProvinceCode": "NY",
+                },
+                "AttentionName": "John Exporter",
+                "CompanyDisplayableName": "US Exporter Corp",
+                "EMailAddress": "exporter@usexporter.com",
+                "Name": "US Exporter Corp",
+                "Phone": {"Number": "555-987-6543"},
+                "ShipperNumber": "Your Account Number",
+                "TaxIdentificationNumber": "123456789",
+            },
+            "TaxInformationIndicator": "Y",
+        },
+    }
+}
+
+ShipmentCancelRequestData = {"shipment_identifier": "1ZWA82900191640782"}
+
+PackageShipmentData = {
     "shipper": {
         "company_name": "Shipper Name",
         "person_name": "Shipper Attn Name",
@@ -123,7 +354,7 @@ package_shipment_data = {
     "reference": "Your Customer Context",
 }
 
-package_shipment_with_package_preset_data = {
+PackageShipmentWithPackagePresetData = {
     "shipper": {
         "company_name": "Shipper Name",
         "person_name": "Shipper Attn Name",
