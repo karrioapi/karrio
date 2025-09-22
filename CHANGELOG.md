@@ -1,3 +1,12 @@
+# Karrio 2025.5rc22
+
+## Changes
+
+### Feat
+
+- feat: update sapient API options and fix max SKU length issue.
+- feat: migrate shipment preview to shadcn with enriched details.
+
 # Karrio 2025.5rc21
 
 ## Changes
