@@ -108,7 +108,7 @@ opentelemetry-util-http==0.58b0
 packaging==25.0
 phonenumbers==9.0.14
 pillow==11.3.0
-posthog==6.7.5
+posthog==6.7.6
 protobuf==6.32.1
 psutil==7.1.0
 psycopg2-binary==2.9.10
