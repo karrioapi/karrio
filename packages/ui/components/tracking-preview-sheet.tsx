@@ -24,7 +24,18 @@ import {
 import { Button } from "@karrio/ui/components/ui/button";
 import { Input } from "@karrio/ui/components/ui/input";
 import { Label } from "@karrio/ui/components/ui/label";
-import { X, Copy, ExternalLink } from "lucide-react";
+import { Badge } from "@karrio/ui/components/ui/badge";
+import {
+  X,
+  Copy,
+  ExternalLink,
+  CheckCircle,
+  Truck,
+  MapPin,
+  Package,
+  Calendar,
+  Clock
+} from "lucide-react";
 
 type DayEvents = { [k: string]: TrackingEventType[] };
 type TrackingPreviewContextType = {
@@ -121,6 +132,26 @@ export const TrackingPreview = ({
     );
   };
 
+  const getEventIcon = (description?: string) => {
+    const desc = description?.toLowerCase() || "";
+    if (desc.includes("delivered") || desc.includes("parcel locker")) {
+      return <CheckCircle className="h-3 w-3 text-green-600" />;
+    }
+    if (desc.includes("out for delivery")) {
+      return <Truck className="h-3 w-3 text-orange-600" />;
+    }
+    if (desc.includes("arrived") || desc.includes("post office")) {
+      return <MapPin className="h-3 w-3 text-blue-600" />;
+    }
+    if (desc.includes("transit") || desc.includes("departed")) {
+      return <Package className="h-3 w-3 text-gray-600" />;
+    }
+    if (desc.includes("created") || desc.includes("awaiting")) {
+      return <Calendar className="h-3 w-3 text-purple-600" />;
+    }
+    return <Clock className="h-3 w-3 text-gray-500" />;
+  };
+
   return (
     <>
       <TrackingPreviewContext.Provider value={{ previewTracker }}>
@@ -190,34 +221,73 @@ export const TrackingPreview = ({
                   </div>
 
                   {/* Events Timeline */}
-                  <div className="border-t pt-4">
-                    <div className="max-h-80 overflow-y-auto">
-                      <div className="space-y-4">
-                        {Object.entries(computeEvents(tracker as TrackerType)).map(
-                          ([day, events], index) => (
-                            <div key={index} className="space-y-2">
-                              <h3 className="text-sm font-semibold text-gray-900 capitalize">
-                                {day}
-                              </h3>
-                              {events.map((event, index) => (
-                                <div key={index} className="ml-4 space-y-1">
-                                  <div className="flex items-center gap-2">
-                                    <code className="text-xs bg-gray-100 px-2 py-1 rounded">
-                                      {event.time}
-                                    </code>
-                                    <span className="text-xs font-medium text-gray-700">
-                                      {event.location}
-                                    </span>
+                  <div className="border-t pt-4 space-y-4">
+                    <h3 className="text-lg font-semibold">Tracking Timeline</h3>
+                    <div className="max-h-96 overflow-y-auto">
+                      {Object.entries(computeEvents(tracker as TrackerType)).map(
+                        ([day, events], dayIndex) => (
+                          <div key={dayIndex} className="border-b border-gray-100 last:border-b-0">
+                            {/* Date Header */}
+                            <div className="bg-blue-50 px-4 py-3 border-b border-blue-100">
+                              <div className="flex items-center gap-2">
+                                <Calendar className="h-3 w-3 text-blue-600" />
+                                <div>
+                                  <h3 className="text-sm font-medium text-gray-900 capitalize">{day}</h3>
+                                  <p className="text-xs text-gray-500">{events.length} events</p>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Events */}
+                            <div className="relative">
+                              {events.map((event, eventIndex) => (
+                                <div key={eventIndex} className="relative">
+                                  {/* Timeline line */}
+                                  {eventIndex < events.length - 1 && (
+                                    <div className="absolute left-6 top-10 bottom-0 w-px bg-gray-200" />
+                                  )}
+
+                                  <div className="flex gap-3 p-3 hover:bg-gray-50 transition-colors">
+                                    {/* Timeline dot with icon */}
+                                    <div className="flex-shrink-0 relative z-10 mt-0.5">
+                                      <div className="w-5 h-5 bg-white border border-gray-300 rounded-full flex items-center justify-center">
+                                        {getEventIcon(event.description || undefined)}
+                                      </div>
+                                    </div>
+
+                                    {/* Event content */}
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-start justify-between gap-2 mb-1">
+                                        <div className="flex-1">
+                                          <Badge
+                                            variant="outline"
+                                            className="text-xs font-mono bg-blue-50 text-blue-700 border-blue-200 mb-2"
+                                          >
+                                            {event.time}
+                                          </Badge>
+
+                                          {event.location && (
+                                            <div className="flex items-center gap-1 mb-2">
+                                              <MapPin className="h-2.5 w-2.5 text-gray-400" />
+                                              <span className="text-sm font-medium text-gray-600">
+                                                {event.location}
+                                              </span>
+                                            </div>
+                                          )}
+
+                                          <p className="text-sm text-gray-800 leading-relaxed">
+                                            {event.description}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </div>
                                   </div>
-                                  <p className="text-xs text-gray-600 ml-4">
-                                    {event.description}
-                                  </p>
                                 </div>
                               ))}
                             </div>
-                          ),
-                        )}
-                      </div>
+                          </div>
+                        ),
+                      )}
                     </div>
                   </div>
 
