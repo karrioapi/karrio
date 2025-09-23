@@ -142,16 +142,11 @@ Build templates with the visual designer:
 - **Shipping Info**: Carriers, services, tracking
 - **Company Details**: Business information
 
-<div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-4 my-6">
-  <div className="text-sm text-blue-700 dark:text-blue-300 mb-2">
-    💡 Template Variables
-  </div>
-  <p className="text-sm text-blue-600 dark:text-blue-400">
-    Use template variables like `{order.order_id}` or `{customer.name}` to
-    dynamically populate document content. The system automatically replaces
-    these with actual data when generating documents.
-  </p>
-</div>
+> [!TIP]
+>
+> **Template Variables**
+>
+> Use template variables like `{order.order_id}` or `{customer.name}` to dynamically populate document content. The system automatically replaces these with actual data when generating documents.
 
 ## Template Designer Features
 
@@ -302,16 +297,11 @@ Show content based on conditions:
 {{formatTime shipment.pickup_time "h:mm A"}}
 ```
 
-<div className="bg-orange-50 dark:bg-orange-900 rounded-lg p-4 my-6">
-  <div className="text-sm text-orange-700 dark:text-orange-300 mb-2">
-    ⚠️ Data Availability
-  </div>
-  <p className="text-sm text-orange-600 dark:text-orange-400">
-    Template variables depend on the context where the template is used. Not all
-    data is available in every situation. Test templates thoroughly with
-    different data scenarios.
-  </p>
-</div>
+> [!WARNING]
+>
+> **Data Availability**
+>
+> Template variables depend on the context where the template is used. Not all data is available in every situation. Test templates thoroughly with different data scenarios.
 
 ## Template Management
 
