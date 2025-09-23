@@ -1,0 +1,327 @@
+"use client";
+import {
+  formatAddressRegion,
+  formatDayDate,
+  formatRef,
+  isNone,
+} from "@karrio/lib";
+import {
+  TrackerStatusEnum,
+  TrackerType,
+  TrackingEventType,
+} from "@karrio/types";
+import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
+import React, { useRef, useState, useContext } from "react";
+import { AppLink } from "@karrio/ui/core/components/app-link";
+import { useLocation } from "@karrio/hooks/location";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetClose
+} from "@karrio/ui/components/ui/sheet";
+import { Button } from "@karrio/ui/components/ui/button";
+import { Input } from "@karrio/ui/components/ui/input";
+import { Label } from "@karrio/ui/components/ui/label";
+import { X, Copy, ExternalLink } from "lucide-react";
+
+type DayEvents = { [k: string]: TrackingEventType[] };
+type TrackingPreviewContextType = {
+  previewTracker: (tracker: TrackerType) => void;
+};
+
+interface TrackingPreviewComponent {
+  children?: React.ReactNode;
+}
+
+export const TrackingPreviewContext =
+  React.createContext<TrackingPreviewContextType>(
+    {} as TrackingPreviewContextType,
+  );
+
+export const TrackingPreview = ({
+  children,
+}: TrackingPreviewComponent): JSX.Element => {
+  const link = useRef<HTMLAnchorElement>(null);
+  const { addUrlParam, removeUrlParam } = useLocation();
+  const [isActive, setIsActive] = useState<boolean>(false);
+  const [sharingLink, setSharingLink] = useState<string>("");
+  const [key, setKey] = useState<string>(`tracker-${Date.now()}`);
+  const [tracker, setTracker] = useState<TrackerType>();
+
+  const previewTracker = (tracker: TrackerType) => {
+    setTracker(tracker);
+    setIsActive(true);
+    setKey(`tracker-${Date.now()}`);
+    link.current?.setAttribute("href", `/tracking/${tracker.id}`);
+    setSharingLink(link.current?.href as string);
+    addUrlParam("modal", tracker.id);
+  };
+
+  const dismiss = (_?: any) => {
+    setIsActive(false);
+    setTracker(undefined);
+    setKey(`tracker-${Date.now()}`);
+    removeUrlParam("modal");
+  };
+
+  const copy = (_: React.MouseEvent) => {
+    navigator.clipboard.writeText(sharingLink);
+  };
+
+  const computeColor = (tracker: TrackerType) => {
+    if (tracker?.delivered) return "bg-green-500";
+    else if (tracker?.status === TrackerStatusEnum.pending.toString())
+      return "bg-gray-600";
+    else if (
+      [
+        TrackerStatusEnum.on_hold.toString(),
+        TrackerStatusEnum.delivery_delayed.toString(),
+      ].includes(tracker?.status as string)
+    )
+      return "bg-yellow-500";
+    else if (
+      [TrackerStatusEnum.unknown.toString()].includes(tracker?.status as string)
+    )
+      return "bg-gray-400";
+    else if (
+      [TrackerStatusEnum.delivery_failed.toString()].includes(
+        tracker?.status as string,
+      )
+    )
+      return "bg-red-500";
+    else return "bg-blue-500";
+  };
+
+  const computeStatus = (tracker: TrackerType) => {
+    if (tracker?.delivered) return "Delivered";
+    else if (tracker?.status === TrackerStatusEnum.pending.toString())
+      return "Pending";
+    else if (
+      [
+        TrackerStatusEnum.on_hold.toString(),
+        TrackerStatusEnum.delivery_delayed.toString(),
+        TrackerStatusEnum.ready_for_pickup.toString(),
+        TrackerStatusEnum.unknown.toString(),
+        TrackerStatusEnum.delivery_failed.toString(),
+      ].includes(tracker?.status as string)
+    )
+      return formatRef(tracker!.status as string);
+    else return "In-Transit";
+  };
+
+  const computeEvents = (tracker: TrackerType): DayEvents => {
+    return (tracker?.events || []).reduce(
+      (days: any, event: TrackingEventType) => {
+        const daydate = formatDayDate(event.date as string);
+        return { ...days, [daydate]: [...(days[daydate] || []), event] };
+      },
+      {} as DayEvents,
+    );
+  };
+
+  return (
+    <>
+      <TrackingPreviewContext.Provider value={{ previewTracker }}>
+        {children}
+      </TrackingPreviewContext.Provider>
+
+      <Sheet open={isActive} onOpenChange={(open) => !open && dismiss()}>
+        <a ref={link} className="hidden"></a>
+        <SheetContent
+          className="w-full sm:w-[800px] sm:max-w-[800px] p-0 shadow-none"
+          side="right"
+        >
+          <div className="h-full flex flex-col">
+            <SheetHeader className="sticky top-0 z-10 bg-white px-4 py-3 border-b">
+              <div className="flex items-center justify-between">
+                <SheetTitle className="text-lg font-semibold">
+                  Tracking Details
+                </SheetTitle>
+                <SheetClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
+                  <X className="h-4 w-4" />
+                  <span className="sr-only">Close</span>
+                </SheetClose>
+              </div>
+            </SheetHeader>
+
+            <div className="flex-1 overflow-y-auto px-4 py-4">
+              {!isNone(tracker) && (
+                <div className="space-y-6">
+                  {/* Carrier Image */}
+                  <div className="text-center pb-4">
+                    <CarrierImage
+                      carrier_name={
+                        (tracker?.meta as any)?.carrier || tracker?.carrier_name
+                      }
+                      width={60}
+                      height={60}
+                      text_color={tracker?.tracking_carrier?.config?.text_color}
+                      background={tracker?.tracking_carrier?.config?.brand_color}
+                    />
+                  </div>
+
+                  {/* Tracking Number */}
+                  <div className="text-center">
+                    <p className="text-sm text-gray-600 mb-1">Tracking ID</p>
+                    <p className="text-lg font-bold">{tracker?.tracking_number}</p>
+                  </div>
+
+                  {/* Estimated Delivery */}
+                  {!isNone(tracker?.estimated_delivery) && (
+                    <div className="text-center">
+                      <p className="text-sm text-gray-600 mb-1">
+                        {tracker?.delivered ? "Delivered" : "Estimated Delivery"}
+                      </p>
+                      <p className="text-lg font-bold">
+                        {formatDayDate(tracker!.estimated_delivery as string)}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Status Badge */}
+                  <div className={`${computeColor(tracker as TrackerType)} text-white text-center py-3 rounded-lg`}>
+                    <p className="text-xl font-semibold">
+                      {computeStatus(tracker as TrackerType)}
+                    </p>
+                  </div>
+
+                  {/* Events Timeline */}
+                  <div className="border-t pt-4">
+                    <div className="max-h-80 overflow-y-auto">
+                      <div className="space-y-4">
+                        {Object.entries(computeEvents(tracker as TrackerType)).map(
+                          ([day, events], index) => (
+                            <div key={index} className="space-y-2">
+                              <h3 className="text-sm font-semibold text-gray-900 capitalize">
+                                {day}
+                              </h3>
+                              {events.map((event, index) => (
+                                <div key={index} className="ml-4 space-y-1">
+                                  <div className="flex items-center gap-2">
+                                    <code className="text-xs bg-gray-100 px-2 py-1 rounded">
+                                      {event.time}
+                                    </code>
+                                    <span className="text-xs font-medium text-gray-700">
+                                      {event.location}
+                                    </span>
+                                  </div>
+                                  <p className="text-xs text-gray-600 ml-4">
+                                    {event.description}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          ),
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Messages */}
+                  {(tracker?.messages || []).length > 0 && (
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                      <p className="text-sm text-yellow-800">
+                        {(tracker?.messages || [{}])[0].message}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Shipment Details */}
+                  {!isNone(tracker?.shipment) && (
+                    <div className="border-t pt-4 space-y-4">
+                      <h3 className="text-lg font-semibold">Shipment Details</h3>
+
+                      {/* Origin/Destination */}
+                      <div className="grid grid-cols-3 gap-4 items-center">
+                        <div className="text-sm text-gray-600">Origin/Destination</div>
+                        <div className="col-span-2 text-sm font-medium flex items-center gap-2">
+                          <span>{formatAddressRegion(tracker?.shipment?.shipper as any)}</span>
+                          <span>→</span>
+                          <span>{formatAddressRegion(tracker?.shipment?.recipient as any)}</span>
+                        </div>
+                      </div>
+
+                      {/* Service */}
+                      <div className="grid grid-cols-3 gap-4 items-center">
+                        <div className="text-sm text-gray-600">Service</div>
+                        <div className="col-span-2 text-sm font-medium">
+                          {formatRef(
+                            tracker?.info?.shipment_service ||
+                            tracker?.shipment?.meta?.service_name ||
+                            tracker?.shipment?.service,
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Reference */}
+                      {tracker?.shipment?.reference && (
+                        <div className="grid grid-cols-3 gap-4 items-center">
+                          <div className="text-sm text-gray-600">Reference</div>
+                          <div className="col-span-2 text-sm font-medium">
+                            {tracker?.shipment?.reference}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Link */}
+                      <div className="grid grid-cols-3 gap-4 items-center">
+                        <div className="text-sm text-gray-600">Link</div>
+                        <div className="col-span-2">
+                          <AppLink
+                            className="text-blue-600 hover:text-blue-800 text-sm font-medium inline-flex items-center gap-1"
+                            href={`/shipments/${tracker?.shipment?.id}`}
+                            target="_blank"
+                          >
+                            <span>{tracker?.shipment?.id}</span>
+                            <ExternalLink className="w-3 h-3" />
+                          </AppLink>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Share Section */}
+                  <div className="border-t pt-4 space-y-3">
+                    <Label className="text-sm font-medium">Share</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        type="text"
+                        value={sharingLink}
+                        readOnly
+                        className="flex-1"
+                        title="Click to Copy"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={copy}
+                      >
+                        <Copy className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        asChild
+                        variant="outline"
+                        size="sm"
+                      >
+                        <a href={sharingLink} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink className="w-4 h-4" />
+                        </a>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+    </>
+  );
+};
+
+export function useTrackingPreview() {
+  return useContext(TrackingPreviewContext);
+}
