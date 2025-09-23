@@ -6,6 +6,7 @@ import {
   oxygen,
 } from "@karrio/ui/fonts/font";
 import { PlatformSubnav } from "@/components/platform-subnav";
+import { NextPostHogProvider } from "@karrio/hooks/posthog";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import RootProvider from "@/hooks/root-provider";
@@ -36,29 +37,30 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       suppressHydrationWarning
       className={`${inter.variable} ${jetbrains.variable} ${noto.variable} ${ubuntu.variable} ${oxygen.variable}`}>
       <body className="font-sans antialiased">
-        <RootProvider
-          defaultTheme="dark"
-          forcedTheme="dark"
-          disableTransitionOnChange
-          sectionKey="platform"
-        >
-          <div className="flex flex-col min-h-screen bg-background dark:text-white">
-            {/* Header */}
-            <SiteHeader />
+        <NextPostHogProvider>
+          <RootProvider
+            defaultTheme="dark"
+            forcedTheme="dark"
+            disableTransitionOnChange
+            sectionKey="platform"
+          >
+            <div className="flex flex-col min-h-screen bg-background dark:text-white">
+              {/* Header */}
+              <SiteHeader />
 
-            {/* Platform Subnav */}
-            <PlatformSubnav />
+              {/* Platform Subnav */}
+              <PlatformSubnav />
 
-            {/* Main Content */}
-            <main className="flex-1">
-              {children}
-            </main>
+              {/* Main Content */}
+              <main className="flex-1">
+                {children}
+              </main>
 
-            {/* Footer */}
-            <SiteFooter />
-          </div>
-        </RootProvider>
-
+              {/* Footer */}
+              <SiteFooter />
+            </div>
+          </RootProvider>
+        </NextPostHogProvider>
         <img referrerPolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=a16a9706-d13e-4fbc-91ef-c313c2fcec3f" />
       </body>
     </html>

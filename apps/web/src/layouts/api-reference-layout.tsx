@@ -5,10 +5,11 @@ import {
   ubuntu,
   oxygen,
 } from "@karrio/ui/fonts/font";
-import { ApiTheme } from '@/components/nextra/api-theme'
-import { getPageMap } from 'nextra/page-map'
-import type { ReactNode } from 'react'
-import type { Metadata } from 'next'
+import { NextPostHogProvider } from "@karrio/hooks/posthog";
+import { ApiTheme } from '@/components/nextra/api-theme';
+import { getPageMap } from 'nextra/page-map';
+import type { ReactNode } from 'react';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: "Karrio API Reference",
@@ -40,13 +41,15 @@ export default async function DocsLayout({ children }: { children: ReactNode }) 
         <link rel="stylesheet" href="https://unpkg.com/@stoplight/elements/styles.min.css" />
       </head>
       <body className="docs-page" style={{ margin: 0 }}>
-        <ApiTheme
-          pageMap={pageMap}
-          logo="/karrio-docs.svg"
-          darkLogo="/karrio-docs-light.svg"
-        >
-          {children}
-        </ApiTheme>
+        <NextPostHogProvider>
+          <ApiTheme
+            pageMap={pageMap}
+            logo="/karrio-docs.svg"
+            darkLogo="/karrio-docs-light.svg"
+          >
+            {children}
+          </ApiTheme>
+        </NextPostHogProvider>
         <img referrerPolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=a16a9706-d13e-4fbc-91ef-c313c2fcec3f" />
       </body>
     </html>

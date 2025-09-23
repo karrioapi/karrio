@@ -5,11 +5,12 @@ import {
   ubuntu,
   oxygen,
 } from "@karrio/ui/fonts/font";
-import NextraTheme from '@/components/nextra/theme'
-import { getPageMap } from 'nextra/page-map'
-import { headers } from 'next/headers'
-import type { ReactNode } from 'react'
-import type { Metadata } from 'next'
+import { NextPostHogProvider } from "@karrio/hooks/posthog";
+import NextraTheme from '@/components/nextra/theme';
+import { getPageMap } from 'nextra/page-map';
+import { headers } from 'next/headers';
+import type { ReactNode } from 'react';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: "Karrio Docs",
@@ -41,10 +42,11 @@ export default async function DocsLayout({ children }: { children: ReactNode }) 
     <html lang="en" suppressHydrationWarning
       className={`${inter.variable} ${jetbrains.variable} ${noto.variable} ${ubuntu.variable} ${oxygen.variable} h-full scroll-smooth`}>
       <body className="docs-page bg-background" style={{ margin: 0 }}>
-        <NextraTheme pageMap={pageMap}>
-          {children}
-        </NextraTheme>
-
+        <NextPostHogProvider>
+          <NextraTheme pageMap={pageMap}>
+            {children}
+          </NextraTheme>
+        </NextPostHogProvider>
         <img referrerPolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=a16a9706-d13e-4fbc-91ef-c313c2fcec3f" />
       </body>
     </html>

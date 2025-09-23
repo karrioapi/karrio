@@ -5,6 +5,7 @@ import {
   ubuntu,
   oxygen,
 } from "@karrio/ui/fonts/font";
+import { NextPostHogProvider } from "@karrio/hooks/posthog";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import RootProvider from "@/hooks/root-provider";
@@ -46,26 +47,27 @@ export default function WebsiteLayout({
         />
       </head>
       <body className="font-sans antialiased">
-        <RootProvider
-          defaultTheme="light"
-          forcedTheme="light"
-          disableTransitionOnChange
-          sectionKey="marketing"
-        >
-          <div className="flex flex-col min-h-screen">
-            {/* Header */}
-            <SiteHeader />
+        <NextPostHogProvider>
+          <RootProvider
+            defaultTheme="light"
+            forcedTheme="light"
+            disableTransitionOnChange
+            sectionKey="marketing"
+          >
+            <div className="flex flex-col min-h-screen">
+              {/* Header */}
+              <SiteHeader />
 
-            {/* Main Content */}
-            <main className="flex-1">
-              {children}
-            </main>
+              {/* Main Content */}
+              <main className="flex-1">
+                {children}
+              </main>
 
-            {/* Footer */}
-            <SiteFooter />
-          </div>
-        </RootProvider>
-
+              {/* Footer */}
+              <SiteFooter />
+            </div>
+          </RootProvider>
+        </NextPostHogProvider>
         <img referrerPolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=a16a9706-d13e-4fbc-91ef-c313c2fcec3f" />
       </body>
     </html>
