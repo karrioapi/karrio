@@ -132,6 +132,13 @@ export const TrackingPreview = ({
     );
   };
 
+  const getStatusIcon = (status?: string) => {
+    if (status === "delivered") return <CheckCircle className="h-5 w-5" />;
+    if (status === "in_transit") return <Truck className="h-5 w-5" />;
+    if (status === "out_for_delivery") return <Package className="h-5 w-5" />;
+    return <Clock className="h-5 w-5" />;
+  };
+
   const getEventIcon = (description?: string) => {
     const desc = description?.toLowerCase() || "";
     if (desc.includes("delivered") || desc.includes("parcel locker")) {
@@ -218,9 +225,10 @@ export const TrackingPreview = ({
 
                   {/* Status Badge */}
                   <div className={`${computeColor(tracker as TrackerType)} text-white text-center py-3 rounded-lg`}>
-                    <p className="text-xl font-semibold">
+                    <div className="flex items-center justify-center gap-2 text-xl font-semibold">
+                      {getStatusIcon(tracker?.status)}
                       {computeStatus(tracker as TrackerType)}
-                    </p>
+                    </div>
                   </div>
 
                   {/* Events Timeline */}
