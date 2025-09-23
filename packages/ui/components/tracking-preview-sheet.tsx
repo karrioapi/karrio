@@ -180,36 +180,39 @@ export const TrackingPreview = ({
             <div className="flex-1 overflow-y-auto px-4 py-4">
               {!isNone(tracker) && (
                 <div className="space-y-6">
-                  {/* Carrier Image */}
-                  <div className="text-center pb-4">
-                    <CarrierImage
-                      carrier_name={
-                        (tracker?.meta as any)?.carrier || tracker?.carrier_name
-                      }
-                      width={60}
-                      height={60}
-                      text_color={tracker?.tracking_carrier?.config?.text_color}
-                      background={tracker?.tracking_carrier?.config?.brand_color}
-                    />
-                  </div>
-
-                  {/* Tracking Number */}
-                  <div className="text-center">
-                    <p className="text-lg">
-                      <span className="text-gray-600">Tracking ID</span>{" "}
-                      <strong className="font-bold">{tracker?.tracking_number}</strong>
-                    </p>
+                  {/* Carrier Image & Tracking Number */}
+                  <div className="flex items-center justify-center gap-6 mb-6">
+                    <div className="flex-shrink-0">
+                      <CarrierImage
+                        carrier_name={
+                          (tracker?.meta as any)?.carrier || tracker?.carrier_name
+                        }
+                        width={80}
+                        height={80}
+                        text_color={tracker?.tracking_carrier?.config?.text_color}
+                        background={tracker?.tracking_carrier?.config?.brand_color}
+                      />
+                    </div>
+                    <div className="text-center">
+                      <div className="flex justify-center items-center gap-2 text-sm text-gray-500 mb-3">
+                        <Package className="h-4 w-4" />
+                        <span>Tracking Number</span>
+                      </div>
+                      <div className="font-mono text-xl font-bold text-gray-900 bg-gray-50 px-6 py-3 rounded-lg">
+                        {tracker?.tracking_number}
+                      </div>
+                    </div>
                   </div>
 
                   {/* Estimated Delivery */}
                   {!isNone(tracker?.estimated_delivery) && (
-                    <div className="text-center">
-                      <p className="text-sm text-gray-600 mb-1">
-                        {tracker?.delivered ? "Delivered" : "Estimated Delivery"}
-                      </p>
-                      <p className="text-lg font-bold">
+                    <div className="text-center mb-3">
+                      <div className="text-xs text-gray-500">
+                        {tracker?.delivered ? "Delivered on" : "Estimated Delivery"}
+                      </div>
+                      <div className="font-medium text-gray-900 text-sm">
                         {formatDayDate(tracker!.estimated_delivery as string)}
-                      </p>
+                      </div>
                     </div>
                   )}
 
