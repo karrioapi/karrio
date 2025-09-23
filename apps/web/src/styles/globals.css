@@ -263,6 +263,23 @@ html[data-theme="dark"] * {
 
 /* #endregion */
 
+/* Copy LLM button hover overrides */
+.copy-llm-btn:hover {
+  background-color: rgb(239 246 255) !important;
+  /* blue-50 */
+  border-color: rgb(96 165 250) !important;
+  /* blue-400 */
+}
+
+.dark .copy-llm-btn:hover,
+[data-theme="dark"] .copy-llm-btn:hover {
+  background-color: rgb(30 58 138) !important;
+  /* blue-900 */
+  border-color: rgb(59 130 246) !important;
+  /* blue-500/600 */
+  color: #ffffff !important;
+}
+
 /* #region DocSearch Styles */
 @import '@docsearch/css';
 
