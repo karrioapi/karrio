@@ -127,7 +127,7 @@ export const TrackingPreview = ({
         {children}
       </TrackingPreviewContext.Provider>
 
-      <Sheet open={isActive} onOpenChange={(open) => !open && dismiss()}>
+      <Sheet key={key} open={isActive} onOpenChange={(open) => !open && dismiss()}>
         <a ref={link} className="hidden"></a>
         <SheetContent
           className="w-full sm:w-[800px] sm:max-w-[800px] p-0 shadow-none"
@@ -164,8 +164,10 @@ export const TrackingPreview = ({
 
                   {/* Tracking Number */}
                   <div className="text-center">
-                    <p className="text-sm text-gray-600 mb-1">Tracking ID</p>
-                    <p className="text-lg font-bold">{tracker?.tracking_number}</p>
+                    <p className="text-lg">
+                      <span className="text-gray-600">Tracking ID</span>{" "}
+                      <strong className="font-bold">{tracker?.tracking_number}</strong>
+                    </p>
                   </div>
 
                   {/* Estimated Delivery */}
