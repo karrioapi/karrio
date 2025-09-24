@@ -65,6 +65,19 @@ export function CopyMarkdownButton() {
         } catch { }
     }
 
+    async function openClaudeWithPrefill() {
+        const prefill = buildPrefillText(pathname);
+        let target = "https://claude.ai/new";
+        if (prefill) {
+            // Append as q= param to attempt prefill (no clipboard copy here)
+            const q = encodeURIComponent(prefill);
+            target = `https://claude.ai/new?q=${q}`;
+        }
+        try {
+            window.open(target, "_blank", "noopener,noreferrer");
+        } catch { }
+    }
+
     return (
         <DropdownMenu>
             <div className="inline-flex items-stretch">
@@ -111,16 +124,16 @@ export function CopyMarkdownButton() {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                    onClick={() => copyPrefillThenOpen("https://claude.ai/new")}
+                    onClick={openClaudeWithPrefill}
                     className="data-[highlighted]:bg-blue-50 dark:data-[highlighted]:bg-blue-900/40 data-[highlighted]:text-blue-900 dark:data-[highlighted]:text-blue-100"
                 >
-                    Copy and open Claude
+                    Open in Claude
                 </DropdownMenuItem>
                 <DropdownMenuItem
                     onClick={() => copyPrefillThenOpen("https://cursor.sh")}
                     className="data-[highlighted]:bg-blue-50 dark:data-[highlighted]:bg-blue-900/40 data-[highlighted]:text-blue-900 dark:data-[highlighted]:text-blue-100"
                 >
-                    Copy and open Cursor
+                    Copy and Open Cursor
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
