@@ -3,6 +3,14 @@
 import { usePathname } from "next/navigation";
 import { useCallback, useState } from "react";
 import { Button } from "@karrio/ui/components/ui/button";
+import {
+    DropdownMenu,
+    DropdownMenuTrigger,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+} from "@karrio/ui/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
 
 export function CopyMarkdownButton() {
     const pathname = usePathname();
@@ -24,17 +32,98 @@ export function CopyMarkdownButton() {
         }
     }, [pathname]);
 
+    function buildRawMdxUrl(currentPath: string | null, branch = "main") {
+        const clean = (currentPath || "").split(/[?#]/)[0].replace(/\/$/, "");
+        if (!clean.startsWith("/docs/")) return null;
+        return `https://raw.githubusercontent.com/karrioapi/karrio/refs/heads/${branch}/apps/web/src/app${clean}/page.mdx`;
+    }
+
+    function buildPrefillText(currentPath: string | null) {
+        const url = buildRawMdxUrl(currentPath);
+        if (!url) return null;
+        return `Read from ${url} so I can ask questions about it.`;
+    }
+
+    async function copyThenOpen(url: string) {
+        await handleCopy();
+        try {
+            window.open(url, "_blank", "noopener,noreferrer");
+        } catch { }
+    }
+
+    async function copyPrefillThenOpen(url: string) {
+        const prefill = buildPrefillText(pathname);
+        if (prefill) {
+            try {
+                await navigator.clipboard.writeText(prefill);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 1400);
+            } catch { /* ignore */ }
+        }
+        try {
+            window.open(url, "_blank", "noopener,noreferrer");
+        } catch { }
+    }
+
     return (
-        <Button
-            variant="ghost"
-            size="sm"
-            className="copy-llm-btn border border-blue-300/60 text-blue-600 dark:text-blue-200 dark:border-blue-800 transition-colors"
-            onClick={handleCopy}
-            disabled={busy}
-            aria-label="Copy Markdown for LLM"
-        >
-            {copied ? "Copied" : busy ? "Preparing..." : "Copy for LLM"}
-        </Button>
+        <DropdownMenu>
+            <div className="inline-flex items-stretch">
+                {/* Primary action: click to copy */}
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    className="copy-llm-btn border border-blue-300/60 text-blue-600 dark:text-blue-200 dark:border-blue-800 transition-colors rounded-r-none"
+                    onClick={handleCopy}
+                    disabled={busy}
+                    aria-label="Copy Markdown for LLM"
+                >
+                    {copied ? "Copied" : busy ? "Preparing..." : "Copy for LLM"}
+                </Button>
+
+                {/* Secondary: opens dropdown */}
+                <DropdownMenuTrigger asChild>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="copy-llm-btn border border-l-0 border-blue-300/60 text-blue-600 dark:text-blue-200 dark:border-blue-800 rounded-l-none transition-colors"
+                        aria-label="More copy options"
+                    >
+                        <ChevronDown className="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+            </div>
+
+            <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                    onClick={handleCopy}
+                    className="data-[highlighted]:bg-blue-50 dark:data-[highlighted]:bg-blue-900/40 data-[highlighted]:text-blue-900 dark:data-[highlighted]:text-blue-100"
+                >
+                    Copy for LLM
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                    onClick={() => {
+                        const url = buildRawMdxUrl(pathname);
+                        if (url) window.open(url, "_blank", "noopener,noreferrer");
+                    }}
+                    className="data-[highlighted]:bg-blue-50 dark:data-[highlighted]:bg-blue-900/40 data-[highlighted]:text-blue-900 dark:data-[highlighted]:text-blue-100"
+                >
+                    Open Markdown View
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                    onClick={() => copyPrefillThenOpen("https://claude.ai/new")}
+                    className="data-[highlighted]:bg-blue-50 dark:data-[highlighted]:bg-blue-900/40 data-[highlighted]:text-blue-900 dark:data-[highlighted]:text-blue-100"
+                >
+                    Copy and open Claude
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                    onClick={() => copyPrefillThenOpen("https://cursor.sh")}
+                    className="data-[highlighted]:bg-blue-50 dark:data-[highlighted]:bg-blue-900/40 data-[highlighted]:text-blue-900 dark:data-[highlighted]:text-blue-100"
+                >
+                    Copy and open Cursor
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
     );
 }
 
