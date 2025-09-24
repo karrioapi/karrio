@@ -85,7 +85,8 @@
     --muted: 252 16% 26%;
     --muted-foreground: 0 0% 90%;
     /* Improved from 70% to 90% for better contrast */
-    --accent: 16 100% 50%;
+    /* Use blue accent in dark mode to avoid orange/red outlines on hover */
+    --accent: 217 91% 60%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -211,16 +212,18 @@
   /* Ensure links have good visibility and contrast */
   .dark .prose a,
   [data-theme="dark"] .prose a {
-    color: #a78bfa;
+    color: #60a5fa;
+    /* blue-400 */
     /* Purple that matches the brand */
     text-decoration-color: #a78bfa;
   }
 
   .dark .prose a:hover,
   [data-theme="dark"] .prose a:hover {
-    color: #c4b5fd;
-    /* Lighter purple on hover */
-    text-decoration-color: #c4b5fd;
+    color: #93c5fd;
+    /* blue-300 */
+    /* Lighter blue on hover */
+    text-decoration-color: #93c5fd;
   }
 
   /* Style for code and pre-formatted text */
@@ -317,7 +320,7 @@ html[data-theme="dark"] * {
 .DocSearch-Button:hover,
 .DocSearch-Button:focus {
   background-color: hsl(var(--accent));
-  border-color: hsl(var(--accent-foreground) / 20%);
+  border-color: hsl(var(--accent) / 40%);
   outline: none;
 }
 
@@ -807,6 +810,28 @@ html[data-theme="dark"] * {
   border-color: #27272a !important;
 }
 
+/* Improve dark-mode code token contrast in regular docs code blocks */
+.dark pre code .token.builtin,
+.dark pre code .token.function,
+.dark pre code .token.command,
+[data-theme="dark"] pre code .token.builtin,
+[data-theme="dark"] pre code .token.function,
+[data-theme="dark"] pre code .token.command {
+  color: #7dd3fc !important;
+  /* sky-300 for readability */
+}
+
+.dark pre code .token.keyword,
+[data-theme="dark"] pre code .token.keyword {
+  color: #7dd3fc !important;
+}
+
+.dark pre code .token.string,
+[data-theme="dark"] pre code .token.string {
+  color: #86efac !important;
+  /* emerald-300 */
+}
+
 /* Ensure inline code styling is consistent across blog and docs */
 .dark .prose code:not([class*="language-"]),
 [data-theme="dark"] .prose code:not([class*="language-"]),
@@ -1112,6 +1137,319 @@ div.nextra-callout:not([data-type="info"]):not([data-type="note"]):not([data-typ
 [data-theme="dark"] .text-gray-900 {
   color: #f3f4f6 !important;
   /* Light gray with good contrast */
+}
+
+/* #endregion */
+
+/* Dark mode table readability in docs (prose) */
+.dark .prose table th,
+.dark .prose table td,
+[data-theme="dark"] .prose table th,
+[data-theme="dark"] .prose table td {
+  color: hsl(var(--foreground)) !important;
+}
+
+/* Ensure API reference web component background adapts */
+.dark elements-api,
+[data-theme="dark"] elements-api {
+  background: transparent !important;
+}
+
+/* Host-level theme vars for Spotlight Elements (apply when we add class on host) */
+elements-api.custom-docs-theme {
+  /* Light theme defaults */
+  --sl-color-text: #1f2937;
+  --sl-color-bg: #f8f9fc;
+}
+
+.dark elements-api.custom-docs-theme,
+[data-theme="dark"] elements-api.custom-docs-theme {
+  /* High contrast dark */
+  --sl-color-text: #e2e8f0;
+  --sl-color-bg: #0f0c24;
+  /* If Spotlight Elements maps code tokens to vars, set them here as discovered */
+  /* Example guesses; harmless if unused */
+  --sl-color-code-text: #e2e8f0;
+  --sl-color-code-bg: #0f0c24;
+  --sl-color-code-kw: #7dd3fc;
+  /* keywords/commands */
+  --sl-color-code-str: #86efac;
+  /* strings */
+  --sl-color-code-num: #fca5a5;
+  /* numbers */
+  --sl-color-code-fn: #fbbf24;
+  /* functions */
+  --sl-color-code-comment: #94a3b8;
+  /* comments */
+}
+
+/* Common internal tokens for Elements API or similar web components */
+.dark elements-api * {
+  --color-canvas: transparent !important;
+  --color-bg: transparent !important;
+  --sl-color-bg: transparent !important;
+  --sl-color-surface: transparent !important;
+}
+
+/* High-contrast code colors inside Stoplight Elements (light DOM) */
+/* Light theme */
+.docs-page .sl-elements pre,
+.docs-page .sl-elements code {
+  background-color: #f8f9fc !important;
+  color: #1f2937 !important;
+}
+
+.docs-page .sl-elements .token.keyword,
+.docs-page .sl-elements .token.tag,
+.docs-page .sl-elements .token.selector,
+.docs-page .sl-elements .token.builtin,
+.docs-page .sl-elements .token.operator,
+.docs-page .sl-elements .token.function,
+.docs-page .sl-elements .token.command {
+  color: #1d4ed8 !important;
+}
+
+.docs-page .sl-elements .token.string,
+.docs-page .sl-elements .token.attr-value {
+  color: #047857 !important;
+}
+
+.docs-page .sl-elements .token.number {
+  color: #b91c1c !important;
+}
+
+/* Light: booleans/constants */
+.docs-page .sl-elements .token.boolean,
+.docs-page .sl-elements .token.constant {
+  color: #b45309 !important;
+}
+
+.docs-page .sl-elements .token.comment {
+  color: #64748b !important;
+}
+
+.docs-page .sl-elements .token.punctuation {
+  color: #1f2937 !important;
+}
+
+/* Dark theme */
+.dark .sl-elements pre,
+.dark .sl-elements code,
+.docs-page [data-theme="dark"] .sl-elements pre,
+.docs-page [data-theme="dark"] .sl-elements code {
+  background-color: #0f0c24 !important;
+  color: #e2e8f0 !important;
+}
+
+.dark .sl-elements .token.keyword,
+.dark .sl-elements .token.tag,
+.dark .sl-elements .token.selector,
+.dark .sl-elements .token.builtin,
+.dark .sl-elements .token.operator,
+.dark .sl-elements .token.function,
+.dark .sl-elements .token.command,
+.docs-page [data-theme="dark"] .sl-elements .token.keyword,
+.docs-page [data-theme="dark"] .sl-elements .token.tag,
+.docs-page [data-theme="dark"] .sl-elements .token.selector,
+.docs-page [data-theme="dark"] .sl-elements .token.builtin,
+.docs-page [data-theme="dark"] .sl-elements .token.operator,
+.docs-page [data-theme="dark"] .sl-elements .token.function,
+.docs-page [data-theme="dark"] .sl-elements .token.command {
+  color: #7dd3fc !important;
+}
+
+.dark .sl-elements .token.string,
+.docs-page [data-theme="dark"] .sl-elements .token.string,
+.dark .sl-elements .token.attr-value,
+.docs-page [data-theme="dark"] .sl-elements .token.attr-value {
+  color: #86efac !important;
+}
+
+/* JSON keys and attributes (Prism JSON often uses .property / .attr-name / .key) */
+.dark .sl-elements .token.property,
+.docs-page [data-theme="dark"] .sl-elements .token.property,
+.dark .sl-elements .token.attr-name,
+.docs-page [data-theme="dark"] .sl-elements .token.attr-name,
+.dark .sl-elements .token.key,
+.docs-page [data-theme="dark"] .sl-elements .token.key {
+  color: #86efac !important;
+}
+
+.dark .sl-elements .token.number,
+.docs-page [data-theme="dark"] .sl-elements .token.number {
+  color: #fca5a5 !important;
+}
+
+/* Dark: booleans/constants */
+.dark .sl-elements .token.boolean,
+.docs-page [data-theme="dark"] .sl-elements .token.boolean,
+.dark .sl-elements .token.constant,
+.docs-page [data-theme="dark"] .sl-elements .token.constant {
+  color: #fbbf24 !important;
+}
+
+.dark .sl-elements .token.comment,
+.docs-page [data-theme="dark"] .sl-elements .token.comment {
+  color: #94a3b8 !important;
+}
+
+.dark .sl-elements .token.punctuation,
+.docs-page [data-theme="dark"] .sl-elements .token.punctuation {
+  color: #e2e8f0 !important;
+}
+
+/* Improve visibility of Stoplight Elements "required" warning labels in dark mode */
+.dark .sl-elements .sl-text-warning,
+.docs-page [data-theme="dark"] .sl-elements .sl-text-warning,
+.dark .sl-elements .text-warning,
+.docs-page [data-theme="dark"] .sl-elements .text-warning {
+  color: #f59e0b !important;
+  /* vibrant amber-500 */
+}
+
+/* #region Docs Callout Helpers (force consistent backgrounds in dark mode) */
+.prose .docs-callout-info,
+.docs-callout-info {
+  background-color: var(--callout-info-bg) !important;
+  border: 1px solid var(--callout-info-border) !important;
+}
+
+.prose .docs-callout-warning,
+.docs-callout-warning {
+  background-color: var(--callout-warning-bg) !important;
+  border: 1px solid var(--callout-warning-border) !important;
+}
+
+.prose .docs-callout-default,
+.docs-callout-default {
+  background-color: var(--callout-bg) !important;
+  border: 1px solid var(--callout-border) !important;
+}
+
+/* Ensure text remains legible inside custom callouts */
+.prose .docs-callout-info *,
+.docs-callout-info * {
+  color: var(--callout-info-text) !important;
+}
+
+.prose .docs-callout-warning *,
+.docs-callout-warning * {
+  color: var(--callout-warning-text) !important;
+}
+
+.prose .docs-callout-default *,
+.docs-callout-default * {
+  color: var(--callout-text) !important;
+}
+
+/* #endregion */
+
+/* #region Legacy light background overrides in dark mode
+   Ensure elements using light Tailwind backgrounds remain readable in dark mode */
+.dark .prose .bg-white,
+[data-theme="dark"] .prose .bg-white {
+  background-color: var(--doc-card-bg) !important;
+}
+
+.dark .prose .bg-gray-50,
+[data-theme="dark"] .prose .bg-gray-50 {
+  background-color: hsl(var(--muted)) !important;
+}
+
+.dark .prose .bg-blue-50,
+[data-theme="dark"] .prose .bg-blue-50 {
+  background-color: #1e3a8a !important;
+  /* blue-900 */
+}
+
+.dark .prose .bg-green-50,
+[data-theme="dark"] .prose .bg-green-50 {
+  background-color: #064e3b !important;
+  /* green-900 */
+}
+
+.dark .prose .bg-red-50,
+[data-theme="dark"] .prose .bg-red-50 {
+  background-color: #7f1d1d !important;
+  /* red-900 */
+}
+
+.dark .prose .bg-yellow-50,
+[data-theme="dark"] .prose .bg-yellow-50 {
+  background-color: #713f12 !important;
+  /* yellow/amber-900 */
+}
+
+.dark .prose .bg-orange-50,
+[data-theme="dark"] .prose .bg-orange-50 {
+  background-color: #7c2d12 !important;
+  /* orange-900 */
+}
+
+.dark .prose .bg-amber-50,
+[data-theme="dark"] .prose .bg-amber-50 {
+  background-color: #78350f !important;
+  /* amber-900 */
+}
+
+.dark .prose .bg-emerald-50,
+[data-theme="dark"] .prose .bg-emerald-50 {
+  background-color: #064e3b !important;
+  /* emerald-900 */
+}
+
+.dark .prose .bg-teal-50,
+[data-theme="dark"] .prose .bg-teal-50 {
+  background-color: #134e4a !important;
+  /* teal-900 */
+}
+
+.dark .prose .bg-cyan-50,
+[data-theme="dark"] .prose .bg-cyan-50 {
+  background-color: #164e63 !important;
+  /* cyan-900 */
+}
+
+.dark .prose .bg-sky-50,
+[data-theme="dark"] .prose .bg-sky-50 {
+  background-color: #0c4a6e !important;
+  /* sky-900 */
+}
+
+.dark .prose .bg-indigo-50,
+[data-theme="dark"] .prose .bg-indigo-50 {
+  background-color: #312e81 !important;
+  /* indigo-900 */
+}
+
+.dark .prose .bg-violet-50,
+[data-theme="dark"] .prose .bg-violet-50 {
+  background-color: #3b0764 !important;
+  /* violet-950 */
+}
+
+.dark .prose .bg-purple-50,
+[data-theme="dark"] .prose .bg-purple-50 {
+  background-color: #581c87 !important;
+  /* purple-900 */
+}
+
+.dark .prose .bg-fuchsia-50,
+[data-theme="dark"] .prose .bg-fuchsia-50 {
+  background-color: #701a75 !important;
+  /* fuchsia-900 */
+}
+
+.dark .prose .bg-pink-50,
+[data-theme="dark"] .prose .bg-pink-50 {
+  background-color: #831843 !important;
+  /* pink-900 */
+}
+
+.dark .prose .bg-rose-50,
+[data-theme="dark"] .prose .bg-rose-50 {
+  background-color: #7f1d1d !important;
+  /* rose-900 */
 }
 
 /* #endregion */

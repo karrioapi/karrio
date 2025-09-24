@@ -116,7 +116,7 @@ export const ApiTheme: FC<{
       attribute="class"
       defaultTheme="system"
       enableSystem
-      storageKey="karrio-docs-theme"
+      storageKey="theme-content"
       enableColorScheme
       disableTransitionOnChange
       themes={['light', 'dark']}
