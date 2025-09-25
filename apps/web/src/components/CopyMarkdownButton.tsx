@@ -44,27 +44,6 @@ export function CopyMarkdownButton() {
         return `Read from ${url} so I can ask questions about it.`;
     }
 
-    async function copyThenOpen(url: string) {
-        await handleCopy();
-        try {
-            window.open(url, "_blank", "noopener,noreferrer");
-        } catch { }
-    }
-
-    async function copyPrefillThenOpen(url: string) {
-        const prefill = buildPrefillText(pathname);
-        if (prefill) {
-            try {
-                await navigator.clipboard.writeText(prefill);
-                setCopied(true);
-                setTimeout(() => setCopied(false), 1400);
-            } catch { /* ignore */ }
-        }
-        try {
-            window.open(url, "_blank", "noopener,noreferrer");
-        } catch { }
-    }
-
     async function openClaudeWithPrefill() {
         const prefill = buildPrefillText(pathname);
         let target = "https://claude.ai/new";
@@ -128,12 +107,6 @@ export function CopyMarkdownButton() {
                     className="data-[highlighted]:bg-blue-50 dark:data-[highlighted]:bg-blue-900/40 data-[highlighted]:text-blue-900 dark:data-[highlighted]:text-blue-100"
                 >
                     Open in Claude
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                    onClick={() => copyPrefillThenOpen("https://cursor.sh")}
-                    className="data-[highlighted]:bg-blue-50 dark:data-[highlighted]:bg-blue-900/40 data-[highlighted]:text-blue-900 dark:data-[highlighted]:text-blue-100"
-                >
-                    Copy and Open Cursor
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
