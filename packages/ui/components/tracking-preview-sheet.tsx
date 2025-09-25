@@ -320,7 +320,7 @@ export const TrackingPreview = ({
                       <h3 className="text-lg font-semibold">Shipment Details</h3>
 
                       {/* Origin/Destination */}
-                      <div className="grid grid-cols-3 gap-4 items-center">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 sm:items-center">
                         <div className="text-sm text-gray-600">Origin/Destination</div>
                         <div className="col-span-2 text-sm font-medium flex items-center gap-2">
                           <span>{formatAddressRegion(tracker?.shipment?.shipper as any)}</span>
@@ -330,7 +330,7 @@ export const TrackingPreview = ({
                       </div>
 
                       {/* Service */}
-                      <div className="grid grid-cols-3 gap-4 items-center">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 sm:items-center">
                         <div className="text-sm text-gray-600">Service</div>
                         <div className="col-span-2 text-sm font-medium">
                           {formatRef(
@@ -343,7 +343,7 @@ export const TrackingPreview = ({
 
                       {/* Reference */}
                       {tracker?.shipment?.reference && (
-                        <div className="grid grid-cols-3 gap-4 items-center">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 sm:items-center">
                           <div className="text-sm text-gray-600">Reference</div>
                           <div className="col-span-2 text-sm font-medium">
                             {tracker?.shipment?.reference}
@@ -352,7 +352,7 @@ export const TrackingPreview = ({
                       )}
 
                       {/* Link */}
-                      <div className="grid grid-cols-3 gap-4 items-center">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 sm:items-center">
                         <div className="text-sm text-gray-600">Link</div>
                         <div className="col-span-2">
                           <AppLink
