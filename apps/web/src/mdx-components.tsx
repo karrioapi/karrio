@@ -12,7 +12,11 @@ export const useMDXComponents = components => {
     return (
       <h1
         {...rest}
-        className={[className, 'flex items-center justify-between gap-3'].filter(Boolean).join(' ')}
+        className={[
+          className,
+          // Mobile: stack vertically, left aligned; sm+: inline row with right actions
+          'flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between'
+        ].filter(Boolean).join(' ')}
       >
         <span>{children}</span>
         <CopyMarkdownButton />

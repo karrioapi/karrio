@@ -545,6 +545,17 @@ html[data-theme="dark"] * {
 
 /* #endregion */
 
+/* Prevent layout shift when scrollbars appear/disappear globally */
+html,
+body {
+  scrollbar-gutter: stable both-edges;
+}
+
+html {
+  overflow-y: scroll;
+  /* fallback for browsers without scrollbar-gutter */
+}
+
 /* #region Sidebar Styling */
 /**
  * Critical mobile and desktop styles
@@ -673,6 +684,11 @@ html[data-theme="dark"] * {
 .docs-page .docs-content {
   background-color: hsl(var(--background));
   padding-top: 0;
+}
+
+/* Keep layout stable when scrollbars appear/disappear */
+.docs-scroll {
+  scrollbar-gutter: stable both-edges;
 }
 
 /* Dark mode specific override for content area */
