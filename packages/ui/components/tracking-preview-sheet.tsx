@@ -168,7 +168,7 @@ export const TrackingPreview = ({
       <Sheet key={key} open={isActive} onOpenChange={(open) => !open && dismiss()}>
         <a ref={link} className="hidden"></a>
         <SheetContent
-          className="w-full sm:w-[800px] sm:max-w-[800px] p-0 shadow-none"
+          className="w-full sm:w-[450px] sm:max-w-[450px] p-0 shadow-none"
           side="right"
         >
           <div className="h-full flex flex-col">
@@ -188,24 +188,27 @@ export const TrackingPreview = ({
               {!isNone(tracker) && (
                 <div className="space-y-6">
                   {/* Carrier Image & Tracking Number */}
-                  <div className="flex items-center justify-center gap-4 mb-4">
-                    <div className="flex-shrink-0">
-                      <CarrierImage
-                        carrier_name={
-                          (tracker?.meta as any)?.carrier || tracker?.carrier_name
-                        }
-                        width={65}
-                        height={65}
-                        text_color={tracker?.tracking_carrier?.config?.text_color}
-                        background={tracker?.tracking_carrier?.config?.brand_color}
-                      />
+                  <div className="text-center mb-4">
+                    <div className="flex justify-center mb-4">
+                      <div className="p-3 bg-gray-50 rounded-xl">
+                        <CarrierImage
+                          carrier_name={
+                            (tracker?.meta as any)?.carrier || tracker?.carrier_name
+                          }
+                          width={48}
+                          height={48}
+                          text_color={tracker?.tracking_carrier?.config?.text_color}
+                          background={tracker?.tracking_carrier?.config?.brand_color}
+                        />
+                      </div>
                     </div>
-                    <div className="text-center">
-                      <div className="flex justify-center items-center gap-1 text-sm text-gray-500 mb-2">
-                        <Package className="h-3.5 w-3.5" />
+
+                    <div className="space-y-1">
+                      <div className="flex justify-center items-center gap-1 text-xs text-gray-500">
+                        <Package className="h-3 w-3" />
                         <span>Tracking Number</span>
                       </div>
-                      <div className="font-mono text-xl font-bold text-gray-900 bg-gray-50 px-4 py-2 rounded">
+                      <div className="font-mono text-sm font-bold text-gray-900 bg-gray-50 px-3 py-1 rounded inline-block">
                         {tracker?.tracking_number}
                       </div>
                     </div>
