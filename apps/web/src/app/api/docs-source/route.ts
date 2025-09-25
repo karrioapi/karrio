@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 export const runtime = 'nodejs'
 
@@ -28,7 +29,7 @@ export async function GET(req: NextRequest) {
     // Candidate 1: relative to this route file (dev reliability)
     let routeDirDocs: string | null = null
     try {
-        const routeFilePath = path.fileURLToPath(new URL(import.meta.url))
+        const routeFilePath = fileURLToPath(import.meta.url)
         const routeDir = path.dirname(routeFilePath)
         // ../../docs from .../app/api/docs-source -> .../app/docs
         routeDirDocs = path.resolve(routeDir, '../../docs')
