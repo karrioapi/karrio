@@ -319,6 +319,21 @@ export const TrackingPreview = ({
                     <div className="border-t pt-4 space-y-4">
                       <h3 className="text-lg font-semibold">Shipment Details</h3>
 
+                      {/* Shipment ID */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 sm:items-center">
+                        <div className="text-sm text-gray-600">Shipment ID</div>
+                        <div className="col-span-2">
+                          <AppLink
+                            className="text-blue-600 hover:text-blue-800 text-sm font-medium inline-flex items-center gap-1"
+                            href={`/shipments/${tracker?.shipment?.id}`}
+                            target="_blank"
+                          >
+                            <span>{tracker?.shipment?.id}</span>
+                            <ExternalLink className="w-3 h-3" />
+                          </AppLink>
+                        </div>
+                      </div>
+
                       {/* Origin/Destination */}
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 sm:items-center">
                         <div className="text-sm text-gray-600">Origin/Destination</div>
@@ -351,20 +366,6 @@ export const TrackingPreview = ({
                         </div>
                       )}
 
-                      {/* Link */}
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 sm:items-center">
-                        <div className="text-sm text-gray-600">Link</div>
-                        <div className="col-span-2">
-                          <AppLink
-                            className="text-blue-600 hover:text-blue-800 text-sm font-medium inline-flex items-center gap-1"
-                            href={`/shipments/${tracker?.shipment?.id}`}
-                            target="_blank"
-                          >
-                            <span>{tracker?.shipment?.id}</span>
-                            <ExternalLink className="w-3 h-3" />
-                          </AppLink>
-                        </div>
-                      </div>
                     </div>
                   )}
 
