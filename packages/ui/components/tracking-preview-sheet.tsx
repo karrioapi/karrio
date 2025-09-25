@@ -133,10 +133,10 @@ export const TrackingPreview = ({
   };
 
   const getStatusIcon = (status?: string) => {
-    if (status === "delivered") return <CheckCircle className="h-5 w-5" />;
-    if (status === "in_transit") return <Truck className="h-5 w-5" />;
-    if (status === "out_for_delivery") return <Package className="h-5 w-5" />;
-    return <Clock className="h-5 w-5" />;
+    if (status === "delivered") return <CheckCircle className="h-4 w-4" />;
+    if (status === "in_transit") return <Truck className="h-4 w-4" />;
+    if (status === "out_for_delivery") return <Package className="h-4 w-4" />;
+    return <Clock className="h-4 w-4" />;
   };
 
   const getEventIcon = (description?: string) => {
@@ -188,24 +188,24 @@ export const TrackingPreview = ({
               {!isNone(tracker) && (
                 <div className="space-y-6">
                   {/* Carrier Image & Tracking Number */}
-                  <div className="flex items-center justify-center gap-6 mb-6">
+                  <div className="flex items-center justify-center gap-4 mb-4">
                     <div className="flex-shrink-0">
                       <CarrierImage
                         carrier_name={
                           (tracker?.meta as any)?.carrier || tracker?.carrier_name
                         }
-                        width={80}
-                        height={80}
+                        width={65}
+                        height={65}
                         text_color={tracker?.tracking_carrier?.config?.text_color}
                         background={tracker?.tracking_carrier?.config?.brand_color}
                       />
                     </div>
                     <div className="text-center">
-                      <div className="flex justify-center items-center gap-2 text-sm text-gray-500 mb-3">
-                        <Package className="h-4 w-4" />
+                      <div className="flex justify-center items-center gap-1 text-sm text-gray-500 mb-2">
+                        <Package className="h-3.5 w-3.5" />
                         <span>Tracking Number</span>
                       </div>
-                      <div className="font-mono text-xl font-bold text-gray-900 bg-gray-50 px-6 py-3 rounded-lg">
+                      <div className="font-mono text-xl font-bold text-gray-900 bg-gray-50 px-4 py-2 rounded">
                         {tracker?.tracking_number}
                       </div>
                     </div>
@@ -224,8 +224,8 @@ export const TrackingPreview = ({
                   )}
 
                   {/* Status Badge */}
-                  <div className={`${computeColor(tracker as TrackerType)} text-white text-center py-3 rounded-lg`}>
-                    <div className="flex items-center justify-center gap-2 text-xl font-semibold">
+                  <div className={`${computeColor(tracker as TrackerType)} text-white text-center py-2 rounded`}>
+                    <div className="flex items-center justify-center gap-2 text-sm font-medium">
                       {getStatusIcon(tracker?.status)}
                       {computeStatus(tracker as TrackerType)}
                     </div>
