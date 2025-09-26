@@ -263,6 +263,23 @@ html[data-theme="dark"] * {
 
 /* #endregion */
 
+/* Copy LLM button hover overrides */
+.copy-llm-btn:hover {
+  background-color: rgb(239 246 255) !important;
+  /* blue-50 */
+  border-color: rgb(96 165 250) !important;
+  /* blue-400 */
+}
+
+.dark .copy-llm-btn:hover,
+[data-theme="dark"] .copy-llm-btn:hover {
+  background-color: rgb(30 58 138) !important;
+  /* blue-900 */
+  border-color: rgb(59 130 246) !important;
+  /* blue-500/600 */
+  color: #ffffff !important;
+}
+
 /* #region DocSearch Styles */
 @import '@docsearch/css';
 
@@ -528,6 +545,17 @@ html[data-theme="dark"] * {
 
 /* #endregion */
 
+/* Prevent layout shift when scrollbars appear/disappear globally */
+html,
+body {
+  scrollbar-gutter: stable both-edges;
+}
+
+html {
+  overflow-y: scroll;
+  /* fallback for browsers without scrollbar-gutter */
+}
+
 /* #region Sidebar Styling */
 /**
  * Critical mobile and desktop styles
@@ -656,6 +684,11 @@ html[data-theme="dark"] * {
 .docs-page .docs-content {
   background-color: hsl(var(--background));
   padding-top: 0;
+}
+
+/* Keep layout stable when scrollbars appear/disappear */
+.docs-scroll {
+  scrollbar-gutter: stable both-edges;
 }
 
 /* Dark mode specific override for content area */
