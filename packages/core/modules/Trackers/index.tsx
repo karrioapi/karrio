@@ -6,7 +6,7 @@ import {
 import {
   TrackingPreview,
   useTrackingPreview,
-} from "@karrio/core/components/tracking-preview";
+} from "@karrio/ui/components/tracking-preview-sheet";
 import { DeleteConfirmationDialog } from "@karrio/ui/components/delete-confirmation-dialog";
 import {
   formatRef,
