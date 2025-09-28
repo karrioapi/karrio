@@ -11,9 +11,8 @@ import React, { useState } from "react";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useOrderMutation } from "@karrio/hooks/order";
 import { useRouter } from "next/navigation";
-import { useAppMode } from "@karrio/hooks/app-mode";
 import { useToast } from "@karrio/ui/hooks/use-toast";
-import { url$ } from "@karrio/lib";
+import { url$, p } from "@karrio/lib";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,7 +34,6 @@ export const OrderMenu = ({
   isViewing,
 }: OrderMenuComponent): JSX.Element => {
   const router = useRouter();
-  const { basePath } = useAppMode();
   const { references } = useAPIMetadata();
   const mutation = useOrderMutation();
   const { toast } = useToast();
@@ -59,7 +57,7 @@ export const OrderMenu = ({
       description: "Taking you to view order details.",
     });
     
-    router.push(basePath + "/orders/" + order.id);
+    router.push(p`/orders/${order.id}`);
   };
 
   const navigateToCreateLabel = (_: React.MouseEvent) => {
@@ -68,7 +66,7 @@ export const OrderMenu = ({
       description: "Taking you to create a label for this order.",
     });
     
-    router.push(`${basePath}/orders/create_label?shipment_id=${computeShipmentId(order)}&order_id=${order?.id}`);
+    router.push(p`/orders/create_label?shipment_id=${computeShipmentId(order)}&order_id=${order?.id}`);
   };
 
   const navigateToEditOrder = (_: React.MouseEvent) => {
@@ -77,7 +75,7 @@ export const OrderMenu = ({
       description: "Taking you to edit this draft order.",
     });
     
-    router.push(`${basePath}/draft_orders/${order?.id}`);
+    router.push(p`/draft_orders/${order?.id}`);
   };
 
   const cancelOrder = (order: OrderType) => async () => {
