@@ -13,6 +13,9 @@ services:
       DEBUG_MODE: "False"
       DETACHED_WORKER: "True"
       SECRET_KEY: ${SECRET_KEY}
+      # Allow API/Dashboard domains for HTTPS
+      ALLOWED_HOSTS: "*,localhost,127.0.0.1,api.${DOMAIN},app.${DOMAIN}"
+      CSRF_TRUSTED_ORIGINS: "https://api.${DOMAIN},https://app.${DOMAIN}"
       REDIS_PORT: ${REDIS_PORT:-6379}
       REDIS_HOST: ${REDIS_HOST:-redis}
       DATABASE_HOST: ${DATABASE_HOST:-db}
@@ -56,6 +59,7 @@ services:
       - api
     environment:
       NEXTAUTH_SECRET: ${JWT_SECRET}
+      NEXTAUTH_URL: https://app.${DOMAIN}
       DASHBOARD_PORT: ${DASHBOARD_PORT:-3002}
       NEXT_PUBLIC_DASHBOARD_URL: ${DASHBOARD_URL}
       NEXT_PUBLIC_KARRIO_PUBLIC_URL: ${KARRIO_PUBLIC_URL}

@@ -68,6 +68,25 @@ docker-compose pull
 echo "Stopping the stack!"
 docker-compose stop
 
+# Patch existing Caddyfile to include X-Forwarded-Proto header if missing
+if [[ -f "Caddyfile" ]]; then
+    echo "Checking existing Caddyfile for HTTPS header forwarding..."
+    TS="$(date +%Y%m%d_%H%M%S)"
+    cp Caddyfile "Caddyfile.bak.${TS}" || true
+
+    if ! grep -q "reverse_proxy http://api:5002 {" Caddyfile; then
+        # Insert header block for API upstream
+        sed -i.bak "s|reverse_proxy http://api:5002$|reverse_proxy http://api:5002 {\\n        header_up X-Forwarded-Proto https\\n    }|" Caddyfile || true
+    fi
+
+    if ! grep -q "reverse_proxy http://dashboard:3002 {" Caddyfile; then
+        # Insert header block for Dashboard upstream
+        sed -i.bak "s|reverse_proxy http://dashboard:3002$|reverse_proxy http://dashboard:3002 {\\n        header_up X-Forwarded-Proto https\\n    }|" Caddyfile || true
+    fi
+
+    echo "Caddyfile check complete. A backup was saved as Caddyfile.bak.${TS}"
+fi
+
 if [ ${DOCKER_VOLUMES_MISSING} == 'TRUE' ]; then
     echo ""
     echo ""

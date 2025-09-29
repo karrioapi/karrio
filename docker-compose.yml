@@ -6,8 +6,28 @@ services:
     container_name: karrio.dev
     ports:
       - 5002:5002
+      - 3002:3002
+      - 3005:3005
     volumes:
       - .:/karrio
+
+  caddy:
+    image: caddy:2.8.4
+    container_name: karrio.caddy.dev
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/Caddyfile.dev:/etc/caddy/Caddyfile:ro
+      - ./.karrio/certs:/etc/caddy/certs:ro
+    environment:
+      API_UPSTREAM: "http://host.docker.internal:5002"
+      DASHBOARD_UPSTREAM: "http://host.docker.internal:3002"
+      DOCS_UPSTREAM: "http://host.docker.internal:3005"
+      CADDY_CERT_DIR: /etc/caddy/certs
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   maildev:
     container_name: karrio.mail

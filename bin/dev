@@ -1,0 +1,708 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Global PIDs
+CADDY_PID=""
+CADDY_SUDO=false
+MAILDEV_PID=""
+SERVER_PID=""
+DASHBOARD_PID=""
+DOCS_PID=""
+
+# Resolve directories
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ROOT_DIR="$( cd "$SCRIPT_DIR/.." && pwd )"
+cd "$ROOT_DIR"
+
+# Color codes for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+print_step() { echo -e "${CYAN}→ $1${NC}"; }
+print_success() { echo -e "${GREEN}✓ $1${NC}"; }
+print_warning() { echo -e "${YELLOW}⚠ $1${NC}"; }
+print_error() { echo -e "${RED}✗ $1${NC}"; }
+command_exists() { command -v "$1" >/dev/null 2>&1; }
+
+# Service detection helpers
+is_caddy_running() { pgrep -f "caddy.*Caddyfile.dev" >/dev/null 2>&1; }
+is_maildev_running() { lsof -ti:1080 >/dev/null 2>&1; }
+
+# Helpers used by "up"
+get_file_mtime() {
+  if [[ -f "$1" ]]; then
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+      stat -f %m "$1" 2>/dev/null || echo "0"
+    else
+      stat -c %Y "$1" 2>/dev/null || echo "0"
+    fi
+  else
+    echo "0"
+  fi
+}
+
+should_restart_caddy() {
+  local caddyfile="./docker/Caddyfile.dev"
+  local state_file="$ROOT_DIR/.karrio/caddy-state"
+  local cert_dir="${CADDY_CERT_DIR:-$ROOT_DIR/.karrio/certs}"
+
+  mkdir -p "$(dirname "$state_file")"
+
+  if ! is_caddy_running; then
+    return 0
+  fi
+
+  local current_mtime
+  current_mtime=$(get_file_mtime "$caddyfile")
+
+  if [[ -f "$state_file" ]]; then
+    local stored_mtime
+    stored_mtime=$(cat "$state_file" 2>/dev/null || echo "0")
+    if [[ "$current_mtime" -gt "$stored_mtime" ]]; then
+      return 0
+    fi
+  else
+    return 0
+  fi
+
+  local hosts=(api.karrio.local app.karrio.local karrio.local)
+  for host in "${hosts[@]}"; do
+    if [[ ! -f "$cert_dir/${host}.pem" || ! -f "$cert_dir/${host}-key.pem" ]]; then
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+store_caddy_state() {
+  local caddyfile="./docker/Caddyfile.dev"
+  local state_file="$ROOT_DIR/.karrio/caddy-state"
+  local current_mtime
+  current_mtime=$(get_file_mtime "$caddyfile")
+  echo "$current_mtime" > "$state_file"
+}
+
+set_node_ca() {
+  if [[ -n "$NODE_EXTRA_CA_CERTS" ]]; then
+    return
+  fi
+  if command_exists mkcert; then
+    local caroot
+    caroot=$(mkcert -CAROOT 2>/dev/null || true)
+    if [[ -n "$caroot" && -f "$caroot/rootCA.pem" ]]; then
+      export NODE_EXTRA_CA_CERTS="$caroot/rootCA.pem"
+    fi
+  fi
+}
+
+ensure_local_certs() {
+  local cert_dir="${CADDY_CERT_DIR:-$ROOT_DIR/.karrio/certs}"
+  local hosts=(api.karrio.local app.karrio.local karrio.local)
+  local missing=false
+
+  mkdir -p "$cert_dir"
+  for host in "${hosts[@]}"; do
+    if [[ ! -f "$cert_dir/${host}.pem" || ! -f "$cert_dir/${host}-key.pem" ]]; then
+      missing=true
+      break
+    fi
+  done
+
+  if [[ "$missing" == true ]]; then
+    if ! command_exists mkcert; then
+      print_error "mkcert not found but --with-https was specified."
+      print_error "Install mkcert (e.g., 'brew install mkcert') to generate HTTPS certificates."
+      print_error "Or run without --with-https to use localhost URLs."
+      exit 1
+    fi
+
+    print_step "Generating local TLS certificates with mkcert..."
+    mkcert -install >/dev/null 2>&1 || true
+
+    for host in "${hosts[@]}"; do
+      if mkcert -cert-file "$cert_dir/${host}.pem" -key-file "$cert_dir/${host}-key.pem" "$host" >/dev/null 2>&1; then
+        print_success "Certificate ready for $host"
+      else
+        print_error "Failed to generate certificate for $host"
+        print_error "HTTPS setup failed. Check mkcert installation or run without --with-https."
+        exit 1
+      fi
+    done
+  fi
+
+  export CADDY_CERT_DIR="$cert_dir"
+  return 0
+}
+
+ensure_hosts_entries() {
+  local hosts=(api.karrio.local app.karrio.local karrio.local)
+  local missing=()
+  for host in "${hosts[@]}"; do
+    if ! grep -qE "(^|\s)${host}(\s|$)" /etc/hosts 2>/dev/null; then
+      missing+=("$host")
+    fi
+  done
+  if [[ ${#missing[@]} -gt 0 ]]; then
+    print_warning "Missing local domains in /etc/hosts: ${missing[*]}"
+    if [[ -t 0 ]]; then
+      print_step "Adding entries to /etc/hosts (requires sudo)..."
+      if echo "127.0.0.1 ${hosts[*]}" | sudo tee -a /etc/hosts >/dev/null; then
+        print_success "Added local domain entries to /etc/hosts"
+      else
+        print_error "Failed to update /etc/hosts. Add entries manually or run ./bin/install-dev"
+        return 1
+      fi
+    else
+      print_error "Non-interactive shell. Add hosts entries manually: 127.0.0.1 ${hosts[*]}"
+      return 1
+    fi
+  fi
+  return 0
+}
+
+# ===================== DOWN (stop) =====================
+run_down() {
+  echo
+  echo "██╗  ██╗ █████╗ ██████╗ ██████╗ ██╗ ██████╗ "
+  echo "██║ ██╔╝██╔══██╗██╔══██╗██╔══██╗██║██╔═══██╗"
+  echo "█████╔╝ ███████║██████╔╝██████╔╝██║██║   ██║"
+  echo "██╔═██╗ ██╔══██║██╔══██╗██╔══██╗██║██║   ██║"
+  echo "██║  ██╗██║  ██║██║  ██║██║  ██║██║╚██████╔╝"
+  echo "╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝ "
+  echo
+  echo "Stopping Development Environment"
+  echo
+
+  # Stop Caddy
+  if is_caddy_running; then
+    print_step "Stopping Caddy HTTPS proxy..."
+    pkill -f "caddy.*Caddyfile.dev" 2>/dev/null || true
+    lsof -ti:80 | xargs kill -9 2>/dev/null || true
+    lsof -ti:443 | xargs kill -9 2>/dev/null || true
+    print_success "Caddy stopped"
+  else
+    print_warning "Caddy not running"
+  fi
+
+  # Stop API processes
+  print_step "Stopping Karrio API server..."
+  pgrep -f "karrio.*runserver|python.*manage.py.*runserver" 2>/dev/null | xargs kill -TERM 2>/dev/null || true
+  sleep 2
+  for pid in $(pgrep -f "karrio.*runserver|python.*manage.py.*runserver" 2>/dev/null || true); do
+    kill -9 "$pid" 2>/dev/null || true
+  done
+  lsof -ti:5002 | xargs kill -9 2>/dev/null || true
+  print_success "API stopped (if it was running)"
+
+  # Stop Dashboard
+  print_step "Stopping Dashboard..."
+  pgrep -f "next.*dev.*3002|node.*next.*3002" 2>/dev/null | xargs kill -TERM 2>/dev/null || true
+  sleep 2
+  for pid in $(pgrep -f "next.*dev.*3002|node.*next.*3002" 2>/dev/null || true); do
+    kill -9 "$pid" 2>/dev/null || true
+  done
+  lsof -ti:3002 | xargs kill -9 2>/dev/null || true
+  print_success "Dashboard stopped (if it was running)"
+
+  # Stop Docs
+  print_step "Stopping Docs..."
+  pgrep -f "next.*dev.*3005|node.*next.*3005" 2>/dev/null | xargs kill -TERM 2>/dev/null || true
+  sleep 2
+  for pid in $(pgrep -f "next.*dev.*3005|node.*next.*3005" 2>/dev/null || true); do
+    kill -9 "$pid" 2>/dev/null || true
+  done
+  lsof -ti:3005 | xargs kill -9 2>/dev/null || true
+  print_success "Docs stopped (if it was running)"
+
+  # Stop Maildev
+  if is_maildev_running; then
+    print_step "Stopping Maildev SMTP capture..."
+    lsof -ti:1080 | xargs kill -TERM 2>/dev/null || true
+    sleep 1
+    lsof -ti:1080 | xargs kill -9 2>/dev/null || true
+    print_success "Maildev stopped"
+  else
+    print_warning "Maildev not running"
+  fi
+
+  # Clean symlink
+  rm -f "$ROOT_DIR/apps/dashboard/.env.development.local" || true
+
+  print_success "Development environment stopped"
+}
+
+# ===================== UP (start) =====================
+run_up() {
+  local WITH_HTTPS=false
+  local SHOW_HELP=false
+  local START_API=true
+  local START_DASHBOARD=true
+  local START_DOCS=true
+  local WAIT_AT_END=true
+  local DASHBOARD_USE_ENV=false
+
+  # Parse args (remaining after subcommand)
+  local COMPONENTS=()
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      --with-https)
+        WITH_HTTPS=true; shift ;;
+      --api-only)
+        START_API=true; START_DASHBOARD=false; START_DOCS=false; shift ;;
+      --dashboard-only)
+        START_API=false; START_DASHBOARD=true; START_DOCS=false; shift ;;
+      --docs-only)
+        START_API=false; START_DASHBOARD=false; START_DOCS=true; shift ;;
+      --no-api)
+        START_API=false; shift ;;
+      --no-dashboard)
+        START_DASHBOARD=false; shift ;;
+      --no-docs)
+        START_DOCS=false; shift ;;
+      --dashboard-use-env)
+        DASHBOARD_USE_ENV=true; shift ;;
+      --no-wait|--detach)
+        WAIT_AT_END=false; shift ;;
+      -h|--help)
+        SHOW_HELP=true; shift ;;
+      api|dashboard|docs|all)
+        COMPONENTS+=("$1"); shift ;;
+      *)
+        print_error "Unknown option: $1"; exit 1 ;;
+    esac
+  done
+
+  if [[ "$SHOW_HELP" == true ]]; then
+    echo "Usage: $0 up [OPTIONS] [COMPONENTS]"
+    echo ""
+    echo "OPTIONS:"
+    echo "  --with-https         Enable HTTPS proxy (Caddy), use .local domains"
+    echo "  --no-wait, --detach  Start services then exit (do not wait)"
+    echo "  --api-only           Start only the API server"
+    echo "  --dashboard-only     Start only the Dashboard"
+    echo "  --docs-only          Start only the Docs"
+    echo "  --no-api             Skip starting the API server"
+    echo "  --no-dashboard       Skip starting the Dashboard"
+    echo "  --no-docs            Skip starting the Docs"
+    echo "  -h, --help           Show this help message"
+    echo ""
+    echo "COMPONENTS: api | dashboard | docs | all"
+    return 0
+  fi
+
+  if [[ ${#COMPONENTS[@]} -gt 0 ]]; then
+    START_API=false; START_DASHBOARD=false; START_DOCS=false
+    for component in "${COMPONENTS[@]}"; do
+      case $(echo "$component" | tr '[:upper:]' '[:lower:]') in
+        api) START_API=true ;;
+        dashboard) START_DASHBOARD=true ;;
+        docs) START_DOCS=true ;;
+        all) START_API=true; START_DASHBOARD=true; START_DOCS=true ;;
+        *) print_error "Unknown component '$component'"; return 1 ;;
+      esac
+    done
+  fi
+
+  if ! $START_API && ! $START_DASHBOARD && ! $START_DOCS; then
+    print_warning "No components selected. Starting all components."
+    START_API=true; START_DASHBOARD=true; START_DOCS=true
+  fi
+
+  # SKIP_CADDY logic (inverse)
+  if [[ "$WITH_HTTPS" == false ]]; then
+    export SKIP_CADDY=true
+  else
+    export SKIP_CADDY=false
+  fi
+
+  # Allow env override for dashboard via environment variable as well
+  if [[ -n "${DASHBOARD_USE_ENV}" ]]; then
+    case "${DASHBOARD_USE_ENV}" in
+      1|true|TRUE|True) DASHBOARD_USE_ENV=true ;; 
+      *) ;; 
+    esac
+  fi
+
+  set_node_ca
+
+  DEFAULT_API_HTTP="http://localhost:5002"
+  DEFAULT_API_HTTPS="https://api.karrio.local"
+  DEFAULT_DASHBOARD_HTTP="http://localhost:3002"
+  DEFAULT_DASHBOARD_HTTPS="https://app.karrio.local"
+  DEFAULT_DOCS_HTTP="http://localhost:3005"
+  DEFAULT_DOCS_HTTPS="https://karrio.local"
+
+  export KARRIO_URL="${KARRIO_URL:-$DEFAULT_API_HTTP}"
+  export KARRIO_PUBLIC_URL="${KARRIO_PUBLIC_URL:-$KARRIO_URL}"
+  export NEXT_PUBLIC_KARRIO_PUBLIC_URL="${NEXT_PUBLIC_KARRIO_PUBLIC_URL:-$KARRIO_PUBLIC_URL}"
+  export NEXTAUTH_URL="${NEXTAUTH_URL:-$DEFAULT_DASHBOARD_HTTP}"
+  export ALLOWED_HOSTS="${ALLOWED_HOSTS:-*,localhost,127.0.0.1,api.karrio.local,app.karrio.local,karrio.local}"
+  export CSRF_TRUSTED_ORIGINS="${CSRF_TRUSTED_ORIGINS:-http://localhost:5002,https://api.karrio.local,https://app.karrio.local}"
+  export USE_HTTPS="${USE_HTTPS:-False}"
+
+  ORIG_KARRIO_URL="$KARRIO_URL"
+  ORIG_KARRIO_PUBLIC_URL="$KARRIO_PUBLIC_URL"
+  ORIG_NEXT_PUBLIC_KARRIO_PUBLIC_URL="$NEXT_PUBLIC_KARRIO_PUBLIC_URL"
+  ORIG_NEXTAUTH_URL="$NEXTAUTH_URL"
+  ORIG_ALLOWED_HOSTS="$ALLOWED_HOSTS"
+  ORIG_CSRF_TRUSTED_ORIGINS="$CSRF_TRUSTED_ORIGINS"
+  ORIG_USE_HTTPS="$USE_HTTPS"
+  HTTPS_ACTIVE=false
+
+  # Header
+  echo -e "${BLUE}"
+  echo "██╗  ██╗ █████╗ ██████╗ ██████╗ ██╗ ██████╗ "
+  echo "██║ ██╔╝██╔══██╗██╔══██╗██╔══██╗██║██╔═══██╗"
+  echo "█████╔╝ ███████║██████╔╝██████╔╝██║██║   ██║"
+  echo "██╔═██╗ ██╔══██║██╔══██╗██╔══██╗██║██║   ██║"
+  echo "██║  ██╗██║  ██║██║  ██║██║  ██║██║╚██████╔╝"
+  echo "╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝ "
+  echo -e "${NC}"
+  printf "Starting Development Environment\n\n"
+
+  SELECTED_LABELS=()
+  $START_API && SELECTED_LABELS+=("API")
+  $START_DASHBOARD && SELECTED_LABELS+=("Dashboard")
+  $START_DOCS && SELECTED_LABELS+=("Docs")
+  if [[ ${#SELECTED_LABELS[@]} -gt 0 ]]; then
+    echo "→ Selected components: ${SELECTED_LABELS[*]}"
+    echo ""
+  fi
+
+  if ! $START_API && ( $START_DASHBOARD || $START_DOCS ); then
+    print_warning "API is not running. Dashboard/Docs expect an API at http://localhost:5002."
+    echo ""
+  fi
+
+  print_step "Checking prerequisites..."
+  if [[ ! -d ".venv/karrio" ]]; then
+    print_error "Python virtual environment not found. Please run ./bin/install-dev first."
+    exit 1
+  fi
+  if [[ ! -d "node_modules" ]]; then
+    print_warning "Node.js dependencies not found. Running npm install..."
+    npm install
+  fi
+  print_success "All prerequisites satisfied"
+
+  # Cleanup (smart) - only when HTTPS is enabled we check Caddy
+  print_step "Cleaning up existing services..."
+  RESTART_CADDY=false
+  if [[ "${SKIP_CADDY}" != "1" && ! "${SKIP_CADDY}" =~ ^(true|TRUE|True)$ ]]; then
+    if should_restart_caddy; then
+      print_step "Caddy configuration changed or not running, will restart Caddy"
+      pkill -f "caddy.*Caddyfile.dev" 2>/dev/null || true
+      lsof -ti:80 | xargs kill -9 2>/dev/null || true
+      lsof -ti:443 | xargs kill -9 2>/dev/null || true
+      RESTART_CADDY=true
+    else
+      print_success "Caddy is running and up-to-date, keeping existing process"
+    fi
+  fi
+
+  # Always kill API, Dashboard, Docs
+  pkill -f "karrio runserver" 2>/dev/null || true
+  pkill -f "karrio server" 2>/dev/null || true
+  lsof -ti:5002 | xargs kill -9 2>/dev/null || true
+  lsof -ti:3002 | xargs kill -9 2>/dev/null || true
+  lsof -ti:3005 | xargs kill -9 2>/dev/null || true
+  sleep 1
+  print_success "Cleanup completed"
+
+  cleanup_trap() {
+    echo ""
+    echo "Shutting down development environment..."
+    for pid in "$SERVER_PID" "$DASHBOARD_PID" "$DOCS_PID"; do
+      if [[ -n "$pid" ]]; then
+        kill "$pid" 2>/dev/null || true
+        wait "$pid" 2>/dev/null || true
+      fi
+    done
+    if [[ -n "$CADDY_PID" && "$RESTART_CADDY" == true ]]; then
+      if [[ "$CADDY_SUDO" == true ]]; then
+        sudo kill "$CADDY_PID" 2>/dev/null || true
+      else
+        kill "$CADDY_PID" 2>/dev/null || true
+      fi
+      wait "$CADDY_PID" 2>/dev/null || true
+      print_step "Stopped Caddy (restarted this session)"
+    fi
+    if [[ -n "$MAILDEV_PID" && ! is_maildev_running ]]; then
+      kill "$MAILDEV_PID" 2>/dev/null || true
+      wait "$MAILDEV_PID" 2>/dev/null || true
+    fi
+    rm -f "$ROOT_DIR/apps/dashboard/.env.development.local"
+    echo "Development environment stopped (persistent services left running)"
+    exit 0
+  }
+  trap cleanup_trap SIGINT SIGTERM EXIT
+
+  start_caddy_proxy() {
+    if [[ "${SKIP_CADDY}" == "1" || "${SKIP_CADDY}" =~ ^(true|TRUE|True)$ ]]; then
+      return
+    fi
+    if ! command_exists caddy; then
+      print_error "Caddy binary not found but --with-https was specified."
+      print_error "Install Caddy (e.g., 'brew install caddy') to enable HTTPS locally."
+      print_error "Or run without --with-https to use localhost URLs."
+      exit 1
+    fi
+    ensure_hosts_entries || true
+    if [[ "$RESTART_CADDY" == false ]] && is_caddy_running; then
+      print_success "Caddy is already running and up-to-date"
+      HTTPS_ACTIVE=true
+      CADDY_PID=$(pgrep -f "caddy.*Caddyfile.dev" | head -1)
+      export KARRIO_URL="$DEFAULT_API_HTTPS"
+      export KARRIO_PUBLIC_URL="$DEFAULT_API_HTTPS"
+      export NEXT_PUBLIC_KARRIO_PUBLIC_URL="$DEFAULT_API_HTTPS"
+      export NEXTAUTH_URL="$DEFAULT_DASHBOARD_HTTPS"
+      export ALLOWED_HOSTS="*,localhost,127.0.0.1,api.karrio.local,app.karrio.local,karrio.local"
+      export CSRF_TRUSTED_ORIGINS="https://api.karrio.local,https://app.karrio.local"
+      export USE_HTTPS=True
+      return
+    fi
+    if ! ensure_local_certs; then
+      print_error "TLS certificates setup failed but --with-https was specified."
+      print_error "Run ./bin/install-dev to fix certificate issues or run without --with-https."
+      exit 1
+    fi
+    export API_UPSTREAM="${API_UPSTREAM:-http://localhost:5002}"
+    export DASHBOARD_UPSTREAM="${DASHBOARD_UPSTREAM:-http://localhost:3002}"
+    export DOCS_UPSTREAM="${DOCS_UPSTREAM:-http://localhost:3005}"
+    print_step "Starting Caddy HTTPS proxy..."
+    CADDY_LOG=/tmp/caddy-dev.log
+    rm -f "$CADDY_LOG"
+    (API_UPSTREAM="$API_UPSTREAM" \
+     DASHBOARD_UPSTREAM="$DASHBOARD_UPSTREAM" \
+     DOCS_UPSTREAM="$DOCS_UPSTREAM" \
+     CADDY_CERT_DIR="$CADDY_CERT_DIR" \
+     caddy run --config ./docker/Caddyfile.dev >"$CADDY_LOG" 2>&1) &
+    CADDY_PID=$!
+
+    local retries=0
+    local max_retries=10
+    while [[ $retries -lt $max_retries ]]; do
+      sleep 1
+      if ps -p "$CADDY_PID" >/dev/null 2>&1 && [[ -f "$CADDY_LOG" ]] && grep -q "server running" "$CADDY_LOG" 2>/dev/null; then
+        break
+      fi
+      retries=$((retries + 1))
+    done
+
+    if ps -p "$CADDY_PID" >/dev/null 2>&1 && [[ -f "$CADDY_LOG" ]] && grep -q "server running" "$CADDY_LOG" 2>/dev/null; then
+      print_success "Caddy running (ports 80/443). Logs: $CADDY_LOG"
+      store_caddy_state
+      HTTPS_ACTIVE=true
+      export KARRIO_URL="$DEFAULT_API_HTTPS"
+      export KARRIO_PUBLIC_URL="$DEFAULT_API_HTTPS"
+      export NEXT_PUBLIC_KARRIO_PUBLIC_URL="$DEFAULT_API_HTTPS"
+      export NEXTAUTH_URL="$DEFAULT_DASHBOARD_HTTPS"
+      export ALLOWED_HOSTS="*,localhost,127.0.0.1,api.karrio.local,app.karrio.local,karrio.local"
+      export CSRF_TRUSTED_ORIGINS="https://api.karrio.local,https://app.karrio.local"
+      export USE_HTTPS=True
+    else
+      if [[ "$OSTYPE" == "darwin"* ]] && [[ -f "$CADDY_LOG" ]] && grep -qi "permission denied" "$CADDY_LOG"; then
+        print_warning "Permission denied binding :80/:443. Retrying Caddy with sudo..."
+        kill "$CADDY_PID" 2>/dev/null || true
+        wait "$CADDY_PID" 2>/dev/null || true
+        (API_UPSTREAM="$API_UPSTREAM" \
+         DASHBOARD_UPSTREAM="$DASHBOARD_UPSTREAM" \
+         DOCS_UPSTREAM="$DOCS_UPSTREAM" \
+         CADDY_CERT_DIR="$CADDY_CERT_DIR" \
+         sudo -E caddy run --config ./docker/Caddyfile.dev >"$CADDY_LOG" 2>&1) &
+        CADDY_PID=$!
+        CADDY_SUDO=true
+        retries=0
+        while [[ $retries -lt $max_retries ]]; do
+          sleep 1
+          if ps -p "$CADDY_PID" >/dev/null 2>&1 && [[ -f "$CADDY_LOG" ]] && grep -q "server running" "$CADDY_LOG" 2>/dev/null; then
+            break
+          fi
+          retries=$((retries + 1))
+        done
+      fi
+      if ps -p "$CADDY_PID" >/dev/null 2>&1 && [[ -f "$CADDY_LOG" ]] && grep -q "server running" "$CADDY_LOG" 2>/dev/null; then
+        print_success "Caddy running (ports 80/443). Logs: $CADDY_LOG"
+        store_caddy_state
+        HTTPS_ACTIVE=true
+        export KARRIO_URL="$DEFAULT_API_HTTPS"
+        export KARRIO_PUBLIC_URL="$DEFAULT_API_HTTPS"
+        export NEXT_PUBLIC_KARRIO_PUBLIC_URL="$DEFAULT_API_HTTPS"
+        export NEXTAUTH_URL="$DEFAULT_DASHBOARD_HTTPS"
+        export ALLOWED_HOSTS="*,localhost,127.0.0.1,api.karrio.local,app.karrio.local,karrio.local"
+        export CSRF_TRUSTED_ORIGINS="https://api.karrio.local,https://app.karrio.local"
+        export USE_HTTPS=True
+      else
+        print_error "Caddy failed to start but --with-https was specified."
+        if [[ -s "$CADDY_LOG" ]]; then
+          print_error "Caddy logs:"; tail -n 10 "$CADDY_LOG" | sed 's/^/   /'
+        fi
+        if [[ "$OSTYPE" != "darwin"* ]]; then
+          print_error "If you see 'permission denied', grant access: sudo setcap \"cap_net_bind_service=+ep\" $(command -v caddy)"
+          print_error "Alternatively run: sudo caddy run --config docker/Caddyfile.dev"
+        fi
+        print_error "Or run without --with-https to use localhost URLs."
+        exit 1
+      fi
+    fi
+  }
+
+  start_caddy_proxy
+
+  if [[ "${SKIP_CADDY}" != "1" && ! "${SKIP_CADDY}" =~ ^(true|TRUE|True)$ ]]; then
+    if curl -s --max-time 2 https://api.karrio.local > /dev/null 2>&1; then
+      print_success "HTTPS proxy is responding, using HTTPS configuration"
+      HTTPS_ACTIVE=true
+      export KARRIO_URL="$DEFAULT_API_HTTPS"
+      export KARRIO_PUBLIC_URL="$DEFAULT_API_HTTPS"
+      export NEXT_PUBLIC_KARRIO_PUBLIC_URL="$DEFAULT_API_HTTPS"
+      export NEXTAUTH_URL="$DEFAULT_DASHBOARD_HTTPS"
+      export ALLOWED_HOSTS="*,localhost,127.0.0.1,api.karrio.local,app.karrio.local,karrio.local"
+      export CSRF_TRUSTED_ORIGINS="https://api.karrio.local,https://app.karrio.local"
+    fi
+  fi
+
+  if $START_API; then
+    print_step "Starting Karrio API server..."
+    (
+      source bin/activate-env
+      if [[ -f "bin/start-server" ]]; then
+        ./bin/start-server
+      else
+        karrio runserver
+      fi
+    ) &
+    SERVER_PID=$!
+    sleep 3
+  fi
+
+  if $START_DASHBOARD; then
+    print_step "Starting Karrio Dashboard..."
+    rm -rf "$ROOT_DIR/apps/dashboard/.next"
+    (
+      cd "$ROOT_DIR/apps/dashboard"
+      if [[ "$DASHBOARD_USE_ENV" == true ]]; then
+        # Respect existing apps/dashboard/.env, do not create a symlink
+        if [[ -f .env.development.local && -L .env.development.local ]]; then
+          rm -f .env.development.local
+        fi
+        # Ensure parent-provided defaults do not override .env inside Next.js
+        unset KARRIO_URL KARRIO_PUBLIC_URL NEXT_PUBLIC_KARRIO_PUBLIC_URL NEXTAUTH_URL
+        print_success "Respecting apps/dashboard/.env (no .env.development.local created)"
+      else
+        # Create a symlink to ensure consistent defaults
+        rm -f .env.development.local
+        if [[ "$HTTPS_ACTIVE" == "true" ]]; then
+          ln -s ".env.https" .env.development.local
+          print_success "Using HTTPS environment configuration (.env.https)"
+        else
+          ln -s ".env.sample" .env.development.local
+          print_success "Using localhost environment configuration (.env.sample)"
+        fi
+      fi
+      npm run dev
+    ) &
+    DASHBOARD_PID=$!
+    sleep 3
+  fi
+
+  if $START_DOCS; then
+    print_step "Starting Karrio Docs..."
+    npm run dev:web -w @karrio/web &
+    DOCS_PID=$!
+    sleep 3
+  fi
+
+  if $START_API; then
+    print_step "Starting Maildev (SMTP capture)..."
+    if is_maildev_running; then
+      print_success "Maildev is already running at http://localhost:1080"
+      MAILDEV_PID=$(lsof -ti:1080 2>/dev/null | head -1)
+    else
+      if command_exists npx; then
+        (npx maildev >/dev/null 2>&1 &)
+        MAILDEV_PID=$!
+        sleep 2
+        if ps -p "$MAILDEV_PID" >/dev/null 2>&1; then
+          print_success "Maildev running at http://localhost:1080"
+        else
+          print_warning "Maildev failed to start automatically. Run 'npx maildev' manually if needed."
+          MAILDEV_PID=""
+        fi
+      else
+        print_warning "npx not found. Install Node.js to run Maildev locally."
+      fi
+    fi
+  fi
+
+  echo ""
+  print_success "Development environment started! 🚀"
+  echo ""
+  enabled=()
+  $START_API && enabled+=("API")
+  $START_DASHBOARD && enabled+=("Dashboard")
+  $START_DOCS && enabled+=("Docs")
+  if [[ ${#enabled[@]} -gt 0 ]]; then
+    echo "Components: ${enabled[*]}"
+    echo ""
+  fi
+  echo -e "${GREEN}Access your application:${NC}"
+  if $START_API; then
+    if [[ "$HTTPS_ACTIVE" == true ]]; then
+      echo "   → API: https://api.karrio.local"
+      echo "   → Admin: https://api.karrio.local/admin"
+    else
+      echo "   → API: http://localhost:5002"
+      echo "   → Admin: http://localhost:5002/admin"
+    fi
+  fi
+  if $START_DASHBOARD; then
+    if [[ "$HTTPS_ACTIVE" == true ]]; then
+      echo "   → Dashboard: https://app.karrio.local"
+    else
+      echo "   → Dashboard: http://localhost:3002"
+    fi
+  fi
+  if $START_DOCS; then
+    if [[ "$HTTPS_ACTIVE" == true ]]; then
+      echo "   → Docs: https://karrio.local"
+    else
+      echo "   → Docs: http://localhost:3005"
+    fi
+  fi
+  if [[ -n "$MAILDEV_PID" ]]; then
+    echo "   → Maildev: http://localhost:1080"
+  fi
+  echo ""
+  if [[ "$HTTPS_ACTIVE" == true ]]; then
+    echo "   HTTPS proxy: running (Caddy)"
+  else
+    echo "   HTTPS proxy: not running (use --with-https to enable)"
+  fi
+  echo ""
+  if $WAIT_AT_END; then
+    echo -e "${CYAN}Press Ctrl+C to stop selected services${NC}"
+    echo ""
+    wait
+  else
+    echo -e "${YELLOW}Detaching (no wait). Use './bin/dev down' to stop services.${NC}"
+  fi
+}
+
+# ===================== Dispatch =====================
+CMD="${1:-up}"
+if [[ "$CMD" == "up" ]]; then
+  shift
+  run_up "$@"
+elif [[ "$CMD" == "down" ]]; then
+  run_down
+else
+  echo "Usage: $0 {up|down} [options]"
+  exit 1
+fi

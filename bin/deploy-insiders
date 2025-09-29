@@ -100,7 +100,9 @@ api.$DOMAIN {
         }
     }
     handle {
-        reverse_proxy http://api:5002
+        reverse_proxy http://api:5002 {
+            header_up X-Forwarded-Proto https
+        }
     }
     encode gzip
     log {
@@ -108,7 +110,9 @@ api.$DOMAIN {
     }
 }
 app.$DOMAIN {
-    reverse_proxy http://dashboard:3002
+    reverse_proxy http://dashboard:3002 {
+        header_up X-Forwarded-Proto https
+    }
 }
 EOF
 
