@@ -16,10 +16,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Checkout submodules
         run: |
-          git submodule sync --recursive
-          git submodule update --init --recursive || true
-          # Continue even if some submodules fail due to permissions
-          git submodule foreach --recursive 'git submodule update --init || true'
+          git submodule update --init community
       - name: Run Tests
         run: |
           ./bin/setup-sdk-env -v &&
@@ -37,10 +34,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Checkout submodules
         run: |
-          git submodule sync --recursive
-          git submodule update --init --recursive || true
-          # Continue even if some submodules fail due to permissions
-          git submodule foreach --recursive 'git submodule update --init || true'
+          git submodule update --init community
       - name: Run Tests
         env:
           ENABLE_ALL_PLUGINS_BY_DEFAULT: true
@@ -57,10 +51,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Checkout submodules
         run: |
-          git submodule sync --recursive
-          git submodule update --init --recursive || true
-          # Continue even if some submodules fail due to permissions
-          git submodule foreach --recursive 'git submodule update --init || true'
+          git submodule update --init community
       - uses: actions/setup-node@v3
         with:
           node-version: 22.x
