@@ -1,0 +1,11 @@
+---
+id: laposte
+title: La Poste
+---
+
+import integrations from "../integrations.json";
+import CarrierIntegrationDetails from "@site/src/components/CarrierIntegrationDetails";
+
+<CarrierIntegrationDetails 
+    id="laposte"
+    integration={integrations.find(i => i.id === "laposte")} />

@@ -1,0 +1,35 @@
+{
+    "wait_for_label_url": true,
+    "preferences": [
+        {
+            "type": "PRINT",
+            "format": "ZPL",
+            "groups": [
+                {
+                    "group": "Parcel Post",
+                    "layout": "A4-1pp",
+                    "branded": true,
+                    "left_offset": 0,
+                    "top_offset": 0
+                },
+                {
+                    "group": "Express Post",
+                    "layout": "A4-1pp",
+                    "branded": false,
+                    "left_offset": 0,
+                    "top_offset": 0
+                }
+            ]
+        }
+    ],
+    "shipments": [
+        {
+            "shipment_id": "t4AK0EhQTu4AAAFeVsxGqhLO",
+            "items": [
+                {
+                    "item_id": "2vsK0EhQT1YAAAFeWMxGqhLO"
+                }
+            ]
+        }
+    ]
+}

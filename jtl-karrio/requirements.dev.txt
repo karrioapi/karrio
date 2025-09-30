@@ -1,0 +1,7 @@
+bandit
+black
+coverage
+mypy
+twine
+wheel
+setuptools

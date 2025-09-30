@@ -1,0 +1,19 @@
+{
+  "apiVersion": "string",
+  "error": {
+    "code": "string",
+    "message": "string",
+    "errors": [
+      {
+        "status": "string",
+        "code": "string",
+        "title": "string",
+        "detail": "string",
+        "source": {
+          "parameter": "string",
+          "example": "string"
+        }
+      }
+    ]
+  }
+}

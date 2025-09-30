@@ -1,0 +1,27 @@
+<xsd:schema elementFormDefault="qualified" targetNamespace="http://www.microsoft.com/practices/EnterpriseLibrary/2007/01/wcf/validation" 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://www.microsoft.com/practices/EnterpriseLibrary/2007/01/wcf/validation">
+    <xsd:complexType name="ValidationFault">
+        <xsd:annotation>
+            <xsd:appinfo />
+            <xsd:documentation>This class is used to return information to a WCF client when validation fails on a service parameter.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="Details" nillable="true" type="q1:ArrayOfValidationDetail" 
+                xmlns:q1="http://schemas.datacontract.org/2004/07/Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <Surrogate z:Id="1" i:type="d1p1:Annotation" 
+                            xmlns="http://schemas.microsoft.com/2003/10/Serialization/" 
+                            xmlns:i="http://www.w3.org/2001/XMLSchema-instance" 
+                            xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/" 
+                            xmlns:d1p1="XmlCommentsExporter.Annotation">
+                            <d1p1:Text z:Id="2"></d1p1:Text>
+                        </Surrogate>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ValidationFault" nillable="true" type="tns:ValidationFault" />
+</xsd:schema>

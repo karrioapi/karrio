@@ -1,0 +1,63 @@
+---
+id: integrations
+title: Carrier Integrations
+slug: /carriers
+---
+
+import integrations from "./carriers/integrations.json";
+
+# Karrio Carriers
+
+Karrio allows you to access a network of shipping carriers and integrate with any additional logistics provider.
+
+## Carriers Connections
+
+<div id="tailwind">
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    {integrations.map((integration, key) => (
+      <a
+        key={key}
+        href={integration.href}
+        className="block p-6 bg-white rounded-lg border border-slate-200 shadow-sm hover:border-blue-400 hover:shadow-md transition-all"
+      >
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h3 className="text-lg font-semibold text-slate-800 mb-1">
+              {integration.name}
+            </h3>
+            <div className="flex flex-wrap gap-2 mb-3">
+              {integration.features?.map((feature, idx) => (
+                <span
+                  key={idx}
+                  className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full text-xs font-medium"
+                >
+                  {feature}
+                </span>
+              ))}
+            </div>
+          </div>
+          <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
+            integration.status === 'production'
+              ? 'bg-green-100 text-green-800'
+              : 'bg-yellow-100 text-yellow-800'
+          }`}>
+            {integration.status}
+          </span>
+        </div>
+
+        <p className="text-slate-600 text-sm mb-4">
+          {integration.description}
+        </p>
+      </a>
+    ))}
+
+  </div>
+</div>
+
+## Missing a carrier?
+
+You can get your shipping providers added to Karrio:
+
+-   [Sponsor an Issue](https://github.com/karrioapi/karrio/issues/new?assignees=&labels=&template=feature_request.md)
+-   [Submit a PR](https://github.com/karrioapi/karrio)
+-   [Carrier integration guide](/carriers/sdk/extension)

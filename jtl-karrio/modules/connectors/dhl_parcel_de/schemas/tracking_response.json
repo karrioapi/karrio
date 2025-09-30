@@ -1,0 +1,163 @@
+{
+  "trackingRequest": {
+    "trackingNumber": "",
+    "service": "",
+    "requesterCountryCode": "",
+    "originCountryCode": "",
+    "recipientPostalCode": "",
+    "language": "en",
+    "offset": 0,
+    "limit": 0
+  },
+  "trackingResponse": {
+    "url": "/shipments?trackingNumber=7777777770?offset=0&limit=5",
+    "prevUrl": "/shipments?trackingNumber=7777777770?offset=0&limit=5",
+    "nextUrl": "/shipments?trackingNumber=7777777770?offset=5&limit=5",
+    "firstUrl": "/shipments?trackingNumber=7777777770?offset=0&limit=5",
+    "lastUrl": "/shipments?trackingNumber=7777777770?offset=10&limit=5",
+    "shipments": [
+      {
+        "id": 7777777770,
+        "service": "express",
+        "origin": {
+          "address": {
+            "countryCode": "NL",
+            "postalCode": "1043 AG",
+            "addressLocality": "Oderweg 2, AMSTERDAM"
+          }
+        },
+        "destination": {
+          "address": {
+            "countryCode": "NL",
+            "postalCode": "1043 AG",
+            "addressLocality": "Oderweg 2, AMSTERDAM"
+          }
+        },
+        "status": {
+          "timestamp": "2018-03-02T07:53:47Z",
+          "location": {
+            "address": {
+              "countryCode": "NL",
+              "postalCode": "1043 AG",
+              "addressLocality": "Oderweg 2, AMSTERDAM"
+            }
+          },
+          "statusCode": "pre-transit",
+          "status": "DELIVERED",
+          "description": "JESSICA",
+          "remark": "The shipment is pending completion of customs inspection.",
+          "nextSteps": "The status will be updated following customs inspection."
+        },
+        "estimatedTimeOfDelivery": "2018-08-03T00:00:00Z",
+        "estimatedDeliveryTimeFrame": {
+          "estimatedFrom": "2018-08-03T00:00:00Z",
+          "estimatedThrough": "2018-08-03T22:00:00Z"
+        },
+        "estimatedTimeOfDeliveryRemark": "By End of Day",
+        "serviceUrl": "http://www.dhl.de/de/privatkunden.html?piececode=7777777770",
+        "rerouteUrl": "https://www.dhl.de/de/privatkunden.html?piececode=7777777770&verfuegen_selected_tab=FIRST",
+        "details": {
+          "carrier": {
+            "@type": "Organization",
+            "organizationName": "EXPRESS"
+          },
+          "product": {
+            "productName": "UNKNOWN - Product unknown"
+          },
+          "receiver": {
+            "@type": "Person",
+            "organizationName": "EXPRESS",
+            "familyName": "Doe",
+            "givenName": "John",
+            "name": "John"
+          },
+          "sender": {
+            "@type": "Person",
+            "organizationName": "EXPRESS",
+            "familyName": "Doe",
+            "givenName": "John",
+            "name": "John"
+          },
+          "proofOfDelivery": {
+            "timestamp": "2018-09-05T16:33:00Z",
+            "signatureUrl": "string",
+            "documentUrl": "https://webpod.dhl.com/webPOD/DHLePODRequest",
+            "signed": {
+              "@type": "Person",
+              "familyName": "Doe",
+              "givenName": "John",
+              "name": "John"
+            }
+          },
+          "totalNumberOfPieces": 8,
+          "pieceIds": [
+            "JD014600006281230704",
+            "JD014600002708681600",
+            "JD014600006615052259",
+            "JD014600006615052264",
+            "JD014600006615052265",
+            "JD014600006615052268",
+            "JD014600006615052307",
+            "JD014600002266382340",
+            "JD014600002659593446",
+            "JD014600006101653481",
+            "JD014600006614884499"
+          ],
+          "weight": {
+            "value": 253.5,
+            "unitText": "kg"
+          },
+          "volume": {
+            "value": 12600
+          },
+          "loadingMeters": 1.5,
+          "dimensions": {
+            "width": {
+              "value": 20,
+              "unitText": "cm"
+            },
+            "height": {
+              "value": 18,
+              "unitText": "cm"
+            },
+            "length": {
+              "value": 35,
+              "unitText": "cm"
+            }
+          },
+          "references": {
+            "number": "YZ3892406173",
+            "type": "customer-reference"
+          }
+        },
+        "events": [
+          {
+            "timestamp": "2018-03-02T07:53:47",
+            "location": {
+              "address": {
+                "countryCode": "NL",
+                "postalCode": "1043 AG",
+                "addressLocality": "Oderweg 2, AMSTERDAM"
+              }
+            },
+            "statusCode": "pre-transit",
+            "status": "DELIVERED",
+            "description": "JESSICA",
+            "remark": "The shipment is pending completion of customs inspection.",
+            "nextSteps": "The status will be updated following customs inspection."
+          }
+        ]
+      }
+    ],
+    "possibleAdditionalShipmentsUrl": [
+      "/shipments?trackingNumber=7777777770&service=parcel-de",
+      "/shipments?trackingNumber=7777777770&service=parcel-nl"
+    ]
+  },
+  "error": {
+    "title": "No result found",
+    "detail": "No shipment with given tracking number found.",
+    "status": 404,
+    "instance": "/shipment/8264715546"
+  }
+}

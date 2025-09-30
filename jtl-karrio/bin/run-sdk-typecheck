@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# Activate python env
+source "bin/activate-env" > /dev/null 2>&1
+
+echo "running sdk typecheck with mypy"
+
+
+for submodule in $(find "modules/sdk" -type f -name "__init__.py" ! -path "*tests*" ! -path "*schemas*" -exec dirname '{}' \;); do
+    mypy ${submodule} || exit $?;
+done;
+
+packages=$(find "modules/connectors" -type f -name "setup.py" -exec dirname '{}' \;)
+for module in ${packages}; do
+    for submodule in $(find ${module} -type f -name "__init__.py" ! -path "*tests*" ! -path "*schemas*" -exec dirname '{}' \;); do
+        mypy ${submodule} || exit $?;
+    done;
+done

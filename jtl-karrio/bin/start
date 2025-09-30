@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -e
+
+trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
+
+# Activate python env
+source "bin/activate-env" > /dev/null 2>&1
+
+export WORKER_IMMEDIATE_MODE=False
+./bin/start-server &
+./bin/start-worker &
+
+wait

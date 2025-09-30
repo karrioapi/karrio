@@ -1,0 +1,636 @@
+---
+id: extension
+title: Extension
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+## Custom Carrier
+
+The question we are most asked is: **How to add a custom carrier?**
+
+We have experimented and studied approximately ~100 shipping carriers API/web services to design the karrio structure as it is.
+The good news is that making it easy to add a custom carrier fits perfectly with karrio' vision.
+
+:::caution
+To integrate a custom carrier at this stage, you will need:
+
+-   A minimal knowledge of Python
+-   Write code to extend the abstract classes
+-   Use the plugin/extension structure available
+-   Read and Understand the carrier' API documentation
+
+Note that we are still iterating on the SDK to make it more user-friendly and make it easy to add custom carriers.
+Therefore, we recommend taking inspiration from the existing carrier integrations. As we discover patterns and things
+that can be abstracted, we will continue to improve the implementation process.
+
+:::
+
+---
+
+### Steps to integrate a custom carrier
+
+1. Create a karrio extension package
+
+2. Generate Python data types
+
+3. Define carrier connection settings
+
+4. Set up API calls under proxy
+
+5. Implement the Mapper functions
+
+6. Consolidate your integration with unit tests
+
+7. Update the API specs and frontend sdk typing
+
+:::info
+The package naming convention for extensions is `karrio.[carrier_name]`
+:::
+
+---
+
+#### Prerequisites
+
+Make sure that you have set up your development environment as instructed in the [development guide](/product/resources/development#working-on-karrio-sdk-core-and-all-extensions).
+
+#### 1. Create a karrio extension package
+
+Once you have [karrio installed for development](/product/resources/development) on your machine,
+You can run the following command to scafold a karrio extension for you carrier.
+
+```terminal title="Terminal"
+./bin/cli add-extension
+```
+
+```terminal title="Terminal"
+Carrier slug: freight_express            # Unique carrier identifier (e.g., dhl_express, ups, fedex, canadapost)
+Display name: Freight Express            # Human-readable carrier name (e.g., DHL, UPS, FedEx, Canada Post)
+Features [tracking, rating, shipping]:   # The carrier features you wish to integrate
+Version [2024.3]:                        # The extension initial version
+Is XML API? [y/N]:                       # Specify whether the carrier' API data format is XML. (n - for JSON APIs)
+Generate new carrier: "Freight Express" extension with id "freight_express" and features [tracking, rating, shipping] [y/N]: y
+```
+
+This command will create a karrio compatible extension folder under `modules/connectors/[carrier_name]`
+with all the boilerplate code required for your integration.
+From there, all you have to do is to implement the API data mapping from and to karrio unified interface.
+And add API contract tests to ensure that karrio generates the right requests for your API.
+
+##### Extension anatomy
+
+Considering the vision we aimed to achieve with karrio, the codebase has been modularized with a clear separation of
+concerns to decouple the carrier integration from the interface abstraction. Additionally, each carrier
+integration is done in an isolated self-contained Python package.
+
+As a result, we have a very modular ecosystem where one can only select the carrier integrations of interest without
+carrying the whole codebase.
+
+**Most importantly, this flexibility allows the integration of additional carrier services under the karrio umbrella.**
+
+:::info
+karrio makes shipping API integration easy for a single carrier and in a multi-carrier scenario, the value
+is exponential.
+:::
+
+###### Signature
+
+The Mapper is the base of karrio 's abstraction. A `Metadata` declared at `karrio/mappers/[carrier_name]/__init__`
+specifies the integration classes required to define a karrio compatible extension.
+
+```text title="karrio/mappers/[carrier_name]/__init__.py"
+from karrio.core.metadata import Metadata
+
+from karrio.mappers.[carrier_name].mapper import Mapper
+from karrio.mappers.[carrier_name].proxy import Proxy
+from karrio.mappers.[carrier_name].settings import Settings
+import karrio.providers.[carrier_name].units as units
+
+
+METADATA = Metadata(
+    id="[carrier_name]",  # e.g: "ddp_uk"
+    label="[Carrier Name]",  # e.g: "DDP UK"
+
+    # Integrations
+    Mapper=Mapper,
+    Proxy=Proxy,
+    Settings=Settings,
+
+    # Data Units (Optional...)
+    options=units.ShippingOption,  # Enum of Shipping options supported by the carrier
+    package_presets=units.PackagePresets, # Enum of parcel presets/templates
+    services=units.ShippingService,  # Enum of Shipping services supported by the carrier
+
+    is_hub=False # True if the carrier is a hub like (EasyPost, Shippo, Postmen...)
+)
+```
+
+###### Module convention
+
+Three modules are required to create a karrio extension.
+
+-   `karrio.mappers.[carrier_name]`
+-   `karrio.providers.[carrier_name]`
+-   `karrio.schemas.[carrier_name]`
+
+:::info `karrio.mappers.[carrier_name]`
+This is where the karrio abstract classes are implemented. Also, the Metadata require to identified
+the extension is also provided there.
+
+> on runtime, karrio retrieves all mappers by going trought the `karrio.mappers` modules
+
+:::
+
+:::info `karrio.providers.[carrier_name]`
+
+This is where the mapping between karrio Unified API data is mapped on the carrier data type corresponding requests
+
+:::
+
+:::info `karrio.schemas.[carrier_name]`
+
+This is where the your carrier generated python data types are stored.
+
+:::
+
+##### File structure
+
+The carrier extension package folder structure looks like this
+
+```text title="modules/connectors/"
+[carrier_name]/
+├── setup.py
+├── generate
+├── schemas
+|   └── error_response.json
+|   ├── rate_response.json
+|   ├── rate_request.json
+|   └── ...
+└── karrio
+│   ├── mappers
+│   │   └── [carrier_name]
+│   │       ├── __init__.py
+│   │       ├── mapper.py
+│   │       ├── proxy.py
+│   │       └── settings.py
+│   ├── providers
+│   │   └── [carrier_name]
+│   │       ├── __init__.py
+│   │       ├── address.py
+│   │       ├── error.py
+│   │       ├── pickup
+│   │       │   ├── __init__.py
+│   │       │   ├── cancel.py
+│   │       │   ├── create.py
+│   │       │   └── update.py
+│   │       ├── rate.py
+│   │       ├── shipment
+│   │       │   ├── __init__.py
+│   │       │   ├── cancel.py
+│   │       │   └── create.py
+│   │       ├── tracking.py
+│   |       ├── units.py
+│   |       └── utils.py
+│   └── schemas
+│       └── [carrier_name]
+│           ├── __init__.py
+│           ├── error_response.py
+│           ├── rate_request.py
+│           ├── rate_response.py
+│           └── ....
+└── tests
+    ├── __init__.py
+    └── [carrier_name]
+        ├── __init__.py
+        ├── fixture.py
+        ├── test_rate.py
+        └── ...
+```
+
+:::info
+Note that `pickup` and `shipment` modules are directories since there are often many sub to integrate such as
+**create**, **cancel**...
+:::
+
+---
+
+#### 2. Generate Python data types
+
+Karrio uses some cool open source projects to generate API schema datatypes.
+
+:::info
+We strongly believe in **types** because with a good IDE setup, they help you understand
+the datatypes available and makes maintenance easy.
+:::
+
+##### Preapre the API schema files
+
+-   For JSON APIs
+
+First, you need to create `.json` files based on carrier API documentation under the `[carrier_name]/schemas` directory.
+Check the [amazon_mws schemas files](https://github.com/karrioapi/karrio/blob/main/modules/connectors/amazon_shipping/schemas) as examples.
+
+Then, update the `generate` script to include the schema files list.
+Check the [amazon_mws schema scripting](https://github.com/karrioapi/karrio/blob/main/modules/connectors/amazon_shipping/generate) as an example.
+
+-   For XML/SOAP APIs
+
+First, you need to collect `.xsd` files from the carrier API documentation and add them to the `[carrier_name]/schemas` directory.
+Check the [canadapost schemas files](https://github.com/karrioapi/karrio/blob/main/modules/connectors/canadapost/schemas) as examples.
+
+Then, update the `generate` script to include the schema files list.
+Please check the [canadapost schema package](https://github.com/karrioapi/karrio/blob/main/modules/connectors/canadapost/generate) as an example.
+
+:::tip
+
+If the carrier is SOAP based with `.wsdl` files, you need to extract the `<xs:schema ...>` sections into `.xsd` files.
+
+:::
+
+##### Generate Python datatypes
+
+To generate the Python data types, you need to run the `generate` script.
+
+:::note For a JSON API
+
+Karrio uses a fork of `quicktype` to generate Python dataclasses from the `jstruct` library to turn JSON request and response
+samples.
+
+:::warning
+
+To use quicktype, you need to build a the custom docker image we have prepared for with our fork.
+
+```terminal title="Terminal"
+./bin/build-tool-image
+```
+
+:::
+
+:::note For a XML/SOAP API
+
+Karrio uses the `generateDS` project cli to turn XML files and XML schemas from SOAP webservices into Python classes.
+
+:::tip
+
+generateDS is installed along with karrio' dev dependencies. So it should already be available.
+
+:::
+
+```terminal title="Terminal"
+./bin/run-generate-on modules/connectors/[carrier_name]
+```
+
+---
+
+#### 3. Define carrier connection settings
+
+The settings class is where the carrier connection settings are defined.
+
+```python title="karrio/mappers/[carrier_name]/settings.py"
+"""Karrio Canada post client settings."""
+
+import attr
+from karrio.providers.canadapost import Settings as BaseSettings
+
+
+@attr.s(auto_attribs=True)
+class Settings(BaseSettings):
+    """Canada post connection settings."""
+
+    username: str
+    password: str
+    customer_number: str = None
+    contract_id: str = None
+    language: str = "en"
+
+    id: str = None
+    test_mode: bool = False
+    carrier_id: str = "canadapost"
+    account_country_code: str = "CA"
+    metadata: dict = {}
+    config: dict = {}
+
+```
+
+---
+
+#### 4. Set up API calls under proxy
+
+The proxy class is the carrier API client that makes the HTTP requests to the carrier API endpoints.
+
+```python title="[carrier_name]/karrio/mappers/[carrier_name]/proxy.py"
+"""Karrio Australia Post client proxy."""
+
+import karrio.lib as lib
+import karrio.api.proxy as proxy
+import karrio.mappers.australiapost.settings as provider_settings
+
+
+class Proxy(proxy.Proxy):
+    settings: provider_settings.Settings
+
+    def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = lib.request(
+            url=f"{self.settings.server_url}/shipping/v1/prices/items",
+            data=lib.to_json(request.serialize()),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Account-Number": self.settings.account_number,
+                "Authorization": f"Basic {self.settings.authorization}",
+            },
+        )
+
+        return lib.Deserializable(response, lib.to_dict)
+
+    # ....
+
+    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        query = request.serialize()
+        tracking_ids = ",".join(query["tracking_ids"])
+        response = lib.request(
+            url=f"{self.settings.server_url}/shipping/v1/track?tracking_ids={tracking_ids}",
+            trace=self.trace_as("json"),
+            method="GET",
+            headers={
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Account-Number": self.settings.account_number,
+                "Authorization": f"Basic {self.settings.authorization}",
+            },
+        )
+
+        return lib.Deserializable(response, lib.to_dict)
+
+```
+
+---
+
+#### 5. Implement the Mapper functions
+
+The mapper function implementations consists of instantiating carrier specific request data types assigning.
+
+:::info
+The mapping function instantiates the carrier data types like a tree to offer a global view and simplify the
+mental relation between the `code` and the formatted data output based on the `schema`.
+:::
+
+<div id="tabs">
+<Tabs>
+<TabItem value="mapper" label="Mapper">
+
+```python
+import karrio.schemas.amazon_shipping.rate_request as amazon
+from karrio.schemas.amazon_shipping.rate_response import ServiceRate
+
+import typing
+import karrio.lib as lib
+import karrio.core.units as units
+import karrio.core.models as models
+import karrio.core.errors as errors
+import karrio.providers.amazon_shipping.error as provider_error
+import karrio.providers.amazon_shipping.units as provider_units
+import karrio.providers.amazon_shipping.utils as provider_utils
+
+
+def parse_rate_response(
+    _response: lib.Deserializable[dict],
+    settings: provider_utils.Settings,
+) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
+    errors: typing.List[models.Message] = sum(
+        [
+            provider_error.parse_error_response(data, settings)
+            for data in response.get("errors", [])
+        ],
+        [],
+    )
+    rates = [
+        _extract_details(data, settings) for data in response.get("serviceRates", [])
+    ]
+
+    return rates, errors
+
+
+def _extract_details(
+    data: dict,
+    settings: provider_utils.Settings,
+) -> models.RateDetails:
+    rate = lib.to_object(ServiceRate, data)
+    transit = (
+        lib.to_date(rate.promise.deliveryWindow.start, "%Y-%m-%dT%H:%M:%S.%fZ").date()
+        - lib.to_date(rate.promise.receiveWindow.end, "%Y-%m-%dT%H:%M:%S.%fZ").date()
+    ).days
+
+    return models.RateDetails(
+        carrier_id=settings.carrier_id,
+        carrier_name=settings.carrier_name,
+        service=provider_units.Service.map(rate.serviceType).name_or_key,
+        total_charge=lib.to_decimal(rate.totalCharge.value),
+        currency=rate.totalCharge.unit,
+        transit_days=transit,
+        meta=dict(
+            service_name=rate.serviceType,
+        ),
+    )
+
+
+def rate_request(payload: models.RateRequest, settings: provider_utils.Settings) -> lib.Serializable:
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
+    packages = lib.to_packages(payload.parcels)
+    options = lib.to_shipping_options(payload.options)
+    services = lib.to_services(payload.services, provider_units.Service)
+
+    request = amazon.RateRequest(
+        shipFrom=amazon.Ship(
+            name=shipper.person_name,
+            city=shipper.city,
+            addressLine1=shipper.street,
+            addressLine2=shipper.address_line2,
+            stateOrRegion=shipper.state_code,
+            email=shipper.email,
+            copyEmails=lib.join(shipper.email),
+            phoneNumber=shipper.phone_number,
+        ),
+        shipTo=amazon.Ship(
+            name=recipient.person_name,
+            city=recipient.city,
+            addressLine1=recipient.street,
+            addressLine2=recipient.address_line2,
+            stateOrRegion=recipient.state_code,
+            email=recipient.email,
+            copyEmails=lib.join(recipient.email),
+            phoneNumber=recipient.phone_number,
+        ),
+        serviceTypes=list(services),
+        shipDate=lib.fdatetime(
+            options.shipment_date.state, "%Y-%m-%d", "%Y-%m-%dT%H:%M:%S.%fZ"
+        ),
+        containerSpecifications=[
+            amazon.ContainerSpecification(
+                dimensions=amazon.Dimensions(
+                    height=package.height.IN,
+                    length=package.length.IN,
+                    width=package.width.IN,
+                    unit="IN",
+                ),
+                weight=amazon.Weight(
+                    value=package.weight.LB,
+                    unit="LB",
+                ),
+            )
+            for package in packages
+        ],
+    )
+
+    return lib.Serializable(request, lib.to_dict)
+
+```
+
+</TabItem>
+<TabItem value="request" label="Request">
+
+```json
+{
+    "containerSpecifications": [
+        {
+            "dimensions": {
+                "height": -11128938.315315291,
+                "length": -53992777.93301245,
+                "unit": "IN",
+                "width": -15948568.310932204
+            },
+            "weight": {
+                "unit": "oz",
+                "value": -18429960.164813638
+            }
+        },
+        {
+            "dimensions": {
+                "height": 3778128.7328606546,
+                "length": 92830895.03670138,
+                "unit": "CM",
+                "width": 64394598.26120943
+            },
+            "weight": {
+                "unit": "oz",
+                "value": 59033905.13044372
+            }
+        }
+    ],
+    "serviceTypes": ["Amazon Shipping Premium", "Amazon Shipping Ground"],
+    "shipFrom": {
+        "addressLine1": "consectetur dolore aliqua",
+        "city": "cillum",
+        "countryCode": "su",
+        "name": "ad mollit fugiat",
+        "postalCode": "enim",
+        "stateOrRegion": "commodo",
+        "addressLine2": "qui elit exercitation",
+        "addressLine3": "qui proident",
+        "email": "iru",
+        "copyEmails": ["officia laborum Lorem", "eiusmod L"],
+        "phoneNumber": "tempor pariatu"
+    },
+    "shipTo": {
+        "addressLine1": "Lorem aliquip in consequat",
+        "city": "consectetur dolor u",
+        "countryCode": "su",
+        "name": "eu ali",
+        "postalCode": "proident",
+        "stateOrRegion": "commodo sed",
+        "addressLine2": "proident",
+        "addressLine3": "laboris",
+        "email": "eu et Excepteur i",
+        "copyEmails": ["dolor dolore ut ut irure", "exercitation est "],
+        "phoneNumber": "id"
+    },
+    "shipDate": "1983-08-21T03:27:52.022Z"
+}
+```
+
+</TabItem>
+</Tabs>
+</div>
+
+---
+
+#### 6. Consolidate your integration with unit tests
+
+Once you have the foundation of your extension and an initial implementation of your data mappers,
+you need to install your new extension and add it as a dependency in `./requirements.sdk.dev.txt`
+
+```terminal
+# Installation
+pip install -e ./modules/connectors/[carrier_name]
+```
+
+```txt
+# Carrier Extentions packages
+-e ./modules/sdk
+-e ./modules/connectors/allied_express
+-e ./modules/connectors/allied_express_local
+-e ./modules/connectors/amazon_shipping
+...
+
+# add your extension as dependency here
+-e ./modules/connectors/[carrier_name]
+
+...
+-e ./modules/connectors/locate2u
+-e ./modules/connectors/zoom2u
+```
+
+Note that when you first bootstrapped the extension, some tests files have already been prepared for you.
+
+You can run test against your extension using
+
+```terminal title="Terminal"
+python -m unittest discover -v -f modules/connectors/[carrier_name]/tests
+```
+
+You will need to update the tests fixture and the input and output data to consolidate the various scenarios
+of you implementation.
+
+---
+
+#### 7. Update the API specs and frontend sdk typing
+
+This is the final step where you make your custom carrier configurable in the karrio dashboard.
+
+Now that you have a working carrier extension, the API specs and sdk needs to get updated to reflect the new list of supported carriers.
+
+-   Karrio Shipping REST API schema and Typescript typings
+
+```terminal title="Terminal"
+# generate the REST OpenAPI schemas
+./bin/server gen:openapi
+```
+
+```terminal title="Terminal"
+# generate the Typescript typings for the REST API
+./bin/generate-openapi-types
+```
+
+-   Karrio management GraphQL API schema and Typescript typings
+
+```terminal title="Terminal"
+# Install these dependencies if you are generating this for the first time
+npm i -g graphql apollo
+
+# generate the GraphQL schema
+./bin/server gen:graph
+```
+
+Only then you can generate the Typescript typings for the GraphQL API.
+
+```terminal title="Terminal"
+./bin/generate-graphql-types
+```
+
+Once the typings are updated to identify your new integration,
+you can now set up a connection for your new carrier from the dashboard.

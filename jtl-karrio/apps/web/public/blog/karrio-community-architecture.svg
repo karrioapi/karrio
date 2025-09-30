@@ -1,0 +1,124 @@
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="600" fill="#080215" />
+
+  <!-- Background Gradients -->
+  <circle cx="200" cy="300" r="200" fill="url(#communityGlow)" opacity="0.15" />
+  <circle cx="600" cy="300" r="150" fill="url(#tealGlow)" opacity="0.12" />
+
+  <!-- Your Application Layer -->
+  <g>
+    <rect x="60" y="70" width="680" height="200" rx="12" stroke="#30D9B7" strokeWidth="2"
+      fill="rgba(48, 217, 183, 0.08)" />
+    <text x="320" y="40" fill="white" fontSize="20" fontWeight="bold" textAnchor="middle">YOUR
+      APPLICATION</text>
+
+    <!-- UI/UX Component -->
+    <rect x="90" y="100" width="180" height="140" rx="8" stroke="#30D9B7" strokeWidth="1.5"
+      fill="rgba(48, 217, 183, 0.05)" />
+    <text x="120" y="130" fill="white" fontSize="16" fontWeight="600" textAnchor="middle">Your UI/UX</text>
+    <text x="120" y="160" fill="white" fontSize="12" opacity="0.8">• E-commerce</text>
+    <text x="120" y="180" fill="white" fontSize="12" opacity="0.8">• Admin Panel</text>
+    <text x="120" y="200" fill="white" fontSize="12" opacity="0.8">• Mobile App</text>
+    <text x="120" y="220" fill="white" fontSize="12" opacity="0.8">• Dashboard</text>
+
+    <!-- Business Logic Component -->
+    <rect x="310" y="100" width="180" height="140" rx="8" stroke="#30D9B7" strokeWidth="1.5"
+      fill="rgba(48, 217, 183, 0.05)" />
+    <text x="340" y="130" fill="white" fontSize="16" fontWeight="600" textAnchor="middle">Business
+      Logic</text>
+    <text x="340" y="160" fill="white" fontSize="12" opacity="0.8">• Order Management</text>
+    <text x="340" y="180" fill="white" fontSize="12" opacity="0.8">• Inventory Control</text>
+    <text x="340" y="200" fill="white" fontSize="12" opacity="0.8">• Pricing Rules</text>
+    <text x="340" y="220" fill="white" fontSize="12" opacity="0.8">• User Auth</text>
+
+    <!-- Your Database Component -->
+    <rect x="530" y="100" width="180" height="140" rx="8" stroke="#30D9B7" strokeWidth="1.5"
+      fill="rgba(48, 217, 183, 0.05)" />
+    <text x="560" y="130" fill="white" fontSize="16" fontWeight="600" textAnchor="middle">Your
+      Database</text>
+    <text x="560" y="160" fill="white" fontSize="12" opacity="0.8">• Orders</text>
+    <text x="560" y="180" fill="white" fontSize="12" opacity="0.8">• Customers</text>
+    <text x="560" y="200" fill="white" fontSize="12" opacity="0.8">• Products</text>
+    <text x="560" y="220" fill="white" fontSize="12" opacity="0.8">• Analytics</text>
+  </g>
+
+  <!-- Integration Arrow -->
+  <path d="M400 275 L400 305" stroke="#5722cc" strokeWidth="3" />
+  <path d="M392 297 L400 305 L408 297" fill="none" stroke="#5722cc" strokeWidth="3" />
+
+  <!-- Karrio Community API Layer -->
+  <g>
+    <rect x="60" y="340" width="680" height="120" rx="12" stroke="#5722cc" strokeWidth="2"
+      fill="rgba(87, 34, 204, 0.12)" />
+    <text x="325" y="325" fill="white" fontSize="20" fontWeight="bold" textAnchor="middle">KARRIO
+      CORE API</text>
+
+    <!-- API Components -->
+    <rect x="120" y="370" width="150" height="60" rx="6" stroke="#5722cc" strokeWidth="1.5"
+      fill="rgba(87, 34, 204, 0.08)" />
+    <text x="140" y="395" fill="white" fontSize="14" fontWeight="600" textAnchor="middle">Rate
+      Quotes</text>
+    <text x="140" y="415" fill="white" fontSize="11" opacity="0.7" textAnchor="middle">Multi-carrier
+      rates</text>
+
+    <rect x="310" y="370" width="170" height="60" rx="6" stroke="#5722cc" strokeWidth="1.5"
+      fill="rgba(87, 34, 204, 0.08)" />
+    <text x="325" y="395" fill="white" fontSize="14" fontWeight="600" textAnchor="middle">Shipping
+      Labels</text>
+    <text x="325" y="415" fill="white" fontSize="11" opacity="0.7" textAnchor="middle">Automated
+      generation</text>
+
+    <rect x="530" y="370" width="150" height="60" rx="6" stroke="#5722cc" strokeWidth="1.5"
+      fill="rgba(87, 34, 204, 0.08)" />
+    <text x="550" y="395" fill="white" fontSize="14" fontWeight="600" textAnchor="middle">
+      Tracking</text>
+    <text x="550" y="415" fill="white" fontSize="11" opacity="0.7" textAnchor="middle">Real-time
+      updates</text>
+  </g>
+
+  <!-- Carrier Integration Arrow -->
+  <path d="M400 460 L400 490" stroke="#30D9B7" strokeWidth="3" />
+  <path d="M392 482 L400 490 L408 482" fill="none" stroke="#30D9B7" strokeWidth="3" />
+
+  <!-- Carriers Layer -->
+  <g>
+    <rect x="60" y="520" width="680" height="60" rx="12" stroke="#30D9B7" strokeWidth="2"
+      fill="rgba(48, 217, 183, 0.08)" />
+    <text x="360" y="510" fill="white" fontSize="18" fontWeight="bold" textAnchor="middle">
+      CARRIERS</text>
+
+    <!-- Individual Carriers -->
+    <rect x="100" y="535" width="120" height="30" rx="4" stroke="#30D9B7" strokeWidth="1"
+      fill="rgba(48, 217, 183, 0.05)" />
+    <text x="130" y="555" fill="white" fontSize="12" fontWeight="500" textAnchor="middle">USPS</text>
+
+    <rect x="240" y="535" width="120" height="30" rx="4" stroke="#30D9B7" strokeWidth="1"
+      fill="rgba(48, 217, 183, 0.05)" />
+    <text x="270" y="555" fill="white" fontSize="12" fontWeight="500" textAnchor="middle">FedEx</text>
+
+    <rect x="380" y="535" width="120" height="30" rx="4" stroke="#30D9B7" strokeWidth="1"
+      fill="rgba(48, 217, 183, 0.05)" />
+    <text x="410" y="555" fill="white" fontSize="12" fontWeight="500" textAnchor="middle">UPS</text>
+
+    <rect x="520" y="535" width="120" height="30" rx="4" stroke="#30D9B7" strokeWidth="1"
+      fill="rgba(48, 217, 183, 0.05)" />
+    <text x="550" y="555" fill="white" fontSize="12" fontWeight="500" textAnchor="middle">DHL</text>
+
+    <text x="650" y="555" fill="white" fontSize="12" opacity="0.6" fontWeight="500"
+      textAnchor="middle">+30 more</text>
+  </g>
+
+  <!-- Gradients -->
+  <defs>
+    <radialGradient id="communityGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stopColor="#30D9B7" stopOpacity="0.4" />
+      <stop offset="100%" stopColor="#30D9B7" stopOpacity="0" />
+    </radialGradient>
+
+    <radialGradient id="tealGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stopColor="#5722cc" stopOpacity="0.3" />
+      <stop offset="100%" stopColor="#5722cc" stopOpacity="0" />
+    </radialGradient>
+  </defs>
+</svg>

@@ -1,0 +1,520 @@
+<xsd:schema elementFormDefault="qualified" targetNamespace="http://purolator.com/pws/datatypes/v1" 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://purolator.com/pws/datatypes/v1">
+    <xsd:complexType name="GetDocumentsRequest">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>GetDocumentsRequest</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Request">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="1" nillable="true" name="OutputType" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>OutputType - string</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element minOccurs="0" maxOccurs="1" nillable="true" name="Synchronous" type="xsd:boolean">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>Synchronous - boolean</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="DocumentCriterium" nillable="true" type="tns:ArrayOfDocumentCriteria">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>DocumentCriterium - DocumentCriteria[]</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="GetDocumentsRequest" nillable="true" type="tns:GetDocumentsRequest"/>
+    <xsd:complexType name="Request">
+        <xsd:sequence/>
+    </xsd:complexType>
+    <xsd:element name="Request" nillable="true" type="tns:Request"/>
+    <xsd:complexType name="ArrayOfDocumentCriteria">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="DocumentCriteria" nillable="true" type="tns:DocumentCriteria"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfDocumentCriteria" nillable="true" type="tns:ArrayOfDocumentCriteria"/>
+    <xsd:complexType name="DocumentCriteria">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>DocumentCriteria</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="PIN" nillable="true" type="tns:PIN">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>PIN - PIN</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="DocumentTypes" nillable="true" type="tns:DocumentTypes">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>DocumentTypes - string[]</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="DocumentCriteria" nillable="true" type="tns:DocumentCriteria"/>
+    <xsd:complexType name="PIN">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>PIN</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Value" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Value - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="PIN" nillable="true" type="tns:PIN"/>
+    <xsd:complexType name="DocumentTypes">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <GenericType Name="DocumentTypes" Namespace="http://purolator.com/pws/datatypes/v1" 
+                    xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                    <GenericParameter Name="string" Namespace="http://www.w3.org/2001/XMLSchema"/>
+                </GenericType>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="DocumentType" nillable="true" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="DocumentTypes" nillable="true" type="tns:DocumentTypes"/>
+    <xsd:element name="GetDocumentsRequest" nillable="true" type="tns:GetDocumentsRequest"/>
+    <xsd:complexType name="RequestContext">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>RequestContext</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Version" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Version - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Language" type="tns:Language">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Language - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="GroupID" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>GroupID - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="RequestReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>RequestReference - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="UserToken" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>UserToken - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="RequestContext" nillable="true" type="tns:RequestContext"/>
+    <xsd:simpleType name="Language">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>Language - enum</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="en">
+                <xsd:annotation>
+                    <xsd:documentation>en</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="fr">
+                <xsd:annotation>
+                    <xsd:documentation>fr</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="Language" nillable="true" type="tns:Language"/>
+    <xsd:complexType name="GetDocumentsResponse">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>GetDocumentsResponse</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Response">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" name="Documents" nillable="true" type="tns:ArrayOfDocument">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>Documents - Document[]</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="GetDocumentsResponse" nillable="true" type="tns:GetDocumentsResponse"/>
+    <xsd:complexType name="Response">
+        <xsd:sequence>
+            <xsd:element name="ResponseInformation" nillable="true" type="tns:ResponseInformation">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>ResponseInformation - ResponseInformation</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Response" nillable="true" type="tns:Response"/>
+    <xsd:complexType name="ResponseInformation">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>ResponseInformation</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Errors" nillable="true" type="tns:ArrayOfError">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Errors - Error[]</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="InformationalMessages" nillable="true" type="tns:ArrayOfInformationalMessage">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>InformationalMessages - InformationalMessage[]</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ResponseInformation" nillable="true" type="tns:ResponseInformation"/>
+    <xsd:complexType name="ArrayOfError">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="Error" nillable="true" type="tns:Error"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfError" nillable="true" type="tns:ArrayOfError"/>
+    <xsd:complexType name="Error">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>Error</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Code" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Code - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Description" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Description - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="AdditionalInformation" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>AdditionalInformation - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Error" nillable="true" type="tns:Error"/>
+    <xsd:complexType name="ArrayOfInformationalMessage">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="InformationalMessage" nillable="true" type="tns:InformationalMessage"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfInformationalMessage" nillable="true" type="tns:ArrayOfInformationalMessage"/>
+    <xsd:complexType name="InformationalMessage">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>InformationalMessage</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Code" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Code - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Message" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Message - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="InformationalMessage" nillable="true" type="tns:InformationalMessage"/>
+    <xsd:complexType name="ArrayOfDocument">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="Document" nillable="true" type="tns:Document"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfDocument" nillable="true" type="tns:ArrayOfDocument"/>
+    <xsd:complexType name="Document">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>Document</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="PIN" nillable="true" type="tns:PIN">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>PIN - PIN</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="DocumentDetails" nillable="true" type="tns:ArrayOfDocumentDetail">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>DocumentDetails - DocumentDetail[]</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Document" nillable="true" type="tns:Document"/>
+    <xsd:complexType name="ArrayOfDocumentDetail">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="DocumentDetail" nillable="true" type="tns:DocumentDetail"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfDocumentDetail" nillable="true" type="tns:ArrayOfDocumentDetail"/>
+    <xsd:complexType name="DocumentDetail">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>DocumentDetail</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="DocumentType" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>DocumentType - DocumentType</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Description" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Description - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="DocumentStatus" type="tns:DocumentStatus">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>DocumentType - DocumentStatus</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="URL" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>URL - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Data" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Data - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="DocumentDetail" nillable="true" type="tns:DocumentDetail"/>
+    <xsd:simpleType name="DocumentStatus">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>DocumentStatus - enum</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Pending">
+                <xsd:annotation>
+                    <xsd:documentation>Pending</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="Queued">
+                <xsd:annotation>
+                    <xsd:documentation>Queued</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="Processing">
+                <xsd:annotation>
+                    <xsd:documentation>Processing</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="Completed">
+                <xsd:annotation>
+                    <xsd:documentation>Completed</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="Error">
+                <xsd:annotation>
+                    <xsd:documentation>Error</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="DocumentStatus" nillable="true" type="tns:DocumentStatus"/>
+    <xsd:element name="GetDocumentsResponse" nillable="true" type="tns:GetDocumentsResponse"/>
+    <xsd:complexType name="ResponseContext">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>ResponseContext</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="ResponseReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>ResponseReference - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ResponseContext" nillable="true" type="tns:ResponseContext"/>
+    <xsd:complexType name="GetShipmentManifestDocumentRequest">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>GetShipmentManifestDocumentRequest</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Request">
+                <xsd:sequence>
+                    <xsd:element name="ShipmentManifestDocumentCriterium" nillable="true" type="tns:ArrayOfShipmentManifestDocumentCriteria">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>ShipmentManifestDocumentCriterium - ShipmentManifestDocumentCriteria[]</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="GetShipmentManifestDocumentRequest" nillable="true" type="tns:GetShipmentManifestDocumentRequest"/>
+    <xsd:complexType name="ArrayOfShipmentManifestDocumentCriteria">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="ShipmentManifestDocumentCriteria" nillable="true" type="tns:ShipmentManifestDocumentCriteria"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfShipmentManifestDocumentCriteria" nillable="true" type="tns:ArrayOfShipmentManifestDocumentCriteria"/>
+    <xsd:complexType name="ShipmentManifestDocumentCriteria">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>ShipmentManifestDocumentCriteria</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="ManifestDate" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>ShipmentManifestDate - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ShipmentManifestDocumentCriteria" nillable="true" type="tns:ShipmentManifestDocumentCriteria"/>
+    <xsd:element name="GetShipmentManifestDocumentRequest" nillable="true" type="tns:GetShipmentManifestDocumentRequest"/>
+    <xsd:complexType name="GetShipmentManifestDocumentResponse">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>GetShipmentManifestDocumentResponse</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Response">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" name="ManifestBatches" nillable="true" type="tns:ArrayOfManifestBatch">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>ManifestBatches - ManifestBatch[]</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="GetShipmentManifestDocumentResponse" nillable="true" type="tns:GetShipmentManifestDocumentResponse"/>
+    <xsd:complexType name="ArrayOfManifestBatch">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="ManifestBatch" nillable="true" type="tns:ManifestBatch"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfManifestBatch" nillable="true" type="tns:ArrayOfManifestBatch"/>
+    <xsd:complexType name="ManifestBatch">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>Document</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="ShipmentManifestDate" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>string - ShipmentManifestDate</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ManifestCloseDateTime" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>string - ManifestCloseDateTime</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ManifestBatchDetails" nillable="true" type="tns:ArrayOfManifestBatchDetail">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>ManifestBatchDetails - ManifestBatchDetail[]</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ManifestBatch" nillable="true" type="tns:ManifestBatch"/>
+    <xsd:complexType name="ArrayOfManifestBatchDetail">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="ManifestBatchDetail" nillable="true" type="tns:ManifestBatchDetail"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfManifestBatchDetail" nillable="true" type="tns:ArrayOfManifestBatchDetail"/>
+    <xsd:complexType name="ManifestBatchDetail">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>ManifestBatchDetail</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="DocumentType" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>DocumentType - DocumentType</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Description" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Description - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="DocumentStatus" type="tns:DocumentStatus">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>DocumentType - DocumentStatus</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="URL" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>URL - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ManifestBatchDetail" nillable="true" type="tns:ManifestBatchDetail"/>
+    <xsd:element name="GetShipmentManifestDocumentResponse" nillable="true" type="tns:GetShipmentManifestDocumentResponse"/>
+</xsd:schema>

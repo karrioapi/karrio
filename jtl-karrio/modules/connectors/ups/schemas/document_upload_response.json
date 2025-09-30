@@ -1,0 +1,28 @@
+{
+  "UploadResponse": {
+    "Response": {
+      "ResponseStatus": {
+        "Code": "1",
+        "Description": "Success"
+      },
+      "Alert": [
+        {
+          "Code": "9369054",
+          "Description": "User is not registered for freight processing."
+        },
+        {
+          "Code": "9369055",
+          "Description": "User is not eligible for contract rates."
+        }
+      ],
+      "TransactionReference": {
+        "CustomerContext": "string"
+      }
+    },
+    "FormsHistoryDocumentID": [
+      {
+        "DocumentID": "2016-01-18-11.01.07.589501"
+      }
+    ]
+  }
+}

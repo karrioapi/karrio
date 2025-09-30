@@ -1,0 +1,29 @@
+---
+id: faq
+title: FAQs
+description: 'Most frequently asked questions regarding Karrio'
+hide_table_of_contents: true
+---
+
+*If you don't find an answer below or if you have a different question, please email us at
+[hello@karrio.io](mailto:hello@karrio.io).*
+
+## How can I integrate a custom carrier?
+
+karrio server uses the carrier extensions detected by the karrio SDK to establish carrier connections.
+To write your own carrier integration, you need to create a carrier extension using the
+[karrio SDK framework](/carriers/sdk/extension).
+
+## How can I spin up a sandbox for development?
+
+See [Local Developement](/product/local-development) guide for a simple docker compose setup without having to fork the entire repository.
+
+## How to set up the environment variables?
+
+See [Configuration](/product/self-hosting/environment) guide for full details on Karrio's deployment environment setup.
+
+## No active carrier connection found to process the request
+
+This error occurs when the karrio server is unable to find an active carrier connection to process the request.
+If you have carrier accounts configured, make sure that the carrier accounts are active and that you requests are being sent
+to the right environment. 

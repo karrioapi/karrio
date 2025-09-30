@@ -1,0 +1,169 @@
+{
+  "trackResponse": {
+    "shipment": [
+      {
+        "inquiryNumber": "1Z1442YY7229014688",
+        "package": [
+          {
+            "accessPointInformation": {
+              "pickupByDate": "20220126"
+            },
+            "trackingNumber": "1Z1442YY7229014688",
+            "activity": [
+              {
+                "location": {
+                  "address": {
+                    "addressLine1": "",
+                    "addressLine2": "",
+                    "addressLine3": "",
+                    "city": "PARAMUS",
+                    "stateProvince": "NJ",
+                    "countryCode": "US",
+                    "postalCode": "07652",
+                    "country": "US"
+                  },
+                  "slic": "0761"
+                },
+                "status": {
+                  "type": "D",
+                  "description": "DELIVERED ",
+                  "code": "F4",
+                  "statusCode": "011",
+                  "simplifiedTextDescription": ""
+                },
+                "date": "20220126",
+                "time": "163000"
+              },
+              {
+                "location": {
+                  "address": {
+                    "countryCode": "US",
+                    "country": "US"
+                  }
+                },
+                "status": {
+                  "type": "M",
+                  "description": "Shipper created a label, UPS has not received the package yet. ",
+                  "code": "MP",
+                  "statusCode": "003"
+                },
+                "date": "20220126",
+                "time": "151641"
+              }
+            ],
+            "additionalAttributes": [
+              ""
+            ],
+            "additionalServices": [
+              ""
+            ],
+            "alternateTrackingNumber": [
+              {
+                "number": "",
+                "type": ""
+              }
+            ],
+            "currentStatus": {
+              "code": "20220126",
+              "description": "DELIVERED ",
+              "simplifiedTextDescription": "DELIVERED ",
+              "statusCode": "003",
+              "type": "D"
+            },
+            "deliveryDate": [
+              {
+                "type": "DEL",
+                "date": "20220126"
+              }
+            ],
+            "deliveryInformation": {
+              "location": "DEL",
+              "receivedBy": "163000",
+              "signature": {
+                "image": "encoding Base64"
+              },
+              "deliveryPhoto": {
+                "isNonPostalCodeCountry": false,
+                "photo": "encoding Base64",
+                "photoCaptureInd": "string",
+                "photoDispositionCode": "string"
+              }
+            },
+            "deliveryTime": {
+              "type": "DEL",
+              "endTime": "163000",
+              "startTime": "163000"
+            },
+            "milestones": [
+              {
+                "category": "DEL",
+                "code": "011",
+                "current": true,
+                "description": "DELIVERED ",
+                "linkedActivity": "",
+                "state": "",
+                "subMilestone": {
+                  "category": "DEL"
+                }
+              }
+            ],
+            "packageAddress": [
+              {
+                "address": {
+                  "addressLine1": "",
+                  "addressLine2": "",
+                  "addressLine3": "",
+                  "city": "PARAMUS",
+                  "stateProvince": "NJ",
+                  "countryCode": "US",
+                  "postalCode": "07652",
+                  "country": "US"
+                },
+                "attentionName": "",
+                "name": "",
+                "type": "01"
+              }
+            ],
+            "packageCount": 1,
+            "paymentInformation": {
+              "amount": "0.00",
+              "currency": "USD",
+              "id": "",
+              "paid": false,
+              "paymentMethod": "",
+              "type": ""
+            },
+            "referenceNumber": [
+              {
+                "number": "",
+                "type": ""
+              }
+            ],
+            "service": {
+              "code": "",
+              "description": ""
+            },
+            "statusCode": "",
+            "statusDescription": "",
+            "suppressionIndicators": [
+              ""
+            ],
+            "weight": {
+              "unitOfMeasurement": "",
+              "weight": ""
+            }
+          }
+        ],
+        "userRelation": [
+          ""
+        ],
+        "warnings": [
+          {
+            "code": "250003",
+            "message": "Invalid Access License number"
+          }
+        ]
+      }
+    ]
+  }
+}

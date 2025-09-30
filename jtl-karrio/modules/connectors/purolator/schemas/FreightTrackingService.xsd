@@ -1,0 +1,239 @@
+<xsd:schema elementFormDefault="qualified" targetNamespace="http://purolator.com/pws/datatypes/v1" 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://purolator.com/pws/datatypes/v1">
+    <xsd:complexType name="TrackPackagesByPinRequest">
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Request">
+                <xsd:sequence>
+                    <xsd:element name="PINs" nillable="true" type="tns:ArrayOfPIN" />
+                    <xsd:element minOccurs="0" name="SearchType" nillable="true" type="xsd:string" />
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="TrackPackagesByPinRequest" nillable="true" type="tns:TrackPackagesByPinRequest" />
+    <xsd:complexType name="Request">
+        <xsd:sequence />
+    </xsd:complexType>
+    <xsd:element name="Request" nillable="true" type="tns:Request" />
+    <xsd:complexType name="ArrayOfPIN">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="PIN" nillable="true" type="tns:PIN" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfPIN" nillable="true" type="tns:ArrayOfPIN" />
+    <xsd:complexType name="PIN">
+        <xsd:sequence>
+            <xsd:element name="Value" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="PIN" nillable="true" type="tns:PIN" />
+    <xsd:element name="TrackPackageByPINSearchCriteria" nillable="true" type="tns:TrackPackagesByPinRequest" />
+    <xsd:complexType name="RequestContext">
+        <xsd:sequence>
+            <xsd:element name="Version" nillable="true" type="xsd:string" />
+            <xsd:element name="Language" type="tns:Language" />
+            <xsd:element name="GroupID" nillable="true" type="xsd:string" />
+            <xsd:element name="RequestReference" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="UserToken" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>UserToken - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="RequestContext" nillable="true" type="tns:RequestContext" />
+    <xsd:simpleType name="Language">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="en" />
+            <xsd:enumeration value="fr" />
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="Language" nillable="true" type="tns:Language" />
+    <xsd:complexType name="TrackingResponse">
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Response">
+                <xsd:sequence>
+                    <xsd:element name="TrackingInformationList" nillable="true" type="tns:ArrayOfTrackingInformation" />
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="TrackingResponse" nillable="true" type="tns:TrackingResponse" />
+    <xsd:complexType name="Response">
+        <xsd:sequence>
+            <xsd:element name="ResponseInformation" nillable="true" type="tns:ResponseInformation" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Response" nillable="true" type="tns:Response" />
+    <xsd:complexType name="ResponseInformation">
+        <xsd:sequence>
+            <xsd:element name="Errors" nillable="true" type="tns:ArrayOfError" />
+            <xsd:element name="InformationalMessages" nillable="true" type="tns:ArrayOfInformationalMessage" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ResponseInformation" nillable="true" type="tns:ResponseInformation" />
+    <xsd:complexType name="ArrayOfError">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="Error" nillable="true" type="tns:Error" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfError" nillable="true" type="tns:ArrayOfError" />
+    <xsd:complexType name="Error">
+        <xsd:sequence>
+            <xsd:element name="Code" nillable="true" type="xsd:string" />
+            <xsd:element name="Description" nillable="true" type="xsd:string" />
+            <xsd:element name="AdditionalInformation" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Error" nillable="true" type="tns:Error" />
+    <xsd:complexType name="ArrayOfInformationalMessage">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="InformationalMessage" nillable="true" type="tns:InformationalMessage" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfInformationalMessage" nillable="true" type="tns:ArrayOfInformationalMessage" />
+    <xsd:complexType name="InformationalMessage">
+        <xsd:sequence>
+            <xsd:element name="Code" nillable="true" type="xsd:string" />
+            <xsd:element name="Message" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="InformationalMessage" nillable="true" type="tns:InformationalMessage" />
+    <xsd:complexType name="ArrayOfTrackingInformation">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="TrackingInformation" nillable="true" type="tns:TrackingInformation" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfTrackingInformation" nillable="true" type="tns:ArrayOfTrackingInformation" />
+    <xsd:complexType name="TrackingInformation">
+        <xsd:sequence>
+            <xsd:element name="ShipmentDetails" nillable="true" type="tns:ShipmentDetails" />
+            <xsd:element name="ShipmentStatus" nillable="true" type="tns:ShipmentStatus" />
+            <xsd:element name="ShipmentPinHistory" nillable="true" type="tns:ArrayOfPinTraceHistory" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="TrackingInformation" nillable="true" type="tns:TrackingInformation" />
+    <xsd:complexType name="ShipmentDetails">
+        <xsd:sequence>
+            <xsd:element name="SenderInformation" nillable="true" type="tns:SenderInformation" />
+            <xsd:element name="ReceiverInformation" nillable="true" type="tns:ReceiverInformation" />
+            <xsd:element name="ThirdPartyInformation" nillable="true" type="tns:ThirdPartyInformation" />
+            <xsd:element name="ProNumber" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="Trn" nillable="true" type="xsd:int" />
+            <xsd:element name="BOLNo" nillable="true" type="xsd:string" />
+            <xsd:element name="ShipDate" nillable="true" type="xsd:string" />
+            <xsd:element name="Pieces" type="xsd:int" />
+            <xsd:element name="Weight" type="xsd:decimal" />
+            <xsd:element name="Pallets" type="xsd:int" />
+            <xsd:element name="ServiceTypeCode" nillable="true" type="xsd:string" />
+            <xsd:element name="ServiceTypeDesc" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="InternalPro" nillable="true" type="xsd:decimal" />
+            <xsd:element name="POType" nillable="true" type="xsd:string" />
+            <xsd:element name="PONumber" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ShipmentDetails" nillable="true" type="tns:ShipmentDetails" />
+    <xsd:complexType name="SenderInformation">
+        <xsd:sequence>
+            <xsd:element name="Address" nillable="true" type="tns:Address" />
+            <xsd:element minOccurs="0" name="EmailAddress" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="SenderInformation" nillable="true" type="tns:SenderInformation" />
+    <xsd:complexType name="Address">
+        <xsd:sequence>
+            <xsd:element name="Name" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="Company" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="Department" nillable="true" type="xsd:string" />
+            <xsd:element name="StreetNumber" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="StreetSuffix" nillable="true" type="xsd:string" />
+            <xsd:element name="StreetName" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="StreetType" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="StreetDirection" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="Suite" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="Floor" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="StreetAddress2" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="StreetAddress3" nillable="true" type="xsd:string" />
+            <xsd:element name="City" nillable="true" type="xsd:string" />
+            <xsd:element name="Province" nillable="true" type="xsd:string" />
+            <xsd:element name="Country" nillable="true" type="xsd:string" />
+            <xsd:element name="PostalCode" nillable="true" type="xsd:string" />
+            <xsd:element name="PhoneNumber" nillable="true" type="tns:PhoneNumber" />
+            <xsd:element minOccurs="0" name="FaxNumber" nillable="true" type="tns:PhoneNumber" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Address" nillable="true" type="tns:Address" />
+    <xsd:complexType name="PhoneNumber">
+        <xsd:sequence>
+            <xsd:element name="CountryCode" nillable="true" type="xsd:string" />
+            <xsd:element name="AreaCode" nillable="true" type="xsd:string" />
+            <xsd:element name="Phone" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="Extension" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="PhoneNumber" nillable="true" type="tns:PhoneNumber" />
+    <xsd:complexType name="ReceiverInformation">
+        <xsd:sequence>
+            <xsd:element name="Address" nillable="true" type="tns:Address" />
+            <xsd:element minOccurs="0" name="EmailAddress" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ReceiverInformation" nillable="true" type="tns:ReceiverInformation" />
+    <xsd:complexType name="ThirdPartyInformation">
+        <xsd:sequence>
+            <xsd:element name="Address" nillable="true" type="tns:Address" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ThirdPartyInformation" nillable="true" type="tns:ThirdPartyInformation" />
+    <xsd:complexType name="ShipmentStatus">
+        <xsd:sequence>
+            <xsd:element name="ShipmentStatus" nillable="true" type="xsd:string" />
+            <xsd:element name="Delivered" type="xsd:boolean" />
+            <xsd:element name="DelDate" nillable="true" type="xsd:string" />
+            <xsd:element name="DelTime" nillable="true" type="xsd:string" />
+            <xsd:element name="SignedBy" nillable="true" type="xsd:string" />
+            <xsd:element name="DelStatCode" nillable="true" type="xsd:string" />
+            <xsd:element name="DelStatDesc" nillable="true" type="xsd:string" />
+            <xsd:element name="AppDateStart" nillable="true" type="xsd:string" />
+            <xsd:element name="AppDateEnd" nillable="true" type="xsd:string" />
+            <xsd:element name="AppTimeStart" nillable="true" type="xsd:string" />
+            <xsd:element name="AppTimeEnd" nillable="true" type="xsd:string" />
+            <xsd:element name="AppContact" nillable="true" type="xsd:string" />
+            <xsd:element name="ImageType" nillable="true" type="xsd:string" />
+            <xsd:element name="ImageLink" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ShipmentStatus" nillable="true" type="tns:ShipmentStatus" />
+    <xsd:complexType name="ArrayOfPinTraceHistory">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="PinTraceHistory" nillable="true" type="tns:PinTraceHistory" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfPinTraceHistory" nillable="true" type="tns:ArrayOfPinTraceHistory" />
+    <xsd:complexType name="PinTraceHistory">
+        <xsd:sequence>
+            <xsd:element name="ProNumber" nillable="true" type="xsd:string" />
+            <xsd:element name="PIN" nillable="true" type="xsd:string" />
+            <xsd:element name="ScanDetails" nillable="true" type="tns:ScanDetail" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="PinTraceHistory" nillable="true" type="tns:PinTraceHistory" />
+    <xsd:complexType name="ScanDetail">
+        <xsd:sequence>
+            <xsd:element name="HistDate" nillable="true" type="xsd:string" />
+            <xsd:element name="HistTime" nillable="true" type="xsd:string" />
+            <xsd:element name="HistCode" nillable="true" type="xsd:string" />
+            <xsd:element name="HistDesc" nillable="true" type="xsd:string" />
+            <xsd:element name="HistLocation" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ScanDetail" nillable="true" type="tns:ScanDetail" />
+    <xsd:complexType name="ResponseContext">
+        <xsd:sequence>
+            <xsd:element name="ResponseReference" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ResponseContext" nillable="true" type="tns:ResponseContext" />
+</xsd:schema>

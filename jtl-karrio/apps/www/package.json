@@ -1,0 +1,61 @@
+{
+  "name": "www",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "docusaurus": "docusaurus",
+    "start": "docusaurus start --port 3004",
+    "dev:docs": "docusaurus start --port 3004",
+    "build": "docusaurus build",
+    "swizzle": "docusaurus swizzle",
+    "deploy": "docusaurus deploy",
+    "clear": "docusaurus clear",
+    "serve": "docusaurus serve",
+    "write-translations": "docusaurus write-translations",
+    "write-heading-ids": "docusaurus write-heading-ids"
+  },
+  "dependencies": {
+    "@docusaurus/core": "^3.6.3",
+    "@docusaurus/plugin-client-redirects": "^3.6.3",
+    "@docusaurus/preset-classic": "^3.6.3",
+    "@docusaurus/theme-mermaid": "^3.6.3",
+    "@fortawesome/fontawesome-free": "^6.4.2",
+    "@heroicons/react": "^2.1.5",
+    "@mdx-js/react": "^3.0.0",
+    "@xyflow/react": "^12.3.5",
+    "clsx": "^1.2.1",
+    "docusaurus-plugin-openapi-docs": "^4.0.0",
+    "docusaurus-theme-openapi-docs": "^4.0.0",
+    "postcss": "^8.4.31",
+    "postcss-import": "^15.1.0",
+    "postcss-preset-env": "^9.3.0",
+    "posthog-docusaurus": "^2.0.0",
+    "prism-react-renderer": "^2.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "redocusaurus": "^2.0.0",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0",
+    "tailwind-loader": "file:plugins/tailwind-loader"
+  },
+  "devDependencies": {
+    "@docusaurus/module-type-aliases": "^3.6.3",
+    "@docusaurus/types": "^3.6.3",
+    "tailwindcss": "^3.3.5"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 3 chrome version",
+      "last 3 firefox version",
+      "last 5 safari version"
+    ]
+  },
+  "engines": {
+    "node": ">=18.0"
+  }
+}

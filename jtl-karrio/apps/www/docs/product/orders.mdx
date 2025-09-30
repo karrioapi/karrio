@@ -1,0 +1,786 @@
+---
+id: orders
+title: Orders
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import VideoWrapper from "@site/src/components/VideoWrapper";
+
+
+There are two ways to process shipments in Karrio:
+
+- **Label creation:** use Karrio's API or dashboard to create shipments and print labels for orders managed outside of Karrio.
+- **Order fulfillment:** use Karrio's API or dashboard to create shipments and print labels for orders synced from your ERP, WMS or OMS to Karrio.
+
+Karrio orders API is design as a readonly API. Meaning that we consider your ERP, WMS or OMS as the source of truth for orders.
+You can use Karrio to process shipments for orders that are already in your system. All you need is to leverage Karrio's API
+to create orders based on your existing orders and use the webhook to get notified when the order fulfillment status changes.
+
+Here's a short demo of how to create and fulfil an order in Karrio:
+
+<div id="tailwind">
+
+<VideoWrapper>
+  <iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/HJ9tzaFIsF0"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen
+  ></iframe>
+</VideoWrapper>
+
+<br />
+<br />
+
+<p>
+  This docs walks you through fulfilling an order with karrio.
+  <br />
+  Follow these steps to fulfill an order:
+</p>
+
+<br />
+
+</div>
+
+1. Sync an order from your OMS to Karrio
+2. Create a shipment for the order
+
+<br />
+
+## Sync an order
+
+You can create an order on Karrio by providing the following information:
+
+- **order_id:** the unique identifier of the order in your system. (can an be order number)
+- **shipping_to:** the customer shipping address.
+- **line_items:** the list of items in the order. (the products from to the cart)
+
+_Optionally_
+
+- **order_date (`optional`):** the date the order was created in your system.
+- **source (`optional`):** the source of the order. (e.g. Shopify, Magento, etc.)
+
+Check out the [order API reference](/reference/openapi/#tag/Orders/operation/&&&&create) for more details.
+
+Considering the following shopify order sample:
+
+<div id="tabs">
+<Tabs>
+<TabItem value="response" label="Shopify order">
+
+```json
+{
+  "app_id": 1966818,
+  "billing_address": {
+    "address1": "2259 Park Ct",
+    "address2": "Apartment 5",
+    "city": "Drayton Valley",
+    "company": null,
+    "country": "Canada",
+    "first_name": "Christopher",
+    "last_name": "Gorski",
+    "phone": "(555)555-5555",
+    "province": "Alberta",
+    "zip": "T0E 0M0",
+    "name": "Christopher Gorski",
+    "province_code": "AB",
+    "country_code": "CA",
+    "latitude": "45.41634",
+    "longitude": "-75.6868"
+  },
+  "browser_ip": "216.191.105.146",
+  "buyer_accepts_marketing": false,
+  "cancel_reason": "customer",
+  "cancelled_at": null,
+  "cart_token": "68778783ad298f1c80c3bafcddeea",
+  "checkout_token": "bd5a8aa1ecd019dd3520ff791ee3a24c",
+  "client_details": {
+    "accept_language": "en-US,en;q=0.9",
+    "browser_height": 1320,
+    "browser_ip": "216.191.105.146",
+    "browser_width": 1280,
+    "session_hash": "9ad4d1f4e6a8977b9dd98eed1e477643",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36"
+  },
+  "closed_at": "2008-01-10T11:00:00-05:00",
+  "company": {
+    "id": 182772,
+    "location_id": 753095
+  },
+  "created_at": "2008-01-10T11:00:00-05:00",
+  "currency": "USD",
+  "current_total_additional_fees_set": {
+    "shop_money": {
+      "amount": "1.23",
+      "currency_code": "CAD"
+    },
+    "presentment_money": {
+      "amount": "0.85",
+      "currency_code": "EUR"
+    }
+  },
+  "current_total_discounts": "10.00",
+  "current_total_discounts_set": {
+    "current_total_discounts_set": {
+      "shop_money": {
+        "amount": "10.00",
+        "currency_code": "CAD"
+      },
+      "presentment_money": {
+        "amount": "5.00",
+        "currency_code": "EUR"
+      }
+    }
+  },
+  "current_total_duties_set": {
+    "current_total_duties_set": {
+      "shop_money": {
+        "amount": "164.86",
+        "currency_code": "CAD"
+      },
+      "presentment_money": {
+        "amount": "105.31",
+        "currency_code": "EUR"
+      }
+    }
+  },
+  "current_total_price": "10.00",
+  "current_total_price_set": {
+    "current_total_price_set": {
+      "shop_money": {
+        "amount": "30.00",
+        "currency_code": "CAD"
+      },
+      "presentment_money": {
+        "amount": "20.00",
+        "currency_code": "EUR"
+      }
+    }
+  },
+  "current_subtotal_price": "10.00",
+  "current_subtotal_price_set": {
+    "current_subtotal_price_set": {
+      "shop_money": {
+        "amount": "30.00",
+        "currency_code": "CAD"
+      },
+      "presentment_money": {
+        "amount": "20.00",
+        "currency_code": "EUR"
+      }
+    }
+  },
+  "current_total_tax": "10.00",
+  "current_total_tax_set": {
+    "current_total_tax_set": {
+      "shop_money": {
+        "amount": "30.00",
+        "currency_code": "CAD"
+      },
+      "presentment_money": {
+        "amount": "20.00",
+        "currency_code": "EUR"
+      }
+    }
+  },
+  "customer": {
+    "id": 207119551,
+    "email": "bob.norman@mail.example.com",
+    "accepts_marketing": false,
+    "created_at": "2012-03-13T16:09:55-04:00",
+    "updated_at": "2012-03-13T16:09:55-04:00",
+    "first_name": "Bob",
+    "last_name": "Norman",
+    "state": "disabled",
+    "note": null,
+    "verified_email": true,
+    "multipass_identifier": null,
+    "tax_exempt": false,
+    "tax_exemptions": {},
+    "phone": "+13125551212",
+    "tags": "loyal",
+    "currency": "USD",
+    "addresses": {},
+    "admin_graphql_api_id": "gid://shopify/Customer/207119551",
+    "default_address": {}
+  },
+  "customer_locale": "en-CA",
+  "discount_applications": {
+    "discount_applications": [
+      {
+        "type": "manual",
+        "title": "custom discount",
+        "description": "customer deserved it",
+        "value": "2.0",
+        "value_type": "fixed_amount",
+        "allocation_method": "across",
+        "target_selection": "explicit",
+        "target_type": "line_item"
+      },
+      {
+        "type": "script",
+        "description": "my scripted discount",
+        "value": "5.0",
+        "value_type": "fixed_amount",
+        "allocation_method": "across",
+        "target_selection": "explicit",
+        "target_type": "shipping_line"
+      },
+      {
+        "type": "discount_code",
+        "code": "SUMMERSALE",
+        "value": "10.0",
+        "value_type": "fixed_amount",
+        "allocation_method": "across",
+        "target_selection": "all",
+        "target_type": "line_item"
+      }
+    ]
+  },
+  "discount_codes": [
+    {
+      "code": "SPRING30",
+      "amount": "30.00",
+      "type": "fixed_amount"
+    }
+  ],
+  "email": "bob.norman@mail.example.com",
+  "estimated_taxes": false,
+  "financial_status": "authorized",
+  "fulfillments": [],
+  "fulfillment_status": "partial",
+  "gateway": "shopify_payments",
+  "id": 450789469,
+  "landing_site": "http://www.example.com?source=abc",
+  "line_items": [
+    {
+      "attributed_staffs": [
+        {
+          "id": "gid://shopify/StaffMember/2108187",
+          "quantity": 1
+        }
+      ],
+      "fulfillable_quantity": 1,
+      "fulfillment_service": "amazon",
+      "fulfillment_status": "fulfilled",
+      "grams": 500,
+      "id": 669751112,
+      "price": "199.99",
+      "product_id": 7513594,
+      "quantity": 1,
+      "requires_shipping": true,
+      "sku": "IPOD-342-N",
+      "title": "IPod Nano",
+      "variant_id": 4264112,
+      "variant_title": "Pink",
+      "vendor": "Apple",
+      "name": "IPod Nano - Pink",
+      "gift_card": false,
+      "price_set": {
+        "shop_money": {
+          "amount": "199.99",
+          "currency_code": "USD"
+        },
+        "presentment_money": {
+          "amount": "173.30",
+          "currency_code": "EUR"
+        }
+      },
+      "properties": [
+        {
+          "name": "custom engraving",
+          "value": "Happy Birthday Mom!"
+        }
+      ],
+      "taxable": true,
+      "tax_lines": [
+        {
+          "title": "HST",
+          "price": "25.81",
+          "price_set": {
+            "shop_money": {
+              "amount": "25.81",
+              "currency_code": "USD"
+            },
+            "presentment_money": {
+              "amount": "20.15",
+              "currency_code": "EUR"
+            }
+          },
+          "channel_liable": true,
+          "rate": 0.13
+        }
+      ],
+      "total_discount": "5.00",
+      "total_discount_set": {
+        "shop_money": {
+          "amount": "5.00",
+          "currency_code": "USD"
+        },
+        "presentment_money": {
+          "amount": "4.30",
+          "currency_code": "EUR"
+        }
+      },
+      "discount_allocations": [
+        {
+          "amount": "5.00",
+          "discount_application_index": 2,
+          "amount_set": {
+            "shop_money": {
+              "amount": "5.00",
+              "currency_code": "USD"
+            },
+            "presentment_money": {
+              "amount": "3.96",
+              "currency_code": "EUR"
+            }
+          }
+        }
+      ],
+      "origin_location": {
+        "id": 1390592786454,
+        "country_code": "CA",
+        "province_code": "ON",
+        "name": "Apple",
+        "address1": "700 West Georgia Street",
+        "address2": "1500",
+        "city": "Toronto",
+        "zip": "V7Y 1G5"
+      },
+      "duties": [
+        {
+          "id": "2",
+          "harmonized_system_code": "520300",
+          "country_code_of_origin": "CA",
+          "shop_money": {
+            "amount": "164.86",
+            "currency_code": "CAD"
+          },
+          "presentment_money": {
+            "amount": "105.31",
+            "currency_code": "EUR"
+          },
+          "tax_lines": [
+            {
+              "title": "VAT",
+              "price": "16.486",
+              "rate": 0.1,
+              "price_set": {
+                "shop_money": {
+                  "amount": "16.486",
+                  "currency_code": "CAD"
+                },
+                "presentment_money": {
+                  "amount": "10.531",
+                  "currency_code": "EUR"
+                }
+              },
+              "channel_liable": true
+            }
+          ],
+          "admin_graphql_api_id": "gid://shopify/Duty/2"
+        }
+      ]
+    }
+  ],
+  "location_id": 49202758,
+  "merchant_of_record_app_id": 123456,
+  "name": "#1001",
+  "note": "Customer changed their mind.",
+  "note_attributes": [
+    {
+      "name": "custom name",
+      "value": "custom value"
+    }
+  ],
+  "number": 1,
+  "order_number": 1001,
+  "original_total_additional_fees_set": {
+    "shop_money": {
+      "amount": "1.23",
+      "currency_code": "CAD"
+    },
+    "presentment_money": {
+      "amount": "0.85",
+      "currency_code": "EUR"
+    }
+  },
+  "original_total_duties_set": {
+    "original_total_duties_set": {
+      "shop_money": {
+        "amount": "164.86",
+        "currency_code": "CAD"
+      },
+      "presentment_money": {
+        "amount": "105.31",
+        "currency_code": "EUR"
+      }
+    }
+  },
+  "payment_details": {
+    "avs_result_code": "Y",
+    "credit_card_bin": "453600",
+    "cvv_result_code": "M",
+    "credit_card_number": "•••• •••• •••• 4242",
+    "credit_card_company": "Visa"
+  },
+  "payment_terms": {
+    "amount": 70,
+    "currency": "CAD",
+    "payment_terms_name": "NET_30",
+    "payment_terms_type": "NET",
+    "due_in_days": 30,
+    "payment_schedules": [
+      {
+        "amount": 70,
+        "currency": "CAD",
+        "issued_at": "2020-07-29T13:02:43-04:00",
+        "due_at": "2020-08-29T13:02:43-04:00",
+        "completed_at": "null",
+        "expected_payment_method": "shopify_payments"
+      }
+    ]
+  },
+  "payment_gateway_names": ["authorize_net", "Cash on Delivery (COD)"],
+  "phone": "+557734881234",
+  "presentment_currency": "CAD",
+  "processed_at": "2008-01-10T11:00:00-05:00",
+  "processing_method": "direct",
+  "referring_site": "http://www.anexample.com",
+  "refunds": [
+    {
+      "id": 18423447608,
+      "order_id": 394481795128,
+      "created_at": "2018-03-06T09:35:37-05:00",
+      "note": null,
+      "user_id": null,
+      "processed_at": "2018-03-06T09:35:37-05:00",
+      "refund_line_items": [],
+      "transactions": [],
+      "order_adjustments": []
+    }
+  ],
+  "shipping_address": {
+    "address1": "123 Amoebobacterieae St",
+    "address2": "",
+    "city": "Ottawa",
+    "company": null,
+    "country": "Canada",
+    "first_name": "Bob",
+    "last_name": "Bobsen",
+    "latitude": "45.41634",
+    "longitude": "-75.6868",
+    "phone": "555-625-1199",
+    "province": "Ontario",
+    "zip": "K2P0V6",
+    "name": "Bob Bobsen",
+    "country_code": "CA",
+    "province_code": "ON"
+  },
+  "shipping_lines": [
+    {
+      "code": "INT.TP",
+      "price": "4.00",
+      "price_set": {
+        "shop_money": {
+          "amount": "4.00",
+          "currency_code": "USD"
+        },
+        "presentment_money": {
+          "amount": "3.17",
+          "currency_code": "EUR"
+        }
+      },
+      "discounted_price": "4.00",
+      "discounted_price_set": {
+        "shop_money": {
+          "amount": "4.00",
+          "currency_code": "USD"
+        },
+        "presentment_money": {
+          "amount": "3.17",
+          "currency_code": "EUR"
+        }
+      },
+      "source": "canada_post",
+      "title": "Small Packet International Air",
+      "tax_lines": [],
+      "carrier_identifier": "third_party_carrier_identifier",
+      "requested_fulfillment_service_id": "third_party_fulfillment_service_id"
+    }
+  ],
+  "source_name": "instagram",
+  "source_identifier": "ORDERID-123",
+  "source_url": "{URL_to_order}",
+  "subtotal_price": "398.00",
+  "subtotal_price_set": {
+    "shop_money": {
+      "amount": "141.99",
+      "currency_code": "CAD"
+    },
+    "presentment_money": {
+      "amount": "90.95",
+      "currency_code": "EUR"
+    }
+  },
+  "tags": "imported, vip",
+  "tax_lines": [
+    {
+      "price": 11.94,
+      "rate": 0.06,
+      "title": "State Tax",
+      "channel_liable": true
+    }
+  ],
+  "taxes_included": false,
+  "test": true,
+  "token": "b1946ac92492d2347c6235b4d2611184",
+  "total_discounts": "0.00",
+  "total_discounts_set": {
+    "shop_money": {
+      "amount": "0.00",
+      "currency_code": "CAD"
+    },
+    "presentment_money": {
+      "amount": "0.00",
+      "currency_code": "EUR"
+    }
+  },
+  "total_line_items_price": "398.00",
+  "total_line_items_price_set": {
+    "shop_money": {
+      "amount": "141.99",
+      "currency_code": "CAD"
+    },
+    "presentment_money": {
+      "amount": "90.95",
+      "currency_code": "EUR"
+    }
+  },
+  "total_outstanding": "5.00",
+  "total_price": "409.94",
+  "total_price_set": {
+    "shop_money": {
+      "amount": "164.86",
+      "currency_code": "CAD"
+    },
+    "presentment_money": {
+      "amount": "105.31",
+      "currency_code": "EUR"
+    }
+  },
+  "total_shipping_price_set": {
+    "shop_money": {
+      "amount": "30.00",
+      "currency_code": "USD"
+    },
+    "presentment_money": {
+      "amount": "0.00",
+      "currency_code": "USD"
+    }
+  },
+  "total_tax": "11.94",
+  "total_tax_set": {
+    "shop_money": {
+      "amount": "18.87",
+      "currency_code": "CAD"
+    },
+    "presentment_money": {
+      "amount": "11.82",
+      "currency_code": "EUR"
+    }
+  },
+  "total_tip_received": "4.87",
+  "total_weight": 300,
+  "updated_at": "2012-08-24T14:02:15-04:00",
+  "user_id": 31522279,
+  "order_status_url": {
+    "order_status_url": "https://checkout.shopify.com/112233/checkouts/4207896aad57dfb159/thank_you_token?key=753621327b9e8a64789651bf221dfe35"
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+</div>
+
+The subsequent karrio order request will be:
+
+<div id="tabs">
+<Tabs>
+<TabItem value="request" label="Request">
+
+```bash
+curl --request POST \
+  --url https://api.karrio.io/v1/orders \
+  --header 'Authorization: Token [API_KEY]' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"source": "Shopify",
+	"order_id": "450789469",
+	"order_date": "2008-01-10",
+	"shipping_to": {
+		"address_line1": "123 Amoebobacterieae St",
+		"city": "Ottawa",
+		"country_code": "CA",
+		"email": "bob.norman@mail.example.com",
+		"person_name": "Bob Bobsen",
+		"phone_number": "555-625-1199",
+		"postal_code": "K2P0V6",
+		"state_code": "ON"
+	},
+	"line_items": [
+		{
+			"quantity": 1,
+			"sku": "IPOD-342-N",
+			"title": "IPod Nano",
+			"description": "IPod Nano - Pink",
+			"origin_country": "CA",
+			"value_amount": "199.99",
+			"value_currency": "USD",
+			"weight": 0.5,
+			"weight_unit": "KG"
+		}
+	]
+}'
+```
+
+</TabItem>
+<TabItem value="response" label="Response">
+
+```json
+{
+  "id": "ord_d926dd1db0954a1f8bab2fa22537225d",
+  "object_type": "order",
+  "order_id": "450789469",
+  "order_date": "2008-01-10",
+  "source": "Shopify",
+  "status": "unfulfilled",
+  "shipping_to": {
+    "id": "adr_d4bd0a3416fb4b639dcb714fa4aab5dd",
+    "postal_code": "K2P0V6",
+    "city": "Ottawa",
+    "federal_tax_id": null,
+    "state_tax_id": null,
+    "person_name": "Bob Bobsen",
+    "company_name": null,
+    "country_code": "CA",
+    "email": "bob.norman@mail.example.com",
+    "phone_number": "+1 555-625-1199",
+    "state_code": "ON",
+    "suburb": null,
+    "residential": false,
+    "street_number": null,
+    "address_line1": "123 Amoebobacterieae St",
+    "address_line2": null,
+    "validate_location": false,
+    "object_type": "address",
+    "validation": null
+  },
+  "shipping_from": null,
+  "line_items": [
+    {
+      "id": "cdt_5b4ca7b3949c4d4b82e1bfc6560aa46d",
+      "weight": 0.5,
+      "weight_unit": "KG",
+      "title": "IPod Nano",
+      "description": "IPod Nano - Pink",
+      "quantity": 1,
+      "sku": "IPOD-342-N",
+      "hs_code": null,
+      "value_amount": 199.99,
+      "value_currency": "USD",
+      "origin_country": "CA",
+      "parent_id": null,
+      "metadata": {},
+      "object_type": "commodity",
+      "unfulfilled_quantity": 1
+    }
+  ],
+  "options": {},
+  "meta": {},
+  "metadata": {},
+  "shipments": [],
+  "test_mode": true,
+  "created_at": "2023-05-21 02:23:55.638967+00:00"
+}
+```
+
+</TabItem>
+</Tabs>
+</div>
+
+## Create a shipment
+
+1 - Navigate to **Orders** in the left navigation bar.
+
+2 - Click on the unfulfilled order's menu then `Create shipment`.
+
+<img style={{ borderRadius: 5 }} src="/img/assets/order-fulfillment/unfulfilled-orders.png" />
+
+3 - The shipment details will be prefilled for you based on the order details.
+
+_You can edit the shipment details if needed._
+
+4 - Select your preferred shipping rate and click `Buy shipping label`.
+
+<img
+  style={{ borderRadius: 5 }}
+  src="/img/assets/order-fulfillment/create-shipment.png"
+/>
+
+5 - You will get redirected to the shipment details page. You can download the shipping label.
+
+<img
+  style={{ borderRadius: 5 }}
+  src="/img/assets/order-fulfillment/purchased-label.png"
+/>
+
+6 - Navigate back to **Orders** in the left navigation bar.
+
+:::info
+Note that the order status has been updated to `fulfilled`.
+:::
+
+<img
+  style={{ borderRadius: 5 }}
+  src="/img/assets/order-fulfillment/fulfilled-orders.png"
+/>
+
+## Under the hood
+
+All the steps above are done through the karrio API. You can use the API to automate the process.
+
+:::note
+The dashboard is a client of the API that we provide not only to make it easier for your to manage
+your shipments and orders. But also to show you what's going on under the hood. This gives you the
+full transparency and control over your data and serves as a reference for your own implementation.
+:::
+
+- You can view the logs of all the API calls made for this operation by navigating to `Developers > Logs`
+
+<img
+  style={{ borderRadius: 5 }}
+  src="/img/assets/order-fulfillment/fulfillment-api-logs.png"
+/>
+
+- You can also view the full lifecycle events triggered by the state changes during the operation.
+
+Navigate to `Developers > Events` view the events.
+
+
+<img
+  style={{ borderRadius: 5 }}
+  src="/img/assets/order-fulfillment/fulfillment-lifecycle-events.png"
+/>
+
+:::info
+Note that you can setup a webhook to get notified of these events.
+All you need is to provide the `event_types` of interest.
+:::
+

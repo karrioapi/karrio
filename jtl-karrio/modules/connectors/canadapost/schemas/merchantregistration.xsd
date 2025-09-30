@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="1.0" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc" targetNamespace="http://www.canadapost.ca/ws/merchant/registration" xmlns="http://www.canadapost.ca/ws/merchant/registration" elementFormDefault="qualified">
+
+  	<xsd:annotation>
+		<xsd:appinfo>
+			<jaxb:globalBindings>
+				<xjc:simple />
+			</jaxb:globalBindings>
+		</xsd:appinfo>
+	</xsd:annotation>
+
+	<xsd:element name="merchant-info">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element minOccurs="0" name="customer-number" type="xsd:string" />
+				<xsd:element minOccurs="0" name="contract-number" type="xsd:string" />
+				<xsd:element minOccurs="0" name="merchant-username" type="xsd:string" />
+				<xsd:element minOccurs="0" name="merchant-password" type="xsd:string" />
+				<xsd:element minOccurs="0" name="has-default-credit-card" type="xsd:boolean" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="token">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="token-id" type="TokenIDType" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:simpleType name="TokenIDType">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="40" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+</xsd:schema>

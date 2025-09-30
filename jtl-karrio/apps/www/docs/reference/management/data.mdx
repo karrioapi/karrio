@@ -1,0 +1,2610 @@
+---
+id: data
+title: Queries & Mutations
+description: Query and Mutate your shipping related data using GraphQL.
+tags:
+  - GraphQL
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+In addition to the system objects, the Management API allows many other operations and advanced data manipulation of your shipping related data.
+
+
+## Shipments operations
+
+### Query shipments
+
+<div id="tabs">
+<Tabs>
+<TabItem value="query" label="Query">
+
+```graphql
+query get_shipments($filter: ShipmentFilter) {
+  shipments(filter: $filter) {
+    page_info {
+      count
+      has_next_page
+      has_previous_page
+      start_cursor
+      end_cursor
+    }
+    edges {
+      node {
+        id
+        carrier_id
+        carrier_name
+        created_at
+        updated_at
+        created_by {
+          email
+          full_name
+        }
+        status
+        recipient {
+          id
+          postal_code
+          city
+          person_name
+          company_name
+          country_code
+          email
+          phone_number
+          state_code
+          suburb
+          residential
+          street_number
+          address_line1
+          address_line2
+          federal_tax_id
+          state_tax_id
+          validate_location
+        }
+        shipper {
+          id
+          postal_code
+          city
+          person_name
+          company_name
+          country_code
+          email
+          phone_number
+          state_code
+          suburb
+          residential
+          street_number
+          address_line1
+          address_line2
+          federal_tax_id
+          state_tax_id
+          validate_location
+        }
+        billing_address {
+          id
+          postal_code
+          city
+          person_name
+          company_name
+          country_code
+          email
+          phone_number
+          state_code
+          suburb
+          residential
+          street_number
+          address_line1
+          address_line2
+          federal_tax_id
+          state_tax_id
+          validate_location
+        }
+        parcels {
+          id
+          width
+          height
+          length
+          is_document
+          dimension_unit
+          weight
+          weight_unit
+          packaging_type
+          package_preset
+          freight_class
+          reference_number
+          items {
+            id
+            weight
+            title
+            description
+            quantity
+            sku
+            hs_code
+            value_amount
+            weight_unit
+            value_currency
+            origin_country
+            metadata
+            parent_id
+          }
+        }
+        label_type
+        tracking_number
+        shipment_identifier
+        label_url
+        invoice_url
+        tracking_url
+        tracker_id
+        test_mode
+        service
+        reference
+        customs {
+          id
+          certify
+          commercial_invoice
+          content_type
+          content_description
+          incoterm
+          invoice
+          invoice_date
+          signer
+          duty {
+            paid_by
+            currency
+            account_number
+            declared_value
+          }
+          options
+          commodities {
+            id
+            weight
+            weight_unit
+            title
+            description
+            quantity
+            sku
+            hs_code
+            value_amount
+            value_currency
+            origin_country
+            metadata
+            parent_id
+          }
+          duty_billing_address {
+            id
+            postal_code
+            city
+            person_name
+            company_name
+            country_code
+            email
+            phone_number
+            state_code
+            suburb
+            residential
+            street_number
+            address_line1
+            address_line2
+            federal_tax_id
+            state_tax_id
+            validate_location
+          }
+        }
+        payment {
+          paid_by
+          currency
+          account_number
+        }
+        selected_rate_id
+        selected_rate {
+          id
+          carrier_name
+          carrier_id
+          currency
+          service
+          transit_days
+          total_charge
+          extra_charges {
+            name
+            amount
+            currency
+          }
+          test_mode
+          meta
+        }
+        carrier_ids
+        rates {
+          id
+          carrier_name
+          carrier_id
+          currency
+          service
+          transit_days
+          total_charge
+          extra_charges {
+            name
+            amount
+            currency
+          }
+          test_mode
+          meta
+        }
+        options
+        metadata
+        meta
+        messages {
+          carrier_name
+          carrier_id
+          message
+          code
+          details
+        }
+        selected_rate_carrier {
+          carrier_id
+          carrier_name
+          config
+        }
+      }
+    }
+  }
+}
+```
+
+</TabItem>
+<TabItem value="variables" label="Filter Variables">
+
+```json
+{
+  "filter": {
+    "offset": 5,
+    "first": 5,
+    "status": [
+      "purchased",
+      "delivered",
+      "in_transit",
+      "cancelled",
+      "needs_attention",
+      "out_for_delivery",
+      "delivery_failed"
+    ]
+  }
+}
+```
+
+</TabItem>
+<TabItem value="response" label="Response">
+
+```json
+{
+  "data": {
+    "shipments": {
+      "page_info": {
+        "count": 110,
+        "has_next_page": true,
+        "has_previous_page": false,
+        "start_cursor": "c2hwXzk1NjFhMDc2NWZiYTRjZGNiNzgyZjcyNDUxOTRhM2Jm",
+        "end_cursor": "c2hwXzQ1NjllMDhlZDkxYTQwYjY4ZDJjMjI3ZDUzY2I2YTM5"
+      },
+      "edges": [
+        {
+          "node": {
+            "id": "shp_9561a0765fba4cdcb782f7245194a3bf",
+            "carrier_id": "canadapost",
+            "carrier_name": "canadapost",
+            "created_at": "2023-12-21T05:34:22.925000+00:00",
+            "updated_at": "2023-12-21T05:34:22.925000+00:00",
+            "created_by": {
+              "email": "admin@example.com",
+              "full_name": "Dan"
+            },
+            "status": "cancelled",
+            "recipient": {
+              "id": "adr_5d849e18d73a4aa6acef8772583183c0",
+              "postal_code": "V6M2V9",
+              "city": "Vancouver",
+              "person_name": "Jane Doe",
+              "company_name": "B corp.",
+              "country_code": "CA",
+              "email": "test@test.com",
+              "phone_number": null,
+              "state_code": "BC",
+              "suburb": null,
+              "residential": true,
+              "street_number": null,
+              "address_line1": "5840 Oak St",
+              "address_line2": null,
+              "federal_tax_id": null,
+              "state_tax_id": null,
+              "validate_location": null
+            },
+            "shipper": {
+              "id": "adr_05e4ed742e7d4be78d13cf38edd1d30e",
+              "postal_code": "E1C4Z8",
+              "city": "Moncton",
+              "person_name": "John Doe",
+              "company_name": "A corp.",
+              "country_code": "CA",
+              "email": null,
+              "phone_number": null,
+              "state_code": "NB",
+              "suburb": null,
+              "residential": false,
+              "street_number": null,
+              "address_line1": "125 Church St",
+              "address_line2": null,
+              "federal_tax_id": null,
+              "state_tax_id": null,
+              "validate_location": null
+            },
+            "billing_address": null,
+            "parcels": [
+              {
+                "id": "pcl_6715081a0b4e4d8fbea66126b566fb2e",
+                "width": 46,
+                "height": 38,
+                "length": 32,
+                "is_document": false,
+                "dimension_unit": "CM",
+                "weight": 1,
+                "weight_unit": "KG",
+                "packaging_type": null,
+                "package_preset": "canadapost_corrugated_medium_box",
+                "freight_class": null,
+                "reference_number": "123456789012",
+                "items": []
+              },
+              {
+                "id": "pcl_d56fe3455d3d473b99eaf89b394e230d",
+                "width": 33.7,
+                "height": 18.2,
+                "length": 10,
+                "is_document": false,
+                "dimension_unit": "CM",
+                "weight": 1,
+                "weight_unit": "KG",
+                "packaging_type": "your_packaging",
+                "package_preset": null,
+                "freight_class": null,
+                "reference_number": "0000000191",
+                "items": []
+              }
+            ],
+            "label_type": "PDF",
+            "tracking_number": "123456789012",
+            "shipment_identifier": "123456789012",
+            "label_url": "/v1/shipments/shp_9561a0765fba4cdcb782f7245194a3bf/label.pdf",
+            "invoice_url": null,
+            "tracking_url": "/v1/trackers/canadapost/123456789012",
+            "tracker_id": null,
+            "test_mode": true,
+            "service": "canadapost_regular_parcel",
+            "reference": null,
+            "customs": null,
+            "payment": {
+              "paid_by": "sender",
+              "currency": null,
+              "account_number": null
+            },
+            "selected_rate_id": "rat_d2f922b3eae440d8a7fe9d587be91c92",
+            "selected_rate": {
+              "id": "rat_d2f922b3eae440d8a7fe9d587be91c92",
+              "carrier_name": "canadapost",
+              "carrier_id": "canadapost",
+              "currency": "CAD",
+              "service": "canadapost_regular_parcel",
+              "transit_days": 9,
+              "total_charge": 71.48,
+              "extra_charges": [
+                {
+                  "name": "Base charge",
+                  "amount": 53.4,
+                  "currency": "CAD"
+                },
+                {
+                  "name": "GST",
+                  "amount": 3.4,
+                  "currency": "CAD"
+                },
+                {
+                  "name": "PST",
+                  "amount": 0,
+                  "currency": "CAD"
+                },
+                {
+                  "name": "HST",
+                  "amount": 0,
+                  "currency": "CAD"
+                },
+                {
+                  "name": "Fuel surcharge",
+                  "amount": 14.68,
+                  "currency": "CAD"
+                }
+              ],
+              "test_mode": true,
+              "meta": {
+                "ext": "canadapost",
+                "carrier": "canadapost",
+                "service_name": "CANADAPOST REGULAR PARCEL",
+                "rate_provider": "canadapost",
+                "carrier_connection_id": "car_773f4a5577e4471e8918a9a1d47b208b"
+              }
+            },
+            "carrier_ids": [
+              "canadapost"
+            ],
+            "rates": [
+              {
+                "id": "rat_d2f922b3eae440d8a7fe9d587be91c92",
+                "carrier_name": "canadapost",
+                "carrier_id": "canadapost",
+                "currency": "CAD",
+                "service": "canadapost_regular_parcel",
+                "transit_days": 9,
+                "total_charge": 71.48,
+                "extra_charges": [
+                  {
+                    "name": "Base charge",
+                    "amount": 53.4,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "GST",
+                    "amount": 3.4,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "PST",
+                    "amount": 0,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "HST",
+                    "amount": 0,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "Fuel surcharge",
+                    "amount": 14.68,
+                    "currency": "CAD"
+                  }
+                ],
+                "test_mode": true,
+                "meta": {
+                  "ext": "canadapost",
+                  "carrier": "canadapost",
+                  "service_name": "CANADAPOST REGULAR PARCEL",
+                  "rate_provider": "canadapost",
+                  "carrier_connection_id": "car_773f4a5577e4471e8918a9a1d47b208b"
+                }
+              }
+            ],
+            "options": {
+              "shipment_date": "2023-12-21"
+            },
+            "metadata": {},
+            "meta": {
+              "ext": "canadapost",
+              "carrier": "canadapost",
+              "service_name": "CANADAPOST REGULAR PARCEL",
+              "rate_provider": "canadapost",
+              "tracking_numbers": [
+                "123456789012"
+              ],
+              "shipment_identifiers": [
+                "123456789012"
+              ],
+              "carrier_tracking_link": "https://www.canadapost-postescanada.ca/track-reperage/en#/resultList?searchFor=123456789012"
+            },
+            "messages": [],
+            "selected_rate_carrier": {
+              "carrier_id": "canadapost",
+              "carrier_name": "canadapost",
+              "config": null
+            }
+          }
+        },
+        {
+          "node": {
+            "id": "shp_155c9b17c39d48e3a1ccfb28fe3362c0",
+            "carrier_id": "canadapost",
+            "carrier_name": "canadapost",
+            "created_at": "2023-12-21T05:29:23.206000+00:00",
+            "updated_at": "2023-12-21T05:29:23.206000+00:00",
+            "created_by": {
+              "email": "admin@example.com",
+              "full_name": "Dan"
+            },
+            "status": "purchased",
+            "recipient": {
+              "id": "adr_d7c177289f1b44f7ae8433ca1e257ebc",
+              "postal_code": "V6M2V9",
+              "city": "Vancouver",
+              "person_name": "Jane Doe",
+              "company_name": "B corp.",
+              "country_code": "CA",
+              "email": "test@test.com",
+              "phone_number": null,
+              "state_code": "BC",
+              "suburb": null,
+              "residential": true,
+              "street_number": null,
+              "address_line1": "5840 Oak St",
+              "address_line2": null,
+              "federal_tax_id": null,
+              "state_tax_id": null,
+              "validate_location": null
+            },
+            "shipper": {
+              "id": "adr_f1b4e8bdee8649b2bd564724ae0cc2bc",
+              "postal_code": "E1C4Z8",
+              "city": "Moncton",
+              "person_name": "John Doe",
+              "company_name": "A corp.",
+              "country_code": "CA",
+              "email": null,
+              "phone_number": null,
+              "state_code": "NB",
+              "suburb": null,
+              "residential": false,
+              "street_number": null,
+              "address_line1": "125 Church St",
+              "address_line2": null,
+              "federal_tax_id": null,
+              "state_tax_id": null,
+              "validate_location": null
+            },
+            "billing_address": null,
+            "parcels": [
+              {
+                "id": "pcl_8e4cc16afcba4f12bf82080d840f126a",
+                "width": 46,
+                "height": 38,
+                "length": 32,
+                "is_document": false,
+                "dimension_unit": "CM",
+                "weight": 1,
+                "weight_unit": "KG",
+                "packaging_type": null,
+                "package_preset": "canadapost_corrugated_medium_box",
+                "freight_class": null,
+                "reference_number": "123456789012",
+                "items": []
+              },
+              {
+                "id": "pcl_df56d9f96338461fadb8883693f4b10c",
+                "width": 31,
+                "height": 23.5,
+                "length": 13.3,
+                "is_document": false,
+                "dimension_unit": "CM",
+                "weight": 1,
+                "weight_unit": "KG",
+                "packaging_type": null,
+                "package_preset": "canadapost_medium_mailing_box",
+                "freight_class": null,
+                "reference_number": "0000000189",
+                "items": []
+              }
+            ],
+            "label_type": "PDF",
+            "tracking_number": "123456789012",
+            "shipment_identifier": "123456789012",
+            "label_url": "/v1/shipments/shp_155c9b17c39d48e3a1ccfb28fe3362c0/label.pdf",
+            "invoice_url": null,
+            "tracking_url": "/v1/trackers/canadapost/123456789012",
+            "tracker_id": "trk_9c6841384b4f4ab9b20a3a70069bde4f",
+            "test_mode": true,
+            "service": "DOM.EP.EPLUS",
+            "reference": null,
+            "customs": null,
+            "payment": {
+              "paid_by": "sender",
+              "currency": null,
+              "account_number": null
+            },
+            "selected_rate_id": "rat_d97e185bf09541f39f3e4c4801a591a1",
+            "selected_rate": {
+              "id": "rat_d97e185bf09541f39f3e4c4801a591a1",
+              "carrier_name": "canadapost",
+              "carrier_id": "canadapost",
+              "currency": "CAD",
+              "service": "DOM.EP.EPLUS",
+              "transit_days": 7,
+              "total_charge": 58.27,
+              "extra_charges": [
+                {
+                  "name": "Base charge",
+                  "amount": 43.52,
+                  "currency": "CAD"
+                },
+                {
+                  "name": "GST",
+                  "amount": 2.7800000000000002,
+                  "currency": "CAD"
+                },
+                {
+                  "name": "PST",
+                  "amount": 0,
+                  "currency": "CAD"
+                },
+                {
+                  "name": "HST",
+                  "amount": 0,
+                  "currency": "CAD"
+                },
+                {
+                  "name": "Fuel surcharge",
+                  "amount": 11.97,
+                  "currency": "CAD"
+                }
+              ],
+              "test_mode": true,
+              "meta": {
+                "ext": "canadapost",
+                "carrier": "canadapost",
+                "service_name": "EXPEDITED PARCEL PLUS",
+                "rate_provider": "canadapost",
+                "carrier_connection_id": "car_773f4a5577e4471e8918a9a1d47b208b"
+              }
+            },
+            "carrier_ids": [
+              "canadapost"
+            ],
+            "rates": [
+              {
+                "id": "rat_71311e20b9d14a7ea3478a0df58e722d",
+                "carrier_name": "canadapost",
+                "carrier_id": "canadapost",
+                "currency": "CAD",
+                "service": "canadapost_library_books",
+                "transit_days": 9,
+                "total_charge": 9.58,
+                "extra_charges": [
+                  {
+                    "name": "Base charge",
+                    "amount": 9.12,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "GST",
+                    "amount": 0.46,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "PST",
+                    "amount": 0,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "HST",
+                    "amount": 0,
+                    "currency": "CAD"
+                  }
+                ],
+                "test_mode": true,
+                "meta": {
+                  "ext": "canadapost",
+                  "carrier": "canadapost",
+                  "service_name": "CANADAPOST LIBRARY BOOKS",
+                  "rate_provider": "canadapost",
+                  "carrier_connection_id": "car_773f4a5577e4471e8918a9a1d47b208b"
+                }
+              },
+              {
+                "id": "rat_d97e185bf09541f39f3e4c4801a591a1",
+                "carrier_name": "canadapost",
+                "carrier_id": "canadapost",
+                "currency": "CAD",
+                "service": "DOM.EP.EPLUS",
+                "transit_days": 7,
+                "total_charge": 58.27,
+                "extra_charges": [
+                  {
+                    "name": "Base charge",
+                    "amount": 43.52,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "GST",
+                    "amount": 2.7800000000000002,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "PST",
+                    "amount": 0,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "HST",
+                    "amount": 0,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "Fuel surcharge",
+                    "amount": 11.97,
+                    "currency": "CAD"
+                  }
+                ],
+                "test_mode": true,
+                "meta": {
+                  "ext": "canadapost",
+                  "carrier": "canadapost",
+                  "service_name": "EXPEDITED PARCEL PLUS",
+                  "rate_provider": "canadapost",
+                  "carrier_connection_id": "car_773f4a5577e4471e8918a9a1d47b208b"
+                }
+              },
+              {
+                "id": "rat_9643540835cc475f8db5d07d0ac0828d",
+                "carrier_name": "canadapost",
+                "carrier_id": "canadapost",
+                "currency": "CAD",
+                "service": "canadapost_regular_parcel",
+                "transit_days": 9,
+                "total_charge": 72.88,
+                "extra_charges": [
+                  {
+                    "name": "Base charge",
+                    "amount": 54.44,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "GST",
+                    "amount": 3.47,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "PST",
+                    "amount": 0,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "HST",
+                    "amount": 0,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "Fuel surcharge",
+                    "amount": 14.97,
+                    "currency": "CAD"
+                  }
+                ],
+                "test_mode": true,
+                "meta": {
+                  "ext": "canadapost",
+                  "carrier": "canadapost",
+                  "service_name": "CANADAPOST REGULAR PARCEL",
+                  "rate_provider": "canadapost",
+                  "carrier_connection_id": "car_773f4a5577e4471e8918a9a1d47b208b"
+                }
+              },
+              {
+                "id": "rat_1915feea8e0149fa8574c8307d015b57",
+                "carrier_name": "canadapost",
+                "carrier_id": "canadapost",
+                "currency": "CAD",
+                "service": "canadapost_expedited_parcel",
+                "transit_days": 7,
+                "total_charge": 77.25999999999999,
+                "extra_charges": [
+                  {
+                    "name": "Base charge",
+                    "amount": 57.71,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "GST",
+                    "amount": 3.68,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "PST",
+                    "amount": 0,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "HST",
+                    "amount": 0,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "Fuel surcharge",
+                    "amount": 15.870000000000001,
+                    "currency": "CAD"
+                  }
+                ],
+                "test_mode": true,
+                "meta": {
+                  "ext": "canadapost",
+                  "carrier": "canadapost",
+                  "service_name": "CANADAPOST EXPEDITED PARCEL",
+                  "rate_provider": "canadapost",
+                  "carrier_connection_id": "car_773f4a5577e4471e8918a9a1d47b208b"
+                }
+              },
+              {
+                "id": "rat_5bb4e5e766ae4f50940c2fcafe91386d",
+                "carrier_name": "canadapost",
+                "carrier_id": "canadapost",
+                "currency": "CAD",
+                "service": "canadapost_xpresspost",
+                "transit_days": 2,
+                "total_charge": 182.22,
+                "extra_charges": [
+                  {
+                    "name": "Base charge",
+                    "amount": 136.12,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "GST",
+                    "amount": 8.67,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "PST",
+                    "amount": 0,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "HST",
+                    "amount": 0,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "Fuel surcharge",
+                    "amount": 37.43,
+                    "currency": "CAD"
+                  }
+                ],
+                "test_mode": true,
+                "meta": {
+                  "ext": "canadapost",
+                  "carrier": "canadapost",
+                  "service_name": "CANADAPOST XPRESSPOST",
+                  "rate_provider": "canadapost",
+                  "carrier_connection_id": "car_773f4a5577e4471e8918a9a1d47b208b"
+                }
+              },
+              {
+                "id": "rat_d05276acd88c4024ae76dbbd55508a58",
+                "carrier_name": "canadapost",
+                "carrier_id": "canadapost",
+                "currency": "CAD",
+                "service": "canadapost_priority",
+                "transit_days": 2,
+                "total_charge": 252.59,
+                "extra_charges": [
+                  {
+                    "name": "Base charge",
+                    "amount": 188.68,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "GST",
+                    "amount": 12.030000000000001,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "PST",
+                    "amount": 0,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "HST",
+                    "amount": 0,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "Fuel surcharge",
+                    "amount": 51.879999999999995,
+                    "currency": "CAD"
+                  }
+                ],
+                "test_mode": true,
+                "meta": {
+                  "ext": "canadapost",
+                  "carrier": "canadapost",
+                  "service_name": "CANADAPOST PRIORITY",
+                  "rate_provider": "canadapost",
+                  "carrier_connection_id": "car_773f4a5577e4471e8918a9a1d47b208b"
+                }
+              }
+            ],
+            "options": {
+              "shipment_date": "2023-12-21"
+            },
+            "metadata": {},
+            "meta": {
+              "ext": "canadapost",
+              "carrier": "canadapost",
+              "service_name": "DOM.EP.EPLUS",
+              "rate_provider": "canadapost",
+              "tracking_numbers": [
+                "123456789012"
+              ],
+              "shipment_identifiers": [
+                "123456789012"
+              ],
+              "carrier_tracking_link": "https://www.canadapost-postescanada.ca/track-reperage/en#/resultList?searchFor=123456789012"
+            },
+            "messages": [],
+            "selected_rate_carrier": {
+              "carrier_id": "canadapost",
+              "carrier_name": "canadapost",
+              "config": null
+            }
+          }
+        },
+        {
+          "node": {
+            "id": "shp_f15fd0f45a97455d9d0982d16ef89862",
+            "carrier_id": "purolator-account",
+            "carrier_name": "purolator",
+            "created_at": "2022-12-24T21:41:29.829000+00:00",
+            "updated_at": "2022-12-24T21:41:29.829000+00:00",
+            "created_by": {
+              "email": "admin@example.com",
+              "full_name": "Dan"
+            },
+            "status": "delivered",
+            "recipient": {
+              "id": "adr_58724bf8464648139fede993ecf9958b",
+              "postal_code": "V6M2V9",
+              "city": "Vancouver",
+              "person_name": "Jane Doe",
+              "company_name": "B corp.",
+              "country_code": "CA",
+              "email": "test@test.com",
+              "phone_number": "+1 800-999-9999",
+              "state_code": "BC",
+              "suburb": null,
+              "residential": true,
+              "street_number": null,
+              "address_line1": "5840 Oak St",
+              "address_line2": null,
+              "federal_tax_id": null,
+              "state_tax_id": null,
+              "validate_location": null
+            },
+            "shipper": {
+              "id": "adr_58ab1b3b1be14c0f82373ba0e61eb10b",
+              "postal_code": "E1C4Z8",
+              "city": "Moncton",
+              "person_name": "John Doe",
+              "company_name": "A corp.",
+              "country_code": "CA",
+              "email": null,
+              "phone_number": "+1 800-999-9999",
+              "state_code": "NB",
+              "suburb": null,
+              "residential": false,
+              "street_number": null,
+              "address_line1": "125 Church St",
+              "address_line2": null,
+              "federal_tax_id": null,
+              "state_tax_id": null,
+              "validate_location": null
+            },
+            "billing_address": null,
+            "parcels": [
+              {
+                "id": "pcl_381186d145764f51b71a0907b8508f24",
+                "width": 46,
+                "height": 38,
+                "length": 32,
+                "is_document": false,
+                "dimension_unit": "CM",
+                "weight": 1,
+                "weight_unit": "KG",
+                "packaging_type": null,
+                "package_preset": "canadapost_corrugated_medium_box",
+                "freight_class": null,
+                "reference_number": "329033206411",
+                "items": []
+              }
+            ],
+            "label_type": "PDF",
+            "tracking_number": "329033206411",
+            "shipment_identifier": "329033206411",
+            "label_url": "/v1/shipments/shp_f15fd0f45a97455d9d0982d16ef89862/label.pdf",
+            "invoice_url": null,
+            "tracking_url": "/v1/trackers/purolator/329033206411",
+            "tracker_id": "trk_601fe54372194434b2a0c70b6434b7a0",
+            "test_mode": true,
+            "service": "purolator_ground",
+            "reference": null,
+            "customs": null,
+            "payment": {
+              "paid_by": "sender",
+              "currency": null,
+              "account_number": null
+            },
+            "selected_rate_id": "rat_c9f4d622b27f4d879455f9953ffa31a2",
+            "selected_rate": {
+              "id": "rat_c9f4d622b27f4d879455f9953ffa31a2",
+              "carrier_name": "purolator",
+              "carrier_id": "purolator-account",
+              "currency": "CAD",
+              "service": "purolator_ground",
+              "transit_days": 6,
+              "total_charge": 88.94,
+              "extra_charges": [
+                {
+                  "name": "Base charge",
+                  "amount": 70.9,
+                  "currency": "CAD"
+                },
+                {
+                  "name": "GST",
+                  "amount": 9.53,
+                  "currency": "CAD"
+                },
+                {
+                  "name": "Fuel",
+                  "amount": 8.51,
+                  "currency": "CAD"
+                }
+              ],
+              "test_mode": true,
+              "meta": {
+                "service_name": "PUROLATOR GROUND",
+                "rate_provider": "purolator",
+                "carrier_connection_id": "car_cb16c5bb6b02490988e80c911a614d96"
+              }
+            },
+            "carrier_ids": [
+              "purolator-account"
+            ],
+            "rates": [
+              {
+                "id": "rat_c9f4d622b27f4d879455f9953ffa31a2",
+                "carrier_name": "purolator",
+                "carrier_id": "purolator-account",
+                "currency": "CAD",
+                "service": "purolator_ground",
+                "transit_days": 6,
+                "total_charge": 88.94,
+                "extra_charges": [
+                  {
+                    "name": "Base charge",
+                    "amount": 70.9,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "GST",
+                    "amount": 9.53,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "Fuel",
+                    "amount": 8.51,
+                    "currency": "CAD"
+                  }
+                ],
+                "test_mode": true,
+                "meta": {
+                  "service_name": "PUROLATOR GROUND",
+                  "rate_provider": "purolator",
+                  "carrier_connection_id": "car_cb16c5bb6b02490988e80c911a614d96"
+                }
+              },
+              {
+                "id": "rat_afb8a8df53b64e398cc27946717c6ad4",
+                "carrier_name": "purolator",
+                "carrier_id": "purolator-account",
+                "currency": "CAD",
+                "service": "purolator_ground_10_30_am",
+                "transit_days": 6,
+                "total_charge": 103.87,
+                "extra_charges": [
+                  {
+                    "name": "Base charge",
+                    "amount": 82.8,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "GST",
+                    "amount": 11.13,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "Fuel",
+                    "amount": 9.94,
+                    "currency": "CAD"
+                  }
+                ],
+                "test_mode": true,
+                "meta": {
+                  "service_name": "PUROLATOR GROUND 10 30 AM",
+                  "rate_provider": "purolator",
+                  "carrier_connection_id": "car_cb16c5bb6b02490988e80c911a614d96"
+                }
+              },
+              {
+                "id": "rat_9f25390c2c6d4c1bbb2caf0772e8922f",
+                "carrier_name": "purolator",
+                "carrier_id": "purolator-account",
+                "currency": "CAD",
+                "service": "purolator_ground_evening",
+                "transit_days": 6,
+                "total_charge": 112.34,
+                "extra_charges": [
+                  {
+                    "name": "Base charge",
+                    "amount": 89.55,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "GST",
+                    "amount": 12.04,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "Fuel",
+                    "amount": 10.75,
+                    "currency": "CAD"
+                  }
+                ],
+                "test_mode": true,
+                "meta": {
+                  "service_name": "PUROLATOR GROUND EVENING",
+                  "rate_provider": "purolator",
+                  "carrier_connection_id": "car_cb16c5bb6b02490988e80c911a614d96"
+                }
+              },
+              {
+                "id": "rat_2582840350394dd9a8da921e851cb664",
+                "carrier_name": "purolator",
+                "carrier_id": "purolator-account",
+                "currency": "CAD",
+                "service": "purolator_ground_9_am",
+                "transit_days": 6,
+                "total_charge": 122.49,
+                "extra_charges": [
+                  {
+                    "name": "Base charge",
+                    "amount": 97.65,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "GST",
+                    "amount": 13.12,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "Fuel",
+                    "amount": 11.72,
+                    "currency": "CAD"
+                  }
+                ],
+                "test_mode": true,
+                "meta": {
+                  "service_name": "PUROLATOR GROUND 9 AM",
+                  "rate_provider": "purolator",
+                  "carrier_connection_id": "car_cb16c5bb6b02490988e80c911a614d96"
+                }
+              },
+              {
+                "id": "rat_d00b1029f13b43e1b7624e8cb7f88622",
+                "carrier_name": "purolator",
+                "carrier_id": "purolator-account",
+                "currency": "CAD",
+                "service": "purolator_express",
+                "transit_days": 1,
+                "total_charge": 208.73,
+                "extra_charges": [
+                  {
+                    "name": "Base charge",
+                    "amount": 166.4,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "GST",
+                    "amount": 22.36,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "Fuel",
+                    "amount": 19.97,
+                    "currency": "CAD"
+                  }
+                ],
+                "test_mode": true,
+                "meta": {
+                  "service_name": "PUROLATOR EXPRESS",
+                  "rate_provider": "purolator",
+                  "carrier_connection_id": "car_cb16c5bb6b02490988e80c911a614d96"
+                }
+              },
+              {
+                "id": "rat_b4576fe927f64f098cf7931f126d2ba8",
+                "carrier_name": "purolator",
+                "carrier_id": "purolator-account",
+                "currency": "CAD",
+                "service": "purolator_express_10_30_am",
+                "transit_days": 1,
+                "total_charge": 234.33,
+                "extra_charges": [
+                  {
+                    "name": "Base charge",
+                    "amount": 186.8,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "GST",
+                    "amount": 25.11,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "Fuel",
+                    "amount": 22.42,
+                    "currency": "CAD"
+                  }
+                ],
+                "test_mode": true,
+                "meta": {
+                  "service_name": "PUROLATOR EXPRESS 10 30 AM",
+                  "rate_provider": "purolator",
+                  "carrier_connection_id": "car_cb16c5bb6b02490988e80c911a614d96"
+                }
+              },
+              {
+                "id": "rat_e932dc4c845f4bdebc9c5425729731ed",
+                "carrier_name": "purolator",
+                "carrier_id": "purolator-account",
+                "currency": "CAD",
+                "service": "purolator_express_12_pm",
+                "transit_days": 1,
+                "total_charge": 241.79,
+                "extra_charges": [
+                  {
+                    "name": "Base charge",
+                    "amount": 192.75,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "GST",
+                    "amount": 25.91,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "Fuel",
+                    "amount": 23.13,
+                    "currency": "CAD"
+                  }
+                ],
+                "test_mode": true,
+                "meta": {
+                  "service_name": "PUROLATOR EXPRESS 12 PM",
+                  "rate_provider": "purolator",
+                  "carrier_connection_id": "car_cb16c5bb6b02490988e80c911a614d96"
+                }
+              },
+              {
+                "id": "rat_f95ff6fb9a0949379432dc9e61585cae",
+                "carrier_name": "purolator",
+                "carrier_id": "purolator-account",
+                "currency": "CAD",
+                "service": "purolator_express_evening",
+                "transit_days": 1,
+                "total_charge": 253.2,
+                "extra_charges": [
+                  {
+                    "name": "Base charge",
+                    "amount": 201.85,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "GST",
+                    "amount": 27.13,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "Fuel",
+                    "amount": 24.22,
+                    "currency": "CAD"
+                  }
+                ],
+                "test_mode": true,
+                "meta": {
+                  "service_name": "PUROLATOR EXPRESS EVENING",
+                  "rate_provider": "purolator",
+                  "carrier_connection_id": "car_cb16c5bb6b02490988e80c911a614d96"
+                }
+              },
+              {
+                "id": "rat_c99c0b3e8f724d4389957c36cdc2884f",
+                "carrier_name": "purolator",
+                "carrier_id": "purolator-account",
+                "currency": "CAD",
+                "service": "purolator_express_9_am",
+                "transit_days": 1,
+                "total_charge": 275.27,
+                "extra_charges": [
+                  {
+                    "name": "Base charge",
+                    "amount": 219.45,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "GST",
+                    "amount": 29.49,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "Fuel",
+                    "amount": 26.33,
+                    "currency": "CAD"
+                  }
+                ],
+                "test_mode": true,
+                "meta": {
+                  "service_name": "PUROLATOR EXPRESS 9 AM",
+                  "rate_provider": "purolator",
+                  "carrier_connection_id": "car_cb16c5bb6b02490988e80c911a614d96"
+                }
+              }
+            ],
+            "options": {
+              "shipment_date": "2022-12-24"
+            },
+            "metadata": {},
+            "meta": {
+              "ext": "purolator",
+              "carrier": "purolator",
+              "service_name": "PUROLATOR GROUND",
+              "rate_provider": "purolator"
+            },
+            "messages": [],
+            "selected_rate_carrier": {
+              "carrier_id": "purolator-account",
+              "carrier_name": "purolator",
+              "config": null
+            }
+          }
+        },
+        {
+          "node": {
+            "id": "shp_af90d2c0c20540c5b339cb1dc9e490d2",
+            "carrier_id": "easypost",
+            "carrier_name": "easypost",
+            "created_at": "2022-12-24T21:32:34.815000+00:00",
+            "updated_at": "2022-12-24T21:32:34.816000+00:00",
+            "created_by": {
+              "email": "admin@example.com",
+              "full_name": "Dan"
+            },
+            "status": "purchased",
+            "recipient": {
+              "id": "adr_0cfb7a513dd2487d954b9735ce8a9e7c",
+              "postal_code": "32827-4392",
+              "city": "Orlando",
+              "person_name": "Martin",
+              "company_name": null,
+              "country_code": "US",
+              "email": null,
+              "phone_number": null,
+              "state_code": "FL",
+              "suburb": null,
+              "residential": false,
+              "street_number": null,
+              "address_line1": "Jeff Fuqua Blvd 1",
+              "address_line2": null,
+              "federal_tax_id": null,
+              "state_tax_id": null,
+              "validate_location": null
+            },
+            "shipper": {
+              "id": "adr_7d6dd66abcf84fbbae55104219967555",
+              "postal_code": "89109",
+              "city": "Las Vegas",
+              "person_name": "Convention center",
+              "company_name": "Contention Center",
+              "country_code": "US",
+              "email": null,
+              "phone_number": null,
+              "state_code": "NV",
+              "suburb": null,
+              "residential": false,
+              "street_number": null,
+              "address_line1": "Paradise Rd 3150",
+              "address_line2": null,
+              "federal_tax_id": null,
+              "state_tax_id": null,
+              "validate_location": null
+            },
+            "billing_address": null,
+            "parcels": [
+              {
+                "id": "pcl_f7dbcbc778d4406eb6a31f7ed94fac48",
+                "width": 46,
+                "height": 38,
+                "length": 32,
+                "is_document": false,
+                "dimension_unit": "CM",
+                "weight": 1,
+                "weight_unit": "KG",
+                "packaging_type": null,
+                "package_preset": "canadapost_corrugated_medium_box",
+                "freight_class": null,
+                "reference_number": "9405500106068165174778",
+                "items": []
+              }
+            ],
+            "label_type": "PDF",
+            "tracking_number": "9405500106068165174778",
+            "shipment_identifier": "shp_99bd255d0d914b87a292612570a004b8",
+            "label_url": "/v1/shipments/shp_af90d2c0c20540c5b339cb1dc9e490d2/label.pdf",
+            "invoice_url": null,
+            "tracking_url": "/v1/trackers/usps/9405500106068165174778",
+            "tracker_id": "trk_0ca8813419fd489d9d9ed9498b708bb4",
+            "test_mode": true,
+            "service": "easypost_canadapost_priority",
+            "reference": null,
+            "customs": null,
+            "payment": {
+              "paid_by": "sender",
+              "currency": null,
+              "account_number": null
+            },
+            "selected_rate_id": "rat_a164d4f9a9f340f4a8862c2ce0373d96",
+            "selected_rate": {
+              "id": "rat_a164d4f9a9f340f4a8862c2ce0373d96",
+              "carrier_name": "easypost",
+              "carrier_id": "easypost",
+              "currency": "USD",
+              "service": "easypost_canadapost_priority",
+              "transit_days": 2,
+              "total_charge": 65.01,
+              "extra_charges": [],
+              "test_mode": true,
+              "meta": {
+                "service_name": "CANADAPOST PRIORITY",
+                "rate_provider": "usps",
+                "carrier_connection_id": "car_474c3b80810749f8a7d7634ded74f05f"
+              }
+            },
+            "carrier_ids": [
+              "easypost"
+            ],
+            "rates": [
+              {
+                "id": "rat_5dbfd058a7c7439e81b1103c0d434461",
+                "carrier_name": "easypost",
+                "carrier_id": "easypost",
+                "currency": "USD",
+                "service": "easypost_newgistics_parcel_select",
+                "transit_days": 7,
+                "total_charge": 42.04,
+                "extra_charges": [],
+                "test_mode": true,
+                "meta": {
+                  "service_name": "NEWGISTICS PARCEL SELECT",
+                  "rate_provider": "usps",
+                  "carrier_connection_id": "car_474c3b80810749f8a7d7634ded74f05f"
+                }
+              },
+              {
+                "id": "rat_a164d4f9a9f340f4a8862c2ce0373d96",
+                "carrier_name": "easypost",
+                "carrier_id": "easypost",
+                "currency": "USD",
+                "service": "easypost_canadapost_priority",
+                "transit_days": 2,
+                "total_charge": 65.01,
+                "extra_charges": [],
+                "test_mode": true,
+                "meta": {
+                  "service_name": "CANADAPOST PRIORITY",
+                  "rate_provider": "usps",
+                  "carrier_connection_id": "car_474c3b80810749f8a7d7634ded74f05f"
+                }
+              },
+              {
+                "id": "rat_aefea227e6734921b8b662b1db99c04a",
+                "carrier_name": "easypost",
+                "carrier_id": "easypost",
+                "currency": "USD",
+                "service": "easypost_newgistics_express",
+                "transit_days": null,
+                "total_charge": 159.25,
+                "extra_charges": [],
+                "test_mode": true,
+                "meta": {
+                  "service_name": "NEWGISTICS EXPRESS",
+                  "rate_provider": "usps",
+                  "carrier_connection_id": "car_474c3b80810749f8a7d7634ded74f05f"
+                }
+              }
+            ],
+            "options": {
+              "shipment_date": "2022-12-24"
+            },
+            "metadata": {},
+            "meta": {
+              "ext": "easypost",
+              "carrier": "usps",
+              "label_url": "https://easypost-files.s3.us-west-2.amazonaws.com/files/postage_label/20221224/fd78ed40a01f4eea81294a20f217437c.pdf",
+              "service_name": "PRIORITY",
+              "rate_provider": "usps"
+            },
+            "messages": [],
+            "selected_rate_carrier": {
+              "carrier_id": "easypost",
+              "carrier_name": "easypost",
+              "config": null
+            }
+          }
+        },
+        {
+          "node": {
+            "id": "shp_4569e08ed91a40b68d2c227d53cb6a39",
+            "carrier_id": "fedex-test-account",
+            "carrier_name": "fedex",
+            "created_at": "2022-07-12T09:01:35.050000+00:00",
+            "updated_at": "2022-07-12T09:01:35.050000+00:00",
+            "created_by": {
+              "email": "admin@example.com",
+              "full_name": "Dan"
+            },
+            "status": "purchased",
+            "recipient": {
+              "id": "adr_1af1873a391b4c4091ead6a0eb5b769b",
+              "postal_code": "V6M2V9",
+              "city": "Vancouver",
+              "person_name": "Jane Doe",
+              "company_name": "B corp.",
+              "country_code": "CA",
+              "email": "test@test.com",
+              "phone_number": null,
+              "state_code": "BC",
+              "suburb": null,
+              "residential": true,
+              "street_number": null,
+              "address_line1": "5840 Oak St",
+              "address_line2": null,
+              "federal_tax_id": null,
+              "state_tax_id": null,
+              "validate_location": null
+            },
+            "shipper": {
+              "id": "adr_cdce7b1287b94e55962eb4a3e0a942cf",
+              "postal_code": "E1C4Z8",
+              "city": "Moncton",
+              "person_name": "John Doe",
+              "company_name": "A corp.",
+              "country_code": "CA",
+              "email": null,
+              "phone_number": null,
+              "state_code": "NB",
+              "suburb": null,
+              "residential": false,
+              "street_number": null,
+              "address_line1": "125 Church St",
+              "address_line2": null,
+              "federal_tax_id": null,
+              "state_tax_id": null,
+              "validate_location": null
+            },
+            "billing_address": null,
+            "parcels": [
+              {
+                "id": "pcl_0401ec04d7754fc7a12742a1176685e7",
+                "width": 46,
+                "height": 38,
+                "length": 32,
+                "is_document": false,
+                "dimension_unit": "CM",
+                "weight": 1,
+                "weight_unit": "KG",
+                "packaging_type": null,
+                "package_preset": "canadapost_corrugated_medium_box",
+                "freight_class": null,
+                "reference_number": "794649872078",
+                "items": []
+              }
+            ],
+            "label_type": "PDF",
+            "tracking_number": "794649872078",
+            "shipment_identifier": "794649872078",
+            "label_url": "/v1/shipments/shp_4569e08ed91a40b68d2c227d53cb6a39/label.pdf",
+            "invoice_url": "/v1/shipments/shp_4569e08ed91a40b68d2c227d53cb6a39/invoice.pdf",
+            "tracking_url": "/v1/trackers/fedex/794649872078",
+            "tracker_id": "trk_23f293b3786d47fb95dafa0c3962baf2",
+            "test_mode": true,
+            "service": "fedex_ground",
+            "reference": null,
+            "customs": null,
+            "payment": {
+              "paid_by": "sender",
+              "currency": null,
+              "account_number": null
+            },
+            "selected_rate_id": "rat_b3b9a4c4715340c29a6280b33f669c16",
+            "selected_rate": {
+              "id": "rat_b3b9a4c4715340c29a6280b33f669c16",
+              "carrier_name": "fedex",
+              "carrier_id": "fedex-test-account",
+              "currency": "CAD",
+              "service": "fedex_ground",
+              "transit_days": 8,
+              "total_charge": 73.95,
+              "extra_charges": [
+                {
+                  "name": "Base charge",
+                  "amount": 54.2,
+                  "currency": "CAD"
+                },
+                {
+                  "name": "Residential delivery",
+                  "amount": 4.25,
+                  "currency": "CAD"
+                },
+                {
+                  "name": "FedEx Ground Fuel",
+                  "amount": 11.98,
+                  "currency": "CAD"
+                },
+                {
+                  "name": "Canada goods and services",
+                  "amount": 3.52,
+                  "currency": "CAD"
+                }
+              ],
+              "test_mode": true,
+              "meta": {
+                "service_name": "FEDEX GROUND",
+                "rate_provider": "fedex",
+                "carrier_connection_id": "car_416ec30cca6b4a2a8c387324f161b632"
+              }
+            },
+            "carrier_ids": [
+              "fedex-test-account"
+            ],
+            "rates": [
+              {
+                "id": "rat_b3b9a4c4715340c29a6280b33f669c16",
+                "carrier_name": "fedex",
+                "carrier_id": "fedex-test-account",
+                "currency": "CAD",
+                "service": "fedex_ground",
+                "transit_days": 8,
+                "total_charge": 73.95,
+                "extra_charges": [
+                  {
+                    "name": "Base charge",
+                    "amount": 54.2,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "Residential delivery",
+                    "amount": 4.25,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "FedEx Ground Fuel",
+                    "amount": 11.98,
+                    "currency": "CAD"
+                  },
+                  {
+                    "name": "Canada goods and services",
+                    "amount": 3.52,
+                    "currency": "CAD"
+                  }
+                ],
+                "test_mode": true,
+                "meta": {
+                  "service_name": "FEDEX GROUND",
+                  "rate_provider": "fedex",
+                  "carrier_connection_id": "car_416ec30cca6b4a2a8c387324f161b632"
+                }
+              }
+            ],
+            "options": {
+              "shipment_date": "2022-07-12"
+            },
+            "metadata": {},
+            "meta": {
+              "ext": "fedex",
+              "carrier": "fedex",
+              "service_name": "FEDEX GROUND",
+              "rate_provider": "fedex",
+              "tracking_numbers": [
+                "794649872078"
+              ]
+            },
+            "messages": [],
+            "selected_rate_carrier": {
+              "carrier_id": "fedex-test-account",
+              "carrier_name": "fedex",
+              "config": null
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+</TabItem>  
+</Tabs>
+</div>
+
+### Shipment partial update
+
+<div id="tabs">
+<Tabs>
+<TabItem value="mutation" label="Mutation">
+
+```graphql
+mutation updateShipment($data: PartialShipmentMutationInput!) {
+  partial_shipment_update(input: $data) {
+    shipment {
+      id
+      status
+      recipient {
+        id
+        postal_code
+        city
+        person_name
+        company_name
+        country_code
+        email
+        phone_number
+        state_code
+        suburb
+        residential
+        street_number
+        address_line1
+        address_line2
+        federal_tax_id
+        state_tax_id
+        validate_location
+      }
+      shipper {
+        id
+        postal_code
+        city
+        person_name
+        company_name
+        country_code
+        email
+        phone_number
+        state_code
+        suburb
+        residential
+        street_number
+        address_line1
+        address_line2
+        federal_tax_id
+        state_tax_id
+        validate_location
+      }
+      billing_address {
+        id
+        postal_code
+        city
+        person_name
+        company_name
+        country_code
+        email
+        phone_number
+        state_code
+        suburb
+        residential
+        street_number
+        address_line1
+        address_line2
+        federal_tax_id
+        state_tax_id
+        validate_location
+      }
+      parcels {
+        id
+        width
+        height
+        length
+        is_document
+        dimension_unit
+        weight
+        weight_unit
+        packaging_type
+        package_preset
+        freight_class
+        reference_number
+        items {
+          id
+          weight
+          title
+          description
+          quantity
+          sku
+          hs_code
+          value_amount
+          weight_unit
+          value_currency
+          origin_country
+          metadata
+          parent_id
+        }
+      }
+      label_type
+      service
+      reference
+      customs {
+        id
+        certify
+        commercial_invoice
+        content_type
+        content_description
+        incoterm
+        invoice
+        invoice_date
+        signer
+        duty {
+          paid_by
+          currency
+          account_number
+          declared_value
+        }
+        options
+        commodities {
+          id
+          weight
+          weight_unit
+          title
+          description
+          quantity
+          sku
+          hs_code
+          value_amount
+          value_currency
+          origin_country
+          metadata
+          parent_id
+        }
+        duty_billing_address {
+          id
+          postal_code
+          city
+          person_name
+          company_name
+          country_code
+          email
+          phone_number
+          state_code
+          suburb
+          residential
+          street_number
+          address_line1
+          address_line2
+          federal_tax_id
+          state_tax_id
+          validate_location
+        }
+      }
+      payment {
+        paid_by
+        currency
+        account_number
+      }
+      carrier_ids
+      options
+      metadata
+      rates {
+        id
+        carrier_name
+        carrier_id
+        currency
+        service
+        transit_days
+        total_charge
+        extra_charges {
+          name
+          amount
+          currency
+        }
+        test_mode
+        meta
+      }
+      messages {
+        carrier_name
+        carrier_id
+        message
+        code
+        details
+      }
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+```
+
+</TabItem>
+<TabItem value="variables" label="Variables">
+
+```json
+{
+  "data": {
+    "id": "shp_9af26928437a41c685cac6a769d60b23",
+    "options": {
+      "currency": "USD",
+      "shipment_date": "2024-01-23",
+      "declared_value": 99.99,
+      "preferred_service": "premium"
+    }
+  }
+}
+```
+
+</TabItem>
+<TabItem value="response" label="Response">
+
+```json
+{
+  "data": {
+    "partial_shipment_update": {
+      "shipment": {
+        "id": "shp_9af26928437a41c685cac6a769d60b23",
+        "status": "draft",
+        "recipient": {
+          "id": "adr_923aadcc49214335989d91c49e4a8253",
+          "postal_code": "E1C4Z8",
+          "city": "Moncton",
+          "person_name": "John Doe",
+          "company_name": "A corp.",
+          "country_code": "CA",
+          "email": null,
+          "phone_number": null,
+          "state_code": "NB",
+          "suburb": null,
+          "residential": false,
+          "street_number": null,
+          "address_line1": "125 Church St",
+          "address_line2": null,
+          "federal_tax_id": null,
+          "state_tax_id": null,
+          "validate_location": false
+        },
+        "shipper": {
+          "id": "adr_23ced0d03a4d42fabfdfa8a0bcd1026e",
+          "postal_code": "E1C4Z8",
+          "city": "Moncton",
+          "person_name": "John Doe",
+          "company_name": "A corp.",
+          "country_code": "CA",
+          "email": null,
+          "phone_number": null,
+          "state_code": "NB",
+          "suburb": null,
+          "residential": false,
+          "street_number": null,
+          "address_line1": "125 Church St",
+          "address_line2": null,
+          "federal_tax_id": null,
+          "state_tax_id": null,
+          "validate_location": false
+        },
+        "billing_address": null,
+        "parcels": [
+          {
+            "id": "pcl_f348b0eea22c44cba5651133e781eba2",
+            "width": 46,
+            "height": 38,
+            "length": 32,
+            "is_document": false,
+            "dimension_unit": "CM",
+            "weight": 1.7,
+            "weight_unit": "KG",
+            "packaging_type": null,
+            "package_preset": "canadapost_corrugated_medium_box",
+            "freight_class": null,
+            "reference_number": "0000000194",
+            "items": [
+              {
+                "id": "cdt_04f89e478bfe4373a70007200df6ae5d",
+                "weight": 1.7,
+                "title": null,
+                "description": "Blue Jean Coat",
+                "quantity": 1,
+                "sku": null,
+                "hs_code": null,
+                "value_amount": 99.99,
+                "weight_unit": "KG",
+                "value_currency": "USD",
+                "origin_country": null,
+                "metadata": {
+                  "BGM": "040000000000016256",
+                  "CTL": "11253678",
+                  "DEPT": "DBR128",
+                  "XXNC": "138039C01",
+                  "NAD_UD": "570162",
+                  "RFF_CN": "037-2332855",
+                  "RFF_ON": "5424560",
+                  "RFF_AEM": "3901L",
+                  "RFF_AJY": "907"
+                },
+                "parent_id": "cdt_67ec4527dd0f4f31a30fb7adc4eb3bf7"
+              }
+            ]
+          }
+        ],
+        "label_type": "PDF",
+        "service": null,
+        "reference": null,
+        "customs": null,
+        "payment": {
+          "paid_by": "sender",
+          "currency": null,
+          "account_number": null
+        },
+        "carrier_ids": [
+          "express-freight",
+          "tst-overland",
+          "canadapost"
+        ],
+        "options": {
+          "currency": "USD",
+          "declared_value": 99.99,
+          "preferred_service": "premium",
+          "shipment_date": "2024-02-10"
+        },
+        "metadata": {
+          "order_ids": "100001"
+        },
+        "rates": [
+          {
+            "id": "rat_43cf026d31aa4e25a3893d9f6dc77c20",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
+            "currency": "CAD",
+            "service": "canadapost_library_books",
+            "transit_days": 2,
+            "total_charge": 2.02,
+            "extra_charges": [
+              {
+                "name": "Base charge",
+                "amount": 1.76,
+                "currency": "CAD"
+              },
+              {
+                "name": "GST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "PST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "HST",
+                "amount": 0.26,
+                "currency": "CAD"
+              }
+            ],
+            "test_mode": true,
+            "meta": {
+              "ext": "canadapost",
+              "carrier": "canadapost",
+              "service_name": "CANADAPOST LIBRARY BOOKS",
+              "rate_provider": "canadapost",
+              "carrier_connection_id": "car_773f4a5577e4471e8918a9a1d47b208b"
+            }
+          },
+          {
+            "id": "rat_b3ac6f160f31428cafdbf17d0f8e374e",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
+            "currency": "CAD",
+            "service": "canadapost_library_books",
+            "transit_days": 2,
+            "total_charge": 2.02,
+            "extra_charges": [
+              {
+                "name": "Base charge",
+                "amount": 1.76,
+                "currency": "CAD"
+              },
+              {
+                "name": "GST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "PST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "HST",
+                "amount": 0.26,
+                "currency": "CAD"
+              }
+            ],
+            "test_mode": true,
+            "meta": {
+              "ext": "canadapost",
+              "carrier": "canadapost",
+              "service_name": "CANADAPOST LIBRARY BOOKS",
+              "rate_provider": "canadapost",
+              "carrier_connection_id": "car_773f4a5577e4471e8918a9a1d47b208b"
+            }
+          },
+          {
+            "id": "rat_e6c56304d2fa47bd967ef36eada0abc2",
+            "carrier_name": "express_freight",
+            "carrier_id": "express-freight",
+            "currency": "CAD",
+            "service": "premium",
+            "transit_days": 3,
+            "total_charge": 6,
+            "extra_charges": [],
+            "test_mode": true,
+            "meta": {
+              "ext": "generic",
+              "carrier": "express_freight",
+              "service_name": "PREMIUM",
+              "rate_provider": "express_freight",
+              "carrier_connection_id": "car_4f62ec17088a45ad9d0ac8c3956959dc"
+            }
+          },
+          {
+            "id": "rat_aa63deb63c764bc08ecca92f1dd90d6d",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
+            "currency": "CAD",
+            "service": "DOM.EP.EPLUS",
+            "transit_days": 1,
+            "total_charge": 20.72,
+            "extra_charges": [
+              {
+                "name": "Base charge",
+                "amount": 14.53,
+                "currency": "CAD"
+              },
+              {
+                "name": "GST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "PST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "HST",
+                "amount": 2.7,
+                "currency": "CAD"
+              },
+              {
+                "name": "Fuel surcharge",
+                "amount": 3.49,
+                "currency": "CAD"
+              }
+            ],
+            "test_mode": true,
+            "meta": {
+              "ext": "canadapost",
+              "carrier": "canadapost",
+              "service_name": "EXPEDITED PARCEL PLUS",
+              "rate_provider": "canadapost",
+              "carrier_connection_id": "car_773f4a5577e4471e8918a9a1d47b208b"
+            }
+          },
+          {
+            "id": "rat_a83e7d98bac6462ead6b40002696b675",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
+            "currency": "CAD",
+            "service": "DOM.EP.EPLUS",
+            "transit_days": 1,
+            "total_charge": 20.72,
+            "extra_charges": [
+              {
+                "name": "Base charge",
+                "amount": 14.53,
+                "currency": "CAD"
+              },
+              {
+                "name": "GST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "PST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "HST",
+                "amount": 2.7,
+                "currency": "CAD"
+              },
+              {
+                "name": "Fuel surcharge",
+                "amount": 3.49,
+                "currency": "CAD"
+              }
+            ],
+            "test_mode": true,
+            "meta": {
+              "ext": "canadapost",
+              "carrier": "canadapost",
+              "service_name": "EXPEDITED PARCEL PLUS",
+              "rate_provider": "canadapost",
+              "carrier_connection_id": "car_773f4a5577e4471e8918a9a1d47b208b"
+            }
+          },
+          {
+            "id": "rat_a56d7ec13e344a54bf64be298e406cda",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
+            "currency": "CAD",
+            "service": "canadapost_regular_parcel",
+            "transit_days": 2,
+            "total_charge": 32.25,
+            "extra_charges": [
+              {
+                "name": "Base charge",
+                "amount": 22.61,
+                "currency": "CAD"
+              },
+              {
+                "name": "GST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "PST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "HST",
+                "amount": 4.21,
+                "currency": "CAD"
+              },
+              {
+                "name": "Fuel surcharge",
+                "amount": 5.43,
+                "currency": "CAD"
+              }
+            ],
+            "test_mode": true,
+            "meta": {
+              "ext": "canadapost",
+              "carrier": "canadapost",
+              "service_name": "CANADAPOST REGULAR PARCEL",
+              "rate_provider": "canadapost",
+              "carrier_connection_id": "car_773f4a5577e4471e8918a9a1d47b208b"
+            }
+          },
+          {
+            "id": "rat_01a1d2a7eb9242159372bc53a92dbf71",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
+            "currency": "CAD",
+            "service": "canadapost_regular_parcel",
+            "transit_days": 2,
+            "total_charge": 32.25,
+            "extra_charges": [
+              {
+                "name": "Base charge",
+                "amount": 22.61,
+                "currency": "CAD"
+              },
+              {
+                "name": "GST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "PST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "HST",
+                "amount": 4.21,
+                "currency": "CAD"
+              },
+              {
+                "name": "Fuel surcharge",
+                "amount": 5.43,
+                "currency": "CAD"
+              }
+            ],
+            "test_mode": true,
+            "meta": {
+              "ext": "canadapost",
+              "carrier": "canadapost",
+              "service_name": "CANADAPOST REGULAR PARCEL",
+              "rate_provider": "canadapost",
+              "carrier_connection_id": "car_773f4a5577e4471e8918a9a1d47b208b"
+            }
+          },
+          {
+            "id": "rat_89697c9f6e794d8b897a460ee2f91bbc",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
+            "currency": "CAD",
+            "service": "canadapost_expedited_parcel",
+            "transit_days": 1,
+            "total_charge": 35.02,
+            "extra_charges": [
+              {
+                "name": "Base charge",
+                "amount": 24.56,
+                "currency": "CAD"
+              },
+              {
+                "name": "GST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "PST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "HST",
+                "amount": 4.57,
+                "currency": "CAD"
+              },
+              {
+                "name": "Fuel surcharge",
+                "amount": 5.89,
+                "currency": "CAD"
+              }
+            ],
+            "test_mode": true,
+            "meta": {
+              "ext": "canadapost",
+              "carrier": "canadapost",
+              "service_name": "CANADAPOST EXPEDITED PARCEL",
+              "rate_provider": "canadapost",
+              "carrier_connection_id": "car_773f4a5577e4471e8918a9a1d47b208b"
+            }
+          },
+          {
+            "id": "rat_9b5395377560496991afc63657861e93",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
+            "currency": "CAD",
+            "service": "canadapost_expedited_parcel",
+            "transit_days": 1,
+            "total_charge": 35.02,
+            "extra_charges": [
+              {
+                "name": "Base charge",
+                "amount": 24.56,
+                "currency": "CAD"
+              },
+              {
+                "name": "GST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "PST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "HST",
+                "amount": 4.57,
+                "currency": "CAD"
+              },
+              {
+                "name": "Fuel surcharge",
+                "amount": 5.89,
+                "currency": "CAD"
+              }
+            ],
+            "test_mode": true,
+            "meta": {
+              "ext": "canadapost",
+              "carrier": "canadapost",
+              "service_name": "CANADAPOST EXPEDITED PARCEL",
+              "rate_provider": "canadapost",
+              "carrier_connection_id": "car_773f4a5577e4471e8918a9a1d47b208b"
+            }
+          },
+          {
+            "id": "rat_7962eb66df8b4bd695c4ae375682d5d2",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
+            "currency": "CAD",
+            "service": "canadapost_xpresspost",
+            "transit_days": 1,
+            "total_charge": 40.47,
+            "extra_charges": [
+              {
+                "name": "Base charge",
+                "amount": 28.38,
+                "currency": "CAD"
+              },
+              {
+                "name": "GST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "PST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "HST",
+                "amount": 5.28,
+                "currency": "CAD"
+              },
+              {
+                "name": "Fuel surcharge",
+                "amount": 6.81,
+                "currency": "CAD"
+              }
+            ],
+            "test_mode": true,
+            "meta": {
+              "ext": "canadapost",
+              "carrier": "canadapost",
+              "service_name": "CANADAPOST XPRESSPOST",
+              "rate_provider": "canadapost",
+              "carrier_connection_id": "car_773f4a5577e4471e8918a9a1d47b208b"
+            }
+          },
+          {
+            "id": "rat_3c59ae165efa403ca14af4d0401b0d5c",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
+            "currency": "CAD",
+            "service": "canadapost_xpresspost",
+            "transit_days": 1,
+            "total_charge": 40.47,
+            "extra_charges": [
+              {
+                "name": "Base charge",
+                "amount": 28.38,
+                "currency": "CAD"
+              },
+              {
+                "name": "GST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "PST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "HST",
+                "amount": 5.28,
+                "currency": "CAD"
+              },
+              {
+                "name": "Fuel surcharge",
+                "amount": 6.81,
+                "currency": "CAD"
+              }
+            ],
+            "test_mode": true,
+            "meta": {
+              "ext": "canadapost",
+              "carrier": "canadapost",
+              "service_name": "CANADAPOST XPRESSPOST",
+              "rate_provider": "canadapost",
+              "carrier_connection_id": "car_773f4a5577e4471e8918a9a1d47b208b"
+            }
+          },
+          {
+            "id": "rat_6deb29bad35844389309d58adf0408d4",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
+            "currency": "CAD",
+            "service": "canadapost_priority",
+            "transit_days": 1,
+            "total_charge": 63.15,
+            "extra_charges": [
+              {
+                "name": "Base charge",
+                "amount": 44.28,
+                "currency": "CAD"
+              },
+              {
+                "name": "GST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "PST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "HST",
+                "amount": 8.24,
+                "currency": "CAD"
+              },
+              {
+                "name": "Fuel surcharge",
+                "amount": 10.63,
+                "currency": "CAD"
+              }
+            ],
+            "test_mode": true,
+            "meta": {
+              "ext": "canadapost",
+              "carrier": "canadapost",
+              "service_name": "CANADAPOST PRIORITY",
+              "rate_provider": "canadapost",
+              "carrier_connection_id": "car_773f4a5577e4471e8918a9a1d47b208b"
+            }
+          },
+          {
+            "id": "rat_dad64ab6c6384cd080a5bdebbcd60539",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
+            "currency": "CAD",
+            "service": "canadapost_priority",
+            "transit_days": 1,
+            "total_charge": 63.15,
+            "extra_charges": [
+              {
+                "name": "Base charge",
+                "amount": 44.28,
+                "currency": "CAD"
+              },
+              {
+                "name": "GST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "PST",
+                "amount": 0,
+                "currency": "CAD"
+              },
+              {
+                "name": "HST",
+                "amount": 8.24,
+                "currency": "CAD"
+              },
+              {
+                "name": "Fuel surcharge",
+                "amount": 10.63,
+                "currency": "CAD"
+              }
+            ],
+            "test_mode": true,
+            "meta": {
+              "ext": "canadapost",
+              "carrier": "canadapost",
+              "service_name": "CANADAPOST PRIORITY",
+              "rate_provider": "canadapost",
+              "carrier_connection_id": "car_773f4a5577e4471e8918a9a1d47b208b"
+            }
+          }
+        ],
+        "messages": []
+      },
+      "errors": null
+    }
+  }
+}
+```
+
+</TabItem>  
+</Tabs>
+</div>
+

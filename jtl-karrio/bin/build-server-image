@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# Source environment variables
+source "bin/_env"
+
+echo 'building server image...'
+docker build -f "${ROOT}/docker/api/Dockerfile" -t karrio/server:$1 "${ROOT}" "${@:2}"
