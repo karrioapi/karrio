@@ -3,8 +3,6 @@ import typing
 import datetime
 import strawberry
 
-import karrio.server.providers.models as providers
-import karrio.server.serializers as serializers
 import karrio.server.graph.utils as utils
 
 

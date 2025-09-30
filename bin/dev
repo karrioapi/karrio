@@ -1,0 +1,277 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Global PIDs
+MAILDEV_PID=""
+SERVER_PID=""
+FOUNDATION_PID=""
+
+# Resolve directories
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ROOT_DIR="$( cd "$SCRIPT_DIR/.." && pwd )"
+cd "$ROOT_DIR"
+
+# Color codes for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+print_step() { echo -e "${CYAN}→ $1${NC}"; }
+print_success() { echo -e "${GREEN}✓ $1${NC}"; }
+print_warning() { echo -e "${YELLOW}⚠ $1${NC}"; }
+print_error() { echo -e "${RED}✗ $1${NC}"; }
+command_exists() { command -v "$1" >/dev/null 2>&1; }
+
+# Service detection helpers
+is_maildev_running() { lsof -ti:1080 >/dev/null 2>&1; }
+
+# ===================== DOWN (stop) =====================
+run_down() {
+  echo
+  echo "██╗  ██╗ █████╗ ██████╗ ██████╗ ██╗ ██████╗ "
+  echo "██║ ██╔╝██╔══██╗██╔══██╗██╔══██╗██║██╔═══██╗"
+  echo "█████╔╝ ███████║██████╔╝██████╔╝██║██║   ██║"
+  echo "██╔═██╗ ██╔══██║██╔══██╗██╔══██╗██║██║   ██║"
+  echo "██║  ██╗██║  ██║██║  ██║██║  ██║██║╚██████╔╝"
+  echo "╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝ "
+  echo
+  echo "Stopping JTL Development Environment"
+  echo
+
+  # Stop Karrio API server
+  print_step "Stopping Karrio API server..."
+  pgrep -f "karrio.*runserver|python.*manage.py.*runserver" 2>/dev/null | xargs kill -TERM 2>/dev/null || true
+  sleep 2
+  for pid in $(pgrep -f "karrio.*runserver|python.*manage.py.*runserver" 2>/dev/null || true); do
+    kill -9 "$pid" 2>/dev/null || true
+  done
+  lsof -ti:5002 | xargs kill -9 2>/dev/null || true
+  print_success "API server stopped (if it was running)"
+
+  # Stop Foundation frontend
+  print_step "Stopping Foundation frontend..."
+  pgrep -f "npm.*run.*dev.*jtl-foundation|node.*next.*jtl-foundation" 2>/dev/null | xargs kill -TERM 2>/dev/null || true
+  sleep 2
+  for pid in $(pgrep -f "npm.*run.*dev.*jtl-foundation|node.*next.*jtl-foundation" 2>/dev/null || true); do
+    kill -9 "$pid" 2>/dev/null || true
+  done
+  lsof -ti:3000 | xargs kill -9 2>/dev/null || true
+  print_success "Foundation frontend stopped (if it was running)"
+
+  # Stop Maildev
+  if is_maildev_running; then
+    print_step "Stopping Maildev SMTP capture..."
+    lsof -ti:1080 | xargs kill -TERM 2>/dev/null || true
+    sleep 1
+    lsof -ti:1080 | xargs kill -9 2>/dev/null || true
+    print_success "Maildev stopped"
+  else
+    print_warning "Maildev not running"
+  fi
+
+  print_success "Development environment stopped"
+}
+
+# ===================== UP (start) =====================
+run_up() {
+  local SHOW_HELP=false
+  local START_API=true
+  local START_FOUNDATION=true
+  local START_MAILDEV=true
+  local WAIT_AT_END=true
+
+  # Parse args
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      --api-only)
+        START_API=true; START_FOUNDATION=false; START_MAILDEV=false; shift ;;
+      --frontend-only)
+        START_API=false; START_FOUNDATION=true; START_MAILDEV=false; shift ;;
+      --no-api)
+        START_API=false; shift ;;
+      --no-frontend)
+        START_FOUNDATION=false; shift ;;
+      --no-maildev)
+        START_MAILDEV=false; shift ;;
+      --no-wait|--detach)
+        WAIT_AT_END=false; shift ;;
+      -h|--help)
+        SHOW_HELP=true; shift ;;
+      *)
+        print_error "Unknown option: $1"; exit 1 ;;
+    esac
+  done
+
+  if [[ "$SHOW_HELP" == true ]]; then
+    echo "Usage: $0 up [OPTIONS]"
+    echo ""
+    echo "OPTIONS:"
+    echo "  --api-only           Start only the Karrio API server"
+    echo "  --frontend-only      Start only the Foundation frontend"
+    echo "  --no-api             Skip starting the API server"
+    echo "  --no-frontend        Skip starting the Foundation frontend"
+    echo "  --no-maildev         Skip starting Maildev"
+    echo "  --no-wait, --detach  Start services then exit (do not wait)"
+    echo "  -h, --help           Show this help message"
+    return 0
+  fi
+
+  if ! $START_API && ! $START_FOUNDATION; then
+    print_warning "No components selected. Starting all components."
+    START_API=true; START_FOUNDATION=true; START_MAILDEV=true
+  fi
+
+  # Header
+  echo -e "${BLUE}"
+  echo "██╗  ██╗ █████╗ ██████╗ ██████╗ ██╗ ██████╗ "
+  echo "██║ ██╔╝██╔══██╗██╔══██╗██╔══██╗██║██╔═══██╗"
+  echo "█████╔╝ ███████║██████╔╝██████╔╝██║██║   ██║"
+  echo "██╔═██╗ ██╔══██║██╔══██╗██╔══██╗██║██║   ██║"
+  echo "██║  ██╗██║  ██║██║  ██║██║  ██║██║╚██████╔╝"
+  echo "╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝ "
+  echo -e "${NC}"
+  printf "Starting JTL Development Environment\n\n"
+
+  SELECTED_LABELS=()
+  $START_API && SELECTED_LABELS+=("API")
+  $START_FOUNDATION && SELECTED_LABELS+=("Foundation")
+  $START_MAILDEV && SELECTED_LABELS+=("Maildev")
+  if [[ ${#SELECTED_LABELS[@]} -gt 0 ]]; then
+    echo "→ Selected components: ${SELECTED_LABELS[*]}"
+    echo ""
+  fi
+
+  if ! $START_API && $START_FOUNDATION; then
+    print_warning "API is not running. Foundation expects an API at http://localhost:5002."
+    echo ""
+  fi
+
+  print_step "Checking prerequisites..."
+  if [[ ! -d ".venv/karrio" ]]; then
+    print_error "Python virtual environment not found. Please run ./bin/install-dev first."
+    exit 1
+  fi
+  if [[ ! -d "node_modules" ]]; then
+    print_warning "Node.js dependencies not found. Running npm install..."
+    npm install
+  fi
+  if [[ ! -d "apps/jtl-foundation/node_modules" ]]; then
+    print_warning "Foundation dependencies not found. Running npm install..."
+    (cd apps/jtl-foundation && npm install)
+  fi
+  print_success "All prerequisites satisfied"
+
+  # Cleanup
+  print_step "Cleaning up existing services..."
+  pkill -f "karrio runserver" 2>/dev/null || true
+  lsof -ti:5002 | xargs kill -9 2>/dev/null || true
+  lsof -ti:3000 | xargs kill -9 2>/dev/null || true
+  sleep 1
+  print_success "Cleanup completed"
+
+  cleanup_trap() {
+    echo ""
+    echo "Shutting down development environment..."
+    for pid in "$SERVER_PID" "$FOUNDATION_PID" "$MAILDEV_PID"; do
+      if [[ -n "$pid" ]]; then
+        kill "$pid" 2>/dev/null || true
+        wait "$pid" 2>/dev/null || true
+      fi
+    done
+    echo "Development environment stopped"
+    exit 0
+  }
+  trap cleanup_trap SIGINT SIGTERM EXIT
+
+  if $START_MAILDEV; then
+    print_step "Starting Maildev (SMTP capture)..."
+    if is_maildev_running; then
+      print_success "Maildev is already running at http://localhost:1080"
+      MAILDEV_PID=$(lsof -ti:1080 2>/dev/null | head -1)
+    else
+      if command_exists npx; then
+        (npx maildev >/dev/null 2>&1 &)
+        MAILDEV_PID=$!
+        sleep 2
+        if ps -p "$MAILDEV_PID" >/dev/null 2>&1; then
+          print_success "Maildev running at http://localhost:1080"
+        else
+          print_warning "Maildev failed to start automatically. Run 'npx maildev' manually if needed."
+          MAILDEV_PID=""
+        fi
+      else
+        print_warning "npx not found. Install Node.js to run Maildev locally."
+      fi
+    fi
+  fi
+
+  if $START_API; then
+    print_step "Starting Karrio API server..."
+    (
+      cd "$ROOT_DIR/jtl-karrio"
+      source "$ROOT_DIR/.venv/karrio/bin/activate"
+      karrio runserver
+    ) &
+    SERVER_PID=$!
+    sleep 3
+    print_success "API server starting on http://localhost:5002"
+  fi
+
+  if $START_FOUNDATION; then
+    print_step "Starting Foundation frontend..."
+    (
+      cd "$ROOT_DIR/apps/jtl-foundation"
+      npm run dev
+    ) &
+    FOUNDATION_PID=$!
+    sleep 3
+    print_success "Foundation frontend starting on http://localhost:3000"
+  fi
+
+  echo ""
+  print_success "Development environment started! 🚀"
+  echo ""
+  enabled=()
+  $START_API && enabled+=("API")
+  $START_FOUNDATION && enabled+=("Foundation")
+  $START_MAILDEV && enabled+=("Maildev")
+  if [[ ${#enabled[@]} -gt 0 ]]; then
+    echo "Components: ${enabled[*]}"
+    echo ""
+  fi
+  echo -e "${GREEN}Access your application:${NC}"
+  if $START_API; then
+    echo "   → API: http://localhost:5002"
+    echo "   → Admin: http://localhost:5002/admin"
+  fi
+  if $START_FOUNDATION; then
+    echo "   → Foundation: http://localhost:3000"
+  fi
+  if $START_MAILDEV && [[ -n "$MAILDEV_PID" ]]; then
+    echo "   → Maildev: http://localhost:1080"
+  fi
+  echo ""
+  if $WAIT_AT_END; then
+    echo -e "${CYAN}Press Ctrl+C to stop services${NC}"
+    echo ""
+    wait
+  else
+    echo -e "${YELLOW}Detaching (no wait). Use './bin/dev down' to stop services.${NC}"
+  fi
+}
+
+# ===================== Dispatch =====================
+CMD="${1:-up}"
+if [[ "$CMD" == "up" ]]; then
+  shift
+  run_up "$@"
+elif [[ "$CMD" == "down" ]]; then
+  run_down
+else
+  echo "Usage: $0 {up|down} [options]"
+  exit 1
+fi

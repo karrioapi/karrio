@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "karrio_server_orgs"
+name = "karrio_server_shipping"
 version = "2025.5rc22"
-description = "Multi-carrier shipping API organization module"
+description = "Multi-carrier shipping API shipping module"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"
@@ -16,15 +16,10 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 dependencies = [
-    "django-extensions",
-    "django-organizations",
+    "karrio_server",
     "karrio_server_core",
     "karrio_server_graph",
-    "karrio_server_admin",
-    "karrio_server_orders",
-    "karrio_server_audit",
-    "karrio_server_documents",
-    "karrio_server_automation",
+    "karrio_server_orgs",
 ]
 
 [project.urls]
