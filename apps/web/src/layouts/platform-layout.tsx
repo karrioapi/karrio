@@ -9,6 +9,7 @@ import { PlatformSubnav } from "@/components/platform-subnav";
 import { NextPostHogProvider } from "@karrio/hooks/posthog";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { PublicEnvScript } from "next-runtime-env";
 import RootProvider from "@/hooks/root-provider";
 import { Metadata } from "next";
 
@@ -36,6 +37,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en"
       suppressHydrationWarning
       className={`${inter.variable} ${jetbrains.variable} ${noto.variable} ${ubuntu.variable} ${oxygen.variable}`}>
+      <head>
+        <PublicEnvScript />
+      </head>
       <body className="font-sans antialiased">
         <NextPostHogProvider>
           <RootProvider

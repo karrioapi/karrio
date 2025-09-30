@@ -7,6 +7,7 @@ import {
 } from "@karrio/ui/fonts/font";
 import { NextPostHogProvider } from "@karrio/hooks/posthog";
 import { ApiTheme } from '@/components/nextra/api-theme';
+import { PublicEnvScript } from "next-runtime-env";
 import { getPageMap } from 'nextra/page-map';
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
@@ -37,6 +38,7 @@ export default async function DocsLayout({ children }: { children: ReactNode }) 
     <html lang="en" suppressHydrationWarning
       className={`${inter.variable} ${jetbrains.variable} ${noto.variable} ${ubuntu.variable} ${oxygen.variable} h-full scroll-smooth`}>
       <head>
+        <PublicEnvScript />
         <script async src="https://unpkg.com/@stoplight/elements/web-components.min.js"></script>
         <link rel="stylesheet" href="https://unpkg.com/@stoplight/elements/styles.min.css" />
       </head>

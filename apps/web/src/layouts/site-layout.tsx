@@ -8,6 +8,7 @@ import {
 import { NextPostHogProvider } from "@karrio/hooks/posthog";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { PublicEnvScript } from "next-runtime-env";
 import RootProvider from "@/hooks/root-provider";
 import { Metadata } from "next";
 
@@ -40,6 +41,7 @@ export default function WebsiteLayout({
       suppressHydrationWarning
       className={`${inter.variable} ${jetbrains.variable} ${noto.variable} ${ubuntu.variable} ${oxygen.variable}`}>
       <head>
+        <PublicEnvScript />
         <link
           rel="preconnect"
           href={`https://${process.env.NEXT_PUBLIC_ALGOLIA_APP_ID || ''}-dsn.algolia.net`}

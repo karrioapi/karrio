@@ -9,8 +9,9 @@ import { NextPostHogProvider } from "@karrio/hooks/posthog";
 import { Toaster } from "@karrio/ui/components/ui/toaster";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { PublicEnvScript } from "next-runtime-env";
 import RootProvider from "@/hooks/root-provider";
-import type { Metadata } from 'next';
+import { Metadata } from "next";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
@@ -40,6 +41,9 @@ export default function BlogLayout({
   return (
     <html lang="en" suppressHydrationWarning
       className={`${inter.variable} ${jetbrains.variable} ${noto.variable} ${ubuntu.variable} ${oxygen.variable} h-full scroll-smooth`}>
+      <head>
+        <PublicEnvScript />
+      </head>
       <body className="blog-page" style={{ margin: 0 }}>
         <NextPostHogProvider>
           <RootProvider
