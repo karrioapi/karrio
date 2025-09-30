@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Run django huey worker...
+WORKER_IMMEDIATE_MODE=False karrio run_huey -w 2

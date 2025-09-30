@@ -1,0 +1,18 @@
+services:
+  karriodev:
+    build:
+      context: .
+      dockerfile: docker/dev.Dockerfile
+    container_name: karrio.dev
+    ports:
+      - 5002:5002
+    volumes:
+      - .:/karrio
+
+  maildev:
+    container_name: karrio.mail
+    image: maildev/maildev
+    restart: on-failure
+    ports:
+      - "1080:1080"
+      - "1025:1025"

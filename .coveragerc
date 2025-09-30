@@ -1,0 +1,11 @@
+# .coveragerc to control coverage.py
+[run]
+branch = True
+omit =
+    */sdk/extensions/dicom/*
+
+[report]
+include =
+    */sdk/core/*
+    */sdk/extensions/*
+    */sdk/vendors/*

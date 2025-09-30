@@ -1,0 +1,185 @@
+---
+sidebarTitle: Guides
+title: AWS
+description: Learn how to deploy Karrio on AWS
+tags: [self-hosting, aws]
+author: Karrio Team
+---
+
+# AWS Deployment
+
+Deploy Karrio on Amazon Web Services (AWS).
+
+## Prerequisites
+
+- Active AWS account
+- Basic knowledge of Docker and Docker Compose
+
+## Step 1: Create an EC2 Instance
+
+1. Log into AWS Management Console
+2. Navigate to EC2 service
+3. Click "Launch Instance"
+4. Choose AMI: **Amazon Linux 2023** or **Ubuntu 22.04 LTS**
+5. Select instance type:
+   - Production: **t3.medium** (2 vCPU, 4 GB RAM)
+   - Development: **t3.small** (2 vCPU, 2 GB RAM)
+6. Configure security group:
+   - Allow HTTP (port 80)
+   - Allow HTTPS (port 443)
+   - Allow SSH (port 22) from your IP
+7. Add storage: At least 20 GB EBS
+8. Launch instance and create/select key pair
+
+## Step 2: Connect to Your Instance
+
+**Amazon Linux:**
+
+```bash
+ssh -i /path/to/your-key.pem ec2-user@your-instance-public-ip
+```
+
+**Ubuntu:**
+
+```bash
+ssh -i /path/to/your-key.pem ubuntu@your-instance-public-ip
+```
+
+## Step 3: Install Docker and Docker Compose
+
+**Amazon Linux 2023:**
+
+```bash
+sudo yum update -y
+sudo yum install -y docker
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo usermod -aG docker $USER
+sudo curl -L "https://github.com/docker/compose/releases/download/v2.18.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+exit
+```
+
+**Ubuntu:**
+
+```bash
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt update
+sudo apt install -y docker-ce
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo usermod -aG docker $USER
+sudo curl -L "https://github.com/docker/compose/releases/download/v2.18.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+exit
+```
+
+## Step 4: Deploy Karrio
+
+Reconnect to your instance after logging out.
+
+### Option 1: One-Click Hobby Deployment
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/deploy-hobby)"
+```
+
+When prompted, enter your domain name.
+
+### Option 2: Manual Deployment
+
+```bash
+mkdir -p ~/karrio
+cd ~/karrio
+curl -O https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/docker-compose.yml
+curl -O https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/.env
+docker-compose up -d
+```
+
+Edit `.env` with your configuration. Set up your preferred webserver for HTTPS and domain routing.
+
+## Step 5: Configure DNS
+
+Add DNS records:
+- Type: `A`, Name: `api`, Value: Your EC2 instance's public IP
+- Type: `A`, Name: `app`, Value: Your EC2 instance's public IP
+
+## Step 6: Access Your Karrio Instance
+
+- Dashboard: `https://app.your-domain.com`
+- API: `https://api.your-domain.com`
+
+Default login: `admin@example.com` / `demo`
+
+## Setting Up an Elastic IP (Recommended)
+
+1. Navigate to EC2 > Elastic IPs
+2. Click "Allocate Elastic IP address"
+3. Select "Amazon's pool of IPv4 addresses"
+4. Click "Allocate"
+5. Select the Elastic IP, click "Actions" > "Associate Elastic IP address"
+6. Select your Karrio instance
+7. Click "Associate"
+
+Update DNS records to point to this Elastic IP.
+
+## Setting Up a Load Balancer (Optional)
+
+1. Create an Application Load Balancer
+2. Configure HTTPS listeners (port 443)
+3. Set up target groups pointing to your EC2 instance(s)
+4. Update DNS records to point to the load balancer's DNS name
+
+## Backup and Restore
+
+### AWS Backup
+
+1. Navigate to AWS Backup
+2. Create a backup plan
+3. Assign your EC2 instance and EBS volume
+
+### Manual Database Backup
+
+```bash
+cd ~/karrio
+docker-compose exec db pg_dump -U postgres -d db > karrio_backup_$(date +%Y%m%d).sql
+aws s3 cp karrio_backup_$(date +%Y%m%d).sql s3://your-backup-bucket/
+```
+
+## Monitoring
+
+- AWS CloudWatch for instance metrics
+- Container logs: `cd ~/karrio && docker-compose logs -f`
+
+## Updating
+
+```bash
+cd ~/karrio
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/upgrade-hobby)"
+```
+
+## Troubleshooting
+
+### SSL Certificate Issues
+
+```bash
+cd ~/karrio
+docker-compose logs caddy
+```
+
+Check: DNS records, ports 80/443 open in security group
+
+### Container Issues
+
+```bash
+cd ~/karrio
+docker-compose ps
+docker-compose logs <service_name>
+```
+
+### Instance Resources
+
+Check usage with `top` or `htop`. Upgrade instance type in AWS console if needed.

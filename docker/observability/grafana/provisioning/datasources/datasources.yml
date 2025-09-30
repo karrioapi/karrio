@@ -1,0 +1,43 @@
+# Grafana data sources for Karrio observability stack
+apiVersion: 1
+
+datasources:
+  # Prometheus for metrics
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true
+
+  # Tempo for distributed tracing
+  - name: Tempo
+    type: tempo
+    access: proxy
+    url: http://tempo:3200
+    editable: true
+    jsonData:
+      tracesToLogsV2:
+        datasourceUid: 'loki'
+        spanStartTimeShift: '1h'
+        spanEndTimeShift: '-1h'
+        filterByTraceID: false
+        filterBySpanID: false
+        tags: ['service.name', 'service.namespace']
+      nodeGraph:
+        enabled: true
+      serviceMap:
+        datasourceUid: 'prometheus'
+
+  # Loki for logs
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    editable: true
+    jsonData:
+      derivedFields:
+        - datasourceUid: 'tempo'
+          matcherRegex: 'trace_id=([a-f0-9]+)'
+          name: 'trace_id'
+          url: '$${__value.raw}'

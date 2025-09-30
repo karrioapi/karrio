@@ -1,0 +1,29 @@
+{
+  "name": "Karrio Shared Packages Rules",
+  "description": "Rules specific to shared packages in the Karrio monorepo",
+  "match": "packages/**/*.{ts,tsx}",
+  "rules": [
+    "Design shared components and utilities for reusability across multiple applications.",
+    "Provide comprehensive TypeScript types for all exported functions and components.",
+    "Document public APIs with clear examples and usage patterns.",
+    "Follow semantic versioning principles when making changes to shared packages.",
+    "Ensure backward compatibility or provide clear migration paths for breaking changes.",
+    "Implement proper unit tests for all shared functionality.",
+    "Keep shared components focused and avoid app-specific logic in shared packages.",
+    "Minimize external dependencies in shared packages.",
+    "Use consistent naming and organization patterns across shared packages.",
+    "Document any side effects or special considerations for shared utilities.",
+    "Follow established folder structure patterns: components/, hooks/, utils/, types/, etc.",
+    "Implement proper prop validation for React components.",
+    "Create custom hooks for reusable logic following the 'use' prefix convention.",
+    "Export types and interfaces for consumers to use.",
+    "Ensure components are responsive and accessible by default.",
+    "Implement proper memoization for expensive operations.",
+    "Use code splitting techniques for larger packages.",
+    "Follow established patterns for context providers and state management."
+  ],
+  "files": [
+    "@file:packages/ui/package.json",
+    "@file:packages/core/package.json"
+  ]
+}

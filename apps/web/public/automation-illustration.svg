@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 1200 1200">
+  <!-- Generator: Adobe Illustrator 29.3.1, SVG Export Plug-In . SVG Version: 2.1.0 Build 151)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: none;
+      }
+
+      .st1, .st2 {
+        fill: #ab4a9c;
+      }
+
+      .st3 {
+        fill: url(#linear-gradient);
+      }
+
+      .st2, .st4, .st5, .st6, .st7 {
+        letter-spacing: 0em;
+      }
+
+      .st8 {
+        fill: #272727;
+        font-family: Arial-BoldMT, Arial;
+        font-weight: 700;
+      }
+
+      .st8, .st9, .st10 {
+        isolation: isolate;
+      }
+
+      .st8, .st10 {
+        font-size: 18.9px;
+      }
+
+      .st4, .st11 {
+        fill: #00aeef;
+      }
+
+      .st10 {
+        fill: #959595;
+      }
+
+      .st10, .st12 {
+        font-family: ArialMT, Arial;
+      }
+
+      .st12 {
+        font-size: 20px;
+      }
+
+      .st13 {
+        fill: #00aeef;
+      }
+
+      .st14 {
+        fill: #4e4e4e;
+      }
+
+      .st15, .st5, .st16, .st17 {
+        fill: #fff;
+      }
+
+      .st18 {
+        fill: #f2f2f2;
+      }
+
+      .st6 {
+        fill: #ed1c24;
+      }
+
+      .st16 {
+        letter-spacing: 1.5em;
+      }
+
+      .st19 {
+        fill: #e8e8e8;
+      }
+
+      .st17 {
+        stroke: #d1d1d1;
+        stroke-miterlimit: 10;
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="195.7" y1="600" x2="797.5" y2="600" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#292043"/>
+      <stop offset="1" stop-color="#1f1834"/>
+    </linearGradient>
+  </defs>
+  <rect class="st0" width="1200" height="1200" rx="3" ry="3"/>
+  <rect class="st18" x="153.5" y="252.1" width="893.1" height="695.9" rx="20" ry="20"/>
+  <g>
+    <rect class="st3" x="195.7" y="323.6" width="601.8" height="552.8" rx="14.6" ry="14.6"/>
+    <text class="st12" transform="translate(231.9 365.3)"><tspan class="st5"><tspan x="0" y="0">{</tspan></tspan><tspan class="st7"><tspan class="st15" x="0" y="24" xml:space="preserve">     </tspan><tspan class="st1" x="30.3" y="24">&quot;object_type&quot;</tspan><tspan class="st15" x="153.3" y="24" xml:space="preserve"> :  </tspan><tspan class="st13" x="177.5" y="24">&quot;order&quot;</tspan><tspan class="st15" x="241.9" y="24">,</tspan></tspan><tspan class="st7"><tspan class="st15" x="0" y="48" xml:space="preserve">     </tspan><tspan class="st1" x="30.3" y="48">&quot;order_id&quot;</tspan><tspan class="st15" x="122.9" y="48" xml:space="preserve"> :  </tspan><tspan class="st11" x="147.1" y="48">&quot;345098457777&quot;</tspan><tspan class="st15" x="301.8" y="48">,</tspan></tspan><tspan class="st7"><tspan class="st15" x="0" y="72" xml:space="preserve">     </tspan><tspan class="st1" x="30.3" y="72">&quot;source&quot;</tspan><tspan class="st15" x="108.5" y="72" xml:space="preserve"> :  </tspan><tspan class="st11" x="132.7" y="72">&quot;woocommerce&quot;</tspan><tspan class="st15" x="283.5" y="72">,</tspan></tspan><tspan class="st7"><tspan class="st15" x="0" y="96" xml:space="preserve">     </tspan><tspan class="st1" x="30.3" y="96">&quot;line_items&quot;</tspan><tspan class="st15" x="140.5" y="96" xml:space="preserve"> :  [</tspan></tspan><tspan class="st5"><tspan x="0" y="120" xml:space="preserve">      {</tspan></tspan><tspan class="st5" x="0" y="144" xml:space="preserve">      </tspan><tspan class="st16" x="36.3" y="144">	</tspan><tspan class="st2" x="72" y="144">&quot;weight&quot;</tspan><tspan class="st5" x="148" y="144" xml:space="preserve"> :  </tspan><tspan class="st6" x="172.2" y="144">1.7</tspan><tspan class="st5" x="201.5" y="144">,</tspan><tspan class="st5" x="0" y="168" xml:space="preserve">      </tspan><tspan class="st16" x="36.3" y="168">	</tspan><tspan class="st2" x="72" y="168">&quot;weight_unit&quot;</tspan><tspan class="st5" x="193.9" y="168" xml:space="preserve"> :  </tspan><tspan class="st4" x="218.1" y="168">&quot;KG&quot;</tspan><tspan class="st5" x="263.2" y="168">,</tspan><tspan class="st5" x="0" y="192" xml:space="preserve">      </tspan><tspan class="st16" x="36.3" y="192">	</tspan><tspan class="st2" x="72" y="192">&quot;description&quot;</tspan><tspan class="st5" x="189.4" y="192" xml:space="preserve"> :  </tspan><tspan class="st4" x="213.6" y="192">&quot;Blue Jean Coat&quot;,</tspan><tspan class="st5" x="0" y="216" xml:space="preserve">      </tspan><tspan class="st16" x="36.3" y="216">	</tspan><tspan class="st2" x="72" y="216">&quot;quantity&quot;</tspan><tspan class="st5" x="161.2" y="216" xml:space="preserve"> :  </tspan><tspan class="st6" x="185.5" y="216">1</tspan><tspan class="st5" x="197.1" y="216">,</tspan><tspan class="st5" x="0" y="240" xml:space="preserve">      </tspan><tspan class="st16" x="36.3" y="240">	</tspan><tspan class="st2" x="72" y="240">&quot;value_amount&quot;</tspan><tspan class="st5" x="218.8" y="240" xml:space="preserve"> :  </tspan><tspan class="st6" x="243.1" y="240">99.99</tspan><tspan class="st5" x="295.6" y="240">,</tspan><tspan class="st5" x="0" y="264" xml:space="preserve">      </tspan><tspan class="st16" x="36.3" y="264">	</tspan><tspan class="st2" x="72" y="264">&quot;value_currency&quot;</tspan><tspan class="st5" x="229.8" y="264" xml:space="preserve"> :  </tspan><tspan class="st4" x="254.1" y="264">&quot;USD&quot;</tspan><tspan class="st5" x="313" y="264">,</tspan><tspan class="st5" x="0" y="288" xml:space="preserve">      </tspan><tspan class="st16" x="36.3" y="288">	</tspan><tspan class="st2" x="72" y="288">&quot;unfulfilled_quantity&quot;</tspan><tspan class="st5" x="262.9" y="288" xml:space="preserve"> :  </tspan><tspan class="st6" x="287.1" y="288">1</tspan><tspan class="st5"><tspan x="0" y="312" xml:space="preserve">      },</tspan></tspan><tspan class="st5"><tspan x="0" y="336" xml:space="preserve">  ],</tspan></tspan><tspan class="st7"><tspan class="st15" x="0" y="360" xml:space="preserve">  </tspan><tspan class="st1" x="12.1" y="360">&quot;options&quot;</tspan><tspan class="st15" x="95.3" y="360">: { </tspan></tspan><tspan class="st7"><tspan class="st15" x="0" y="384" xml:space="preserve">      </tspan><tspan class="st1" x="36.3" y="384">&quot;preferred_service&quot;</tspan><tspan class="st15" x="215.7" y="384" xml:space="preserve"> :  </tspan><tspan class="st11" x="239.9" y="384">&quot;ups_express_saver_ca&quot;</tspan></tspan><tspan class="st5"><tspan x="0" y="408" xml:space="preserve">  },</tspan></tspan><tspan class="st7"><tspan class="st15" x="0" y="432" xml:space="preserve">  </tspan><tspan class="st1" x="12.1" y="432">&quot;test_mode&quot;</tspan><tspan class="st15" x="125.2" y="432" xml:space="preserve"> :  </tspan><tspan class="st11" x="149.4" y="432">true</tspan><tspan class="st15" x="185.9" y="432">,</tspan></tspan><tspan class="st7"><tspan class="st15" x="0" y="456" xml:space="preserve">  </tspan><tspan class="st1" x="12.1" y="456">&quot;created_at&quot;</tspan><tspan class="st15" x="126.8" y="456" xml:space="preserve"> :  </tspan><tspan class="st11" x="151.1" y="456">&quot;2024-02-10 09:52:27.067064+00:00&apos;</tspan></tspan><tspan class="st5"><tspan x="0" y="480">}</tspan></tspan></text>
+  </g>
+  <g>
+    <g>
+      <rect class="st17" x="551.1" y="293.2" width="457.7" height="103" rx="20" ry="20"/>
+      <path class="st19" d="M633.1,370.1c0,2.6-2.1,4.7-4.7,4.7h-50.6c-2.6,0-4.7-2.1-4.7-4.7v-50.6c0-2.6,2.1-4.7,4.7-4.7h50.6c2.6,0,4.7,2.1,4.7,4.7v50.6h0Z"/>
+      <g>
+        <path class="st14" d="M603.1,331.2c.8,0,1.4.6,1.4,1.4h1.4c0-1.6-1.3-2.8-2.8-2.8s-2.8,1.3-2.8,2.8h1.4c0-.8.6-1.4,1.4-1.4h-.2,0Z"/>
+        <path class="st14" d="M603.1,358.3c-.9,0-1.7-.3-2.2-.9s-.6-.7-.6-1.3h-1.4c0,.8.3,1.6.9,2.2s2,1.3,3.2,1.3c2.3,0,4.2-1.6,4.2-3.5h-1.4c0,1.2-1.3,2.1-2.8,2.1Z"/>
+        <path class="st14" d="M615.6,352.5c0-.9.2-2.4-.5-3.6h0c-.2-.3-.4-.6-.6-.8-.9-.9-2.2-2-2.5-5.6-.4-4.6-3.5-9.4-8.8-9.4s-8.4,4.7-8.8,9.4c-.3,3.5-1.6,4.7-2.5,5.6-.2.2-.5.4-.6.6h0c-.6,1.3-.6,2.8-.5,3.8v1l.4.2c2.9,1.7,6.8,2.4,12.1,2.4s9.2-.8,12.1-2.4l.5-.2v-1h-.2ZM614.2,352.4v.4c-2.7,1.4-6.2,2-11,2s-8.3-.6-11-2v-.4c0-.9-.2-2,.2-2.8.2-.2.3-.3.5-.5,1-.9,2.6-2.4,2.9-6.4.3-3.9,2.8-8.1,7.4-8.1s7.1,4.2,7.4,8.1c.3,4,1.9,5.5,2.9,6.4.2.2.4.3.5.5.4.8.3,2,.2,2.8Z"/>
+      </g>
+      <g>
+        <g class="st9">
+          <g class="st9">
+            <text class="st8" transform="translate(650.9 338.9) scale(1.2 1)"><tspan x="0" y="0">order_created</tspan></text>
+          </g>
+        </g>
+        <g class="st9">
+          <g class="st9">
+            <text class="st10" transform="translate(650.9 360.9) scale(1.2 1)"><tspan x="0" y="0">evt_n764a1vhf83r82vhr</tspan></text>
+          </g>
+        </g>
+      </g>
+      <g class="st9">
+        <g class="st9">
+          <text class="st10" transform="translate(901.1 349.7) scale(1.2 1)"><tspan x="0" y="0">10:24:03</tspan></text>
+        </g>
+      </g>
+    </g>
+    <g>
+      <rect class="st17" x="551.1" y="420.9" width="457.7" height="103" rx="20" ry="20"/>
+      <path class="st19" d="M633.1,497.7c0,2.6-2.1,4.7-4.7,4.7h-50.6c-2.6,0-4.7-2.1-4.7-4.7v-50.6c0-2.6,2.1-4.7,4.7-4.7h50.6c2.6,0,4.7,2.1,4.7,4.7v50.6h0Z"/>
+      <g>
+        <path class="st14" d="M603.1,458.8c.8,0,1.4.6,1.4,1.4h1.4c0-1.6-1.3-2.8-2.8-2.8s-2.8,1.3-2.8,2.8h1.4c0-.8.6-1.4,1.4-1.4h-.2,0Z"/>
+        <path class="st14" d="M603.1,485.9c-.9,0-1.7-.3-2.2-.9s-.6-.7-.6-1.3h-1.4c0,.8.3,1.6.9,2.2s2,1.3,3.2,1.3c2.3,0,4.2-1.6,4.2-3.5h-1.4c0,1.2-1.3,2.1-2.8,2.1Z"/>
+        <path class="st14" d="M615.6,480.2c0-.9.2-2.4-.5-3.6h0c-.2-.3-.4-.6-.6-.8-.9-.9-2.2-2-2.5-5.6-.4-4.6-3.5-9.4-8.8-9.4s-8.4,4.7-8.8,9.4c-.3,3.5-1.6,4.7-2.5,5.6-.2.2-.5.4-.6.6h0c-.6,1.3-.6,2.8-.5,3.8v1l.4.2c2.9,1.7,6.8,2.4,12.1,2.4s9.2-.8,12.1-2.4l.5-.2v-1h-.2ZM614.2,480.1v.4c-2.7,1.4-6.2,2-11,2s-8.3-.6-11-2v-.4c0-.9-.2-2,.2-2.8.2-.2.3-.3.5-.5,1-.9,2.6-2.4,2.9-6.4.3-3.9,2.8-8.1,7.4-8.1s7.1,4.2,7.4,8.1c.3,4,1.9,5.5,2.9,6.4.2.2.4.3.5.5.4.8.3,2,.2,2.8Z"/>
+      </g>
+      <g>
+        <g class="st9">
+          <g class="st9">
+            <text class="st8" transform="translate(650.9 466.6) scale(1.2 1)"><tspan x="0" y="0">shipment_purchased</tspan></text>
+          </g>
+        </g>
+        <g class="st9">
+          <g class="st9">
+            <text class="st10" transform="translate(650.9 488.6) scale(1.2 1)"><tspan x="0" y="0">evt_hb810vanqvs672np</tspan></text>
+          </g>
+        </g>
+      </g>
+      <g class="st9">
+        <g class="st9">
+          <text class="st10" transform="translate(901.1 477.4) scale(1.2 1)"><tspan x="0" y="0">10:24:04</tspan></text>
+        </g>
+      </g>
+    </g>
+    <g>
+      <rect class="st17" x="551.1" y="548.6" width="457.7" height="103" rx="20" ry="20"/>
+      <path class="st19" d="M633.1,625.3c0,2.6-2.1,4.7-4.7,4.7h-50.6c-2.6,0-4.7-2.1-4.7-4.7v-50.6c0-2.6,2.1-4.7,4.7-4.7h50.6c2.6,0,4.7,2.1,4.7,4.7v50.6h0Z"/>
+      <g>
+        <path class="st14" d="M603.1,586.4c.8,0,1.4.6,1.4,1.4h1.4c0-1.6-1.3-2.8-2.8-2.8s-2.8,1.3-2.8,2.8h1.4c0-.8.6-1.4,1.4-1.4h-.2,0Z"/>
+        <path class="st14" d="M603.1,613.6c-.9,0-1.7-.3-2.2-.9-.2-.2-.6-.7-.6-1.3h-1.4c0,.8.3,1.6.9,2.2s2,1.3,3.2,1.3c2.3,0,4.2-1.6,4.2-3.5h-1.4c0,1.2-1.3,2.1-2.8,2.1Z"/>
+        <path class="st14" d="M615.6,607.9c0-.9.2-2.4-.5-3.6h0c-.2-.3-.4-.6-.6-.8-.9-.9-2.2-2-2.5-5.6-.4-4.6-3.5-9.4-8.8-9.4s-8.4,4.7-8.8,9.4c-.3,3.5-1.6,4.7-2.5,5.6-.2.2-.5.4-.6.6h0c-.6,1.3-.6,2.8-.5,3.8v1l.4.2c2.9,1.7,6.8,2.4,12.1,2.4s9.2-.8,12.1-2.4l.5-.2v-1h-.2ZM614.2,607.7v.4c-2.7,1.4-6.2,2-11,2s-8.3-.6-11-2v-.4c0-.9-.2-2,.2-2.8l.5-.5c1-.9,2.6-2.4,2.9-6.4.3-3.9,2.8-8.1,7.4-8.1s7.1,4.2,7.4,8.1c.3,4,1.9,5.5,2.9,6.4.2.2.4.3.5.5.4.8.3,2,.2,2.8Z"/>
+      </g>
+      <g>
+        <g class="st9">
+          <g class="st9">
+            <text class="st8" transform="translate(650.9 594.2) scale(1.2 1)"><tspan x="0" y="0">tracker_created</tspan></text>
+          </g>
+        </g>
+        <g class="st9">
+          <g class="st9">
+            <text class="st10" transform="translate(650.9 616.2) scale(1.2 1)"><tspan x="0" y="0">evt_qpa420n764a1vhf8</tspan></text>
+          </g>
+        </g>
+      </g>
+      <g class="st9">
+        <g class="st9">
+          <text class="st10" transform="translate(901.1 605.1) scale(1.2 1)"><tspan x="0" y="0">10:24:05</tspan></text>
+        </g>
+      </g>
+    </g>
+    <g>
+      <rect class="st17" x="551.1" y="676.2" width="457.7" height="103" rx="20" ry="20"/>
+      <path class="st19" d="M633.1,753c0,2.6-2.1,4.7-4.7,4.7h-50.6c-2.6,0-4.7-2.1-4.7-4.7v-50.6c0-2.6,2.1-4.7,4.7-4.7h50.6c2.6,0,4.7,2.1,4.7,4.7v50.6h0Z"/>
+      <g>
+        <path class="st14" d="M603.1,714.2c.8,0,1.4.6,1.4,1.4h1.4c0-1.6-1.3-2.8-2.8-2.8s-2.8,1.3-2.8,2.8h1.4c0-.8.6-1.4,1.4-1.4h-.2,0Z"/>
+        <path class="st14" d="M603.1,741.3c-.9,0-1.7-.3-2.2-.9-.2-.2-.6-.7-.6-1.3h-1.4c0,.8.3,1.6.9,2.2s2,1.3,3.2,1.3c2.3,0,4.2-1.6,4.2-3.5h-1.4c0,1.2-1.3,2.1-2.8,2.1Z"/>
+        <path class="st14" d="M615.6,735.5c0-.9.2-2.4-.5-3.6h0c-.2-.3-.4-.6-.6-.8-.9-.9-2.2-2-2.5-5.6-.4-4.6-3.5-9.4-8.8-9.4s-8.4,4.7-8.8,9.4c-.3,3.5-1.6,4.7-2.5,5.6-.2.2-.5.4-.6.6h0c-.6,1.3-.6,2.8-.5,3.8v1l.4.2c2.9,1.7,6.8,2.4,12.1,2.4s9.2-.8,12.1-2.4l.5-.2v-1h-.2ZM614.2,735.4v.4c-2.7,1.4-6.2,2-11,2s-8.3-.6-11-2v-.4c0-.9-.2-2,.2-2.8l.5-.5c1-.9,2.6-2.4,2.9-6.4.3-3.9,2.8-8.1,7.4-8.1s7.1,4.2,7.4,8.1c.3,4,1.9,5.5,2.9,6.4.2.2.4.3.5.5.4.8.3,2,.2,2.8Z"/>
+      </g>
+      <g>
+        <g class="st9">
+          <g class="st9">
+            <text class="st8" transform="translate(650.9 721.9) scale(1.2 1)"><tspan x="0" y="0">order_fulfilled</tspan></text>
+          </g>
+        </g>
+        <g class="st9">
+          <g class="st9">
+            <text class="st10" transform="translate(650.9 743.9) scale(1.2 1)"><tspan x="0" y="0">evt_iw2wu8sa9m1lm3g</tspan></text>
+          </g>
+        </g>
+      </g>
+      <g class="st9">
+        <g class="st9">
+          <text class="st10" transform="translate(901.1 732.7) scale(1.2 1)"><tspan x="0" y="0">10:24:06</tspan></text>
+        </g>
+      </g>
+    </g>
+    <g>
+      <rect class="st17" x="551.1" y="803.8" width="457.7" height="103" rx="20" ry="20"/>
+      <path class="st19" d="M633.1,880.7c0,2.6-2.1,4.7-4.7,4.7h-50.6c-2.6,0-4.7-2.1-4.7-4.7v-50.6c0-2.6,2.1-4.7,4.7-4.7h50.6c2.6,0,4.7,2.1,4.7,4.7v50.6h0Z"/>
+      <g>
+        <path class="st14" d="M603.1,841.8c.8,0,1.4.6,1.4,1.4h1.4c0-1.6-1.3-2.8-2.8-2.8s-2.8,1.3-2.8,2.8h1.4c0-.8.6-1.4,1.4-1.4h-.2,0Z"/>
+        <path class="st14" d="M603.1,868.9c-.9,0-1.7-.3-2.2-.9-.2-.2-.6-.7-.6-1.3h-1.4c0,.8.3,1.6.9,2.2s2,1.3,3.2,1.3c2.3,0,4.2-1.6,4.2-3.5h-1.4c0,1.2-1.3,2.1-2.8,2.1Z"/>
+        <path class="st14" d="M615.6,863.2c0-.9.2-2.4-.5-3.6h0c-.2-.3-.4-.6-.6-.8-.9-.9-2.2-2-2.5-5.6-.4-4.6-3.5-9.4-8.8-9.4s-8.4,4.7-8.8,9.4c-.3,3.5-1.6,4.7-2.5,5.6-.2.2-.5.4-.6.6h0c-.6,1.3-.6,2.8-.5,3.8v1l.4.2c2.9,1.7,6.8,2.4,12.1,2.4s9.2-.8,12.1-2.4l.5-.2v-1h-.2ZM614.2,863v.4c-2.7,1.4-6.2,2-11,2s-8.3-.6-11-2v-.4c0-.9-.2-2,.2-2.8l.5-.5c1-.9,2.6-2.4,2.9-6.4.3-3.9,2.8-8.1,7.4-8.1s7.1,4.2,7.4,8.1c.3,4,1.9,5.5,2.9,6.4.2.2.4.3.5.5.4.8.3,2,.2,2.8Z"/>
+      </g>
+      <g>
+        <g class="st9">
+          <g class="st9">
+            <text class="st8" transform="translate(650.9 849.5) scale(1.2 1)"><tspan x="0" y="0">tracker_updated</tspan></text>
+          </g>
+        </g>
+        <g class="st9">
+          <g class="st9">
+            <text class="st10" transform="translate(650.9 871.6) scale(1.2 1)"><tspan x="0" y="0">evt_bm3at9ty2tli9ty5rk1</tspan></text>
+          </g>
+        </g>
+      </g>
+      <g class="st9">
+        <g class="st9">
+          <text class="st10" transform="translate(901.1 860.4) scale(1.2 1)"><tspan x="0" y="0">10:24:07</tspan></text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

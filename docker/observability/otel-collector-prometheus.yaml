@@ -1,0 +1,57 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+    timeout: 1s
+    send_batch_size: 1024
+    send_batch_max_size: 2048
+
+  # Add resource attributes for better identification
+  resource:
+    attributes:
+      - key: service.instance.id
+        from_attribute: service.name
+        action: insert
+      - key: deployment.environment
+        value: "docker"
+        action: insert
+
+  # Memory limiter to prevent OOM
+  memory_limiter:
+    limit_mib: 512
+    check_interval: 5s
+
+exporters:
+  # Export metrics to Prometheus
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+    
+  # Debug exporter for debugging (optional)
+  debug:
+    verbosity: normal
+
+service:
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, batch]
+      exporters: [prometheus, debug]
+    
+    # We only process metrics for Prometheus, but can add traces if needed
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, batch]
+      exporters: [debug]  # Just log traces for now
+    
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, batch]
+      exporters: [debug]  # Just log entries for now
+
+  extensions: []

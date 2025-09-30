@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+
+set -e
+
+echo "Upgrading Karrio Insiders. This will cause a few minutes of downtime."
+read -r -p "Do you want to upgrade Karrio Insiders? [y/N] " response
+if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
+    echo "OK!"
+else
+    exit
+fi
+
+echo "Checking for named postgres volumes to avoid data loss when upgrading"
+if docker volume ls | grep -e 'postgres-data'; then
+    DOCKER_VOLUMES_MISSING=FALSE
+    echo "Found postgres volume, proceeding..."
+else
+    DOCKER_VOLUMES_MISSING=TRUE
+    echo ""
+    echo ""
+    echo "🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨"
+    echo "🚨🚨🚨🚨🚨 WARNING: POTENTIAL DATA LOSS 🚨🚨🚨🚨🚨🚨"
+    echo "🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨"
+    echo ""
+    echo ""
+    echo "We were unable to find named postgres volume."
+    echo ""
+    echo "WE STRONGLY RECOMMEND YOU:"
+    echo ""
+    echo "🛑 Stop this script and do not proceed"
+    echo "✅ Back up your entire environment/installation (vm, host, etc.), including all docker containers and volumes:"
+    echo "✅ Specifically back up the contents of :"
+    echo "  ☑ /var/lib/postgresql/data in the db (*_db_1) container"
+    echo "and be ready to check/recopy the data before you boot Karrio Insiders next."
+    read -r -p "Do you want to proceed anyway? [y/N] " response
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
+        echo "OK!"
+    else
+        exit
+    fi
+fi
+
+[[ -f ".env" ]] && export $(cat .env | xargs) || (echo "No .env file found. Please create it with required variables." && exit 1)
+
+# Verify GitHub credentials
+if [ -z "$GITHUB_TOKEN" ]; then
+    echo "GitHub token missing. Please ensure GITHUB_TOKEN is in your .env file"
+    exit 1
+fi
+
+# Re-authenticate with GitHub
+echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
+
+export KARRIO_TAG="${KARRIO_TAG:-2024.9.15}"
+
+# get karrio insiders scripts
+mkdir -p ./karrio-insiders
+cd karrio-insiders
+
+echo "Downloading the latest karrio insiders installation files"
+curl https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/docker-compose.insiders.yml -o docker-compose.insiders.yml
+
+cd -
+
+# Upgrade Docker Compose to version 2.13.0
+echo "Setting up Docker Compose"
+sudo rm /usr/local/bin/docker-compose
+sudo curl -L "https://github.com/docker/compose/releases/download/v2.13.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose || true
+sudo chmod +x /usr/local/bin/docker-compose
+
+rm -f docker-compose.yml
+cp karrio-insiders/docker-compose.hobby.yml docker-compose.yml.tmpl
+envsubst <docker-compose.yml.tmpl >docker-compose.yml
+rm docker-compose.yml.tmpl
+
+docker-compose pull
+
+echo "Stopping the stack!"
+docker-compose stop
+
+if [ ${DOCKER_VOLUMES_MISSING} == 'TRUE' ]; then
+    echo ""
+    echo ""
+    echo "🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨"
+    echo "🚨🚨🚨🚨🚨WARNING: LAST CHANCE TO AVOID DATA LOSS 🚨🚨🚨🚨🚨🚨"
+    echo "🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨"
+    echo ""
+    echo ""
+    echo "Before we restart the stack, you should restore data you have backed up from the previous warning."
+    echo ""
+    echo ""
+fi
+
+read -r -p "Do you want to restart the Karrio Insiders stack now ? (docker-compose up) [y/N] " response
+if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
+    echo "OK, Restarting the stack!"
+    sudo -E docker-compose up -d
+else
+    echo "OK, we are leaving the stack OFFLINE. Run 'sudo -E docker-compose up -d' when you are ready to start it."
+    exit
+fi
+
+echo "Karrio Insiders upgraded successfully!"

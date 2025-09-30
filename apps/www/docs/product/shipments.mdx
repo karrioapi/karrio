@@ -1,0 +1,112 @@
+---
+id: shipments
+title: Shipments
+---
+
+With karrio carrier connections, you can get live quotes and purchase
+shipping labels using the karrio API. The web app uses karrio' API
+to streamline manual shipping processes.
+
+The typical manual shipping process flow is
+
+- Get live rates
+- Choose a preferred rate
+- Buy a label
+- Print a label
+
+## Get Live rates
+
+Karrio can get live rates for your shipments from all the carrier
+accounts you have registered and enabled.
+
+:::note To get live rates:
+
+1. Go to the `Shipments` section.
+2. Click `Create Label`.
+3. Fill in the shipping details (shipper address, recipient address, parcel measurements...).
+4. Click `Fetch Rates`.
+
+:::
+
+<video width="99%" loop={true} muted={true} playsInline={true} controls={true}>
+  <source src="/videos/get-rates.mp4" />
+</video>
+
+:::info
+
+You can always go back to edit any shipment details or add options and refresh the rates.
+
+:::
+
+## Buy a label
+
+You can generate (buy) labels from all supported carriers once you know
+your prefered rate and service.
+
+:::note To buy a label:
+
+1. Go to the `Shipments > Create Label` section.
+2. Select you prefered rate.
+3. Click `Buy`.
+
+:::
+
+<video width="99%" loop={true} muted={true} playsInline={true} controls={true}>
+  <source src="/videos/buy-label.mp4" />
+</video>
+
+## Print a label
+
+You can print labels from all shipments that have already been purchased.
+
+:::note To print a label:
+
+1. Go to the `Shipments` section.
+2. Click `Print Label` on the action dropdown.
+
+:::
+
+<video width="99%" loop={true} muted={true} playsInline={true} controls={true}>
+  <source src="/videos/print-label.mp4" />
+</video>
+
+## Advanced
+
+### Declare Customs info
+
+For international shipment fulfilments, you will need to fill customs
+declaration information to insure safe passage at the border and duty
+control centers.
+
+:::note To declare customs info:
+
+1. Go to the `Shipments > Create Label > Customs Info` section.
+2. Make sure to fill in all relevant information.
+
+:::
+
+<video width="99%" loop={true} muted={true} playsInline={true} controls={true}>
+  <source src="/videos/customs-declaration.mp4" />
+</video>
+
+### Cancel a shipment
+
+You can always cancel a shipment and void a label if the shipment has not
+been picked up by carriers.
+
+:::note To cancel a shipment:
+
+1. Go to the `Shipments` section.
+2. Click `Cancel Shipment` on the action dropdown.
+
+:::
+
+<video width="99%" loop={true} muted={true} playsInline={true} controls={true}>
+  <source src="/videos/cancel-shipment.mp4" />
+</video>
+
+## Next steps
+
+- Got a question? [Ask here](https://github.com/karrioapi/karrio/discussions).
+- [Track your shipment packages](/product/trackers).
+- [Generate additional documentation for your shipments](/product/document-templates).

@@ -1,0 +1,175 @@
+<svg width="800" height="700" viewBox="0 0 800 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="700" fill="#080215" />
+
+  <!-- Background Gradients -->
+  <circle cx="200" cy="350" r="200" fill="url(#insidersGlow)" opacity="0.15" />
+  <circle cx="600" cy="350" r="150" fill="url(#tealGlow)" opacity="0.12" />
+
+  <!-- Your Application Layer -->
+  <g>
+    <rect x="60" y="65" width="680" height="140" rx="12" stroke="#30D9B7" strokeWidth="2"
+      fill="rgba(48, 217, 183, 0.08)" />
+    <text x="340" y="40" fill="white" fontSize="20" fontWeight="bold" textAnchor="middle">YOUR
+      APPLICATION</text>
+
+    <!-- Branding Component -->
+    <rect x="90" y="90" width="180" height="90" rx="8" stroke="#30D9B7" strokeWidth="1.5"
+      fill="rgba(48, 217, 183, 0.05)" />
+    <text x="110" y="115" fill="white" fontSize="16" fontWeight="600">Your
+      Branding</text>
+    <text x="110" y="135" fill="white" fontSize="12" opacity="0.8">• White Label UI</text>
+    <text x="110" y="150" fill="white" fontSize="12" opacity="0.8">• Custom Domain</text>
+    <text x="110" y="165" fill="white" fontSize="12" opacity="0.8">• Brand Assets</text>
+
+    <!-- Custom Workflows Component -->
+    <rect x="310" y="90" width="180" height="90" rx="8" stroke="#30D9B7" strokeWidth="1.5"
+      fill="rgba(48, 217, 183, 0.05)" />
+    <text x="330" y="120" fill="white" fontSize="16" fontWeight="600">Custom
+      Workflows</text>
+    <text x="330" y="140" fill="white" fontSize="12" opacity="0.8">• Approval Flows</text>
+    <text x="330" y="155" fill="white" fontSize="12" opacity="0.8">• Auto Routing</text>
+    <text x="330" y="170" fill="white" fontSize="12" opacity="0.8">• Business Rules</text>
+
+    <!-- Integrations Component -->
+    <rect x="530" y="90" width="180" height="90" rx="8" stroke="#30D9B7" strokeWidth="1.5"
+      fill="rgba(48, 217, 183, 0.05)" />
+    <text x="550" y="120" fill="white" fontSize="16" fontWeight="600">
+      Integrations</text>
+    <text x="550" y="140" fill="white" fontSize="12" opacity="0.8">• Your ERP</text>
+    <text x="550" y="155" fill="white" fontSize="12" opacity="0.8">• Your CRM</text>
+    <text x="550" y="170" fill="white" fontSize="12" opacity="0.8">• Webhooks</text>
+  </g>
+
+  <!-- Integration Arrow -->
+  <path d="M400 210 L400 230" stroke="#5722cc" strokeWidth="3" />
+  <path d="M392 222 L400 230 L408 222" fill="none" stroke="#5722cc" strokeWidth="3" />
+
+  <!-- Karrio Insiders Platform Layer -->
+  <g>
+    <rect x="60" y="260" width="680" height="260" rx="12" stroke="#5722cc" strokeWidth="2"
+      fill="rgba(87, 34, 204, 0.12)" />
+    <text x="310" y="250" fill="white" fontSize="20" fontWeight="bold" textAnchor="middle">KARRIO
+      INSIDERS PLATFORM</text>
+
+    <!-- Top Row Components -->
+    <rect x="90" y="280" width="180" height="60" rx="6" stroke="#5722cc" strokeWidth="1.5"
+      fill="rgba(87, 34, 204, 0.08)" />
+    <text x="105" y="305" fill="white" fontSize="14" fontWeight="600">Multi-Tenant
+      Orgs</text>
+    <text x="105" y="325" fill="white" fontSize="11" opacity="0.7">Isolated
+      data &amp; configs</text>
+
+    <rect x="310" y="280" width="180" height="60" rx="6" stroke="#5722cc" strokeWidth="1.5"
+      fill="rgba(87, 34, 204, 0.08)" />
+    <text x="330" y="305" fill="white" fontSize="14" fontWeight="600">Admin
+      Console</text>
+    <text x="330" y="325" fill="white" fontSize="11" opacity="0.7">System
+      configuration</text>
+
+    <rect x="530" y="280" width="180" height="60" rx="6" stroke="#5722cc" strokeWidth="1.5"
+      fill="rgba(87, 34, 204, 0.08)" />
+    <text x="550" y="305" fill="white" fontSize="14" fontWeight="600">Shipping
+      Rules</text>
+    <text x="550" y="325" fill="white" fontSize="11" opacity="0.7">Automated
+      routing</text>
+
+    <!-- Middle Row Components -->
+    <rect x="90" y="365" width="180" height="60" rx="6" stroke="#5722cc" strokeWidth="1.5"
+      fill="rgba(87, 34, 204, 0.08)" />
+    <text x="105" y="390" fill="white" fontSize="14" fontWeight="600">Orders
+      Management</text>
+    <text x="105" y="410" fill="white" fontSize="11" opacity="0.7">Complete
+      order lifecycle</text>
+
+    <rect x="310" y="365" width="180" height="60" rx="6" stroke="#5722cc" strokeWidth="1.5"
+      fill="rgba(87, 34, 204, 0.08)" />
+    <text x="330" y="390" fill="white" fontSize="14" fontWeight="600">
+      Shipments</text>
+    <text x="330" y="410" fill="white" fontSize="11" opacity="0.7">Label
+      generation</text>
+
+    <rect x="530" y="365" width="180" height="60" rx="6" stroke="#5722cc" strokeWidth="1.5"
+      fill="rgba(87, 34, 204, 0.08)" />
+    <text x="550" y="390" fill="white" fontSize="14" fontWeight="600">Tracking
+      &amp; Analytics</text>
+    <text x="550" y="410" fill="white" fontSize="11" opacity="0.7">Real-time
+      insights</text>
+
+    <!-- Bottom Row Components -->
+    <rect x="90" y="445" width="180" height="60" rx="6" stroke="#5722cc" strokeWidth="1.5"
+      fill="rgba(87, 34, 204, 0.08)" />
+    <text x="105" y="470" fill="white" fontSize="14" fontWeight="600">Users
+      &amp; Permissions</text>
+    <text x="105" y="490" fill="white" fontSize="11" opacity="0.7">Role-based
+      access</text>
+
+    <rect x="310" y="445" width="180" height="60" rx="6" stroke="#5722cc" strokeWidth="1.5"
+      fill="rgba(87, 34, 204, 0.08)" />
+    <text x="330" y="475" fill="white" fontSize="14" fontWeight="600">Carrier
+      Management</text>
+    <text x="330" y="490" fill="white" fontSize="11" opacity="0.7">Partner
+      onboarding</text>
+
+    <rect x="530" y="445" width="180" height="60" rx="6" stroke="#5722cc" strokeWidth="1.5"
+      fill="rgba(87, 34, 204, 0.08)" />
+    <text x="550" y="475" fill="white" fontSize="14" fontWeight="600">
+      Workflows</text>
+    <text x="550" y="490" fill="white" fontSize="11" opacity="0.7">Process
+      automation</text>
+  </g>
+
+  <!-- Carrier Network Arrow -->
+  <path d="M400 520 L400 550" stroke="#30D9B7" strokeWidth="3" />
+  <path d="M392 542 L400 550 L408 542" fill="none" stroke="#30D9B7" strokeWidth="3" />
+
+  <!-- Carrier Network Layer -->
+  <g>
+    <rect x="60" y="580" width="680" height="80" rx="12" stroke="#30D9B7" strokeWidth="2"
+      fill="rgba(48, 217, 183, 0.08)" />
+    <text x="330" y="570" fill="white" fontSize="18" fontWeight="bold" textAnchor="middle">CARRIER
+      NETWORK</text>
+
+    <!-- Carrier Categories -->
+    <rect x="85" y="595" width="140" height="50" rx="4" stroke="#30D9B7" strokeWidth="1"
+      fill="rgba(48, 217, 183, 0.05)" />
+    <text x="100" y="617" fill="white" fontSize="12" fontWeight="600">Regional
+      Carriers</text>
+    <text x="100" y="635" fill="white" fontSize="10" opacity="0.7">Local
+      networks</text>
+
+    <rect x="255" y="595" width="140" height="50" rx="4" stroke="#30D9B7" strokeWidth="1"
+      fill="rgba(48, 217, 183, 0.05)" />
+    <text x="270" y="617" fill="white" fontSize="12" fontWeight="600">Last
+      Mile</text>
+    <text x="270" y="635" fill="white" fontSize="10" opacity="0.7">Final
+      delivery</text>
+
+    <rect x="415" y="595" width="140" height="50" rx="4" stroke="#30D9B7" strokeWidth="1"
+      fill="rgba(48, 217, 183, 0.05)" />
+    <text x="430" y="617" fill="white" fontSize="12" fontWeight="600">
+      Enterprise</text>
+    <text x="430" y="635" fill="white" fontSize="10" opacity="0.7">Contract
+      accounts</text>
+
+    <rect x="580" y="595" width="140" height="50" rx="4" stroke="#30D9B7" strokeWidth="1"
+      fill="rgba(48, 217, 183, 0.05)" />
+    <text x="590" y="617" fill="white" fontSize="12" fontWeight="600">Partners
+      3PLs</text>
+    <text x="590" y="635" fill="white" fontSize="10" opacity="0.7">Logistics
+      partners</text>
+  </g>
+
+  <!-- Gradients -->
+  <defs>
+    <radialGradient id="insidersGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stopColor="#5722cc" stopOpacity="0.4" />
+      <stop offset="100%" stopColor="#5722cc" stopOpacity="0" />
+    </radialGradient>
+
+    <radialGradient id="tealGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stopColor="#30D9B7" stopOpacity="0.3" />
+      <stop offset="100%" stopColor="#30D9B7" stopOpacity="0" />
+    </radialGradient>
+  </defs>
+</svg>

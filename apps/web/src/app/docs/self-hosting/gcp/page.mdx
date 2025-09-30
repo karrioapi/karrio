@@ -1,0 +1,189 @@
+---
+sidebarTitle: Guides
+title: GCP
+description: Learn how to deploy Karrio on GCP
+tags: [self-hosting, gcp]
+author: Karrio Team
+---
+
+# GCP Deployment
+
+Deploy Karrio on Google Cloud Platform (GCP).
+
+## Prerequisites
+
+- Google Cloud Platform account
+- GCP project with billing enabled
+- Basic knowledge of Docker and Docker Compose
+
+## Step 1: Create a Compute Engine VM Instance
+
+1. Log into Google Cloud Console
+2. Navigate to "Compute Engine" > "VM Instances"
+3. Click "Create Instance"
+4. Configure:
+   - **Name**: `karrio-server`
+   - **Machine Type**: `e2-medium` (production) or `e2-small` (development)
+   - **Boot Disk**: Ubuntu 22.04 LTS, 20 GB SSD
+   - **Firewall**: Allow HTTP and HTTPS traffic
+5. Click "Create"
+
+## Step 2: Set Up Firewall Rules
+
+1. Navigate to "VPC Network" > "Firewall"
+2. Create rules for:
+   - Allow HTTP (port 80)
+   - Allow HTTPS (port 443)
+   - Allow SSH (port 22)
+
+## Step 3: Connect to Your VM
+
+```bash
+gcloud compute ssh karrio-server --zone=your-zone
+```
+
+Or use the SSH button in the Google Cloud Console.
+
+## Step 4: Install Docker and Docker Compose
+
+```bash
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt update
+sudo apt install -y docker-ce
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo usermod -aG docker $USER
+sudo curl -L "https://github.com/docker/compose/releases/download/v2.18.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+exit
+```
+
+## Step 5: Deploy Karrio
+
+Reconnect to your VM after logging out.
+
+### Option 1: One-Click Hobby Deployment
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/deploy-hobby)"
+```
+
+When prompted, enter your domain name.
+
+### Option 2: Manual Deployment
+
+```bash
+mkdir -p ~/karrio
+cd ~/karrio
+curl -O https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/docker-compose.yml
+curl -O https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/.env
+docker-compose up -d
+```
+
+Edit `.env` with your configuration. Set up your preferred webserver for HTTPS and domain routing.
+
+## Step 6: Set Up a Static External IP
+
+1. Navigate to "VPC Network" > "External IP addresses"
+2. Click "Reserve Static Address"
+3. Configure:
+   - **Name**: `karrio-static-ip`
+   - **Network Service Tier**: Premium
+   - **IP Version**: IPv4
+   - **Type**: Regional
+   - **Region**: Same as your VM
+   - **Attached To**: Your VM instance
+4. Click "Reserve"
+
+## Step 7: Configure DNS
+
+Add DNS records:
+- Type: `A`, Name: `api`, Value: Your VM's static IP
+- Type: `A`, Name: `app`, Value: Your VM's static IP
+
+## Step 8: Access Your Karrio Instance
+
+- Dashboard: `https://app.your-domain.com`
+- API: `https://api.your-domain.com`
+
+Default login: `admin@example.com` / `demo`
+
+## Setting Up a Load Balancer (Optional)
+
+1. Navigate to "Network Services" > "Load Balancing"
+2. Click "Create Load Balancer"
+3. Choose "HTTP(S) Load Balancing"
+4. Configure:
+   - Backend: Create backend service pointing to your VM
+   - Frontend: Set up HTTPS with SSL certificates
+5. Update DNS records to point to the load balancer's IP address
+
+## Backup and Restore
+
+### Automated Backups
+
+```bash
+cat > ~/backup_karrio.sh << 'EOL'
+#!/bin/bash
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+BACKUP_DIR=~/karrio-backups
+mkdir -p $BACKUP_DIR
+cd ~/karrio
+docker-compose exec -T db pg_dump -U postgres -d db > $BACKUP_DIR/karrio_db_$TIMESTAMP.sql
+cp ~/karrio/.env $BACKUP_DIR/env_$TIMESTAMP
+cp ~/karrio/Caddyfile $BACKUP_DIR/Caddyfile_$TIMESTAMP
+EOL
+chmod +x ~/backup_karrio.sh
+(crontab -l 2>/dev/null; echo "0 2 * * * ~/backup_karrio.sh") | crontab -
+```
+
+### Google Cloud Storage (Optional)
+
+1. Create Storage Bucket in "Storage" > "Browser"
+2. Install gsutil: `sudo apt-get install -y google-cloud-sdk-gsutil`
+3. Uncomment gsutil commands in backup script
+
+## Monitoring
+
+- Google Cloud Monitoring
+- Container logs: `cd ~/karrio && docker-compose logs -f`
+
+## Updating
+
+```bash
+cd ~/karrio
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/upgrade-hobby)"
+```
+
+## Troubleshooting
+
+### SSL Certificate Issues
+
+```bash
+cd ~/karrio
+docker-compose logs caddy
+```
+
+Check: DNS records, ports 80/443 open in firewall rules
+
+### Container Issues
+
+```bash
+cd ~/karrio
+docker-compose ps
+docker-compose logs <service_name>
+```
+
+### Instance Resources
+
+Check usage with `top`. Upgrade machine type in Google Cloud Console if needed.
+
+## Optimizing Costs
+
+- Use Compute Engine sustained use discounts (automatic)
+- Consider preemptible VMs for non-production
+- Right-size VM instance based on usage
+- Set up budget alerts in Google Cloud Console

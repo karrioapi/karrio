@@ -1,0 +1,112 @@
+{
+  "originZIPCode": "10001",
+  "destinationZIPCode": "90210",
+  "pricingOptions": [
+    {
+      "shippingOptions": [
+        {
+          "mailClass": "LIBRARY_MAIL",
+          "rateOptions": [
+            {
+              "commitment": {
+                "name": "7 Days",
+                "scheduleDeliveryDate": "2025-06-04",
+                "guaranteedDelivery": false
+              },
+              "totalPrice": 5.82,
+              "totalBasePrice": 5.82,
+              "rates": [
+                {
+                  "description": "Library Mail Machinable Single-piece",
+                  "startDate": "2025-01-19",
+                  "endDate": "",
+                  "price": 5.82,
+                  "zone": "08",
+                  "weight": 2.5,
+                  "dimensionalWeight": 0,
+                  "dimWeight": 0,
+                  "fees": [],
+                  "priceType": "RETAIL",
+                  "mailClass": "LIBRARY_MAIL",
+                  "productName": "",
+                  "productDefinition": "",
+                  "processingCategory": "MACHINABLE",
+                  "rateIndicator": "SP",
+                  "destinationEntryFacilityType": "NONE",
+                  "SKU": "DLXX0XXXUR00030"
+                }
+              ],
+              "extraServices": [
+                {
+                  "name": "USPS Tracking",
+                  "price": 0,
+                  "extraService": "920",
+                  "priceType": "RETAIL",
+                  "warnings": [],
+                  "SKU": "DXTL0EXXXRX0000"
+                },
+                {
+                  "name": "Global Direct Entry",
+                  "price": 0,
+                  "extraService": "365",
+                  "priceType": "COMMERCIAL",
+                  "warnings": [],
+                  "SKU": "NA"
+                }
+              ]
+            },
+            {
+              "commitment": {
+                "name": "7 Days",
+                "scheduleDeliveryDate": "2025-06-04",
+                "guaranteedDelivery": false
+              },
+              "totalPrice": 5.82,
+              "totalBasePrice": 5.82,
+              "rates": [
+                {
+                  "description": "Library Mail Nonstandard Single-piece",
+                  "startDate": "2025-01-19",
+                  "endDate": "",
+                  "price": 5.82,
+                  "zone": "08",
+                  "weight": 2.5,
+                  "dimensionalWeight": 0,
+                  "dimWeight": 0,
+                  "fees": [],
+                  "priceType": "RETAIL",
+                  "mailClass": "LIBRARY_MAIL",
+                  "productName": "",
+                  "productDefinition": "",
+                  "processingCategory": "NONSTANDARD",
+                  "rateIndicator": "SP",
+                  "destinationEntryFacilityType": "NONE",
+                  "SKU": "DLXX0XXXUR00030"
+                }
+              ],
+              "extraServices": [
+                {
+                  "name": "USPS Tracking",
+                  "price": 0,
+                  "extraService": "920",
+                  "priceType": "RETAIL",
+                  "warnings": [],
+                  "SKU": "DXTL0EXXXRX0000"
+                },
+                {
+                  "name": "Global Direct Entry",
+                  "price": 0,
+                  "extraService": "365",
+                  "priceType": "COMMERCIAL",
+                  "warnings": [],
+                  "SKU": "NA"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "priceType": "RETAIL"
+    }
+  ]
+}

@@ -1,0 +1,1331 @@
+<xs:schema elementFormDefault="qualified" targetNamespace="https://dhl24.com.pl/webapi2/provider/service.html?ws=1"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="https://dhl24.com.pl/webapi2/provider/service.html?ws=1">
+    <xs:element name="getVersion">
+        <xs:complexType/>
+    </xs:element>
+    <xs:element name="getVersionResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="getVersionResult" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="AuthData">
+        <xs:all>
+            <xs:element name="username" type="xs:string" nillable="true"/>
+            <xs:element name="password" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="AddressData">
+        <xs:all>
+            <xs:element name="name" type="xs:string" nillable="true"/>
+            <xs:element name="postalCode" type="xs:string" nillable="true"/>
+            <xs:element name="city" type="xs:string" nillable="true"/>
+            <xs:element name="street" type="xs:string" nillable="true"/>
+            <xs:element name="houseNumber" type="xs:string" nillable="true"/>
+            <xs:element name="apartmentNumber" type="xs:string" nillable="true"/>
+            <xs:element name="contactPerson" type="xs:string" nillable="true"/>
+            <xs:element name="contactPhone" type="xs:string" nillable="true"/>
+            <xs:element name="contactEmail" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ReceiverAddressData">
+        <xs:all>
+            <xs:element name="country" type="xs:string" nillable="true"/>
+            <xs:element name="isPackstation" type="xs:boolean" nillable="true"/>
+            <xs:element name="isPostfiliale" type="xs:boolean" nillable="true"/>
+            <xs:element name="postnummer" type="xs:string" nillable="true"/>
+            <xs:element name="addressType" type="xs:string" nillable="true"/>
+            <xs:element name="name" type="xs:string" nillable="true"/>
+            <xs:element name="postalCode" type="xs:string" nillable="true"/>
+            <xs:element name="city" type="xs:string" nillable="true"/>
+            <xs:element name="street" type="xs:string" nillable="true"/>
+            <xs:element name="houseNumber" type="xs:string" nillable="true"/>
+            <xs:element name="apartmentNumber" type="xs:string" nillable="true"/>
+            <xs:element name="contactPerson" type="xs:string" nillable="true"/>
+            <xs:element name="contactPhone" type="xs:string" nillable="true"/>
+            <xs:element name="contactEmail" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="NeighbourAddress">
+        <xs:all>
+            <xs:element name="name" type="xs:string" nillable="true"/>
+            <xs:element name="postalCode" type="xs:string" nillable="true"/>
+            <xs:element name="city" type="xs:string" nillable="true"/>
+            <xs:element name="street" type="xs:string" nillable="true"/>
+            <xs:element name="houseNumber" type="xs:string" nillable="true"/>
+            <xs:element name="apartmentNumber" type="xs:string" nillable="true"/>
+            <xs:element name="contactPhone" type="xs:string" nillable="true"/>
+            <xs:element name="contactEmail" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="PieceDefinition">
+        <xs:all>
+            <xs:element name="type" type="xs:string" nillable="true"/>
+            <xs:element name="width" type="xs:int" nillable="true"/>
+            <xs:element name="height" type="xs:int" nillable="true"/>
+            <xs:element name="length" type="xs:int" nillable="true"/>
+            <xs:element name="weight" type="xs:float" nillable="true"/>
+            <xs:element name="quantity" type="xs:int" nillable="true"/>
+            <xs:element name="nonStandard" type="xs:boolean" nillable="true"/>
+            <xs:element name="blpPieceId" type="xs:string" nillable="true"/>
+            <xs:element name="euroReturn" type="xs:boolean" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfPiecedefinition">
+        <xs:sequence>
+            <xs:element name="item" type="tns:PieceDefinition" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="PaymentData">
+        <xs:all>
+            <xs:element name="paymentMethod" type="xs:string" nillable="true"/>
+            <xs:element name="payerType" type="xs:string" nillable="true"/>
+            <xs:element name="accountNumber" type="xs:string" nillable="true"/>
+            <xs:element name="costsCenter" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ServiceDefinition">
+        <xs:all>
+            <xs:element name="product" type="xs:string" nillable="true"/>
+            <xs:element name="deliveryEvening" type="xs:boolean" nillable="true"/>
+            <xs:element name="deliveryOnSaturday" type="xs:boolean" nillable="true"/>
+            <xs:element name="pickupOnSaturday" type="xs:boolean" nillable="true"/>
+            <xs:element name="collectOnDelivery" type="xs:boolean" nillable="true"/>
+            <xs:element name="collectOnDeliveryValue" type="xs:float" nillable="true"/>
+            <xs:element name="collectOnDeliveryForm" type="xs:string" nillable="true"/>
+            <xs:element name="collectOnDeliveryReference" type="xs:string" nillable="true"/>
+            <xs:element name="insurance" type="xs:boolean" nillable="true"/>
+            <xs:element name="insuranceValue" type="xs:float" nillable="true"/>
+            <xs:element name="returnOnDelivery" type="xs:boolean" nillable="true"/>
+            <xs:element name="returnOnDeliveryReference" type="xs:string" nillable="true"/>
+            <xs:element name="proofOfDelivery" type="xs:boolean" nillable="true"/>
+            <xs:element name="selfCollect" type="xs:boolean" nillable="true"/>
+            <xs:element name="predeliveryInformation" type="xs:boolean" nillable="true"/>
+            <xs:element name="deliveryToNeighbour" type="xs:boolean" nillable="true"/>
+            <xs:element name="preaviso" type="xs:boolean" nillable="true"/>
+            <xs:element name="additionalService" type="xs:boolean" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="CustomsItemData">
+        <xs:all>
+            <xs:element name="nameEn" type="xs:string" nillable="true"/>
+            <xs:element name="namePl" type="xs:string" nillable="true"/>
+            <xs:element name="quantity" type="xs:string" nillable="true"/>
+            <xs:element name="weight" type="xs:string" nillable="true"/>
+            <xs:element name="value" type="xs:string" nillable="true"/>
+            <xs:element name="tariffCode" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfCustomsitemdata">
+        <xs:sequence>
+            <xs:element name="item" type="tns:CustomsItemData" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CustomsAgreementData">
+        <xs:all>
+            <xs:element name="notExceedValue" type="xs:boolean" nillable="true"/>
+            <xs:element name="notProhibitedGoods" type="xs:boolean" nillable="true"/>
+            <xs:element name="notRestrictedGoods" type="xs:boolean" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="CustomsData">
+        <xs:all>
+            <xs:element name="customsType" type="xs:string" nillable="true"/>
+            <xs:element name="firstName" type="xs:string" nillable="true"/>
+            <xs:element name="secondaryName" type="xs:string" nillable="true"/>
+            <xs:element name="costsOfShipment" type="xs:string" nillable="true"/>
+            <xs:element name="currency" type="xs:string" nillable="true"/>
+            <xs:element name="nipNr" type="xs:string" nillable="true"/>
+            <xs:element name="eoriNr" type="xs:string" nillable="true"/>
+            <xs:element name="vatRegistrationNumber" type="xs:string" nillable="true"/>
+            <xs:element name="categoryOfItem" type="xs:string" nillable="true"/>
+            <xs:element name="invoiceNr" type="xs:string" nillable="true"/>
+            <xs:element name="invoice" type="xs:string" nillable="true"/>
+            <xs:element name="invoiceDate" type="xs:string" nillable="true"/>
+            <xs:element name="countryOfOrigin" type="xs:string" nillable="true"/>
+            <xs:element name="additionalInfo" type="xs:string" nillable="true"/>
+            <xs:element name="grossWeight" type="xs:string" nillable="true"/>
+            <xs:element name="customsItem" type="tns:ArrayOfCustomsitemdata" nillable="true"/>
+            <xs:element name="customAgreements" type="tns:CustomsAgreementData" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ShipmentFullData">
+        <xs:all>
+            <xs:element name="shipper" type="tns:AddressData" nillable="true"/>
+            <xs:element name="receiver" type="tns:ReceiverAddressData" nillable="true"/>
+            <xs:element name="neighbour" type="tns:NeighbourAddress" nillable="true"/>
+            <xs:element name="pieceList" type="tns:ArrayOfPiecedefinition" nillable="true"/>
+            <xs:element name="payment" type="tns:PaymentData" nillable="true"/>
+            <xs:element name="service" type="tns:ServiceDefinition" nillable="true"/>
+            <xs:element name="shipmentDate" type="xs:string" nillable="true"/>
+            <xs:element name="skipRestrictionCheck" type="xs:boolean"/>
+            <xs:element name="comment" type="xs:string" nillable="true"/>
+            <xs:element name="content" type="xs:string" nillable="true"/>
+            <xs:element name="reference" type="xs:string" nillable="true"/>
+            <xs:element name="shipmentId" type="xs:int" nillable="true"/>
+            <xs:element name="created" type="xs:string" nillable="true"/>
+            <xs:element name="orderStatus" type="xs:string" nillable="true"/>
+            <xs:element name="customs" type="tns:CustomsData" nillable="true"/>
+            <xs:element name="wayBill" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfShipmentfulldata">
+        <xs:sequence>
+            <xs:element name="item" type="tns:ShipmentFullData" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="createShipments">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="authData" type="tns:AuthData" nillable="true"/>
+                <xs:element name="shipments" type="tns:ArrayOfShipmentfulldata" nillable="true"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ShipmentBasicData">
+        <xs:all>
+            <xs:element name="shipmentId" type="xs:string" nillable="true"/>
+            <xs:element name="created" type="xs:string" nillable="true"/>
+            <xs:element name="shipper" type="tns:AddressData" nillable="true"/>
+            <xs:element name="receiver" type="tns:AddressData" nillable="true"/>
+            <xs:element name="orderStatus" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfShipmentbasicdata">
+        <xs:sequence>
+            <xs:element name="item" type="tns:ShipmentBasicData" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="createShipmentsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="createShipmentsResult" type="tns:ArrayOfShipmentbasicdata"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ReturnItemToPrint">
+        <xs:all>
+            <xs:element name="labelType" type="xs:string" nillable="true"/>
+            <xs:element name="shipmentId" type="xs:string" nillable="true"/>
+            <xs:element name="wayBill" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfReturnitemtoprint">
+        <xs:sequence>
+            <xs:element name="item" type="tns:ReturnItemToPrint" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="getReturnByWaybill">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="authData" type="tns:AuthData"/>
+                <xs:element name="itemsToPrint" type="tns:ArrayOfReturnitemtoprint"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="Label">
+        <xs:all>
+            <xs:element name="labelType" type="xs:string" nillable="true"/>
+            <xs:element name="labelFormat" type="xs:string" nillable="true"/>
+            <xs:element name="labelContent" type="xs:string" nillable="true"/>
+            <xs:element name="cn23Content" type="xs:string" nillable="true"/>
+            <xs:element name="cn23MimeType" type="xs:string" nillable="true"/>
+            <xs:element name="fvProformaContent" type="xs:string" nillable="true"/>
+            <xs:element name="fvProformaMimeType" type="xs:string" nillable="true"/>
+            <xs:element name="fvProformaNumer" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="CreateShipmentResponse">
+        <xs:all>
+            <xs:element name="shipmentNotificationNumber" type="xs:string" nillable="true"/>
+            <xs:element name="shipmentTrackingNumber" type="xs:string" nillable="true"/>
+            <xs:element name="packagesTrackingNumbers" type="xs:string" nillable="true"/>
+            <xs:element name="dispatchNotificationNumber" type="xs:string" nillable="true"/>
+            <xs:element name="label" type="tns:Label" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfCreateshipmentresponse">
+        <xs:sequence>
+            <xs:element name="item" type="tns:CreateShipmentResponse" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="getReturnByWaybillResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="getReturnByWaybillResult" type="tns:ArrayOfCreateshipmentresponse"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="Billing">
+        <xs:all>
+            <xs:element name="shippingPaymentType" type="xs:string" nillable="true"/>
+            <xs:element name="billingAccountNumber" type="xs:int" nillable="true"/>
+            <xs:element name="paymentType" type="xs:string" nillable="true"/>
+            <xs:element name="costsCenter" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ReturnService">
+        <xs:all>
+            <xs:element name="serviceType" type="xs:string" nillable="true"/>
+            <xs:element name="serviceValue" type="xs:float" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfReturnservice">
+        <xs:sequence>
+            <xs:element name="item" type="tns:ReturnService" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ReturnShipmentTime">
+        <xs:all>
+            <xs:element name="labelExpDate" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ReturnShipmentInfo">
+        <xs:all>
+            <xs:element name="wayBill" type="xs:string" nillable="true"/>
+            <xs:element name="serviceType" type="xs:string" nillable="true"/>
+            <xs:element name="bookCourier" type="xs:boolean" nillable="true"/>
+            <xs:element name="billing" type="tns:Billing" nillable="true"/>
+            <xs:element name="specialServices" type="tns:ArrayOfReturnservice" nillable="true"/>
+            <xs:element name="shipmentTime" type="tns:ReturnShipmentTime" nillable="true"/>
+            <xs:element name="labelType" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="PreavisoContact">
+        <xs:all>
+            <xs:element name="personName" type="xs:string" nillable="true"/>
+            <xs:element name="phoneNumber" type="xs:string" nillable="true"/>
+            <xs:element name="emailAddress" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ShipperAddress">
+        <xs:all>
+            <xs:element name="country" type="xs:string" nillable="true"/>
+            <xs:element name="name" type="xs:string" nillable="true"/>
+            <xs:element name="postalCode" type="xs:string" nillable="true"/>
+            <xs:element name="city" type="xs:string" nillable="true"/>
+            <xs:element name="street" type="xs:string" nillable="true"/>
+            <xs:element name="houseNumber" type="xs:string" nillable="true"/>
+            <xs:element name="apartmentNumber" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ReturnAddressat">
+        <xs:all>
+            <xs:element name="preaviso" type="tns:PreavisoContact" nillable="true"/>
+            <xs:element name="contact" type="tns:PreavisoContact" nillable="true"/>
+            <xs:element name="address" type="tns:ShipperAddress" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ReturnShip">
+        <xs:all>
+            <xs:element name="shipper" type="tns:ReturnAddressat" nillable="true"/>
+            <xs:element name="receiver" type="tns:ReturnAddressat" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ReturnPackage">
+        <xs:all>
+            <xs:element name="type" type="xs:string" nillable="true"/>
+            <xs:element name="weight" type="xs:int" nillable="true"/>
+            <xs:element name="width" type="xs:int" nillable="true"/>
+            <xs:element name="height" type="xs:int" nillable="true"/>
+            <xs:element name="length" type="xs:int" nillable="true"/>
+            <xs:element name="quantity" type="xs:int" nillable="true"/>
+            <xs:element name="nonStandard" type="xs:boolean" nillable="true"/>
+            <xs:element name="blpPieceId" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfReturnpackage">
+        <xs:sequence>
+            <xs:element name="item" type="tns:ReturnPackage" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CreateReturnShipmentRequest">
+        <xs:all>
+            <xs:element name="shipmentInfo" type="tns:ReturnShipmentInfo" nillable="true"/>
+            <xs:element name="content" type="xs:string" nillable="true"/>
+            <xs:element name="comment" type="xs:string" nillable="true"/>
+            <xs:element name="reference" type="xs:string" nillable="true"/>
+            <xs:element name="primaryWaybillNumber" type="xs:string" nillable="true"/>
+            <xs:element name="ship" type="tns:ReturnShip" nillable="true"/>
+            <xs:element name="pieceList" type="tns:ArrayOfReturnpackage" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:element name="createShipmentReturn">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="authData" type="tns:AuthData"/>
+                <xs:element name="shipment" type="tns:CreateReturnShipmentRequest"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="CreateReturnShipmentResponse">
+        <xs:all>
+            <xs:element name="shipmentNotificationNumber" type="xs:string" nillable="true"/>
+            <xs:element name="shipmentTrackingNumber" type="xs:string" nillable="true"/>
+            <xs:element name="packagesTrackingNumbers" type="xs:string" nillable="true"/>
+            <xs:element name="dispatchNotificationNumber" type="xs:string" nillable="true"/>
+            <xs:element name="label" type="tns:Label" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfCreatereturnshipmentresponse">
+        <xs:sequence>
+            <xs:element name="item" type="tns:CreateReturnShipmentResponse" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="createShipmentReturnResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="createShipmentReturnResult" type="tns:ArrayOfCreatereturnshipmentresponse"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ArrayOfString">
+        <xs:sequence>
+            <xs:element name="item" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="deleteShipments">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="authData" type="tns:AuthData" nillable="true"/>
+                <xs:element name="shipments" type="tns:ArrayOfString" nillable="true"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="DeleteNotification">
+        <xs:all>
+            <xs:element name="id" type="xs:string" nillable="true"/>
+            <xs:element name="result" type="xs:boolean" nillable="true"/>
+            <xs:element name="error" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfDeletenotification">
+        <xs:sequence>
+            <xs:element name="item" type="tns:DeleteNotification" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="deleteShipmentsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="deleteShipmentsResult" type="tns:ArrayOfDeletenotification"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getMyShipments">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="authData" type="tns:AuthData" nillable="true"/>
+                <xs:element name="createdFrom" type="xs:string" nillable="true"/>
+                <xs:element name="createdTo" type="xs:string" nillable="true"/>
+                <xs:element name="offset" type="xs:int" nillable="true"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getMyShipmentsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="getMyShipmentsResult" type="tns:ArrayOfShipmentbasicdata"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getMyShipmentsCount">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="authData" type="tns:AuthData" nillable="true"/>
+                <xs:element name="createdFrom" type="xs:string" nillable="true"/>
+                <xs:element name="createdTo" type="xs:string" nillable="true"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getMyShipmentsCountResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="getMyShipmentsCountResult" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getPostalCodeServices">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="authData" type="tns:AuthData" nillable="true"/>
+                <xs:element name="postCode" type="xs:string" nillable="true"/>
+                <xs:element name="pickupDate" type="xs:string" nillable="true"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="PostalCodeServicesResponse">
+        <xs:all>
+            <xs:element name="domesticExpress9" type="xs:boolean" nillable="true"/>
+            <xs:element name="domesticExpress12" type="xs:boolean" nillable="true"/>
+            <xs:element name="deliveryEvening" type="xs:boolean" nillable="true"/>
+            <xs:element name="pickupOnSaturday" type="xs:boolean" nillable="true"/>
+            <xs:element name="deliverySaturday" type="xs:boolean" nillable="true"/>
+            <xs:element name="exPickupFrom" type="xs:string" nillable="true"/>
+            <xs:element name="exPickupTo" type="xs:string" nillable="true"/>
+            <xs:element name="drPickupFrom" type="xs:string" nillable="true"/>
+            <xs:element name="drPickupTo" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:element name="getPostalCodeServicesResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="getPostalCodeServicesResult" type="tns:PostalCodeServicesResponse"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getTrackAndTraceInfo">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="authData" type="tns:AuthData" nillable="true"/>
+                <xs:element name="shipmentId" type="xs:string" nillable="true"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="TrackAndTraceEvent">
+        <xs:all>
+            <xs:element name="status" type="xs:string" nillable="true"/>
+            <xs:element name="description" type="xs:string" nillable="true"/>
+            <xs:element name="terminal" type="xs:string" nillable="true"/>
+            <xs:element name="timestamp" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfTrackandtraceevent">
+        <xs:sequence>
+            <xs:element name="item" type="tns:TrackAndTraceEvent" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TrackAndTraceResponse">
+        <xs:all>
+            <xs:element name="shipmentId" type="xs:string" nillable="true"/>
+            <xs:element name="receivedBy" type="xs:string" nillable="true"/>
+            <xs:element name="events" type="tns:ArrayOfTrackandtraceevent" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:element name="getTrackAndTraceInfoResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="getTrackAndTraceInfoResult" type="tns:TrackAndTraceResponse"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ShipmentOrderInfo">
+        <xs:all>
+            <xs:element name="shipper" type="tns:AddressData" nillable="true"/>
+            <xs:element name="numberOfExPieces" type="xs:int" nillable="true"/>
+            <xs:element name="numberOfDrPieces" type="xs:int" nillable="true"/>
+            <xs:element name="totalWeight" type="xs:int" nillable="true"/>
+            <xs:element name="heaviestPieceWeight" type="xs:int" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:element name="bookCourier">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="authData" type="tns:AuthData" nillable="true"/>
+                <xs:element name="pickupDate" type="xs:string" nillable="true"/>
+                <xs:element name="pickupTimeFrom" type="xs:string" nillable="true"/>
+                <xs:element name="pickupTimeTo" type="xs:string" nillable="true"/>
+                <xs:element name="additionalInfo" type="xs:string" nillable="true"/>
+                <xs:element name="shipmentIdList" type="tns:ArrayOfString" nillable="true"/>
+                <xs:element name="shipmentOrderInfo" type="tns:ShipmentOrderInfo" nillable="true"/>
+                <xs:element name="courierWithLabel" type="xs:boolean" nillable="true"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="bookCourierResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="bookCourierResult" type="tns:ArrayOfString"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="cancelCourierBooking">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="authData" type="tns:AuthData" nillable="true"/>
+                <xs:element name="orders" type="tns:ArrayOfString" nillable="true"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="cancelCourierBookingResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="cancelCourierBookingResult" type="tns:ArrayOfDeletenotification"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ItemToPrint">
+        <xs:all>
+            <xs:element name="labelType" type="xs:string" nillable="true"/>
+            <xs:element name="shipmentId" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfItemtoprint">
+        <xs:sequence>
+            <xs:element name="item" type="tns:ItemToPrint" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="getLabels">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="authData" type="tns:AuthData" nillable="true"/>
+                <xs:element name="itemsToPrint" type="tns:ArrayOfItemtoprint" nillable="true"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ItemToPrintResponse">
+        <xs:all>
+            <xs:element name="shipmentId" type="xs:string" nillable="true"/>
+            <xs:element name="labelType" type="xs:string" nillable="true"/>
+            <xs:element name="labelName" type="xs:string" nillable="true"/>
+            <xs:element name="labelData" type="xs:string" nillable="true"/>
+            <xs:element name="labelMimeType" type="xs:string" nillable="true"/>
+            <xs:element name="cn23Data" type="xs:string" nillable="true"/>
+            <xs:element name="cn23MimeType" type="xs:string" nillable="true"/>
+            <xs:element name="fvProformaData" type="xs:string" nillable="true"/>
+            <xs:element name="fvProformaMimeType" type="xs:string" nillable="true"/>
+            <xs:element name="fvProformaNumer" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfItemtoprintresponse">
+        <xs:sequence>
+            <xs:element name="item" type="tns:ItemToPrintResponse" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="getLabelsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="getLabelsResult" type="tns:ArrayOfItemtoprintresponse"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="PnpRequest">
+        <xs:all>
+            <xs:element name="authData" type="tns:AuthData" nillable="true"/>
+            <xs:element name="date" type="xs:string" nillable="true"/>
+            <xs:element name="type" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:element name="getPnp">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="pnpRequest" type="tns:PnpRequest" nillable="true"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="PnpResponse">
+        <xs:all>
+            <xs:element name="fileName" type="xs:string" nillable="true"/>
+            <xs:element name="fileData" type="xs:string" nillable="true"/>
+            <xs:element name="fileMimeType" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:element name="getPnpResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="getPnpResult" type="tns:PnpResponse"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getShipmentScan">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="authData" type="tns:AuthData" nillable="true"/>
+                <xs:element name="shipmentId" type="xs:string" nillable="true"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ScanToPrintResponse">
+        <xs:all>
+            <xs:element name="scanData" type="xs:string" nillable="true"/>
+            <xs:element name="scanMimeType" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:element name="getShipmentScanResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="getShipmentScanResult" type="tns:ScanToPrintResponse"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="Service">
+        <xs:all>
+            <xs:element name="serviceType" type="xs:string" nillable="true"/>
+            <xs:element name="serviceValue" type="xs:float" nillable="true"/>
+            <xs:element name="textInstruction" type="xs:string" nillable="true"/>
+            <xs:element name="collectOnDeliveryForm" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfService">
+        <xs:sequence>
+            <xs:element name="item" type="tns:Service" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ShipmentTime">
+        <xs:all>
+            <xs:element name="shipmentDate" type="xs:string" nillable="true"/>
+            <xs:element name="shipmentStartHour" type="xs:string" nillable="true"/>
+            <xs:element name="shipmentEndHour" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ShipmentInfo">
+        <xs:all>
+            <xs:element name="wayBill" type="xs:string" nillable="true"/>
+            <xs:element name="dropOffType" type="xs:string" nillable="true"/>
+            <xs:element name="serviceType" type="xs:string" nillable="true"/>
+            <xs:element name="billing" type="tns:Billing" nillable="true"/>
+            <xs:element name="specialServices" type="tns:ArrayOfService" nillable="true"/>
+            <xs:element name="shipmentTime" type="tns:ShipmentTime" nillable="true"/>
+            <xs:element name="labelType" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="Address">
+        <xs:all>
+            <xs:element name="name" type="xs:string" nillable="true"/>
+            <xs:element name="postalCode" type="xs:string" nillable="true"/>
+            <xs:element name="city" type="xs:string" nillable="true"/>
+            <xs:element name="street" type="xs:string" nillable="true"/>
+            <xs:element name="houseNumber" type="xs:string" nillable="true"/>
+            <xs:element name="apartmentNumber" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="Addressat">
+        <xs:all>
+            <xs:element name="preaviso" type="tns:PreavisoContact" nillable="true"/>
+            <xs:element name="contact" type="tns:PreavisoContact" nillable="true"/>
+            <xs:element name="address" type="tns:Address" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ReceiverAddress">
+        <xs:all>
+            <xs:element name="country" type="xs:string" nillable="true"/>
+            <xs:element name="isPackstation" type="xs:boolean" nillable="true"/>
+            <xs:element name="isPostfiliale" type="xs:boolean" nillable="true"/>
+            <xs:element name="postnummer" type="xs:string" nillable="true"/>
+            <xs:element name="addressType" type="xs:string" nillable="true"/>
+            <xs:element name="name" type="xs:string" nillable="true"/>
+            <xs:element name="postalCode" type="xs:string" nillable="true"/>
+            <xs:element name="city" type="xs:string" nillable="true"/>
+            <xs:element name="street" type="xs:string" nillable="true"/>
+            <xs:element name="houseNumber" type="xs:string" nillable="true"/>
+            <xs:element name="apartmentNumber" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ReceiverAddressat">
+        <xs:all>
+            <xs:element name="preaviso" type="tns:PreavisoContact" nillable="true"/>
+            <xs:element name="contact" type="tns:PreavisoContact" nillable="true"/>
+            <xs:element name="address" type="tns:ReceiverAddress" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="Ship">
+        <xs:all>
+            <xs:element name="shipper" type="tns:Addressat" nillable="true"/>
+            <xs:element name="receiver" type="tns:ReceiverAddressat" nillable="true"/>
+            <xs:element name="neighbour" type="tns:NeighbourAddress" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="Package">
+        <xs:all>
+            <xs:element name="type" type="xs:string" nillable="true"/>
+            <xs:element name="euroReturn" type="xs:boolean" nillable="true"/>
+            <xs:element name="weight" type="xs:int" nillable="true"/>
+            <xs:element name="width" type="xs:int" nillable="true"/>
+            <xs:element name="height" type="xs:int" nillable="true"/>
+            <xs:element name="length" type="xs:int" nillable="true"/>
+            <xs:element name="quantity" type="xs:int" nillable="true"/>
+            <xs:element name="nonStandard" type="xs:boolean" nillable="true"/>
+            <xs:element name="blpPieceId" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfPackage">
+        <xs:sequence>
+            <xs:element name="item" type="tns:Package" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CreateShipmentRequest">
+        <xs:all>
+            <xs:element name="shipmentInfo" type="tns:ShipmentInfo" nillable="true"/>
+            <xs:element name="content" type="xs:string" nillable="true"/>
+            <xs:element name="comment" type="xs:string" nillable="true"/>
+            <xs:element name="reference" type="xs:string" nillable="true"/>
+            <xs:element name="ship" type="tns:Ship" nillable="true"/>
+            <xs:element name="pieceList" type="tns:ArrayOfPackage" nillable="true"/>
+            <xs:element name="customs" type="tns:CustomsData" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:element name="createShipment">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="authData" type="tns:AuthData" nillable="true"/>
+                <xs:element name="shipment" type="tns:CreateShipmentRequest" nillable="true"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="createShipmentResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="createShipmentResult" type="tns:CreateShipmentResponse"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="DeleteShipmentRequest">
+        <xs:all>
+            <xs:element name="shipmentIdentificationNumber" type="xs:string" nillable="true"/>
+            <xs:element name="dispatchIdentificationNumber" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:element name="deleteShipment">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="authData" type="tns:AuthData" nillable="true"/>
+                <xs:element name="shipment" type="tns:DeleteShipmentRequest" nillable="true"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="DeleteShipmentResponse">
+        <xs:all>
+            <xs:element name="id" type="xs:string" nillable="true"/>
+            <xs:element name="result" type="xs:boolean" nillable="true"/>
+            <xs:element name="error" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:element name="deleteShipmentResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="deleteShipmentResult" type="tns:DeleteShipmentResponse"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="GetNearestServicepointsRequest">
+        <xs:all>
+            <xs:element name="country" type="xs:string" nillable="true"/>
+            <xs:element name="postcode" type="xs:string" nillable="true"/>
+            <xs:element name="city" type="xs:string" nillable="true"/>
+            <xs:element name="radius" type="xs:int" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:element name="getNearestServicepoints">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="authData" type="tns:AuthData" nillable="true"/>
+                <xs:element name="structure" type="tns:GetNearestServicepointsRequest" nillable="true"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="SearchAddress">
+        <xs:all>
+            <xs:element name="country" type="xs:string" nillable="true"/>
+            <xs:element name="name" type="xs:string" nillable="true"/>
+            <xs:element name="postcode" type="xs:string" nillable="true"/>
+            <xs:element name="city" type="xs:string" nillable="true"/>
+            <xs:element name="street" type="xs:string" nillable="true"/>
+            <xs:element name="houseNumber" type="xs:string" nillable="true"/>
+            <xs:element name="apartmentNumber" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="Point">
+        <xs:all>
+            <xs:element name="type" type="xs:string" nillable="true"/>
+            <xs:element name="address" type="tns:SearchAddress" nillable="true"/>
+            <xs:element name="description" type="xs:string" nillable="true"/>
+            <xs:element name="longitude" type="xs:string" nillable="true"/>
+            <xs:element name="latitude" type="xs:string" nillable="true"/>
+            <xs:element name="sap" type="xs:string" nillable="true"/>
+            <xs:element name="monOpen" type="xs:string" nillable="true"/>
+            <xs:element name="monClose" type="xs:string" nillable="true"/>
+            <xs:element name="tueOpen" type="xs:string" nillable="true"/>
+            <xs:element name="tueClose" type="xs:string" nillable="true"/>
+            <xs:element name="wedOpen" type="xs:string" nillable="true"/>
+            <xs:element name="wedClose" type="xs:string" nillable="true"/>
+            <xs:element name="thuOpen" type="xs:string" nillable="true"/>
+            <xs:element name="thuClose" type="xs:string" nillable="true"/>
+            <xs:element name="friOpen" type="xs:string" nillable="true"/>
+            <xs:element name="friClose" type="xs:string" nillable="true"/>
+            <xs:element name="satOpen" type="xs:string" nillable="true"/>
+            <xs:element name="satClose" type="xs:string" nillable="true"/>
+            <xs:element name="sunOpen" type="xs:string" nillable="true"/>
+            <xs:element name="sunClose" type="xs:string" nillable="true"/>
+            <xs:element name="workInHoliday" type="xs:boolean" nillable="true"/>
+            <xs:element name="name" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfPoint">
+        <xs:sequence>
+            <xs:element name="item" type="tns:Point" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="GetNearestServicepointsResponse">
+        <xs:all>
+            <xs:element name="points" type="tns:ArrayOfPoint" nillable="true"/>
+            <xs:element name="count" type="xs:int" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:element name="getNearestServicepointsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="getNearestServicepointsResult" type="tns:GetNearestServicepointsResponse"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getInternationalParams">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="authData" type="tns:AuthData" nillable="true"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="InternationalParam">
+        <xs:all>
+            <xs:element name="countryName" type="xs:string" nillable="true"/>
+            <xs:element name="countryNameEn" type="xs:string" nillable="true"/>
+            <xs:element name="countryCode" type="xs:string" nillable="true"/>
+            <xs:element name="product" type="xs:string" nillable="true"/>
+            <xs:element name="pieceHeader" type="xs:string" nillable="true"/>
+            <xs:element name="routing" type="xs:string" nillable="true"/>
+            <xs:element name="code2l" type="xs:string" nillable="true"/>
+            <xs:element name="pickupDays" type="xs:int" nillable="true"/>
+            <xs:element name="courierMaxWeight" type="xs:float" nillable="true"/>
+            <xs:element name="courierMaxWidth" type="xs:int" nillable="true"/>
+            <xs:element name="courierMaxHeight" type="xs:int" nillable="true"/>
+            <xs:element name="courierMaxLength" type="xs:int" nillable="true"/>
+            <xs:element name="courierMaxCod" type="xs:int" nillable="true"/>
+            <xs:element name="courierCodCurrency" type="xs:string" nillable="true"/>
+            <xs:element name="courierExchrate" type="xs:float" nillable="true"/>
+            <xs:element name="courierNstAvailable" type="xs:boolean" nillable="true"/>
+            <xs:element name="courierMaxNst" type="xs:int" nillable="true"/>
+            <xs:element name="courierMaxGirth" type="xs:int" nillable="true"/>
+            <xs:element name="packstationAvailable" type="xs:boolean" nillable="true"/>
+            <xs:element name="packstationMaxWeight" type="xs:float" nillable="true"/>
+            <xs:element name="packstationMaxWidth" type="xs:int" nillable="true"/>
+            <xs:element name="packstationMaxHeight" type="xs:int" nillable="true"/>
+            <xs:element name="packstationMaxLength" type="xs:int" nillable="true"/>
+            <xs:element name="postfilialeAvailable" type="xs:boolean" nillable="true"/>
+            <xs:element name="postfilialeMaxWeight" type="xs:float" nillable="true"/>
+            <xs:element name="postfilialeMaxWidth" type="xs:int" nillable="true"/>
+            <xs:element name="postfilialeMaxHeight" type="xs:int" nillable="true"/>
+            <xs:element name="postfilialeMaxLength" type="xs:int" nillable="true"/>
+            <xs:element name="zipFormat" type="xs:string" nillable="true"/>
+            <xs:element name="identifier" type="xs:string" nillable="true"/>
+            <xs:element name="emailRequired" type="xs:int" nillable="true"/>
+            <xs:element name="active" type="xs:string" nillable="true"/>
+            <xs:element name="dutyProduct" type="xs:string" nillable="true"/>
+            <xs:element name="dutyPickupDays" type="xs:int" nillable="true"/>
+            <xs:element name="dutyPieceHeader" type="xs:string" nillable="true"/>
+            <xs:element name="dutyMaxWeight" type="xs:float" nillable="true"/>
+            <xs:element name="dutyMaxWidth" type="xs:int" nillable="true"/>
+            <xs:element name="dutyMaxHeight" type="xs:int" nillable="true"/>
+            <xs:element name="dutyMaxLength" type="xs:int" nillable="true"/>
+            <xs:element name="dutyNstAvailable" type="xs:boolean" nillable="true"/>
+            <xs:element name="dutyMaxNst" type="xs:int" nillable="true"/>
+            <xs:element name="dutyMaxGirth" type="xs:int" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfInternationalparam">
+        <xs:sequence>
+            <xs:element name="item" type="tns:InternationalParam" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="GetInternationalParamsResponse">
+        <xs:all>
+            <xs:element name="params" type="tns:ArrayOfInternationalparam" nillable="true"/>
+            <xs:element name="count" type="xs:int" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:element name="getInternationalParamsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="getInternationalParamsResult" type="tns:GetInternationalParamsResponse"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getReturnParams">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="authData" type="tns:AuthData" nillable="true"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ReturnParam">
+        <xs:all>
+            <xs:element name="countryCode" type="xs:string" nillable="true"/>
+            <xs:element name="product" type="xs:string" nillable="true"/>
+            <xs:element name="pieceHeader" type="xs:string" nillable="true"/>
+            <xs:element name="routing" type="xs:string" nillable="true"/>
+            <xs:element name="code2l" type="xs:string" nillable="true"/>
+            <xs:element name="courierAvailable" type="xs:boolean" nillable="true"/>
+            <xs:element name="courierMaxWeight" type="xs:float" nillable="true"/>
+            <xs:element name="courierMaxWidth" type="xs:int" nillable="true"/>
+            <xs:element name="courierMaxHeight" type="xs:int" nillable="true"/>
+            <xs:element name="courierMaxLength" type="xs:int" nillable="true"/>
+            <xs:element name="courierMaxCod" type="xs:int" nillable="true"/>
+            <xs:element name="courierNstAvailable" type="xs:boolean" nillable="true"/>
+            <xs:element name="maxNst" type="xs:int" nillable="true"/>
+            <xs:element name="maxGirth" type="xs:int" nillable="true"/>
+            <xs:element name="packstationAvailable" type="xs:boolean" nillable="true"/>
+            <xs:element name="packstationMaxWeight" type="xs:float" nillable="true"/>
+            <xs:element name="packstationMaxWidth" type="xs:int" nillable="true"/>
+            <xs:element name="packstationMaxHeight" type="xs:int" nillable="true"/>
+            <xs:element name="packstationNstAvailable" type="xs:boolean" nillable="true"/>
+            <xs:element name="packstationMaxLength" type="xs:int" nillable="true"/>
+            <xs:element name="postfilialeAvailable" type="xs:boolean" nillable="true"/>
+            <xs:element name="postfilialeMaxWeight" type="xs:float" nillable="true"/>
+            <xs:element name="postfilialeMaxWidth" type="xs:int" nillable="true"/>
+            <xs:element name="postfilialeMaxHeight" type="xs:int" nillable="true"/>
+            <xs:element name="postfilialeNstAvailable" type="xs:boolean" nillable="true"/>
+            <xs:element name="postfilialeMaxLength" type="xs:int" nillable="true"/>
+            <xs:element name="zipFormat" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfReturnparam">
+        <xs:sequence>
+            <xs:element name="item" type="tns:ReturnParam" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="GetReturnParamsResponse">
+        <xs:all>
+            <xs:element name="params" type="tns:ArrayOfReturnparam" nillable="true"/>
+            <xs:element name="count" type="xs:int" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:element name="getReturnParamsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="getReturnParamsResult" type="tns:GetReturnParamsResponse"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getInternationalParams2">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="authData" type="tns:AuthData" nillable="true"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ReturnPip2Param">
+        <xs:all>
+            <xs:element name="customerType" type="xs:string" nillable="true"/>
+            <xs:element name="elementType" type="xs:string" nillable="true"/>
+            <xs:element name="pickUpDays" type="xs:string" nillable="true"/>
+            <xs:element name="product" type="xs:string" nillable="true"/>
+            <xs:element name="pieceHeader" type="xs:string" nillable="true"/>
+            <xs:element name="routing" type="xs:string" nillable="true"/>
+            <xs:element name="code" type="xs:int" nillable="true"/>
+            <xs:element name="maxWeight" type="xs:float" nillable="true"/>
+            <xs:element name="maxWidth" type="xs:int" nillable="true"/>
+            <xs:element name="maxLength" type="xs:int" nillable="true"/>
+            <xs:element name="maxHeight" type="xs:int" nillable="true"/>
+            <xs:element name="maxShipmentWeight" type="xs:float" nillable="true"/>
+            <xs:element name="maxShipmentPc" type="xs:int" nillable="true"/>
+            <xs:element name="maxCod" type="xs:int" nillable="true"/>
+            <xs:element name="codCurrency" type="xs:string" nillable="true"/>
+            <xs:element name="exchRate" type="xs:float" nillable="true"/>
+            <xs:element name="nst" type="xs:boolean" nillable="true"/>
+            <xs:element name="maxNst" type="xs:int" nillable="true"/>
+            <xs:element name="girth" type="xs:int" nillable="true"/>
+            <xs:element name="packstation" type="xs:boolean" nillable="true"/>
+            <xs:element name="psMaxWeight" type="xs:float" nillable="true"/>
+            <xs:element name="psMaxLength" type="xs:float" nillable="true"/>
+            <xs:element name="psMaxWidth" type="xs:float" nillable="true"/>
+            <xs:element name="psMaxHeight" type="xs:float" nillable="true"/>
+            <xs:element name="postfiliale" type="xs:int" nillable="true"/>
+            <xs:element name="pfMaxWeight" type="xs:float" nillable="true"/>
+            <xs:element name="pfMaxWidth" type="xs:int" nillable="true"/>
+            <xs:element name="pfMaxHeight" type="xs:int" nillable="true"/>
+            <xs:element name="pfMaxLength" type="xs:int" nillable="true"/>
+            <xs:element name="zipFormat" type="xs:string" nillable="true"/>
+            <xs:element name="active" type="xs:boolean" nillable="true"/>
+            <xs:element name="identifier" type="xs:string" nillable="true"/>
+            <xs:element name="emailRec" type="xs:boolean" nillable="true"/>
+            <xs:element name="deliveryMethod" type="xs:string" nillable="true"/>
+            <xs:element name="deliveryOption" type="xs:string" nillable="true"/>
+            <xs:element name="deliveryInfo" type="xs:string" nillable="true"/>
+            <xs:element name="tntUrl" type="xs:string" nillable="true"/>
+            <xs:element name="emailSen" type="xs:boolean" nillable="true"/>
+            <xs:element name="mobPhoneRec" type="xs:boolean" nillable="true"/>
+            <xs:element name="insuranceBase" type="xs:int" nillable="true"/>
+            <xs:element name="insuranceMaxcashPln" type="xs:int" nillable="true"/>
+            <xs:element name="zipformatInfo" type="xs:string" nillable="true"/>
+            <xs:element name="printReceiversPhone" type="xs:boolean" nillable="true"/>
+            <xs:element name="countryUe" type="xs:boolean" nillable="true"/>
+            <xs:element name="deliveryOptionEn" type="xs:string" nillable="true"/>
+            <xs:element name="deliveryInfoEn" type="xs:string" nillable="true"/>
+            <xs:element name="zipformatInfoEn" type="xs:string" nillable="true"/>
+            <xs:element name="countryCode3" type="xs:string" nillable="true"/>
+            <xs:element name="mobPhoneSen" type="xs:boolean" nillable="true"/>
+            <xs:element name="routeLabel" type="xs:string" nillable="true"/>
+            <xs:element name="maxValue" type="xs:int" nillable="true"/>
+            <xs:element name="productName" type="xs:string" nillable="true"/>
+            <xs:element name="dutyIndividual" type="xs:boolean" nillable="true"/>
+            <xs:element name="dutySimple" type="xs:boolean" nillable="true"/>
+            <xs:element name="dhl24Available" type="xs:boolean" nillable="true"/>
+            <xs:element name="dhl24FuAvailable" type="xs:boolean" nillable="true"/>
+            <xs:element name="isbAvailable" type="xs:boolean" nillable="true"/>
+            <xs:element name="psmAvailable" type="xs:boolean" nillable="true"/>
+            <xs:element name="mobPhoneSpRec" type="xs:boolean" nillable="true"/>
+            <xs:element name="emailSpRec" type="xs:boolean" nillable="true"/>
+            <xs:element name="emailPlRec" type="xs:boolean" nillable="true"/>
+            <xs:element name="mobPhonePlRec" type="xs:boolean" nillable="true"/>
+            <xs:element name="podAvailable" type="xs:boolean" nillable="true"/>
+            <xs:element name="minLength" type="xs:int" nillable="true"/>
+            <xs:element name="minWidth" type="xs:int" nillable="true"/>
+            <xs:element name="minHeight" type="xs:int" nillable="true"/>
+            <xs:element name="fmNstKurier" type="xs:boolean" nillable="true"/>
+            <xs:element name="adhocpickup" type="xs:boolean" nillable="true"/>
+            <xs:element name="fmNstPf" type="xs:boolean" nillable="true"/>
+            <xs:element name="fmNstPs" type="xs:boolean" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfReturnpip2param">
+        <xs:sequence>
+            <xs:element name="item" type="tns:ReturnPip2Param" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ReturnPip2Country">
+        <xs:all>
+            <xs:element name="countryName" type="xs:string" nillable="true"/>
+            <xs:element name="countryNameEn" type="xs:string" nillable="true"/>
+            <xs:element name="countryCode" type="xs:string" nillable="true"/>
+            <xs:element name="products" type="tns:ArrayOfReturnpip2param" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfReturnpip2country">
+        <xs:sequence>
+            <xs:element name="item" type="tns:ReturnPip2Country" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="GetPip2Response">
+        <xs:all>
+            <xs:element name="params" type="tns:ArrayOfReturnpip2country" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:element name="getInternationalParams2Response">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="getInternationalParams2Result" type="tns:GetPip2Response"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="PieceShipmentItem">
+        <xs:all>
+            <xs:element name="shipmentNumber" type="xs:int" nillable="true"/>
+            <xs:element name="cedexNumber" type="xs:string" nillable="true"/>
+            <xs:element name="packageNumber" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfPieceshipmentitem">
+        <xs:sequence>
+            <xs:element name="item" type="tns:PieceShipmentItem" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="GetPieceIdRequest">
+        <xs:all>
+            <xs:element name="items" type="tns:ArrayOfPieceshipmentitem" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:element name="getPieceId">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="authData" type="tns:AuthData"/>
+                <xs:element name="request" type="tns:GetPieceIdRequest"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="Piece">
+        <xs:all>
+            <xs:element name="packageNumber" type="xs:string" nillable="true"/>
+            <xs:element name="productType" type="xs:string" nillable="true"/>
+            <xs:element name="weightReal" type="xs:float" nillable="true"/>
+            <xs:element name="weighVolumetric" type="xs:float" nillable="true"/>
+            <xs:element name="width" type="xs:int" nillable="true"/>
+            <xs:element name="length" type="xs:int" nillable="true"/>
+            <xs:element name="height" type="xs:int" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfPiece">
+        <xs:sequence>
+            <xs:element name="item" type="tns:Piece" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="PieceShipment">
+        <xs:all>
+            <xs:element name="shipmentNumber" type="xs:int" nillable="true"/>
+            <xs:element name="cedexNumber" type="xs:string" nillable="true"/>
+            <xs:element name="packages" type="tns:ArrayOfPiece" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfPieceshipment">
+        <xs:sequence>
+            <xs:element name="item" type="tns:PieceShipment" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="GetPieceIdResponse">
+        <xs:all>
+            <xs:element name="shipments" type="tns:ArrayOfPieceshipment" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:element name="getPieceIdResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="getPieceIdResult" type="tns:GetPieceIdResponse"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ItemToLabelData">
+        <xs:all>
+            <xs:element name="shipmentId" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfItemtolabeldata">
+        <xs:sequence>
+            <xs:element name="item" type="tns:ItemToLabelData" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="getLabelsData">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="authData" type="tns:AuthData" nillable="true"/>
+                <xs:element name="itemsToLabelData" type="tns:ArrayOfItemtolabeldata" nillable="true"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ShipmentTimeLabelData">
+        <xs:all>
+            <xs:element name="labelExpDate" type="xs:string" nillable="true"/>
+            <xs:element name="shipmentDate" type="xs:string" nillable="true"/>
+            <xs:element name="shipmentStartHour" type="xs:string" nillable="true"/>
+            <xs:element name="shipmentEndHour" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="Routing">
+        <xs:all>
+            <xs:element name="senderDepot" type="xs:string" nillable="true"/>
+            <xs:element name="receiverDepot" type="xs:string" nillable="true"/>
+            <xs:element name="senderAps" type="xs:string" nillable="true"/>
+            <xs:element name="receiverAps" type="xs:string" nillable="true"/>
+            <xs:element name="tourId" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ShipperAddressLabelData">
+        <xs:all>
+            <xs:element name="contactPerson" type="xs:string" nillable="true"/>
+            <xs:element name="contactPhone" type="xs:string" nillable="true"/>
+            <xs:element name="contactEmail" type="xs:string" nillable="true"/>
+            <xs:element name="preavisoPhone" type="xs:string" nillable="true"/>
+            <xs:element name="preavisoEmail" type="xs:string" nillable="true"/>
+            <xs:element name="preavisoPerson" type="xs:string" nillable="true"/>
+            <xs:element name="country" type="xs:string" nillable="true"/>
+            <xs:element name="name" type="xs:string" nillable="true"/>
+            <xs:element name="postalCode" type="xs:string" nillable="true"/>
+            <xs:element name="city" type="xs:string" nillable="true"/>
+            <xs:element name="street" type="xs:string" nillable="true"/>
+            <xs:element name="houseNumber" type="xs:string" nillable="true"/>
+            <xs:element name="apartmentNumber" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ReceiverAddressLabelData">
+        <xs:all>
+            <xs:element name="contactPerson" type="xs:string" nillable="true"/>
+            <xs:element name="contactPhone" type="xs:string" nillable="true"/>
+            <xs:element name="contactEmail" type="xs:string" nillable="true"/>
+            <xs:element name="preavisoPhone" type="xs:string" nillable="true"/>
+            <xs:element name="preavisoEmail" type="xs:string" nillable="true"/>
+            <xs:element name="preavisoPerson" type="xs:string" nillable="true"/>
+            <xs:element name="country" type="xs:string" nillable="true"/>
+            <xs:element name="isPackstation" type="xs:boolean" nillable="true"/>
+            <xs:element name="isPostfiliale" type="xs:boolean" nillable="true"/>
+            <xs:element name="postnummer" type="xs:string" nillable="true"/>
+            <xs:element name="addressType" type="xs:string" nillable="true"/>
+            <xs:element name="name" type="xs:string" nillable="true"/>
+            <xs:element name="postalCode" type="xs:string" nillable="true"/>
+            <xs:element name="city" type="xs:string" nillable="true"/>
+            <xs:element name="street" type="xs:string" nillable="true"/>
+            <xs:element name="houseNumber" type="xs:string" nillable="true"/>
+            <xs:element name="apartmentNumber" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ServicePoint">
+        <xs:all>
+            <xs:element name="servicePointAccountNumber" type="xs:string" nillable="true"/>
+            <xs:element name="name" type="xs:string" nillable="true"/>
+            <xs:element name="country" type="xs:string" nillable="true"/>
+            <xs:element name="postcode" type="xs:string" nillable="true"/>
+            <xs:element name="city" type="xs:string" nillable="true"/>
+            <xs:element name="street" type="xs:string" nillable="true"/>
+            <xs:element name="houseNumber" type="xs:string" nillable="true"/>
+            <xs:element name="apartmentNumber" type="xs:string" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="LabelDataServiceDefinition">
+        <xs:all>
+            <xs:element name="product" type="xs:string" nillable="true"/>
+            <xs:element name="deliveryEvening" type="xs:boolean" nillable="true"/>
+            <xs:element name="deliveryOnSaturday" type="xs:boolean" nillable="true"/>
+            <xs:element name="pickupOnSaturday" type="xs:boolean" nillable="true"/>
+            <xs:element name="collectOnDelivery" type="xs:boolean" nillable="true"/>
+            <xs:element name="collectOnDeliveryValue" type="xs:float" nillable="true"/>
+            <xs:element name="collectOnDeliveryForm" type="xs:string" nillable="true"/>
+            <xs:element name="collectOnDeliveryReference" type="xs:string" nillable="true"/>
+            <xs:element name="insurance" type="xs:boolean" nillable="true"/>
+            <xs:element name="insuranceValue" type="xs:float" nillable="true"/>
+            <xs:element name="returnOnDelivery" type="xs:boolean" nillable="true"/>
+            <xs:element name="returnOnDeliveryReference" type="xs:string" nillable="true"/>
+            <xs:element name="proofOfDelivery" type="xs:boolean" nillable="true"/>
+            <xs:element name="selfCollect" type="xs:boolean" nillable="true"/>
+            <xs:element name="predeliveryInformation" type="xs:boolean" nillable="true"/>
+            <xs:element name="deliveryToNeighbour" type="xs:boolean" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="PieceDefinitionLabelData">
+        <xs:all>
+            <xs:element name="routingBarcode" type="xs:string" nillable="true"/>
+            <xs:element name="type" type="xs:string" nillable="true"/>
+            <xs:element name="width" type="xs:int" nillable="true"/>
+            <xs:element name="height" type="xs:int" nillable="true"/>
+            <xs:element name="length" type="xs:int" nillable="true"/>
+            <xs:element name="weight" type="xs:float" nillable="true"/>
+            <xs:element name="quantity" type="xs:int" nillable="true"/>
+            <xs:element name="nonStandard" type="xs:boolean" nillable="true"/>
+            <xs:element name="blpPieceId" type="xs:string" nillable="true"/>
+            <xs:element name="euroReturn" type="xs:boolean" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfPiecedefinitionlabeldata">
+        <xs:sequence>
+            <xs:element name="item" type="tns:PieceDefinitionLabelData" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ItemToLabelDataResponse">
+        <xs:all>
+            <xs:element name="shipmentId" type="xs:string" nillable="true"/>
+            <xs:element name="primaryWaybillNumber" type="xs:string" nillable="true"/>
+            <xs:element name="dispatchNotificationNumber" type="xs:string" nillable="true"/>
+            <xs:element name="labelHeader" type="xs:string" nillable="true"/>
+            <xs:element name="content" type="xs:string" nillable="true"/>
+            <xs:element name="comment" type="xs:string" nillable="true"/>
+            <xs:element name="reference" type="xs:string" nillable="true"/>
+            <xs:element name="billing" type="tns:Billing" nillable="true"/>
+            <xs:element name="shipmentTime" type="tns:ShipmentTimeLabelData" nillable="true"/>
+            <xs:element name="routing" type="tns:Routing" nillable="true"/>
+            <xs:element name="shipper" type="tns:ShipperAddressLabelData" nillable="true"/>
+            <xs:element name="receiver" type="tns:ReceiverAddressLabelData" nillable="true"/>
+            <xs:element name="neighbour" type="tns:NeighbourAddress" nillable="true"/>
+            <xs:element name="servicepoint" type="tns:ServicePoint" nillable="true"/>
+            <xs:element name="service" type="tns:LabelDataServiceDefinition" nillable="true"/>
+            <xs:element name="pieceList" type="tns:ArrayOfPiecedefinitionlabeldata" nillable="true"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfItemtolabeldataresponse">
+        <xs:sequence>
+            <xs:element name="item" type="tns:ItemToLabelDataResponse" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="getLabelsDataResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="getLabelsDataResult" type="tns:ArrayOfItemtolabeldataresponse"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

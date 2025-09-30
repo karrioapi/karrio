@@ -1,0 +1,545 @@
+#!/usr/bin/env bash
+
+# =============================================================================
+# KARRIO DEVELOPMENT ENVIRONMENT SETUP
+# =============================================================================
+# Sets up complete development environment for Karrio
+# Based on bin/deploy pattern but adapted for local development
+# =============================================================================
+
+# Don't exit on error - we'll handle errors explicitly
+set +e
+
+# Detect if script is being sourced or executed
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    SCRIPT_SOURCED=false
+else
+    SCRIPT_SOURCED=true
+fi
+
+# Save current directory
+ORIGINAL_DIR="$(pwd)"
+
+# Get script directory
+if [[ -n "${BASH_SOURCE[0]}" ]]; then
+    SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+else
+    # Fallback for when script is sourced
+    SCRIPT_DIR="$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")"
+fi
+ROOT_DIR="$( cd "$SCRIPT_DIR/.." && pwd )"
+
+# Color codes for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+# Utility functions
+print_step() { echo -e "${CYAN}→ $1${NC}"; }
+print_success() { echo -e "${GREEN}✓ $1${NC}"; }
+print_warning() { echo -e "${YELLOW}⚠ $1${NC}"; }
+print_error() { echo -e "${RED}✗ $1${NC}"; }
+command_exists() { command -v "$1" >/dev/null 2>&1; }
+
+# Header
+echo -e "${BLUE}"
+echo "██╗  ██╗ █████╗ ██████╗ ██████╗ ██╗ ██████╗ "
+echo "██║ ██╔╝██╔══██╗██╔══██╗██╔══██╗██║██╔═══██╗"
+echo "█████╔╝ ███████║██████╔╝██████╔╝██║██║   ██║"
+echo "██╔═██╗ ██╔══██║██╔══██╗██╔══██╗██║██║   ██║"
+echo "██║  ██╗██║  ██║██║  ██║██║  ██║██║╚██████╔╝"
+echo "╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝ "
+echo -e "${NC}"
+echo "Development Environment Setup"
+echo ""
+
+# Change to root directory
+cd "$ROOT_DIR"
+
+# =============================================================================
+# PREREQUISITES CHECK
+# =============================================================================
+print_step "Checking prerequisites..."
+
+# Check if running with proper permissions
+if [[ "$(uname -s)" == "Linux" ]] && [[ $EUID -ne 0 ]] && ! groups | grep -qE "sudo|wheel"; then
+    print_warning "You may need sudo permissions to install system packages"
+    print_warning "Some installation steps might fail without proper permissions"
+fi
+
+# Check internet connectivity
+if ! curl -s --head https://pypi.org >/dev/null 2>&1; then
+    print_error "No internet connection detected. This script requires internet access."
+    if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+        return 1
+    else
+        exit 1
+    fi
+fi
+
+print_success "Prerequisites check passed"
+
+# =============================================================================
+# STEP 1: SYSTEM DEPENDENCIES
+# =============================================================================
+print_step "Installing system dependencies..."
+
+# Install system binaries - inline installation like in deploy script
+if [[ "$(uname)" == "Darwin" ]]; then
+    # macOS
+    print_step "Installing macOS dependencies..."
+    if command_exists brew; then
+        brew install gcc pango libffi ghostscript zint curl git 2>/dev/null || {
+            print_warning "Some packages may already be installed"
+        }
+    else
+        print_warning "Homebrew not found. Please install Homebrew first: https://brew.sh"
+    fi
+elif [[ "$(uname -s)" == "Linux" ]]; then
+    # Linux
+    print_step "Installing Linux dependencies..."
+    
+    # First update package lists
+    print_step "Updating package lists..."
+    if ! sudo apt update -y; then
+        print_error "Failed to update package lists"
+        if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+            return 1
+        else
+            exit 1
+        fi
+    fi
+    
+    # Install pyenv build dependencies as per official wiki
+    print_step "Installing pyenv build dependencies..."
+    if ! sudo apt install -y make build-essential libssl-dev zlib1g-dev \
+        libbz2-dev libreadline-dev libsqlite3-dev curl git \
+        libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev; then
+        print_error "Failed to install pyenv build dependencies. This is critical for Python compilation."
+        if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+            return 1
+        else
+            exit 1
+        fi
+    fi
+    
+    # Install additional dependencies for Python and Karrio
+    print_step "Installing additional dependencies..."
+    sudo apt install -y \
+        pkg-config wget llvm libncurses5-dev \
+        python3-full python3-pip python3-venv python3-dev \
+        libpango-1.0-0 libharfbuzz0b libpangoft2-1.0-0 libharfbuzz-subset0 \
+        gcc ghostscript libjpeg-dev libopenjp2-7-dev zint || {
+        print_warning "Some packages may already be installed"
+    }
+    
+    # Try to install version-specific python venv packages
+    print_step "Installing Python venv packages..."
+    for version in 3.13 3.12 3.11; do
+        sudo apt install -y python${version}-venv 2>/dev/null || true
+    done
+fi
+print_success "System dependencies installed"
+
+
+# =============================================================================
+# STEP 2: DOCKER INSTALLATION CHECK
+# =============================================================================
+print_step "Checking Docker installation..."
+
+if command_exists docker; then
+    docker_version=$(docker --version 2>/dev/null || echo "unknown")
+    print_success "Docker found: $docker_version"
+
+    # Check if Docker daemon is running
+    if ! docker info >/dev/null 2>&1; then
+        print_warning "Docker daemon is not running. Please start Docker Desktop or Docker service."
+    fi
+else
+    print_warning "Docker not found. Please install Docker Desktop manually."
+    print_warning "Download from: https://docs.docker.com/desktop/"
+fi
+
+# Check Docker Compose
+if command_exists docker-compose || docker compose version >/dev/null 2>&1; then
+    print_success "Docker Compose available"
+else
+    print_warning "Docker Compose not found"
+fi
+
+# =============================================================================
+# STEP 3: PYENV AND PYTHON SETUP
+# =============================================================================
+print_step "Setting up Python environment..."
+
+# Install pyenv if not available
+if ! command_exists pyenv; then
+    print_step "Installing pyenv..."
+    if [[ "$(uname)" == "Darwin" ]]; then
+        # macOS
+        brew install pyenv
+    elif [[ "$(uname -s)" == "Linux" ]]; then
+        # Linux - install pyenv
+        if [[ ! -d "$HOME/.pyenv" ]]; then
+            curl https://pyenv.run | bash
+        else
+            print_step "pyenv directory exists, updating..."
+            cd "$HOME/.pyenv" && git pull 2>/dev/null || true
+            cd "$ROOT_DIR"
+        fi
+    fi
+else
+    print_success "pyenv already available"
+fi
+
+# Setup pyenv environment - critical for the script to work
+export PYENV_ROOT="$HOME/.pyenv"
+if [[ -d "$PYENV_ROOT/bin" ]]; then
+    export PATH="$PYENV_ROOT/bin:$PATH"
+fi
+
+# Initialize pyenv if it exists
+if [[ -d "$PYENV_ROOT" ]]; then
+    eval "$(pyenv init --path)" 2>/dev/null || true
+    eval "$(pyenv init -)" 2>/dev/null || true
+fi
+
+# Add pyenv to shell profile if not already there
+for shell_config in ~/.bashrc ~/.zshrc ~/.profile; do
+    if [[ -f "$shell_config" ]] && ! grep -q "pyenv init" "$shell_config"; then
+        print_step "Adding pyenv to $shell_config"
+        echo '' >> "$shell_config"
+        echo '# pyenv configuration' >> "$shell_config"
+        echo 'export PYENV_ROOT="$HOME/.pyenv"' >> "$shell_config"
+        echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> "$shell_config"
+        echo 'eval "$(pyenv init --path)"' >> "$shell_config"
+        echo 'eval "$(pyenv init -)"' >> "$shell_config"
+        break
+    fi
+done
+
+# Update pyenv
+print_step "Updating pyenv..."
+if command_exists brew && brew list pyenv >/dev/null 2>&1; then
+    # Run brew update/upgrade but don't fail if it doesn't work
+    (brew update && brew upgrade pyenv) 2>/dev/null || true
+fi
+
+# Reload pyenv environment
+print_step "Setting up pyenv environment..."
+export PYENV_ROOT="$HOME/.pyenv"
+if [[ -d "$PYENV_ROOT/bin" ]]; then
+    export PATH="$PYENV_ROOT/bin:$PATH"
+fi
+
+if [[ -d "$PYENV_ROOT" ]]; then
+    eval "$(pyenv init --path)" 2>/dev/null || true
+    eval "$(pyenv init -)" 2>/dev/null || true
+fi
+
+if ! command_exists pyenv; then
+    print_error "pyenv not available. Please restart your shell and run this script again."
+    if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+        return 1
+    else
+        exit 1
+    fi
+fi
+
+# Install latest Python 3.12.x
+print_step "Finding latest Python 3.12.x version..."
+
+# Get the latest 3.12.x version
+PYTHON_VERSION=$(pyenv install --list 2>/dev/null | grep -E "^\s*3\.12\.[0-9]+$" | tail -1 | xargs)
+
+if [[ -z "$PYTHON_VERSION" ]]; then
+    PYTHON_VERSION="3.12.11"  # Fallback
+fi
+
+print_step "Installing Python $PYTHON_VERSION"
+
+# Check if the specific version is already installed
+if pyenv versions 2>/dev/null | grep -q "$PYTHON_VERSION"; then
+    print_success "Python $PYTHON_VERSION already installed"
+else
+    print_step "Installing Python $PYTHON_VERSION (this may take a few minutes)..."
+    
+    # For Linux, ensure all build dependencies are available
+    if [[ "$(uname -s)" == "Linux" ]]; then
+        if ! command_exists make; then
+            print_error "'make' command not found. Build dependencies may not be properly installed."
+            print_error "Please ensure build-essential is installed: sudo apt install build-essential"
+            if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+                return 1
+            else
+                exit 1
+            fi
+        fi
+    fi
+    
+    # Install Python with appropriate compiler flags
+    print_step "Compiling Python $PYTHON_VERSION from source..."
+    CFLAGS="-Wno-error=array-bounds -Wno-error=stringop-overflow -Wno-error=incompatible-pointer-types" \
+    pyenv install "$PYTHON_VERSION" || {
+        print_error "Failed to install Python $PYTHON_VERSION"
+        if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+            return 1
+        else
+            exit 1
+        fi
+    }
+    
+    print_success "Python $PYTHON_VERSION installed successfully"
+fi
+
+# Set local Python version
+pyenv local "$PYTHON_VERSION" || {
+    print_error "Failed to set Python version"
+    if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+        return 1
+    else
+        exit 1
+    fi
+}
+pyenv rehash
+print_success "Python $PYTHON_VERSION set up"
+
+# =============================================================================
+# STEP 4: NODE.JS SETUP
+# =============================================================================
+print_step "Setting up Node.js environment..."
+
+# Install nvm if not available
+if [[ ! -d "$HOME/.nvm" ]] && ! command_exists nvm; then
+    print_step "Installing nvm..."
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+fi
+
+# Source nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# Install Node.js
+if command_exists nvm; then
+    nvm install stable
+    nvm use stable
+    nvm alias default stable
+    print_success "Node.js installed and set as default"
+else
+    print_warning "nvm not available, skipping Node.js setup"
+fi
+
+# =============================================================================
+# STEP 5: PYTHON VIRTUAL ENVIRONMENT AND DEPENDENCIES
+# =============================================================================
+print_step "Setting up Python virtual environment..."
+
+# Create necessary directories
+mkdir -p .karrio/app .karrio/log .karrio/data .karrio/static
+
+# Use setup-server-env to install Python dependencies
+if [[ -f "bin/setup-server-env" ]]; then
+    print_step "Installing Python dependencies using setup-server-env..."
+    export CFLAGS="-Wno-error=array-bounds -Wno-error=stringop-overflow -Wno-error=incompatible-pointer-types"
+
+    # Run setup-server-env
+    print_step "Running setup-server-env (this may take a while)..."
+    if (
+        cd "$ROOT_DIR"
+        export PYENV_ROOT="$HOME/.pyenv"
+        export PATH="$PYENV_ROOT/bin:$PATH"
+        if [[ -d "$PYENV_ROOT" ]]; then
+            eval "$(pyenv init --path)" 2>/dev/null || true
+            eval "$(pyenv init -)" 2>/dev/null || true
+        fi
+        ./bin/setup-server-env
+    ); then
+        print_success "Python environment and dependencies installed"
+    else
+        print_error "setup-server-env failed"
+        if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+            return 1
+        else
+            exit 1
+        fi
+    fi
+
+    unset CFLAGS
+
+    # Verify the virtual environment was created
+    if [[ ! -d ".venv/karrio" ]]; then
+        print_warning "Virtual environment not found after setup, this might be normal on first run"
+    fi
+else
+    print_error "bin/setup-server-env not found!"
+    if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+        return 1
+    else
+        exit 1
+    fi
+fi
+
+# =============================================================================
+# STEP 6: NODE.JS DEPENDENCIES
+# =============================================================================
+if command_exists npm; then
+    print_step "Installing Node.js dependencies..."
+    npm install
+    print_success "Node.js dependencies installed"
+else
+    print_warning "npm not found, skipping Node.js dependencies"
+fi
+
+# =============================================================================
+# STEP 7: ENVIRONMENT FILES
+# =============================================================================
+
+print_step "Setting up environment files..."
+
+# Setup main server .env file
+if [[ -f ".env" ]]; then
+    # File exists, ask user if they want to overwrite
+    print_warning "Main .env already exists"
+    echo -n "Do you want to overwrite it with .env.sample? [y/N]: "
+    read -r response
+    if [[ "$response" =~ ^[Yy]$ ]]; then
+        if [[ -f ".env.sample" ]]; then
+            cp ".env.sample" ".env"
+            print_success "Updated .env from .env.sample (optimized for local development)"
+        else
+            print_warning ".env.sample not found, skipping main .env update"
+        fi
+    else
+        print_success "Main .env kept unchanged"
+    fi
+else
+    # File doesn't exist, create it
+    if [[ -f ".env.sample" ]]; then
+        cp ".env.sample" ".env"
+        print_success "Created .env from .env.sample (optimized for local development)"
+    else
+        print_warning ".env.sample not found, skipping main .env creation"
+    fi
+fi
+
+# Setup dashboard .env file
+if [[ -f "apps/dashboard/.env" ]]; then
+    # File exists, ask user if they want to overwrite
+    print_warning "Dashboard .env already exists"
+    echo -n "Do you want to overwrite it with .env.sample? [y/N]: "
+    read -r response
+    if [[ "$response" =~ ^[Yy]$ ]]; then
+        if [[ -f "apps/dashboard/.env.sample" ]]; then
+            cp "apps/dashboard/.env.sample" "apps/dashboard/.env"
+            print_success "Updated dashboard .env from .env.sample"
+        else
+            print_warning "apps/dashboard/.env.sample not found, skipping dashboard .env update"
+        fi
+    else
+        print_success "Dashboard .env kept unchanged"
+    fi
+else
+    # File doesn't exist, create it
+    if [[ -f "apps/dashboard/.env.sample" ]]; then
+        cp "apps/dashboard/.env.sample" "apps/dashboard/.env"
+        print_success "Created dashboard .env from .env.sample"
+    else
+        print_warning "apps/dashboard/.env.sample not found, skipping dashboard .env creation"
+    fi
+fi
+
+# Display environment setup summary
+print_success "Environment files configured for local development"
+echo ""
+echo -e "${CYAN}Environment Configuration Summary:${NC}"
+echo "   → API Server: http://localhost:5002"
+echo "   → Dashboard: http://localhost:3002"
+echo "   → SQLite Database: .karrio/db.sqlite3"
+echo "   → Work Directory: .karrio/"
+
+# =============================================================================
+# COMPLETION
+# =============================================================================
+echo ""
+
+# Check if setup was successful
+if ! command_exists pyenv; then
+    print_warning "Setup incomplete - please restart your shell and run this script again"
+    if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+        return 0
+    else
+        exit 0
+    fi
+fi
+
+print_success "Development environment setup complete! 🎉"
+echo ""
+echo -e "${YELLOW}Next steps:${NC}"
+echo ""
+echo "1. Activate Python environment:"
+echo "   source bin/activate-env"
+echo ""
+echo "2. Run database migrations:"
+echo "   karrio migrate"
+echo ""
+echo "3. Create superuser:"
+echo "   karrio createsuperuser"
+echo ""
+echo "4. Collect static files:"
+echo "   karrio collectstatic --noinput"
+echo ""
+echo "5. Start development servers:"
+echo "   ./bin/start-dev"
+echo ""
+echo -e "${GREEN}Access your application at:${NC}"
+echo "   → API: http://localhost:5002"
+echo "   → Dashboard: http://localhost:3002"
+echo "   → Admin: http://localhost:5002/admin"
+echo ""
+
+# Check for any warnings
+if [[ "$(uname -s)" == "Linux" ]] && ! groups | grep -q docker; then
+    print_warning "Please log out and log back in for Docker permissions"
+fi
+
+
+# =============================================================================
+# FINAL SETUP
+# =============================================================================
+
+# If sourced, activate the Python environment
+if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+    print_step "Activating Python environment..."
+    if [[ -f "bin/activate-env" ]]; then
+        source "bin/activate-env"
+
+        # Fix double parentheses in prompt if they exist
+        if [[ "$PS1" == *"((karrio) )"* ]]; then
+            PS1="$(echo "$PS1" | sed 's/((karrio) )/(karrio) /')"
+            export PS1
+        fi
+
+        print_success "Python environment activated!"
+    else
+        print_warning "bin/activate-env not found, skipping activation"
+    fi
+    echo ""
+    echo -e "${GREEN}You can now run:${NC}"
+    echo "   → karrio migrate"
+    echo "   → karrio createsuperuser"
+    echo "   → ./bin/start-dev"
+fi
+
+# Return to original directory
+cd "$ORIGINAL_DIR"
+
+# Use return for sourced scripts, exit for executed scripts
+if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+    return 0
+else
+    exit 0
+fi

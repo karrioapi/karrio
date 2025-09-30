@@ -1,0 +1,11 @@
+---
+id: royalmail
+title: Royal Mail
+---
+
+import integrations from "../integrations.json";
+import CarrierIntegrationDetails from "@site/src/components/CarrierIntegrationDetails";
+
+<CarrierIntegrationDetails 
+    id="royalmail"
+    integration={integrations.find(i => i.id === "royalmail")} />

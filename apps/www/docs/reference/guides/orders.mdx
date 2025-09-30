@@ -1,0 +1,720 @@
+---
+id: orders
+title: Orders
+description: Sync orders with Karrio for fulfilment via API.
+tags:
+  - REST API
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Karrio's orders API allows you to sync orders with Karrio for fulfilment. 
+You can use the API to create, update, and cancel orders.
+
+<div id="tailwind">
+  <table className="table-auto">
+    <thead>
+      <tr>
+        <th>ENDPOINTS</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>GET</td>
+        <td>/v1/orders</td>
+      </tr>
+      <tr>
+        <td>POST</td>
+        <td>
+          /v1/orders
+        </td>
+      </tr>
+      <tr>
+        <td>GET</td>
+        <td>
+          /v1/orders/<strong>[id]</strong>
+        </td>
+      </tr>
+      <tr>
+        <td>POST</td>
+        <td>
+          /v1/orders/<strong>[id]</strong>/cancel
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+## Creating an order
+
+> `POST` /v1/orders
+
+You can create a readonly order in Karrio based on the order data from your OMS.
+
+<div id="tabs">
+<Tabs>
+<TabItem value="request" label="Request">
+
+```bash
+curl --request POST \
+  --url 'https://api.karrio.io/v1/shipments' \
+  --header 'Authorization: Token  [API_KEY]' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"order_id": "345098457777",
+	"source": "bigcommerce",
+	"shipping_to": {
+		"address_line1": "5840 Oak St",
+		"city": "Vancouver",
+		"company_name": "B corp.",
+		"country_code": "CA",
+		"person_name": "Jane Doe",
+		"phone_number": "+1 514-000-0000",
+		"postal_code": "V6M2V9",
+		"residential": true,
+		"state_code": "BC"
+	},
+	"shipping_from": {
+		"postal_code": "E1C4Z8",
+		"city": "Moncton",
+		"person_name": "John Doe",
+		"company_name": "A corp.",
+		"country_code": "CA",
+		"phone_number": "+1 514-000-0000",
+		"state_code": "NB",
+		"address_line1": "125 Church St"
+	},
+	"line_items": [
+		{
+			"weight": 1.7,
+			"weight_unit": "KG",
+			"description": "Blue Jean Coat",
+			"quantity": 1,
+			"hs_code": "10000001",
+			"value_amount": 99.99,
+			"value_currency": "USD"
+		},
+		{
+			"weight": 0.75,
+			"weight_unit": "KG",
+			"description": "Brow Suede Shoes",
+			"quantity": 2,
+			"hs_code": "10000002",
+			"value_amount": 59.95,
+			"value_currency": "USD"
+		}
+	]
+}'
+```
+
+</TabItem>
+<TabItem value="response" label="Response">
+
+```json
+{
+	"id": "ord_2cbaa39d502247a080b9bd140b5591e8",
+	"object_type": "order",
+	"order_id": "345098457777",
+	"order_date": "2024-02-10",
+	"source": "bigcommerce",
+	"status": "unfulfilled",
+	"shipping_to": {
+		"id": "adr_b3a18bfeedec482c8640134c88913d51",
+		"postal_code": "V6M2V9",
+		"city": "Vancouver",
+		"federal_tax_id": null,
+		"state_tax_id": null,
+		"person_name": "Jane Doe",
+		"company_name": "B corp.",
+		"country_code": "CA",
+		"email": null,
+		"phone_number": "+1 514-000-0000",
+		"state_code": "BC",
+		"suburb": null,
+		"residential": true,
+		"street_number": null,
+		"address_line1": "5840 Oak St",
+		"address_line2": null,
+		"validate_location": false,
+		"object_type": "address",
+		"validation": null
+	},
+	"shipping_from": {
+		"id": "adr_da1b22549d4645239dd0f58c1f2e7a72",
+		"postal_code": "E1C4Z8",
+		"city": "Moncton",
+		"federal_tax_id": null,
+		"state_tax_id": null,
+		"person_name": "John Doe",
+		"company_name": "A corp.",
+		"country_code": "CA",
+		"email": null,
+		"phone_number": "+1 514-000-0000",
+		"state_code": "NB",
+		"suburb": null,
+		"residential": false,
+		"street_number": null,
+		"address_line1": "125 Church St",
+		"address_line2": null,
+		"validate_location": false,
+		"object_type": "address",
+		"validation": null
+	},
+	"billing_address": null,
+	"line_items": [
+		{
+			"id": "cdt_549f66b743a147958f084f5b1928e08e",
+			"weight": 1.7,
+			"weight_unit": "KG",
+			"title": null,
+			"description": "Blue Jean Coat",
+			"quantity": 1,
+			"sku": null,
+			"hs_code": "10000001",
+			"value_amount": 99.99,
+			"value_currency": "USD",
+			"origin_country": null,
+			"parent_id": null,
+			"metadata": {},
+			"object_type": "commodity",
+			"unfulfilled_quantity": 1
+		},
+		{
+			"id": "cdt_e44ecabf0d904aa9b45d1139d4ce045a",
+			"weight": 0.75,
+			"weight_unit": "KG",
+			"title": null,
+			"description": "Brow Suede Shoes",
+			"quantity": 2,
+			"sku": null,
+			"hs_code": "10000002",
+			"value_amount": 59.95,
+			"value_currency": "USD",
+			"origin_country": null,
+			"parent_id": null,
+			"metadata": {},
+			"object_type": "commodity",
+			"unfulfilled_quantity": 2
+		}
+	],
+	"options": {},
+	"meta": {},
+	"metadata": {},
+	"shipments": [],
+	"test_mode": true,
+	"created_at": "2024-02-10 09:52:27.067064+00:00"
+}
+```
+
+</TabItem>
+</Tabs>
+</div>
+
+
+## Fulfiling an order
+
+:::info 
+
+You can fulfill an order by creating a shipment for the order.
+
+:::
+
+<div id="tabs">
+<Tabs>
+<TabItem value="request" label="Request">
+
+```bash
+curl --request POST \
+  --url 'https://api.karrio.io/v1/shipments' \
+  --header 'Authorization: Token  [API_KEY]' \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "carrier_ids": [
+    "ups-account"
+  ],
+  "label_type": "PDF",
+  "metadata": {
+    "order_ids": "345098457777"
+  },
+  "options": {
+    "currency": "USD",
+    "declared_value": 219.89,
+    "preferred_service": "ups_express_saver_ca"
+  },
+  "parcels": [
+    {
+      "dimension_unit": "CM",
+      "height": 38,
+      "is_document": false,
+      "items": [
+        {
+          "description": "Blue Jean Coat",
+          "hs_code": "10000001",
+          "metadata": {},
+          "parent_id": "cdt_549f66b743a147958f084f5b1928e08e",
+          "quantity": 1,
+          "value_amount": 99.99,
+          "value_currency": "USD",
+          "weight": 1.7,
+          "weight_unit": "KG"
+        },
+        {
+          "description": "Brow Suede Shoes",
+          "hs_code": "10000002",
+          "metadata": {},
+          "parent_id": "cdt_e44ecabf0d904aa9b45d1139d4ce045a",
+          "quantity": 2,
+          "value_amount": 59.95,
+          "value_currency": "USD",
+          "weight": 0.75,
+          "weight_unit": "KG"
+        }
+      ],
+      "length": 32,
+      "package_preset": "canadapost_corrugated_medium_box",
+      "weight": 3.2,
+      "weight_unit": "KG",
+      "width": 46
+    }
+  ],
+  "payment": {
+    "paid_by": "sender"
+  },
+  "recipient": {
+    "address_line1": "5840 Oak St",
+    "city": "Vancouver",
+    "company_name": "B corp.",
+    "country_code": "CA",
+    "person_name": "Jane Doe",
+    "phone_number": "+1 514-000-0000",
+    "postal_code": "V6M2V9",
+    "residential": true,
+    "state_code": "BC",
+    "validate_location": false
+  },
+  "service": "ups_express_saver_ca",
+  "shipper": {
+    "address_line1": "125 Church St",
+    "city": "Moncton",
+    "company_name": "A corp.",
+    "country_code": "CA",
+    "person_name": "John Doe",
+    "phone_number": "+1 514-000-0000",
+    "postal_code": "E1C4Z8",
+    "residential": false,
+    "state_code": "NB",
+    "validate_location": false
+  }
+}'
+```
+
+</TabItem>
+<TabItem value="response" label="Response">
+
+```json
+{
+  "id": "shp_2862f2ce62aa4873b821b156a1a2ac21",
+  "object_type": "shipment",
+  "tracking_url": "/v1/trackers/ups/1ZXXXXXXXXXXXXXXXX",
+  "shipper": {
+    "id": "adr_e2a2cc6b1b6646a99b55a54323476a7b",
+    "postal_code": "E1C4Z8",
+    "city": "Moncton",
+    "person_name": "John Doe",
+    "company_name": "A corp.",
+    "country_code": "CA",
+    "phone_number": "+1 514-000-0000",
+    "state_code": "NB",
+    "residential": false,
+    "address_line1": "125 Church St",
+    "validate_location": false,
+    "object_type": "address"
+  },
+  "recipient": {
+    "id": "adr_7c23022e3bbb48aa89a0199be1800035",
+    "postal_code": "V6M2V9",
+    "city": "Vancouver",
+    "person_name": "Jane Doe",
+    "company_name": "B corp.",
+    "country_code": "CA",
+    "phone_number": "+1 514-000-0000",
+    "state_code": "BC",
+    "residential": true,
+    "address_line1": "5840 Oak St",
+    "validate_location": false,
+    "object_type": "address"
+  },
+  "parcels": [
+    {
+      "id": "pcl_279fa6f22f6942fea5e89935b60f7f21",
+      "weight": 3.2,
+      "width": 46,
+      "height": 38,
+      "length": 32,
+      "package_preset": "canadapost_corrugated_medium_box",
+      "is_document": false,
+      "weight_unit": "KG",
+      "dimension_unit": "CM",
+      "items": [
+        {
+          "id": "cdt_6753c0a1db494f21b72380afff98504f",
+          "weight": 1.7,
+          "weight_unit": "KG",
+          "description": "Blue Jean Coat",
+          "quantity": 1,
+          "hs_code": "10000001",
+          "value_amount": 99.99,
+          "value_currency": "USD",
+          "parent_id": "cdt_549f66b743a147958f084f5b1928e08e",
+          "metadata": {},
+          "object_type": "commodity"
+        },
+        {
+          "id": "cdt_aa439cb4058e4a88a921c9a492638f7d",
+          "weight": 0.75,
+          "weight_unit": "KG",
+          "description": "Brow Suede Shoes",
+          "quantity": 2,
+          "hs_code": "10000002",
+          "value_amount": 59.95,
+          "value_currency": "USD",
+          "parent_id": "cdt_e44ecabf0d904aa9b45d1139d4ce045a",
+          "metadata": {},
+          "object_type": "commodity"
+        }
+      ],
+      "reference_number": "1ZXXXXXXXXXXXXXXXX",
+      "options": {},
+      "object_type": "parcel"
+    }
+  ],
+  "services": [
+    "ups_express_saver_ca"
+  ],
+  "options": {
+    "declared_value": 219.89,
+    "currency": "USD",
+    "preferred_service": "ups_express_saver_ca",
+    "shipment_date": "2024-02-10"
+  },
+  "payment": {
+    "paid_by": "sender"
+  },
+  "rates": [
+    {
+      "id": "rat_391c5f22fd6f46eba0984d47d2df288f",
+      "object_type": "rate",
+      "carrier_name": "ups",
+      "carrier_id": "ups-account",
+      "currency": "CAD",
+      "service": "ups_standard_ca",
+      "total_charge": 124.32,
+      "transit_days": 6,
+      "extra_charges": [
+        {
+          "name": "Base charge",
+          "amount": 118.4,
+          "currency": "CAD"
+        },
+        {
+          "name": "11",
+          "amount": 0,
+          "currency": "CAD"
+        },
+        {
+          "name": "375",
+          "amount": 24.8,
+          "currency": "CAD"
+        },
+        {
+          "name": "270",
+          "amount": 4.6,
+          "currency": "CAD"
+        },
+        {
+          "name": "GST",
+          "amount": 5.92,
+          "currency": "CAD"
+        }
+      ],
+      "meta": {
+        "carrier": "ups",
+        "carrier_connection_id": "car_c539dbf2372f48cf9e2587f2006afc5e",
+        "ext": "ups",
+        "rate_provider": "ups",
+        "service_name": "UPS STANDARD CA"
+      },
+      "test_mode": true
+    },
+    {
+      "id": "rat_9a5f81aacfb244f3916fd56f1f41e6e5",
+      "object_type": "rate",
+      "carrier_name": "ups",
+      "carrier_id": "ups-account",
+      "currency": "CAD",
+      "service": "ups_expedited_ca",
+      "total_charge": 234.06,
+      "transit_days": 2,
+      "extra_charges": [
+        {
+          "name": "Base charge",
+          "amount": 222.91,
+          "currency": "CAD"
+        },
+        {
+          "name": "02",
+          "amount": 0,
+          "currency": "CAD"
+        },
+        {
+          "name": "375",
+          "amount": 41.31,
+          "currency": "CAD"
+        },
+        {
+          "name": "270",
+          "amount": 4.6,
+          "currency": "CAD"
+        },
+        {
+          "name": "GST",
+          "amount": 11.15,
+          "currency": "CAD"
+        }
+      ],
+      "meta": {
+        "carrier": "ups",
+        "carrier_connection_id": "car_c539dbf2372f48cf9e2587f2006afc5e",
+        "ext": "ups",
+        "rate_provider": "ups",
+        "service_name": "UPS EXPEDITED CA"
+      },
+      "test_mode": true
+    },
+    {
+      "id": "rat_1bd1f370755f43e0b3e401d1b01c7269",
+      "object_type": "rate",
+      "carrier_name": "ups",
+      "carrier_id": "ups-account",
+      "currency": "CAD",
+      "service": "ups_express_saver_ca",
+      "total_charge": 246.95,
+      "transit_days": 1,
+      "extra_charges": [
+        {
+          "name": "Base charge",
+          "amount": 235.19,
+          "currency": "CAD"
+        },
+        {
+          "name": "13",
+          "amount": 0,
+          "currency": "CAD"
+        },
+        {
+          "name": "375",
+          "amount": 43.59,
+          "currency": "CAD"
+        },
+        {
+          "name": "270",
+          "amount": 4.6,
+          "currency": "CAD"
+        },
+        {
+          "name": "GST",
+          "amount": 11.76,
+          "currency": "CAD"
+        }
+      ],
+      "meta": {
+        "carrier": "ups",
+        "carrier_connection_id": "car_c539dbf2372f48cf9e2587f2006afc5e",
+        "ext": "ups",
+        "rate_provider": "ups",
+        "service_name": "UPS EXPRESS SAVER CA"
+      },
+      "test_mode": true
+    },
+    {
+      "id": "rat_b4e2eb216bc5419f97d86a952eabc0e9",
+      "object_type": "rate",
+      "carrier_name": "ups",
+      "carrier_id": "ups-account",
+      "currency": "CAD",
+      "service": "ups_express_ca",
+      "total_charge": 277.56,
+      "transit_days": 1,
+      "extra_charges": [
+        {
+          "name": "Base charge",
+          "amount": 264.34,
+          "currency": "CAD"
+        },
+        {
+          "name": "01",
+          "amount": 0,
+          "currency": "CAD"
+        },
+        {
+          "name": "375",
+          "amount": 48.99,
+          "currency": "CAD"
+        },
+        {
+          "name": "270",
+          "amount": 4.6,
+          "currency": "CAD"
+        },
+        {
+          "name": "GST",
+          "amount": 13.22,
+          "currency": "CAD"
+        }
+      ],
+      "meta": {
+        "carrier": "ups",
+        "carrier_connection_id": "car_c539dbf2372f48cf9e2587f2006afc5e",
+        "ext": "ups",
+        "rate_provider": "ups",
+        "service_name": "UPS EXPRESS CA"
+      },
+      "test_mode": true
+    },
+    {
+      "id": "rat_0c7fdb58f1054c2fb1bab82c90e1a449",
+      "object_type": "rate",
+      "carrier_name": "ups",
+      "carrier_id": "ups-account",
+      "currency": "CAD",
+      "service": "ups_express_early_ca",
+      "total_charge": 315.84,
+      "transit_days": 1,
+      "extra_charges": [
+        {
+          "name": "Base charge",
+          "amount": 300.8,
+          "currency": "CAD"
+        },
+        {
+          "name": "14",
+          "amount": 0,
+          "currency": "CAD"
+        },
+        {
+          "name": "375",
+          "amount": 55.75,
+          "currency": "CAD"
+        },
+        {
+          "name": "270",
+          "amount": 4.6,
+          "currency": "CAD"
+        },
+        {
+          "name": "GST",
+          "amount": 15.04,
+          "currency": "CAD"
+        }
+      ],
+      "meta": {
+        "carrier": "ups",
+        "carrier_connection_id": "car_c539dbf2372f48cf9e2587f2006afc5e",
+        "ext": "ups",
+        "rate_provider": "ups",
+        "service_name": "UPS EXPRESS EARLY CA"
+      },
+      "test_mode": true
+    }
+  ],
+  "label_type": "PDF",
+  "carrier_ids": [
+    "ups-account"
+  ],
+  "tracker_id": "trk_f85ab78ba90b40ea97f9b7da0e72cd89",
+  "created_at": "2024-02-10 22:46:26.554005+00:00",
+  "metadata": {
+    "order_ids": "345098457777"
+  },
+  "status": "purchased",
+  "carrier_name": "ups",
+  "carrier_id": "ups-account",
+  "tracking_number": "1ZXXXXXXXXXXXXXXXX",
+  "shipment_identifier": "1ZXXXXXXXXXXXXXXXX",
+  "selected_rate": {
+    "id": "rat_1bd1f370755f43e0b3e401d1b01c7269",
+    "object_type": "rate",
+    "carrier_name": "ups",
+    "carrier_id": "ups-account",
+    "currency": "CAD",
+    "service": "ups_express_saver_ca",
+    "total_charge": 246.95,
+    "transit_days": 1,
+    "extra_charges": [
+      {
+        "name": "Base charge",
+        "amount": 235.19,
+        "currency": "CAD"
+      },
+      {
+        "name": "13",
+        "amount": 0,
+        "currency": "CAD"
+      },
+      {
+        "name": "375",
+        "amount": 43.59,
+        "currency": "CAD"
+      },
+      {
+        "name": "270",
+        "amount": 4.6,
+        "currency": "CAD"
+      },
+      {
+        "name": "GST",
+        "amount": 11.76,
+        "currency": "CAD"
+      }
+    ],
+    "meta": {
+      "carrier": "ups",
+      "carrier_connection_id": "car_c539dbf2372f48cf9e2587f2006afc5e",
+      "ext": "ups",
+      "rate_provider": "ups",
+      "service_name": "UPS EXPRESS SAVER CA"
+    },
+    "test_mode": true
+  },
+  "meta": {
+    "carrier_tracking_link": "https://www.ups.com/track?loc=en_US&requester=QUIC&tracknum=1ZXXXXXXXXXXXXXXXX/trackdetails",
+    "tracking_numbers": [
+      "1ZXXXXXXXXXXXXXXXX"
+    ],
+    "ext": "ups",
+    "carrier": "ups",
+    "service_name": "UPS EXPRESS SAVER CA",
+    "rate_provider": "ups"
+  },
+  "service": "ups_express_saver_ca",
+  "selected_rate_id": "rat_1bd1f370755f43e0b3e401d1b01c7269",
+  "test_mode": true,
+  "label_url": "/v1/shipments/shp_2862f2ce62aa4873b821b156a1a2ac21/label.pdf"
+}
+```
+
+</TabItem>  
+</Tabs>
+</div>
+
+:::tip
+
+**Critical** to understanding how Karrio link the shipment to the order. You will notice in the request above
+that the `shipment.parcels` array contains `items` that refer to `line_items` from the order using the `parent_id` property.
+
+Karrio can then determine the fulfilment status of an order by checking that all the `line_items` quantities have been fulfilled by `parcels` from one or multiple `shipments`.
+
+:::
+

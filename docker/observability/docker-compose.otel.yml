@@ -1,0 +1,64 @@
+# OpenTelemetry example configuration with Jaeger
+# This file provides an example setup for OpenTelemetry with Jaeger as the backend
+# To use: docker-compose -f docker-compose.yml -f docker-compose.otel.yml up
+
+services:
+  # Jaeger All-in-One for development/testing
+  # For production, use separate collector, query, and storage components
+  jaeger:
+    container_name: karrio.jaeger
+    image: jaegertracing/all-in-one:latest
+    restart: unless-stopped
+    ports:
+      - "16686:16686"  # Jaeger UI
+      - "4317:4317"    # OTLP gRPC receiver
+      - "4318:4318"    # OTLP HTTP receiver
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+      SPAN_STORAGE_TYPE: "memory"  # Use 'cassandra' or 'elasticsearch' for production
+      MAX_TRACES: "10000"  # Limit memory usage in development
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:14269/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Override api service to enable OpenTelemetry
+  api:
+    environment:
+      OTEL_ENABLED: "true"
+      OTEL_SERVICE_NAME: "karrio-api"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://jaeger:4317"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_ENVIRONMENT: "development"
+      OTEL_RESOURCE_ATTRIBUTES: "deployment.environment=docker,service.namespace=karrio"
+
+  # Override worker service to enable OpenTelemetry
+  worker:
+    environment:
+      OTEL_ENABLED: "true"
+      OTEL_SERVICE_NAME: "karrio-worker"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://jaeger:4317"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_ENVIRONMENT: "development"
+      OTEL_RESOURCE_ATTRIBUTES: "deployment.environment=docker,service.namespace=karrio"
+
+# Alternative: OpenTelemetry Collector Configuration
+# Uncomment below to use OpenTelemetry Collector instead of direct Jaeger
+# This provides more flexibility and supports multiple backends
+
+# otel-collector:
+#   container_name: karrio.otel-collector
+#   image: otel/opentelemetry-collector-contrib:latest
+#   restart: unless-stopped
+#   command: ["--config=/etc/otel-collector-config.yaml"]
+#   volumes:
+#     - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+#   ports:
+#     - "4317:4317"   # OTLP gRPC receiver
+#     - "4318:4318"   # OTLP HTTP receiver
+#     - "8888:8888"   # Prometheus metrics exposed by the collector
+#     - "8889:8889"   # Prometheus exporter metrics
+#   depends_on:
+#     - jaeger

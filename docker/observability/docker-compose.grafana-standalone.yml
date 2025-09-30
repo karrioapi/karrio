@@ -1,0 +1,98 @@
+# Standalone Grafana Observability Stack for Local Karrio Development
+# Use this when running Karrio locally and want to visualize telemetry data
+# Usage: docker-compose -f docker-compose.grafana-standalone.yml up -d
+
+services:
+  # OpenTelemetry Collector - Central telemetry data hub
+  otel-collector:
+    container_name: karrio.otel-collector
+    image: otel/opentelemetry-collector-contrib:latest
+    restart: unless-stopped
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-grafana.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317"   # OTLP gRPC receiver
+      - "4318:4318"   # OTLP HTTP receiver
+      - "8888:8888"   # Prometheus metrics exposed by the collector
+      - "8889:8889"   # Prometheus exporter metrics
+    depends_on:
+      - tempo
+      - loki
+      - prometheus
+
+  # Grafana Tempo - Distributed tracing backend
+  tempo:
+    container_name: karrio.tempo
+    image: grafana/tempo:latest
+    restart: unless-stopped
+    command: ["-config.file=/etc/tempo.yaml"]
+    volumes:
+      - ./tempo.yaml:/etc/tempo.yaml
+      - tempo-data:/var/tempo
+    ports:
+      - "3200:3200"   # Tempo HTTP
+      - "4317"        # OTLP gRPC receiver (internal)
+      - "4318"        # OTLP HTTP receiver (internal)
+
+  # Grafana Loki - Log aggregation
+  loki:
+    container_name: karrio.loki
+    image: grafana/loki:latest
+    restart: unless-stopped
+    command: -config.file=/etc/loki/local-config.yaml
+    ports:
+      - "3100:3100"   # Loki HTTP
+    volumes:
+      - loki-data:/tmp/loki
+
+  # Prometheus - Metrics storage
+  prometheus:
+    container_name: karrio.prometheus
+    image: prom/prometheus:latest
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--storage.tsdb.retention.time=200h"
+      - "--web.enable-lifecycle"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"   # Prometheus web UI
+
+  # Grafana - Observability dashboard
+  grafana:
+    container_name: karrio.grafana
+    image: grafana/grafana:latest
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_FEATURE_TOGGLES_ENABLE=traceqlEditor
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    ports:
+      - "3000:3000"   # Grafana web UI
+    depends_on:
+      - tempo
+      - loki
+      - prometheus
+
+volumes:
+  tempo-data:
+  loki-data:
+  prometheus-data:
+  grafana-data:
+
+# Access URLs:
+# - Grafana: http://localhost:3000 (admin/admin)
+# - Prometheus: http://localhost:9090
+# - Tempo: http://localhost:3200
+# - Loki: http://localhost:3100
+# - OTEL Collector: http://localhost:4317 (gRPC), http://localhost:4318 (HTTP)

@@ -1,0 +1,179 @@
+---
+sidebarTitle: Guides
+title: Plugin Mounting
+description: Learn how to mount external plugins into Karrio containers
+tags: [self-hosting, plugins, docker]
+author: Karrio Team
+---
+
+# Plugin Mounting
+
+This guide explains how to mount external plugins and extensions into your Karrio Docker containers without rebuilding the images. This approach allows you to add custom functionality, carrier integrations, and business logic to Karrio while maintaining easy updates and deployments.
+
+## Overview
+
+Karrio supports loading plugins from a mounted directory, enabling you to:
+
+- Add custom carrier integrations
+- Implement custom business logic
+- Integrate with external systems
+- Extend functionality without modifying core code
+- Deploy updates without rebuilding containers
+
+## Docker Compose Configuration
+
+All the provided Docker Compose files include plugin mounting configuration. The plugin directory is mounted using the `KARRIO_PLUGINS` environment variable, which defaults to `./plugins` if not specified.
+
+### Environment Variable
+
+```bash
+# In your .env file
+KARRIO_PLUGINS=./plugins
+```
+
+### Volume Mounting
+
+In all Docker Compose configurations, you'll find this volume mount:
+
+```yaml
+services:
+  api:
+    volumes:
+      - ${KARRIO_PLUGINS:-./plugins}:/karrio/plugins
+
+  worker:
+    volumes:
+      - ${KARRIO_PLUGINS:-./plugins}:/karrio/plugins
+```
+
+This configuration:
+
+- Mounts your local `./plugins` directory to `/karrio/plugins` inside the container
+- Uses the `KARRIO_PLUGINS` environment variable if set, defaults to `./plugins`
+- Makes plugins available to both the API server and background worker
+
+## Environment Variables
+
+Configure plugin behavior using environment variables:
+
+```bash
+# .env file
+KARRIO_PLUGINS=./plugins
+ENABLE_ALL_PLUGINS_BY_DEFAULT=True
+```
+
+## Plugin Discovery and Loading
+
+Karrio automatically discovers and loads plugins from the mounted directory. The plugin loading process:
+
+1. **Discovery**: Karrio scans `/karrio/plugins` for directories containing `__init__.py`
+2. **Metadata**: Reads plugin metadata from the `METADATA` variable
+3. **Registration**: Registers carriers, hooks, and services based on plugin type
+4. **Initialization**: Calls any initialization functions
+
+### Debugging Plugin Loading
+
+Check if your plugins are being discovered:
+
+```bash
+# View plugin loading logs
+docker-compose logs api | grep -i plugin
+
+# Check mounted plugins directory
+docker-compose exec api ls -la /karrio/plugins
+```
+
+## Working with Existing Plugins
+
+### Installing Third-Party Plugins
+
+1. **Download or clone** the plugin to your plugins directory:
+
+```bash
+cd plugins
+git clone https://github.com/example/karrio-custom-carrier.git custom_carrier
+```
+
+## Best Practices
+
+### Security
+
+- **Never commit secrets** to your plugin code
+- **Use environment variables** for configuration
+- **Validate all inputs** in your plugin code
+- **Sanitize data** before external API calls
+
+### Performance
+
+- **Cache expensive operations** when possible
+- **Use async operations** for external API calls
+- **Implement proper error handling** and timeouts
+- **Monitor resource usage** of your plugins
+
+### Maintenance
+
+- **Document your plugins** thoroughly
+- **Version your plugins** properly
+- **Test plugins** before deployment
+- **Keep dependencies** up to date
+
+## Troubleshooting
+
+### Plugin Not Loading
+
+1. **Check directory structure**:
+
+```bash
+docker-compose exec api find /karrio/plugins -name "*.py" | head -10
+```
+
+2. **Verify plugin metadata**:
+
+```bash
+docker-compose exec api python -c "
+import sys
+sys.path.append('/karrio/plugins')
+import my_plugin
+print(my_plugin.METADATA)
+"
+```
+
+3. **Check logs for errors**:
+
+```bash
+docker-compose logs api | grep -i error
+```
+
+### Import Errors
+
+1. **Verify Python path**:
+
+```bash
+docker-compose exec api python -c "import sys; print(sys.path)"
+```
+
+2. **Test imports manually**:
+
+```bash
+docker-compose exec api python -c "
+import sys
+sys.path.append('/karrio/plugins')
+try:
+    import my_plugin
+    print('Plugin imported successfully')
+except ImportError as e:
+    print(f'Import error: {e}')
+"
+```
+
+### Permission Issues
+
+If you encounter permission errors:
+
+```bash
+# Fix ownership of plugins directory
+sudo chown -R $USER:$USER plugins/
+
+# Fix permissions
+chmod -R 755 plugins/
+```

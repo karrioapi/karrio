@@ -1,0 +1,98 @@
+---
+id: authentication
+title: Authentication
+description: Manage you API keys to authenticate requests to Karrio.
+tags:
+  - Authentication
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+**Manage your API keys to authenticate requests with Karrio.**
+
+Karrio authenticates your API requests using your account’s API keys.
+If you don’t include your key when making an API request, or use an
+incorrect or outdated one, Karrio returns an error.
+
+There are two types of keys: a private key and a JSON Web Token.
+
+- Private You must keep your private API keys confidential and only
+  store them on your own servers. You must not share your private API
+  key with any third parties. Your account’s private API key can perform
+  any API request to Karrio without restriction. If Karrio believes that
+  your secret API key has been compromised, you may cancel and reissue it.
+- JSON Web Token aka JWT are meant solely to identify your account with
+  Karrio, they aren’t secret. In other words, you can safely publish them
+  in places like your karrio.js JavaScript code, or in an Android or iPhone app.
+
+## Obtaining your API keys
+
+- Your Private API key is always available in the [Dashboard](https://app.karrio.io/developers/api):
+
+<img style={{ borderRadius: 5 }} src="/img/assets/api-key.png" width="90%" />
+
+- The JWT (JSON Web Token) on the other hand are obtained by API request
+
+<div id="tabs">
+<Tabs>
+<TabItem value="curl" label="cURL">
+
+```shell
+curl --request POST \\
+  --url https://api.karrio.io/api/token \\
+  --header 'Content-Type: application/json' \\
+  --data '{
+	"email": "admin@example.com",
+	"password": "demo"
+}'
+```
+
+</TabItem>
+<TabItem value="js" label="Javascript">
+
+```javascript
+const karrio = Karrio();
+const token = await karrio.api.authenticate({
+  email: "admin@example.com",
+  password: "demo",
+});
+```
+
+</TabItem>
+</Tabs>
+</div>
+
+Karrio returns an key pair object in response to your API request.
+
+```json
+{
+  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYzNjYxMzY4NSwiaWF0IjoxNjM2MTgxNjg1LCJqdGkiOiIwNjM1ZGQ4NWExMWU0NTNjYTk2ZTk3NDM4ZDBjOTRkMiIsInVzZXJfaWQiOjF9.1MO8ODXIPvEQtTJdiyyFT1UA54hZnLjrVj8a3DEDbbw",
+  "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjM2MTgyNTg1LCJpYXQiOjE2MzYxODE2ODUsImp0aSI6ImMyYWI5YTAzNTRkYTRlZTQ5ZjQ1ZDdlMmI4NWQ5ZGZkIiwidXNlcl9pZCI6MX0.X-MA-9Vi_zWJfvMWSaL8dNj7XOy8kPNz16gvbciLCIM"
+}
+```
+
+## Karrio environment
+
+The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. 
+In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in test_mode.
+
+
+:::note [Request environments]
+
+Requests authenticate using **API Key** are already bound to the environment in which they were created.
+
+If you use the **JWT** to authenticate, you can specify the environment in which you want to make the request
+using the `x-text-mode` header.
+
+```javascript
+{
+  ...
+  headers: {
+    "x-test-mode": true  // or false for live mode
+  }
+  ...
+}
+```
+
+:::

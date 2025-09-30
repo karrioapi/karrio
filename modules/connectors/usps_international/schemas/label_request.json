@@ -1,0 +1,149 @@
+{
+  "imageInfo": {
+    "imageType": "LABEL_BROKER",
+    "labelType": "4X6LABEL",
+    "holdForManifest": false
+  },
+  "toAddress": {
+    "streetAddress": "string",
+    "secondaryAddress": "string",
+    "city": "string",
+    "postalCode": "string",
+    "province": "string",
+    "country": "string",
+    "countryISOAlpha2Code": "string",
+    "firstName": "string",
+    "lastName": "string",
+    "firm": "string",
+    "phone": "string"
+  },
+  "fromAddress": {
+    "streetAddress": "string",
+    "secondaryAddress": "string",
+    "city": "string",
+    "state": "st",
+    "ZIPCode": "string",
+    "ZIPPlus4": "string",
+    "urbanization": "string",
+    "firstName": "string",
+    "lastName": "string",
+    "firm": "string",
+    "phone": "string",
+    "email": "user@example.com",
+    "ignoreBadAddress": true
+  },
+  "senderAddress": {
+    "streetAddress": "string",
+    "secondaryAddress": "string",
+    "city": "string",
+    "state": "st",
+    "ZIPCode": "string",
+    "ZIPPlus4": "string",
+    "urbanization": "string",
+    "firstName": "string",
+    "lastName": "string",
+    "firm": "string",
+    "phone": "string",
+    "email": "user@example.com",
+    "ignoreBadAddress": true,
+    "platformUserId": "string"
+  },
+  "packageDescription": {
+    "weightUOM": "lb",
+    "weight": 0,
+    "dimensionsUOM": "in",
+    "length": 0,
+    "height": 0,
+    "width": 0,
+    "girth": 0,
+    "destinationEntryFacilityAddress": {
+      "streetAddress": "string",
+      "secondaryAddress": "string",
+      "city": "string",
+      "state": "st",
+      "ZIPCode": "string",
+      "ZIPPlus4": "string",
+      "urbanization": "string"
+    },
+    "mailClass": "FIRST-CLASS_PACKAGE_INTERNATIONAL_SERVICE",
+    "rateIndicator": "E4",
+    "diameter": 0,
+    "shape": "RECTANGLE",
+    "processingCategory": "LETTERS",
+    "destinationEntryFacilityType": "NONE",
+    "mailingDate": "2019-08-24",
+    "packageOptions": {
+      "packageValue": 35,
+      "nonDeliveryOption": "RETURN",
+      "redirectAddress": {
+        "streetAddress": "string",
+        "secondaryAddress": "string",
+        "city": "string",
+        "state": "st",
+        "ZIPCode": "string",
+        "ZIPPlus4": "string",
+        "urbanization": "string",
+        "firstName": "string",
+        "lastName": "string",
+        "firm": "string",
+        "phone": "string",
+        "email": "user@example.com",
+        "ignoreBadAddress": true
+      },
+      "originalPackage": {
+        "originalTrackingNumber": "stringstrings",
+        "originalConstructCode": "G01"
+      },
+      "generateGXEvent": true
+    },
+    "customerReference": [
+      {
+        "referenceNumber": "string"
+      }
+    ],
+    "extraServices": [480]
+  },
+  "customsForm": {
+    "contentComments": "string",
+    "restrictionType": "QUARANTINE",
+    "restrictionComments": "string",
+    "AESITN": "string",
+    "invoiceNumber": "string",
+    "licenseNumber": "string",
+    "certificateNumber": "string",
+    "customsContentType": "MERCHANDISE",
+    "importersReference": {
+      "referenceType": "TAX_CODE",
+      "reference": "string",
+      "contact": {
+        "phone": "string",
+        "fax": "string",
+        "email": "user@example.com"
+      }
+    },
+    "exportersReference": {
+      "referenceType": "TAX_CODE",
+      "reference": "string",
+      "contact": {
+        "phone": "string",
+        "fax": "string",
+        "email": "user@example.com"
+      }
+    },
+    "contents": [
+      {
+        "itemDescription": "Policy guidelines document",
+        "itemQuantity": 1,
+        "itemValue": 1,
+        "itemTotalValue": 1,
+        "weightUOM": "lb",
+        "itemWeight": 1.0001,
+        "itemTotalWeight": 1.0001,
+        "HSTariffNumber": "string",
+        "countryofOrigin": "string",
+        "itemCategory": "string",
+        "itemSubcategory": "string"
+      }
+    ]
+  }
+}
