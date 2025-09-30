@@ -1,3 +1,26 @@
+# Karrio 2025.5rc23
+
+## Changes
+
+### Feat
+
+- feat: adds a button to copy docs pages for LLMs
+
+### Fix
+
+- fix: redirection issue when signin page is accessed directly
+- fix: the readability of certain features on the documentation when in dark mode
+
+### Chore
+
+- chore: set up Posthog for docs analytics
+
+### DevX
+
+- devx: prevent node constant override to latest version and set a minimum version for karrio development
+- devx: debugging and improving dev and HTTPS support both for development and production deployment
+- devx: introduce AGENTS.md using cursor
+
 # Karrio 2025.5rc22
 
 ## Changes
