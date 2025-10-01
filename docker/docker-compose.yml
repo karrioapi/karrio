@@ -11,8 +11,6 @@ services:
     environment:
       DEBUG_MODE: "True"
       DETACHED_WORKER: "True"
-      ALLOWED_HOSTS: "*,localhost,127.0.0.1,api.karrio.local,app.karrio.local"
-      CSRF_TRUSTED_ORIGINS: "http://localhost:5002,https://api.karrio.local,https://app.karrio.local"
       SECRET_KEY: ${SECRET_KEY}
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
@@ -88,32 +86,10 @@ services:
     environment:
       AUTH_TRUST_HOST: true
       NEXTAUTH_SECRET: ${JWT_SECRET}
-      NEXTAUTH_URL: https://app.karrio.local
       DASHBOARD_PORT: ${DASHBOARD_PORT:-3002}
       NEXT_PUBLIC_DASHBOARD_URL: ${DASHBOARD_URL}
       NEXT_PUBLIC_KARRIO_PUBLIC_URL: ${KARRIO_PUBLIC_URL}
       KARRIO_URL: http://api:${KARRIO_HTTP_PORT:-5002}
-
-  caddy:
-    container_name: karrio.caddy
-    image: caddy:2.8.4
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    environment:
-      API_UPSTREAM: "http://api:5002"
-      DASHBOARD_UPSTREAM: "http://dashboard:${DASHBOARD_PORT:-3002}"
-      DOCS_UPSTREAM: "${DOCS_UPSTREAM:-http://host.docker.internal:3005}"
-      CADDY_CERT_DIR: /etc/caddy/certs
-    volumes:
-      - ./Caddyfile.dev:/etc/caddy/Caddyfile:ro
-      - ../.karrio/certs:/etc/caddy/certs:ro
-    depends_on:
-      - api
-      - dashboard
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
 
   maildev:
     container_name: karrio.mail

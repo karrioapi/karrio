@@ -72,27 +72,6 @@ services:
       NEXT_PUBLIC_KARRIO_PUBLIC_URL: ${KARRIO_PUBLIC_URL}
       KARRIO_URL: http://api:${KARRIO_HTTP_PORT:-5002}
 
-  caddy:
-    container_name: karrio.caddy
-    image: caddy:2.8.4
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    environment:
-      API_UPSTREAM: "http://api:5002"
-      DASHBOARD_UPSTREAM: "http://dashboard:${DASHBOARD_PORT:-3002}"
-      DOCS_UPSTREAM: "${DOCS_UPSTREAM:-http://host.docker.internal:3005}"
-      CADDY_CERT_DIR: /etc/caddy/certs
-    volumes:
-      - ./Caddyfile.dev:/etc/caddy/Caddyfile:ro
-      - ../.karrio/certs:/etc/caddy/certs:ro
-    depends_on:
-      - api
-      - dashboard
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
   maildev:
     container_name: karrio.mail
     image: maildev/maildev
@@ -101,6 +80,7 @@ services:
       - "1080:1080"
       - "1025:1025"
 
+  # Comment out everything below this point if you are using an external database and redis instance.
   db:
     container_name: karrio.db
     image: postgres
@@ -121,6 +101,7 @@ services:
     restart: unless-stopped
     ports:
       - ${REDIS_PORT}:6379
+    # command: redis-server --requirepass ${REDIS_PASSWORD}
     volumes:
       - redis-data:/data
 
