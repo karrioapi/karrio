@@ -125,7 +125,12 @@ Special thanks to our sponsors
 
 <a href="https://appsandbrains.com/" target="_blank"><img alt="Apps & Brains" src="screenshots/apps-&-brains.png" style="width: 150px; height: 30px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
 <a href="https://superroute.ca/" target="_blank"><img alt="SuperRoute" src="screenshots/superroute.png" style="width: 150px; height: 30px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
+<a href="https://app.fossa.com/projects/git%2Bgithub.com%2Fkarrioapi%2Fkarrio?ref=badge_shield" alt="FOSSA Status"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Fkarrioapi%2Fkarrio.svg?type=shield"/></a>
 
 ### Become a sponsor
 
 <a href="https://github.com/sponsors/karrioapi" target="_blank"><img alt="New Sponsor" src="screenshots/become-a-sponsor.png" /></a>
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fkarrioapi%2Fkarrio.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fkarrioapi%2Fkarrio?ref=badge_large)
