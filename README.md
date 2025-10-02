@@ -109,6 +109,7 @@ We <3 contributions big and small. In priority order (although everything is app
 
 -   Ask general question on [Github Discussions](https://github.com/orgs/karrioapi/discussions)
 -   Submit a [feature request](https://github.com/orgs/karrioapi/discussions)
+-   Review the [Repository Guidelines](AGENTS.md) for project-specific conventions
 -   Open a PR (see our instructions on [developing Karrio locally](https://docs.karrio.io/contributing/development))
 
 ### Contributors

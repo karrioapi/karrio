@@ -312,6 +312,22 @@ print_success "Python $PYTHON_VERSION set up"
 # =============================================================================
 print_step "Setting up Node.js environment..."
 
+# Detect existing Node.js version and decide whether to skip install/switch
+EXISTING_NODE_VERSION=""
+EXISTING_NODE_MAJOR=""
+SKIP_NODE_INSTALL="false"
+
+if command_exists node; then
+    EXISTING_NODE_VERSION="$(node -v 2>/dev/null | sed 's/^v//')"
+    EXISTING_NODE_MAJOR="${EXISTING_NODE_VERSION%%.*}"
+
+    # If an existing Node.js major version is greater than 22, do not override it
+    if [[ -n "$EXISTING_NODE_MAJOR" ]] && [[ "$EXISTING_NODE_MAJOR" =~ ^[0-9]+$ ]] && [ "$EXISTING_NODE_MAJOR" -gt 22 ]; then
+        SKIP_NODE_INSTALL="true"
+        print_step "Detected Node.js v$EXISTING_NODE_VERSION (>22); skipping installation and version switch to avoid override"
+    fi
+fi
+
 # Install nvm if not available
 if [[ ! -d "$HOME/.nvm" ]] && ! command_exists nvm; then
     print_step "Installing nvm..."
@@ -323,12 +339,16 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
-# Install Node.js
+# Install Node.js (unless an existing >22 installation is present)
 if command_exists nvm; then
-    nvm install stable
-    nvm use stable
-    nvm alias default stable
-    print_success "Node.js installed and set as default"
+    if [[ "$SKIP_NODE_INSTALL" == "true" ]]; then
+        print_success "Keeping existing Node.js v$EXISTING_NODE_VERSION unchanged"
+    else
+        nvm install stable
+        nvm use stable
+        nvm alias default stable
+        print_success "Node.js installed and set as default"
+    fi
 else
     print_warning "nvm not available, skipping Node.js setup"
 fi
@@ -395,7 +415,72 @@ else
 fi
 
 # =============================================================================
-# STEP 7: ENVIRONMENT FILES
+# STEP 7: LOCAL HTTPS SUPPORT
+# =============================================================================
+
+print_step "Configuring local HTTPS certificates..."
+
+CERT_DIR=".karrio/certs"
+mkdir -p "$CERT_DIR"
+
+ensure_mkcert_installed() {
+    if command_exists mkcert; then
+        return 0
+    fi
+
+    print_warning "mkcert not found. Attempting installation..."
+
+    if [[ "$(uname)" == "Darwin" ]]; then
+        if command_exists brew; then
+            brew install mkcert nss >/dev/null 2>&1 || true
+        fi
+    elif [[ "$(uname -s)" == "Linux" ]]; then
+        if command_exists apt; then
+            sudo apt update -y >/dev/null 2>&1 || true
+            sudo apt install -y mkcert libnss3-tools >/dev/null 2>&1 || true
+        fi
+    fi
+
+    if ! command_exists mkcert; then
+        print_warning "mkcert is required to generate trusted HTTPS certificates. Install it manually to enable HTTPS."
+        return 1
+    fi
+}
+
+if ensure_mkcert_installed; then
+    mkcert -install >/dev/null 2>&1 || true
+
+    cert_created=false
+    for host in api.karrio.local app.karrio.local karrio.local; do
+        cert_file="$CERT_DIR/${host}.pem"
+        key_file="$CERT_DIR/${host}-key.pem"
+        if [[ ! -f "$cert_file" || ! -f "$key_file" ]]; then
+            if mkcert -cert-file "$cert_file" -key-file "$key_file" "$host" >/dev/null 2>&1; then
+                print_success "Generated certificate for $host"
+                cert_created=true
+            else
+                print_warning "Failed to generate certificate for $host"
+            fi
+        else
+            print_step "Certificate for $host already exists"
+        fi
+    done
+
+    if [[ "$cert_created" == false ]]; then
+        print_success "Local HTTPS certificates already configured"
+    fi
+
+    HOSTS_SNIPPET="127.0.0.1 api.karrio.local app.karrio.local karrio.local"
+    if ! grep -q "api.karrio.local" /etc/hosts 2>/dev/null; then
+        print_warning "Add the following entry to /etc/hosts to enable HTTPS domains:"
+        echo "   $HOSTS_SNIPPET"
+    fi
+else
+    print_warning "Skipping certificate generation; HTTPS will rely on http://localhost:* URLs."
+fi
+
+# =============================================================================
+# STEP 8: ENVIRONMENT FILES
 # =============================================================================
 
 print_step "Setting up environment files..."
@@ -456,8 +541,11 @@ fi
 print_success "Environment files configured for local development"
 echo ""
 echo -e "${CYAN}Environment Configuration Summary:${NC}"
-echo "   → API Server: http://localhost:5002"
-echo "   → Dashboard: http://localhost:3002"
+echo "   → API: http://localhost:5002 (HTTPS via https://api.karrio.local when Caddy is running)"
+echo "   → Dashboard: http://localhost:3002 (HTTPS via https://app.karrio.local when Caddy is running)"
+echo "   → Docs: http://localhost:3005 (HTTPS via https://karrio.local when Caddy is running)"
+echo "   → Maildev UI: http://localhost:1080"
+echo "   → Certificates: $CERT_DIR"
 echo "   → SQLite Database: .karrio/db.sqlite3"
 echo "   → Work Directory: .karrio/"
 
@@ -492,13 +580,16 @@ echo ""
 echo "4. Collect static files:"
 echo "   karrio collectstatic --noinput"
 echo ""
-echo "5. Start development servers:"
+echo "5. Start development servers (API, dashboard, docs, Maildev, optional Caddy proxy):"
 echo "   ./bin/start-dev"
+echo "   (Use SKIP_CADDY=true ./bin/start-dev to disable HTTPS proxy.)"
 echo ""
 echo -e "${GREEN}Access your application at:${NC}"
 echo "   → API: http://localhost:5002"
 echo "   → Dashboard: http://localhost:3002"
-echo "   → Admin: http://localhost:5002/admin"
+echo "   → Docs: http://localhost:3005"
+echo "   → Maildev: http://localhost:1080"
+echo "   → HTTPS domains (when Caddy is running): https://api.karrio.local, https://app.karrio.local, https://karrio.local"
 echo ""
 
 # Check for any warnings

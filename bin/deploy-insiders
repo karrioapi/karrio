@@ -2,7 +2,7 @@
 
 set -e
 
-export KARRIO_TAG="${KARRIO_TAG:-2025.5rc22}"
+export KARRIO_TAG="${KARRIO_TAG:-2025.5rc23}"
 export SENTRY_DSN="${SENTRY_DSN:-'https://public@sentry.example.com/1'}"
 
 SECRET_KEY=$(head -c 28 /dev/urandom | sha224sum -b | head -c 56)
@@ -100,7 +100,9 @@ api.$DOMAIN {
         }
     }
     handle {
-        reverse_proxy http://api:5002
+        reverse_proxy http://api:5002 {
+            header_up X-Forwarded-Proto https
+        }
     }
     encode gzip
     log {
@@ -108,18 +110,24 @@ api.$DOMAIN {
     }
 }
 app.$DOMAIN {
-    reverse_proxy http://dashboard:3002
+    reverse_proxy http://dashboard:3002 {
+        header_up X-Forwarded-Proto https
+    }
 }
 EOF
 
+# Export environment variables for envsubst
+export DASHBOARD_URL=https://app.$DOMAIN
+export KARRIO_PUBLIC_URL=https://api.$DOMAIN
+
 # Write .env file
-envsubst >.env <<EOF
+cat > .env <<EOF
 DOMAIN=$DOMAIN
 SECRET_KEY=$SECRET_KEY
 JWT_SECRET=$JWT_SECRET
 SENTRY_DSN=$SENTRY_DSN
-DASHBOARD_URL=https://app.$DOMAIN
-KARRIO_PUBLIC_URL=https://api.$DOMAIN
+DASHBOARD_URL=$DASHBOARD_URL
+KARRIO_PUBLIC_URL=$KARRIO_PUBLIC_URL
 GITHUB_TOKEN=$GITHUB_TOKEN
 EOF
 

@@ -1,4 +1,4 @@
-import typing
+import logging
 from constance import config
 from django.urls import reverse
 from rest_framework.request import Request
@@ -31,18 +31,29 @@ NON_HUBS_CARRIERS = [
     carrier_name for carrier_name in CARRIER_NAMES if carrier_name not in CARRIER_HUBS
 ]
 
+LOGGER = logging.getLogger(__name__)
+
 
 def contextual_metadata(request: Request):
-    _host: str = typing.cast(
-        str,
-        (
-            request.build_absolute_uri(
-                reverse("karrio.server.core:metadata", kwargs={})
-            )
-            if hasattr(request, "build_absolute_uri")
-            else "/"
-        ),
-    )
+    # Detect HTTPS from headers (for proxied environments like Caddy/ALB)
+    is_https = False
+    if hasattr(request, 'META'):
+        # Check X-Forwarded-Proto header (set by load balancers/proxies)
+        forwarded_proto = request.META.get('HTTP_X_FORWARDED_PROTO', '').lower()
+        # Check if request is secure (Django's built-in HTTPS detection)
+        is_secure = getattr(request, 'is_secure', lambda: False)()
+        is_https = forwarded_proto == 'https' or is_secure
+
+    if hasattr(request, "build_absolute_uri"):
+        _host: str = request.build_absolute_uri(
+            reverse("karrio.server.core:metadata", kwargs={})
+        )
+        # Override protocol if we detected HTTPS but build_absolute_uri returned HTTP
+        if is_https and _host.startswith('http://'):
+            _host = _host.replace('http://', 'https://', 1)
+    else:
+        _host = "/"
+
     host = _host[:-1] if _host[-1] == "/" else _host
     name = lib.identity(
         getattr(conf.settings.tenant, "name", conf.settings.APP_NAME)

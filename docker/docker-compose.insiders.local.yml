@@ -83,7 +83,7 @@ services:
   # Comment out everything below this point if you are using an external database and redis instance.
   db:
     container_name: karrio.db
-    image: postgres
+    image: postgres:16
     restart: unless-stopped
     ports:
       - ${DATABASE_PORT}:5432

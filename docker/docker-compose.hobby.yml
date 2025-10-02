@@ -9,7 +9,7 @@ services:
       - db
       - redis
     environment:
-      USE_HTTPS: "True"
+      USE_HTTPS: "True" # Ensure HTTPS is enabled for production (required when DEBUG_MODE is False)
       DEBUG_MODE: "False"
       DETACHED_WORKER: "True"
       SECRET_KEY: ${SECRET_KEY}
@@ -77,7 +77,7 @@ services:
 
   db:
     container_name: karrio.db
-    image: postgres
+    image: postgres:16
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${DATABASE_NAME:-db}

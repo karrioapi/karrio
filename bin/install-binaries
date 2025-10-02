@@ -5,7 +5,7 @@
 if [ "$(uname)" == "Darwin" ]; then
     # Mac OS X platform
     echo "Installing system dependencies for macOS..."
-    brew install gcc pango libffi ghostscript zint
+    brew install gcc pango libffi ghostscript zint caddy mkcert nss
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     # GNU/Linux platform
     echo "Installing system dependencies for Linux..."
@@ -20,7 +20,10 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
         libjpeg-dev \
         libopenjp2-7-dev \
         zint \
-        curl
+        curl \
+        caddy \
+        mkcert \
+        libnss3-tools
 fi
 
 echo "System dependencies installation complete."

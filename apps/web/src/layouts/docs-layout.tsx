@@ -7,6 +7,7 @@ import {
 } from "@karrio/ui/fonts/font";
 import { NextPostHogProvider } from "@karrio/hooks/posthog";
 import NextraTheme from '@/components/nextra/theme';
+import { PublicEnvScript } from "next-runtime-env";
 import { getPageMap } from 'nextra/page-map';
 import { headers } from 'next/headers';
 import type { ReactNode } from 'react';
@@ -41,6 +42,9 @@ export default async function DocsLayout({ children }: { children: ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning
       className={`${inter.variable} ${jetbrains.variable} ${noto.variable} ${ubuntu.variable} ${oxygen.variable} h-full scroll-smooth`}>
+      <head>
+        <PublicEnvScript />
+      </head>
       <body className="docs-page bg-background" style={{ margin: 0 }}>
         <NextPostHogProvider>
           <NextraTheme pageMap={pageMap}>

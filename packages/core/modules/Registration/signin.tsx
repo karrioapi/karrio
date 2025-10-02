@@ -68,7 +68,7 @@ function SignInPage(pageProps: any) {
         } catch { }
 
         const nextUrl = searchParams.get("next");
-        const target = nextUrl ? p`${nextUrl}` : response.url || "/";
+        const target = nextUrl ? p`${nextUrl}` : "/";
         window.location.replace(target);
       } else {
         setAuthError("Unable to sign in. Please try again.");
