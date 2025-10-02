@@ -108,14 +108,18 @@ app.$DOMAIN {
 }
 EOF
 
+# Export environment variables for envsubst
+export DASHBOARD_URL=https://app.$DOMAIN
+export KARRIO_PUBLIC_URL=https://api.$DOMAIN
+
 # Write .env file
-envsubst >.env <<EOF
+cat > .env <<EOF
 DOMAIN=$DOMAIN
 SECRET_KEY=$SECRET_KEY
 JWT_SECRET=$JWT_SECRET
 SENTRY_DSN=$SENTRY_DSN
-DASHBOARD_URL=https://app.$DOMAIN
-KARRIO_PUBLIC_URL=https://api.$DOMAIN
+DASHBOARD_URL=$DASHBOARD_URL
+KARRIO_PUBLIC_URL=$KARRIO_PUBLIC_URL
 EOF
 
 # setup docker
