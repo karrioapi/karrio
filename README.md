@@ -15,7 +15,7 @@ The JTL Shipping Platform is a monorepo-based application that combines a Python
 - **Analytics Dashboard** - Real-time insights into shipping operations
 - **Enterprise Auth** - OIDC/OAuth2 authentication support
 - **REST API** - Comprehensive API for integration with existing systems
-- **GraphQL management API* - Comprehensive API for custom integration
+- **GraphQL management API** - Comprehensive API for custom integration
 
 ## Architecture
 
@@ -125,8 +125,8 @@ This will install dependencies for:
 - Root workspace
 - All apps in `apps/`
 - All packages in `packages/`
-- All Karrio apps in `jtl-karrio/apps/`
-- All Karrio packages in `jtl-karrio/packages/`
+- All Karrio apps in `karrio/apps/`
+- All Karrio packages in `karrio/packages/`
 
 ## Running the Application
 
@@ -465,8 +465,8 @@ The project has two git remotes for subtrees:
 # View configured remotes
 git remote -v
 
-# karrio -> git@github.com:jtlshipping/jtl-karrio.git
-# insiders -> git@github.com:jtlshipping/jtl-karrio-insiders.git
+# karrio -> git@github.com:jtlshipping/karrio.git
+# insiders -> git@github.com:jtlshipping/karrio-insiders.git
 ```
 
 ### Handling Merge Conflicts
@@ -554,7 +554,7 @@ rm -rf .venv/karrio
 # Clean install
 rm -rf node_modules
 rm -rf apps/*/node_modules
-rm -rf jtl-karrio/apps/*/node_modules
+rm -rf karrio/apps/*/node_modules
 rm package-lock.json
 npm install
 ```

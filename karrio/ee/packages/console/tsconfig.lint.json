@@ -1,8 +1,0 @@
-{
-  "extends": "@karrio/tsconfig/react-library.json",
-  "compilerOptions": {
-    "outDir": "dist"
-  },
-  "include": ["src", "turbo"],
-  "exclude": ["node_modules", "dist"]
-}

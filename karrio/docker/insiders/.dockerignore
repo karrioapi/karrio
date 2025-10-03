@@ -1,9 +1,0 @@
-# Ignore everything
-*
-
-!/docker/insiders/worker.sh
-!/docker/insiders/Dockerfile
-!/docker/insiders/entrypoint.sh
-!/docker/insiders/gunicorn-cfg.py
-!/plugins/
-!/plugins/**
