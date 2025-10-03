@@ -9,6 +9,7 @@ import { Sheet, SheetContent } from "@karrio/ui/components/ui/sheet";
 import { Cross2Icon, TrashIcon } from "@radix-ui/react-icons";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { useToast } from "@karrio/ui/hooks/use-toast";
 import { Button } from "@karrio/ui/components/ui/button";
 import { Input } from "@karrio/ui/components/ui/input";
 import { Label } from "@karrio/ui/components/ui/label";
@@ -50,6 +51,7 @@ export const RateSheetEditor = ({
 }: RateSheetEditorProps) => {
   const loader = useLoader();
   const { references, metadata } = useAPIMetadata();
+  const { toast } = useToast();
   const isNew = rateSheetId === 'new';
 
   // Fetch carrier metadata for optional fallback defaults
@@ -326,6 +328,7 @@ export const RateSheetEditor = ({
             // Seed buffers from fresh data so text persists after save
             setZoneTextBuffers(buildZoneTextBuffersFromServices(fresh.services || []));
           }
+          toast({ title: "Rate Sheet Saved!" });
         }
       } else {
         // For updates, don't send carrier_name
@@ -345,12 +348,14 @@ export const RateSheetEditor = ({
           // Seed buffers from fresh data so text persists after save
           setZoneTextBuffers(buildZoneTextBuffersFromServices(fresh.services || []));
         }
+        toast({ title: "Rate Sheet Saved!" });
       }
       // Do not close the editor; leave it open
     } catch (error: any) {
       // Surface a friendly error, avoid throwing in console overlay
       const message = error?.response?.errors?.[0]?.message || error?.message || 'Unknown error';
       console.warn("Failed to save rate sheet:", message);
+      toast({ title: "Rate Sheet was unable to be saved. Error:", description: message, variant: "destructive" });
     } finally {
       loader.setLoading(false);
     }
