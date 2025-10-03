@@ -13,14 +13,16 @@ import karrio.server.graph.schemas.shipping.inputs as inputs
 class ShippingMethodType:
     id: str
     object_type: str
+    name: str
     slug: str
-    source: str
+    description: typing.Optional[str]
     carrier_code: str
     carrier_service: str
     carrier_ids: typing.List[str]
     carrier_options: utils.JSON
     metadata: utils.JSON
     is_active: bool
+    test_mode: bool
     created_at: datetime.datetime
     updated_at: datetime.datetime
     created_by: base.types.UserType

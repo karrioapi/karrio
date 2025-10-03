@@ -2,7 +2,6 @@ import rest_framework.fields as fields
 
 import karrio.server.manager.serializers as manager_serializers
 import karrio.server.serializers as serializers
-import karrio.server.openapi as openapi
 
 
 class ShippingMethod(serializers.EntitySerializer):
@@ -54,18 +53,10 @@ class ShippingMethod(serializers.EntitySerializer):
     )
 
 
-class PurchaseShipmentPayload(serializers.Serializer):
-    shipment_id = fields.CharField(required=True, help_text="The shipment id.")
-
-@openapi.extend_schema_field(
-    openapi.PolymorphicProxySerializer(
-        component_name="PurchaseShippingMethodData",
-        serializers=[
-            manager_serializers.ShipmentData,
-            PurchaseShipmentPayload,
-        ],
-        resource_type_field_name=None,
+class BuyShipmentData(manager_serializers.ShipmentUpdateData):
+    reference = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The shipment reference",
     )
-)
-class ShippingMethodData(serializers.DictField):
-    pass
