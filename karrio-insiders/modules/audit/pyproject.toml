@@ -19,7 +19,6 @@ dependencies = [
     "django-auditlog",
     "karrio_server_core",
     "karrio_server_graph",
-    "karrio_server_cloud",
 ]
 
 [project.urls]
