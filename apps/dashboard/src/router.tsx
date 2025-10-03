@@ -5,8 +5,8 @@ import * as TanstackQuery from './integrations/tanstack-query/root-provider'
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
 
-// Create a new router instance
-export const createRouter = () => {
+// Export a function that creates the router
+export function getRouter() {
   const rqContext = TanstackQuery.getContext()
 
   const router = createTanstackRouter({
@@ -30,6 +30,6 @@ export const createRouter = () => {
 // Register the router instance for type safety
 declare module '@tanstack/react-router' {
   interface Register {
-    router: ReturnType<typeof createRouter>
+    router: ReturnType<typeof getRouter>
   }
 }

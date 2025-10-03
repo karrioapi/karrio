@@ -1,0 +1,159 @@
+#!/usr/bin/env bash
+
+# =============================================================================
+# SUBTREE UPDATE SCRIPT
+# =============================================================================
+# Updates git subtrees from upstream repositories
+# This script pulls the latest changes from both karrio and insiders repos
+# =============================================================================
+
+set -e
+
+# Resolve directories
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ROOT_DIR="$( cd "$SCRIPT_DIR/.." && pwd )"
+cd "$ROOT_DIR"
+
+# Color codes for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+print_step() { echo -e "${CYAN}→ $1${NC}"; }
+print_success() { echo -e "${GREEN}✓ $1${NC}"; }
+print_warning() { echo -e "${YELLOW}⚠ $1${NC}"; }
+print_error() { echo -e "${RED}✗ $1${NC}"; }
+
+# Header
+echo
+echo "██╗  ██╗ █████╗ ██████╗ ██████╗ ██╗ ██████╗ "
+echo "██║ ██╔╝██╔══██╗██╔══██╗██╔══██╗██║██╔═══██╗"
+echo "█████╔╝ ███████║██████╔╝██████╔╝██║██║   ██║"
+echo "██╔═██╗ ██╔══██║██╔══██╗██╔══██╗██║██║   ██║"
+echo "██║  ██╗██║  ██║██║  ██║██║  ██║██║╚██████╔╝"
+echo "╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝ "
+echo
+echo "Updating Git Subtrees"
+echo
+
+# Check if we're in a git repository
+if ! git rev-parse --git-dir > /dev/null 2>&1; then
+    print_error "Not in a git repository"
+    exit 1
+fi
+
+# Check for uncommitted changes
+if ! git diff-index --quiet HEAD --; then
+    print_warning "You have uncommitted changes in your working directory"
+    echo -n "Do you want to continue? [y/N]: "
+    read -r response
+    if [[ ! "$response" =~ ^[Yy]$ ]]; then
+        print_error "Aborted by user"
+        exit 1
+    fi
+fi
+
+# Parse arguments
+UPDATE_KARRIO=true
+UPDATE_INSIDERS=true
+BRANCH="main"
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --karrio-only)
+            UPDATE_KARRIO=true
+            UPDATE_INSIDERS=false
+            shift
+            ;;
+        --insiders-only)
+            UPDATE_KARRIO=false
+            UPDATE_INSIDERS=true
+            shift
+            ;;
+        --branch)
+            BRANCH="$2"
+            shift 2
+            ;;
+        -h|--help)
+            echo "Usage: $0 [OPTIONS]"
+            echo ""
+            echo "OPTIONS:"
+            echo "  --karrio-only      Update only the karrio subtree"
+            echo "  --insiders-only    Update only the insiders subtree"
+            echo "  --branch BRANCH    Specify branch to pull from (default: main)"
+            echo "  -h, --help         Show this help message"
+            exit 0
+            ;;
+        *)
+            print_error "Unknown option: $1"
+            echo "Run '$0 --help' for usage information"
+            exit 1
+            ;;
+    esac
+done
+
+echo "Branch: $BRANCH"
+echo ""
+
+# Update Karrio subtree
+if $UPDATE_KARRIO; then
+    print_step "Updating Karrio subtree from upstream..."
+
+    # Fetch latest changes from karrio remote
+    print_step "Fetching from karrio remote..."
+    if ! git fetch karrio; then
+        print_error "Failed to fetch from karrio remote"
+        print_error "Make sure the remote exists: git remote -v"
+        exit 1
+    fi
+
+    # Pull subtree changes
+    print_step "Pulling karrio subtree changes..."
+    if git subtree pull --prefix=karrio karrio "$BRANCH" --squash; then
+        print_success "Karrio subtree updated successfully"
+    else
+        print_error "Failed to update karrio subtree"
+        print_error "There might be merge conflicts. Please resolve them manually."
+        exit 1
+    fi
+fi
+
+# Update Insiders subtree
+if $UPDATE_INSIDERS; then
+    print_step "Updating Insiders subtree from upstream..."
+
+    # Fetch latest changes from insiders remote
+    print_step "Fetching from insiders remote..."
+    if ! git fetch insiders; then
+        print_error "Failed to fetch from insiders remote"
+        print_error "Make sure the remote exists: git remote -v"
+        exit 1
+    fi
+
+    # Pull subtree changes
+    print_step "Pulling insiders subtree changes..."
+    if git subtree pull --prefix=insiders insiders "$BRANCH" --squash; then
+        print_success "Insiders subtree updated successfully"
+    else
+        print_error "Failed to update insiders subtree"
+        print_error "There might be merge conflicts. Please resolve them manually."
+        exit 1
+    fi
+fi
+
+echo ""
+print_success "Subtree update complete!"
+echo ""
+echo -e "${CYAN}Next steps:${NC}"
+echo "1. Review the changes:"
+echo "   git log --oneline -n 10"
+echo ""
+echo "2. Test the updated code:"
+echo "   ./bin/dev up"
+echo ""
+echo "3. If everything works, commit and push:"
+echo "   git push origin main"
+echo ""

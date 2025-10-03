@@ -9,7 +9,6 @@
     "check-types": "turbo run check-types"
   },
   "devDependencies": {
-    "maildev": "^2.2.1",
     "prettier": "^3.6.2",
     "turbo": "^2.5.8",
     "typescript": "5.9.2"
@@ -20,6 +19,9 @@
   "packageManager": "npm@11.5.1",
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "packages/*",
+    "karrio",
+    "karrio/apps/*",
+    "karrio/packages/*"
   ]
 }

@@ -6,6 +6,7 @@ set -e
 MAILDEV_PID=""
 SERVER_PID=""
 FOUNDATION_PID=""
+DASHBOARD_PID=""
 
 # Resolve directories
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -59,8 +60,18 @@ run_down() {
   for pid in $(pgrep -f "npm.*run.*dev.*jtl-foundation|node.*next.*jtl-foundation" 2>/dev/null || true); do
     kill -9 "$pid" 2>/dev/null || true
   done
-  lsof -ti:3000 | xargs kill -9 2>/dev/null || true
+  lsof -ti:3102 | xargs kill -9 2>/dev/null || true
   print_success "Foundation frontend stopped (if it was running)"
+
+  # Stop Karrio Dashboard
+  print_step "Stopping Karrio Dashboard..."
+  pgrep -f "npm.*run.*dev.*karrio/apps/dashboard|node.*vite.*karrio" 2>/dev/null | xargs kill -TERM 2>/dev/null || true
+  sleep 2
+  for pid in $(pgrep -f "npm.*run.*dev.*karrio/apps/dashboard|node.*vite.*karrio" 2>/dev/null || true); do
+    kill -9 "$pid" 2>/dev/null || true
+  done
+  lsof -ti:3000 | xargs kill -9 2>/dev/null || true
+  print_success "Karrio Dashboard stopped (if it was running)"
 
   # Stop Maildev
   if is_maildev_running; then
@@ -81,6 +92,7 @@ run_up() {
   local SHOW_HELP=false
   local START_API=true
   local START_FOUNDATION=true
+  local START_DASHBOARD=true
   local START_MAILDEV=true
   local WAIT_AT_END=true
 
@@ -88,13 +100,17 @@ run_up() {
   while [[ $# -gt 0 ]]; do
     case $1 in
       --api-only)
-        START_API=true; START_FOUNDATION=false; START_MAILDEV=false; shift ;;
+        START_API=true; START_FOUNDATION=false; START_DASHBOARD=false; START_MAILDEV=false; shift ;;
       --frontend-only)
-        START_API=false; START_FOUNDATION=true; START_MAILDEV=false; shift ;;
+        START_API=false; START_FOUNDATION=true; START_DASHBOARD=false; START_MAILDEV=false; shift ;;
+      --dashboard-only)
+        START_API=false; START_FOUNDATION=false; START_DASHBOARD=true; START_MAILDEV=false; shift ;;
       --no-api)
         START_API=false; shift ;;
       --no-frontend)
         START_FOUNDATION=false; shift ;;
+      --no-dashboard)
+        START_DASHBOARD=false; shift ;;
       --no-maildev)
         START_MAILDEV=false; shift ;;
       --no-wait|--detach)
@@ -112,17 +128,19 @@ run_up() {
     echo "OPTIONS:"
     echo "  --api-only           Start only the Karrio API server"
     echo "  --frontend-only      Start only the Foundation frontend"
+    echo "  --dashboard-only     Start only the Karrio Dashboard"
     echo "  --no-api             Skip starting the API server"
     echo "  --no-frontend        Skip starting the Foundation frontend"
+    echo "  --no-dashboard       Skip starting the Karrio Dashboard"
     echo "  --no-maildev         Skip starting Maildev"
     echo "  --no-wait, --detach  Start services then exit (do not wait)"
     echo "  -h, --help           Show this help message"
     return 0
   fi
 
-  if ! $START_API && ! $START_FOUNDATION; then
+  if ! $START_API && ! $START_FOUNDATION && ! $START_DASHBOARD; then
     print_warning "No components selected. Starting all components."
-    START_API=true; START_FOUNDATION=true; START_MAILDEV=true
+    START_API=true; START_FOUNDATION=true; START_DASHBOARD=true; START_MAILDEV=true
   fi
 
   # Header
@@ -139,6 +157,7 @@ run_up() {
   SELECTED_LABELS=()
   $START_API && SELECTED_LABELS+=("API")
   $START_FOUNDATION && SELECTED_LABELS+=("Foundation")
+  $START_DASHBOARD && SELECTED_LABELS+=("Dashboard")
   $START_MAILDEV && SELECTED_LABELS+=("Maildev")
   if [[ ${#SELECTED_LABELS[@]} -gt 0 ]]; then
     echo "→ Selected components: ${SELECTED_LABELS[*]}"
@@ -159,9 +178,9 @@ run_up() {
     print_warning "Node.js dependencies not found. Running npm install..."
     npm install
   fi
-  if [[ ! -d "apps/jtl-foundation/node_modules" ]]; then
+  if [[ ! -d "apps/dashboard/node_modules" ]]; then
     print_warning "Foundation dependencies not found. Running npm install..."
-    (cd apps/jtl-foundation && npm install)
+    (cd apps/dashboard && npm install)
   fi
   print_success "All prerequisites satisfied"
 
@@ -169,6 +188,7 @@ run_up() {
   print_step "Cleaning up existing services..."
   pkill -f "karrio runserver" 2>/dev/null || true
   lsof -ti:5002 | xargs kill -9 2>/dev/null || true
+  lsof -ti:3102 | xargs kill -9 2>/dev/null || true
   lsof -ti:3000 | xargs kill -9 2>/dev/null || true
   sleep 1
   print_success "Cleanup completed"
@@ -176,7 +196,7 @@ run_up() {
   cleanup_trap() {
     echo ""
     echo "Shutting down development environment..."
-    for pid in "$SERVER_PID" "$FOUNDATION_PID" "$MAILDEV_PID"; do
+    for pid in "$SERVER_PID" "$FOUNDATION_PID" "$DASHBOARD_PID" "$MAILDEV_PID"; do
       if [[ -n "$pid" ]]; then
         kill "$pid" 2>/dev/null || true
         wait "$pid" 2>/dev/null || true
@@ -212,7 +232,7 @@ run_up() {
   if $START_API; then
     print_step "Starting Karrio API server..."
     (
-      cd "$ROOT_DIR/jtl-karrio"
+      cd "$ROOT_DIR"
       source "$ROOT_DIR/.venv/karrio/bin/activate"
       karrio runserver
     ) &
@@ -224,12 +244,23 @@ run_up() {
   if $START_FOUNDATION; then
     print_step "Starting Foundation frontend..."
     (
-      cd "$ROOT_DIR/apps/jtl-foundation"
-      npm run dev
+      cd "$ROOT_DIR"
+      npm run dev -w @jtl/dashboard
     ) &
     FOUNDATION_PID=$!
     sleep 3
-    print_success "Foundation frontend starting on http://localhost:3000"
+    print_success "Foundation frontend starting on http://localhost:3102"
+  fi
+
+  if $START_DASHBOARD; then
+    print_step "Starting Karrio Dashboard..."
+    (
+      cd "$ROOT_DIR"
+      npm run dev -w @karrio/dashboard
+    ) &
+    DASHBOARD_PID=$!
+    sleep 3
+    print_success "Karrio Dashboard starting on http://localhost:3002"
   fi
 
   echo ""
@@ -238,6 +269,7 @@ run_up() {
   enabled=()
   $START_API && enabled+=("API")
   $START_FOUNDATION && enabled+=("Foundation")
+  $START_DASHBOARD && enabled+=("Dashboard")
   $START_MAILDEV && enabled+=("Maildev")
   if [[ ${#enabled[@]} -gt 0 ]]; then
     echo "Components: ${enabled[*]}"
@@ -249,7 +281,10 @@ run_up() {
     echo "   → Admin: http://localhost:5002/admin"
   fi
   if $START_FOUNDATION; then
-    echo "   → Foundation: http://localhost:3000"
+    echo "   → Foundation: http://localhost:3102"
+  fi
+  if $START_DASHBOARD; then
+    echo "   → Dashboard: http://localhost:3002"
   fi
   if $START_MAILDEV && [[ -n "$MAILDEV_PID" ]]; then
     echo "   → Maildev: http://localhost:1080"
@@ -264,14 +299,37 @@ run_up() {
   fi
 }
 
+# ===================== Help =====================
+show_help() {
+  echo "Usage: $0 <command> [options]"
+  echo ""
+  echo "Commands:"
+  echo "  up      Start the development environment (default)"
+  echo "  down    Stop all development services"
+  echo "  help    Show this help message"
+  echo ""
+  echo "Examples:"
+  echo "  $0 up                Start all services"
+  echo "  $0 up --api-only     Start only the API server"
+  echo "  $0 up --help         Show options for the 'up' command"
+  echo "  $0 down              Stop all services"
+  echo ""
+  echo "For more options, run: $0 up --help"
+}
+
 # ===================== Dispatch =====================
-CMD="${1:-up}"
-if [[ "$CMD" == "up" ]]; then
+CMD="${1}"
+if [[ -z "$CMD" ]] || [[ "$CMD" == "help" ]] || [[ "$CMD" == "-h" ]] || [[ "$CMD" == "--help" ]]; then
+  show_help
+  exit 0
+elif [[ "$CMD" == "up" ]]; then
   shift
   run_up "$@"
 elif [[ "$CMD" == "down" ]]; then
   run_down
 else
-  echo "Usage: $0 {up|down} [options]"
+  echo "Unknown command: $CMD"
+  echo ""
+  show_help
   exit 1
 fi

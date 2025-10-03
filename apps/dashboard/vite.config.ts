@@ -13,6 +13,8 @@ const config = defineConfig({
     tailwindcss(),
     tanstackStart({
       customViteReactPlugin: true,
+      routersDirectory: './src',
+      routeTreeFilePattern: 'routeTree.gen.ts',
     }),
     viteReact(),
   ],

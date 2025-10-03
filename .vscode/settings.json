@@ -1,0 +1,23 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/karrio/bin/python",
+  "python.analysis.extraPaths": [
+    "./karrio/modules/*",
+    "./karrio/modules/connectors/*",
+    "./karrio/apps/*",
+    "./insiders/modules/*",
+    "./insiders/modules/connectors/*",
+    "./modules/*"
+  ],
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.useLibraryCodeForTypes": true,
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportMissingTypeStubs": "none"
+  },
+  "[python]": {
+    "editor.formatOnSave": false,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  }
+}

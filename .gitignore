@@ -1,43 +1,11 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
 
-# Dependencies
-node_modules
-.pnp
-.pnp.js
+# C extensions
+*.so
 
-# Local env files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Testing
-coverage
-
-# Turbo
-.turbo
-
-# Vercel
-.vercel
-
-# Build Outputs
-.next/
-out/
-build
-dist
-
-
-# Debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Misc
-.DS_Store
-*.pem
-
-# Python
 # Distribution / packaging
 .Python
 build/
@@ -67,5 +35,124 @@ MANIFEST
 pip-log.txt
 pip-delete-this-directory.txt
 
-# Custom
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.env.development
+.env.test
+.env.production
+.env.staging
 .venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+
+# misc
+*.DS_Store
+*.pem
+
+# node
+node_modules
+!**/packages/**/lib/
+
+# turbo
+.turbo
+
+# vercel
+.vercel
+
+# karrio stuff:
+!apps/api/karrio/server/lib
+!apps/dashboard/src/lib
+!packages/lib
+
+
+.bash_history
+
+.idea/
+staticfiles/*
+apps/api/karrio/server/staticfiles/*
+
+.karrio/
+packages/karriojs/api/generated
+!docker/.env
+
+# Karrio plugins
+plugins/*
+docker/plugins
+!plugins/README.md
+!plugins/addresscomplete
+!plugins/googlegeocoding
+
+# Meta-repo private directories
+meta/private/
+
+# Testing
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Temporary files
+*.tmp
+*.backup

@@ -43,6 +43,7 @@ class ShippingMethod(core.OwnedEntity):
     
     metadata = models.JSONField(blank=True, null=True, default=core.field_default({}))
     is_active = models.BooleanField(null=False, default=False)
+    test_mode = models.BooleanField()
 
     # Related fields
     created_by = models.ForeignKey(
@@ -53,6 +54,12 @@ class ShippingMethod(core.OwnedEntity):
         editable=False,
     )
 
+    org = models.ManyToManyField(
+        "orgs.Organization",
+        related_name="shipping_methods",
+        through="ShippingMethodLink"
+    )
+
     # Compute fields
     @property
     def object_type(self):
@@ -60,11 +67,15 @@ class ShippingMethod(core.OwnedEntity):
 
 
 class ShippingMethodLink(models.Model):
+    """Link table for Organization to ShippingMethod one-to-many relationship"""
+
     org = models.ForeignKey(
         "orgs.Organization",
         on_delete=models.CASCADE,
         related_name="shipping_method_links",
     )
     item = models.OneToOneField(
-        ShippingMethod, on_delete=models.CASCADE, related_name="link"
+        ShippingMethod,
+        on_delete=models.CASCADE,
+        related_name="link"
     )

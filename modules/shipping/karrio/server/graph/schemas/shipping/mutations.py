@@ -8,7 +8,7 @@ import karrio.server.shipping.models as models
 import karrio.server.serializers as serializers
 import karrio.server.graph.schemas.shipping.types as types
 import karrio.server.graph.schemas.shipping.inputs as inputs
-import karrio.server.shipping.serializers.shipping_method as model_serializers
+import karrio.server.shipping.serializers.shipping as model_serializers
 
 
 @strawberry.type

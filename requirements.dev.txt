@@ -1,45 +1,47 @@
 # Server dev dependencies
 django-debug-toolbar
+django-stubs[compatible-mypy]
+djangorestframework-stubs
 
 # Karrio dev packages
--e ./jtl-karrio/modules/sdk
--e ./jtl-karrio/modules/cli[dev]
+-e ./karrio/modules/sdk
+-e ./karrio/modules/cli[dev]
 
 # Shipping Plugins
--e ./jtl-karrio/modules/connectors/australiapost
--e ./jtl-karrio/modules/connectors/canadapost
--e ./jtl-karrio/modules/connectors/dhl_express
--e ./jtl-karrio/modules/connectors/dhl_parcel_de
--e ./jtl-karrio/modules/connectors/dhl_poland
--e ./jtl-karrio/modules/connectors/dhl_universal
--e ./jtl-karrio/modules/connectors/fedex
--e ./jtl-karrio/modules/connectors/generic
--e ./jtl-karrio/modules/connectors/laposte
--e ./jtl-karrio/modules/connectors/purolator
--e ./jtl-karrio/modules/connectors/seko
--e ./jtl-karrio/modules/connectors/sendle
--e ./jtl-karrio/modules/connectors/ups
--e ./jtl-karrio/modules/connectors/usps
--e ./jtl-karrio/modules/connectors/usps_international
+-e ./karrio/modules/connectors/australiapost
+-e ./karrio/modules/connectors/canadapost
+-e ./karrio/modules/connectors/dhl_express
+-e ./karrio/modules/connectors/dhl_parcel_de
+-e ./karrio/modules/connectors/dhl_poland
+-e ./karrio/modules/connectors/dhl_universal
+-e ./karrio/modules/connectors/fedex
+-e ./karrio/modules/connectors/generic
+-e ./karrio/modules/connectors/laposte
+-e ./karrio/modules/connectors/purolator
+-e ./karrio/modules/connectors/seko
+-e ./karrio/modules/connectors/sendle
+-e ./karrio/modules/connectors/ups
+-e ./karrio/modules/connectors/usps
+-e ./karrio/modules/connectors/usps_international
 
 # karrio server modules
--e ./jtl-karrio/modules/core
--e ./jtl-karrio/apps/api
--e ./jtl-karrio/modules/graph
--e ./jtl-karrio/modules/data
--e ./jtl-karrio/modules/events
--e ./jtl-karrio/modules/manager
--e ./jtl-karrio/modules/orders
--e ./jtl-karrio/modules/proxy
--e ./jtl-karrio/modules/pricing
--e ./jtl-karrio/modules/documents
+-e ./karrio/modules/core
+-e ./karrio/apps/api
+-e ./karrio/modules/graph
+-e ./karrio/modules/data
+-e ./karrio/modules/events
+-e ./karrio/modules/manager
+-e ./karrio/modules/orders
+-e ./karrio/modules/proxy
+-e ./karrio/modules/pricing
+-e ./karrio/modules/documents
 
 # karrio insiders modules
--e ./jtl-karrio-insiders/modules/apps
--e ./jtl-karrio-insiders/modules/admin
--e ./jtl-karrio-insiders/modules/audit
--e ./jtl-karrio-insiders/modules/automation
--e ./jtl-karrio-insiders/modules/orgs
+-e ./insiders/modules/apps
+-e ./insiders/modules/admin
+-e ./insiders/modules/audit
+-e ./insiders/modules/automation
+-e ./insiders/modules/orgs
 
 # JTL custom karrio modules
 -e ./modules/shipping
