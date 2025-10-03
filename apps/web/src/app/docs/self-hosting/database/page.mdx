@@ -1,0 +1,105 @@
+# Database Migrations
+
+## Understanding Database Migrations
+
+Database migrations are a controlled way to evolve your database schema over time. In Karrio, we use [Django's migration system](https://docs.djangoproject.com/en/stable/topics/migrations/) to handle changes to the database structure in a secure and stable manner.
+
+When you make changes to models in your project, these changes need to be reflected in your database. Instead of manually altering the database, migrations provide several benefits:
+
+- **Reproducibility**: Each schema change is tracked and can be reproduced exactly the same way in different environments.
+- **Version control**: Migrations work alongside your version control system, allowing you to track database changes alongside code changes.
+- **Data preservation**: Proper migrations help transform data from one schema to another without data loss.
+- **Collaborative development**: Team members can apply the same database changes consistently.
+
+## Running Migrations
+
+To update your database with the latest migrations, use the following command:
+
+```bash
+# In your Karrio installation directory
+bin/migrate
+```
+
+This script activates the Python environment and runs `karrio migrate`, which applies any pending migrations to your database.
+
+For development environments, migrations are typically run automatically when starting the server:
+
+```bash
+bin/start-server
+```
+
+## How Migrations Work in Karrio
+
+Karrio's database structure is distributed across multiple modules:
+
+- `modules/core/karrio/server/providers/migrations/`: Carrier and provider related schemas
+- `modules/manager/karrio/server/manager/migrations/`: Core business objects like Shipments, Parcels, etc.
+- `modules/pricing/karrio/server/pricing/migrations/`: Rate and pricing related schemas
+- `modules/data/karrio/server/data/migrations/`: Data models and analytics
+
+Each module maintains its own set of migrations that are applied in sequence based on their dependencies.
+
+## Troubleshooting Migrations
+
+### Migration Conflicts
+
+If you encounter migration conflicts (typically when two developers create migrations simultaneously), you may need to:
+
+1. Roll back to a common migration point
+2. Apply the conflicting migrations in the correct order
+
+### Database Out of Sync
+
+When your database state doesn't match what Karrio expects (common after restoring backups or in development), you might see errors like:
+
+```
+django.db.utils.ProgrammingError: relation already exists
+```
+
+To resolve this, you can use Django's command to mark migrations as applied without running them:
+
+```bash
+# Replace migration_name with the name of the specific migration
+karrio migrate --fake migration_name
+```
+
+For a completely fresh start in development (warning: this destroys all data):
+
+```bash
+# Drop and recreate your database
+karrio reset_db
+# Mark all migrations as applied without running them
+karrio migrate --fake
+```
+
+## Customizing Migrations
+
+For advanced users who need to customize how migrations work, Karrio supports Django's migration system including:
+
+- Data migrations (for transforming data when schema changes)
+- Migration dependencies (for controlling order of operations)
+- Custom migration operations
+
+Refer to the [Django Migrations documentation](https://docs.djangoproject.com/en/stable/topics/migrations/) for more information on these advanced features.
+
+## Creating Migrations (Development Only)
+
+When developing or extending Karrio, if you modify model definitions in `models.py` files, you'll need to create migrations:
+
+```bash
+# Generate migrations based on model changes
+karrio makemigrations
+
+# Apply the newly created migrations
+bin/migrate
+```
+
+Never manually edit the migration files unless you fully understand the implications. Django generates migrations automatically based on changes to your models, and manual edits can lead to inconsistent states.
+
+## Best Practices
+
+- Always back up your database before applying migrations in production
+- Test migrations in a staging environment before deploying to production
+- Keep migrations small and focused on specific changes
+- If multiple developers are working on the project, coordinate migration creation to avoid conflicts
+- Include migrations in code reviews to catch potential issues early

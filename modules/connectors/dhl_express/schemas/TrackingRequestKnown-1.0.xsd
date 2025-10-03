@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://www.dhl.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.dhl.com" xmlns:dhl="http://www.dhl.com/datatypes" elementFormDefault="unqualified">
+	<xsd:import namespace="http://www.dhl.com/datatypes" schemaLocation="datatypes.xsd"/>
+	<xsd:element name="KnownTrackingRequest">
+		<xsd:annotation>
+			<xsd:documentation>Root element for known shipment tracking request</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Request" type="dhl:Request"/>
+				<xsd:element name="LanguageCode" type="dhl:LanguageCode"/>
+				<xsd:choice>
+					<xsd:element name="AWBNumber" type="dhl:AWBNumber" maxOccurs="10"/>
+					<xsd:element name="LPNumber" type="dhl:TrackingPieceID" minOccurs="1" maxOccurs="10" />
+				</xsd:choice>
+				<xsd:element name="LevelOfDetails" type="dhl:LevelOfDetails"/>			
+			   <xsd:element name="PiecesEnabled" minOccurs="0">
+	     		  <xsd:simpleType>
+					<xsd:annotation>
+							<xsd:documentation>S for Only shipment Details,B for Both
+								Shipment and Piece Details,P for only Piece Details
+							</xsd:documentation>
+					</xsd:annotation>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="S"/>
+						<xsd:enumeration value="B"/>
+						<xsd:enumeration value="P"/>
+					</xsd:restriction>
+				  </xsd:simpleType>
+			   </xsd:element>
+				<xsd:element name="CountryCode" type="dhl:CountryCode"
+					minOccurs="0" />
+			</xsd:sequence>
+			<xsd:attribute name="schemaVersion" type="xsd:decimal" use="required" fixed="1.0"/>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

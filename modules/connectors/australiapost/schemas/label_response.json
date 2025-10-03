@@ -1,0 +1,25 @@
+{
+    "labels": [
+        {
+            "request_id": "c2991876-9596-42ed-aed3-dd11dcfb03ba",
+            "url": "https://ptest.npe.auspost.com.au/lodgement4/labels/c2991876-9596-42ed-aed3-dd11dcfb03ba.pdf?AWSAccessKeyId=AKIAR4N3J3VDHZFMRVFM&Expires=1568274226&Signature=ATq0MzBdb89gf98%2FE%2FGWOiPZ%2BTw%3D",
+            "status": "AVAILABLE",
+            "request_date": "11-09-2019 17:43:46",
+            "url_creation_date": "11-09-2019 17:43:46",
+            "shipments": [
+                {
+                    "shipment_id": "t4AK0EhQTu4AAAFeVsxGqhLO",
+                    "options": [],
+                    "items": [
+                        {
+                            "item_id": "t4AK0EhQTu4AAAFeVsxGqhLO"
+                        }
+                    ]
+                }
+            ],
+            "shipment_ids": [
+                "t4AK0EhQTu4AAAFeVsxGqhLO"
+            ]
+        }
+    ]
+}

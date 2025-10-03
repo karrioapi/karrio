@@ -1,0 +1,283 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.canadapost.ca/ws/manifest-v8"
+    xmlns="http://www.canadapost.ca/ws/manifest-v8" elementFormDefault="qualified">
+    <xsd:annotation>
+        <xsd:documentation> - Get Manifest Details returns credit card receipt details or supplier
+            account receipt details. - changed contract-id from mandatory to optional in
+            ManifestDetailsType </xsd:documentation>
+    </xsd:annotation>
+    <xsd:redefine schemaLocation="common.xsd">
+        <xsd:simpleType name="RelType">
+            <xsd:restriction base="RelType">
+                <xsd:enumeration value="self" />
+                <xsd:enumeration value="artifact" />
+                <xsd:enumeration value="details" />
+                <xsd:enumeration value="manifestShipments" />
+                <xsd:enumeration value="manifest" />
+                <xsd:enumeration value="shipment" />
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:redefine>
+
+    <xsd:element name="transmit-set" type="ShipmentTransmitSetType" />
+
+    <xsd:element name="manifests" type="ManifestsType" />
+
+    <xsd:element name="manifest" type="ManifestType" />
+
+    <xsd:element name="shipments" type="ShipmentsType" />
+
+    <xsd:element name="manifest-details" type="ManifestDetailsType" />
+
+    <xsd:complexType name="ShipmentTransmitSetType">
+        <xsd:all>
+            <xsd:element name="customer-request-id" type="CustomerRequestIdType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>For future use</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="group-ids" type="GroupIDListType" />
+            <xsd:element name="cpc-pickup-indicator" type="xsd:boolean" fixed="true" minOccurs="0" />
+            <xsd:element name="requested-shipping-point" type="PostalCodeType" minOccurs="0" />
+            <xsd:element name="shipping-point-id" type="OutletIDType" minOccurs="0" />
+            <xsd:element name="detailed-manifests" type="xsd:boolean" />
+            <xsd:element name="method-of-payment" type="MethodOfPaymentType" />
+            <xsd:element name="manifest-address" type="ManifestAddressType" />
+            <xsd:element name="customer-reference" type="CustomerReferenceType" minOccurs="0" />
+            <xsd:element name="excluded-shipments" type="ExcludedShipmentsType" minOccurs="0" />
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="GroupIDListType">
+        <xsd:sequence>
+            <xsd:element name="group-id" type="GroupIDType" maxOccurs="unbounded" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="GroupIDType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:minLength value="1" />
+            <xsd:maxLength value="32" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="ExcludedShipmentsType">
+        <xsd:sequence>
+            <xsd:element name="shipment-id" type="ShipmentIDType" maxOccurs="unbounded" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="ShipmentIDType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="32" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="CustomerReferenceType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="12" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+
+    <xsd:complexType name="ShipmentsType">
+        <xsd:sequence>
+            <xsd:element ref="link" minOccurs="0" maxOccurs="unbounded" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ManifestsType">
+        <xsd:sequence>
+            <xsd:element ref="link" minOccurs="0" maxOccurs="unbounded" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ManifestType">
+        <xsd:all>
+            <xsd:element name="customer-request-id" type="CustomerRequestIdType" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>For future use</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="po-number" type="PoNumberType" />
+            <xsd:element ref="links" />
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:simpleType name="CustomerRequestIdType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="35" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="ManifestDetailsType">
+        <xsd:all>
+            <xsd:element name="po-number" type="PoNumberType" />
+            <xsd:element name="final-shipping-point" type="PostalCodeType" />
+            <xsd:element name="shipping-point-name">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:normalizedString">
+                        <xsd:maxLength value="35" />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="shipping-point-id" type="OutletIDType" />
+            <xsd:element name="cpc-pickup-indicator" type="xsd:boolean" fixed="true" minOccurs="0" />
+            <xsd:element name="mailed-by-customer" type="CustomerIDType" />
+            <xsd:element name="mailed-on-behalf-of" type="CustomerIDType" />
+            <xsd:element name="paid-by-customer" type="CustomerIDType" />
+            <xsd:element name="customer-ref" type="xsd:normalizedString" minOccurs="0" />
+            <xsd:element name="manifest-date" type="xsd:date" />
+            <xsd:element name="manifest-time">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:normalizedString">
+                        <xsd:pattern value="\d{2}:\d{2} [a-zA-Z ]+" />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="contract-id" type="ContractIDType" minOccurs="0" />
+            <xsd:element name="method-of-payment" type="MethodOfPaymentType" />
+            <xsd:element name="cc-receipt-details" minOccurs="0">
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element name="merchant-name" type="CcNameType" />
+                        <xsd:element name="merchant-url">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:normalizedString">
+                                    <xsd:maxLength value="60" />
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                        <xsd:element name="name-on-card" type="CcNameType" minOccurs="0" />
+                        <xsd:element name="auth-code" type="CcAuthorizationCodeType" />
+                        <xsd:element name="auth-timestamp" type="xsd:dateTime" />
+                        <xsd:element name="card-type" type="CcType" />
+                        <xsd:element name="currency" type="CurrencyType" />
+                        <xsd:element name="transaction-type">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:normalizedString">
+                                    <xsd:maxLength value="44" />
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                    </xsd:all>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="supplier-account-receipt-details" minOccurs="0">
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element name="merchant-name">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:normalizedString">
+                                    <xsd:maxLength value="44" />
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                        <xsd:element name="merchant-url">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:normalizedString">
+                                    <xsd:maxLength value="60" />
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                        <xsd:element name="auth-code" type="AuthorizationCodeType" />
+                        <xsd:element name="auth-timestamp" type="xsd:dateTime" />
+                        <xsd:element name="supplier-id" type="xsd:normalizedString" />
+                        <xsd:element name="currency" type="CurrencyType" />
+                        <xsd:element name="transaction-type">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:normalizedString">
+                                    <xsd:maxLength value="44" />
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                    </xsd:all>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="manifest-pricing-info" type="ManifestPricingInfoType" />
+            <xsd:element name="manifest-address" type="ManifestAddressType" />
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="ManifestPricingInfoType">
+        <xsd:all>
+            <xsd:element name="base-cost" type="CostTypeAllowsZero" />
+            <xsd:element name="automation-discount" type="CostTypeAllowsNegative" />
+            <xsd:element name="options-and-surcharges" type="CostTypeAllowsNegative" />
+            <xsd:element name="gst" type="CostTypeAllowsZero" />
+            <xsd:element name="pst" type="CostTypeAllowsZero" />
+            <xsd:element name="hst" type="CostTypeAllowsZero" />
+            <xsd:element name="total-due-cpc" type="CostTypeAllowsZero" />
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="ManifestAddressType">
+        <xsd:all>
+            <xsd:element name="manifest-company">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:normalizedString">
+                        <xsd:minLength value="1" />
+                        <xsd:maxLength value="44" />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="manifest-name" minOccurs="0">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:normalizedString">
+                        <xsd:minLength value="1" />
+                        <xsd:maxLength value="44" />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="phone-number" type="PhoneNumberType" />
+            <xsd:element name="address-details" type="AddressDetailsType" />
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="AddressDetailsType">
+        <xsd:all>
+            <xsd:element name="address-line-1">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:normalizedString">
+                        <xsd:minLength value="1" />
+                        <xsd:maxLength value="44" />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="address-line-2" minOccurs="0">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:normalizedString">
+                        <xsd:maxLength value="44" />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="city">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:normalizedString">
+                        <xsd:minLength value="1" />
+                        <xsd:maxLength value="40" />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="prov-state">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:normalizedString">
+                        <xsd:minLength value="1" />
+                        <xsd:maxLength value="2" />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="country-code" minOccurs="0">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:enumeration value="CA" />
+                        <xsd:enumeration value="US" />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="postal-zip-code" type="PostalCodeOrZipType" />
+        </xsd:all>
+    </xsd:complexType>
+
+</xsd:schema>

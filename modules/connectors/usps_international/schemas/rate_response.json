@@ -1,0 +1,61 @@
+{
+  "originZIPCode": "22407",
+  "foreignPostalCode": "63118",
+  "destinationCountryCode": "CA",
+  "pricingOptions": [
+    {
+      "shippingOptions": [
+        {
+          "mailClass": "PRIORITY_MAIL_EXPRESS_INTERNATIONAL",
+          "rateOptions": [
+            {
+              "totalPrice": 31.95,
+              "totalBasePrice": 31.95,
+              "rates": [
+                {
+                  "description": "Priority Mail Express International ISC Single-piece",
+                  "startDate": "2024-07-14",
+                  "endDate": "2024-10-05",
+                  "price": 65.64,
+                  "zone": "01",
+                  "weight": 1.2,
+                  "dimensionalWeight": 0,
+                  "dimWeight": 0,
+                  "fees": [],
+                  "priceType": "COMMERCIAL_BASE",
+                  "mailClass": "PRIORITY_MAIL_EXPRESS_INTERNATIONAL",
+                  "productName": "",
+                  "productDefinition": "",
+                  "processingCategory": "FLATS",
+                  "rateIndicator": "PA",
+                  "destinationEntryFacilityType": "INTERNATIONAL_SERVICE_CENTER",
+                  "SKU": "IEXX0XXXXB01020"
+                }
+              ],
+              "extraServices": [
+                {
+                  "name": "Insurance <= $500",
+                  "price": 20.15,
+                  "extraService": "930",
+                  "priceType": "COMMERCIAL",
+                  "warnings": [
+                    {
+                      "warningCode": "001",
+                      "warningDescription": "Contract rate not found for request. Published rate returned."
+                    }
+                  ],
+                  "SKU": "IXIE0XXXXCX0500"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "priceType": "COMMERCIAL",
+      "paymentAccount": {
+        "accountType": "METER",
+        "accountNumber": "123456789"
+      }
+    }
+  ]
+}

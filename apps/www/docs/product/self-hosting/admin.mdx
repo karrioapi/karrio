@@ -1,0 +1,87 @@
+---
+id: administration
+title: Instance settings
+---
+
+When self-hosting Karrio there are several instance settings that can be adjusted according to your needs.
+These settings are available on the admin console. Some settings can only be set using Environment variables.
+
+Instance settings can be managed by staff users by visiting the Instance settings page (api.instance.com/admin).
+Some setting configurations cannot be managed this way, and in particular,
+settings that determine how Karrio should behave at runtime must be set using Environment variables.
+Please review the Environment variables list for further details.
+
+## Updating settings
+
+Settings can easily be updated from Karrio's admin console.
+When updating, settings are applied immediately and used across your entire instance.
+The settings updated here can be for advanced users and may have adverse consequences to your instance when not managed properly.
+Please review any warnings or additional information carefully that comes up when updating settings.
+
+## Staff users
+
+Staff users are a special kind of instance-level permission that allows managing advanced instance-wide settings.
+A user can be a staff user regardless of their permission level to any organization(s) in your instance.
+Only staff users can manage these settings.
+
+The first user in any instance is a staff user. This user can then add others if applicable.
+When possible, it is recommended to have multiple staff users to ensure your instance can always be properly maintained.
+
+Staff users can also easily manage (add/remove) other staff users via the Karrio user interface or the API.
+You can visit the Instance status (/admin/) page and navigate to the "Users" section to do this.
+
+If you don't have any staff users, you can add your first staff user, by connecting to your instance, and then running the commands below.
+
+```terminal
+karrio shell
+```
+
+Once you access the karrio (Django) interactive shell,
+
+```python
+from django.contrib.auth import get_user_model
+user = get_user_model().objects.get(email="email_of_the_user_to_add@example.com")
+user.is_staff = True
+user.save()
+```
+
+## Configuring email
+
+Karrio's core relies on email messaging for certain functionality. For example:
+
+- Sending a reset link to a user that has forgotten their password.
+- Sending an invite link for new team members to join Karrio.
+
+By default, Karrio will not send email messages until you enable an SMTP server.
+We very strongly recommend using an email service to act as email server.
+Choose a provider that is optimized to maximize email deliverability.
+
+To prevent spam, most email providers have very complex systems in place
+that validate a myriad of factors before allowing an email through.
+Optimizing local servers for this is a bit like reinventing the wheel,
+so avoid this unless you have a very strong reason not to.
+
+### Environment config
+
+To configure a remote email server, you will need to head over to Instance settings and set up the following parameters:
+
+- `EMAIL_HOST`: Defaults to None. Hostname to connect to for establishing SMTP connections.
+- `EMAIL_PORT`: Defaults to 25. Port that should be used to connect to the host.
+- `EMAIL_HOST_USER`: Defaults to null. Credentials to connect to the host.
+- `EMAIL_HOST_PASSWORD`: Defaults to null. Credentials to connect to the host.
+- `EMAIL_USE_TLS`: Defaults to false. Whether to use TLS protocol when connecting to the host.
+- `EMAIL_FROM_ADDRESS`: Defaults to noreply@example.com. Email address that will appear as the sender in emails (From header).
+- `EMAIL_ENABLED`: Defaults to true. Whether email service is enabled or not.
+
+## Configuration data retention
+
+You can setup karrio instance to automatically delete data after a certain period of time.
+
+- `ORDER_DATA_RETENTION` : Defaults to `183`. Number of days to keep order data.
+- `TRACKER_DATA_RETENTION` : Defaults to `183`. Number of days to keep tracker data.
+- `SHIPMENT_DATA_RETENTION` : Defaults to `183`. Number of days to keep shipment data.
+- `API_LOGS_DATA_RETENTION` : Defaults to `92`. Number of days to keep API logs and SDK tracing data.
+
+### Data archiving schedule
+
+- `DATA_ARCHIVING_SCHEDULE` : Defaults to every `168` hours (7 days). Cron schedule for data archiving.

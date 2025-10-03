@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# Source environment variables
+source "bin/_env"
+
+echo "building dev tool image..."
+docker build -f "${ROOT}/docker/dev.tool.Dockerfile" -t karrio/tools --no-cache "${ROOT}"

@@ -1,0 +1,11 @@
+---
+id: ups
+title: UPS
+---
+
+import integrations from "../integrations.json";
+import CarrierIntegrationDetails from "@site/src/components/CarrierIntegrationDetails";
+
+<CarrierIntegrationDetails 
+    id="ups"
+    integration={integrations.find(i => i.id === "ups")} />

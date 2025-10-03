@@ -1,0 +1,35 @@
+# Server dev dependencies
+django-debug-toolbar
+
+# Karrio dev packages
+-e ./modules/sdk
+-e ./modules/cli[dev]
+
+# Shipping Plugins
+-e ./modules/connectors/australiapost
+-e ./modules/connectors/canadapost
+-e ./modules/connectors/dhl_express
+-e ./modules/connectors/dhl_parcel_de
+-e ./modules/connectors/dhl_poland
+-e ./modules/connectors/dhl_universal
+-e ./modules/connectors/fedex
+-e ./modules/connectors/generic
+-e ./modules/connectors/laposte
+-e ./modules/connectors/purolator
+-e ./modules/connectors/seko
+-e ./modules/connectors/sendle
+-e ./modules/connectors/ups
+-e ./modules/connectors/usps
+-e ./modules/connectors/usps_international
+
+# karrio server modules
+-e ./modules/core
+-e ./apps/api
+-e ./modules/graph
+-e ./modules/data
+-e ./modules/events
+-e ./modules/manager
+-e ./modules/orders
+-e ./modules/proxy
+-e ./modules/pricing
+-e ./modules/documents

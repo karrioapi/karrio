@@ -1,0 +1,567 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.canadapost.ca/ws/pickuprequest" xmlns="http://www.canadapost.ca/ws/pickuprequest" elementFormDefault="qualified">
+
+	<xsd:annotation>
+		<xsd:documentation>Pickup Request REST schema</xsd:documentation>
+	</xsd:annotation>
+
+	<xsd:element name="pickup-request-details" type="PickupRequestDetailsType" />
+
+	<xsd:element name="pickup-request-update" type="PickupRequestUpdateDetailsType" />
+
+	<xsd:element name="pickup-request-info" type="PickupRequestInfoType" />
+
+	<xsd:element name="pickup-request-detailed-info" type="PickupRequestDetailedInfoType" />
+
+	<xsd:element name="hold-pickups-info" type="HoldPickupsInfoType" />
+
+	<xsd:element name="resume-pickups-info" type="ResumePickupsInfoType" />
+
+	<xsd:element name="pickup-requests" type="PickupRequestsType" />
+
+	<xsd:element name="pickup-details" type="PickupDetailsType" />
+
+	<xsd:element name="pickup-request-price" type="PickupRequestPriceNoCCType" />
+
+	<xsd:complexType name="PickupRequestDetailsType">
+		<xsd:all>
+			<xsd:element name="customer-request-id" type="CustomerRequestIDType" minOccurs="0" />
+			<xsd:element name="pickup-type" type="PickupTypeType" />
+			<xsd:element name="pickup-location" type="PickupLocationType" />
+			<xsd:element name="contact-info" type="ContactInfoType" />
+			<xsd:element name="location-details" type="LocationDetailsType" />
+			<xsd:element name="items-characteristics" type="ItemsCharacteristicsType" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="pickup-volume" type="PickupVolumeType" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="pickup-times" type="PickupTimesType" />
+			<xsd:element name="payment-info" type="PaymentInfoType" minOccurs="0" maxOccurs="1" />
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="PickupRequestUpdateDetailsType">
+		<xsd:all>
+			<xsd:element name="contact-info" type="ContactInfoType" />
+			<xsd:element name="location-details" type="LocationDetailsType" />
+			<xsd:element name="items-characteristics" type="ItemsCharacteristicsUpdateDetailsType" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="pickup-volume" type="PickupVolumeType" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="pickup-times" type="PickupTimesType" />
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="PickupRequestsType">
+		<xsd:sequence>
+			<xsd:element name="pickup-request" type="PickupRequestType" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="PickupDetailsType">
+		<xsd:sequence>
+			<xsd:element name="date" type="xsd:date" minOccurs="0" />
+			<xsd:element name="contract-id" type="ContractIDType" minOccurs="0" />
+			<xsd:element name="pww-flag" type="xsd:boolean" minOccurs="0" />
+			<xsd:element name="priority-flag" type="xsd:boolean" minOccurs="0" />
+			<xsd:element name="alternate-address-province" type="ProvinceType" minOccurs="0" />
+			<xsd:element name="alternate-address-postal-code" type="PostalCodeType" minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="PickupRequestInfoType">
+		<xsd:all>
+			<xsd:element name="pickup-request-header" type="PickupRequestHeaderType" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="pickup-request-price" type="PickupRequestPriceType" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="links">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="link" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="PickupRequestType">
+		<xsd:all>
+			<xsd:element name="pickup-request-header" type="PickupRequestHeaderType" />
+			<xsd:element name="links">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="link" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="PickupRequestDetailedInfoType">
+		<xsd:all>
+			<xsd:element name="pickup-request-header" type="PickupRequestHeaderType" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="pickup-request-details" type="PickupRequestResponseDetailsType" minOccurs="1" maxOccurs="1" />
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="PickupRequestResponseDetailsType">
+		<xsd:all>
+			<xsd:element name="pickup-location" type="PickupLocationType" />
+			<xsd:element name="contact-info" type="ContactInfoResponseDetailsType" />
+			<xsd:element name="location-details" type="LocationDetailsType" />
+			<xsd:element name="items-characteristics" type="ItemsCharacteristicsType" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="pickup-volume" type="PickupVolumeType" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="pickup-times" type="PickupTimesType" />
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:simpleType name="PickupTypeType">
+		<xsd:restriction base="xsd:normalizedString">
+			<xsd:enumeration value="OnDemand" />
+			<xsd:enumeration value="Scheduled" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:complexType name="HoldPickupsInfoType">
+		<xsd:all>
+			<xsd:element name="effective-date" type="xsd:date" />
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="ResumePickupsInfoType">
+		<xsd:all>
+			<xsd:element name="effective-date" type="xsd:date" />
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="PickupLocationType">
+		<xsd:sequence>
+			<xsd:element name="business-address-flag" type="xsd:boolean" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="alternate-address" type="AlternateAddressType" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="AlternateAddressType">
+		<xsd:sequence>
+			<xsd:element name="company" minOccurs="1" maxOccurs="1">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="35" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="address-line-1" minOccurs="1" maxOccurs="1">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="35" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="city" minOccurs="1" maxOccurs="1">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="35" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="province" type="ProvinceType" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="postal-code" type="PostalCodeType" minOccurs="1" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="ContactInfoType">
+		<xsd:sequence>
+			<xsd:element name="contact-name" minOccurs="1" maxOccurs="1">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="45" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="email" type="EmailType" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="contact-phone" type="PhoneType" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="telephone-ext" type="PhoneExtentionType" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="receive-email-updates-flag" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="ContactInfoResponseDetailsType">
+		<xsd:sequence>
+			<xsd:element name="contact-name" minOccurs="1" maxOccurs="1">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="45" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="email" type="EmailType" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="contact-phone" type="PhoneType" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="telephone-ext" type="PhoneExtentionType" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="receive-email-updates-flag" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="LocationDetailsType">
+		<xsd:sequence>
+			<xsd:element name="five-ton-flag" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="loading-dock-flag" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="pickup-instructions">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="132" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="ItemsCharacteristicsType">
+		<xsd:sequence>
+			<xsd:element name="pww-flag" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="priority-flag" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="returns-flag" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="heavy-item-flag" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="ItemsCharacteristicsUpdateDetailsType">
+		<xsd:sequence>
+			<xsd:element name="heavy-item-flag" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="PickupTimesType">
+		<xsd:choice>
+			<xsd:element name="on-demand-pickup-time" type="OnDemandPickupTimeType" />
+			<xsd:element name="scheduled-pickup-times" type="ScheduledPickupTimesType" />
+		</xsd:choice>
+	</xsd:complexType>
+
+	<xsd:complexType name="OnDemandPickupTimeType">
+		<xsd:sequence>
+			<xsd:element name="date" type="xsd:date" />
+			<xsd:element name="preferred-time" type="PickupTimeType" />
+			<xsd:element name="closing-time" type="PickupTimeType" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="ScheduledPickupTimesType">
+		<xsd:sequence>
+			<xsd:element name="pickup-times-per-day" type="PickupTimesPerDayType" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="PickupTimesPerDayType">
+		<xsd:sequence>
+			<xsd:element name="day" type="DayOfTheWeekType" />
+			<xsd:element name="preferred-time-1" type="PickupTimeType" maxOccurs="1" />
+			<xsd:element name="preferred-time-2" type="PickupTimeType" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="closing-time" type="PickupTimeType" minOccurs="1" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="PaymentInfoType">
+		<xsd:sequence>
+			<xsd:element name="contract-id" type="ContractIDType" minOccurs="0" />
+			<xsd:element name="method-of-payment" type="MethodOfPaymentType" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="pre-authorized-payment" type="PreAuthorizedPaymentType" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="PreAuthorizedPaymentType">
+		<xsd:sequence>
+			<xsd:element name="account-number" type="PreAuthorizedPaymentAccountNumberType" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="auth-code" type="PreAuthorizedPaymentAuthCodeType" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="auth-timestamp" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="charge-amount" type="PreAuthorizedPaymentAmountType" minOccurs="1" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:simpleType name="PreAuthorizedPaymentAccountNumberType">
+		<xsd:restriction base="xsd:normalizedString">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="10" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PreAuthorizedPaymentAuthCodeType">
+		<xsd:restriction base="xsd:normalizedString">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="16" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PreAuthorizedPaymentAmountType">
+		<xsd:restriction base="xsd:decimal">
+			<xsd:minInclusive value="0" />
+			<xsd:maxInclusive value="9999999.99" />
+			<xsd:fractionDigits value="2" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="DayOfTheWeekType">
+		<xsd:restriction base="xsd:normalizedString">
+			<xsd:enumeration value="MON" />
+			<xsd:enumeration value="TUE" />
+			<xsd:enumeration value="WED" />
+			<xsd:enumeration value="THU" />
+			<xsd:enumeration value="FRI" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:complexType name="PickupRequestHeaderType">
+		<xsd:all>
+			<xsd:element name="request-id" type="RequestIDType" />
+			<xsd:element name="request-status" type="PickupStatusType" />
+			<xsd:element name="pickup-type" type="PickupTypeType" />
+			<xsd:element name="request-date" type="xsd:date" minOccurs="0" />
+			<xsd:element name="next-pickup-date" type="xsd:date" minOccurs="0" />
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:element name="link" type="LinkType" />
+
+	<xsd:complexType name="LinkType">
+		<xsd:attribute name="href" type="xsd:anyURI" use="required" />
+		<xsd:attribute name="rel" type="RelType" use="required" />
+		<xsd:attribute name="index" type="xsd:nonNegativeInteger" use="optional" />
+		<xsd:attribute name="media-type" type="xsd:normalizedString" use="required" />
+	</xsd:complexType>
+
+	<xsd:complexType name="PickupRequestPriceType">
+		<xsd:sequence>
+			<xsd:element name="pre-tax-amount" type="CostTypeAllowsZero" />
+			<xsd:element name="gst-amount" type="CostTypeAllowsZero" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="pst-amount" type="CostTypeAllowsZero" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="hst-amount" type="CostTypeAllowsZero" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="due-amount" type="CostTypeAllowsZero" />
+			<xsd:element name="cc-receipt-details" type="cc-receipt-details-type" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="supplier-account-receipt-details" type="SupplierAccountReceiptDetailsType" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="PickupRequestPriceNoCCType">
+		<xsd:sequence>
+			<xsd:element name="pre-tax-amount" type="CostTypeAllowsZero" />
+			<xsd:element name="gst-amount" type="CostTypeAllowsZero" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="pst-amount" type="CostTypeAllowsZero" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="hst-amount" type="CostTypeAllowsZero" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="due-amount" type="CostTypeAllowsZero" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="SupplierAccountReceiptDetailsType">
+		<xsd:sequence>
+			<xsd:element name="merchant-name" minOccurs="1" maxOccurs="1">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:normalizedString">
+						<xsd:maxLength value="35" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="merchant-url" minOccurs="1" maxOccurs="1">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:normalizedString">
+						<xsd:maxLength value="132" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="auth-code" type="PreAuthorizedPaymentAuthCodeType" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="auth-timestamp" type="xsd:dateTime" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="supplier-id" minOccurs="1" maxOccurs="1">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:normalizedString">
+						<xsd:maxLength value="10" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="charge-amount" type="PreAuthorizedPaymentAmountType" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="currency" type="CurrencyType" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="transaction-type" minOccurs="1" maxOccurs="1">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:normalizedString">
+						<xsd:maxLength value="8" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:simpleType name="PickupTimeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(12|13|14|15|16|17):(00|15|30|45)" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="RelType">
+		<xsd:restriction base="xsd:string">
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PostalCodeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[A-Z]\d[A-Z]\d[A-Z]\d" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="ProvinceType">
+		<xsd:restriction base="xsd:normalizedString">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="2" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="EmailType">
+		<xsd:restriction base="xsd:normalizedString">
+			<xsd:pattern value="(['_A-Za-z0-9\-\+]+)(\.['_A-Za-z0-9\-\+]+)*@([A-Za-z0-9\-]+)(\.[A-Za-z0-9\-]+)*(\.[A-Za-z]{2,5})" />
+			<xsd:maxLength value="60" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PhoneType">
+		<xsd:restriction base="xsd:normalizedString">
+			<xsd:pattern value="[0-9]{3}-[0-9]{3}-[0-9]{4}" />
+			<xsd:maxLength value="16" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PhoneExtentionType">
+		<xsd:restriction base="xsd:normalizedString">
+			<xsd:pattern value="\d{1,6}" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CustomerRequestIDType">
+		<xsd:restriction base="xsd:normalizedString">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="35" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="ContractIDType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="\d{1,10}" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="MethodOfPaymentType">
+		<xsd:restriction base="xsd:normalizedString">
+			<xsd:enumeration value="CreditCard" />
+			<xsd:enumeration value="Account" />
+			<xsd:enumeration value="SupplierAccount" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="RequestIDType">
+		<xsd:restriction base="xsd:normalizedString">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="32" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PickupVolumeType">
+		<xsd:restriction base="xsd:normalizedString">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="40" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="PickupStatusType">
+		<xsd:restriction base="xsd:normalizedString">
+			<xsd:enumeration value="Active" />
+			<xsd:enumeration value="New" />
+			<xsd:enumeration value="Cancelled" />
+			<xsd:enumeration value="Pending" />
+			<xsd:enumeration value="Missed Pickup" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CostTypeNonZero">
+		<xsd:restriction base="xsd:decimal">
+			<xsd:minExclusive value="0" />
+			<xsd:maxInclusive value="999999.99" />
+			<xsd:fractionDigits value="2" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CostTypeAllowsZero">
+		<xsd:restriction base="xsd:decimal">
+			<xsd:minInclusive value="0" />
+			<xsd:maxInclusive value="999999.99" />
+			<xsd:fractionDigits value="2" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CostTypeAllowsNegative">
+		<xsd:restriction base="xsd:decimal">
+			<xsd:minInclusive value="-999999.99" />
+			<xsd:maxInclusive value="999999.99" />
+			<xsd:fractionDigits value="2" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CcType">
+		<xsd:restriction base="xsd:normalizedString">
+			<xsd:maxLength value="20" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CcMaskedNumberType">
+		<xsd:restriction base="xsd:normalizedString">
+			<xsd:maxLength value="20" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CcNameType">
+		<xsd:restriction base="xsd:normalizedString">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="40" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CcAuthorizationCodeType">
+		<xsd:restriction base="xsd:normalizedString">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="10" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CcAuthorizationAmountType">
+		<xsd:restriction base="xsd:decimal">
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CurrencyType">
+		<xsd:restriction base="xsd:normalizedString">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="3" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:complexType name="cc-receipt-details-type">
+		<xsd:all>
+			<xsd:element name="merchant-name">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:normalizedString">
+						<xsd:maxLength value="44" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="merchant-url">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:normalizedString">
+						<xsd:maxLength value="60" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="name-on-card" type="CcNameType" minOccurs="0" />
+			<xsd:element name="auth-code" type="CcAuthorizationCodeType" />
+			<xsd:element name="auth-timestamp" type="xsd:dateTime" />
+			<xsd:element name="card-type" type="CcType" />
+			<xsd:element name="charge-amount" type="CcAuthorizationAmountType" />
+			<xsd:element name="currency" type="CurrencyType" />
+			<xsd:element name="transaction-type">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:normalizedString">
+						<xsd:maxLength value="44" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:all>
+	</xsd:complexType>
+
+</xsd:schema>

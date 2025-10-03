@@ -1,0 +1,11 @@
+# Ignore everything
+*
+
+!/requirements.txt
+!/docker/api/*
+!/apps/
+!/apps/**
+!/modules/
+!/modules/**
+!/plugins/
+!/plugins/**

@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:dhl="http://www.dhl.com/datatypes_global" xmlns="http://www.dhl.com" xmlns:dct="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.dhl.com" elementFormDefault="unqualified">
+	<xsd:import namespace="http://www.dhl.com/datatypes_global" schemaLocation="datatypes_global_v10.xsd"/>
+	<xsd:import namespace="http://www.dhl.com/DCTRequestdatatypes" schemaLocation="DCTRequestdatatypes_global.xsd"/>
+	<xsd:element name="DCTRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:choice minOccurs="1" maxOccurs="1">
+					<xsd:element name="GetQuote">
+						<xsd:annotation>
+							<xsd:documentation>Root element of Quote request
+							</xsd:documentation>
+						</xsd:annotation>
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="Request" type="dhl:Request"/>
+								<xsd:element name="From" type="dct:DCTFrom" minOccurs="1"/>
+								<xsd:element name="BkgDetails" type="dct:BkgDetailsType" minOccurs="1"/>
+								<xsd:element name="To" type="dct:DCTTo" minOccurs="1"/>
+								<xsd:element name="Dutiable" type="dct:DCTDutiable" minOccurs="0"/>
+								<xsd:element name="GenReq" type="dct:GenReq" minOccurs="0"/>
+								<xsd:element name="RequestValueAddedServicesAndRuleGroups" type="dhl:YesNo" minOccurs="0">
+									<xsd:annotation>
+										<xsd:documentation>If the value is "Y" all the additional services available for the product selected will be returned plus all the additional services rule groups to be adhered to for the product selected will be returned. The default value is "N".</xsd:documentation>
+									</xsd:annotation>
+								</xsd:element>
+								<xsd:element name="StrictValidation" type="dhl:YesNo" minOccurs="0"/>
+								<xsd:element name="RequestEstimatedDeliveryDate" type="dhl:YesNo" minOccurs="0">
+									<xsd:annotation>
+										<xsd:documentation>If the value is "Y", EDD details will be returned in response. The defailt value is "Y".</xsd:documentation>
+									</xsd:annotation>
+								</xsd:element>
+								<xsd:element name="EstimatedDeliveryDateType" type="dct:EDDType" minOccurs="0">
+									<xsd:annotation>
+										<xsd:documentation>EDD type field. 
+										If the value is 'QDDF' - is the fastest ('docs') transit time as quoted to the customer at booking or shipment creation. No custom clearance is considered. 
+										If the value is 'QDDC' - constitutes DHL's service commitment as quoted at booking/shipment creation. QDDC builds in clearance time, and potentially other special perational non-transport component(s), when relevant.</xsd:documentation>
+									</xsd:annotation>
+								</xsd:element>								
+							</xsd:sequence>
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="GetCapability">
+						<xsd:annotation>
+							<xsd:documentation>Root element of Capability request
+							</xsd:documentation>
+						</xsd:annotation>
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="Request" type="dhl:Request"/>
+								<xsd:element name="From" type="dct:DCTFrom" minOccurs="1"/>
+								<xsd:element name="BkgDetails" type="dct:BkgDetailsType" minOccurs="1"/>
+								<xsd:element name="To" type="dct:DCTTo" minOccurs="1"/>
+								<xsd:element name="Dutiable" type="dct:DCTDutiable" minOccurs="0"/>
+								<xsd:element name="GenReq" type="dct:GenReq" minOccurs="0"/>
+								<xsd:element name="RequestValueAddedServicesAndRuleGroups" type="dhl:YesNo" minOccurs="0">
+									<xsd:annotation>
+										<xsd:documentation>If the value is "Y" all the additional services available for the product selected will be returned plus all the additional services rule groups to be adhered to for the product selected will be returned. The default value is "N".</xsd:documentation>
+									</xsd:annotation>
+								</xsd:element>
+								<xsd:element name="StrictValidation" type="dhl:YesNo" minOccurs="0"/>
+								<xsd:element name="RequestEstimatedDeliveryDate" type="dhl:YesNo" minOccurs="0">
+									<xsd:annotation>
+										<xsd:documentation>If the value is "Y", EDD details will be returned in response. The defailt value is "Y".</xsd:documentation>
+									</xsd:annotation>
+								</xsd:element>
+								<xsd:element name="EstimatedDeliveryDateType" type="dct:EDDType" minOccurs="0">
+									<xsd:annotation>
+										<xsd:documentation>EDD type field. 
+										If the value is 'QDDF' - is the fastest ('docs') transit time as quoted to the customer at booking or shipment creation. No custom clearance is considered. 
+										If the value is 'QDDC' - constitutes DHL's service commitment as quoted at booking/shipment creation. QDDC builds in clearance time, and potentially other special perational non-transport component(s), when relevant.</xsd:documentation>
+									</xsd:annotation>
+								</xsd:element>									
+							</xsd:sequence>
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:choice>
+			</xsd:sequence>
+			<xsd:attribute name="schemaVersion" type="xsd:decimal" use="required" fixed="3.0"/>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

@@ -1,0 +1,333 @@
+# OpenTelemetry Observability
+
+Karrio includes built-in support for OpenTelemetry, providing distributed tracing, metrics collection, and log correlation across all services. This enables comprehensive monitoring and debugging of your shipping operations.
+
+## Overview
+
+OpenTelemetry automatically instruments Karrio to provide:
+
+- **Distributed Tracing**: Follow requests across API and worker services
+- **Performance Metrics**: HTTP response times, database query performance, error rates
+- **Log Correlation**: Logs automatically include trace and span IDs for easy debugging
+- **Custom Spans**: Business logic operations like rate calculations and carrier API calls
+
+## Supported Backends
+
+Karrio can export telemetry data to various OpenTelemetry-compatible backends:
+
+### **Distributed Tracing Systems**
+
+- **Jaeger**: Popular open-source distributed tracing system
+  - gRPC endpoint: `http://jaeger:4317`
+  - HTTP endpoint: `http://jaeger:4318`
+
+- **Zipkin**: Another popular distributed tracing system
+  - Endpoint: `http://zipkin:9411/api/v2/spans`
+
+- **Grafana Tempo**: Cloud-native distributed tracing backend
+  - OTLP endpoint: `http://tempo:4317`
+  - Native OTLP support with excellent Grafana integration
+
+### **Metrics and Monitoring**
+
+- **Prometheus**: Time-series metrics database via OTLP metrics export
+  - Use with OpenTelemetry Collector configured for Prometheus export
+  - Endpoint: `http://otel-collector:4317` → Prometheus scrape endpoint
+
+- **Grafana**: Visualization platform supporting multiple data sources
+  - Connect to Prometheus for metrics visualization
+  - Connect to Jaeger/Tempo for distributed tracing
+  - Unified observability dashboard
+
+### **Logging Systems**
+
+- **Loki**: Log aggregation system by Grafana Labs
+  - Collects logs with trace correlation via OpenTelemetry logging instrumentation
+  - Perfect integration with Grafana for log visualization
+
+- **Elasticsearch/ELK Stack**: Enterprise logging solution
+  - Use OpenTelemetry Collector with Elasticsearch exporter
+  - Full-text search and log analytics
+
+### **Error Tracking and APM**
+
+- **Sentry**: Error tracking and performance monitoring
+  - Already integrated in Karrio + supports OTLP traces
+  - Automatic error correlation with distributed traces
+
+- **OTLP Collector**: OpenTelemetry Collector for routing to multiple backends
+  - Central hub for telemetry data routing and processing
+  - Default endpoint: `http://otel-collector:4317`
+
+### **Cloud Providers**
+
+- **AWS**:
+  - **AWS X-Ray**: Use OTLP collector with X-Ray exporter  
+  - **CloudWatch**: Metrics and logs via OTLP collector
+
+- **Google Cloud**:
+  - **Cloud Trace**: Configure with appropriate headers
+  - **Cloud Monitoring**: Metrics via OTLP protocol
+
+- **Azure**:
+  - **Application Insights**: Use connection string for OTLP export
+  - **Azure Monitor**: Full observability suite
+
+## Quick Setup Options
+
+### Option 1: Jaeger (Simple Tracing)
+
+Perfect for development and getting started with distributed tracing.
+
+**1. Start Jaeger:**
+```bash
+docker compose -f docker-compose.yml -f docker-compose.otel.yml up -d
+```
+
+**2. Configure Karrio in `.env`:**
+```bash
+OTEL_ENABLED=true
+OTEL_SERVICE_NAME=karrio-api
+OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+OTEL_ENVIRONMENT=development
+```
+
+**3. Access Jaeger UI:**
+- URL: http://localhost:16686
+- Select service: `karrio-api`
+- View traces and performance data
+
+### Option 2: Complete Grafana Stack
+
+Full observability solution with metrics, logs, and tracing.
+
+**1. Start the full stack:**
+```bash
+docker compose -f docker-compose.yml -f docker-compose.observability.yml up -d
+```
+
+**2. Configuration (automatic via Docker Compose):**
+- OpenTelemetry Collector routes data to all backends
+- Karrio automatically configured to send to collector
+
+**3. Access the dashboards:**
+- **Grafana**: http://localhost:3000 (admin/admin)
+- **Prometheus**: http://localhost:9090
+- **Tempo**: http://localhost:3200  
+- **Loki**: http://localhost:3100
+
+## Configuration Examples
+
+### Basic Configuration
+
+Enable OpenTelemetry with Jaeger:
+
+```bash
+# Required settings
+OTEL_ENABLED=true
+OTEL_SERVICE_NAME=karrio-api
+OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+
+# Optional settings
+OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+OTEL_ENVIRONMENT=production
+OTEL_RESOURCE_ATTRIBUTES=team=logistics,region=us-west-2
+```
+
+### Grafana Stack Configuration
+
+Route all telemetry through OpenTelemetry Collector:
+
+```bash
+# OpenTelemetry with Grafana Stack via OTLP Collector
+OTEL_ENABLED=true
+OTEL_SERVICE_NAME=karrio-api
+OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+OTEL_ENVIRONMENT=production
+OTEL_RESOURCE_ATTRIBUTES=team=logistics,region=us-west-2
+```
+
+### Metrics-Only Configuration
+
+Send only metrics to Prometheus:
+
+```bash
+# Direct Prometheus metrics export via OTLP Collector
+OTEL_ENABLED=true
+OTEL_SERVICE_NAME=karrio-api
+OTEL_EXPORTER_OTLP_ENDPOINT=http://prometheus-otel-collector:4317
+OTEL_METRICS_EXPORTER=otlp
+# Disable traces if only metrics needed
+OTEL_TRACES_EXPORTER=none
+```
+
+### Grafana Tempo Configuration
+
+Direct tracing to Grafana Tempo:
+
+```bash
+# Direct to Grafana Tempo
+OTEL_ENABLED=true
+OTEL_SERVICE_NAME=karrio-api
+OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317
+OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+OTEL_ENVIRONMENT=production
+```
+
+### Sentry with OpenTelemetry
+
+Combine existing Sentry integration with OTLP traces:
+
+```bash
+# Sentry already configured + OTLP traces
+SENTRY_DSN=https://your-dsn@sentry.io/project-id
+OTEL_ENABLED=true
+OTEL_SERVICE_NAME=karrio-api
+OTEL_EXPORTER_OTLP_ENDPOINT=https://your-org.sentry.io/api/project-id/envelope/
+OTEL_EXPORTER_OTLP_HEADERS=Authorization=Bearer your-auth-token
+```
+
+### Cloud Provider Configuration
+
+Example for cloud providers requiring authentication:
+
+```bash
+# AWS X-Ray via OTLP Collector
+OTEL_ENABLED=true
+OTEL_EXPORTER_OTLP_ENDPOINT=http://aws-otel-collector:4317
+OTEL_RESOURCE_ATTRIBUTES=aws.region=us-west-2,service.namespace=karrio
+
+# Google Cloud Trace
+OTEL_ENABLED=true
+OTEL_EXPORTER_OTLP_ENDPOINT=https://cloudtrace.googleapis.com:443
+OTEL_EXPORTER_OTLP_HEADERS=x-goog-api-key=your-api-key
+
+# Generic cloud provider with authentication
+OTEL_ENABLED=true
+OTEL_EXPORTER_OTLP_ENDPOINT=https://otlp.your-provider.com:4317
+OTEL_EXPORTER_OTLP_HEADERS=api-key=your-api-key,tenant-id=your-tenant
+```
+
+## What Gets Traced
+
+When OpenTelemetry is enabled, Karrio automatically instruments:
+
+### HTTP Operations
+- **Incoming API Requests**: All REST and GraphQL endpoints
+- **Response Times**: Request duration and status codes
+- **Client IP and User Agent**: Request metadata
+- **Error Tracking**: Failed requests with stack traces
+
+### Database Operations
+- **SQL Queries**: PostgreSQL queries with execution time
+- **Connection Pool**: Database connection metrics
+- **Query Parameters**: Parameterized queries (sanitized)
+- **Transaction Tracking**: Database transaction spans
+
+### Cache Operations  
+- **Redis Commands**: Cache hits/misses and command execution
+- **Cache Keys**: Key patterns and access frequency
+- **Performance Metrics**: Cache response times
+
+### Background Tasks
+- **Task Processing**: Background job execution times
+- **Queue Metrics**: Task queue depth and processing rates
+- **Error Tracking**: Failed background tasks
+- **Context Propagation**: Traces follow from API to worker
+
+### External API Calls
+- **Shipping Carriers**: API calls to UPS, FedEx, USPS, etc.
+- **Rate Shopping**: Multiple carrier rate requests
+- **Webhooks**: Outbound webhook delivery
+- **Third-party Services**: External service integrations
+
+### Business Logic
+- **Rate Calculations**: Shipping cost computation spans
+- **Address Validation**: Address verification operations
+- **Document Generation**: Label and invoice generation
+- **Workflow Processing**: Multi-step shipping operations
+
+## Viewing and Using Traces
+
+### Jaeger UI
+
+1. **Service Selection**: Choose `karrio-api` or `karrio-worker`
+2. **Operation Filtering**: Filter by endpoint or operation type
+3. **Time Range**: Select time period to analyze
+4. **Trace Analysis**: Click traces to see detailed span breakdown
+5. **Performance Insights**: Identify slow operations and bottlenecks
+
+### Grafana Dashboard
+
+1. **Service Overview**: High-level service health metrics
+2. **Distributed Tracing**: Tempo integration for trace exploration
+3. **Log Correlation**: Loki logs automatically linked to traces
+4. **Custom Dashboards**: Create business-specific monitoring views
+5. **Alerting**: Set up alerts on SLA violations or error rates
+
+### Troubleshooting with Traces
+
+**High Response Times:**
+- Identify slow database queries
+- Find external API bottlenecks
+- Analyze request processing pipeline
+
+**Error Investigation:**
+- Trace error propagation across services
+- Correlate errors with specific user actions
+- Identify root cause in distributed operations
+
+**Performance Optimization:**
+- Find most expensive operations
+- Identify N+1 query problems
+- Optimize carrier API usage patterns
+
+## Production Considerations
+
+### Sampling
+
+For high-traffic deployments, configure sampling to reduce overhead:
+
+```bash
+# Sample 10% of traces in production
+OTEL_TRACES_SAMPLER=traceidratio
+OTEL_TRACES_SAMPLER_ARG=0.1
+```
+
+### Resource Attributes
+
+Add meaningful metadata for production monitoring:
+
+```bash
+OTEL_RESOURCE_ATTRIBUTES=\
+service.namespace=karrio,\
+service.instance.id=api-01,\
+deployment.environment=production,\
+team=logistics,\
+region=us-west-2,\
+cluster=prod-west
+```
+
+### Security
+
+Ensure secure transmission of telemetry data:
+
+```bash
+# Use TLS for production endpoints
+OTEL_EXPORTER_OTLP_ENDPOINT=https://secure-collector.company.com:4317
+
+# Include authentication headers
+OTEL_EXPORTER_OTLP_HEADERS=authorization=Bearer your-secure-token
+```
+
+### Performance Impact
+
+OpenTelemetry is designed to have minimal performance impact:
+- **CPU Overhead**: < 5% in typical workloads
+- **Memory Overhead**: ~50MB for instrumentation libraries
+- **Network**: Batched export reduces bandwidth usage
+- **Sampling**: Reduces overhead in high-traffic scenarios
+
+This comprehensive OpenTelemetry integration provides full visibility into your Karrio deployment, enabling proactive monitoring, fast troubleshooting, and performance optimization of your shipping operations.

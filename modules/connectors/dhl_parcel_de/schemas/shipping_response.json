@@ -1,0 +1,56 @@
+{
+  "status": {
+    "title": "ok",
+    "statusCode": 200,
+    "instance": "string",
+    "detail": "The Webservice call ran successfully."
+  },
+  "items": [
+    {
+      "shipmentNo": "340434310428091700",
+      "returnShipmentNo": "340434310428091700",
+      "sstatus": {
+        "title": "OK",
+        "statusCode": 200,
+        "instance": "string",
+        "detail": "The Webservice call ran successfully."
+      },
+      "shipmentRefNo": "340434310428091700",
+      "label": {
+        "b64": "string",
+        "zpl2": "string",
+        "url": "https://api-dev.dhl.com/parcel/de/shipping/v1-feature-order-endpoint/labels?token=x5xzrHE7ctmqPqk33k%2BKkBwbvIfYP4elMQsBFM%2BJOdiT2bmoaXXzris%2Ftz9jBtdVFLY5cCENit0Jnd9aXuxoNEXhP9PQ8tAVdPeXD26RZ6JZqF5NCJlrihrAv1%2FAOzuDPqWJLRVaRq461BpT4bcbzChAAHVg%2FHUaQAkeIkaZ8NqfcxWEQzK1AYJWczpy6sv6",
+        "fileFormat": "PDF",
+        "printFormat": "A4"
+      },
+      "returnLabel": {
+        "b64": "string",
+        "zpl2": "string",
+        "url": "https://api-dev.dhl.com/parcel/de/shipping/v1-feature-order-endpoint/labels?token=x5xzrHE7ctmqPqk33k%2BKkBwbvIfYP4elMQsBFM%2BJOdiT2bmoaXXzris%2Ftz9jBtdVFLY5cCENit0Jnd9aXuxoNEXhP9PQ8tAVdPeXD26RZ6JZqF5NCJlrihrAv1%2FAOzuDPqWJLRVaRq461BpT4bcbzChAAHVg%2FHUaQAkeIkaZ8NqfcxWEQzK1AYJWczpy6sv6",
+        "fileFormat": "PDF",
+        "printFormat": "A4"
+      },
+      "customsDoc": {
+        "b64": "string",
+        "zpl2": "string",
+        "url": "https://api-dev.dhl.com/parcel/de/shipping/v1-feature-order-endpoint/labels?token=x5xzrHE7ctmqPqk33k%2BKkBwbvIfYP4elMQsBFM%2BJOdiT2bmoaXXzris%2Ftz9jBtdVFLY5cCENit0Jnd9aXuxoNEXhP9PQ8tAVdPeXD26RZ6JZqF5NCJlrihrAv1%2FAOzuDPqWJLRVaRq461BpT4bcbzChAAHVg%2FHUaQAkeIkaZ8NqfcxWEQzK1AYJWczpy6sv6",
+        "fileFormat": "PDF",
+        "printFormat": "A4"
+      },
+      "codLabel": {
+        "b64": "string",
+        "zpl2": "string",
+        "url": "https://api-dev.dhl.com/parcel/de/shipping/v1-feature-order-endpoint/labels?token=x5xzrHE7ctmqPqk33k%2BKkBwbvIfYP4elMQsBFM%2BJOdiT2bmoaXXzris%2Ftz9jBtdVFLY5cCENit0Jnd9aXuxoNEXhP9PQ8tAVdPeXD26RZ6JZqF5NCJlrihrAv1%2FAOzuDPqWJLRVaRq461BpT4bcbzChAAHVg%2FHUaQAkeIkaZ8NqfcxWEQzK1AYJWczpy6sv6",
+        "fileFormat": "PDF",
+        "printFormat": "A4"
+      },
+      "validationMessages": [
+        {
+          "property": "string",
+          "validationMessage": "string",
+          "validationState": "string"
+        }
+      ]
+    }
+  ]
+}

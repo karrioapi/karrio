@@ -1,0 +1,60 @@
+---
+id: overview
+title: Overview
+tags:
+  - GraphQL
+  - Management API
+---
+
+## What is the Management API?
+
+The Karrio Management API is a GraphQL API that allows you to query, mutate and manage your shipping and system objects.
+Where as the REST Shipping API is focused on a unified interface for shipping, the Management API is focused on providing 
+a headless control of the infrastructure.
+
+:::tip
+
+- The REST Shipping API enbody the API-first design of the platform, and is the primary way to interact with the platform.
+
+- The Management API enbody the Headless aspect of the platform, and is for advanced control and for building custom experiences. 
+
+:::
+
+## Sending GraphQL Requests
+
+The Karrio Management API follows the [GraphQL](https://graphql.org/) specification.
+Making a request to the Management API involves sending a POST request to the API endpoint with a JSON body that contains the query and variables.
+
+```json
+{
+  "query": "query { ... }",
+  "variables": { ... }
+}
+```
+
+- **Using cURL**
+
+```basch
+curl --request POST \
+  --url 'https://api.karrio.io/graphql' \
+  --header 'Authorization: Token  [API_KEY]' \
+  --header 'Content-Type: application/json' \
+  --data-raw $'{"query":"mutation mutate_system_connection($data: SystemCarrierMutationInput\u0021) {\\n  mutate_system_connection(input: $data) {\\n    carrier {\\n      id\\n      active\\n    }\\n  }\\n}\\n","variables":{"data":{"id":"car_773f4a5577e4471e8918a9a1d47b208b","enable":false}}}' \
+  --compressed
+```
+
+- **Using JavaScript Fetch**
+
+```javascript
+fetch("https://api.karrio.io/graphql", {
+  "headers": {
+    "authorization": "Token [API_KEY]",
+    "content-type": "application/json",
+  },
+  "body": "{\"query\":\"mutation mutate_system_connection($data: SystemCarrierMutationInput!) {\\n  mutate_system_connection(input: $data) {\\n    carrier {\\n      id\\n      active\\n    }\\n  }\\n}\\n\",\"variables\":{\"data\":{\"id\":\"car_773f4a5577e4471e8918a9a1d47b208b\",\"enable\":false}}}",
+  "method": "POST",
+  "mode": "cors",
+  "credentials": "include"
+});
+```
+

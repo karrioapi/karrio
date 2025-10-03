@@ -1,0 +1,1012 @@
+<xsd:schema elementFormDefault="qualified" targetNamespace="http://purolator.com/pws/datatypes/v1" 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://purolator.com/pws/datatypes/v1">
+    <xsd:complexType name="SchedulePickUpRequest">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>SchedulePickUpRequest</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Request">
+                <xsd:sequence>
+                    <xsd:element name="BillingAccountNumber" nillable="true" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>AccountNumber - string</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element minOccurs="0" name="PartnerID" nillable="true" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>PartnerID - string</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="PickupInstruction" nillable="true" type="tns:PickupInstruction">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>PickupInstruction - PickupInstruction</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Address" nillable="true" type="tns:Address">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>Address - Address</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element minOccurs="0" name="ShipmentSummary" nillable="true" type="tns:ShipmentSummary">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>ShipmentSummary - ShipmentSummary</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element minOccurs="0" name="NotificationEmails" nillable="true" type="tns:NotificationEmails">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>NotificationEmails - NotificationEmail[]</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="SchedulePickUpRequest" nillable="true" type="tns:SchedulePickUpRequest"/>
+    <xsd:complexType name="Request">
+        <xsd:sequence/>
+    </xsd:complexType>
+    <xsd:element name="Request" nillable="true" type="tns:Request"/>
+    <xsd:complexType name="PickupInstruction">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>PickupInstruction</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Date" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>String - Date</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="AnyTimeAfter" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>String - AnyTimeAfter</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="UntilTime" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>String - UntilTime</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="TotalWeight" nillable="true" type="tns:Weight">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Weight - TotalWeight</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="TotalPieces" type="xsd:int">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>int - TotalPieces</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="BoxesIndicator" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>String? - BoxesIndicator</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="PickUpLocation" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>String? - PhysicalLocation</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="AdditionalInstructions" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>String? - AdditionalInstructions</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="SupplyRequestCodes" nillable="true" type="tns:SupplyRequestCodes">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>SupplyRequestCodes - string[]</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="TrailerAccessible" type="xsd:boolean">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>bool - TrailerAccessible</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="LoadingDockAvailable" type="xsd:boolean">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>bool - LoadingDockAvailable</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="ShipmentOnSkids" type="xsd:boolean">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>bool - ShipmentOnSkids</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="NumberOfSkids" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>int? - NumberOfSkids</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="PickupInstruction" nillable="true" type="tns:PickupInstruction"/>
+    <xsd:complexType name="Weight">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>Weight</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Value" nillable="true" type="xsd:decimal">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Value - decimal</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="WeightUnit" type="tns:WeightUnit">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>WeightUnit - WeightUnit</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Weight" nillable="true" type="tns:Weight"/>
+    <xsd:simpleType name="WeightUnit">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>WeightUnit - enum</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="lb">
+                <xsd:annotation>
+                    <xsd:documentation>lb</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="kg">
+                <xsd:annotation>
+                    <xsd:documentation>kg</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="WeightUnit" nillable="true" type="tns:WeightUnit"/>
+    <xsd:complexType name="SupplyRequestCodes">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <GenericType Name="SupplyRequestCodes" Namespace="http://purolator.com/pws/datatypes/v1" 
+                    xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                    <GenericParameter Name="string" Namespace="http://www.w3.org/2001/XMLSchema"/>
+                </GenericType>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="SupplyRequestCode" nillable="true" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="SupplyRequestCodes" nillable="true" type="tns:SupplyRequestCodes"/>
+    <xsd:complexType name="Address">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>Address</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Name" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Name - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="Company" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Company - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="Department" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Department - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="StreetNumber" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>StreetNumber - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="StreetSuffix" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>StreetSuffix - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="StreetName" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>StreetName - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="StreetType" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>StreetType - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="StreetDirection" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>StreetDirection - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="Suite" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Suite - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="Floor" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Floor - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="StreetAddress2" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>StreetAddress2 - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="StreetAddress3" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>StreetAddress3 - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="City" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>City - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Province" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Province - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Country" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Country - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="PostalCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>PostalCode - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="PhoneNumber" nillable="true" type="tns:PhoneNumber">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>PhoneNumber - PhoneNumber</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="FaxNumber" nillable="true" type="tns:PhoneNumber">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Faxnumber - PhoneNumber</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Address" nillable="true" type="tns:Address"/>
+    <xsd:complexType name="PhoneNumber">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>PhoneNumber</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="CountryCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>CountryCode - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="AreaCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>AreaCode - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Phone" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Phone - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="Extension" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Extension - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="PhoneNumber" nillable="true" type="tns:PhoneNumber"/>
+    <xsd:complexType name="ShipmentSummary">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>Shipment Summary</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="ShipmentSummaryDetails" nillable="true" type="tns:ArrayOfShipmentSummaryDetail">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>ShipmentSummaryDetail - ShipmentSummaryDetail</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ShipmentSummary" nillable="true" type="tns:ShipmentSummary"/>
+    <xsd:complexType name="ArrayOfShipmentSummaryDetail">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="ShipmentSummaryDetail" nillable="true" type="tns:ShipmentSummaryDetail"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfShipmentSummaryDetail" nillable="true" type="tns:ArrayOfShipmentSummaryDetail"/>
+    <xsd:complexType name="ShipmentSummaryDetail">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>Shipment Summary</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="DestinationCode" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>String - DestinationCode</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="ModeOfTransport" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>String - ModeOfTransport</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="TotalPieces" type="xsd:int">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Weight - TotalWeight</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="TotalWeight" nillable="true" type="tns:Weight">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Int - TotalPieces</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ShipmentSummaryDetail" nillable="true" type="tns:ShipmentSummaryDetail"/>
+    <xsd:complexType name="NotificationEmails">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <GenericType Name="NotificationEmails" Namespace="http://purolator.com/pws/datatypes/v1" 
+                    xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                    <GenericParameter Name="string" Namespace="http://www.w3.org/2001/XMLSchema"/>
+                </GenericType>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="NotificationEmail" nillable="true" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="NotificationEmails" nillable="true" type="tns:NotificationEmails"/>
+    <xsd:element name="SchedulePickUpRequest" nillable="true" type="tns:SchedulePickUpRequest"/>
+    <xsd:complexType name="RequestContext">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>RequestContext</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Version" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Version - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Language" type="tns:Language">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Language - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="GroupID" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>GroupID - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="RequestReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>RequestReference - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="UserToken" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>UserToken - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="RequestContext" nillable="true" type="tns:RequestContext"/>
+    <xsd:simpleType name="Language">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>Language - enum</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="en">
+                <xsd:annotation>
+                    <xsd:documentation>en</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="fr">
+                <xsd:annotation>
+                    <xsd:documentation>fr</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="Language" nillable="true" type="tns:Language"/>
+    <xsd:complexType name="SchedulePickUpResponse">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>SchedulePickUpRespone</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Response">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" name="PickUpConfirmationNumber" nillable="true" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>PickUpConfirmationNumber - string</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="SchedulePickUpResponse" nillable="true" type="tns:SchedulePickUpResponse"/>
+    <xsd:complexType name="Response">
+        <xsd:sequence>
+            <xsd:element name="ResponseInformation" nillable="true" type="tns:ResponseInformation">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>ResponseInformation - ResponseInformation</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Response" nillable="true" type="tns:Response"/>
+    <xsd:complexType name="ResponseInformation">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>ResponseInformation</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Errors" nillable="true" type="tns:ArrayOfError">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Errors - Error[]</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="InformationalMessages" nillable="true" type="tns:ArrayOfInformationalMessage">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>InformationalMessages - InformationalMessage[]</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ResponseInformation" nillable="true" type="tns:ResponseInformation"/>
+    <xsd:complexType name="ArrayOfError">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="Error" nillable="true" type="tns:Error"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfError" nillable="true" type="tns:ArrayOfError"/>
+    <xsd:complexType name="Error">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>Error</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Code" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Code - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Description" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Description - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="AdditionalInformation" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>AdditionalInformation - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Error" nillable="true" type="tns:Error"/>
+    <xsd:complexType name="ArrayOfInformationalMessage">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="InformationalMessage" nillable="true" type="tns:InformationalMessage"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfInformationalMessage" nillable="true" type="tns:ArrayOfInformationalMessage"/>
+    <xsd:complexType name="InformationalMessage">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>InformationalMessage</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Code" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Code - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Message" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Message - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="InformationalMessage" nillable="true" type="tns:InformationalMessage"/>
+    <xsd:element name="SchedulePickUpResponse" nillable="true" type="tns:SchedulePickUpResponse"/>
+    <xsd:complexType name="ResponseContext">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>ResponseContext</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="ResponseReference" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>ResponseReference - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ResponseContext" nillable="true" type="tns:ResponseContext"/>
+    <xsd:complexType name="VoidPickUpRequest">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>VoidPickUpRequest</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Request">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" name="PickUpConfirmationNumber" nillable="true" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>PickUpConfirmationNumber - string</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="VoidPickUpRequest" nillable="true" type="tns:VoidPickUpRequest"/>
+    <xsd:element name="VoidPickUpRequest" nillable="true" type="tns:VoidPickUpRequest"/>
+    <xsd:complexType name="VoidPickUpResponse">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>VoidPickUpRespone</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Response">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" name="PickUpVoided" type="xsd:boolean">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>PickUpVoided - bool</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="VoidPickUpResponse" nillable="true" type="tns:VoidPickUpResponse"/>
+    <xsd:element name="VoidPickUpResponse" nillable="true" type="tns:VoidPickUpResponse"/>
+    <xsd:complexType name="ValidatePickUpRequest">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>ValidatePickUpRequest</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Request">
+                <xsd:sequence>
+                    <xsd:element name="BillingAccountNumber" nillable="true" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>BillingAccountNumber - string</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element minOccurs="0" name="PartnerID" nillable="true" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>PartnerID - string</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="PickupInstruction" nillable="true" type="tns:PickupInstruction">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>PickupInstruction - PickupInstruction</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="Address" nillable="true" type="tns:Address">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>Address - Address</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element minOccurs="0" name="ShipmentSummary" nillable="true" type="tns:ShipmentSummary">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>ShipmentSummary - ShipmentSummary</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element minOccurs="0" name="NotificationEmails" nillable="true" type="tns:NotificationEmails">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>NotificationEmails - NotificationEmail[]</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="ValidatePickUpRequest" nillable="true" type="tns:ValidatePickUpRequest"/>
+    <xsd:element name="ValidatePickUpRequest" nillable="true" type="tns:ValidatePickUpRequest"/>
+    <xsd:complexType name="ValidatePickUpResponse">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>ValidatePickUpRespone</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Response">
+                <xsd:sequence>
+                    <xsd:element name="IsBulkdRequired" type="xsd:boolean">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>IsBulkdRequired - boolean</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="CutOffTime" nillable="true" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>CutOffTime - string</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="CutOffWindow" type="xsd:int">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>CutOffWindow - int</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="BulkMaxWeight" type="xsd:decimal">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>BulkMaxWeight - decimal</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="BulkMaxPackages" type="xsd:int">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>BulkMaxPackages - int</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="ValidatePickUpResponse" nillable="true" type="tns:ValidatePickUpResponse"/>
+    <xsd:element name="ValidatePickUpResponse" nillable="true" type="tns:ValidatePickUpResponse"/>
+    <xsd:complexType name="GetPickUpHistoryRequest">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>GetPickUpHistoryRequest</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Request">
+                <xsd:sequence>
+                    <xsd:element name="PickUpHistorySearchCriteria" nillable="true" type="tns:PickUpHistorySearchCriteria">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>PickUpHistorySearchCriteria - PickUpHistorySearchCriteria</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="GetPickUpHistoryRequest" nillable="true" type="tns:GetPickUpHistoryRequest"/>
+    <xsd:complexType name="PickUpHistorySearchCriteria">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>PickUpHistorySearchCriteria</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="FromDate" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>FromDate</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ToDate" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>ToDate</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="ConfirmationNumber" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>ConfirmationNumber</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="AccountNumber" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>AccountNumber</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="Status" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Status</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="MaxNumOfRecords" type="xsd:int">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>MaxNumOfRecords</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="SortColumn" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>SortColumn</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="SortDirection" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>SortDirection</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="PickUpHistorySearchCriteria" nillable="true" type="tns:PickUpHistorySearchCriteria"/>
+    <xsd:element name="GetPickUpHistoryRequest" nillable="true" type="tns:GetPickUpHistoryRequest"/>
+    <xsd:complexType name="GetPickUpHistoryResponse">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>Service Contract Class - GetPickUpHistoryResponse</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Response">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" name="PickUpDetailList" nillable="true" type="tns:ArrayOfPickUpDetail">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>PickUpDetailList - PickUpDetail[]</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="GetPickUpHistoryResponse" nillable="true" type="tns:GetPickUpHistoryResponse"/>
+    <xsd:complexType name="ArrayOfPickUpDetail">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="PickUpDetail" nillable="true" type="tns:PickUpDetail"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfPickUpDetail" nillable="true" type="tns:ArrayOfPickUpDetail"/>
+    <xsd:complexType name="PickUpDetail">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>PickUp Detail</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="BillingAccountNumber" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>BillingAccountNumber - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="PartnerId" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>PartnerID - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ConfirmationNumber" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>ConfirmationNumber - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="PickupStatus" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>PickupStatus - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="PickupType" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>PickupType - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="PickupInstruction" nillable="true" type="tns:PickupInstruction">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>PickupInstruction - PickupInstruction</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Address" nillable="true" type="tns:Address">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Address - Address</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ShipmentSummary" nillable="true" type="tns:ShipmentSummary">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>ShipmentSummary - ShipmentSummary</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="NotificationEmails" nillable="true" type="q1:ArrayOfstring" 
+                xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>NotificationEmails - string[]</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="PickUpDetail" nillable="true" type="tns:PickUpDetail"/>
+    <xsd:element name="GetPickUpHistoryResponse" nillable="true" type="tns:GetPickUpHistoryResponse"/>
+    <xsd:complexType name="ModifyPickUpRequest">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>ModifyPickUpRequest</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Request">
+                <xsd:sequence>
+                    <xsd:element name="BillingAccountNumber" nillable="true" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>BillingAccountNumber - string</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element minOccurs="0" name="ConfirmationNumber" nillable="true" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>ConfirmationNumber - string</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="ModifyPickupInstruction" nillable="true" type="tns:ModifyPickupInstruction">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>ModifyPickupInstruction - ModifyPickupInstruction</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element minOccurs="0" name="ShipmentSummary" nillable="true" type="tns:ShipmentSummary">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>ShipmentSummary - ShipmentSummary</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="ModifyPickUpRequest" nillable="true" type="tns:ModifyPickUpRequest"/>
+    <xsd:complexType name="ModifyPickupInstruction">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>ModifyPickupInstruction</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="UntilTime" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>String - UntilTime</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="PickUpLocation" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>String? - PhysicalLocation</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="SupplyRequestCodes" nillable="true" type="tns:SupplyRequestCodes">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>SupplyRequestCodes - string[]</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="TrailerAccessible" type="xsd:boolean">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>bool - TrailerAccessible</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="LoadingDockAvailable" type="xsd:boolean">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>bool - LoadingDockAvailable</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="ShipmentOnSkids" type="xsd:boolean">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>bool - ShipmentOnSkids</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="NumberOfSkids" nillable="true" type="xsd:int">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>int? - NumberOfSkids</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ModifyPickupInstruction" nillable="true" type="tns:ModifyPickupInstruction"/>
+    <xsd:element name="ModifyPickUpRequest" nillable="true" type="tns:ModifyPickUpRequest"/>
+    <xsd:complexType name="ModifyPickUpResponse">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>ModifyPickUpResponse</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Response">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" name="PickUpConfirmationNumber" nillable="true" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>PickUpConfirmationNumber - string</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="ModifyPickUpResponse" nillable="true" type="tns:ModifyPickUpResponse"/>
+    <xsd:element name="ModifyPickUpResponse" nillable="true" type="tns:ModifyPickUpResponse"/>
+</xsd:schema>

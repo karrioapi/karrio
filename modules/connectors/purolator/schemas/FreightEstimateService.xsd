@@ -1,0 +1,301 @@
+<xsd:schema elementFormDefault="qualified" targetNamespace="http://purolator.com/pws/datatypes/v1" 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://purolator.com/pws/datatypes/v1">
+    <xsd:complexType name="GetEstimateRequest">
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Request">
+                <xsd:sequence>
+                    <xsd:element name="Estimate" nillable="true" type="tns:Shipment" />
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="GetEstimateRequest" nillable="true" type="tns:GetEstimateRequest" />
+    <xsd:complexType name="Request">
+        <xsd:sequence />
+    </xsd:complexType>
+    <xsd:element name="Request" nillable="true" type="tns:Request" />
+    <xsd:complexType name="Shipment">
+        <xsd:sequence>
+            <xsd:element name="SenderInformation" nillable="true" type="tns:SenderInformation" />
+            <xsd:element name="ReceiverInformation" nillable="true" type="tns:ReceiverInformation" />
+            <xsd:element name="PaymentInformation" nillable="true" type="tns:PaymentInformation" />
+            <xsd:element name="ShipmentDetails" nillable="true" type="tns:EstimateInformation" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Shipment" nillable="true" type="tns:Shipment" />
+    <xsd:complexType name="SenderInformation">
+        <xsd:sequence>
+            <xsd:element name="Address" nillable="true" type="tns:Address" />
+            <xsd:element minOccurs="0" name="EmailAddress" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="SenderInformation" nillable="true" type="tns:SenderInformation" />
+    <xsd:complexType name="Address">
+        <xsd:sequence>
+            <xsd:element name="Name" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="Company" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="Department" nillable="true" type="xsd:string" />
+            <xsd:element name="StreetNumber" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="StreetSuffix" nillable="true" type="xsd:string" />
+            <xsd:element name="StreetName" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="StreetType" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="StreetDirection" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="Suite" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="Floor" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="StreetAddress2" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="StreetAddress3" nillable="true" type="xsd:string" />
+            <xsd:element name="City" nillable="true" type="xsd:string" />
+            <xsd:element name="Province" nillable="true" type="xsd:string" />
+            <xsd:element name="Country" nillable="true" type="xsd:string" />
+            <xsd:element name="PostalCode" nillable="true" type="xsd:string" />
+            <xsd:element name="PhoneNumber" nillable="true" type="tns:PhoneNumber" />
+            <xsd:element minOccurs="0" name="FaxNumber" nillable="true" type="tns:PhoneNumber" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Address" nillable="true" type="tns:Address" />
+    <xsd:complexType name="PhoneNumber">
+        <xsd:sequence>
+            <xsd:element name="CountryCode" nillable="true" type="xsd:string" />
+            <xsd:element name="AreaCode" nillable="true" type="xsd:string" />
+            <xsd:element name="Phone" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="Extension" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="PhoneNumber" nillable="true" type="tns:PhoneNumber" />
+    <xsd:complexType name="ReceiverInformation">
+        <xsd:sequence>
+            <xsd:element name="Address" nillable="true" type="tns:Address" />
+            <xsd:element minOccurs="0" name="EmailAddress" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ReceiverInformation" nillable="true" type="tns:ReceiverInformation" />
+    <xsd:complexType name="PaymentInformation">
+        <xsd:sequence>
+            <xsd:element name="PaymentType" type="tns:PaymentType" />
+            <xsd:element name="RegisteredAccountNumber" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="BillingAccountNumber" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="CreditCardInformation" nillable="true" type="tns:CreditCardInformation" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="PaymentInformation" nillable="true" type="tns:PaymentInformation" />
+    <xsd:simpleType name="PaymentType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Sender" />
+            <xsd:enumeration value="Receiver" />
+            <xsd:enumeration value="ThirdParty" />
+            <xsd:enumeration value="CreditCard" />
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="PaymentType" nillable="true" type="tns:PaymentType" />
+    <xsd:complexType name="CreditCardInformation">
+        <xsd:sequence>
+            <xsd:element name="Type" type="tns:CreditCardType" />
+            <xsd:element name="Number" nillable="true" type="xsd:string" />
+            <xsd:element name="Name" nillable="true" type="xsd:string" />
+            <xsd:element name="ExpiryMonth" type="xsd:int" />
+            <xsd:element name="ExpiryYear" type="xsd:int" />
+            <xsd:element name="CVV" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="CreditCardInformation" nillable="true" type="tns:CreditCardInformation" />
+    <xsd:simpleType name="CreditCardType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Visa" />
+            <xsd:enumeration value="MasterCard" />
+            <xsd:enumeration value="AmericanExpress" />
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="CreditCardType" nillable="true" type="tns:CreditCardType" />
+    <xsd:complexType name="EstimateInformation">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="ServiceTypeCode" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="ShipmentDate" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="DeclaredValue" nillable="true" type="xsd:decimal" />
+            <xsd:element minOccurs="0" name="CODAmount" nillable="true" type="xsd:decimal" />
+            <xsd:element minOccurs="0" name="SpecialInstructions" nillable="true" type="xsd:string" />
+            <xsd:element name="LineItemDetails" nillable="true" type="tns:ArrayOfLineItem" />
+            <xsd:element minOccurs="0" name="AccessorialParameters" nillable="true" type="tns:ArrayOfBoolValuePair" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="EstimateInformation" nillable="true" type="tns:EstimateInformation" />
+    <xsd:complexType name="ArrayOfLineItem">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="LineItem" nillable="true" type="tns:LineItem" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfLineItem" nillable="true" type="tns:ArrayOfLineItem" />
+    <xsd:complexType name="LineItem">
+        <xsd:sequence>
+            <xsd:element name="LineNumber" type="xsd:int" />
+            <xsd:element name="Pieces" type="xsd:int" />
+            <xsd:element name="HandlingUnit" type="xsd:int" />
+            <xsd:element name="HandlingUnitType" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="Description" nillable="true" type="xsd:string" />
+            <xsd:element name="Weight" nillable="true" type="tns:Weight" />
+            <xsd:element minOccurs="0" name="FreightClass" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="Length" nillable="true" type="tns:Dimension" />
+            <xsd:element minOccurs="0" name="Width" nillable="true" type="tns:Dimension" />
+            <xsd:element minOccurs="0" name="Height" nillable="true" type="tns:Dimension" />
+            <xsd:element minOccurs="0" name="BasePrice" type="xsd:decimal" />
+            <xsd:element minOccurs="0" name="Charge" type="xsd:decimal" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="LineItem" nillable="true" type="tns:LineItem" />
+    <xsd:complexType name="Weight">
+        <xsd:sequence>
+            <xsd:element name="Value" nillable="true" type="xsd:decimal" />
+            <xsd:element name="WeightUnit" type="tns:WeightUnit" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Weight" nillable="true" type="tns:Weight" />
+    <xsd:simpleType name="WeightUnit">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="lb" />
+            <xsd:enumeration value="kg" />
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="WeightUnit" nillable="true" type="tns:WeightUnit" />
+    <xsd:complexType name="Dimension">
+        <xsd:sequence>
+            <xsd:element name="Value" nillable="true" type="xsd:decimal" />
+            <xsd:element name="DimensionUnit" type="tns:DimensionUnit" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Dimension" nillable="true" type="tns:Dimension" />
+    <xsd:simpleType name="DimensionUnit">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="in" />
+            <xsd:enumeration value="cm" />
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="DimensionUnit" nillable="true" type="tns:DimensionUnit" />
+    <xsd:complexType name="ArrayOfBoolValuePair">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="BoolValuePair" nillable="true" type="tns:BoolValuePair" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfBoolValuePair" nillable="true" type="tns:ArrayOfBoolValuePair" />
+    <xsd:complexType name="BoolValuePair">
+        <xsd:sequence>
+            <xsd:element name="Keyword" nillable="true" type="xsd:string" />
+            <xsd:element name="Value" type="xsd:boolean" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="BoolValuePair" nillable="true" type="tns:BoolValuePair" />
+    <xsd:element name="FreightGetEstimateRequest" nillable="true" type="tns:GetEstimateRequest" />
+    <xsd:complexType name="RequestContext">
+        <xsd:sequence>
+            <xsd:element name="Version" nillable="true" type="xsd:string" />
+            <xsd:element name="Language" type="tns:Language" />
+            <xsd:element name="GroupID" nillable="true" type="xsd:string" />
+            <xsd:element name="RequestReference" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="UserToken" nillable="true" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>UserToken - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="RequestContext" nillable="true" type="tns:RequestContext" />
+    <xsd:simpleType name="Language">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="en" />
+            <xsd:enumeration value="fr" />
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="Language" nillable="true" type="tns:Language" />
+    <xsd:complexType name="GetEstimateResponse">
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Response">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" name="TariffCode" nillable="true" type="xsd:string" />
+                    <xsd:element minOccurs="0" name="DiscountPoint" type="xsd:decimal" />
+                    <xsd:element minOccurs="0" name="TransitDays" type="xsd:int" />
+                    <xsd:element minOccurs="0" name="EstimatedDeliveryDate" nillable="true" type="xsd:string" />
+                    <xsd:element minOccurs="0" name="TotalPrice" type="xsd:decimal" />
+                    <xsd:element minOccurs="0" name="LineItemDetails" nillable="true" type="tns:ArrayOfLineItem" />
+                    <xsd:element minOccurs="0" name="AccessorialDetails" nillable="true" type="tns:ArrayOfAccessorialItem" />
+                    <xsd:element minOccurs="0" name="ShipmentTaxes" nillable="true" type="tns:ArrayOfTax" />
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="GetEstimateResponse" nillable="true" type="tns:GetEstimateResponse" />
+    <xsd:complexType name="Response">
+        <xsd:sequence>
+            <xsd:element name="ResponseInformation" nillable="true" type="tns:ResponseInformation" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Response" nillable="true" type="tns:Response" />
+    <xsd:complexType name="ResponseInformation">
+        <xsd:sequence>
+            <xsd:element name="Errors" nillable="true" type="tns:ArrayOfError" />
+            <xsd:element name="InformationalMessages" nillable="true" type="tns:ArrayOfInformationalMessage" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ResponseInformation" nillable="true" type="tns:ResponseInformation" />
+    <xsd:complexType name="ArrayOfError">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="Error" nillable="true" type="tns:Error" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfError" nillable="true" type="tns:ArrayOfError" />
+    <xsd:complexType name="Error">
+        <xsd:sequence>
+            <xsd:element name="Code" nillable="true" type="xsd:string" />
+            <xsd:element name="Description" nillable="true" type="xsd:string" />
+            <xsd:element name="AdditionalInformation" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Error" nillable="true" type="tns:Error" />
+    <xsd:complexType name="ArrayOfInformationalMessage">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="InformationalMessage" nillable="true" type="tns:InformationalMessage" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfInformationalMessage" nillable="true" type="tns:ArrayOfInformationalMessage" />
+    <xsd:complexType name="InformationalMessage">
+        <xsd:sequence>
+            <xsd:element name="Code" nillable="true" type="xsd:string" />
+            <xsd:element name="Message" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="InformationalMessage" nillable="true" type="tns:InformationalMessage" />
+    <xsd:complexType name="ArrayOfAccessorialItem">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="AccessorialItem" nillable="true" type="tns:AccessorialItem" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfAccessorialItem" nillable="true" type="tns:ArrayOfAccessorialItem" />
+    <xsd:complexType name="AccessorialItem">
+        <xsd:sequence>
+            <xsd:element name="Code" nillable="true" type="xsd:string" />
+            <xsd:element name="Description" nillable="true" type="xsd:string" />
+            <xsd:element name="Charge" type="xsd:decimal" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="AccessorialItem" nillable="true" type="tns:AccessorialItem" />
+    <xsd:complexType name="ArrayOfTax">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="Tax" nillable="true" type="tns:Tax" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfTax" nillable="true" type="tns:ArrayOfTax" />
+    <xsd:complexType name="Tax">
+        <xsd:sequence>
+            <xsd:element name="Amount" type="xsd:decimal" />
+            <xsd:element name="Type" nillable="true" type="xsd:string" />
+            <xsd:element name="Description" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Tax" nillable="true" type="tns:Tax" />
+    <xsd:element name="GetEstimateResponse" nillable="true" type="tns:GetEstimateResponse" />
+    <xsd:complexType name="ResponseContext">
+        <xsd:sequence>
+            <xsd:element name="ResponseReference" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ResponseContext" nillable="true" type="tns:ResponseContext" />
+</xsd:schema>
