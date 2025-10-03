@@ -4,8 +4,8 @@
     "./karrio/modules/*",
     "./karrio/modules/connectors/*",
     "./karrio/apps/*",
-    "./insiders/modules/*",
-    "./insiders/modules/connectors/*",
+    "./karrio-insiders/modules/*",
+    "./karrio-insiders/modules/connectors/*",
     "./modules/*"
   ],
   "python.analysis.typeCheckingMode": "basic",

@@ -37,11 +37,11 @@ djangorestframework-stubs
 -e ./karrio/modules/documents
 
 # karrio insiders modules
--e ./insiders/modules/apps
--e ./insiders/modules/admin
--e ./insiders/modules/audit
--e ./insiders/modules/automation
--e ./insiders/modules/orgs
+-e ./karrio-insiders/modules/apps
+-e ./karrio-insiders/modules/admin
+-e ./karrio-insiders/modules/audit
+-e ./karrio-insiders/modules/automation
+-e ./karrio-insiders/modules/orgs
 
 # JTL custom karrio modules
 -e ./modules/shipping

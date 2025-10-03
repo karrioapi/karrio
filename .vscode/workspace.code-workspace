@@ -9,8 +9,8 @@
       "path": "../karrio",
     },
     {
-      "name": "insiders",
-      "path": "../insiders",
+      "name": "karrio-insiders",
+      "path": "../karrio-insiders",
     },
   ],
   "settings": {
