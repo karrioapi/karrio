@@ -1,0 +1,30 @@
+{
+  "status": "OK",
+  "data": [
+    {
+      "success": true,
+      "reference_number": "100008518801",
+      "courier_partner": "DTDC",
+      "courier_account": "",
+      "courier_partner_reference_number": "D78326386",
+      "chargeable_weight": 2.5,
+      "self_pickup_enabled": true,
+      "customer_reference_number": "REF123456",
+      "pieces": [
+        {
+          "reference_number": "7X9150223001",
+          "product_code": ""
+        },
+        {
+          "reference_number": "7X9150223002",
+          "product_code": ""
+        },
+        {
+          "reference_number": "7X9150223003",
+          "product_code": ""
+        }
+      ],
+      "barCodeData": ""
+    }
+  ]
+}
