@@ -235,10 +235,12 @@ export const ShipmentComponent = ({
                       <div className="text-xs mb-1 font-bold">Shipment method</div>
                       <div className="flex items-center">
                         <CarrierImage
-                          carrier_name={shipment.meta.carrier as string}
+                          carrier_name={(shipment.meta.custom_carrier_name || shipment.meta.carrier) as string}
                           containerClassName="mt-1 ml-1 mr-2"
                           height={28}
                           width={28}
+                          text_color={shipment.selected_rate_carrier?.config?.text_color}
+                          background={shipment.selected_rate_carrier?.config?.brand_color}
                         />
                         <div className="text-ellipsis text-xs" style={{ maxWidth: "190px", lineHeight: "16px" }}>
                           <span className="text-blue-600 font-bold">
