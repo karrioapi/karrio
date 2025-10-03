@@ -120,6 +120,9 @@ export const RateSheetEditor = ({
         carrier_name: rateSheet.carrier_name,
         services: [...(rateSheet.services || [])]
       });
+      // Seed buffers from loaded data so fields show saved text immediately
+      const buffers = buildZoneTextBuffersFromServices(rateSheet.services || []);
+      setZoneTextBuffers(buffers);
     } else if (isNew && !localData) {
       // Initialize with preloaded carrier or defaults for new rate sheets
       const initialCarrier = preloadCarrier || 'generic';
@@ -175,6 +178,25 @@ export const RateSheetEditor = ({
 
     loader.setLoading(true);
     try {
+      // Merge any buffered zone text into working copy so unsaved typing is included
+      const parseList = (text: string): string[] =>
+        text
+          .split(',')
+          .map((v) => v.trim())
+          .filter((v) => v.length > 0);
+
+      const mergedServices = (localData.services || []).map((service: any) => ({
+        ...service,
+        zones: (service.zones || []).map((zone: any, i: number) => {
+          const buffer = zoneTextBuffers[i] || {};
+          const patch: any = {};
+          if (typeof buffer.country_codes === 'string') patch.country_codes = parseList(buffer.country_codes);
+          if (typeof buffer.cities === 'string') patch.cities = parseList(buffer.cities);
+          if (typeof buffer.postal_codes === 'string') patch.postal_codes = parseList(buffer.postal_codes);
+          return { ...zone, ...patch };
+        })
+      }));
+
       // Clean data for mutation - ensure we have at least basic validation
       if (!localData.name || !localData.name.trim()) {
         throw new Error('Rate sheet name is required');
@@ -191,7 +213,7 @@ export const RateSheetEditor = ({
       const cleanedData = {
         name: localData.name.trim(),
         // Note: carrier_name is stored locally but not sent in updates
-        services: (localData.services || []).map((service: any, index: number) => {
+        services: (mergedServices || []).map((service: any, index: number) => {
           // Validate required service fields
           if (!service.service_name || !service.service_name.trim()) {
             throw new Error(`Service ${index + 1}: service_name is required`);
@@ -301,6 +323,8 @@ export const RateSheetEditor = ({
               carrier_name: fresh.carrier_name,
               services: [...(fresh.services || [])]
             });
+            // Seed buffers from fresh data so text persists after save
+            setZoneTextBuffers(buildZoneTextBuffersFromServices(fresh.services || []));
           }
         }
       } else {
@@ -318,6 +342,8 @@ export const RateSheetEditor = ({
             carrier_name: fresh.carrier_name,
             services: [...(fresh.services || [])]
           });
+          // Seed buffers from fresh data so text persists after save
+          setZoneTextBuffers(buildZoneTextBuffersFromServices(fresh.services || []));
         }
       }
       // Do not close the editor; leave it open
@@ -378,6 +404,57 @@ export const RateSheetEditor = ({
       }
       return next;
     });
+  };
+
+  // Get first non-empty zone array across all services for display purposes
+  const getAggregatedZoneArray = React.useCallback((
+    zoneIndex: number,
+    field: 'country_codes' | 'cities' | 'postal_codes',
+  ): string[] => {
+    const servicesList = localData?.services || [];
+    for (const service of servicesList) {
+      const zone = (service.zones || [])[zoneIndex];
+      const arr = zone?.[field];
+      if (Array.isArray(arr) && arr.length > 0) return arr as string[];
+    }
+    return [];
+  }, [localData?.services]);
+
+  // Build buffers from services so inputs display saved values on load/refetch
+  const buildZoneTextBuffersFromServices = (servicesData: any[]): Record<number, Partial<Record<'country_codes' | 'cities' | 'postal_codes', string>>> => {
+    const buffers: Record<number, Partial<Record<'country_codes' | 'cities' | 'postal_codes', string>>> = {};
+    const maxZones = Math.max(0, ...servicesData.map((s: any) => (s.zones || []).length));
+    for (let i = 0; i < maxZones; i++) {
+      const entry: Partial<Record<'country_codes' | 'cities' | 'postal_codes', string>> = {};
+      // Use first non-empty across services for each field
+      const cc = (() => {
+        for (const s of servicesData) {
+          const a = s?.zones?.[i]?.country_codes;
+          if (Array.isArray(a) && a.length > 0) return a as string[];
+        }
+        return [] as string[];
+      })();
+      const ct = (() => {
+        for (const s of servicesData) {
+          const a = s?.zones?.[i]?.cities;
+          if (Array.isArray(a) && a.length > 0) return a as string[];
+        }
+        return [] as string[];
+      })();
+      const pc = (() => {
+        for (const s of servicesData) {
+          const a = s?.zones?.[i]?.postal_codes;
+          if (Array.isArray(a) && a.length > 0) return a as string[];
+        }
+        return [] as string[];
+      })();
+
+      if (cc.length > 0) entry.country_codes = cc.join(', ');
+      if (ct.length > 0) entry.cities = ct.join(', ');
+      if (pc.length > 0) entry.postal_codes = pc.join(', ');
+      if (Object.keys(entry).length > 0) buffers[i] = entry;
+    }
+    return buffers;
   };
 
   const handleAddService = () => {
@@ -978,7 +1055,7 @@ export const RateSheetEditor = ({
                                 <div>
                                   <Label>Country Codes (comma separated)</Label>
                                   <Input
-                                    value={getZoneTextValue(i, 'country_codes', sample.country_codes)}
+                                    value={getZoneTextValue(i, 'country_codes', getAggregatedZoneArray(i, 'country_codes'))}
                                     inputMode="text"
                                     onKeyDown={(e) => {
                                       // Allow comma and space input - prevent any parent/global blocking behavior
@@ -1003,7 +1080,7 @@ export const RateSheetEditor = ({
                                 <div>
                                   <Label>Cities (comma separated)</Label>
                                   <Input
-                                    value={getZoneTextValue(i, 'cities', sample.cities)}
+                                    value={getZoneTextValue(i, 'cities', getAggregatedZoneArray(i, 'cities'))}
                                     inputMode="text"
                                     onKeyDown={(e) => {
                                       // Allow comma and space input - prevent any parent/global blocking behavior
@@ -1028,7 +1105,7 @@ export const RateSheetEditor = ({
                                 <div>
                                   <Label>Postal Codes (comma separated)</Label>
                                   <Input
-                                    value={getZoneTextValue(i, 'postal_codes', sample.postal_codes)}
+                                    value={getZoneTextValue(i, 'postal_codes', getAggregatedZoneArray(i, 'postal_codes'))}
                                     inputMode="text"
                                     onKeyDown={(e) => {
                                       // Allow comma and space input - prevent any parent/global blocking behavior
