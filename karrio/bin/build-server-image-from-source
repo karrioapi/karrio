@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# Source environment variables
+source "bin/_env"
+
+echo 'building server image from source...'
+docker build \
+    --no-cache \
+    -f "${ROOT}/docker/api/Dockerfile" \
+    -t karrio/server:$1 \
+    "${ROOT}" \
+    --build-arg REQUIREMENTS=source.requirements.txt \
+    "${@:2}"

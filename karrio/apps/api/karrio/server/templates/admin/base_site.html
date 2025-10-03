@@ -1,0 +1,12 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{% if title %}{{ title }} | {% endif %}{{ APP_NAME|default:_('Site admin') }}{% endblock %}
+
+{% block extrastyle %}
+<link rel="shortcut icon" href="{% static 'branding/favicon.ico' %}">
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ APP_NAME|default:_('Administration') }}</a></h1>
+{% endblock %}

@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+source "bin/activate-env" "$@"
+
+log_section "Running SDK Tests"
+# Get all test directories
+packages=$(find modules/connectors -type d -name "tests" -exec dirname '{}' \;)
+
+# Run SDK tests
+minimal_log "Running SDK tests"
+if [[ "$VERBOSE" == "true" ]]; then
+    run_command "python -m unittest discover -v -f modules/sdk/tests" "SDK tests failed" "Running SDK tests with verbose output..." || exit 1
+else
+    run_command "python -m unittest discover -f modules/sdk/tests" "SDK tests failed" "Running SDK tests..." || exit 1
+fi
+
+# Run connector tests
+log_section "Running Connector Tests"
+for module in ${packages}; do
+    module_name=$(basename $module)
+    minimal_log "Testing ${module_name} connector"
+    if [[ "$VERBOSE" == "true" ]]; then
+        run_command "python -m unittest discover -v -f ${module}/tests" "Tests for ${module} failed" "Running ${module_name} tests with verbose output..." || exit $?
+    else
+        run_command "python -m unittest discover -f ${module}/tests" "Tests for ${module} failed" "Running ${module_name} tests..." || exit $?
+    fi
+done
+
+# Run community plugin tests if community/plugins exists
+if [ -d "community/plugins" ]; then
+    community_packages=$(find community/plugins -type d -name "tests" -exec dirname '{}' \;)
+    if [ ! -z "$community_packages" ]; then
+        log_section "Running Community Plugin Tests"
+        for module in ${community_packages}; do
+            module_name=$(basename $module)
+            minimal_log "Testing ${module_name} community plugin"
+            if [[ "$VERBOSE" == "true" ]]; then
+                run_command "python -m unittest discover -v -f ${module}/tests" "Tests for ${module} failed" "Running ${module_name} community plugin tests with verbose output..." || exit $?
+            else
+                run_command "python -m unittest discover -f ${module}/tests" "Tests for ${module} failed" "Running ${module_name} community plugin tests..." || exit $?
+            fi
+        done
+    fi
+fi
+
+# Show completion message regardless of verbose mode
+echo -e "\033[0;32mAll tests completed successfully\033[0m"

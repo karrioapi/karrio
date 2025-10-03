@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -e
+
+KARRIO_PORT=${KARRIO_PORT:-5002}
+
+# Run django migration...
+karrio runserver 0.0.0.0:$KARRIO_PORT

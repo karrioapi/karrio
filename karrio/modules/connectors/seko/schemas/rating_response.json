@@ -1,0 +1,62 @@
+{
+  "Available": [
+    {
+      "QuoteId": "e7fdf36c-8f6a-4d3f-8d96-c8b5893a0e7f",
+      "CarrierId": 604,
+      "CarrierName": "Omni Parcel",
+      "DeliveryType": "AIR TRACKED",
+      "Cost": 5.82,
+      "ServiceStandard": "",
+      "Comments": "",
+      "Route": "OFFSHORE->AKL- SI",
+      "IsRuralDelivery": false,
+      "IsSaturdayDelivery": false,
+      "IsFreightForward": false,
+      "CarrierServiceType": "InternationalCourier",
+      "EstimatedDeliveryDays": 3,
+      "TransitTime": "3-5 business days",
+      "ServiceLevel": "Express",
+      "CarrierType": 33,
+      "IsOvernight": false,
+      "HasTrackPaks": false
+    }
+  ],
+  "Rejected": [
+    {
+      "CarrierName": "CarrierName",
+      "DeliveryType": "DeliveryType",
+      "Reason": "Reason",
+      "CarrierId": 0,
+      "QuoteId": "",
+      "ErrorCode": "ERR001",
+      "ErrorDetails": "Detailed error information"
+    }
+  ],
+  "ValidationErrors": [
+    {
+      "Property": "Destination.Address.CountryCode",
+      "Message": "CountryCode is required",
+      "Key": "CountryCode",
+      "Value": "",
+      "ErrorCode": "VAL001",
+      "Severity": "Error"
+    }
+  ],
+  "Summary": {
+    "TotalAvailable": 1,
+    "TotalRejected": 0,
+    "TotalValidationErrors": 0,
+    "Currency": "NZD",
+    "RequestId": "req-12345"
+  },
+  "Warnings": [
+    {
+      "Property": "Packages[0].Weight",
+      "Message": "Package weight is below minimum threshold",
+      "Key": "Weight",
+      "Value": "0.1",
+      "WarningCode": "WARN001",
+      "Severity": "Warning"
+    }
+  ]
+}

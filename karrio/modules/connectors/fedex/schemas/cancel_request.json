@@ -1,0 +1,9 @@
+{
+  "accountNumber": {
+    "value": "Your account number"
+  },
+  "emailShipment": "false",
+  "senderCountryCode": "US",
+  "deletionControl": "DELETE_ALL_PACKAGES",
+  "trackingNumber": "794953555571"
+}

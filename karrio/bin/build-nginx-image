@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+echo '> Building custom nginx image...'
+docker build -f "docker/nginx/Dockerfile" \
+    -t ghcr.io/karrioapi/nginx:$1 \
+    --no-cache \
+    ./docker/nginx "${@:2}"

@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+docker run  --rm -v ${PWD}:/local openapitools/openapi-generator-cli bash -c '
+  ./usr/local/bin/docker-entrypoint.sh generate \
+    -i "/local/schemas/openapi.yml" \
+    -g typescript-axios \
+    -o /local/packages/types/rest \
+    --additional-properties=typescriptThreePlus=true \
+    --additional-properties=modelPropertyNaming=snake_case \
+    --additional-properties=useSingleRequestParameter=true && \
+  rm -rf /local/packages/types/rest/.openapi-generator/ \
+    /local/packages/types/rest/.openapi-generator-ignore \
+    /local/packages/types/rest/.gitignore \
+    /local/packages/types/rest/.npmignore \
+    /local/packages/types/rest/git_push.sh && \
+  sed -i -e 's/RawAxiosRequestConfig/AxiosRequestConfig/g' \
+    /local/packages/types/rest/api.ts
+'

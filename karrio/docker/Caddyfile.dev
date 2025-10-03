@@ -1,0 +1,31 @@
+(common_headers) {
+    encode gzip
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        -Server
+    }
+}
+
+api.karrio.local {
+    import common_headers
+    tls {$CADDY_CERT_DIR}/api.karrio.local.pem {$CADDY_CERT_DIR}/api.karrio.local-key.pem
+    reverse_proxy {$API_UPSTREAM} {
+        header_up X-Forwarded-Proto https
+    }
+}
+
+app.karrio.local {
+    import common_headers
+    tls {$CADDY_CERT_DIR}/app.karrio.local.pem {$CADDY_CERT_DIR}/app.karrio.local-key.pem
+    reverse_proxy {$DASHBOARD_UPSTREAM} {
+        header_up X-Forwarded-Proto https
+    }
+}
+
+karrio.local {
+    import common_headers
+    tls {$CADDY_CERT_DIR}/karrio.local.pem {$CADDY_CERT_DIR}/karrio.local-key.pem
+    reverse_proxy {$DOCS_UPSTREAM} {
+        header_up X-Forwarded-Proto https
+    }
+}

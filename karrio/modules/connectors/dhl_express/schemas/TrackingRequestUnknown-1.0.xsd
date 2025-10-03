@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://www.dhl.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.dhl.com" xmlns:dhl="http://www.dhl.com/datatypes" elementFormDefault="unqualified">
+        <xsd:import namespace="http://www.dhl.com/datatypes" schemaLocation="datatypes.xsd"/>
+        <xsd:element name="UnknownTrackingRequest">
+                <xsd:annotation>
+                        <xsd:documentation>Comment describing your root element</xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                        <xsd:sequence>
+                                <xsd:element name="Request" type="dhl:Request"/>
+                                <xsd:element name="LanguageCode" type="dhl:LanguageCode"/>
+                                <xsd:element name="AccountNumber" type="dhl:AccountNumber" minOccurs="1"/>
+                                <xsd:element name="ShipperReference" type="dhl:Reference" maxOccurs="unbounded"/>
+                                <xsd:element name="ShipmentDate" type="dhl:ShipmentDate" minOccurs="0"/>
+				<xsd:element name="CountryCode" type="dhl:CountryCode" minOccurs="0"/>				
+                        </xsd:sequence>
+                        <xsd:attribute name="schemaVersion" type="xsd:decimal" use="required" fixed="1.0"/>
+                </xsd:complexType>
+        </xsd:element>
+</xsd:schema>

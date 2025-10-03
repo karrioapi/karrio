@@ -1,0 +1,11 @@
+{
+    "order_id": "f5233746-71d4-4b05-bf63-56f4abaed5f6",
+    "state": "Cancelled",
+    "order_url": "https://api.sendle.com/api/orders/f5233746-71d4-4b05-bf63-56f4abaed5f6",
+    "sendle_reference": "S34WER4S",
+    "tracking_url": "https://track.sendle.com/tracking?ref=S34WER4S",
+    "customer_reference": "SupBdayPressie",
+    "metadata": {},
+    "cancelled_at": "2015-10-15 00:56:51 UTC",
+    "cancellation_message": "Cancelled by S6LRX64PV8MABbBbzu6DoBHD during picking up"
+}

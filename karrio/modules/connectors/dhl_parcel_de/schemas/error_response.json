@@ -1,0 +1,6 @@
+{
+  "title": "ok",
+  "statusCode": 200,
+  "instance": "string",
+  "detail": "The Webservice call ran successfully."
+}

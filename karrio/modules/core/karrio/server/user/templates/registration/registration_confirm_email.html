@@ -1,0 +1,10 @@
+{% load i18n %}{% autoescape off %}
+{% block title %}Email confirmation{% endblock %}
+
+<p>{% trans "You are almost there," %}</p>
+
+<p>{% trans "Please click the following link to verify your email address." %}</p>
+
+{{ link }}
+
+{% endautoescape %}

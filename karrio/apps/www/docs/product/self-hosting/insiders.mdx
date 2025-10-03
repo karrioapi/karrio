@@ -1,0 +1,121 @@
+---
+id: insiders
+title: Insiders
+---
+
+# Self-host Karrio Insiders
+
+Karrio Insiders is the enterprise version of Karrio with additional modules for large companies with significant data isolation requirements.
+
+## Hobby one-click install
+
+### Requirements
+
+-   A Linux Ubuntu Virtual Machine
+
+    -   An instance with 4GB of RAM can handle approximately 100k events spread over a month
+    -   We highly recommend an instance with at least 4GB of RAM to handle any surges in event volume
+
+-   Custom domain with the following records for your instance
+
+    -   Type `A` | Host `api` | Value `Your instance IP`
+    -   Type `A` | Host `app` | Value `Your instance IP`
+
+-   GitHub Personal Access Token (PAT) with `read:packages` scope
+    -   This is required to pull the private Karrio Insiders images
+    -   [Learn how to create a PAT](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
+
+### Setting up the stack
+
+To get started, run the following command which will spin up a fresh Karrio Insiders deployment:
+
+```terminal title="Terminal"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio-insiders/HEAD/bin/deploy-insiders)"
+```
+
+You'll be asked to provide:
+
+1. Your GitHub Personal Access Token
+2. The release tag you would like to use
+3. The domain you have connected to your instance
+
+Once everything has been set up, you should see the following message:
+
+```terminal title="Terminal"
+We will need to wait ~5-10 minutes for things to settle down, migrations to finish, and TLS certs to be issued
+
+⏳ Waiting for Karrio Insiders to boot (this will take a few minutes)
+```
+
+### Customizing your deployment (optional)
+
+The deployment uses default configuration values suitable for most deployments. If you need to customize anything, you can:
+
+1. Review the full list of [environment variables](/product/self-hosting/environment)
+2. Edit your `.env` file with any custom values
+3. Restart the stack with `docker-compose`
+
+For different versions of Karrio Insiders, check the available tags in your Insiders portal.
+
+### Troubleshooting
+
+#### Authentication Issues
+
+If you see Docker pull errors, ensure:
+
+-   Your GitHub PAT has the `read:packages` scope
+-   Your PAT hasn't expired
+-   You're using the correct PAT in your environment
+
+#### Container Issues
+
+Check that all containers are running:
+
+```terminal title="Terminal"
+docker ps
+```
+
+You should see containers for:
+
+-   karrio.caddy
+-   karrio.worker
+-   karrio.dashboard
+-   karrio.api
+-   karrio.db
+-   karrio.redis
+
+To check container logs:
+
+```terminal title="Terminal"
+docker logs <container_name>
+```
+
+### Upgrading
+
+To upgrade your Karrio Insiders installation:
+
+```terminal title="Terminal"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio-insiders/HEAD/bin/upgrade-insiders)"
+```
+
+:::caution
+Before upgrading:
+
+1. Create backups of all your data
+2. Ensure your GitHub PAT is still valid
+3. Check the changelog for any breaking changes
+   :::
+
+### Migrating
+
+If you need to scale beyond your current setup, consider:
+
+1. Increasing your instance size
+2. Moving to [Karrio Cloud Enterprise](https://karrio.io/enterprise) for a fully managed experience
+
+## Support
+
+For Karrio Insiders support:
+
+-   Email: support@karrio.io
+-   Discord: [Karrio Discord Server](https://discord.gg/gS88uE7sEx) (Private Insiders channel)

@@ -1,0 +1,13 @@
+{
+  "OutboundManifest": [
+    {
+      "ManifestNumber": "OHG00288",
+      "ManifestedConnotes": ["01593505840002135181", "01593505840002135198"],
+      "ManifestContent": "JVBERi0xLjcgCiXi48/TIAoxIDAgb2JqIAo8PCAKL1R5cGUgL0NhdGFsb2cgCi9QYWdlcyAyIDAgUiAKL1BhZ2VNb2RlIC9Vc2VOb25lIAovVmlld2VyUH...."
+    }
+  ],
+  "InboundManifest": [],
+  "Error": [],
+  "StatusCode": 200,
+  "UnManifestedConnotes": []
+}

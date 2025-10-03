@@ -1,0 +1,81 @@
+---
+title: "Karrio Release 2024.2"
+date: "2024-03-01"
+description: "Karrio 2024.2 is finally here with many exciting improvements and features. We've been busy working with a 3PL out in Australia to build merchant fulfillment functionalities on top of Karrio."
+author: "Karrio Team"
+image: /blog/release-2024.2-banner.png
+tags: ["release", "update", "features", "carriers"]
+category: "Launch Week"
+---
+
+Karrio 2024.2 is finally here with many exciting improvements and features. In the last quarter of 2023 and the first quarter of 2024, we've been busy working with a 3PL out in Australia to build merchant fulfillment functionalities on top of Karrio.
+
+Here is a breakdown of what we have been working on:
+
+## New Carrier Integrations
+
+We've added new carrier compatibilities to Karrio. Our latest additions include full integrations with Australia Post, Sendle, and some Australian local carriers such as Allied Express and TGE. We have also upgraded previous API integrations like FedEx with the new REST API (upgrade from FedEx web service) and DHL Parcel Post (upgrade from DPDHL web service).
+
+## Dedicated Rate Sheet Object
+
+We are excited to move forward with our vision to build simple, standardized, and open APIs for data commonly exchanged in the logistics industry. We are introducing a dedicated rate sheet object in Karrio. You can now manage a custom rate sheet and link them to generic carriers as well as carriers without a rating API. The rate sheet object is an improvement from the previous services list defined inside the carrier object. With this new release, the rate sheet will now be independently linked to carrier connections and be environment agnostic, allowing you to run tests with live carrier rate sheets without having to redefine them.
+
+![Rate Sheet Object](/blog/connections_rate_sheet.jpg)
+
+## Expanding on Carrier Connection Configuration
+
+The updated carrier connection configuration permits deeper customization for specific carrier services. For example, we have added support for FedEx SmartPost API, and you can now set up your Smart Post Hub ID using the carrier connection configuration.
+
+It can also be used to set up minimal branding colours for your generic carrier connections. You can now set up a background and text colour for your generic carriers, allowing you to quickly and easily differentiate carriers across the app.
+
+![Carrier Connection Configuration](/blog/connections_ui.jpg)
+
+## Metafield API
+
+If you have worked with the Karrio API, you are familiar with the metadata field available on all major Karrio objects like shipment, tracker, order, carrier connections, and more. This "metadata" field was inspired by Stripe's. It is a very useful tool for tagging or storing any additional information from your system in Karrio's shipping-related objects.
+
+However, certain scenarios require a more advanced option. Which is why we are introducing the metafield. Inspired by the Shopify API, the metafield API will allow you to extend Karrio's object with customized data and fields. Unlike the metadata field, which was simply a dictionary where you could store string key-value pairs, the Metafield API is richer and has type definitions, which is a more practical approach to extending an API with customized data.
+
+```
+{
+    workflow_action_templates {
+        edges {
+            node {
+                object_type
+                metafields {
+                    object_type
+                    id
+                    key
+                    is_required
+                    type
+                    value
+                }
+            }
+        }
+    }
+}
+```
+
+## Manifest API
+
+A crucial API that was missing in making Karrio a complete shipping API for everyday operations was the manifest API. Some carriers require an extra step after the label is purchased to generate the manifest. The document will list all the labelled shipments that a carrier will pick up at your warehouse or should expect at a dropoff. This step also serves as a commitment to ship the packages previously labelled and, at times, allows the carrier to initiate billing. Check out the API docs for further details on the specifications.
+
+Note that this API is in beta, and we plan to improve it based on our users' feedback. We would love for you to test it.
+
+![Manifest API](/blog/connections_code.jpg)
+
+## Dashboard Update
+
+We have made many user experience (UX) improvements and redesigned the user interface (UI) of the Karrio dashboard to better serve developers, as well as the technical logistics managers who use Karrio to orchestrate their fulfillment operations in the back office. We have an endless list of to-do's to improve end-user experience. For example, many users use Karrio for active fulfillment operations. However, our dashboard is geared mainly toward developers. We would love to hear from you and get your input. Should we split the current dashboard into an order fulfillment/shipping UI from a data-intensive dev tools vibe?
+
+## Karrio launch week
+
+We discuss all these new features, as well as Karrio's vision, our road to sustainability, how to move the project forward, the impact we believe it can have on developers in the industry, and more.
+
+Come chat with us, ask questions, and propose features by following along at https://www.karrio.io/launch-week-x and join the conversation on GitHub.
+
+## To learn more:
+
+- Follow Karrio on Github
+- Ask us anything at hello@Karrio.io
+- Report any issues on our public repository

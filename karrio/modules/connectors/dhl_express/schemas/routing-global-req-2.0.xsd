@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<xsd:schema targetNamespace="http://www.dhl.com" xmlns:dhl="http://www.dhl.com/datatypes_global" xmlns="http://www.dhl.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified">
+<xsd:import namespace="http://www.dhl.com/datatypes_global" schemaLocation="datatypes_global_v62b.xsd"/>
+	<xsd:element name="RouteRequest">
+		<xsd:annotation>
+			<xsd:documentation><![CDATA[Root element of Routing (Origin/Destination) request]]></xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Request" type="dhl:Request">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[The element contains the header information for the message. It is present in both the request and response XML message. The request element contains a complex datatype ServiceHeader and MetaData]]></xsd:documentation>
+					</xsd:annotation>					
+				</xsd:element>
+				<xsd:element name="RegionCode" type="dhl:RegionCode">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[The RegionCode element indicates the shipment to be route to the specific region eCom backend. It is a mandatory field. The valid values are AP, EU and AM]]></xsd:documentation>
+					</xsd:annotation>					
+				</xsd:element>
+				<xsd:element name="RequestType">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[Defines the type of routing to be done (O: Origin D: Destination)]]></xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:length value="1"/>
+							<xsd:enumeration value="O"/>
+							<xsd:enumeration value="D"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="Address1" type="dhl:AddressLine" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[The Address1 element contains the first line of address]]></xsd:documentation>
+					</xsd:annotation>					
+				</xsd:element>
+				<xsd:element name="Address2" type="dhl:AddressLine" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[The Address2 element contains the second line of address]]></xsd:documentation>
+					</xsd:annotation>					
+				</xsd:element>
+				<xsd:element name="Address3" type="dhl:AddressLine" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[The Address3 element contains the third line of address]]></xsd:documentation>
+					</xsd:annotation>					
+				</xsd:element>
+				<xsd:element name="PostalCode" type="dhl:PostalCode" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[The Postal Code element contains the postal code of the address to be validated]]></xsd:documentation>
+					</xsd:annotation>					
+				</xsd:element>
+				<xsd:element name="City" type="dhl:City">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[The City element contains the City of the routing address]]></xsd:documentation>
+					</xsd:annotation>					
+				</xsd:element>
+				<xsd:element name="Division" type="dhl:Division" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[The Division element contains the state or state code of the routing place]]></xsd:documentation>
+					</xsd:annotation>					
+				</xsd:element>
+				<xsd:element name="CountryCode" type="dhl:CountryCode">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[The Country Code element contains the country/region code of the routing place. It must be of 2 letters. Please refer to the Reference Data (DHL Country/Region) for country/region codes]]></xsd:documentation>
+					</xsd:annotation>					
+				</xsd:element>
+				<xsd:element name="CountryName" type="dhl:CountryName">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[The CountryName element contains the country/region name of the address to the routing place. The tag is required but even if the value is blanks a valid response will be returned]]></xsd:documentation>
+					</xsd:annotation>					
+				</xsd:element>
+				<xsd:element name="OriginCountryCode" type="dhl:CountryCode">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[The OriginCountryCode element contains the country/region code of origin. Please refer to the Reference Data (DHL Country/Region) for country/region codes]]></xsd:documentation>
+					</xsd:annotation>					
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="schemaVersion" type="xsd:decimal" use="required" fixed="2.0"/>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

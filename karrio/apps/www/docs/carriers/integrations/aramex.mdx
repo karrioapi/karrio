@@ -1,0 +1,11 @@
+---
+id: aramex
+title: Aramex
+---
+
+import integrations from "../integrations.json";
+import CarrierIntegrationDetails from "@site/src/components/CarrierIntegrationDetails";
+
+<CarrierIntegrationDetails 
+    id="aramex"
+    integration={integrations.find(i => i.id === "aramex")} />

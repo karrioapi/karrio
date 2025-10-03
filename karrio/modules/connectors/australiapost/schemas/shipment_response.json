@@ -1,0 +1,76 @@
+{
+    "shipments": [
+        {
+            "shipment_id": "9lesEAOvOm4AAAFI3swaDRYB",
+            "shipment_reference": "XYZ-001-01",
+            "shipment_creation_date": "2014-08-27T15:48:09+10:00",
+            "shipment_modified_date": "2014-08-27T15:48:09+10:00",
+            "customer_reference_1": "Order 001",
+            "customer_reference_2": "SKU-1, SKU-2, SKU-3",
+            "sender_references": [
+                "Order 001",
+                "SKU-1, SKU-2, SKU-3"
+            ],
+            "email_tracking_enabled": true,
+            "items": [
+                {
+                    "item_id": "LDCsEAOvU_oAAAFI6MwaDRYB",
+                    "item_reference": "SKU-1",
+                    "tracking_details": {
+                        "article_id": "ABC000128B4C5",
+                        "consignment_id": "ABC000128",
+                        "barcode_id": "ABC000128B4C5"
+                    },
+                    "product_id": "T28S",
+                    "item_summary": {
+                        "total_cost": 5,
+                        "total_cost_ex_gst": 4.55,
+                        "total_gst": 0.45,
+                        "manual_handling_surcharge": 7.60,
+                        "status": "Created"
+                    }
+                },
+                {
+                    "item_id": "ynesEAOvnlAAAAFI88waDRYB",
+                    "item_reference": "SKU-3",
+                    "tracking_details": {
+                        "article_id": "ABC000128B4C6",
+                        "consignment_id": "ABC000128"
+                    },
+                    "product_id": "T28S",
+                    "item_summary": {
+                        "total_cost": 4,
+                        "total_cost_ex_gst": 3.64,
+                        "total_gst": 0.36,
+                        "status": "Created"
+                    }
+                },
+                {
+                    "item_id": "TkGsEAOv9.4AAAFI8MwaDRYB",
+                    "item_reference": "SKU-2",
+                    "tracking_details": {
+                        "article_id": "ABC000128B4C7",
+                        "consignment_id": "ABC000128"
+                    },
+                    "product_id": "T28S",
+                    "item_summary": {
+                        "total_cost": 4,
+                        "total_cost_ex_gst": 3.64,
+                        "total_gst": 0.36,
+                        "status": "Created"
+                    }
+                }
+            ],
+            "shipment_summary": {
+                "total_cost": 13,
+                "total_cost_ex_gst": 11.82,
+                "fuel_surcharge": 2.15,
+                "total_gst": 1.18,
+                "manual_handling_surcharge": 7.60,
+                "status": "Created",
+                "number_of_items": 3,
+                "tracking_summary": []
+            }
+        }
+    ]
+}

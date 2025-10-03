@@ -1,0 +1,22 @@
+{
+    "name": "Karrio Data Fetching Rules",
+    "description": "Rules specific to data fetching patterns in frontend applications",
+    "match": "apps/{dashboard,web,www}/**/*.{ts,tsx}",
+    "rules": [
+        "Follow established data fetching patterns in the codebase.",
+        "Use custom hooks for encapsulating data fetching logic.",
+        "Implement proper loading, error, and success states for all data fetching operations.",
+        "Follow consistent patterns for API request structure and error handling.",
+        "Implement proper caching strategies for fetched data.",
+        "Use optimistic updates for mutations where appropriate.",
+        "Implement proper retry logic for failed requests.",
+        "Use suspense boundaries for loading states where applicable.",
+        "Follow established patterns for request cancellation.",
+        "Implement proper pagination logic for list data.",
+        "Use proper typing for API responses and request payloads.",
+        "Implement proper state management for form submissions.",
+        "Follow established patterns for authentication and authorization in API requests.",
+        "Use proper error handling and user feedback for failed requests.",
+        "Implement data prefetching where appropriate for improved user experience."
+    ]
+}
