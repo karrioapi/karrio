@@ -22,7 +22,6 @@ dependencies = [
     "karrio_server_orders",
     "karrio_server_manager",
     "karrio_server_documents",
-    "karrio_server_cloud",
     "croniter",
 ]
 

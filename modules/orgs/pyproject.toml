@@ -25,7 +25,6 @@ dependencies = [
     "karrio_server_audit",
     "karrio_server_documents",
     "karrio_server_automation",
-    "karrio_server_cloud",
 ]
 
 [project.urls]
