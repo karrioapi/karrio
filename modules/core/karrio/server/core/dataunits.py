@@ -104,30 +104,31 @@ def contextual_reference(request: Request = None, reduced: bool = True):
     }
 
     def _get_generic_carriers():
+        # Get all carriers, then filter by extension instead of hardcoded slug
         system_custom_carriers = [
-            c for c in gateway.Carriers.list(system_only=True, carrier_name="generic")
+            c for c in gateway.Carriers.list(system_only=True)
+            if c.ext == "generic"
         ]
         custom_carriers = [
             c
             for c in (
-                gateway.Carriers.list(context=request, carrier_name="generic").exclude(
-                    is_system=True
-                )
+                gateway.Carriers.list(context=request).exclude(is_system=True)
                 if is_authenticated
                 else []
             )
+            if c.ext == "generic"
         ]
 
         extra_carriers = {
-            f"{c.credentials.get('custom_carrier_name') or 'generic'}": c.display_name
+            c.carrier_code: c.display_name
             for c in custom_carriers
         }
         system_carriers = {
-            f"{c.credentials.get('custom_carrier_name') or 'generic'}": c.display_name
+            c.carrier_code: c.display_name
             for c in system_custom_carriers
         }
         extra_services = {
-            f"{c.credentials.get('custom_carrier_name') or 'generic'}": {
+            c.carrier_code: {
                 s.service_code: s.service_code
                 for s in c.services
                 or [
