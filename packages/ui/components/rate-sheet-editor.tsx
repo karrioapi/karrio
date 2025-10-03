@@ -79,6 +79,7 @@ export const RateSheetEditor = ({
   const [carrierMetadata, setCarrierMetadata] = React.useState<any[]>([]);
   const [existingRateSheets, setExistingRateSheets] = React.useState<any[]>([]);
   const [showExistingOptions, setShowExistingOptions] = React.useState(false);
+  const [zoneTextBuffers, setZoneTextBuffers] = React.useState<Record<number, Partial<Record<'country_codes' | 'cities' | 'postal_codes', string>>>>({});
 
   const rateSheet = query.data?.rate_sheet;
   const services = rateSheet?.services || [];
@@ -327,6 +328,56 @@ export const RateSheetEditor = ({
     } finally {
       loader.setLoading(false);
     }
+  };
+
+  // Helpers to manage free-typing buffers for comma-separated fields
+  const getZoneTextValue = (
+    zoneIndex: number,
+    field: 'country_codes' | 'cities' | 'postal_codes',
+    currentArray: string[] | undefined,
+  ): string => {
+    const buffered = zoneTextBuffers[zoneIndex]?.[field];
+    if (typeof buffered === 'string') return buffered;
+    return Array.isArray(currentArray) ? currentArray.join(', ') : '';
+  };
+
+  const setZoneTextValue = (
+    zoneIndex: number,
+    field: 'country_codes' | 'cities' | 'postal_codes',
+    text: string,
+  ) => {
+    setZoneTextBuffers((prev) => ({
+      ...prev,
+      [zoneIndex]: {
+        ...(prev[zoneIndex] || {}),
+        [field]: text,
+      },
+    }));
+  };
+
+  const persistZoneTextValue = (
+    zoneIndex: number,
+    field: 'country_codes' | 'cities' | 'postal_codes',
+  ) => {
+    const text = zoneTextBuffers[zoneIndex]?.[field];
+    if (text === undefined) return; // Nothing to persist
+    const values = text
+      .split(',')
+      .map((v) => v.trim())
+      .filter((v) => v.length > 0);
+    handleUpdateZoneFieldAll(zoneIndex, field, values);
+    // Clear buffer for this field so display falls back to normalized value
+    setZoneTextBuffers((prev) => {
+      const next = { ...prev } as typeof prev;
+      const zoneEntry = { ...(next[zoneIndex] || {}) };
+      delete zoneEntry[field];
+      if (Object.keys(zoneEntry).length === 0) {
+        delete next[zoneIndex];
+      } else {
+        next[zoneIndex] = zoneEntry;
+      }
+      return next;
+    });
   };
 
   const handleAddService = () => {
@@ -927,45 +978,75 @@ export const RateSheetEditor = ({
                                 <div>
                                   <Label>Country Codes (comma separated)</Label>
                                   <Input
-                                    value={(sample.country_codes || []).join(', ')}
+                                    value={getZoneTextValue(i, 'country_codes', sample.country_codes)}
                                     inputMode="text"
                                     onKeyDown={(e) => {
-                                      // Allow comma input - prevent any default blocking behavior
-                                      if (e.key === ',' || e.keyCode === 188) {
+                                      // Allow comma and space input - prevent any parent/global blocking behavior
+                                      if (e.key === ',' || e.key === ' ' || (e as any).keyCode === 188 || (e as any).keyCode === 32) {
+                                        e.stopPropagation();
+                                        const nativeEvent: any = (e as any).nativeEvent;
+                                        if (nativeEvent && typeof nativeEvent.stopImmediatePropagation === 'function') {
+                                          nativeEvent.stopImmediatePropagation();
+                                        }
+                                      }
+                                    }}
+                                    onKeyDownCapture={(e) => {
+                                      if (e.key === ',' || e.key === ' ' || (e as any).keyCode === 188 || (e as any).keyCode === 32) {
                                         e.stopPropagation();
                                       }
                                     }}
-                                    onChange={(e) => handleUpdateZoneFieldAll(i, 'country_codes', e.target.value.split(',').map(v => v.trim()).filter(Boolean))}
+                                    onChange={(e) => setZoneTextValue(i, 'country_codes', e.target.value)}
+                                    onBlur={() => persistZoneTextValue(i, 'country_codes')}
                                     placeholder="US, CA, MX"
                                   />
                                 </div>
                                 <div>
                                   <Label>Cities (comma separated)</Label>
                                   <Input
-                                    value={(sample.cities || []).join(', ')}
+                                    value={getZoneTextValue(i, 'cities', sample.cities)}
                                     inputMode="text"
                                     onKeyDown={(e) => {
-                                      // Allow comma input - prevent any default blocking behavior
-                                      if (e.key === ',' || e.keyCode === 188) {
+                                      // Allow comma and space input - prevent any parent/global blocking behavior
+                                      if (e.key === ',' || e.key === ' ' || (e as any).keyCode === 188 || (e as any).keyCode === 32) {
+                                        e.stopPropagation();
+                                        const nativeEvent: any = (e as any).nativeEvent;
+                                        if (nativeEvent && typeof nativeEvent.stopImmediatePropagation === 'function') {
+                                          nativeEvent.stopImmediatePropagation();
+                                        }
+                                      }
+                                    }}
+                                    onKeyDownCapture={(e) => {
+                                      if (e.key === ',' || e.key === ' ' || (e as any).keyCode === 188 || (e as any).keyCode === 32) {
                                         e.stopPropagation();
                                       }
                                     }}
-                                    onChange={(e) => handleUpdateZoneFieldAll(i, 'cities', e.target.value.split(',').map(v => v.trim()).filter(Boolean))}
+                                    onChange={(e) => setZoneTextValue(i, 'cities', e.target.value)}
+                                    onBlur={() => persistZoneTextValue(i, 'cities')}
                                     placeholder="New York, Toronto"
                                   />
                                 </div>
                                 <div>
                                   <Label>Postal Codes (comma separated)</Label>
                                   <Input
-                                    value={(sample.postal_codes || []).join(', ')}
+                                    value={getZoneTextValue(i, 'postal_codes', sample.postal_codes)}
                                     inputMode="text"
                                     onKeyDown={(e) => {
-                                      // Allow comma input - prevent any default blocking behavior
-                                      if (e.key === ',' || e.keyCode === 188) {
+                                      // Allow comma and space input - prevent any parent/global blocking behavior
+                                      if (e.key === ',' || e.key === ' ' || (e as any).keyCode === 188 || (e as any).keyCode === 32) {
+                                        e.stopPropagation();
+                                        const nativeEvent: any = (e as any).nativeEvent;
+                                        if (nativeEvent && typeof nativeEvent.stopImmediatePropagation === 'function') {
+                                          nativeEvent.stopImmediatePropagation();
+                                        }
+                                      }
+                                    }}
+                                    onKeyDownCapture={(e) => {
+                                      if (e.key === ',' || e.key === ' ' || (e as any).keyCode === 188 || (e as any).keyCode === 32) {
                                         e.stopPropagation();
                                       }
                                     }}
-                                    onChange={(e) => handleUpdateZoneFieldAll(i, 'postal_codes', e.target.value.split(',').map(v => v.trim()).filter(Boolean))}
+                                    onChange={(e) => setZoneTextValue(i, 'postal_codes', e.target.value)}
+                                    onBlur={() => persistZoneTextValue(i, 'postal_codes')}
                                     placeholder="10001, 94105"
                                   />
                                 </div>
