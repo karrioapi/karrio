@@ -315,20 +315,9 @@ export const RateSheetEditor = ({
         }
         const newId = (res as any)?.create_rate_sheet?.rate_sheet?.id;
         if (newId) {
-          // Switch to edit mode without closing and refresh data from server
-          setRateSheetId(newId);
-          const refreshed = await query.refetch();
-          const fresh = (refreshed.data as any)?.rate_sheet;
-          if (fresh) {
-            setLocalData({
-              name: fresh.name,
-              carrier_name: fresh.carrier_name,
-              services: [...(fresh.services || [])]
-            });
-            // Seed buffers from fresh data so text persists after save
-            setZoneTextBuffers(buildZoneTextBuffersFromServices(fresh.services || []));
-          }
-          toast({ title: "Rate Sheet Saved!" });
+          toast({ title: `${localData?.name || 'Rate Sheet'} created!` });
+          onClose();
+          return;
         }
       } else {
         // For updates, don't send carrier_name
@@ -689,7 +678,7 @@ export const RateSheetEditor = ({
               size="sm"
               className="bg-green-600 hover:bg-green-700"
             >
-              {loader.loading ? "Saving..." : "Save"}
+              {loader.loading ? (isNew ? "Creating..." : "Saving...") : (isNew ? "Create and Close" : "Save")}
             </Button>
           </header>
 
