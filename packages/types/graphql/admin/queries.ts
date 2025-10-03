@@ -265,6 +265,9 @@ export const GET_RATE_SHEET = gql`
           rate
           min_weight
           max_weight
+          cities
+          postal_codes
+          country_codes
         }
       }
       carriers {
