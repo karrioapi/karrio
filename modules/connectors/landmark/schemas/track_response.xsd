@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="TrackResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Test" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="Result">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Success" type="xs:boolean"/>
+              <xs:element name="ShipmentDetails" minOccurs="0">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="EndDeliveryCarrier" type="xs:string" minOccurs="0"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="Packages" minOccurs="0">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Package" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="TrackingNumber" type="xs:string"/>
+                          <xs:element name="LandmarkTrackingNumber" type="xs:string"/>
+                          <xs:element name="PackageReference" type="xs:string" minOccurs="0"/>
+                          <xs:element name="Events">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="Event" maxOccurs="unbounded">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element name="Status" type="xs:string"/>
+                                      <xs:element name="DateTime" type="xs:string"/>
+                                      <xs:element name="Location" type="xs:string"/>
+                                      <xs:element name="EventCode" type="xs:string"/>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

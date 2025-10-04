@@ -14,6 +14,7 @@ django-debug-toolbar
 -e ./modules/connectors/dhl_universal
 -e ./modules/connectors/fedex
 -e ./modules/connectors/generic
+-e ./modules/connectors/landmark
 -e ./modules/connectors/laposte
 -e ./modules/connectors/purolator
 -e ./modules/connectors/seko

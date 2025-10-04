@@ -182,8 +182,7 @@ class WorkspaceConfigType:
         # Create a default workspace config if none exists
         if workspace_config is None:
             workspace_config = auth.WorkspaceConfig.objects.create(
-                created_by=info.context.request.user,
-                config={}
+                created_by=info.context.request.user, config={}
             )
 
         return workspace_config
@@ -289,7 +288,7 @@ class SystemUsageType:
                 count=models.Count("id"),
                 amount=models.Sum(
                     functions.Cast("selected_rate__total_charge", models.FloatField())
-                )
+                ),
             )
             .order_by("-date")
         )
@@ -312,10 +311,20 @@ class SystemUsageType:
         total_trackers = sum([item["count"] for item in tracker_count], 0)
         total_shipments = sum([item["count"] for item in shipment_count], 0)
         order_volume = lib.to_decimal(
-            sum([item["count"] for item in order_volumes if item["count"] is not None], 0.0)
+            sum(
+                [item["count"] for item in order_volumes if item["count"] is not None],
+                0.0,
+            )
         )
         total_shipping_spend = lib.to_decimal(
-            sum([item["amount"] for item in shipping_spend if item["amount"] is not None], 0.0)
+            sum(
+                [
+                    item["amount"]
+                    for item in shipping_spend
+                    if item["amount"] is not None
+                ],
+                0.0,
+            )
         )
         user_count = User.objects.count()
         organization_count = 1
@@ -334,12 +343,30 @@ class SystemUsageType:
             total_shipments=total_shipments,
             organization_count=organization_count,
             total_shipping_spend=total_shipping_spend,
-            api_errors=[utils.UsageStatType.parse(item, label="api_errors") for item in api_errors],
-            api_requests=[utils.UsageStatType.parse(item, label="api_requests") for item in api_requests],
-            order_volumes=[utils.UsageStatType.parse(item, label="order_volumes") for item in order_volumes],
-            shipment_count=[utils.UsageStatType.parse(item, label="shipment_count") for item in shipment_count],
-            shipping_spend=[utils.UsageStatType.parse(item, label="shipping_spend") for item in shipping_spend],
-            tracker_count=[utils.UsageStatType.parse(item, label="tracker_count") for item in tracker_count],
+            api_errors=[
+                utils.UsageStatType.parse(item, label="api_errors")
+                for item in api_errors
+            ],
+            api_requests=[
+                utils.UsageStatType.parse(item, label="api_requests")
+                for item in api_requests
+            ],
+            order_volumes=[
+                utils.UsageStatType.parse(item, label="order_volumes")
+                for item in order_volumes
+            ],
+            shipment_count=[
+                utils.UsageStatType.parse(item, label="shipment_count")
+                for item in shipment_count
+            ],
+            shipping_spend=[
+                utils.UsageStatType.parse(item, label="shipping_spend")
+                for item in shipping_spend
+            ],
+            tracker_count=[
+                utils.UsageStatType.parse(item, label="tracker_count")
+                for item in tracker_count
+            ],
         )
 
 

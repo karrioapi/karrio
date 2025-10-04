@@ -7,9 +7,9 @@ source "bin/activate-env" >/dev/null 2>&1
 download_graphql_schema() {
     local endpoint="$1"
     local output_file="$2"
-    
+
     echo "Downloading GraphQL schema from $endpoint..."
-    
+
     curl -s -X POST "$endpoint" \
         -H "Content-Type: application/json" \
         -d '{
@@ -21,27 +21,27 @@ download_graphql_schema() {
 # Run server commands
 if [[ "$*" == *gen:ee* ]]; then
     cd "${ROOT:?}"
-    download_graphql_schema "http://localhost:5004/graphql/" "${ROOT:?}/schemas/graphql-ee.json"
+    download_graphql_schema "http://localhost:5002/graphql/" "${ROOT:?}/schemas/graphql-ee.json"
     cd -
 elif [[ "$*" == *gen:graph* ]]; then
     cd "${ROOT:?}"
-    download_graphql_schema "http://localhost:5004/graphql/" "${ROOT:?}/schemas/graphql.json"
+    download_graphql_schema "http://localhost:5002/graphql/" "${ROOT:?}/schemas/graphql.json"
     cd -
 elif [[ "$*" == *gen:admin* ]]; then
     cd "${ROOT:?}"
-    download_graphql_schema "http://localhost:5004/admin/graphql/" "${ROOT:?}/schemas/graphql-admin.json"
+    download_graphql_schema "http://localhost:5002/admin/graphql/" "${ROOT:?}/schemas/graphql-admin.json"
     cd -
 elif [[ "$*" == *gen:platform* ]]; then
     cd "${ROOT:?}"
-    download_graphql_schema "http://localhost:5004/admin/graphql/" "${ROOT:?}/ee/platform/schemas/graphql-platform.json"
+    download_graphql_schema "http://localhost:5002/admin/graphql/" "${ROOT:?}/ee/platform/schemas/graphql-platform.json"
     cd -
 elif [[ "$*" == *gen:openapi* ]]; then
     cd "${ROOT:?}"
-    curl http://localhost:5004/shipping-openapi -o "${ROOT:?}/schemas/openapi.yml"
+    curl http://localhost:5002/shipping-openapi -o "${ROOT:?}/schemas/openapi.yml"
     cd -
 elif [[ "$*" == *gen:ref* ]]; then
     cd "${ROOT:?}"
-    curl http://localhost:5004/v1/carriers >"${ROOT:?}/apps/web/public/carrier-integrations.json"
+    curl http://localhost:5002/v1/carriers >"${ROOT:?}/apps/web/public/carrier-integrations.json"
     cd -
 elif [[ "$*" == *gen:ts:cli* ]]; then
     cd "${ROOT:?}"

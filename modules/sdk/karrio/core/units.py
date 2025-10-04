@@ -1,6 +1,5 @@
 """Karrio universal data types and units definitions"""
 
-from ctypes import util
 import attr
 import typing
 import numbers
@@ -594,6 +593,10 @@ class Product(models.Commodity):
             return 1
 
         return _quantity
+
+    @property
+    def metadata(self) -> dict:
+        return self.item.metadata or dict()
 
 
 class Products(typing.Iterable[Product]):

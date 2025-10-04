@@ -323,6 +323,26 @@ class CommodityData(serializers.Serializer):
         choices=COUNTRIES,
         help_text="The origin or manufacture country",
     )
+    product_url = serializers.CharField(
+        required=False,
+        allow_null=True,
+        help_text="The product url",
+    )
+    image_url = serializers.CharField(
+        required=False,
+        allow_null=True,
+        help_text="The image url",
+    )
+    product_id = serializers.CharField(
+        required=False,
+        allow_null=True,
+        help_text="The product id",
+    )
+    variant_id = serializers.CharField(
+        required=False,
+        allow_null=True,
+        help_text="The variant id",
+    )
     parent_id = serializers.CharField(
         required=False,
         allow_null=True,

@@ -1,0 +1,1580 @@
+Landmark Global Docs Metadata
+
+·       Client ID: 9999
+
+·       AccountNumber: xxxx
+
+·       Region  : Client UK
+
+·       State element in ‘ShipTo’ is mandatory for US
+
+·       ShipMethod:
+
+·              LGINTSTD: MaxiPak Scan DDP shipments
+
+·              LGINTSTDU: MaxiPak Scan DDU shipments
+
+·              LGINTBPIP: MiniPak Scan DDP shipments(EU ONLY)
+
+·              LGINTBPIU: MiniPak Scan DDU shipments(EU & ROW)
+
+·       ShipmentInsuranceFreight: cost of shipping charged to the client and potential insurance
+
+·       Item details: mandatory
+
+·       Vendor details: mandatory for consolidators
+
+·       ShipRequest API documentation- ShipRequest API - API Documentation (landmarkglobal.com)
+
+·       ImportRequest API documentation- ImportRequest API - API Documentation (landmarkglobal.com)
+
+·       Tracking API documentation:  Track API Request - API Documentation (landmarkglobal.com)
+
+
+
+Possible tracking status codes include:
+50    Shipment Data Uploaded
+60    Shipment inventory allocated
+75    Shipment Processed80    Shipment Fulfilled
+90    Shipment held for payment
+100    Shipment information transmitted to carrier
+125    Customs Cleared
+135    Customs Issue
+150    Crossing Border
+155    Crossing Received
+200    Item scanned at postal facility
+225    Item grouped at Landmark or partner facility
+250    Item scanned for crossing
+275    Item in transit with carrier
+300    Item out for delivery
+400    Attempted delivery
+410    Item available for pickup
+450    Item re-directed to new address
+500    Item successfully delivered
+510    Proof Of Delivery
+550    Return received at handling facility
+570    Return Received
+800    Claim Issued
+900    Delivery failed
+
+
+⸻
+
+Landmark Global ImportRequest Schema (XSD)
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+  <xs:element name="ImportRequest">
+    <xs:complexType>
+      <xs:sequence>
+
+        <!-- Authentication -->
+        <xs:element name="Login">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Username" type="xs:string"/>
+              <xs:element name="Password" type="xs:string"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Test" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="ClientID" type="xs:string"/>
+        <xs:element name="AccountNumber" type="xs:string" minOccurs="0"/>
+        <xs:element name="Reference" type="xs:string"/>
+
+        <!-- ShipTo -->
+        <xs:element name="ShipTo">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Name" type="xs:string"/>
+              <xs:element name="Attention" type="xs:string" minOccurs="0"/>
+              <xs:element name="Address1" type="xs:string"/>
+              <xs:element name="Address2" type="xs:string" minOccurs="0"/>
+              <xs:element name="Address3" type="xs:string" minOccurs="0"/>
+              <xs:element name="City" type="xs:string"/>
+              <xs:element name="State" type="xs:string"/>
+              <xs:element name="PostalCode" type="xs:string"/>
+              <xs:element name="Country" type="xs:string"/>
+              <xs:element name="Phone" type="xs:string" minOccurs="0"/>
+              <xs:element name="Email" type="xs:string" minOccurs="0"/>
+              <xs:element name="ConsigneeTaxID" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- Shipping -->
+        <xs:element name="ShippingLane">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Region" type="xs:string"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ShipMethod" type="xs:string"/>
+        <xs:element name="OrderTotal" type="xs:decimal" minOccurs="0"/>
+        <xs:element name="OrderInsuranceFreightTotal" type="xs:decimal" minOccurs="0"/>
+        <xs:element name="ShipmentInsuranceFreight" type="xs:decimal" minOccurs="0"/>
+        <xs:element name="ItemsCurrency" type="xs:string" minOccurs="0"/>
+        <xs:element name="IsCommercialShipment" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="ProduceLabel" type="xs:boolean" minOccurs="0"/>
+
+        <xs:element name="LabelFormat" minOccurs="0">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="PDF"/>
+              <xs:enumeration value="JPG"/>
+              <xs:enumeration value="GIF"/>
+              <xs:enumeration value="BMP"/>
+              <xs:enumeration value="ZPL"/>
+              <xs:enumeration value="PNG"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+
+        <xs:element name="LabelEncoding" minOccurs="0">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="LINKS"/>
+              <xs:enumeration value="ZPL"/>
+              <xs:enumeration value="BASE64"/>
+              <xs:enumeration value="BASE64COMPRESSED"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+
+        <!-- Ship Options -->
+        <xs:element name="ShipOptions" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Option" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Name" type="xs:string"/>
+                    <xs:element name="Value" type="xs:string"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- Vendor -->
+        <xs:element name="VendorInformation" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="VendorName" type="xs:string"/>
+              <xs:element name="VendorPhone" type="xs:string"/>
+              <xs:element name="VendorEmail" type="xs:string"/>
+              <xs:element name="VendorAddress1" type="xs:string"/>
+              <xs:element name="VendorAddress2" type="xs:string" minOccurs="0"/>
+              <xs:element name="VendorCity" type="xs:string"/>
+              <xs:element name="VendorState" type="xs:string"/>
+              <xs:element name="VendorPostalCode" type="xs:string"/>
+              <xs:element name="VendorCountry" type="xs:string"/>
+              <xs:element name="VendorLowValueTaxID" type="xs:string" minOccurs="0"/>
+              <xs:element name="VendorCCN" type="xs:string" minOccurs="0"/>
+              <xs:element name="VendorBusinessNumber" type="xs:string" minOccurs="0"/>
+              <xs:element name="VendorRGRNumber" type="xs:string" minOccurs="0"/>
+              <xs:element name="VendorIOSSNumber" type="xs:string" minOccurs="0"/>
+              <xs:element name="VendorEORINumber" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- Fulfillment & Returns -->
+        <xs:element name="FulfillmentAddress" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Name" type="xs:string"/>
+              <xs:element name="Attention" type="xs:string" minOccurs="0"/>
+              <xs:element name="Address1" type="xs:string"/>
+              <xs:element name="Address2" type="xs:string" minOccurs="0"/>
+              <xs:element name="Address3" type="xs:string" minOccurs="0"/>
+              <xs:element name="City" type="xs:string"/>
+              <xs:element name="State" type="xs:string"/>
+              <xs:element name="PostalCode" type="xs:string"/>
+              <xs:element name="Country" type="xs:string"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="SendReturnToAddress" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Code" type="xs:string" minOccurs="0"/>
+              <xs:element name="Name" type="xs:string"/>
+              <xs:element name="Attention" type="xs:string" minOccurs="0"/>
+              <xs:element name="Address1" type="xs:string"/>
+              <xs:element name="Address2" type="xs:string" minOccurs="0"/>
+              <xs:element name="Address3" type="xs:string" minOccurs="0"/>
+              <xs:element name="City" type="xs:string"/>
+              <xs:element name="State" type="xs:string"/>
+              <xs:element name="PostalCode" type="xs:string"/>
+              <xs:element name="Country" type="xs:string"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- Additional Fields -->
+        <xs:element name="AdditionalFields" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Field1" type="xs:string" minOccurs="0"/>
+              <xs:element name="Field2" type="xs:string" minOccurs="0"/>
+              <xs:element name="Field3" type="xs:string" minOccurs="0"/>
+              <xs:element name="Field4" type="xs:string" minOccurs="0"/>
+              <xs:element name="Field5" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- PickSlip -->
+        <xs:element name="PickSlipAdditions" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Charges" minOccurs="0">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Charge" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Description" type="xs:string"/>
+                          <xs:element name="Value" type="xs:decimal"/>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="Memos" minOccurs="0">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Memo" type="xs:string" maxOccurs="unbounded"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- VAS -->
+        <xs:element name="ValueAddedServices" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Request" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Type" type="xs:string"/>
+                    <xs:element name="Instructions" minOccurs="0">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Instruction" type="xs:string" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- Packages -->
+        <xs:element name="Packages" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Package" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="WeightUnit">
+                      <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                          <xs:enumeration value="LB"/>
+                          <xs:enumeration value="KG"/>
+                          <xs:enumeration value="G"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="Weight" type="xs:decimal"/>
+                    <xs:element name="DimensionsUnit" minOccurs="0">
+                      <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                          <xs:enumeration value="IN"/>
+                          <xs:enumeration value="CM"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="Length" type="xs:decimal" minOccurs="0"/>
+                    <xs:element name="Width" type="xs:decimal" minOccurs="0"/>
+                    <xs:element name="Height" type="xs:decimal" minOccurs="0"/>
+                    <xs:element name="PackageReference" type="xs:string" minOccurs="0"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- Items -->
+        <xs:element name="Items" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Item" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Sku" type="xs:string"/>
+                    <xs:element name="LineNumber" type="xs:string" minOccurs="0"/>
+                    <xs:element name="Quantity" type="xs:decimal"/>
+                    <xs:element name="UnitPrice" type="xs:decimal"/>
+                    <xs:element name="Description" type="xs:string"/>
+                    <xs:element name="HSCode" type="xs:string" minOccurs="0"/>
+                    <xs:element name="CountryOfOrigin" type="xs:string" minOccurs="0"/>
+                    <xs:element name="URL" type="xs:string" minOccurs="0"/>
+                    <xs:element name="USMID" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ContentCategory" minOccurs="0">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="ReturnCustomsInfo" minOccurs="0">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="HSCode" type="xs:string"/>
+                                <xs:element name="HSRegionCode" type="xs:string"/>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="DangerousGoodsInformation" minOccurs="0">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="ContainsDangerousGoods" type="xs:boolean"/>
+                                <xs:element name="UNCode" type="xs:string"/>
+                                <xs:element name="PackingGroup" type="xs:string" minOccurs="0"/>
+                                <xs:element name="PackingInstructions" type="xs:string" minOccurs="0"/>
+                                <xs:element name="ItemWeight" type="xs:decimal"/>
+                                <xs:element name="ItemWeightUnit" type="xs:string"/>
+                                <xs:element name="ItemVolume" type="xs:decimal" minOccurs="0"/>
+                                <xs:element name="ItemVolumeUnit" type="xs:string" minOccurs="0"/>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="ValueAddedServices" minOccurs="0">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="Request" maxOccurs="unbounded">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element name="Type" type="xs:string"/>
+                                      <xs:element name="Instructions" minOccurs="0">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="Instruction" type="xs:string" maxOccurs="unbounded"/>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- Freight -->
+        <xs:element name="FreightDetails" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ProNumber" type="xs:string"/>
+              <xs:element name="PieceUnit" type="xs:string"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>
+
+Request sample:
+
+<ImportRequest>
+	<Login>
+		<Username>demoapi</Username>
+		<Password>demo123</Password>
+	</Login>
+	<Test>true</Test>
+	<ClientID>218</ClientID>
+	<AccountNumber>L0218A</AccountNumber>
+	<Reference>3245325</Reference>
+
+	<ShipTo>
+		<Name>John Doe</Name>
+		<Attention>Purchasing Dept.</Attention>
+		<Address1>1600 Amphitheatre Parkway</Address1>
+		<City>Mountain View</City>
+		<State>CA</State>
+		<PostalCode>94043</PostalCode>
+		<Country>US</Country>
+		<Phone>14085551234</Phone>
+		<Email>orders@example.com</Email>
+	</ShipTo>
+
+	<ShippingLane>
+		<Region>Landmark CMH</Region>
+	</ShippingLane>
+	<ShipMethod>LGINTSTD</ShipMethod>
+
+	<OrderTotal>187.98</OrderTotal>
+	<OrderInsuranceFreightTotal>20.65</OrderInsuranceFreightTotal>
+	<ShipmentInsuranceFreight>20.65</ShipmentInsuranceFreight>
+	<ItemsCurrency>USD</ItemsCurrency>
+	<IsCommercialShipment>0</IsCommercialShipment>
+	<ProduceLabel>false</ProduceLabel>
+	<LabelFormat>PDF</LabelFormat>
+	<LabelEncoding>LINKS</LabelEncoding>
+
+	<ShipOptions>
+		<Option>
+			<Name>dummy_option</Name>
+			<Value>true</Value>
+		</Option>
+	</ShipOptions>
+
+	<VendorInformation>
+		<VendorName>Acme Retail Inc</VendorName>
+		<VendorPhone>12125551234</VendorPhone>
+		<VendorEmail>contact@acme.com</VendorEmail>
+		<VendorAddress1>123 Main Street</VendorAddress1>
+		<VendorCity>New York</VendorCity>
+		<VendorState>NY</VendorState>
+		<VendorPostalCode>10001</VendorPostalCode>
+		<VendorCountry>US</VendorCountry>
+	</VendorInformation>
+
+	<FulfillmentAddress>
+		<Name>Acme Warehouse</Name>
+		<Attention>Returns Dept.</Attention>
+		<Address1>500 Terry A Francois Blvd</Address1>
+		<City>San Francisco</City>
+		<State>CA</State>
+		<PostalCode>94158</PostalCode>
+		<Country>US</Country>
+	</FulfillmentAddress>
+
+	<SendReturnToAddress>
+		<Code>RET01</Code>
+		<Name>Acme Warehouse Returns</Name>
+		<Attention>Returns Dept.</Attention>
+		<Address1>500 Terry A Francois Blvd</Address1>
+		<City>San Francisco</City>
+		<State>CA</State>
+		<PostalCode>94158</PostalCode>
+		<Country>US</Country>
+	</SendReturnToAddress>
+
+	<AdditionalFields>
+		<Field1>Any type of data</Field1>
+		<Field2>Purchased with Credit Card</Field2>
+	</AdditionalFields>
+
+	<PickSlipAdditions>
+		<Charges>
+			<Charge>
+				<Description>Sales Tax</Description>
+				<Value>15.00</Value>
+			</Charge>
+		</Charges>
+		<Memos>
+			<Memo>Thank you for your order!</Memo>
+		</Memos>
+	</PickSlipAdditions>
+
+	<Packages>
+		<Package>
+			<WeightUnit>LB</WeightUnit>
+			<Weight>4.5</Weight>
+			<DimensionsUnit>IN</DimensionsUnit>
+			<Length>12</Length>
+			<Width>12</Width>
+			<Height>12</Height>
+			<PackageReference>98233310</PackageReference>
+		</Package>
+	</Packages>
+
+	<Items>
+		<Item>
+			<Sku>7224059</Sku>
+			<LineNumber>1</LineNumber>
+			<Quantity>2</Quantity>
+			<UnitPrice>93.99</UnitPrice>
+			<Description>Women's Shoes</Description>
+			<HSCode>6403993000</HSCode>
+			<CountryOfOrigin>CN</CountryOfOrigin>
+			<USMID>CNZHOEAS3ZHON</USMID>
+			<ContentCategory>
+				<ReturnCustomsInfo>
+					<HSCode>6403993000</HSCode>
+					<HSRegionCode>US</HSRegionCode>
+				</ReturnCustomsInfo>
+			</ContentCategory>
+		</Item>
+	</Items>
+
+	<FreightDetails>
+		<ProNumber>LGBR020409E</ProNumber>
+		<PieceUnit>Pallet</PieceUnit>
+	</FreightDetails>
+</ImportRequest>
+
+Response sample:
+
+<?xml version="1.0"?>
+<ImportResponse>
+	<Result>
+		<Success>true</Success>
+		<ResultMessage>Shipment 3245325 successfully created</ResultMessage>
+		<Packages>
+			<Package>
+				<TrackingNumber>LTNtest46539068N1</TrackingNumber>
+				<LandmarkTrackingNumber>LTNtest46539068N1</LandmarkTrackingNumber>
+				<PackageReference>98233310</PackageReference>
+			</Package>
+		</Packages>
+	</Result>
+</ImportResponse>
+
+
+Error response sample:
+
+<?xml version="1.0"?>
+<ImportResponse>
+	<Result>
+		<Success>false</Success>
+		<ResultMessage>See Errors element for error details</ResultMessage>
+	</Result>
+	<Errors>
+		<Error>
+			<ErrorCode>invalid_vas</ErrorCode>
+			<ErrorMessage>Value Added Services support is disabled for this client, so the ValueAddedServices tag is not allowed. To enable Value Added Services, contact your account manager.</ErrorMessage>
+		</Error>
+		<Error>
+			<ErrorCode>LineNumber-1</ErrorCode>
+			<ErrorMessage>LineNumber PAU7830 is not numeric in Item element 1</ErrorMessage>
+		</Error>
+	</Errors>
+</ImportResponse>
+
+⸻
+
+Landmark Global XSD Schema for ShipRequest
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+  <xs:element name="ShipRequest">
+    <xs:complexType>
+      <xs:sequence>
+
+        <!-- Authentication -->
+        <xs:element name="Login">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Username" type="xs:string"/>
+              <xs:element name="Password" type="xs:string"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="Test" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="ClientID" type="xs:string"/>
+        <xs:element name="AccountNumber" type="xs:string" minOccurs="0"/>
+        <xs:element name="Reference" type="xs:string"/>
+
+        <!-- ShipTo -->
+        <xs:element name="ShipTo">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Name" type="xs:string"/>
+              <xs:element name="Attention" type="xs:string" minOccurs="0"/>
+              <xs:element name="Address1" type="xs:string"/>
+              <xs:element name="Address2" type="xs:string" minOccurs="0"/>
+              <xs:element name="Address3" type="xs:string" minOccurs="0"/>
+              <xs:element name="City" type="xs:string"/>
+              <xs:element name="State" type="xs:string"/>
+              <xs:element name="PostalCode" type="xs:string"/>
+              <xs:element name="Country" type="xs:string"/>
+              <xs:element name="Phone" type="xs:string" minOccurs="0"/>
+              <xs:element name="Email" type="xs:string" minOccurs="0"/>
+              <xs:element name="ConsigneeTaxID" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- Shipping Lane -->
+        <xs:element name="ShippingLane" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Region" type="xs:string"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="ShipMethod" type="xs:string"/>
+        <xs:element name="OrderTotal" type="xs:decimal" minOccurs="0"/>
+        <xs:element name="OrderInsuranceFreightTotal" type="xs:decimal" minOccurs="0"/>
+        <xs:element name="ShipmentInsuranceFreight" type="xs:decimal" minOccurs="0"/>
+        <xs:element name="ItemsCurrency" type="xs:string"/>
+        <xs:element name="IsCommercialShipment" type="xs:boolean" minOccurs="0"/>
+
+        <xs:element name="LabelFormat" minOccurs="0">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="PDF"/>
+              <xs:enumeration value="JPG"/>
+              <xs:enumeration value="GIF"/>
+              <xs:enumeration value="BMP"/>
+              <xs:enumeration value="PNG"/>
+              <xs:enumeration value="ZPL"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+
+        <xs:element name="LabelDPI" minOccurs="0">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="203"/>
+              <xs:enumeration value="300"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+
+        <xs:element name="LabelEncoding" minOccurs="0">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="LINKS"/>
+              <xs:enumeration value="BASE64"/>
+              <xs:enumeration value="BASE64COMPRESSED"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+
+        <!-- Ship Options -->
+        <xs:element name="ShipOptions" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Option" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Name" type="xs:string"/>
+                    <xs:element name="Value" type="xs:string"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- Vendor Information -->
+        <xs:element name="VendorInformation" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="VendorName" type="xs:string"/>
+              <xs:element name="VendorPhone" type="xs:string"/>
+              <xs:element name="VendorEmail" type="xs:string"/>
+              <xs:element name="VendorAddress1" type="xs:string"/>
+              <xs:element name="VendorAddress2" type="xs:string" minOccurs="0"/>
+              <xs:element name="VendorCity" type="xs:string"/>
+              <xs:element name="VendorState" type="xs:string"/>
+              <xs:element name="VendorPostalCode" type="xs:string"/>
+              <xs:element name="VendorCountry" type="xs:string"/>
+              <xs:element name="VendorLowValueTaxID" type="xs:string" minOccurs="0"/>
+              <xs:element name="VendorCCN" type="xs:string" minOccurs="0"/>
+              <xs:element name="VendorBusinessNumber" type="xs:string" minOccurs="0"/>
+              <xs:element name="VendorRGRNumber" type="xs:string" minOccurs="0"/>
+              <xs:element name="VendorIOSSNumber" type="xs:string" minOccurs="0"/>
+              <xs:element name="VendorEORINumber" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- Return Information -->
+        <xs:element name="ReturnInformation" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="OutboundShipment" minOccurs="0">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Reference" type="xs:string" minOccurs="0"/>
+                    <xs:element name="TrackingNumber" type="xs:string" minOccurs="0"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="Condition" type="xs:string" minOccurs="0"/>
+              <xs:element name="RMANumber" type="xs:string" minOccurs="0"/>
+              <xs:element name="Notes" type="xs:string" minOccurs="0"/>
+              <xs:element name="Reason" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- Fulfillment & Return Addresses -->
+        <xs:element name="FulfillmentAddress" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Name" type="xs:string"/>
+              <xs:element name="Attention" type="xs:string" minOccurs="0"/>
+              <xs:element name="Address1" type="xs:string"/>
+              <xs:element name="Address2" type="xs:string" minOccurs="0"/>
+              <xs:element name="Address3" type="xs:string" minOccurs="0"/>
+              <xs:element name="City" type="xs:string"/>
+              <xs:element name="State" type="xs:string"/>
+              <xs:element name="PostalCode" type="xs:string"/>
+              <xs:element name="Country" type="xs:string"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="SendReturnToAddress" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Code" type="xs:string" minOccurs="0"/>
+              <xs:element name="Name" type="xs:string"/>
+              <xs:element name="Attention" type="xs:string" minOccurs="0"/>
+              <xs:element name="Address1" type="xs:string"/>
+              <xs:element name="Address2" type="xs:string" minOccurs="0"/>
+              <xs:element name="Address3" type="xs:string" minOccurs="0"/>
+              <xs:element name="City" type="xs:string"/>
+              <xs:element name="State" type="xs:string"/>
+              <xs:element name="PostalCode" type="xs:string"/>
+              <xs:element name="Country" type="xs:string"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- Additional Fields -->
+        <xs:element name="AdditionalFields" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Field1" type="xs:string" minOccurs="0"/>
+              <xs:element name="Field2" type="xs:string" minOccurs="0"/>
+              <xs:element name="Field3" type="xs:string" minOccurs="0"/>
+              <xs:element name="Field4" type="xs:string" minOccurs="0"/>
+              <xs:element name="Field5" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- Packages -->
+        <xs:element name="Packages" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Package" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="WeightUnit">
+                      <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                          <xs:enumeration value="LB"/>
+                          <xs:enumeration value="KG"/>
+                          <xs:enumeration value="G"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="Weight" type="xs:decimal"/>
+                    <xs:element name="DimensionsUnit" minOccurs="0">
+                      <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                          <xs:enumeration value="IN"/>
+                          <xs:enumeration value="CM"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="Length" type="xs:decimal" minOccurs="0"/>
+                    <xs:element name="Width" type="xs:decimal" minOccurs="0"/>
+                    <xs:element name="Height" type="xs:decimal" minOccurs="0"/>
+                    <xs:element name="PackageReference" type="xs:string" minOccurs="0"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- Items -->
+        <xs:element name="Items">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Item" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Sku" type="xs:string"/>
+                    <xs:element name="DangerousGoodsInformation" minOccurs="0">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="ContainsDangerousGoods" type="xs:boolean"/>
+                          <xs:element name="UNCode" type="xs:string"/>
+                          <xs:element name="PackingGroup" type="xs:string" minOccurs="0"/>
+                          <xs:element name="PackingInstructions" type="xs:string" minOccurs="0"/>
+                          <xs:element name="ItemWeight" type="xs:decimal"/>
+                          <xs:element name="ItemWeightUnit" type="xs:string"/>
+                          <xs:element name="ItemVolume" type="xs:decimal" minOccurs="0"/>
+                          <xs:element name="ItemVolumeUnit" type="xs:string" minOccurs="0"/>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Quantity" type="xs:decimal"/>
+                    <xs:element name="UnitPrice" type="xs:decimal"/>
+                    <xs:element name="Description" type="xs:string"/>
+                    <xs:element name="HSCode" type="xs:string" minOccurs="0"/>
+                    <xs:element name="CountryOfOrigin" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ContentCategory" type="xs:string" minOccurs="0"/>
+                    <xs:element name="URL" type="xs:string" minOccurs="0"/>
+                    <xs:element name="USMID" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ReturnCustomsInfo" minOccurs="0">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="HSCode" type="xs:string"/>
+                          <xs:element name="HSRegionCode" type="xs:string"/>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- Freight -->
+        <xs:element name="FreightDetails" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ProNumber" type="xs:string"/>
+              <xs:element name="PieceUnit" type="xs:string"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>
+
+
+Request sample:
+
+<ShipRequest>
+	<Login>
+		<Username>demoapi</Username>
+		<Password>demo123</Password>
+	</Login>
+	<Test>true</Test>
+	<ClientID>218</ClientID>
+	<AccountNumber>L0218A</AccountNumber>
+	<Reference>TEST-ORDER-001</Reference>
+
+	<ShipTo>
+		<Name>Jane Smith</Name>
+		<Attention>Purchasing Dept.</Attention>
+		<Address1>1600 Amphitheatre Parkway</Address1>
+		<City>Mountain View</City>
+		<State>CA</State>
+		<PostalCode>94043</PostalCode>
+		<Country>US</Country>
+		<Phone>14085551234</Phone>
+		<Email>jane.smith@example.com</Email>
+	</ShipTo>
+
+	<ShippingLane>
+		<Region>Landmark CMH</Region>
+	</ShippingLane>
+	<ShipMethod>LGINTSTD</ShipMethod>
+
+	<OrderTotal>187.98</OrderTotal>
+	<OrderInsuranceFreightTotal>20.65</OrderInsuranceFreightTotal>
+	<ShipmentInsuranceFreight>20.65</ShipmentInsuranceFreight>
+	<ItemsCurrency>USD</ItemsCurrency>
+	<IsCommercialShipment>0</IsCommercialShipment>
+	<LabelFormat>PDF</LabelFormat>
+	<LabelEncoding>LINKS</LabelEncoding>
+
+	<Packages>
+		<Package>
+			<WeightUnit>LB</WeightUnit>
+			<Weight>4.5</Weight>
+			<DimensionsUnit>IN</DimensionsUnit>
+			<Length>12</Length>
+			<Width>12</Width>
+			<Height>12</Height>
+			<PackageReference>PKG-001</PackageReference>
+		</Package>
+	</Packages>
+
+	<Items>
+		<Item>
+			<Sku>7224059</Sku>
+			<Quantity>2</Quantity>
+			<UnitPrice>93.99</UnitPrice>
+			<Description>Women's Shoes</Description>
+			<HSCode>6403993000</HSCode>
+			<CountryOfOrigin>CN</CountryOfOrigin>
+			<USMID>CNZHOEAS3ZHON</USMID>
+			<ReturnCustomsInfo>
+				<HSCode>6403993000</HSCode>
+				<HSRegionCode>US</HSRegionCode>
+			</ReturnCustomsInfo>
+		</Item>
+	</Items>
+
+	<FreightDetails>
+		<ProNumber>LGBR020409E</ProNumber>
+		<PieceUnit>Pallet</PieceUnit>
+	</FreightDetails>
+</ShipRequest>
+
+Response sample:
+
+<?xml version="1.0"?>
+<ShipResponse>
+	<Result>
+		<Success>true</Success>
+		<ResultMessage>Shipment TEST-ORDER-001 successfully created and processed</ResultMessage>
+		<ShipmentLabelLink>https://api.landmarkglobal.com/download/get-label.php?hid=sf3SloC8b0e%2FP%2FX1qj9gOKYN%2B29O_rhMinI3WO0Cgto4I</ShipmentLabelLink>
+		<Packages>
+			<Package>
+				<LabelLink>https://api.landmarkglobal.com/download/get-label.php?hid=WqiYSjywKe6KBVyWh8jHFhFW9NSBXxcJf%2BDMVWhF_4vyh0soLwuorxAdA</LabelLink>
+				<TrackingNumber>8724720680</TrackingNumber>
+				<LandmarkTrackingNumber>LTN_test69944547N1</LandmarkTrackingNumber>
+				<PackageID>xxx1</PackageID>
+				<BarcodeData>xxx492104000000412001</BarcodeData>
+				<PackageReference>PKG-001</PackageReference>
+			</Package>
+		</Packages>
+	</Result>
+</ShipResponse>
+
+⸻
+
+Landmark Global XSD Schema for CancelRequest
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+  <xs:element name="CancelRequest">
+    <xs:complexType>
+      <xs:sequence>
+
+        <!-- Authentication -->
+        <xs:element name="Login">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Username" type="xs:string"/>
+              <xs:element name="Password" type="xs:string"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- General fields -->
+        <xs:element name="Test" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="ClientID" type="xs:string" minOccurs="0"/>
+
+        <!-- Identification -->
+        <!-- Either Reference OR TrackingNumber is required, but not both -->
+        <xs:element name="Reference" type="xs:string" minOccurs="0"/>
+        <xs:element name="TrackingNumber" type="xs:string" minOccurs="0"/>
+
+        <!-- Cancel options -->
+        <xs:element name="DeleteShipment" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="Reason" type="xs:string" minOccurs="0"/>
+
+      </xs:sequence>
+    </xs:complexType>
+
+    <!-- Enforce either Reference OR TrackingNumber -->
+    <xs:assert test="(exists(Reference) and not(exists(TrackingNumber))) or (exists(TrackingNumber) and not(exists(Reference)))"/>
+
+  </xs:element>
+
+</xs:schema>
+
+
+Request sample:
+
+<CancelRequest>
+	<Login>
+		<Username>demoapi</Username>
+		<Password>demo123</Password>
+	</Login>
+	<Test>true</Test>
+	<ClientID>218</ClientID>
+	<!-- Using TrackingNumber only -->
+	<TrackingNumber>7237529100002194</TrackingNumber>
+	<DeleteShipment>true</DeleteShipment>
+	<Reason>Consignee canceled shipment.</Reason>
+</CancelRequest>
+
+Response sample:
+
+<?xml version="1.0"?>
+<CancelResponse>
+	<Test>true</Test>
+	<Result>
+		<Success>true</Success>
+		<ResultMessage>Successfully unprocessed shipment 1234</ResultMessage>
+	</Result>
+</CancelResponse>
+
+Response with error:
+
+<?xml version="1.0"?>
+<CancelResponse>
+	<Test>true</Test>
+	<Result>
+		<Success>false</Success>
+		<ResultMessage>See Errors element for error details</ResultMessage>
+	</Result>
+	<Errors>
+		<Error>
+			<ErrorCode>unprocess</ErrorCode>
+			<ErrorMessage>Already assigned to Shipment Group</ErrorMessage>
+		</Error>
+	</Errors>
+</CancelResponse>
+
+
+⸻
+
+Landmark Global XSD Schema for TrackRequest
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+  <xs:element name="TrackRequest">
+    <xs:complexType>
+      <xs:sequence>
+
+        <!-- Authentication -->
+        <xs:element name="Login">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Username" type="xs:string"/>
+              <xs:element name="Password" type="xs:string"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- General -->
+        <xs:element name="Test" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="ClientID" type="xs:string" minOccurs="0"/>
+
+        <!-- Identification -->
+        <!-- Reference OR TrackingNumber OR PackageReference is required (but not all three) -->
+        <xs:element name="Reference" type="xs:string" minOccurs="0"/>
+        <xs:element name="TrackingNumber" type="xs:string" minOccurs="0"/>
+        <xs:element name="PackageReference" type="xs:string" minOccurs="0"/>
+
+        <!-- Retrieval Type -->
+        <xs:element name="RetrievalType" minOccurs="0">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="Last"/>        <!-- Default if omitted -->
+              <xs:enumeration value="Historical"/> <!-- Return full history -->
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+
+      </xs:sequence>
+    </xs:complexType>
+
+    <!-- Rule: one of Reference OR TrackingNumber OR PackageReference is required -->
+    <xs:assert test="count((Reference[normalize-space()], TrackingNumber[normalize-space()], PackageReference[normalize-space()])) = 1"/>
+
+  </xs:element>
+</xs:schema>
+
+
+Valid Test Request:
+
+<TrackRequest>
+	<Login>
+		<Username>demoapi</Username>
+		<Password>demo123</Password>
+	</Login>
+	<Test>true</Test>
+	<ClientID>218</ClientID>
+	<TrackingNumber>LTN123121</TrackingNumber>
+	<RetrievalType>Historical</RetrievalType>
+</TrackRequest>
+
+
+Alternative Minimal Request:
+
+Using Reference instead:
+
+<TrackRequest>
+	<Login>
+		<Username>demoapi</Username>
+		<Password>demo123</Password>
+	</Login>
+	<ClientID>218</ClientID>
+	<Reference>ORDER-3245325</Reference>
+</TrackRequest>
+
+
+Response sample:
+
+<?xml version="1.0"?>
+<TrackResponse>
+	<Test>true</Test>
+	<Result>
+		<Success>true</Success>
+		<ShipmentDetails>
+			<EndDeliveryCarrier>Sample Carrier</EndDeliveryCarrier>
+		</ShipmentDetails>
+		<Packages>
+			<Package>
+				<TrackingNumber>LTN123121</TrackingNumber>
+				<LandmarkTrackingNumber>LTN38570269N1</LandmarkTrackingNumber>
+				<PackageReference></PackageReference>
+				<Events>
+					<Event>
+						<Status>Customs Clearance in Progress</Status>
+						<DateTime>10/01/2025 03:02 PM</DateTime>
+						<Location>Anytown, US</Location>
+						<EventCode>250</EventCode>
+					</Event>
+				</Events>
+			</Package>
+			<Package>
+				<TrackingNumber>3292421</TrackingNumber>
+				<LandmarkTrackingNumber>LTN38570269N2</LandmarkTrackingNumber>
+				<PackageReference></PackageReference>
+				<Events>
+					<Event>
+						<Status>US in Transit</Status>
+						<DateTime>10/01/2025 03:02 PM</DateTime>
+						<Location>Anytown, US</Location>
+						<EventCode>200</EventCode>
+					</Event>
+				</Events>
+			</Package>
+		</Packages>
+	</Result>
+</TrackResponse>
+
+Error response sample:
+
+<?xml version="1.0"?>
+<TrackResponse>
+	<Result>
+		<Success>false</Success>
+		<ResultMessage>See Errors element for error details</ResultMessage>
+	</Result>
+	<Errors>
+		<Error>
+			<ErrorCode>Login</ErrorCode>
+			<ErrorMessage>The username/password combination provided is invalid.</ErrorMessage>
+		</Error>
+	</Errors>
+</TrackResponse>
+
+
+⸻
+
+requests examples:
+
+curl --request POST \
+  --url https://api.landmarkglobal.com/v2/Import.php \
+  --header 'Content-Type: application/xml' \
+  --header 'User-Agent: insomnia/11.5.0' \
+  --data '<ImportRequest>
+	<Login>
+		<Username>demoapi</Username>
+		<Password>demo123</Password>
+	</Login>
+	<Test>true</Test>
+	<!-- Optional. Defaults to true before account activation, false afterwards -->
+	<ClientID>218</ClientID>
+	<AccountNumber>L0218A</AccountNumber>
+	<!--Optional. Only used by clients with multiple account numbers. See integration manager for relevant account numbers -->
+	<Reference>3245325</Reference>
+	<!-- Customer Reference, or Order Number. Primary shipment identifier -->
+	<ShipTo>
+		<Name>Test Company</Name>
+		<!-- Max 50 characters -->
+		<Attention>Ole Olsen</Attention>
+		<!-- Optional. Max 50 characters -->
+		<Address1>5130 Halford Drive</Address1>
+		<!-- Max 60 characters -->
+		<Address2>Building #C</Address2>
+		<!-- Optional. Max 60 characters -->
+		<Address3>Unit 1</Address3>
+		<!-- Optional. Max 60 characters -->
+		<City>Windsor</City>
+		<!-- Max 40 characters -->
+		<State>ON</State>
+		<!-- ISO-3166-2 code -->
+		<PostalCode>N9A6J3</PostalCode>
+		<!-- Max 10 characters -->
+		<Country>CA</Country>
+		<!-- Use ISO-3166-2 standard -->
+		<Phone>1-519-737-9101</Phone>
+		<!-- Optional, but encouraged. Max 20 characters -->
+		<Email>orders@test.com</Email>
+		<!-- Optional. Max 80 characters -->
+		<ConsigneeTaxID>12345</ConsigneeTaxID>
+		<!-- Optional, for countries that require an individual'\''s tax id to import as DDP. -->
+	</ShipTo>
+	<ShippingLane>
+		<Region>Landmark CMH</Region>
+		<!-- The Region field links the shipment to a Landmark facility combination and is determined on a case-by-case basis. Please contact your Integration Manager for details per shipping facility.-->
+	</ShippingLane>
+	<ShipMethod>LGINTSTD</ShipMethod>
+	<OrderTotal>187.98</OrderTotal>
+	<!-- Conditional. Amount paid by the customer for all the items in their order. Must be passed in instances where the shipment information represents a partial shipment of products comprising a larger order-->
+	<OrderInsuranceFreightTotal>20.65</OrderInsuranceFreightTotal>
+	<!-- Conditional. Amount paid by the customer for shipping their entire order. Must be passed in instances where the shipment information represents a partial shipment of products comprising a larger order-->
+	<ShipmentInsuranceFreight>20.65</ShipmentInsuranceFreight>
+	<!-- Amount charged for shipping and any insurance for the shipment. This value does not include the amount charged for purchased items (i.e. Item Unit Value).-->
+	<ItemsCurrency>USD</ItemsCurrency>
+	<!-- Optional, and only used when client uses multiple currencies. If used, pass the 3 character ISO 4217 code to represent the currency (i.e. USD, CAD) -->
+	<IsCommercialShipment>0</IsCommercialShipment>
+	<!-- Optional boolean, and only used in cases when client requires shipments to be commercially cleared (i.e. B2B clearance) -->
+	<ProduceLabel>false</ProduceLabel>
+	<!-- Optional, Whether or not to return a generic label even though the shipment will not be processed. -->
+	<LabelFormat>PDF</LabelFormat>
+	<!-- Optional, only used if ProduceLabel = true. Default is PDF. Also supports JPG, GIF, BMP, ZPL and PNG -->
+	<LabelEncoding>LINKS</LabelEncoding>
+	<!-- Optional, only used if ProduceLabel = true. Default is "LINKS" (if LabelFormat = ZPL, default is "ZPL").
+
+                LINKS - returns links to all labels which must be retrieved in <LabelLink> tag.
+
+                ZPL - label image returned as ZPL in <LabelImage> tag. This type automatically chosen if LabelFormat = ZPL.
+
+                BASE64 - Base64 encoded label image is returned directly in the XML response in <LabelImage> tag.
+
+                BASE64COMPRESSED - GZcompressed and Base64 encoded label image is returned directly in the XML response in <LabelImage> tag.
+
+              -->
+	<ShipOptions>
+		<!-- Optional, For a list of available options, contact your account rep -->
+		<Option>
+			<Name>dummy_option</Name>
+			<Value>true</Value>
+		</Option>
+	</ShipOptions>
+	<VendorInformation>
+		<!-- Conditional. Required if providing third party logistics for the client. Information here represents the actual vendor (retailer) name and address for the items sold in the order. -->
+		<VendorName>Test Company Legal Name</VendorName>
+		<VendorPhone>12223334444</VendorPhone>
+		<VendorEmail>contact@vendor.com</VendorEmail>
+		<VendorAddress1>Sample Company Street</VendorAddress1>
+		<VendorAddress2>Suite 135</VendorAddress2>
+		<VendorCity>Santa Barbara</VendorCity>
+		<VendorState>CA</VendorState>
+		<VendorPostalCode>93101</VendorPostalCode>
+		<VendorCountry>US</VendorCountry>
+		<VendorLowValueTaxID>VOEC0123456</VendorLowValueTaxID>
+		<!--Populate with the vendor'\''s low value tax id if relevant for tax compliane, such as Norway'\''s VOEC or Australian GST Number-->
+		<VendorCCN>12345678RM0001</VendorCCN>
+		<!--Populate with the vendor'\''s commercial clearance (b2b) value if it is being requested-->
+		<VendorBusinessNumber>12345</VendorBusinessNumber>
+		<VendorRGRNumber>123</VendorRGRNumber>
+		<VendorIOSSNumber>IM1234567891</VendorIOSSNumber>
+		<VendorEORINumber>12345</VendorEORINumber>
+	</VendorInformation>
+	<FulfillmentAddress>
+		<!-- Optional, Enables associating a shipment will a different fulfillment address. -->
+		<Name>Acme Warehouse</Name>
+		<!-- Required when including FulfillmentAddress, Max 50 characters. -->
+		<Attention>Returns Dept.</Attention>
+		<!-- Optional. Max 50 characters. -->
+		<Address1>65-11 Roy St.</Address1>
+		<!-- Required when including FulfillmentAddress, Max 100 characters. -->
+		<Address2>Suite BA</Address2>
+		<!-- Optional. Max 100 characters. -->
+		<Address3></Address3>
+		<!-- Optional. Max 100 characters. -->
+		<City>Kitchener</City>
+		<!-- Required when including FulfillmentAddress, Max 50 characters. -->
+		<State>ON</State>
+		<!-- Max 20 characters. -->
+		<PostalCode>N2H 4B4</PostalCode>
+		<!-- Max 10 characters. -->
+		<Country>CA</Country>
+		<!-- Required when including FulfillmentAddress, 2 character ISO code -->
+	</FulfillmentAddress>
+	<SendReturnToAddress>
+		<!-- Optional (rare). Allows overriding the default address where the shipment will be sent back to if it is returned. Contact your integration manager if you plan to use this feature. -->
+		<Code>GHB78</Code>
+		<!-- Optional. Max length is 32 characters. -->
+		<Name>Acme Warehouse</Name>
+		<!-- Max 50 characters. -->
+		<Attention>Returns Dept.</Attention>
+		<!-- Optional. Max 50 characters. -->
+		<Address1>65-11 Roy St.</Address1>
+		<!-- Max 100 characters. -->
+		<Address2>Suite BA</Address2>
+		<!-- Optional. Max 100 characters. -->
+		<Address3></Address3>
+		<!-- Optional. Max 100 characters. -->
+		<City>Kitchener</City>
+		<!-- Max 50 characters. -->
+		<State>ON</State>
+		<!-- Max 20 characters. -->
+		<PostalCode>N2H 4B4</PostalCode>
+		<!-- Max 10 characters. -->
+		<Country>CA</Country>
+		<!-- 2 character ISO code -->
+	</SendReturnToAddress>
+	<AdditionalFields>
+		<!-- Optional. Used to store any other additional information the client wants to pass. Up to 5 additional fields may be passed. -->
+		<Field1>Any type of data</Field1>
+		<!-- Optional -->
+		<Field2>Purchased with Credit Card</Field2>
+		<!-- Optional -->
+		<Field3>99000029327172321</Field3>
+		<!-- Optional -->
+		<Field4>123198012</Field4>
+		<!-- Optional -->
+		<Field5>Stored information</Field5>
+		<!-- Optional -->
+	</AdditionalFields>
+	<PickSlipAdditions>
+		<!-- Optional, Used to display additional information on the pick slip. Such as a charge or memo -->
+		<Charges>
+			<!-- Optional. Additional charges besides the charges for each item -->
+			<Charge>
+				<Description>Gift Card Code: DISCOUNTHOUND</Description>
+				<Value>-7.25</Value>
+			</Charge>
+			<Charge>
+				<Description>Sales Tax</Description>
+				<Value>1.59</Value>
+			</Charge>
+		</Charges>
+		<Memos>
+			<!-- Optional -->
+			<Memo>You will receive 15% off your next order with coupon code SAVE15</Memo>
+		</Memos>
+	</PickSlipAdditions>
+	<ValueAddedServices>
+		<!-- Optional. Used to request additional services related to the entire shipment during fulfillment (i.e. gift wrapping). Contact your integration manager if you plan to use this feature -->
+		<Request>
+			<!-- The caller should include one Request per '\''Type'\'' being requested -->
+			<Type>WRAPPING</Type>
+			<Instructions>
+				<!-- Instructions are displayed to warehouse staff to guide them through completing the VAS request. Include as many Instruction tags as needed. -->
+				<Instruction>Style: Fancy Paper</Instruction>
+				<Instruction>Color: Red and White Striped</Instruction>
+				<Instruction>Include a bow</Instruction>
+			</Instructions>
+		</Request>
+	</ValueAddedServices>
+	<Packages>
+		<!-- Do not include the Packages node for orders Landmark is fulfilling -->
+		<Package>
+			<WeightUnit>LB</WeightUnit>
+			<!-- Optional package weight Unit of Measure. Default is LB (pounds). Supports LB, KG, G -->
+			<Weight>4.5</Weight>
+			<!-- Default in LB -->
+			<DimensionsUnit>IN</DimensionsUnit>
+			<!-- Optional package dimension Unit of Measure. Default is IN (inches). Supports IN, CM -->
+			<Length>12</Length>
+			<!-- Optional -->
+			<Width>12</Width>
+			<!-- Optional -->
+			<Height>12</Height>
+			<!-- Optional -->
+			<PackageReference>98233310</PackageReference>
+			<!-- Optional. Another reference for the client -->
+		</Package>
+	</Packages>
+	<Items>
+		<!-- Required for customs if the shipment will be crossing the border -->
+		<Item>
+			<Sku>7224059</Sku>
+			<LineNumber>PAU7830</LineNumber>
+			<!-- Optional -->
+			<Quantity>2</Quantity>
+			<UnitPrice>93.99</UnitPrice>
+			<Description>Women'\''s Shoes</Description>
+			<HSCode>640399.30.00</HSCode>
+			<!-- Optional -->
+			<CountryOfOrigin>CN</CountryOfOrigin>
+			<!-- 2 character ISO code -->
+			<URL></URL>
+			<!-- Optional, web address of the item from your storefront -->
+			<USMID>CNZHOEAS3ZHON</USMID>
+			<!-- Value for a US Manufacturer'\''s Identification Code. Required for US formal customs entries -->
+			<ContentCategory>
+				<!-- Optional. Supports GOODS, DOCUMENTS, GIFT, RETURNED_GOODS -->
+				<ReturnCustomsInfo>
+					<!-- Optional -->
+					<HSCode>6403993000</HSCode>
+					<HSRegionCode>US</HSRegionCode>
+				</ReturnCustomsInfo>
+				<DangerousGoodsInformation>
+					<!-- This section is required if item contains dangerous goods -->
+					<ContainsDangerousGoods>1</ContainsDangerousGoods>
+					<!-- Required. Flag to declare that item contains dangerous goods -->
+					<UNCode>UN3481</UNCode>
+					<!-- Required -->
+					<PackingGroup>II</PackingGroup>
+					<!-- Required for some UN codes -->
+					<PackingInstructions>PS967S1</PackingInstructions>
+					<!-- Required for some UN codes -->
+					<ItemWeight>10</ItemWeight>
+					<!-- Required -->
+					<ItemWeightUnit>kg</ItemWeightUnit>
+					<!-- Required -->
+					<ItemVolume>30</ItemVolume>
+					<!-- Required for some UN codes -->
+					<ItemVolumeUnit>ML</ItemVolumeUnit>
+					<!-- Required for some UN codes -->
+				</DangerousGoodsInformation>
+				<ValueAddedServices>
+					<!-- Optional. Used to request additional services related to this item during fulfillment (i.e. manufacturing). Contact your integration manager if you plan to use this feature -->
+					<Request>
+						<!-- The caller should include one Request per '\''Type'\'' being requested -->
+						<Type>MANUFACTURING</Type>
+						<Instructions>
+							<!-- Instructions are displayed to warehouse staff to guide them through completing the VAS request. Include as many Instruction tags as needed. -->
+							<Instruction>Font: Arial</Instruction>
+							<Instruction>Color: Blue</Instruction>
+							<Instruction>Text: My text on the t-shirt</Instruction>
+						</Instructions>
+					</Request>
+				</ValueAddedServices>
+			</ContentCategory>
+		</Item>
+	</Items>
+	<FreightDetails>
+		<!-- Required for all freight shipments -->
+		<ProNumber>LGBR020409E</ProNumber>
+		<PieceUnit>Pallet</PieceUnit>
+	</FreightDetails>
+</ImportRequest>'
+
+
+curl --request POST \
+  --url https://api.landmarkglobal.com/v2/Ship.php \
+  --header 'Content-Type: application/xml' \
+  --header 'User-Agent: insomnia/11.5.0' \
+  --data '<ShipRequest>
+	<Login>
+		<Username>demoapi</Username>
+		<Password>demo123</Password>
+	</Login>
+	<Test>true</Test>
+	<ClientID>218</ClientID>
+	<AccountNumber>L0218A</AccountNumber>
+	<Reference>TEST-ORDER-001</Reference>
+	<ShipTo>
+		<Name>Jane Smith</Name>
+		<Attention>Purchasing Dept.</Attention>
+		<Address1>1600 Amphitheatre Parkway</Address1>
+		<City>Mountain View</City>
+		<State>CA</State>
+		<PostalCode>94043</PostalCode>
+		<Country>US</Country>
+		<Phone>14085551234</Phone>
+		<Email>jane.smith@example.com</Email>
+	</ShipTo>
+	<ShippingLane>
+		<Region>Landmark CMH</Region>
+	</ShippingLane>
+	<ShipMethod>LGINTSTD</ShipMethod>
+	<OrderTotal>187.98</OrderTotal>
+	<OrderInsuranceFreightTotal>20.65</OrderInsuranceFreightTotal>
+	<ShipmentInsuranceFreight>20.65</ShipmentInsuranceFreight>
+	<ItemsCurrency>USD</ItemsCurrency>
+	<IsCommercialShipment>0</IsCommercialShipment>
+	<LabelFormat>PDF</LabelFormat>
+	<LabelEncoding>LINKS</LabelEncoding>
+	<Packages>
+		<Package>
+			<WeightUnit>LB</WeightUnit>
+			<Weight>4.5</Weight>
+			<DimensionsUnit>IN</DimensionsUnit>
+			<Length>12</Length>
+			<Width>12</Width>
+			<Height>12</Height>
+			<PackageReference>PKG-001</PackageReference>
+		</Package>
+	</Packages>
+	<Items>
+		<Item>
+			<Sku>7224059</Sku>
+			<Quantity>2</Quantity>
+			<UnitPrice>93.99</UnitPrice>
+			<Description>Women'\''s Shoes</Description>
+			<HSCode>6403993000</HSCode>
+			<CountryOfOrigin>CN</CountryOfOrigin>
+			<USMID>CNZHOEAS3ZHON</USMID>
+			<ReturnCustomsInfo>
+				<HSCode>6403993000</HSCode>
+				<HSRegionCode>US</HSRegionCode>
+			</ReturnCustomsInfo>
+		</Item>
+	</Items>
+	<FreightDetails>
+		<ProNumber>LGBR020409E</ProNumber>
+		<PieceUnit>Pallet</PieceUnit>
+	</FreightDetails>
+</ShipRequest>'
+
+
+curl --request POST \
+  --url https://api.landmarkglobal.com/v2/Cancel.php \
+  --header 'Content-Type: application/xml' \
+  --header 'User-Agent: insomnia/11.5.0' \
+  --data '<CancelRequest>
+	<!-- A cancel request will cancel ALL packages under a shipment, even if only one tracking number is passed. -->
+	<Login>
+		<Username>demoapi</Username>
+		<Password>demo123</Password>
+	</Login>
+	<Test>true</Test>
+	<!-- Optional. Defaults to true before account activation, false afterwards -->
+	<ClientID>218</ClientID>
+	<!-- Required if more than one client under user, otherwise Optional -->
+	<!-- Either Reference OR TrackingNumber is required but not both -->
+	<TrackingNumber>8724720680</TrackingNumber>
+	<DeleteShipment>true</DeleteShipment>
+	<!--Optional-->
+	<Reason>Consignee canceled shipment.</Reason>
+	<!--Required if deleting a shipment.-->
+</CancelRequest>'
+
+
+curl --request POST \
+  --url https://api.landmarkglobal.com/v2/Track.php \
+  --header 'Content-Type: application/xml' \
+  --header 'User-Agent: insomnia/11.5.0' \
+  --data '<TrackRequest>
+	<Login>
+		<Username>demoapi</Username>
+		<Password>demo13</Password>
+	</Login>
+	<Test>true</Test>
+	<ClientID>218</ClientID>
+	<TrackingNumber>INVALID</TrackingNumber>
+	<PackageReference/>
+	<RetrievalType>Historical</RetrievalType>
+	<!-- Optional Node. Will return all tracking statuses for a packages if populated. Will return last tracking status if empty or node not present -->
+</TrackRequest>'
+
+
+
+⸻
+

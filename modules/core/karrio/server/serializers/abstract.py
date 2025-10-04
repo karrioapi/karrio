@@ -3,7 +3,7 @@ import pydoc
 import typing
 import logging
 from django.db import models
-from django.conf import settings
+from django.conf import empty, settings
 from django.db import transaction
 from rest_framework import serializers
 from django.forms.models import model_to_dict
@@ -458,7 +458,11 @@ def field_to_serializer(args: dict):
     if type == "string":
         return serializers.CharField(
             required=required,
-            **(dict(default=default) if not required else {}),
+            **(
+                dict(default=default, allow_blank=True, allow_null=True)
+                if not required
+                else {}
+            ),
         )
     if type == "integer":
         return serializers.IntegerField(
