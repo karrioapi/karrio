@@ -13,5 +13,8 @@ gateway = karrio.gateway["landmark"].create(
         client_id="2437",
         account_number="TEST123",
         region="Landmark CMH",
+        config=dict(
+            account_currency="EUR",
+        ),
     )
 )

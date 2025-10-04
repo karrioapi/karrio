@@ -1,6 +1,5 @@
 """Karrio Landmark Global shipment creation implementation."""
 
-from calendar import c
 import karrio.schemas.landmark.import_request as import_req
 import karrio.schemas.landmark.import_response as import_res
 import karrio.schemas.landmark.ship_request as ship_req
@@ -39,9 +38,17 @@ def _extract_details(
     """Extract shipment details from ImportResponse or ShipResponse"""
     label_format = ctx.get("label_format", "PDF")
     packages = lib.find_element("Package", data, ship_res.PackageType)
-    [tracking_number, *tracking_numbers] = [_.TrackingNumber for _ in packages if _.TrackingNumber is not None]
-    [landmark_id, *landmark_ids] = [_.LandmarkTrackingNumber for _ in packages if _.LandmarkTrackingNumber is not None]
-    package_references = [_.PackageReference for _ in packages if _.PackageReference is not None]
+    [tracking_number, *tracking_numbers] = [
+        _.TrackingNumber for _ in packages if _.TrackingNumber is not None
+    ]
+    [landmark_id, *landmark_ids] = [
+        _.LandmarkTrackingNumber
+        for _ in packages
+        if _.LandmarkTrackingNumber is not None
+    ]
+    package_references = [
+        _.PackageReference for _ in packages if _.PackageReference is not None
+    ]
     barcode_datas = [_.BarcodeData for _ in packages if _.BarcodeData is not None]
     package_ids = [_.PackageID for _ in packages if _.PackageID is not None]
     label_images = lib.find_element("LabelImages", data, ship_res.LabelImagesType)
@@ -51,7 +58,8 @@ def _extract_details(
             [_.LabelImage[0] for _ in label_images if len(_.LabelImage) > 0],
             label_format,
         )
-        if any(_.LabelImage for _ in label_images) else ""
+        if any(_.LabelImage for _ in label_images)
+        else ""
     )
 
     return models.ShipmentDetails(
@@ -116,9 +124,12 @@ def shipment_request(
     produce_label = lib.identity(
         options.landmark_produce_label.state
         if options.landmark_produce_label.state is not None
-        else settings.connection_config.impport_request_produce_label.state
-        if settings.connection_config.impport_request_produce_label.state is not None
-        else False
+        else (
+            settings.connection_config.impport_request_produce_label.state
+            if settings.connection_config.impport_request_produce_label.state
+            is not None
+            else False
+        )
     )
     items = lib.identity(customs.commodities if payload.customs else packages.items)
 
@@ -133,15 +144,15 @@ def shipment_request(
             AccountNumber=settings.account_number,
             Reference=payload.reference,
             ShipTo=import_req.ShipToType(
-                Name=recipient.company_name or recipient.person_name,
+                Name=recipient.company_name or recipient.person_name or "",
                 Attention=recipient.person_name,
-                Address1=recipient.address_line1,
+                Address1=recipient.address_line1 or "",
                 Address2=recipient.address_line2,
                 Address3=None,
-                City=recipient.city,
-                State=recipient.state_code,
-                PostalCode=recipient.postal_code,
-                Country=recipient.country_code,
+                City=recipient.city or "",
+                State=lib.text(recipient.state_code, max=25) or "",
+                PostalCode=recipient.postal_code or "",
+                Country=recipient.country_code or "",
                 Phone=recipient.phone_number,
                 Email=recipient.email,
                 ConsigneeTaxID=recipient.tax_id,
@@ -163,15 +174,15 @@ def shipment_request(
             ShipOptions=None,
             VendorInformation=lib.identity(
                 import_req.VendorInformationType(
-                    VendorName=vendor.company_name or vendor.person_name,
-                    VendorPhone=vendor.phone_number,
-                    VendorEmail=vendor.email,
-                    VendorAddress1=vendor.address_line1,
+                    VendorName=vendor.company_name or vendor.person_name or "",
+                    VendorPhone=vendor.phone_number or "",
+                    VendorEmail=vendor.email or "",
+                    VendorAddress1=vendor.address_line1 or "",
                     VendorAddress2=vendor.address_line2,
-                    VendorCity=vendor.city,
-                    VendorState=vendor.state_code,
-                    VendorPostalCode=vendor.postal_code,
-                    VendorCountry=vendor.country_code,
+                    VendorCity=vendor.city or "",
+                    VendorState=lib.text(vendor.state_code, max=25) or "",
+                    VendorPostalCode=vendor.postal_code or "",
+                    VendorCountry=vendor.country_code or "",
                     VendorLowValueTaxID=customs.options.low_value_tax_id.state,
                     VendorCCN=customs.options.ccn.state,
                     VendorBusinessNumber=customs.options.business_number.state,
@@ -183,28 +194,30 @@ def shipment_request(
                 else None
             ),
             FulfillmentAddress=import_req.FulfillmentAddressType(
-                Name=shipper.company_name or shipper.person_name,
+                Name=shipper.company_name or shipper.person_name or "",
                 Attention=shipper.person_name,
-                Address1=shipper.address_line1,
+                Address1=shipper.address_line1 or "",
                 Address2=shipper.address_line2,
                 Address3=None,
-                City=shipper.city,
-                State=shipper.state_code,
-                PostalCode=shipper.postal_code,
-                Country=shipper.country_code,
+                City=shipper.city or "",
+                State=lib.text(shipper.state_code, max=25) or "",
+                PostalCode=shipper.postal_code or "",
+                Country=shipper.country_code or "",
             ),
             ReturnAddress=lib.identity(
                 import_req.SendReturnToAddressType(
                     Code=options.landmark_return_address_code.state,
-                    Name=return_address.company_name or return_address.person_name,
+                    Name=return_address.company_name
+                    or return_address.person_name
+                    or "",
                     Attention=return_address.person_name,
-                    Address1=return_address.address_line1,
+                    Address1=return_address.address_line1 or "",
                     Address2=return_address.address_line2,
                     Address3=None,
-                    City=return_address.city,
-                    State=return_address.state_code,
-                    PostalCode=return_address.postal_code,
-                    Country=return_address.country_code,
+                    City=return_address.city or "",
+                    State=lib.text(return_address.state_code, max=25) or "",
+                    PostalCode=return_address.postal_code or "",
+                    Country=return_address.country_code or "",
                 )
                 if payload.return_address
                 else None
@@ -234,11 +247,11 @@ def shipment_request(
                 import_req.ItemsType(
                     Item=[
                         import_req.ItemType(
-                            Sku=item.sku,
+                            Sku=item.sku or "",
                             LineNumber=item.metadata.get("LineNumber"),
                             Quantity=lib.to_int(item.quantity),
                             UnitPrice=lib.to_money(item.value_amount),
-                            Description=item.description or item.title,
+                            Description=item.description or item.title or "",
                             HSCode=item.hs_code,
                             CountryOfOrigin=item.origin_country,
                             URL=item.product_url,
@@ -260,7 +273,11 @@ def shipment_request(
                                             "PackingInstructions"
                                         ),
                                         ItemWeight=item.weight,
-                                        ItemWeightUnit=item.weight_unit.lower(),
+                                        ItemWeightUnit=(
+                                            item.weight_unit.lower()
+                                            if item.weight_unit
+                                            else None
+                                        ),
                                         ItemVolume=item.metadata.get("ItemVolume"),
                                         ItemVolumeUnit=item.metadata.get(
                                             "ItemVolumeUnit"
@@ -280,8 +297,8 @@ def shipment_request(
             ),
             FreightDetails=lib.identity(
                 import_req.FreightDetailsType(
-                    ProNumber=options.landmark_freight_pro_number.state,
-                    PieceUnit=options.landmark_freight_piece_unit.state,
+                    ProNumber=options.landmark_freight_pro_number.state or "",
+                    PieceUnit=options.landmark_freight_piece_unit.state or "",
                 )
                 if options.landmark_freight_pro_number.state
                 and options.landmark_freight_piece_unit.state
@@ -299,15 +316,15 @@ def shipment_request(
             AccountNumber=settings.account_number,
             Reference=payload.reference,
             ShipTo=ship_req.ShipToType(
-                Name=recipient.company_name or recipient.person_name,
+                Name=recipient.company_name or recipient.person_name or "",
                 Attention=recipient.person_name,
-                Address1=recipient.address_line1,
+                Address1=recipient.address_line1 or "",
                 Address2=recipient.address_line2,
                 Address3=None,
-                City=recipient.city,
-                State=recipient.state_code,
-                PostalCode=recipient.postal_code,
-                Country=recipient.country_code,
+                City=recipient.city or "",
+                State=lib.text(recipient.state_code, max=25) or "",
+                PostalCode=recipient.postal_code or "",
+                Country=recipient.country_code or "",
                 Phone=recipient.phone_number,
                 Email=recipient.email,
                 ConsigneeTaxID=recipient.tax_id,
@@ -333,15 +350,15 @@ def shipment_request(
             ShipOptions=None,
             VendorInformation=lib.identity(
                 ship_req.VendorInformationType(
-                    VendorName=vendor.company_name or vendor.person_name,
-                    VendorPhone=vendor.phone_number,
-                    VendorEmail=vendor.email,
-                    VendorAddress1=vendor.address_line1,
+                    VendorName=vendor.company_name or vendor.person_name or "",
+                    VendorPhone=vendor.phone_number or "",
+                    VendorEmail=vendor.email or "",
+                    VendorAddress1=vendor.address_line1 or "",
                     VendorAddress2=vendor.address_line2,
-                    VendorCity=vendor.city,
-                    VendorState=vendor.state_code,
-                    VendorPostalCode=vendor.postal_code,
-                    VendorCountry=vendor.country_code,
+                    VendorCity=vendor.city or "",
+                    VendorState=lib.text(vendor.state_code, max=25) or "",
+                    VendorPostalCode=vendor.postal_code or "",
+                    VendorCountry=vendor.country_code or "",
                     VendorLowValueTaxID=customs.options.low_value_tax_id.state,
                     VendorCCN=customs.options.ccn.state,
                     VendorBusinessNumber=customs.options.business_number.state,
@@ -354,28 +371,30 @@ def shipment_request(
             ),
             ReturnInformation=None,
             FulfillmentAddress=ship_req.FulfillmentAddressType(
-                Name=shipper.company_name or shipper.person_name,
+                Name=shipper.company_name or shipper.person_name or "",
                 Attention=shipper.person_name,
-                Address1=shipper.address_line1,
+                Address1=shipper.address_line1 or "",
                 Address2=shipper.address_line2,
                 Address3=None,
-                City=shipper.city,
-                State=shipper.state_code,
-                PostalCode=shipper.postal_code,
-                Country=shipper.country_code,
+                City=shipper.city or "",
+                State=lib.text(shipper.state_code, max=25) or "",
+                PostalCode=shipper.postal_code or "",
+                Country=shipper.country_code or "",
             ),
             SendReturnToAddress=lib.identity(
                 ship_req.SendReturnToAddressType(
                     Code=options.landmark_return_address_code.state,
-                    Name=return_address.company_name or return_address.person_name,
+                    Name=return_address.company_name
+                    or return_address.person_name
+                    or "",
                     Attention=return_address.person_name,
-                    Address1=return_address.address_line1,
+                    Address1=return_address.address_line1 or "",
                     Address2=return_address.address_line2,
                     Address3=None,
-                    City=return_address.city,
-                    State=return_address.state_code,
-                    PostalCode=return_address.postal_code,
-                    Country=return_address.country_code,
+                    City=return_address.city or "",
+                    State=lib.text(return_address.state_code, max=25) or "",
+                    PostalCode=return_address.postal_code or "",
+                    Country=return_address.country_code or "",
                 )
                 if payload.return_address
                 else None
@@ -403,11 +422,11 @@ def shipment_request(
                 ship_req.ItemsType(
                     Item=[
                         ship_req.ItemType(
-                            Sku=item.sku,
+                            Sku=item.sku or "",
                             LineNumber=item.metadata.get("LineNumber"),
                             Quantity=item.quantity,
                             UnitPrice=item.value_amount,
-                            Description=item.description or item.title,
+                            Description=item.description or item.title or "",
                             HSCode=item.hs_code,
                             CountryOfOrigin=item.origin_country,
                             ContentCategory=item.category,
@@ -431,8 +450,8 @@ def shipment_request(
             ),
             FreightDetails=lib.identity(
                 ship_req.FreightDetailsType(
-                    ProNumber=options.landmark_freight_pro_number.state,
-                    PieceUnit=options.landmark_freight_piece_unit.state,
+                    ProNumber=options.landmark_freight_pro_number.state or "",
+                    PieceUnit=options.landmark_freight_piece_unit.state or "",
                 )
                 if options.landmark_freight_pro_number.state
                 and options.landmark_freight_piece_unit.state
@@ -445,6 +464,7 @@ def shipment_request(
         request,
         lib.to_xml,
         ctx=dict(
+            API=("Import" if is_import_request else "Ship"),
             label_format=label_format,
             label_encoding=label_encoding,
             is_import_request=is_import_request,

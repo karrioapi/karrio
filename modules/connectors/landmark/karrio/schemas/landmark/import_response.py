@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Sat Oct  4 01:20:10 2025 by generateDS.py version 2.44.3.
+# Generated Sat Oct  4 04:10:47 2025 by generateDS.py version 2.44.3.
 # Python 3.12.11 (main, Jul 30 2025, 16:35:51) [Clang 17.0.0 (clang-1700.0.13.5)]
 #
 # Command line options:
@@ -13,7 +13,7 @@
 #   ./schemas/import_response.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/karrio/patch/.venv/patch/bin/generateDS --no-namespace-defs -o "./karrio/schemas/landmark/import_response.py" ./schemas/import_response.xsd
+#   /Users/danielkobina/Workspace/karrio/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./karrio/schemas/landmark/import_response.py" ./schemas/import_response.xsd
 #
 # Current working directory (os.getcwd()):
 #   landmark

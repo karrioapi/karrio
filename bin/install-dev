@@ -5,10 +5,62 @@
 # =============================================================================
 # Sets up complete development environment for Karrio
 # Based on bin/deploy pattern but adapted for local development
+#
+# Usage: ./bin/install-dev [OPTIONS]
+#
+# This script:
+#   - Installs system dependencies (gcc, pango, ghostscript, etc.)
+#   - Sets up pyenv and installs Python 3.12.x
+#   - Installs nvm and Node.js
+#   - Creates Python virtual environment (.venv/karrio)
+#   - Installs Python and Node.js dependencies
+#   - Generates local HTTPS certificates (mkcert)
+#   - Sets up environment files (.env)
+#
+# After running this script, use:
+#   - ./bin/dev up          Start all development services
+#   - source bin/activate-env   Activate Python environment
+#   - karrio migrate        Run database migrations
+#
+# For more information, see: https://docs.karrio.io
 # =============================================================================
 
 # Don't exit on error - we'll handle errors explicitly
 set +e
+
+# Show help message
+show_help() {
+    echo "Usage: ./bin/install-dev [OPTIONS]"
+    echo ""
+    echo "Sets up complete Karrio development environment."
+    echo ""
+    echo "OPTIONS:"
+    echo "  -h, --help    Show this help message"
+    echo ""
+    echo "This script will:"
+    echo "  1. Install system dependencies"
+    echo "  2. Set up pyenv and Python 3.12.x"
+    echo "  3. Install nvm and Node.js"
+    echo "  4. Create virtual environment at .venv/karrio"
+    echo "  5. Install all Python and Node.js dependencies"
+    echo "  6. Generate HTTPS certificates with mkcert"
+    echo "  7. Set up environment configuration files"
+    echo ""
+    echo "After installation, run:"
+    echo "  ./bin/dev up              Start development servers"
+    echo "  source bin/activate-env   Activate Python environment"
+    echo ""
+    exit 0
+}
+
+# Parse arguments
+for arg in "$@"; do
+    case $arg in
+        -h|--help)
+            show_help
+            ;;
+    esac
+done
 
 # Detect if script is being sourced or executed
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
@@ -581,8 +633,8 @@ echo "4. Collect static files:"
 echo "   karrio collectstatic --noinput"
 echo ""
 echo "5. Start development servers (API, dashboard, docs, Maildev, optional Caddy proxy):"
-echo "   ./bin/start-dev"
-echo "   (Use SKIP_CADDY=true ./bin/start-dev to disable HTTPS proxy.)"
+echo "   ./bin/dev up"
+echo "   (Use ./bin/dev up --with-https to enable HTTPS proxy with Caddy.)"
 echo ""
 echo -e "${GREEN}Access your application at:${NC}"
 echo "   → API: http://localhost:5002"

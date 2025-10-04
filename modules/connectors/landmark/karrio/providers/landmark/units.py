@@ -1,4 +1,3 @@
-
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
@@ -31,7 +30,8 @@ class LabelEncoding(lib.StrEnum):
 
 
 class PackagingType(lib.StrEnum):
-    """ Carrier specific packaging type """
+    """Carrier specific packaging type"""
+
     PACKAGE = "PACKAGE"
 
     """ Unified Packaging type mapping """
@@ -45,16 +45,20 @@ class PackagingType(lib.StrEnum):
 
 
 class ConnectionConfig(lib.Enum):
-    """ Landmark connection configuration options """
+    """Landmark connection configuration options"""
+
     label_type = lib.OptionEnum("label_type", LabelFormat, default="PDF")
     account_currency = lib.OptionEnum("account_currency", str, default="EUR")
-    import_request_by_default = lib.OptionEnum("import_request_by_default", bool, default=False)
+    import_request_by_default = lib.OptionEnum(
+        "import_request_by_default", bool, default=False
+    )
     shipping_services = lib.OptionEnum("shipping_services", list)
     shipping_options = lib.OptionEnum("shipping_options", list)
 
 
 class ShippingService(lib.StrEnum):
-    """ Carrier specific services """
+    """Carrier specific services"""
+
     # MaxiPak Scan DDP shipments
     landmark_maxipak_ddp = "LGINTSTD"
     # MaxiPak Scan DDU shipments
@@ -66,10 +70,14 @@ class ShippingService(lib.StrEnum):
 
 
 class ShippingOption(lib.Enum):
-    """ Carrier specific options """
+    """Carrier specific options"""
 
-    landmark_shipment_insurance_freight = lib.OptionEnum("ShipmentInsuranceFreight", float)
-    landmark_order_insurance_freight_total = lib.OptionEnum("OrderInsuranceFreightTotal", float)
+    landmark_shipment_insurance_freight = lib.OptionEnum(
+        "ShipmentInsuranceFreight", float
+    )
+    landmark_order_insurance_freight_total = lib.OptionEnum(
+        "OrderInsuranceFreightTotal", float
+    )
 
     """ Unified Option type mapping """
     landmark_produce_label = lib.OptionEnum("ProduceLabel", bool)
@@ -102,15 +110,16 @@ def shipping_options_initializer(
 
 class TrackingStatus(lib.Enum):
     """Carrier tracking status mapping"""
+
     delivered = [
         "500",  # Item successfully delivered
         "510",  # Proof Of Delivery
     ]
     in_transit = [
-        "50",   # Shipment Data Uploaded
-        "60",   # Shipment inventory allocated
-        "75",   # Shipment Processed
-        "80",   # Shipment Fulfilled
+        "50",  # Shipment Data Uploaded
+        "60",  # Shipment inventory allocated
+        "75",  # Shipment Processed
+        "80",  # Shipment Fulfilled
         "100",  # Shipment information transmitted to carrier
         "125",  # Customs Cleared
         "150",  # Crossing Border
@@ -121,7 +130,7 @@ class TrackingStatus(lib.Enum):
         "275",  # Item in transit with carrier
     ]
     on_hold = [
-        "90",   # Shipment held for payment
+        "90",  # Shipment held for payment
         "135",  # Customs Issue
     ]
     delivery_failed = [
@@ -141,9 +150,9 @@ class TrackingStatus(lib.Enum):
 
 DEFAULT_SERVICES = [
     models.ServiceLevel(
-        service_name=f"Landmark {service.value}",
+        service_name=service.name,
         service_code=service.name,
-        currency=ConnectionConfig.account_currency.value,
+        currency="EUR",
         zones=[models.ServiceZone(label="Flat Rate", rate=0.0)],
     )
     for service in ShippingService

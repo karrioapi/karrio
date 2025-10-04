@@ -4251,7 +4251,7 @@ components:
           nullable: true
           description: "The address postal code\n        **(required for shipment\
             \ purchase)**\n        "
-          maxLength: 10
+          maxLength: 20
         city:
           type: string
           nullable: true
@@ -4583,7 +4583,7 @@ components:
           nullable: true
           description: "The address postal code\n        **(required for shipment\
             \ purchase)**\n        "
-          maxLength: 10
+          maxLength: 20
         city:
           type: string
           nullable: true
@@ -5806,6 +5806,22 @@ components:
           x-spec-enum-id: 05a7b91de773db3e
           nullable: true
           description: The origin or manufacture country
+        product_url:
+          type: string
+          nullable: true
+          description: The product url
+        image_url:
+          type: string
+          nullable: true
+          description: The image url
+        product_id:
+          type: string
+          nullable: true
+          description: The product id
+        variant_id:
+          type: string
+          nullable: true
+          description: The variant id
         parent_id:
           type: string
           nullable: true
@@ -6269,6 +6285,22 @@ components:
           x-spec-enum-id: 05a7b91de773db3e
           nullable: true
           description: The origin or manufacture country
+        product_url:
+          type: string
+          nullable: true
+          description: The product url
+        image_url:
+          type: string
+          nullable: true
+          description: The image url
+        product_id:
+          type: string
+          nullable: true
+          description: The product id
+        variant_id:
+          type: string
+          nullable: true
+          description: The variant id
         parent_id:
           type: string
           nullable: true
@@ -7442,6 +7474,22 @@ components:
           x-spec-enum-id: 05a7b91de773db3e
           nullable: true
           description: The origin or manufacture country
+        product_url:
+          type: string
+          nullable: true
+          description: The product url
+        image_url:
+          type: string
+          nullable: true
+          description: The image url
+        product_id:
+          type: string
+          nullable: true
+          description: The product id
+        variant_id:
+          type: string
+          nullable: true
+          description: The variant id
         parent_id:
           type: string
           nullable: true
@@ -7958,13 +8006,13 @@ components:
             \ <br/>\n        `envelope` `pak` `tube` `pallet` `small_box` `medium_box`\
             \ `your_packaging`<br/>\n        For carrier specific packaging types,\
             \ please consult the reference.\n        "
-          maxLength: 50
+          maxLength: 100
         package_preset:
           type: string
           nullable: true
           description: "The parcel's package preset.<br/>\n        For carrier specific\
             \ package presets, please consult the reference.\n        "
-          maxLength: 50
+          maxLength: 100
         description:
           type: string
           nullable: true
@@ -8058,13 +8106,13 @@ components:
             \ <br/>\n        `envelope` `pak` `tube` `pallet` `small_box` `medium_box`\
             \ `your_packaging`<br/>\n        For carrier specific packaging types,\
             \ please consult the reference.\n        "
-          maxLength: 50
+          maxLength: 100
         package_preset:
           type: string
           nullable: true
           description: "The parcel's package preset.<br/>\n        For carrier specific\
             \ package presets, please consult the reference.\n        "
-          maxLength: 50
+          maxLength: 100
         description:
           type: string
           nullable: true
@@ -8152,7 +8200,7 @@ components:
           nullable: true
           description: "The address postal code\n        **(required for shipment\
             \ purchase)**\n        "
-          maxLength: 10
+          maxLength: 20
         city:
           type: string
           nullable: true
@@ -8612,13 +8660,13 @@ components:
             \ <br/>\n        `envelope` `pak` `tube` `pallet` `small_box` `medium_box`\
             \ `your_packaging`<br/>\n        For carrier specific packaging types,\
             \ please consult the reference.\n        "
-          maxLength: 50
+          maxLength: 100
         package_preset:
           type: string
           nullable: true
           description: "The parcel's package preset.<br/>\n        For carrier specific\
             \ package presets, please consult the reference.\n        "
-          maxLength: 50
+          maxLength: 100
         description:
           type: string
           nullable: true

@@ -14,7 +14,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
-            url=f"{self.settings.server_url}/Ship.php",
+            url=f"{self.settings.server_url}/{request.ctx['API']}.php",
             data=request.serialize(),
             trace=self.trace_as("xml"),
             method="POST",
@@ -50,15 +50,14 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                     headers={
                         "Content-Type": "application/xml",
                     },
-                )
+                ),
             ),
-            requests.serialize()
+            requests.serialize(),
         )
 
         return lib.Deserializable(
             responses,
             lambda res: [
-                (num, lib.to_element(track))
-                for num, track in res if any(track.strip())
+                (num, lib.to_element(track)) for num, track in res if any(track.strip())
             ],
         )
