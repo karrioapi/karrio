@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="CancelRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Login">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Username" type="xs:string"/>
+              <xs:element name="Password" type="xs:string"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Test" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="ClientID" type="xs:string" minOccurs="0"/>
+        <xs:element name="Reference" type="xs:string" minOccurs="0"/>
+        <xs:element name="TrackingNumber" type="xs:string" minOccurs="0"/>
+        <xs:element name="DeleteShipment" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="Reason" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

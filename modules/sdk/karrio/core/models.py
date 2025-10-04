@@ -48,6 +48,10 @@ class Commodity:
     origin_country: str = None
     category: str = None
 
+    product_url: str = None
+    image_url: str = None
+    product_id: str = None
+    variant_id: str = None
     metadata: Dict = {}
 
 
