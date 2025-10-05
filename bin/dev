@@ -424,12 +424,18 @@ run_up() {
     fi
   fi
 
-  # Always kill API, Dashboard, Docs
-  pkill -f "karrio runserver" 2>/dev/null || true
-  pkill -f "karrio server" 2>/dev/null || true
-  lsof -ti:5002 | xargs kill -9 2>/dev/null || true
-  lsof -ti:3002 | xargs kill -9 2>/dev/null || true
-  lsof -ti:3005 | xargs kill -9 2>/dev/null || true
+  # Only kill services that we're about to start
+  if $START_API; then
+    pkill -f "karrio runserver" 2>/dev/null || true
+    pkill -f "karrio server" 2>/dev/null || true
+    lsof -ti:5002 | xargs kill -9 2>/dev/null || true
+  fi
+  if $START_DASHBOARD; then
+    lsof -ti:3002 | xargs kill -9 2>/dev/null || true
+  fi
+  if $START_DOCS; then
+    lsof -ti:3005 | xargs kill -9 2>/dev/null || true
+  fi
   sleep 1
   print_success "Cleanup completed"
 
