@@ -1,3 +1,5 @@
+import csv
+import pathlib
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
@@ -60,13 +62,13 @@ class ShippingService(lib.StrEnum):
     """Carrier specific services"""
 
     # MaxiPak Scan DDP shipments
-    landmark_maxipak_ddp = "LGINTSTD"
+    landmark_maxipak_scan_ddp = "LGINTSTD"
     # MaxiPak Scan DDU shipments
-    landmark_maxipak_ddu = "LGINTSTDU"
+    landmark_maxipak_scan_ddu = "LGINTSTDU"
     # MiniPak Scan DDP shipments (EU ONLY)
-    landmark_minipak_ddp = "LGINTBPIP"
+    landmark_minipak_scan_ddp = "LGINTBPIP"
     # MiniPak Scan DDU shipments (EU & ROW)
-    landmark_minipak_ddu = "LGINTBPIU"
+    landmark_minipak_scan_ddu = "LGINTBPIU"
 
 
 class ShippingOption(lib.Enum):
@@ -148,12 +150,65 @@ class TrackingStatus(lib.Enum):
     ]
 
 
-DEFAULT_SERVICES = [
-    models.ServiceLevel(
-        service_name=service.name,
-        service_code=service.name,
-        currency="EUR",
-        zones=[models.ServiceZone(label="Flat Rate", rate=0.0)],
-    )
-    for service in ShippingService
-]
+def load_services_from_csv() -> list:
+    """
+    Load service definitions from CSV file.
+    CSV format: service_code, service_name, zone_label, country_codes, min_weight, max_weight, rate, currency, transit_days
+    """
+    csv_path = pathlib.Path(__file__).resolve().parent / "services.csv"
+
+    if not csv_path.exists():
+        # Fallback to simple default if CSV doesn't exist
+        return [
+            models.ServiceLevel(
+                service_name=service.name,
+                service_code=service.name,
+                currency="GBP",
+                zones=[models.ServiceZone(label="Flat Rate", rate=0.0)],
+            )
+            for service in ShippingService
+        ]
+
+    # Group zones by service
+    services_dict = {}
+
+    with open(csv_path, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            service_code = row["service_code"]
+
+            # Initialize service if not exists
+            if service_code not in services_dict:
+                services_dict[service_code] = {
+                    "service_name": row["service_name"],
+                    "service_code": service_code,
+                    "currency": row.get("currency", "GBP"),
+                    "zones": [],
+                }
+
+            # Parse country codes
+            country_codes = [
+                c.strip() for c in row.get("country_codes", "").split(",") if c.strip()
+            ]
+
+            # Create zone
+            zone = models.ServiceZone(
+                label=row.get("zone_label", "Default Zone"),
+                rate=float(row.get("rate", 0.0)),
+                min_weight=float(row["min_weight"]) if row.get("min_weight") else None,
+                max_weight=float(row["max_weight"]) if row.get("max_weight") else None,
+                transit_days=(
+                    int(row["transit_days"]) if row.get("transit_days") else None
+                ),
+                country_codes=country_codes,
+            )
+
+            services_dict[service_code]["zones"].append(zone)
+
+    # Convert to ServiceLevel objects
+    return [
+        models.ServiceLevel(**service_data) for service_data in services_dict.values()
+    ]
+
+
+DEFAULT_SERVICES = load_services_from_csv()
