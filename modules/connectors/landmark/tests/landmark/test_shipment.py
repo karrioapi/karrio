@@ -134,7 +134,7 @@ IMPORT_SHIPMENT_REQUEST_PAYLOAD = {
             "reference_number": "98233310",
         }
     ],
-    "service": "landmark_maxipak_ddp",
+    "service": "landmark_maxipak_scan_ddp",
     "reference": "3245325",
     "options": {
         "landmark_import_request": True,
@@ -199,7 +199,7 @@ SHIPMENT_REQUEST_PAYLOAD = {
             "dimension_unit": "IN",
         }
     ],
-    "service": "landmark_maxipak_ddp",
+    "service": "landmark_maxipak_scan_ddp",
     "reference": "TEST-ORDER-001",
     "customs": {
         "duty": {

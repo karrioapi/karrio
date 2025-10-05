@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "karrio"
-version = "2025.5rc23"
+version = "2025.5rc24"
 description = "Multi-carrier shipping API integration with python"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -18,6 +18,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 dependencies = [
+    "attrs",
     "jstruct",
     "xmltodict",
     "lxml",

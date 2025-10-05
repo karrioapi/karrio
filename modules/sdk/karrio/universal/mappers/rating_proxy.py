@@ -158,17 +158,23 @@ def check_weight_match(
     - Zone: 0-0.5kg, Package: 0.5kg -> No match ❌ (equals max)
     - Zone: 0.5-1.0kg, Package: 0.5kg -> Match ✅ (equals min)
     """
-    package_weight = package.weight[service.weight_unit]
+    # If zone has no weight restrictions, always match
+    if zone.min_weight is None and zone.max_weight is None:
+        return True
+
+    # Default to KG if service doesn't specify weight unit
+    weight_unit = service.weight_unit or "KG"
+    package_weight = package.weight[weight_unit]
 
     # Check min weight (inclusive)
     if zone.min_weight is not None:
-        min_weight_value = units.Weight(zone.min_weight, service.weight_unit).value
+        min_weight_value = units.Weight(zone.min_weight, weight_unit).value
         if package_weight < min_weight_value:
             return False
 
     # Check max weight (exclusive)
     if zone.max_weight is not None:
-        max_weight_value = units.Weight(zone.max_weight, service.weight_unit).value
+        max_weight_value = units.Weight(zone.max_weight, weight_unit).value
         if package_weight >= max_weight_value:
             return False
 
@@ -194,7 +200,7 @@ def find_best_matching_zone(
     Returns:
         Best matching zone, or None if no matches found
     """
-    matching_zones = []
+    matching_zones: typing.List[typing.Tuple[int, float, float, models.ServiceZone]] = []
 
     for zone in zones:
         # Must match location
@@ -208,32 +214,24 @@ def find_best_matching_zone(
         # Calculate metrics for sorting
         specificity = calculate_zone_specificity(zone)
         weight_range = (zone.max_weight or float("inf")) - (zone.min_weight or 0)
+        rate = zone.rate or 0.0
 
-        matching_zones.append(
-            {
-                "zone": zone,
-                "specificity": specificity,
-                "weight_range": weight_range,
-                "rate": zone.rate or 0,
-            }
-        )
+        # Store as tuple: (specificity, weight_range, rate, zone)
+        matching_zones.append((specificity, weight_range, rate, zone))
 
     if not matching_zones:
         return None
 
     # Sort by priority:
-    # 1. Highest specificity (descending)
+    # 1. Highest specificity (descending) - use negative
     # 2. Tightest weight range (ascending)
     # 3. Lowest rate (ascending)
-    matching_zones.sort(
-        key=lambda z: (
-            -z["specificity"],  # Negative for descending
-            z["weight_range"],  # Ascending (tighter first)
-            z["rate"],  # Ascending (cheaper first)
-        )
+    best_match = min(
+        matching_zones,
+        key=lambda t: (-t[0], t[1], t[2])
     )
 
-    return matching_zones[0]["zone"]
+    return best_match[3]  # Return the zone
 
 
 def get_available_rates(
