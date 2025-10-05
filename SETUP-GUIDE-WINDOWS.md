@@ -271,6 +271,32 @@ source .venv/karrio/Scripts/activate
 
 **Solution:** Follow Step 7 to install GTK via MSYS2, or use Docker for development.
 
+### Dashboard "Invalid URL" Error
+**Symptom:** Dashboard logs show `TypeError: Invalid URL` with `input: 'undefined'` when trying to load metadata.
+
+**Error:**
+```
+loadMetadata TypeError: Invalid URL
+{
+  code: 'ERR_INVALID_URL',
+  input: 'undefined'
+}
+```
+
+**Cause:** The dashboard's `.env` file is missing. The `apps/dashboard/.env.sample` file is not automatically copied to `.env` during setup.
+
+**Solution:**
+1. Copy the sample file:
+   ```bash
+   cp apps/dashboard/.env.sample apps/dashboard/.env
+   ```
+2. Verify the file contains the correct API URL (default is already configured):
+   ```
+   KARRIO_URL=http://localhost:5002
+   NEXT_PUBLIC_KARRIO_PUBLIC_URL=http://localhost:5002
+   ```
+3. Restart the dashboard server
+
 ---
 
 ## Next Steps After Setup
@@ -297,7 +323,13 @@ Once setup completes successfully:
    karrio collectstatic --noinput
    ```
 
-5. **Start development servers:**
+5. **Create dashboard .env file (if not already created):**
+   ```bash
+   cp apps/dashboard/.env.sample apps/dashboard/.env
+   ```
+   **Note:** The setup script should create this automatically, but sometimes it doesn't. This file is required for the dashboard to connect to the API.
+
+6. **Start development servers:**
    ```bash
    ./bin/dev up
    ```
