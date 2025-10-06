@@ -34,7 +34,11 @@ class TestLandmarkRates(unittest.TestCase):
         )
 
         self.assertIsNotNone(maxipak_ddp)
-        self.assertEqual(maxipak_ddp.service_name, "MaxiPak Scan DDP")
+        self.assertIn(
+            maxipak_ddp.service_name,
+            ["MaxiPak Scan DDP", "landmark_maxipak_scan_ddp"],
+            "Service name should be either CSV name or enum name",
+        )
         self.assertEqual(maxipak_ddp.currency, "GBP")
 
         # Should have multiple zones

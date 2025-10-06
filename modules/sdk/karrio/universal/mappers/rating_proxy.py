@@ -257,14 +257,18 @@ def get_available_rates(
             continue
 
         # Check if destination covered
-        cover_domestic_shipment = (
-            service.domicile is True and service.domicile == is_domicile
-        )
+        # Service explicitly supports domestic shipments
+        cover_domestic_shipment = service.domicile is True and is_domicile is True
+
+        # Service explicitly supports international shipments
         cover_international_shipment = (
-            service.international is True and service.international == is_international
+            service.international is True and is_international is True
         )
+
+        # Service supports all destinations (both flags None OR both flags True)
         cover_all_destination = (
-            service.domicile is None and service.international is None
+            (service.domicile is None and service.international is None)
+            or (service.domicile is True and service.international is True)
         )
         explicit_destination_covered = explicitly_requested and (
             cover_domestic_shipment

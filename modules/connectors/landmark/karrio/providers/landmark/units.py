@@ -161,16 +161,16 @@ def load_services_from_csv() -> list:
         # Fallback to simple default if CSV doesn't exist
         return [
             models.ServiceLevel(
-                service_name=service.name,
+                service_name=ShippingService.map(service.code).name_or_key,
                 service_code=service.name,
                 currency="GBP",
                 zones=[models.ServiceZone(label="Flat Rate", rate=0.0)],
             )
-            for service in ShippingService
+            for service in ShippingService  # type: ignore
         ]
 
     # Group zones by service
-    services_dict = {}
+    services_dict: dict[str, dict] = {}
 
     with open(csv_path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
@@ -180,7 +180,7 @@ def load_services_from_csv() -> list:
             # Initialize service if not exists
             if service_code not in services_dict:
                 services_dict[service_code] = {
-                    "service_name": row["service_name"],
+                    "service_name": ShippingService.map(service_code).name_or_key,
                     "service_code": service_code,
                     "currency": row.get("currency", "GBP"),
                     "zones": [],
@@ -205,9 +205,15 @@ def load_services_from_csv() -> list:
 
             services_dict[service_code]["zones"].append(zone)
 
-    # Convert to ServiceLevel objects
+    # Convert to ServiceLevel objects and mark as international-only
     return [
-        models.ServiceLevel(**service_data) for service_data in services_dict.values()
+        models.ServiceLevel(
+            **service_data,
+            international=True,  # All Landmark services are international-only
+            domicile=False,
+            weight_unit="KG",  # Weight unit for zone matching
+        )
+        for service_data in services_dict.values()
     ]
 
 
