@@ -58,6 +58,15 @@ class ConnectionConfig(lib.Enum):
     shipping_options = lib.OptionEnum("shipping_options", list)
 
 
+class ShippingServiceName(lib.StrEnum):
+    """Carrier specific services"""
+
+    landmark_maxipak_scan_ddp = "MaxiPak Scan DDP"
+    landmark_maxipak_scan_ddu = "MaxiPak Scan DDU"
+    landmark_minipak_scan_ddp = "MiniPak Scan DDP (EU Only)"
+    landmark_minipak_scan_ddu = "MiniPak Scan DDU shipments (EU & ROW)"
+
+
 class ShippingService(lib.StrEnum):
     """Carrier specific services"""
 
@@ -161,8 +170,10 @@ def load_services_from_csv() -> list:
         # Fallback to simple default if CSV doesn't exist
         return [
             models.ServiceLevel(
-                service_name=ShippingService.map(service.code).name_or_key,
-                service_code=service.name,
+                service_name=ShippingServiceName.map(
+                    ShippingService.map(service.code).name_or_key
+                ).value_or_key,
+                service_code=ShippingService.map(service.code).name_or_key,
                 currency="GBP",
                 zones=[models.ServiceZone(label="Flat Rate", rate=0.0)],
             )
@@ -180,8 +191,10 @@ def load_services_from_csv() -> list:
             # Initialize service if not exists
             if service_code not in services_dict:
                 services_dict[service_code] = {
-                    "service_name": ShippingService.map(service_code).name_or_key,
-                    "service_code": service_code,
+                    "service_name": ShippingServiceName.map(
+                        ShippingService.map(service_code).name_or_key
+                    ).value_or_key,
+                    "service_code": ShippingService.map(service_code).name_or_key,
                     "currency": row.get("currency", "GBP"),
                     "zones": [],
                 }
