@@ -201,7 +201,6 @@ class Migration(migrations.Migration):
 
 ### Cons
 - Additional model and table
-- Slightly more complex than Option 1
 - Requires migration to initialize existing counters
 
 ---
