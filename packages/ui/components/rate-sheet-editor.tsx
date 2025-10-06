@@ -344,7 +344,7 @@ export const RateSheetEditor = ({
       // Surface a friendly error, avoid throwing in console overlay
       const message = error?.response?.errors?.[0]?.message || error?.message || 'Unknown error';
       console.warn("Failed to save rate sheet:", message);
-      toast({ title: "Rate Sheet was unable to be saved. Error:", description: message, variant: "destructive" });
+      toast({ title: `Rate Sheet was unable to be ${isNew ? 'created' : 'saved'}`, description: message, variant: "destructive" });
     } finally {
       loader.setLoading(false);
     }
