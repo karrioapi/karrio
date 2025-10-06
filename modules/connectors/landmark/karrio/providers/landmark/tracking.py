@@ -5,11 +5,18 @@ import karrio.schemas.landmark.track_response as landmark_res
 
 import typing
 import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
 import karrio.providers.landmark.error as error
 import karrio.providers.landmark.utils as provider_utils
 import karrio.providers.landmark.units as provider_units
+
+
+# Supported datetime formats for Landmark Global
+DATETIME_FORMATS = [
+    "%m/%d/%Y %I:%M %p",  # 10/01/2025 03:02 PM
+    "%-m/%d/%Y %I:%M %p",  # 0/01/2025 03:03 PM (single digit month)
+    "%Y-%m-%d %H:%M:%S",  # 2019-01-01 13:21:45
+]
 
 
 def parse_tracking_response(
@@ -30,7 +37,7 @@ def parse_tracking_response(
 
     tracking_details = [
         _extract_details(details, settings)
-        for number, details in responses
+        for _, details in responses
         if len(lib.find_element("TrackingNumber", details)) > 0
     ]
 
@@ -43,15 +50,36 @@ def _extract_details(
 ) -> models.TrackingDetails:
     """Extract tracking details from carrier response data"""
 
-    details = lib.find_element("ShipmentDetails", data, landmark_res.ShipmentDetailsType, first=True)
+    details = lib.find_element(
+        "ShipmentDetails", data, landmark_res.ShipmentDetailsType, first=True
+    )
     package = lib.find_element("Package", data, landmark_res.PackageType, first=True)
-    events = lib.find_element("Event", data, landmark_res.EventType)
 
+    # Transform events to TrackingEvent models
+    tracking_events = lib.sort_events(
+        [
+            models.TrackingEvent(
+                date=lib.fdate(event.DateTime, try_formats=DATETIME_FORMATS),
+                time=lib.flocaltime(
+                    event.DateTime,
+                    output_format="%I:%M %p",
+                    try_formats=DATETIME_FORMATS,
+                ),
+                description=event.Status,
+                code=event.EventCode,
+                location=event.Location,
+            )
+            for event in package.Events.Event
+        ]
+    )
+
+    # Determine status based on the most recent event
+    latest_event = tracking_events[0] if tracking_events else None
     status = next(
         (
             status.name
             for status in list(provider_units.TrackingStatus)
-            if events[0].EventCode in status.value
+            if latest_event and latest_event.code in status.value
         ),
         provider_units.TrackingStatus.in_transit.name,
     )
@@ -60,20 +88,13 @@ def _extract_details(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         tracking_number=package.TrackingNumber,
-        events=[
-            models.TrackingEvent(
-                date=lib.fdate(event.DateTime, "%m/%d/%Y %I:%M %p"),
-                time=lib.flocaltime(event.DateTime, "%m/%d/%Y %I:%M %p"),
-                description=event.Status,
-                code=event.EventCode,
-                location=event.Location,
-            )
-            for event in package.Events.Event
-        ],
+        events=tracking_events,
         delivered=status == "delivered",
         status=status,
         info=models.TrackingInfo(
-            carrier_tracking_link=settings.tracking_url.format(package.LandmarkTrackingNumber),
+            carrier_tracking_link=settings.tracking_url.format(
+                package.LandmarkTrackingNumber
+            ),
         ),
         meta=dict(carrier=details.EndDeliveryCarrier),
     )
@@ -104,7 +125,6 @@ def tracking_request(
     return lib.Serializable(
         requests,
         lambda __: [
-            lib.typed(number=_.TrackingNumber, request=lib.to_xml(_))
-            for _ in __
-        ]
+            lib.typed(number=_.TrackingNumber, request=lib.to_xml(_)) for _ in __
+        ],
     )

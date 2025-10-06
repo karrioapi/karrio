@@ -1,5 +1,6 @@
 from karrio.core.utils.soap import *
 from karrio.core.utils.helpers import *
+from karrio.core.utils.helpers import sort_events_chronologically
 from karrio.core.utils.dict import DICTPARSE as DP
 from karrio.core.utils.string import STRINGFORMAT as SF
 from karrio.core.utils.number import NUMBERFORMAT as NF
