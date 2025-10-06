@@ -12,6 +12,7 @@ import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { Button } from "@karrio/ui/components/ui/button";
 import { Input } from "@karrio/ui/components/ui/input";
+import { MultiSelect } from "@karrio/ui/components/multi-select";
 import { Label } from "@karrio/ui/components/ui/label";
 import {
   AlertDialog,
@@ -82,6 +83,14 @@ export const RateSheetEditor = ({
   const [existingRateSheets, setExistingRateSheets] = React.useState<any[]>([]);
   const [showExistingOptions, setShowExistingOptions] = React.useState(false);
   const [zoneTextBuffers, setZoneTextBuffers] = React.useState<Record<number, Partial<Record<'country_codes' | 'cities' | 'postal_codes', string>>>>({});
+
+  const countryOptions = React.useMemo(() => {
+    const countries = references?.countries || {};
+    return Object.entries(countries).map(([code, name]) => ({
+      label: String(name),
+      value: String(code).toUpperCase(),
+    }));
+  }, [references?.countries]);
 
   const rateSheet = query.data?.rate_sheet;
   const services = rateSheet?.services || [];
@@ -192,7 +201,7 @@ export const RateSheetEditor = ({
         zones: (service.zones || []).map((zone: any, i: number) => {
           const buffer = zoneTextBuffers[i] || {};
           const patch: any = {};
-          if (typeof buffer.country_codes === 'string') patch.country_codes = parseList(buffer.country_codes);
+          // Do not override country_codes from legacy text buffer anymore (MultiSelect manages arrays directly)
           if (typeof buffer.cities === 'string') patch.cities = parseList(buffer.cities);
           if (typeof buffer.postal_codes === 'string') patch.postal_codes = parseList(buffer.postal_codes);
           return { ...zone, ...patch };
@@ -270,7 +279,8 @@ export const RateSheetEditor = ({
               if (zone.transit_time) cleanZone.transit_time = zone.transit_time;
               if (zone.cities && zone.cities.length > 0) cleanZone.cities = zone.cities;
               if (zone.postal_codes && zone.postal_codes.length > 0) cleanZone.postal_codes = zone.postal_codes;
-              if (zone.country_codes && zone.country_codes.length > 0) cleanZone.country_codes = zone.country_codes;
+              // Include country_codes even if empty to allow clearing
+              if (zone.country_codes !== undefined) cleanZone.country_codes = zone.country_codes;
 
               return cleanZone;
             })
@@ -1047,28 +1057,15 @@ export const RateSheetEditor = ({
                                   />
                                 </div>
                                 <div>
-                                  <Label>Country Codes (comma separated)</Label>
-                                  <Input
-                                    value={getZoneTextValue(i, 'country_codes', getAggregatedZoneArray(i, 'country_codes'))}
-                                    inputMode="text"
-                                    onKeyDown={(e) => {
-                                      // Allow comma and space input - prevent any parent/global blocking behavior
-                                      if (e.key === ',' || e.key === ' ' || (e as any).keyCode === 188 || (e as any).keyCode === 32) {
-                                        e.stopPropagation();
-                                        const nativeEvent: any = (e as any).nativeEvent;
-                                        if (nativeEvent && typeof nativeEvent.stopImmediatePropagation === 'function') {
-                                          nativeEvent.stopImmediatePropagation();
-                                        }
-                                      }
+                                  <Label>Country Codes</Label>
+                                  <MultiSelect
+                                    options={countryOptions}
+                                    value={getAggregatedZoneArray(i, 'country_codes')}
+                                    onValueChange={(vals) => {
+                                      const unique = Array.from(new Set(vals.map((v) => v.toUpperCase())));
+                                      handleUpdateZoneFieldAll(i, 'country_codes', unique);
                                     }}
-                                    onKeyDownCapture={(e) => {
-                                      if (e.key === ',' || e.key === ' ' || (e as any).keyCode === 188 || (e as any).keyCode === 32) {
-                                        e.stopPropagation();
-                                      }
-                                    }}
-                                    onChange={(e) => setZoneTextValue(i, 'country_codes', e.target.value)}
-                                    onBlur={() => persistZoneTextValue(i, 'country_codes')}
-                                    placeholder="US, CA, MX"
+                                    placeholder="Select countries"
                                   />
                                 </div>
                                 <div>
