@@ -362,7 +362,7 @@ class TrackingDetails:
 class Documents:
     """Karrio unified shipment documents details data type."""
 
-    label: str
+    label: str = None
 
     invoice: str = None
     zpl_label: str = None
