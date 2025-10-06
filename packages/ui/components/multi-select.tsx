@@ -45,6 +45,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
 }) => {
     const [open, setOpen] = React.useState(false);
     const [search, setSearch] = React.useState("");
+    const [showSelectedOnly, setShowSelectedOnly] = React.useState(false);
 
     const selectedSet = React.useMemo(() => new Set(value), [value]);
 
@@ -55,6 +56,11 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
             `${opt.label} ${opt.value}`.toLowerCase().includes(term)
         );
     }, [options, search]);
+
+    const displayed = React.useMemo(() => {
+        const base = filtered;
+        return showSelectedOnly ? base.filter(o => selectedSet.has(o.value)) : base;
+    }, [filtered, showSelectedOnly, selectedSet]);
 
     const toggle = (val: string) => {
         if (selectedSet.has(val)) {
@@ -140,47 +146,46 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                         value={search}
                         onValueChange={setSearch}
                     />
-                    <div
-                        className="max-h-72 overflow-y-auto"
-                        onWheel={(e) => {
-                            const el = e.currentTarget as HTMLDivElement;
-                            const canScrollUp = el.scrollTop > 0;
-                            const canScrollDown = el.scrollTop < el.scrollHeight - el.clientHeight;
-                            if ((e.deltaY < 0 && canScrollUp) || (e.deltaY > 0 && canScrollDown)) {
-                                e.stopPropagation();
-                            }
-                        }}
+                    <CommandList
+                        className="max-h-72 overflow-y-auto overscroll-contain"
+                        onWheelCapture={(e) => e.stopPropagation()}
                     >
-                        <CommandList>
-                            <CommandEmpty>No results found.</CommandEmpty>
-                            <CommandGroup>
-                                {filtered.map((opt) => {
-                                    const selected = selectedSet.has(opt.value);
-                                    return (
-                                        <CommandItem
-                                            key={opt.value}
-                                            onSelect={() => toggle(opt.value)}
-                                            className="cursor-pointer"
-                                        >
-                                            <Check
-                                                className={cn(
-                                                    "mr-2 h-4 w-4",
-                                                    selected ? "opacity-100" : "opacity-0"
-                                                )}
-                                            />
-                                            <span className="flex-1 truncate">{opt.label}</span>
-                                            <span className="text-xs text-muted-foreground ml-2">({opt.value})</span>
-                                        </CommandItem>
-                                    );
-                                })}
-                            </CommandGroup>
-                        </CommandList>
-                    </div>
-                    {value.length > 0 && (
-                        <div className="flex justify-end p-2 border-t">
+                        <CommandEmpty>No results found.</CommandEmpty>
+                        <CommandGroup>
+                            {displayed.map((opt) => {
+                                const selected = selectedSet.has(opt.value);
+                                return (
+                                    <CommandItem
+                                        key={opt.value}
+                                        onSelect={() => toggle(opt.value)}
+                                        className="cursor-pointer"
+                                    >
+                                        <Check
+                                            className={cn(
+                                                "mr-2 h-4 w-4",
+                                                selected ? "opacity-100" : "opacity-0"
+                                            )}
+                                        />
+                                        <span className="flex-1 truncate">{opt.label}</span>
+                                        <span className="text-xs text-muted-foreground ml-2">({opt.value})</span>
+                                    </CommandItem>
+                                );
+                            })}
+                        </CommandGroup>
+                    </CommandList>
+                    <div className="flex justify-between p-2 border-t">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setShowSelectedOnly((s) => !s)}
+                            disabled={value.length === 0 && !showSelectedOnly}
+                        >
+                            {showSelectedOnly ? "All Countries" : "Selected"}
+                        </Button>
+                        {value.length > 0 && (
                             <Button variant="ghost" size="sm" onClick={clear}>Clear</Button>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </Command>
             </PopoverContent>
         </Popover>
