@@ -120,7 +120,8 @@ run_pip_install() {
 
 # Python virtual environment helpers
 ROOT="$(pwd)"
-BASE_DIR="${ROOT##*/}"
+# Always use 'karrio' as the virtual environment name, regardless of folder name
+BASE_DIR="karrio"
 ENV_DIR=".venv"
 LOG_DIR=".karrio"
 DIST="${ROOT:?}/${ENV_DIR}/dist"

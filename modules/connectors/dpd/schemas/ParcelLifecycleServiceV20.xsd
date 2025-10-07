@@ -1,0 +1,115 @@
+<xs:schema elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://dpd.com/common/service/types/ParcelLifeCycleService/2.0"
+    targetNamespace="http://dpd.com/common/service/types/ParcelLifeCycleService/2.0">
+    <xs:element name="getParcelLabelNumberForWebNumber" type="tns:getParcelLabelNumberForWebNumber" />
+    <xs:complexType name="getParcelLabelNumberForWebNumber">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="webNumber"
+                type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="getParcelLabelNumberForWebNumberResponse"
+        type="tns:getParcelLabelNumberForWebNumberResponse" />
+    <xs:complexType name="getParcelLabelNumberForWebNumberResponse">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="parcelLabelNumber" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="getTrackingData" type="tns:getTrackingData" />
+    <xs:complexType name="getTrackingData">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="parcelLabelNumber"
+                type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="getTrackingDataResponse" type="tns:getTrackingDataResponse" />
+    <xs:complexType name="getTrackingDataResponse">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="trackingresult" type="tns:TrackingResult" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TrackingResult">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="shipmentInfo" type="tns:ShipmentInfo" />
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="statusInfo" type="tns:StatusInfo" />
+            <xs:element minOccurs="0" maxOccurs="3" name="contactInfo" type="tns:ContentItem" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ShipmentInfo">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="receiver" type="tns:ContentItem" />
+            <xs:element minOccurs="0" maxOccurs="1" name="predictInformation" type="tns:ContentItem" />
+            <xs:element minOccurs="0" maxOccurs="1" name="serviceDescription" type="tns:ContentItem" />
+            <xs:element minOccurs="0" maxOccurs="1" name="additionalServiceElements"
+                type="tns:ContentItem" />
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="trackingProperty"
+                type="tns:TrackingProperty" />
+            <xs:element minOccurs="1" maxOccurs="1" name="status" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="label" type="tns:ContentLine" />
+            <xs:element minOccurs="1" maxOccurs="1" name="description" type="tns:ContentItem" />
+            <xs:element minOccurs="1" maxOccurs="1" name="statusHasBeenReached" type="xs:boolean" />
+            <xs:element minOccurs="1" maxOccurs="1" name="isCurrentStatus" type="xs:boolean" />
+            <xs:element minOccurs="1" maxOccurs="1" name="showContactInfo" type="xs:boolean" />
+            <xs:element minOccurs="0" maxOccurs="1" name="location" type="tns:ContentLine" />
+            <xs:element minOccurs="0" maxOccurs="1" name="date" type="tns:ContentLine" />
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="normalItems"
+                type="tns:ContentItem" />
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="importantItems"
+                type="tns:ContentItem" />
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="errorItems" type="tns:ContentItem" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ContentItem">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="label" type="tns:ContentLine" />
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="content" type="tns:ContentLine" />
+            <xs:element minOccurs="0" maxOccurs="1" name="linkTarget" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ContentLine">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="content" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="bold" type="xs:boolean" />
+            <xs:element minOccurs="1" maxOccurs="1" name="paragraph" type="xs:boolean" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TrackingProperty">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="key" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="value" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfContentLine">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="ContentLine" nillable="true"
+                type="tns:ContentLine" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="StatusInfo">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="status" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="label" type="tns:ContentLine" />
+            <xs:element minOccurs="1" maxOccurs="1" name="description" type="tns:ContentItem" />
+            <xs:element minOccurs="1" maxOccurs="1" name="statusHasBeenReached" type="xs:boolean" />
+            <xs:element minOccurs="1" maxOccurs="1" name="isCurrentStatus" type="xs:boolean" />
+            <xs:element minOccurs="1" maxOccurs="1" name="showContactInfo" type="xs:boolean" />
+            <xs:element minOccurs="0" maxOccurs="1" name="location" type="tns:ContentLine" />
+            <xs:element minOccurs="0" maxOccurs="1" name="date" type="tns:ContentLine" />
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="normalItems"
+                type="tns:ContentItem" />
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="importantItems"
+                type="tns:ContentItem" />
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="errorItems" type="tns:ContentItem" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="faults" type="tns:faults" />
+    <xs:complexType name="faults">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="faultCode"
+                type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="message"
+                type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

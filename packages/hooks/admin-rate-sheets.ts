@@ -79,6 +79,8 @@ export function useRateSheetMutation() {
     // Invalidate all related queries to ensure data refresh
     queryClient.invalidateQueries({ queryKey: ['admin_rate_sheets'] });
     queryClient.invalidateQueries({ queryKey: ['admin_rate_sheet'] });
+    // Also invalidate carrier connections since they include rate sheet info
+    queryClient.invalidateQueries({ queryKey: ['admin_account_carrier_connections'] });
     // Force refetch to ensure UI updates immediately
     queryClient.refetchQueries({ queryKey: ['admin_rate_sheets'] });
   };
