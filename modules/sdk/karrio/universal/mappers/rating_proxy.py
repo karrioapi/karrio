@@ -121,18 +121,15 @@ def check_location_match(
     """
     # Check postal codes (most specific)
     if zone.postal_codes:
-        return (
-            recipient.postal_code is not None
-            and str(recipient.postal_code).lower()
-            in [str(pc).lower() for pc in zone.postal_codes]
-        )
+        return recipient.postal_code is not None and str(
+            recipient.postal_code
+        ).lower() in [str(pc).lower() for pc in zone.postal_codes]
 
     # Check cities (medium specific)
     if zone.cities:
-        return (
-            recipient.city is not None
-            and recipient.city.lower() in [city.lower() for city in zone.cities]
-        )
+        return recipient.city is not None and recipient.city.lower() in [
+            city.lower() for city in zone.cities
+        ]
 
     # Check country codes (least specific)
     if zone.country_codes:
@@ -200,7 +197,9 @@ def find_best_matching_zone(
     Returns:
         Best matching zone, or None if no matches found
     """
-    matching_zones: typing.List[typing.Tuple[int, float, float, models.ServiceZone]] = []
+    matching_zones: typing.List[typing.Tuple[int, float, float, models.ServiceZone]] = (
+        []
+    )
 
     for zone in zones:
         # Must match location
@@ -226,10 +225,7 @@ def find_best_matching_zone(
     # 1. Highest specificity (descending) - use negative
     # 2. Tightest weight range (ascending)
     # 3. Lowest rate (ascending)
-    best_match = min(
-        matching_zones,
-        key=lambda t: (-t[0], t[1], t[2])
-    )
+    best_match = min(matching_zones, key=lambda t: (-t[0], t[1], t[2]))
 
     return best_match[3]  # Return the zone
 
@@ -267,9 +263,8 @@ def get_available_rates(
 
         # Service supports all destinations (both flags None OR both flags True)
         cover_all_destination = (
-            (service.domicile is None and service.international is None)
-            or (service.domicile is True and service.international is True)
-        )
+            service.domicile is None and service.international is None
+        ) or (service.domicile is True and service.international is True)
         explicit_destination_covered = explicitly_requested and (
             cover_domestic_shipment
             or cover_international_shipment
@@ -415,7 +410,19 @@ def get_available_rates(
                     currency=service.currency,
                     transit_days=transit_days,
                     total_charge=selected_zone.rate,
-                    meta=dict(service_name=service.service_name),
+                    extra_charges=[
+                        models.ChargeDetails(
+                            name="Base Charge",
+                            amount=selected_zone.rate,
+                            currency=service.currency,
+                        )
+                    ],
+                    meta=lib.to_dict(  # type: ignore
+                        dict(
+                            carrier_service_code=service.carrier_service_code,
+                            service_name=service.service_name,
+                        )
+                    ),
                 )
             )
 

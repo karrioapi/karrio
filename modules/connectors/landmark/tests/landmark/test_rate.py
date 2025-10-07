@@ -22,15 +22,15 @@ class TestLandmarkRates(unittest.TestCase):
 
         # Check that we have the expected services
         service_codes = [s.service_code for s in self.services]
-        self.assertIn("LGINTSTD", service_codes)
-        self.assertIn("LGINTSTDU", service_codes)
-        self.assertIn("LGINTBPIP", service_codes)
-        self.assertIn("LGINTBPIU", service_codes)
+        self.assertIn("landmark_maxipak_scan_ddp", service_codes)
+        self.assertIn("landmark_maxipak_scan_ddu", service_codes)
+        self.assertIn("landmark_minipak_scan_ddp", service_codes)
+        self.assertIn("landmark_minipak_scan_ddu", service_codes)
 
     def test_maxipak_ddp_service_structure(self):
         """Test MaxiPak DDP service has correct structure."""
         maxipak_ddp = next(
-            (s for s in self.services if s.service_code == "LGINTSTD"), None
+            (s for s in self.services if s.service_code == "landmark_maxipak_scan_ddp"), None
         )
 
         self.assertIsNotNone(maxipak_ddp)
@@ -47,14 +47,12 @@ class TestLandmarkRates(unittest.TestCase):
     def test_weight_tiers_for_us_zone(self):
         """Test that US zone has multiple weight tiers."""
         maxipak_ddp = next(
-            (s for s in self.services if s.service_code == "LGINTSTD"), None
+            (s for s in self.services if s.service_code == "landmark_maxipak_scan_ddp"), None
         )
 
         # Filter US zones
         us_zones = [
-            z
-            for z in maxipak_ddp.zones
-            if z.country_codes and "US" in z.country_codes
+            z for z in maxipak_ddp.zones if z.country_codes and "US" in z.country_codes
         ]
 
         # Should have multiple weight tiers for US
@@ -63,20 +61,24 @@ class TestLandmarkRates(unittest.TestCase):
         # Check that zones have different weight ranges
         weight_ranges = [(z.min_weight, z.max_weight) for z in us_zones]
         self.assertEqual(
-            len(weight_ranges), len(set(weight_ranges)), "Weight ranges should be unique"
+            len(weight_ranges),
+            len(set(weight_ranges)),
+            "Weight ranges should be unique",
         )
 
     def test_zone_prices_increase_with_weight(self):
         """Test that prices generally increase with weight within same destination."""
         maxipak_ddp = next(
-            (s for s in self.services if s.service_code == "LGINTSTD"), None
+            (s for s in self.services if s.service_code == "landmark_maxipak_scan_ddp"), None
         )
 
         # Get US zones sorted by max_weight
         us_zones = [
             z
             for z in maxipak_ddp.zones
-            if z.country_codes and "US" in z.country_codes and z.label == "United States"
+            if z.country_codes
+            and "US" in z.country_codes
+            and z.label == "United States"
         ]
         us_zones_sorted = sorted(
             us_zones, key=lambda z: z.max_weight if z.max_weight else float("inf")
@@ -97,7 +99,7 @@ class TestLandmarkRates(unittest.TestCase):
     def test_light_package_to_us_rate(self):
         """Test rate for 0.3kg package to US."""
         maxipak_ddp = next(
-            (s for s in self.services if s.service_code == "LGINTSTD"), None
+            (s for s in self.services if s.service_code == "landmark_maxipak_scan_ddp"), None
         )
 
         # Find matching zone for 0.3kg to US
@@ -120,7 +122,7 @@ class TestLandmarkRates(unittest.TestCase):
     def test_medium_package_to_us_rate(self):
         """Test rate for 0.75kg package to US."""
         maxipak_ddp = next(
-            (s for s in self.services if s.service_code == "LGINTSTD"), None
+            (s for s in self.services if s.service_code == "landmark_maxipak_scan_ddp"), None
         )
 
         # Find matching zone for 0.75kg to US
@@ -147,7 +149,7 @@ class TestLandmarkRates(unittest.TestCase):
     def test_heavy_package_to_us_rate(self):
         """Test rate for 1.5kg package to US."""
         maxipak_ddp = next(
-            (s for s in self.services if s.service_code == "LGINTSTD"), None
+            (s for s in self.services if s.service_code == "landmark_maxipak_scan_ddp"), None
         )
 
         # Find matching zone for 1.5kg to US
@@ -162,9 +164,7 @@ class TestLandmarkRates(unittest.TestCase):
                     matching_zone = zone
                     break
 
-        self.assertIsNotNone(
-            matching_zone, "Should find matching zone for 1.5kg to US"
-        )
+        self.assertIsNotNone(matching_zone, "Should find matching zone for 1.5kg to US")
         self.assertEqual(
             matching_zone.rate,
             10.81,
@@ -174,7 +174,7 @@ class TestLandmarkRates(unittest.TestCase):
     def test_eu_zone_coverage(self):
         """Test that EU zones cover expected countries."""
         maxipak_ddp = next(
-            (s for s in self.services if s.service_code == "LGINTSTD"), None
+            (s for s in self.services if s.service_code == "landmark_maxipak_scan_ddp"), None
         )
 
         # Get all EU country codes
@@ -194,7 +194,7 @@ class TestLandmarkRates(unittest.TestCase):
     def test_germany_rate_lower_than_us(self):
         """Test that Germany rates are lower than US rates (EU Zone 1 vs US)."""
         maxipak_ddp = next(
-            (s for s in self.services if s.service_code == "LGINTSTD"), None
+            (s for s in self.services if s.service_code == "landmark_maxipak_scan_ddp"), None
         )
 
         # Get 1kg rate for Germany (EU Zone 1)
@@ -232,7 +232,7 @@ class TestLandmarkRates(unittest.TestCase):
     def test_minipak_eu_only_restriction(self):
         """Test that MiniPak DDP is EU only."""
         minipak_ddp = next(
-            (s for s in self.services if s.service_code == "LGINTBPIP"), None
+            (s for s in self.services if s.service_code == "landmark_minipak_scan_ddp"), None
         )
 
         self.assertIsNotNone(minipak_ddp)
@@ -251,7 +251,7 @@ class TestLandmarkRates(unittest.TestCase):
     def test_minipak_weight_limit(self):
         """Test that MiniPak services have 2kg weight limit."""
         minipak_ddp = next(
-            (s for s in self.services if s.service_code == "LGINTBPIP"), None
+            (s for s in self.services if s.service_code == "landmark_minipak_scan_ddp"), None
         )
 
         # Check maximum weight across all zones
@@ -265,7 +265,7 @@ class TestLandmarkRates(unittest.TestCase):
     def test_transit_times_defined(self):
         """Test that transit times are defined for zones."""
         maxipak_ddp = next(
-            (s for s in self.services if s.service_code == "LGINTSTD"), None
+            (s for s in self.services if s.service_code == "landmark_maxipak_scan_ddp"), None
         )
 
         # Check that zones have transit times
@@ -277,9 +277,7 @@ class TestLandmarkRates(unittest.TestCase):
 
         # Check US transit time is 7 days
         us_zones = [
-            z
-            for z in maxipak_ddp.zones
-            if z.country_codes and "US" in z.country_codes
+            z for z in maxipak_ddp.zones if z.country_codes and "US" in z.country_codes
         ]
         if us_zones:
             self.assertEqual(
@@ -289,7 +287,7 @@ class TestLandmarkRates(unittest.TestCase):
     def test_zone_weight_ranges_no_gaps(self):
         """Test that weight ranges don't have gaps for each destination."""
         maxipak_ddp = next(
-            (s for s in self.services if s.service_code == "LGINTSTD"), None
+            (s for s in self.services if s.service_code == "landmark_maxipak_scan_ddp"), None
         )
 
         # Group zones by destination (using label for simplicity)
@@ -357,13 +355,13 @@ class TestLandmarkRateScenarios(unittest.TestCase):
         from karrio.providers.landmark import units
 
         maxipak_ddp = next(
-            (s for s in units.DEFAULT_SERVICES if s.service_code == "LGINTSTD"), None
+            (s for s in units.DEFAULT_SERVICES if s.service_code == "landmark_maxipak_scan_ddp"), None
         )
 
         # Find zone for 0.5kg to US
         matching_zones = [
             z
-            for z in maxipak_ddp.zones
+            for z in getattr(maxipak_ddp, "zones", [])
             if z.country_codes
             and "US" in z.country_codes
             and z.min_weight is not None
@@ -371,21 +369,27 @@ class TestLandmarkRateScenarios(unittest.TestCase):
             and z.min_weight <= 0.5 < z.max_weight
         ]
 
-        self.assertEqual(len(matching_zones), 1, "Should find exactly one matching zone")
-        self.assertEqual(matching_zones[0].rate, 8.78, "0.5kg to US should cost £8.78 (0.5-1.0kg tier)")
+        self.assertEqual(
+            len(matching_zones), 1, "Should find exactly one matching zone"
+        )
+        self.assertEqual(
+            matching_zones[0].rate,
+            8.78,
+            "0.5kg to US should cost £8.78 (0.5-1.0kg tier)",
+        )
 
     def test_package_exactly_on_tier_boundary(self):
         """Test: Package weight exactly on tier boundary (0.5kg)."""
         from karrio.providers.landmark import units
 
         maxipak_ddp = next(
-            (s for s in units.DEFAULT_SERVICES if s.service_code == "LGINTSTD"), None
+            (s for s in units.DEFAULT_SERVICES if s.service_code == "landmark_maxipak_scan_ddp"), None
         )
 
         # Weight = 0.5kg should match 0.5-1.0kg tier (inclusive min, exclusive max)
         matching_zones = [
             z
-            for z in maxipak_ddp.zones
+            for z in getattr(maxipak_ddp, "zones", [])
             if z.country_codes
             and "US" in z.country_codes
             and z.min_weight is not None

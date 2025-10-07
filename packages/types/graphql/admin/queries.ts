@@ -228,6 +228,10 @@ export const GET_RATE_SHEETS = gql`
               rate
               min_weight
               max_weight
+              transit_days
+              cities
+              postal_codes
+              country_codes
             }
           }
           carriers {
@@ -265,6 +269,7 @@ export const GET_RATE_SHEET = gql`
           rate
           min_weight
           max_weight
+          transit_days
           cities
           postal_codes
           country_codes

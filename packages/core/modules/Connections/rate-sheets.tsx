@@ -74,60 +74,85 @@ export default function RateSheetsPage() {
         </div>
 
         {/* List */}
-        <div className="space-y-3">
-          {filtered.map(({ node: sheet }) => (
-            <div key={sheet.id} className="group relative flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200 bg-white gap-3">
-              <div className="flex items-start sm:items-center gap-3 flex-1 w-full sm:w-auto">
-                <div className="flex-shrink-0">
-                  <CarrierImage carrier_name={sheet.carrier_name} width={48} height={48} className="rounded-lg" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
-                    <h3 className="font-medium text-gray-900 text-base">{sheet.name}</h3>
+        {filtered.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="mx-auto mb-4 text-gray-400">
+              <svg className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-gray-500 mb-2">
+              No rate sheets found
+            </h3>
+            <p className="text-sm text-gray-400 mb-4">
+              {search
+                ? "No rate sheets match your search criteria."
+                : "Get started by creating your first rate sheet to manage custom carrier pricing."
+              }
+            </p>
+            {!search && (
+              <Button onClick={() => openRateSheetEditor('new')}>
+                <Plus className="mr-2 h-4 w-4" />
+                Create Your First Rate Sheet
+              </Button>
+            )}
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {filtered.map(({ node: sheet }) => (
+              <div key={sheet.id} className="group relative flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200 bg-white gap-3">
+                <div className="flex items-start sm:items-center gap-3 flex-1 w-full sm:w-auto">
+                  <div className="flex-shrink-0">
+                    <CarrierImage carrier_name={sheet.carrier_name} width={48} height={48} className="rounded-lg" />
                   </div>
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm">
-                    <span className="text-gray-600 font-mono">{sheet.carrier_name}</span>
-                    <span className="hidden sm:inline text-gray-400">•</span>
-                    <div className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded inline-block">
-                      {(sheet.services?.length ?? 0)} services
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
+                      <h3 className="font-medium text-gray-900 text-base">{sheet.name}</h3>
+                    </div>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm">
+                      <span className="text-gray-600 font-mono">{sheet.carrier_name}</span>
+                      <span className="hidden sm:inline text-gray-400">•</span>
+                      <div className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded inline-block">
+                        {(sheet.services?.length ?? 0)} services
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-muted">
-                      <MoreHorizontal className="h-4 w-4" />
-                      <span className="sr-only">Open menu</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem onClick={() => openRateSheetEditor(sheet.id)}>
-                      <Edit3 className="mr-2 h-4 w-4" />
-                      Edit Rate Sheet
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigator.clipboard.writeText(sheet.id)}>
-                      <Copy className="mr-2 h-4 w-4" />
-                      Copy ID
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-red-600" onClick={() => deleteRateSheet.mutate({ id: sheet.id }, {
-                      onSuccess: () => toast({ title: "Rate sheet deleted" }),
-                      onError: (e: any) => toast({ title: "Failed to delete", description: e?.message || "", variant: "destructive" })
-                    })}>
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-muted">
+                        <MoreHorizontal className="h-4 w-4" />
+                        <span className="sr-only">Open menu</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuItem onClick={() => openRateSheetEditor(sheet.id)}>
+                        <Edit3 className="mr-2 h-4 w-4" />
+                        Edit Rate Sheet
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigator.clipboard.writeText(sheet.id)}>
+                        <Copy className="mr-2 h-4 w-4" />
+                        Copy ID
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="text-red-600" onClick={() => deleteRateSheet.mutate({ id: sheet.id }, {
+                        onSuccess: () => toast({ title: "Rate sheet deleted" }),
+                        onError: (e: any) => toast({ title: "Failed to delete", description: e?.message || "", variant: "destructive" })
+                      })}>
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+                <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-lg bg-gray-300" />
               </div>
-              <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-lg bg-gray-300" />
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         {/* Editor */}
         {rateSheetEditorOpen && selectedRateSheetId && (

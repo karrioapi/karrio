@@ -209,7 +209,16 @@ ParsedRateResponse = [
             "carrier_id": "dhl_parcel_de",
             "carrier_name": "dhl_parcel_de",
             "currency": "EUR",
-            "meta": {"service_name": "DHL Paket"},
+            "extra_charges": [
+                {
+                    "amount": 0.0,
+                    "currency": "EUR",
+                    "name": "Base Charge",
+                }
+            ],
+            "meta": {
+                "service_name": "DHL Paket",
+            },
             "service": "dhl_parcel_de_paket",
             "total_charge": 0.0,
         }

@@ -34,12 +34,21 @@ export function RateSheetsTable({
 }: RateSheetsTableProps) {
   if (rateSheets.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <p className="text-sm text-muted-foreground">No rate sheets found</p>
-        <p className="text-sm text-muted-foreground mb-4">Add a rate sheet to get started</p>
+      <div className="text-center py-12">
+        <div className="mx-auto mb-4 text-gray-400">
+          <svg className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        </div>
+        <h3 className="text-lg font-medium text-gray-500 mb-2">
+          No rate sheets found
+        </h3>
+        <p className="text-sm text-gray-400 mb-4">
+          Get started by creating your first rate sheet to manage custom carrier pricing.
+        </p>
         <Button onClick={onCreateNew}>
           <Plus className="h-4 w-4 mr-2" />
-          Add Rate Sheet
+          Create Your First Rate Sheet
         </Button>
       </div>
     );

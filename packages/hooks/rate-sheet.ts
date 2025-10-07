@@ -95,7 +95,12 @@ export function useRateSheet({ id, setVariablesToURL = false }: Args = {}) {
 export function useRateSheetMutation() {
   const queryClient = useQueryClient();
   const karrio = useKarrio();
-  const invalidateCache = () => { queryClient.invalidateQueries(['rate-sheets']) };
+  const invalidateCache = () => {
+    // Invalidate rate sheets cache
+    queryClient.invalidateQueries(['rate-sheets']);
+    // Also invalidate carrier connections cache since they include rate sheet info
+    queryClient.invalidateQueries(['user-connections']);
+  };
 
   // Mutations
   const createRateSheet = useMutation(
@@ -116,7 +121,7 @@ export function useRateSheetMutation() {
     ),
     { onSuccess: invalidateCache, onError }
   );
-  
+
   const deleteRateSheetService = useMutation(
     (data: { rate_sheet_id: string; service_id: string }) => karrio.graphql.request<any>(
       gqlstr(DELETE_RATE_SHEET_SERVICE), { data }

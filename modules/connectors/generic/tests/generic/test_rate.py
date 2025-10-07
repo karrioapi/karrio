@@ -147,7 +147,16 @@ ParsedRateResponse = [
             "carrier_id": "custom-carrier",
             "carrier_name": "custom_carrier",
             "currency": "USD",
-            "meta": {"service_name": "Standard Service"},
+            "extra_charges": [
+                {
+                    "amount": 100.0,
+                    "currency": "USD",
+                    "name": "Base Charge",
+                }
+            ],
+            "meta": {
+                "service_name": "Standard Service",
+            },
             "service": "standard_service",
             "total_charge": 100.0,
         }

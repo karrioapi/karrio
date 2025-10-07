@@ -231,7 +231,9 @@ class TestUniversalRating(unittest.TestCase):
 
     def test_zone_specificity_city_over_country(self):
         """Test that city-specific zone is preferred over country-only zone."""
-        settings_with_specific_zones = RatingMixinSettings(**zone_specificity_settings_data)
+        settings_with_specific_zones = RatingMixinSettings(
+            **zone_specificity_settings_data
+        )
         proxy = RatingMixinProxy(settings_with_specific_zones)
 
         CitySpecificRequest = Serializable(
@@ -241,7 +243,7 @@ class TestUniversalRating(unittest.TestCase):
                     "recipient": {
                         "city": "Montreal",
                         "postal_code": "H3A 1A1",
-                        "country_code": "CA"
+                        "country_code": "CA",
                     },
                 }
             )
@@ -349,6 +351,9 @@ ParsedRateResponseWithoutSelection = [
             "meta": {"service_name": "Standard"},
             "service": "carrier_standard",
             "total_charge": 10.0,
+            "extra_charges": [
+                {"amount": 10.0, "currency": "USD", "name": "Base Charge"}
+            ],
         },
         {
             "carrier_id": "universal",
@@ -356,6 +361,9 @@ ParsedRateResponseWithoutSelection = [
             "meta": {"service_name": "Premium"},
             "service": "carrier_premium",
             "total_charge": 15.0,
+            "extra_charges": [
+                {"amount": 15.0, "currency": "USD", "name": "Base Charge"}
+            ],
         },
     ],
     [],
@@ -369,6 +377,9 @@ ParsedRateResponseStandardService = [
             "meta": {"service_name": "Standard"},
             "service": "carrier_standard",
             "total_charge": 10.0,
+            "extra_charges": [
+                {"amount": 10.0, "currency": "USD", "name": "Base Charge"}
+            ],
         }
     ],
     [],
@@ -382,6 +393,9 @@ ParsedRateResponseHighWeightService = [
             "meta": {"service_name": "Premium"},
             "service": "carrier_premium",
             "total_charge": 15.0,
+            "extra_charges": [
+                {"amount": 15.0, "currency": "USD", "name": "Base Charge"}
+            ],
         }
     ],
     [
@@ -401,6 +415,9 @@ ParsedInternationalRateResponseService = [
             "meta": {"service_name": "International Parcel"},
             "service": "carrier_interational_parcel",
             "total_charge": 25.0,
+            "extra_charges": [
+                {"amount": 25.0, "currency": "USD", "name": "Base Charge"}
+            ],
         }
     ],
     [],
@@ -422,6 +439,9 @@ ParsedMultiPieceRateResponse = [
         {
             "carrier_id": "universal",
             "currency": "USD",
+            "extra_charges": [
+                {"amount": 20.0, "currency": "USD", "name": "Base Charge"}
+            ],
             "meta": {"service_name": "Standard"},
             "service": "carrier_standard",
             "total_charge": 20.0,
@@ -429,6 +449,9 @@ ParsedMultiPieceRateResponse = [
         {
             "carrier_id": "universal",
             "currency": "USD",
+            "extra_charges": [
+                {"amount": 30.0, "currency": "USD", "name": "Base Charge"}
+            ],
             "meta": {"service_name": "Premium"},
             "service": "carrier_premium",
             "total_charge": 30.0,
@@ -483,6 +506,9 @@ ParsedWeightTierLightPackage = [
             "meta": {"service_name": "Weight Tiered Service"},
             "service": "carrier_weight_tiered",
             "total_charge": 5.0,  # Tier 1: 0-0.5kg
+            "extra_charges": [
+                {"amount": 5.0, "currency": "USD", "name": "Base Charge"}
+            ],
         }
     ],
     [],
@@ -496,6 +522,9 @@ ParsedWeightTierMediumPackage = [
             "meta": {"service_name": "Weight Tiered Service"},
             "service": "carrier_weight_tiered",
             "total_charge": 8.0,  # Tier 2: 0.5-1.0kg
+            "extra_charges": [
+                {"amount": 8.0, "currency": "USD", "name": "Base Charge"}
+            ],
         }
     ],
     [],
@@ -509,6 +538,9 @@ ParsedWeightTierHeavyPackage = [
             "meta": {"service_name": "Weight Tiered Service"},
             "service": "carrier_weight_tiered",
             "total_charge": 12.0,  # Tier 3: 1.0-2.0kg
+            "extra_charges": [
+                {"amount": 12.0, "currency": "USD", "name": "Base Charge"}
+            ],
         }
     ],
     [],
@@ -522,6 +554,9 @@ ParsedWeightTierBoundaryPackage = [
             "meta": {"service_name": "Weight Tiered Service"},
             "service": "carrier_weight_tiered",
             "total_charge": 8.0,  # Tier 2: 0.5-1.0kg (0.5 is inclusive min of tier 2)
+            "extra_charges": [
+                {"amount": 8.0, "currency": "USD", "name": "Base Charge"}
+            ],
         }
     ],
     [],
@@ -530,7 +565,7 @@ ParsedWeightTierBoundaryPackage = [
 ParsedNoMatchingZone = [
     [],  # No rates - weight exceeds all tiers
     [],
-]
+]  # type: ignore
 
 # Zone specificity test data
 zone_specificity_settings_data = {
@@ -568,6 +603,9 @@ ParsedZoneSpecificityCityMatch = [
             "meta": {"service_name": "Zone Specific Service"},
             "service": "carrier_zone_specific",
             "total_charge": 12.0,  # City-specific rate, not country rate
+            "extra_charges": [
+                {"amount": 12.0, "currency": "USD", "name": "Base Charge"}
+            ],
         }
     ],
     [],

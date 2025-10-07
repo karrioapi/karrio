@@ -937,9 +937,10 @@ paths:
           `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
           `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
           `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `hay_post`, `laposte`, `locate2u`, `mydhl`, `nationex`,
-          `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
+          `generic`, `geodis`, `hay_post`, `landmark`, `laposte`, `locate2u`, `mydhl`,
+          `nationex`, `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`,
+          `shipengine`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`,
+          `zoom2u`'
         required: true
       tags:
       - Carriers
@@ -977,9 +978,10 @@ paths:
           `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
           `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
           `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `hay_post`, `laposte`, `locate2u`, `mydhl`, `nationex`,
-          `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
+          `generic`, `geodis`, `hay_post`, `landmark`, `laposte`, `locate2u`, `mydhl`,
+          `nationex`, `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`,
+          `shipengine`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`,
+          `zoom2u`'
         required: true
       tags:
       - Carriers
@@ -1028,9 +1030,10 @@ paths:
           `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
           `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
           `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `hay_post`, `laposte`, `locate2u`, `mydhl`, `nationex`,
-          `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
+          `generic`, `geodis`, `hay_post`, `landmark`, `laposte`, `locate2u`, `mydhl`,
+          `nationex`, `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`,
+          `shipengine`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`,
+          `zoom2u`'
         required: true
       tags:
       - Carriers
@@ -1100,9 +1103,10 @@ paths:
           `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
           `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
           `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `hay_post`, `laposte`, `locate2u`, `mydhl`, `nationex`,
-          `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
+          `generic`, `geodis`, `hay_post`, `landmark`, `laposte`, `locate2u`, `mydhl`,
+          `nationex`, `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`,
+          `shipengine`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`,
+          `zoom2u`'
       - in: query
         name: metadata_key
         schema:
@@ -1690,9 +1694,10 @@ paths:
           `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
           `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
           `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `hay_post`, `laposte`, `locate2u`, `mydhl`, `nationex`,
-          `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
+          `generic`, `geodis`, `hay_post`, `landmark`, `laposte`, `locate2u`, `mydhl`,
+          `nationex`, `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`,
+          `shipengine`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`,
+          `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -2580,6 +2585,7 @@ paths:
           - generic
           - geodis
           - hay_post
+          - landmark
           - laposte
           - locate2u
           - mydhl
@@ -2673,6 +2679,7 @@ paths:
           - generic
           - geodis
           - hay_post
+          - landmark
           - laposte
           - locate2u
           - mydhl
@@ -2766,6 +2773,7 @@ paths:
           - generic
           - geodis
           - hay_post
+          - landmark
           - laposte
           - locate2u
           - mydhl
@@ -2952,6 +2960,7 @@ paths:
           - generic
           - geodis
           - hay_post
+          - landmark
           - laposte
           - locate2u
           - mydhl
@@ -3086,6 +3095,7 @@ paths:
           - generic
           - geodis
           - hay_post
+          - landmark
           - laposte
           - locate2u
           - mydhl
@@ -3220,9 +3230,10 @@ paths:
           `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
           `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
           `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `hay_post`, `laposte`, `locate2u`, `mydhl`, `nationex`,
-          `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
+          `generic`, `geodis`, `hay_post`, `landmark`, `laposte`, `locate2u`, `mydhl`,
+          `nationex`, `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`,
+          `shipengine`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`,
+          `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -3653,9 +3664,10 @@ paths:
           `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
           `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
           `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `hay_post`, `laposte`, `locate2u`, `mydhl`, `nationex`,
-          `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
+          `generic`, `geodis`, `hay_post`, `landmark`, `laposte`, `locate2u`, `mydhl`,
+          `nationex`, `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`,
+          `shipengine`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`,
+          `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -3799,6 +3811,7 @@ paths:
           - generic
           - geodis
           - hay_post
+          - landmark
           - laposte
           - locate2u
           - mydhl
@@ -5082,6 +5095,7 @@ components:
           - generic
           - geodis
           - hay_post
+          - landmark
           - laposte
           - locate2u
           - mydhl
@@ -5101,7 +5115,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: 38c83e1761ec1bf0
+          x-spec-enum-id: 0829cc4ec7f54bd3
           description: A carrier connection type.
         display_name:
           type: string
@@ -5176,6 +5190,7 @@ components:
           - generic
           - geodis
           - hay_post
+          - landmark
           - laposte
           - locate2u
           - mydhl
@@ -5195,7 +5210,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: 38c83e1761ec1bf0
+          x-spec-enum-id: 0829cc4ec7f54bd3
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -5278,6 +5293,7 @@ components:
           - generic
           - geodis
           - hay_post
+          - landmark
           - laposte
           - locate2u
           - mydhl
@@ -5297,7 +5313,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: 38c83e1761ec1bf0
+          x-spec-enum-id: 0829cc4ec7f54bd3
           description: Indicates a carrier (type)
         display_name:
           type: string
@@ -6343,6 +6359,7 @@ components:
       - $ref: '#/components/schemas/generic'
       - $ref: '#/components/schemas/geodis'
       - $ref: '#/components/schemas/hay_post'
+      - $ref: '#/components/schemas/landmark'
       - $ref: '#/components/schemas/laposte'
       - $ref: '#/components/schemas/locate2u'
       - $ref: '#/components/schemas/mydhl'
@@ -8542,6 +8559,7 @@ components:
           - generic
           - geodis
           - hay_post
+          - landmark
           - laposte
           - locate2u
           - mydhl
@@ -8561,7 +8579,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: 38c83e1761ec1bf0
+          x-spec-enum-id: 0829cc4ec7f54bd3
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -10514,6 +10532,7 @@ components:
           - generic
           - geodis
           - hay_post
+          - landmark
           - laposte
           - locate2u
           - mydhl
@@ -10531,7 +10550,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: bac3894e526830f2
+          x-spec-enum-id: b35b7d0cba4ec534
           description: The tracking carrier
         account_number:
           type: string
@@ -10966,8 +10985,10 @@ components:
           type: string
         account_number:
           type: string
+          nullable: true
         account_country_code:
           type: string
+          nullable: true
           default: US
       required:
       - api_key
@@ -10984,6 +11005,7 @@ components:
           type: string
         account_country_code:
           type: string
+          nullable: true
           default: AU
       required:
       - account_number
@@ -10998,6 +11020,7 @@ components:
           type: string
         account_country_code:
           type: string
+          nullable: true
           default: CA
       required:
       - password
@@ -11011,6 +11034,7 @@ components:
           type: string
         account_country_code:
           type: string
+          nullable: true
           default: BE
       required:
       - account_id
@@ -11024,8 +11048,10 @@ components:
           type: string
         customer_number:
           type: string
+          nullable: true
         contract_id:
           type: string
+          nullable: true
         language:
           enum:
           - en
@@ -11035,6 +11061,7 @@ components:
           description: Indicates a language string
         account_country_code:
           type: string
+          nullable: true
           default: CA
       required:
       - password
@@ -11055,6 +11082,7 @@ components:
           description: Indicates a language string
         account_country_code:
           type: string
+          nullable: true
           default: CA
       required:
       - password
@@ -11068,6 +11096,7 @@ components:
           type: string
         id_emit:
           type: string
+          nullable: true
           default: CHRFR
         language:
           enum:
@@ -11078,6 +11107,7 @@ components:
           description: Indicates a language string
         account_country_code:
           type: string
+          nullable: true
           default: FR
       required:
       - account_number
@@ -11091,8 +11121,10 @@ components:
           type: string
         laposte_api_key:
           type: string
+          nullable: true
         account_country_code:
           type: string
+          nullable: true
           default: FR
       required:
       - contract_number
@@ -11106,8 +11138,10 @@ components:
           type: string
         account_number:
           type: string
+          nullable: true
         account_country_code:
           type: string
+          nullable: true
       required:
       - password
       - site_id
@@ -11122,12 +11156,16 @@ components:
           type: string
         customer_number:
           type: string
+          nullable: true
         tracking_consumer_key:
           type: string
+          nullable: true
         tracking_consumer_secret:
           type: string
+          nullable: true
         account_country_code:
           type: string
+          nullable: true
           default: DE
       required:
       - dhl_api_key
@@ -11142,8 +11180,10 @@ components:
           type: string
         account_number:
           type: string
+          nullable: true
         account_country_code:
           type: string
+          nullable: true
           default: PL
       required:
       - password
@@ -11164,6 +11204,7 @@ components:
           description: Indicates a language string
         account_country_code:
           type: string
+          nullable: true
           default: DE
       required:
       - consumer_key
@@ -11177,8 +11218,10 @@ components:
           type: string
         billing_account:
           type: string
+          nullable: true
         account_country_code:
           type: string
+          nullable: true
       required:
       - password
       - username
@@ -11191,11 +11234,14 @@ components:
           type: string
         depot:
           type: string
+          nullable: true
         message_language:
           type: string
+          nullable: true
           default: en_EN
         account_country_code:
           type: string
+          nullable: true
           default: BE
       required:
       - delis_id
@@ -11209,10 +11255,13 @@ components:
           type: string
         username:
           type: string
+          nullable: true
         password:
           type: string
+          nullable: true
         account_country_code:
           type: string
+          nullable: true
           default: IN
       required:
       - api_key
@@ -11224,6 +11273,7 @@ components:
           type: string
         account_country_code:
           type: string
+          nullable: true
       required:
       - api_key
     easyship:
@@ -11233,6 +11283,7 @@ components:
           type: string
         account_country_code:
           type: string
+          nullable: true
       required:
       - access_token
     eshipper:
@@ -11244,6 +11295,7 @@ components:
           type: string
         account_country_code:
           type: string
+          nullable: true
       required:
       - credential
       - principal
@@ -11252,16 +11304,22 @@ components:
       properties:
         api_key:
           type: string
+          nullable: true
         secret_key:
           type: string
+          nullable: true
         account_number:
           type: string
+          nullable: true
         track_api_key:
           type: string
+          nullable: true
         track_secret_key:
           type: string
+          nullable: true
         account_country_code:
           type: string
+          nullable: true
     freightcom:
       type: object
       properties:
@@ -11271,6 +11329,7 @@ components:
           type: string
         account_country_code:
           type: string
+          nullable: true
       required:
       - password
       - username
@@ -11283,8 +11342,10 @@ components:
           type: string
         account_country_code:
           type: string
+          nullable: true
         account_number:
           type: string
+          nullable: true
       required:
       - custom_carrier_name
       - display_name
@@ -11297,6 +11358,7 @@ components:
           type: string
         code_client:
           type: string
+          nullable: true
         language:
           enum:
           - fr
@@ -11306,6 +11368,7 @@ components:
           description: Indicates a language string
         account_country_code:
           type: string
+          nullable: true
           default: FR
       required:
       - api_key
@@ -11323,9 +11386,33 @@ components:
           type: string
         account_country_code:
           type: string
+          nullable: true
       required:
       - customer_id
       - customer_type
+      - password
+      - username
+    landmark:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        client_id:
+          type: string
+        account_number:
+          type: string
+          nullable: true
+        region:
+          type: string
+          nullable: true
+          default: Landmark CMH
+        account_country_code:
+          type: string
+          nullable: true
+      required:
+      - client_id
       - password
       - username
     laposte:
@@ -11342,6 +11429,7 @@ components:
           description: Indicates a lang string
         account_country_code:
           type: string
+          nullable: true
           default: FR
       required:
       - api_key
@@ -11350,10 +11438,13 @@ components:
       properties:
         client_id:
           type: string
+          nullable: true
         client_secret:
           type: string
+          nullable: true
         account_country_code:
           type: string
+          nullable: true
           default: AU
     mydhl:
       type: object
@@ -11366,6 +11457,7 @@ components:
           type: string
         account_country_code:
           type: string
+          nullable: true
       required:
       - account_number
       - password
@@ -11379,6 +11471,7 @@ components:
           type: string
         billing_account:
           type: string
+          nullable: true
         language:
           enum:
           - en
@@ -11388,6 +11481,7 @@ components:
           description: Indicates a language string
         account_country_code:
           type: string
+          nullable: true
           default: CA
       required:
       - api_key
@@ -11403,6 +11497,7 @@ components:
           type: string
         user_token:
           type: string
+          nullable: true
         language:
           enum:
           - en
@@ -11412,6 +11507,7 @@ components:
           description: Indicates a language string
         account_country_code:
           type: string
+          nullable: true
           default: CA
       required:
       - account_number
@@ -11424,6 +11520,7 @@ components:
           type: string
         account_country_code:
           type: string
+          nullable: true
           default: US
       required:
       - api_key
@@ -11436,6 +11533,7 @@ components:
           type: string
         account_country_code:
           type: string
+          nullable: true
           default: UK
       required:
       - client_id
@@ -11461,6 +11559,7 @@ components:
           description: Indicates a sapient_carrier_code string
         account_country_code:
           type: string
+          nullable: true
           default: GB
       required:
       - client_id
@@ -11473,6 +11572,7 @@ components:
           type: string
         account_country_code:
           type: string
+          nullable: true
       required:
       - access_key
     sendle:
@@ -11484,6 +11584,7 @@ components:
           type: string
         account_country_code:
           type: string
+          nullable: true
       required:
       - api_key
       - sendle_id
@@ -11494,10 +11595,13 @@ components:
           type: string
         carrier_ids:
           type: string
+          nullable: true
         account_number:
           type: string
+          nullable: true
         account_country_code:
           type: string
+          nullable: true
       required:
       - api_key
     tge:
@@ -11519,12 +11623,14 @@ components:
           type: string
         account_code:
           type: string
+          nullable: true
         sscc_count:
           type: integer
         shipment_count:
           type: integer
         account_country_code:
           type: string
+          nullable: true
           default: AU
       required:
       - api_key
@@ -11543,8 +11649,10 @@ components:
           type: string
         account_number:
           type: string
+          nullable: true
         account_country_code:
           type: string
+          nullable: true
       required:
       - password
       - username
@@ -11557,8 +11665,10 @@ components:
           type: string
         account_number:
           type: string
+          nullable: true
         account_country_code:
           type: string
+          nullable: true
       required:
       - client_id
       - client_secret
@@ -11571,6 +11681,7 @@ components:
           type: string
         account_number:
           type: string
+          nullable: true
         account_type:
           enum:
           - EPS
@@ -11581,12 +11692,16 @@ components:
           description: Indicates a account_type string
         manifest_MID:
           type: string
+          nullable: true
         CRID:
           type: string
+          nullable: true
         MID:
           type: string
+          nullable: true
         account_country_code:
           type: string
+          nullable: true
           default: US
       required:
       - client_id
@@ -11600,6 +11715,7 @@ components:
           type: string
         account_number:
           type: string
+          nullable: true
         account_type:
           enum:
           - EPS
@@ -11610,12 +11726,16 @@ components:
           description: Indicates a account_type string
         manifest_MID:
           type: string
+          nullable: true
         CRID:
           type: string
+          nullable: true
         MID:
           type: string
+          nullable: true
         account_country_code:
           type: string
+          nullable: true
           default: US
       required:
       - client_id
@@ -11627,8 +11747,10 @@ components:
           type: string
         account_number:
           type: string
+          nullable: true
         account_country_code:
           type: string
+          nullable: true
       required:
       - api_key
     zoom2u:
@@ -11638,6 +11760,7 @@ components:
           type: string
         account_country_code:
           type: string
+          nullable: true
           default: AU
       required:
       - api_key
@@ -11770,6 +11893,7 @@ tags:
     | freightcom | Freightcom |
     | geodis | GEODIS |
     | hay_post | HayPost |
+    | landmark | Landmark Global |
     | laposte | La Poste |
     | locate2u | Locate2u |
     | mydhl | MyDHL |
@@ -13081,6 +13205,14 @@ tags:
     | sekogram_simple | 96 |
     | sprint_simple | 97 |
     | yes_ordered_value | 99 |
+
+    ### Landmark Global
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | landmark_maxipak_scan_ddp | LGINTSTD |
+    | landmark_maxipak_scan_ddu | LGINTSTDU |
+    | landmark_minipak_scan_ddp | LGINTBPIP |
+    | landmark_minipak_scan_ddu | LGINTBPIU |
 
     ### Locate2u
     | Code         | Service Name |

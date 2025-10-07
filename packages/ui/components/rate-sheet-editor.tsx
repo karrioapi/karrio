@@ -109,6 +109,7 @@ export const RateSheetEditor = ({
         ...service,
         id: `temp_${Date.now()}_${index}`,
         zones: (service.zones || [{ label: 'Zone 1', rate: 0 }]).map((zone: any, zoneIndex: number) => ({
+          ...zone,  // Preserve all zone properties (country_codes, min_weight, max_weight, transit_days, etc.)
           label: zone.label || `Zone ${zoneIndex + 1}`,
           rate: zone.rate ?? 0
         }))
@@ -178,7 +179,7 @@ export const RateSheetEditor = ({
     }
   };
 
-  const checkForExistingRateSheets = (carrierName: string) => {
+  const checkForExistingRateSheets = (_carrierName: string) => {
     // This would check for existing rate sheets with same carrier_name
     // For now, we'll implement the basic structure
     setShowExistingOptions(false); // Reset for now

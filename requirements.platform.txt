@@ -1,9 +1,9 @@
 --extra-index-url https://karrio.gateway.scarf.sh/simple/
-asgiref==3.9.2
-attrs==25.3.0
+asgiref==3.10.0
+attrs==25.4.0
 backoff==2.2.1
 Brotli==1.1.0
-certifi==2025.8.3
+certifi==2025.10.5
 cffi==2.0.0
 charset-normalizer==3.4.3
 click==8.3.0
@@ -21,14 +21,14 @@ django-cors-headers==4.9.0
 django-downloadview==2.4.0
 django-email-verification==0.3.3
 django-extensions==4.1
-django-filter==25.1
+django-filter==25.2
 django-formtools==2.5.1
 django-health-check==3.20.0
 django-import-export==4.3.10
 django-oauth-toolkit==3.1.0
 django-organizations==2.5.0
 django-otp==1.6.1
-django-phonenumber-field==8.2.0
+django-phonenumber-field==8.3.0
 django-picklefield==3.3
 django-redis==6.0.0
 django-tenants==3.9.0
@@ -143,10 +143,10 @@ redis==6.4.0
 referencing==0.36.2
 requests==2.32.5
 rpds-py==0.27.1
-sentry-sdk==2.39.0
+sentry-sdk==2.40.0
 six==1.17.0
 sqlparse==0.5.3
-strawberry-graphql==0.282.0
+strawberry-graphql==0.283.1
 tablib==3.8.0
 tinycss2==1.4.0
 tinyhtml5==2.0.0
