@@ -35,6 +35,7 @@ import {
   formatAddressShort,
   getURLSearchParams,
   isNoneOrEmpty,
+  isEqual,
 } from "@karrio/lib";
 import {
   useAddressTemplateMutation,
@@ -44,18 +45,35 @@ import { AddressType, NotificationType } from "@karrio/types";
 import { useSearchParams } from "next/navigation";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
 
+// Helper function to normalize address for comparison (exclude metadata)
+const normalizeAddressForComparison = (address: any) => {
+  if (!address) return {};
+  const { id, validate_location, ...addressData } = address;
+  return addressData;
+};
+
+// Helper function to check if two addresses are identical
+const areAddressesIdentical = (addr1: any, addr2: any) => {
+  return isEqual(
+    normalizeAddressForComparison(addr1),
+    normalizeAddressForComparison(addr2)
+  );
+};
+
 interface AddressEditDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   addressTemplate?: any;
   onSave: () => void;
+  existingTemplates?: any[];
 }
 
 function AddressEditDialog({
   open,
   onOpenChange,
   addressTemplate,
-  onSave
+  onSave,
+  existingTemplates = []
 }: AddressEditDialogProps) {
   const notifier = useNotifier();
   const { createAddressTemplate, updateAddressTemplate } = useAddressTemplateMutation();
@@ -87,6 +105,38 @@ function AddressEditDialog({
   };
 
   const handleSubmit = async (address: Partial<AddressType>) => {
+    // Filter out current template when editing (to allow updating without false positives)
+    const templatesToCheck = existingTemplates.filter(
+      template => !addressTemplate || template.id !== addressTemplate.id
+    );
+
+    // Validation 1: Check for duplicate labels (case-insensitive)
+    const trimmedLabel = formData.label.trim();
+    const duplicateLabel = templatesToCheck.find(
+      template => template.label?.trim().toLowerCase() === trimmedLabel.toLowerCase()
+    );
+
+    if (duplicateLabel) {
+      notifier.notify({
+        type: NotificationType.error,
+        message: "A template with this label already exists. Please use a different label.",
+      });
+      return;
+    }
+
+    // Validation 2: Check for identical address content
+    const duplicateAddress = templatesToCheck.find(
+      template => areAddressesIdentical(template.address, address)
+    );
+
+    if (duplicateAddress) {
+      notifier.notify({
+        type: NotificationType.error,
+        message: "An identical address already exists. Please use a different address or edit the existing template.",
+      });
+      return;
+    }
+
     try {
       const payload = {
         ...formData,
@@ -389,6 +439,7 @@ export function AddressesManagement() {
         onOpenChange={setEditDialogOpen}
         addressTemplate={selectedAddress}
         onSave={handleSave}
+        existingTemplates={addresses.map(({ node }: any) => node)}
       />
 
       <ConfirmationDialog
