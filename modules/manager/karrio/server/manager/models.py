@@ -337,6 +337,10 @@ class Commodity(core.OwnedEntity):
     description = models.CharField(max_length=250, null=True, blank=True)
     sku = models.CharField(max_length=250, null=True, blank=True, db_index=True)
     hs_code = models.CharField(max_length=250, null=True, blank=True, db_index=True)
+    product_url = models.CharField(max_length=250, null=True, blank=True)
+    image_url = models.CharField(max_length=250, null=True, blank=True)
+    product_id = models.CharField(max_length=250, null=True, blank=True)
+    variant_id = models.CharField(max_length=250, null=True, blank=True)
     value_amount = models.FloatField(blank=True, null=True)
     weight_unit = models.CharField(
         max_length=2, choices=serializers.WEIGHT_UNIT, null=True, blank=True

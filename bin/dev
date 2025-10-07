@@ -1,4 +1,22 @@
 #!/usr/bin/env bash
+#
+# Karrio Development Server Manager
+#
+# Usage:
+#   ./bin/dev up [OPTIONS] [COMPONENTS]    Start development services
+#   ./bin/dev down                         Stop development services
+#   ./bin/dev -h, --help                   Show this help message
+#
+# Examples:
+#   ./bin/dev up                           Start all services (API, Dashboard, Docs)
+#   ./bin/dev up --with-https              Start with HTTPS proxy (Caddy)
+#   ./bin/dev up api                       Start only API server
+#   ./bin/dev up dashboard docs            Start Dashboard and Docs
+#   ./bin/dev up --no-api                  Start everything except API
+#   ./bin/dev down                         Stop all services
+#
+# See './bin/dev up --help' for more options.
+#
 
 set -e
 
@@ -406,12 +424,18 @@ run_up() {
     fi
   fi
 
-  # Always kill API, Dashboard, Docs
-  pkill -f "karrio runserver" 2>/dev/null || true
-  pkill -f "karrio server" 2>/dev/null || true
-  lsof -ti:5002 | xargs kill -9 2>/dev/null || true
-  lsof -ti:3002 | xargs kill -9 2>/dev/null || true
-  lsof -ti:3005 | xargs kill -9 2>/dev/null || true
+  # Only kill services that we're about to start
+  if $START_API; then
+    pkill -f "karrio runserver" 2>/dev/null || true
+    pkill -f "karrio server" 2>/dev/null || true
+    lsof -ti:5002 | xargs kill -9 2>/dev/null || true
+  fi
+  if $START_DASHBOARD; then
+    lsof -ti:3002 | xargs kill -9 2>/dev/null || true
+  fi
+  if $START_DOCS; then
+    lsof -ti:3005 | xargs kill -9 2>/dev/null || true
+  fi
   sleep 1
   print_success "Cleanup completed"
 
@@ -696,13 +720,39 @@ run_up() {
 }
 
 # ===================== Dispatch =====================
-CMD="${1:-up}"
+CMD="${1:-}"
+
+# Show help if requested or no command provided
+if [[ -z "$CMD" || "$CMD" == "-h" || "$CMD" == "--help" ]]; then
+  echo "Karrio Development Server Manager"
+  echo ""
+  echo "Usage:"
+  echo "  ./bin/dev up [OPTIONS] [COMPONENTS]    Start development services"
+  echo "  ./bin/dev down                         Stop development services"
+  echo ""
+  echo "Commands:"
+  echo "  up      Start development services"
+  echo "  down    Stop all running development services"
+  echo ""
+  echo "Run './bin/dev up --help' for detailed options."
+  echo ""
+  echo "Examples:"
+  echo "  ./bin/dev up                    Start all services"
+  echo "  ./bin/dev up --with-https       Start with HTTPS (Caddy proxy)"
+  echo "  ./bin/dev up api                Start only API"
+  echo "  ./bin/dev up --no-dashboard     Start without Dashboard"
+  echo "  ./bin/dev down                  Stop all services"
+  exit 0
+fi
+
 if [[ "$CMD" == "up" ]]; then
   shift
   run_up "$@"
 elif [[ "$CMD" == "down" ]]; then
   run_down
 else
-  echo "Usage: $0 {up|down} [options]"
+  echo "Unknown command: $CMD"
+  echo "Usage: ./bin/dev {up|down} [options]"
+  echo "Run './bin/dev --help' for more information."
   exit 1
 fi

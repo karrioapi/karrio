@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+    <!-- Define the Error type -->
+    <xs:complexType name="ErrorType">
+        <xs:sequence>
+            <xs:element name="ErrorCode" type="xs:string" />
+            <xs:element name="ErrorMessage" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Define the Errors container -->
+    <xs:complexType name="ErrorsType">
+        <xs:sequence>
+            <xs:element name="Error" type="ErrorType" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Reusable Errors element -->
+    <xs:element name="Errors" type="ErrorsType" />
+
+</xs:schema>
