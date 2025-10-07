@@ -61,10 +61,68 @@ const SignUpForm = (): JSX.Element => {
         // Redirect to sign in page
         router.push(p`/signin`);
       } catch (error: any) {
-        setErrors(Array.isArray(error) ? error : [error]);
+        const parsedErrors: register_user_register_user_errors[] = [];
+
+        // 1. Handle GraphQL execution errors (backend format: "field: message")
+        if (error.data?.errors?.[0]?.message) {
+          const errorMessage = error.data.errors[0].message;
+          // Split by ". " to handle multiple errors joined by backend
+          const errorParts = errorMessage.split(". ");
+
+          errorParts.forEach((part: string) => {
+            // Match "field: message" pattern
+            const match = part.match(/^([^:]+):\s*(.+)$/);
+            if (match) {
+              const [_, field, message] = match;
+              // Find existing error for this field or create new
+              const existing = parsedErrors.find(e => e.field === field.trim());
+              if (existing) {
+                existing.messages.push(message.trim());
+              } else {
+                parsedErrors.push({
+                  field: field.trim(),
+                  messages: [message.trim()]
+                });
+              }
+            } else {
+              // General error without field pattern
+              parsedErrors.push({
+                field: "",
+                messages: [part.trim()]
+              });
+            }
+          });
+        }
+
+        // 2. Handle structured errors in response
+        if (error.data?.register_user?.errors) {
+          parsedErrors.push(...error.data.register_user.errors);
+        }
+
+        // 3. Fallback to raw error message
+        if (parsedErrors.length === 0) {
+          parsedErrors.push({
+            field: "",
+            messages: [error.message || "An error occurred during registration"]
+          });
+        }
+
+        setErrors(parsedErrors);
       }
     },
   });
+
+  // Clear errors when user starts editing (only subscribe when errors exist)
+  useEffect(() => {
+    // Only subscribe if there are errors to clear
+    if (errors.length === 0) return;
+
+    const subscription = form.store.subscribe(() => {
+      setErrors([]); // Clear all errors on any form change
+    });
+
+    return () => subscription();
+  }, [errors.length]); // Only re-run when errors appear/disappear
 
   useEffect(() => {
     if (!isNoneOrEmpty(emailParam)) {
@@ -81,9 +139,13 @@ const SignUpForm = (): JSX.Element => {
 
             {(errors as any[])
               .filter((error) => !error.field)
-              .map(({ message }, index) => (
+              .map(({ messages }, index) => (
                 <Alert key={index} variant="destructive" className="mb-4">
-                  <AlertDescription>{message}</AlertDescription>
+                  <AlertDescription>
+                    {messages.map((msg: string, idx: number) => (
+                      <p key={idx}>{msg}</p>
+                    ))}
+                  </AlertDescription>
                 </Alert>
               ))}
 
