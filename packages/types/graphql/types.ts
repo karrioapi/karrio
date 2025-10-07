@@ -4085,6 +4085,8 @@ export interface GetRateSheet_rate_sheet_services {
   max_height: number | null;
   max_length: number | null;
   dimension_unit: DimensionUnitEnum | null;
+  domicile: boolean | null;
+  international: boolean | null;
   zones: GetRateSheet_rate_sheet_services_zones[];
 }
 
@@ -4156,6 +4158,8 @@ export interface GetRateSheets_rate_sheets_edges_node_services {
   max_height: number | null;
   max_length: number | null;
   dimension_unit: DimensionUnitEnum | null;
+  domicile: boolean | null;
+  international: boolean | null;
   zones: GetRateSheets_rate_sheets_edges_node_services_zones[];
 }
 

@@ -385,6 +385,7 @@ export default function Page(pageProps: any) {
                         <div className="flex items-center">
                           <CarrierImage
                             carrier_name={
+                              shipment.meta?.custom_carrier_name ||
                               shipment.meta?.carrier ||
                               getRate(shipment).meta?.rate_provider ||
                               getRate(shipment).carrier_name ||

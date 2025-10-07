@@ -190,6 +190,7 @@ class Shipments:
             rate_provider = (
                 (parent.meta or {}).get("rate_provider") or carrier.carrier_name
             ).lower()
+            custom_carrier_name = carrier.credentials.get("custom_carrier_name")
 
             return {
                 **(parent.meta or {}),
@@ -197,6 +198,7 @@ class Shipments:
                 "carrier": rate_provider,
                 "service_name": service_name,
                 "rate_provider": rate_provider,  # TODO: deprecate 'rate_provider' in favor of 'carrier'
+                **({"custom_carrier_name": custom_carrier_name} if custom_carrier_name else {}),
             }
 
         def process_selected_rate() -> dict:

@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@karrio/ui/components/
 import { ServiceEditorModal } from "@karrio/ui/components/modals/service-editor-modal";
 import { CURRENCY_OPTIONS, DIMENSION_UNITS, WEIGHT_UNITS } from "@karrio/types";
 import { RateSheetTable } from "@karrio/ui/components/rate-sheet-table";
-import { Sheet, SheetContent } from "@karrio/ui/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@karrio/ui/components/ui/sheet";
 import { Cross2Icon, TrashIcon } from "@radix-ui/react-icons";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
@@ -679,9 +679,9 @@ export const RateSheetEditor = ({
               >
                 <Cross2Icon className="h-4 w-4" />
               </Button>
-              <h1 className="text-lg font-semibold">
+              <SheetTitle className="text-lg font-semibold">
                 {isNew ? "Create Rate Sheet" : "Edit Rate Sheet"}
-              </h1>
+              </SheetTitle>
             </div>
             <Button
               onClick={handleSave}
