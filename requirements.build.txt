@@ -1,11 +1,4 @@
-# Server dev dependencies
-django-debug-toolbar
-django-stubs[compatible-mypy]
-djangorestframework-stubs
-
-# Karrio dev packages
 -e ./karrio/modules/sdk
--e ./karrio/modules/cli[dev]
 
 # Shipping Plugins
 -e ./karrio/modules/connectors/dhl_express
@@ -31,6 +24,7 @@ djangorestframework-stubs
 -e ./karrio/modules/proxy
 -e ./karrio/modules/pricing
 -e ./karrio/modules/documents
+
 
 # karrio insiders modules
 -e ./karrio-insiders/modules/apps

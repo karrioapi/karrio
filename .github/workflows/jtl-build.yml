@@ -1,0 +1,75 @@
+name: jtl-build
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.changes.outputs.version }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            version:
+              - 'VERSION'
+
+  jtl-server-build:
+    needs: changes
+    if: ${{ needs.changes.outputs.version == 'true' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: get_tag
+        run: |
+          cat ./VERSION
+          echo "tag=$(cat ./VERSION)" >> "$GITHUB_ENV"
+
+      - name: Build JTL server image
+        run: |
+          echo 'Build and push JTL shipping platform server:${{ env.tag }}...'
+          echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          ./bin/build-jtl-server-image ${{ env.tag }} &&
+          docker push ghcr.io/jtl/shipping-platform-server:${{ env.tag }} || exit 1
+
+  jtl-dashboard-build:
+    needs: changes
+    if: ${{ needs.changes.outputs.version == 'true' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: get_tag
+        run: |
+          cat ./VERSION
+          echo "tag=$(cat ./VERSION)" >> "$GITHUB_ENV"
+
+      - name: Build JTL dashboard image
+        run: |
+          echo 'Build and push JTL shipping platform dashboard:${{ env.tag }}...'
+          echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          JTL_IMAGE=ghcr.io/jtl/shipping-platform-dashboard SOURCE=https://github.com/jtl/shipping-platform ./bin/build-jtl-dashboard-image ${{ env.tag }} &&
+          docker push ghcr.io/jtl/shipping-platform-dashboard:${{ env.tag }} || exit 1

@@ -1,0 +1,113 @@
+services:
+  api:
+    container_name: jtl.api
+    image: ghcr.io/jtlshipping/server:${JTL_TAG}
+    restart: unless-stopped
+    ports:
+      - 5002:5002
+    depends_on:
+      - db
+      - redis
+    environment:
+      USE_HTTPS: "True" # Ensure HTTPS is enabled for production (required when DEBUG_MODE is False)
+      DEBUG_MODE: "False"
+      DETACHED_WORKER: "True"
+      SECRET_KEY: ${SECRET_KEY}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      DATABASE_HOST: ${DATABASE_HOST:-db}
+      DATABASE_NAME: ${DATABASE_NAME:-db}
+      DATABASE_PORT: ${DATABASE_PORT:-5432}
+      DATABASE_ENGINE: ${DATABASE_ENGINE:-postgresql_psycopg2}
+      DATABASE_USERNAME: ${DATABASE_USERNAME:-postgres}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+      ENABLE_ALL_PLUGINS_BY_DEFAULT: "True"
+    volumes:
+      - jtl-static:/karrio/static
+      - ${JTL_PLUGINS:-./plugins}:/karrio/plugins
+
+  worker:
+    container_name: jtl.worker
+    image: ghcr.io/jtlshipping/server:${JTL_TAG}
+    restart: unless-stopped
+    command: "/bin/bash ./worker"
+    depends_on:
+      - db
+      - redis
+      - api
+    environment:
+      DEBUG_MODE: "False"
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      DATABASE_HOST: ${DATABASE_HOST:-db}
+      DATABASE_NAME: ${DATABASE_NAME:-db}
+      DATABASE_PORT: ${DATABASE_PORT:-5432}
+      DATABASE_ENGINE: ${DATABASE_ENGINE:-postgresql_psycopg2}
+      DATABASE_USERNAME: ${DATABASE_USERNAME:-postgres}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+      ENABLE_ALL_PLUGINS_BY_DEFAULT: "True"
+    volumes:
+      - ${JTL_PLUGINS:-./plugins}:/karrio/plugins
+
+  dashboard:
+    container_name: jtl.dashboard
+    image: ghcr.io/jtlshipping/dashboard:${JTL_TAG}
+    ports:
+      - ${DASHBOARD_PORT:-3102}:${DASHBOARD_PORT:-3102}/tcp
+    depends_on:
+      - api
+    environment:
+      NODE_ENV: production
+      DASHBOARD_PORT: ${DASHBOARD_PORT:-3102}
+      DASHBOARD_URL: ${DASHBOARD_URL}
+      KARRIO_PUBLIC_URL: ${KARRIO_PUBLIC_URL}
+      # Vite environment variables
+      VITE_KARRIO_API: ${KARRIO_PUBLIC_URL}
+      VITE_KARRIO_OAUTH_CLIENT_ID: ${OAUTH_CLIENT_ID}
+      VITE_KARRIO_OAUTH_CLIENT_SECRET: ${OAUTH_CLIENT_SECRET}
+      VITE_KARRIO_OAUTH_REDIRECT_URI: ${DASHBOARD_URL}/auth/callback
+      # JTL specific
+      VITE_JTL_CLIENT_ID: ${JTL_CLIENT_ID}
+      VITE_JTL_CLIENT_SECRET: ${JTL_CLIENT_SECRET}
+      JTL_CLIENT_ID: ${JTL_CLIENT_ID}
+      JTL_CLIENT_SECRET: ${JTL_CLIENT_SECRET}
+
+  caddy:
+    container_name: jtl.caddy
+    image: caddy:2.6.2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - jtl-static:/var/www/karrio/static
+      - caddy-data:/data
+    depends_on:
+      - api
+      - dashboard
+
+  db:
+    container_name: jtl.db
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME:-db}
+      POSTGRES_USER: ${DATABASE_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+      PGDATA: /var/lib/postgresql/data/jtl
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  redis:
+    container_name: jtl.redis
+    image: redis
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+
+volumes:
+  jtl-static:
+  postgres-data:
+  redis-data:
+  caddy-data:

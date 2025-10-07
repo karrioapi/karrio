@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+# Get the root directory
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# Default values
+JTL_IMAGE=${JTL_IMAGE:-"ghcr.io/jtl/shipping-platform-dashboard"}
+SOURCE=${SOURCE:-"https://github.com/jtl/shipping-platform"}
+
+# Check if version argument is provided
+if [ -z "$1" ]; then
+    echo "Error: Version argument is required"
+    echo "Usage: $0 <version>"
+    exit 1
+fi
+
+VERSION=$1
+
+echo "Building JTL Shipping Platform dashboard image ${JTL_IMAGE}:${VERSION}..."
+
+# Build the Docker image
+docker build -t "${JTL_IMAGE}:${VERSION}" \
+    --build-arg VERSION=${VERSION} \
+    --build-arg SOURCE=${SOURCE} \
+    -f "${ROOT}/docker/dashboard/Dockerfile" \
+    "${ROOT}" \
+    "${@:2}"
+
+if [ $? -eq 0 ]; then
+    echo "✅ Successfully built ${JTL_IMAGE}:${VERSION}"
+    # Also tag as latest
+    docker tag ${JTL_IMAGE}:${VERSION} ${JTL_IMAGE}:latest
+    echo "✅ Tagged as ${JTL_IMAGE}:latest"
+else
+    echo "❌ Failed to build ${JTL_IMAGE}:${VERSION}"
+    exit 1
+fi

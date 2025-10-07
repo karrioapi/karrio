@@ -1,0 +1,167 @@
+name: Build and Deploy JTL Shipping Platform
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - 'VERSION'
+      - 'karrio/**'
+      - 'karrio-insiders/**'
+      - 'modules/**'
+      - 'apps/**'
+      - 'docker/**'
+      - 'requirements.build.txt'
+      - '.github/workflows/build-and-deploy.yml'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (leave empty to use VERSION file)'
+        required: false
+        type: string
+
+jobs:
+  build-server:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get version
+        id: get_version
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION=$(cat VERSION)
+          fi
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Building version: ${VERSION}"
+
+      - name: Build and push server image
+        run: |
+          VERSION="${{ steps.get_version.outputs.version }}"
+
+          # Build the server image
+          JTL_IMAGE=ghcr.io/${{ github.repository_owner }}/shipping-platform-server \
+          SOURCE=https://github.com/${{ github.repository }} \
+          ./bin/build-jtl-server-image ${VERSION}
+
+          # Push the images
+          docker push ghcr.io/${{ github.repository_owner }}/shipping-platform-server:${VERSION}
+          docker push ghcr.io/${{ github.repository_owner }}/shipping-platform-server:latest
+
+  build-dashboard:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get version
+        id: get_version
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION=$(cat VERSION)
+          fi
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Building version: ${VERSION}"
+
+      - name: Build and push dashboard image
+        run: |
+          VERSION="${{ steps.get_version.outputs.version }}"
+
+          # Build the dashboard image
+          JTL_IMAGE=ghcr.io/${{ github.repository_owner }}/shipping-platform-dashboard \
+          SOURCE=https://github.com/${{ github.repository }} \
+          ./bin/build-jtl-dashboard-image ${VERSION}
+
+          # Push the images
+          docker push ghcr.io/${{ github.repository_owner }}/shipping-platform-dashboard:${VERSION}
+          docker push ghcr.io/${{ github.repository_owner }}/shipping-platform-dashboard:latest
+
+  create-release:
+    needs: [build-server, build-dashboard]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version
+        id: get_version
+        run: |
+          VERSION=$(cat VERSION)
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.get_version.outputs.version }}
+          name: JTL Shipping Platform v${{ steps.get_version.outputs.version }}
+          body: |
+            ## Docker Images
+
+            **Server:**
+            ```
+            docker pull ghcr.io/${{ github.repository_owner }}/shipping-platform-server:${{ steps.get_version.outputs.version }}
+            ```
+
+            **Dashboard:**
+            ```
+            docker pull ghcr.io/${{ github.repository_owner }}/shipping-platform-dashboard:${{ steps.get_version.outputs.version }}
+            ```
+
+            ## Docker Compose
+
+            Update your `.env` file:
+            ```
+            JTL_TAG=${{ steps.get_version.outputs.version }}
+            ```
+
+            Then run:
+            ```
+            docker compose pull
+            docker compose up -d
+            ```
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+
+# Update version across the JTL Shipping Platform
+# Usage: ./bin/update-version <old-version> <new-version>
+
+if [ -z "$1" ] || [ -z "$2" ]; then
+    echo "Error: Both old and new version arguments are required"
+    echo "Usage: $0 <old-version> <new-version>"
+    echo "Example: $0 2025.5rc25 2025.5rc26"
+    exit 1
+fi
+
+OLD_VERSION=$1
+NEW_VERSION=$2
+
+echo "Updating version from ${OLD_VERSION} to ${NEW_VERSION}..."
+
+# Detect OS for sed compatibility
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS
+    SED_INPLACE="sed -i ''"
+else
+    # Linux
+    SED_INPLACE="sed -i"
+fi
+
+# Update version in key files
+echo "→ Updating VERSION"
+echo "${NEW_VERSION}" > VERSION
+
+# Update version in docker-compose files
+if [ -f "docker/docker-compose.yml" ]; then
+    echo "→ Updating docker/docker-compose.yml"
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        sed -i '' -e "s/${OLD_VERSION}/${NEW_VERSION}/g" docker/docker-compose.yml
+    else
+        sed -i "s/${OLD_VERSION}/${NEW_VERSION}/g" docker/docker-compose.yml
+    fi
+fi
+
+# Update version in deployment script
+if [ -f "bin/deploy-jtl" ]; then
+    echo "→ Updating bin/deploy-jtl"
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        sed -i '' -e "s/${OLD_VERSION}/${NEW_VERSION}/g" bin/deploy-jtl
+    else
+        sed -i "s/${OLD_VERSION}/${NEW_VERSION}/g" bin/deploy-jtl
+    fi
+fi
+
+# Update version in GitHub workflow
+if [ -f ".github/workflows/jtl-build.yml" ]; then
+    echo "→ Updating .github/workflows/jtl-build.yml"
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        sed -i '' -e "s/${OLD_VERSION}/${NEW_VERSION}/g" .github/workflows/jtl-build.yml
+    else
+        sed -i "s/${OLD_VERSION}/${NEW_VERSION}/g" .github/workflows/jtl-build.yml
+    fi
+fi
+
+echo "✅ Version updated successfully from ${OLD_VERSION} to ${NEW_VERSION}"
