@@ -66,32 +66,38 @@ const SignUpForm = (): JSX.Element => {
         // 1. Handle GraphQL execution errors (backend format: "field: message")
         if (error.data?.errors?.[0]?.message) {
           const errorMessage = error.data.errors[0].message;
-          // Split by ". " to handle multiple errors joined by backend
-          const errorParts = errorMessage.split(". ");
 
-          errorParts.forEach((part: string) => {
-            // Match "field: message" pattern
-            const match = part.match(/^([^:]+):\s*(.+)$/);
-            if (match) {
-              const [_, field, message] = match;
-              // Find existing error for this field or create new
-              const existing = parsedErrors.find(e => e.field === field.trim());
-              if (existing) {
-                existing.messages.push(message.trim());
-              } else {
-                parsedErrors.push({
-                  field: field.trim(),
-                  messages: [message.trim()]
-                });
+          // Check if this is a field-specific error (contains "field:" pattern)
+          const hasFieldPattern = /^[^:]+:\s*.+/.test(errorMessage.split(". ")[0]);
+
+          if (hasFieldPattern) {
+            // Split by ". " to handle multiple field errors joined by backend
+            const errorParts = errorMessage.split(". ");
+
+            errorParts.forEach((part: string) => {
+              // Match "field: message" pattern
+              const match = part.match(/^([^:]+):\s*(.+)$/);
+              if (match) {
+                const [_, field, message] = match;
+                // Find existing error for this field or create new
+                const existing = parsedErrors.find(e => e.field === field.trim());
+                if (existing) {
+                  existing.messages.push(message.trim());
+                } else {
+                  parsedErrors.push({
+                    field: field.trim(),
+                    messages: [message.trim()]
+                  });
+                }
               }
-            } else {
-              // General error without field pattern
-              parsedErrors.push({
-                field: "",
-                messages: [part.trim()]
-              });
-            }
-          });
+            });
+          } else {
+            // General error without field pattern - keep entire message together
+            parsedErrors.push({
+              field: "",
+              messages: [errorMessage.trim()]
+            });
+          }
         }
 
         // 2. Handle structured errors in response
