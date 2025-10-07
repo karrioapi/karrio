@@ -22,14 +22,19 @@ if [[ "$VERBOSE" == "true" ]]; then
     echo "activating $BASE_DIR env ..."
 fi
 
-source "${ROOT:?}/$ENV_DIR/$BASE_DIR/bin/activate"
+# Handle both Unix (bin) and Windows (Scripts) paths
+if [[ -f "${ROOT:?}/$ENV_DIR/$BASE_DIR/Scripts/activate" ]]; then
+    source "${ROOT:?}/$ENV_DIR/$BASE_DIR/Scripts/activate"
+else
+    source "${ROOT:?}/$ENV_DIR/$BASE_DIR/bin/activate"
+fi
 
 # install requirements
 if [[ "$VERBOSE" == "true" ]]; then
     echo "installing base requirements ..."
 fi
 
-run_command "pip install pip --upgrade" "Failed to upgrade pip" "Upgrading pip..." || exit $?
+run_command "python -m pip install pip --upgrade" "Failed to upgrade pip" "Upgrading pip..." || exit $?
 
 if [[ "$*" != *--empty* ]]; then
     run_pip_install "${ROOT}/requirements.dev.txt" "Failed to install development requirements" || exit $?
