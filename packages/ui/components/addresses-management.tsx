@@ -82,6 +82,7 @@ function AddressEditDialog({
     is_default: false,
     address: {},
   });
+  const [labelError, setLabelError] = React.useState<string>("");
   const addressFormRef = React.useRef<AddressFormRef>(null);
 
   React.useEffect(() => {
@@ -98,33 +99,52 @@ function AddressEditDialog({
         address: {},
       });
     }
+    setLabelError("");
   }, [addressTemplate, open]);
+
+  // Real-time label validation
+  React.useEffect(() => {
+    const trimmedLabel = formData.label.trim();
+
+    // Don't show error for empty label (handled by required field)
+    if (!trimmedLabel) {
+      setLabelError("");
+      return;
+    }
+
+    // Filter out current template when editing
+    const templatesToCheck = existingTemplates.filter(
+      template => !addressTemplate || template.id !== addressTemplate.id
+    );
+
+    // Check for duplicate label (case-insensitive)
+    const duplicateLabel = templatesToCheck.find(
+      template => template.label?.trim().toLowerCase() === trimmedLabel.toLowerCase()
+    );
+
+    if (duplicateLabel) {
+      setLabelError("A template with this label already exists");
+    } else {
+      setLabelError("");
+    }
+  }, [formData.label, existingTemplates, addressTemplate]);
 
   const handleAddressChange = (address: Partial<AddressType>) => {
     setFormData(prev => ({ ...prev, address }));
   };
 
   const handleSubmit = async (address: Partial<AddressType>) => {
+    // Check if there's a label error (already validated in real-time)
+    if (labelError) {
+      return;
+    }
+
     // Filter out current template when editing (to allow updating without false positives)
     const templatesToCheck = existingTemplates.filter(
       template => !addressTemplate || template.id !== addressTemplate.id
     );
 
-    // Validation 1: Check for duplicate labels (case-insensitive)
-    const trimmedLabel = formData.label.trim();
-    const duplicateLabel = templatesToCheck.find(
-      template => template.label?.trim().toLowerCase() === trimmedLabel.toLowerCase()
-    );
-
-    if (duplicateLabel) {
-      notifier.notify({
-        type: NotificationType.error,
-        message: "A template with this label already exists. Please use a different label.",
-      });
-      return;
-    }
-
-    // Validation 2: Check for identical address content
+    // Validation: Check for identical address content
     const duplicateAddress = templatesToCheck.find(
       template => areAddressesIdentical(template.address, address)
     );
@@ -199,8 +219,11 @@ function AddressEditDialog({
                 value={formData.label}
                 onChange={(e) => setFormData(prev => ({ ...prev, label: e.target.value }))}
                 required
-                className="h-8"
+                className={`h-8 ${labelError ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""}`}
               />
+              {labelError && (
+                <p className="text-xs text-red-500 mt-1">{labelError}</p>
+              )}
             </div>
 
             <div className="flex items-center space-x-2">
@@ -228,7 +251,7 @@ function AddressEditDialog({
           <Button variant="outline" size="sm" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button size="sm" onClick={handleSaveClick} disabled={!formData.label.trim()}>
+          <Button size="sm" onClick={handleSaveClick} disabled={!formData.label.trim() || !!labelError}>
             {addressTemplate ? "Update Template" : "Create Template"}
           </Button>
         </DialogFooter>
