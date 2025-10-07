@@ -15,6 +15,7 @@ import { Label } from "@karrio/ui/components/ui/label";
 import { Card, CardContent } from "@karrio/ui/components/ui/card";
 import { Alert, AlertDescription } from "@karrio/ui/components/ui/alert";
 import { FieldInfo } from "@karrio/ui/core/components/field-info";
+import { useToast } from "@karrio/ui/hooks/use-toast";
 
 const DEFAULT_VALUE: Partial<RegisterUserMutationInput> = {
   email: "",
@@ -29,6 +30,7 @@ const SignUpForm = (): JSX.Element => {
   const searchParams = useSearchParams();
   const emailParam = (searchParams.get("email") as string) || "";
   const mutation = useUserMutation();
+  const { toast } = useToast();
   const [errors, setErrors] = useState<register_user_register_user_errors[]>([]);
 
   const form = useForm<RegisterUserMutationInput>({
@@ -49,7 +51,15 @@ const SignUpForm = (): JSX.Element => {
           password2: value.password2,
           redirect_url: location.origin + p`/email`,
         });
-        router.push(p`/signup/success`);
+
+        // Show success toast
+        toast({
+          title: "Account created successfully!",
+          description: "Please sign in with your new credentials.",
+        });
+
+        // Redirect to sign in page
+        router.push(p`/signin`);
       } catch (error: any) {
         setErrors(Array.isArray(error) ? error : [error]);
       }
