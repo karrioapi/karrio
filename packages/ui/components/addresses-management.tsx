@@ -41,9 +41,9 @@ import {
   useAddressTemplateMutation,
   useAddressTemplates,
 } from "@karrio/hooks/address";
-import { AddressType, NotificationType } from "@karrio/types";
+import { AddressType } from "@karrio/types";
 import { useSearchParams } from "next/navigation";
-import { useNotifier } from "@karrio/ui/core/components/notifier";
+import { useToast } from "@karrio/ui/hooks/use-toast";
 
 // Helper function to normalize address for comparison (exclude metadata)
 const normalizeAddressForComparison = (address: any) => {
@@ -75,7 +75,7 @@ function AddressEditDialog({
   onSave,
   existingTemplates = []
 }: AddressEditDialogProps) {
-  const notifier = useNotifier();
+  const { toast } = useToast();
   const { createAddressTemplate, updateAddressTemplate } = useAddressTemplateMutation();
   const [formData, setFormData] = React.useState({
     label: "",
@@ -150,9 +150,10 @@ function AddressEditDialog({
     );
 
     if (duplicateAddress) {
-      notifier.notify({
-        type: NotificationType.error,
-        message: "An identical address already exists. Please use a different address or edit the existing template.",
+      toast({
+        variant: "destructive",
+        title: "Duplicate Address",
+        description: "An identical address already exists. Please use a different address or edit the existing template.",
       });
       return;
     }
@@ -165,15 +166,15 @@ function AddressEditDialog({
 
       if (addressTemplate) {
         await updateAddressTemplate.mutateAsync({ ...payload, id: addressTemplate.id });
-        notifier.notify({
-          type: NotificationType.success,
-          message: "Address template updated successfully!",
+        toast({
+          title: "Success",
+          description: "Address template updated successfully!",
         });
       } else {
         await createAddressTemplate.mutateAsync(payload);
-        notifier.notify({
-          type: NotificationType.success,
-          message: "Address template created successfully!",
+        toast({
+          title: "Success",
+          description: "Address template created successfully!",
         });
       }
 
@@ -181,9 +182,12 @@ function AddressEditDialog({
       onOpenChange(false);
     } catch (error: any) {
       const detailed = error?.data || error?.response?.data || error;
-      notifier.notify({
-        type: NotificationType.error,
-        message: detailed || { message: error?.message || "Failed to save address template" },
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: typeof detailed === 'string'
+          ? detailed
+          : (detailed?.message || error?.message || "Failed to save address template"),
       });
     }
   };
