@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "karrio_landmark"
-version = "2025.5rc24"
+version = "2025.5rc25"
 description = "Karrio - Landmark Global Shipping Extension"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -25,7 +25,7 @@ dependencies = [
 Homepage = "https://github.com/karrioapi/karrio"
 
 [project.entry-points."karrio.plugins"]
-landmark = "karrio.plugins.landmark"
+landmark = "karrio.plugins.landmark:METADATA"
 
 [tool.setuptools]
 zip-safe = false
@@ -37,3 +37,6 @@ include-package-data = true
 [tool.setuptools.packages.find]
 exclude = ["tests.*", "tests"]
 namespaces = true
+
+[tool.setuptools.package-data]
+"karrio.providers.landmark" = ["services.csv"]

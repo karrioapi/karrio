@@ -171,9 +171,9 @@ def load_services_from_csv() -> list:
         return [
             models.ServiceLevel(
                 service_name=ShippingServiceName.map(
-                    ShippingService.map(service.code).name_or_key
+                    ShippingService.map(service.name).name_or_key
                 ).value_or_key,
-                service_code=ShippingService.map(service.code).name_or_key,
+                service_code=service.name,
                 currency="GBP",
                 zones=[models.ServiceZone(label="Flat Rate", rate=0.0)],
             )
