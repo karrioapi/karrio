@@ -374,3 +374,67 @@ class Location:
             raise Exception(
                 'Missing country code. e.g: Location(state_code, country="US").as_state_name'
             ) from e
+
+
+def sort_events_chronologically(events: List[Any]) -> List[Any]:
+    """
+    Sort tracking events chronologically with the most recent event first.
+
+    This function determines if events are in chronological order (oldest to newest)
+    or reverse chronological order (newest to oldest) by examining events with dates.
+    If events are oldest-first, the entire list is reversed to maintain relative order
+    of events without dates.
+
+    Args:
+        events: List of tracking events to sort
+
+    Returns:
+        Sorted list with most recent event first
+    """
+    import datetime
+
+    if not events or len(events) < 2:
+        return events
+
+    # Find events with dates and parse them to datetime objects
+    dated_events = []
+    for idx, event in enumerate(events):
+        if hasattr(event, "date") and event.date:
+            parsed_date = None
+
+            # Try parsing just the date first
+            date_formats = ["%Y-%m-%d", "%m/%d/%Y", "%-m/%d/%Y"]
+            for fmt in date_formats:
+                try:
+                    parsed_date = datetime.datetime.strptime(event.date, fmt)
+                    break
+                except ValueError:
+                    continue
+
+            # If we have time, try to add it to the parsed date
+            if parsed_date and hasattr(event, "time") and event.time:
+                time_formats = ["%I:%M %p", "%H:%M:%S", "%H:%M"]
+                for fmt in time_formats:
+                    try:
+                        time_obj = datetime.datetime.strptime(event.time, fmt).time()
+                        parsed_date = datetime.datetime.combine(
+                            parsed_date.date(), time_obj
+                        )
+                        break
+                    except ValueError:
+                        continue
+
+            if parsed_date:
+                dated_events.append((idx, parsed_date))
+
+    # If we have at least 2 dated events, check if reversal is needed
+    if len(dated_events) >= 2:
+        first_dated = dated_events[0][1]
+        last_dated = dated_events[-1][1]
+
+        # If first event is older than last, reverse the entire list
+        if first_dated < last_dated:
+            return list(reversed(events))
+
+    # Otherwise, return as-is (already in correct order or not enough data to determine)
+    return events

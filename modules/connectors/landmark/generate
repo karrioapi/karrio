@@ -1,0 +1,14 @@
+SCHEMAS=./schemas
+LIB_MODULES=./karrio/schemas/landmark
+find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
+touch "${LIB_MODULES}/__init__.py"
+
+generateDS --no-namespace-defs -o "${LIB_MODULES}/error_response.py" $SCHEMAS/error_response.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/import_request.py" $SCHEMAS/import_request.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/import_response.py" $SCHEMAS/import_response.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/ship_request.py" $SCHEMAS/ship_request.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/ship_response.py" $SCHEMAS/ship_response.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/cancel_request.py" $SCHEMAS/cancel_request.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/cancel_response.py" $SCHEMAS/cancel_response.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/track_request.py" $SCHEMAS/track_request.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/track_response.py" $SCHEMAS/track_response.xsd

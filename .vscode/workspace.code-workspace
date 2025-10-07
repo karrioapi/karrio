@@ -31,7 +31,8 @@
         "editor.formatOnPaste": true,
         "python.terminal.activateEnvInCurrentTerminal": true,
         "editor.formatOnSave": true,
-        "python.defaultInterpreterPath": "../.venv/patch",
+        "python.defaultInterpreterPath": "../.venv/karrio/bin/python",
+        "python.envFile": "${workspaceFolder}/../.env",
         "files.associations": {
             "**/*.html": "html",
             "**/templates/**/*.html": "django-html",
@@ -39,6 +40,13 @@
             "**/requirements{/**,*}.{txt,in}": "pip-requirements",
         },
         "python.analysis.autoImportCompletions": true,
+        "python.analysis.typeCheckingMode": "basic",
+        "python.analysis.diagnosticMode": "workspace",
+        "python.analysis.extraPaths": [
+            "../modules",
+            "../ee/insiders/modules",
+            "../ee/platform/modules",
+        ],
     },
     "extensions": {
         "recommendations": [

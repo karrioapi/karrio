@@ -5,10 +5,67 @@
 # =============================================================================
 # Sets up complete development environment for Karrio
 # Based on bin/deploy pattern but adapted for local development
+#
+# Usage: ./bin/install-dev [OPTIONS]
+#
+# NOTE: This is a ONE-TIME setup script. For regular environment activation:
+#   - Use: source bin/activate-env
+#   - Or:  source ./bin/setup-server-env
+#
+# This script:
+#   - Installs system dependencies (gcc, pango, ghostscript, etc.)
+#   - Sets up pyenv and installs Python 3.12.x
+#   - Installs nvm and Node.js
+#   - Creates Python virtual environment (.venv/karrio)
+#   - Installs Python and Node.js dependencies
+#   - Generates local HTTPS certificates (mkcert)
+#   - Sets up environment files (.env)
+#
+# After running this script, activate the environment and continue:
+#   1. source bin/activate-env     Activate Python environment
+#   2. karrio migrate              Run database migrations
+#   3. karrio createsuperuser      Create admin user
+#   4. ./bin/dev up                Start all development services
+#
+# For more information, see: https://docs.karrio.io
 # =============================================================================
 
 # Don't exit on error - we'll handle errors explicitly
 set +e
+
+# Show help message
+show_help() {
+    echo "Usage: ./bin/install-dev [OPTIONS]"
+    echo ""
+    echo "Sets up complete Karrio development environment."
+    echo ""
+    echo "OPTIONS:"
+    echo "  -h, --help    Show this help message"
+    echo ""
+    echo "This script will:"
+    echo "  1. Install system dependencies"
+    echo "  2. Set up pyenv and Python 3.12.x"
+    echo "  3. Install nvm and Node.js"
+    echo "  4. Create virtual environment at .venv/karrio"
+    echo "  5. Install all Python and Node.js dependencies"
+    echo "  6. Generate HTTPS certificates with mkcert"
+    echo "  7. Set up environment configuration files"
+    echo ""
+    echo "After installation, run:"
+    echo "  ./bin/dev up              Start development servers"
+    echo "  source bin/activate-env   Activate Python environment"
+    echo ""
+    exit 0
+}
+
+# Parse arguments
+for arg in "$@"; do
+    case $arg in
+        -h|--help)
+            show_help
+            ;;
+    esac
+done
 
 # Detect if script is being sourced or executed
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
@@ -392,7 +449,47 @@ if [[ -f "bin/setup-server-env" ]]; then
 
     # Verify the virtual environment was created
     if [[ ! -d ".venv/karrio" ]]; then
-        print_warning "Virtual environment not found after setup, this might be normal on first run"
+        print_error "Virtual environment not found after setup"
+        if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+            return 1
+        else
+            exit 1
+        fi
+    fi
+
+    # Verify key packages are installed
+    print_step "Verifying Python environment..."
+    if source ".venv/karrio/bin/activate" 2>/dev/null; then
+        MISSING_PACKAGES=()
+
+        if ! python -c "import attr" 2>/dev/null; then
+            MISSING_PACKAGES+=("attrs")
+        fi
+
+        if ! python -c "import mypy" 2>/dev/null; then
+            MISSING_PACKAGES+=("mypy")
+        fi
+
+        if ! python -c "import karrio" 2>/dev/null; then
+            MISSING_PACKAGES+=("karrio (SDK module)")
+        fi
+
+        if [[ ${#MISSING_PACKAGES[@]} -gt 0 ]]; then
+            print_warning "Some packages are missing: ${MISSING_PACKAGES[*]}"
+            print_warning "This usually happens if dependencies were recently updated."
+            echo ""
+            echo "To fix this, run ONE of the following:"
+            echo "  ${GREEN}1. source ./bin/setup-server-env${NC}   (Recommended - recreates environment)"
+            echo "  ${GREEN}2. pip install -e ./modules/sdk${NC}   (Quick fix - reinstalls SDK)"
+            echo ""
+        else
+            print_success "All key packages verified"
+        fi
+
+        # Deactivate to avoid interfering with later steps
+        deactivate 2>/dev/null || true
+    else
+        print_warning "Could not activate virtual environment for verification"
     fi
 else
     print_error "bin/setup-server-env not found!"
@@ -566,30 +663,47 @@ fi
 
 print_success "Development environment setup complete! 🎉"
 echo ""
-echo -e "${YELLOW}Next steps:${NC}"
+echo -e "${CYAN}═══════════════════════════════════════════════════════════${NC}"
+echo -e "${YELLOW}IMPORTANT: Activate Python Environment${NC}"
+echo -e "${CYAN}═══════════════════════════════════════════════════════════${NC}"
 echo ""
-echo "1. Activate Python environment:"
+echo "Before proceeding, activate the Python virtual environment:"
+echo ""
+echo -e "   ${GREEN}source bin/activate-env${NC}"
+echo ""
+echo "Or restart your shell and run: ${GREEN}source ./bin/setup-server-env${NC}"
+echo ""
+echo -e "${CYAN}═══════════════════════════════════════════════════════════${NC}"
+echo -e "${YELLOW}Next Steps:${NC}"
+echo -e "${CYAN}═══════════════════════════════════════════════════════════${NC}"
+echo ""
+echo "1. ${BLUE}Activate Python environment:${NC}"
 echo "   source bin/activate-env"
 echo ""
-echo "2. Run database migrations:"
+echo "2. ${BLUE}Run database migrations:${NC}"
 echo "   karrio migrate"
 echo ""
-echo "3. Create superuser:"
+echo "3. ${BLUE}Create superuser:${NC}"
 echo "   karrio createsuperuser"
 echo ""
-echo "4. Collect static files:"
+echo "4. ${BLUE}Collect static files:${NC}"
 echo "   karrio collectstatic --noinput"
 echo ""
-echo "5. Start development servers (API, dashboard, docs, Maildev, optional Caddy proxy):"
-echo "   ./bin/start-dev"
-echo "   (Use SKIP_CADDY=true ./bin/start-dev to disable HTTPS proxy.)"
+echo "5. ${BLUE}Start development servers:${NC}"
+echo "   ./bin/dev up"
+echo "   ${CYAN}(Use ./bin/dev up --with-https to enable HTTPS proxy with Caddy)${NC}"
 echo ""
+echo -e "${CYAN}═══════════════════════════════════════════════════════════${NC}"
 echo -e "${GREEN}Access your application at:${NC}"
+echo -e "${CYAN}═══════════════════════════════════════════════════════════${NC}"
 echo "   → API: http://localhost:5002"
 echo "   → Dashboard: http://localhost:3002"
 echo "   → Docs: http://localhost:3005"
 echo "   → Maildev: http://localhost:1080"
-echo "   → HTTPS domains (when Caddy is running): https://api.karrio.local, https://app.karrio.local, https://karrio.local"
+echo "   → HTTPS (when Caddy is running):"
+echo "     • https://api.karrio.local"
+echo "     • https://app.karrio.local"
+echo "     • https://karrio.local"
 echo ""
 
 # Check for any warnings

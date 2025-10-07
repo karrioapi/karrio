@@ -31,6 +31,8 @@ Enum = utils.Enum
 Flag = utils.Flag
 StrEnum = utils.StrEnum
 identity = utils.identity
+typed = utils.typed
+sort_events = utils.sort_events_chronologically
 
 
 # -----------------------------------------------------------

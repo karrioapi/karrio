@@ -164,9 +164,16 @@ export default function ConnectionsPage() {
 
   const handleOpenRateSheet = async (connection: any) => {
     try {
+      // Refetch connection data to get the latest linked rate sheet
+      await carrierQuery.refetch();
+
+      // Find the fresh connection data from the query results
+      const freshConnection = userConnections.find(c => c.id === connection.id);
+      const linkedRateSheetId = freshConnection?.rate_sheet?.id;
+
       // Prefer an explicitly linked sheet if present, otherwise find by carrier_name
       const existingSheet = rate_sheets?.edges?.find(({ node }) => (
-        node.id === connection.rate_sheet?.id
+        node.id === linkedRateSheetId
       ));
 
       if (existingSheet) {
@@ -177,7 +184,7 @@ export default function ConnectionsPage() {
           carrier_name: connection.carrier_name,
           name: `${connection.display_name} Rate Sheet`,
           services: [],
-          carriers: [connection]
+          carriers: [freshConnection || connection]
         });
       }
 
@@ -612,7 +619,7 @@ export default function ConnectionsPage() {
             await rateSheetMutation.updateRateSheet.mutateAsync({ id: rate_sheet_id, carriers });
             toast({ title: "Linked to rate sheet" });
             setIsLinkDialogOpen(false);
-            rateSheetsQuery.refetch();
+            // Cache invalidation is handled automatically by the mutation hook
           }}
         />
       )}

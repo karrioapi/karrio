@@ -71,6 +71,165 @@ class RatingMixinProxy:
         return utils.Deserializable(response)
 
 
+def calculate_zone_specificity(
+    zone: models.ServiceZone,
+) -> int:
+    """
+    Calculate how specific a zone is.
+    Higher score = more specific = better match.
+
+    Scoring:
+    - Postal code match: 1000 points (most specific)
+    - City match: 100 points (medium specific)
+    - Country match only: 10 points (least specific)
+    - Weight range defined: +5 points
+    - Both weight bounds defined: +5 points (total +10)
+    """
+    score = 0
+
+    # Location specificity (mutually exclusive layers)
+    if zone.postal_codes:
+        score += 1000  # Most specific
+    elif zone.cities:
+        score += 100  # Medium specific
+    elif zone.country_codes:
+        score += 10  # Least specific
+
+    # Weight range specificity
+    if zone.min_weight is not None or zone.max_weight is not None:
+        score += 5
+
+    # Both bounds defined is more specific
+    if zone.min_weight is not None and zone.max_weight is not None:
+        score += 5
+
+    return score
+
+
+def check_location_match(
+    zone: models.ServiceZone,
+    recipient: units.ComputedAddress,
+) -> bool:
+    """
+    Check if recipient location matches zone criteria.
+
+    Returns True if:
+    - Zone has no location restrictions (matches all), OR
+    - Recipient matches postal code list (if defined), OR
+    - Recipient matches city list (if defined), OR
+    - Recipient matches country code list (if defined)
+    """
+    # Check postal codes (most specific)
+    if zone.postal_codes:
+        return recipient.postal_code is not None and str(
+            recipient.postal_code
+        ).lower() in [str(pc).lower() for pc in zone.postal_codes]
+
+    # Check cities (medium specific)
+    if zone.cities:
+        return recipient.city is not None and recipient.city.lower() in [
+            city.lower() for city in zone.cities
+        ]
+
+    # Check country codes (least specific)
+    if zone.country_codes:
+        return recipient.country_code in zone.country_codes
+
+    # No location restrictions = matches all
+    return True
+
+
+def check_weight_match(
+    zone: models.ServiceZone,
+    package: units.Package,
+    service,
+) -> bool:
+    """
+    Check if package weight fits within zone's weight range.
+
+    Weight range logic (inclusive min, exclusive max):
+    - min_weight <= package_weight < max_weight
+
+    Examples:
+    - Zone: 0-0.5kg, Package: 0.3kg -> Match ✅
+    - Zone: 0-0.5kg, Package: 0.5kg -> No match ❌ (equals max)
+    - Zone: 0.5-1.0kg, Package: 0.5kg -> Match ✅ (equals min)
+    """
+    # If zone has no weight restrictions, always match
+    if zone.min_weight is None and zone.max_weight is None:
+        return True
+
+    # Default to KG if service doesn't specify weight unit
+    weight_unit = service.weight_unit or "KG"
+    package_weight = package.weight[weight_unit]
+
+    # Check min weight (inclusive)
+    if zone.min_weight is not None:
+        min_weight_value = units.Weight(zone.min_weight, weight_unit).value
+        if package_weight < min_weight_value:
+            return False
+
+    # Check max weight (exclusive)
+    if zone.max_weight is not None:
+        max_weight_value = units.Weight(zone.max_weight, weight_unit).value
+        if package_weight >= max_weight_value:
+            return False
+
+    return True
+
+
+def find_best_matching_zone(
+    zones: typing.List[models.ServiceZone],
+    package: units.Package,
+    recipient: units.ComputedAddress,
+    service,
+) -> typing.Optional[models.ServiceZone]:
+    """
+    Find the most specific zone that matches package and destination.
+
+    Selection priority:
+    1. Location match (must match)
+    2. Weight range match (must fit)
+    3. Highest specificity score (postal > city > country)
+    4. Tightest weight range (smallest gap)
+    5. Lowest rate (tie-breaker)
+
+    Returns:
+        Best matching zone, or None if no matches found
+    """
+    matching_zones: typing.List[typing.Tuple[int, float, float, models.ServiceZone]] = (
+        []
+    )
+
+    for zone in zones:
+        # Must match location
+        if not check_location_match(zone, recipient):
+            continue
+
+        # Must fit weight range
+        if not check_weight_match(zone, package, service):
+            continue
+
+        # Calculate metrics for sorting
+        specificity = calculate_zone_specificity(zone)
+        weight_range = (zone.max_weight or float("inf")) - (zone.min_weight or 0)
+        rate = zone.rate or 0.0
+
+        # Store as tuple: (specificity, weight_range, rate, zone)
+        matching_zones.append((specificity, weight_range, rate, zone))
+
+    if not matching_zones:
+        return None
+
+    # Sort by priority:
+    # 1. Highest specificity (descending) - use negative
+    # 2. Tightest weight range (ascending)
+    # 3. Lowest rate (ascending)
+    best_match = min(matching_zones, key=lambda t: (-t[0], t[1], t[2]))
+
+    return best_match[3]  # Return the zone
+
+
 def get_available_rates(
     package: units.Package,
     shipper: units.ComputedAddress,
@@ -94,15 +253,18 @@ def get_available_rates(
             continue
 
         # Check if destination covered
-        cover_domestic_shipment = (
-            service.domicile is True and service.domicile == is_domicile
-        )
+        # Service explicitly supports domestic shipments
+        cover_domestic_shipment = service.domicile is True and is_domicile is True
+
+        # Service explicitly supports international shipments
         cover_international_shipment = (
-            service.international is True and service.international == is_international
+            service.international is True and is_international is True
         )
+
+        # Service supports all destinations (both flags None OR both flags True)
         cover_all_destination = (
             service.domicile is None and service.international is None
-        )
+        ) or (service.domicile is True and service.international is True)
         explicit_destination_covered = explicitly_requested and (
             cover_domestic_shipment
             or cover_international_shipment
@@ -145,67 +307,13 @@ def get_available_rates(
             <= units.Weight(service.max_weight, service.weight_unit).value
         ) or (service.max_weight is None)
 
-        # resolve matching zone
-        selected_zone: typing.Optional[models.ServiceZone] = None
-
-        for zone in service.zones or []:
-            # Check Location inclusion
-            _cover_supported_cities = (
-                zone.cities is not None
-                and recipient.city is not None
-                and recipient.city.lower() in [_.lower() for _ in zone.cities]
-            ) or not any(zone.cities or [])
-            _cover_supported_countries = (
-                zone.country_codes is not None
-                and recipient.country_code in zone.country_codes
-            ) or not any(zone.country_codes or [])
-            _cover_supported_postal_codes = (
-                zone.postal_codes is not None
-                and recipient.postal_code is not None
-                and str(recipient.postal_code).lower()
-                in [str(_).lower() for _ in zone.postal_codes]
-            ) or not any(zone.postal_codes or [])
-
-            # Check if weight and dimensions fit restrictions
-            _match_zone_min_weight_requirements = (
-                zone.min_weight is not None
-                and package.weight[service.weight_unit]
-                >= units.Weight(zone.min_weight, service.weight_unit).value
-            ) or (zone.min_weight is None)
-            _match_zone_max_weight_requirements = (
-                zone.max_weight is not None
-                and package.weight[service.weight_unit]
-                <= units.Weight(zone.max_weight, service.weight_unit).value
-            ) or (zone.max_weight is None)
-
-            # Check if best fit zone is selected
-            _best_fit_zone_selected = (
-                selected_zone is not None
-                and selected_zone.max_weight is not None
-                and (
-                    selected_zone.rate < zone.rate
-                    or (
-                        selected_zone.max_weight is not None
-                        and zone.max_weight is not None
-                        and selected_zone.max_weight < zone.max_weight
-                    )
-                    or (
-                        selected_zone.min_weight is not None
-                        and zone.min_weight is not None
-                        and selected_zone.min_weight < zone.min_weight
-                    )
-                )
-            )
-
-            if (
-                _cover_supported_cities
-                and _cover_supported_countries
-                and _cover_supported_postal_codes
-                and _match_zone_min_weight_requirements
-                and _match_zone_max_weight_requirements
-                and _best_fit_zone_selected is False
-            ):
-                selected_zone = zone
+        # resolve matching zone using improved algorithm
+        selected_zone: typing.Optional[models.ServiceZone] = find_best_matching_zone(
+            zones=service.zones or [],
+            package=package,
+            recipient=recipient,
+            service=service,
+        )
 
         # error validations
         if explicitly_requested and not explicit_destination_covered:
@@ -302,7 +410,19 @@ def get_available_rates(
                     currency=service.currency,
                     transit_days=transit_days,
                     total_charge=selected_zone.rate,
-                    meta=dict(service_name=service.service_name),
+                    extra_charges=[
+                        models.ChargeDetails(
+                            name="Base Charge",
+                            amount=selected_zone.rate,
+                            currency=service.currency,
+                        )
+                    ],
+                    meta=lib.to_dict(  # type: ignore
+                        dict(
+                            carrier_service_code=service.carrier_service_code,
+                            service_name=service.service_name,
+                        )
+                    ),
                 )
             )
 

@@ -1,0 +1,170 @@
+<xs:schema elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://dpd.com/common/service/types/ParcelShopFinderService/5.0"
+    targetNamespace="http://dpd.com/common/service/types/ParcelShopFinderService/5.0">
+    <xs:element name="findCities" type="tns:findCities" />
+    <xs:complexType name="findCities">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="country" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="zipCode" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="city" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="limit" type="xs:int" />
+            <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="order" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="findCitiesResponse" type="tns:ArrayOfCity" />
+    <xs:complexType name="ArrayOfCity">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="city" nillable="true"
+                type="tns:city" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="city">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="country" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="countryNum" type="xs:int" />
+            <xs:element minOccurs="0" maxOccurs="1" name="zipCode" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="name" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="town" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="findParcelShops" type="tns:findParcelShops" />
+    <xs:complexType name="findParcelShops">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="country" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="zipCode" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="city" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="street" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="houseNo" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="limit" type="xs:int" />
+            <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="availabilityDate"
+                type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="hideClosed"
+                type="xs:boolean" />
+            <xs:element minOccurs="0" maxOccurs="unbounded" form="unqualified" name="searchCountry"
+                type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="services"
+                type="tns:services" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="services">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" form="unqualified" name="service"
+                type="tns:service" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="service">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="code" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="available"
+                type="xs:boolean" />
+            <xs:element minOccurs="0" maxOccurs="unbounded" form="unqualified" name="serviceDetail"
+                type="tns:serviceDetail" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="serviceDetail">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="code" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="findParcelShopsResponse" type="tns:ArrayOfParcelShop" />
+    <xs:complexType name="ArrayOfParcelShop">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="parcelShop" nillable="true"
+                type="tns:parcelShop" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="parcelShop">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="parcelShopId" type="xs:long" />
+            <xs:element minOccurs="0" maxOccurs="1" name="pudoId" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="company" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="street" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="houseNo" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="country" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="countryNum" type="xs:int" />
+            <xs:element minOccurs="0" maxOccurs="1" name="state" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="zipCode" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="city" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="town" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="phone" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="fax" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="email" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="homepage" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="latitude" type="xs:double" />
+            <xs:element minOccurs="0" maxOccurs="1" name="longitude" type="xs:double" />
+            <xs:element minOccurs="0" maxOccurs="1" name="coordinateX" type="xs:double" />
+            <xs:element minOccurs="0" maxOccurs="1" name="coordinateY" type="xs:double" />
+            <xs:element minOccurs="0" maxOccurs="1" name="coordinateZ" type="xs:double" />
+            <xs:element minOccurs="0" maxOccurs="1" name="distance" type="xs:double" />
+            <xs:element minOccurs="0" maxOccurs="1" name="expressPickupTime" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="extraInfo" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="openingHours"
+                type="tns:OpeningHoursType" />
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="holiday" type="tns:HolidayType" />
+            <xs:element minOccurs="0" maxOccurs="1" name="services" type="tns:ServiceType" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="OpeningHoursType">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="weekday" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="openMorning" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="closeMorning" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="closeAfternoon" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="openAfternoon" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="HolidayType">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="holidayStart" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="holidayEnd" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ServiceType">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="code" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="available" type="xs:boolean" />
+            <xs:element minOccurs="0" maxOccurs="1" name="description" type="tns:DescriptionType" />
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="serviceDetail"
+                type="tns:ServiceDetailType" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="DescriptionType">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="DescriptionType" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ServiceDetailType">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="code" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="description" type="tns:DescriptionType" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="findParcelShopsByGeoData" type="tns:findParcelShopsByGeoData" />
+    <xs:complexType name="findParcelShopsByGeoData">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="longitude"
+                type="xs:double" />
+            <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="latitude"
+                type="xs:double" />
+            <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="limit" type="xs:int" />
+            <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="availabilityDate"
+                type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="hideClosed"
+                type="xs:boolean" />
+            <xs:element minOccurs="0" maxOccurs="unbounded" form="unqualified" name="searchCountry"
+                type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="services"
+                type="tns:services" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="findParcelShopsByGeoDataResponse" type="tns:ArrayOfParcelShop" />
+    <xs:element name="faults" type="tns:faults" />
+    <xs:complexType name="faults">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="faultCode"
+                type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="message" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
