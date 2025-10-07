@@ -1,34 +1,34 @@
 --extra-index-url https://karrio.gateway.scarf.sh/simple/
-asgiref==3.9.2
-attrs==25.3.0
+asgiref==3.10.0
+attrs==25.4.0
 backoff==2.2.1
 Brotli==1.1.0
-certifi==2025.8.3
+certifi==2025.10.5
 cffi==2.0.0
 charset-normalizer==3.4.3
 click==8.3.0
 croniter==6.0.0
-cryptography==46.0.1
+cryptography==46.0.2
 cssselect2==0.8.0
 deprecation==2.1.0
 diff-match-patch==20241021
 distro==1.9.0
 dj-database-url==3.0.1
-Django==5.2.6
-django-auditlog==3.2.1
+Django==5.2.7
+django-auditlog==3.3.0
 django-constance==4.3.2
 django-cors-headers==4.9.0
 django-downloadview==2.4.0
 django-email-verification==0.3.3
 django-extensions==4.1
-django-filter==25.1
+django-filter==25.2
 django-formtools==2.5.1
 django-health-check==3.20.0
 django-import-export==4.3.10
-django-oauth-toolkit==3.0.1
+django-oauth-toolkit==3.1.0
 django-organizations==2.5.0
 django-otp==1.6.1
-django-phonenumber-field==8.1.0
+django-phonenumber-field==8.3.0
 django-picklefield==3.3
 django-redis==6.0.0
 django-tenants==3.9.0
@@ -62,7 +62,7 @@ karrio_dhl_express @ file://${PWD}/modules/connectors/dhl_express
 karrio_dhl_parcel_de @ file://${PWD}/modules/connectors/dhl_parcel_de
 karrio_dhl_poland @ file://${PWD}/modules/connectors/dhl_poland
 karrio_dhl_universal @ file://${PWD}/modules/connectors/dhl_universal
-karrio_dpd @ file://${PWD}/community/plugins/dpd
+karrio_dpd @ file://${PWD}/modules/connectors/dpd
 karrio_dtdc @ file://${PWD}/ee/insiders/modules/connectors/dtdc
 karrio_easypost @ file://${PWD}/community/plugins/easypost
 karrio_easyship @ file://${PWD}/community/plugins/easyship
@@ -70,6 +70,7 @@ karrio_eshipper @ file://${PWD}/community/plugins/eshipper
 karrio_fedex @ file://${PWD}/modules/connectors/fedex
 karrio_freightcom @ file://${PWD}/community/plugins/freightcom
 karrio_generic @ file://${PWD}/modules/connectors/generic
+karrio_landmark @ file://${PWD}/modules/connectors/landmark
 karrio_laposte @ file://${PWD}/modules/connectors/laposte
 karrio_purolator @ file://${PWD}/modules/connectors/purolator
 karrio_sapient @ file://${PWD}/community/plugins/sapient
@@ -142,10 +143,10 @@ redis==6.4.0
 referencing==0.36.2
 requests==2.32.5
 rpds-py==0.27.1
-sentry-sdk==2.39.0
+sentry-sdk==2.40.0
 six==1.17.0
 sqlparse==0.5.3
-strawberry-graphql==0.282.0
+strawberry-graphql==0.283.1
 tablib==3.8.0
 tinycss2==1.4.0
 tinyhtml5==2.0.0

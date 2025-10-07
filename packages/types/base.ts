@@ -442,6 +442,8 @@ export const CARRIER_IMAGES: Collection = {
   interlink: "generic",
   jppost: "generic",
   kuroneko_yamato: "generic",
+  landmark_global: "landmark",
+  landmark: "landmark",
   lasership: "generic",
   loomis: "generic",
   lso: "generic",

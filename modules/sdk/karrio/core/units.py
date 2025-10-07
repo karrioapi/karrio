@@ -1,6 +1,5 @@
 """Karrio universal data types and units definitions"""
 
-from ctypes import util
 import attr
 import typing
 import numbers
@@ -566,6 +565,9 @@ class Product(models.Commodity):
         self._weight_unit: str = weight_unit or item.weight_unit or "LB"
 
     def __getitem__(self, item):
+        if item == "metadata":
+            return self.item.metadata or dict()
+
         return getattr(self.item, item, None)
 
     def __getattr__(self, item):

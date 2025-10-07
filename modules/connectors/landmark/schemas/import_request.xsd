@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+    <xs:element name="ImportRequest">
+        <xs:complexType>
+            <xs:sequence>
+
+                <!-- Authentication -->
+                <xs:element name="Login">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Username" type="xs:string" />
+                            <xs:element name="Password" type="xs:string" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <!-- Basic Shipment -->
+                <xs:element name="Test" type="xs:boolean" minOccurs="0" />
+                <xs:element name="ClientID" type="xs:string" />
+                <xs:element name="AccountNumber" type="xs:string" minOccurs="0" />
+                <xs:element name="Reference" type="xs:string" />
+
+                <!-- Consignee -->
+                <xs:element name="ShipTo">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Name" type="xs:string" />
+                            <xs:element name="Attention" type="xs:string" minOccurs="0" />
+                            <xs:element name="Address1" type="xs:string" />
+                            <xs:element name="Address2" type="xs:string" minOccurs="0" />
+                            <xs:element name="Address3" type="xs:string" minOccurs="0" />
+                            <xs:element name="City" type="xs:string" />
+                            <xs:element name="State" type="xs:string" />
+                            <xs:element name="PostalCode" type="xs:string" />
+                            <xs:element name="Country" type="xs:string" />
+                            <xs:element name="Phone" type="xs:string" minOccurs="0" />
+                            <xs:element name="Email" type="xs:string" minOccurs="0" />
+                            <xs:element name="ConsigneeTaxID" type="xs:string" minOccurs="0" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <!-- Routing -->
+                <xs:element name="ShippingLane" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Region" type="xs:string" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="ShipMethod" type="xs:string" />
+
+                <!-- Financials -->
+                <xs:element name="OrderTotal" type="xs:decimal" minOccurs="0" />
+                <xs:element name="OrderInsuranceFreightTotal" type="xs:decimal" minOccurs="0" />
+                <xs:element name="ShipmentInsuranceFreight" type="xs:decimal" minOccurs="0" />
+                <xs:element name="ItemsCurrency" type="xs:string" />
+                <xs:element name="IsCommercialShipment" type="xs:boolean" minOccurs="0" />
+
+                <!-- Labels -->
+                <xs:element name="ProduceLabel" type="xs:boolean" minOccurs="0" />
+                <xs:element name="LabelFormat" minOccurs="0">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="PDF" />
+                            <xs:enumeration value="JPG" />
+                            <xs:enumeration value="GIF" />
+                            <xs:enumeration value="BMP" />
+                            <xs:enumeration value="ZPL" />
+                            <xs:enumeration value="PNG" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="LabelEncoding" minOccurs="0">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="LINKS" />
+                            <xs:enumeration value="ZPL" />
+                            <xs:enumeration value="BASE64" />
+                            <xs:enumeration value="BASE64COMPRESSED" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+
+                <!-- Options -->
+                <xs:element name="ShipOptions" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Option" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="Name" type="xs:string" />
+                                        <xs:element name="Value" type="xs:string" />
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <!-- Vendor -->
+                <xs:element name="VendorInformation" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="VendorName" type="xs:string" />
+                            <xs:element name="VendorPhone" type="xs:string" />
+                            <xs:element name="VendorEmail" type="xs:string" />
+                            <xs:element name="VendorAddress1" type="xs:string" />
+                            <xs:element name="VendorAddress2" type="xs:string" minOccurs="0" />
+                            <xs:element name="VendorCity" type="xs:string" />
+                            <xs:element name="VendorState" type="xs:string" />
+                            <xs:element name="VendorPostalCode" type="xs:string" />
+                            <xs:element name="VendorCountry" type="xs:string" />
+                            <xs:element name="VendorLowValueTaxID" type="xs:string" minOccurs="0" />
+                            <xs:element name="VendorCCN" type="xs:string" minOccurs="0" />
+                            <xs:element name="VendorBusinessNumber" type="xs:string" minOccurs="0" />
+                            <xs:element name="VendorRGRNumber" type="xs:string" minOccurs="0" />
+                            <xs:element name="VendorIOSSNumber" type="xs:string" minOccurs="0" />
+                            <xs:element name="VendorEORINumber" type="xs:string" minOccurs="0" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <!-- Fulfillment -->
+                <xs:element name="FulfillmentAddress" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Name" type="xs:string" />
+                            <xs:element name="Attention" type="xs:string" minOccurs="0" />
+                            <xs:element name="Address1" type="xs:string" />
+                            <xs:element name="Address2" type="xs:string" minOccurs="0" />
+                            <xs:element name="Address3" type="xs:string" minOccurs="0" />
+                            <xs:element name="City" type="xs:string" />
+                            <xs:element name="State" type="xs:string" />
+                            <xs:element name="PostalCode" type="xs:string" />
+                            <xs:element name="Country" type="xs:string" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <!-- Return To -->
+                <xs:element name="SendReturnToAddress" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Code" type="xs:string" minOccurs="0" />
+                            <xs:element name="Name" type="xs:string" />
+                            <xs:element name="Attention" type="xs:string" minOccurs="0" />
+                            <xs:element name="Address1" type="xs:string" />
+                            <xs:element name="Address2" type="xs:string" minOccurs="0" />
+                            <xs:element name="Address3" type="xs:string" minOccurs="0" />
+                            <xs:element name="City" type="xs:string" />
+                            <xs:element name="State" type="xs:string" />
+                            <xs:element name="PostalCode" type="xs:string" />
+                            <xs:element name="Country" type="xs:string" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <!-- Additional -->
+                <xs:element name="AdditionalFields" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Field1" type="xs:string" minOccurs="0" />
+                            <xs:element name="Field2" type="xs:string" minOccurs="0" />
+                            <xs:element name="Field3" type="xs:string" minOccurs="0" />
+                            <xs:element name="Field4" type="xs:string" minOccurs="0" />
+                            <xs:element name="Field5" type="xs:string" minOccurs="0" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <!-- PickSlip -->
+                <xs:element name="PickSlipAdditions" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Charges" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="Charge" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element name="Description" type="xs:string" />
+                                                    <xs:element name="Value" type="xs:decimal" />
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="Memos" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="Memo" type="xs:string"
+                                            maxOccurs="unbounded" />
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <!-- Shipment VAS -->
+                <xs:element name="ValueAddedServices" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Request" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="Type" type="xs:string" />
+                                        <xs:element name="Instructions">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element name="Instruction" type="xs:string"
+                                                        maxOccurs="unbounded" />
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <!-- Packages -->
+                <xs:element name="Packages" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Package" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="WeightUnit" type="xs:string" />
+                                        <xs:element name="Weight" type="xs:decimal" />
+                                        <xs:element name="DimensionsUnit" type="xs:string"
+                                            minOccurs="0" />
+                                        <xs:element name="Length" type="xs:decimal" minOccurs="0" />
+                                        <xs:element name="Width" type="xs:decimal" minOccurs="0" />
+                                        <xs:element name="Height" type="xs:decimal" minOccurs="0" />
+                                        <xs:element name="PackageReference" type="xs:string"
+                                            minOccurs="0" />
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <!-- Items -->
+                <xs:element name="Items" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Item" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="Sku" type="xs:string" />
+                                        <xs:element name="LineNumber" type="xs:string" minOccurs="0" />
+                                        <xs:element name="Quantity" type="xs:decimal" />
+                                        <xs:element name="UnitPrice" type="xs:decimal" />
+                                        <xs:element name="Description" type="xs:string" />
+                                        <xs:element name="HSCode" type="xs:string" minOccurs="0" />
+                                        <xs:element name="CountryOfOrigin" type="xs:string"
+                                            minOccurs="0" />
+                                        <xs:element name="URL" type="xs:string" minOccurs="0" />
+                                        <xs:element name="USMID" type="xs:string" minOccurs="0" />
+
+                                        <!-- Nested: ContentCategory -->
+                                        <xs:element name="ContentCategory" minOccurs="0">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element name="ReturnCustomsInfo"
+                                                        minOccurs="0">
+                                                        <xs:complexType>
+                                                            <xs:sequence>
+                                                                <xs:element name="HSCode"
+                                                                    type="xs:string" />
+                                                                <xs:element name="HSRegionCode"
+                                                                    type="xs:string" />
+                                                            </xs:sequence>
+                                                        </xs:complexType>
+                                                    </xs:element>
+                                                    <xs:element name="DangerousGoodsInformation"
+                                                        minOccurs="0">
+                                                        <xs:complexType>
+                                                            <xs:sequence>
+                                                                <xs:element
+                                                                    name="ContainsDangerousGoods"
+                                                                    type="xs:boolean" />
+                                                                <xs:element name="UNCode"
+                                                                    type="xs:string" />
+                                                                <xs:element name="PackingGroup"
+                                                                    type="xs:string" minOccurs="0" />
+                                                                <xs:element
+                                                                    name="PackingInstructions"
+                                                                    type="xs:string" minOccurs="0" />
+                                                                <xs:element name="ItemWeight"
+                                                                    type="xs:decimal" />
+                                                                <xs:element name="ItemWeightUnit"
+                                                                    type="xs:string" />
+                                                                <xs:element name="ItemVolume"
+                                                                    type="xs:decimal" minOccurs="0" />
+                                                                <xs:element name="ItemVolumeUnit"
+                                                                    type="xs:string" minOccurs="0" />
+                                                            </xs:sequence>
+                                                        </xs:complexType>
+                                                    </xs:element>
+                                                    <xs:element name="ValueAddedServices"
+                                                        minOccurs="0">
+                                                        <xs:complexType>
+                                                            <xs:sequence>
+                                                                <xs:element name="Request"
+                                                                    maxOccurs="unbounded">
+                                                                    <xs:complexType>
+                                                                        <xs:sequence>
+                                                                            <xs:element name="Type"
+                                                                                type="xs:string" />
+                                                                            <xs:element
+                                                                                name="Instructions">
+                                                                                <xs:complexType>
+                                                                                    <xs:sequence>
+                                                                                        <xs:element
+                                                                                            name="Instruction"
+                                                                                            type="xs:string"
+                                                                                            maxOccurs="unbounded" />
+                                                                                    </xs:sequence>
+                                                                                </xs:complexType>
+                                                                            </xs:element>
+                                                                        </xs:sequence>
+                                                                    </xs:complexType>
+                                                                </xs:element>
+                                                            </xs:sequence>
+                                                        </xs:complexType>
+                                                    </xs:element>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <!-- Freight -->
+                <xs:element name="FreightDetails" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="ProNumber" type="xs:string" />
+                            <xs:element name="PieceUnit" type="xs:string" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>
