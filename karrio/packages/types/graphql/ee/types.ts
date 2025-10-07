@@ -3100,6 +3100,7 @@ export interface UsageFilter {
   date_after?: string | null;
   date_before?: string | null;
   omit?: string[] | null;
+  surcharge_id?: string | null;
 }
 
 // null

@@ -120,6 +120,171 @@ class TestUniversalRating(unittest.TestCase):
             ParsedMultiPieceRateResponse,
         )
 
+    def test_weight_tiered_pricing_light_package(self):
+        """Test that correct weight tier is selected for light package (0.3kg)."""
+        settings_with_tiers = RatingMixinSettings(**weight_tiered_settings_data)
+        proxy = RatingMixinProxy(settings_with_tiers)
+
+        LightPackageRequest = Serializable(
+            RateRequest(
+                **{
+                    **rate_request_data,
+                    "parcels": [
+                        {
+                            **rate_request_data["parcels"][0],
+                            "weight": 0.66,  # 0.3kg in LB
+                            "weight_unit": "LB",
+                        }
+                    ],
+                }
+            )
+        )
+        response_data = proxy.get_rates(LightPackageRequest)
+        rates = parse_rate_response(response_data, settings_with_tiers)
+
+        self.assertListEqual(
+            DP.to_dict(rates),
+            ParsedWeightTierLightPackage,
+        )
+
+    def test_weight_tiered_pricing_medium_package(self):
+        """Test that correct weight tier is selected for medium package (0.75kg)."""
+        settings_with_tiers = RatingMixinSettings(**weight_tiered_settings_data)
+        proxy = RatingMixinProxy(settings_with_tiers)
+
+        MediumPackageRequest = Serializable(
+            RateRequest(
+                **{
+                    **rate_request_data,
+                    "parcels": [
+                        {
+                            **rate_request_data["parcels"][0],
+                            "weight": 1.65,  # 0.75kg in LB
+                            "weight_unit": "LB",
+                        }
+                    ],
+                }
+            )
+        )
+        response_data = proxy.get_rates(MediumPackageRequest)
+        rates = parse_rate_response(response_data, settings_with_tiers)
+
+        self.assertListEqual(
+            DP.to_dict(rates),
+            ParsedWeightTierMediumPackage,
+        )
+
+    def test_weight_tiered_pricing_heavy_package(self):
+        """Test that correct weight tier is selected for heavy package (1.5kg)."""
+        settings_with_tiers = RatingMixinSettings(**weight_tiered_settings_data)
+        proxy = RatingMixinProxy(settings_with_tiers)
+
+        HeavyPackageRequest = Serializable(
+            RateRequest(
+                **{
+                    **rate_request_data,
+                    "parcels": [
+                        {
+                            **rate_request_data["parcels"][0],
+                            "weight": 3.31,  # 1.5kg in LB
+                            "weight_unit": "LB",
+                        }
+                    ],
+                }
+            )
+        )
+        response_data = proxy.get_rates(HeavyPackageRequest)
+        rates = parse_rate_response(response_data, settings_with_tiers)
+
+        self.assertListEqual(
+            DP.to_dict(rates),
+            ParsedWeightTierHeavyPackage,
+        )
+
+    def test_weight_tier_boundary_exact_match(self):
+        """Test weight exactly on tier boundary (0.5kg = max of tier 1, min of tier 2)."""
+        settings_with_tiers = RatingMixinSettings(**weight_tiered_settings_data)
+        proxy = RatingMixinProxy(settings_with_tiers)
+
+        BoundaryPackageRequest = Serializable(
+            RateRequest(
+                **{
+                    **rate_request_data,
+                    "parcels": [
+                        {
+                            **rate_request_data["parcels"][0],
+                            "weight": 1.10,  # 0.5kg in LB (exactly)
+                            "weight_unit": "LB",
+                        }
+                    ],
+                }
+            )
+        )
+        response_data = proxy.get_rates(BoundaryPackageRequest)
+        rates = parse_rate_response(response_data, settings_with_tiers)
+
+        # Should match tier 2 (0.5-1.0kg) not tier 1 (0-0.5kg)
+        self.assertListEqual(
+            DP.to_dict(rates),
+            ParsedWeightTierBoundaryPackage,
+        )
+
+    def test_zone_specificity_city_over_country(self):
+        """Test that city-specific zone is preferred over country-only zone."""
+        settings_with_specific_zones = RatingMixinSettings(
+            **zone_specificity_settings_data
+        )
+        proxy = RatingMixinProxy(settings_with_specific_zones)
+
+        CitySpecificRequest = Serializable(
+            RateRequest(
+                **{
+                    **rate_request_data,
+                    "recipient": {
+                        "city": "Montreal",
+                        "postal_code": "H3A 1A1",
+                        "country_code": "CA",
+                    },
+                }
+            )
+        )
+        response_data = proxy.get_rates(CitySpecificRequest)
+        rates = parse_rate_response(response_data, settings_with_specific_zones)
+
+        # Should use city rate (12.00) not country rate (15.00)
+        self.assertListEqual(
+            DP.to_dict(rates),
+            ParsedZoneSpecificityCityMatch,
+        )
+
+    def test_no_matching_zone_for_weight(self):
+        """Test that no rate is returned when package exceeds all zone weight limits."""
+        settings_with_tiers = RatingMixinSettings(**weight_tiered_settings_data)
+        proxy = RatingMixinProxy(settings_with_tiers)
+
+        OverweightRequest = Serializable(
+            RateRequest(
+                **{
+                    **rate_request_data,
+                    "parcels": [
+                        {
+                            **rate_request_data["parcels"][0],
+                            "weight": 11.0,  # 5kg - exceeds all tiers
+                            "weight_unit": "LB",
+                        }
+                    ],
+                }
+            )
+        )
+        response_data = proxy.get_rates(OverweightRequest)
+        rates = parse_rate_response(response_data, settings_with_tiers)
+
+        # Should return no rates
+        self.assertListEqual(
+            DP.to_dict(rates),
+            ParsedNoMatchingZone,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -186,6 +351,9 @@ ParsedRateResponseWithoutSelection = [
             "meta": {"service_name": "Standard"},
             "service": "carrier_standard",
             "total_charge": 10.0,
+            "extra_charges": [
+                {"amount": 10.0, "currency": "USD", "name": "Base Charge"}
+            ],
         },
         {
             "carrier_id": "universal",
@@ -193,6 +361,9 @@ ParsedRateResponseWithoutSelection = [
             "meta": {"service_name": "Premium"},
             "service": "carrier_premium",
             "total_charge": 15.0,
+            "extra_charges": [
+                {"amount": 15.0, "currency": "USD", "name": "Base Charge"}
+            ],
         },
     ],
     [],
@@ -206,6 +377,9 @@ ParsedRateResponseStandardService = [
             "meta": {"service_name": "Standard"},
             "service": "carrier_standard",
             "total_charge": 10.0,
+            "extra_charges": [
+                {"amount": 10.0, "currency": "USD", "name": "Base Charge"}
+            ],
         }
     ],
     [],
@@ -219,6 +393,9 @@ ParsedRateResponseHighWeightService = [
             "meta": {"service_name": "Premium"},
             "service": "carrier_premium",
             "total_charge": 15.0,
+            "extra_charges": [
+                {"amount": 15.0, "currency": "USD", "name": "Base Charge"}
+            ],
         }
     ],
     [
@@ -238,6 +415,9 @@ ParsedInternationalRateResponseService = [
             "meta": {"service_name": "International Parcel"},
             "service": "carrier_interational_parcel",
             "total_charge": 25.0,
+            "extra_charges": [
+                {"amount": 25.0, "currency": "USD", "name": "Base Charge"}
+            ],
         }
     ],
     [],
@@ -259,6 +439,9 @@ ParsedMultiPieceRateResponse = [
         {
             "carrier_id": "universal",
             "currency": "USD",
+            "extra_charges": [
+                {"amount": 20.0, "currency": "USD", "name": "Base Charge"}
+            ],
             "meta": {"service_name": "Standard"},
             "service": "carrier_standard",
             "total_charge": 20.0,
@@ -266,10 +449,164 @@ ParsedMultiPieceRateResponse = [
         {
             "carrier_id": "universal",
             "currency": "USD",
+            "extra_charges": [
+                {"amount": 30.0, "currency": "USD", "name": "Base Charge"}
+            ],
             "meta": {"service_name": "Premium"},
             "service": "carrier_premium",
             "total_charge": 30.0,
         },
+    ],
+    [],
+]
+
+# Weight-tiered pricing test data
+weight_tiered_settings_data = {
+    "carrier_id": "universal",
+    "services": [
+        {
+            "service_name": "Weight Tiered Service",
+            "service_code": "carrier_weight_tiered",
+            "currency": "USD",
+            "weight_unit": "KG",
+            "domicile": True,
+            "international": False,
+            "zones": [
+                {
+                    "label": "Tier 1 (0-0.5kg)",
+                    "country_codes": ["CA"],
+                    "min_weight": 0.0,
+                    "max_weight": 0.5,
+                    "rate": 5.00,
+                },
+                {
+                    "label": "Tier 2 (0.5-1.0kg)",
+                    "country_codes": ["CA"],
+                    "min_weight": 0.5,
+                    "max_weight": 1.0,
+                    "rate": 8.00,
+                },
+                {
+                    "label": "Tier 3 (1.0-2.0kg)",
+                    "country_codes": ["CA"],
+                    "min_weight": 1.0,
+                    "max_weight": 2.0,
+                    "rate": 12.00,
+                },
+            ],
+        },
+    ],
+}
+
+ParsedWeightTierLightPackage = [
+    [
+        {
+            "carrier_id": "universal",
+            "currency": "USD",
+            "meta": {"service_name": "Weight Tiered Service"},
+            "service": "carrier_weight_tiered",
+            "total_charge": 5.0,  # Tier 1: 0-0.5kg
+            "extra_charges": [
+                {"amount": 5.0, "currency": "USD", "name": "Base Charge"}
+            ],
+        }
+    ],
+    [],
+]
+
+ParsedWeightTierMediumPackage = [
+    [
+        {
+            "carrier_id": "universal",
+            "currency": "USD",
+            "meta": {"service_name": "Weight Tiered Service"},
+            "service": "carrier_weight_tiered",
+            "total_charge": 8.0,  # Tier 2: 0.5-1.0kg
+            "extra_charges": [
+                {"amount": 8.0, "currency": "USD", "name": "Base Charge"}
+            ],
+        }
+    ],
+    [],
+]
+
+ParsedWeightTierHeavyPackage = [
+    [
+        {
+            "carrier_id": "universal",
+            "currency": "USD",
+            "meta": {"service_name": "Weight Tiered Service"},
+            "service": "carrier_weight_tiered",
+            "total_charge": 12.0,  # Tier 3: 1.0-2.0kg
+            "extra_charges": [
+                {"amount": 12.0, "currency": "USD", "name": "Base Charge"}
+            ],
+        }
+    ],
+    [],
+]
+
+ParsedWeightTierBoundaryPackage = [
+    [
+        {
+            "carrier_id": "universal",
+            "currency": "USD",
+            "meta": {"service_name": "Weight Tiered Service"},
+            "service": "carrier_weight_tiered",
+            "total_charge": 8.0,  # Tier 2: 0.5-1.0kg (0.5 is inclusive min of tier 2)
+            "extra_charges": [
+                {"amount": 8.0, "currency": "USD", "name": "Base Charge"}
+            ],
+        }
+    ],
+    [],
+]
+
+ParsedNoMatchingZone = [
+    [],  # No rates - weight exceeds all tiers
+    [],
+]  # type: ignore
+
+# Zone specificity test data
+zone_specificity_settings_data = {
+    "carrier_id": "universal",
+    "services": [
+        {
+            "service_name": "Zone Specific Service",
+            "service_code": "carrier_zone_specific",
+            "currency": "USD",
+            "weight_unit": "LB",
+            "domicile": True,
+            "international": False,
+            "zones": [
+                {
+                    "label": "Country Zone",
+                    "country_codes": ["CA"],
+                    "rate": 15.00,
+                },
+                {
+                    "label": "City Zone (Montreal)",
+                    "country_codes": ["CA"],
+                    "cities": ["Montreal"],
+                    "rate": 12.00,
+                },
+            ],
+        },
+    ],
+}
+
+ParsedZoneSpecificityCityMatch = [
+    [
+        {
+            "carrier_id": "universal",
+            "currency": "USD",
+            "meta": {"service_name": "Zone Specific Service"},
+            "service": "carrier_zone_specific",
+            "total_charge": 12.0,  # City-specific rate, not country rate
+            "extra_charges": [
+                {"amount": 12.0, "currency": "USD", "name": "Base Charge"}
+            ],
+        }
     ],
     [],
 ]

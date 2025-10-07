@@ -1,3 +1,23 @@
+# Karrio 2025.5rc25
+
+## Changes
+
+### Fix
+
+- hotfix: landmark global default services loading and assets attachment
+
+# Karrio 2025.5rc24
+
+## Changes
+
+### Feat
+
+- feat: landmark global carrier integration
+
+### Chore
+
+- chore: environsment cleaning and landmark testing
+
 # Karrio 2025.5rc23
 
 ## Changes

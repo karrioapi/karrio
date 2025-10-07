@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+    <xs:element name="ShipResponse">
+        <xs:complexType>
+            <xs:sequence>
+
+                <!-- Errors block (optional) -->
+                <xs:element name="Errors" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Error" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="ErrorCode" type="xs:string" />
+                                        <xs:element name="ErrorMessage" type="xs:string" />
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <!-- Test flag -->
+                <xs:element name="Test" type="xs:boolean" minOccurs="0" />
+
+                <!-- Result block -->
+                <xs:element name="Result">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Success" type="xs:boolean" />
+                            <xs:element name="ResultMessage" type="xs:string" />
+                            <xs:element name="ShippingCarrier" type="xs:string" minOccurs="0" />
+
+                            <!-- Address Corrections -->
+                            <xs:element name="AddressCorrections" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="Correction" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element name="ModifiedField"
+                                                        type="xs:string" />
+                                                    <xs:element name="OldValue" type="xs:string" />
+                                                    <xs:element name="NewValue" type="xs:string" />
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+
+                            <!-- Label Link -->
+                            <xs:element name="ShipmentLabelLink" type="xs:string" minOccurs="0" />
+
+                            <!-- Packages -->
+                            <xs:element name="Packages" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="Package" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <!-- One or more LabelLinks -->
+                                                    <xs:element name="LabelLink" type="xs:string"
+                                                        minOccurs="0" maxOccurs="unbounded" />
+
+                                                    <!-- One or more LabelImages -->
+                                                    <xs:element name="LabelImages" minOccurs="0">
+                                                        <xs:complexType>
+                                                            <xs:sequence>
+                                                                <xs:element name="LabelImage"
+                                                                    type="xs:string"
+                                                                    maxOccurs="unbounded" />
+                                                            </xs:sequence>
+                                                        </xs:complexType>
+                                                    </xs:element>
+
+                                                    <xs:element name="TrackingNumber"
+                                                        type="xs:string" />
+                                                    <xs:element name="LandmarkTrackingNumber"
+                                                        type="xs:string" />
+                                                    <xs:element name="PackageID" type="xs:string"
+                                                        minOccurs="0" />
+                                                    <xs:element name="BarcodeData" type="xs:string"
+                                                        minOccurs="0" />
+                                                    <xs:element name="PackageReference"
+                                                        type="xs:string" minOccurs="0" />
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>

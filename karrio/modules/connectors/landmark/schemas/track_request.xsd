@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+    <xs:element name="TrackRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <!-- Login -->
+                <xs:element name="Login">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Username" type="xs:string" />
+                            <xs:element name="Password" type="xs:string" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <!-- Optional Test -->
+                <xs:element name="Test" type="xs:boolean" minOccurs="0" />
+
+                <!-- Optional ClientID -->
+                <xs:element name="ClientID" type="xs:string" minOccurs="0" />
+
+                <!-- Exactly one of Reference, TrackingNumber, PackageReference -->
+                <xs:choice>
+                    <xs:element name="Reference" type="xs:string" />
+                    <xs:element name="TrackingNumber" type="xs:string" />
+                    <xs:element name="PackageReference" type="xs:string" />
+                </xs:choice>
+
+                <!-- RetrievalType -->
+                <xs:element name="RetrievalType" minOccurs="0">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="Last" />
+                            <xs:enumeration value="Historical" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>

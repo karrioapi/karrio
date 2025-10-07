@@ -9,8 +9,10 @@ import { Sheet, SheetContent } from "@karrio/ui/components/ui/sheet";
 import { Cross2Icon, TrashIcon } from "@radix-ui/react-icons";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { useToast } from "@karrio/ui/hooks/use-toast";
 import { Button } from "@karrio/ui/components/ui/button";
 import { Input } from "@karrio/ui/components/ui/input";
+import { MultiSelect } from "@karrio/ui/components/multi-select";
 import { Label } from "@karrio/ui/components/ui/label";
 import {
   AlertDialog,
@@ -50,6 +52,7 @@ export const RateSheetEditor = ({
 }: RateSheetEditorProps) => {
   const loader = useLoader();
   const { references, metadata } = useAPIMetadata();
+  const { toast } = useToast();
   const isNew = rateSheetId === 'new';
 
   // Fetch carrier metadata for optional fallback defaults
@@ -79,6 +82,15 @@ export const RateSheetEditor = ({
   const [carrierMetadata, setCarrierMetadata] = React.useState<any[]>([]);
   const [existingRateSheets, setExistingRateSheets] = React.useState<any[]>([]);
   const [showExistingOptions, setShowExistingOptions] = React.useState(false);
+  const [zoneTextBuffers, setZoneTextBuffers] = React.useState<Record<number, Partial<Record<'country_codes' | 'cities' | 'postal_codes', string>>>>({});
+
+  const countryOptions = React.useMemo(() => {
+    const countries = references?.countries || {};
+    return Object.entries(countries).map(([code, name]) => ({
+      label: String(name),
+      value: String(code).toUpperCase(),
+    }));
+  }, [references?.countries]);
 
   const rateSheet = query.data?.rate_sheet;
   const services = rateSheet?.services || [];
@@ -97,6 +109,7 @@ export const RateSheetEditor = ({
         ...service,
         id: `temp_${Date.now()}_${index}`,
         zones: (service.zones || [{ label: 'Zone 1', rate: 0 }]).map((zone: any, zoneIndex: number) => ({
+          ...zone,  // Preserve all zone properties (country_codes, min_weight, max_weight, transit_days, etc.)
           label: zone.label || `Zone ${zoneIndex + 1}`,
           rate: zone.rate ?? 0
         }))
@@ -119,6 +132,9 @@ export const RateSheetEditor = ({
         carrier_name: rateSheet.carrier_name,
         services: [...(rateSheet.services || [])]
       });
+      // Seed buffers from loaded data so fields show saved text immediately
+      const buffers = buildZoneTextBuffersFromServices(rateSheet.services || []);
+      setZoneTextBuffers(buffers);
     } else if (isNew && !localData) {
       // Initialize with preloaded carrier or defaults for new rate sheets
       const initialCarrier = preloadCarrier || 'generic';
@@ -163,7 +179,7 @@ export const RateSheetEditor = ({
     }
   };
 
-  const checkForExistingRateSheets = (carrierName: string) => {
+  const checkForExistingRateSheets = (_carrierName: string) => {
     // This would check for existing rate sheets with same carrier_name
     // For now, we'll implement the basic structure
     setShowExistingOptions(false); // Reset for now
@@ -174,6 +190,25 @@ export const RateSheetEditor = ({
 
     loader.setLoading(true);
     try {
+      // Merge any buffered zone text into working copy so unsaved typing is included
+      const parseList = (text: string): string[] =>
+        text
+          .split(',')
+          .map((v) => v.trim())
+          .filter((v) => v.length > 0);
+
+      const mergedServices = (localData.services || []).map((service: any) => ({
+        ...service,
+        zones: (service.zones || []).map((zone: any, i: number) => {
+          const buffer = zoneTextBuffers[i] || {};
+          const patch: any = {};
+          // Do not override country_codes from legacy text buffer anymore (MultiSelect manages arrays directly)
+          if (typeof buffer.cities === 'string') patch.cities = parseList(buffer.cities);
+          if (typeof buffer.postal_codes === 'string') patch.postal_codes = parseList(buffer.postal_codes);
+          return { ...zone, ...patch };
+        })
+      }));
+
       // Clean data for mutation - ensure we have at least basic validation
       if (!localData.name || !localData.name.trim()) {
         throw new Error('Rate sheet name is required');
@@ -190,7 +225,7 @@ export const RateSheetEditor = ({
       const cleanedData = {
         name: localData.name.trim(),
         // Note: carrier_name is stored locally but not sent in updates
-        services: (localData.services || []).map((service: any, index: number) => {
+        services: (mergedServices || []).map((service: any, index: number) => {
           // Validate required service fields
           if (!service.service_name || !service.service_name.trim()) {
             throw new Error(`Service ${index + 1}: service_name is required`);
@@ -245,7 +280,8 @@ export const RateSheetEditor = ({
               if (zone.transit_time) cleanZone.transit_time = zone.transit_time;
               if (zone.cities && zone.cities.length > 0) cleanZone.cities = zone.cities;
               if (zone.postal_codes && zone.postal_codes.length > 0) cleanZone.postal_codes = zone.postal_codes;
-              if (zone.country_codes && zone.country_codes.length > 0) cleanZone.country_codes = zone.country_codes;
+              // Include country_codes even if empty to allow clearing
+              if (zone.country_codes !== undefined) cleanZone.country_codes = zone.country_codes;
 
               return cleanZone;
             })
@@ -290,17 +326,9 @@ export const RateSheetEditor = ({
         }
         const newId = (res as any)?.create_rate_sheet?.rate_sheet?.id;
         if (newId) {
-          // Switch to edit mode without closing and refresh data from server
-          setRateSheetId(newId);
-          const refreshed = await query.refetch();
-          const fresh = (refreshed.data as any)?.rate_sheet;
-          if (fresh) {
-            setLocalData({
-              name: fresh.name,
-              carrier_name: fresh.carrier_name,
-              services: [...(fresh.services || [])]
-            });
-          }
+          toast({ title: `${localData?.name || 'Rate Sheet'} created!` });
+          onClose();
+          return;
         }
       } else {
         // For updates, don't send carrier_name
@@ -317,16 +345,121 @@ export const RateSheetEditor = ({
             carrier_name: fresh.carrier_name,
             services: [...(fresh.services || [])]
           });
+          // Seed buffers from fresh data so text persists after save
+          setZoneTextBuffers(buildZoneTextBuffersFromServices(fresh.services || []));
         }
+        toast({ title: "Rate Sheet Saved!" });
       }
       // Do not close the editor; leave it open
     } catch (error: any) {
       // Surface a friendly error, avoid throwing in console overlay
       const message = error?.response?.errors?.[0]?.message || error?.message || 'Unknown error';
       console.warn("Failed to save rate sheet:", message);
+      toast({ title: `Rate Sheet was unable to be ${isNew ? 'created' : 'saved'}`, description: message, variant: "destructive" });
     } finally {
       loader.setLoading(false);
     }
+  };
+
+  // Helpers to manage free-typing buffers for comma-separated fields
+  const getZoneTextValue = (
+    zoneIndex: number,
+    field: 'country_codes' | 'cities' | 'postal_codes',
+    currentArray: string[] | undefined,
+  ): string => {
+    const buffered = zoneTextBuffers[zoneIndex]?.[field];
+    if (typeof buffered === 'string') return buffered;
+    return Array.isArray(currentArray) ? currentArray.join(', ') : '';
+  };
+
+  const setZoneTextValue = (
+    zoneIndex: number,
+    field: 'country_codes' | 'cities' | 'postal_codes',
+    text: string,
+  ) => {
+    setZoneTextBuffers((prev) => ({
+      ...prev,
+      [zoneIndex]: {
+        ...(prev[zoneIndex] || {}),
+        [field]: text,
+      },
+    }));
+  };
+
+  const persistZoneTextValue = (
+    zoneIndex: number,
+    field: 'country_codes' | 'cities' | 'postal_codes',
+  ) => {
+    const text = zoneTextBuffers[zoneIndex]?.[field];
+    if (text === undefined) return; // Nothing to persist
+    const values = text
+      .split(',')
+      .map((v) => v.trim())
+      .filter((v) => v.length > 0);
+    handleUpdateZoneFieldAll(zoneIndex, field, values);
+    // Clear buffer for this field so display falls back to normalized value
+    setZoneTextBuffers((prev) => {
+      const next = { ...prev } as typeof prev;
+      const zoneEntry = { ...(next[zoneIndex] || {}) };
+      delete zoneEntry[field];
+      if (Object.keys(zoneEntry).length === 0) {
+        delete next[zoneIndex];
+      } else {
+        next[zoneIndex] = zoneEntry;
+      }
+      return next;
+    });
+  };
+
+  // Get first non-empty zone array across all services for display purposes
+  const getAggregatedZoneArray = React.useCallback((
+    zoneIndex: number,
+    field: 'country_codes' | 'cities' | 'postal_codes',
+  ): string[] => {
+    const servicesList = localData?.services || [];
+    for (const service of servicesList) {
+      const zone = (service.zones || [])[zoneIndex];
+      const arr = zone?.[field];
+      if (Array.isArray(arr) && arr.length > 0) return arr as string[];
+    }
+    return [];
+  }, [localData?.services]);
+
+  // Build buffers from services so inputs display saved values on load/refetch
+  const buildZoneTextBuffersFromServices = (servicesData: any[]): Record<number, Partial<Record<'country_codes' | 'cities' | 'postal_codes', string>>> => {
+    const buffers: Record<number, Partial<Record<'country_codes' | 'cities' | 'postal_codes', string>>> = {};
+    const maxZones = Math.max(0, ...servicesData.map((s: any) => (s.zones || []).length));
+    for (let i = 0; i < maxZones; i++) {
+      const entry: Partial<Record<'country_codes' | 'cities' | 'postal_codes', string>> = {};
+      // Use first non-empty across services for each field
+      const cc = (() => {
+        for (const s of servicesData) {
+          const a = s?.zones?.[i]?.country_codes;
+          if (Array.isArray(a) && a.length > 0) return a as string[];
+        }
+        return [] as string[];
+      })();
+      const ct = (() => {
+        for (const s of servicesData) {
+          const a = s?.zones?.[i]?.cities;
+          if (Array.isArray(a) && a.length > 0) return a as string[];
+        }
+        return [] as string[];
+      })();
+      const pc = (() => {
+        for (const s of servicesData) {
+          const a = s?.zones?.[i]?.postal_codes;
+          if (Array.isArray(a) && a.length > 0) return a as string[];
+        }
+        return [] as string[];
+      })();
+
+      if (cc.length > 0) entry.country_codes = cc.join(', ');
+      if (ct.length > 0) entry.cities = ct.join(', ');
+      if (pc.length > 0) entry.postal_codes = pc.join(', ');
+      if (Object.keys(entry).length > 0) buffers[i] = entry;
+    }
+    return buffers;
   };
 
   const handleAddService = () => {
@@ -556,7 +689,7 @@ export const RateSheetEditor = ({
               size="sm"
               className="bg-green-600 hover:bg-green-700"
             >
-              {loader.loading ? "Saving..." : "Save"}
+              {loader.loading ? (isNew ? "Creating..." : "Saving...") : (isNew ? "Create and Close" : "Save")}
             </Button>
           </header>
 
@@ -925,47 +1058,64 @@ export const RateSheetEditor = ({
                                   />
                                 </div>
                                 <div>
-                                  <Label>Country Codes (comma separated)</Label>
-                                  <Input
-                                    value={(sample.country_codes || []).join(', ')}
-                                    inputMode="text"
-                                    onKeyDown={(e) => {
-                                      // Allow comma input - prevent any default blocking behavior
-                                      if (e.key === ',' || e.keyCode === 188) {
-                                        e.stopPropagation();
-                                      }
+                                  <Label>Country Codes</Label>
+                                  <MultiSelect
+                                    options={countryOptions}
+                                    value={getAggregatedZoneArray(i, 'country_codes')}
+                                    onValueChange={(vals) => {
+                                      const unique = Array.from(new Set(vals.map((v) => v.toUpperCase())));
+                                      handleUpdateZoneFieldAll(i, 'country_codes', unique);
                                     }}
-                                    onChange={(e) => handleUpdateZoneFieldAll(i, 'country_codes', e.target.value.split(',').map(v => v.trim()).filter(Boolean))}
-                                    placeholder="US, CA, MX"
+                                    placeholder="Select countries"
                                   />
                                 </div>
                                 <div>
                                   <Label>Cities (comma separated)</Label>
                                   <Input
-                                    value={(sample.cities || []).join(', ')}
+                                    value={getZoneTextValue(i, 'cities', getAggregatedZoneArray(i, 'cities'))}
                                     inputMode="text"
                                     onKeyDown={(e) => {
-                                      // Allow comma input - prevent any default blocking behavior
-                                      if (e.key === ',' || e.keyCode === 188) {
+                                      // Allow comma and space input - prevent any parent/global blocking behavior
+                                      if (e.key === ',' || e.key === ' ' || (e as any).keyCode === 188 || (e as any).keyCode === 32) {
+                                        e.stopPropagation();
+                                        const nativeEvent: any = (e as any).nativeEvent;
+                                        if (nativeEvent && typeof nativeEvent.stopImmediatePropagation === 'function') {
+                                          nativeEvent.stopImmediatePropagation();
+                                        }
+                                      }
+                                    }}
+                                    onKeyDownCapture={(e) => {
+                                      if (e.key === ',' || e.key === ' ' || (e as any).keyCode === 188 || (e as any).keyCode === 32) {
                                         e.stopPropagation();
                                       }
                                     }}
-                                    onChange={(e) => handleUpdateZoneFieldAll(i, 'cities', e.target.value.split(',').map(v => v.trim()).filter(Boolean))}
+                                    onChange={(e) => setZoneTextValue(i, 'cities', e.target.value)}
+                                    onBlur={() => persistZoneTextValue(i, 'cities')}
                                     placeholder="New York, Toronto"
                                   />
                                 </div>
                                 <div>
                                   <Label>Postal Codes (comma separated)</Label>
                                   <Input
-                                    value={(sample.postal_codes || []).join(', ')}
+                                    value={getZoneTextValue(i, 'postal_codes', getAggregatedZoneArray(i, 'postal_codes'))}
                                     inputMode="text"
                                     onKeyDown={(e) => {
-                                      // Allow comma input - prevent any default blocking behavior
-                                      if (e.key === ',' || e.keyCode === 188) {
+                                      // Allow comma and space input - prevent any parent/global blocking behavior
+                                      if (e.key === ',' || e.key === ' ' || (e as any).keyCode === 188 || (e as any).keyCode === 32) {
+                                        e.stopPropagation();
+                                        const nativeEvent: any = (e as any).nativeEvent;
+                                        if (nativeEvent && typeof nativeEvent.stopImmediatePropagation === 'function') {
+                                          nativeEvent.stopImmediatePropagation();
+                                        }
+                                      }
+                                    }}
+                                    onKeyDownCapture={(e) => {
+                                      if (e.key === ',' || e.key === ' ' || (e as any).keyCode === 188 || (e as any).keyCode === 32) {
                                         e.stopPropagation();
                                       }
                                     }}
-                                    onChange={(e) => handleUpdateZoneFieldAll(i, 'postal_codes', e.target.value.split(',').map(v => v.trim()).filter(Boolean))}
+                                    onChange={(e) => setZoneTextValue(i, 'postal_codes', e.target.value)}
+                                    onBlur={() => persistZoneTextValue(i, 'postal_codes')}
                                     placeholder="10001, 94105"
                                   />
                                 </div>
