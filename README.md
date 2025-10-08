@@ -620,11 +620,12 @@ The deployment pulls private Docker images from GitHub Container Registry, so yo
 Deploy to Digital Ocean, AWS, or any Ubuntu server:
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/jtlshipping/shipping-platform/main/bin/deploy-jtl)"
+export GITHUB_TOKEN=ghp_your_token_here
+/bin/bash -c "$(curl -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3.raw" -L https://api.github.com/repos/jtlshipping/shipping-platform/contents/bin/install-jtl?ref=main)"
 ```
 
 **What the script does:**
-1. Prompts for your GitHub Personal Access Token
+1. Downloads deployment files from private repository using GitHub API
 2. Asks for version to deploy (defaults to latest from `VERSION` file)
 3. Asks for your domain name
 4. Installs Docker and Docker Compose (if not present)
@@ -641,11 +642,14 @@ Deploy to Digital Ocean, AWS, or any Ubuntu server:
 # SSH into your server
 ssh root@YOUR_SERVER_IP
 
+# Set your GitHub token
+export GITHUB_TOKEN=ghp_your_token_here
+
 # Run deployment with version and domain
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/jtlshipping/shipping-platform/main/bin/deploy-jtl)" -- 2025.1.0 yourdomain.com
+/bin/bash -c "$(curl -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3.raw" -L https://api.github.com/repos/jtlshipping/shipping-platform/contents/bin/install-jtl?ref=main)" -- 2025.1.0 yourdomain.com
 
 # For staging SSL (Let's Encrypt staging)
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/jtlshipping/shipping-platform/main/bin/deploy-jtl)" -- 2025.1.0 yourdomain.com staging
+/bin/bash -c "$(curl -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3.raw" -L https://api.github.com/repos/jtlshipping/shipping-platform/contents/bin/install-jtl?ref=main)" -- 2025.1.0 yourdomain.com staging
 ```
 
 **After deployment (5-10 minutes):**
