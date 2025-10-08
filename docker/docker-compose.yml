@@ -1,7 +1,7 @@
 services:
   api:
     container_name: jtl.api
-    image: ghcr.io/jtlshipping/server:${JTL_TAG}
+    image: ghcr.io/jtlshipping/shipping-platform-server:${JTL_TAG}
     restart: unless-stopped
     ports:
       - 5002:5002
@@ -28,7 +28,7 @@ services:
 
   worker:
     container_name: jtl.worker
-    image: ghcr.io/jtlshipping/server:${JTL_TAG}
+    image: ghcr.io/jtlshipping/shipping-platform-server:${JTL_TAG}
     restart: unless-stopped
     command: "/bin/bash ./worker"
     depends_on:
@@ -51,7 +51,7 @@ services:
 
   dashboard:
     container_name: jtl.dashboard
-    image: ghcr.io/jtlshipping/dashboard:${JTL_TAG}
+    image: ghcr.io/jtlshipping/shipping-platform-dashboard:${JTL_TAG}
     ports:
       - ${DASHBOARD_PORT:-3102}:${DASHBOARD_PORT:-3102}/tcp
     depends_on:

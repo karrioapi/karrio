@@ -2,72 +2,36 @@
 
 set -e
 
-REPO="jtlshipping/shipping-platform"
-BRANCH="main"
-
-echo "Welcome to JTL Shipping Platform installer"
-echo ""
-
-# Get GitHub token
-if [ -z "$GITHUB_TOKEN" ]; then
-    echo "Please enter your GitHub Personal Access Token (needs read:packages scope):"
-    read -r GITHUB_TOKEN
-    export GITHUB_TOKEN
-fi
-
-# Download deployment files from private repository
-echo "Downloading deployment files from GitHub..."
-
-# Create temporary directory
-TMP_DIR=$(mktemp -d)
-cd "$TMP_DIR"
-
-# Download required files using GitHub API
-download_file() {
-    local file_path=$1
-    local output_path=$2
-
-    mkdir -p "$(dirname "$output_path")"
-
-    curl -H "Authorization: token $GITHUB_TOKEN" \
-         -H "Accept: application/vnd.github.v3.raw" \
-         -L "https://api.github.com/repos/$REPO/contents/$file_path?ref=$BRANCH" \
-         -o "$output_path"
-}
-
-echo "Downloading docker-compose.yml..."
-download_file "docker-compose.yml" "docker-compose.yml"
-
-echo "Downloading Caddyfile template..."
-mkdir -p docker
-download_file "docker/Caddyfile" "docker/Caddyfile.template"
-
-echo "Downloading VERSION file..."
-download_file "VERSION" "VERSION"
-
-# Run the main deployment
-echo "Running deployment script..."
-
-# Inline deployment logic
-DEFAULT_VERSION=$(cat VERSION 2>/dev/null || echo "2025.1.0")
+# Get the default version from VERSION file or use fallback
+DEFAULT_VERSION="2025.5rc25"
 export JTL_TAG="${JTL_TAG:-$DEFAULT_VERSION}"
+export SENTRY_DSN="${SENTRY_DSN:-''}"
 
 SECRET_KEY=$(head -c 28 /dev/urandom | sha224sum -b | head -c 56)
 JWT_SECRET=$(head -c 28 /dev/urandom | sha224sum -b | head -c 56)
 export SECRET_KEY
 export JWT_SECRET
 
+# Talk to the user
+echo "Welcome to JTL Shipping Platform installer"
 echo ""
 echo "⚠️  You really need 4gb or more of memory to run this stack ⚠️"
 echo ""
-echo "📖 Deployment docs: https://github.com/$REPO"
+echo "📖 Deployment docs: https://github.com/jtlshipping/shipping-platform"
 echo ""
+
+# GitHub authentication
+if [ -z "$GITHUB_TOKEN" ]; then
+    echo "Please enter your GitHub Personal Access Token (needs read:packages scope):"
+    read -r GITHUB_TOKEN
+    export GITHUB_TOKEN
+fi
 
 if ! [ -z "$1" ]; then
     export JTL_TAG=$1
 else
     echo "What version of JTL Shipping Platform would you like to install? (We default to '${JTL_TAG}')"
-    echo "You can check available versions at: https://github.com/$REPO/pkgs/container/shipping-platform-server"
+    echo "You can check available versions at: https://github.com/jtlshipping/shipping-platform/pkgs/container/shipping-platform-server"
     read -r JTL_TAG_READ
     if [ -z "$JTL_TAG_READ" ]; then
         echo "Using default and installing $JTL_TAG"
@@ -81,7 +45,7 @@ if ! [ -z "$2" ]; then
     export DOMAIN=$2
 else
     echo "Let's get the exact domain JTL Shipping Platform will be installed on"
-    echo "Make sure that you have Host A DNS records pointing to this instance!"
+    echo "Make sure that you have a Host A DNS record pointing to this instance!"
     echo "This will be used for TLS 🔐"
     echo "ie: jtl.example.com (NOT an IP address)"
     read -r DOMAIN
@@ -106,13 +70,25 @@ sudo -E docker compose -f docker-compose.yml stop &>/dev/null || true
 echo "Grabbing latest apt caches"
 sudo apt update
 
+# get jtl shipping platform scripts
+mkdir -p ./jtl-deployment
+cd jtl-deployment
+
+echo "Downloading JTL Shipping Platform installation files"
+curl -H "Authorization: token $GITHUB_TOKEN" \
+     -H "Accept: application/vnd.github.v3.raw" \
+     -L "https://api.github.com/repos/jtlshipping/shipping-platform/contents/docker/docker-compose.yml?ref=main" \
+     -o docker-compose.jtl.yml
+
+cd -
+
 if [ -n "$3" ]; then
     export TLS_BLOCK="acme_ca https://acme-staging-v02.api.letsencrypt.org/directory"
 fi
 
 # rewrite caddyfile
-rm -f docker/Caddyfile
-envsubst > docker/Caddyfile <<EOF
+rm -f Caddyfile
+envsubst >Caddyfile <<EOF
 {
     http_port 80
     https_port 443
@@ -155,7 +131,7 @@ JTL_CLIENT_ID=$(head -c 28 /dev/urandom | base64 | tr -d '/+=' | head -c 40)
 JTL_CLIENT_SECRET=$(head -c 56 /dev/urandom | base64 | tr -d '/+=' | head -c 128)
 
 # Write .env file
-cat > docker/.env <<EOF
+cat > .env <<EOF
 DOMAIN=$DOMAIN
 SECRET_KEY=$SECRET_KEY
 JWT_SECRET=$JWT_SECRET
@@ -190,8 +166,12 @@ echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
 
 # start up the stack
 echo "Configuring Docker Compose...."
+rm -f docker-compose.yml
+cp jtl-deployment/docker-compose.jtl.yml docker-compose.yml.tmpl
+envsubst <docker-compose.yml.tmpl >docker-compose.yml
+rm docker-compose.yml.tmpl
 echo "Starting the stack!"
-sudo -E docker compose up -d
+sudo -E docker compose -f docker-compose.yml up -d
 
 echo "We will need to wait ~5-10 minutes for things to settle down, migrations to finish, and TLS certs to be issued"
 echo ""
@@ -203,12 +183,10 @@ echo "🎉🎉🎉  Done! 🎉🎉🎉"
 echo ""
 echo "To stop the stack run 'docker compose stop'"
 echo "To start the stack again run 'docker compose start'"
-echo "If you have any issues at all delete everything in this directory and run the deployment script again"
+echo "If you have any issues at all delete everything in this directory and run the curl command again"
 echo ""
 echo "JTL Shipping Platform will be up at the location you provided!"
 echo "API:         https://api.${DOMAIN}"
 echo "Dashboard:   https://app.${DOMAIN}"
-echo ""
-echo "Installation directory: $TMP_DIR"
 echo ""
 echo "This is the end: Happy shipping with JTL Shipping Platform!"
