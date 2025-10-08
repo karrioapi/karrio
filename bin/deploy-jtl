@@ -2,8 +2,9 @@
 
 set -e
 
-export JTL_TAG="${JTL_TAG:-2025.5rc25}"
-export SENTRY_DSN="${SENTRY_DSN:-'https://public@sentry.example.com/1'}"
+# Get the default version from VERSION file
+DEFAULT_VERSION=$(cat "$(dirname "$0")/../VERSION" 2>/dev/null || echo "2025.1.0")
+export JTL_TAG="${JTL_TAG:-$DEFAULT_VERSION}"
 
 SECRET_KEY=$(head -c 28 /dev/urandom | sha224sum -b | head -c 56)
 JWT_SECRET=$(head -c 28 /dev/urandom | sha224sum -b | head -c 56)
@@ -15,15 +16,21 @@ echo "Welcome to JTL Shipping Platform installer"
 echo ""
 echo "⚠️  You really need 4gb or more of memory to run this stack ⚠️"
 echo ""
-echo "Power user or aspiring power user?"
-echo "Check out our docs on deploying JTL Shipping Platform!"
+echo "📖 Deployment docs: https://github.com/jtlshipping/shipping-platform"
 echo ""
+
+# GitHub authentication for private images
+if [ -z "$GITHUB_TOKEN" ]; then
+    echo "Please enter your GitHub Personal Access Token (needs read:packages scope):"
+    read -r GITHUB_TOKEN
+    export GITHUB_TOKEN
+fi
 
 if ! [ -z "$1" ]; then
     export JTL_TAG=$1
 else
     echo "What version of JTL Shipping Platform would you like to install? (We default to '${JTL_TAG}')"
-    echo "You can check available versions in your deployment portal"
+    echo "You can check available versions at: https://github.com/jtlshipping/shipping-platform/pkgs/container/shipping-platform-server"
     read -r JTL_TAG_READ
     if [ -z "$JTL_TAG_READ" ]; then
         echo "Using default and installing $JTL_TAG"
@@ -37,7 +44,7 @@ if ! [ -z "$2" ]; then
     export DOMAIN=$2
 else
     echo "Let's get the exact domain JTL Shipping Platform will be installed on"
-    echo "Make sure that you have a Host A DNS record pointing to this instance!"
+    echo "Make sure that you have Host A DNS records pointing to this instance!"
     echo "This will be used for TLS 🔐"
     echo "ie: jtl.example.com (NOT an IP address)"
     read -r DOMAIN
@@ -150,9 +157,11 @@ echo "Docker Compose is included with Docker CE"
 # enable docker without sudo
 sudo usermod -aG docker "${USER}" || true
 
+# login to docker private registry
+echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
+
 # start up the stack
 echo "Configuring Docker Compose...."
-rm -f docker/docker-compose.yml.tmpl
 echo "Starting the stack!"
 cd docker
 sudo -E docker compose up -d
