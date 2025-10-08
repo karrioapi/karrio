@@ -228,8 +228,8 @@ class ConfirmEmailChangeMutation(utils.BaseMutation):
     def mutate(info: Info, token: str) -> "ConfirmEmailChangeMutation":
         validated_token = ConfirmationToken(token)
         user = info.context.request.user
-
-        if user.id != validated_token["user_id"]:
+        
+        if str(user.id) != validated_token["user_id"]:
             raise exceptions.ValidationError(
                 {"token": "auth.Token is invalid or expired"}
             )

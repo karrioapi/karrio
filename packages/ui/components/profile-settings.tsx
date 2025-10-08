@@ -10,6 +10,7 @@ import { useUserMutation } from "@karrio/hooks/user";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { NotificationType } from "@karrio/types";
+import { BASE_PATH } from "@karrio/lib";
 
 interface EmailChangeDialogProps {
   open: boolean;
@@ -33,7 +34,7 @@ function EmailChangeDialog({ open, onOpenChange }: EmailChangeDialogProps) {
       await mutation.requestEmailChange.mutateAsync({
         email,
         password,
-        redirect_url: `${location.origin}/email/change`,
+        redirect_url: `${location.origin}${BASE_PATH}/email/change`,
       });
       notify({
         type: NotificationType.success,
