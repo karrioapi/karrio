@@ -4,9 +4,9 @@
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 # Default values
-JTL_IMAGE=${JTL_IMAGE:-"ghcr.io/jtl/shipping-platform-server"}
+JTL_IMAGE=${JTL_IMAGE:-"ghcr.io/jtlshipping/shipping-platform-server"}
 REQUIREMENTS=${REQUIREMENTS:-"./requirements.build.txt"}
-SOURCE=${SOURCE:-"https://github.com/jtl/shipping-platform"}
+SOURCE=${SOURCE:-"https://github.com/jtlshipping/shipping-platform"}
 
 # Check if version argument is provided
 if [ -z "$1" ]; then

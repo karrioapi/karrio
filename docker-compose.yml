@@ -1,7 +1,7 @@
 services:
   api:
     container_name: jtl.api
-    image: ghcr.io/jtl/shipping-platform-server:${JTL_TAG:-2025.5rc25}
+    image: ghcr.io/jtlshipping/shipping-platform-server:${JTL_TAG:-2025.5rc25}
     restart: unless-stopped
     ports:
       - ${JTL_HTTP_PORT:-5002}:${JTL_HTTP_PORT:-5002}
@@ -47,7 +47,7 @@ services:
 
   worker:
     container_name: jtl.worker
-    image: ghcr.io/jtl/shipping-platform-server:${JTL_TAG:-2025.5rc25}
+    image: ghcr.io/jtlshipping/shipping-platform-server:${JTL_TAG:-2025.5rc25}
     restart: unless-stopped
     depends_on:
       - db
@@ -78,7 +78,7 @@ services:
 
   dashboard:
     container_name: jtl.dashboard
-    image: ghcr.io/jtl/shipping-platform-dashboard:${JTL_TAG:-2025.5rc25}
+    image: ghcr.io/jtlshipping/shipping-platform-dashboard:${JTL_TAG:-2025.5rc25}
     restart: unless-stopped
     ports:
       - ${DASHBOARD_PORT:-3102}:${DASHBOARD_PORT:-3102}/tcp
