@@ -2,21 +2,20 @@
 import React, { Suspense, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { isNone, url$ } from "@karrio/lib";
+import { isNone } from "@karrio/lib";
 import { Spinner } from "@karrio/ui/core/components/spinner";
 import { Card, CardContent } from "@karrio/ui/components/ui/card";
 import { Alert, AlertDescription } from "@karrio/ui/components/ui/alert";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import { useUserMutation } from "@karrio/hooks/user";
 
 // Inner component that uses useSearchParams
 function EmailChangeConfirmation(): JSX.Element {
   const searchParams = useSearchParams();
   const rawToken = searchParams.get("token") as string;
   const token = (rawToken || "").trim().replace(/^"+|"+$/g, "");
-  const { references, getHost, metadata } = useAPIMetadata();
+  const { confirmEmailChange } = useUserMutation();
   const { status } = useSession();
   const router = useRouter();
   const [loading, setLoading] = React.useState(false);
@@ -27,26 +26,7 @@ function EmailChangeConfirmation(): JSX.Element {
   const confirm = async () => {
     setLoading(true);
     try {
-      const host = getHost?.();
-      const graphqlUrl = (metadata as any)?.GRAPHQL || url$`${host}/graphql`;
-      // Build auth headers from the current NextAuth session
-      const session = (await import("next-auth/react").then(m => m.getSession())) as any;
-      const headers: Record<string, string> = {};
-      if (session?.accessToken) headers["authorization"] = `Bearer ${session.accessToken}`;
-      if (session?.orgId) headers["x-org-id"] = String(session.orgId);
-      if (session?.testMode) headers["x-test-mode"] = "true";
-
-      const { data } = await axios.post(
-        graphqlUrl,
-        {
-          query: `mutation confirm_email_change($data: ConfirmEmailChangeMutationInput!) { confirm_email_change(input: $data) { user { email } errors { field messages } } }`,
-          variables: { data: { token } },
-        },
-        {
-          headers,
-        }
-      );
-      const result = data?.data?.confirm_email_change;
+      const { confirm_email_change: result } = await confirmEmailChange.mutateAsync({ token });
       const email = result?.user?.email;
       if (!isNone(email)) {
         setSuccess(true);
@@ -54,8 +34,7 @@ function EmailChangeConfirmation(): JSX.Element {
         setErrorMessage(null);
       } else {
         // Extract GraphQL errors from body when request succeeds with errors
-        const graphQLErrors =
-          result?.errors || data?.errors || data?.data?.errors || [];
+        const graphQLErrors = result?.errors || [];
         const detailedMessage = Array.isArray(graphQLErrors)
           ? graphQLErrors
             .map((e: any) =>

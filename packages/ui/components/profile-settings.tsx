@@ -34,7 +34,7 @@ function EmailChangeDialog({ open, onOpenChange }: EmailChangeDialogProps) {
       await mutation.requestEmailChange.mutateAsync({
         email,
         password,
-        redirect_url: `${location.origin}${BASE_PATH}/email/change`,
+        redirect_url: `${location.origin}/email/change`,
       });
       notify({
         type: NotificationType.success,
