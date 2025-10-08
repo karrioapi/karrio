@@ -662,7 +662,6 @@ export GITHUB_TOKEN=ghp_your_token_here
 
 **View logs:**
 ```bash
-cd /root/docker  # or wherever you ran the deployment
 docker compose logs -f api
 docker compose logs -f dashboard
 ```
@@ -677,19 +676,31 @@ docker compose stop
 docker compose start
 ```
 
-**Update to new version:**
+**Upgrade to latest version:**
 ```bash
+# Automated upgrade with safety checks
+/bin/bash -c "$(curl -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3.raw" -L https://api.github.com/repos/jtlshipping/shipping-platform/contents/bin/upgrade-jtl?ref=main)"
+```
+
+The upgrade script will:
+1. Check for postgres volume to prevent data loss
+2. Back up your Caddyfile
+3. Download latest docker-compose.yml
+4. Pull new Docker images
+5. Gracefully stop services
+6. Apply any necessary configuration updates
+7. Restart with new version
+
+**Manual upgrade:**
+```bash
+# Set your GitHub token in .env file or export it
+export GITHUB_TOKEN=your_token_here
+
 # Pull latest images
 docker compose pull
 
 # Restart services
 docker compose up -d
-```
-
-**Full redeployment:**
-```bash
-export GITHUB_TOKEN=your_token_here
-./bin/deploy-jtl NEW_VERSION yourdomain.com
 ```
 
 ### Local Docker Deployment

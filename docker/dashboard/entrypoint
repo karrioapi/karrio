@@ -3,8 +3,10 @@
 # Setup environment variables
 export DASHBOARD_PORT=${DASHBOARD_PORT:-3102}
 export NODE_ENV=${NODE_ENV:-production}
+export PORT=${DASHBOARD_PORT}
+export HOST=0.0.0.0
 
-# TanStack Start / Vite environment variables
+# TanStack Start / Vite environment variables (must be set at build time, but also runtime for SSR)
 export VITE_KARRIO_API=${VITE_KARRIO_API:-${KARRIO_PUBLIC_URL:-"http://localhost:5002"}}
 export VITE_KARRIO_OAUTH_CLIENT_ID=${VITE_KARRIO_OAUTH_CLIENT_ID:-${OAUTH_CLIENT_ID}}
 export VITE_KARRIO_OAUTH_CLIENT_SECRET=${VITE_KARRIO_OAUTH_CLIENT_SECRET:-${OAUTH_CLIENT_SECRET}}
@@ -19,8 +21,9 @@ set -e
 
 echo "Starting JTL Shipping Platform Dashboard..."
 echo "DASHBOARD_PORT: $DASHBOARD_PORT"
+echo "HOST: $HOST"
 echo "VITE_KARRIO_API: $VITE_KARRIO_API"
 echo "NODE_ENV: $NODE_ENV"
 
-# Start the TanStack Start server
-PORT=$DASHBOARD_PORT npm start
+# Start the TanStack Start production server
+exec node server-entry.mjs

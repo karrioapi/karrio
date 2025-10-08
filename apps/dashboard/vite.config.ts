@@ -18,6 +18,10 @@ const config = defineConfig({
     }),
     viteReact(),
   ],
+  server: {
+    host: true, // Allow all hosts
+    allowedHosts: 'all', // Allow all hostnames
+  },
 })
 
 export default config
