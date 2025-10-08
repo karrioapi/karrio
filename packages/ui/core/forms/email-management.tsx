@@ -33,7 +33,7 @@ export const EmailManagement = ({
       await mutation.requestEmailChange.mutateAsync({
         email: email.current?.value as string,
         password: password.current?.value as string,
-        redirect_url: `${location.origin}${BASE_PATH}/email/change`,
+        redirect_url: `${location.origin}/email/change`,
       });
       notify({
         type: NotificationType.success,
@@ -42,33 +42,8 @@ export const EmailManagement = ({
       setIsActive(false);
     } catch (error: any) {
       setErrors(Array.isArray(error) ? error : [error]);
-      // Extract GraphQL/network error details if present
-      const graphQLErrorMessage =
-        error?.response?.errors?.[0]?.message ||
-        error?.response?.data?.errors?.[0]?.message ||
-        error?.data?.errors?.[0]?.message ||
-        error?.message;
-      const validation =
-        error?.response?.errors?.[0]?.validation ||
-        error?.response?.data?.errors?.[0]?.validation ||
-        error?.data?.errors?.[0]?.validation;
-
-      // Use structured toast message so details render on a smaller, secondary line
-      const structuredMessage: any = {
-        errors: [
-          {
-            message: "Failed to send confirmation email. Please try again.",
-            ...(graphQLErrorMessage || validation
-              ? { validation: validation || { Reason: [graphQLErrorMessage] } }
-              : {}),
-          },
-        ],
-      };
-
-      notify({
-        type: NotificationType.error,
-        message: structuredMessage,
-      });
+      // Rely on GraphQL wrapper parsing: pass error directly to notifier
+      notify({ type: NotificationType.error, message: error });
     }
     setLoading(false);
   };
