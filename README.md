@@ -30,8 +30,7 @@ The platform consists of three main layers:
 
 ### Frontend Applications
 
-- **Foundation Dashboard** (`@jtl/dashboard`) - Main administrative interface (React + Vite + TanStack)
-- **Karrio Dashboard** (`@karrio/dashboard`) - Shipping operations dashboard (Next.js)
+- **JTL Dashboard** (`@jtl/dashboard`) - Main administrative interface (React + Vite + TanStack Start)
 
 ### Shared Packages
 
@@ -141,16 +140,14 @@ The easiest way to run the entire platform is using the development script:
 This will start:
 
 - **API Server** on `http://localhost:5002`
-- **Foundation Dashboard** on `http://localhost:3102`
-- **Karrio Dashboard** on `http://localhost:3002`
+- **JTL Dashboard** on `http://localhost:3102`
 - **Maildev** (email testing) on `http://localhost:1080`
 
 Access points:
 
 - **API**: http://localhost:5002
 - **Admin Panel**: http://localhost:5002/admin
-- **Foundation**: http://localhost:3102
-- **Dashboard**: http://localhost:3002
+- **JTL Dashboard**: http://localhost:3102
 - **Maildev**: http://localhost:1080
 
 ### Selective Service Startup
@@ -161,11 +158,8 @@ Run specific services only:
 # API server only
 ./bin/dev up --api-only
 
-# Foundation frontend only
-./bin/dev up --frontend-only
-
 # Dashboard only
-./bin/dev up --dashboard-only
+./bin/dev up --frontend-only
 
 # Skip specific services
 ./bin/dev up --no-maildev
@@ -195,16 +189,10 @@ source .venv/karrio/bin/activate
 karrio runserver
 ```
 
-#### Foundation Dashboard
+#### JTL Dashboard
 
 ```bash
 npm run dev -w @jtl/dashboard
-```
-
-#### Karrio Dashboard
-
-```bash
-npm run dev -w @karrio/dashboard
 ```
 
 ## Available Commands
@@ -233,13 +221,12 @@ npm run format
 ```bash
 # Run specific workspace
 npm run dev -w @jtl/dashboard
-npm run dev -w @karrio/dashboard
 
 # Build specific workspace
 npm run build -w @jtl/dashboard
 
 # Lint specific workspace
-npm run lint -w @karrio/ui
+npm run lint -w @jtl/dashboard
 ```
 
 ### Turbo Commands
@@ -256,7 +243,7 @@ turbo check-types
 
 # Filter by workspace
 turbo build --filter=@jtl/dashboard
-turbo dev --filter=@karrio/dashboard
+turbo dev --filter=@jtl/dashboard
 ```
 
 ## Project Structure
@@ -264,49 +251,53 @@ turbo dev --filter=@karrio/dashboard
 ```txt
 shipping-platform/
 ├── apps/                           # JTL Applications
-│   └── dashboard/                  # Foundation Dashboard (React + Vite)
+│   └── dashboard/                  # JTL Dashboard (React + Vite + TanStack Start)
 ├── packages/                       # JTL Shared Packages
 │   ├── eslint-config/             # ESLint configurations
 │   └── typescript-config/         # TypeScript configurations
-├── karrio/                        # Karrio Monorepo (Git Subtree)
+├── karrio/                        # Karrio Backend (Git Subtree)
 │   ├── apps/
-│   │   ├── api/                   # API documentation app
-│   │   ├── dashboard/             # Karrio Dashboard (Next.js)
-│   │   ├── web/                   # Customer portal
-│   │   └── www/                   # Marketing website
-│   └── packages/
-│       ├── admin/                 # Admin components
-│       ├── app-store/             # Plugin marketplace
-│       ├── core/                  # Core logic
-│       ├── developers/            # Developer tools
+│   │   └── api/                   # Karrio API server (Django)
+│   ├── modules/                   # Karrio core modules
+│   │   ├── core/                  # Core functionality
+│   │   ├── manager/               # Shipment management
+│   │   ├── pricing/               # Pricing engine
+│   │   ├── documents/             # Document generation
+│   │   └── connectors/            # Carrier integrations
+│   └── packages/                  # Karrio shared packages
 │       ├── hooks/                 # React hooks
-│       ├── karriojs/              # Karrio JavaScript SDK
 │       ├── lib/                   # Utilities
 │       ├── types/                 # TypeScript types
 │       └── ui/                    # UI components
-├── insiders/                      # Karrio Insiders (Git Subtree)
+├── karrio-insiders/               # Karrio Insiders (Git Subtree)
 │   └── modules/                   # Premium/private modules
 │       ├── apps/                  # Apps module
 │       ├── admin/                 # Admin enhancements
 │       ├── audit/                 # Audit logging
 │       ├── automation/            # Workflow automation
 │       └── orgs/                  # Multi-tenancy
-├── modules/                       # Python Backend Modules
+├── modules/                       # Custom Python Modules
 │   └── shipping/                  # Custom shipping module
 │       ├── models.py              # Database models
 │       ├── serializers/           # API serializers
 │       ├── views.py               # API views
 │       └── router.py              # URL routing
-├── bin/                           # Development Scripts
+├── docker/                        # Docker deployment files
+│   ├── server/                    # Server Dockerfile & scripts
+│   ├── dashboard/                 # Dashboard Dockerfile & scripts
+│   ├── docker-compose.yml         # Local development stack
+│   └── Caddyfile                  # Reverse proxy config
+├── bin/                           # Development & Deployment Scripts
 │   ├── dev                        # Development environment manager
 │   ├── install-dev                # Installation script
-│   ├── update-subtrees            # Update git subtrees
-│   └── activate                   # Virtual environment activator
+│   ├── deploy-jtl                 # Production deployment script
+│   ├── build-jtl-server-image     # Build server Docker image
+│   └── build-jtl-dashboard-image  # Build dashboard Docker image
 ├── .env.sample                    # Sample environment configuration
 ├── package.json                   # Root package configuration
 ├── turbo.json                     # Turborepo configuration
-├── requirements.txt               # Python dependencies
-└── requirements.dev.txt           # Python dev dependencies
+├── requirements.build.txt         # Python build dependencies
+└── VERSION                        # Version tracking
 ```
 
 ## Development Workflow
@@ -598,6 +589,32 @@ For support, email [your-email] or open an issue in the repository.
 - **Domain**: DNS A records configured for `api.yourdomain.com` and `app.yourdomain.com`
 - **GitHub PAT**: Personal Access Token with `read:packages` scope to pull Docker images
 
+### Setting Up GitHub Personal Access Token (PAT)
+
+The deployment pulls private Docker images from GitHub Container Registry, so you need a PAT:
+
+1. **Go to GitHub Settings**
+   - Visit: https://github.com/settings/tokens
+   - Or: GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
+
+2. **Generate New Token**
+   - Click "Generate new token (classic)"
+   - Give it a name: e.g., "JTL Deployment"
+   - Select expiration: "No expiration" or custom period
+   - **Required scope**: Check `read:packages` (allows downloading Docker images)
+   - Click "Generate token"
+
+3. **Save Your Token**
+   - **Copy the token immediately** - you won't see it again!
+   - Store it securely (password manager, secure notes, etc.)
+   - Example token format: `ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
+
+4. **Use the Token**
+   - The deployment script will prompt you for it
+   - Or set it as an environment variable: `export GITHUB_TOKEN=ghp_your_token_here`
+
+**Note**: If you lose your token, you'll need to generate a new one.
+
 ### One-Line Cloud Deployment
 
 Deploy to Digital Ocean, AWS, or any Ubuntu server:
@@ -691,5 +708,5 @@ Access at:
 
 - [Karrio Documentation](https://docs.karrio.io)
 - [Turborepo Documentation](https://turborepo.com/docs)
-- [Next.js Documentation](https://nextjs.org/docs)
+- [TanStack Start Documentation](https://tanstack.com/start/latest)
 - [Django Documentation](https://docs.djangoproject.com)
