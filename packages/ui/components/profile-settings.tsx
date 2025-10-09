@@ -10,6 +10,7 @@ import { useUserMutation } from "@karrio/hooks/user";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { NotificationType } from "@karrio/types";
+import { BASE_PATH } from "@karrio/lib";
 
 interface EmailChangeDialogProps {
   open: boolean;
@@ -44,6 +45,8 @@ function EmailChangeDialog({ open, onOpenChange }: EmailChangeDialogProps) {
       setPassword("");
     } catch (error: any) {
       setErrors(Array.isArray(error) ? error : [error]);
+      // Rely on GraphQL wrapper parsing: pass error directly to notifier
+      notify({ type: NotificationType.error, message: error });
     } finally {
       setLoading(false);
     }

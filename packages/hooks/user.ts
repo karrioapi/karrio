@@ -28,8 +28,11 @@ import {
 } from "@karrio/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuthenticatedQuery } from "./karrio";
-import { gqlstr, onError } from "@karrio/lib";
+import { gqlstr, onError, url$ } from "@karrio/lib";
 import { useKarrio } from "./karrio";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import axios from "axios";
+import { getSession } from "next-auth/react";
 
 export function useUser() {
   const karrio = useKarrio();
@@ -53,6 +56,7 @@ export function useUser() {
 
 export function useUserMutation() {
   const karrio = useKarrio();
+  const { getHost, metadata } = useAPIMetadata();
   const queryClient = useQueryClient();
   const invalidateCache = () => {
     // Invalidate all related queries to ensure data refresh
@@ -89,11 +93,32 @@ export function useUserMutation() {
     { onSuccess: invalidateCache, onError },
   );
   const confirmEmailChange = useMutation(
-    (data: ConfirmEmailChangeMutationInput) =>
-      karrio.graphql.request<confirm_email_change>(
-        gqlstr(CONFIRM_EMAIL_CHANGE),
-        { data },
-      ),
+    async (data: ConfirmEmailChangeMutationInput) => {
+      // Prefer direct authenticated POST so it also works on public routes without providers
+      const host = getHost?.();
+      const graphqlUrl = (metadata as any)?.GRAPHQL || url$`${host}/graphql`;
+      const session: any = await getSession();
+      const headers: Record<string, string> = {
+        "content-type": "application/json",
+      };
+      if (session?.accessToken) headers["authorization"] = `Bearer ${session.accessToken}`;
+      if (session?.orgId) headers["x-org-id"] = String(session.orgId);
+      if (session?.testMode) headers["x-test-mode"] = "true";
+
+      const body = {
+        query: `mutation confirm_email_change($data: ConfirmEmailChangeMutationInput!) { confirm_email_change(input: $data) { user { email } errors { field messages } } }`,
+        variables: { data },
+      };
+
+      const resp = await axios.post(graphqlUrl, body, { headers });
+      // Normalize return to the original gql.request shape
+      const result = resp.data?.data?.confirm_email_change;
+      if (!result) {
+        // Bubble up top-level GraphQL errors in a consistent shape
+        throw resp.data?.errors || [{ message: "Unknown error" }];
+      }
+      return { confirm_email_change: result } as any;
+    },
     { onSuccess: invalidateCache, onError },
   );
   const changePassword = useMutation(

@@ -4,6 +4,7 @@ import { useUser, useUserMutation } from "@karrio/hooks/user";
 import { Notifier, useNotifier } from "../components/notifier";
 import { NotificationType } from "@karrio/types";
 import { useLoader } from "../components/loader";
+import { p } from "@karrio/lib";
 
 interface EmailManagementComponent {
   children?: React.ReactNode;
@@ -32,7 +33,7 @@ export const EmailManagement = ({
       await mutation.requestEmailChange.mutateAsync({
         email: email.current?.value as string,
         password: password.current?.value as string,
-        redirect_url: `${location.origin}/email/change`,
+        redirect_url: p`/email/change`,
       });
       notify({
         type: NotificationType.success,
@@ -41,6 +42,8 @@ export const EmailManagement = ({
       setIsActive(false);
     } catch (error: any) {
       setErrors(Array.isArray(error) ? error : [error]);
+      // Rely on GraphQL wrapper parsing: pass error directly to notifier
+      notify({ type: NotificationType.error, message: error });
     }
     setLoading(false);
   };
