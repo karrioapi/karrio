@@ -10,6 +10,7 @@ import { Button } from "@karrio/ui/components/ui/button";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { useState } from "react";
 import { useUsers, useUserMutation, usePermissionGroups } from "@karrio/hooks/admin-users";
+import { p } from "@karrio/lib";
 import {
   GetUsers_users_edges_node as User,
 } from "@karrio/types/graphql/admin/types";
@@ -113,6 +114,7 @@ export default function Page() {
         full_name: data.full_name,
         password1: data.password1,
         password2: data.password2,
+        redirect_url: location.origin + p`/email`,
         is_staff: data.is_staff,
         is_active: data.is_active,
         is_superuser: data.is_superuser,
