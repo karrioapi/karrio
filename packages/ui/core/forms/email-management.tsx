@@ -4,7 +4,7 @@ import { useUser, useUserMutation } from "@karrio/hooks/user";
 import { Notifier, useNotifier } from "../components/notifier";
 import { NotificationType } from "@karrio/types";
 import { useLoader } from "../components/loader";
-import { BASE_PATH } from "@karrio/lib";
+import { p } from "@karrio/lib";
 
 interface EmailManagementComponent {
   children?: React.ReactNode;
@@ -33,7 +33,7 @@ export const EmailManagement = ({
       await mutation.requestEmailChange.mutateAsync({
         email: email.current?.value as string,
         password: password.current?.value as string,
-        redirect_url: `${location.origin}/email/change`,
+        redirect_url: p`/email/change`,
       });
       notify({
         type: NotificationType.success,
