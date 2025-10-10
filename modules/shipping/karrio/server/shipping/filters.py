@@ -1,5 +1,6 @@
 import typing
 
+import django.db.models as django_models
 import karrio.server.filters as filters
 import karrio.server.openapi as openapi
 import karrio.server.shipping.models as models
@@ -37,7 +38,7 @@ class ShippingMethodFilters(filters.FilterSet):
 
     def search_filter(self, queryset, name, value):
         return queryset.filter(
-            models.Q(name__icontains=value)
-            | models.Q(slug__icontains=value)
-            | models.Q(description__icontains=value)
+            django_models.Q(name__icontains=value)
+            | django_models.Q(slug__icontains=value)
+            | django_models.Q(description__icontains=value)
         )

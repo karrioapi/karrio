@@ -48,30 +48,23 @@ class UpdateShippingMethodMutation(utils.BaseMutation):
     @utils.authorization_required(["manage_carriers"])
     def mutate(
         info: Info,
-        metadata: typing.Optional[utils.JSON] = None,
         **input: inputs.UpdateShippingMethodMutationInput,
     ) -> "UpdateShippingMethodMutation":
-        data = input.copy()
-        instance = models.ShippingMethod.access_by(info.context.request).get(
-            id=data.get("id"),
-        )
+        id = input["id"]
+        instance = models.ShippingMethod.access_by(info.context.request).get(id=id)
 
-        if metadata is not None:
-            data.update(
-                serializers.process_dictionaries_mutations(["metadata"], data, instance)
-            )
-
-        shipping_method = (
+        (
             model_serializers.ShippingMethodModelSerializer.map(
-                data=data,
+                instance,
                 partial=True,
-                instance=instance,
+                data=serializers.process_dictionaries_mutations(
+                    ["metadata", "carrier_options"], input, instance
+                ),
                 context=info.context.request,
             )
             .save()
-            .instance
         )
 
         return UpdateShippingMethodMutation(
-            shipping_method=models.ShippingMethod.objects.get(id=shipping_method.id)
+            shipping_method=models.ShippingMethod.objects.get(id=id)
         )  # type:ignore

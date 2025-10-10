@@ -69,7 +69,7 @@ curl -X GET "http://localhost:5002/v1/shipping-methods?limit=10&offset=0" \
       "description": "Standard UPS ground shipping for domestic shipments",
       "carrier_code": "ups",
       "carrier_service": "ups_standard",
-      "carrier_ids": ["car_ups12345"],
+      "carrier_id": "car_ups12345",
       "carrier_options": {
         "insurance": 100,
         "signature_required": false
@@ -90,7 +90,7 @@ curl -X GET "http://localhost:5002/v1/shipping-methods?limit=10&offset=0" \
       "description": "Fast international shipping via DHL Express",
       "carrier_code": "dhl_express",
       "carrier_service": "dhl_express_worldwide",
-      "carrier_ids": ["car_dhl67890"],
+      "carrier_id": "car_dhl67890",
       "carrier_options": {
         "insurance": 500,
         "dhl_paperless_trade": true
@@ -487,7 +487,7 @@ curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_dpd_express_12h/labe
     "paid_by": "sender"
   },
   "service": "ups_standard",
-  "carrier_ids": ["car_ups12345"],
+  "carrier_id": "car_ups12345",
   "test_mode": false,
   "created_at": "2024-01-17T10:30:15.123456Z",
   "messages": []
@@ -560,7 +560,7 @@ curl -X POST "http://localhost:5002/v1/shipments" \
       "currency": "USD",
       "paid_by": "sender"
     },
-    "carrier_ids": ["car_ups12345"]
+    "carrier_id": "car_ups12345"
   }'
 ```
 
@@ -686,7 +686,7 @@ curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_dpd_express_10h/ship
   },
   "reference": "ORDER-2024-001",
   "service": "ups_standard",
-  "carrier_ids": ["car_ups12345"],
+  "carrier_id": "car_ups12345",
   "test_mode": false,
   "created_at": "2024-01-17T09:15:22.987654Z",
   "messages": []
@@ -714,7 +714,7 @@ curl -X POST "http://localhost:5002/graphql" \
         "description": "Standard ground shipping, 3-5 business days",
         "carrier_code": "ups",
         "carrier_service": "ups_standard",
-        "carrier_ids": ["car_ups12345"],
+        "carrier_id": "car_ups12345",
         "carrier_options": {
           "insurance": 50
         },
@@ -739,7 +739,7 @@ curl -X POST "http://localhost:5002/graphql" \
         "description": "Next business day delivery",
         "carrier_code": "ups",
         "carrier_service": "ups_next_day_air",
-        "carrier_ids": ["car_ups12345"],
+        "carrier_id": "car_ups12345",
         "carrier_options": {
           "insurance": 100,
           "signature_required": true
@@ -765,7 +765,7 @@ curl -X POST "http://localhost:5002/graphql" \
         "description": "Fast worldwide shipping via DHL",
         "carrier_code": "dhl_express",
         "carrier_service": "dhl_express_worldwide",
-        "carrier_ids": ["car_dhl67890"],
+        "carrier_id": "car_dhl67890",
         "carrier_options": {
           "insurance": 500,
           "dhl_paperless_trade": true
@@ -915,14 +915,14 @@ curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_dpd_express_12h/labe
 
 ### Common Error Codes
 
-| Status Code | Error Type | Description |
-|-------------|------------|-------------|
-| 400 | `bad_request` | Invalid request parameters or missing required fields |
-| 401 | `unauthorized` | Missing or invalid authentication token |
-| 404 | `not_found` | Shipping method or shipment not found |
-| 422 | `validation_error` | Validation failed (e.g., invalid address, carrier service) |
-| 424 | `carrier_error` | Carrier API returned an error |
-| 500 | `server_error` | Internal server error |
+| Status Code | Error Type         | Description                                                |
+| ----------- | ------------------ | ---------------------------------------------------------- |
+| 400         | `bad_request`      | Invalid request parameters or missing required fields      |
+| 401         | `unauthorized`     | Missing or invalid authentication token                    |
+| 404         | `not_found`        | Shipping method or shipment not found                      |
+| 422         | `validation_error` | Validation failed (e.g., invalid address, carrier service) |
+| 424         | `carrier_error`    | Carrier API returned an error                              |
+| 500         | `server_error`     | Internal server error                                      |
 
 ### Error Response Format
 

@@ -18,7 +18,7 @@ class ShippingMethodType:
     description: typing.Optional[str]
     carrier_code: str
     carrier_service: str
-    carrier_ids: typing.List[str]
+    carrier_id: typing.Optional[str]
     carrier_options: utils.JSON
     metadata: utils.JSON
     is_active: bool

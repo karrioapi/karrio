@@ -3,24 +3,31 @@ name: Build and Deploy JTL Shipping Platform
 on:
   push:
     branches: ["main"]
-    paths:
-      - 'VERSION'
-      - 'karrio/**'
-      - 'karrio-insiders/**'
-      - 'modules/**'
-      - 'apps/**'
-      - 'docker/**'
-      - 'requirements.build.txt'
-      - '.github/workflows/build-and-deploy.yml'
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version tag (leave empty to use VERSION file)'
+        description: "Version tag (leave empty to use VERSION file)"
         required: false
         type: string
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.changes.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            version:
+              - 'VERSION'
+
   build-server:
+    needs: changes
+    if: ${{ needs.changes.outputs.version == 'true' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -66,6 +73,8 @@ jobs:
           docker push ghcr.io/${{ github.repository_owner }}/shipping-platform-server:latest
 
   build-dashboard:
+    needs: changes
+    if: ${{ needs.changes.outputs.version == 'true' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read

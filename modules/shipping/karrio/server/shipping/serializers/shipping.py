@@ -6,3 +6,4 @@ import karrio.server.shipping.models as models
 class ShippingMethodModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ShippingMethod
+        fields = '__all__'

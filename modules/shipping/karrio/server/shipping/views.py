@@ -7,7 +7,6 @@ from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination
 from django_filters.rest_framework import DjangoFilterBackend
 
-
 from karrio.server.shipping.router import router
 import karrio.server.shipping.serializers as serializers
 import karrio.server.manager.models as manager_models
@@ -15,10 +14,13 @@ import karrio.server.shipping.filters as filters
 import karrio.server.shipping.models as models
 import karrio.server.core.views.api as api
 import karrio.server.openapi as openapi
+import karrio.lib as lib
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "&&&$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
-ShippingMethods = serializers.PaginatedResult("ShippingMethodList", serializers.ShippingMethod)
+ShippingMethods = serializers.PaginatedResult(
+    "ShippingMethodList", serializers.ShippingMethod
+)
 
 
 class ShippingMethodList(api.GenericAPIView):
@@ -48,7 +50,9 @@ class ShippingMethodList(api.GenericAPIView):
         Retrieve all shipping methods.
         """
         methods = self.filter_queryset(self.get_queryset()).order_by("-created_at")
-        response = self.paginate_queryset(serializers.ShippingMethod(methods, many=True).data)
+        response = self.paginate_queryset(
+            serializers.ShippingMethod(methods, many=True).data
+        )
 
         return self.get_paginated_response(response)
 
@@ -74,21 +78,27 @@ class BuyShippingMethodLabel(api.APIView):
         Buy a label for a shipping method.
         """
         method = models.ShippingMethod.access_by(request).get(pk=pk)
-        data = serializers.ShipmentData(
-            service=method.carrier_service,
-            carrier_ids=method.carrier_ids,
-            options={
-                **method.carrier_options,
-                **request.data.get("options", {}),
+        data = serializers.ShipmentData.map(
+            data={
+                **request.data,
+                **({"carrier_ids": [method.carrier_id]} if method.carrier_id else {}),
+                "service": method.carrier_service,
+                "options": {
+                    **method.carrier_options,
+                    **request.data.get("options", {}),
+                },
             },
-        ).data 
+            context=request,
+        ).data
         shipment = (
-            serializers.ShipmentSerializer
-            .map(data=data, context=request)
-            .save().instance
+            serializers.ShipmentSerializer.map(data=data, context=request)
+            .save()
+            .instance
         )
 
-        return Response(serializers.Shipment(shipment).data, status=status.HTTP_201_CREATED)
+        return Response(
+            serializers.Shipment(shipment).data, status=status.HTTP_201_CREATED
+        )
 
 
 class BuyShipmentLabel(api.APIView):
@@ -113,32 +123,32 @@ class BuyShipmentLabel(api.APIView):
         """
         method = models.ShippingMethod.access_by(request).get(pk=pk)
         shipment = manager_models.Shipment.access_by(request).get(pk=shipment_id)
+
         serializers.can_mutate_shipment(shipment, purchase=True, update=True)
 
-        payload = serializers.ShipmentPurchaseData.map(
-            data=dict(
-                service=method.carrier_service,
-                carrier_ids=method.carrier_ids,
-                options={
+        data = serializers.process_dictionaries_mutations(
+            ["metadata"],
+            {
+                **request.data,
+                "service": method.carrier_service,
+                "options": {
                     **method.carrier_options,
-                    **serializers.ShipmentData(request.data).data.get("options", {}),
+                    **request.data.get("options", {}),
                 },
-            )
-        ).data
-
-        update = serializers.buy_shipment_label(
+                **({"carrier_ids": [method.carrier_id]} if method.carrier_id else {}),
+            },
             shipment,
-            context=request,
-            data=serializers.process_dictionaries_mutations(["metadata"], payload, shipment),
         )
 
+        update = serializers.buy_shipment_label(shipment, context=request, data=data)
+        
         return Response(serializers.Shipment(update).data)
 
 
 router.urls.append(
     path(
-        "shipping-methods", 
-        ShippingMethodList.as_view(), 
+        "shipping-methods",
+        ShippingMethodList.as_view(),
         name="shipping-method-list",
     ),
 )

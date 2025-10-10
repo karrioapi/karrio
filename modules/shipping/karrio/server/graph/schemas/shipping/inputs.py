@@ -17,7 +17,7 @@ class CreateShippingMethodMutationInput(utils.BaseInput):
     description: typing.Optional[str] = strawberry.UNSET
     carrier_code: str
     carrier_service: str
-    carrier_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
+    carrier_id: typing.Optional[str] = strawberry.UNSET
     carrier_options: typing.Optional[utils.JSON] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
     is_active: typing.Optional[bool] = strawberry.UNSET
@@ -30,7 +30,7 @@ class UpdateShippingMethodMutationInput(utils.BaseInput):
     description: typing.Optional[str] = strawberry.UNSET
     carrier_code: typing.Optional[str] = strawberry.UNSET
     carrier_service: typing.Optional[str] = strawberry.UNSET
-    carrier_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
+    carrier_id: typing.Optional[str] = strawberry.UNSET
     carrier_options: typing.Optional[utils.JSON] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
     is_active: typing.Optional[bool] = strawberry.UNSET
