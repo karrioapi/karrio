@@ -40,6 +40,8 @@ else
     fi
 fi
 
+# Load .env file to get GITHUB_TOKEN but preserve command-line JTL_TAG if set
+CMDLINE_JTL_TAG="$JTL_TAG"
 [[ -f ".env" ]] && export $(cat .env | xargs) || (echo "No .env file found. Please create it with required variables." && exit 1)
 
 # Verify GitHub credentials
@@ -51,7 +53,19 @@ fi
 # Re-authenticate with GitHub
 echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
 
-export JTL_TAG="${JTL_TAG:-2025.5rc25}"
+# Get the default version from VERSION file in repository
+# Command-line JTL_TAG takes precedence, otherwise fetch from repository
+if [ -n "$CMDLINE_JTL_TAG" ]; then
+    export JTL_TAG="$CMDLINE_JTL_TAG"
+    echo "Using version from command line: $JTL_TAG"
+else
+    echo "Fetching latest version from repository..."
+    DEFAULT_VERSION=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+         -H "Accept: application/vnd.github.v3.raw" \
+         -L "https://api.github.com/repos/jtlshipping/shipping-platform/contents/VERSION?ref=main" | tr -d '[:space:]')
+    export JTL_TAG="${DEFAULT_VERSION:-2025.5rc25}"
+    echo "Using version: $JTL_TAG"
+fi
 
 # get jtl shipping platform scripts
 mkdir -p ./jtl-deployment
