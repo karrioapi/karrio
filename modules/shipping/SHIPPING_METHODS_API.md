@@ -22,10 +22,10 @@ The Shipping Methods API allows you to create predefined shipping methods with s
 
 ## Authentication
 
-All API requests require authentication using a Bearer token or API key in the Authorization header:
+All API requests require authentication using a Bearer token with your JTL application JWT in the Authorization header:
 
 ```bash
-Authorization: Token YOUR_API_KEY
+Authorization: Bearer JTL_APP_JWT
 ```
 
 ---
@@ -49,7 +49,7 @@ Retrieve all configured shipping methods.
 
 ```bash
 curl -X GET "http://localhost:5002/v1/shipping-methods?limit=10&offset=0" \
-  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Authorization: Bearer JTL_APP_JWT" \
   -H "Content-Type: application/json"
 ```
 
@@ -180,7 +180,7 @@ Create a new shipment and immediately purchase a label using a predefined shippi
 
 ```bash
 curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_ups_standard_123/labels" \
-  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Authorization: Bearer JTL_APP_JWT" \
   -H "Content-Type: application/json" \
   -d '{
     "recipient": {
@@ -232,7 +232,7 @@ curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_ups_standard_123/lab
 
 ```bash
 curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_dhl_express_456/labels" \
-  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Authorization: Bearer JTL_APP_JWT" \
   -H "Content-Type: application/json" \
   -d '{
     "recipient": {
@@ -300,7 +300,7 @@ curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_dhl_express_456/labe
 
 ```bash
 curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_dhl_parcel_de_789/labels" \
-  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Authorization: Bearer JTL_APP_JWT" \
   -H "Content-Type: application/json" \
   -d '{
     "recipient": {
@@ -350,7 +350,7 @@ curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_dhl_parcel_de_789/la
 
 ```bash
 curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_dpd_express_12h/labels" \
-  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Authorization: Bearer JTL_APP_JWT" \
   -H "Content-Type: application/json" \
   -d '{
     "recipient": {
@@ -529,7 +529,7 @@ Purchase a label for an existing shipment (in draft status) using a shipping met
 
 ```bash
 curl -X POST "http://localhost:5002/v1/shipments" \
-  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Authorization: Bearer JTL_APP_JWT" \
   -H "Content-Type: application/json" \
   -d '{
     "recipient": {
@@ -570,7 +570,7 @@ curl -X POST "http://localhost:5002/v1/shipments" \
 
 ```bash
 curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_ups_standard_123/shipments/shp_draft123/labels" \
-  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Authorization: Bearer JTL_APP_JWT" \
   -H "Content-Type: application/json" \
   -d '{
     "label_type": "PDF",
@@ -590,7 +590,7 @@ curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_ups_standard_123/shi
 
 ```bash
 curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_dhl_express_456/shipments/shp_draft456/labels" \
-  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Authorization: Bearer JTL_APP_JWT" \
   -H "Content-Type: application/json" \
   -d '{
     "label_type": "PDF",
@@ -611,7 +611,7 @@ curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_dhl_express_456/ship
 
 ```bash
 curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_dhl_parcel_de_789/shipments/shp_draft789/labels" \
-  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Authorization: Bearer JTL_APP_JWT" \
   -H "Content-Type: application/json" \
   -d '{
     "label_type": "PDF_A4",
@@ -633,7 +633,7 @@ curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_dhl_parcel_de_789/sh
 
 ```bash
 curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_dpd_express_10h/shipments/shp_draft101/labels" \
-  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Authorization: Bearer JTL_APP_JWT" \
   -H "Content-Type: application/json" \
   -d '{
     "label_type": "PDF",
@@ -704,7 +704,7 @@ Create shipping methods for different service levels:
 ```bash
 # 1. Create Economy Shipping Method (UPS Ground)
 curl -X POST "http://localhost:5002/graphql" \
-  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Authorization: Bearer JTL_APP_JWT" \
   -H "Content-Type: application/json" \
   -d '{
     "query": "mutation CreateShippingMethod($data: CreateShippingMethodMutationInput!) { create_shipping_method(input: $data) { shipping_method { id name slug carrier_service } } }",
@@ -729,7 +729,7 @@ curl -X POST "http://localhost:5002/graphql" \
 
 # 2. Create Express Shipping Method (UPS Next Day)
 curl -X POST "http://localhost:5002/graphql" \
-  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Authorization: Bearer JTL_APP_JWT" \
   -H "Content-Type: application/json" \
   -d '{
     "query": "mutation CreateShippingMethod($data: CreateShippingMethodMutationInput!) { create_shipping_method(input: $data) { shipping_method { id name slug carrier_service } } }",
@@ -755,7 +755,7 @@ curl -X POST "http://localhost:5002/graphql" \
 
 # 3. Create International Shipping Method (DHL Express)
 curl -X POST "http://localhost:5002/graphql" \
-  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Authorization: Bearer JTL_APP_JWT" \
   -H "Content-Type: application/json" \
   -d '{
     "query": "mutation CreateShippingMethod($data: CreateShippingMethodMutationInput!) { create_shipping_method(input: $data) { shipping_method { id name slug carrier_service } } }",
@@ -787,7 +787,7 @@ Use different carriers for different regions:
 ```bash
 # US Domestic - UPS Ground
 curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_ups_ground_us/labels" \
-  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Authorization: Bearer JTL_APP_JWT" \
   -H "Content-Type: application/json" \
   -d '{
     "recipient": {
@@ -814,7 +814,7 @@ curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_ups_ground_us/labels
 
 # Germany Domestic - DHL Parcel DE
 curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_dhl_parcel_de/labels" \
-  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Authorization: Bearer JTL_APP_JWT" \
   -H "Content-Type: application/json" \
   -d '{
     "recipient": {
@@ -839,7 +839,7 @@ curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_dhl_parcel_de/labels
 
 # International - DHL Express
 curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_dhl_express_intl/labels" \
-  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Authorization: Bearer JTL_APP_JWT" \
   -H "Content-Type: application/json" \
   -d '{
     "recipient": {
@@ -879,7 +879,7 @@ curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_dhl_express_intl/lab
 
 # European Cross-Border - DPD Express 12h
 curl -X POST "http://localhost:5002/v1/shipping-methods/mtd_dpd_express_12h/labels" \
-  -H "Authorization: Token YOUR_API_KEY" \
+  -H "Authorization: Bearer JTL_APP_JWT" \
   -H "Content-Type: application/json" \
   -d '{
     "recipient": {
