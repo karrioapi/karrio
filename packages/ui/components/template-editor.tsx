@@ -70,8 +70,6 @@ interface TemplateEditorProps {
 }
 
 export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorProps) {
-  const docId = templateId;
-  const isNew = docId === "new";
   const [template, dispatch] = React.useReducer(reducer, DEFAULT_STATE);
   const [activeTab, setActiveTab] = React.useState("code");
   const [previewContent, setPreviewContent] = React.useState<string>("");
@@ -93,10 +91,14 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
   const mutation = useDocumentTemplateMutation();
   const {
     query: { data: { document_template } = {} },
+    docId: currentDocId,
+    setDocId,
   } = useDocumentTemplate({
     setVariablesToURL: true,
     id: id as string,
   });
+
+  const isNew = currentDocId === "new";
 
   const computeParams = (template: DocumentTemplateType) => {
     if (isNoneOrEmpty(template.related_object)) {
@@ -160,7 +162,10 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
         loader.setLoading(false);
 
         setSubmitAttempted(false);
-        dispatch({ name: "partial", value: create_document_template.template as any });
+        const createdTemplate = create_document_template.template as any;
+        const mergedTemplate = { ...createdTemplate, template: (template as any).template };
+        dispatch({ name: "partial", value: mergedTemplate });
+        if (createdTemplate?.id) setDocId(createdTemplate.id);
         onSave();
       } else {
         await mutation.updateDocumentTemplate.mutateAsync(data);
@@ -579,14 +584,14 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
   };
 
   React.useEffect(() => {
-    if (docId !== "new") {
+    if (currentDocId !== "new") {
       dispatch({ name: "partial", value: document_template as any });
     }
   }, [document_template]);
 
   // Initialize metadata and options from loaded template
   React.useEffect(() => {
-    if (document_template && docId !== "new") {
+    if (document_template && currentDocId !== "new") {
       // Initialize options from template
       if (document_template.options) {
         try {
@@ -599,7 +604,7 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
         setOptions("{}");
       }
     }
-  }, [document_template, docId]);
+  }, [document_template, currentDocId]);
 
   // Initialize sample data when template or related_object changes
   React.useEffect(() => {
