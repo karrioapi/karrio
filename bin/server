@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+
+# Activate python env
+source "bin/activate" >/dev/null 2>&1
+
+# Get the root directory
+ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+
+# Function to download GraphQL schema using curl and introspection
+download_graphql_schema() {
+    local endpoint="$1"
+    local output_file="$2"
+
+    echo "Downloading GraphQL schema from $endpoint..."
+
+    curl -s -X POST "$endpoint" \
+        -H "Content-Type: application/json" \
+        -d '{
+            "query": "query IntrospectionQuery { __schema { queryType { name } mutationType { name } subscriptionType { name } types { ...FullType } directives { name description locations args { ...InputValue } } } } fragment FullType on __Type { kind name description fields(includeDeprecated: true) { name description args { ...InputValue } type { ...TypeRef } isDeprecated deprecationReason } inputFields { ...InputValue } interfaces { ...TypeRef } enumValues(includeDeprecated: true) { name description isDeprecated deprecationReason } possibleTypes { ...TypeRef } } fragment InputValue on __InputValue { name description type { ...TypeRef } defaultValue } fragment TypeRef on __Type { kind name ofType { kind name ofType { kind name ofType { kind name ofType { kind name ofType { kind name ofType { kind name ofType { kind name } } } } } } } }"
+        }' \
+        -o "$output_file" && echo "✓ Schema saved to $output_file" || { echo "✗ Failed to download schema"; exit 1; }
+}
+
+# Run server commands
+if [[ "$*" == *gen:openapi* ]]; then
+    cd "${ROOT_DIR}"
+    echo "Generating OpenAPI schema..."
+    mkdir -p schemas
+    curl -s http://localhost:5002/shipping-openapi -o "${ROOT_DIR}/schemas/openapi.yml" && \
+        echo "✓ OpenAPI schema saved to schemas/openapi.yml" || \
+        { echo "✗ Failed to download OpenAPI schema"; exit 1; }
+    cd -
+elif [[ "$*" == *gen:graphql* ]]; then
+    cd "${ROOT_DIR}"
+    mkdir -p schemas
+    download_graphql_schema "http://localhost:5002/graphql/" "${ROOT_DIR}/schemas/graphql.json"
+    cd -
+elif [[ "$*" == *gen:carriers* ]]; then
+    cd "${ROOT_DIR}"
+    echo "Generating carrier metadata..."
+    mkdir -p schemas
+    curl -s http://localhost:5002/v1/carriers -o "${ROOT_DIR}/schemas/carrier-metadata.json" && \
+        echo "✓ Carrier metadata saved to schemas/carrier-metadata.json" || \
+        { echo "✗ Failed to download carrier metadata"; exit 1; }
+    cd -
+elif [[ "$*" == *gen:references* ]]; then
+    cd "${ROOT_DIR}"
+    echo "Generating Karrio references..."
+    mkdir -p schemas
+    curl -s "http://localhost:5002/v1/references?reduced=false" -o "${ROOT_DIR}/schemas/api-references.json" && \
+        echo "✓ Karrio references saved to schemas/api-references.json" || \
+        { echo "✗ Failed to download Karrio references"; exit 1; }
+    cd -
+elif [[ "$*" == *gen:all* ]]; then
+    cd "${ROOT_DIR}"
+    echo "Generating all JTL Shipping Platform schemas..."
+    mkdir -p schemas
+
+    # Generate OpenAPI schema
+    echo ""
+    echo "1/4 Generating OpenAPI schema..."
+    curl -s http://localhost:5002/shipping-openapi -o "${ROOT_DIR}/schemas/openapi.yml" && \
+        echo "✓ OpenAPI schema saved to schemas/openapi.yml" || \
+        echo "✗ Failed to download OpenAPI schema"
+
+    # Generate GraphQL schema
+    echo ""
+    echo "2/4 Generating GraphQL schema..."
+    download_graphql_schema "http://localhost:5002/graphql/" "${ROOT_DIR}/schemas/graphql.json"
+
+    # Generate Carrier metadata
+    echo ""
+    echo "3/4 Generating carrier metadata..."
+    curl -s http://localhost:5002/v1/carriers -o "${ROOT_DIR}/schemas/carrier-metadata.json" && \
+        echo "✓ Carrier metadata saved to schemas/carrier-metadata.json" || \
+        echo "✗ Failed to download carrier metadata"
+
+    # Generate Karrio references
+    echo ""
+    echo "4/4 Generating Karrio references..."
+    curl -s "http://localhost:5002/v1/references?reduced=false" -o "${ROOT_DIR}/schemas/api-references.json" && \
+        echo "✓ Karrio references saved to schemas/api-references.json" || \
+        echo "✗ Failed to download Karrio references"
+
+    echo ""
+    echo "✓ All schemas generated successfully in schemas/"
+    cd -
+else
+    echo "JTL Shipping Platform Schema Generator"
+    echo "======================================="
+    echo ""
+    echo "Usage: ./bin/server <command>"
+    echo ""
+    echo "Available commands:"
+    echo "  gen:openapi     - Generate OpenAPI schema from localhost:5002/shipping-openapi"
+    echo "  gen:graphql     - Generate GraphQL schema from localhost:5002/graphql/"
+    echo "  gen:carriers    - Generate carrier metadata from localhost:5002/v1/carriers"
+    echo "  gen:references  - Generate Karrio references from localhost:5002/v1/references"
+    echo "  gen:all         - Generate all schemas (openapi, graphql, carriers, references)"
+    echo ""
+    echo "Examples:"
+    echo "  ./bin/server gen:openapi"
+    echo "  ./bin/server gen:all"
+    echo ""
+    echo "Output directory: schemas/"
+    echo ""
+    echo "Note: Make sure your development server is running on localhost:5002 before generating schemas."
+fi
