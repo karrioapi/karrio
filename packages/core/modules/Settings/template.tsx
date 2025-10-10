@@ -12,7 +12,8 @@ export default function TemplatePage(pageProps: any) {
   };
 
   const handleSave = () => {
-    // Save logic handled by TemplateEditor
+    // After a successful save, close the editor by navigating back to templates list
+    router.push('/settings/templates');
   };
 
   const Component = (): JSX.Element => {

@@ -81,6 +81,7 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
   const [sampleData, setSampleData] = React.useState<string>("");
   const [metadata, setMetadata] = React.useState<string>("{}");
   const [options, setOptions] = React.useState<string>("{}");
+  const [submitAttempted, setSubmitAttempted] = React.useState(false);
 
   const { references } = useAPIMetadata();
   const { documents } = useKarrio();
@@ -123,6 +124,14 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
   const handleSubmit = async (evt?: React.FormEvent<HTMLFormElement>) => {
     try {
       evt?.preventDefault();
+      setSubmitAttempted(true);
+
+      const nameValid = !!(template.name && String(template.name).trim());
+      const slugValid = !!(template.slug && /^[a-z0-9_]+$/.test(String(template.slug)));
+      if (!nameValid || !slugValid) {
+        return;
+      }
+
       loader.setLoading(true);
 
       const { preview_url, updated_at, ...templateData } = template as any;
@@ -150,6 +159,7 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
         });
         loader.setLoading(false);
 
+        setSubmitAttempted(false);
         dispatch({ name: "partial", value: create_document_template.template as any });
         onSave();
       } else {
@@ -159,12 +169,39 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
           message: `Document template updated successfully`,
         });
         loader.setLoading(false);
+        setSubmitAttempted(false);
         dispatch({ name: "partial", value: data as any });
         onSave();
       }
     } catch (error: any) {
-      const message = error.message || "Failed to save template";
-      notifier.notify({ type: NotificationType.error, message });
+      // Prefer GraphQL validation subtext if available
+      const response = error?.response?.data || error?.data || {};
+      const topLevelErrors = Array.isArray(response?.errors) ? response.errors : [];
+      const mergedValidationRaw = topLevelErrors.reduce((acc: Record<string, string[] | string>, err: any) => ({
+        ...acc,
+        ...(err?.validation || {}),
+      }), {} as Record<string, string[] | string>);
+      // Prefer server-provided validation; otherwise use merged from errors
+      const validationRaw: Record<string, string[] | string> | undefined = response?.validation || (Object.keys(mergedValidationRaw).length > 0 ? mergedValidationRaw : undefined);
+      // Normalize to arrays so notifier shows "slug: message"
+      const validation = validationRaw
+        ? Object.fromEntries(
+          Object.entries(validationRaw).map(([field, messages]) => [
+            field,
+            Array.isArray(messages) ? messages : [String(messages)],
+          ])
+        ) as Record<string, string[]>
+        : undefined;
+
+      if (validation) {
+        notifier.notify({
+          type: NotificationType.error,
+          message: ({ message: "Failed to save template", validation } as any),
+        });
+      } else {
+        const message = error.message || "Failed to save template";
+        notifier.notify({ type: NotificationType.error, message });
+      }
       loader.setLoading(false);
     }
   };
@@ -583,6 +620,12 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
 
   const hasChanges = !isEqual(template, document_template || DEFAULT_STATE);
 
+  const nameInvalid = submitAttempted && (!template.name || String(template.name).trim() === "");
+  const _slug = String(template.slug || "");
+  const slugEmpty = submitAttempted && _slug.trim() === "";
+  const slugPatternInvalid = submitAttempted && _slug.trim() !== "" && !/^[a-z0-9_]+$/.test(_slug);
+  const slugInvalid = slugEmpty || slugPatternInvalid;
+
   return (
     <div className="tailwind-only h-screen max-h-screen flex flex-col bg-slate-50 overflow-hidden">
       {/* Sticky Header */}
@@ -641,6 +684,9 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
               <div className="space-y-1 lg:space-y-2">
                 <Label htmlFor="name" className="text-xs lg:text-sm font-medium">
                   Template Name
+                  {nameInvalid && (
+                    <span className="text-red-600 ml-2 italic">* required field *</span>
+                  )}
                 </Label>
                 <Input
                   id="name"
@@ -648,7 +694,7 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
                   value={template.name as string}
                   onChange={handleChange}
                   placeholder="e.g., Packing Slip"
-                  className="text-xs lg:text-sm h-8 lg:h-10"
+                  className={`text-xs lg:text-sm h-8 lg:h-10 ${nameInvalid ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
                   required
                 />
               </div>
@@ -656,6 +702,12 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
               <div className="space-y-1 lg:space-y-2">
                 <Label htmlFor="slug" className="text-xs lg:text-sm font-medium">
                   Slug
+                  {slugEmpty && (
+                    <span className="text-red-600 ml-2 italic">* required field *</span>
+                  )}
+                  {!slugEmpty && slugPatternInvalid && (
+                    <span className="text-red-600 ml-2 italic">* invalid input *</span>
+                  )}
                 </Label>
                 <Input
                   id="slug"
@@ -666,11 +718,11 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
                     validationMessage("Please enter a valid slug"),
                   )}
                   placeholder="e.g., packing_slip"
-                  className="text-xs lg:text-sm font-mono h-8 lg:h-10"
+                  className={`text-xs lg:text-sm font-mono h-8 lg:h-10 ${slugInvalid ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
                   pattern="^[a-z0-9_]+$"
                   required
                 />
-                <p className="text-xs text-muted-foreground">
+                <p className={`text-xs ${slugPatternInvalid ? 'text-red-600' : 'text-muted-foreground'}`}>
                   Only lowercase letters, numbers, and underscores
                 </p>
               </div>
