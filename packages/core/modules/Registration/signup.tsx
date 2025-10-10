@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "@tanstack/react-form";
 import { useUserMutation } from "@karrio/hooks/user";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { p, isNoneOrEmpty } from "@karrio/lib";
 import {
   RegisterUserMutationInput,
@@ -29,7 +30,30 @@ const SignUpForm = (): JSX.Element => {
   const searchParams = useSearchParams();
   const emailParam = (searchParams.get("email") as string) || "";
   const mutation = useUserMutation();
+  const { metadata } = useAPIMetadata();
   const [errors, setErrors] = useState<register_user_register_user_errors[]>([]);
+
+  // If signup is not allowed, show error message instead of form
+  if (metadata && !metadata.ALLOW_SIGNUP) {
+    return (
+      <>
+        <div className="px-4">
+          <Card className="mx-auto mt-6 w-full max-w-md md:max-w-lg lg:max-w-xl border-0 bg-transparent shadow-none sm:border sm:bg-card sm:shadow">
+            <CardContent className="p-6 sm:p-6 md:p-8 text-center space-y-3">
+              <p className="text-lg font-medium">Signup is not allowed.</p>
+              <p className="text-sm text-muted-foreground">
+                Please contact your administrator to create an account.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="my-4 text-center text-sm">
+          Already have an account? <Link href="/signin" className="font-semibold text-primary hover:underline">Sign in</Link>
+        </div>
+      </>
+    );
+  }
 
   const form = useForm<RegisterUserMutationInput>({
     defaultValues: {
@@ -349,7 +373,7 @@ const SignUpForm = (): JSX.Element => {
 };
 
 // Exported component with Suspense
-export default function SignUp(pageProps: any) {
+export default function SignUp() {
   return (
     <Suspense fallback={
       <Card className="mx-auto mt-6 w-full max-w-md"><CardContent className="pt-6"><p className="text-center">Loading...</p></CardContent></Card>
