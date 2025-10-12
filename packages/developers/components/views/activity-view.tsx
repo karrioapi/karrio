@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
 import { LineChart, Line, CartesianGrid, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { useDeveloperTools } from "@karrio/developers/context/developer-tools-context";
-import { CopiableLink } from "@karrio/ui/core/components/copiable-link";
+import { CopiableLink } from "@karrio/ui/components/copiable-link";
 import { Eye, EyeOff, Copy, AlertCircle } from "lucide-react";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { Button } from "@karrio/ui/components/ui/button";
@@ -292,17 +292,21 @@ export function ActivityView() {
                 <div>
                   <div className="text-xs text-slate-600 mb-1">REST API</div>
                   <CopiableLink
-                    className="text-xs font-mono bg-slate-50 px-2 py-1 rounded block text-slate-700 hover:bg-slate-100 truncate"
+                    className="w-2/3 h-7 px-2 gap-1.5 !justify-start"
                     text={references?.HOST}
-                    title={references?.HOST}
+                    title="Copy REST API URL"
+                    variant="outline"
+                    size="sm"
                   />
                 </div>
                 <div>
                   <div className="text-xs text-slate-600 mb-1">GraphQL API</div>
                   <CopiableLink
-                    className="text-xs font-mono bg-slate-50 px-2 py-1 rounded block text-slate-700 hover:bg-slate-100 truncate"
+                    className="w-2/3 h-7 px-2 gap-1.5 !justify-start"
                     text={references?.GRAPHQL}
-                    title={references?.GRAPHQL}
+                    title="Copy GraphQL API URL"
+                    variant="outline"
+                    size="sm"
                   />
                 </div>
               </div>
