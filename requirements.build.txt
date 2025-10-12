@@ -35,3 +35,4 @@
 
 # JTL custom karrio modules
 -e ./modules/shipping
+-e ./modules/jtl

@@ -142,7 +142,7 @@ function CarriersPage() {
     return (
       <Card
         key={connection.id}
-        className={`relative group hover:shadow-lg transition-shadow duration-200 ${isSystemCarrier ? 'border-orange-200 bg-orange-50/30' : 'border-blue-200 bg-blue-50/30'}`}
+        className={`relative group hover:shadow-lg transition-shadow duration-200 ${isSystemCarrier ? 'border-orange-200 dark:border-orange-800 bg-orange-50/30 dark:bg-orange-950/30' : 'border-primary/20 bg-primary/5'}`}
       >
         <CardContent className="p-6">
           {/* Header with carrier info and status */}
@@ -157,42 +157,42 @@ function CarriersPage() {
                 />
                 {/* Status indicator */}
                 <div
-                  className={`absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${connection.active ? 'bg-green-500' : 'bg-gray-400'}`}
+                  className={`absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-background ${connection.active ? 'bg-green-500 dark:bg-green-400' : 'bg-muted'}`}
                 />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between mb-2">
-                  <h3 className="font-semibold text-lg text-gray-900 truncate">
+                  <h3 className="font-semibold text-lg text-foreground truncate">
                     {connection.display_name}
                   </h3>
                   {isSystemCarrier && (
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-800 ml-2">
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-orange-100 dark:bg-orange-950 text-orange-800 dark:text-orange-200 ml-2">
                       <Users className="w-3 h-3 mr-1" />
                       System
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-gray-600 mb-2 font-medium">
+                <p className="text-sm text-muted-foreground mb-2 font-medium">
                   {connection.carrier_name}
                 </p>
                 <div className="flex items-center gap-4 text-sm">
                   <span
                     className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium ${
                       connection.active
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-gray-100 text-gray-600'
+                        ? 'bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-300'
+                        : 'bg-muted text-muted-foreground'
                     }`}
                   >
                     <div
-                      className={`w-2 h-2 rounded-full ${connection.active ? 'bg-green-500' : 'bg-gray-400'}`}
+                      className={`w-2 h-2 rounded-full ${connection.active ? 'bg-green-500 dark:bg-green-400' : 'bg-muted-foreground'}`}
                     />
                     {connection.active ? 'Active' : 'Inactive'}
                   </span>
                   <span
                     className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
                       connection.test_mode
-                        ? 'bg-yellow-100 text-yellow-700'
-                        : 'bg-blue-100 text-blue-700'
+                        ? 'bg-yellow-100 dark:bg-yellow-950 text-yellow-700 dark:text-yellow-300'
+                        : 'bg-primary/10 text-primary'
                     }`}
                   >
                     {connection.test_mode ? 'Test Mode' : 'Live Mode'}
@@ -205,19 +205,19 @@ function CarriersPage() {
           {/* Capabilities and details */}
           <div className="mb-6">
             <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-100">
-                <span className="text-sm font-medium text-gray-600">
+              <div className="flex items-center justify-between p-3 bg-card rounded-lg border">
+                <span className="text-sm font-medium text-muted-foreground">
                   Capabilities
                 </span>
-                <span className="font-semibold text-gray-900">
+                <span className="font-semibold text-foreground">
                   {connection.capabilities.length || 0}
                 </span>
               </div>
-              <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-100">
-                <span className="text-sm font-medium text-gray-600">
+              <div className="flex items-center justify-between p-3 bg-card rounded-lg border">
+                <span className="text-sm font-medium text-muted-foreground">
                   Carrier ID
                 </span>
-                <span className="font-semibold text-gray-900 text-xs font-mono">
+                <span className="font-semibold text-foreground text-xs font-mono">
                   {connection.carrier_id || 'N/A'}
                 </span>
               </div>
@@ -251,20 +251,20 @@ function CarriersPage() {
                 size="sm"
                 onClick={() => handleDeleteConnection(connection.id)}
                 disabled={deleteConnection.isPending}
-                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           ) : (
-            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+            <div className="bg-orange-50 dark:bg-orange-950 border border-orange-200 dark:border-orange-800 rounded-lg p-4">
               <div className="flex items-center gap-2 mb-2">
-                <Users className="h-4 w-4 text-orange-600" />
-                <span className="text-sm font-medium text-orange-800">
+                <Users className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                <span className="text-sm font-medium text-orange-800 dark:text-orange-200">
                   System Managed Carrier
                 </span>
               </div>
-              <p className="text-xs text-orange-700">
+              <p className="text-xs text-orange-700 dark:text-orange-300">
                 This carrier is managed by the system administrator.
                 Configuration and credentials cannot be modified.
               </p>
@@ -292,7 +292,6 @@ function CarriersPage() {
       <div className="flex items-center justify-between mb-6">
         <div></div>
         <Button
-          className="bg-blue-600 hover:bg-blue-700"
           onClick={handleAddConnection}
         >
           <Plus className="h-4 w-4 mr-2" />
@@ -352,19 +351,19 @@ function CarriersPage() {
 
               {filteredUserConnections.length === 0 && (
                 <div className="col-span-full text-center py-16">
-                  <div className="bg-blue-50 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
-                    <Package className="h-12 w-12 text-blue-600" />
+                  <div className="bg-primary/10 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                    <Package className="h-12 w-12 text-primary" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-3 text-gray-900">
+                  <h3 className="text-xl font-semibold mb-3 text-foreground">
                     No user carrier connections found
                   </h3>
-                  <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                  <p className="text-muted-foreground mb-6 max-w-md mx-auto">
                     {searchTerm
                       ? 'No user carriers match your search. Try adjusting your search terms.'
                       : 'Get started by connecting your first shipping carrier to begin processing shipments.'}
                   </p>
                   <Button
-                    className="bg-blue-600 hover:bg-blue-700 px-6 py-2"
+                    className="px-6 py-2"
                     onClick={handleAddConnection}
                   >
                     <Plus className="h-4 w-4 mr-2" />
@@ -383,13 +382,13 @@ function CarriersPage() {
 
               {filteredSystemConnections.length === 0 && (
                 <div className="col-span-full text-center py-16">
-                  <div className="bg-orange-50 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
-                    <Users className="h-12 w-12 text-orange-600" />
+                  <div className="bg-orange-50 dark:bg-orange-950 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                    <Users className="h-12 w-12 text-orange-600 dark:text-orange-400" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-3 text-gray-900">
+                  <h3 className="text-xl font-semibold mb-3 text-foreground">
                     No system carrier connections found
                   </h3>
-                  <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                  <p className="text-muted-foreground mb-6 max-w-md mx-auto">
                     {searchTerm
                       ? 'No system carriers match your search. Try adjusting your search terms.'
                       : 'No system carriers are currently configured by the administrator.'}

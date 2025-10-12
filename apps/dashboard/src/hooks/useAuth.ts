@@ -17,8 +17,8 @@ const GET_USER = `
 `
 
 const GET_ORGANIZATIONS = `
-  query get_organizations($filter: OrganizationFilter) {
-    organizations(filter: $filter) {
+  query get_organizations {
+    organizations {
       edges {
         node {
           id
@@ -82,7 +82,7 @@ export function useOrganizations() {
         organizations: {
           edges: Array<{ node: Organization }>
         }
-      }>(GET_ORGANIZATIONS, { filter: { is_active: true } })
+      }>(GET_ORGANIZATIONS)
 
       return {
         organizations: data.organizations.edges.map(edge => edge.node),

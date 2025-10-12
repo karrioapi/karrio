@@ -112,7 +112,7 @@ function DashboardPage() {
               <h3 className="text-lg font-medium">Carrier Connections</h3>
               <button
                 onClick={() => router.navigate({ to: '/carriers' })}
-                className="text-sm text-blue-600 hover:underline"
+                className="text-sm text-primary hover:underline"
               >
                 View all
               </button>
@@ -130,7 +130,7 @@ function DashboardPage() {
                   >
                     <div className="flex items-center gap-3">
                       <div
-                        className={`h-2 w-2 rounded-full ${connection.active ? 'bg-green-500' : 'bg-gray-400'}`}
+                        className={`h-2 w-2 rounded-full ${connection.active ? 'bg-green-500 dark:bg-green-400' : 'bg-muted-foreground'}`}
                       ></div>
                       <div>
                         <p className="font-medium">{connection.display_name}</p>
@@ -140,7 +140,7 @@ function DashboardPage() {
                       </div>
                     </div>
                     <span
-                      className={`text-sm font-medium ${connection.active ? 'text-green-600' : 'text-gray-500'}`}
+                      className={`text-sm font-medium ${connection.active ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}`}
                     >
                       {connection.active ? 'Active' : 'Inactive'}
                     </span>
@@ -152,7 +152,7 @@ function DashboardPage() {
                     </p>
                     <button
                       onClick={() => router.navigate({ to: '/carriers' })}
-                      className="text-sm text-blue-600 hover:underline"
+                      className="text-sm text-primary hover:underline"
                     >
                       Add your first carrier
                     </button>

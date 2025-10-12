@@ -2,7 +2,7 @@ import { useRouter } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { Bell, Home, Package, Truck } from 'lucide-react'
 import type { ReactNode } from 'react';
-import { oauth } from '@/lib/oauth'
+import { authManager } from '@/lib/auth'
 import {
   Sidebar,
   SidebarContent,
@@ -21,7 +21,6 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
-import logo from '@/logo.svg'
 
 interface ShellProps {
   children: ReactNode
@@ -46,10 +45,11 @@ function SidebarHeaderContent() {
   const { state } = useSidebar()
 
   return (
-    <div className="flex items-center gap-2 px-2 py-1.5">
-      <img src={logo} alt="JTL App" className="size-6" />
-      {state === 'expanded' && (
-        <span className="text-sm font-semibold">JTL Shipping</span>
+    <div className="flex items-center justify-center px-2 py-3">
+      {state === 'expanded' ? (
+        <img src="/logo.svg" alt="JTL Shipping" className="h-8 w-auto" />
+      ) : (
+        <img src="/icon.svg" alt="JTL" className="h-9 w-auto" />
       )}
     </div>
   )
@@ -66,9 +66,9 @@ export function Shell({
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null)
 
   useEffect(() => {
-    const checkAuth = async () => {
+    const checkAuth = () => {
       try {
-        const authenticated = await oauth.isAuthenticated()
+        const authenticated = authManager.isAuthenticated()
         if (!authenticated) {
           router.navigate({ to: '/signin' })
           return
@@ -76,21 +76,17 @@ export function Shell({
 
         setIsAuthenticated(true)
 
-        const storedUserInfo = localStorage.getItem('karrio_user_info')
-        if (storedUserInfo) {
-          setUserInfo(JSON.parse(storedUserInfo))
-        } else {
-          // Fetch fresh user info
-          const { accessToken } = oauth.getStoredTokens()
-          if (accessToken) {
-            try {
-              const info = await oauth.getUserInfo(accessToken)
-              setUserInfo({ name: info.name, email: info.email })
-              localStorage.setItem('karrio_user_info', JSON.stringify(info))
-            } catch (error) {
-              console.error('Failed to fetch user info:', error)
-            }
-          }
+        // Get user info from stored auth
+        const auth = authManager.getStoredAuth()
+        if (auth.user) {
+          const fullName = auth.user.first_name && auth.user.last_name
+            ? `${auth.user.first_name} ${auth.user.last_name}`.trim()
+            : auth.user.first_name || auth.user.last_name || auth.user.email
+
+          setUserInfo({
+            name: fullName,
+            email: auth.user.email,
+          })
         }
       } catch (error) {
         console.error('Authentication check failed:', error)
@@ -102,9 +98,7 @@ export function Shell({
   }, [router])
 
   const handleLogout = () => {
-    oauth.clearTokens()
-    localStorage.removeItem('isAuthenticated')
-    localStorage.removeItem('karrio_user_info')
+    authManager.logout()
     router.navigate({ to: '/signin' })
   }
 
@@ -124,7 +118,7 @@ export function Shell({
       current: currentPage === 'dashboard',
     },
     {
-      name: 'Carriers',
+      name: 'Carrier Connections',
       icon: Package,
       to: '/carriers',
       current: currentPage === 'carriers',
@@ -182,9 +176,9 @@ export function Shell({
         <SidebarRail />
       </Sidebar>
 
-      <SidebarInset>
+      <SidebarInset className="bg-background">
         {/* Top Navigation Bar */}
-        <div className="flex h-14 items-center gap-4 border-b px-4">
+        <div className="flex h-14 items-center gap-4 border-b px-4 bg-background">
           <SidebarTrigger />
 
           {/* Page Title */}
@@ -204,7 +198,7 @@ export function Shell({
                     {userInfo.email}
                   </div>
                 </div>
-                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-sm font-medium">
                   {(userInfo.name || userInfo.email)[0].toUpperCase()}
                 </div>
               </div>
@@ -217,8 +211,8 @@ export function Shell({
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 overflow-auto">
-          <div className="container mx-auto p-6">
+        <div className="flex-1 overflow-auto bg-background">
+          <div className="container mx-auto p-6 bg-background">
             {/* Page Header */}
             {(pageTitle || pageDescription) && (
               <div className="mb-6">

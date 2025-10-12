@@ -14,7 +14,7 @@ import { Route as ShipmentMethodsRouteImport } from './routes/shipment-methods'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CarriersRouteImport } from './routes/carriers'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
+import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 
 const SigninRoute = SigninRouteImport.update({
   id: '/signin',

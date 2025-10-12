@@ -107,10 +107,10 @@ function ShipmentMethodCard({
     <Card
       className={`relative group hover:shadow-lg transition-shadow duration-200 min-w-[300px] ${
         isMyMethod
-          ? 'border-green-200 bg-green-50/30'
+          ? 'border-green-200 dark:border-green-800 bg-green-50/30 dark:bg-green-950/30'
           : enabled
-          ? 'border-blue-200 bg-blue-50/30'
-          : 'border-gray-200 bg-gray-50/30'
+          ? 'border-primary/20 bg-primary/5'
+          : 'border-border bg-muted/30'
       }`}
     >
       <CardContent className="p-6">
@@ -125,35 +125,35 @@ function ShipmentMethodCard({
                 className="rounded-xl shadow-sm"
               />
               {/* Status indicator */}
-              <div className={`absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${
-                enabled ? 'bg-green-500' : 'bg-gray-400'
+              <div className={`absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-background ${
+                enabled ? 'bg-green-500 dark:bg-green-400' : 'bg-muted'
               }`} />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between mb-2">
-                <h3 className="font-semibold text-lg text-gray-900 truncate">
+                <h3 className="font-semibold text-lg text-foreground truncate">
                   {method.name}
                 </h3>
                 {isMyMethod && (
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 ml-2">
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 dark:bg-green-950 text-green-800 dark:text-green-200 ml-2">
                     <Package className="w-3 h-3 mr-1" />
                     My Method
                   </span>
                 )}
               </div>
-              <p className="text-sm text-gray-600 mb-2 font-medium">
+              <p className="text-sm text-muted-foreground mb-2 font-medium">
                 {method.carrierName} • {method.currency}{method.price}
               </p>
               <div className="flex items-center gap-4 text-sm">
                 <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium ${
                   enabled
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-gray-100 text-gray-600'
+                    ? 'bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-300'
+                    : 'bg-muted text-muted-foreground'
                 }`}>
-                  <div className={`w-2 h-2 rounded-full ${enabled ? 'bg-green-500' : 'bg-gray-400'}`} />
+                  <div className={`w-2 h-2 rounded-full ${enabled ? 'bg-green-500 dark:bg-green-400' : 'bg-muted-foreground'}`} />
                   {enabled ? 'Available' : 'Disabled'}
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
                   <Clock className="w-3 h-3" />
                   {method.deliveryDays}
                 </span>
@@ -164,16 +164,16 @@ function ShipmentMethodCard({
 
         {/* Service details */}
         <div className="mb-6">
-          <p className="text-sm text-gray-600 mb-4">{method.description}</p>
+          <p className="text-sm text-muted-foreground mb-4">{method.description}</p>
 
           <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-100">
-              <span className="text-sm font-medium text-gray-600">Features</span>
-              <span className="font-semibold text-gray-900">{method.features.length}</span>
+            <div className="flex items-center justify-between p-3 bg-card rounded-lg border">
+              <span className="text-sm font-medium text-muted-foreground">Features</span>
+              <span className="font-semibold text-foreground">{method.features.length}</span>
             </div>
-            <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-100">
-              <span className="text-sm font-medium text-gray-600">Base Rate</span>
-              <span className="font-semibold text-gray-900">{method.currency}{method.price}</span>
+            <div className="flex items-center justify-between p-3 bg-card rounded-lg border">
+              <span className="text-sm font-medium text-muted-foreground">Base Rate</span>
+              <span className="font-semibold text-foreground">{method.currency}{method.price}</span>
             </div>
           </div>
 
@@ -184,13 +184,13 @@ function ShipmentMethodCard({
                 {method.features.slice(0, 3).map((feature, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700"
+                    className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-muted text-foreground"
                   >
                     {feature}
                   </span>
                 ))}
                 {method.features.length > 3 && (
-                  <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-500">
+                  <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-muted text-muted-foreground">
                     +{method.features.length - 3} more
                   </span>
                 )}
@@ -201,11 +201,11 @@ function ShipmentMethodCard({
           {/* Additional charges */}
           {method.additionalCharges && method.additionalCharges.length > 0 && (
             <div className="space-y-2">
-              <h4 className="text-sm font-medium text-gray-700">Additional Charges:</h4>
+              <h4 className="text-sm font-medium text-foreground">Additional Charges:</h4>
               {method.additionalCharges.map((charge, index) => (
-                <div key={index} className="flex justify-between text-sm p-2 bg-gray-50 rounded">
-                  <span className="text-gray-600">{charge.name}</span>
-                  <span className="font-medium text-gray-900">{charge.price}</span>
+                <div key={index} className="flex justify-between text-sm p-2 bg-muted rounded">
+                  <span className="text-muted-foreground">{charge.name}</span>
+                  <span className="font-medium text-foreground">{charge.price}</span>
                 </div>
               ))}
             </div>
@@ -256,7 +256,7 @@ function ShipmentMethodCard({
           ) : (
             <Button
               size="sm"
-              className="flex-1 bg-blue-600 hover:bg-blue-700"
+              className="flex-1"
               onClick={onToggle}
             >
               <Plus className="h-4 w-4 mr-2" />
@@ -376,7 +376,7 @@ function ShipmentMethodsPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <Button className="bg-blue-600 hover:bg-blue-700">
+              <Button>
                 Enable All
               </Button>
             </div>
@@ -422,7 +422,6 @@ function ShipmentMethodsPage() {
                   options.
                 </p>
                 <Button
-                  className="bg-blue-600 hover:bg-blue-700"
                   onClick={handleAddMethod}
                 >
                   <Plus className="h-4 w-4 mr-2" />

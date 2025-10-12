@@ -32,4 +32,5 @@ karrio_server_pricing @ file://${PWD}/karrio/modules/pricing
 karrio_server_documents @ file://${PWD}/karrio/modules/documents
 
 # JTL custom karrio modules
-karrio_shipping @ file://${PWD}/modules/shipping
+karrio_server_shipping @ file://${PWD}/modules/shipping
+karrio_server_jtl @ file://${PWD}/modules/jtl
