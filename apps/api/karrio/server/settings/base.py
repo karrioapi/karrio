@@ -87,6 +87,11 @@ KARRIO_CONF = [
     app
     for app in [
         {
+            "app": "karrio.server.jtl",
+            "module": "karrio.server.jtl",
+            "urls": "karrio.server.jtl.urls",
+        },
+        {
             "app": "karrio.server.core",
             "module": "karrio.server.core",
             "urls": "karrio.server.core.urls",
@@ -406,8 +411,20 @@ STORAGES = {
 }
 
 
+# JTL Hub OAuth Settings
+JTL_HUB_PUBLIC_KEY = config("JTL_HUB_PUBLIC_KEY", default="")
+JTL_HUB_OAUTH_AUTHORIZE_URL = config(
+    "JTL_HUB_OAUTH_AUTHORIZE_URL",
+    default="https://auth.jtl-cloud.com/oauth/authorize"
+)
+JTL_HUB_OAUTH_REDIRECT_URI = config(
+    "JTL_HUB_OAUTH_REDIRECT_URI",
+    default="http://localhost:3000/auth/callback"
+)
+
 # Django REST framework
 AUTHENTICATION_CLASSES = [
+    "karrio.server.jtl.authentication.JTLHubAuthentication",
     "karrio.server.core.authentication.TokenBasicAuthentication",
     "karrio.server.core.authentication.TokenAuthentication",
     "karrio.server.core.authentication.OAuth2Authentication",
