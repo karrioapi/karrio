@@ -10,8 +10,7 @@ COPY package.json package-lock.json ./
 COPY apps/dashboard/package.json ./apps/dashboard/
 
 # Install dependencies
-# First remove package-lock.json and reinstall to get correct platform binaries
-RUN rm -f package-lock.json && npm install --no-package-lock
+RUN npm ci --force
 
 # Copy application source
 COPY apps/dashboard ./apps/dashboard
