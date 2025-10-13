@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "@tanstack/react-form";
 import { useUserMutation } from "@karrio/hooks/user";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { p, isNoneOrEmpty } from "@karrio/lib";
 import {
   RegisterUserMutationInput,
@@ -29,7 +30,30 @@ const SignUpForm = (): JSX.Element => {
   const searchParams = useSearchParams();
   const emailParam = (searchParams.get("email") as string) || "";
   const mutation = useUserMutation();
+  const { metadata } = useAPIMetadata();
   const [errors, setErrors] = useState<register_user_register_user_errors[]>([]);
+
+  // If signup is not allowed, show error message instead of form
+  if (metadata && !metadata.ALLOW_SIGNUP) {
+    return (
+      <>
+        <div className="px-4">
+          <Card className="mx-auto mt-6 w-full max-w-md md:max-w-lg lg:max-w-xl border-0 bg-transparent shadow-none sm:border sm:bg-card sm:shadow">
+            <CardContent className="p-6 sm:p-6 md:p-8 text-center space-y-3">
+              <p className="text-lg font-medium">Signup is not allowed.</p>
+              <p className="text-sm text-muted-foreground">
+                Please contact your administrator to create an account.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="my-4 text-center text-sm">
+          Already have an account? <Link href="/signin" className="font-semibold text-primary hover:underline">Sign in</Link>
+        </div>
+      </>
+    );
+  }
 
   const form = useForm<RegisterUserMutationInput>({
     defaultValues: {
@@ -49,12 +73,78 @@ const SignUpForm = (): JSX.Element => {
           password2: value.password2,
           redirect_url: location.origin + p`/email`,
         });
+
+        // Redirect to success page with email verification instructions
         router.push(p`/signup/success`);
       } catch (error: any) {
-        setErrors(Array.isArray(error) ? error : [error]);
+        const parsedErrors: register_user_register_user_errors[] = [];
+
+        // 1. Handle GraphQL execution errors (backend format: "field: message")
+        if (error.data?.errors?.[0]?.message) {
+          const errorMessage = error.data.errors[0].message;
+
+          // Check if this is a field-specific error (contains "field:" pattern)
+          const hasFieldPattern = /^[^:]+:\s*.+/.test(errorMessage.split(". ")[0]);
+
+          if (hasFieldPattern) {
+            // Split by ". " to handle multiple field errors joined by backend
+            const errorParts = errorMessage.split(". ");
+
+            errorParts.forEach((part: string) => {
+              // Match "field: message" pattern
+              const match = part.match(/^([^:]+):\s*(.+)$/);
+              if (match) {
+                const [_, field, message] = match;
+                // Find existing error for this field or create new
+                const existing = parsedErrors.find(e => e.field === field.trim());
+                if (existing) {
+                  existing.messages.push(message.trim());
+                } else {
+                  parsedErrors.push({
+                    field: field.trim(),
+                    messages: [message.trim()]
+                  });
+                }
+              }
+            });
+          } else {
+            // General error without field pattern - keep entire message together
+            parsedErrors.push({
+              field: "",
+              messages: [errorMessage.trim()]
+            });
+          }
+        }
+
+        // 2. Handle structured errors in response
+        if (error.data?.register_user?.errors) {
+          parsedErrors.push(...error.data.register_user.errors);
+        }
+
+        // 3. Fallback to raw error message
+        if (parsedErrors.length === 0) {
+          parsedErrors.push({
+            field: "",
+            messages: [error.message || "An error occurred during registration"]
+          });
+        }
+
+        setErrors(parsedErrors);
       }
     },
   });
+
+  // Clear errors when user starts editing (only subscribe when errors exist)
+  useEffect(() => {
+    // Only subscribe if there are errors to clear
+    if (errors.length === 0) return;
+
+    const subscription = form.store.subscribe(() => {
+      setErrors([]); // Clear all errors on any form change
+    });
+
+    return () => subscription();
+  }, [errors.length]); // Only re-run when errors appear/disappear
 
   useEffect(() => {
     if (!isNoneOrEmpty(emailParam)) {
@@ -71,9 +161,13 @@ const SignUpForm = (): JSX.Element => {
 
             {(errors as any[])
               .filter((error) => !error.field)
-              .map(({ message }, index) => (
+              .map(({ messages }, index) => (
                 <Alert key={index} variant="destructive" className="mb-4">
-                  <AlertDescription>{message}</AlertDescription>
+                  <AlertDescription>
+                    {messages.map((msg: string, idx: number) => (
+                      <p key={idx}>{msg}</p>
+                    ))}
+                  </AlertDescription>
                 </Alert>
               ))}
 
@@ -279,7 +373,7 @@ const SignUpForm = (): JSX.Element => {
 };
 
 // Exported component with Suspense
-export default function SignUp(pageProps: any) {
+export default function SignUp() {
   return (
     <Suspense fallback={
       <Card className="mx-auto mt-6 w-full max-w-md"><CardContent className="pt-6"><p className="text-center">Loading...</p></CardContent></Card>
