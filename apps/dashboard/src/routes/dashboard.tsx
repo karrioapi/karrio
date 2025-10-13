@@ -6,10 +6,12 @@ import {
   useSystemConnections,
 } from '@/hooks/useCarriers'
 import { Shell } from '@/components/layouts/shell'
-import { Button } from '@/components/ui/button'
 
 export const Route = createFileRoute('/dashboard')({
   component: DashboardPage,
+  head: () => ({
+    meta: [{ title: 'Dashboard - JTL Shipping' }],
+  }),
 })
 
 function DashboardPage() {

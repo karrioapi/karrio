@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import { api } from '@/lib/api'
 import axios from 'axios'
 
 export interface CarrierReferences {

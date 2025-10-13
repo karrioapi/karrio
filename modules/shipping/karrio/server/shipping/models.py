@@ -40,10 +40,10 @@ class ShippingMethod(core.OwnedEntity):
     carrier_service = models.CharField(_("carrier_service"), max_length=150)
     carrier_id = models.CharField(_("carrier_id"), null=True, blank=True, max_length=150)
     carrier_options = models.JSONField(blank=True, null=True, default=core.field_default({}))
-    
+
     metadata = models.JSONField(blank=True, null=True, default=core.field_default({}))
     is_active = models.BooleanField(null=False, default=False)
-    test_mode = models.BooleanField(default=False)
+    test_mode = models.BooleanField(null=False)
 
     # Related fields
     created_by = models.ForeignKey(

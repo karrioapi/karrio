@@ -24,10 +24,10 @@ export function CarrierImage({
   className,
   ...props
 }: CarrierImageProps) {
-  const { width, height, text } = sizeMap[size]
+  const { width, height } = sizeMap[size]
 
   // Format carrier name for file lookup
-  const formattedName = carrierName.toLowerCase().replace(/[^a-z0-9]/g, '')
+  const formattedName = carrierName.toLowerCase().replace(/[^a-z0-9_]/g, '')
 
   // Generate initials for fallback
   const getInitials = (name: string) => {

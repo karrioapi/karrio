@@ -11,7 +11,6 @@ export const Route = createFileRoute('/auth/callback')({
 function CallbackPage() {
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
-  const [isProcessing, setIsProcessing] = useState(true)
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -40,7 +39,6 @@ function CallbackPage() {
       } catch (err) {
         console.error('Authentication error:', err)
         setError(err instanceof Error ? err.message : 'Authentication failed')
-        setIsProcessing(false)
       }
     }
 

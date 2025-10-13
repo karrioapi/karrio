@@ -6,4 +6,5 @@ import karrio.server.shipping.models as models
 class ShippingMethodModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ShippingMethod
-        fields = '__all__'
+        exclude = ["created_at", "updated_at", "created_by"]
+        extra_kwargs = {field: {"read_only": True} for field in ["id"]}

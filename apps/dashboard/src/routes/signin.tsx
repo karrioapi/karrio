@@ -7,6 +7,9 @@ import { authManager } from '@/lib/auth'
 
 export const Route = createFileRoute('/signin')({
   component: SignInPage,
+  head: () => ({
+    meta: [{ title: 'Sign In - JTL Shipping' }],
+  }),
 })
 
 function SignInPage() {

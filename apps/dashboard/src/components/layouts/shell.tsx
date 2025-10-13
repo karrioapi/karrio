@@ -1,6 +1,6 @@
 import { useRouter } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
-import { Bell, Home, Package, Truck } from 'lucide-react'
+import { Bell, Home, LogOut, Package, Truck } from 'lucide-react'
 import type { ReactNode } from 'react';
 import { authManager } from '@/lib/auth'
 import {
@@ -124,10 +124,10 @@ export function Shell({
       current: currentPage === 'carriers',
     },
     {
-      name: 'Shipment Methods',
+      name: 'Shipping Methods',
       icon: Truck,
-      to: '/shipment-methods',
-      current: currentPage === 'shipment-methods',
+      to: '/shipping-methods',
+      current: currentPage === 'shipping-methods',
     },
   ]
 
@@ -178,34 +178,20 @@ export function Shell({
 
       <SidebarInset className="bg-background">
         {/* Top Navigation Bar */}
-        <div className="flex h-14 items-center gap-4 border-b px-4 bg-background">
+        <div className="flex h-14 items-center gap-2 sm:gap-4 border-b px-2 sm:px-4 bg-background">
           <SidebarTrigger />
 
-          {/* Page Title */}
-          {pageTitle && <div className="font-medium">{pageTitle}</div>}
+          {/* Page Title - hidden on small screens */}
+          {pageTitle && <div className="font-medium hidden md:block">{pageTitle}</div>}
 
           {/* Right side actions */}
-          <div className="ml-auto flex items-center gap-2">
-            <Button variant="ghost" size="sm">
+          <div className="ml-auto flex items-center gap-1 sm:gap-2">
+            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
               <Bell className="h-4 w-4" />
             </Button>
 
-            {userInfo && (
-              <div className="flex items-center gap-2 px-2 py-1 text-sm">
-                <div className="text-right">
-                  <div className="font-medium">{userInfo.name || 'User'}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {userInfo.email}
-                  </div>
-                </div>
-                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-sm font-medium">
-                  {(userInfo.name || userInfo.email)[0].toUpperCase()}
-                </div>
-              </div>
-            )}
-
-            <Button variant="outline" size="sm" onClick={handleLogout}>
-              Logout
+            <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={handleLogout} title="Logout">
+              <LogOut className="h-4 w-4" />
             </Button>
           </div>
         </div>

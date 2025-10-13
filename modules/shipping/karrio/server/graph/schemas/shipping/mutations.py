@@ -24,6 +24,7 @@ class CreateShippingMethodMutation(utils.BaseMutation):
     ) -> "CreateShippingMethodMutation":
         data = input.copy()
         data.update(slug=f"$.{uuid.uuid4().hex}.shipping_method")
+        data.update(test_mode=info.context.request.test_mode)
 
         shipping_method = (
             model_serializers.ShippingMethodModelSerializer.map(

@@ -59,7 +59,7 @@ const GET_SYSTEM_CONNECTIONS = `
 const CREATE_CARRIER_CONNECTION = `
   mutation create_carrier_connection($data: CreateCarrierConnectionMutationInput!) {
     create_carrier_connection(input: $data) {
-      carrier_connection {
+      connection {
         id
         carrier_id
         carrier_name
@@ -82,7 +82,7 @@ const CREATE_CARRIER_CONNECTION = `
 const UPDATE_CARRIER_CONNECTION = `
   mutation update_carrier_connection($data: UpdateCarrierConnectionMutationInput!) {
     update_carrier_connection(input: $data) {
-      carrier_connection {
+      connection {
         id
         carrier_id
         carrier_name
@@ -219,12 +219,12 @@ export function useCreateCarrierConnection() {
     mutationFn: async (data: CreateCarrierConnectionInput) => {
       const result = await api.graphql<{
         create_carrier_connection: {
-          carrier_connection: CarrierConnection
-          errors: Array<{ field: string; messages: Array<string> }>
+          connection: CarrierConnection
+          errors: Array<{ field: string; messages: Array<string> }> | null
         }
       }>(CREATE_CARRIER_CONNECTION, { data })
 
-      if (result.create_carrier_connection.errors.length > 0) {
+      if (result.create_carrier_connection.errors && result.create_carrier_connection.errors.length > 0) {
         throw new Error(
           result.create_carrier_connection.errors
             .map((e) => e.messages.join(', '))
@@ -232,10 +232,13 @@ export function useCreateCarrierConnection() {
         )
       }
 
-      return result.create_carrier_connection.carrier_connection
+      return result.create_carrier_connection.connection
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user_connections'] })
+      queryClient.invalidateQueries({
+        queryKey: ['user_connections'],
+        refetchType: 'active'
+      })
     },
   })
 }
@@ -247,12 +250,12 @@ export function useUpdateCarrierConnection() {
     mutationFn: async (data: UpdateCarrierConnectionInput) => {
       const result = await api.graphql<{
         update_carrier_connection: {
-          carrier_connection: CarrierConnection
-          errors: Array<{ field: string; messages: Array<string> }>
+          connection: CarrierConnection
+          errors: Array<{ field: string; messages: Array<string> }> | null
         }
       }>(UPDATE_CARRIER_CONNECTION, { data })
 
-      if (result.update_carrier_connection.errors.length > 0) {
+      if (result.update_carrier_connection.errors && result.update_carrier_connection.errors.length > 0) {
         throw new Error(
           result.update_carrier_connection.errors
             .map((e) => e.messages.join(', '))
@@ -260,10 +263,13 @@ export function useUpdateCarrierConnection() {
         )
       }
 
-      return result.update_carrier_connection.carrier_connection
+      return result.update_carrier_connection.connection
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user_connections'] })
+      queryClient.invalidateQueries({
+        queryKey: ['user_connections'],
+        refetchType: 'active'
+      })
     },
   })
 }
@@ -276,11 +282,11 @@ export function useDeleteCarrierConnection() {
       const result = await api.graphql<{
         delete_carrier_connection: {
           id: string
-          errors: Array<{ field: string; messages: Array<string> }>
+          errors: Array<{ field: string; messages: Array<string> }> | null
         }
       }>(DELETE_CARRIER_CONNECTION, { data: { id } })
 
-      if (result.delete_carrier_connection.errors.length > 0) {
+      if (result.delete_carrier_connection.errors && result.delete_carrier_connection.errors.length > 0) {
         throw new Error(
           result.delete_carrier_connection.errors
             .map((e) => e.messages.join(', '))
@@ -291,7 +297,10 @@ export function useDeleteCarrierConnection() {
       return result.delete_carrier_connection.id
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user_connections'] })
+      queryClient.invalidateQueries({
+        queryKey: ['user_connections'],
+        refetchType: 'active'
+      })
     },
   })
 }
@@ -324,11 +333,11 @@ export function useUpdateSystemConnection() {
       const result = await api.graphql<{
         mutate_system_connection: {
           carrier: CarrierConnection
-          errors: Array<{ field: string; messages: Array<string> }>
+          errors: Array<{ field: string; messages: Array<string> }> | null
         }
       }>(MUTATE_SYSTEM_CONNECTION, { data })
 
-      if (result.mutate_system_connection.errors.length > 0) {
+      if (result.mutate_system_connection.errors && result.mutate_system_connection.errors.length > 0) {
         throw new Error(
           result.mutate_system_connection.errors
             .map((e) => e.messages.join(', '))
@@ -339,7 +348,10 @@ export function useUpdateSystemConnection() {
       return result.mutate_system_connection.carrier
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['system_connections'] })
+      queryClient.invalidateQueries({
+        queryKey: ['system_connections'],
+        refetchType: 'active'
+      })
     },
   })
 }

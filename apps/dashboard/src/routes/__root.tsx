@@ -7,6 +7,7 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanstackDevtools } from '@tanstack/react-devtools'
 import type { QueryClient } from '@tanstack/react-query'
 import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools'
+import { Toaster } from '@/components/ui/sonner'
 import appCss from '@/styles.css?url'
 
 interface MyRouterContext {
@@ -24,7 +25,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'JTL Shipping',
       },
     ],
     links: [
@@ -46,6 +47,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body className="bg-background text-foreground">
         {children}
+        <Toaster />
         <TanstackDevtools
           config={{
             position: 'bottom-left',
