@@ -99,7 +99,16 @@ class Surcharge(core.Entity):
             charges = getattr(rate, "extra_charges", None) or []
 
             if any(self.carriers or []):
-                applicable.append(rate.carrier_name in self.carriers)
+                # For custom carriers (ext="generic"), check if "generic" is in the addon's carrier list
+                # since rate.carrier_name contains custom_carrier_name but users select "generic"
+                if (
+                    rate.meta
+                    and rate.meta.get("ext") == "generic"
+                    and "generic" in self.carriers
+                ):
+                    applicable.append(True)
+                else:
+                    applicable.append(rate.carrier_name in self.carriers)
 
             if any(carrier_ids):
                 applicable.append(rate.carrier_id in carrier_ids)
