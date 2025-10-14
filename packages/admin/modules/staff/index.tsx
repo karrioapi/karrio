@@ -10,6 +10,7 @@ import { Button } from "@karrio/ui/components/ui/button";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { useState } from "react";
 import { useUsers, useUserMutation, usePermissionGroups } from "@karrio/hooks/admin-users";
+import { p } from "@karrio/lib";
 import {
   GetUsers_users_edges_node as User,
 } from "@karrio/types/graphql/admin/types";
@@ -64,10 +65,44 @@ export default function Page() {
     toast({ title: "User removed successfully" });
   };
 
+  const extractValidationMessage = (error: any): string | undefined => {
+    const gqlErrors =
+      error?.data?.errors || error?.errors || error?.response?.data?.errors;
+
+    if (Array.isArray(gqlErrors) && gqlErrors.length > 0) {
+      const candidate =
+        gqlErrors.find((e: any) => e?.validation)?.validation ||
+        gqlErrors[0]?.validation ||
+        gqlErrors[0]?.extensions?.exception?.validation ||
+        gqlErrors[0]?.extensions?.validation;
+
+      if (candidate && typeof candidate === "object") {
+        try {
+          const messages = Object.values(candidate)
+            .flat()
+            .filter(Boolean) as string[];
+          if (messages.length > 0) return messages.join("; ");
+        } catch (_) {
+          // ignore formatting issues and fall back below
+        }
+      }
+    }
+
+    return undefined;
+  };
+
   const handleError = (error: any, action: string) => {
+    const validation = extractValidationMessage(error);
+    const fallbackMessage =
+      (error?.data?.errors?.[0]?.message as string) ||
+      (error?.errors?.[0]?.message as string) ||
+      (error?.response?.errors?.[0]?.message as string) ||
+      error?.message ||
+      "An error occurred";
+
     toast({
       title: `Failed to ${action} user`,
-      description: error.message || "An error occurred",
+      description: validation || fallbackMessage,
       variant: "destructive",
     });
   };
@@ -79,17 +114,18 @@ export default function Page() {
         full_name: data.full_name,
         password1: data.password1,
         password2: data.password2,
+        redirect_url: location.origin + p`/email`,
         is_staff: data.is_staff,
         is_active: data.is_active,
         is_superuser: data.is_superuser,
         permissions: data.permissions,
       },
       {
-        onSuccess: (response) => {
-          // Check if user already existed by looking for typical creation vs update indicators
+        onSuccess: () => {
           toast({
             title: "User added successfully",
-            description: "User has been configured with the specified permissions and access level."
+            description:
+              "User has been configured with the specified permissions and access level.",
           });
           setIsInviteOpen(false);
         },

@@ -1,3 +1,24 @@
+# Karrio 2025.5rc26
+
+## Changes
+
+### Feat
+
+- feat: add metadata fields to organization and organization user for SSO setup
+
+### Fix
+
+- fix: document templates editor bug and error notifications
+- feat(signup): block form access when ALLOW_SIGNUP is disabled
+- fix: confirm email in add user workflow now includes full link not just token and is clickable
+- fix: added a detailed error message to the pop up when it Failed to add User in admin console
+- fix(signup): redirect to success page and fix domain route import
+- fix: redirection to sign in page upon clicking confirmation link if not authorized, changing confirmation link to a clickable link in the sent email
+- add: an error message popup with a reason to 'change email address' when the confirmation email fails to send
+- fix(signup): add success notification and redirect to sign-in page
+- fix: email change token validation
+
+
 # Karrio 2025.5rc25
 
 ## Changes

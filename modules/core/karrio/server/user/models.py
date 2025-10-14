@@ -45,6 +45,9 @@ class UserManager(auth.UserManager):
 class User(auth.AbstractUser):
     full_name = models.CharField(_("full name"), max_length=150, blank=True)
     email = models.EmailField(_("email address"), unique=True)
+    metadata = models.JSONField(
+        default=core.field_default({}), help_text="User defined metadata"
+    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS: list = []
@@ -75,15 +78,24 @@ class User(auth.AbstractUser):
         ctx = middleware.SessionContext.get_current_request()
         _permissions = []
 
-        if conf.settings.MULTI_ORGANIZATIONS and ctx is not None and hasattr(ctx, 'org') and ctx.org is not None:
+        if (
+            conf.settings.MULTI_ORGANIZATIONS
+            and ctx is not None
+            and hasattr(ctx, "org")
+            and ctx.org is not None
+        ):
             org_user = ctx.org.organization_users.filter(user_id=self.pk)
             if org_user.exists():
                 try:
                     context_permission = iam.ContextPermission.objects.get(
-                    object_pk=org_user.first().pk,
-                    content_type=ContentType.objects.get_for_model(org_user.first()),
-                )
-                    _permissions = list(context_permission.groups.all().values_list("name", flat=True))
+                        object_pk=org_user.first().pk,
+                        content_type=ContentType.objects.get_for_model(
+                            org_user.first()
+                        ),
+                    )
+                    _permissions = list(
+                        context_permission.groups.all().values_list("name", flat=True)
+                    )
                 except iam.ContextPermission.DoesNotExist:
                     pass
 
@@ -94,9 +106,11 @@ class User(auth.AbstractUser):
             return list(Group.objects.all().values_list("name", flat=True))
 
         if not any(_permissions) and self.is_staff:
-            return list(Group.objects.exclude(
-                name__in=["manage_system", "manage_team", "manage_org_owner"]
-            ).values_list("name", flat=True))
+            return list(
+                Group.objects.exclude(
+                    name__in=["manage_system", "manage_team", "manage_org_owner"]
+                ).values_list("name", flat=True)
+            )
 
         return _permissions
 
