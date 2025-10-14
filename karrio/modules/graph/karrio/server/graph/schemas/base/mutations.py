@@ -51,7 +51,7 @@ class UserUpdateMutation(utils.BaseMutation):
         serializer = serializers.UserModelSerializer(
             instance,
             partial=True,
-            data=input,
+            data=process_dictionaries_mutations(["metadata"], input, instance),
             context=info.context.request,
         )
 
@@ -229,7 +229,7 @@ class ConfirmEmailChangeMutation(utils.BaseMutation):
         validated_token = ConfirmationToken(token)
         user = info.context.request.user
 
-        if user.id != validated_token["user_id"]:
+        if str(user.id) != validated_token["user_id"]:
             raise exceptions.ValidationError(
                 {"token": "auth.Token is invalid or expired"}
             )
@@ -267,7 +267,7 @@ class RegisterUserMutation(utils.BaseMutation):
                     for message in messages:
                         errors.append(f"{field}: {message}")
                 raise Exception(". ".join(errors))
-            
+
             user = form.save()
 
             return RegisterUserMutation(user=user)  # type:ignore
@@ -541,10 +541,12 @@ class CreateRateSheetMutation(utils.BaseMutation):
 
         if any(carriers):
             (
-                providers.Carrier.access_by(info.context.request).filter(
+                providers.Carrier.access_by(info.context.request)
+                .filter(
                     carrier_code=rate_sheet.carrier_name,
                     id__in=carriers,
-                ).update(rate_sheet=rate_sheet)
+                )
+                .update(rate_sheet=rate_sheet)
             )
 
         return CreateRateSheetMutation(rate_sheet=rate_sheet)
@@ -589,14 +591,17 @@ class UpdateRateSheetMutation(utils.BaseMutation):
         if any(carriers):
             # Link listed carriers to rate sheet
             (
-                providers.Carrier.access_by(info.context.request).filter(
+                providers.Carrier.access_by(info.context.request)
+                .filter(
                     carrier_code=rate_sheet.carrier_name,
                     id__in=carriers,
-                ).update(rate_sheet=rate_sheet)
+                )
+                .update(rate_sheet=rate_sheet)
             )
             # Unlink missing carriers from rate sheet
             (
-                providers.Carrier.access_by(info.context.request).filter(
+                providers.Carrier.access_by(info.context.request)
+                .filter(
                     carrier_code=rate_sheet.carrier_name,
                     rate_sheet=rate_sheet,
                 )

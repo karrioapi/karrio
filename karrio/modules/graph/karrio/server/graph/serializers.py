@@ -31,6 +31,7 @@ class UserModelSerializer(serializers.ModelSerializer):
             "is_staff",
             "last_login",
             "date_joined",
+            "metadata",
         ]
 
     @transaction.atomic
@@ -363,9 +364,7 @@ class RateSheetModelSerializer(serializers.ModelSerializer):
             ).filter(id__in=list(_ids))
 
             for carrier in _carriers:
-                carrier.rate_sheet = (
-                    self.instance if carrier.id in carriers else None
-                )
+                carrier.rate_sheet = self.instance if carrier.id in carriers else None
                 carrier.save(update_fields=["rate_sheet"])
 
     def update(self, instance, validated_data, **kwargs):

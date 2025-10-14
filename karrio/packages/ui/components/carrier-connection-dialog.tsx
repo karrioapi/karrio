@@ -115,15 +115,9 @@ export function CarrierConnectionDialog({
     }
 
     try {
-      // For generic carriers, use the custom_carrier_name as the carrier_name
-      const submitValues = {
-        ...values,
-        carrier_name: values.carrier_name === "generic"
-          ? values.credentials.custom_carrier_name || "generic"
-          : values.carrier_name
-      };
-
-      await onSubmit(submitValues, selectedConnection);
+      // Keep carrier_name as-is (should be "generic" for custom carriers)
+      // The custom_carrier_name stays in credentials where backend expects it
+      await onSubmit(values, selectedConnection);
 
       toast({
         title: "Success",
