@@ -9,7 +9,7 @@ from organizations.abstract import (
     AbstractOrganizationInvitation,
 )
 
-import karrio.server.orgs.serializers as serializers
+import karrio.server.orgs.serializers.base as serializers
 import karrio.server.providers.models as providers
 import karrio.server.documents.models as documents
 import karrio.server.pricing.models as pricing
@@ -44,6 +44,10 @@ class Organization(AbstractOrganization):
         on_delete=models.CASCADE,
         related_name="org",
         null=True,
+    )
+    metadata = models.JSONField(
+        default=core.field_default({}),
+        help_text="Organization defined metadata",
     )
 
     carriers = models.ManyToManyField(
@@ -185,6 +189,10 @@ class OrganizationUser(AbstractOrganizationUser):
                 serializers.UserRole.developer.value,
             ]
         ),
+    )
+    metadata = models.JSONField(
+        default=core.field_default({}),
+        help_text="Organization user defined metadata",
     )
 
     def save(self, *args, **kwargs):
