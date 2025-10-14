@@ -1,11 +1,4 @@
-import karrio.lib as lib
 from karrio.server.serializers import *
-
-
-class UserRole(lib.StrEnum):
-    member = "member"
-    developer = "developer"
-    admin = "admin"
-
-
-USER_ROLES = [(c.name, c.name) for c in list(UserRole)]
+from karrio.server.orgs.serializers.base import *
+# NOTE: Don't import organization here to avoid circular imports with models.py
+# Import directly from karrio.server.orgs.serializers.organization where needed

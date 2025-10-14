@@ -80,13 +80,15 @@ class OrganizationType:
     is_active: bool
     created: datetime.datetime
     modified: datetime.datetime
+    metadata: typing.Optional[utils.JSON] = None
 
     @strawberry.field
     def current_user(self: models.Organization, info: Info) -> OrganizationMemberType:
         import django.forms.models as models
 
         user = info.context.request.user
-        return lib.to_object(OrganizationUserType,  # type: ignore
+        return lib.to_object(
+            OrganizationUserType,  # type: ignore
             {
                 **{
                     k: v
@@ -97,7 +99,7 @@ class OrganizationType:
                 "is_owner": self.is_owner(user),
                 "roles": self.organization_users.get(user=user).roles,
                 "user_id": str(user.id),
-            }
+            },
         )
 
     @strawberry.field
@@ -130,7 +132,9 @@ class OrganizationType:
         return users + invites
 
     @strawberry.field
-    def organization_invites(self: models.Organization) -> typing.List[OrganizationInvitationType]:
+    def organization_invites(
+        self: models.Organization,
+    ) -> typing.List[OrganizationInvitationType]:
         return self.organization_invites.all()
 
     @strawberry.field
@@ -317,37 +321,57 @@ class OrgUsageType:
                     created_after=_filter["date_after"],
                     status__not_in=["draft", "cancelled"],
                 ),
-                org.shipments.filter(**_test_filter)
-                .exclude(
-                    models.Q(selected_rate__meta__surcharge_amount__isnull=True) |
-                    models.Q(selected_rate__meta__surcharge_amount=0)
+                org.shipments.filter(**_test_filter).exclude(
+                    models.Q(selected_rate__meta__surcharge_amount__isnull=True)
+                    | models.Q(selected_rate__meta__surcharge_amount=0)
                 ),
             )
             .qs.annotate(date=functions.TruncDay("created_at"))
             .values("date")
-            .annotate(count=models.Sum(
-                functions.Cast(
-                    "selected_rate__meta__surcharge_amount",
-                    models.FloatField(),
-                ),
-            ))
+            .annotate(
+                count=models.Sum(
+                    functions.Cast(
+                        "selected_rate__meta__surcharge_amount",
+                        models.FloatField(),
+                    ),
+                )
+            )
             .order_by("-date")
         )
 
         members = org.users.count()
-        total_errors = sum([item["count"] for item in api_errors if item["count"] is not None], 0)
-        total_requests = sum([item["count"] for item in api_requests if item["count"] is not None], 0)
-        total_trackers = sum([item["count"] for item in tracker_count if item["count"] is not None], 0)
-        total_shipments = sum([item["count"] for item in shipment_count if item["count"] is not None], 0)
-        order_volume = lib.to_money(sum([item["count"] for item in order_volumes if item["count"] is not None], 0.0))
+        total_errors = sum(
+            [item["count"] for item in api_errors if item["count"] is not None], 0
+        )
+        total_requests = sum(
+            [item["count"] for item in api_requests if item["count"] is not None], 0
+        )
+        total_trackers = sum(
+            [item["count"] for item in tracker_count if item["count"] is not None], 0
+        )
+        total_shipments = sum(
+            [item["count"] for item in shipment_count if item["count"] is not None], 0
+        )
+        order_volume = lib.to_money(
+            sum(
+                [item["count"] for item in order_volumes if item["count"] is not None],
+                0.0,
+            )
+        )
         unfulfilled_orders = org.orders.filter(
             status__in=["unfulfilled", "partial"], **_test_filter
         ).count()
         total_shipping_spend = lib.to_money(
-            sum([item["count"] for item in shipping_spend if item["count"] is not None], 0.0)
+            sum(
+                [item["count"] for item in shipping_spend if item["count"] is not None],
+                0.0,
+            )
         )
         total_addons_charges = lib.to_money(
-            sum([item["count"] for item in addons_charges if item["count"] is not None], 0.0)
+            sum(
+                [item["count"] for item in addons_charges if item["count"] is not None],
+                0.0,
+            )
         )
 
         return dict(

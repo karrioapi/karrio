@@ -10,9 +10,10 @@ import karrio.server.orgs.utils as orgs
 import karrio.server.core.utils as core
 import karrio.server.graph.utils as utils
 import karrio.server.orgs.models as models
+import karrio.server.serializers as serializers
 import karrio.server.graph.schemas.orgs.types as types
 import karrio.server.graph.schemas.orgs.inputs as inputs
-import karrio.server.orgs.serializers.organization as serializers
+import karrio.server.orgs.serializers.organization as org_serializers
 
 
 @strawberry.type
@@ -26,7 +27,7 @@ class CreateOrganizationMutation(utils.BaseMutation):
         info: Info, **input: inputs.CreateOrganizationMutationInput
     ) -> "CreateOrganizationMutation":
         slug = f"org_{lib.to_slug(input.get('name'))}_{uuid.uuid4().hex}"
-        serializer = serializers.OrganizationModelSerializer(
+        serializer = org_serializers.OrganizationModelSerializer(
             data={**input, "slug": slug},
             context=info.context.request,
         )
@@ -51,11 +52,15 @@ class UpdateOrganizationMutation(utils.BaseMutation):
         )
 
         if input.get("name"):
-            input.update({ "slug": f"org_{lib.to_slug(input.get('name'))}_{uuid.uuid4().hex}" })
+            input.update(
+                {"slug": f"org_{lib.to_slug(input.get('name'))}_{uuid.uuid4().hex}"}
+            )
 
-        serializer = serializers.OrganizationModelSerializer(
+        serializer = org_serializers.OrganizationModelSerializer(
             instance,
-            data=input,
+            data=serializers.process_dictionaries_mutations(
+                ["metadata"], input, instance
+            ),
             partial=True,
             context=info.context.request,
         )

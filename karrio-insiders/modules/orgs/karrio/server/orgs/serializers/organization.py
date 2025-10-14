@@ -2,14 +2,14 @@ from django.db import transaction
 
 import karrio.lib as lib
 import karrio.server.orgs.models as models
-import karrio.server.orgs.serializers as serializers
+import karrio.server.serializers as serializers
 
 
 @serializers.owned_model_serializer
 class OrganizationModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Organization
-        fields = ("id", "name", "slug")
+        fields = ("id", "name", "slug", "metadata")
 
     @transaction.atomic
     def create(self, data: dict, **kwargs):

@@ -17,12 +17,14 @@ class OrgFilter(utils.Paginated):
 @strawberry.input
 class CreateOrganizationMutationInput(utils.BaseInput):
     name: str
+    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
 @strawberry.input
 class UpdateOrganizationMutationInput(utils.BaseInput):
     id: str
     name: typing.Optional[str] = strawberry.UNSET
+    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
 @strawberry.input
