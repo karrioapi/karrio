@@ -89,6 +89,7 @@ class CarrierFilter(utils.Paginated):
 class UpdateUserInput(utils.BaseInput):
     full_name: typing.Optional[str] = strawberry.UNSET
     is_active: typing.Optional[bool] = strawberry.UNSET
+    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
 @strawberry.input

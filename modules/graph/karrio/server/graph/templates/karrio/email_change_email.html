@@ -3,7 +3,7 @@
 <br /><br />
 {% trans "Please open the following link to confirm:" %}<br />
 {% block change_link %}
-{{ link }}?token={{ token }}
+<a href="{{ link }}?token={{ token }}" target="_blank" rel="noopener noreferrer">{{ link }}?token={{ token }}</a>
 {% endblock %}
 <br /><br />
 {% trans "Thanks for using our platform!" %}

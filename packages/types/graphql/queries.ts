@@ -2867,6 +2867,8 @@ export const GET_RATE_SHEET = gql`
         max_height
         max_length
         dimension_unit
+        domicile
+        international
         zones {
           object_type
           id
@@ -2922,6 +2924,8 @@ export const GET_RATE_SHEETS = gql`
             max_height
             max_length
             dimension_unit
+            domicile
+            international
             zones {
               id
               label
