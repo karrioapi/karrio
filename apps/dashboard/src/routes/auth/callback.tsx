@@ -15,15 +15,27 @@ function CallbackPage() {
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        // Extract JWT token from URL (query params or hash fragment)
+        // Extract authorization code or token from URL
         const params = new URLSearchParams(window.location.search)
         const hash = new URLSearchParams(window.location.hash.substring(1))
 
-        const token = params.get('token') || hash.get('token')
+        // Try to get authorization code first (PKCE flow)
+        const code = params.get('code')
         const state = params.get('state') || hash.get('state')
 
-        if (!token) {
-          throw new Error('No authentication token received from JTL Hub')
+        // Fallback to token (legacy implicit flow)
+        const token = params.get('token') || hash.get('token') || hash.get('access_token')
+
+        // Check for OAuth errors
+        const error = params.get('error')
+        const errorDescription = params.get('error_description')
+
+        if (error) {
+          throw new Error(errorDescription || error || 'OAuth authentication failed')
+        }
+
+        if (!code && !token) {
+          throw new Error('No authorization code or token received from JTL Hub')
         }
 
         // Verify state for CSRF protection
@@ -31,8 +43,14 @@ function CallbackPage() {
           throw new Error('Invalid state parameter - possible CSRF attack')
         }
 
-        // Exchange JTL token for Karrio JWT
-        await authManager.handleJTLCallback(token)
+        // Exchange authorization code or token for Karrio JWT
+        if (code) {
+          console.log('Exchanging authorization code for tokens...')
+          await authManager.handleJTLCallback(code)
+        } else if (token) {
+          console.warn('Using legacy implicit flow - consider migrating to authorization code flow')
+          await authManager.handleJTLCallback(token)
+        }
 
         // Redirect to dashboard
         router.navigate({ to: '/dashboard' })

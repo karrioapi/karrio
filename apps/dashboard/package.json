@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
+    "@jtl-software/cloud-apps-core": "^2.7.0-qa",
     "@radix-ui/react-alert-dialog": "^1.1.15",
     "@radix-ui/react-checkbox": "^1.3.3",
     "@radix-ui/react-dialog": "^1.1.15",
@@ -62,13 +63,13 @@
     "vite": "^7.1.7"
   },
   "optionalDependencies": {
-    "@rollup/rollup-linux-x64-musl": "4.52.2",
-    "@rollup/rollup-linux-arm64-musl": "4.52.2",
-    "@rollup/rollup-darwin-x64": "4.52.2",
     "@rollup/rollup-darwin-arm64": "4.52.2",
-    "lightningcss-linux-x64-musl": "1.30.1",
-    "lightningcss-linux-arm64-musl": "1.30.1",
+    "@rollup/rollup-darwin-x64": "4.52.2",
+    "@rollup/rollup-linux-arm64-musl": "4.52.2",
+    "@rollup/rollup-linux-x64-musl": "4.52.2",
+    "lightningcss-darwin-arm64": "1.30.1",
     "lightningcss-darwin-x64": "1.30.1",
-    "lightningcss-darwin-arm64": "1.30.1"
+    "lightningcss-linux-arm64-musl": "1.30.1",
+    "lightningcss-linux-x64-musl": "1.30.1"
   }
 }

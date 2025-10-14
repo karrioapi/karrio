@@ -1,15 +1,19 @@
 /**
  * JTL Hub OAuth Client
  *
- * Handles authentication flow with JTL Hub:
- * 1. Redirect to JTL Hub for authentication
- * 2. Handle callback with JWT token
- * 3. Exchange JWT for Karrio tokens
+ * Implements Authorization Code Flow with PKCE (Proof Key for Code Exchange)
+ * per OAuth 2.0 best practices:
+ * 1. Generate PKCE code verifier and challenge
+ * 2. Redirect to JTL Hub for authentication
+ * 3. Handle callback with authorization code
+ * 4. Exchange code for tokens (id_token, access_token, refresh_token)
+ * 5. Exchange JTL tokens for Karrio JWT
  */
 
 interface JTLOAuthConfig {
   clientId: string
   authorizeUrl: string
+  tokenUrl: string
   redirectUri: string
   apiUrl: string
 }
@@ -31,13 +35,23 @@ interface AuthResponse {
   }
 }
 
+interface JTLTokenResponse {
+  access_token: string
+  token_type: string
+  expires_in: number
+  refresh_token?: string
+  id_token?: string
+  scope: string
+}
+
 class JTLHubOAuth {
   private config: JTLOAuthConfig
 
   constructor() {
     this.config = {
       clientId: import.meta.env.VITE_JTL_HUB_CLIENT_ID || '',
-      authorizeUrl: import.meta.env.VITE_JTL_HUB_AUTHORIZE_URL || '',
+      authorizeUrl: import.meta.env.VITE_JTL_HUB_AUTHORIZE_URL || 'https://auth.jtl-cloud.com/oauth2/auth',
+      tokenUrl: import.meta.env.VITE_JTL_HUB_TOKEN_URL || 'https://auth.jtl-cloud.com/oauth2/token',
       redirectUri: import.meta.env.VITE_JTL_HUB_REDIRECT_URI || '',
       apiUrl: import.meta.env.VITE_KARRIO_API || '',
     }
@@ -53,41 +67,84 @@ class JTLHubOAuth {
   }
 
   /**
-   * Redirect to JTL Hub for authentication
+   * Generate PKCE code verifier (random 43-128 character string)
    */
-  login(): void {
+  private generateCodeVerifier(): string {
+    const array = new Uint8Array(32)
+    crypto.getRandomValues(array)
+    return this.base64UrlEncode(array)
+  }
+
+  /**
+   * Generate PKCE code challenge from verifier (SHA-256 hash, base64url encoded)
+   */
+  private async generateCodeChallenge(verifier: string): Promise<string> {
+    const encoder = new TextEncoder()
+    const data = encoder.encode(verifier)
+    const hash = await crypto.subtle.digest('SHA-256', data)
+    return this.base64UrlEncode(new Uint8Array(hash))
+  }
+
+  /**
+   * Base64URL encode (without padding)
+   */
+  private base64UrlEncode(array: Uint8Array): string {
+    const base64 = btoa(String.fromCharCode(...array))
+    return base64
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '')
+  }
+
+  /**
+   * Redirect to JTL Hub for authentication with PKCE
+   */
+  async login(): Promise<void> {
     if (!this.config.clientId) {
       throw new Error('JTL Hub CLIENT_ID not configured')
     }
 
+    // Generate PKCE codes
+    const codeVerifier = this.generateCodeVerifier()
+    const codeChallenge = await this.generateCodeChallenge(codeVerifier)
+
+    // Store code verifier for token exchange
+    sessionStorage.setItem('jtl_oauth_code_verifier', codeVerifier)
+
     const state = this.generateState()
     const params = new URLSearchParams({
       client_id: this.config.clientId,
-      response_type: 'token',  // Implicit flow - returns JWT directly
+      response_type: 'code',  // Authorization code flow
       redirect_uri: this.config.redirectUri,
       state,
-      scope: 'openid profile',  // Request OpenID Connect scopes
+      scope: 'openid offline_access',  // OpenID Connect + refresh token
+      code_challenge: codeChallenge,
+      code_challenge_method: 'S256',
     })
 
     const authUrl = `${this.config.authorizeUrl}?${params.toString()}`
-    console.log('Redirecting to JTL Hub:', authUrl)
+    console.log('Redirecting to JTL Hub with PKCE:', authUrl)
     window.location.href = authUrl
   }
 
   /**
-   * Handle callback from JTL Hub
+   * Exchange authorization code for JTL Hub tokens, then exchange for Karrio tokens
    *
-   * @param token - JWT token from JTL Hub
+   * @param code - Authorization code from JTL Hub
    * @returns Promise with Karrio JWT and user/org info
    */
-  async handleCallback(token: string): Promise<AuthResponse> {
+  async handleCallback(code: string): Promise<AuthResponse> {
     try {
+      // Step 1: Exchange authorization code for JTL Hub tokens
+      const jtlTokens = await this.exchangeCodeForToken(code)
+
+      // Step 2: Exchange JTL access token for Karrio JWT
       const response = await fetch(`${this.config.apiUrl}/auth/jtl/callback`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ token }),
+        body: JSON.stringify({ token: jtlTokens.access_token }),
       })
 
       if (!response.ok) {
@@ -105,6 +162,54 @@ class JTLHubOAuth {
       console.error('JTL Hub callback error:', error)
       throw error
     }
+  }
+
+  /**
+   * Exchange authorization code for JTL Hub tokens using PKCE
+   *
+   * @param code - Authorization code from callback
+   * @returns Promise with JTL Hub token response
+   */
+  private async exchangeCodeForToken(code: string): Promise<JTLTokenResponse> {
+    // Retrieve code verifier from session storage
+    const codeVerifier = sessionStorage.getItem('jtl_oauth_code_verifier')
+    sessionStorage.removeItem('jtl_oauth_code_verifier')
+
+    if (!codeVerifier) {
+      throw new Error('PKCE code verifier not found - possible session timeout')
+    }
+
+    const params = new URLSearchParams({
+      grant_type: 'authorization_code',
+      code,
+      redirect_uri: this.config.redirectUri,
+      client_id: this.config.clientId,
+      code_verifier: codeVerifier,
+    })
+
+    const response = await fetch(this.config.tokenUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: params.toString(),
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}))
+      throw new Error(error.error_description || error.error || `Token exchange failed: ${response.status}`)
+    }
+
+    const tokens: JTLTokenResponse = await response.json()
+    console.log('JTL Hub tokens obtained:', {
+      hasAccessToken: !!tokens.access_token,
+      hasRefreshToken: !!tokens.refresh_token,
+      hasIdToken: !!tokens.id_token,
+      expiresIn: tokens.expires_in,
+      scope: tokens.scope,
+    })
+
+    return tokens
   }
 
   /**

@@ -120,26 +120,49 @@ EOF
 export DASHBOARD_URL=https://app.$DOMAIN
 export KARRIO_PUBLIC_URL=https://api.$DOMAIN
 
-# Generate OAuth client credentials
-OAUTH_CLIENT_ID=$(head -c 28 /dev/urandom | base64 | tr -d '/+=' | head -c 40)
-OAUTH_CLIENT_SECRET=$(head -c 56 /dev/urandom | base64 | tr -d '/+=' | head -c 128)
-JTL_CLIENT_ID=$(head -c 28 /dev/urandom | base64 | tr -d '/+=' | head -c 40)
-JTL_CLIENT_SECRET=$(head -c 56 /dev/urandom | base64 | tr -d '/+=' | head -c 128)
+# JTL Hub OAuth2 Credentials
+# Get these from https://developer.jtl-cloud.com
+if [ -z "$JTL_HUB_CLIENT_ID" ]; then
+    echo "⚠️  JTL_HUB_CLIENT_ID not set. Generating placeholder (replace with real credentials)"
+    echo "   Get real credentials from: https://developer.jtl-cloud.com"
+    JTL_HUB_CLIENT_ID="placeholder-$(head -c 28 /dev/urandom | base64 | tr -d '/+=' | head -c 40)"
+fi
+
+# JTL Hub Client Secret (optional for PKCE flow)
+if [ -z "$JTL_HUB_CLIENT_SECRET" ]; then
+    echo "ℹ️  JTL_HUB_CLIENT_SECRET not set (optional for public PKCE clients)"
+    JTL_HUB_CLIENT_SECRET=""
+fi
 
 # Write .env file
 cat > docker/.env <<EOF
+# ============================================
+# JTL Shipping Platform Configuration
+# ============================================
+
+# Domain Configuration
 DOMAIN=$DOMAIN
-SECRET_KEY=$SECRET_KEY
-JWT_SECRET=$JWT_SECRET
-SENTRY_DSN=$SENTRY_DSN
 DASHBOARD_URL=$DASHBOARD_URL
 KARRIO_PUBLIC_URL=$KARRIO_PUBLIC_URL
 JTL_TAG=$JTL_TAG
 DASHBOARD_PORT=3102
-OAUTH_CLIENT_ID=$OAUTH_CLIENT_ID
-OAUTH_CLIENT_SECRET=$OAUTH_CLIENT_SECRET
-JTL_CLIENT_ID=$JTL_CLIENT_ID
-JTL_CLIENT_SECRET=$JTL_CLIENT_SECRET
+
+# Security Keys
+SECRET_KEY=$SECRET_KEY
+JWT_SECRET=$JWT_SECRET
+SENTRY_DSN=${SENTRY_DSN:-}
+
+# ============================================
+# JTL Hub Authentication
+# ============================================
+
+# OAuth2 Client Credentials (from https://developer.jtl-cloud.com)
+JTL_HUB_CLIENT_ID=$JTL_HUB_CLIENT_ID
+JTL_HUB_CLIENT_SECRET=$JTL_HUB_CLIENT_SECRET
+
+# OAuth2 Endpoints (usually don't need to change)
+JTL_HUB_AUTHORIZE_URL=https://auth.jtl-cloud.com/oauth2/auth
+JTL_HUB_TOKEN_URL=https://auth.jtl-cloud.com/oauth2/token
 EOF
 
 # setup docker
@@ -184,3 +207,32 @@ echo "API:         https://api.${DOMAIN}"
 echo "Dashboard:   https://app.${DOMAIN}"
 echo ""
 echo "This is the end: Happy shipping with JTL Shipping Platform!"
+echo ""
+
+# Check if placeholder credentials are being used
+if grep -q "^JTL_HUB_CLIENT_ID=placeholder-" "docker/.env" 2>/dev/null; then
+    echo "⚠️  IMPORTANT: JTL Hub OAuth Configuration"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+    echo "Your deployment is using placeholder JTL Hub credentials."
+    echo "To enable JTL Hub SSO authentication, you need to:"
+    echo ""
+    echo "1. Register your application at: https://developer.jtl-cloud.com"
+    echo "2. Get your OAuth2 Client ID and Secret"
+    echo "3. Update docker/.env file with:"
+    echo "   JTL_HUB_CLIENT_ID=<your-client-id>"
+    echo "   JTL_HUB_CLIENT_SECRET=<your-client-secret>"
+    echo "4. Restart the dashboard: cd docker && docker compose restart dashboard"
+    echo ""
+    echo "OAuth endpoints are already configured:"
+    echo "  • Authorization: https://auth.jtl-cloud.com/oauth2/auth"
+    echo "  • Token: https://auth.jtl-cloud.com/oauth2/token"
+    echo ""
+    echo "Redirect URI to register: ${DASHBOARD_URL}/auth/callback"
+    echo ""
+    echo "For development/testing, you can also use Karrio API Token authentication"
+    echo "from the sign-in page (API Token tab)."
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+fi

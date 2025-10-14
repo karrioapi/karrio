@@ -25,13 +25,17 @@ function SignInPage() {
   const [apiToken, setApiToken] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleJTLLogin = () => {
+  const handleJTLLogin = async () => {
     try {
       setError(null)
-      authManager.loginWithJTLHub()
+      setIsLoading(true)
+      await authManager.loginWithJTLHub()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Authentication error')
+      setIsLoading(false)
     }
+    // Note: setIsLoading(false) is intentionally NOT called on success
+    // because the page will redirect to JTL Hub
   }
 
   const handleTokenLogin = async () => {
@@ -125,11 +129,11 @@ function SignInPage() {
 
                   <Button
                     onClick={handleJTLLogin}
-                    disabled={!isJTLConfigured}
+                    disabled={!isJTLConfigured || isLoading}
                     className="w-full"
                     size="lg"
                   >
-                    Sign in with JTL Hub
+                    {isLoading && activeTab === 'jtl' ? 'Redirecting to JTL Hub...' : 'Sign in with JTL Hub'}
                   </Button>
 
                   {!isJTLConfigured && (

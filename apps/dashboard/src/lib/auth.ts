@@ -2,8 +2,8 @@
  * Authentication Library
  *
  * Supports two authentication methods:
- * 1. JTL Hub OAuth (Bearer token)
- * 2. Karrio API Token (Token auth)
+ * 1. JTL Hub OAuth (Bearer token) - OAuth flow with PKCE
+ * 2. Karrio API Token (Token auth) - Direct API token
  */
 
 import { jtlOAuth, type AuthResponse } from './jtl-oauth'
@@ -71,10 +71,10 @@ class AuthManager {
   }
 
   /**
-   * Sign in with JTL Hub OAuth
+   * Sign in with JTL Hub OAuth (PKCE flow)
    */
-  loginWithJTLHub(): void {
-    jtlOAuth.login()
+  async loginWithJTLHub(): Promise<void> {
+    await jtlOAuth.login()
   }
 
   /**
@@ -120,7 +120,7 @@ class AuthManager {
   }
 
   /**
-   * Store JWT-based authentication (from JTL Hub)
+   * Store JWT-based authentication (from JTL Hub OAuth)
    */
   private storeJWTAuth(data: AuthResponse): void {
     if (typeof window === 'undefined') return
