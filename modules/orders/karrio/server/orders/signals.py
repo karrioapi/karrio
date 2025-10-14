@@ -114,6 +114,7 @@ def order_updated(sender, instance, *args, **kwargs):
         if duplicates > 1:
             raise exceptions.APIException(
                 detail=f"An order with 'order_id' {instance.order_id} from {instance.source} already exists.",
+                code="duplicate_order_id",
                 status_code=status.HTTP_409_CONFLICT,
             )
 
