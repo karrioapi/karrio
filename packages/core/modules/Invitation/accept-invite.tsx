@@ -41,7 +41,7 @@ function AcceptInvitePage() {
       setTimeout(
         () =>
           router.push(
-            `/signin?email=${invite?.invitee?.email}&next=/?accept_invitation=${token}`,
+            `/signin?email=${encodeURIComponent(invite?.invitee?.email || "")}\u0026next=${encodeURIComponent(`/?accept_invitation=${token}`)}`,
           ),
         1000,
       );
