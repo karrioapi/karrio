@@ -1,32 +1,40 @@
-"""
-JTL Hub SSO Settings
+# type: ignore
+from karrio.server.settings.base import *
+from karrio.server.settings.constance import *
 
-This module provides JTL Hub-specific configuration and middleware setup.
-It extends the base Karrio settings with JTL Hub OAuth authentication.
-"""
+## White label settings
 
-# Ensure JTL Hub authentication is always first
-# This prioritizes JTL Hub SSO for all authentication attempts
-if "karrio.server.jtl.authentication.JTLHubAuthentication" not in AUTHENTICATION_CLASSES:
-    AUTHENTICATION_CLASSES.insert(0, "karrio.server.jtl.authentication.JTLHubAuthentication")
+APP_NAME = config("APP_NAME", default="JTL Shipping")
+APP_WEBSITE = config("APP_WEBSITE", default="https://jtl-software.de")
 
-# JTL Hub Feature Flags
-JTL_HUB_SSO_ENABLED = True
-JTL_HUB_AUTO_PROVISION_USERS = True
-JTL_HUB_AUTO_PROVISION_ORGS = True
 
-# JTL Hub JWKS Configuration (for dynamic key fetching)
-# These defaults point to production; override via environment variables for other environments
-JTL_HUB_JWKS_URL = config(
-    "JTL_HUB_JWKS_URL",
-    default="https://auth.jtl-cloud.com/.well-known/jwks.json"
+CONSTANCE_CONFIG = {
+    "APP_NAME": (APP_NAME, "The name of the application", str),
+    "APP_WEBSITE": (APP_WEBSITE, "The website of the application", str),
+    **CONSTANCE_CONFIG,
+}
+
+CONSTANCE_CONFIG_FIELDSETS = {
+    "Platform Config": ("APP_NAME", "APP_WEBSITE"),
+    **CONSTANCE_CONFIG_FIELDSETS,
+}
+
+# Extend authentication classes with JTL JWT authentication (prepend to list)
+AUTHENTICATION_CLASSES = [
+    "karrio.server.jtl.authentication.JTLJWTAuthentication",
+    *AUTHENTICATION_CLASSES,
+]
+KARRIO_URLS += ["karrio.server.jtl.urls"]
+INSTALLED_APPS += ["karrio.server.jtl"]
+
+# JTL JWT Configuration
+# JWT_SECRET is used for symmetric HS256 encryption/decryption
+JWT_SECRET = config(
+    "JWT_SECRET",
+    default=""
 )
-JTL_HUB_ISSUER = config(
-    "JTL_HUB_ISSUER",
-    default="https://auth.jtl-cloud.com"
-)
 
-# Logging configuration for JTL Hub
+# Logging configuration for JTL
 LOGGING["loggers"]["karrio.server.jtl"] = {
     "handlers": ["file", "console"],
     "level": LOG_LEVEL,

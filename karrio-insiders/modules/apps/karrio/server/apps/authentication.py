@@ -37,34 +37,37 @@ class AppJWTAuthentication(BaseAuthentication):
             payload = jwt.decode(
                 jwt_token,
                 settings.JWT_APP_SECRET_KEY,
-                algorithms=['HS256'],
-                audience='karrio-api',
-                issuer='karrio-dashboard'
+                algorithms=["HS256"],
+                audience="karrio-api",
+                issuer="karrio-dashboard",
             )
 
             # Extract app context from JWT
             app_context = {
-                'app_id': payload['app_id'],
-                'installation_id': payload['installation_id'],
-                'user_id': payload['user_id'],
-                'org_id': payload['org_id'],
-                'access_scopes': payload['access_scopes']
+                "app_id": payload["app_id"],
+                "installation_id": payload["installation_id"],
+                "user_id": payload["user_id"],
+                "org_id": payload["org_id"],
+                "access_scopes": payload["access_scopes"],
             }
 
             # Verify app installation exists (import here to avoid circular import)
             try:
                 from .models import AppInstallation
+
                 installation = AppInstallation.objects.get(
-                    id=app_context['installation_id'],
-                    app_id=app_context['app_id'],
-                    is_active=True
+                    id=app_context["installation_id"],
+                    app_id=app_context["app_id"],
+                    is_active=True,
                 )
             except AppInstallation.DoesNotExist:
-                logger.warning(f"App installation not found: {app_context['installation_id']}")
-                raise AuthenticationFailed('App installation not found')
+                logger.warning(
+                    f"App installation not found: {app_context['installation_id']}"
+                )
+                raise AuthenticationFailed("App installation not found")
 
-                        # Add installation to app context
-            app_context['installation'] = installation
+                # Add installation to app context
+            app_context["installation"] = installation
 
             logger.debug(f"JWT authenticated for app {app_context['app_id']}")
 
@@ -73,29 +76,29 @@ class AppJWTAuthentication(BaseAuthentication):
 
         except jwt.ExpiredSignatureError:
             logger.warning("JWT token has expired")
-            raise AuthenticationFailed('JWT token has expired')
+            raise AuthenticationFailed("JWT token has expired")
 
         except jwt.InvalidTokenError as e:
             logger.warning(f"Invalid JWT token: {e}")
-            raise AuthenticationFailed('Invalid JWT token')
+            raise AuthenticationFailed("Invalid JWT token")
 
         except KeyError as e:
             logger.warning(f"JWT missing required field: {e}")
-            raise AuthenticationFailed(f'JWT missing required field: {e}')
+            raise AuthenticationFailed(f"JWT missing required field: {e}")
 
         except Exception as e:
             logger.error(f"JWT authentication error: {e}")
-            raise AuthenticationFailed('JWT authentication failed')
+            raise AuthenticationFailed("JWT authentication failed")
 
     def extract_jwt_token(self, request):
         """Extract JWT token from Authorization header or query parameter."""
         # Try Authorization header first
-        auth_header = request.META.get('HTTP_AUTHORIZATION', '')
-        if auth_header.startswith('Bearer '):
+        auth_header = request.META.get("HTTP_AUTHORIZATION", "")
+        if auth_header.startswith("Bearer "):
             return auth_header[7:]
 
         # Try query parameter as fallback (for webhook URLs)
-        return request.GET.get('token')
+        return request.GET.get("token")
 
     def authenticate_header(self, request):
         """Return the authentication header for 401 responses."""
@@ -129,19 +132,21 @@ class AppContextUser:
         return self.id
 
     def __str__(self):
-        return f"App {self.app_context['app_id']} ({self.app_context['installation_id']})"
+        return (
+            f"App {self.app_context['app_id']} ({self.app_context['installation_id']})"
+        )
 
     def has_perm(self, perm, obj=None):
         """Check if app has permission based on access scopes."""
         # Map permissions to scopes
         scope_mapping = {
-            'read': ['read'],
-            'write': ['write'],
-            'admin': ['admin'],
+            "read": ["read"],
+            "write": ["write"],
+            "admin": ["admin"],
         }
 
         for scope, perms in scope_mapping.items():
-            if scope in self.app_context.get('access_scopes', []):
+            if scope in self.app_context.get("access_scopes", []):
                 if perm in perms:
                     return True
 
@@ -154,8 +159,8 @@ class AppContextUser:
     def has_module_perms(self, package_name):
         """Check if app has permissions for a module."""
         # Apps with 'admin' scope can access all modules
-        return 'admin' in self.app_context.get('access_scopes', [])
+        return "admin" in self.app_context.get("access_scopes", [])
 
     def get_all_permissions(self, obj=None):
         """Get all permissions for this app."""
-        return set(self.app_context.get('access_scopes', []))
+        return set(self.app_context.get("access_scopes", []))

@@ -1,116 +1,116 @@
 """
-JTL Hub OAuth callback endpoint.
+JTL Tenant Onboarding API View
+
+Handles tenant onboarding for JTL Hub integration with clean separation of concerns.
 """
 
-import jwt
 import logging
-from django.conf import settings
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework_simplejwt.tokens import RefreshToken
-from .authentication import JTLHubAuthentication
+
+import karrio.server.openapi as openapi
+from karrio.server.core.serializers import ErrorResponse
+from karrio.server.jtl.serializers import (
+    JTLOnboardingRequestSerializer,
+    JTLOnboardingResponseSerializer,
+)
+from karrio.server.jtl.helpers import onboard_jtl_tenant
 
 logger = logging.getLogger(__name__)
+ENDPOINT_ID = "jtl$"  # Unique endpoint ID for operation naming
 
 
-class JTLCallbackView(APIView):
+class JTLTenantOnboardingView(APIView):
     """
-    Handle OAuth callback from JTL Hub.
+    JTL tenant onboarding endpoint.
 
-    After user authenticates with JTL Hub, they are redirected back
-    with a JWT token. This endpoint validates the token and issues
-    a Karrio JWT for API access.
+    Creates or retrieves organizations and users based on JTL tenantId and userId,
+    ensuring idempotent operations.
+
+    POST /jtl/tenants/onboarding
+
+    Request:
+        {
+            "tenantId": "uuid-string",
+            "userId": "uuid-string",
+            "email": "user@example.com",
+            "password": "user-password"
+        }
+
+    Response (200 OK):
+        {
+            "access_token": "...",
+            "refresh_token": "...",
+            "user": {
+                "id": 1,
+                "email": "user@example.com",
+                "full_name": "User Name"
+            },
+            "org": {
+                "id": "org_uuid",
+                "name": "Organization Name",
+                "slug": "org-slug"
+            },
+            "org_user": {
+                "id": "org_user_uuid",
+                "is_owner": true,
+                "roles": ["admin"]
+            }
+        }
     """
 
     authentication_classes = []  # Public endpoint
     permission_classes = []  # No permissions required
 
+    @openapi.extend_schema(
+        tags=["JTL"],
+        operation_id=f"{ENDPOINT_ID}onboard_tenant",
+        extensions={"x-operationId": "onboardJTLTenant"},
+        summary="Onboard a JTL tenant",
+        request=JTLOnboardingRequestSerializer(),
+        responses={
+            200: JTLOnboardingResponseSerializer(),
+            400: ErrorResponse(),
+        },
+    )
     def post(self, request):
         """
-        Receive JWT token from JTL Hub and exchange for Karrio JWT.
+        Onboard JTL tenant and user.
 
-        Request body:
-            {
-                "token": "eyJhbGc..."  # JTL Hub JWT
-            }
-
-        Response:
-            {
-                "access_token": "...",   # Karrio JWT access token
-                "refresh_token": "...",  # Karrio JWT refresh token
-                "user": {...},           # User info
-                "org": {...}             # Organization info
-            }
+        Validates request payload, orchestrates onboarding process,
+        and returns JWT tokens with user/organization information.
         """
-        # Get JTL Hub token from request
-        jtl_token = request.data.get('token') or request.GET.get('token')
+        # Validate request data
+        serializer = JTLOnboardingRequestSerializer(data=request.data)
 
-        if not jtl_token:
-            logger.warning("Callback received without token")
+        if not serializer.is_valid():
             return Response(
-                {'error': 'Missing token parameter'},
+                {'errors': serializer.errors},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+        validated_data = serializer.validated_data
 
         try:
-            # Validate JTL Hub token and provision user/org
-            auth = JTLHubAuthentication()
-            payload, header = auth.validate_token(jtl_token)
-            user, org = auth.get_or_create_user_and_org(payload, header)
-
-            # Issue Karrio JWT tokens
-            refresh = RefreshToken.for_user(user)
-            refresh['org_id'] = str(org.id)
-            refresh['is_verified'] = True  # Verified by JTL Hub
-
-            logger.info(
-                f"JTL Hub callback successful - "
-                f"User: {user.username}, Org: {org.id}"
+            # Onboard tenant
+            user, org, org_user, is_owner = onboard_jtl_tenant(
+                tenant_id=validated_data['tenantId'],
+                user_id=validated_data['userId'],
+                email=validated_data['email'],
+                password=validated_data['password']
             )
 
-            return Response({
-                'access_token': str(refresh.access_token),
-                'refresh_token': str(refresh),
-                'user': {
-                    'id': user.id,
-                    'email': user.email,
-                    'username': user.username,
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
-                },
-                'org': {
-                    'id': str(org.id),
-                    'name': org.name,
-                    'slug': org.slug,
-                }
-            }, status=status.HTTP_200_OK)
-
-        except jwt.ExpiredSignatureError:
-            logger.warning("JTL Hub token expired")
-            return Response(
-                {'error': 'Token has expired'},
-                status=status.HTTP_401_UNAUTHORIZED
+            # Create response with JWT tokens
+            response_data = JTLOnboardingResponseSerializer.create_response(
+                user, org, org_user, is_owner
             )
 
-        except jwt.InvalidTokenError as e:
-            logger.warning(f"Invalid JTL Hub token: {e}")
-            return Response(
-                {'error': f'Invalid token: {str(e)}'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+            return Response(response_data, status=status.HTTP_200_OK)
 
         except Exception as e:
-            logger.error(f"JTL Hub callback error: {e}", exc_info=True)
+            logger.error(f"JTL tenant onboarding error: {e}", exc_info=True)
             return Response(
-                {'error': 'Authentication failed'},
+                {'error': f'Onboarding failed: {str(e)}'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-
-    def get(self, request):
-        """
-        Handle GET requests (for URL-based token delivery).
-
-        Some OAuth flows may pass the token as a URL parameter.
-        """
-        return self.post(request)

@@ -21,6 +21,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
+import { OrgSwitcher } from '@/components/org-switcher'
 
 interface ShellProps {
   children: ReactNode
@@ -186,6 +187,9 @@ export function Shell({
 
           {/* Right side actions */}
           <div className="ml-auto flex items-center gap-1 sm:gap-2">
+            {/* Organization Switcher */}
+            <OrgSwitcher />
+
             <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
               <Bell className="h-4 w-4" />
             </Button>

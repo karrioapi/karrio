@@ -18,10 +18,19 @@ class KarrioAPI {
       throw new Error('No authentication available')
     }
 
-    return {
+    const headers: Record<string, string> = {
       Authorization: authManager.getAuthHeader(),
       'Content-Type': 'application/json',
+      'x-test-mode': authManager.getTestMode().toString(),
     }
+
+    // Add x-org-id header if an organization is selected
+    const orgId = authManager.getCurrentOrgId()
+    if (orgId) {
+      headers['x-org-id'] = orgId
+    }
+
+    return headers
   }
 
   async request<T>(

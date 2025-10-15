@@ -14,6 +14,7 @@ services:
       DEBUG_MODE: "False"
       DETACHED_WORKER: "True"
       SECRET_KEY: ${SECRET_KEY}
+      JWT_SECRET: ${JWT_SECRET}
       ENABLE_ALL_PLUGINS_BY_DEFAULT: "True"
 
       # Database Configuration
@@ -43,6 +44,7 @@ services:
     environment:
       # Application Settings
       DEBUG_MODE: "False"
+      JWT_SECRET: ${JWT_SECRET}
       ENABLE_ALL_PLUGINS_BY_DEFAULT: "True"
 
       # Database Configuration
@@ -77,13 +79,7 @@ services:
 
       # Karrio API (Backend)
       VITE_KARRIO_API: ${KARRIO_PUBLIC_URL}
-
-      # JTL Hub OAuth2 (Authorization Code Flow with PKCE) - For standalone access
-      VITE_JTL_HUB_CLIENT_ID: ${JTL_HUB_CLIENT_ID}
-      VITE_JTL_HUB_CLIENT_SECRET: ${JTL_HUB_CLIENT_SECRET:-}
-      VITE_JTL_HUB_AUTHORIZE_URL: ${JTL_HUB_AUTHORIZE_URL:-https://auth.jtl-cloud.com/oauth2/auth}
-      VITE_JTL_HUB_TOKEN_URL: ${JTL_HUB_TOKEN_URL:-https://auth.jtl-cloud.com/oauth2/token}
-      VITE_JTL_HUB_REDIRECT_URI: ${DASHBOARD_URL}/auth/callback
+      VITE_KARRIO_TEST_MODE: ${VITE_KARRIO_TEST_MODE:-false}
 
   caddy:
     container_name: jtl.caddy

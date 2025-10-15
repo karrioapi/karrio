@@ -195,7 +195,7 @@ function CarriersPage() {
     return (
       <Card
         key={connection.id}
-        className={`relative group hover:shadow-lg transition-shadow duration-200 border-l-4 ${
+        className={`relative group hover:shadow-lg transition-shadow duration-200 border-l-4 min-w-[320px] ${
           connection.active
             ? 'border-l-green-500'
             : 'border-l-gray-300 dark:border-l-gray-700'
@@ -426,7 +426,7 @@ function CarriersPage() {
           </TabsList>
 
           <TabsContent value="user" className="mt-6">
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-6 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {filteredUserConnections.map((connection) =>
                 renderCarrierCard(connection, false),
               )}
@@ -454,7 +454,7 @@ function CarriersPage() {
           </TabsContent>
 
           <TabsContent value="system" className="mt-6">
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-6 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {filteredSystemConnections.map((connection) =>
                 renderCarrierCard(connection, true),
               )}

@@ -1,126 +1,169 @@
 """
-JTL Hub Authentication for Karrio
+JTL Authentication for Karrio
 
-Implements EdDSA (Ed25519) JWT verification for JTL Hub tokens using JWKS.
+Implements symmetric JWT authentication using HS256 algorithm with JWT_SECRET.
 """
 
 import jwt
 import logging
-from jwt import PyJWKClient
+import functools
 from django.conf import settings
+from django.utils.functional import SimpleLazyObject
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 
 logger = logging.getLogger(__name__)
 
-# JWKS client singleton (caches keys)
-_jwks_client = None
+
+def catch_auth_exception(func):
+    """Decorator to catch and convert authentication exceptions to Karrio API exceptions."""
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except AuthenticationFailed:
+            from karrio.server.core.exceptions import APIException
+            from rest_framework import status
+
+            raise APIException(
+                "Given token not valid for any token type",
+                code="invalid_token",
+                status_code=status.HTTP_401_UNAUTHORIZED,
+            )
+
+    return wrapper
 
 
-class JTLHubAuthentication(BaseAuthentication):
+def get_request_test_mode(request):
+    """Get test mode from request headers."""
+    import yaml
+    return yaml.safe_load(request.META.get("HTTP_X_TEST_MODE", "")) or False
+
+
+def get_request_org(request, user, org_id=None, default_org=None):
+    """Get organization for request, following Karrio's org resolution pattern."""
+    from karrio.server.orgs.models import Organization
+
+    if not settings.MULTI_ORGANIZATIONS:
+        return None
+
+    try:
+        if default_org is not None:
+            org = default_org
+        elif user and hasattr(user, 'id') and user.id:
+            orgs = Organization.objects.filter(users__id=user.id)
+            org = (
+                orgs.filter(id=org_id).first()
+                if org_id is not None and orgs.filter(id=org_id).exists()
+                else orgs.filter(is_active=True).first()
+            )
+        else:
+            org = None
+
+        if org is not None and not org.is_active:
+            raise AuthenticationFailed("Organization is inactive")
+
+        if org is None and org_id is not None:
+            raise AuthenticationFailed("No active organization found with the given credentials")
+
+        return org
+    except Exception:
+        return None
+
+
+class JTLJWTAuthentication(BaseAuthentication):
     """
-    Authenticate requests using JTL Hub JWT tokens.
-
-    JTL Hub uses EdDSA (Ed25519) for JWT signatures.
-    Requires public key verification.
+    Authenticate requests using JTL JWT tokens with HS256 symmetric encryption.
 
     Token structure:
     {
-        "header": {"alg": "EdDSA", "typ": "JWT", "kid": "<key-id>"},
+        "header": {"alg": "HS256", "typ": "JWT"},
         "payload": {
-            "userId": "<UUID>",
             "tenantId": "<UUID>",
-            "iss": "https://auth.jtl-cloud.com",
+            "userId": "<UUID>",
+            "iss": "jtl-wawi-api",
             "exp": 1746616503
         }
     }
-
-    Note: kid (key ID) is in the header, not the payload.
     """
 
+    @catch_auth_exception
     def authenticate(self, request):
-        """Authenticate using JTL Hub JWT token."""
+        """Authenticate using JTL JWT token."""
         auth_header = request.META.get('HTTP_AUTHORIZATION', '')
+        logger.info(f"JTL JWT Auth called. Header: {auth_header[:50] if auth_header else 'NONE'}")
+
         if not auth_header.startswith('Bearer '):
+            logger.info("No Bearer token found, skipping JTL auth")
             return None
 
         token = auth_header[7:]
+        logger.info(f"Processing JTL JWT token: {token[:20]}...")
 
         try:
-            # Validate JWT with EdDSA public key
-            payload, header = self.validate_token(token)
+            # Validate JWT with HS256 symmetric key
+            payload = self.validate_token(token)
 
-            # Get or create user and organization
-            user, org = self.get_or_create_user_and_org(payload, header)
+            # Get user and organization (must exist from onboarding)
+            user, default_org, org_user = self.get_user_and_org(payload)
 
-            # Set request context
+            # Set request context following Karrio patterns
             request.user = user
-            request.org = org
-            request.test_mode = False
+            request.token = payload
+            request.test_mode = get_request_test_mode(request)
+            request.otp_is_verified = True  # JTL tokens are pre-verified
+            request.org = SimpleLazyObject(
+                functools.partial(
+                    get_request_org,
+                    request,
+                    user,
+                    org_id=request.META.get("HTTP_X_ORG_ID"),
+                    default_org=default_org,
+                )
+            )
 
-            logger.info(f"JTL Hub user authenticated: {payload.get('userId')}")
+            logger.info(f"JTL user authenticated: {payload.get('userId')}")
 
-            return (user, token)
+            return (user, payload)
 
         except jwt.ExpiredSignatureError:
-            logger.warning("JTL Hub token has expired")
+            logger.warning("JTL token has expired")
             raise AuthenticationFailed('Token has expired')
         except jwt.InvalidTokenError as e:
-            logger.warning(f"Invalid JTL Hub token: {e}")
+            logger.warning(f"Invalid JTL token: {e}")
             raise AuthenticationFailed(f'Invalid token: {str(e)}')
         except Exception as e:
-            logger.error(f"JTL Hub authentication error: {e}", exc_info=True)
+            logger.error(f"JTL authentication error: {e}", exc_info=True)
             raise AuthenticationFailed('Authentication failed')
 
     def validate_token(self, token):
         """
-        Validate JWT using JTL Hub's JWKS endpoint.
+        Validate JWT using JWT_SECRET with HS256 algorithm.
 
-        Dynamically fetches public keys from JWKS endpoint and verifies EdDSA signature.
-        This is the recommended approach as it automatically handles key rotation.
-
-        Returns tuple of (payload, header) to access kid from header.
+        Returns payload dictionary.
         """
-        global _jwks_client
-
-        # Get JWKS URL from settings with default
-        jwks_url = getattr(
-            settings,
-            'JTL_HUB_JWKS_URL',
-            'https://auth.jtl-cloud.com/.well-known/jwks.json'
-        )
-
         try:
-            # Initialize JWKS client (cached globally)
-            if _jwks_client is None:
-                _jwks_client = PyJWKClient(jwks_url)
-
-            # Get signing key from JWKS (automatically fetches and caches)
-            signing_key = _jwks_client.get_signing_key_from_jwt(token)
+            # Get JWT secret from Django settings (loaded via decouple)
+            jwt_secret = getattr(settings, 'JWT_SECRET', None)
+            if not jwt_secret:
+                raise AuthenticationFailed('JWT_SECRET not configured')
 
             # Decode and verify JWT signature
             payload = jwt.decode(
                 token,
-                signing_key.key,
-                algorithms=["EdDSA"],
-                issuer=getattr(
-                    settings,
-                    'JTL_HUB_ISSUER',
-                    'https://auth.jtl-cloud.com'
-                ),
+                jwt_secret,
+                algorithms=["HS256"],
+                issuer="jtl-wawi-api",
                 options={
                     "verify_exp": True,
-                    "verify_aud": False  # JTL Hub doesn't include aud claim
+                    "verify_aud": False
                 }
             )
 
-            # Get header to access kid (key ID)
-            header = jwt.get_unverified_header(token)
-
-            return payload, header
+            return payload
 
         except jwt.ExpiredSignatureError:
-            logger.warning("JTL Hub token has expired")
+            logger.warning("JTL token has expired")
             raise
         except jwt.InvalidIssuerError:
             logger.warning("Invalid token issuer")
@@ -129,67 +172,54 @@ class JTLHubAuthentication(BaseAuthentication):
             logger.error(f"Token validation error: {e}", exc_info=True)
             raise
 
-    def get_or_create_user_and_org(self, payload, header):
+    def get_user_and_org(self, payload):
         """
-        Auto-provision user and organization from JTL Hub token.
+        Retrieve user and organization from JTL token.
+
+        Authentication will fail if tenant or user doesn't exist.
+        Users must be onboarded via the onboarding API first.
 
         Mapping:
-        - tenantId → Organization.id
-        - userId → User.username (format: jtl-{userId})
-        - kid (from header) → Key ID for org identification (optional)
+        - tenantId → Organization (metadata.tenantId = tenantId)
+        - userId → OrganizationUser (metadata.userId = userId)
         """
         from karrio.server.user.models import User
-        from karrio.server.orgs.models import Organization
-        from .utils import get_user_email
+        from karrio.server.orgs.models import Organization, OrganizationUser
 
         tenant_id = payload.get('tenantId')
         user_id = payload.get('userId')
-        kid = header.get('kid')  # kid is in JWT header, not payload
 
         if not tenant_id or not user_id:
             raise AuthenticationFailed('Missing tenantId or userId in token')
 
-        # Get or create organization
-        org, org_created = Organization.objects.get_or_create(
-            id=tenant_id,
-            defaults={
-                'name': f'JTL Tenant {kid or tenant_id}',
-                'slug': f'jtl-{tenant_id[:8]}',
-                'is_active': True,
-            }
-        )
+        # Get organization by metadata.tenantId
+        org = Organization.objects.filter(
+            metadata__tenantId=tenant_id
+        ).first()
 
-        # Get or create user
-        username = f'jtl-{user_id}'
-        email = get_user_email(user_id, tenant_id)
+        if not org:
+            logger.warning(f"Organization not found for tenantId: {tenant_id[:8]}")
+            raise AuthenticationFailed('Organization not found. Please complete onboarding first.')
 
-        user, user_created = User.objects.get_or_create(
-            username=username,
-            defaults={
-                'email': email,
-                'is_active': True,
-                'first_name': 'JTL',
-                'last_name': 'User',
-            }
-        )
+        # Get organization user by metadata.userId
+        org_user = OrganizationUser.objects.filter(
+            organization=org,
+            metadata__userId=user_id
+        ).first()
 
-        # Update email if changed
-        if not user_created and user.email != email:
-            user.email = email
-            user.save(update_fields=['email'])
+        if not org_user:
+            logger.warning(f"User not found for userId: {user_id[:8]} in organization: {org.id}")
+            raise AuthenticationFailed('User not found. Please complete onboarding first.')
 
-        # Add user to organization
-        if not org.users.filter(id=user.id).exists():
-            org.users.add(user)
+        user = org_user.user
 
-        if user_created or org_created:
-            logger.info(
-                f"JTL Hub provisioning - "
-                f"User: {username} (new={user_created}), "
-                f"Org: {tenant_id} (new={org_created})"
-            )
+        if not user.is_active:
+            logger.warning(f"Inactive user attempted authentication: {user_id[:8]}")
+            raise AuthenticationFailed('User account is inactive.')
 
-        return user, org
+        logger.info(f"Authenticated user: {user_id[:8]} for organization: {tenant_id[:8]}")
+
+        return user, org, org_user
 
     def authenticate_header(self, request):
         """Return authentication header for 401 responses."""

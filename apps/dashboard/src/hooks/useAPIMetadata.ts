@@ -22,10 +22,20 @@ export function useAPIMetadata() {
     queryFn: async (): Promise<References> => {
       const authHeader = authManager.getAuthHeader()
 
+      // Build headers with Karrio-specific headers
+      const headers: Record<string, string> = {
+        ...(authHeader ? { Authorization: authHeader } : {}),
+        'x-test-mode': authManager.getTestMode().toString(),
+      }
+
+      // Add x-org-id header if an organization is selected
+      const orgId = authManager.getCurrentOrgId()
+      if (orgId) {
+        headers['x-org-id'] = orgId
+      }
+
       const response = await fetch(`${apiUrl}/v1/references?reduced=false`, {
-        headers: {
-          ...(authHeader ? { Authorization: authHeader } : {}),
-        },
+        headers,
       })
 
       if (!response.ok) {

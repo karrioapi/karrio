@@ -1,20 +1,32 @@
 /**
  * Authentication Library
  *
- * Supports two authentication methods:
- * 1. JTL Hub OAuth (Bearer token) - OAuth flow with PKCE
- * 2. Karrio API Token (Token auth) - Direct API token
+ * Handles email/password authentication with JWT tokens
  */
 
-import { jtlOAuth, type AuthResponse } from './jtl-oauth'
-
-export type AuthMethod = 'jtl-oauth' | 'karrio-token'
+export type AuthResponse = {
+  access_token: string
+  refresh_token: string
+  user: {
+    id: number
+    email: string
+    username: string
+    first_name: string
+    last_name: string
+  }
+  org?: {
+    id: string
+    name: string
+    slug: string
+  }
+}
 
 interface StoredAuth {
-  method: AuthMethod
-  token: string
-  user?: AuthResponse['user']
+  accessToken: string
+  refreshToken: string
+  user: AuthResponse['user']
   org?: AuthResponse['org']
+  testMode?: boolean
 }
 
 class AuthManager {
@@ -25,16 +37,89 @@ class AuthManager {
   }
 
   /**
-   * Sign in with Karrio API Token
+   * Get current test mode setting
    */
-  async loginWithToken(apiToken: string): Promise<void> {
+  getTestMode(): boolean {
+    if (typeof window === 'undefined') return false
+
+    const testMode = localStorage.getItem('karrio_test_mode')
+
+    // If test mode has been explicitly set, use that value
+    if (testMode !== null) {
+      return testMode === 'true'
+    }
+
+    // Otherwise, use the default from environment variable
+    const defaultTestMode = import.meta.env.VITE_KARRIO_TEST_MODE
+    return defaultTestMode === 'true'
+  }
+
+  /**
+   * Set test mode
+   */
+  setTestMode(enabled: boolean): void {
+    if (typeof window === 'undefined') return
+    localStorage.setItem('karrio_test_mode', enabled ? 'true' : 'false')
+  }
+
+  /**
+   * Get current organization ID
+   */
+  getCurrentOrgId(): string | null {
+    if (typeof window === 'undefined') return null
+    const orgStr = localStorage.getItem('karrio_org')
+    if (!orgStr) return null
     try {
-      // Test the token by fetching user info via GraphQL
-      const response = await fetch(`${this.apiUrl}/graphql`, {
+      const org = JSON.parse(orgStr)
+      return org?.id || null
+    } catch {
+      return null
+    }
+  }
+
+  /**
+   * Switch to a different organization
+   */
+  setCurrentOrg(org: AuthResponse['org']): void {
+    if (typeof window === 'undefined') return
+    if (org) {
+      localStorage.setItem('karrio_org', JSON.stringify(org))
+    } else {
+      localStorage.removeItem('karrio_org')
+    }
+  }
+
+  /**
+   * Sign in with email and password (Karrio authentication)
+   */
+  async loginWithEmailPassword(email: string, password: string): Promise<void> {
+    try {
+      // Authenticate with Karrio API
+      const response = await fetch(`${this.apiUrl}/api/token`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Token ${apiToken}`,
+        },
+        body: JSON.stringify({ email, password }),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.detail || 'Invalid email or password')
+      }
+
+      const result = await response.json()
+
+      if (!result.access || !result.refresh) {
+        throw new Error('Invalid response from server')
+      }
+
+      // Fetch user info using the access token
+      const userResponse = await fetch(`${this.apiUrl}/graphql`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${result.access}`,
         },
         body: JSON.stringify({
           query: `{
@@ -43,153 +128,141 @@ class AuthManager {
               full_name
               is_staff
             }
+            organizations {
+              edges {
+                node {
+                  id
+                  name
+                  slug
+                }
+              }
+            }
           }`,
         }),
       })
 
-      if (!response.ok) {
-        throw new Error('Invalid API token')
+      const userData = await userResponse.json()
+
+      if (userData.errors) {
+        throw new Error(userData.errors[0]?.message || 'Failed to fetch user data')
       }
 
-      const result = await response.json()
-
-      if (result.errors) {
-        throw new Error(result.errors[0]?.message || 'Invalid API token')
+      // Store JWT auth
+      const authData: AuthResponse = {
+        access_token: result.access,
+        refresh_token: result.refresh,
+        user: {
+          id: 0,
+          email: userData.data.user.email,
+          username: userData.data.user.email,
+          first_name: userData.data.user.full_name?.split(' ')[0] || '',
+          last_name: userData.data.user.full_name?.split(' ').slice(1).join(' ') || '',
+        },
+        org: userData.data.organizations.edges[0]?.node || undefined,
       }
 
-      if (!result.data?.user) {
-        throw new Error('Invalid API token')
-      }
-
-      // Store token and auth method
-      this.storeTokenAuth(apiToken, result.data.user)
+      this.storeAuth(authData)
 
     } catch (error) {
-      console.error('Token authentication error:', error)
+      console.error('Email/password authentication error:', error)
       throw error
     }
   }
 
   /**
-   * Sign in with JTL Hub OAuth (PKCE flow)
+   * Register/onboard a new JTL tenant
+   * Note: Does NOT automatically log the user in - they must sign in after registration
    */
-  async loginWithJTLHub(): Promise<void> {
-    await jtlOAuth.login()
-  }
+  async registerJTLTenant(data: {
+    tenantId: string
+    userId: string
+    email: string
+    password: string
+  }): Promise<void> {
+    try {
+      // Call the JTL onboarding API
+      const response = await fetch(`${this.apiUrl}/jtl/tenants/onboarding`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
 
-  /**
-   * Handle JTL Hub OAuth callback
-   */
-  async handleJTLCallback(token: string): Promise<AuthResponse> {
-    const data = await jtlOAuth.handleCallback(token)
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Registration failed')
+      }
 
-    // Store JWT and auth method
-    this.storeJWTAuth(data)
-
-    return data
-  }
-
-  /**
-   * Store Token-based authentication
-   */
-  private storeTokenAuth(token: string, userData: any): void {
-    if (typeof window === 'undefined') return
-
-    // Parse full_name into first and last name
-    const fullName = userData.full_name || ''
-    const nameParts = fullName.split(' ')
-    const firstName = nameParts[0] || ''
-    const lastName = nameParts.slice(1).join(' ') || ''
-
-    const authData: StoredAuth = {
-      method: 'karrio-token',
-      token,
-      user: {
-        id: 0, // GraphQL user endpoint doesn't return ID
-        email: userData.email,
-        username: userData.email,
-        first_name: firstName,
-        last_name: lastName,
-      },
+      // Registration successful - user can now sign in
+      // We intentionally do NOT store auth here to require explicit signin
+    } catch (error) {
+      console.error('JTL tenant registration error:', error)
+      throw error
     }
-
-    localStorage.setItem('auth_method', 'karrio-token')
-    localStorage.setItem('karrio_access_token', token)
-    localStorage.setItem('karrio_user', JSON.stringify(authData.user))
-    localStorage.setItem('isAuthenticated', 'true')
   }
 
   /**
-   * Store JWT-based authentication (from JTL Hub OAuth)
+   * Store authentication data
    */
-  private storeJWTAuth(data: AuthResponse): void {
+  private storeAuth(data: AuthResponse): void {
     if (typeof window === 'undefined') return
 
-    localStorage.setItem('auth_method', 'jtl-oauth')
     localStorage.setItem('karrio_access_token', data.access_token)
     localStorage.setItem('karrio_refresh_token', data.refresh_token)
     localStorage.setItem('karrio_user', JSON.stringify(data.user))
-    localStorage.setItem('karrio_org', JSON.stringify(data.org))
+    if (data.org) {
+      localStorage.setItem('karrio_org', JSON.stringify(data.org))
+    }
     localStorage.setItem('isAuthenticated', 'true')
   }
 
   /**
-   * Get authentication method
-   */
-  getAuthMethod(): AuthMethod | null {
-    if (typeof window === 'undefined') return null
-    return localStorage.getItem('auth_method') as AuthMethod | null
-  }
-
-  /**
-   * Get authorization header for API calls
+   * Get authorization header for API calls (always Bearer JWT)
    */
   getAuthHeader(): string {
     if (typeof window === 'undefined') return ''
 
-    const method = this.getAuthMethod()
     const token = localStorage.getItem('karrio_access_token')
 
     if (!token) {
       return ''
     }
 
-    // Use appropriate auth header based on method
-    switch (method) {
-      case 'karrio-token':
-        return `Token ${token}`
-      case 'jtl-oauth':
-        return `Bearer ${token}`
-      default:
-        // Fallback to Token auth for backward compatibility
-        return `Token ${token}`
-    }
+    return `Bearer ${token}`
+  }
+
+  /**
+   * Get access token
+   */
+  getAccessToken(): string | null {
+    if (typeof window === 'undefined') return null
+    return localStorage.getItem('karrio_access_token')
+  }
+
+  /**
+   * Get refresh token
+   */
+  getRefreshToken(): string | null {
+    if (typeof window === 'undefined') return null
+    return localStorage.getItem('karrio_refresh_token')
   }
 
   /**
    * Get stored authentication data
    */
-  getStoredAuth(): {
-    method: AuthMethod | null
-    accessToken: string | null
-    refreshToken: string | null
-    user: AuthResponse['user'] | null
-    org: AuthResponse['org'] | null
-  } {
-    // SSR-safe: return empty auth during server-side rendering
+  getStoredAuth(): StoredAuth | null {
+    // SSR-safe: return null during server-side rendering
     if (typeof window === 'undefined') {
-      return {
-        method: null,
-        accessToken: null,
-        refreshToken: null,
-        user: null,
-        org: null,
-      }
+      return null
     }
 
-    const method = this.getAuthMethod()
     const accessToken = localStorage.getItem('karrio_access_token')
     const refreshToken = localStorage.getItem('karrio_refresh_token')
+
+    if (!accessToken || !refreshToken) {
+      return null
+    }
 
     let user = null
     let org = null
@@ -201,17 +274,108 @@ class AuthManager {
       if (orgStr) org = JSON.parse(orgStr)
     } catch (e) {
       console.error('Error parsing stored user/org:', e)
+      return null
     }
 
-    return { method, accessToken, refreshToken, user, org }
+    if (!user) {
+      return null
+    }
+
+    return { accessToken, refreshToken, user, org }
   }
 
   /**
    * Check if user is authenticated
    */
   isAuthenticated(): boolean {
-    const { accessToken } = this.getStoredAuth()
-    return !!accessToken
+    const auth = this.getStoredAuth()
+    return !!auth?.accessToken
+  }
+
+  /**
+   * Refresh the access token using the refresh token
+   */
+  async refreshAccessToken(): Promise<string> {
+    const refreshToken = this.getRefreshToken()
+
+    if (!refreshToken) {
+      throw new Error('No refresh token available')
+    }
+
+    try {
+      const response = await fetch(`${this.apiUrl}/api/token/refresh`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ refresh: refreshToken }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to refresh token')
+      }
+
+      const result = await response.json()
+
+      if (!result.access) {
+        throw new Error('Invalid refresh response')
+      }
+
+      // Update stored access token
+      localStorage.setItem('karrio_access_token', result.access)
+
+      // Update refresh token if returned
+      if (result.refresh) {
+        localStorage.setItem('karrio_refresh_token', result.refresh)
+      }
+
+      return result.access
+    } catch (error) {
+      console.error('Token refresh error:', error)
+      // Clear auth on refresh failure
+      this.logout()
+      throw error
+    }
+  }
+
+  /**
+   * Fetch all organizations for the current user
+   */
+  async fetchOrganizations(): Promise<AuthResponse['org'][]> {
+    const accessToken = this.getAccessToken()
+    if (!accessToken) {
+      throw new Error('Not authenticated')
+    }
+
+    const response = await fetch(`${this.apiUrl}/graphql`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+        'x-test-mode': this.getTestMode().toString(),
+      },
+      body: JSON.stringify({
+        query: `{
+          organizations {
+            edges {
+              node {
+                id
+                name
+                slug
+              }
+            }
+          }
+        }`,
+      }),
+    })
+
+    const result = await response.json()
+
+    if (result.errors) {
+      throw new Error(result.errors[0]?.message || 'Failed to fetch organizations')
+    }
+
+    return result.data.organizations.edges.map((e: any) => e.node) || []
   }
 
   /**
@@ -220,20 +384,12 @@ class AuthManager {
   logout(): void {
     if (typeof window === 'undefined') return
 
-    localStorage.removeItem('auth_method')
     localStorage.removeItem('karrio_access_token')
     localStorage.removeItem('karrio_refresh_token')
     localStorage.removeItem('karrio_user')
     localStorage.removeItem('karrio_org')
+    localStorage.removeItem('karrio_test_mode')
     localStorage.removeItem('isAuthenticated')
-    localStorage.removeItem('jtl_oauth_state')
-  }
-
-  /**
-   * Verify state parameter (for JTL Hub OAuth)
-   */
-  verifyOAuthState(state: string): boolean {
-    return jtlOAuth.verifyState(state)
   }
 }
 
@@ -241,4 +397,4 @@ class AuthManager {
 export const authManager = new AuthManager()
 
 // Export types
-export type { AuthResponse, StoredAuth }
+export type { StoredAuth }

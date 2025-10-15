@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2025.5rc25`.
+    The current version is `2025.5rc26`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2025.5rc25
+  version: 2025.5rc26
 paths:
   /:
     get:
@@ -206,6 +206,37 @@ paths:
                 type: object
                 additionalProperties: {}
           description: ''
+  /jtl/tenants/onboarding:
+    post:
+      operationId: jtl$onboard_tenant
+      description: |-
+        Onboard JTL tenant and user.
+
+        Validates request payload, orchestrates onboarding process,
+        and returns JWT tokens with user/organization information.
+      summary: Onboard a JTL tenant
+      tags:
+      - JTL
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JTLOnboardingRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JTLOnboardingResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+      x-operationId: onboardJTLTenant
   /v1/addresses:
     get:
       operationId: $list
@@ -6968,6 +6999,57 @@ components:
           type: string
           nullable: true
           description: A signature image in base64 string
+    JTLOnboardingRequest:
+      type: object
+      description: Validates JTL tenant onboarding request payload.
+      properties:
+        tenantId:
+          type: string
+          description: JTL tenant UUID identifier
+        userId:
+          type: string
+          description: JTL user UUID identifier
+        email:
+          type: string
+          format: email
+          description: User email address for Karrio account
+        password:
+          type: string
+          writeOnly: true
+          description: User password for Karrio account
+      required:
+      - email
+      - password
+      - tenantId
+      - userId
+    JTLOnboardingResponse:
+      type: object
+      description: JTL tenant onboarding response with Karrio JWT tokens.
+      properties:
+        access_token:
+          type: string
+          readOnly: true
+        refresh_token:
+          type: string
+          readOnly: true
+        user:
+          allOf:
+          - $ref: '#/components/schemas/UserResponse'
+          readOnly: true
+        org:
+          allOf:
+          - $ref: '#/components/schemas/OrganizationResponse'
+          readOnly: true
+        org_user:
+          allOf:
+          - $ref: '#/components/schemas/OrganizationUserResponse'
+          readOnly: true
+      required:
+      - access_token
+      - org
+      - org_user
+      - refresh_token
+      - user
     LineItem:
       type: object
       properties:
@@ -7913,6 +7995,42 @@ components:
           type: object
           additionalProperties: {}
           description: User metadata for the shipment
+    OrganizationResponse:
+      type: object
+      description: Organization details in response.
+      properties:
+        id:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        slug:
+          type: string
+          readOnly: true
+      required:
+      - id
+      - name
+      - slug
+    OrganizationUserResponse:
+      type: object
+      description: Organization user details in response.
+      properties:
+        id:
+          type: string
+          readOnly: true
+        is_owner:
+          type: boolean
+          readOnly: true
+        roles:
+          type: array
+          items:
+            type: string
+          readOnly: true
+      required:
+      - id
+      - is_owner
+      - roles
     Parcel:
       type: object
       properties:
@@ -10754,6 +10872,24 @@ components:
       - carrier_name
       - test_mode
       - tracking_number
+    UserResponse:
+      type: object
+      description: User details in response.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+          readOnly: true
+        full_name:
+          type: string
+          readOnly: true
+      required:
+      - email
+      - full_name
+      - id
     VerifiedTokenObtainPair:
       type: object
       properties:

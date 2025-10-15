@@ -12,34 +12,38 @@ To use this settings file:
 
 import importlib
 
-# Import admin module settings
+
+if importlib.util.find_spec("karrio.server.shipping") is not None:
+    from karrio.server.settings.shipping import *
+
+
 if importlib.util.find_spec("karrio.server.admin") is not None:
-    from karrio.server.settings.admin import *  # noqa
+    from karrio.server.settings.admin import *
 
-# Import organizations module settings
+
 if importlib.util.find_spec("karrio.server.orgs") is not None:
-    from karrio.server.settings.orgs import *  # noqa
+    from karrio.server.settings.orgs import *
 
-# Import audit module settings
+
 if importlib.util.find_spec("karrio.server.audit") is not None:
-    from karrio.server.settings.audit import *  # noqa
+    from karrio.server.settings.audit import *
 
-# Import automation module settings
+
 if importlib.util.find_spec("karrio.server.automation") is not None:
-    from karrio.server.settings.automation import *  # noqa
+    from karrio.server.settings.automation import *
 
-# Import apps module settings
+
 if importlib.util.find_spec("karrio.server.apps") is not None:
-    from karrio.server.settings.apps import *  # noqa
+    from karrio.server.settings.apps import *
 
 # Import shipping module settings
 if importlib.util.find_spec("karrio.server.shipping") is not None:
-    from karrio.server.settings.shipping import *  # noqa
+    from karrio.server.settings.shipping import *
 
-# Import JTL Hub settings (must come before other modules)
+# Import JTL Hub settings (must come after other modules to avoid being overridden)
 if importlib.util.find_spec("karrio.server.jtl") is not None:
-    from karrio.server.settings.jtl import *  # noqa
+    from karrio.server.settings.jtl import *
 
 # Warning: This section needs to be last for settings extensibility
 if MULTI_TENANTS:
-    from karrio.server.settings.tenants import *  # noqa
+    from karrio.server.settings.tenants import *

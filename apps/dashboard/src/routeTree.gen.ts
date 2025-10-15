@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as ShippingMethodsRouteImport } from './routes/shipping-methods'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CarriersRouteImport } from './routes/carriers'
 import { Route as IndexRouteImport } from './routes/index'
@@ -24,6 +25,11 @@ const SigninRoute = SigninRouteImport.update({
 const ShippingMethodsRoute = ShippingMethodsRouteImport.update({
   id: '/shipping-methods',
   path: '/shipping-methods',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/carriers': typeof CarriersRoute
   '/dashboard': typeof DashboardRoute
+  '/register': typeof RegisterRoute
   '/shipping-methods': typeof ShippingMethodsRoute
   '/signin': typeof SigninRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/carriers': typeof CarriersRoute
   '/dashboard': typeof DashboardRoute
+  '/register': typeof RegisterRoute
   '/shipping-methods': typeof ShippingMethodsRoute
   '/signin': typeof SigninRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -68,6 +76,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/carriers': typeof CarriersRoute
   '/dashboard': typeof DashboardRoute
+  '/register': typeof RegisterRoute
   '/shipping-methods': typeof ShippingMethodsRoute
   '/signin': typeof SigninRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -78,6 +87,7 @@ export interface FileRouteTypes {
     | '/'
     | '/carriers'
     | '/dashboard'
+    | '/register'
     | '/shipping-methods'
     | '/signin'
     | '/auth/callback'
@@ -86,6 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/carriers'
     | '/dashboard'
+    | '/register'
     | '/shipping-methods'
     | '/signin'
     | '/auth/callback'
@@ -94,6 +105,7 @@ export interface FileRouteTypes {
     | '/'
     | '/carriers'
     | '/dashboard'
+    | '/register'
     | '/shipping-methods'
     | '/signin'
     | '/auth/callback'
@@ -103,6 +115,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CarriersRoute: typeof CarriersRoute
   DashboardRoute: typeof DashboardRoute
+  RegisterRoute: typeof RegisterRoute
   ShippingMethodsRoute: typeof ShippingMethodsRoute
   SigninRoute: typeof SigninRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
@@ -122,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/shipping-methods'
       fullPath: '/shipping-methods'
       preLoaderRoute: typeof ShippingMethodsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -159,6 +179,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CarriersRoute: CarriersRoute,
   DashboardRoute: DashboardRoute,
+  RegisterRoute: RegisterRoute,
   ShippingMethodsRoute: ShippingMethodsRoute,
   SigninRoute: SigninRoute,
   AuthCallbackRoute: AuthCallbackRoute,

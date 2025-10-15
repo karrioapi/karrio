@@ -241,18 +241,22 @@ def authenticate_user(request):
     def authenticate(request, authenticator):
         # Check if user exists and is not authenticated
         if not hasattr(request, 'user') or request.user is None or not getattr(request.user, 'is_authenticated', False):
+            logger.info(f"Trying authenticator: {authenticator}")
             auth = pydoc.locate(authenticator)().authenticate(request)
 
             if auth is not None:
                 user, token = auth
                 request.user = user
                 request.token = token
+                logger.info(f"Authentication successful with: {authenticator}")
 
         return request
 
     try:
+        logger.info(f"Auth classes to try: {AUTHENTICATION_CLASSES}")
         return functools.reduce(authenticate, AUTHENTICATION_CLASSES, request)
-    except Exception:
+    except Exception as e:
+        logger.error(f"Authentication error: {e}", exc_info=True)
         return request
 
 

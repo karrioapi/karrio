@@ -154,18 +154,50 @@ jobs:
             docker pull ghcr.io/${{ github.repository_owner }}/shipping-platform-dashboard:${{ steps.get_version.outputs.version }}
             ```
 
-            ## Docker Compose
+            ## Upgrade Instructions
+
+            ### Automated Upgrade (Recommended)
+
+            Navigate to your deployment directory and run:
+            ```bash
+            ./bin/upgrade-jtl
+            ```
+
+            The upgrade script will:
+            - Check for required environment variables (JWT_SECRET, VITE_KARRIO_TEST_MODE)
+            - Prompt for any missing configuration
+            - Clean up deprecated variables
+            - Pull latest images
+            - Restart services
+
+            ### Manual Upgrade
 
             Update your `.env` file:
-            ```
+            ```bash
             JTL_TAG=${{ steps.get_version.outputs.version }}
             ```
 
-            Then run:
+            Ensure required variables exist:
+            ```bash
+            # Generate JWT_SECRET if missing
+            JWT_SECRET=$(head -c 28 /dev/urandom | sha224sum -b | head -c 56)
+
+            # Set dashboard test mode (false for production, true for testing)
+            VITE_KARRIO_TEST_MODE=false
             ```
+
+            Then upgrade:
+            ```bash
             docker compose pull
+            docker compose stop
             docker compose up -d
             ```
+
+            ## Documentation
+
+            - [Full Deployment Guide](https://github.com/${{ github.repository }}/blob/main/DEPLOYMENT.md)
+            - [Installation Script](https://github.com/${{ github.repository }}/blob/main/bin/install-jtl)
+            - [Upgrade Script](https://github.com/${{ github.repository }}/blob/main/bin/upgrade-jtl)
           draft: false
           prerelease: false
         env:

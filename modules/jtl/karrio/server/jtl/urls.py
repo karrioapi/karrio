@@ -3,10 +3,10 @@ URL routing for JTL Hub integration.
 """
 
 from django.urls import path
-from .views import JTLCallbackView
+from .views import JTLTenantOnboardingView
 
 app_name = 'karrio.server.jtl'
 
 urlpatterns = [
-    path('auth/jtl/callback', JTLCallbackView.as_view(), name='jtl-callback'),
+    path("jtl/tenants/onboarding", JTLTenantOnboardingView.as_view(), name="jtl-onboarding"),
 ]

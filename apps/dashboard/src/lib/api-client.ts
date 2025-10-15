@@ -1,9 +1,8 @@
 /**
  * API Client
  *
- * Automatically uses the correct authentication method:
- * - Token: "Token KARRIO_API_KEY" (for Karrio API token auth)
- * - Bearer: "Bearer JWT_TOKEN" (for JTL Hub OAuth)
+ * Automatically uses Bearer JWT authentication for all API requests:
+ * - Authorization: "Bearer JWT_TOKEN"
  */
 
 import { authManager } from './auth'
@@ -20,11 +19,12 @@ class ApiClient {
   }
 
   /**
-   * Make authenticated API request
+   * Make authenticated API request with automatic token refresh
    */
   async request<T = any>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
+    retryCount = 0
   ): Promise<T> {
     const authHeader = authManager.getAuthHeader()
 
@@ -36,17 +36,45 @@ class ApiClient {
       ? endpoint
       : `${this.baseUrl}${endpoint}`
 
+    // Build headers with Karrio-specific headers
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      Authorization: authHeader,
+      'x-test-mode': authManager.getTestMode().toString(),
+    }
+
+    // Add x-org-id header if an organization is selected
+    const orgId = authManager.getCurrentOrgId()
+    if (orgId) {
+      headers['x-org-id'] = orgId
+    }
+
     const response = await fetch(url, {
       ...options,
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: authHeader,
+        ...headers,
         ...options.headers,
       },
     })
 
+    // Handle 401 Unauthorized with token refresh
+    if (response.status === 401 && retryCount === 0) {
+      try {
+        // Try to refresh the token
+        await authManager.refreshAccessToken()
+
+        // Retry the request with the new token
+        return this.request<T>(endpoint, options, retryCount + 1)
+      } catch (error) {
+        // Refresh failed - clear auth and redirect to login
+        authManager.logout()
+        window.location.href = '/signin'
+        throw new Error('Session expired. Please sign in again.')
+      }
+    }
+
     if (response.status === 401) {
-      // Unauthorized - clear auth and redirect to login
+      // Already retried - clear auth and redirect
       authManager.logout()
       window.location.href = '/signin'
       throw new Error('Unauthorized')
@@ -135,6 +163,4 @@ export { ApiClient }
 // // POST request
 // const shipment = await apiClient.post('/api/v1/shipments', { data: {...} })
 //
-// The client automatically uses:
-// - "Token xxx" header for Karrio API token auth
-// - "Bearer xxx" header for JTL Hub OAuth
+// The client automatically includes Bearer JWT authentication header

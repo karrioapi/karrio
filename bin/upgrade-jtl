@@ -164,6 +164,51 @@ if grep -q "^JTL_CLIENT_ID=" ".env" && ! grep -q "^JTL_HUB_CLIENT_ID=" ".env"; t
 fi
 
 # ========================================
+# Ensure JWT_SECRET exists
+# ========================================
+echo "✅ Checking JWT configuration..."
+if ! grep -q "^JWT_SECRET=" ".env"; then
+    echo ""
+    echo "⚠️  JWT_SECRET not found in your .env file."
+    echo "This is required for JTL JWT authentication."
+    echo ""
+    read -r -p "Would you like to generate a new JWT_SECRET? [y/N] " response
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
+        JWT_SECRET=$(head -c 28 /dev/urandom | sha224sum -b | head -c 56)
+        add_or_update_env "JWT_SECRET" "$JWT_SECRET"
+        echo "  ✓ Generated and added JWT_SECRET"
+        echo ""
+        echo "⚠️  IMPORTANT: Share this JWT_SECRET with JTL WAWI for authentication"
+        echo "JWT_SECRET=$JWT_SECRET"
+        echo ""
+    else
+        echo "  ⚠️  Skipping JWT_SECRET generation."
+        echo "  Please add JWT_SECRET manually to your .env file later."
+    fi
+fi
+
+# ========================================
+# Ensure Dashboard Test Mode Configuration
+# ========================================
+echo "✅ Checking dashboard test mode configuration..."
+if ! grep -q "^VITE_KARRIO_TEST_MODE=" ".env"; then
+    echo ""
+    echo "Configure default test mode for the dashboard:"
+    echo "  • 'true'  = API requests default to test mode (recommended for testing)"
+    echo "  • 'false' = API requests default to live mode (recommended for production)"
+    echo ""
+    read -r -p "Enable test mode by default? [y/N] " response
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
+        add_or_update_env "VITE_KARRIO_TEST_MODE" "true"
+        echo "  ✓ Test mode enabled by default"
+    else
+        add_or_update_env "VITE_KARRIO_TEST_MODE" "false"
+        echo "  ✓ Live mode enabled by default"
+    fi
+    echo ""
+fi
+
+# ========================================
 # Ensure JTL Hub OAuth Configuration
 # ========================================
 echo "✅ Checking JTL Hub OAuth configuration..."
