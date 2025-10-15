@@ -3,7 +3,7 @@ import { useAppMode } from "@karrio/hooks/app-mode";
 import Link, { LinkProps } from "next/link";
 import { p } from "@karrio/lib";
 import React from "react";
-import { useSidebar } from "@karrio/ui/components/ui/sidebar";
+import { SidebarContext } from "@karrio/ui/components/ui/sidebar";
 
 interface AppLinkProps extends LinkProps<HTMLElement> {
   href: string;
@@ -24,11 +24,14 @@ export const AppLink = ({
   ...props
 }: AppLinkProps): JSX.Element => {
   const { basePath } = useAppMode();
-  const { setOpenMobile } = useSidebar();
+  // Optionally use sidebar context - don't throw error if not available
+  const sidebarContext = React.useContext(SidebarContext);
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    // Close mobile sidebar on navigation
-    setOpenMobile(false);
+    // Close mobile sidebar on navigation if sidebar context is available
+    if (sidebarContext) {
+      sidebarContext.setOpenMobile(false);
+    }
 
     // Call the original onClick if provided
     onClick?.(e);
