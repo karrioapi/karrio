@@ -15,7 +15,7 @@ import { useOrganizationInvitation, useOrganizationMutation } from "@karrio/hook
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { createContext, useContext, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 
 interface AcceptInvitationDialogContextType {
   acceptInvitation: () => void;
@@ -48,8 +48,12 @@ const AcceptInvitationDialog: React.FC<{ close: () => void }> = ({ close }) => {
   const searchParams = useSearchParams();
   const guid = searchParams.get('token') as string;
   const { toast } = useToast();
-  const { data: { invitation } = {}, isLoading, isError } = useOrganizationInvitation(guid) as any;
+  const { query } = useOrganizationInvitation(guid);
+  const invitation = (query.data as any)?.organization_invitation;
+  const isLoading = query.isLoading;
+  const isError = query.isError;
   const { acceptInvitation: mutation } = useOrganizationMutation() as any;
+  const { status } = useSession();
   const [fullName, setFullName] = useState("");
   const [password, setPassword] = useState("");
 
@@ -60,6 +64,13 @@ const AcceptInvitationDialog: React.FC<{ close: () => void }> = ({ close }) => {
       setFullName(nameFromEmail);
     }
   }, [invitation]);
+
+  // Auto-close the dialog if the user is already authenticated; acceptance is handled inline on the page
+  useEffect(() => {
+    if (status === "authenticated") {
+      close();
+    }
+  }, [status, close]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,7 +123,7 @@ const AcceptInvitationDialog: React.FC<{ close: () => void }> = ({ close }) => {
 
         {isLoading && <p>Loading invitation details...</p>}
 
-        {!isLoading && !isError && invitation && (
+        {!isLoading && !isError && invitation && status !== "authenticated" && (
           <form onSubmit={handleSubmit} className="space-y-4">
             <p>You have been invited by <strong>{invitation.inviter_name}</strong> to join <strong>{invitation.organization_name}</strong>.</p>
             <p>Accept the invitation for <strong>{invitation.invitee_identifier}</strong> by setting up your account below.</p>
@@ -154,12 +165,12 @@ const AcceptInvitationDialog: React.FC<{ close: () => void }> = ({ close }) => {
               </Button>
             </DialogFooter>
           </form>
-        )}
-      </DialogContent>
+        )
+        }
+      </DialogContent >
     </Dialog >
   );
 }
-
 
 export function useAcceptInvitationDialog() {
   return useContext(AcceptInvitationDialogContext);
