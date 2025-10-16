@@ -12,7 +12,6 @@ import {
   useOrganizations,
 } from "@karrio/hooks/organization";
 import { useCreateOrganizationDialog } from "@karrio/ui/components/create-organization-dialog";
-import { useAcceptInvitationDialog } from "@karrio/ui/components/accept-invitation-dialog";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useAPIToken } from "@karrio/hooks/api-token";
@@ -44,9 +43,7 @@ export function TeamSwitcher() {
   const mutation = useOrganizationMutation();
   const { setLoading } = useLoader();
   const { organizations, organization } = useOrganizations();
-  const { acceptInvitation } = useAcceptInvitationDialog();
   const { createOrganization } = useCreateOrganizationDialog();
-  const [initialized, setInitialized] = React.useState<boolean>(false);
   const [open, setOpen] = React.useState(false);
 
   const user = userQuery.data?.user;
@@ -87,15 +84,7 @@ export function TeamSwitcher() {
     });
   };
 
-  React.useEffect(() => {
-    if (!initialized && !isNoneOrEmpty(searchParams.get("accept_invitation"))) {
-      acceptInvitation();
-      setInitialized(true);
-    }
-    if (searchParams && isNoneOrEmpty(searchParams.get("accept_invitation"))) {
-      setInitialized(true);
-    }
-  }, [initialized, searchParams, acceptInvitation, mutation]);
+  // Note: Invite acceptance is now handled inline on /accept-invite
 
   // Placeholder skeleton animation for loading states
   const renderPlaceholder = () => (
