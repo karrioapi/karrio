@@ -6,8 +6,9 @@ export NODE_ENV=${NODE_ENV:-production}
 export PORT=${DASHBOARD_PORT}
 export HOST=0.0.0.0
 
-# TanStack Start / Vite environment variables (must be set at build time, but also runtime for SSR)
+# TanStack Start / Vite environment variables (for SSR and runtime API config)
 export VITE_KARRIO_API=${VITE_KARRIO_API:-${KARRIO_PUBLIC_URL:-"http://localhost:5002"}}
+export VITE_KARRIO_TEST_MODE=${VITE_KARRIO_TEST_MODE:-false}
 export VITE_KARRIO_OAUTH_CLIENT_ID=${VITE_KARRIO_OAUTH_CLIENT_ID:-${OAUTH_CLIENT_ID}}
 export VITE_KARRIO_OAUTH_CLIENT_SECRET=${VITE_KARRIO_OAUTH_CLIENT_SECRET:-${OAUTH_CLIENT_SECRET}}
 export VITE_KARRIO_OAUTH_REDIRECT_URI=${VITE_KARRIO_OAUTH_REDIRECT_URI:-"${DASHBOARD_URL}/auth/callback"}
@@ -16,6 +17,10 @@ export VITE_KARRIO_OAUTH_REDIRECT_URI=${VITE_KARRIO_OAUTH_REDIRECT_URI:-"${DASHB
 export VITE_JTL_CLIENT_ID=${VITE_JTL_CLIENT_ID:-${JTL_CLIENT_ID}}
 export VITE_JTL_CLIENT_SECRET=${VITE_JTL_CLIENT_SECRET:-${JTL_CLIENT_SECRET}}
 
+# Additional environment variables for runtime configuration
+export KARRIO_PUBLIC_URL=${KARRIO_PUBLIC_URL:-${VITE_KARRIO_API:-"http://localhost:5002"}}
+export DASHBOARD_URL=${DASHBOARD_URL:-"http://localhost:3102"}
+
 # Start services
 set -e
 
@@ -23,7 +28,21 @@ echo "Starting JTL Shipping Platform Dashboard..."
 echo "DASHBOARD_PORT: $DASHBOARD_PORT"
 echo "HOST: $HOST"
 echo "VITE_KARRIO_API: $VITE_KARRIO_API"
+echo "KARRIO_PUBLIC_URL: $KARRIO_PUBLIC_URL"
+echo "DASHBOARD_URL: $DASHBOARD_URL"
 echo "NODE_ENV: $NODE_ENV"
+
+# Optional: Replace placeholders in built files (for environments that need it)
+# This supports the "build once, run anywhere" pattern
+if [ -n "$APP_PREFIX" ] && [ -n "$ASSET_DIR" ]; then
+    echo "Replacing runtime placeholders..."
+    
+    # Find all JS files and replace placeholders
+    find "${ASSET_DIR}" -name "*.js" -type f -exec sed -i "s|${APP_PREFIX}KARRIO_API|${VITE_KARRIO_API}|g" {} \;
+    find "${ASSET_DIR}" -name "*.js" -type f -exec sed -i "s|${APP_PREFIX}KARRIO_TEST_MODE|${VITE_KARRIO_TEST_MODE}|g" {} \;
+    
+    echo "Placeholder replacement completed"
+fi
 
 # Start the TanStack Start production server
 exec node server-entry.mjs

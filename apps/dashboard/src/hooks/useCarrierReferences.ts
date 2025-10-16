@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
+import { getRuntimeConfig } from '@/lib/runtime-config'
 
 export interface CarrierReferences {
   carriers: Record<string, string> // carrier_id -> display_name
@@ -32,8 +33,9 @@ export function useCarrierReferences() {
   return useQuery({
     queryKey: ['references'],
     queryFn: async (): Promise<CarrierReferences> => {
+      const config = await getRuntimeConfig()
       const response = await axios.get<CarrierReferences>(
-        'http://localhost:5002/v1/references?reduced=false'
+        `${config.KARRIO_API_URL}/v1/references?reduced=false`
       )
       return response.data
     },
@@ -48,8 +50,9 @@ export function useCarrierMetadata() {
   return useQuery({
     queryKey: ['carriers'],
     queryFn: async (): Promise<CarrierMetadata[]> => {
+      const config = await getRuntimeConfig()
       const response = await axios.get<CarrierMetadata[]>(
-        'http://localhost:5002/v1/carriers'
+        `${config.KARRIO_API_URL}/v1/carriers`
       )
       return response.data
     },

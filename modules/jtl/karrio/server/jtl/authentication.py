@@ -87,7 +87,6 @@ class JTLJWTAuthentication(BaseAuthentication):
     }
     """
 
-    @catch_auth_exception
     def authenticate(self, request):
         """Authenticate using JTL JWT token."""
         auth_header = request.META.get('HTTP_AUTHORIZATION', '')
@@ -101,7 +100,12 @@ class JTLJWTAuthentication(BaseAuthentication):
         logger.info(f"Processing JTL JWT token: {token[:20]}...")
 
         try:
-            # Validate JWT with HS256 symmetric key
+            # First, check if this is likely a JTL token before full validation
+            if not self.is_jtl_token(token):
+                logger.info("Token is not a JTL token, skipping")
+                return None
+
+            # Validate JWT with HS256 symmetric key (only for JTL tokens)
             payload = self.validate_token(token)
 
             # Get user and organization (must exist from onboarding)
@@ -134,7 +138,49 @@ class JTLJWTAuthentication(BaseAuthentication):
             raise AuthenticationFailed(f'Invalid token: {str(e)}')
         except Exception as e:
             logger.error(f"JTL authentication error: {e}", exc_info=True)
+            # For JTL tokens that fail validation, still raise an exception
+            # But for non-JTL tokens, we should have returned None earlier
             raise AuthenticationFailed('Authentication failed')
+
+    def is_jtl_token(self, token):
+        """
+        Check if a JWT token is intended for JTL authentication without full validation.
+        
+        This method safely decodes the token payload to check for JTL-specific fields
+        or issuer without validating the signature or expiration.
+        
+        Returns True if this looks like a JTL token, False otherwise.
+        """
+        try:
+            # Decode without verification to peek at the payload
+            payload = jwt.decode(
+                token,
+                options={
+                    "verify_signature": False,
+                    "verify_exp": False,
+                    "verify_aud": False,
+                    "verify_iss": False
+                }
+            )
+            
+            # Check for JTL-specific indicators
+            # JTL tokens should have both tenantId and userId, and optionally issuer
+            has_tenant_id = 'tenantId' in payload
+            has_user_id = 'userId' in payload
+            has_jtl_issuer = payload.get('iss') == 'jtl-wawi-api'
+            
+            # Consider it a JTL token if it has JTL fields OR JTL issuer
+            is_jtl = has_jtl_issuer or (has_tenant_id and has_user_id)
+            
+            if is_jtl:
+                logger.info(f"Detected JTL token with tenantId: {has_tenant_id}, userId: {has_user_id}, issuer: {payload.get('iss', 'none')}")
+            
+            return is_jtl
+            
+        except Exception as e:
+            # If we can't decode the token at all, it's probably not valid JWT
+            logger.debug(f"Could not decode token for JTL check: {e}")
+            return False
 
     def validate_token(self, token):
         """

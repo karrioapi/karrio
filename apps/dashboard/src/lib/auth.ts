@@ -4,6 +4,8 @@
  * Handles email/password authentication with JWT tokens
  */
 
+import { getRuntimeConfig, getRuntimeConfigSync } from './runtime-config'
+
 export type AuthResponse = {
   access_token: string
   refresh_token: string
@@ -30,10 +32,48 @@ interface StoredAuth {
 }
 
 class AuthManager {
-  private apiUrl: string
+  private apiUrl: string | null = null
+  private initialized = false
 
   constructor() {
+    // Initialize with build-time fallback
     this.apiUrl = import.meta.env.VITE_KARRIO_API || 'http://localhost:5002'
+  }
+
+  /**
+   * Initialize the auth manager with runtime configuration
+   */
+  async initialize(): Promise<void> {
+    if (this.initialized) return
+    
+    try {
+      const config = await getRuntimeConfig()
+      this.apiUrl = config.KARRIO_API_URL
+      this.initialized = true
+    } catch (error) {
+      console.warn('Failed to initialize auth with runtime config, using fallback:', error)
+      // Keep the fallback apiUrl from constructor
+      this.initialized = true
+    }
+  }
+
+  /**
+   * Get the API URL, ensuring initialization
+   */
+  private async getApiUrl(): Promise<string> {
+    if (!this.initialized) {
+      await this.initialize()
+    }
+    
+    // Try to get updated config if available (for client-side updates)
+    if (typeof window !== 'undefined') {
+      const cachedConfig = getRuntimeConfigSync()
+      if (cachedConfig) {
+        this.apiUrl = cachedConfig.KARRIO_API_URL
+      }
+    }
+    
+    return this.apiUrl!
   }
 
   /**
@@ -49,7 +89,13 @@ class AuthManager {
       return testMode === 'true'
     }
 
-    // Otherwise, use the default from environment variable
+    // Otherwise, use the default from runtime config or environment variable
+    const cachedConfig = getRuntimeConfigSync()
+    if (cachedConfig) {
+      return cachedConfig.KARRIO_TEST_MODE
+    }
+
+    // Final fallback to build-time environment variable
     const defaultTestMode = import.meta.env.VITE_KARRIO_TEST_MODE
     return defaultTestMode === 'true'
   }
@@ -94,8 +140,9 @@ class AuthManager {
    */
   async loginWithEmailPassword(email: string, password: string): Promise<void> {
     try {
+      const apiUrl = await this.getApiUrl()
       // Authenticate with Karrio API
-      const response = await fetch(`${this.apiUrl}/api/token`, {
+      const response = await fetch(`${apiUrl}/api/token`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -115,7 +162,7 @@ class AuthManager {
       }
 
       // Fetch user info using the access token
-      const userResponse = await fetch(`${this.apiUrl}/graphql`, {
+      const userResponse = await fetch(`${apiUrl}/graphql`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -180,8 +227,9 @@ class AuthManager {
     password: string
   }): Promise<void> {
     try {
+      const apiUrl = await this.getApiUrl()
       // Call the JTL onboarding API
-      const response = await fetch(`${this.apiUrl}/jtl/tenants/onboarding`, {
+      const response = await fetch(`${apiUrl}/jtl/tenants/onboarding`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -303,7 +351,8 @@ class AuthManager {
     }
 
     try {
-      const response = await fetch(`${this.apiUrl}/api/token/refresh`, {
+      const apiUrl = await this.getApiUrl()
+      const response = await fetch(`${apiUrl}/api/token/refresh`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -347,7 +396,8 @@ class AuthManager {
       throw new Error('Not authenticated')
     }
 
-    const response = await fetch(`${this.apiUrl}/graphql`, {
+    const apiUrl = await this.getApiUrl()
+    const response = await fetch(`${apiUrl}/graphql`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

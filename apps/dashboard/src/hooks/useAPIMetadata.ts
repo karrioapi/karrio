@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { authManager } from '@/lib/auth'
+import { getRuntimeConfig } from '@/lib/runtime-config'
 
 export interface References {
   carriers: Record<string, string>
@@ -15,11 +16,10 @@ export interface References {
 }
 
 export function useAPIMetadata() {
-  const apiUrl = import.meta.env.VITE_KARRIO_API_URL || 'http://localhost:5002'
-
   const query = useQuery({
     queryKey: ['api-metadata'],
     queryFn: async (): Promise<References> => {
+      const config = await getRuntimeConfig()
       const authHeader = authManager.getAuthHeader()
 
       // Build headers with Karrio-specific headers
@@ -34,7 +34,7 @@ export function useAPIMetadata() {
         headers['x-org-id'] = orgId
       }
 
-      const response = await fetch(`${apiUrl}/v1/references?reduced=false`, {
+      const response = await fetch(`${config.KARRIO_API_URL}/v1/references?reduced=false`, {
         headers,
       })
 

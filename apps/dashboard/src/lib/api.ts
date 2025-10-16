@@ -1,4 +1,5 @@
 import { authManager } from './auth'
+import { getRuntimeConfig, getRuntimeConfigSync } from './runtime-config'
 
 export interface ApiRequestConfig {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
@@ -7,10 +8,48 @@ export interface ApiRequestConfig {
 }
 
 class KarrioAPI {
-  private baseUrl: string
+  private baseUrl: string | null = null
+  private initialized = false
 
   constructor() {
-    this.baseUrl = import.meta.env.VITE_KARRIO_API
+    // Initialize with build-time fallback
+    this.baseUrl = import.meta.env.VITE_KARRIO_API || 'http://localhost:5002'
+  }
+
+  /**
+   * Initialize the API with runtime configuration
+   */
+  async initialize(): Promise<void> {
+    if (this.initialized) return
+    
+    try {
+      const config = await getRuntimeConfig()
+      this.baseUrl = config.KARRIO_API_URL
+      this.initialized = true
+    } catch (error) {
+      console.warn('Failed to initialize API with runtime config, using fallback:', error)
+      // Keep the fallback baseUrl from constructor
+      this.initialized = true
+    }
+  }
+
+  /**
+   * Get the base URL, ensuring initialization
+   */
+  private async getBaseUrl(): Promise<string> {
+    if (!this.initialized) {
+      await this.initialize()
+    }
+    
+    // Try to get updated config if available (for client-side updates)
+    if (typeof window !== 'undefined') {
+      const cachedConfig = getRuntimeConfigSync()
+      if (cachedConfig) {
+        this.baseUrl = cachedConfig.KARRIO_API_URL
+      }
+    }
+    
+    return this.baseUrl!
   }
 
   private getAuthHeaders(): Record<string, string> {
@@ -39,8 +78,9 @@ class KarrioAPI {
   ): Promise<T> {
     const { method = 'GET', body } = config
     const headers = this.getAuthHeaders()
+    const baseUrl = await this.getBaseUrl()
 
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+    const response = await fetch(`${baseUrl}${endpoint}`, {
       method,
       headers: {
         ...headers,

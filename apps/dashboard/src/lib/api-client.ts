@@ -6,16 +6,47 @@
  */
 
 import { authManager } from './auth'
+import { getRuntimeConfig } from './runtime-config'
 
 interface ApiClientConfig {
   baseUrl?: string
 }
 
 class ApiClient {
-  private baseUrl: string
+  private baseUrl: string | null = null
+  private initialized = false
 
   constructor(config: ApiClientConfig = {}) {
+    // Initialize with build-time fallback or provided config
     this.baseUrl = config.baseUrl || import.meta.env.VITE_KARRIO_API || 'http://localhost:5002'
+  }
+
+  /**
+   * Initialize the API client with runtime configuration
+   */
+  async initialize(): Promise<void> {
+    if (this.initialized) return
+    
+    try {
+      const config = await getRuntimeConfig()
+      this.baseUrl = config.KARRIO_API_URL
+      this.initialized = true
+    } catch (error) {
+      console.warn('Failed to initialize API client with runtime config, using fallback:', error)
+      // Keep the fallback baseUrl from constructor
+      this.initialized = true
+    }
+  }
+
+  /**
+   * Get the base URL, ensuring initialization
+   */
+  private async getBaseUrl(): Promise<string> {
+    if (!this.initialized) {
+      await this.initialize()
+    }
+    
+    return this.baseUrl!
   }
 
   /**
@@ -32,9 +63,10 @@ class ApiClient {
       throw new Error('Not authenticated')
     }
 
+    const baseUrl = await this.getBaseUrl()
     const url = endpoint.startsWith('http')
       ? endpoint
-      : `${this.baseUrl}${endpoint}`
+      : `${baseUrl}${endpoint}`
 
     // Build headers with Karrio-specific headers
     const headers: Record<string, string> = {

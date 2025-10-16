@@ -94,9 +94,16 @@ services:
       DASHBOARD_URL: ${DASHBOARD_URL:-http://localhost:3102}
       KARRIO_PUBLIC_URL: ${KARRIO_PUBLIC_URL:-http://localhost:5002}
       KARRIO_URL: http://api:${JTL_HTTP_PORT:-5002}
-      # Vite environment variables
+      # Vite environment variables (for SSR and runtime config)
       VITE_KARRIO_API: ${KARRIO_PUBLIC_URL:-http://localhost:5002}
       VITE_KARRIO_TEST_MODE: ${VITE_KARRIO_TEST_MODE:-true}
+      # OAuth configuration
+      VITE_KARRIO_OAUTH_CLIENT_ID: ${OAUTH_CLIENT_ID}
+      VITE_KARRIO_OAUTH_CLIENT_SECRET: ${OAUTH_CLIENT_SECRET}
+      VITE_KARRIO_OAUTH_REDIRECT_URI: ${DASHBOARD_URL:-http://localhost:3102}/auth/callback
+      # JTL configuration
+      VITE_JTL_CLIENT_ID: ${JTL_CLIENT_ID}
+      VITE_JTL_CLIENT_SECRET: ${JTL_CLIENT_SECRET}
 
   maildev:
     container_name: jtl.mail

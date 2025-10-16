@@ -55,6 +55,23 @@ const httpServer = createServer(async (req, res) => {
   try {
     const url = new URL(req.url, `http://${req.headers.host}`)
 
+    // Handle runtime config endpoint
+    if (url.pathname === '/api/config' && req.method === 'GET') {
+      const config = {
+        KARRIO_API_URL: process.env.VITE_KARRIO_API || process.env.KARRIO_PUBLIC_URL || 'http://localhost:5002',
+        KARRIO_TEST_MODE: process.env.VITE_KARRIO_TEST_MODE === 'true',
+        OAUTH_CLIENT_ID: process.env.VITE_KARRIO_OAUTH_CLIENT_ID || process.env.OAUTH_CLIENT_ID,
+        OAUTH_REDIRECT_URI: process.env.VITE_KARRIO_OAUTH_REDIRECT_URI || `${process.env.DASHBOARD_URL || 'http://localhost:3102'}/auth/callback`,
+        JTL_CLIENT_ID: process.env.VITE_JTL_CLIENT_ID || process.env.JTL_CLIENT_ID,
+      }
+
+      res.statusCode = 200
+      res.setHeader('Content-Type', 'application/json')
+      res.setHeader('Cache-Control', 'public, max-age=300') // Cache for 5 minutes
+      res.end(JSON.stringify(config))
+      return
+    }
+
     // Try to serve static assets first
     if (url.pathname.startsWith('/assets/') ||
         url.pathname.startsWith('/carriers/') ||
