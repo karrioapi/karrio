@@ -24,6 +24,12 @@ AUTHENTICATION_CLASSES = [
     "karrio.server.jtl.authentication.JTLJWTAuthentication",
     *AUTHENTICATION_CLASSES,
 ]
+
+# Also update REST framework authentication classes
+REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"] = [
+    "karrio.server.jtl.authentication.JTLJWTAuthentication",
+    *REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"],
+]
 KARRIO_URLS += ["karrio.server.jtl.urls"]
 INSTALLED_APPS += ["karrio.server.jtl"]
 
