@@ -361,14 +361,14 @@ export function useOrganizationInvitation(guid?: string) {
   });
 
   // Mutations
-  const acceptInvitation = useMutation(
-    (data: { guid: string }) =>
+  const acceptInvitation = useAuthenticatedMutation({
+    mutationFn: (data: { guid: string; full_name?: string; password?: string }) =>
       karrio.graphql.request<accept_organization_invitation>(
         gqlstr(ACCEPT_ORGANIZATION_INVITATION),
         { data },
       ),
-    { onSuccess: invalidateCache },
-  );
+    onSuccess: invalidateCache,
+  });
 
   return {
     query,

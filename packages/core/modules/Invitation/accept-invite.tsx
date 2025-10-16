@@ -1,25 +1,28 @@
 "use client";
 import { useOrganizationInvitation } from "@karrio/hooks/organization";
+import { Button } from "@karrio/ui/components/ui/button";
 import { Spinner } from "@karrio/ui/core/components/spinner";
 import { Card, CardContent } from "@karrio/ui/components/ui/card";
 import { Alert, AlertDescription } from "@karrio/ui/components/ui/alert";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useSession } from "next-auth/react";
-import React, { Suspense, useEffect } from "react";
+import { useSession, getSession } from "next-auth/react";
+import { useToast } from "@karrio/ui/hooks/use-toast";
+import { useKarrio } from "@karrio/hooks/karrio";
+import React, { Suspense, useEffect, useState } from "react";
 import { isNone } from "@karrio/lib";
 import Link from "next/link";
 
 // Inner component that uses useSearchParams
 function AcceptInvitePage() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
+  const karrio = useKarrio();
+  const { toast } = useToast();
   const {
     query: { data: { organization_invitation } = {}, ...query },
   } = useOrganizationInvitation(token as string);
-  const { toast } = useToast();
-  const karrio = useKarrio();
   const [isAccepting, setIsAccepting] = useState(false);
 
   useEffect(() => {
@@ -47,14 +50,14 @@ function AcceptInvitePage() {
       setTimeout(
         () =>
           router.push(
-            `/signin?email=${invite?.invitee?.email}&next=/?accept_invitation=${token}`,
+            `/signin?email=${encodeURIComponent(invite?.invitee?.email || "")}\u0026next=${encodeURIComponent(`/accept-invite?token=${token}`)}`,
           ),
         500,
       );
       return;
     }
     // If there is an active session, stay on this page; we'll render Accept/Decline inline
-    if (status === "authenticated" && invite) {
+    if (called && !isNone(session) && invite) {
       return;
     }
   }, [status, session, organization_invitation, token, router, query.isFetched]);
@@ -74,20 +77,11 @@ function AcceptInvitePage() {
               </Alert>
             )}
 
-            {/* Show redirect messages when unauthenticated before navigation */}
-            {query.isFetched && status === "unauthenticated" && organization_invitation && (
-              <p>
-                {organization_invitation.invitee
-                  ? "Redirecting to sign in..."
-                  : "Redirecting to sign up..."}
-              </p>
-            )}
-
             {!isNone(session) && organization_invitation && (
               <div className="space-y-4">
                 <p>
-                  You have been invited to join <strong>{organization_invitation.organization_name}</strong>{" "}
-                  as <strong>{organization_invitation.invitee_identifier}</strong>.
+                  You have been invited to join <strong>{organization_invitation.organization_name}</strong>
+                  {" "}as <strong>{organization_invitation.invitee_identifier}</strong>.
                 </p>
                 {(() => {
                   const inviteeEmail = organization_invitation?.invitee?.email as string | undefined;
