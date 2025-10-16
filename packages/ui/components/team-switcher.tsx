@@ -5,7 +5,7 @@ import { ChevronsUpDown, Plus, Building, Settings, LogOut, User } from "lucide-r
 import { useAppMode } from "@karrio/hooks/app-mode"
 import { useUser } from "@karrio/hooks/user"
 import { signOut } from "next-auth/react"
-import Link from "next/link"
+import { AppLink } from "@karrio/ui/core/components/app-link"
 import {
   OrganizationType,
   useOrganizationMutation,
@@ -164,26 +164,26 @@ export function TeamSwitcher() {
               <div className="p-0">
                 {/* Settings */}
                 <div className="p-3 border-b">
-                  <Link
+                  <AppLink
                     href="/settings"
                     className="w-full flex items-center gap-3 px-3 py-2 text-sm text-left rounded-md hover:bg-muted transition-colors"
                     onClick={() => setOpen(false)}
                   >
                     <Settings className="size-4 text-muted-foreground" />
                     <span>Settings</span>
-                  </Link>
+                  </AppLink>
                 </div>
 
                 {/* User Section */}
                 <div className="p-3">
-                  <Link
+                  <AppLink
                     href="/settings/profile"
                     className="w-full flex items-center gap-3 px-3 py-2 text-sm text-left rounded-md hover:bg-muted transition-colors"
                     onClick={() => setOpen(false)}
                   >
                     <User className="size-4 text-muted-foreground" />
                     <span>{user?.full_name || user?.email || "Profile"}</span>
-                  </Link>
+                  </AppLink>
                   <button
                     onClick={() => {
                       setOpen(false);
@@ -254,14 +254,14 @@ export function TeamSwitcher() {
 
                 {/* Settings */}
                 <div className="p-3 border-b">
-                  <Link
+                  <AppLink
                     href="/settings"
                     className="w-full flex items-center gap-3 px-3 py-2 text-sm text-left rounded-md hover:bg-muted transition-colors"
                     onClick={() => setOpen(false)}
                   >
                     <Settings className="size-4 text-muted-foreground" />
                     <span>Settings</span>
-                  </Link>
+                  </AppLink>
                 </div>
 
                 {/* Organizations */}
@@ -297,14 +297,14 @@ export function TeamSwitcher() {
 
                 {/* User Section */}
                 <div className="p-3">
-                  <Link
+                  <AppLink
                     href="/settings/profile"
                     className="w-full flex items-center gap-3 px-3 py-2 text-sm text-left rounded-md hover:bg-muted transition-colors"
                     onClick={() => setOpen(false)}
                   >
                     <User className="size-4 text-muted-foreground" />
                     <span>{user?.full_name || user?.email || "Profile"}</span>
-                  </Link>
+                  </AppLink>
                   <button
                     onClick={() => {
                       setOpen(false);
