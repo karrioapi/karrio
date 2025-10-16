@@ -48,14 +48,14 @@ const AcceptInvitationDialog: React.FC<{ close: () => void }> = ({ close }) => {
   const searchParams = useSearchParams();
   const guid = searchParams.get('token') as string;
   const { toast } = useToast();
-  const { query, acceptInvitation } = useOrganizationInvitation(guid);
+  const { query } = useOrganizationInvitation(guid);
   const invitation = (query.data as any)?.organization_invitation;
   const isLoading = query.isLoading;
   const isError = query.isError;
-  const { data: session, status } = useSession();
+  const { acceptInvitation: mutation } = useOrganizationMutation() as any;
+  const { status } = useSession();
   const [fullName, setFullName] = useState("");
   const [password, setPassword] = useState("");
-  const [isAccepting, setIsAccepting] = useState(false);
 
   useEffect(() => {
     if (invitation?.invitee_identifier) {
@@ -65,12 +65,19 @@ const AcceptInvitationDialog: React.FC<{ close: () => void }> = ({ close }) => {
     }
   }, [invitation]);
 
+  // Auto-close the dialog if the user is already authenticated; acceptance is handled inline on the page
+  useEffect(() => {
+    if (status === "authenticated") {
+      close();
+    }
+  }, [status, close]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!fullName || !password) return;
 
     try {
-      const { acceptInvitation: result } = await (useOrganizationMutation() as any).acceptInvitation.mutateAsync({
+      const { acceptInvitation: result } = await mutation.mutateAsync({
         guid,
         full_name: fullName,
         password,
@@ -116,63 +123,53 @@ const AcceptInvitationDialog: React.FC<{ close: () => void }> = ({ close }) => {
 
         {isLoading && <p>Loading invitation details...</p>}
 
-        {!isLoading && !isError && invitation && (
-          status === "authenticated" ? (
-            <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">You're signed in. This invitation can be accepted on the accept page.</p>
-              <DialogFooter>
-                <Button type="button" onClick={close}>Close</Button>
-              </DialogFooter>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <p>You have been invited by <strong>{invitation.inviter_name}</strong> to join <strong>{invitation.organization_name}</strong>.</p>
-              <p>Accept the invitation for <strong>{invitation.invitee_identifier}</strong> by setting up your account below.</p>
+        {!isLoading && !isError && invitation && status !== "authenticated" && (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <p>You have been invited by <strong>{invitation.inviter_name}</strong> to join <strong>{invitation.organization_name}</strong>.</p>
+            <p>Accept the invitation for <strong>{invitation.invitee_identifier}</strong> by setting up your account below.</p>
 
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="full_name" className="text-right">
-                    Full Name
-                  </Label>
-                  <Input
-                    id="full_name"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className="col-span-3"
-                    required
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="password" className="text-right">
-                    Password
-                  </Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="col-span-3"
-                    required
-                  />
-                </div>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="full_name" className="text-right">
+                  Full Name
+                </Label>
+                <Input
+                  id="full_name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="col-span-3"
+                  required
+                />
               </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="password" className="text-right">
+                  Password
+                </Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="col-span-3"
+                  required
+                />
+              </div>
+            </div>
 
-              <DialogFooter>
-                <Button type="button" variant="ghost" onClick={close}>
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={(useOrganizationMutation() as any).acceptInvitation.isLoading}>
-                  {(useOrganizationMutation() as any).acceptInvitation.isLoading ? "Accepting..." : "Accept & Join"}
-                </Button>
-              </DialogFooter>
-            </form>
-          )
+            <DialogFooter>
+              <Button type="button" variant="ghost" onClick={close}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={mutation.isLoading}>
+                {mutation.isLoading ? "Accepting..." : "Accept & Join"}
+              </Button>
+            </DialogFooter>
+          </form>
         )}
       </DialogContent>
     </Dialog >
   );
 }
-
 
 export function useAcceptInvitationDialog() {
   return useContext(AcceptInvitationDialogContext);
