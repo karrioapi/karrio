@@ -1,4 +1,4 @@
-hostName: "karrio-dashboard"
+hostName: "app"
 domain: "jtl-shipping-cloud-dev.com"
 port: "3102"
 detachedWorker: "true"
