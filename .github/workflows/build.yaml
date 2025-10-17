@@ -38,9 +38,10 @@ jobs:
             image_name: shipping-platform-dashboard
             build_script: ./bin/build-jtl-dashboard-image
     outputs:
-      image_repo_${{ matrix.component }}: ${{ steps.meta.outputs.image_repo }}
-      image_tag_${{ matrix.component }}:  ${{ steps.meta.outputs.image_tag }}
-      image_ref_${{ matrix.component }}:  ${{ steps.meta.outputs.image_ref }}
+      server_image: ${{ steps.set-output.outputs.server_image }}
+      server_tag: ${{ steps.set-output.outputs.server_tag }}
+      dashboard_image: ${{ steps.set-output.outputs.dashboard_image }}
+      dashboard_tag: ${{ steps.set-output.outputs.dashboard_tag }}
     steps:
       - uses: actions/checkout@v4
 
@@ -59,25 +60,26 @@ jobs:
           tenant-id: ${{ env.AZURE_TENANT_ID }}
           subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Login to ACR (docker)
-        uses: azure/docker-login@v2
-        with:
-          login-server: ${{ env.ACR_NAME }}.azurecr.io
+      - name: Login to Azure Container Registry
+        run: |
+          az acr login --name ${{ env.ACR_NAME }}
 
       - name: Prepare image metadata
         id: meta
         run: |
-          echo "image_repo=${{ env.ACR_NAME }}.azurecr.io/${{ matrix.image_name }}" >> $GITHUB_OUTPUT
+          IMAGE_REPO="${{ env.ACR_NAME }}.azurecr.io/${{ matrix.image_name }}"
+          
           # Tag SHA for push on main; PR builds get a readable tag as well
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             TAG="pr-${{ github.event.number }}-${{ github.sha }}"
           else
             TAG="${{ github.sha }}"
           fi
+          
+          echo "image_repo=${IMAGE_REPO}" >> $GITHUB_OUTPUT
           echo "image_tag=${TAG}" >> $GITHUB_OUTPUT
-          echo "image_ref=${{ env.ACR_NAME }}.azurecr.io/${{ matrix.image_name }}:${TAG}" >> $GITHUB_OUTPUT
+          echo "image_ref=${IMAGE_REPO}:${TAG}" >> $GITHUB_OUTPUT
 
-      # Build with your existing scripts (keeps Dockerfile logic consistent)
       - name: Build image (no push yet)
         run: |
           export JTL_IMAGE="${{ steps.meta.outputs.image_repo }}"
@@ -88,12 +90,24 @@ jobs:
           # Tag latest too (we'll push conditionally)
           docker tag "${JTL_IMAGE}:${VERSION}" "${JTL_IMAGE}:latest"
 
-      # Push only on main (still build on PR)
       - name: Push image (sha and latest)
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
           docker push "${{ steps.meta.outputs.image_ref }}"
           docker push "${{ steps.meta.outputs.image_repo }}:latest"
+
+      # Set outputs for deploy job (only last matrix run will set, but we need both)
+      - name: Set job outputs
+        id: set-output
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          if [ "${{ matrix.component }}" = "server" ]; then
+            echo "server_image=${{ steps.meta.outputs.image_repo }}" >> $GITHUB_OUTPUT
+            echo "server_tag=${{ steps.meta.outputs.image_tag }}" >> $GITHUB_OUTPUT
+          elif [ "${{ matrix.component }}" = "dashboard" ]; then
+            echo "dashboard_image=${{ steps.meta.outputs.image_repo }}" >> $GITHUB_OUTPUT
+            echo "dashboard_tag=${{ steps.meta.outputs.image_tag }}" >> $GITHUB_OUTPUT
+          fi
 
   deploy:
     name: Deploy to AKS (Helm)
@@ -119,18 +133,17 @@ jobs:
       - name: Install Helm
         uses: azure/setup-helm@v4
 
-      # Example: deploy two releases (if you have separate charts)
-      # If you have ONE chart that accepts both images, set both via --set.
-      - name: Helm upgrade/install API
+      - name: Helm upgrade/install Server
         run: |
-          helm upgrade --install jtl-api ./chart/server \
+          helm upgrade --install karrio-server ./chart/server \
             --namespace default --create-namespace \
-            --set image.repository="${{ needs.build.outputs.image_repo_server }}" \
-            --set image.tag="${{ needs.build.outputs.image_tag_server }}"
+            --set image.repository="${{ needs.build.outputs.server_image }}" \
+            --set image.tag="${{ needs.build.outputs.server_tag }}"
 
-      # - name: Helm upgrade/install Dashboard
-      #   run: |
-      #     helm upgrade --install jtl-dashboard ./chart-dashboard \
-      #       --namespace default --create-namespace \
-      #       --set image.repository="${{ needs.build.outputs.image_repo_dashboard }}" \
-      #       --set image.tag="${{ needs.build.outputs.image_tag_dashboard }}"
+      - name: Helm upgrade/install Dashboard
+        if: needs.build.outputs.dashboard_image != ''
+        run: |
+          helm upgrade --install karrio-dashboard ./chart/dashboard \
+            --namespace default --create-namespace \
+            --set image.repository="${{ needs.build.outputs.dashboard_image }}" \
+            --set image.tag="${{ needs.build.outputs.dashboard_tag }}"
