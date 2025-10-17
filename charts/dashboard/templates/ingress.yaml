@@ -5,7 +5,6 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
     appgw.ingress.kubernetes.io/ssl-redirect: "true"
-    appgw.ingress.kubernetes.io/health-probe-path: /health
 spec:
   ingressClassName: azure-application-gateway
   tls:
