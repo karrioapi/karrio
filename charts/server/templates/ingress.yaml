@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "mychart.fullname" . }}
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    appgw.ingress.kubernetes.io/ssl-redirect: "true"
+    appgw.ingress.kubernetes.io/health-probe-path: /health
+spec:
+  ingressClassName: azure-application-gateway
+  tls:
+  - hosts:
+      - "{{ .Values.hostName  }}.{{ .Values.domain }}"
+    secretName: {{.Release.Name }}-tls-secret
+  rules:
+    - host: "{{ .Values.hostName  }}.{{ .Values.domain }}" 
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "mychart.fullname" . }}  
+                port:
+                  number: 80
+        
+ 
+
+
+                 
