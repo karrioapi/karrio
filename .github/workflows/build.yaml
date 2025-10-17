@@ -144,7 +144,7 @@ jobs:
       - name: Helm upgrade/install Dashboard
         if: needs.build.outputs.dashboard_image != ''
         run: |
-          helm upgrade --install karrio-dashboard ./chart/dashboard \
+          helm upgrade --install karrio-dashboard ./charts/dashboard \
             --namespace default --create-namespace \
             --set image.repository="${{ needs.build.outputs.dashboard_image }}" \
             --set image.tag="${{ needs.build.outputs.dashboard_tag }}" \
