@@ -135,15 +135,15 @@ jobs:
 
       - name: Helm upgrade/install Server
         run: |
-          helm upgrade --install karrio-server ./chart/server \
+          helm upgrade --install karrio-server ./charts/server \
             --namespace default --create-namespace \
             --set image.repository="${{ needs.build.outputs.server_image }}" \
             --set image.tag="${{ needs.build.outputs.server_tag }}"
 
-      - name: Helm upgrade/install Dashboard
-        if: needs.build.outputs.dashboard_image != ''
-        run: |
-          helm upgrade --install karrio-dashboard ./chart/dashboard \
-            --namespace default --create-namespace \
-            --set image.repository="${{ needs.build.outputs.dashboard_image }}" \
-            --set image.tag="${{ needs.build.outputs.dashboard_tag }}"
+      # - name: Helm upgrade/install Dashboard
+      #   if: needs.build.outputs.dashboard_image != ''
+      #   run: |
+      #     helm upgrade --install karrio-dashboard ./chart/dashboard \
+      #       --namespace default --create-namespace \
+      #       --set image.repository="${{ needs.build.outputs.dashboard_image }}" \
+      #       --set image.tag="${{ needs.build.outputs.dashboard_tag }}"
