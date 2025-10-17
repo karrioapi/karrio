@@ -13,6 +13,7 @@ permissions:
 
 env:
   ACR_NAME: jtlstgwesteuropeacr1
+  VAULT_CLIENT_ID: ${{ secrets.VAULT_CLIENT_ID }}
   AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
   AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
   AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
@@ -140,10 +141,12 @@ jobs:
             --set image.repository="${{ needs.build.outputs.server_image }}" \
             --set image.tag="${{ needs.build.outputs.server_tag }}"
 
-      # - name: Helm upgrade/install Dashboard
-      #   if: needs.build.outputs.dashboard_image != ''
-      #   run: |
-      #     helm upgrade --install karrio-dashboard ./chart/dashboard \
-      #       --namespace default --create-namespace \
-      #       --set image.repository="${{ needs.build.outputs.dashboard_image }}" \
-      #       --set image.tag="${{ needs.build.outputs.dashboard_tag }}"
+      - name: Helm upgrade/install Dashboard
+        if: needs.build.outputs.dashboard_image != ''
+        run: |
+          helm upgrade --install karrio-dashboard ./chart/dashboard \
+            --namespace default --create-namespace \
+            --set image.repository="${{ needs.build.outputs.dashboard_image }}" \
+            --set image.tag="${{ needs.build.outputs.dashboard_tag }}" \
+            --set tenantId="${{ env.AZURE_TENANT_ID }}" \
+            --set clientID="${{ env.VAULT_CLIENT_ID }}" 

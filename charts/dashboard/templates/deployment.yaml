@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mychart.fullname" . }}
+  labels:
+    {{- include "mychart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "mychart.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        {{- include "mychart.labels" . | nindent 8 }}
+    spec:
+      serviceAccountName: kv-sa
+      containers:
+        - name: app
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }} 
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: {{ .Values.port }}
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.port }}
+            initialDelaySeconds: 100
+            periodSeconds: 10
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.port }}
+            initialDelaySeconds: 200
+            periodSeconds: 20
+            timeoutSeconds: 2
+            failureThreshold: 3
+          env:
+            - name: VITE_KARRIO_OAUTH_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: oauth-credentials
+                  key: OAUTH_CLIENT_ID
+            - name: VITE_KARRIO_OAUTH_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: oauth-credentials
+                  key: OAUTH_CLIENT_SECRET
+            - name: VITE_KARRIO_OAUTH_REDIRECT_URI
+              value: "https://{{ .Values.hostName }}.{{ .Values.domain }}/auth/callback"
+
+            - name: DASHBOARD_URL
+              value: "https://{{ .Values.hostName }}.{{ .Values.domain }}"
+  
+          {{- if and .Values.csi.enabled .Values.csi.volumes }}
+          volumeMounts:
+            {{- range .Values.csi.volumes }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath | quote }}
+              readOnly: {{ default true .readOnly }}
+            {{- end }}
+           {{- end }}
+      {{- if and .Values.csi.enabled .Values.csi.volumes }}
+      volumes:
+        {{- range .Values.csi.volumes }}
+        - name: {{ .name }}
+          csi:
+            driver: {{ default "secrets-store.csi.k8s.io" .driver | quote }}
+            readOnly: {{ default true .readOnly }}
+            volumeAttributes:
+              secretProviderClass: {{ .secretProviderClass | quote }}
+        {{- end }}
+      {{- end }}
+
+

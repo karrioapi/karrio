@@ -23,6 +23,8 @@ extraEnv:
   OTEL_EXPORTER_OTLP_HEADERS: ""
   OTEL_RESOURCE_ATTRIBUTES: ""
   OTEL_ENVIRONMENT: "development"
+  ALLOWED_HOSTS: "karrio-server.jtl-shipping-cloud-dev.com"  
+  CSRF_TRUSTED_ORIGINS:  "https://karrio-server.jtl-shipping-cloud-dev.com"
 
 
 image:
