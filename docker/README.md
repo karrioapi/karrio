@@ -42,7 +42,7 @@ The platform consists of the following services:
 Create a `.env` file in the `docker` directory with the following variables:
 
 ```bash
-JTL_TAG=2025.5rc25
+JTL_TAG=2025.5rc26
 DOMAIN=your-domain.com
 SECRET_KEY=your-secret-key
 JWT_SECRET=your-jwt-secret

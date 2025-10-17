@@ -47,15 +47,3 @@ LOGGING["loggers"]["karrio.server.jtl"] = {
     "level": LOG_LEVEL,
     "propagate": False,
 }
-
-
-
-print(
-    "REDIS configration in use: ",
-    dict(
-        REDIS_HOST=decouple.config("REDIS_HOST", default=None),
-        REDIS_PORT=decouple.config("REDIS_PORT", default=None),
-        REDIS_PASSWORD=decouple.config("REDIS_PASSWORD", default=None),
-        REDIS_USERNAME=decouple.config("REDIS_USERNAME", default="default"),
-    ),
-)

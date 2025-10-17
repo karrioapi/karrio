@@ -3,7 +3,7 @@
 set -e
 
 # Get the default version from VERSION file or use fallback
-DEFAULT_VERSION="2025.5rc25"
+DEFAULT_VERSION="2025.5rc26"
 export JTL_TAG="${JTL_TAG:-$DEFAULT_VERSION}"
 export SENTRY_DSN="${SENTRY_DSN:-''}"
 

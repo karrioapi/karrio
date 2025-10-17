@@ -16,9 +16,9 @@ class AutomationConfig(AppConfig):
 
         signals.register()
 
-        # Load scheduled workflows only in worker processes
-        if self._should_register_scheduled_workflows():
-            self._register_scheduled_workflows()
+        # # Load scheduled workflows only in worker processes
+        # if self._should_register_scheduled_workflows():
+        #     self._register_scheduled_workflows()
 
     def _should_register_scheduled_workflows(self) -> bool:
         """
@@ -29,19 +29,25 @@ class AutomationConfig(AppConfig):
         """
         # Check if we're running the Huey consumer
         import sys
-        command_args = ' '.join(sys.argv)
+
+        command_args = " ".join(sys.argv)
 
         # Register in Huey consumer processes
-        if 'run_huey' in command_args:
+        if "run_huey" in command_args:
             return True
 
         # Register in development runserver if no separate worker
-        if ('runserver' in command_args and
-            os.environ.get('DJANGO_DEVELOPMENT_MODE', 'False').lower() == 'true'):
+        if (
+            "runserver" in command_args
+            and os.environ.get("DJANGO_DEVELOPMENT_MODE", "False").lower() == "true"
+        ):
             return True
 
         # Don't register in migrations, tests, or other management commands
-        if any(cmd in command_args for cmd in ['migrate', 'test', 'makemigrations', 'shell']):
+        if any(
+            cmd in command_args
+            for cmd in ["migrate", "test", "makemigrations", "shell"]
+        ):
             return False
 
         return False
@@ -53,10 +59,13 @@ class AutomationConfig(AppConfig):
 
             # Small delay to ensure database is ready
             import time
+
             time.sleep(1)
 
             registered_count = workflow_scheduler.refresh_all_scheduled_workflows()
-            logger.info(f"Automation app ready: {registered_count} scheduled workflows registered")
+            logger.info(
+                f"Automation app ready: {registered_count} scheduled workflows registered"
+            )
 
         except Exception as e:
             logger.error(f"Failed to register scheduled workflows on startup: {e}")

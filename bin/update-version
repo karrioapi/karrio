@@ -6,7 +6,7 @@
 if [ -z "$1" ] || [ -z "$2" ]; then
     echo "Error: Both old and new version arguments are required"
     echo "Usage: $0 <old-version> <new-version>"
-    echo "Example: $0 2025.5rc25 2025.5rc26"
+    echo "Example: $0 2025.5rc26 2025.5rc26"
     exit 1
 fi
 
