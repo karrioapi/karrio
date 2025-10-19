@@ -2,6 +2,14 @@
 
 ## Changes
 
+### Fix
+
+- fix: landmark tracking number mapping during processing to solve invalid backgroung tracking failure.
+
+# Karrio 2025.5rc26
+
+## Changes
+
 ### Feat
 
 - feat: add metadata fields to organization and organization user for SSO setup
