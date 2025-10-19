@@ -87,7 +87,7 @@ def _extract_details(
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number=package.TrackingNumber,
+        tracking_number=package.LandmarkTrackingNumber,
         events=tracking_events,
         delivered=status == "delivered",
         status=status,
@@ -96,7 +96,10 @@ def _extract_details(
                 package.LandmarkTrackingNumber
             ),
         ),
-        meta=dict(carrier=details.EndDeliveryCarrier),
+        meta=dict(
+            lastMileTrackingNumber=package.TrackingNumber,
+            carrier=details.EndDeliveryCarrier,
+        ),
     )
 
 
