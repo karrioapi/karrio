@@ -3,8 +3,7 @@ import {
   useOrganizationMutation,
   useOrganizations,
 } from "@karrio/hooks/organization";
-import { useCreateOrganizationModal } from "../modals/create-organization-modal";
-import { useAcceptInvitation } from "../modals/accept-invitation-modal";
+import { useCreateOrganizationDialog } from "@karrio/ui/components/create-organization-dialog";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useAPIToken } from "@karrio/hooks/api-token";
@@ -24,8 +23,7 @@ export const OrganizationDropdown = (): JSX.Element => {
   const {
     metadata: { ALLOW_MULTI_ACCOUNT },
   } = useAPIMetadata();
-  const { acceptInvitation } = useAcceptInvitation();
-  const { createOrganization } = useCreateOrganizationModal();
+  const { createOrganization } = useCreateOrganizationDialog();
   const [isActive, setIsActive] = useState<boolean>(false);
   const [selected, setSelected] = useState<OrganizationType>();
   const [initialized, setInitialized] = useState<boolean>(false);
@@ -70,17 +68,7 @@ export const OrganizationDropdown = (): JSX.Element => {
   useEffect(() => {
     setSelected(organization);
   }, [organization]);
-  useEffect(() => {
-    if (!initialized && !isNoneOrEmpty(searchParams.get("accept_invitation"))) {
-      acceptInvitation({
-        onChange: (orgId) => mutation.changeActiveOrganization(orgId),
-      });
-      setInitialized(true);
-    }
-    if (searchParams && isNoneOrEmpty(searchParams.get("accept_invitation"))) {
-      setInitialized(true);
-    }
-  }, [initialized, searchParams]);
+  // Note: Invite acceptance is now handled inline on /accept-invite
 
   return (
     <>
