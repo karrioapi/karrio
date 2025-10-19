@@ -369,21 +369,8 @@ print_success "Python $PYTHON_VERSION set up"
 # =============================================================================
 print_step "Setting up Node.js environment..."
 
-# Detect existing Node.js version and decide whether to skip install/switch
-EXISTING_NODE_VERSION=""
-EXISTING_NODE_MAJOR=""
-SKIP_NODE_INSTALL="false"
-
-if command_exists node; then
-    EXISTING_NODE_VERSION="$(node -v 2>/dev/null | sed 's/^v//')"
-    EXISTING_NODE_MAJOR="${EXISTING_NODE_VERSION%%.*}"
-
-    # If an existing Node.js major version is greater than 22, do not override it
-    if [[ -n "$EXISTING_NODE_MAJOR" ]] && [[ "$EXISTING_NODE_MAJOR" =~ ^[0-9]+$ ]] && [ "$EXISTING_NODE_MAJOR" -gt 22 ]; then
-        SKIP_NODE_INSTALL="true"
-        print_step "Detected Node.js v$EXISTING_NODE_VERSION (>22); skipping installation and version switch to avoid override"
-    fi
-fi
+# Minimum required Node.js version
+MIN_NODE_VERSION=18
 
 # Install nvm if not available
 if [[ ! -d "$HOME/.nvm" ]] && ! command_exists nvm; then
@@ -396,11 +383,30 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
-# Install Node.js (unless an existing >22 installation is present)
+# Detect existing Node.js version AFTER nvm is sourced
+EXISTING_NODE_VERSION=""
+EXISTING_NODE_MAJOR=""
+SKIP_NODE_INSTALL="false"
+
+if command_exists node; then
+    EXISTING_NODE_VERSION="$(node -v 2>/dev/null | sed 's/^v//')"
+    EXISTING_NODE_MAJOR="${EXISTING_NODE_VERSION%%.*}"
+
+    # If an existing Node.js major version meets minimum requirements, keep it
+    if [[ -n "$EXISTING_NODE_MAJOR" ]] && [[ "$EXISTING_NODE_MAJOR" =~ ^[0-9]+$ ]] && [ "$EXISTING_NODE_MAJOR" -ge "$MIN_NODE_VERSION" ]; then
+        SKIP_NODE_INSTALL="true"
+        print_success "Detected Node.js v$EXISTING_NODE_VERSION (>= $MIN_NODE_VERSION); keeping existing version"
+    else
+        print_warning "Detected Node.js v$EXISTING_NODE_VERSION (< $MIN_NODE_VERSION); will install newer version"
+    fi
+fi
+
+# Install Node.js only if needed
 if command_exists nvm; then
     if [[ "$SKIP_NODE_INSTALL" == "true" ]]; then
-        print_success "Keeping existing Node.js v$EXISTING_NODE_VERSION unchanged"
+        print_success "Node.js v$EXISTING_NODE_VERSION meets requirements"
     else
+        print_step "Installing Node.js (stable)..."
         nvm install stable
         nvm use stable
         nvm alias default stable
