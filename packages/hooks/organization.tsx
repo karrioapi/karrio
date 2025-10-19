@@ -135,11 +135,14 @@ export function useOrganizationMutation() {
   const invalidateCache = () => {
     queryClient.invalidateQueries({ queryKey: ["organizations"] });
     // Invalidate common org-scoped caches
-    queryClient.invalidateQueries({ predicate: (q) => {
-      const key = q.queryKey as any[];
-      // If key has the session scope object with orgId, let it refetch after session.update
-      return Array.isArray(key) && key.length > 1 && typeof key[1] === 'object' && key[1] !== null && 'orgId' in key[1];
-    }});
+    queryClient.invalidateQueries({
+      predicate: (q) => {
+        const key = q.queryKey as any[];
+        // If key has the session scope object with orgId, let it refetch after session.update
+        return Array.isArray(key) && key.length > 1 && typeof key[1] === 'object' && key[1] !== null && 'orgId' in key[1];
+      }
+    });
+    // Active queries will refetch after invalidation; no explicit refetch needed
   };
 
   const createOrganization = useAuthenticatedMutation({
@@ -155,7 +158,28 @@ export function useOrganizationMutation() {
       karrio.graphql.request<update_organization>(gqlstr(UPDATE_ORGANIZATION), {
         data,
       }),
-    onSuccess: invalidateCache,
+    onSuccess: (result, variables) => {
+      try {
+        const updated = (result as any)?.update_organization?.organization;
+        if (updated?.id && updated?.name) {
+          // Optimistically update cached organizations lists
+          queryClient.setQueriesData({ queryKey: ["organizations"] }, (old: any) => {
+            if (!old) return old;
+            const edges = old?.organizations?.edges;
+            if (!Array.isArray(edges)) return old;
+            const newEdges = edges.map((e: any) =>
+              e?.node?.id === updated.id
+                ? { ...e, node: { ...e.node, name: updated.name } }
+                : e,
+            );
+            return { ...old, organizations: { ...old.organizations, edges: newEdges } };
+          });
+        }
+      } catch {
+        // no-op on optimistic failure
+      }
+      invalidateCache();
+    },
   });
 
   const deleteOrganization = useAuthenticatedMutation({
