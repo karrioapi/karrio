@@ -135,6 +135,7 @@ export function useAuthenticatedMutation<TData = unknown, TError = unknown, TVar
 
 function requestInterceptor(session?: ExtendedSessionType) {
   return (config: any = { headers: {} }) => {
+    const cookieOrgId = getCookie("orgId");
     const testHeader: any = !!session?.testMode
       ? { "x-test-mode": session.testMode }
       : {};
@@ -143,7 +144,7 @@ function requestInterceptor(session?: ExtendedSessionType) {
       : {};
     const orgHeader: any = !!session?.orgId
       ? { "x-org-id": session.orgId }
-      : {};
+      : (cookieOrgId ? { "x-org-id": cookieOrgId } : {});
 
     config.headers = {
       ...config.headers,
