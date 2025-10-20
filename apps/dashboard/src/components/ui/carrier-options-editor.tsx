@@ -35,9 +35,6 @@ export function CarrierOptionsEditor({
   carrierName,
 }: CarrierOptionsEditorProps) {
   const [selectedOption, setSelectedOption] = React.useState<string>('')
-  const [customKey, setCustomKey] = React.useState('')
-  const [customValue, setCustomValue] = React.useState('')
-  const [showCustom, setShowCustom] = React.useState(false)
   const [showAddOption, setShowAddOption] = React.useState(false)
 
   // Generic options supported by all carriers
@@ -97,23 +94,6 @@ export function CarrierOptionsEditor({
     onChange(updated)
     setSelectedOption('')
     setShowAddOption(false)
-  }
-
-  const addCustomOption = () => {
-    if (!customKey.trim()) return
-
-    const updated = { ...(value || {}) }
-    try {
-      // Try to parse as JSON first
-      updated[customKey] = JSON.parse(customValue)
-    } catch {
-      // If parsing fails, use as string
-      updated[customKey] = customValue
-    }
-    onChange(updated)
-    setCustomKey('')
-    setCustomValue('')
-    setShowCustom(false)
   }
 
   const findOptionDefinition = (code: string): CarrierOption | null => {
@@ -295,65 +275,6 @@ export function CarrierOptionsEditor({
         </div>
       )}
 
-      {/* Add Custom Option */}
-      {!showCustom && (
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => setShowCustom(true)}
-          className="w-full"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Add Custom Option
-        </Button>
-      )}
-
-      {showCustom && (
-        <div className="space-y-2 border rounded-lg p-4 bg-muted/30">
-          <p className="text-xs text-muted-foreground mb-2">
-            Add a custom option not listed above
-          </p>
-          <div className="flex gap-2">
-            <Input
-              placeholder="Option key"
-              value={customKey}
-              onChange={(e) => setCustomKey(e.target.value)}
-              className="flex-1"
-            />
-            <Input
-              placeholder="Value (JSON or string)"
-              value={customValue}
-              onChange={(e) => setCustomValue(e.target.value)}
-              className="flex-1"
-            />
-          </div>
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setShowCustom(false)
-                setCustomKey('')
-                setCustomValue('')
-              }}
-              className="flex-1"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              onClick={addCustomOption}
-              disabled={!customKey.trim()}
-              className="flex-1"
-            >
-              Add
-            </Button>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

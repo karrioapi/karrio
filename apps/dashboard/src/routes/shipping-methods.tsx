@@ -98,9 +98,11 @@ function ShippingMethodsPage() {
   const handleDialogSubmit = async (values: any, method: ShippingMethod | null) => {
     try {
       if (method) {
+        // For update, exclude slug as it's auto-generated and read-only
+        const { slug, ...updateData } = values
         await updateMethod.mutateAsync({
           id: method.id,
-          ...values,
+          ...updateData,
         })
         toast.success('Shipping method updated successfully')
       } else {

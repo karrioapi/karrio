@@ -102,6 +102,11 @@ export function ShippingMethodDialog({
         carrier_id: values.carrier_id || undefined,
       }
 
+      // Remove slug when updating (it's auto-generated and read-only)
+      if (selectedMethod) {
+        delete submitValues.slug
+      }
+
       await onSubmit(submitValues, selectedMethod)
       onSuccess?.()
       onOpenChange(false)
@@ -174,6 +179,23 @@ export function ShippingMethodDialog({
             className="flex flex-col flex-1 overflow-hidden"
           >
             <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
+              {/* Name */}
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Name <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="DHL Express - Express Worldwide" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               {/* Carrier Code Selection (Primary) */}
               <FormField
                 control={form.control}
@@ -229,7 +251,6 @@ export function ShippingMethodDialog({
                       <Select
                         onValueChange={field.onChange}
                         value={field.value || ''}
-                        disabled={!!selectedMethod}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -251,44 +272,72 @@ export function ShippingMethodDialog({
               )}
 
               {/* Carrier Connection (Optional, Filtered by carrier_code) */}
-              {watchCarrierCode && filteredConnections.length > 0 && (
+              {watchCarrierCode && (
                 <FormField
                   control={form.control}
                   name="carrier_id"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Carrier Connection (Optional)</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value || undefined}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a connection (optional)" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {filteredConnections.map((connection) => (
-                            <SelectItem key={connection.id} value={connection.id}>
-                              <div className="flex items-center gap-2">
-                                <div className="flex flex-col">
-                                  <span className="font-medium">{connection.display_name}</span>
-                                  <span className="text-xs text-gray-500">
-                                    ID: {connection.carrier_id || 'N/A'}
-                                  </span>
-                                </div>
-                                {connection.test_mode && (
-                                  <Badge variant="secondary" className="ml-2">
-                                    Test
-                                  </Badge>
-                                )}
+                      <div className="flex gap-2">
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value || undefined}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="flex-1">
+                              <SelectValue placeholder={
+                                filteredConnections.length === 0
+                                  ? "No connections available"
+                                  : "Select a connection (optional)"
+                              } />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {filteredConnections.length === 0 ? (
+                              <div className="px-2 py-6 text-center text-sm text-muted-foreground">
+                                No carrier connections found for {watchCarrierCode}.
+                                <br />
+                                Create one in the Carriers page first.
                               </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                            ) : (
+                              filteredConnections.map((connection) => (
+                                <SelectItem key={connection.id} value={connection.id}>
+                                  <div className="flex items-center gap-2">
+                                    <div className="flex flex-col">
+                                      <span className="font-medium">{connection.display_name}</span>
+                                      <span className="text-xs text-gray-500">
+                                        ID: {connection.carrier_id || 'N/A'}
+                                      </span>
+                                    </div>
+                                    {connection.test_mode && (
+                                      <Badge variant="secondary" className="ml-2">
+                                        Test
+                                      </Badge>
+                                    )}
+                                  </div>
+                                </SelectItem>
+                              ))
+                            )}
+                          </SelectContent>
+                        </Select>
+                        {field.value && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={() => field.onChange('')}
+                            title="Clear connection"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
                       <div className="text-xs text-muted-foreground mt-1">
-                        Link this method to a specific carrier connection
+                        {filteredConnections.length > 0
+                          ? "Link this method to a specific carrier connection"
+                          : `No carrier connections configured for ${selectedCarrierMeta?.display_name || watchCarrierCode}. You can add one later from the Carriers page.`
+                        }
                       </div>
                       <FormMessage />
                     </FormItem>
@@ -312,23 +361,6 @@ export function ShippingMethodDialog({
                   />
                 </div>
               )}
-
-              {/* Method Name */}
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Method Name <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="DHL Express - Express Worldwide" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
               {/* Description */}
               <FormField
