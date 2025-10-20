@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { api } from '@/lib/api'
 import { useActiveOrganization } from '@/hooks/useAuth'
+import { useInitialization } from './useInitialization'
 
 const GET_ORGANIZATION_USAGE = `
   query get_organization($id: String!, $usage: UsageFilter) {
@@ -81,6 +82,7 @@ export interface OrganizationUsage {
 
 export function useOrganizationUsage(filter?: UsageFilter) {
   const { orgId } = useActiveOrganization()
+  const { isInitialized } = useInitialization()
 
   return useQuery({
     queryKey: ['organization_usage', orgId, filter],
@@ -102,7 +104,7 @@ export function useOrganizationUsage(filter?: UsageFilter) {
 
       return data.organization.usage
     },
-    enabled: !!orgId,
+    enabled: isInitialized && !!orgId,
     staleTime: 2 * 60 * 1000, // 2 minutes
   })
 }

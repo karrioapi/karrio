@@ -5,6 +5,7 @@ import type {
   CreateShippingMethodInput,
   UpdateShippingMethodInput,
 } from '@/types/shipping-methods'
+import { useInitialization } from './useInitialization'
 
 const gql = String.raw
 
@@ -121,6 +122,8 @@ const DELETE_SHIPPING_METHOD = gql`
 
 // React Query Hooks
 export function useShippingMethods(filter?: any) {
+  const { isInitialized } = useInitialization()
+
   return useQuery({
     queryKey: ['shipping-methods', filter],
     queryFn: async (): Promise<ShippingMethodsResponse> => {
@@ -130,6 +133,7 @@ export function useShippingMethods(filter?: any) {
         total: response.shipping_methods.edges.length,
       }
     },
+    enabled: isInitialized,
   })
 }
 

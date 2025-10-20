@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api'
+import { useInitialization } from './useInitialization'
 
 // GraphQL Queries
 const GET_USER_CONNECTIONS = `
@@ -161,6 +162,8 @@ export interface UpdateCarrierConnectionInput {
 
 // Hooks
 export function useCarrierConnections(filter?: CarrierFilter) {
+  const { isInitialized } = useInitialization()
+
   return useQuery({
     queryKey: ['user_connections', filter],
     queryFn: async () => {
@@ -176,11 +179,14 @@ export function useCarrierConnections(filter?: CarrierFilter) {
         pageInfo: data.user_connections.page_info,
       }
     },
+    enabled: isInitialized,
     staleTime: 5 * 60 * 1000, // 5 minutes
   })
 }
 
 export function useSystemConnections(filter?: CarrierFilter) {
+  const { isInitialized } = useInitialization()
+
   return useQuery({
     queryKey: ['system_connections', filter],
     queryFn: async () => {
@@ -196,6 +202,7 @@ export function useSystemConnections(filter?: CarrierFilter) {
         pageInfo: data.system_connections.page_info,
       }
     },
+    enabled: isInitialized,
     staleTime: 5 * 60 * 1000, // 5 minutes
   })
 }

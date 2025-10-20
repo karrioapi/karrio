@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { authManager } from '@/lib/auth'
 import { getRuntimeConfig } from '@/lib/runtime-config'
+import { useInitialization } from './useInitialization'
 
 export interface References {
   carriers: Record<string, string>
@@ -16,6 +17,8 @@ export interface References {
 }
 
 export function useAPIMetadata() {
+  const { isInitialized } = useInitialization()
+
   const query = useQuery({
     queryKey: ['api-metadata'],
     queryFn: async (): Promise<References> => {
@@ -44,6 +47,7 @@ export function useAPIMetadata() {
 
       return response.json()
     },
+    enabled: isInitialized,
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
   })

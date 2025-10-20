@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { getRuntimeConfig } from '@/lib/runtime-config'
+import { useInitialization } from './useInitialization'
 
 export interface CarrierReferences {
   carriers: Record<string, string> // carrier_id -> display_name
@@ -30,6 +31,8 @@ export interface CarrierMetadata {
 
 // Hook to fetch reference data (carriers, services, countries, etc.) - aligned with Karrio pattern
 export function useCarrierReferences() {
+  const { isInitialized } = useInitialization()
+
   return useQuery({
     queryKey: ['references'],
     queryFn: async (): Promise<CarrierReferences> => {
@@ -39,6 +42,7 @@ export function useCarrierReferences() {
       )
       return response.data
     },
+    enabled: isInitialized,
     refetchOnWindowFocus: false,
     staleTime: 300000, // 5 minutes (matching Karrio pattern)
     gcTime: 1000 * 60 * 60 * 24, // 24 hours
@@ -47,6 +51,8 @@ export function useCarrierReferences() {
 
 // Hook to fetch detailed carrier metadata - aligned with Karrio pattern
 export function useCarrierMetadata() {
+  const { isInitialized } = useInitialization()
+
   return useQuery({
     queryKey: ['carriers'],
     queryFn: async (): Promise<CarrierMetadata[]> => {
@@ -56,6 +62,7 @@ export function useCarrierMetadata() {
       )
       return response.data
     },
+    enabled: isInitialized,
     refetchOnWindowFocus: false,
     staleTime: 300000, // 5 minutes (matching Karrio pattern)
     gcTime: 1000 * 60 * 60 * 12, // 12 hours
