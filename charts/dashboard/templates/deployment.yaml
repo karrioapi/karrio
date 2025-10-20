@@ -39,21 +39,12 @@ spec:
             timeoutSeconds: 2
             failureThreshold: 3
           env:
-            - name: VITE_KARRIO_OAUTH_CLIENT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: oauth-credentials
-                  key: OAUTH_CLIENT_ID
-            - name: VITE_KARRIO_OAUTH_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: oauth-credentials
-                  key: OAUTH_CLIENT_SECRET
-            - name: VITE_KARRIO_OAUTH_REDIRECT_URI
-              value: "https://{{ .Values.hostName }}.{{ .Values.domain }}/auth/callback"
-
             - name: DASHBOARD_URL
               value: "https://{{ .Values.hostName }}.{{ .Values.domain }}"
+            - name: VITE_KARRIO_API
+              value: "https://karrio-server.jtl-shipping-cloud-dev.com"
+            - name: VITE_KARRIO_TEST_MODE
+              value: "true"
   
           {{- if and .Values.csi.enabled .Values.csi.volumes }}
           volumeMounts:
