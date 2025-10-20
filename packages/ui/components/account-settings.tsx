@@ -17,6 +17,7 @@ import { COUNTRY_OPTIONS, CURRENCY_OPTIONS } from "@karrio/types";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { NotificationType } from "@karrio/types";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 import { Switch } from "./ui/switch";
 import { Package as PackageIcon } from "lucide-react";
 
@@ -92,24 +93,33 @@ function CloseAccountDialog({ open, onOpenChange }: CloseAccountDialogProps) {
   const mutation = useUserMutation();
   const { notify } = useNotifier();
   const [loading, setLoading] = React.useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
 
     try {
+      // Only handle mutation errors here
       await mutation.closeAccount.mutateAsync();
-      notify({
-        type: NotificationType.success,
-        message: "Account closed successfully"
-      });
-      // Redirect handled by mutation
     } catch (error: any) {
       notify({
         type: NotificationType.error,
         message: error.message || "Failed to close account"
       });
-    } finally {
+      return setLoading(false);
+    }
+
+    // Mutation succeeded: proceed to sign out/redirect; ignore errors here
+    try {
+      notify({
+        type: NotificationType.success,
+        message: "Account closed successfully"
+      });
+      await signOut({ callbackUrl: "/signin" });
+      router.push("/signin");
+    } catch { }
+    finally {
       setLoading(false);
     }
   };
