@@ -7,7 +7,6 @@ extraEnv:
   # DATABASE_ENGINE: "postgresql_psycopg2"
   # KARRIO_HTTP_PORT: "5002"
   # ENABLE_ALL_PLUGINS_BY_DEFAULT: "True"
-  USE_HTTPS: "true"
 
   # Email (dev defaults)
   EMAIL_PORT: "1025"
