@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2025.5rc26`.
+    The current version is `2025.5rc27`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2025.5rc26
+  version: 2025.5rc27
 paths:
   /:
     get:
@@ -3630,60 +3630,6 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
       x-operationId: buyMethodLabel
-  /v1/shipping-methods/{id}/shipments/{shipment_id}/labels:
-    post:
-      operationId: '&&&$buy_shipment_label'
-      description: Buy a shipment label.
-      summary: Buy shipment label
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-        required: true
-      - in: path
-        name: shipment_id
-        schema:
-          type: string
-        required: true
-      tags:
-      - ShippingMethods
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BuyShipmentData'
-      security:
-      - TokenBasic: []
-      - Token: []
-      - OAuth2: []
-      - JWT: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Shipment'
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: ''
-        '424':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessages'
-          description: ''
-        '500':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: ''
-      x-operationId: buyShipmentLabel
   /v1/trackers:
     get:
       operationId: $$$$$$list
@@ -5069,54 +5015,6 @@ components:
           description: The list of tracking info to process.
       required:
       - trackers
-    BuyShipmentData:
-      type: object
-      properties:
-        label_type:
-          enum:
-          - PDF
-          - ZPL
-          - PNG
-          type: string
-          x-spec-enum-id: d10a5d5e08394b13
-          default: PDF
-          description: The shipment label file type.
-        payment:
-          allOf:
-          - $ref: '#/components/schemas/Payment'
-          description: The payment details
-        options:
-          type: object
-          additionalProperties: {}
-          default: {}
-          description: "<details>\n        <summary>The options available for the\
-            \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
-            ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
-            : 30.00,\n            \"dangerous_good\": true,\n            \"declared_value\"\
-            : 150.00,\n            \"sms_notification\": true,\n            \"email_notification\"\
-            : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
-            \            \"hold_at_location\": true,\n            \"paperless_trade\"\
-            : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
-            \            \"shipment_date\": \"2020-01-01\",  # TODO: deprecate\n \
-            \           \"shipping_date\": \"2020-01-01T00:00\",\n            \"shipment_note\"\
-            : \"This is a shipment note\",\n            \"signature_confirmation\"\
-            : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
-            : true,\n            \"doc_files\": [\n                {\n           \
-            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
-            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
-            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
-            pdf\",\n                }\n            ],\n            \"doc_references\"\
-            : [\n                {\n                    \"doc_id\": \"123456789\"\
-            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        </details>\n        "
-        reference:
-          type: string
-          nullable: true
-          description: The shipment reference
-        metadata:
-          type: object
-          additionalProperties: {}
-          description: User metadata for the shipment
     CarrierConnection:
       type: object
       properties:

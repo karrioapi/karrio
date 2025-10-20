@@ -9,12 +9,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from karrio.server.shipping.router import router
 import karrio.server.shipping.serializers as serializers
-import karrio.server.manager.models as manager_models
 import karrio.server.shipping.filters as filters
 import karrio.server.shipping.models as models
 import karrio.server.core.views.api as api
 import karrio.server.openapi as openapi
-import karrio.lib as lib
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "&&&$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
@@ -101,50 +99,6 @@ class BuyShippingMethodLabel(api.APIView):
         )
 
 
-class BuyShipmentLabel(api.APIView):
-    throttle_scope = "carrier_request"
-
-    @openapi.extend_schema(
-        tags=["ShippingMethods"],
-        operation_id=f"{ENDPOINT_ID}buy_shipment_label",
-        extensions={"x-operationId": "buyShipmentLabel"},
-        summary="Buy shipment label",
-        responses={
-            201: serializers.Shipment(),
-            400: serializers.ErrorResponse(),
-            424: serializers.ErrorMessages(),
-            500: serializers.ErrorResponse(),
-        },
-        request=serializers.BuyShipmentData(),
-    )
-    def post(self, request: Request, pk: str, shipment_id: str):
-        """
-        Buy a shipment label.
-        """
-        method = models.ShippingMethod.access_by(request).get(pk=pk)
-        shipment = manager_models.Shipment.access_by(request).get(pk=shipment_id)
-
-        serializers.can_mutate_shipment(shipment, purchase=True, update=True)
-
-        data = serializers.process_dictionaries_mutations(
-            ["metadata"],
-            {
-                **request.data,
-                "service": method.carrier_service,
-                "options": {
-                    **method.carrier_options,
-                    **request.data.get("options", {}),
-                },
-                **({"carrier_ids": [method.carrier_id]} if method.carrier_id else {}),
-            },
-            shipment,
-        )
-
-        update = serializers.buy_shipment_label(shipment, context=request, data=data)
-        
-        return Response(serializers.Shipment(update).data)
-
-
 router.urls.append(
     path(
         "shipping-methods",
@@ -157,12 +111,5 @@ router.urls.append(
         "shipping-methods/<str:pk>/labels",
         BuyShippingMethodLabel.as_view(),
         name="buy-method-label",
-    )
-)
-router.urls.append(
-    path(
-        "shipping-methods/<str:pk>/shipments/<str:shipment_id>/labels",
-        BuyShipmentLabel.as_view(),
-        name="buy-shipment-label",
     )
 )
