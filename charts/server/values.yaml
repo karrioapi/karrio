@@ -7,6 +7,7 @@ extraEnv:
   # DATABASE_ENGINE: "postgresql_psycopg2"
   # KARRIO_HTTP_PORT: "5002"
   # ENABLE_ALL_PLUGINS_BY_DEFAULT: "True"
+  USE_HTTPS: "true"
 
   # Email (dev defaults)
   EMAIL_PORT: "1025"
@@ -23,15 +24,12 @@ extraEnv:
   OTEL_EXPORTER_OTLP_HEADERS: ""
   OTEL_RESOURCE_ATTRIBUTES: ""
   OTEL_ENVIRONMENT: "development"
-  ALLOWED_HOSTS: "karrio-server.jtl-shipping-cloud-dev.com"  
-  CSRF_TRUSTED_ORIGINS:  "https://karrio-server.jtl-shipping-cloud-dev.com"
-
+  ALLOWED_HOSTS: "karrio-server.jtl-shipping-cloud-dev.com"
+  CSRF_TRUSTED_ORIGINS: "https://karrio-server.jtl-shipping-cloud-dev.com"
 
 image:
   repository: jtlstgwesteuropeacr1.azurecr.io/shipping-platform
   tag: latest
-
-
 
 csi:
   enabled: true
@@ -50,8 +48,7 @@ csi:
       secretProviderClass: shipping-platform-kv-spc
       mountPath: /mnt/secrets/other
       readOnly: true
-      driver: secrets-store.csi.k8s.io  
-
+      driver: secrets-store.csi.k8s.io
 
 worker:
   enabled: true

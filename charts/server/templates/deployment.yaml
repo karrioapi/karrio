@@ -41,6 +41,8 @@ spec:
           env:
             - name: DEBUG_MODE
               value: {{ .Values.debug | default "true" | toString | quote }}
+            - name: USE_HTTPS
+              value: "true"
             - name: DETACHED_WORKER
               value: "true"
 
