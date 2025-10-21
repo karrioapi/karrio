@@ -113,7 +113,7 @@ function createMetadataLoader(domain?: string) {
       return { metadata, error };
     },
     [`metadata-${domain || 'default'}`],
-    { revalidate: 60, tags: ["metadata"] } // Cache for 60 seconds
+    { revalidate: 5, tags: ["metadata"] } // Cache for 5 seconds to reflect admin changes quickly
   );
 }
 
