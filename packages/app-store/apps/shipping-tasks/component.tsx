@@ -28,6 +28,7 @@ export default function ShippingTasksComponent({ app, context }: AppComponentPro
   const [filter, setFilter] = useState<"all" | "pending" | "completed">("all");
   const [categoryError, setCategoryError] = useState<string | null>(null);
   const [priorityError, setPriorityError] = useState<string | null>(null);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   // Get configuration from app installation metafields
   const config = app.installation?.metafields?.reduce((acc, field) => {
@@ -41,19 +42,26 @@ export default function ShippingTasksComponent({ app, context }: AppComponentPro
     : ["Pickup", "Delivery", "Documentation", "Customer Service"];
   const workspaceName = config.workspace_name || context.workspace?.name || "Shipping Workspace";
   const dailyTaskLimit = parseInt(config.daily_task_limit) || 10;
+  const storageKey = context.workspace?.id ? `shipping-tasks-${context.workspace.id}` : null;
 
-  // Load tasks from localStorage on component mount
+  // Load tasks from localStorage on component mount or when workspace changes
   useEffect(() => {
-    const savedTasks = localStorage.getItem(`shipping-tasks-${context.workspace?.id}`);
-    if (savedTasks) {
-      setTasks(JSON.parse(savedTasks));
+    if (!storageKey) return;
+    try {
+      const savedTasks = localStorage.getItem(storageKey);
+      if (savedTasks) {
+        setTasks(JSON.parse(savedTasks));
+      }
+    } finally {
+      setIsHydrated(true);
     }
-  }, [context.workspace?.id]);
+  }, [storageKey]);
 
-  // Save tasks to localStorage whenever tasks change
+  // Save tasks to localStorage whenever tasks change (after hydration)
   useEffect(() => {
-    localStorage.setItem(`shipping-tasks-${context.workspace?.id}`, JSON.stringify(tasks));
-  }, [tasks, context.workspace?.id]);
+    if (!storageKey || !isHydrated) return;
+    localStorage.setItem(storageKey, JSON.stringify(tasks));
+  }, [tasks, storageKey, isHydrated]);
 
   const addTask = () => {
     if (!newTaskTitle.trim()) return;
