@@ -761,13 +761,13 @@ export default function AddonsPage() {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
               <h2 className="text-lg font-medium text-gray-900">Addon management</h2>
               <div className="flex flex-col sm:flex-row gap-2">
-                <div className="relative">
-                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
+                <div className="flex h-9 w-full sm:w-[200px] items-center rounded-md border border-input bg-transparent shadow-sm">
+                  <Search className="ml-3 h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  <input
                     placeholder="Search addons..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-8 w-full sm:w-[200px]"
+                    className="flex-1 bg-transparent border-0 px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-0"
                   />
                 </div>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
