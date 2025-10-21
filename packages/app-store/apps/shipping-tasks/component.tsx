@@ -24,8 +24,10 @@ export default function ShippingTasksComponent({ app, context }: AppComponentPro
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskCategory, setNewTaskCategory] = useState("");
-  const [newTaskPriority, setNewTaskPriority] = useState<Task["priority"]>("medium");
+  const [newTaskPriority, setNewTaskPriority] = useState<Task["priority"] | "">("");
   const [filter, setFilter] = useState<"all" | "pending" | "completed">("all");
+  const [categoryError, setCategoryError] = useState<string | null>(null);
+  const [priorityError, setPriorityError] = useState<string | null>(null);
 
   // Get configuration from app installation metafields
   const config = app.installation?.metafields?.reduce((acc, field) => {
@@ -55,12 +57,17 @@ export default function ShippingTasksComponent({ app, context }: AppComponentPro
 
   const addTask = () => {
     if (!newTaskTitle.trim()) return;
+    const missingCategory = !newTaskCategory;
+    const missingPriority = !newTaskPriority;
+    if (missingCategory) setCategoryError("* Category is Required *");
+    if (missingPriority) setPriorityError("* Priority is Required *");
+    if (missingCategory || missingPriority) return;
 
     const newTask: Task = {
       id: Date.now().toString(),
       title: newTaskTitle.trim(),
-      priority: newTaskPriority,
-      category: newTaskCategory || taskCategories[0],
+      priority: newTaskPriority as Task["priority"],
+      category: newTaskCategory,
       completed: false,
       created_at: new Date().toISOString(),
     };
@@ -68,7 +75,9 @@ export default function ShippingTasksComponent({ app, context }: AppComponentPro
     setTasks(prev => [newTask, ...prev]);
     setNewTaskTitle("");
     setNewTaskCategory("");
-    setNewTaskPriority(defaultPriority as Task["priority"]);
+    setNewTaskPriority("");
+    setCategoryError(null);
+    setPriorityError(null);
   };
 
   const toggleTask = (taskId: string) => {
@@ -167,29 +176,51 @@ export default function ShippingTasksComponent({ app, context }: AppComponentPro
               className="w-full"
             />
             <div className="flex flex-col sm:flex-row gap-3">
-              <Select value={newTaskCategory} onValueChange={setNewTaskCategory}>
-                <SelectTrigger className="w-full sm:w-48">
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {taskCategories.map(category => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={newTaskPriority} onValueChange={(value) => setNewTaskPriority(value as Task["priority"])}>
-                <SelectTrigger className="w-full sm:w-32">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="low">Low</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="high">High</SelectItem>
-                  <SelectItem value="urgent">Urgent</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="w-full sm:w-48">
+                <Select
+                  value={newTaskCategory}
+                  onValueChange={(value) => {
+                    setNewTaskCategory(value);
+                    if (categoryError) setCategoryError(null);
+                  }}
+                >
+                  <SelectTrigger className={`w-full ${!newTaskCategory ? "text-muted-foreground" : ""} ${categoryError ? "border-red-500 focus:ring-red-500 focus:border-red-500" : ""}`}>
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {taskCategories.map(category => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {categoryError && (
+                  <p className="mt-1 text-xs text-red-600">{categoryError}</p>
+                )}
+              </div>
+              <div className="w-full sm:w-32">
+                <Select
+                  value={newTaskPriority}
+                  onValueChange={(value) => {
+                    setNewTaskPriority(value as Task["priority"]);
+                    if (priorityError) setPriorityError(null);
+                  }}
+                >
+                  <SelectTrigger className={`w-full ${!newTaskPriority ? "text-muted-foreground" : ""} ${priorityError ? "border-red-500 focus:ring-red-500 focus:border-red-500" : ""}`}>
+                    <SelectValue placeholder="Priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                    <SelectItem value="urgent">Urgent</SelectItem>
+                  </SelectContent>
+                </Select>
+                {priorityError && (
+                  <p className="mt-1 text-xs text-red-600">{priorityError}</p>
+                )}
+              </div>
               <Button onClick={addTask} disabled={!newTaskTitle.trim()}>
                 <Plus className="h-4 w-4 mr-1" />
                 Add
