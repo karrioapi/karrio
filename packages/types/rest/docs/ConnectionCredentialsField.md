@@ -43,8 +43,9 @@ Name | Type | Description | Notes
 **code_client** | **string** |  | [optional] [default to undefined]
 **customer_id** | **string** |  | [default to undefined]
 **customer_type** | **string** |  | [default to undefined]
-**lang** | **string** | Indicates a lang string | [optional] [default to undefined]
 **client_id** | **string** |  | [default to undefined]
+**region** | **string** |  | [optional] [default to 'Landmark CMH']
+**lang** | **string** | Indicates a lang string | [optional] [default to undefined]
 **client_secret** | **string** |  | [default to undefined]
 **user_token** | **string** |  | [optional] [default to undefined]
 **shipping_account_id** | **string** |  | [default to undefined]
@@ -108,8 +109,9 @@ const instance: ConnectionCredentialsField = {
     code_client,
     customer_id,
     customer_type,
-    lang,
     client_id,
+    region,
+    lang,
     client_secret,
     user_token,
     shipping_account_id,
