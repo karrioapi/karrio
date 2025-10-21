@@ -158,41 +158,43 @@ export default function ShippingTasksComponent({ app, context }: AppComponentPro
           </CardDescription>
         </CardHeader>
         <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="space-y-3">
             <Input
               placeholder="Enter task title..."
               value={newTaskTitle}
               onChange={(e) => setNewTaskTitle(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && addTask()}
-              className="flex-1"
+              className="w-full"
             />
-            <Select value={newTaskCategory} onValueChange={setNewTaskCategory}>
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent>
-                {taskCategories.map(category => (
-                  <SelectItem key={category} value={category}>
-                    {category}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={newTaskPriority} onValueChange={(value) => setNewTaskPriority(value as Task["priority"])}>
-              <SelectTrigger className="w-full sm:w-32">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="low">Low</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="high">High</SelectItem>
-                <SelectItem value="urgent">Urgent</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button onClick={addTask} disabled={!newTaskTitle.trim()}>
-              <Plus className="h-4 w-4 mr-1" />
-              Add
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Select value={newTaskCategory} onValueChange={setNewTaskCategory}>
+                <SelectTrigger className="w-full sm:w-48">
+                  <SelectValue placeholder="Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {taskCategories.map(category => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={newTaskPriority} onValueChange={(value) => setNewTaskPriority(value as Task["priority"])}>
+                <SelectTrigger className="w-full sm:w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="urgent">Urgent</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button onClick={addTask} disabled={!newTaskTitle.trim()}>
+                <Plus className="h-4 w-4 mr-1" />
+                Add
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
