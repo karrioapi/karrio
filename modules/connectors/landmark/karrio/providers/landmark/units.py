@@ -65,6 +65,7 @@ class ShippingServiceName(lib.StrEnum):
     landmark_maxipak_scan_ddu = "MaxiPak Scan DDU"
     landmark_minipak_scan_ddp = "MiniPak Scan DDP (EU Only)"
     landmark_minipak_scan_ddu = "MiniPak Scan DDU shipments (EU & ROW)"
+    landmark_maxipak_scan_premium = "MaxiPak Scan Premium Service (UPS-EU-ROW)"
 
 
 class ShippingService(lib.StrEnum):
@@ -78,6 +79,8 @@ class ShippingService(lib.StrEnum):
     landmark_minipak_scan_ddp = "LGINTBPIP"
     # MiniPak Scan DDU shipments (EU & ROW)
     landmark_minipak_scan_ddu = "LGINTBPIU"
+    # MaxiPak Scan Premium Service (UPS-EU-ROW)
+    landmark_maxipak_scan_premium = "LGINTUPST"
 
 
 class ShippingOption(lib.Enum):

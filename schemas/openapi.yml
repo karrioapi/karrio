@@ -13213,6 +13213,7 @@ tags:
     | landmark_maxipak_scan_ddu | LGINTSTDU |
     | landmark_minipak_scan_ddp | LGINTBPIP |
     | landmark_minipak_scan_ddu | LGINTBPIU |
+    | landmark_maxipak_scan_premium | LGINTUPST |
 
     ### Locate2u
     | Code         | Service Name |
