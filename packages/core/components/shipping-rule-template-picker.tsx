@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@karrio/ui/components/ui/dialog";
 import { Button } from "@karrio/ui/components/ui/button";
-import { Input } from "@karrio/ui/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@karrio/ui/components/ui/card";
 import { Badge } from "@karrio/ui/components/ui/badge";
 import { Search, Truck, Settings, Plus } from "lucide-react";
@@ -57,13 +56,13 @@ export function ShippingRuleTemplatePicker({ onSelectTemplate, children }: Shipp
 
           {/* Search */}
           <div className="p-4 pb-8">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-              <Input
+            <div className="flex h-8 w-full items-center rounded-md border border-input bg-transparent shadow-sm">
+              <Search className="ml-3 h-4 w-4 text-slate-400 flex-shrink-0" />
+              <input
                 placeholder="Search templates..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 h-8 text-sm"
+                className="flex-1 bg-transparent border-0 px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-0"
               />
             </div>
           </div>
