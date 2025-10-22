@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@karrio/ui/components/ui/table";
 import { Trash2, Plus, Copy, Eye, EyeOff, Calendar, MoreHorizontal } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@karrio/ui/components/ui/dropdown-menu";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@karrio/ui/components/ui/tooltip";
 import { useAPIKeys, useAPIKeyMutation } from "@karrio/hooks/api-keys";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { Checkbox } from "@karrio/ui/components/ui/checkbox";
@@ -139,26 +140,27 @@ export function ApiKeysView() {
                 Create API Key
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-lg mx-2 sm:mx-auto">
-              <DialogHeader>
-                <DialogTitle>Create API Key</DialogTitle>
-                <DialogDescription>
+            <DialogContent className="max-w-lg mx-2 sm:mx-auto bg-[#0f0c24] border-neutral-800 text-neutral-200">
+              <DialogHeader className="bg-[#0f0c24] border-b border-neutral-800 px-4 py-3 text-neutral-200">
+                <DialogTitle className="text-neutral-100">Create API Key</DialogTitle>
+                <DialogDescription className="text-neutral-400">
                   Create a new API key for programmatic access to your account.
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleCreateSubmit} className="space-y-4 p-4 pb-8">
                 <div className="space-y-2">
-                  <Label htmlFor="label">Label</Label>
+                  <Label htmlFor="label" className="text-neutral-300">Label</Label>
                   <Input
                     id="label"
                     value={formData.label}
                     onChange={(e) => setFormData(prev => ({ ...prev, label: e.target.value }))}
                     placeholder="Enter a descriptive label"
                     required
+                    className="bg-[#0f0c24] border-neutral-700 text-neutral-200 placeholder:text-neutral-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password" className="text-neutral-300">Password</Label>
                   <Input
                     id="password"
                     type="password"
@@ -166,10 +168,11 @@ export function ApiKeysView() {
                     onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
                     placeholder="Enter your account password"
                     required
+                    className="bg-[#0f0c24] border-neutral-700 text-neutral-200 placeholder:text-neutral-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Permissions</Label>
+                  <Label className="text-neutral-300">Permissions</Label>
                   <div className="space-y-2 max-h-48 overflow-y-auto">
                     {AVAILABLE_PERMISSIONS.map((permission) => (
                       <div key={permission} className="flex items-center space-x-2">
@@ -190,7 +193,7 @@ export function ApiKeysView() {
                             }
                           }}
                         />
-                        <Label htmlFor={permission} className="text-sm">
+                        <Label htmlFor={permission} className="text-sm text-neutral-300">
                           {formatPermissionName(permission)}
                         </Label>
                       </div>
@@ -198,7 +201,7 @@ export function ApiKeysView() {
                   </div>
                 </div>
                 <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2">
-                  <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)} className="w-full sm:w-auto">
+                  <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)} className="w-full sm:w-auto text-white bg-gray-800 hover:bg-gray-700 hover:text-white border-neutral-800">
                     Cancel
                   </Button>
                   <Button type="submit" disabled={createAPIKey.isLoading} className="w-full sm:w-auto">
@@ -227,15 +230,15 @@ export function ApiKeysView() {
             </Button>
           </div>
         ) : (
-          <div className="border-b border-neutral-800">
+          <div className="border-b border-neutral-800 text-gray-300">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Label</TableHead>
-                  <TableHead>Mode</TableHead>
-                  <TableHead>API Key</TableHead>
-                  <TableHead>Permissions</TableHead>
-                  <TableHead>Created</TableHead>
+                  <TableHead className="text-white">Label</TableHead>
+                  <TableHead className="text-white">Mode</TableHead>
+                  <TableHead className="text-white">API Key</TableHead>
+                  <TableHead className="text-white">Permissions</TableHead>
+                  <TableHead className="text-white">Created</TableHead>
                   <TableHead className="w-12"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -252,7 +255,7 @@ export function ApiKeysView() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <code className="text-sm bg-neutral-900 border border-neutral-800 text-neutral-200 px-2 py-1 rounded font-mono">
+                        <code className="text-sm bg-gray-800 border border-gray-600 text-neutral-200 px-2 py-1 rounded font-mono">
                           {showSecrets[apiKey.key] ? apiKey.key : `${apiKey.key.slice(0, 8)}...`}
                         </code>
                         <Button
@@ -260,7 +263,7 @@ export function ApiKeysView() {
                           size="sm"
                           onClick={() => toggleSecret(apiKey.key)}
                         >
-                          {showSecrets[apiKey.key] ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          {showSecrets[apiKey.key] ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
                         </Button>
                       </div>
                     </TableCell>
@@ -274,9 +277,22 @@ export function ApiKeysView() {
                               </Badge>
                             ))}
                             {apiKey.permissions.length > 2 && (
-                              <Badge variant="secondary" className="text-xs">
-                                +{apiKey.permissions.length - 2}
-                              </Badge>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Badge variant="secondary" className="text-xs cursor-default">
+                                      +{apiKey.permissions.length - 2}
+                                    </Badge>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="bottom" sideOffset={6} className="bg-[#0f0c24] text-white border border-neutral-800">
+                                    <div className="max-w-xs text-xs space-y-1">
+                                      {apiKey.permissions.slice(2).map((permission: string) => (
+                                        <div key={permission}>{formatPermissionName(permission)}</div>
+                                      ))}
+                                    </div>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
                             )}
                           </div>
                         ) : (
@@ -292,12 +308,12 @@ export function ApiKeysView() {
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <Button variant="ghost" size="lg" className="h-8 w-8 p-0">
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => copyToClipboard(apiKey.key)}>
+                        <DropdownMenuContent align="end" className="bg-[#0f0c24] text-white border-neutral-800">
+                          <DropdownMenuItem onClick={() => copyToClipboard(apiKey.key)} className="text-white focus:bg-purple-900/20 focus:text-white">
                             <Copy className="h-4 w-4 mr-2" />
                             Copy API Key
                           </DropdownMenuItem>
