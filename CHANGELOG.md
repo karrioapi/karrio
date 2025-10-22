@@ -1,4 +1,15 @@
-# Karrio 2025.5rc26
+# Karrio 2025.5rc28
+
+## Changes
+
+### Feat
+
+- feat: add default mapping for maxipack premium
+- feat: differentiate last_mile carrier from hubs carrier
+- feat: add missing carrier logos and id mapping
+- feat: update generated openapi types
+
+# Karrio 2025.5rc27
 
 ## Changes
 
