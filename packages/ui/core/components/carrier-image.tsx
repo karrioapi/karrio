@@ -1,5 +1,5 @@
 import { CARRIER_IMAGES, CarrierNameEnum, IMAGES } from "@karrio/types";
-import { isNoneOrEmpty, p, formatCarrierSlug, getInitials } from "@karrio/lib";
+import { isNoneOrEmpty, p, formatCarrierSlug, getInitials, snakeCase } from "@karrio/lib";
 import Image from "next/legacy/image";
 import React from "react";
 
@@ -21,15 +21,17 @@ export const CarrierImage = ({
   height,
   ...props
 }: CarrierImageComponent): JSX.Element => {
-  const carrier_img = CARRIER_IMAGES[carrier_name as any] || carrier_name;
-  const has_image = IMAGES.includes(carrier_name as string);
+  const carrierName = snakeCase(carrier_name);
+  const carrier_img = CARRIER_IMAGES[carrierName as any] || carrierName;
+  const has_image = IMAGES.includes(carrierName as string);
   const has_styling = !isNoneOrEmpty(text_color) || !isNoneOrEmpty(background);
 
-  const _name = carrier_name as string;
+  const _name = carrierName;
   const isIcon = true;  // We always use icon format for this component
-  const carrier_label = isIcon
+  const carrier_label = (isIcon
     ? getInitials(_name).substring(0, 2)
-    : formatCarrierSlug(_name);
+    : formatCarrierSlug(_name)
+  );
   const svg_text_color = isNoneOrEmpty(text_color) ? "#ddd" : text_color;
   const svg_background = isNoneOrEmpty(background) ? "#7e51e1" : background;
   const props_str = 'viewBox="0 0 512 512"';

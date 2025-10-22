@@ -5727,6 +5727,7 @@ export interface TokenMutationInput {
 export interface UpdateUserInput {
   full_name?: string | null;
   is_active?: boolean | null;
+  metadata?: any | null;
 }
 
 // null

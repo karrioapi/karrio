@@ -107,3 +107,35 @@ LGINTBPIU,MiniPak Scan DDU,Rest of World,"AE,AU,CA,HK,NZ,SA,SG",0.0,0.25,3.54,GB
 LGINTBPIU,MiniPak Scan DDU,Rest of World,"AE,AU,CA,HK,NZ,SA,SG",0.25,0.5,5.51,GBP,9
 LGINTBPIU,MiniPak Scan DDU,Rest of World,"AE,AU,CA,HK,NZ,SA,SG",0.5,1.0,6.89,GBP,9
 LGINTBPIU,MiniPak Scan DDU,Rest of World,"AE,AU,CA,HK,NZ,SA,SG",1.0,2.0,10.07,GBP,9
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 1,"AT,BE,CZ,DE,DK,FR,IE,LU,NL,PL",0.0,0.25,5.50,GBP,6
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 1,"AT,BE,CZ,DE,DK,FR,IE,LU,NL,PL",0.25,0.5,6.00,GBP,6
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 1,"AT,BE,CZ,DE,DK,FR,IE,LU,NL,PL",0.5,1.0,7.00,GBP,6
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 1,"AT,BE,CZ,DE,DK,FR,IE,LU,NL,PL",1.0,2.0,8.50,GBP,6
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 1,"AT,BE,CZ,DE,DK,FR,IE,LU,NL,PL",2.0,5.0,11.00,GBP,6
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 1,"AT,BE,CZ,DE,DK,FR,IE,LU,NL,PL",5.0,10.0,18.00,GBP,6
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 1,"AT,BE,CZ,DE,DK,FR,IE,LU,NL,PL",10.0,20.0,30.00,GBP,6
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 1,"AT,BE,CZ,DE,DK,FR,IE,LU,NL,PL",20.0,30.0,45.00,GBP,6
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 2,"ES,FI,HU,IT,PT,SE",0.0,0.25,4.50,GBP,7
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 2,"ES,FI,HU,IT,PT,SE",0.25,0.5,5.50,GBP,7
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 2,"ES,FI,HU,IT,PT,SE",0.5,1.0,6.50,GBP,7
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 2,"ES,FI,HU,IT,PT,SE",1.0,2.0,7.00,GBP,7
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 2,"ES,FI,HU,IT,PT,SE",2.0,5.0,8.00,GBP,7
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 2,"ES,FI,HU,IT,PT,SE",5.0,10.0,9.50,GBP,7
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 2,"ES,FI,HU,IT,PT,SE",10.0,20.0,12.00,GBP,7
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 2,"ES,FI,HU,IT,PT,SE",20.0,30.0,17.50,GBP,7
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 3,"BG,CY,EE,GR,HR,LT,LV,MT,RO,SI,SK",0.0,0.25,4.00,GBP,8
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 3,"BG,CY,EE,GR,HR,LT,LV,MT,RO,SI,SK",0.25,0.5,5.50,GBP,8
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 3,"BG,CY,EE,GR,HR,LT,LV,MT,RO,SI,SK",0.5,1.0,6.50,GBP,8
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 3,"BG,CY,EE,GR,HR,LT,LV,MT,RO,SI,SK",1.0,2.0,8.00,GBP,8
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 3,"BG,CY,EE,GR,HR,LT,LV,MT,RO,SI,SK",2.0,5.0,12.50,GBP,8
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 3,"BG,CY,EE,GR,HR,LT,LV,MT,RO,SI,SK",5.0,10.0,24.00,GBP,8
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 3,"BG,CY,EE,GR,HR,LT,LV,MT,RO,SI,SK",10.0,20.0,45.00,GBP,8
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),EU Zone 3,"BG,CY,EE,GR,HR,LT,LV,MT,RO,SI,SK",20.0,30.0,88.00,GBP,8
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),Rest of World,"AE,AU,CA,HK,NZ,SA,SG",0.0,0.25,4.50,GBP,7
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),Rest of World,"AE,AU,CA,HK,NZ,SA,SG",0.25,0.5,7.00,GBP,7
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),Rest of World,"AE,AU,CA,HK,NZ,SA,SG",0.5,1.0,9.00,GBP,7
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),Rest of World,"AE,AU,CA,HK,NZ,SA,SG",1.0,2.0,13.00,GBP,7
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),Rest of World,"AE,AU,CA,HK,NZ,SA,SG",2.0,5.0,21.00,GBP,7
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),Rest of World,"AE,AU,CA,HK,NZ,SA,SG",5.0,10.0,43.00,GBP,7
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),Rest of World,"AE,AU,CA,HK,NZ,SA,SG",10.0,20.0,82.00,GBP,7
+LGINTUPST,MaxiPak Scan Premium Service (UPS-EU-ROW),Rest of World,"AE,AU,CA,HK,NZ,SA,SG",20.0,30.0,160.00,GBP,7

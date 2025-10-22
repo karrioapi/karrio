@@ -190,7 +190,7 @@ ParsedShipmentResponse = [
             "consignment_ids": [5473553],
             "tracking_urls": ["http://track.omniparcel.com/1153896-6994008906"],
             "carrier_tracking_link": "http://track.omniparcel.com/1153896-6994008906",
-            "rate_provider": "MyChildData",
+            "last_mile_carrier": "MyChildData",
         },
         "selected_rate": {
             "carrier_id": "seko",
@@ -204,8 +204,8 @@ ParsedShipmentResponse = [
                 "IsRuralDelivery": False,
                 "IsSaturdayDelivery": False,
                 "service_name": "eCommerce Express Tracked",
+                "last_mile_carrier": "MyChildData",
                 "seko_carrier": "MyChildData",
-                "rate_provider": "MyChildData",
             },
         },
         "shipment_identifier": 5473553,

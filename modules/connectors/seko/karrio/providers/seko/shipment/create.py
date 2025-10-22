@@ -57,7 +57,7 @@ def _extract_details(
             currency=settings.connection_config.currency.state or "USD",
             meta=dict(
                 service_name=service.value_or_key,
-                rate_provider=details.CarrierName,
+                last_mile_carrier=details.CarrierName,
                 seko_carrier=details.CarrierName,
                 CarrierType=details.CarrierType,
                 IsRuralDelivery=details.IsRural,
@@ -80,6 +80,7 @@ def _extract_details(
         selected_rate=selected_rate,
         meta=dict(
             carrier_tracking_link=TrackingUrls[0],
+            last_mile_carrier=details.CarrierName,
             seko_site_id=details.SiteId,
             tracking_urls=TrackingUrls,
             consignment_id=ConsignmentIds[0],
@@ -87,7 +88,6 @@ def _extract_details(
             seko_carrier_id=details.CarrierId,
             seko_carrier_name=details.CarrierName,
             seko_carrier_type=details.CarrierType,
-            rate_provider=details.CarrierName,
             seko_invoice_response=details.InvoiceResponse,
         ),
     )

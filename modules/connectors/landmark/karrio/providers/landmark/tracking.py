@@ -96,9 +96,15 @@ def _extract_details(
                 package.LandmarkTrackingNumber
             ),
         ),
-        meta=dict(
-            lastMileTrackingNumber=package.TrackingNumber,
-            carrier=details.EndDeliveryCarrier,
+        meta=lib.to_dict(
+            dict(
+                last_mile_tracking_number=package.TrackingNumber,
+                last_mile_carrier=lib.identity(
+                    "landmark"
+                    if "routed" in details.EndDeliveryCarrier.lower()
+                    else details.EndDeliveryCarrier
+                ),
+            )
         ),
     )
 
