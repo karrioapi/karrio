@@ -120,8 +120,8 @@ PARSED_TRACKING_RESPONSE = [
                 "carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN38570269N1"
             },
             "meta": {
-                "lastMileTrackingNumber": "LTN123121",
-                "carrier": "Sample Carrier",
+                "last_mile_tracking_number": "LTN123121",
+                "last_mile_carrier": "Sample Carrier",
             },
             "status": "in_transit",
             "tracking_number": "LTN38570269N1",
@@ -183,8 +183,8 @@ PARSED_IN_TRANSIT_RESPONSE = [
                 "carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN48392101N1"
             },
             "meta": {
-                "lastMileTrackingNumber": "1Z999AA10123456784",
-                "carrier": "Canada Post",
+                "last_mile_tracking_number": "1Z999AA10123456784",
+                "last_mile_carrier": "Canada Post",
             },
             "status": "in_transit",
             "tracking_number": "LTN48392101N1",
@@ -240,8 +240,8 @@ PARSED_OUT_FOR_DELIVERY_RESPONSE = [
                 "carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN49831232N2"
             },
             "meta": {
-                "lastMileTrackingNumber": "1Z999BB20234567895",
-                "carrier": "La Poste",
+                "last_mile_tracking_number": "1Z999BB20234567895",
+                "last_mile_carrier": "La Poste",
             },
             "status": "out_for_delivery",
             "tracking_number": "LTN49831232N2",
@@ -297,8 +297,8 @@ PARSED_DELIVERED_RESPONSE = [
                 "carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN49100231N3"
             },
             "meta": {
-                "lastMileTrackingNumber": "1Z999CC30345678906",
-                "carrier": "Canada Post",
+                "last_mile_tracking_number": "1Z999CC30345678906",
+                "last_mile_carrier": "Canada Post",
             },
             "status": "delivered",
             "tracking_number": "LTN49100231N3",
@@ -351,7 +351,10 @@ PARSED_DELIVERY_FAILED_RESPONSE = [
             "info": {
                 "carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN49678120N4"
             },
-            "meta": {"carrier": "DHL", "lastMileTrackingNumber": "1Z999DD40456789017"},
+            "meta": {
+                "last_mile_carrier": "DHL",
+                "last_mile_tracking_number": "1Z999DD40456789017",
+            },
             "status": "delivery_failed",
             "tracking_number": "LTN49678120N4",
         }

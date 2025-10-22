@@ -22,14 +22,15 @@ export const CarrierBadge = ({
   ...props
 }: CarrierBadgeComponent): JSX.Element => {
   const carrier_img = CARRIER_IMAGES[carrier_name as any] || carrier_name;
-  const query = new URLSearchParams(
+  const query = (new URLSearchParams(
     JSON.parse(
       JSON.stringify({
         text_color: !!text_color ? encodeURIComponent(text_color) : undefined,
         background: !!background ? encodeURIComponent(background) : undefined,
       }),
     ),
-  ).toString();
+  ).toString()
+  );
 
   return (
     <div className="mt-1">

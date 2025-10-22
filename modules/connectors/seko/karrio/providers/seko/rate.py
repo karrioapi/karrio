@@ -39,7 +39,7 @@ def _extract_details(
         currency=settings.connection_config.currency.state or "USD",
         meta=dict(
             service_name=service.value_or_key,
-            seko_carrier=details.CarrierName,
+            last_mile_carrier=details.CarrierName,
             Route=details.Route,
             QuoteId=details.QuoteId,
             DeliveryType=details.DeliveryType,

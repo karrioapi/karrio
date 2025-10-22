@@ -111,7 +111,7 @@ ParsedRateResponse = [
                 "IsSaturdayDelivery": False,
                 "QuoteId": "e7fdf36c-8f6a-4d3f-8d96-c8b5893a0e7f",
                 "Route": "OFFSHORE->AKL- SI",
-                "seko_carrier": "Omni Parcel",
+                "last_mile_carrier": "Omni Parcel",
                 "service_name": "AIR TRACKED",
             },
             "service": "AIR TRACKED",
