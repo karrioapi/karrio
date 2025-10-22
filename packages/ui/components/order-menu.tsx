@@ -154,20 +154,22 @@ export const OrderMenu = ({
               <DropdownMenuItem onClick={navigateToEditOrder} className="cursor-pointer">
                 <span>Edit order</span>
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => {
-                  setConfirmAction({
-                    title: "Delete Order",
-                    description: `Are you sure you want to delete order ${order.id}? This action cannot be undone.`,
-                    confirmLabel: "Submit",
-                    onConfirm: () => mutation.deleteOrder.mutateAsync({ id: order.id }),
-                  });
-                  setConfirmDialogOpen(true);
-                }}
-                className="text-destructive focus:text-destructive cursor-pointer"
-              >
-                <span>Delete order</span>
-              </DropdownMenuItem>
+              {order.status !== "cancelled" && (
+                <DropdownMenuItem
+                  onClick={() => {
+                    setConfirmAction({
+                      title: "Delete Order",
+                      description: `Are you sure you want to delete order ${order.id}? This action cannot be undone.`,
+                      confirmLabel: "Submit",
+                      onConfirm: () => mutation.deleteOrder.mutateAsync({ id: order.id }),
+                    });
+                    setConfirmDialogOpen(true);
+                  }}
+                  className="text-destructive focus:text-destructive cursor-pointer"
+                >
+                  <span>Delete order</span>
+                </DropdownMenuItem>
+              )}
             </>
           )}
 
