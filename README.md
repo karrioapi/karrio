@@ -1,7 +1,7 @@
 # Karrio
 
 -   Website: <https://karrio.io>
--   Documentation: [https://docs.karrio.io/](https://docs.karrio.io/)
+-   Documentation: [https://karrio.io/docs](https://karrio.io/docs)
 -   Forums: [Github Discussions](https://github.com/orgs/karrioapi/discussions)
 -   Discord: [Karrio Discord server](https://discord.gg/gS88uE7sEx)
 -   Issues: [Issue Tracker](https://github.com/karrioapi/karrio/issues)
@@ -109,8 +109,8 @@ We <3 contributions big and small. In priority order (although everything is app
 
 -   Ask general question on [Github Discussions](https://github.com/orgs/karrioapi/discussions)
 -   Submit a [feature request](https://github.com/orgs/karrioapi/discussions)
--   Review the [Repository Guidelines](AGENTS.md) for project-specific conventions
--   Open a PR (see our instructions on [developing Karrio locally](https://docs.karrio.io/contributing/development))
+-   Review the [Repository Guidelines](https://www.karrio.io/docs/developing/oss-contribution) for project-specific conventions
+-   Open a PR (see our instructions on [developing Karrio locally](https://www.karrio.io/docs/developing/local-development))
 
 ### Contributors
 
