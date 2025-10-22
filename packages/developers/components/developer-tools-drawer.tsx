@@ -28,16 +28,18 @@ const CustomDrawerContent = React.forwardRef<
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed z-50 flex flex-col border-t bg-background",
+        "fixed z-50 flex flex-col border-t bg-[#0f0c24]",
         // Mobile: full screen with rounded top corners
         "inset-0 h-full w-full lg:inset-auto",
         // Desktop: positioned below navbar (navbar is h-14 = 56px)
         "lg:top-14 lg:left-0 lg:right-0 lg:bottom-0 lg:h-[calc(100vh-3.5rem)]",
+        // Force dark mode for this drawer only (scoped)
+        "dark",
         className
       )}
       {...props}
     >
-      <div className="mx-auto mt-2 h-1 w-[100px] rounded-full bg-muted lg:hidden" />
+      <div className="mx-auto mt-2 h-1 w-[100px] rounded-full bg-purple-900/40 lg:hidden" />
       {children}
     </DrawerPrimitive.Content>
   </DrawerPortal>
@@ -113,7 +115,7 @@ export function DeveloperToolsDrawer() {
     }}>
       <CustomDrawerContent className="h-full max-h-full flex flex-col overflow-hidden">
         {/* Header */}
-        <DrawerHeader className="flex-shrink-0 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-2 sm:px-4 py-2">
+        <DrawerHeader className="relative z-50 flex-shrink-0 border-b border-neutral-800 !bg-[#0b0a1a] px-2 sm:px-4 py-2 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3">
               {/* Mobile menu button */}
@@ -125,15 +127,15 @@ export function DeveloperToolsDrawer() {
               >
                 <Menu className="h-6 w-6" />
               </Button>
-              <Terminal className="h-6 w-6 sm:h-7 sm:w-7 text-muted-foreground" />
-              <DrawerTitle className="text-base sm:text-lg font-semibold">Developer Tools</DrawerTitle>
+              <Terminal className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
+              <DrawerTitle className="text-base sm:text-lg font-semibold text-white">Developer Tools</DrawerTitle>
               <DrawerDescription className="sr-only">Developer tools drawer</DrawerDescription>
             </div>
             <Button
               variant="ghost"
               size="sm"
               onClick={closeDeveloperTools}
-              className="h-10 w-10 p-0"
+              className="h-10 w-10 p-0 text-neutral-300 hover:text-white hover:bg-neutral-800/40"
             >
               <X className="h-6 w-6" />
             </Button>
@@ -151,14 +153,14 @@ export function DeveloperToolsDrawer() {
             {/* Mobile Sidebar Overlay */}
             {isMobileSidebarOpen && (
               <div
-                className="absolute inset-0 bg-black/20 z-5 lg:hidden"
+                className="absolute inset-0 bg-blue-900/30 z-5 lg:hidden"
                 onClick={() => setIsMobileSidebarOpen(false)}
               />
             )}
 
             {/* Sidebar Navigation */}
             <div className={cn(
-              "flex-shrink-0 border-r bg-background transition-transform duration-200 ease-in-out z-10",
+              "flex-shrink-0 border-r border-neutral-800 bg-[#0b0a1a] transition-transform duration-200 ease-in-out z-10",
               // Mobile: slide in from left, hidden by default
               "absolute lg:relative inset-y-0 left-0",
               "w-52 sm:w-56 lg:w-52",
@@ -172,12 +174,12 @@ export function DeveloperToolsDrawer() {
                       key={viewKey}
                       value={viewKey}
                       className={cn(
-                        "w-full justify-start gap-3 px-3 py-3 text-sm font-medium transition-all",
-                        "data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
-                        "hover:bg-muted/50"
+                        "w-full justify-start gap-3 px-3 py-3 text-sm font-medium transition-all rounded-md",
+                        "text-white hover:bg-purple-900/10",
+                        "data-[state=active]:bg-purple-900/20 data-[state=active]:text-white data-[state=active]:shadow-sm border border-transparent data-[state=active]:border-neutral-700"
                       )}
                     >
-                      <Icon className="h-5 w-5 flex-shrink-0" />
+                      <Icon className="h-5 w-5 flex-shrink-0 text-purple-400" />
                       <span className="truncate">{config.label}</span>
                     </TabsTrigger>
                   );
@@ -186,7 +188,7 @@ export function DeveloperToolsDrawer() {
             </div>
 
             {/* Main Content Area */}
-            <div className="flex-1 overflow-hidden lg:ml-0">
+            <div className="flex-1 overflow-hidden lg:ml-0 bg-[#0f0c24]">
               {Object.entries(VIEW_CONFIG).map(([viewKey, config]) => {
                 const Component = config.component;
                 return (

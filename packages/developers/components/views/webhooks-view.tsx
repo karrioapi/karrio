@@ -153,12 +153,12 @@ export function WebhooksView() {
   ];
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="px-4 py-3 border-b border-slate-200">
+    <div className="h-full flex flex-col bg-[#0f0c24]">
+      <div className="px-4 py-3 border-b border-neutral-800">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg font-semibold">Webhooks</h2>
-            <p className="text-sm text-muted-foreground mt-1">
+            <h2 className="text-lg font-semibold text-neutral-200">Webhooks</h2>
+            <p className="text-sm text-neutral-400 mt-1">
               Manage webhook endpoints and event subscriptions
             </p>
           </div>
@@ -262,24 +262,24 @@ export function WebhooksView() {
       <div className="flex-1 overflow-auto p-4">
         {query.isLoading ? (
           <div className="flex items-center justify-center h-full">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-400"></div>
           </div>
         ) : webhooks.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-slate-400 mb-4">
+            <div className="text-neutral-500 mb-4">
               <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-slate-900 mb-2">No webhooks configured</h3>
-            <p className="text-slate-500 mb-4">Create your first webhook to start receiving event notifications.</p>
+            <h3 className="text-lg font-medium text-neutral-200 mb-2">No webhooks configured</h3>
+            <p className="text-neutral-400 mb-4">Create your first webhook to start receiving event notifications.</p>
             <Button onClick={() => setIsCreateOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Create Webhook
             </Button>
           </div>
         ) : (
-          <div className="border-b">
+          <div className="border-b border-neutral-800">
             <Table>
               <TableHeader>
                 <TableRow>

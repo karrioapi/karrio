@@ -28,7 +28,7 @@ const TimelineTab = ({ log, parseRecordData, copyToClipboard }: {
   return (
     <div className="p-4">
       {(log?.records || []).length === 0 && (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-neutral-400">
           <Clock className="h-8 w-8 mx-auto mb-2 opacity-50" />
           <p>No tracing records available</p>
         </div>
@@ -45,19 +45,19 @@ const TimelineTab = ({ log, parseRecordData, copyToClipboard }: {
             const requestId = (request?.record || response?.record)?.request_id || key;
 
             return (
-              <Card key={key} className="border border-gray-200">
+              <Card key={key} className="border border-neutral-800 bg-neutral-950">
                 <CardHeader className="p-4">
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2">
-                      <Server className="h-4 w-4 text-gray-500" />
+                      <Server className="h-4 w-4 text-neutral-500" />
                       <span className="font-medium">
                         {(request || response)?.meta?.carrier_name}
                       </span>
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs border-neutral-700 text-neutral-300">
                         {(request || response)?.meta?.carrier_id}
                       </Badge>
                     </div>
-                    <div className="text-xs text-gray-600 space-y-1">
+                    <div className="text-xs text-neutral-400 space-y-1">
                       <div>URL: {(request?.record || response?.record)?.url}</div>
                       <div>Request ID: {requestId}</div>
                       {request?.timestamp && (
@@ -77,23 +77,23 @@ const TimelineTab = ({ log, parseRecordData, copyToClipboard }: {
                   {request && requestData && (
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-700">Request</span>
+                        <span className="text-sm font-medium text-neutral-300">Request</span>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => copyToClipboard(requestData || "")}
-                          className="h-7 px-2"
+                          className="h-7 px-2 border-neutral-800 text-neutral-300 hover:bg-purple-900/20"
                         >
                           <Copy className="h-3 w-3" />
                         </Button>
                       </div>
-                      <div className="border rounded-md overflow-hidden">
+                      <div className="border border-neutral-800 rounded-md overflow-hidden">
                         <CodeMirror
                           value={requestData || ""}
                           extensions={[
                             request.record?.format === "xml" ? xml() : json()
                           ]}
-                          theme="light"
+                          theme="dark"
                           className="text-xs"
                           readOnly
                           basicSetup={{
@@ -115,23 +115,23 @@ const TimelineTab = ({ log, parseRecordData, copyToClipboard }: {
                   {response && responseData && (
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-700">{response.key}</span>
+                        <span className="text-sm font-medium text-neutral-300">{response.key}</span>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => copyToClipboard(responseData || "")}
-                          className="h-7 px-2"
+                          className="h-7 px-2 border-neutral-800 text-neutral-300 hover:bg-purple-900/20"
                         >
                           <Copy className="h-3 w-3" />
                         </Button>
                       </div>
-                      <div className="border rounded-md overflow-hidden">
+                      <div className="border border-neutral-800 rounded-md overflow-hidden">
                         <CodeMirror
                           value={responseData || ""}
                           extensions={[
                             response.record?.format === "xml" ? xml() : json()
                           ]}
-                          theme="light"
+                          theme="dark"
                           className="text-xs"
                           readOnly
                           basicSetup={{
@@ -179,20 +179,20 @@ const LogDetailViewer = ({ log }: { log: any }) => {
   }, [log]);
 
   const getStatusColor = (statusCode: number | null) => {
-    if (!statusCode) return "bg-gray-100 text-gray-800";
-    if (statusCode >= 200 && statusCode < 300) return "bg-green-100 text-green-800";
-    if (statusCode >= 400) return "bg-red-100 text-red-800";
-    return "bg-yellow-100 text-yellow-800";
+    if (!statusCode) return "bg-slate-900/30 text-slate-200";
+    if (statusCode >= 200 && statusCode < 300) return "bg-green-900/30 text-green-200";
+    if (statusCode >= 400) return "bg-red-900/30 text-red-200";
+    return "bg-yellow-900/30 text-yellow-200";
   };
 
   const getMethodColor = (method: string | null) => {
     switch (method?.toUpperCase()) {
-      case 'GET': return "bg-blue-100 text-blue-800";
-      case 'POST': return "bg-green-100 text-green-800";
-      case 'PUT': return "bg-yellow-100 text-yellow-800";
-      case 'DELETE': return "bg-red-100 text-red-800";
-      case 'PATCH': return "bg-purple-100 text-purple-800";
-      default: return "bg-gray-100 text-gray-800";
+      case 'GET': return "bg-blue-900/30 text-blue-200";
+      case 'POST': return "bg-green-900/30 text-green-200";
+      case 'PUT': return "bg-yellow-900/30 text-yellow-200";
+      case 'DELETE': return "bg-red-900/30 text-red-200";
+      case 'PATCH': return "bg-purple-900/30 text-purple-200";
+      default: return "bg-slate-900/30 text-slate-200";
     }
   };
 
@@ -482,8 +482,8 @@ const LogListItem = ({
   return (
     <div
       className={cn(
-        "p-4 border-b border-gray-200 cursor-pointer transition-all duration-150 hover:bg-gray-50",
-        isSelected ? "bg-gray-50 border-l-4 border-l-gray-400" : "border-l-4 border-l-transparent"
+        "p-4 border-b border-neutral-800 cursor-pointer transition-all duration-150 hover:bg-purple-900/10",
+        isSelected ? "bg-purple-900/20 border-l-4 border-l-purple-800/60" : "border-l-4 border-l-transparent"
       )}
       onClick={() => onSelect(log)}
     >
@@ -499,19 +499,19 @@ const LogListItem = ({
                 {log.status_code}
               </Badge>
               {log.response_ms && (
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-neutral-400">
                   {log.response_ms}ms
                 </span>
               )}
             </div>
-            <div className="text-sm text-slate-900 truncate font-mono">
+            <div className="text-sm text-neutral-200 truncate font-mono">
               {log.path}
             </div>
-            <div className="text-xs text-slate-500 truncate">
+            <div className="text-xs text-neutral-400 truncate">
               ID: {log.id} • {log.host || "Unknown"}
             </div>
           </div>
-          <div className="text-xs text-slate-500 flex-shrink-0">
+          <div className="text-xs text-neutral-400 flex-shrink-0">
             {formatDateTimeLong(log.requested_at)}
           </div>
         </div>
@@ -721,7 +721,7 @@ export function LogsView() {
   };
 
   return (
-    <div className="h-full flex overflow-hidden">
+    <div className="h-full flex overflow-hidden bg-[#0f0c24]">
       {/* Left Panel - Logs List */}
       <div className="w-1/2 border-r flex flex-col lg:flex hidden h-full">
         {/* Header */}

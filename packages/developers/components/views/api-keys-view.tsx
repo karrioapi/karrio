@@ -123,12 +123,12 @@ export function ApiKeysView() {
   };
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="px-4 py-3 border-b border-slate-200">
+    <div className="h-full flex flex-col bg-[#0f0c24]">
+      <div className="px-4 py-3 border-b border-neutral-400">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold">API Keys</h2>
-            <p className="text-sm text-muted-foreground mt-1">
+            <h2 className="text-lg font-semibold text-white">API Keys</h2>
+            <p className="text-sm text-neutral-200 mt-1">
               Manage your API keys for programmatic access
             </p>
           </div>
@@ -214,20 +214,20 @@ export function ApiKeysView() {
       <div className="flex-1 overflow-auto p-4">
         {apiKeys.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-slate-400 mb-4">
+            <div className="text-neutral-500 mb-4">
               <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-3.586l6.879-6.879A6 6 0 0119 9z" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-slate-900 mb-2">No API keys</h3>
-            <p className="text-slate-500 mb-4">Get started by creating your first API key.</p>
+            <h3 className="text-lg font-medium text-neutral-200 mb-2">No API keys</h3>
+            <p className="text-neutral-400 mb-4">Get started by creating your first API key.</p>
             <Button onClick={() => setIsCreateOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Create API Key
             </Button>
           </div>
         ) : (
-          <div className="border-b">
+          <div className="border-b border-neutral-800">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -239,80 +239,80 @@ export function ApiKeysView() {
                   <TableHead className="w-12"></TableHead>
                 </TableRow>
               </TableHeader>
-                <TableBody>
-                  {apiKeys.map((apiKey) => (
-                    <TableRow key={apiKey.key}>
-                      <TableCell className="font-medium">
-                        {apiKey.label}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={apiKey.test_mode ? "secondary" : "default"}>
-                          {apiKey.test_mode ? "Test" : "Live"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <code className="text-sm bg-muted px-2 py-1 rounded font-mono">
-                            {showSecrets[apiKey.key] ? apiKey.key : `${apiKey.key.slice(0, 8)}...`}
-                          </code>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => toggleSecret(apiKey.key)}
-                          >
-                            {showSecrets[apiKey.key] ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              <TableBody>
+                {apiKeys.map((apiKey) => (
+                  <TableRow key={apiKey.key}>
+                    <TableCell className="font-medium">
+                      {apiKey.label}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={apiKey.test_mode ? "secondary" : "default"}>
+                        {apiKey.test_mode ? "Test" : "Live"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <code className="text-sm bg-neutral-900 border border-neutral-800 text-neutral-200 px-2 py-1 rounded font-mono">
+                          {showSecrets[apiKey.key] ? apiKey.key : `${apiKey.key.slice(0, 8)}...`}
+                        </code>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => toggleSecret(apiKey.key)}
+                        >
+                          {showSecrets[apiKey.key] ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </Button>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="max-w-md">
+                        {apiKey.permissions && apiKey.permissions.length > 0 ? (
+                          <div className="flex flex-wrap gap-1">
+                            {apiKey.permissions.slice(0, 2).map((permission) => (
+                              <Badge key={permission} variant="secondary" className="text-xs">
+                                {formatPermissionName(permission)}
+                              </Badge>
+                            ))}
+                            {apiKey.permissions.length > 2 && (
+                              <Badge variant="secondary" className="text-xs">
+                                +{apiKey.permissions.length - 2}
+                              </Badge>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-xs text-neutral-400">No permissions</span>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm text-neutral-400">
+                        {formatDateTimeLong(apiKey.created)}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <MoreHorizontal className="h-4 w-4" />
                           </Button>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="max-w-md">
-                          {apiKey.permissions && apiKey.permissions.length > 0 ? (
-                            <div className="flex flex-wrap gap-1">
-                              {apiKey.permissions.slice(0, 2).map((permission) => (
-                                <Badge key={permission} variant="secondary" className="text-xs">
-                                  {formatPermissionName(permission)}
-                                </Badge>
-                              ))}
-                              {apiKey.permissions.length > 2 && (
-                                <Badge variant="secondary" className="text-xs">
-                                  +{apiKey.permissions.length - 2}
-                                </Badge>
-                              )}
-                            </div>
-                          ) : (
-                            <span className="text-xs text-muted-foreground">No permissions</span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm text-muted-foreground">
-                          {formatDateTimeLong(apiKey.created)}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => copyToClipboard(apiKey.key)}>
-                              <Copy className="h-4 w-4 mr-2" />
-                              Copy API Key
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => handleDelete(apiKey.key)}
-                              className="text-destructive"
-                            >
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => copyToClipboard(apiKey.key)}>
+                            <Copy className="h-4 w-4 mr-2" />
+                            Copy API Key
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => handleDelete(apiKey.key)}
+                            className="text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </div>

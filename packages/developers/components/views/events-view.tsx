@@ -15,16 +15,16 @@ import { EventTypes, EVENT_TYPES } from "@karrio/types";
 import { cn } from "@karrio/ui/lib/utils";
 
 const EVENT_TYPE_COLORS = {
-  [EventTypes.order_created]: "bg-indigo-100 text-indigo-800",
-  [EventTypes.order_updated]: "bg-cyan-100 text-cyan-800",
-  [EventTypes.order_fulfilled]: "bg-emerald-100 text-emerald-800",
-  [EventTypes.order_cancelled]: "bg-red-100 text-red-800",
-  [EventTypes.shipment_purchased]: "bg-blue-100 text-blue-800",
-  [EventTypes.shipment_cancelled]: "bg-red-100 text-red-800",
-  [EventTypes.shipment_fulfilled]: "bg-purple-100 text-purple-800",
-  [EventTypes.tracker_created]: "bg-orange-100 text-orange-800",
-  [EventTypes.tracker_updated]: "bg-yellow-100 text-yellow-800",
-  default: "bg-slate-100 text-slate-800",
+  [EventTypes.order_created]: "bg-indigo-900/30 text-indigo-200",
+  [EventTypes.order_updated]: "bg-cyan-900/30 text-cyan-200",
+  [EventTypes.order_fulfilled]: "bg-emerald-900/30 text-emerald-200",
+  [EventTypes.order_cancelled]: "bg-red-900/30 text-red-200",
+  [EventTypes.shipment_purchased]: "bg-blue-900/30 text-blue-200",
+  [EventTypes.shipment_cancelled]: "bg-red-900/30 text-red-200",
+  [EventTypes.shipment_fulfilled]: "bg-purple-900/30 text-purple-200",
+  [EventTypes.tracker_created]: "bg-orange-900/30 text-orange-200",
+  [EventTypes.tracker_updated]: "bg-yellow-900/30 text-yellow-200",
+  default: "bg-slate-900/30 text-slate-200",
 };
 
 const EVENT_TYPE_ICONS = {
@@ -42,7 +42,7 @@ const EventDetailViewer = ({ event }: { event: any }) => {
 
   if (!event) {
     return (
-      <div className="flex items-center justify-center h-64 text-gray-500">
+      <div className="flex items-center justify-center h-64 text-neutral-400">
         <div className="text-center">
           <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
           <p>Select an event to view details</p>
@@ -63,9 +63,9 @@ const EventDetailViewer = ({ event }: { event: any }) => {
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col bg-[#0f0c24]">
       {/* Header */}
-      <div className="border-b px-4 py-3 flex-shrink-0">
+      <div className="border-b border-neutral-800 px-4 py-3 flex-shrink-0">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             {getEventTypeIcon(event.type as EventTypes | null)}
@@ -73,14 +73,14 @@ const EventDetailViewer = ({ event }: { event: any }) => {
               {event.type}
             </Badge>
           </div>
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-neutral-400">
             {formatDateTimeLong(event.created_at)}
           </div>
         </div>
-        <div className="text-sm font-medium truncate">
+        <div className="text-sm font-medium truncate text-neutral-200">
           Event: {event.type}
         </div>
-        <div className="text-xs text-gray-500 mt-1">
+        <div className="text-xs text-neutral-400 mt-1">
           ID: {event.id} • Test: {event.test_mode ? "Yes" : "No"}
         </div>
       </div>
@@ -91,21 +91,21 @@ const EventDetailViewer = ({ event }: { event: any }) => {
           {event.data && (
             <div className="mb-3">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-700">Event Data</span>
+                <span className="text-sm font-medium text-neutral-300">Event Data</span>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => copyToClipboard(JSON.stringify(event.data, null, 2))}
-                  className="h-7 px-2"
+                  className="h-7 px-2 border-neutral-800 text-neutral-300 hover:bg-purple-900/20"
                 >
                   <Copy className="h-3 w-3" />
                 </Button>
               </div>
-              <div className="border rounded-md overflow-hidden">
+              <div className="border border-neutral-800 rounded-md overflow-hidden">
                 <CodeMirror
                   value={JSON.stringify(event.data, null, 2)}
                   extensions={[json()]}
-                  theme="light"
+                  theme="dark"
                   className="text-xs"
                   readOnly
                   basicSetup={{
@@ -152,8 +152,8 @@ const EventListItem = ({
   return (
     <div
       className={cn(
-        "p-4 border-b border-gray-200 cursor-pointer transition-all duration-150 hover:bg-gray-50",
-        isSelected ? "bg-gray-50 border-l-4 border-l-gray-400" : "border-l-4 border-l-transparent"
+        "p-4 border-b border-neutral-800 cursor-pointer transition-all duration-150 hover:bg-purple-900/10",
+        isSelected ? "bg-purple-900/20 border-l-4 border-l-purple-800/60" : "border-l-4 border-l-transparent"
       )}
       onClick={() => onSelect(event)}
     >
@@ -166,19 +166,19 @@ const EventListItem = ({
                 {event.type}
               </Badge>
               {event.pending_webhooks > 0 && (
-                <span className="text-xs text-orange-500">
+                <span className="text-xs text-orange-300">
                   {event.pending_webhooks} pending
                 </span>
               )}
             </div>
-            <div className="text-sm text-slate-900 truncate font-mono">
+            <div className="text-sm text-neutral-200 truncate font-mono">
               {event.type}
             </div>
-            <div className="text-xs text-slate-500 truncate">
+            <div className="text-xs text-neutral-400 truncate">
               ID: {event.id} • Test: {event.test_mode ? "Yes" : "No"}
             </div>
           </div>
-          <div className="text-xs text-slate-500 flex-shrink-0">
+          <div className="text-xs text-neutral-400 flex-shrink-0">
             {formatDateTimeLong(event.created_at)}
           </div>
         </div>
@@ -376,11 +376,11 @@ export function EventsView() {
   };
 
   return (
-    <div className="h-full flex overflow-hidden">
+    <div className="h-full flex overflow-hidden bg-[#0f0c24]">
       {/* Left Panel - Events List */}
-      <div className="w-1/2 border-r flex flex-col lg:flex hidden h-full">
+      <div className="w-1/2 border-r border-neutral-800 flex flex-col lg:flex hidden h-full">
         {/* Header */}
-        <div className="border-b px-4 py-3 flex-shrink-0">
+        <div className="border-b border-neutral-800 px-4 py-3 flex-shrink-0">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-semibold">Events</h2>
             <div className="flex items-center gap-2">
@@ -421,16 +421,16 @@ export function EventsView() {
         <div className="flex-1 overflow-y-auto">
           {query.isFetching && (
             <div className="flex items-center justify-center py-8">
-              <RefreshCw className="h-6 w-6 animate-spin text-gray-400" />
+              <RefreshCw className="h-6 w-6 animate-spin text-neutral-500" />
             </div>
           )}
 
           {!query.isFetching && events.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-neutral-400">
               <Activity className="h-8 w-8 mx-auto mb-2 opacity-50" />
               <p>No events found</p>
               {hasActiveFilters() && (
-                <p className="text-xs mt-1">Try adjusting your filters</p>
+                <p className="text-xs mt-1 text-neutral-500">Try adjusting your filters</p>
               )}
             </div>
           )}
@@ -451,8 +451,8 @@ export function EventsView() {
 
         {/* Pagination */}
         {events.length > 0 && (
-          <div className="border-t px-4 py-2 flex items-center justify-between text-sm flex-shrink-0">
-            <span className="text-gray-600">
+          <div className="border-t border-neutral-800 px-4 py-2 flex items-center justify-between text-sm flex-shrink-0">
+            <span className="text-neutral-400">
               Showing {((filter.offset as number) || 0) + 1}-{((filter.offset as number) || 0) + events.length}
               {query.data?.events?.page_info.has_next_page && " of many"}
             </span>
@@ -462,7 +462,7 @@ export function EventsView() {
                 size="sm"
                 onClick={() => updateFilter({ offset: Math.max(0, ((filter.offset as number) || 0) - 20) })}
                 disabled={(filter.offset as number) === 0 || filter.offset === undefined}
-                className="h-7 px-2 text-xs"
+                className="h-7 px-2 text-xs border-neutral-800"
               >
                 Previous
               </Button>
@@ -471,7 +471,7 @@ export function EventsView() {
                 size="sm"
                 onClick={() => updateFilter({ offset: ((filter.offset as number) || 0) + 20 })}
                 disabled={!query.data?.events?.page_info.has_next_page}
-                className="h-7 px-2 text-xs"
+                className="h-7 px-2 text-xs border-neutral-800"
               >
                 Next
               </Button>
@@ -506,7 +506,7 @@ export function EventsView() {
         ) : (
           <div className="h-full flex flex-col">
             {/* Mobile Header */}
-            <div className="border-b px-4 py-3">
+            <div className="border-b border-neutral-800 px-4 py-3">
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-lg font-semibold">Events</h2>
                 <div className="flex items-center gap-2">
@@ -547,16 +547,16 @@ export function EventsView() {
             <div className="flex-1 overflow-auto">
               {query.isFetching && (
                 <div className="flex items-center justify-center py-8">
-                  <RefreshCw className="h-6 w-6 animate-spin text-gray-400" />
+                  <RefreshCw className="h-6 w-6 animate-spin text-neutral-500" />
                 </div>
               )}
 
               {!query.isFetching && events.length === 0 && (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-neutral-400">
                   <Activity className="h-8 w-8 mx-auto mb-2 opacity-50" />
                   <p>No events found</p>
                   {hasActiveFilters() && (
-                    <p className="text-xs mt-1">Try adjusting your filters</p>
+                    <p className="text-xs mt-1 text-neutral-500">Try adjusting your filters</p>
                   )}
                 </div>
               )}
@@ -577,8 +577,8 @@ export function EventsView() {
 
             {/* Mobile Pagination */}
             {events.length > 0 && (
-              <div className="border-t px-4 py-2 flex items-center justify-between text-sm">
-                <span className="text-gray-600">
+              <div className="border-t border-neutral-800 px-4 py-2 flex items-center justify-between text-sm">
+                <span className="text-neutral-400">
                   Showing {((filter.offset as number) || 0) + 1}-{((filter.offset as number) || 0) + events.length}
                   {query.data?.events?.page_info.has_next_page && " of many"}
                 </span>
@@ -588,7 +588,7 @@ export function EventsView() {
                     size="sm"
                     onClick={() => updateFilter({ offset: Math.max(0, ((filter.offset as number) || 0) - 20) })}
                     disabled={(filter.offset as number) === 0 || filter.offset === undefined}
-                    className="h-7 px-2 text-xs"
+                    className="h-7 px-2 text-xs border-neutral-800"
                   >
                     Previous
                   </Button>
@@ -597,7 +597,7 @@ export function EventsView() {
                     size="sm"
                     onClick={() => updateFilter({ offset: ((filter.offset as number) || 0) + 20 })}
                     disabled={!query.data?.events?.page_info.has_next_page}
-                    className="h-7 px-2 text-xs"
+                    className="h-7 px-2 text-xs border-neutral-800"
                   >
                     Next
                   </Button>
