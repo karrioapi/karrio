@@ -261,6 +261,50 @@ OTP_APPS = [
     "two_factor.plugins.email",
 ]
 
+# Configure HUEY before djhuey/apps are loaded
+# This must be done here (not in workers.py) because task modules import djhuey
+# at module load time, which happens when Django loads apps from INSTALLED_APPS
+_REDIS_HOST = config("REDIS_HOST", default=None)
+_REDIS_PORT = config("REDIS_PORT", default=None)
+_REDIS_PASSWORD = config("REDIS_PASSWORD", default=None)
+_REDIS_USERNAME = config("REDIS_USERNAME", default="default")
+_WORKER_IMMEDIATE_MODE = config(
+    "WORKER_IMMEDIATE_MODE", default=(_REDIS_HOST is None), cast=bool
+)
+
+HUEY = {
+    "huey_class": "huey.RedisHuey" if _REDIS_HOST else "huey.SqliteHuey",
+    "name": "default",
+    "results": True,
+    "store_none": False,
+    "immediate": _WORKER_IMMEDIATE_MODE,
+    "utc": True,
+    **({
+        "blocking": True,
+        "connection": {
+            "host": _REDIS_HOST,
+            "port": _REDIS_PORT or 6379,
+            "db": 0,
+            "connection_pool": None,
+            "read_timeout": 1,
+            "max_connections": 20,
+            **({
+                "username": _REDIS_USERNAME,
+                "password": _REDIS_PASSWORD,
+            } if _REDIS_PASSWORD else {}),
+        },
+    } if _REDIS_HOST else {}),
+    **({
+        "filename": os.path.join(WORK_DIR, "tasks.sqlite3"),
+    } if not _REDIS_HOST else {}),
+}
+
+# Karrio Server Background jobs interval config
+DEFAULT_SCHEDULER_RUN_INTERVAL = 3600  # value is seconds. so 3600 seconds = 1 Hour
+DEFAULT_TRACKERS_UPDATE_INTERVAL = config(
+    "TRACKING_PULSE", default=7200, cast=int
+)  # value is seconds. so 10800 seconds = 3 Hours
+
 INSTALLED_APPS = [
     "constance",
     *KARRIO_APPS,
@@ -351,6 +395,15 @@ if config("DATABASE_URL", default=None):
         conn_max_age=config("DATABASE_CONN_MAX_AGE", default=0, cast=int)
     )
     DATABASES["default"].update(db_from_env)
+
+# Configure workers database for SQLite storage when Redis is not available
+if not config("REDIS_HOST", default=None):
+    _WORKER_DB_DIR = config("WORKER_DB_DIR", default=WORK_DIR)
+    _WORKER_DB_FILE_NAME = os.path.join(_WORKER_DB_DIR, "tasks.sqlite3")
+    DATABASES["workers"] = {
+        "NAME": _WORKER_DB_FILE_NAME,
+        "ENGINE": "django.db.backends.sqlite3",
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators

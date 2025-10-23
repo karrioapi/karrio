@@ -37,7 +37,7 @@ class ConfirmPasswordResetForm(auth.SetPasswordForm):
 
 class ResetPasswordRequestForm(auth.PasswordResetForm):
     redirect_url = forms.URLField()
-    from_email = conf.settings.EMAIL_FROM_ADDRESS
+    from_email = confirm._get_validated_field("EMAIL_FROM_ADDRESS")
 
     def save(self, **kwargs):
         try:
