@@ -237,9 +237,9 @@ const EventsFilterDropdown = ({ context }: { context: ReturnType<typeof useEvent
         variant="outline"
         size="sm"
         onClick={() => setIsOpen(!isOpen)}
-        className="h-8"
+        className="h-8 text-white border-neutral-800 hover:bg-neutral-800/40"
       >
-        <Filter className="h-4 w-4 mr-2" />
+        <Filter className="h-4 w-4 mr-2 text-white" />
         Filters
         {hasActiveFilters() && (
           <Badge variant="secondary" className="ml-2 h-5 px-1.5 text-xs">
@@ -391,8 +391,9 @@ export function EventsView() {
                 size="sm"
                 onClick={handleRefresh}
                 disabled={query.isFetching}
+                className="text-white border-neutral-800 hover:bg-neutral-800/40"
               >
-                <RefreshCw className={`h-4 w-4 ${query.isFetching ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`h-4 w-4 text-white ${query.isFetching ? 'animate-spin' : ''}`} />
               </Button>
             </div>
           </div>
@@ -462,7 +463,7 @@ export function EventsView() {
                 size="sm"
                 onClick={() => updateFilter({ offset: Math.max(0, ((filter.offset as number) || 0) - 20) })}
                 disabled={(filter.offset as number) === 0 || filter.offset === undefined}
-                className="h-7 px-2 text-xs border-neutral-800"
+                className="h-7 px-2 text-xs text-white border-neutral-800 hover:bg-neutral-800/40"
               >
                 Previous
               </Button>
@@ -471,7 +472,7 @@ export function EventsView() {
                 size="sm"
                 onClick={() => updateFilter({ offset: ((filter.offset as number) || 0) + 20 })}
                 disabled={!query.data?.events?.page_info.has_next_page}
-                className="h-7 px-2 text-xs border-neutral-800"
+                className="h-7 px-2 text-xs text-white border-neutral-800 hover:bg-neutral-800/40"
               >
                 Next
               </Button>
@@ -588,7 +589,7 @@ export function EventsView() {
                     size="sm"
                     onClick={() => updateFilter({ offset: Math.max(0, ((filter.offset as number) || 0) - 20) })}
                     disabled={(filter.offset as number) === 0 || filter.offset === undefined}
-                    className="h-7 px-2 text-xs border-neutral-800"
+                    className="h-7 px-2 text-xs text-white border-neutral-800 hover:bg-neutral-800/40"
                   >
                     Previous
                   </Button>
@@ -597,7 +598,7 @@ export function EventsView() {
                     size="sm"
                     onClick={() => updateFilter({ offset: ((filter.offset as number) || 0) + 20 })}
                     disabled={!query.data?.events?.page_info.has_next_page}
-                    className="h-7 px-2 text-xs border-neutral-800"
+                    className="h-7 px-2 text-xs text-white border-neutral-800 hover:bg-neutral-800/40"
                   >
                     Next
                   </Button>
