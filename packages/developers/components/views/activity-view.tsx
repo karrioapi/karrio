@@ -156,7 +156,7 @@ export function ActivityView() {
               <Button
                 variant="link"
                 size="sm"
-                className="text-xs sm:text-sm text-purple-300 hover:text-purple-200 p-0 h-auto"
+                className="text-xs sm:text-sm text-[#8B5CF6]  hover:text-purple-200 p-0 h-auto"
                 onClick={handleViewAllRequests}
               >
                 View all requests
@@ -178,7 +178,7 @@ export function ActivityView() {
               <Button
                 variant="link"
                 size="sm"
-                className="text-xs sm:text-sm text-purple-300 hover:text-purple-200 p-0 h-auto"
+                className="text-xs sm:text-sm text-[#8B5CF6] hover:text-purple-200 p-0 h-auto"
                 onClick={handleManageAPIKeys}
               >
                 Manage API keys
@@ -256,7 +256,7 @@ export function ActivityView() {
                 <Button
                   variant="link"
                   size="sm"
-                  className="text-xs sm:text-sm text-purple-300 hover:text-purple-200 p-0 h-auto"
+                  className="text-xs sm:text-sm text-[#8B5CF6] hover:text-purple-200 p-0 h-auto"
                   onClick={handleViewAllRequests}
                 >
                   View all logs →

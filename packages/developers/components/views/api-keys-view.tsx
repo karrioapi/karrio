@@ -277,22 +277,42 @@ export function ApiKeysView() {
                               </Badge>
                             ))}
                             {apiKey.permissions.length > 2 && (
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <Badge variant="secondary" className="text-xs cursor-default">
-                                      +{apiKey.permissions.length - 2}
-                                    </Badge>
-                                  </TooltipTrigger>
-                                  <TooltipContent side="bottom" sideOffset={6} className="bg-[#0f0c24] text-white border border-neutral-800">
-                                    <div className="max-w-xs text-xs space-y-1">
-                                      {apiKey.permissions.slice(2).map((permission: string) => (
-                                        <div key={permission}>{formatPermissionName(permission)}</div>
-                                      ))}
-                                    </div>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
+                              <>
+                                <div className="hidden sm:block">
+                                  <TooltipProvider>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <Badge variant="secondary" className="text-xs cursor-default">
+                                          +{apiKey.permissions.length - 2}
+                                        </Badge>
+                                      </TooltipTrigger>
+                                      <TooltipContent side="bottom" sideOffset={6} className="bg-[#0f0c24] text-white border border-neutral-800">
+                                        <div className="max-w-xs text-xs space-y-1">
+                                          {apiKey.permissions.slice(2).map((permission: string) => (
+                                            <div key={permission}>{formatPermissionName(permission)}</div>
+                                          ))}
+                                        </div>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                </div>
+                                <div className="sm:hidden">
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Badge variant="secondary" className="text-xs cursor-pointer">
+                                        +{apiKey.permissions.length - 2}
+                                      </Badge>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent side="bottom" align="start" className="bg-[#0f0c24] text-white border-neutral-800">
+                                      <div className="max-w-xs text-xs space-y-1 px-2 py-1">
+                                        {apiKey.permissions.slice(2).map((permission: string) => (
+                                          <div key={permission}>{formatPermissionName(permission)}</div>
+                                        ))}
+                                      </div>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </div>
+                              </>
                             )}
                           </div>
                         ) : (

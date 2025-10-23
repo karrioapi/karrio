@@ -179,7 +179,7 @@ export function DeveloperToolsDrawer() {
                         "data-[state=active]:bg-purple-900/20 data-[state=active]:text-white data-[state=active]:shadow-sm border border-transparent data-[state=active]:border-neutral-700"
                       )}
                     >
-                      <Icon className="h-5 w-5 flex-shrink-0 text-primary" />
+                      <Icon className="h-5 w-5 flex-shrink-0 text-[#8B5CF6]" />
                       <span className="truncate">{config.label}</span>
                     </TabsTrigger>
                   );

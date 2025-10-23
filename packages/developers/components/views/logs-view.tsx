@@ -473,10 +473,10 @@ const LogListItem = ({
   };
 
   const getStatusIcon = (statusCode: number | null) => {
-    if (!statusCode) return <AlertCircle className="h-4 w-4 text-primary" />;
-    if (statusCode >= 200 && statusCode < 300) return <CheckCircle className="h-4 w-4 text-primary" />;
-    if (statusCode >= 400) return <AlertCircle className="h-4 w-4 text-primary" />;
-    return <Activity className="h-4 w-4 text-primary" />;
+    if (!statusCode) return <AlertCircle className="h-4 w-4 text-[#8B5CF6]" />;
+    if (statusCode >= 200 && statusCode < 300) return <CheckCircle className="h-4 w-4 text-[#8B5CF6]" />;
+    if (statusCode >= 400) return <AlertCircle className="h-4 w-4 text-[#8B5CF6]" />;
+    return <Activity className="h-4 w-4 text-[#8B5CF6]" />;
   };
 
   return (
@@ -838,15 +838,15 @@ export function LogsView() {
       <div className="lg:hidden w-full">
         {selectedLog ? (
           <div className="h-full flex flex-col">
-            <div className="border-b px-4 py-2 flex items-center gap-2">
+            <div className="border-b px-4 py-2 flex items-center gap-2 text-[#8B5CF6]">
               <Button
                 variant="ghost"
-                size="sm"
+                size="default"
                 onClick={() => setSelectedLog(null)}
               >
                 ← Back
               </Button>
-              <span className="text-sm font-medium">Log Details</span>
+              <span className="text-sm font-medium text-white">Log Details</span>
             </div>
             <div className="flex-1">
               <LogDetailViewer log={selectedLog} />
@@ -857,7 +857,7 @@ export function LogsView() {
             {/* Mobile Header */}
             <div className="border-b px-4 py-3">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg font-semibold">API Logs</h2>
+                <h2 className="text-lg font-semibold text-white">API Logs</h2>
                 <div className="flex items-center gap-2">
                   {/* Use the custom LogsFilterDropdown component for mobile */}
                   <LogsFilterDropdown context={logsContext} />
@@ -867,7 +867,7 @@ export function LogsView() {
                     onClick={handleRefresh}
                     disabled={query.isFetching}
                   >
-                    <RefreshCw className={`h-4 w-4 ${query.isFetching ? 'animate-spin' : ''}`} />
+                    <RefreshCw className={`h-4 w-4 text-white ${query.isFetching ? 'animate-spin' : ''}`} />
                   </Button>
                 </div>
               </div>
@@ -905,7 +905,7 @@ export function LogsView() {
                   <Activity className="h-8 w-8 mx-auto mb-2 opacity-50" />
                   <p>No logs found</p>
                   {hasActiveFilters() && (
-                    <p className="text-xs mt-1">Try adjusting your filters</p>
+                    <p className="text-xs mt-1 text-white">Try adjusting your filters</p>
                   )}
                 </div>
               )}
