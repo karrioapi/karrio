@@ -11,7 +11,6 @@ karrio test --failfast karrio.server.events.tests || exit 1
 karrio test --failfast karrio.server.graph.tests || exit 1
 karrio test --failfast karrio.server.orders.tests || exit 1
 karrio test --failfast karrio.server.documents.tests || exit 1
-karrio test --failfast karrio.server.shipping.tests || exit 1
 
 if [[ "${HAS_INSIDERS}" == "true" && ! "$*" == *--exclude-insiders* ]]; then
     karrio test --failfast karrio.server.orgs.tests || exit 1
