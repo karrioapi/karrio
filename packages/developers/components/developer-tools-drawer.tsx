@@ -166,7 +166,7 @@ export function DeveloperToolsDrawer() {
               "w-52 sm:w-56 lg:w-52",
               isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
             )}>
-              <TabsList className="flex flex-col h-full w-full justify-start bg-transparent p-2 space-y-1">
+              <TabsList className="flex flex-col h-full w-full justify-start !bg-transparent !p-2 !rounded-none !h-auto space-y-1">
                 {Object.entries(VIEW_CONFIG).map(([viewKey, config]) => {
                   const Icon = config.icon;
                   return (
@@ -179,7 +179,7 @@ export function DeveloperToolsDrawer() {
                         "data-[state=active]:bg-purple-900/20 data-[state=active]:text-white data-[state=active]:shadow-sm border border-transparent data-[state=active]:border-neutral-700"
                       )}
                     >
-                      <Icon className="h-5 w-5 flex-shrink-0 text-purple-400" />
+                      <Icon className="h-5 w-5 flex-shrink-0 text-primary" />
                       <span className="truncate">{config.label}</span>
                     </TabsTrigger>
                   );
