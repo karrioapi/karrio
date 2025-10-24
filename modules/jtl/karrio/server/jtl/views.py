@@ -73,6 +73,7 @@ class JTLTenantOnboardingView(APIView):
             200: JTLOnboardingResponseSerializer(),
             400: ErrorResponse(),
         },
+        exclude=True,
     )
     def post(self, request):
         """

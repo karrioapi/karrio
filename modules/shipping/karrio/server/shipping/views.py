@@ -60,11 +60,11 @@ class BuyShippingMethodLabel(api.APIView):
 
     @openapi.extend_schema(
         tags=["ShippingMethods"],
-        operation_id=f"{ENDPOINT_ID}buy_method_label",
-        extensions={"x-operationId": "buyMethodLabel"},
-        summary="Buy shipping method label",
+        operation_id=f"{ENDPOINT_ID}order_label",
+        extensions={"x-operationId": "orderLabel"},
+        summary="Order shipping label",
         responses={
-            201: serializers.Shipment(),
+            201: serializers.ShippingLabelResponse(),
             400: serializers.ErrorResponse(),
             424: serializers.ErrorMessages(),
             500: serializers.ErrorResponse(),
@@ -73,7 +73,7 @@ class BuyShippingMethodLabel(api.APIView):
     )
     def post(self, request: Request, pk: str):
         """
-        Buy a label for a shipping method.
+        Order a shipping label for a shipping method.
         """
         method = models.ShippingMethod.access_by(request).get(pk=pk)
         data = serializers.ShipmentData.map(
@@ -95,7 +95,8 @@ class BuyShippingMethodLabel(api.APIView):
         )
 
         return Response(
-            serializers.Shipment(shipment).data, status=status.HTTP_201_CREATED
+            serializers.ShippingLabelResponse(shipment).data,
+            status=status.HTTP_201_CREATED,
         )
 
 

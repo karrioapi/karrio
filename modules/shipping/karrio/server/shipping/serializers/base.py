@@ -105,3 +105,11 @@ class BuyShipmentData(manager_serializers.ShipmentUpdateData):
         allow_null=True,
         help_text="The shipment reference",
     )
+
+
+class ShippingLabelResponse(manager_serializers.Shipment):
+    documents = manager_serializers.Documents(
+        required=False,
+        allow_null=True,
+        help_text="The shipment documents",
+    )

@@ -90,20 +90,22 @@ class JTLJWTAuthentication(BaseAuthentication):
     def authenticate(self, request):
         """Authenticate using JTL JWT token."""
         auth_header = request.META.get('HTTP_AUTHORIZATION', '')
-        logger.info(f"JTL JWT Auth called. Header: {auth_header[:50] if auth_header else 'NONE'}")
 
+        # Silently skip if no Bearer token
         if not auth_header.startswith('Bearer '):
-            logger.info("No Bearer token found, skipping JTL auth")
             return None
 
         token = auth_header[7:]
-        logger.info(f"Processing JTL JWT token: {token[:20]}...")
+        logger.debug(f"Checking if token is JTL JWT: {token[:20]}...")
 
         try:
             # First, check if this is likely a JTL token before full validation
             if not self.is_jtl_token(token):
-                logger.info("Token is not a JTL token, skipping")
+                logger.debug("Token is not a JTL token, skipping")
                 return None
+
+            # Only log when we know it's a JTL token
+            logger.info(f"Processing JTL JWT token: {token[:20]}...")
 
             # Validate JWT with HS256 symmetric key (only for JTL tokens)
             payload = self.validate_token(token)
@@ -126,29 +128,30 @@ class JTLJWTAuthentication(BaseAuthentication):
                 )
             )
 
-            logger.info(f"JTL user authenticated: {payload.get('userId')}")
+            logger.info(f"JTL user authenticated: {payload.get('userId')[:8]}... for tenant: {payload.get('tenantId')[:8]}...")
 
             return (user, payload)
 
         except jwt.ExpiredSignatureError:
-            logger.warning("JTL token has expired")
+            logger.info("JTL token has expired")
             raise AuthenticationFailed('Token has expired')
         except jwt.InvalidTokenError as e:
-            logger.warning(f"Invalid JTL token: {e}")
+            logger.info(f"Invalid JTL token: {str(e)}")
             raise AuthenticationFailed(f'Invalid token: {str(e)}')
+        except AuthenticationFailed:
+            # Re-raise authentication failures without additional logging
+            raise
         except Exception as e:
-            logger.error(f"JTL authentication error: {e}", exc_info=True)
-            # For JTL tokens that fail validation, still raise an exception
-            # But for non-JTL tokens, we should have returned None earlier
+            logger.error(f"Unexpected JTL authentication error: {e}", exc_info=True)
             raise AuthenticationFailed('Authentication failed')
 
     def is_jtl_token(self, token):
         """
         Check if a JWT token is intended for JTL authentication without full validation.
-        
+
         This method safely decodes the token payload to check for JTL-specific fields
         or issuer without validating the signature or expiration.
-        
+
         Returns True if this looks like a JTL token, False otherwise.
         """
         try:
@@ -162,24 +165,24 @@ class JTLJWTAuthentication(BaseAuthentication):
                     "verify_iss": False
                 }
             )
-            
+
             # Check for JTL-specific indicators
             # JTL tokens should have both tenantId and userId, and optionally issuer
             has_tenant_id = 'tenantId' in payload
             has_user_id = 'userId' in payload
             has_jtl_issuer = payload.get('iss') == 'jtl-wawi-api'
-            
+
             # Consider it a JTL token if it has JTL fields OR JTL issuer
             is_jtl = has_jtl_issuer or (has_tenant_id and has_user_id)
-            
+
             if is_jtl:
-                logger.info(f"Detected JTL token with tenantId: {has_tenant_id}, userId: {has_user_id}, issuer: {payload.get('iss', 'none')}")
-            
+                logger.debug(f"Detected JTL token with tenantId: {has_tenant_id}, userId: {has_user_id}, issuer: {payload.get('iss', 'none')}")
+
             return is_jtl
-            
-        except Exception as e:
+
+        except Exception:
             # If we can't decode the token at all, it's probably not valid JWT
-            logger.debug(f"Could not decode token for JTL check: {e}")
+            # Silently return False - this is expected for non-JWT tokens
             return False
 
     def validate_token(self, token):
@@ -209,13 +212,13 @@ class JTLJWTAuthentication(BaseAuthentication):
             return payload
 
         except jwt.ExpiredSignatureError:
-            logger.warning("JTL token has expired")
+            # Don't log - will be logged at higher level
             raise
         except jwt.InvalidIssuerError:
-            logger.warning("Invalid token issuer")
+            logger.debug("Invalid token issuer (not JTL)")
             raise AuthenticationFailed('Invalid token issuer')
         except Exception as e:
-            logger.error(f"Token validation error: {e}", exc_info=True)
+            logger.debug(f"Token validation error: {e}")
             raise
 
     def get_user_and_org(self, payload):
@@ -244,7 +247,7 @@ class JTLJWTAuthentication(BaseAuthentication):
         ).first()
 
         if not org:
-            logger.warning(f"Organization not found for tenantId: {tenant_id[:8]}")
+            logger.info(f"Organization not found for tenantId: {tenant_id[:8]}...")
             raise AuthenticationFailed('Organization not found. Please complete onboarding first.')
 
         # Get organization user by metadata.userId
@@ -254,16 +257,14 @@ class JTLJWTAuthentication(BaseAuthentication):
         ).first()
 
         if not org_user:
-            logger.warning(f"User not found for userId: {user_id[:8]} in organization: {org.id}")
+            logger.info(f"User not found for userId: {user_id[:8]}... in organization: {org.id}")
             raise AuthenticationFailed('User not found. Please complete onboarding first.')
 
         user = org_user.user
 
         if not user.is_active:
-            logger.warning(f"Inactive user attempted authentication: {user_id[:8]}")
+            logger.info(f"Inactive user attempted authentication: {user_id[:8]}...")
             raise AuthenticationFailed('User account is inactive.')
-
-        logger.info(f"Authenticated user: {user_id[:8]} for organization: {tenant_id[:8]}")
 
         return user, org, org_user
 
