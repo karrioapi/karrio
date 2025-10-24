@@ -82,7 +82,7 @@ karrio-server-apps==2025.5rc29
 karrio-server-audit==2025.5rc29
 karrio-server-automation==2025.5rc29
 karrio-server-cloud==2025.5rc29
-karrio-server-core==2025.5rc29.1
+karrio-server-core==2025.5rc30
 karrio-server-data==2025.5rc29
 karrio-server-documents==2025.5rc29
 karrio-server-events==2025.5rc29
@@ -92,7 +92,7 @@ karrio-server-orders==2025.5rc29
 karrio-server-orgs==2025.5rc29
 karrio-server-pricing==2025.5rc29
 karrio-server-proxy==2025.5rc29
--e git+https://github.com/karrioapi/karrio-platform.git@ff7cea04367d4f4ee79b460a64da46fd9033b8b1#egg=karrio_server_tenants&subdirectory=ee/platform/modules/tenants
+-e git+https://github.com/karrioapi/karrio-platform.git@546fb2dee9415de49cccd95a493febc3e954f03d#egg=karrio_server_tenants&subdirectory=ee/platform/modules/tenants
 karrio-ups==2025.5rc29
 karrio-usps==2025.5rc29
 karrio-usps-international==2025.5rc29
@@ -122,7 +122,7 @@ opentelemetry-util-http==0.59b0
 packaging==25.0
 phonenumbers==9.0.17
 pillow==12.0.0
-posthog==6.7.9
+posthog==6.7.10
 protobuf==6.33.0
 psutil==7.1.1
 psycopg2-binary==2.9.11
