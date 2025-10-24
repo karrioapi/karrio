@@ -1,44 +1,8 @@
-# Server dev dependencies
-django-debug-toolbar
-django-stubs[compatible-mypy]
-djangorestframework-stubs
-
-# Karrio dev packages
--e ./karrio/modules/sdk
--e ./karrio/modules/cli[dev]
-
-# Shipping Plugins
--e ./karrio/modules/connectors/dhl_express
--e ./karrio/modules/connectors/dhl_parcel_de
--e ./karrio/modules/connectors/dhl_poland
--e ./karrio/modules/connectors/dhl_universal
--e ./karrio/modules/connectors/dpd
--e ./karrio/modules/connectors/fedex
--e ./karrio/modules/connectors/generic
--e ./karrio/modules/connectors/landmark
--e ./karrio/modules/connectors/ups
--e ./karrio/modules/connectors/usps
--e ./karrio/modules/connectors/usps_international
-
-# karrio server modules
--e ./karrio/modules/core
--e ./karrio/apps/api
--e ./karrio/modules/graph
--e ./karrio/modules/data
--e ./karrio/modules/events
--e ./karrio/modules/manager
--e ./karrio/modules/orders
--e ./karrio/modules/proxy
--e ./karrio/modules/pricing
--e ./karrio/modules/documents
-
-# karrio insiders modules
--e ./karrio-insiders/modules/apps
--e ./karrio-insiders/modules/admin
--e ./karrio-insiders/modules/audit
--e ./karrio-insiders/modules/automation
--e ./karrio-insiders/modules/orgs
-
-# JTL custom karrio modules
--e ./modules/shipping
--e ./modules/jtl
+bandit
+black
+coverage
+lxml-stubs
+mypy
+twine
+wheel
+setuptools

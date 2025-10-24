@@ -1,184 +1,73 @@
-# JTL Shipping Platform Docker Setup
+# Karrio Docker Configuration
 
-This directory contains the Docker configuration and deployment files for the JTL Shipping Platform.
+This directory contains Docker configurations for running Karrio in various deployment scenarios.
 
-## Directory Structure
+## Core Docker Compose Files
 
-```
-docker/
-├── server/
-│   ├── Dockerfile       # Server Docker image
-│   ├── entrypoint       # Server entrypoint script
-│   └── worker           # Background worker script
-├── dashboard/
-│   ├── Dockerfile       # Dashboard Docker image
-│   └── entrypoint       # Dashboard entrypoint script
-├── docker-compose.yml   # Docker Compose configuration
-├── Caddyfile           # Caddy reverse proxy configuration
-└── README.md           # This file
-```
+| File | Purpose | Usage |
+|------|---------|--------|
+| `docker-compose.yml` | Main Karrio stack (API, Dashboard, Database, Redis) | Base configuration for all deployments |
+| `docker-compose.hobby.yml` | Hobby deployment with Caddy reverse proxy | Production-ready single-server setup |
+| `docker-compose.insiders.yml` | Karrio Insiders edition configuration | Enterprise features and extensions |
+| `docker-compose.insiders.local.yml` | Local development for Insiders | Development environment for enterprise features |
 
-## Services
+## Service Directories
 
-The platform consists of the following services:
+| Directory | Contents |
+|-----------|----------|
+| `api/` | API server Dockerfile, entrypoint, and worker script |
+| `dashboard/` | Dashboard Dockerfile and entrypoint |
+| `insiders/` | Insiders-specific Docker configurations |
+| `nginx/` | Nginx reverse proxy configurations |
+| `observability/` | OpenTelemetry and monitoring stack configurations |
 
-- **api**: The main API server (Karrio server)
-- **worker**: Background task worker
-- **dashboard**: TanStack Start (React Router v7) dashboard application with Vite
-- **caddy**: Reverse proxy for SSL/TLS termination
-- **db**: PostgreSQL database
-- **redis**: Redis cache and message broker
+## Development Files
+
+| File | Purpose |
+|------|---------|
+| `dev.Dockerfile` | Development container with all tools |
+| `dev.tool.Dockerfile` | Development tools and utilities |
 
 ## Quick Start
 
-### Prerequisites
-
-- Docker 20.10+
-- Docker Compose 2.0+
-- 4GB+ RAM
-
-### Environment Variables
-
-Create a `.env` file in the `docker` directory with the following variables:
-
+### Basic Development Setup
 ```bash
-JTL_TAG=2025.5rc26
-DOMAIN=your-domain.com
-SECRET_KEY=your-secret-key
-JWT_SECRET=your-jwt-secret
-DASHBOARD_URL=https://app.your-domain.com
-KARRIO_PUBLIC_URL=https://api.your-domain.com
+# Start core Karrio services
+docker-compose up -d
 ```
 
-### Deployment
-
-Use the deployment script:
-
+### Production Deployment
 ```bash
-./bin/deploy-jtl [version] [domain]
+# Start with Caddy reverse proxy for SSL
+docker-compose -f docker-compose.yml -f docker-compose.hobby.yml up -d
 ```
 
-Or manually:
-
+### With Monitoring
 ```bash
-cd docker
-docker compose up -d
+# Start with complete observability stack
+docker-compose -f docker-compose.yml -f observability/docker-compose.observability.yml up -d
 ```
 
-## Building Images
+## Monitoring and Observability
 
-### Server Image
+For detailed monitoring configurations including OpenTelemetry, Prometheus, Grafana, and Jaeger, see the [observability README](./observability/README.md).
 
-```bash
-./bin/build-jtl-server-image <version>
-```
+## Service URLs (Default)
 
-### Dashboard Image
+- **Dashboard**: http://localhost:3002
+- **API**: http://localhost:5002  
+- **Database**: localhost:5432
+- **Redis**: localhost:6379
+- **Grafana**: http://localhost:3000 (when using observability stack)
+- **Prometheus**: http://localhost:9090 (when using observability stack)
+- **Jaeger**: http://localhost:16686 (when using tracing)
 
-The dashboard is built with TanStack Start (React Router v7) and Vite.
+## Environment Configuration
 
-```bash
-./bin/build-jtl-dashboard-image <version>
-```
+Key environment variables are defined in the compose files. For custom configurations, create a `.env` file in the project root or override specific variables as needed.
 
-## Configuration
-
-### Environment Variables
-
-**Server Environment:**
-- `JTL_TAG`: Version tag for the Docker images
-- `SECRET_KEY`: Django secret key
-- `JWT_SECRET`: JWT signing secret
-- `DATABASE_HOST`: PostgreSQL host (default: db)
-- `DATABASE_NAME`: Database name (default: db)
-- `DATABASE_USERNAME`: Database user (default: postgres)
-- `DATABASE_PASSWORD`: Database password (default: postgres)
-- `REDIS_HOST`: Redis host (default: redis)
-- `REDIS_PORT`: Redis port (default: 6379)
-
-**Dashboard Environment:**
-- `NODE_ENV`: Node environment (default: production)
-- `DASHBOARD_PORT`: Dashboard port (default: 3102)
-- `DASHBOARD_URL`: Dashboard public URL
-- `KARRIO_PUBLIC_URL`: API public URL
-- `VITE_KARRIO_API`: Karrio API endpoint (Vite env var)
-- `VITE_KARRIO_OAUTH_CLIENT_ID`: OAuth client ID (Vite env var)
-- `VITE_KARRIO_OAUTH_CLIENT_SECRET`: OAuth client secret (Vite env var)
-- `VITE_KARRIO_OAUTH_REDIRECT_URI`: OAuth redirect URI (Vite env var)
-- `VITE_JTL_CLIENT_ID`: JTL client ID (Vite env var)
-- `VITE_JTL_CLIENT_SECRET`: JTL client secret (Vite env var)
-- `JTL_CLIENT_ID`: JTL client ID
-- `JTL_CLIENT_SECRET`: JTL client secret
-- `OAUTH_CLIENT_ID`: OAuth client ID
-- `OAUTH_CLIENT_SECRET`: OAuth client secret
-
-### Volumes
-
-- `jtl-static`: Static files for the API server
-- `postgres-data`: PostgreSQL data
-- `redis-data`: Redis data
-- `caddy-data`: Caddy certificates and configuration
-
-## Maintenance
-
-### View Logs
-
-```bash
-cd docker
-docker compose logs -f [service-name]
-```
-
-### Stop Services
-
-```bash
-cd docker
-docker compose stop
-```
-
-### Start Services
-
-```bash
-cd docker
-docker compose start
-```
-
-### Restart Services
-
-```bash
-cd docker
-docker compose restart [service-name]
-```
-
-### Update to New Version
-
-1. Update the `JTL_TAG` in `.env`
-2. Pull new images: `docker compose pull`
-3. Restart services: `docker compose up -d`
-
-## Troubleshooting
-
-### Database Connection Issues
-
-Check if the database is running:
-```bash
-docker compose ps db
-docker compose logs db
-```
-
-### Worker Not Processing Jobs
-
-Check worker logs:
-```bash
-docker compose logs worker
-```
-
-### SSL/TLS Certificate Issues
-
-Check Caddy logs:
-```bash
-docker compose logs caddy
-```
-
-## Support
-
-For issues and questions, please contact the JTL support team.
+Common variables:
+- `KARRIO_TAG`: Docker image version to use
+- `DATABASE_*`: Database connection settings  
+- `REDIS_*`: Redis connection settings
+- `OTEL_*`: OpenTelemetry configuration (see observability README)

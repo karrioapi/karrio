@@ -1,0 +1,212 @@
+---
+sidebarTitle: Order Management
+title: Order Management from Dashboard
+description: Create and manage orders with integrated fulfillment workflows and shipping automation
+tags: ["orders", "fulfillment", "e-commerce", "shipping", "workflow"]
+---
+
+# Order Management from Dashboard
+
+<div className="flex gap-2 mb-6">
+  <div className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-400/10 dark:text-green-400 dark:ring-green-400/30">
+    <span className="text-xs">Community Edition</span>
+  </div>
+  <div className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30">
+    <span className="text-xs">Core Feature</span>
+  </div>
+</div>
+
+The order management system provides comprehensive order processing from creation through fulfillment. Manage orders, line items, and shipping workflows in one integrated interface with powerful batch operations and automated fulfillment.
+
+<div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 my-6">
+  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    Orders Dashboard
+  </div>
+  <div className="bg-white dark:bg-gray-800 rounded border overflow-hidden">
+    <img
+      src="/docs/karrio-orders-dashboard.png"
+      alt="Orders dashboard showing order list with status, items, and fulfillment options"
+      className="w-full h-auto"
+    />
+  </div>
+</div>
+
+## Order Dashboard Overview
+
+### Main Orders List
+
+The orders dashboard displays comprehensive order information:
+
+#### Order Information
+
+- **Order Number**: Unique identifier for each order
+- **Order Source**: Origin system (API, dashboard, integration)
+- **Order Status**: Current fulfillment state
+- **Customer Information**: Shipping destination details
+- **Order Value**: Total order amount and currency
+- **Order Date**: When the order was created
+
+#### Status Categories
+
+Orders are organized by fulfillment status:
+
+- **Unfulfilled**: Orders awaiting shipment creation
+- **Partial**: Orders with some items shipped
+- **Fulfilled**: All items shipped successfully
+- **Cancelled**: Orders that have been cancelled
+
+### Filter and Search Options
+
+Organize orders efficiently:
+
+#### Status Filters
+
+Quick filter cards provide instant access to:
+
+- **All Orders**: Complete order list
+- **Unfulfilled**: Orders ready for fulfillment
+- **Fulfilled**: Completed shipments
+- **Cancelled**: Cancelled orders
+
+#### Advanced Filtering
+
+- **Date Range**: Orders within specific time periods
+- **Customer Search**: Find orders by recipient information
+- **Order Source**: Filter by creation method
+- **Value Range**: Orders within specific amount ranges
+
+## Creating New Orders
+
+### Order Creation Process
+
+Create orders from the dashboard:
+
+1. **Access Form**: Click "Create order" from the dashboard
+2. **Order Details**: Enter basic order information
+3. **Customer Information**: Add shipping and billing addresses
+4. **Line Items**: Add products with quantities and values
+5. **Order Options**: Configure shipping preferences
+6. **Save Order**: Create order as draft for later fulfillment
+
+### Order Information Fields
+
+#### Basic Details
+
+- **Order ID**: Unique identifier (auto-generated or custom)
+- **Order Date**: Creation date and time
+- **Reference**: Internal reference number
+- **Notes**: Special instructions or comments
+
+#### Customer Information
+
+- **Shipping Address**: Delivery destination
+- **Billing Address**: Payment address (optional)
+- **Customer Contact**: Email and phone information
+- **Special Instructions**: Delivery preferences
+
+## Order Fulfillment
+
+### Fulfillment Workflow
+
+Convert orders into shipments:
+
+#### Single Shipment Fulfillment
+
+For orders shipping as one package:
+
+1. **Select Order**: Choose unfulfilled order
+2. **Create Shipment**: Use "Create Label" option
+3. **Package Items**: All items in one shipment
+4. **Generate Label**: Complete shipping label creation
+5. **Update Status**: Order automatically marked as fulfilled
+
+#### Partial Fulfillment
+
+For orders requiring multiple shipments:
+
+1. **Select Items**: Choose which items to ship
+2. **Create Partial Shipment**: Ship available items
+3. **Remaining Items**: Keep remaining items unfulfilled
+4. **Complete Fulfillment**: Ship remaining items separately
+5. **Final Status**: Order marked fulfilled when complete
+
+## Order Status Management
+
+### Status Lifecycle
+
+Orders progress through defined states:
+
+#### Unfulfilled
+
+- **New Orders**: Recently created, awaiting fulfillment
+- **Ready to Ship**: All information complete
+- **Awaiting Stock**: Items not yet available
+- **On Hold**: Manual hold for review
+
+#### Partial
+
+- **Some Items Shipped**: Partial fulfillment completed
+- **Split Shipments**: Multiple packages required
+- **Backordered Items**: Some items delayed
+- **Progressive Fulfillment**: Items shipping as available
+
+#### Fulfilled
+
+- **All Items Shipped**: Complete order fulfillment
+- **Labels Generated**: All shipping labels created
+- **Tracking Active**: Shipments in transit
+- **Delivery Confirmed**: Order completion verified
+
+#### Cancelled
+
+- **Customer Cancelled**: Cancelled by customer request
+- **Unable to Fulfill**: Cannot complete order
+- **Payment Issues**: Payment problems
+- **System Cancelled**: Automated cancellation
+
+### Status Updates
+
+Status changes automatically based on:
+
+- **Shipment Creation**: Unfulfilled → Partial or Fulfilled
+- **Label Generation**: Creates tracking and updates status
+- **Delivery Confirmation**: Final status updates
+- **Manual Updates**: Override for special circumstances
+
+## Troubleshooting
+
+### Common Order Issues
+
+#### Address Problems
+
+- **Invalid Addresses**: Address validation failures
+- **Incomplete Information**: Missing delivery details
+- **International Restrictions**: Country-specific limitations
+- **Address Corrections**: Customer address updates
+
+#### Inventory Issues
+
+- **Stock Shortages**: Insufficient inventory for orders
+- **Allocation Conflicts**: Multiple orders for same items
+- **Location Problems**: Items not at fulfillment location
+- **Inventory Synchronization**: Stock level discrepancies
+
+#### Processing Delays
+
+- **System Issues**: Technical processing problems
+- **Manual Holds**: Orders requiring review
+- **Payment Issues**: Billing and payment problems
+- **Carrier Problems**: Shipping service disruptions
+
+## Next Steps
+
+Now that you understand order management:
+
+1. **[Document Templates](/docs/developing/dashboard-guide/document-templates)** - Customize order documents
+2. **[Developer Tools](/docs/developing/dashboard-guide/developer-tools)** - Automate order processing with APIs
+3. **[Label Creation](/docs/developing/dashboard-guide/label-creation)** - Convert orders to shipments
+4. **[Tracker Management](/docs/developing/dashboard-guide/trackers)** - Monitor order deliveries
+
+---
+
+**Need help?** Join our [community Discord](https://discord.gg/gS88uE7sEx) or contact our support team.

@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 
-# Activate python env if available
-if [ -f "bin/activate-env" ]; then
-    source "bin/activate-env" > /dev/null 2>&1
-fi
+# Activate python env
+source "bin/activate-env" > /dev/null 2>&1
 
 # Colors for output
 RED='\033[0;31m'
@@ -55,52 +53,69 @@ main() {
     if [ $# -eq 1 ]; then
         TARGET_VERSION="$1"
     else
-        if [ -f "VERSION" ]; then
-            TARGET_VERSION=$(cat VERSION)
-        else
-            log_error "VERSION file not found at root directory"
-            exit 1
-        fi
+        TARGET_VERSION=$(cat apps/api/karrio/server/VERSION)
     fi
 
     log_info "Updating all package versions to: $TARGET_VERSION"
 
-    # Define packages to update (in karrio subdirectory)
+    # Define packages to update
     declare -a packages=(
-        "karrio/modules/sdk"
-        "karrio/modules/core"
-        "karrio/modules/data"
-        "karrio/modules/documents"
-        "karrio/modules/events"
-        "karrio/modules/graph"
-        "karrio/modules/manager"
-        "karrio/modules/orders"
-        "karrio/modules/pricing"
-        "karrio/modules/proxy"
-        "karrio/modules/soap"
-        "karrio/modules/cli"
+        "modules/sdk"
+        "modules/core"
+        "modules/data"
+        "modules/documents"
+        "modules/events"
+        "modules/graph"
+        "modules/manager"
+        "modules/orders"
+        "modules/pricing"
+        "modules/proxy"
+        "modules/soap"
+        "modules/cli"
     )
 
     # Add connector packages
-    for connector_dir in karrio/modules/connectors/*/; do
+    for connector_dir in modules/connectors/*/; do
         if [ -d "$connector_dir" ] && [ -f "$connector_dir/pyproject.toml" ]; then
             packages+=("$connector_dir")
         fi
     done
-
     # Add community plugin packages
-    for plugin_dir in karrio/community/plugins/*/; do
+    for plugin_dir in community/plugins/*/; do
         if [ -d "$plugin_dir" ] && [ -f "$plugin_dir/pyproject.toml" ]; then
             packages+=("$plugin_dir")
         fi
     done
-
     # Add root plugins (oss) packages
-    for plugin_dir in karrio/plugins/*/; do
+    for plugin_dir in plugins/*/; do
         if [ -d "$plugin_dir" ] && [ -f "$plugin_dir/pyproject.toml" ]; then
             packages+=("$plugin_dir")
         fi
     done
+    # Add insiders packages if ee/insiders/modules exists
+    if [ -d "ee/insiders/modules" ]; then
+        # Add direct modules in ee/insiders/modules/
+        for insiders_dir in ee/insiders/modules/*/; do
+            if [ -d "$insiders_dir" ] && [ -f "$insiders_dir/pyproject.toml" ]; then
+                packages+=("$insiders_dir")
+            fi
+        done
+        # Add connectors in ee/insiders/modules/connectors/
+        for connector_dir in ee/insiders/modules/connectors/*/; do
+            if [ -d "$connector_dir" ] && [ -f "$connector_dir/pyproject.toml" ]; then
+                packages+=("$connector_dir")
+            fi
+        done
+    fi
+    
+    # Add platform packages if ee/platform/modules exists
+    if [ -d "ee/platform/modules" ]; then
+        for platform_dir in ee/platform/modules/*/; do
+            if [ -d "$platform_dir" ] && [ -f "$platform_dir/pyproject.toml" ]; then
+                packages+=("$platform_dir")
+            fi
+        done
+    fi
 
     # Update each package
     local updated_count=0
@@ -150,7 +165,7 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "Examples:"
             echo "  $0                    # Update to central version"
-            echo "  $0 2025.5rc26        # Update to specific version"
+            echo "  $0 2025.5rc4         # Update to specific version"
             exit 0
             ;;
         *)

@@ -1,0 +1,11 @@
+---
+id: dpdhl
+title: Deutsche Post DHL
+---
+
+import integrations from "../integrations.json";
+import CarrierIntegrationDetails from "@site/src/components/CarrierIntegrationDetails";
+
+<CarrierIntegrationDetails 
+    id="dpdhl"
+    integration={integrations.find(i => i.id === "dpdhl")} />

@@ -1,0 +1,271 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.canadapost.ca/ws/ship/rate-v4"
+    xmlns="http://www.canadapost.ca/ws/ship/rate-v4" elementFormDefault="qualified">
+    <xsd:include schemaLocation="common.xsd" />
+
+    <xsd:element name="mailing-scenario">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element name="customer-number" type="CustomerIDType" minOccurs="0" />
+                <xsd:element name="contract-id" type="ContractIDType" minOccurs="0" />
+                <xsd:element name="promo-code" type="PromoCodeType" minOccurs="0" />
+                <xsd:element name="quote-type" minOccurs="0">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value="commercial" />
+                            <xsd:enumeration value="counter" />
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="expected-mailing-date" type="xsd:date" minOccurs="0" />
+                <xsd:element name="options" minOccurs="0">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="option" maxOccurs="20">
+                                <xsd:complexType>
+                                    <xsd:all>
+                                        <xsd:element name="option-code">
+                                            <xsd:simpleType>
+                                                <xsd:restriction base="xsd:normalizedString">
+                                                    <xsd:minLength value="1" />
+                                                    <xsd:maxLength value="10" />
+                                                </xsd:restriction>
+                                            </xsd:simpleType>
+                                        </xsd:element>
+                                        <xsd:element name="option-amount" type="CostTypeNonZero"
+                                            minOccurs="0" />
+                                    </xsd:all>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="parcel-characteristics">
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element name="weight">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:decimal">
+                                        <xsd:minExclusive value="0" />
+                                        <xsd:maxInclusive value="99.999" />
+                                        <xsd:fractionDigits value="3" />
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="dimensions" minOccurs="0">
+                                <xsd:complexType>
+                                    <xsd:all>
+                                        <xsd:element name="length" type="DimensionMeasurementType" />
+                                        <xsd:element name="width" type="DimensionMeasurementType" />
+                                        <xsd:element name="height" type="DimensionMeasurementType" />
+                                    </xsd:all>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="unpackaged" type="xsd:boolean" minOccurs="0" />
+                            <xsd:element name="mailing-tube" type="xsd:boolean" minOccurs="0" />
+                            <xsd:element name="oversized" type="xsd:boolean" minOccurs="0" />
+                        </xsd:all>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="services" minOccurs="0">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="service-code" type="ServiceCodeType" maxOccurs="20" />
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="origin-postal-code" type="PostalCodeType" />
+                <xsd:element name="destination">
+                    <xsd:complexType>
+                        <xsd:choice>
+                            <xsd:element name="domestic">
+                                <xsd:complexType>
+                                    <xsd:all>
+                                        <xsd:element name="postal-code" type="PostalCodeType" />
+                                    </xsd:all>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="united-states">
+                                <xsd:complexType>
+                                    <xsd:all>
+                                        <xsd:element name="zip-code" type="ZipCodeType" />
+                                    </xsd:all>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="international">
+                                <xsd:complexType>
+                                    <xsd:all>
+                                        <xsd:element name="country-code" type="CountryCodeType" />
+                                        <xsd:element name="postal-code" type="IntlPostalCodeType"
+                                            minOccurs="0" />
+                                    </xsd:all>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:choice>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="price-quotes">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="price-quote" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element name="service-code" type="ServiceCodeType" />
+                            <xsd:element name="service-link" type="LinkType" />
+                            <xsd:element name="service-name" type="xsd:normalizedString" />
+                            <xsd:element name="price-details">
+                                <xsd:complexType>
+                                    <xsd:all>
+                                        <xsd:element name="base" type="xsd:decimal" />
+                                        <xsd:element name="taxes" minOccurs="0">
+                                            <xsd:complexType>
+                                                <xsd:all>
+                                                    <xsd:element name="gst" type="TaxType"
+                                                        minOccurs="0" />
+                                                    <xsd:element name="pst" type="TaxType"
+                                                        minOccurs="0" />
+                                                    <xsd:element name="hst" type="TaxType"
+                                                        minOccurs="0" />
+                                                </xsd:all>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                        <xsd:element name="due" type="xsd:decimal" />
+                                        <xsd:element name="options" minOccurs="0">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="option" maxOccurs="20">
+                                                        <xsd:complexType>
+                                                            <xsd:all>
+                                                                <xsd:element name="option-code"
+                                                                    type="xsd:normalizedString" />
+                                                                <xsd:element name="option-name"
+                                                                    type="xsd:normalizedString" />
+                                                                <xsd:element name="option-price"
+                                                                    type="xsd:decimal" />
+                                                                <xsd:element name="qualifier"
+                                                                    minOccurs="0">
+                                                                    <xsd:complexType>
+                                                                        <xsd:all>
+                                                                            <xsd:element
+                                                                                name="step-size"
+                                                                                type="xsd:decimal"
+                                                                                minOccurs="0" />
+                                                                            <xsd:element
+                                                                                name="step-cost"
+                                                                                type="xsd:decimal"
+                                                                                minOccurs="0" />
+                                                                            <xsd:element
+                                                                                name="included-amount"
+                                                                                type="xsd:decimal"
+                                                                                minOccurs="0" />
+                                                                            <xsd:element
+                                                                                name="max-value"
+                                                                                type="xsd:decimal"
+                                                                                minOccurs="0" />
+                                                                            <xsd:element
+                                                                                name="included"
+                                                                                type="xsd:boolean"
+                                                                                minOccurs="0" />
+                                                                            <xsd:element
+                                                                                name="percent"
+                                                                                type="xsd:decimal"
+                                                                                minOccurs="0" />
+                                                                        </xsd:all>
+                                                                    </xsd:complexType>
+                                                                </xsd:element>
+                                                            </xsd:all>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                        <xsd:element name="adjustments" minOccurs="0">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="adjustment" maxOccurs="20">
+                                                        <xsd:complexType>
+                                                            <xsd:all>
+                                                                <xsd:element name="adjustment-code"
+                                                                    type="xsd:normalizedString" />
+                                                                <xsd:element name="adjustment-name"
+                                                                    type="xsd:normalizedString" />
+                                                                <xsd:element name="adjustment-cost"
+                                                                    type="xsd:decimal" />
+                                                                <xsd:element name="qualifier"
+                                                                    minOccurs="0">
+                                                                    <xsd:complexType>
+                                                                        <xsd:all>
+                                                                            <xsd:element
+                                                                                name="percent"
+                                                                                type="xsd:decimal" />
+                                                                        </xsd:all>
+                                                                    </xsd:complexType>
+                                                                </xsd:element>
+                                                            </xsd:all>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                    </xsd:all>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="weight-details">
+                                <xsd:complexType>
+                                    <xsd:all>
+                                        <xsd:element name="cubed-weight" type="xsd:decimal"
+                                            minOccurs="0" />
+                                    </xsd:all>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="service-standard">
+                                <xsd:complexType>
+                                    <xsd:all>
+                                        <xsd:element name="am-delivery" type="xsd:boolean" />
+                                        <xsd:element name="guaranteed-delivery" type="xsd:boolean" />
+                                        <xsd:element name="expected-transit-time" minOccurs="0">
+                                            <xsd:simpleType>
+                                                <xsd:restriction base="xsd:integer">
+                                                    <xsd:minInclusive value="0" />
+                                                    <xsd:maxInclusive value="99" />
+                                                </xsd:restriction>
+                                            </xsd:simpleType>
+                                        </xsd:element>
+                                        <xsd:element name="expected-delivery-date" type="xsd:date"
+                                            minOccurs="0" />
+                                    </xsd:all>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:all>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:complexType name="TaxType">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:decimal">
+                <xsd:attribute name="percent" type="xsd:decimal" use="optional" />
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:simpleType name="PromoCodeType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:minLength value="1" />
+            <xsd:maxLength value="10" />
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="IntlPostalCodeType">
+        <xsd:restriction base="xsd:normalizedString">
+            <xsd:minLength value="1" />
+            <xsd:maxLength value="10" />
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>

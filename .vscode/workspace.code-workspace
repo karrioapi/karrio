@@ -1,65 +1,60 @@
 {
-  "folders": [
-    {
-      "name": "shipping-platform",
-      "path": "..",
-    },
-    {
-      "name": "karrio",
-      "path": "../karrio",
-    },
-    {
-      "name": "karrio-insiders",
-      "path": "../karrio-insiders",
-    },
-  ],
-  "settings": {
-    "files.exclude": {
-      "**/node_modules": true,
-      "**/__pycache__": true,
-      "**/*.pyc": true,
-    },
-    "search.exclude": {
-      "**/node_modules": true,
-      "**/bower_components": true,
-      "**/*.code-search": true,
-    },
-    "editor.formatOnPaste": true,
-    "python.terminal.activateEnvInCurrentTerminal": true,
-    "editor.formatOnSave": true,
-    "python.defaultInterpreterPath": "${workspaceFolder:shipping-platform}/.venv/karrio/bin/python",
-    "files.associations": {
-      "**/*.html": "html",
-      "**/templates/**/*.html": "django-html",
-      "**/templates/**/*": "django-txt",
-      "**/requirements{/**,*}.{txt,in}": "pip-requirements",
-    },
-    "python.analysis.autoImportCompletions": true,
-    "python.analysis.typeCheckingMode": "basic",
-    "python.analysis.diagnosticMode": "workspace",
-    "python.envFile": "${workspaceFolder:shipping-platform}/.env",
-    "python.testing.pytestEnabled": true,
-    "python.testing.unittestEnabled": false,
-    "python.testing.pytestArgs": [
-      "."
+    "folders": [
+        {
+            "name": "karrio",
+            "path": "..",
+        },
+        {
+            "name": "karrio-insiders",
+            "path": "../ee/insiders",
+        },
+        {
+            "name": "karrio-platform",
+            "path": "../ee/platform",
+        },
+        {
+            "name": "karrio-community",
+            "path": "../community",
+        },
     ],
-    "python.formatting.provider": "black",
-    "python.linting.enabled": true,
-    "python.linting.pylintEnabled": false,
-    "python.linting.flake8Enabled": true,
-    "cursorpyright.analysis.autoImportCompletions": true,
-  },
-  "extensions": {
-    "recommendations": [
-      "ms-python.python",
-      "ms-python.vscode-pylance",
-      "batisteo.vscode-django",
-      "dbaeumer.vscode-eslint",
-      "esbenp.prettier-vscode",
-      "eamodio.gitlens",
-      "github.copilot",
-      "ms-python.black-formatter",
-      "ms-python.flake8",
-    ],
-  },
+    "settings": {
+        "files.exclude": {
+            "**/node_modules": true,
+            "**/__pycache__": true,
+            "**/*.pyc": true,
+        },
+        "search.exclude": {
+            "**/node_modules": true,
+            "**/bower_components": true,
+            "**/*.code-search": true,
+        },
+        "editor.formatOnPaste": true,
+        "python.terminal.activateEnvInCurrentTerminal": true,
+        "editor.formatOnSave": true,
+        "python.defaultInterpreterPath": "../.venv/karrio/bin/python",
+        "python.envFile": "${workspaceFolder}/../.env",
+        "files.associations": {
+            "**/*.html": "html",
+            "**/templates/**/*.html": "django-html",
+            "**/templates/**/*": "django-txt",
+            "**/requirements{/**,*}.{txt,in}": "pip-requirements",
+        },
+        "python.analysis.autoImportCompletions": true,
+        "python.analysis.typeCheckingMode": "basic",
+        "python.analysis.diagnosticMode": "workspace",
+        "python.analysis.extraPaths": [
+            "../modules",
+            "../ee/insiders/modules",
+            "../ee/platform/modules",
+        ],
+    },
+    "extensions": {
+        "recommendations": [
+            "ms-python.python",
+            "dbaeumer.vscode-eslint",
+            "esbenp.prettier-vscode",
+            "eamodio.gitlens",
+            "github.copilot",
+        ],
+    },
 }

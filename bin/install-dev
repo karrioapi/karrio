@@ -1,14 +1,71 @@
 #!/usr/bin/env bash
 
 # =============================================================================
-# JTL KARRIO CUSTOM BUILD - DEVELOPMENT ENVIRONMENT SETUP
+# KARRIO DEVELOPMENT ENVIRONMENT SETUP
 # =============================================================================
-# Sets up complete development environment for JTL Karrio custom build
-# Adapted for shipping-platform monorepo structure
+# Sets up complete development environment for Karrio
+# Based on bin/deploy pattern but adapted for local development
+#
+# Usage: ./bin/install-dev [OPTIONS]
+#
+# NOTE: This is a ONE-TIME setup script. For regular environment activation:
+#   - Use: source bin/activate-env
+#   - Or:  source ./bin/setup-server-env
+#
+# This script:
+#   - Installs system dependencies (gcc, pango, ghostscript, etc.)
+#   - Sets up pyenv and installs Python 3.12.x
+#   - Installs nvm and Node.js
+#   - Creates Python virtual environment (.venv/karrio)
+#   - Installs Python and Node.js dependencies
+#   - Generates local HTTPS certificates (mkcert)
+#   - Sets up environment files (.env)
+#
+# After running this script, activate the environment and continue:
+#   1. source bin/activate-env     Activate Python environment
+#   2. karrio migrate              Run database migrations
+#   3. karrio createsuperuser      Create admin user
+#   4. ./bin/dev up                Start all development services
+#
+# For more information, see: https://docs.karrio.io
 # =============================================================================
 
 # Don't exit on error - we'll handle errors explicitly
 set +e
+
+# Show help message
+show_help() {
+    echo "Usage: ./bin/install-dev [OPTIONS]"
+    echo ""
+    echo "Sets up complete Karrio development environment."
+    echo ""
+    echo "OPTIONS:"
+    echo "  -h, --help    Show this help message"
+    echo ""
+    echo "This script will:"
+    echo "  1. Install system dependencies"
+    echo "  2. Set up pyenv and Python 3.12.x"
+    echo "  3. Install nvm and Node.js"
+    echo "  4. Create virtual environment at .venv/karrio"
+    echo "  5. Install all Python and Node.js dependencies"
+    echo "  6. Generate HTTPS certificates with mkcert"
+    echo "  7. Set up environment configuration files"
+    echo ""
+    echo "After installation, run:"
+    echo "  ./bin/dev up              Start development servers"
+    echo "  source bin/activate-env   Activate Python environment"
+    echo ""
+    exit 0
+}
+
+# Parse arguments
+for arg in "$@"; do
+    case $arg in
+        -h|--help)
+            show_help
+            ;;
+    esac
+done
 
 # Detect if script is being sourced or executed
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
@@ -312,21 +369,8 @@ print_success "Python $PYTHON_VERSION set up"
 # =============================================================================
 print_step "Setting up Node.js environment..."
 
-# Detect existing Node.js version and decide whether to skip install/switch
-EXISTING_NODE_VERSION=""
-EXISTING_NODE_MAJOR=""
-SKIP_NODE_INSTALL="false"
-
-if command_exists node; then
-    EXISTING_NODE_VERSION="$(node -v 2>/dev/null | sed 's/^v//')"
-    EXISTING_NODE_MAJOR="${EXISTING_NODE_VERSION%%.*}"
-
-    # If an existing Node.js major version is greater than 22, do not override it
-    if [[ -n "$EXISTING_NODE_MAJOR" ]] && [[ "$EXISTING_NODE_MAJOR" =~ ^[0-9]+$ ]] && [ "$EXISTING_NODE_MAJOR" -gt 22 ]; then
-        SKIP_NODE_INSTALL="true"
-        print_step "Detected Node.js v$EXISTING_NODE_VERSION (>22); skipping installation and version switch to avoid override"
-    fi
-fi
+# Minimum required Node.js version
+MIN_NODE_VERSION=18
 
 # Install nvm if not available
 if [[ ! -d "$HOME/.nvm" ]] && ! command_exists nvm; then
@@ -339,11 +383,30 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
-# Install Node.js (unless an existing >22 installation is present)
+# Detect existing Node.js version AFTER nvm is sourced
+EXISTING_NODE_VERSION=""
+EXISTING_NODE_MAJOR=""
+SKIP_NODE_INSTALL="false"
+
+if command_exists node; then
+    EXISTING_NODE_VERSION="$(node -v 2>/dev/null | sed 's/^v//')"
+    EXISTING_NODE_MAJOR="${EXISTING_NODE_VERSION%%.*}"
+
+    # If an existing Node.js major version meets minimum requirements, keep it
+    if [[ -n "$EXISTING_NODE_MAJOR" ]] && [[ "$EXISTING_NODE_MAJOR" =~ ^[0-9]+$ ]] && [ "$EXISTING_NODE_MAJOR" -ge "$MIN_NODE_VERSION" ]; then
+        SKIP_NODE_INSTALL="true"
+        print_success "Detected Node.js v$EXISTING_NODE_VERSION (>= $MIN_NODE_VERSION); keeping existing version"
+    else
+        print_warning "Detected Node.js v$EXISTING_NODE_VERSION (< $MIN_NODE_VERSION); will install newer version"
+    fi
+fi
+
+# Install Node.js only if needed
 if command_exists nvm; then
     if [[ "$SKIP_NODE_INSTALL" == "true" ]]; then
-        print_success "Keeping existing Node.js v$EXISTING_NODE_VERSION unchanged"
+        print_success "Node.js v$EXISTING_NODE_VERSION meets requirements"
     else
+        print_step "Installing Node.js (stable)..."
         nvm install stable
         nvm use stable
         nvm alias default stable
@@ -361,60 +424,81 @@ print_step "Setting up Python virtual environment..."
 # Create necessary directories
 mkdir -p .karrio/app .karrio/log .karrio/data .karrio/static
 
-# Create virtual environment
-VENV_PATH=".venv/karrio"
-if [[ ! -d "$VENV_PATH" ]]; then
-    print_step "Creating Python virtual environment at $VENV_PATH..."
-    python -m venv "$VENV_PATH" || {
-        print_error "Failed to create virtual environment"
-        if [[ "$SCRIPT_SOURCED" == "true" ]]; then
-            return 1
-        else
-            exit 1
-        fi
-    }
-    print_success "Virtual environment created"
-else
-    print_success "Virtual environment already exists"
-fi
-
-# Activate the virtual environment
-print_step "Activating virtual environment..."
-source "$VENV_PATH/bin/activate" || {
-    print_error "Failed to activate virtual environment"
-    if [[ "$SCRIPT_SOURCED" == "true" ]]; then
-        return 1
-    else
-        exit 1
-    fi
-}
-print_success "Virtual environment activated"
-
-# Upgrade pip and setuptools
-print_step "Upgrading pip and setuptools..."
-pip install --upgrade pip setuptools wheel >/dev/null 2>&1 || {
-    print_warning "Failed to upgrade pip/setuptools (continuing anyway)"
-}
-
-# Install Python dependencies from custom requirements
-if [[ -f "requirements.dev.txt" ]]; then
-    print_step "Installing JTL Karrio custom dependencies (this may take a while)..."
+# Use setup-server-env to install Python dependencies
+if [[ -f "bin/setup-server-env" ]]; then
+    print_step "Installing Python dependencies using setup-server-env..."
     export CFLAGS="-Wno-error=array-bounds -Wno-error=stringop-overflow -Wno-error=incompatible-pointer-types"
 
-    pip install -r requirements.dev.txt || {
-        print_error "Failed to install requirements from requirements.dev.txt"
-        unset CFLAGS
+    # Run setup-server-env
+    print_step "Running setup-server-env (this may take a while)..."
+    if (
+        cd "$ROOT_DIR"
+        export PYENV_ROOT="$HOME/.pyenv"
+        export PATH="$PYENV_ROOT/bin:$PATH"
+        if [[ -d "$PYENV_ROOT" ]]; then
+            eval "$(pyenv init --path)" 2>/dev/null || true
+            eval "$(pyenv init -)" 2>/dev/null || true
+        fi
+        ./bin/setup-server-env
+    ); then
+        print_success "Python environment and dependencies installed"
+    else
+        print_error "setup-server-env failed"
         if [[ "$SCRIPT_SOURCED" == "true" ]]; then
             return 1
         else
             exit 1
         fi
-    }
+    fi
 
     unset CFLAGS
-    print_success "Python dependencies installed"
+
+    # Verify the virtual environment was created
+    if [[ ! -d ".venv/karrio" ]]; then
+        print_error "Virtual environment not found after setup"
+        if [[ "$SCRIPT_SOURCED" == "true" ]]; then
+            return 1
+        else
+            exit 1
+        fi
+    fi
+
+    # Verify key packages are installed
+    print_step "Verifying Python environment..."
+    if source ".venv/karrio/bin/activate" 2>/dev/null; then
+        MISSING_PACKAGES=()
+
+        if ! python -c "import attr" 2>/dev/null; then
+            MISSING_PACKAGES+=("attrs")
+        fi
+
+        if ! python -c "import mypy" 2>/dev/null; then
+            MISSING_PACKAGES+=("mypy")
+        fi
+
+        if ! python -c "import karrio" 2>/dev/null; then
+            MISSING_PACKAGES+=("karrio (SDK module)")
+        fi
+
+        if [[ ${#MISSING_PACKAGES[@]} -gt 0 ]]; then
+            print_warning "Some packages are missing: ${MISSING_PACKAGES[*]}"
+            print_warning "This usually happens if dependencies were recently updated."
+            echo ""
+            echo "To fix this, run ONE of the following:"
+            echo "  ${GREEN}1. source ./bin/setup-server-env${NC}   (Recommended - recreates environment)"
+            echo "  ${GREEN}2. pip install -e ./modules/sdk${NC}   (Quick fix - reinstalls SDK)"
+            echo ""
+        else
+            print_success "All key packages verified"
+        fi
+
+        # Deactivate to avoid interfering with later steps
+        deactivate 2>/dev/null || true
+    else
+        print_warning "Could not activate virtual environment for verification"
+    fi
 else
-    print_error "requirements.dev.txt not found at root!"
+    print_error "bin/setup-server-env not found!"
     if [[ "$SCRIPT_SOURCED" == "true" ]]; then
         return 1
     else
@@ -585,30 +669,47 @@ fi
 
 print_success "Development environment setup complete! 🎉"
 echo ""
-echo -e "${YELLOW}Next steps:${NC}"
+echo -e "${CYAN}═══════════════════════════════════════════════════════════${NC}"
+echo -e "${YELLOW}IMPORTANT: Activate Python Environment${NC}"
+echo -e "${CYAN}═══════════════════════════════════════════════════════════${NC}"
 echo ""
-echo "1. Activate Python environment:"
-echo "   source .venv/karrio/bin/activate"
+echo "Before proceeding, activate the Python virtual environment:"
 echo ""
-echo "2. Run database migrations (from karrio directory):"
-echo "   cd karrio && karrio migrate && cd .."
+echo -e "   ${GREEN}source bin/activate-env${NC}"
 echo ""
-echo "3. Create superuser (from karrio directory):"
-echo "   cd karrio && karrio createsuperuser && cd .."
+echo "Or restart your shell and run: ${GREEN}source ./bin/setup-server-env${NC}"
 echo ""
-echo "4. Collect static files (from karrio directory):"
-echo "   cd karrio && karrio collectstatic --noinput && cd .."
+echo -e "${CYAN}═══════════════════════════════════════════════════════════${NC}"
+echo -e "${YELLOW}Next Steps:${NC}"
+echo -e "${CYAN}═══════════════════════════════════════════════════════════${NC}"
 echo ""
-echo "5. Start development servers:"
+echo "1. ${BLUE}Activate Python environment:${NC}"
+echo "   source bin/activate-env"
+echo ""
+echo "2. ${BLUE}Run database migrations:${NC}"
+echo "   karrio migrate"
+echo ""
+echo "3. ${BLUE}Create superuser:${NC}"
+echo "   karrio createsuperuser"
+echo ""
+echo "4. ${BLUE}Collect static files:${NC}"
+echo "   karrio collectstatic --noinput"
+echo ""
+echo "5. ${BLUE}Start development servers:${NC}"
 echo "   ./bin/dev up"
-echo "   (Use ./bin/dev up --with-https to enable HTTPS proxy)"
+echo "   ${CYAN}(Use ./bin/dev up --with-https to enable HTTPS proxy with Caddy)${NC}"
 echo ""
+echo -e "${CYAN}═══════════════════════════════════════════════════════════${NC}"
 echo -e "${GREEN}Access your application at:${NC}"
+echo -e "${CYAN}═══════════════════════════════════════════════════════════${NC}"
 echo "   → API: http://localhost:5002"
 echo "   → Dashboard: http://localhost:3002"
 echo "   → Docs: http://localhost:3005"
 echo "   → Maildev: http://localhost:1080"
-echo "   → HTTPS domains (with --with-https): https://api.karrio.local, https://app.karrio.local, https://karrio.local"
+echo "   → HTTPS (when Caddy is running):"
+echo "     • https://api.karrio.local"
+echo "     • https://app.karrio.local"
+echo "     • https://karrio.local"
 echo ""
 
 # Check for any warnings
@@ -624,18 +725,24 @@ fi
 # If sourced, activate the Python environment
 if [[ "$SCRIPT_SOURCED" == "true" ]]; then
     print_step "Activating Python environment..."
-    if [[ -f ".venv/karrio/bin/activate" ]]; then
-        source ".venv/karrio/bin/activate"
+    if [[ -f "bin/activate-env" ]]; then
+        source "bin/activate-env"
+
+        # Fix double parentheses in prompt if they exist
+        if [[ "$PS1" == *"((karrio) )"* ]]; then
+            PS1="$(echo "$PS1" | sed 's/((karrio) )/(karrio) /')"
+            export PS1
+        fi
 
         print_success "Python environment activated!"
     else
-        print_warning ".venv/karrio/bin/activate not found, skipping activation"
+        print_warning "bin/activate-env not found, skipping activation"
     fi
     echo ""
     echo -e "${GREEN}You can now run:${NC}"
-    echo "   → cd karrio && karrio migrate && cd .."
-    echo "   → cd karrio && karrio createsuperuser && cd .."
-    echo "   → ./bin/dev up"
+    echo "   → karrio migrate"
+    echo "   → karrio createsuperuser"
+    echo "   → ./bin/start-dev"
 fi
 
 # Return to original directory

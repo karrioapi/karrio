@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 
 # Activate python env
-source "bin/activate" >/dev/null 2>&1
-
-# Get the root directory
-ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+source "bin/activate-env" >/dev/null 2>&1
 
 # Function to download GraphQL schema using curl and introspection
 download_graphql_schema() {
@@ -22,87 +19,61 @@ download_graphql_schema() {
 }
 
 # Run server commands
-if [[ "$*" == *gen:openapi* ]]; then
-    cd "${ROOT_DIR}"
-    echo "Generating OpenAPI schema..."
-    mkdir -p schemas
-    curl -s http://localhost:5002/shipping-openapi -o "${ROOT_DIR}/schemas/openapi.yml" && \
-        echo "✓ OpenAPI schema saved to schemas/openapi.yml" || \
-        { echo "✗ Failed to download OpenAPI schema"; exit 1; }
+if [[ "$*" == *gen:ee* ]]; then
+    cd "${ROOT:?}"
+    download_graphql_schema "http://localhost:5002/graphql/" "${ROOT:?}/schemas/graphql-ee.json"
     cd -
-elif [[ "$*" == *gen:graphql* ]]; then
-    cd "${ROOT_DIR}"
-    mkdir -p schemas
-    download_graphql_schema "http://localhost:5002/graphql/" "${ROOT_DIR}/schemas/graphql.json"
+elif [[ "$*" == *gen:graph* ]]; then
+    cd "${ROOT:?}"
+    download_graphql_schema "http://localhost:5002/graphql/" "${ROOT:?}/schemas/graphql.json"
     cd -
-elif [[ "$*" == *gen:carriers* ]]; then
-    cd "${ROOT_DIR}"
-    echo "Generating carrier metadata..."
-    mkdir -p schemas
-    curl -s http://localhost:5002/v1/carriers -o "${ROOT_DIR}/schemas/carrier-metadata.json" && \
-        echo "✓ Carrier metadata saved to schemas/carrier-metadata.json" || \
-        { echo "✗ Failed to download carrier metadata"; exit 1; }
+elif [[ "$*" == *gen:admin* ]]; then
+    cd "${ROOT:?}"
+    download_graphql_schema "http://localhost:5002/admin/graphql/" "${ROOT:?}/schemas/graphql-admin.json"
     cd -
-elif [[ "$*" == *gen:references* ]]; then
-    cd "${ROOT_DIR}"
-    echo "Generating Karrio references..."
-    mkdir -p schemas
-    curl -s "http://localhost:5002/v1/references?reduced=false" -o "${ROOT_DIR}/schemas/api-references.json" && \
-        echo "✓ Karrio references saved to schemas/api-references.json" || \
-        { echo "✗ Failed to download Karrio references"; exit 1; }
+elif [[ "$*" == *gen:platform* ]]; then
+    cd "${ROOT:?}"
+    download_graphql_schema "http://localhost:5002/admin/graphql/" "${ROOT:?}/ee/platform/schemas/graphql-platform.json"
     cd -
-elif [[ "$*" == *gen:all* ]]; then
-    cd "${ROOT_DIR}"
-    echo "Generating all JTL Shipping Platform schemas..."
-    mkdir -p schemas
-
-    # Generate OpenAPI schema
-    echo ""
-    echo "1/4 Generating OpenAPI schema..."
-    curl -s http://localhost:5002/shipping-openapi -o "${ROOT_DIR}/schemas/openapi.yml" && \
-        echo "✓ OpenAPI schema saved to schemas/openapi.yml" || \
-        echo "✗ Failed to download OpenAPI schema"
-
-    # Generate GraphQL schema
-    echo ""
-    echo "2/4 Generating GraphQL schema..."
-    download_graphql_schema "http://localhost:5002/graphql/" "${ROOT_DIR}/schemas/graphql.json"
-
-    # Generate Carrier metadata
-    echo ""
-    echo "3/4 Generating carrier metadata..."
-    curl -s http://localhost:5002/v1/carriers -o "${ROOT_DIR}/schemas/carrier-metadata.json" && \
-        echo "✓ Carrier metadata saved to schemas/carrier-metadata.json" || \
-        echo "✗ Failed to download carrier metadata"
-
-    # Generate Karrio references
-    echo ""
-    echo "4/4 Generating Karrio references..."
-    curl -s "http://localhost:5002/v1/references?reduced=false" -o "${ROOT_DIR}/schemas/api-references.json" && \
-        echo "✓ Karrio references saved to schemas/api-references.json" || \
-        echo "✗ Failed to download Karrio references"
-
-    echo ""
-    echo "✓ All schemas generated successfully in schemas/"
+elif [[ "$*" == *gen:openapi* ]]; then
+    cd "${ROOT:?}"
+    curl http://localhost:5002/shipping-openapi -o "${ROOT:?}/schemas/openapi.yml"
     cd -
+elif [[ "$*" == *gen:ref* ]]; then
+    cd "${ROOT:?}"
+    curl http://localhost:5002/v1/carriers >"${ROOT:?}/apps/web/public/carrier-integrations.json"
+    cd -
+elif [[ "$*" == *gen:ts:cli* ]]; then
+    cd "${ROOT:?}"
+    docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
+        -i /local/schemas/openapi.yml \
+        -g typescript-fetch \
+        -o /local/packages/karriojs/api/generated \
+        --additional-properties=typescriptThreePlus=true \
+        --additional-properties=modelPropertyNaming=snake_case \
+        --additional-properties=useSingleRequestParameter=true
+    cd -
+elif [[ "$*" == *build:js* ]]; then
+    cd "${ROOT:?}/packages/karriojs"
+
+    # Generate ts client
+    . ${ROOT}/bin/server gen:ts:cli || exit 1
+
+    # Build js client
+    rm -rf node_modules
+    npm install
+    npx gulp build --output "${ROOT:?}/apps/api/karrio/server/static/karrio/js/karrio.js" || exit 1
+    cd -
+    karrio collectstatic --noinput >/dev/null 2>&1
 else
-    echo "JTL Shipping Platform Schema Generator"
-    echo "======================================="
-    echo ""
-    echo "Usage: ./bin/server <command>"
-    echo ""
-    echo "Available commands:"
-    echo "  gen:openapi     - Generate OpenAPI schema from localhost:5002/shipping-openapi"
-    echo "  gen:graphql     - Generate GraphQL schema from localhost:5002/graphql/"
-    echo "  gen:carriers    - Generate carrier metadata from localhost:5002/v1/carriers"
-    echo "  gen:references  - Generate Karrio references from localhost:5002/v1/references"
-    echo "  gen:all         - Generate all schemas (openapi, graphql, carriers, references)"
-    echo ""
-    echo "Examples:"
-    echo "  ./bin/server gen:openapi"
-    echo "  ./bin/server gen:all"
-    echo ""
-    echo "Output directory: schemas/"
-    echo ""
-    echo "Note: Make sure your development server is running on localhost:5002 before generating schemas."
+    echo "Help: You can pass any of the following commands to the server"
+    echo "-----"
+    echo "gen:ee        - Generate GraphQL enterprise edition schema from localhost:5004/graphql/"
+    echo "gen:graph     - Generate standard GraphQL schema from localhost:5004/graphql/"
+    echo "gen:admin     - Generate Admin GraphQL schema from localhost:5004/admin/graphql/"
+    echo "gen:platform  - Generate Platform GraphQL schema from localhost:5004/admin/graphql/"
+    echo "gen:openapi   - Generate OpenAPI schema from localhost:5004/shipping-openapi"
+    echo "gen:ref       - Generate carrier integrations reference file from localhost:5004/v1/carriers"
+    echo "gen:ts:cli    - Generate TypeScript fetch client from OpenAPI schema using docker"
+    echo "build:js      - Build Browser JavaScript client (runs gen:ts:cli, installs dependencies, builds with gulp)"
 fi

@@ -1,0 +1,134 @@
+---
+id: oss
+title: Open-Source
+---
+
+# Self-host Open Source Karrio
+
+The core of Karrio is open-source and always will be.
+Docker is the easiest way to get started with self-hosted Karrio.
+However, for more specific deployments, you can explore the other options.
+
+## Hobby one-click install
+
+### Requirements
+
+-   A Linux Ubuntu Virtual Machine.
+
+    -   An instance with 4GB of RAM can handle approximately 100k events spread over a month
+    -   We highly recommend an instance with at least 4GB of RAM to handle any surges in event volume
+
+-   Custom domain with the following records for your instance
+    -   Type `A` | Host `api` | Value `Your instance IP`.
+    -   Type `A` | Host `app` | Value `Your instance IP`.
+
+Karrio will automatically create an SSL certificate for your domain using LetsEncrypt
+
+### Setting up the stack
+
+To get started, all we need to do is run the following command, which will spin up a fresh Karrio deployment for us automatically!
+
+```terminal title="Terminal"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/deploy-hobby)"
+```
+
+You'll now be asked to provide the release tag you would like to use, as well as the domain you have connected to your instance.
+
+Once everything has been setup, you should see the following message:
+
+```terminal title="Terminal"
+We will need to wait ~5-10 minutes for things to settle down, migrations to finish, and TLS certs to be issued
+
+⏳ Waiting for Kario to boot (this will take a few minutes)
+```
+
+Karrio will wait here on a couple of tasks that need to be completed, which should only take a couple minutes.
+
+Once this is complete, you should be able to see your Karrio dashboard on the domain you provided!
+
+### Customizing your deployment (optional)
+
+By default, the `docker-compose.yml` file that gets run comes with a series of default config values that should work for most deployments.
+If you need to customize anything, you can take a look at the full list of [environment variables](/product/self-hosting/environment).
+After making any changes, simply restart the stack with `docker-compose``.
+
+Additionally, if you would like to run a different version of Karrio, you can change the tag for the web, worker, and plugins services.
+Check out [here](https://hub.docker.com/r/karrio/server/tags) for a list of all available tags.
+
+### Troubleshooting
+
+If you have already run the one-step deployment command above and something went wrong, this section covers a number of steps you can take to debug issues.
+
+#### Hanging issue
+
+If you see the following message `⏳ Waiting for Kario to boot (this will take a few minutes)` after more than 10 minutes,
+it means that the deployment is hanging.
+
+Generally, this is due to DNS configuration issues. Please make sure that:
+
+-   your domain is correctly configured and that the DNS has propagated.
+-   An SSL certificate can be issued for your domain. (No SSL certificate already issued by a service like Cloudflare...)
+
+#### Checking that all containers are running
+
+We can use `docker ps` to check that all of our services are running.
+
+```terminal title="Terminal"
+5e75020e3712   caddy:2.6.2                                      ...   karrio.caddy
+04f057bbe2d9   karrio.docker.scarf.sh/karrio/server:2023.1      ...   karrio.worker
+5b83c24af507   karrio.docker.scarf.sh/karrio/dashboard:2023.1   ...   karrio.dashboard
+fc0afd80f5a0   karrio.docker.scarf.sh/karrio/server:2023.1      ...   karrio.api
+7fc842f7fc2c   postgres                                         ...   karrio.db
+087ab158467c   redis                                            ...   karrio.redis
+```
+
+You should see all the same containers as above. If any containers aren't showing up or show that they've restarted recently, it's worth checking their logs to see what the issue is.
+
+#### Checking the logs of each container
+
+We can use the following command to check the logs for each of our containers.
+
+```terminal title="Terminal"
+docker logs <container_name>
+```
+
+The best place to start looking is in the `karrio.api` container, which runs all the database migrations and will produce an error if any have failed.
+
+### Upgrading
+
+To upgrade, you can run the `upgrade-hobby` script from the Karrio repo.
+
+```terminal title="Terminal"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/upgrade-hobby)"
+```
+
+:::caution
+Warning: Before upgrading, make sure you have created back-ups of all your data!
+:::
+
+### Migrating
+
+If your server is struggling, you can either increase your instance size or move to
+[Karrio Cloud](https://karrio.io/get-started) for a hands-off experience
+
+## Docker-less installation
+
+This is a more custom installation!
+
+### Requirements
+
+-   A Linux Debian (Ubuntu ideally) Machine.
+
+### Install system binary dependencies
+
+```terminal title="Terminal"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/install-binaries)"
+```
+
+### Install Karrio Python packages
+
+```terminal title="Terminal"
+python3 -m venv ./karrio
+source ./karrio/bin/activate
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/deploy)"
+```

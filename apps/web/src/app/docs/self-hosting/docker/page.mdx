@@ -1,0 +1,253 @@
+# Docker
+
+Deploy Karrio using Docker for easy self-hosting.
+
+## Requirements
+
+- Docker Engine 20.10.0 or later
+- Docker Compose V2
+- At least 2GB RAM (4GB+ recommended for production)
+- At least 20GB of available storage
+
+## Getting Started
+
+There are two main ways to deploy Karrio with Docker:
+
+1. **One-click hobby installation** - The fastest way to get started
+2. **Manual Docker Compose setup** - For more customization options
+
+## One-Click Hobby Installation
+
+The fastest way to get started with Karrio.
+
+### Requirements
+
+- A Linux server (Ubuntu 20.04+ recommended)
+- At least 2GB of RAM (4GB recommended)
+- A domain name with DNS configured (for production use)
+
+### Setting up the Stack
+
+1. SSH into your server
+2. Run the following command:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/deploy-hobby)"
+```
+
+3. When prompted, provide:
+   - The release tag you want to use (or accept the default)
+   - Your domain name (for production deployment)
+
+4. Wait for the setup to complete (~5-10 minutes)
+
+Once complete, you'll be able to access your Karrio instance at:
+
+- Dashboard: `https://app.yourdomain.com` (or `http://localhost:3002` for local deployment)
+- API: `https://api.yourdomain.com` (or `http://localhost:5002` for local deployment)
+
+Default login credentials: `admin@example.com` | `demo`
+
+### Customizing Your Deployment
+
+To customize your deployment:
+
+1. Edit the `.env` file:
+
+```bash
+nano ~/karrio/.env
+```
+
+2. Restart the services:
+
+```bash
+cd ~/karrio
+docker-compose down
+docker-compose up -d
+```
+
+## Manual Docker Compose Setup
+
+For more control over the installation process.
+
+### Steps
+
+1. Create a directory for your Karrio installation:
+
+```bash
+mkdir -p ~/karrio
+cd ~/karrio
+```
+
+2. Download the Docker Compose file:
+
+```bash
+curl -O https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/docker-compose.yml
+```
+
+3. Download the environment file:
+
+```bash
+curl -O https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/.env
+```
+
+4. Start the services:
+
+```bash
+docker-compose up -d
+```
+
+5. Access your Karrio instance:
+   - Dashboard: `http://localhost:3002`
+   - API: `http://localhost:5002`
+
+Default login credentials: `admin@example.com` | `demo`
+
+## Production Deployment
+
+For production environments with HTTPS and domain routing, use the hobby installation script which includes Caddy for automatic SSL certificates.
+
+## Container Architecture
+
+The Karrio Docker deployment consists of:
+
+- **karrio.api**: API server (port 5002)
+- **karrio.worker**: Background worker
+- **karrio.dashboard**: Web interface (port 3002)
+- **karrio.db**: PostgreSQL database
+- **karrio.redis**: Redis cache
+- **karrio.caddy** (hobby deployment): Caddy web server
+
+## Checking Container Status
+
+```bash
+docker-compose ps
+```
+
+## Viewing Logs
+
+```bash
+docker-compose logs <container_name>
+```
+
+Follow logs in real-time:
+
+```bash
+docker-compose logs -f karrio.api
+```
+
+## Troubleshooting
+
+### All Containers Not Running
+
+```bash
+docker-compose ps
+docker-compose logs <container_name>
+```
+
+### Database Connection Issues
+
+```bash
+docker-compose logs karrio.db
+docker-compose exec karrio.db psql -U postgres
+```
+
+### API Not Responding
+
+```bash
+docker-compose logs karrio.api
+docker-compose restart karrio.api
+```
+
+### SSL Certificate Issues
+
+```bash
+docker-compose logs karrio.caddy
+```
+
+Common issues: DNS not configured, ports 80/443 blocked, incorrect domain name.
+
+## Updating
+
+For hobby deployments:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/upgrade-hobby)"
+```
+
+For manual deployments:
+
+```bash
+docker-compose pull
+docker-compose down
+docker-compose up -d
+```
+
+## Observability
+
+Karrio includes built-in OpenTelemetry support for monitoring and tracing.
+
+### Quick Setup
+
+1. Download the observability files:
+
+```bash
+curl -O https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/observability/docker-compose.otel.yml
+curl -O https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/observability/docker-compose.prometheus.yml
+curl -O https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/observability/docker-compose.observability.yml
+```
+
+2. Start with your chosen option:
+
+**Simple Tracing with Jaeger:**
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.otel.yml up -d
+```
+
+**Prometheus Metrics:**
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.prometheus.yml up -d
+```
+
+**Complete Stack:**
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.observability.yml up -d
+```
+
+For detailed setup, see the [observability README](https://github.com/karrioapi/karrio/blob/main/docker/observability/README.md).
+
+## Managing Data
+
+### Data Persistence
+
+Docker volumes persist data:
+- `postgres-data`: Database files
+- `redis-data`: Redis data
+- `karrio-static`: Static files
+- `caddy-data`: SSL certificates
+
+### Backing Up
+
+**Database backup:**
+
+```bash
+docker-compose exec karrio.db pg_dump -U postgres -d db > karrio_backup_$(date +%Y%m%d).sql
+```
+
+**Configuration backup:**
+
+```bash
+cp .env .env.backup.$(date +%Y%m%d)
+```
+
+### Service Management
+
+```bash
+docker-compose down          # Stop all services
+docker-compose up -d          # Start all services
+docker-compose restart <name> # Restart specific service
+```
+

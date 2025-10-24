@@ -1,0 +1,275 @@
+{
+  "ShipmentResponse": {
+    "Response": {
+      "ResponseStatus": {
+        "Code": "string",
+        "Description": "string"
+      },
+      "Alert": {
+        "Code": "string",
+        "Description": "string"
+      },
+      "TransactionReference": {
+        "CustomerContext": "string"
+      }
+    },
+    "ShipmentResults": {
+      "Disclaimer": [
+        {
+          "Code": "string",
+          "Description": "string"
+        }
+      ],
+      "ShipmentCharges": {
+        "RateChart": "string",
+        "BaseServiceCharge": {
+          "CurrencyCode": "string",
+          "MonetaryValue": "string"
+        },
+        "TransportationCharges": {
+          "CurrencyCode": "string",
+          "MonetaryValue": "string"
+        },
+        "ItemizedCharges": [
+          {
+            "Code": "string",
+            "Description": "string",
+            "CurrencyCode": "string",
+            "MonetaryValue": "string",
+            "SubType": "string"
+          }
+        ],
+        "ServiceOptionsCharges": {
+          "CurrencyCode": "string",
+          "MonetaryValue": "string"
+        },
+        "TaxCharges": [
+          {
+            "Type": "string",
+            "MonetaryValue": "string"
+          }
+        ],
+        "TotalCharges": {
+          "CurrencyCode": "string",
+          "MonetaryValue": "string"
+        },
+        "TotalChargesWithTaxes": {
+          "CurrencyCode": "string",
+          "MonetaryValue": "string"
+        }
+      },
+      "NegotiatedRateCharges": {
+        "ItemizedCharges": [
+          {
+            "Code": "string",
+            "Description": "string",
+            "CurrencyCode": "string",
+            "MonetaryValue": "string",
+            "SubType": "string"
+          }
+        ],
+        "TaxCharges": [
+          {
+            "Type": "string",
+            "MonetaryValue": "string"
+          }
+        ],
+        "TotalCharge": {
+          "CurrencyCode": "string",
+          "MonetaryValue": "string"
+        },
+        "TotalChargesWithTaxes": {
+          "CurrencyCode": "string",
+          "MonetaryValue": "string"
+        }
+      },
+      "FRSShipmentData": {
+        "TransportationCharges": {
+          "GrossCharge": {
+            "CurrencyCode": "string",
+            "MonetaryValue": "string"
+          },
+          "DiscountAmount": {
+            "CurrencyCode": "string",
+            "MonetaryValue": "string"
+          },
+          "DiscountPercentage": "string",
+          "NetCharge": {
+            "CurrencyCode": "string",
+            "MonetaryValue": "string"
+          }
+        },
+        "FreightDensityRate": {
+          "Density": "string",
+          "TotalCubicFeet": "string"
+        },
+        "HandlingUnits": [
+          {
+            "Quantity": "string",
+            "Type": {
+              "Code": "string",
+              "Description": "string"
+            },
+            "Dimensions": {
+              "UnitOfMeasurement": {
+                "Code": "string",
+                "Description": "string"
+              },
+              "Length": "string",
+              "Width": "string",
+              "Height": "string"
+            },
+            "AdjustedHeight": {
+              "Value": "string",
+              "UnitOfMeasurement": {
+                "Code": "string",
+                "Description": "string"
+              }
+            }
+          }
+        ]
+      },
+      "RatingMethod": "string",
+      "BillableWeightCalculationMethod": "string",
+      "BillingWeight": {
+        "UnitOfMeasurement": {
+          "Code": "string",
+          "Description": "string"
+        },
+        "Weight": "string"
+      },
+      "ShipmentIdentificationNumber": "string",
+      "MIDualReturnShipmentKey": "string",
+      "BarCodeImage": "string",
+      "PackageResults": [
+        {
+          "TrackingNumber": "string",
+          "RateModifier": {
+            "ModifierType": "string",
+            "ModifierDesc": "string",
+            "CurrencyCode": "string",
+            "Amount": "string"
+          },
+          "BaseServiceCharge": {
+            "CurrencyCode": "string",
+            "MonetaryValue": "string"
+          },
+          "ServiceOptionsCharges": {
+            "CurrencyCode": "string",
+            "MonetaryValue": "string"
+          },
+          "ShippingLabel": {
+            "ImageFormat": {
+              "Code": "string",
+              "Description": "string"
+            },
+            "GraphicImage": "string",
+            "GraphicImagePart": [
+              "string"
+            ],
+            "InternationalSignatureGraphicImage": "string",
+            "HTMLImage": "string",
+            "PDF417": "string"
+          },
+          "ShippingReceipt": {
+            "ImageFormat": {
+              "Code": "string",
+              "Description": "string"
+            },
+            "GraphicImage": "string"
+          },
+          "USPSPICNumber": "string",
+          "CN22Number": "string",
+          "Accessorial": [
+            {
+              "Code": "string",
+              "Description": "string"
+            }
+          ],
+          "Form": {
+            "Code": "string",
+            "Description": "string",
+            "Image": {
+              "ImageFormat": {
+                "Code": "string",
+                "Description": "string"
+              },
+              "GraphicImage": "string"
+            },
+            "FormGroupId": "string",
+            "FormGroupIdName": "string"
+          },
+          "ItemizedCharges": [
+            {
+              "Code": "string",
+              "Description": "string",
+              "CurrencyCode": "string",
+              "MonetaryValue": "string",
+              "SubType": "string"
+            }
+          ],
+          "NegotiatedCharges": {
+            "ItemizedCharges": [
+              {
+                "Code": "string",
+                "Description": "string",
+                "CurrencyCode": "string",
+                "MonetaryValue": "string",
+                "SubType": "string"
+              }
+            ]
+          }
+        }
+      ],
+      "ControlLogReceipt": [
+        {
+          "ImageFormat": {
+            "Code": "string",
+            "Description": "string"
+          },
+          "GraphicImage": "string"
+        }
+      ],
+      "Form": {
+        "Code": "string",
+        "Description": "string",
+        "Image": {
+          "ImageFormat": {
+            "Code": "string",
+            "Description": "string"
+          },
+          "GraphicImage": "string"
+        },
+        "FormGroupId": "string",
+        "FormGroupIdName": "string"
+      },
+      "CODTurnInPage": {
+        "Image": {
+          "ImageFormat": {
+            "Code": "string",
+            "Description": "string"
+          },
+          "GraphicImage": "string"
+        }
+      },
+      "HighValueReport": {
+        "Image": {
+          "ImageFormat": {
+            "Code": "string",
+            "Description": "string"
+          },
+          "GraphicImage": "string"
+        }
+      },
+      "LabelURL": "string",
+      "LocalLanguageLabelURL": "string",
+      "ReceiptURL": "string",
+      "LocalLanguageReceiptURL": "string",
+      "DGPaperImage": [
+        "string"
+      ],
+      "MasterCartonID": "string",
+      "RoarRatedIndicator": "string"
+    }
+  }
+}

@@ -1,5 +1,0 @@
-apiVersion: v2
-description: A Helm chart for dashboard server
-name: karrio-dashboard
-type: application
-version: 0.1.0

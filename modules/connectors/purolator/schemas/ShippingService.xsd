@@ -1,0 +1,1594 @@
+<xs:schema elementFormDefault="qualified" targetNamespace="http://purolator.com/pws/datatypes/v2" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://purolator.com/pws/datatypes/v2">
+    <xs:complexType name="CreateShipmentRequest">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>CreateShipmentRequest</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent mixed="false">
+            <xs:extension base="tns:Request">
+                <xs:sequence>
+                    <xs:element name="Shipment" nillable="true" type="tns:Shipment">
+                        <xs:annotation>
+                            <xs:appinfo/>
+                            <xs:documentation>Shipment - Shipment</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="PrinterType" nillable="true" type="tns:PrinterType">
+                        <xs:annotation>
+                            <xs:appinfo/>
+                            <xs:documentation>PrinterType - PrinterType</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:element name="CreateShipmentRequest" nillable="true" type="tns:CreateShipmentRequest"/>
+    <xs:complexType name="Request">
+        <xs:sequence/>
+    </xs:complexType>
+    <xs:element name="Request" nillable="true" type="tns:Request"/>
+    <xs:complexType name="Shipment">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>Shipment</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="SenderInformation" nillable="true" type="tns:SenderInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>SenderInformation - SenderInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="ReceiverInformation" nillable="true" type="tns:ReceiverInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>ReceiverInformation - ReceiverInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="FromOnLabelIndicator" nillable="true" type="xs:boolean">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>FromOnLabelIndicator - bool</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="FromOnLabelInformation" nillable="true" type="tns:FromOnLabelInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>FromOnLabelInformation - FromOnLabelInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="ShipmentDate" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>ShipmentDate - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="PackageInformation" nillable="true" type="tns:PackageInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>PackageInformation - PackageInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="InternationalInformation" nillable="true" type="tns:InternationalInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>InternationalInformatio - InternationalInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="ReturnShipmentInformation" nillable="true" type="tns:ReturnShipmentInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>ReturnShipmentInformation - ReturnShipmentInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="PaymentInformation" nillable="true" type="tns:PaymentInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>PaymentInformation - PaymentInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="PickupInformation" nillable="true" type="tns:PickupInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>PickupInformation - PickupInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="NotificationInformation" nillable="true" type="tns:NotificationInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>NotificationInformation - NotificationInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="TrackingReferenceInformation" nillable="true" type="tns:TrackingReferenceInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>TrackingReferenceInformation - TrackingReferenceInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="OtherInformation" nillable="true" type="tns:OtherInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>OtherInformation - OtherInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="ProactiveNotification" nillable="true" type="tns:ProactiveNotification">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>ProactiveNotificationInformation - ProactiveNotificationInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Shipment" nillable="true" type="tns:Shipment"/>
+    <xs:complexType name="SenderInformation">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>SenderInformation</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Address" nillable="true" type="tns:Address">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Address - Address</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="TaxNumber" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>TaxNumber - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="SenderInformation" nillable="true" type="tns:SenderInformation"/>
+    <xs:complexType name="Address">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>Address</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Name" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Name - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="Company" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Company - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="Department" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Department - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="StreetNumber" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>StreetNumber - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="StreetSuffix" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>StreetSuffix - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="StreetName" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>StreetName - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="StreetType" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>StreetType - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="StreetDirection" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>StreetDirection - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="Suite" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Suite - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="Floor" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Floor - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="StreetAddress2" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>StreetAddress2 - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="StreetAddress3" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>StreetAddress3 - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="City" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>City - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Province" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Province - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Country" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Country - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="PostalCode" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>PostalCode - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="PhoneNumber" nillable="true" type="tns:PhoneNumber">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>PhoneNumber - PhoneNumber</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="FaxNumber" nillable="true" type="tns:PhoneNumber">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Faxnumber - PhoneNumber</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Address" nillable="true" type="tns:Address"/>
+    <xs:complexType name="PhoneNumber">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>PhoneNumber</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="CountryCode" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>CountryCode - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="AreaCode" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>AreaCode - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Phone" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Phone - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="Extension" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Extension - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="PhoneNumber" nillable="true" type="tns:PhoneNumber"/>
+    <xs:complexType name="ReceiverInformation">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>ReceiverInformation</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Address" nillable="true" type="tns:Address">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Address - Address</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="TaxNumber" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>TaxNumber - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ReceiverInformation" nillable="true" type="tns:ReceiverInformation"/>
+    <xs:complexType name="FromOnLabelInformation">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>ReceiverInformation</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Address" nillable="true" type="tns:Address">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Address - Address</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="FromOnLabelInformation" nillable="true" type="tns:FromOnLabelInformation"/>
+    <xs:complexType name="PackageInformation">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>PackageInformation</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="ServiceID" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>ServiceID - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Description - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="TotalWeight" nillable="true" type="tns:TotalWeight">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>TotalWeight - Weight</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="TotalPieces" type="xs:int">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>TotalPieces - int</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="PiecesInformation" nillable="true" type="tns:ArrayOfPiece">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>PiecesInformation - Piece[]</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="DangerousGoodsDeclarationDocumentIndicator" type="xs:boolean">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>DangerousGoodsDeclarationDocumentIndicator - bool</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="OptionsInformation" nillable="true" type="tns:OptionsInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>SenderInformation - SenderInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="PackageInformation" nillable="true" type="tns:PackageInformation"/>
+    <xs:complexType name="TotalWeight">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>TotalWeight</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Value" nillable="true" type="xs:int">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Value - decimal</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="WeightUnit" type="tns:WeightUnit">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>WeightUnit - WeightUnit</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="TotalWeight" nillable="true" type="tns:TotalWeight"/>
+    <xs:simpleType name="WeightUnit">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>WeightUnit - enum</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="lb">
+                <xs:annotation>
+                    <xs:documentation>lb</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="kg">
+                <xs:annotation>
+                    <xs:documentation>kg</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="WeightUnit" nillable="true" type="tns:WeightUnit"/>
+    <xs:complexType name="ArrayOfPiece">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="Piece" nillable="true" type="tns:Piece"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfPiece" nillable="true" type="tns:ArrayOfPiece"/>
+    <xs:complexType name="Piece">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>Piece</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Weight" nillable="true" type="tns:Weight">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Weight - Weight</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="Length" nillable="true" type="tns:Dimension">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Length - Dimension</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="Width" nillable="true" type="tns:Dimension">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Width - Dimension</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="Height" nillable="true" type="tns:Dimension">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Height - Dimension</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="Options" nillable="true" type="tns:ArrayOfOptionIDValuePair">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Options - OptionIDValuePair[]</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Piece" nillable="true" type="tns:Piece"/>
+    <xs:complexType name="Weight">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>Weight</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Value" nillable="true" type="xs:decimal">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Value - decimal</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="WeightUnit" type="tns:WeightUnit">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>WeightUnit - WeightUnit</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Weight" nillable="true" type="tns:Weight"/>
+    <xs:complexType name="Dimension">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>Dimension</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Value" nillable="true" type="xs:decimal">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Value - decimal</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="DimensionUnit" type="tns:DimensionUnit">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>DimensionUnit - DimensionUnit</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Dimension" nillable="true" type="tns:Dimension"/>
+    <xs:simpleType name="DimensionUnit">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>DimensionUnit - enum</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="in">
+                <xs:annotation>
+                    <xs:documentation>in</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="cm">
+                <xs:annotation>
+                    <xs:documentation>cm</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="DimensionUnit" nillable="true" type="tns:DimensionUnit"/>
+    <xs:complexType name="ArrayOfOptionIDValuePair">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="OptionIDValuePair" nillable="true" type="tns:OptionIDValuePair"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfOptionIDValuePair" nillable="true" type="tns:ArrayOfOptionIDValuePair"/>
+    <xs:complexType name="OptionIDValuePair">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>OptionIDValuePair</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="ID" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>ID - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Value" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Value - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="OptionIDValuePair" nillable="true" type="tns:OptionIDValuePair"/>
+    <xs:complexType name="OptionsInformation">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>OptionsInformation</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Options" nillable="true" type="tns:ArrayOfOptionIDValuePair">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Options - OptionIDValuePair[]</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="ExpressChequeAddress" nillable="true" type="tns:Address">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>ExpressChequeAddress - Address</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="OptionsInformation" nillable="true" type="tns:OptionsInformation"/>
+    <xs:complexType name="InternationalInformation">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>InternationalInformation</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="DocumentsOnlyIndicator" type="xs:boolean">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>DocumentsOnlyIndicator - bool</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="ContentDetails" nillable="true" type="tns:ArrayOfContentDetail">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>ContentDetails - ContentDetail[]</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="BuyerInformation" nillable="true" type="tns:BuyerInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>BuyerInformation - BuyerInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="PreferredCustomsBroker" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>PreferredCustomsBroker - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="DutyInformation" nillable="true" type="tns:DutyInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>DutyInformation - DutyInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="ImportExportType" nillable="true" type="tns:ImportExportType">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>ImportExportType - ImportExportType</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="CustomsInvoiceDocumentIndicator" type="xs:boolean">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>CustomsInvoiceDocumentIndicator - bool</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="InternationalInformation" nillable="true" type="tns:InternationalInformation"/>
+    <xs:complexType name="ArrayOfContentDetail">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="ContentDetail" nillable="true" type="tns:ContentDetail"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfContentDetail" nillable="true" type="tns:ArrayOfContentDetail"/>
+    <xs:complexType name="ContentDetail">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>ContentDetail</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Description" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Description - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="HarmonizedCode" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>HarmonizedCode - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="CountryOfManufacture" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>CountryOfManufacture - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="ProductCode" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>ProductCode - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="UnitValue" type="xs:decimal">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>UnitValue - decimal</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Quantity" type="xs:int">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Quantity - int</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="NAFTADocumentIndicator" type="xs:boolean">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>NAFTADocumentIndicator - bool</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="FDADocumentIndicator" type="xs:boolean">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>FDADocumentIndicator - bool</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="FCCDocumentIndicator" type="xs:boolean">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>FCCDocumentIndicator - bool</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="SenderIsProducerIndicator" type="xs:boolean">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>SenderIsProducerIndicator - bool</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="TextileIndicator" type="xs:boolean">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>TextileIndicator - bool</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="TextileManufacturer" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>ProductCode - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ContentDetail" nillable="true" type="tns:ContentDetail"/>
+    <xs:complexType name="BuyerInformation">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>BuyerInformation</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Address" nillable="true" type="tns:Address">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Address - Address</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="TaxNumber" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>TaxNumber - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="BuyerInformation" nillable="true" type="tns:BuyerInformation"/>
+    <xs:complexType name="DutyInformation">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>DutyInformation</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="BillDutiesToParty" nillable="true" type="tns:BillDutiesToParty">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>BillDutiesToParty - BillDutiesToParty</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="BusinessRelationship" nillable="true" type="tns:BusinessRelationship">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>BusinessRelationship - BusinessRelationship</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Currency" nillable="true" type="tns:DutyCurrency">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Currency - DutyCurrency</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="DutyInformation" nillable="true" type="tns:DutyInformation"/>
+    <xs:simpleType name="BillDutiesToParty">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>BillDutiesToParty - enum</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Sender">
+                <xs:annotation>
+                    <xs:documentation>Sender</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="Receiver">
+                <xs:annotation>
+                    <xs:documentation>Receiver</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="Buyer">
+                <xs:annotation>
+                    <xs:documentation>Buyer</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="BillDutiesToParty" nillable="true" type="tns:BillDutiesToParty"/>
+    <xs:simpleType name="BusinessRelationship">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>BusinessRelationship - enum</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Related">
+                <xs:annotation>
+                    <xs:documentation>Related</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="NotRelated">
+                <xs:annotation>
+                    <xs:documentation>NotRelated</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="BusinessRelationship" nillable="true" type="tns:BusinessRelationship"/>
+    <xs:simpleType name="DutyCurrency">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>DutyCurrency - enum</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="CAD">
+                <xs:annotation>
+                    <xs:documentation>CAD</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="USD">
+                <xs:annotation>
+                    <xs:documentation>USD</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="DutyCurrency" nillable="true" type="tns:DutyCurrency"/>
+    <xs:simpleType name="ImportExportType">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>ImportExportType - enum</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Permanent">
+                <xs:annotation>
+                    <xs:documentation>Permanent</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="Temporary">
+                <xs:annotation>
+                    <xs:documentation>Temporary</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="Repair">
+                <xs:annotation>
+                    <xs:documentation>Repair</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="Return">
+                <xs:annotation>
+                    <xs:documentation>Return</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="ImportExportType" nillable="true" type="tns:ImportExportType"/>
+    <xs:complexType name="ReturnShipmentInformation">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>ReturnShipmentInformation</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="NumberOfReturnShipments" type="xs:int">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>NumberOfReturnShipments - int</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="ReturnShipment" nillable="true" type="tns:ReturnShipment">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Shipment - Shipment</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ReturnShipmentInformation" nillable="true" type="tns:ReturnShipmentInformation"/>
+    <xs:complexType name="ReturnShipment">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>Shipment</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="SenderInformation" nillable="true" type="tns:SenderInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>SenderInformation - SenderInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="ReceiverInformation" nillable="true" type="tns:ReceiverInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>ReceiverInformation - ReceiverInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="PackageInformation" nillable="true" type="tns:PackageInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>PackageInformation - PackageInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="PaymentInformation" nillable="true" type="tns:PaymentInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>PaymentInformation - PaymentInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="PickupInformation" nillable="true" type="tns:PickupInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>PickupInformation - PickupInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="NotificationInformation" nillable="true" type="tns:NotificationInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>NotificationInformation - NotificationInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="TrackingReferenceInformation" nillable="true" type="tns:TrackingReferenceInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>TrackingReferenceInformation - TrackingReferenceInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="OtherInformation" nillable="true" type="tns:OtherInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>OtherInformation - OtherInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ReturnShipment" nillable="true" type="tns:ReturnShipment"/>
+    <xs:complexType name="PaymentInformation">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>PaymentInformation</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="PaymentType" type="tns:PaymentType">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>PaymentType - PaymentType</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="RegisteredAccountNumber" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>RegisteredAccountNumber - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="BillingAccountNumber" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>BillingAccountNumber - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="CreditCardInformation" nillable="true" type="tns:CreditCardInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>CreditCardInformation - CreditCardInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="PaymentInformation" nillable="true" type="tns:PaymentInformation"/>
+    <xs:simpleType name="PaymentType">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>PaymentType - enum</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Sender">
+                <xs:annotation>
+                    <xs:documentation>Sender</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="Receiver">
+                <xs:annotation>
+                    <xs:documentation>Receiver</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="ThirdParty">
+                <xs:annotation>
+                    <xs:documentation>ThirdParty</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="CreditCard">
+                <xs:annotation>
+                    <xs:documentation>CreditCard</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="PaymentType" nillable="true" type="tns:PaymentType"/>
+    <xs:complexType name="CreditCardInformation">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>CreditCardInformation</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Type" type="tns:CreditCardType">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Type - CreditCardType</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Number" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Number - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Name" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Name - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="ExpiryMonth" type="xs:int">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>ExpiryMonth - int</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="ExpiryYear" type="xs:int">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>ExpiryYear - int</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="CVV" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>CVV - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="BillingPostalCode" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>BillingPostalCode - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="CreditCardInformation" nillable="true" type="tns:CreditCardInformation"/>
+    <xs:simpleType name="CreditCardType">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>CreditCardType - enum</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Visa">
+                <xs:annotation>
+                    <xs:documentation>Visa</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="MasterCard">
+                <xs:annotation>
+                    <xs:documentation>MasterCard</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="AmericanExpress">
+                <xs:annotation>
+                    <xs:documentation>AmericanExpress</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="CreditCardType" nillable="true" type="tns:CreditCardType"/>
+    <xs:complexType name="PickupInformation">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>PickupInformation</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="PickupType" type="tns:PickupType">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Type - PickupType</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="PickupInformation" nillable="true" type="tns:PickupInformation"/>
+    <xs:simpleType name="PickupType">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>PickupType - enum</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="DropOff">
+                <xs:annotation>
+                    <xs:documentation>DropOff</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="PreScheduled">
+                <xs:annotation>
+                    <xs:documentation>PreScheduled</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="PickupType" nillable="true" type="tns:PickupType"/>
+    <xs:complexType name="NotificationInformation">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>NotificationInformation</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element minOccurs="0" name="ConfirmationEmailAddress" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>ConfirmationEmailAddress - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="AdvancedShippingNotificationEmailAddress1" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>AdvancedShippingNotificationEmailAddress1 - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="AdvancedShippingNotificationEmailAddress2" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>AdvancedShippingNotificationEmailAddress2 - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="AdvancedShippingNotificationMessage" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>AdvancedShippingNotificationMessage - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="NotificationInformation" nillable="true" type="tns:NotificationInformation"/>
+    <xs:complexType name="TrackingReferenceInformation">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>TrackingReferenceInformation</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element minOccurs="0" name="Reference1" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Reference1 - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="Reference2" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Reference2 - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="Reference3" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Reference3 - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="Reference4" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Reference4 - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="TrackingReferenceInformation" nillable="true" type="tns:TrackingReferenceInformation"/>
+    <xs:complexType name="OtherInformation">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>OtherInformation</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element minOccurs="0" name="CostCentre" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>CostCentre - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="SpecialInstructions" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>SpecialInstructions - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="OtherInformation" nillable="true" type="tns:OtherInformation"/>
+    <xs:complexType name="ProactiveNotification">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>ProactiveNotification</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="RequestorName" nillable="true" type="xs:string"/>
+            <xs:element name="RequestorEmail" nillable="true" type="xs:string"/>
+            <xs:element name="Subscriptions" nillable="true" type="tns:ArrayOfSubscription">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Subscriptions - Subscription[]</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ProactiveNotification" nillable="true" type="tns:ProactiveNotification"/>
+    <xs:complexType name="ArrayOfSubscription">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="Subscription" nillable="true" type="tns:Subscription"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfSubscription" nillable="true" type="tns:ArrayOfSubscription"/>
+    <xs:complexType name="Subscription">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>Proactive Notification</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Name" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Name -ProactiveNotification []</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Email" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Email -ProactiveNotification []</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="NotifyWhenExceptionOccurs" type="xs:boolean"/>
+            <xs:element name="NotifyWhenDeliveryOccurs" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Subscription" nillable="true" type="tns:Subscription"/>
+    <xs:simpleType name="PrinterType">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>PrinterType - enum</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Regular">
+                <xs:annotation>
+                    <xs:documentation>Regular</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="Thermal">
+                <xs:annotation>
+                    <xs:documentation>Thermal</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="PrinterType" nillable="true" type="tns:PrinterType"/>
+    <xs:element name="CreateShipmentRequest" nillable="true" type="tns:CreateShipmentRequest"/>
+    <xs:complexType name="RequestContext">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>RequestContext</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Version" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Version - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Language" type="tns:Language">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Language - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="GroupID" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>GroupID - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="RequestReference" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>RequestReference - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="UserToken" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>UserToken - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="RequestContext" nillable="true" type="tns:RequestContext"/>
+    <xs:simpleType name="Language">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>Language - enum</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="en">
+                <xs:annotation>
+                    <xs:documentation>en</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="fr">
+                <xs:annotation>
+                    <xs:documentation>fr</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="Language" nillable="true" type="tns:Language"/>
+    <xs:complexType name="CreateShipmentResponse">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>CreateShipmentResponse</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent mixed="false">
+            <xs:extension base="tns:Response">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="ShipmentPIN" nillable="true" type="tns:PIN">
+                        <xs:annotation>
+                            <xs:appinfo/>
+                            <xs:documentation>ShipmentPIN - PIN</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="PiecePINs" nillable="true" type="tns:ArrayOfPIN">
+                        <xs:annotation>
+                            <xs:appinfo/>
+                            <xs:documentation>PiecePINs - PIN[]</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="ReturnShipmentPINs" nillable="true" type="tns:ArrayOfPIN">
+                        <xs:annotation>
+                            <xs:appinfo/>
+                            <xs:documentation>ReturnShipmentPINs - PIN[]</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="ExpressChequePIN" nillable="true" type="tns:PIN">
+                        <xs:annotation>
+                            <xs:appinfo/>
+                            <xs:documentation>ExpressChequePIN - PIN</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:element name="CreateShipmentResponse" nillable="true" type="tns:CreateShipmentResponse"/>
+    <xs:complexType name="Response">
+        <xs:sequence>
+            <xs:element name="ResponseInformation" nillable="true" type="tns:ResponseInformation">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>ResponseInformation - ResponseInformation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Response" nillable="true" type="tns:Response"/>
+    <xs:complexType name="ResponseInformation">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>ResponseInformation</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Errors" nillable="true" type="tns:ArrayOfError">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Errors - Error[]</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="InformationalMessages" nillable="true" type="tns:ArrayOfInformationalMessage">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>InformationalMessages - InformationalMessage[]</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ResponseInformation" nillable="true" type="tns:ResponseInformation"/>
+    <xs:complexType name="ArrayOfError">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="Error" nillable="true" type="tns:Error"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfError" nillable="true" type="tns:ArrayOfError"/>
+    <xs:complexType name="Error">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>Error</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Code" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Code - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Description" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Description - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="AdditionalInformation" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>AdditionalInformation - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Error" nillable="true" type="tns:Error"/>
+    <xs:complexType name="ArrayOfInformationalMessage">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="InformationalMessage" nillable="true" type="tns:InformationalMessage"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfInformationalMessage" nillable="true" type="tns:ArrayOfInformationalMessage"/>
+    <xs:complexType name="InformationalMessage">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>InformationalMessage</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Code" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Code - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Message" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Message - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="InformationalMessage" nillable="true" type="tns:InformationalMessage"/>
+    <xs:complexType name="PIN">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>PIN</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Value" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>Value - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="PIN" nillable="true" type="tns:PIN"/>
+    <xs:complexType name="ArrayOfPIN">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="PIN" nillable="true" type="tns:PIN"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ArrayOfPIN" nillable="true" type="tns:ArrayOfPIN"/>
+    <xs:element name="CreateShipmentResponse" nillable="true" type="tns:CreateShipmentResponse"/>
+    <xs:complexType name="ResponseContext">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>ResponseContext</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="ResponseReference" nillable="true" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo/>
+                    <xs:documentation>ResponseReference - string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ResponseContext" nillable="true" type="tns:ResponseContext"/>
+    <xs:complexType name="VoidShipmentRequest">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>VoidShipmentRequest</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent mixed="false">
+            <xs:extension base="tns:Request">
+                <xs:sequence>
+                    <xs:element name="PIN" nillable="true" type="tns:PIN">
+                        <xs:annotation>
+                            <xs:appinfo/>
+                            <xs:documentation>PIN - PIN</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:element name="VoidShipmentRequest" nillable="true" type="tns:VoidShipmentRequest"/>
+    <xs:element name="VoidShipmentRequest" nillable="true" type="tns:VoidShipmentRequest"/>
+    <xs:complexType name="VoidShipmentResponse">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>VoidShipmentResponse</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent mixed="false">
+            <xs:extension base="tns:Response">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="ShipmentVoided" type="xs:boolean">
+                        <xs:annotation>
+                            <xs:appinfo/>
+                            <xs:documentation>ShipmentVoided - bool</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:element name="VoidShipmentResponse" nillable="true" type="tns:VoidShipmentResponse"/>
+    <xs:element name="VoidShipmentResponse" nillable="true" type="tns:VoidShipmentResponse"/>
+    <xs:complexType name="ValidateShipmentRequest">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>ValidateShipmentRequest</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent mixed="false">
+            <xs:extension base="tns:Request">
+                <xs:sequence>
+                    <xs:element name="Shipment" nillable="true" type="tns:Shipment">
+                        <xs:annotation>
+                            <xs:appinfo/>
+                            <xs:documentation>Shipment - Shipment</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:element name="ValidateShipmentRequest" nillable="true" type="tns:ValidateShipmentRequest"/>
+    <xs:element name="ValidateShipmentRequest" nillable="true" type="tns:ValidateShipmentRequest"/>
+    <xs:complexType name="ValidateShipmentResponse">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>ValidateShipmentResponse</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent mixed="false">
+            <xs:extension base="tns:Response">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="ValidShipment" type="xs:boolean">
+                        <xs:annotation>
+                            <xs:appinfo/>
+                            <xs:documentation>ValidShipment - bool</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:element name="ValidateShipmentResponse" nillable="true" type="tns:ValidateShipmentResponse"/>
+    <xs:element name="ValidateShipmentResponse" nillable="true" type="tns:ValidateShipmentResponse"/>
+    <xs:complexType name="ConsolidateRequest">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>ValidateShipmentRequest</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent mixed="false">
+            <xs:extension base="tns:Request">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:element name="ConsolidateRequest" nillable="true" type="tns:ConsolidateRequest"/>
+    <xs:element name="ConsolidateRequest" nillable="true" type="tns:ConsolidateRequest"/>
+    <xs:complexType name="ConsolidateResponse">
+        <xs:annotation>
+            <xs:appinfo/>
+            <xs:documentation>ValidateShipmentResponse</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent mixed="false">
+            <xs:extension base="tns:Response">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="Consolidate" type="xs:boolean">
+                        <xs:annotation>
+                            <xs:appinfo/>
+                            <xs:documentation>Consolidate - bool</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:element name="ConsolidateResponse" nillable="true" type="tns:ConsolidateResponse"/>
+    <xs:element name="ConsolidateResponse" nillable="true" type="tns:ConsolidateResponse"/>
+</xs:schema>

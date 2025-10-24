@@ -1,0 +1,33 @@
+{
+  "VoidShipmentResponse": {
+    "Response": {
+      "ResponseStatus": {
+        "Code": "string",
+        "Description": "string"
+      },
+      "Alert": {
+        "Code": "string",
+        "Description": "string"
+      },
+      "TransactionReference": {
+        "CustomerContext": "string",
+        "TransactionIdentifier": "string"
+      }
+    },
+    "SummaryResult": {
+      "Status": {
+        "Code": "string",
+        "Description": "string"
+      }
+    },
+    "PackageLevelResult": [
+      {
+        "TrackingNumber": "string",
+        "Status": {
+          "Code": "string",
+          "Description": "string"
+        }
+      }
+    ]
+  }
+}

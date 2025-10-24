@@ -1,0 +1,10 @@
+{
+  "response": {
+    "errors": [
+      {
+        "code": "250003",
+        "message": "Invalid Access License number"
+      }
+    ]
+  }
+}

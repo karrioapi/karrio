@@ -1,0 +1,150 @@
+{
+  "profile": "STANDARD_GRUPPENPROFIL",
+  "shipments": [
+    {
+      "product": "V53WPAK",
+      "billingNumber": "33333333335301",
+      "refNo": "Order No. 1234",
+      "costCenter": "Cost Center 123",
+      "creationSoftware": "DHL Intraship",
+      "shipDate": "2016-12-24",
+      "shipper": {
+        "name1": "My Online Shop GmbH",
+        "name2": "Max Mustermann",
+        "name3": "Shipping Department",
+        "addressStreet": "Sträßchensweg 10",
+        "addressHouse": "Haus 2",
+        "postalCode": "53113",
+        "city": "Bonn",
+        "country": "DEU",
+        "contactName": "Max Mustermann",
+        "email": "max@mustermann.de"
+      },
+      "consignee": {
+        "name1": "Joe Black",
+        "name2": "Shipping Department",
+        "name3": "Shipping Department",
+        "dispatchingInformation": "Please deliver between 10:00 and 16:00.",
+        "addressStreet": "10 Downing Street",
+        "addressHouse": "Haus 2",
+        "additionalAddressInformation1": "Additional Address Information 1",
+        "additionalAddressInformation2": "Additional Address Information 2",
+        "postalCode": "SW1A 1AA",
+        "city": "London",
+        "state": "London",
+        "country": "GBR",
+        "contactName": "Joe Black",
+        "phone": "+44 123456789",
+        "email": "joe@black.uk",
+        "name": "Locker name",
+        "lockerID": "1234567890",
+        "postNumber": "1234567890",
+        "retailID": "1234567890",
+        "poBoxID": "1234567890"
+      },
+      "details": {
+        "dim": {
+          "uom": "mm",
+          "height": 100,
+          "length": 200,
+          "width": 150
+        },
+        "weight": {
+          "uom": "g",
+          "value": 500.0
+        }
+      },
+      "services": {
+        "preferredNeighbour": "Max Mustermann",
+        "preferredLocation": "Garden",
+        "visualCheckOfAge": "A18",
+        "namedPersonOnly": true,
+        "identCheck": {
+          "firstName": "Max",
+          "lastName": "Mustermann",
+          "dateOfBirth": "1980-01-01",
+          "minimumAge": "A18"
+        },
+        "signedForByRecipient": true,
+        "endorsement": "RETURN",
+        "preferredDay": "2016-12-24",
+        "noNeighbourDelivery": true,
+        "additionalInsurance": {
+          "currency": "EUR",
+          "value": 100.00
+        },
+        "bulkyGoods": true,
+        "cashOnDelivery": {
+          "currency": "EUR",
+          "value": 100.00,
+          "accountHolder": "Max Mustermann",
+          "bankName": "DHL Bank",
+          "iban": "DE12345678901234567890",
+          "bic": "DHLBANKDE",
+          "accountReference": "Order No. 1234",
+          "transferNote1": "Transfer Note 1",
+          "transferNote2": "Transfer Note 2"
+        },
+        "individualSenderRequirement": "Individual Sender Requirement",
+        "premium": true,
+        "closestDropPoint": true,
+        "parcelOutletRouting": "Parcel Outlet Routing",
+        "dhlRetoure": {
+          "billingNumber": "33333333335301",
+          "refNo": "Order No. 1234",
+          "returnAddress": {
+            "name1": "My Online Shop GmbH",
+            "name2": "Max Mustermann",
+            "name3": "Shipping Department",
+            "dispatchingInformation": "Please deliver between 10:00 and 16:00.",
+            "addressStreet": "Sträßchensweg 10",
+            "addressHouse": "Haus 2",
+            "additionalAddressInformation1": "Additional Address Information 1",
+            "additionalAddressInformation2": "Additional Address Information 2",
+            "postalCode": "53113",
+            "city": "Bonn",
+            "state": "NRW",
+            "country": "DE",
+            "contactName": "Max Mustermann",
+            "phone": "+49 123456789",
+            "email": "mustermann@example.com"
+          }
+        },
+        "postalDeliveryDutyPaid": true
+      },
+      "customs": {
+        "invoiceNo": "123456",
+        "exportType": "COMMERCIAL_GOODS",
+        "exportDescription": "Export Description",
+        "shippingConditions": "DDU",
+        "permitNo": "123456",
+        "attestationNo": "123456",
+        "hasElectronicExportNotification": true,
+        "MRN": "123456",
+        "postalCharges": {
+          "currency": "EUR",
+          "value": 1
+        },
+        "officeOfOrigin": "DE",
+        "shipperCustomsRef": "123456",
+        "consigneeCustomsRef": "123456",
+        "items": [
+          {
+            "itemDescription": "Red T-Shirt",
+            "countryOfOrigin": "FRA",
+            "hsCode": "123456",
+            "packagedQuantity": 1,
+            "itemValue": {
+              "currency": "EUR",
+              "value": 10.0
+            },
+            "itemWeight": {
+              "uom": "g",
+              "value": 400.0
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

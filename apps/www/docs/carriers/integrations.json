@@ -1,0 +1,432 @@
+[
+  {
+    "id": "allied_express",
+    "name": "Allied Express",
+    "href": "/carriers/integrations/allied_express",
+    "status": "production",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking"
+    ],
+    "description": "Allied Express is a leading Australian logistics company that provides a range of services including express, courier, and logistics.",
+    "website": "https://www.alliedexpress.com.au/",
+    "docs": "https://3plapi.com/docs",
+    "sandbox_api_url": "https://test.aet.mskaleem.com",
+    "api_url": "https://3plapi.com",
+    "api_access_screenshots": []
+  },
+  {
+    "id": "allied_express_local",
+    "name": "Allied Express Local",
+    "href": "/carriers/integrations/allied_express_local",
+    "status": "beta",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking"
+    ],
+    "description": "Allied Express is a leading Australian logistics company that provides a range of services including express, courier, and logistics.",
+    "website": "https://www.alliedexpress.com.au/",
+    "docs": "https://local.test.aet.mskaleem.com/docs",
+    "api_url": "https://local.test.aet.mskaleem.com",
+    "api_access_screenshots": []
+  },
+  {
+    "id": "amazon_shipping",
+    "name": "Amazon Shipping",
+    "href": "/carriers/integrations/amazon_shipping",
+    "status": "beta",
+    "features": [
+      "Rating",
+      "Shipping"
+    ],
+    "description": "Get Amazon’s reliable transportation network working for your business.",
+    "website": "https://shipping.amazon.com/",
+    "docs": "https://developer-docs.amazon.com/amazon-shipping",
+    "sandbox_api_url": "https://sandbox.sellingpartnerapi-na.amazon.com",
+    "api_url": "https://sellingpartnerapi-na.amazon.com",
+    "api_access_screenshots": []
+  },
+  {
+    "id": "aramex",
+    "name": "Aramex",
+    "href": "/carriers/integrations/aramex",
+    "status": "beta",
+    "features": [
+      "Tracking"
+    ],
+    "description": "Aramex is the leading global logistics provider.",
+    "website": "https://www.aramex.com/ae/en",
+    "docs": "https://www.aramex.com/us/en/developers-solution-center/aramex-apis",
+    "sandbox_api_url": "http://ws.dev.aramex.net",
+    "api_url": "http://ws.aramex.net",
+    "api_access_screenshots": []
+  },
+  {
+    "id": "asendia_us",
+    "name": "Asendia US",
+    "href": "/carriers/integrations/asendia_us",
+    "status": "beta",
+    "features": [
+      "Tracking",
+      "Rating",
+      "Shipping"
+    ],
+    "description": "deliver cross-border e-commerce solutions that are loved by your shoppers worldwide.",
+    "website": "https://www.asendia.com/",
+    "docs": "https://a1api.asendiausa.com/swagger/index.html",
+    "sandbox_api_url": "https://a1apiuat.asendiausa.com",
+    "api_url": "https://a1api.asendiausa.com",
+    "api_access_screenshots": []
+  },
+  {
+    "id": "australiapost",
+    "name": "Australia Post",
+    "href": "/carriers/integrations/australiapost",
+    "status": "beta",
+    "features": [
+      "Tracking",
+      "Rating",
+      "Shipping"
+    ],
+    "description": "Australia Post, formally known as the Australian Postal Corporation, is a Commonwealth government-owned corporation that provides postal services throughout Australia.",
+    "website": "https://auspost.com.au/",
+    "docs": "https://developers.auspost.com.au/apis/shipping-and-tracking/reference",
+    "sandbox_api_url": "https://digitalapi.auspost.com.au/test",
+    "api_url": "https://digitalapi.auspost.com.au",
+    "api_access_screenshots": []
+  },
+  {
+    "id": "boxknight",
+    "name": "BoxKnight",
+    "href": "/carriers/integrations/boxknight",
+    "status": "beta",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking"
+    ],
+    "description": "Specializes in same-day delivery at affordable prices for e-commerce retailers. Our mission is to get packages to your customers when they are actually home and as quickly as possible.",
+    "website": "https://www.boxknight.com/",
+    "docs": "https://www.docs.boxknight.com/",
+    "sandbox_api_url": "",
+    "api_url": "https://api.boxknight.com/v1",
+    "api_access_screenshots": []
+  },
+  {
+    "id": "bpost",
+    "name": "Belgium Post",
+    "href": "/carriers/integrations/bpost",
+    "status": "beta",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking"
+    ],
+    "description": "The Belgian company responsible for the delivery of national and international mail.",
+    "website": "https://bpostgroup.com/",
+    "docs": "https://bpost.freshdesk.com/support/solutions/articles/4000037653-where-can-i-find-the-bpack-integration-manual-examples-and-xsd-s-",
+    "sandbox_api_url": "",
+    "api_url": "https://shm-rest.bpost.cloud/services/shm",
+    "api_access_screenshots": []
+  },
+  {
+    "id": "canadapost",
+    "name": "Canada Post",
+    "href": "/carriers/integrations/canadapost",
+    "status": "production",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking",
+      "Pickup"
+    ],
+    "description": "Mailing and shipping for Personal and Business.",
+    "website": "https://www.canadapost-postescanada.ca/cpc/en/home.page",
+    "docs": "https://www.canadapost-postescanada.ca/information/app/drc/home",
+    "sandbox_api_url": "https://ct.soa-gw.canadapost.ca",
+    "api_url": "https://soa-gw.canadapost.ca",
+    "api_access_screenshots": []
+  },
+  {
+    "id": "canpar",
+    "name": "Canpar",
+    "href": "/carriers/integrations/canpar",
+    "status": "beta",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking",
+      "Pickup"
+    ],
+    "description": "Everything Canpar Express does-product development, technological upgrades, customer service-is shaped and tailored to transporting our customers' parcels efficiently and cost-effectively.",
+    "website": "https://www.canpar.com/",
+    "docs": "https://www.canpar.com/en/solutions/ecommerce_tools.htm",
+    "sandbox_api_url": "https://sandbox.canpar.com/canshipws/services",
+    "api_url": "https://canship.canpar.com/canshipws/services",
+    "api_access_screenshots": []
+  },
+  {
+    "id": "chronopost",
+    "name": "Chronopost",
+    "href": "/carriers/integrations/chronopost",
+    "status": "production",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking"
+    ],
+    "description": "Provides express shipping and delivery service both domestically and internationally.",
+    "website": "https://www.chronopost.fr/en",
+    "docs": "https://www.chrono-api.fr/docs/api/",
+    "sandbox_api_url": "",
+    "api_url": "https://ws.chronopost.fr",
+    "api_access_screenshots": []
+  },
+  {
+    "id": "colissimo",
+    "name": "Colissimo",
+    "href": "/carriers/integrations/colissimo",
+    "status": "beta",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking"
+    ],
+    "description": "Envoi de colis en France et dans le monde entier, livraison à domicile ou en point de retrait, Colissimo vous offre un choix de services qui facilitent votre quotidien.",
+    "website": "https://www.colissimo.entreprise.laposte.fr/en",
+    "docs": "https://www.colissimo.entreprise.laposte.fr/en/tools-and-services",
+    "sandbox_api_url": "",
+    "api_url": "https://ws.colissimo.fr/sls-ws/SlsServiceWSRest/2.0",
+    "api_access_screenshots": []
+  },
+  {
+    "id": "dhl_express",
+    "name": "DHL Express",
+    "href": "/carriers/integrations/dhl_express",
+    "status": "production",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking",
+      "Pickup"
+    ],
+    "description": "When your shipment needs to be there fast, choose the International Specialists for quick, reliable expedited shipments to and from more than 220 countries and territories.",
+    "website": "https://www.dhl.com/ca-en/home/express.html",
+    "docs": "https://developer.dhl.com/api-reference/dhl-express-xml",
+    "sandbox_api_url": "https://xmlpitest-ea.dhl.com/XMLShippingServlet",
+    "api_url": "https://xmlpi-ea.dhl.com/XMLShippingServlet",
+    "api_access_screenshots": []
+  },
+  {
+    "id": "dhl_parcel_post",
+    "name": "DHL Parcel Post",
+    "href": "/carriers/integrations/dhl_parcel_post",
+    "status": "beta",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking"
+    ],
+    "description": "Reliable parcel shipping with DHL.",
+    "website": "https://www.dhl.de/en/privatkunden/pakete-versenden.html",
+    "docs": "https://developer.dhl.com/api-reference/parcel-de-shipping-post-parcel-germany-v2",
+    "sandbox_api_url": "https://api-sandbox.dhl.com/parcel/de/shipping",
+    "api_url": "https://api-eu.dhl.com/parcel/de/shipping",
+    "api_access_screenshots": []
+  },
+  {
+    "id": "dhl_poland",
+    "name": "DHL Poland",
+    "href": "/carriers/integrations/dhl_poland",
+    "status": "production",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking"
+    ],
+    "description": "Global Logistics and International Shipping Poland.",
+    "website": "https://dhl24.com.pl/en",
+    "docs": "https://dhl24.com.pl/en/webapi2/doc.html",
+    "sandbox_api_url": "https://sandbox.dhl24.com.pl/webapi2/provider/service.html?ws=1",
+    "api_url": "https://dhl24.com.pl/webapi2/provider/service.html?ws=1",
+    "api_access_screenshots": []
+  },
+  {
+    "id": "dhl_universal",
+    "name": "DHL Universal",
+    "href": "/carriers/integrations/dhl_universal",
+    "status": "production",
+    "features": [
+      "Tracking"
+    ],
+    "description": "DHL is a German logistics company providing courier, package delivery and express mail service, delivering over 1.8 billion parcels per year.",
+    "website": "https://www.dhl.com/",
+    "docs": "https://developer.dhl.com/api-reference/shipment-tracking",
+    "sandbox_api_url": "",
+    "api_url": "https://api-eu.dhl.com",
+    "api_access_screenshots": []
+  },
+  {
+    "id": "dicom",
+    "name": "Dicom",
+    "href": "/carriers/integrations/dicom",
+    "status": "alpha",
+    "features": [
+      "Tracking"
+    ]
+  },
+  {
+    "id": "dpdhl",
+    "name": "Deutsche Post DHL",
+    "href": "/carriers/integrations/dpdhl",
+    "status": "production",
+    "deprecated": true,
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking"
+    ],
+    "description": "DHL is a German logistics company providing courier, package delivery and express mail service, delivering over 1.8 billion parcels per year.",
+    "website": "https://entwickler.dhl.de/web/ep/welcome",
+    "docs": "https://entwickler.dhl.de/web/ep/welcome",
+    "sandbox_api_url": "https://cig.dhl.de/services/sandbox",
+    "api_url": "https://cig.dhl.de/services/production",
+    "api_access_screenshots": []
+  },
+  {
+    "id": "fedex",
+    "name": "FedEx",
+    "href": "/carriers/integrations/fedex",
+    "status": "production",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking",
+      "Pickup",
+      "Parperless"
+    ]
+  },
+  {
+    "id": "geodis",
+    "name": "GEODIS",
+    "href": "/carriers/integrations/geodis",
+    "status": "beta",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking"
+    ]
+  },
+  {
+    "id": "laposte",
+    "name": "La Poste",
+    "href": "/carriers/integrations/laposte",
+    "status": "production",
+    "features": [
+      "Tracking"
+    ]
+  },
+  {
+    "id": "nationex",
+    "name": "Nationex",
+    "href": "/carriers/integrations/nationex",
+    "status": "beta",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking"
+    ]
+  },
+  {
+    "id": "purolator",
+    "name": "Purolator",
+    "href": "/carriers/integrations/purolator",
+    "status": "production",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking",
+      "Pickup"
+    ]
+  },
+  {
+    "id": "roadie",
+    "name": "Roadie",
+    "href": "/carriers/integrations/roadie",
+    "status": "beta",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking"
+    ]
+  },
+  {
+    "id": "royalmail",
+    "name": "Royal Mail",
+    "href": "/carriers/integrations/royalmail",
+    "status": "beta",
+    "features": [
+      "Tracking"
+    ]
+  },
+  {
+    "id": "sendle",
+    "name": "Sendle",
+    "href": "/carriers/integrations/sendle",
+    "status": "production",
+    "features": [
+      "Tracking",
+      "Rating",
+      "Shipping"
+    ]
+  },
+  {
+    "id": "tnt",
+    "name": "TNT",
+    "href": "/carriers/integrations/tnt",
+    "status": "beta",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking"
+    ]
+  },
+  {
+    "id": "ups",
+    "name": "UPS",
+    "href": "/carriers/integrations/ups",
+    "status": "production",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking",
+      "Parperless"
+    ]
+  },
+  {
+    "id": "usps",
+    "name": "USPS",
+    "href": "/carriers/integrations/usps",
+    "status": "beta",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking",
+      "Pickup"
+    ]
+  },
+  {
+    "id": "usps_international",
+    "name": "USPS International",
+    "href": "/carriers/integrations/usps_international",
+    "status": "beta",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking",
+      "Pickup"
+    ]
+  }
+]

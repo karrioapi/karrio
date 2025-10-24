@@ -1,0 +1,1125 @@
+<xsd:schema xmlns:tns="http://purolator.com/pws/datatypes/v1" targetNamespace="http://purolator.com/pws/datatypes/v1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xsd:complexType name="GetLocationsByAddressRequest">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>GetLocationsByAddressRequest</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Request">
+                <xsd:sequence>
+                    <xsd:element name="Address" type="tns:Address" nillable="true">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>SearchByAddress - SearchByAddress</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="SearchOptions" type="tns:SearchOptions" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>SearchOptions - SearchOptions</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="LocationTypes" type="tns:LocationTypes" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>LocationTypes - string[]</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="HoursOfOperation" type="tns:HoursOfOperation" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>HoursOfOperation - HoursOfOperation</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="DaysOfOperation" type="tns:DaysOfOperation" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>DaysOfWeek - string[]</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="GetLocationsByAddressRequest" type="tns:GetLocationsByAddressRequest" nillable="true"/>
+    <xsd:complexType name="Request">
+        <xsd:sequence/>
+    </xsd:complexType>
+    <xsd:element name="Request" type="tns:Request" nillable="true"/>
+    <xsd:complexType name="Address">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>SearchByAddress</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="AddressLine1" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>AddressLine1 - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="AddressLine2" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>AddressLine2 - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="AddressLine3" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>AddressLine3 - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Address" type="tns:Address" nillable="true"/>
+    <xsd:complexType name="SearchOptions">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>SearchOptions</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="RadialDistanceInKM" type="xsd:decimal" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>RadialDistanceInKM - Decimal</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="HoldForPickup" type="xsd:boolean" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>HoldForPickup - Bool</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="DangerousGoods" type="xsd:boolean" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>DangerousGoods - Bool</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Kiosk" type="xsd:boolean" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Kiosk - Bool</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="StreetAccess" type="xsd:boolean" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>StreetAccess - Bool</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="WheelChairAccess" type="xsd:boolean" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>WheelChairAccess - Bool</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="MaxNumberOfLocations" type="xsd:int" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>MaxNumberOfLocations - int</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="SearchOptions" type="tns:SearchOptions" nillable="true"/>
+    <xsd:complexType name="LocationTypes">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <GenericType xmlns="http://schemas.microsoft.com/2003/10/Serialization/" Namespace="http://purolator.com/pws/datatypes/v1" Name="LocationTypes">
+                    <GenericParameter Namespace="http://www.w3.org/2001/XMLSchema" Name="string"/>
+                </GenericType>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="LocationType" type="xsd:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="LocationTypes" type="tns:LocationTypes" nillable="true"/>
+    <xsd:complexType name="HoursOfOperation">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>HoursOfOperation</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="OpenTime" type="xsd:dateTime" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>OpenTime - DateTime</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CloseTime" type="xsd:dateTime" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>CloseTime - DateTime</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CurrentlyOpen" type="xsd:boolean" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>CurrentlyOpen - bool</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="GMTOffset" type="xsd:dateTime" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>GMTOffset - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="HoursOfOperation" type="tns:HoursOfOperation" nillable="true"/>
+    <xsd:complexType name="DaysOfOperation">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <GenericType xmlns="http://schemas.microsoft.com/2003/10/Serialization/" Namespace="http://purolator.com/pws/datatypes/v1" Name="DaysOfOperation">
+                    <GenericParameter Namespace="http://www.w3.org/2001/XMLSchema" Name="string"/>
+                </GenericType>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="DaysOfWeek" type="xsd:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="DaysOfOperation" type="tns:DaysOfOperation" nillable="true"/>
+    <xsd:element name="GetLocationsByAddressRequest" type="tns:GetLocationsByAddressRequest" nillable="true"/>
+    <xsd:complexType name="RequestContext">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>RequestContext</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Version" type="xsd:string" nillable="true">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Version - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Language" type="tns:Language">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Language - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="GroupID" type="xsd:string" nillable="true">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>GroupID - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="RequestReference" type="xsd:string" nillable="true">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>RequestReference - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="UserToken" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>UserToken - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="RequestContext" type="tns:RequestContext" nillable="true"/>
+    <xsd:simpleType name="Language">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>Language - enum</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="en">
+                <xsd:annotation>
+                    <xsd:documentation>en</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="fr">
+                <xsd:annotation>
+                    <xsd:documentation>fr</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="Language" type="tns:Language" nillable="true"/>
+    <xsd:complexType name="GetLocationsResponse">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>GetLocationsResponse</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Response">
+                <xsd:sequence>
+                    <xsd:element name="Locations" type="tns:ArrayOfDepotLocation" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>Locations - DepotLocation[]</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="GetLocationsResponse" type="tns:GetLocationsResponse" nillable="true"/>
+    <xsd:complexType name="Response">
+        <xsd:sequence>
+            <xsd:element name="ResponseInformation" type="tns:ResponseInformation" nillable="true">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>ResponseInformation - ResponseInformation</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Response" type="tns:Response" nillable="true"/>
+    <xsd:complexType name="ResponseInformation">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>ResponseInformation</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Errors" type="tns:ArrayOfError" nillable="true">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Errors - Error[]</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="InformationalMessages" type="tns:ArrayOfInformationalMessage" nillable="true">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>InformationalMessages - InformationalMessage[]</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ResponseInformation" type="tns:ResponseInformation" nillable="true"/>
+    <xsd:complexType name="ArrayOfError">
+        <xsd:sequence>
+            <xsd:element name="Error" type="tns:Error" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfError" type="tns:ArrayOfError" nillable="true"/>
+    <xsd:complexType name="Error">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>Error</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Code" type="xsd:string" nillable="true">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Code - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Description" type="xsd:string" nillable="true">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Description - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="AdditionalInformation" type="xsd:string" nillable="true">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>AdditionalInformation - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Error" type="tns:Error" nillable="true"/>
+    <xsd:complexType name="ArrayOfInformationalMessage">
+        <xsd:sequence>
+            <xsd:element name="InformationalMessage" type="tns:InformationalMessage" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfInformationalMessage" type="tns:ArrayOfInformationalMessage" nillable="true"/>
+    <xsd:complexType name="InformationalMessage">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>InformationalMessage</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Code" type="xsd:string" nillable="true">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Code - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Message" type="xsd:string" nillable="true">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Message - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="InformationalMessage" type="tns:InformationalMessage" nillable="true"/>
+    <xsd:complexType name="ArrayOfDepotLocation">
+        <xsd:sequence>
+            <xsd:element name="DepotLocation" type="tns:DepotLocation" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ArrayOfDepotLocation" type="tns:ArrayOfDepotLocation" nillable="true"/>
+    <xsd:complexType name="DepotLocation">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>DepotLocation</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="LocationId" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>LocationId - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="LocationTypes" type="tns:LocationTypes" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>LocationTypes - string[]</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="LocationName" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>LocationName - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="locationAddress" type="tns:LocationAddress" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>LocationAddress - LocationAddress</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ContactName" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>ContactName - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="PhoneNumber" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>PhoneNumber - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="SpecialInstructionsEn" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>SpecialInstructionsEn - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="SpecialInstructionsFr" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>SpecialInstructionsFr - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Depot" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Depot - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Unicode" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Unicode - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="HoldForPickup" type="xsd:boolean" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>HoldForPickup - bool</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="DangerousGoods" type="xsd:boolean" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>DangerousGoods - bool</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Kiosk" type="xsd:boolean" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Kiosk - bool</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="StreetAccess" type="xsd:boolean" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>StreetAccess - bool</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="WheelChairAccess" type="xsd:boolean" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>WheelChairAccess - bool</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="OpenMon" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>OpenMon - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CloseMon" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>CloseMon - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="OpenExceptionMon" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>OpenExceptionMon - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CloseExceptionMon" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>CloseExceptionMon - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="OpenTue" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>OpenTue - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CloseTue" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>CloseTue - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="OpenExceptionTue" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>OpenExceptionTue - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CloseExceptionTue" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>CloseExceptionTue - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="OpenWed" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>OpenWed - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CloseWed" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>CloseWed - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="OpenExceptionWed" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>OpenExceptionWed - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CloseExceptionWed" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>CloseExceptionWed - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="OpenThu" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>OpenThu - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CloseThu" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>CloseThu - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="OpenExceptionThu" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>OpenExceptionThu - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CloseExceptionThu" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>CloseExceptionThu - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="OpenFri" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>OpenFri - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CloseFri" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>CloseFri - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="OpenExceptionFri" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>OpenExceptionFri - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CloseExceptionFri" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>CloseExceptionFri - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="OpenSat" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>OpenSat - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CloseSat" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>CloseSat - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="OpenExceptionSat" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>OpenExceptionSat - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CloseExceptionSat" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>CloseExceptionSat - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="OpenSun" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>OpenSun - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CloseSun" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>CloseSun - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="OpenExceptionSun" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>OpenExceptionSun - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CloseExceptionSun" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>CloseExceptionSun - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Latitude" type="xsd:decimal" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>WheelChairAccess - decimal</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Longitude" type="xsd:decimal" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>WheelChairAccess - decimal</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="RadialDistanceInKM" type="xsd:decimal" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>RadialDistanceInKM - decimal</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="GMTOffset" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>GMTOffset - DateTime</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ActivatedDate" type="xsd:dateTime" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>ActivatedDate - DateTime</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="DropOffWeekDayAirDom" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>DropOffWeekDayAirDom - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="DropOffWeekDayAirUS" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>DropOffWeekDayAirUS - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="DropOffWeekDayAirIntl" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>DropOffWeekDayAirIntl - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="DropOffWeekDayGndDom" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>DropOffWeekDayGndDom - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="DropOffWeekDayGndUS" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>DropOffWeekDayGndUS - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="DropOffWeekDayGndIntl" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>DropOffWeekDayGndIntl - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="DropOffSatAirDom" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>DropOffSatAirDom - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="DropOffSatAirUS" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>DropOffSatAirUS - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="DropOffSatAirIntl" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>DropOffSatAirIntl - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="DropOffSatGndDom" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>DropOffSatGndDom - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="DropOffSatGndUS" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>DropOffSatGndUS - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="DropOffSatGndIntl" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>DropOffSatGndIntl - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="DepotLocation" type="tns:DepotLocation" nillable="true"/>
+    <xsd:complexType name="LocationAddress">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>LocationAddress</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="AddressLine1" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>AddressLine1 - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="AddressLine2" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>AddressLine2 - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="AddressLine3" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>AddressLine3 - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="AddressType" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>AddressType - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="FloorNumber" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>FloorNumber - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="StreetNumber" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>StreetNumber - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="UnitSuiteApt" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>UnitSuiteApt - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CityCode" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>CityCode - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CityName" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>CityName - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ProvinceStateCode" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>ProvinceStateCode - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="CountryCode" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>CountryCode - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Direction" type="tns:Direction" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>StreetType - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="PostalCode" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>PostalCode - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="StreetName" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>StreetName - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="StreetType" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>StreetType - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Suffix" type="xsd:string" nillable="true" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Suffix - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="LocationAddress" type="tns:LocationAddress" nillable="true"/>
+    <xsd:simpleType name="Direction">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>Direction - enum</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="N">
+                <xsd:annotation>
+                    <xsd:documentation>N</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="S">
+                <xsd:annotation>
+                    <xsd:documentation>S</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="E">
+                <xsd:annotation>
+                    <xsd:documentation>E</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="W">
+                <xsd:annotation>
+                    <xsd:documentation>W</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="NW">
+                <xsd:annotation>
+                    <xsd:documentation>NW</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="NE">
+                <xsd:annotation>
+                    <xsd:documentation>NE</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="SE">
+                <xsd:annotation>
+                    <xsd:documentation>SE</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="SO">
+                <xsd:annotation>
+                    <xsd:documentation>SO</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="O">
+                <xsd:annotation>
+                    <xsd:documentation>O</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="NO">
+                <xsd:annotation>
+                    <xsd:documentation>NO</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="SW">
+                <xsd:annotation>
+                    <xsd:documentation>SW</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="Direction" type="tns:Direction" nillable="true"/>
+    <xsd:element name="GetLocationsResponse" type="tns:GetLocationsResponse" nillable="true"/>
+    <xsd:complexType name="ResponseContext">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>ResponseContext</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="ResponseReference" type="xsd:string" nillable="true">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>ResponseReference - string</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="ResponseContext" type="tns:ResponseContext" nillable="true"/>
+    <xsd:complexType name="GetLocationsByCoordinatesRequest">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>GetLocationsByCoordinatesRequest</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Request">
+                <xsd:sequence>
+                    <xsd:element name="Coordinates" type="tns:Coordinates" nillable="true">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>Coordinates - Coordinates</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="SearchOptions" type="tns:SearchOptions" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>SearchOptions - SearchOptions</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="LocationTypes" type="tns:LocationTypes" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>LocationTypes - string[]</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="HoursOfOperation" type="tns:HoursOfOperation" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>HoursOfOperation - HoursOfOperation</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="DaysOfOperation" type="tns:DaysOfOperation" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>DaysOfWeek - string[]</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="GetLocationsByCoordinatesRequest" type="tns:GetLocationsByCoordinatesRequest" nillable="true"/>
+    <xsd:complexType name="Coordinates">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>Coordinates</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="Latitude" type="xsd:decimal" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Latitude - Latitude</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Longitude" type="xsd:decimal" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:appinfo/>
+                    <xsd:documentation>Longitude - Longitude</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="Coordinates" type="tns:Coordinates" nillable="true"/>
+    <xsd:element name="GetLocationsByCoordinatesRequest" type="tns:GetLocationsByCoordinatesRequest" nillable="true"/>
+    <xsd:complexType name="GetLocationsByCityRequest">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>GetLocationsByCityRequest</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Request">
+                <xsd:sequence>
+                    <xsd:element name="CountryCode" type="xsd:string" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>CountryCode - string</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="CityName" type="xsd:string" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>CityName - string</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="ProvinceStateCode" type="xsd:string" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>ProvinceStateCode - string</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="SearchOptions" type="tns:SearchOptions" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>SearchOptions - SearchOptions</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="LocationTypes" type="tns:LocationTypes" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>LocationTypes - string[]</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="HoursOfOperation" type="tns:HoursOfOperation" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>HoursOfOperation - HoursOfOperation</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="DaysOfOperation" type="tns:DaysOfOperation" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>DaysOfWeek - string[]</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="GetLocationsByCityRequest" type="tns:GetLocationsByCityRequest" nillable="true"/>
+    <xsd:element name="GetLocationsByCityRequest" type="tns:GetLocationsByCityRequest" nillable="true"/>
+    <xsd:complexType name="GetLocationsByPointOfInterestRequest">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>GetLocationsByPointOfInterestRequest</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Request">
+                <xsd:sequence>
+                    <xsd:element name="PointOfInterest" type="xsd:string" nillable="true">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>PointOfInterest - PointOfInterest</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="SearchOptions" type="tns:SearchOptions" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>SearchOptions - SearchOptions</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="LocationTypes" type="tns:LocationTypes" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>LocationTypes - string[]</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="HoursOfOperation" type="tns:HoursOfOperation" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>HoursOfOperation - HoursOfOperation</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="DaysOfOperation" type="tns:DaysOfOperation" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>DaysOfWeek - string[]</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="GetLocationsByPointOfInterestRequest" type="tns:GetLocationsByPointOfInterestRequest" nillable="true"/>
+    <xsd:element name="GetLocationsByPointOfInterestRequest" type="tns:GetLocationsByPointOfInterestRequest" nillable="true"/>
+    <xsd:complexType name="GetLocationsByPostalCodeRequest">
+        <xsd:annotation>
+            <xsd:appinfo/>
+            <xsd:documentation>GetLocationsByPostalCodeRequest</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="tns:Request">
+                <xsd:sequence>
+                    <xsd:element name="PostalCode" type="xsd:string" nillable="true">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>PostalCode - PostalCode</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="SearchOptions" type="tns:SearchOptions" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>SearchOptions - SearchOptions</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="LocationTypes" type="tns:LocationTypes" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>LocationTypes - string[]</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="HoursOfOperation" type="tns:HoursOfOperation" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>HoursOfOperation - HoursOfOperation</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="DaysOfOperation" type="tns:DaysOfOperation" nillable="true" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:appinfo/>
+                            <xsd:documentation>DaysOfWeek - string[]</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="GetLocationsByPostalCodeRequest" type="tns:GetLocationsByPostalCodeRequest" nillable="true"/>
+    <xsd:element name="GetLocationsByPostalCodeRequest" type="tns:GetLocationsByPostalCodeRequest" nillable="true"/>
+</xsd:schema>

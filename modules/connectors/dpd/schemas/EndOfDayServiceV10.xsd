@@ -1,0 +1,100 @@
+<xs:schema elementFormDefault="unqualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://dpd.com/common/service/types/EndOfDayService/1.0"
+    targetNamespace="http://dpd.com/common/service/types/EndOfDayService/1.0">
+    <xs:element name="endOfDay" type="tns:endOfDay" />
+    <xs:complexType name="endOfDay">
+        <xs:sequence>
+            <xs:element type="tns:period" name="period" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Time period for End of Day manifest.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="tns:printOptions" name="printOptions" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The Options which should be used for manifest printing.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="period">
+        <xs:annotation>
+            <xs:documentation>Time period for End of Day manifest, for example from 10th of September
+                2018 9am to 11th of September 2018 5pm</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="dateFrom" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>format YYYYMMDD, e.g. 20180910</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:int">
+                        <xs:maxInclusive value="99999999" />
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="timeFrom">
+                <xs:annotation>
+                    <xs:documentation>format hhmm, e.g. 0900</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:int">
+                        <xs:maxInclusive value="2400" />
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="dateTo" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>format YYYYMMDD, e.g. 20180911</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:int">
+                        <xs:maxInclusive value="99999999" />
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="timeTo">
+                <xs:annotation>
+                    <xs:documentation>format hhmm, e.g. 1700</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:int">
+                        <xs:maxInclusive value="2400" />
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="printOptions">
+        <xs:sequence>
+            <xs:element name="printerLanguage" minOccurs="1" maxOccurs="1">
+                <!--The
+                language in which the parcel labels should be returned. PDF as file output. In any
+                case the output is base64 encoded.-->
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="PDF" />
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="endOfDayResponse" type="tns:endOfDayResponse" />
+    <xs:complexType name="endOfDayResponse">
+        <xs:sequence>
+            <xs:element type="xs:base64Binary" name="manifestPDF" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Contains end of day manifest PDF data in bytes. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="faults" type="tns:faults" />
+    <xs:complexType name="faults">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="faultCode"
+                type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="message" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

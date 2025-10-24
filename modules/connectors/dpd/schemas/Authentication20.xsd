@@ -1,0 +1,21 @@
+<xs:schema elementFormDefault="unqualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://dpd.com/common/service/types/Authentication/2.0"
+    targetNamespace="http://dpd.com/common/service/types/Authentication/2.0">
+    <xs:element name="authentication" type="tns:authentication" />
+    <xs:complexType name="authentication">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="delisId" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="authToken" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="messageLanguage" type="xs:string" />
+        </xs:sequence>
+        <xs:anyAttribute />
+    </xs:complexType>
+    <xs:element name="authenticationFault" type="tns:authenticationFault" />
+    <xs:complexType name="authenticationFault">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="errorCode" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="errorMessage" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

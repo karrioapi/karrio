@@ -1,0 +1,141 @@
+name: karrio-build
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.changes.outputs.version }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            version:
+              - 'apps/api/karrio/server/VERSION'
+
+  python-packages:
+    # This job builds and releases all Python packages, including:
+    # - modules/
+    # - modules/connectors/
+    # - apps/api/
+    # - community/plugins/
+    # - plugins/
+    # Any subfolder with a pyproject.toml will be processed.
+    # See bin/build-and-release-packages for details.
+    needs: changes
+    if: ${{ needs.changes.outputs.version == 'true' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Checkout submodules
+        run: |
+          # Only clone the community submodule which is public and needed for the build
+          git submodule update --init community
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+
+      - id: get_tag
+        run: |
+          cat ./apps/api/karrio/server/VERSION
+          echo "tag=$(cat ./apps/api/karrio/server/VERSION)" >> "$GITHUB_ENV"
+
+      - name: Build Python packages
+        run: |
+          echo 'Building Python packages for version ${{ env.tag }}...'
+          ./bin/build-and-release-packages --build-only --force
+
+      - name: Publish Python packages to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: .venv/dist/
+          skip-existing: true
+          password: ${{ secrets.PYPI_ACCESS_TOKEN || '' }}
+
+  server-build:
+    needs: changes
+    if: ${{ needs.changes.outputs.version == 'true' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Checkout submodules
+        run: |
+          # Only clone the community submodule which is public and needed for the build
+          git submodule update --init community
+
+      - id: get_tag
+        run: |
+          cat ./apps/api/karrio/server/VERSION
+          echo "tag=$(cat ./apps/api/karrio/server/VERSION)" >> "$GITHUB_ENV"
+
+      - name: Build karrio server image
+        run: |
+          echo 'Building karrio server:${{ env.tag }}...'
+          ls -l ./modules/connectors 2>/dev/null || true
+          ls -l ./community/plugins 2>/dev/null || true
+          ls -l ./modules 2>/dev/null || true
+          ./bin/build-server-image-from-source ${{ env.tag }}
+
+      - name: Push karrio server image
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+          echo 'Pushing karrio server:${{ env.tag }}...'
+          docker push karrio/server:${{ env.tag }}
+          docker tag karrio/server:${{ env.tag }} karrio/server:latest-rc
+          docker push karrio/server:latest-rc
+
+  dashboard-build:
+    needs: changes
+    if: ${{ needs.changes.outputs.version == 'true' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: get_tag
+        run: |
+          cat ./apps/api/karrio/server/VERSION
+          echo "tag=$(cat ./apps/api/karrio/server/VERSION)" >> "$GITHUB_ENV"
+
+      - name: Build karrio dashboard image
+        run: |
+          echo 'Building karrio dashboard:${{ env.tag }}...'
+          export NEXT_PUBLIC_DASHBOARD_VERSION=${{ env.tag }}
+          ./bin/build-dashboard-image ${{ env.tag }}
+
+      - name: Push karrio dashboard image
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+          echo 'Pushing karrio dashboard:${{ env.tag }}...'
+          docker push karrio/dashboard:${{ env.tag }}
+          docker tag karrio/dashboard:${{ env.tag }} karrio/dashboard:latest-rc
+          docker push karrio/dashboard:latest-rc

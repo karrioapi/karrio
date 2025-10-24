@@ -1,0 +1,6 @@
+include LICENSE
+include README.md
+include karrio/server/VERSION
+recursive-include karrio/server/static *
+recursive-include karrio/server/templates *
+recursive-include karrio/server/staticfiles .gitignore

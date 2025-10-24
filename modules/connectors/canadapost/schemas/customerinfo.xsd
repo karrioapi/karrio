@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="1.0" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc" targetNamespace="http://www.canadapost.ca/ws/customer" xmlns="http://www.canadapost.ca/ws/customer" elementFormDefault="qualified">
+
+  	<xsd:annotation>
+		<xsd:appinfo>
+			<jaxb:globalBindings>
+				<xjc:simple />
+			</jaxb:globalBindings>
+		</xsd:appinfo>
+	</xsd:annotation>
+
+	<xsd:element name="customer">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="CustomerBaseType">
+					<xsd:sequence>
+						<xsd:element name="links" type="MoboLinksType" minOccurs="0" />
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="behalf-of-customer">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="CustomerBaseType" />
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="CustomerBaseType">
+		<xsd:sequence>
+			<xsd:element name="customer-number" type="CustomerIDType" />
+			<xsd:element name="contracts" type="ContractsType" minOccurs="0" />
+			<xsd:element name="authorized-payers" type="AuthorizedPayersType" minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+	<xsd:complexType name="MoboLinksType">
+		<xsd:sequence>
+			<xsd:element name="link" minOccurs="0" maxOccurs="unbounded" type="LinkType" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="LinkType">
+		<xsd:attribute name="href" type="xsd:anyURI" use="required" />
+		<xsd:attribute name="rel" type="RelType" use="required" />
+		<xsd:attribute name="index" type="xsd:positiveInteger" use="optional" />
+		<xsd:attribute name="media-type" type="xsd:normalizedString" use="required" />
+	</xsd:complexType>
+
+	<xsd:simpleType name="RelType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="behalf-of-customer" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+
+
+
+
+
+
+	<xsd:simpleType name="CustomerIDType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="\d{1,10}" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+
+	<xsd:complexType name="ContractsType">
+		<xsd:sequence>
+			<xsd:element name="contract-id" type="ContractType" minOccurs="1" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+	<xsd:simpleType name="ContractType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="\d{1,10}" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:complexType name="AuthorizedPayersType">
+		<xsd:sequence>
+			<xsd:element name="payer" type="PayerType" minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="PayerType">
+		<xsd:sequence>
+			<xsd:element name="payer-number" type="PayerNumberType" />
+			<xsd:element name="methods-of-payment" type="MethodsOfPaymentType" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:simpleType name="PayerNumberType">
+		<xsd:restriction base="xsd:normalizedString">
+			<xsd:pattern value="\d{1,10}" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:complexType name="MethodsOfPaymentType">
+		<xsd:sequence>
+			<xsd:element name="method-of-payment" type="MethodOfPaymentType" minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:simpleType name="MethodOfPaymentType">
+		<xsd:restriction base="xsd:normalizedString">
+			<xsd:maxLength value="15" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+</xsd:schema>

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+# Source environment variables
+source "bin/_env"
+
+echo "> Generating openapi for docs..."
+curl http://localhost:5002/shipping-openapi?docs -o "${ROOT:?}/apps/www/openapi.yml"
+
+echo "> Generating openapi docs..."
+cd "${ROOT}/apps/www"
+
+rm -rf ./docs/reference/api
+
+npx docusaurus gen-api-docs all
+mv ./docs/reference/api/sidebar.ts ./docs/reference/api/sidebar.js
+
+clear=''
+typedef=': SidebarsConfig'
+
+sed -i '' -e 1d "${PWD}/docs/reference/api/sidebar.js"
+sed -i '' -e "s/${typedef}/${clear}/g" ./docs/reference/api/sidebar.js
+
+cd -

@@ -1,0 +1,26 @@
+{
+  "name": "Karrio Project Context",
+  "description": "Provides context about the Karrio project structure and key documentation",
+  "match": "**/*",
+  "rules": [
+    "Karrio is a multi-carrier shipping API that simplifies shipping carrier integration.",
+    "The monorepo structure consists of frontend apps (Next.js), backend API (Python/Django), and shared packages.",
+    "Key components of the architecture include:",
+    "- apps/: Contains frontend applications (dashboard, web, www) and the Django API backend",
+    "- modules/: Core Python functionality divided into focused submodules",
+    "- modules/connectors/: Carrier-specific integrations following a common pattern",
+    "- packages/: Shared TypeScript/Node.js libraries used across frontend applications",
+    "- schemas/: API schema definitions",
+    "- plugins/: Extensions and plugin implementations",
+    "Refer to the README.md for project overview and getting started information.",
+    "Follow the established architecture patterns and best practices documented in the codebase.",
+    "Understand the cross-cutting concerns and relationships between different parts of the system.",
+    "Maintain consistency with the existing codebase when making changes."
+  ],
+  "files": [
+    "@file:README.md",
+    "@file:CHANGELOG.md",
+    "@file:apps/api/README.md",
+    "@file:turbo.json"
+  ]
+}

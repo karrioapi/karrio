@@ -1,0 +1,71 @@
+{
+    "sender": {
+        "address": {
+            "country": "AU",
+            "address_line1": "1 Main Street",
+            "address_line2": "",
+            "suburb": "Melbourne",
+            "postcode": "3000",
+            "state_name": "VIC"
+        },
+        "contact": {
+            "name": "John Smith",
+            "email": "",
+            "phone": "0401234567",
+            "company": "Company Name"
+        },
+        "instructions": "Leave at the front door",
+        "tax_ids": {
+            "ioss": "GB123456789"
+        }
+    },
+    "receiver": {
+        "address": {
+            "country": "AU",
+            "address_line1": "1 Main Street",
+            "address_line2": "",
+            "suburb": "Melbourne",
+            "postcode": "3000",
+            "state_name": "VIC"
+        },
+        "contact": {
+            "name": "John Smith",
+            "email": "",
+            "phone": "0401234567",
+            "company": "Company Name"
+        },
+        "instructions": "Leave at the front door"
+    },
+    "description": "Parcel Description",
+    "customer_reference": "Customer Reference",
+    "product_code": "AUS_PARCEL_REGULAR",
+    "first_mile_option": "DROP_OFF",
+    "pickup_date": "2019-01-01",
+    "weight": {
+        "units": "kg",
+        "value": 1.5
+    },
+    "volume": {
+        "units": "m3",
+        "value": 1.5
+    },
+    "dimensions": {
+        "units": "m3",
+        "height": 1.5,
+        "width": 1.5,
+        "length": 1.5
+    },
+    "metadata": {},
+    "hide_pickup_address": false,
+    "parcel_contents": [
+        {
+            "description": "Parcel Contents Description",
+            "value": "100",
+            "currency": "AUD",
+            "quantity": 1,
+            "country_of_origin": "AU",
+            "hs_code": "12345678"
+        }
+    ],
+    "contents_type": "MERCHANDISE"
+}

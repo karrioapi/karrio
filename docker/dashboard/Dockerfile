@@ -1,65 +1,51 @@
-# Build stage
-FROM node:22-alpine AS builder
-
+# Install dependencies only when needed
+FROM node:22.5.1-alpine3.19 AS builder
 RUN apk add --no-cache libc6-compat
-
 WORKDIR /app
+COPY . .
+RUN npm ci -w apps/dashboard
+RUN npm run build -w apps/dashboard && \
+    rm -rf node_modules && \
+    npm install --omit=dev --ignore-scripts --prefer-offline -w apps/dashboard
 
-# Copy package files
-COPY package.json package-lock.json ./
-COPY apps/dashboard/package.json ./apps/dashboard/
-
-# Install dependencies
-RUN npm ci --force
-
-# Copy application source
-COPY apps/dashboard ./apps/dashboard
-
-# Build the dashboard
-WORKDIR /app/apps/dashboard
-RUN npm run build
-
-# Production stage
-FROM node:22-alpine AS runner
-
-RUN apk add --no-cache curl
+# Production image, copy all the files and run next
+FROM node:22.5.1-alpine3.19 AS runner
+RUN apk add curl
 
 ARG VERSION
-ARG SOURCE="https://github.com/jtlshipping/shipping-platform"
+ARG SOURCE="https://github.com/karrioapi/karrio"
 
-LABEL maintainer=hello@jtl.io
-LABEL org.opencontainers.image.title="JTL Shipping Platform Dashboard"
-LABEL org.opencontainers.image.description="JTL shipping platform dashboard runtime image"
-LABEL org.opencontainers.image.url="https://www.jtl-software.de/"
+LABEL maintainer=hello@karrio.io
+LABEL org.opencontainers.image.title="karrio dashboard"
+LABEL org.opencontainers.image.description="karrio dashboard runtime image"
+LABEL org.opencontainers.image.url="https://karrio.io"
+LABEL org.opencontainers.image.documentation="https://docs.karrio.io"
 LABEL org.opencontainers.image.source=${SOURCE}
-LABEL org.opencontainers.image.vendor="JTL"
+LABEL org.opencontainers.image.vendor="team karrio"
+LABEL org.opencontainers.image.authors="hello@karrio.io"
 
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV DASHBOARD_PORT=3102
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV SENTRY_IGNORE_API_RESOLUTION_ERROR=1
+ENV NEXT_PUBLIC_DASHBOARD_VERSION=${VERSION}
+ENV NEXT_PUBLIC_DASHBOARD_URL=http://localhost:3002
+ENV NEXT_PUBLIC_KARRIO_PUBLIC_URL=http://locahost:5002
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S jtl -u 1001
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S karrio -u 1001
+USER karrio
 
-# Copy built application and dependencies
-COPY --from=builder --chown=jtl:nodejs /app/apps/dashboard/dist ./dist
-COPY --from=builder --chown=jtl:nodejs /app/apps/dashboard/package.json ./package.json
-COPY --from=builder --chown=jtl:nodejs /app/node_modules ./node_modules
 
-# Ensure jtl user owns everything
-RUN chown -R jtl:nodejs /app
+COPY --from=builder /app/apps/dashboard/public ./public
+COPY --from=builder /app/apps/dashboard/next.config.mjs ./
+COPY --from=builder --chown=karrio:nodejs /app/apps/dashboard/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/apps/dashboard/package.json ./package.json
+COPY --from=builder /app/docker/dashboard/entrypoint ./entrypoint
 
-# Copy runtime server entry point
-COPY docker/dashboard/server-entry.mjs ./server-entry.mjs
 
-# Copy entrypoint script
-COPY docker/dashboard/entrypoint ./entrypoint
-RUN chmod +x ./entrypoint
-
-USER jtl
-
-EXPOSE 3102
+EXPOSE 3002
 
 CMD ["/bin/sh", "./entrypoint"]

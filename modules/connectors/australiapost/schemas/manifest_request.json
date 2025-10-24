@@ -1,0 +1,10 @@
+{
+    "order_reference": "My order reference",
+    "payment_method": "CHARGE_TO_ACCOUNT",
+    "consignor": "The name or ID of the consignor for this order",
+    "shipments": [
+        {
+            "shipment_id": "569b9a3accdc791c4ba34d6f"
+        }
+    ]
+}

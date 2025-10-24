@@ -1,0 +1,4 @@
+-r requirements.build.insiders.txt
+
+# karrio platform modules
+-e ee/platform/modules/tenants

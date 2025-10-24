@@ -3,81 +3,72 @@
   "configurations": [
     {
       "name": "Karrio: server",
-      "type": "debugpy",
+      "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}/karrio/apps/api/karrio/server/__main__.py",
+      "program": "${workspaceFolder}/apps/api/karrio/server/__main__.py",
       "args": ["runserver", "0.0.0.0:5002"],
       "django": true,
       "justMyCode": true
     },
     {
-      "name": "Test: jtl shipping",
-      "type": "debugpy",
-      "request": "launch",
-      "program": "${workspaceFolder}/karrio/apps/api/karrio/server/__main__.py",
-      "args": ["test", "--failfast", "karrio.server.shipping.tests"],
-      "django": true,
-      "justMyCode": true
-    },
-    {
       "name": "Test: proxy",
-      "type": "debugpy",
+      "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}/karrio/apps/api/karrio/server/__main__.py",
+      "program": "${workspaceFolder}/apps/api/karrio/server/__main__.py",
       "args": ["test", "--failfast", "karrio.server.proxy.tests"],
       "django": true,
       "justMyCode": true
     },
     {
       "name": "Test: pricing",
-      "type": "debugpy",
+      "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}/karrio/apps/api/karrio/server/__main__.py",
+      "program": "${workspaceFolder}/apps/api/karrio/server/__main__.py",
       "args": ["test", "--failfast", "karrio.server.pricing.tests"],
       "django": true,
       "justMyCode": true
     },
     {
       "name": "Test: manager",
-      "type": "debugpy",
+      "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}/karrio/apps/api/karrio/server/__main__.py",
+      "program": "${workspaceFolder}/apps/api/karrio/server/__main__.py",
       "args": ["test", "--failfast", "karrio.server.manager.tests"],
       "django": true,
       "justMyCode": true
     },
     {
       "name": "Test: events",
-      "type": "debugpy",
+      "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}/karrio/apps/api/karrio/server/__main__.py",
+      "program": "${workspaceFolder}/apps/api/karrio/server/__main__.py",
       "args": ["test", "--failfast", "karrio.server.events.tests"],
       "django": true,
       "justMyCode": true
     },
     {
       "name": "Test: graph",
-      "type": "debugpy",
+      "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}/karrio/apps/api/karrio/server/__main__.py",
+      "program": "${workspaceFolder}/apps/api/karrio/server/__main__.py",
       "args": ["test", "--failfast", "karrio.server.graph.tests"],
       "django": true,
       "justMyCode": true
     },
     {
       "name": "Test: orders",
-      "type": "debugpy",
+      "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}/karrio/apps/api/karrio/server/__main__.py",
+      "program": "${workspaceFolder}/apps/api/karrio/server/__main__.py",
       "args": ["test", "--failfast", "karrio.server.orders.tests"],
       "django": true,
       "justMyCode": true
     },
     {
       "name": "Test: automation",
-      "type": "debugpy",
+      "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}/karrio/apps/api/karrio/server/__main__.py",
+      "program": "${workspaceFolder}/apps/api/karrio/server/__main__.py",
       "args": ["test", "--failfast", "karrio.server.automation.tests"],
       "django": true,
       "justMyCode": true
