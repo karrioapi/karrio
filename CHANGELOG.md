@@ -1,3 +1,27 @@
+# Karrio 2025.5rc29
+
+## Changes
+
+### Feat
+
+- feat: add exhaustive list of landmark maxipack services
+
+### Fix
+
+- fix: HUEY initialization race condition causing duplicated instances with Redis connection failure
+- fix: inconsistent tracking number and last mile tracking number extraction in shipment response
+- fix: landmark tracking event sorting
+
+### Chores
+
+- chore: fix package-lock and platform build
+- chore: cleanup the app theme and authentication setup
+- chore: update APIs to match feedback + improve CI CD setup
+
+### Docs
+
+- docs: update README docs url
+
 # Karrio 2025.5rc28
 
 ## Changes

@@ -36,23 +36,24 @@ def _extract_details(
     ctx: dict = dict(),
 ) -> models.ShipmentDetails:
     """Extract shipment details from ImportResponse or ShipResponse"""
+    # fmt: off
     label_format = ctx.get("label_format", "PDF")
     packages = lib.find_element("Package", data, ship_res.PackageType)
-    [tracking_number, *tracking_numbers] = [
-        _.TrackingNumber for _ in packages if _.TrackingNumber is not None
-    ]
-    [landmark_id, *landmark_ids] = [
-        _.LandmarkTrackingNumber
-        for _ in packages
-        if _.LandmarkTrackingNumber is not None
-    ]
-    package_references = [
-        _.PackageReference for _ in packages if _.PackageReference is not None
-    ]
-    barcode_datas = [_.BarcodeData for _ in packages if _.BarcodeData is not None]
-    package_ids = [_.PackageID for _ in packages if _.PackageID is not None]
+    result = lib.find_element("Result", data, ship_res.ResultType, first=True)
     label_images = lib.find_element("LabelImages", data, ship_res.LabelImagesType)
 
+    last_mile_carrier = getattr(result, "ShippingCarrier", None)
+    tracking_numbers = [_.LandmarkTrackingNumber for _ in packages if _.LandmarkTrackingNumber is not None]
+    last_mile_tracking_numbers = [_.TrackingNumber for _ in packages if _.TrackingNumber is not None]
+    package_references = [_.PackageReference for _ in packages if _.PackageReference is not None]
+    barcode_datas = [_.BarcodeData for _ in packages if _.BarcodeData is not None]
+    landmark_ids = [_.PackageID for _ in packages if _.PackageID is not None]
+
+    tracking_number = next(iter(tracking_numbers), None)
+    shipment_identifier = next(iter(landmark_ids), tracking_number)
+    last_mile_tracking_number = next(iter(last_mile_tracking_numbers), None) if last_mile_carrier else None
+    last_mile_tracking_numbers = last_mile_tracking_numbers if last_mile_carrier else []
+    shipment_identifiers = landmark_ids if len(landmark_ids) > 0 else tracking_numbers
     label = (
         lib.bundle_base64(
             [_.LabelImage[0] for _ in label_images if len(_.LabelImage) > 0],
@@ -61,21 +62,24 @@ def _extract_details(
         if any(_.LabelImage for _ in label_images)
         else ""
     )
+    # fmt: on
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         tracking_number=tracking_number,
-        shipment_identifier=landmark_id,
+        shipment_identifier=shipment_identifier,
         label_type=label_format,
         docs=models.Documents(label=label),
         meta=lib.to_dict(
             dict(
-                tracking_numbers=[tracking_number, *tracking_numbers],
-                shipment_identifiers=[landmark_id, *landmark_ids],
+                last_mile_carrier=last_mile_carrier,
+                last_mile_tracking_number=last_mile_tracking_number,
+                last_mile_tracking_numbers=last_mile_tracking_numbers,
+                shipment_identifiers=shipment_identifiers,
                 package_references=package_references,
+                tracking_numbers=tracking_numbers,
                 barcode_datas=barcode_datas,
-                package_ids=package_ids,
             )
         ),
     )

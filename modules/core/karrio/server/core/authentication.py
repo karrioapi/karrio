@@ -241,18 +241,34 @@ def authenticate_user(request):
     def authenticate(request, authenticator):
         # Check if user exists and is not authenticated
         if not hasattr(request, 'user') or request.user is None or not getattr(request.user, 'is_authenticated', False):
-            auth = pydoc.locate(authenticator)().authenticate(request)
+            logger.debug(f"Trying authenticator: {authenticator}")
+            try:
+                auth_instance = pydoc.locate(authenticator)()
+                auth = auth_instance.authenticate(request)
 
-            if auth is not None:
-                user, token = auth
-                request.user = user
-                request.token = token
+                if auth is not None:
+                    user, token = auth
+                    request.user = user
+                    request.token = token
+                    logger.info(f"Authentication successful with: {authenticator}")
+            except AttributeError as e:
+                # Skip SessionAuthentication if it fails with _request attribute error
+                if "'WSGIRequest' object has no attribute '_request'" in str(e):
+                    logger.debug(f"Skipping {authenticator} - incompatible with middleware context")
+                else:
+                    raise
+            except exceptions.AuthenticationFailed:
+                # Silently skip authentication failures - let the next authenticator try
+                logger.debug(f"Authentication failed with {authenticator}, trying next")
+                pass
 
         return request
 
     try:
+        logger.debug(f"Auth classes to try: {AUTHENTICATION_CLASSES}")
         return functools.reduce(authenticate, AUTHENTICATION_CLASSES, request)
-    except Exception:
+    except Exception as e:
+        logger.debug(f"Authentication error: {e}")
         return request
 
 

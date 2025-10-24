@@ -85,7 +85,11 @@ class GraphTestCase(BaseAPITestCase):
         )
 
     def query(
-        self, query: str, operation_name: str = None, variables: dict = None, org_id: str = None
+        self,
+        query: str,
+        operation_name: str = None,
+        variables: dict = None,
+        org_id: str = None,
     ) -> Result:
         url = reverse("karrio.server.graph:graphql")
         data = dict(
@@ -94,9 +98,9 @@ class GraphTestCase(BaseAPITestCase):
             operation_name=operation_name,
         )
 
-        response = self.client.post(url, data, **(
-            { "x-org-id": org_id } if org_id else {}
-        ))
+        response = self.client.post(
+            url, data, **({"x-org-id": org_id} if org_id else {})
+        )
 
         return Result(
             status_code=response.status_code,
@@ -115,10 +119,14 @@ class GraphTestCase(BaseAPITestCase):
 
     def assertResponseNoErrors(self, result: Result):
         if (
-            result.status_code != status.HTTP_200_OK
+            result.status_code not in [status.HTTP_200_OK, status.HTTP_201_CREATED]
             or result.data.get("errors") is not None
         ):
             print(result.data)
 
-        self.assertEqual(result.status_code, status.HTTP_200_OK)
+        if result.status_code != status.HTTP_201_CREATED:
+            self.assertEqual(result.status_code, status.HTTP_200_OK)
+        else:
+            self.assertEqual(result.status_code, status.HTTP_201_CREATED)
+
         assert result.data.get("errors") is None

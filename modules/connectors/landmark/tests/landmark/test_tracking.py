@@ -330,8 +330,10 @@ PARSED_DELIVERY_FAILED_RESPONSE = [
                 },
                 {
                     "code": "275",
+                    "date": "2025-10-01",
                     "description": "Item in transit with carrier",
                     "location": "Rotterdam, NL",
+                    "time": "02:00 PM",
                 },
                 {
                     "code": "225",
@@ -596,6 +598,7 @@ DELIVERY_FAILED_TRACKING_RESPONSE_XML = """
           </Event>
           <Event>
             <Status>Item in transit with carrier</Status>
+            <DateTime>10/01/2025 02:00 PM</DateTime>
             <Location>Rotterdam, NL</Location>
             <EventCode>275</EventCode>
           </Event>
