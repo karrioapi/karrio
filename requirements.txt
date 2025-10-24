@@ -71,7 +71,7 @@ karrio-sapient==2025.5rc29
 karrio-seko==2025.5rc29
 karrio-sendle==2025.5rc29
 karrio-server==2025.5rc29
-karrio-server-core==2025.5rc29
+karrio-server-core==2025.5rc29.1
 karrio-server-data==2025.5rc29
 karrio-server-documents==2025.5rc29
 karrio-server-events==2025.5rc29

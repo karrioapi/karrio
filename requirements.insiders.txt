@@ -81,7 +81,7 @@ karrio-server-apps==2025.5rc29
 karrio-server-audit==2025.5rc29
 karrio-server-automation==2025.5rc29
 karrio-server-cloud==2025.5rc29
-karrio-server-core==2025.5rc29
+karrio-server-core==2025.5rc29.1
 karrio-server-data==2025.5rc29
 karrio-server-documents==2025.5rc29
 karrio-server-events==2025.5rc29
