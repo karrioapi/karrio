@@ -28,11 +28,11 @@ const EVENT_TYPE_COLORS = {
 };
 
 const EVENT_TYPE_ICONS = {
-  shipment: <Package className="h-4 w-4" />,
-  tracker: <Truck className="h-4 w-4" />,
-  order: <Calendar className="h-4 w-4" />,
-  webhook: <Webhook className="h-4 w-4" />,
-  default: <AlertCircle className="h-4 w-4" />,
+  shipment: <Package className="h-4 w-4 text-[#8B5CF6]" />,
+  tracker: <Truck className="h-4 w-4 text-[#8B5CF6]" />,
+  order: <Calendar className="h-4 w-4 text-[#8B5CF6]" />,
+  webhook: <Webhook className="h-4 w-4 text-[#8B5CF6]" />,
+  default: <AlertCircle className="h-4 w-4 text-[#8B5CF6]" />,
 };
 
 const EventDetailViewer = ({ event }: { event: any }) => {
@@ -77,7 +77,7 @@ const EventDetailViewer = ({ event }: { event: any }) => {
             {formatDateTimeLong(event.created_at)}
           </div>
         </div>
-        <div className="text-sm font-medium truncate text-neutral-200">
+        <div className="text-sm font-medium truncate text-white">
           Event: {event.type}
         </div>
         <div className="text-xs text-neutral-400 mt-1">
@@ -152,8 +152,8 @@ const EventListItem = ({
   return (
     <div
       className={cn(
-        "p-4 border-b border-neutral-800 cursor-pointer transition-all duration-150 hover:bg-purple-900/10",
-        isSelected ? "bg-purple-900/20 border-l-4 border-l-purple-800/60" : "border-l-4 border-l-transparent"
+        "p-4 border-b border-neutral-800 cursor-pointer transition-all duration-150 hover:bg-primary/10",
+        isSelected ? "bg-primary/20 border-l-4 border-l-primary/60" : "border-l-4 border-l-transparent"
       )}
       onClick={() => onSelect(event)}
     >
@@ -251,47 +251,47 @@ const EventsFilterDropdown = ({ context }: { context: ReturnType<typeof useEvent
       {isOpen && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
-          <div className="absolute right-0 top-full mt-1 w-80 bg-white border border-gray-200 rounded-md shadow-lg z-20">
+          <div className="absolute right-0 top-full mt-1 w-80 bg-[#0f0c24] border border-neutral-800 rounded-md shadow-lg z-20 text-white">
             <div className="p-4">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-medium text-sm">Filter Events</h3>
+                <h3 className="font-medium text-sm text-neutral-200">Filter Events</h3>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsOpen(false)}
-                  className="h-6 w-6 p-0"
+                  className="h-6 w-6 p-0 text-white hover:bg-neutral-800/40"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-4 w-4 text-white" />
                 </Button>
               </div>
 
               <div className="space-y-4">
                 {/* Search */}
                 <div>
-                  <Label htmlFor="search" className="text-sm font-medium">Search</Label>
+                  <Label htmlFor="search" className="text-sm font-medium text-neutral-300">Search</Label>
                   <Input
                     id="search"
                     placeholder="Search events..."
                     value={tempFilters.query || ""}
                     onChange={(e) => handleTempFilterChange('query', e.target.value)}
-                    className="mt-1"
+                    className="mt-1 bg-[#0f0c24] border-neutral-800 text-neutral-200 placeholder:text-neutral-500"
                   />
                 </div>
 
                 {/* Event Type */}
                 <div>
-                  <Label htmlFor="type" className="text-sm font-medium">Event Type</Label>
+                  <Label htmlFor="type" className="text-sm font-medium text-neutral-300">Event Type</Label>
                   <Select
                     value={tempFilters.type?.[0] || "all"}
                     onValueChange={(value) => handleTempFilterChange('type', value === 'all' ? undefined : [value])}
                   >
-                    <SelectTrigger className="w-full mt-1">
+                    <SelectTrigger className="w-full mt-1 text-white">
                       <SelectValue placeholder="All event types" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All event types</SelectItem>
+                    <SelectContent className="bg-[#0f0c24] text-white border-neutral-800">
+                      <SelectItem value="all" className="text-white focus:bg-purple-900/20 focus:text-white"></SelectItem>
                       {EVENT_TYPES.map((type) => (
-                        <SelectItem key={type} value={type}>{type}</SelectItem>
+                        <SelectItem key={type} value={type} className="text-white focus:bg-purple-900/20 focus:text-white">{type}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -299,24 +299,25 @@ const EventsFilterDropdown = ({ context }: { context: ReturnType<typeof useEvent
 
                 {/* Entity ID */}
                 <div>
-                  <Label htmlFor="entity_id" className="text-sm font-medium">Related Object ID</Label>
+                  <Label htmlFor="entity_id" className="text-sm font-medium text-neutral-300">Related Object ID</Label>
                   <Input
                     id="entity_id"
                     placeholder="e.g: shp_123456"
                     value={tempFilters.entity_id || ""}
                     onChange={(e) => handleTempFilterChange('entity_id', e.target.value)}
-                    className="mt-1"
+                    className="mt-1 bg-[#0f0c24] border-neutral-800 text-neutral-200 placeholder:text-neutral-500"
                   />
                 </div>
 
               </div>
 
-              <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
+              <div className="flex items-center justify-between mt-6 pt-4 border-t border-neutral-800">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleClear}
                   disabled={!hasActiveFilters() && Object.keys(tempFilters).length === 0}
+                  className="text-white border-neutral-800 hover:bg-neutral-800/40"
                 >
                   Clear All
                 </Button>
@@ -325,6 +326,7 @@ const EventsFilterDropdown = ({ context }: { context: ReturnType<typeof useEvent
                     variant="ghost"
                     size="sm"
                     onClick={() => setIsOpen(false)}
+                    className="text-white hover:bg-neutral-800/40"
                   >
                     Cancel
                   </Button>
@@ -332,6 +334,7 @@ const EventsFilterDropdown = ({ context }: { context: ReturnType<typeof useEvent
                     size="sm"
                     onClick={handleApply}
                     disabled={query.isLoading}
+                    className="text-white border-neutral-800 hover:bg-neutral-800/40"
                   >
                     {query.isLoading ? 'Applying...' : 'Apply'}
                   </Button>
@@ -382,7 +385,7 @@ export function EventsView() {
         {/* Header */}
         <div className="border-b border-neutral-800 px-4 py-3 flex-shrink-0">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold">Events</h2>
+            <h2 className="text-lg font-semibold text-white">Events</h2>
             <div className="flex items-center gap-2">
               {/* Use the custom EventsFilterDropdown component */}
               <EventsFilterDropdown context={eventsContext} />
@@ -453,7 +456,7 @@ export function EventsView() {
         {/* Pagination */}
         {events.length > 0 && (
           <div className="border-t border-neutral-800 px-4 py-2 flex items-center justify-between text-sm flex-shrink-0">
-            <span className="text-neutral-400">
+            <span className="text-gray-500">
               Showing {((filter.offset as number) || 0) + 1}-{((filter.offset as number) || 0) + events.length}
               {query.data?.events?.page_info.has_next_page && " of many"}
             </span>
@@ -493,12 +496,13 @@ export function EventsView() {
             <div className="border-b px-4 py-2 flex items-center gap-2">
               <Button
                 variant="ghost"
-                size="sm"
+                size="default"
                 onClick={() => setSelectedEvent(null)}
+                className="text-[#8B5CF6]"
               >
                 ← Back
               </Button>
-              <span className="text-sm font-medium">Event Details</span>
+              <span className="text-sm font-medium text-white">Event Details</span>
             </div>
             <div className="flex-1">
               <EventDetailViewer event={selectedEvent} />
@@ -509,7 +513,7 @@ export function EventsView() {
             {/* Mobile Header */}
             <div className="border-b border-neutral-800 px-4 py-3">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg font-semibold">Events</h2>
+                <h2 className="text-lg font-semibold text-white">Events</h2>
                 <div className="flex items-center gap-2">
                   {/* Use the custom EventsFilterDropdown component for mobile */}
                   <EventsFilterDropdown context={eventsContext} />
@@ -518,6 +522,7 @@ export function EventsView() {
                     size="sm"
                     onClick={handleRefresh}
                     disabled={query.isFetching}
+                    className="text-white border-neutral-800 hover:bg-neutral-800/40"
                   >
                     <RefreshCw className={`h-4 w-4 ${query.isFetching ? 'animate-spin' : ''}`} />
                   </Button>
@@ -579,7 +584,7 @@ export function EventsView() {
             {/* Mobile Pagination */}
             {events.length > 0 && (
               <div className="border-t border-neutral-800 px-4 py-2 flex items-center justify-between text-sm">
-                <span className="text-neutral-400">
+                <span className="text-gray-600">
                   Showing {((filter.offset as number) || 0) + 1}-{((filter.offset as number) || 0) + events.length}
                   {query.data?.events?.page_info.has_next_page && " of many"}
                 </span>
