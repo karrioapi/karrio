@@ -1,1 +1,0 @@
-export { default } from "@/layouts/api-reference-layout";

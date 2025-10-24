@@ -1,1 +1,0 @@
-from .fixture import gateway

@@ -1,1 +1,0 @@
-export { GET, POST, PUT, DELETE, PATCH } from '@karrio/app-store/api/api-route';
