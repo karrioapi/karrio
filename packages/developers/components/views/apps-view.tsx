@@ -112,7 +112,7 @@ export function AppsView() {
       <div className="px-4 py-3 border-b border-slate-200">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold">OAuth Apps</h2>
+            <h2 className="text-lg font-semibold text-white">OAuth Apps</h2>
             <p className="text-sm text-muted-foreground mt-1">
               Manage OAuth applications and integrations
             </p>
@@ -124,10 +124,10 @@ export function AppsView() {
                 Create OAuth App
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-lg">
-              <DialogHeader>
-                <DialogTitle>Create OAuth App</DialogTitle>
-                <DialogDescription>
+            <DialogContent className="max-w-lg bg-[#0f0c24] border-neutral-800 text-neutral-200">
+              <DialogHeader className="bg-[#0f0c24] border-b border-neutral-800 px-4 py-3 text-neutral-200">
+                <DialogTitle className="text-neutral-100">Create OAuth App</DialogTitle>
+                <DialogDescription className="text-neutral-400">
                   Create a new OAuth application for third-party integrations.
                 </DialogDescription>
               </DialogHeader>
@@ -139,8 +139,8 @@ export function AppsView() {
                   name="display_name"
                   children={(field) => (
                     <div className="space-y-2">
-                      <Label htmlFor={field.name}>App Name</Label>
-                      <Input id={field.name} name={field.name} value={field.state.value} onBlur={field.handleBlur} onChange={(e) => field.handleChange(e.target.value)} placeholder="Enter app name" required />
+                      <Label htmlFor={field.name} className="text-neutral-300">App Name</Label>
+                      <Input id={field.name} name={field.name} value={field.state.value} onBlur={field.handleBlur} onChange={(e) => field.handleChange(e.target.value)} placeholder="Enter app name" required className="bg-[#0f0c24] border-neutral-800 text-neutral-200 placeholder:text-neutral-500" />
                     </div>
                   )}
                 />
@@ -148,8 +148,8 @@ export function AppsView() {
                   name="description"
                   children={(field) => (
                     <div className="space-y-2">
-                      <Label htmlFor={field.name}>Description</Label>
-                      <Textarea id={field.name} name={field.name} value={field.state.value} onBlur={field.handleBlur} onChange={(e) => field.handleChange(e.target.value)} placeholder="Describe your OAuth application" rows={3} />
+                      <Label htmlFor={field.name} className="text-neutral-300">Description</Label>
+                      <Textarea id={field.name} name={field.name} value={field.state.value} onBlur={field.handleBlur} onChange={(e) => field.handleChange(e.target.value)} placeholder="Describe your OAuth application" rows={3} className="bg-[#0f0c24] border-neutral-800 text-neutral-200 placeholder:text-neutral-500" />
                     </div>
                   )}
                 />
@@ -157,8 +157,8 @@ export function AppsView() {
                   name="launch_url"
                   children={(field) => (
                     <div className="space-y-2">
-                      <Label htmlFor={field.name}>Launch URL</Label>
-                      <Input id={field.name} name={field.name} value={field.state.value} onBlur={field.handleBlur} onChange={(e) => field.handleChange(e.target.value)} placeholder="https://example.com" required />
+                      <Label htmlFor={field.name} className="text-neutral-300">Launch URL</Label>
+                      <Input id={field.name} name={field.name} value={field.state.value} onBlur={field.handleBlur} onChange={(e) => field.handleChange(e.target.value)} placeholder="https://example.com" required className="bg-[#0f0c24] border-neutral-800 text-neutral-200 placeholder:text-neutral-500" />
                     </div>
                   )}
                 />
@@ -166,14 +166,14 @@ export function AppsView() {
                   name="redirect_uris"
                   children={(field) => (
                     <div className="space-y-2">
-                      <Label htmlFor={field.name}>Redirect URIs</Label>
-                      <Textarea id={field.name} name={field.name} value={field.state.value} onBlur={field.handleBlur} onChange={(e) => field.handleChange(e.target.value)} placeholder="https://example.com/callback&#10;https://example.com/auth/callback" rows={3} required />
-                      <p className="text-xs text-slate-500">Enter one redirect URI per line</p>
+                      <Label htmlFor={field.name} className="text-neutral-300">Redirect URIs</Label>
+                      <Textarea id={field.name} name={field.name} value={field.state.value} onBlur={field.handleBlur} onChange={(e) => field.handleChange(e.target.value)} placeholder={`https://example.com/callback\nhttps://example.com/auth/callback`} rows={3} required className="bg-[#0f0c24] border-neutral-800 text-neutral-200 placeholder:text-neutral-500" />
+                      <p className="text-xs text-neutral-400">Enter one redirect URI per line</p>
                     </div>
                   )}
                 />
-                <DialogFooter className="pt-4">
-                  <Button type="button" variant="outline" onClick={() => setShowCreateDialog(false)}>Cancel</Button>
+                <DialogFooter className="pt-4 bg-[#0f0c24] border-t border-neutral-800">
+                  <Button type="button" variant="outline" onClick={() => setShowCreateDialog(false)} className="!text-white !bg-[#0b0a1a] !border-neutral-800 hover:!bg-primary/10 hover:!border-primary hover:!text-primary">Cancel</Button>
                   <Button type="submit" disabled={createOAuthApp.isLoading}>
                     {createOAuthApp.isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                     Create App
@@ -195,7 +195,7 @@ export function AppsView() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-slate-900 mb-2">No OAuth apps</h3>
+            <h3 className="text-lg font-medium text-slate-300 mb-2">No OAuth apps</h3>
             <p className="text-slate-500 mb-4">Create your first OAuth application to enable third-party integrations.</p>
             <Button onClick={() => setShowCreateDialog(true)}>
               <Plus className="h-4 w-4 mr-2" />
@@ -207,10 +207,10 @@ export function AppsView() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>App Name</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Client ID</TableHead>
-                  <TableHead>Created</TableHead>
+                  <TableHead className="text-neutral-200">App Name</TableHead>
+                  <TableHead className="text-neutral-200">Description</TableHead>
+                  <TableHead className="text-neutral-200">Client ID</TableHead>
+                  <TableHead className="text-neutral-200">Created</TableHead>
                   <TableHead className="w-12"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -219,24 +219,24 @@ export function AppsView() {
                   <TableRow key={app.id}>
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-2">
-                        <Globe className="h-4 w-4 text-muted-foreground" />
-                        <span>{app.display_name}</span>
+                        <Globe className="h-4 w-4 text-[#8B5CF6]" />
+                        <span className="text-white">{app.display_name}</span>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="max-w-md">
-                        <p className="text-sm text-muted-foreground truncate">
+                        <p className="text-sm text-muted-foreground text-neutral-300 truncate">
                           {app.description || "No description provided"}
                         </p>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <code className="text-sm bg-muted px-2 py-1 rounded font-mono">
+                        <code className="text-sm bg-muted border border-neutral-600 px-2 py-1 rounded font-mono">
                           {app.client_id.substring(0, 8)}...
                         </code>
                         <Button variant="ghost" size="sm" onClick={() => copyToClipboard(app.client_id, "Client ID")}>
-                          <Copy className="h-4 w-4" />
+                          <Copy className="h-4 w-4 text-neutral-300" />
                         </Button>
                       </div>
                     </TableCell>
@@ -248,20 +248,20 @@ export function AppsView() {
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
+                          <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
+                            <MoreHorizontal className="h-4 w-4 text-neutral-300" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => setSelectedAppId(app.id)}>
+                        <DropdownMenuContent align="end" className="bg-[#0f0c24] text-white border-neutral-800">
+                          <DropdownMenuItem onClick={() => setSelectedAppId(app.id)} className="text-white focus:bg-purple-900/20 focus:text-white">
                             <Edit3 className="h-4 w-4 mr-2" />
                             Configure
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => copyToClipboard(app.client_id, "Client ID")}>
+                          <DropdownMenuItem onClick={() => copyToClipboard(app.client_id, "Client ID")} className="text-white focus:bg-purple-900/20 focus:text-white">
                             <Copy className="h-4 w-4 mr-2" />
                             Copy Client ID
                           </DropdownMenuItem>
-                          <DropdownMenuItem 
+                          <DropdownMenuItem
                             onClick={() => { setDeleteAppId(app.id); setDeleteAppName(app.display_name); }}
                             className="text-destructive"
                           >
@@ -286,44 +286,44 @@ export function AppsView() {
       </Sheet>
 
       <Dialog open={showClientSecret} onOpenChange={setShowClientSecret}>
-        <DialogContent className="sm:max-w-[525px]">
-          <DialogHeader>
-            <DialogTitle>OAuth App Created Successfully</DialogTitle>
-            <DialogDescription>
+        <DialogContent className="sm:max-w-[525px] bg-[#0f0c24] border-neutral-800 text-neutral-200">
+          <DialogHeader className="bg-[#0f0c24] border-b border-neutral-800 px-4 py-3">
+            <DialogTitle className="text-neutral-100">OAuth App Created Successfully</DialogTitle>
+            <DialogDescription className="text-neutral-400">
               Your OAuth app has been created. Please copy and securely store your client secret now - it will not be shown again.
             </DialogDescription>
           </DialogHeader>
           {newlyCreatedApp && (
             <div className="space-y-4 py-4 p-4 pb-8">
-              <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+              <div className="p-4 bg-red-900/20 border border-red-900/40 rounded-lg">
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><span className="text-red-600 text-sm font-bold">!</span></div>
+                  <div className="w-6 h-6 bg-red-800/50 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><span className="text-red-300 text-sm font-bold">!</span></div>
                   <div>
-                    <h4 className="text-sm font-semibold text-red-900 mb-1">Important Security Notice</h4>
-                    <p className="text-sm text-red-800">This is the only time your client secret will be displayed. Copy it now and store it securely.</p>
+                    <h4 className="text-sm font-semibold text-red-200 mb-1">Important Security Notice</h4>
+                    <p className="text-sm text-red-300">This is the only time your client secret will be displayed. Copy it now and store it securely.</p>
                   </div>
                 </div>
               </div>
               <div className="space-y-3">
                 <div>
-                  <Label className="text-sm font-medium text-slate-700">Client ID</Label>
+                  <Label className="text-sm font-medium text-neutral-300">Client ID</Label>
                   <div className="flex gap-2 mt-1">
-                    <Input value={newlyCreatedApp.client_id} readOnly className="font-mono text-sm bg-slate-50" />
-                    <Button size="sm" variant="outline" onClick={() => copyToClipboard(newlyCreatedApp.client_id, "Client ID")}><Copy className="w-4 w-4" /></Button>
+                    <Input value={newlyCreatedApp.client_id} readOnly className="font-mono text-sm bg-neutral-900 border-neutral-800 text-neutral-200" />
+                    <Button size="sm" variant="outline" onClick={() => copyToClipboard(newlyCreatedApp.client_id, "Client ID")} className="!text-white !bg-[#0b0a1a] !border-neutral-800 hover:!bg-primary/10 hover:!border-primary hover:!text-primary"><Copy className="w-4 w-4" /></Button>
                   </div>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-slate-700">Client Secret</Label>
+                  <Label className="text-sm font-medium text-neutral-300">Client Secret</Label>
                   <div className="flex gap-2 mt-1">
-                    <Input value={newlyCreatedApp.client_secret} readOnly className="font-mono text-sm bg-slate-50" />
-                    <Button size="sm" variant="outline" onClick={() => copyToClipboard(newlyCreatedApp.client_secret, "Client Secret")}><Copy className="w-4 w-4" /></Button>
+                    <Input value={newlyCreatedApp.client_secret} readOnly className="font-mono text-sm bg-neutral-900 border-neutral-800 text-neutral-200" />
+                    <Button size="sm" variant="outline" onClick={() => copyToClipboard(newlyCreatedApp.client_secret, "Client Secret")} className="!text-white !bg-[#0b0a1a] !border-neutral-800 hover:!bg-primary/10 hover:!border-primary hover:!text-primary"><Copy className="w-4 w-4" /></Button>
                   </div>
                 </div>
               </div>
             </div>
           )}
-          <DialogFooter>
-            <Button onClick={() => { setShowClientSecret(false); setNewlyCreatedApp(null); }}>I've Saved My Credentials</Button>
+          <DialogFooter className="bg-[#0f0c24] border-t border-neutral-800">
+            <Button onClick={() => { setShowClientSecret(false); setNewlyCreatedApp(null); }} className="text-white border-neutral-800 hover:bg-neutral-800/40">I've Saved My Credentials</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -336,8 +336,8 @@ export function AppsView() {
               Are you sure you want to delete "{deleteAppName}"? This action cannot be undone and will revoke all existing tokens.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="pt-4">
-            <Button variant="outline" onClick={() => setDeleteAppId(null)}>Cancel</Button>
+          <DialogFooter className="pt-4 bg-[#0f0c24] border-t border-neutral-800">
+            <Button variant="outline" onClick={() => setDeleteAppId(null)} className="!text-white !bg-[#0b0a1a] !border-neutral-800 hover:!bg-primary/10 hover:!border-primary hover:!text-primary">Cancel</Button>
             <Button variant="destructive" onClick={confirmDeleteApp} disabled={deleteOAuthApp.isLoading}>
               {deleteOAuthApp.isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               Delete App
