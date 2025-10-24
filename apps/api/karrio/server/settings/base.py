@@ -268,8 +268,8 @@ _REDIS_HOST = config("REDIS_HOST", default=None)
 _REDIS_PORT = config("REDIS_PORT", default=None)
 _REDIS_PASSWORD = config("REDIS_PASSWORD", default=None)
 _REDIS_USERNAME = config("REDIS_USERNAME", default="default")
-_WORKER_IMMEDIATE_MODE = config(
-    "WORKER_IMMEDIATE_MODE", default=(_REDIS_HOST is None), cast=bool
+_WORKER_IMMEDIATE_MODE = config("WORKER_IMMEDIATE_MODE", default=False, cast=bool) and (
+    _REDIS_HOST is None
 )
 
 HUEY = {
@@ -277,26 +277,38 @@ HUEY = {
     "name": "default",
     "results": True,
     "store_none": False,
-    "immediate": _WORKER_IMMEDIATE_MODE,
     "utc": True,
-    **({
-        "blocking": True,
-        "connection": {
-            "host": _REDIS_HOST,
-            "port": _REDIS_PORT or 6379,
-            "db": 0,
-            "connection_pool": None,
-            "read_timeout": 1,
-            "max_connections": 20,
-            **({
-                "username": _REDIS_USERNAME,
-                "password": _REDIS_PASSWORD,
-            } if _REDIS_PASSWORD else {}),
-        },
-    } if _REDIS_HOST else {}),
-    **({
-        "filename": os.path.join(WORK_DIR, "tasks.sqlite3"),
-    } if not _REDIS_HOST else {}),
+    **(
+        {
+            "blocking": True,
+            "connection": {
+                "host": _REDIS_HOST,
+                "port": _REDIS_PORT or 6379,
+                "db": 0,
+                "connection_pool": None,
+                "read_timeout": 1,
+                "max_connections": 20,
+                **(
+                    {
+                        "username": _REDIS_USERNAME,
+                        "password": _REDIS_PASSWORD,
+                    }
+                    if _REDIS_PASSWORD
+                    else {}
+                ),
+            },
+        }
+        if _REDIS_HOST
+        else {}
+    ),
+    **(
+        {
+            "filename": os.path.join(WORK_DIR, "tasks.sqlite3"),
+            "immediate": _WORKER_IMMEDIATE_MODE,
+        }
+        if not _REDIS_HOST
+        else {}
+    ),
 }
 
 # Karrio Server Background jobs interval config
