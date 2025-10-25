@@ -1,3 +1,19 @@
+# Karrio 2025.5rc31
+
+## Changes
+
+### Fix
+
+- hotfix: HUEY powered worker django settings
+
+# Karrio 2025.5rc30
+
+## Changes
+
+### Fix
+
+- patch: karrio server core module to fix invalid worker settings
+
 # Karrio 2025.5rc29
 
 ## Changes
