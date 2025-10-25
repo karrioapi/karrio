@@ -261,62 +261,6 @@ OTP_APPS = [
     "two_factor.plugins.email",
 ]
 
-# Configure HUEY before djhuey/apps are loaded
-# This must be done here (not in workers.py) because task modules import djhuey
-# at module load time, which happens when Django loads apps from INSTALLED_APPS
-_REDIS_HOST = config("REDIS_HOST", default=None)
-_REDIS_PORT = config("REDIS_PORT", default=None)
-_REDIS_PASSWORD = config("REDIS_PASSWORD", default=None)
-_REDIS_USERNAME = config("REDIS_USERNAME", default="default")
-_WORKER_IMMEDIATE_MODE = config("WORKER_IMMEDIATE_MODE", default=False, cast=bool) and (
-    _REDIS_HOST is None
-)
-
-HUEY = {
-    "huey_class": "huey.RedisHuey" if _REDIS_HOST else "huey.SqliteHuey",
-    "name": "default",
-    "results": True,
-    "store_none": False,
-    "utc": True,
-    **(
-        {
-            "blocking": True,
-            "connection": {
-                "host": _REDIS_HOST,
-                "port": _REDIS_PORT or 6379,
-                "db": 0,
-                "connection_pool": None,
-                "read_timeout": 1,
-                "max_connections": 20,
-                **(
-                    {
-                        "username": _REDIS_USERNAME,
-                        "password": _REDIS_PASSWORD,
-                    }
-                    if _REDIS_PASSWORD
-                    else {}
-                ),
-            },
-        }
-        if _REDIS_HOST
-        else {}
-    ),
-    **(
-        {
-            "filename": os.path.join(WORK_DIR, "tasks.sqlite3"),
-            "immediate": _WORKER_IMMEDIATE_MODE,
-        }
-        if not _REDIS_HOST
-        else {}
-    ),
-}
-
-# Karrio Server Background jobs interval config
-DEFAULT_SCHEDULER_RUN_INTERVAL = 3600  # value is seconds. so 3600 seconds = 1 Hour
-DEFAULT_TRACKERS_UPDATE_INTERVAL = config(
-    "TRACKING_PULSE", default=7200, cast=int
-)  # value is seconds. so 10800 seconds = 3 Hours
-
 INSTALLED_APPS = [
     "constance",
     *KARRIO_APPS,
