@@ -55,8 +55,8 @@ export function GraphiQLModule() {
           if (node.nodeType === Node.ELEMENT_NODE) {
             const element = node as Element;
             // Check if it's a GraphiQL modal overlay
-            if (element.classList.contains('graphiql-dialog-overlay') || 
-                element.querySelector('.graphiql-dialog-overlay')) {
+            if (element.classList.contains('graphiql-dialog-overlay') ||
+              element.querySelector('.graphiql-dialog-overlay')) {
               portalContainer.appendChild(element);
               portalContainer.style.pointerEvents = 'auto';
             }

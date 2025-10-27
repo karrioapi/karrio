@@ -28,13 +28,9 @@ const CustomDrawerContent = React.forwardRef<
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed z-50 flex flex-col border-t bg-[#0f0c24]",
-        // Mobile: full screen with rounded top corners
-        "inset-0 h-full w-full lg:inset-auto",
-        // Desktop: positioned below navbar (navbar is h-14 = 56px)
-        "lg:top-14 lg:left-0 lg:right-0 lg:bottom-0 lg:h-[calc(100vh-3.5rem)]",
-        // Force dark mode for this drawer only (scoped)
-        "dark",
+        "fixed z-50 flex flex-col border-t bg-[#0f0c24] w-full left-0 right-0 bottom-0 top-[1vh] h-[calc(100vh-1vh)]",
+        // Force dark mode for this drawer only (scoped) and crisp rendering
+        "dark antialiased [text-rendering:optimizeLegibility] [backface-visibility:hidden]",
         className
       )}
       {...props}
@@ -100,11 +96,15 @@ export function DeveloperToolsDrawer() {
     window.dispatchEvent(event);
   }, [isOpen]);
 
+
+  // Revert any transform clearing; use only position-based animations when we re-implement
+
   const handleTabChange = (value: string) => {
     setCurrentView(value as DeveloperView);
     // Close mobile sidebar when selecting a tab
     setIsMobileSidebarOpen(false);
   };
+
 
   return (
     <Drawer open={isOpen} onOpenChange={(open) => {
@@ -113,7 +113,7 @@ export function DeveloperToolsDrawer() {
         setIsMobileSidebarOpen(false);
       }
     }}>
-      <CustomDrawerContent className="h-full max-h-full flex flex-col overflow-hidden">
+      <CustomDrawerContent className={cn("h-full max-h-full flex flex-col overflow-hidden")}>
         {/* Header */}
         <DrawerHeader className="relative z-50 flex-shrink-0 border-b border-neutral-800 !bg-[#0b0a1a] px-2 sm:px-4 py-2 text-white">
           <div className="flex items-center justify-between">
@@ -143,12 +143,12 @@ export function DeveloperToolsDrawer() {
         </DrawerHeader>
 
         {/* Main Content */}
-        <div className="flex-1 flex overflow-hidden relative">
+        <div className="flex-1 flex overflow-hidden relative min-h-0">
           <Tabs
             value={currentView}
             onValueChange={handleTabChange}
             orientation="vertical"
-            className="flex h-full w-full"
+            className="flex h-full w-full min-h-0"
           >
             {/* Mobile Sidebar Overlay */}
             {isMobileSidebarOpen && (
@@ -188,16 +188,16 @@ export function DeveloperToolsDrawer() {
             </div>
 
             {/* Main Content Area */}
-            <div className="flex-1 overflow-hidden lg:ml-0 bg-[#0f0c24]">
+            <div className="flex-1 overflow-hidden lg:ml-0 bg-[#0f0c24] min-h-0 pl-0 lg:pl-0">
               {Object.entries(VIEW_CONFIG).map(([viewKey, config]) => {
                 const Component = config.component;
                 return (
                   <TabsContent
                     key={viewKey}
                     value={viewKey}
-                    className="h-full m-0 p-0 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col"
+                    className="h-full min-h-0 m-0 p-0 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col"
                   >
-                    <div className="flex-1 overflow-auto">
+                    <div className="flex-1 overflow-auto min-h-0">
                       <Component />
                     </div>
                   </TabsContent>
