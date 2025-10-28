@@ -1,10 +1,10 @@
 import re
 import typing
-import logging
 import requests  # type: ignore
 import phonenumbers
 from constance import config
 from datetime import datetime
+from karrio.server.core.logging import logger
 
 import karrio.lib as lib
 import karrio.core.units as units
@@ -17,7 +17,6 @@ try:
 except ImportError:
     references = None
 
-logger = logging.getLogger(__name__)
 DIMENSIONS = ["width", "height", "length"]
 
 
@@ -98,7 +97,7 @@ def valid_base64(prop: str, max_size: int = 5242880):
                 error = f"Error: file size exceeds {max_size} bytes."
 
         except Exception as e:
-            logger.exception(e)
+            logger.error("Invalid base64 file content", error=str(e))
             error = "Invalid base64 file content"
             raise serializers.ValidationError(
                 error,
@@ -233,7 +232,7 @@ class AugmentedAddressSerializer(serializers.Serializer):
                     }
                 )
             except Exception as e:
-                logger.warning(e)
+                logger.warning("Invalid phone number format", error=str(e))
                 raise serializers.ValidationError(
                     {"phone_number": "Invalid phone number format"}
                 )
@@ -318,7 +317,7 @@ class Address:
                 if hasattr(module, "METADATA"):
                     validator_class = module.METADATA.Validator
             except (ImportError, AttributeError) as e:
-                logger.warning(f"Could not import validator {validator_name}: {e}")
+                logger.warning("Could not import validator", validator_name=validator_name, error=str(e))
 
             if validator_class is not None:
                 # Return validator info with is_enabled=True
@@ -394,7 +393,7 @@ class Address:
                 if hasattr(module, "METADATA"):
                     return module.METADATA.Validator
             except (ImportError, AttributeError) as e:
-                logger.warning(f"Could not import validator {validator_name}: {e}")
+                logger.warning("Could not import validator", validator_name=validator_name, error=str(e))
 
         # Fall back to legacy validator
         return Address._get_legacy_validator()

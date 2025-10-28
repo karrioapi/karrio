@@ -1,12 +1,9 @@
-import logging
-
 import karrio.lib as lib
 import karrio.server.conf as conf
 import karrio.server.core.utils as utils
 import karrio.server.tracing.models as models
 import karrio.server.serializers as serializers
-
-logger = logging.getLogger(__name__)
+from karrio.server.core.logging import logger
 
 
 @utils.error_wrapper
@@ -66,9 +63,9 @@ def save_tracing_records(context, tracer: lib.Tracer = None, schema: str = None)
             if getattr(context, "org", None) is not None:
                 serializers.bulk_link_org(saved_records, context)
 
-            logger.info("successfully saved tracing records...")
+            logger.info("Tracing records saved successfully", record_count=len(saved_records))
         except Exception as e:
-            logger.error(e, exc_info=False)
+            logger.error("Failed to save tracing records", error=str(e))
 
     persist_records(schema=schema)
 
@@ -84,7 +81,7 @@ def bulk_save_tracing_records(tracer: lib.Tracer, context=None):
     records = []
 
     for record in tracer.records:
-        logger.debug([f"record: {record.key}", record.metadata])
+        logger.debug("Processing tracing record", record_key=record.key, metadata=record.metadata)
         records.append(
             models.TracingRecord(
                 key=record.key,
@@ -101,7 +98,7 @@ def bulk_save_tracing_records(tracer: lib.Tracer, context=None):
     if getattr(context, "org", None) is not None:
         serializers.bulk_link_org(saved_records, context)
 
-    logger.info("> tracing records saved...")
+    logger.info("Tracing records saved successfully", record_count=len(saved_records))
 
 
 def set_tracing_context(**kwargs):

@@ -1,6 +1,5 @@
 import time
 import typing
-import logging
 import datetime
 import functools
 from itertools import groupby
@@ -15,12 +14,11 @@ from karrio.api.interface import IRequestFrom
 from karrio.core.models import TrackingDetails, Message, TrackingEvent
 
 import karrio.server.core.utils as utils
+from karrio.server.core.logging import logger
 import karrio.server.manager.models as models
 import karrio.server.tracing.utils as tracing
 import karrio.server.core.datatypes as datatypes
 import karrio.server.manager.serializers as serializers
-
-logger = logging.getLogger(__name__)
 Delay = int
 RequestBatches = typing.Tuple[
     Gateway, IRequestFrom, Delay, typing.List[models.Tracking]
@@ -38,7 +36,7 @@ def update_trackers(
     ),
     tracker_ids: typing.List[str] = [],
 ):
-    logger.info("> starting scheduled trackers update")
+    logger.info("Starting scheduled trackers update", delta_seconds=delta.seconds, tracker_count=len(tracker_ids) if tracker_ids else 0)
 
     active_trackers = lib.identity(
         models.Tracking.objects.filter(id__in=tracker_ids)
@@ -61,9 +59,9 @@ def update_trackers(
         save_tracing_records(request_batches)
         save_updated_trackers(responses, active_trackers)
     else:
-        logger.info("no active trackers found needing update")
+        logger.info("No active trackers found needing update")
 
-    logger.info("> ending scheduled trackers update")
+    logger.info("Finished scheduled trackers update")
 
 
 def create_request_batches(
@@ -86,7 +84,7 @@ def create_request_batches(
                 lambda acc, t: {**acc, **(t.options or {})}, batch_trackers, {}
             )
 
-            logger.debug(f"prepare tracking request for {tracking_numbers}")
+            logger.debug("Preparing tracking request", tracking_numbers=tracking_numbers, batch_range=(start, end))
 
             # Prepare and send tracking request(s) using the karrio interface.
             request: IRequestFrom = karrio.Tracking.fetch(
@@ -99,8 +97,8 @@ def create_request_batches(
             batches.append((gateway, request, delay, batch_trackers))
 
         except Exception as request_error:
-            logger.warning(f"failed to prepare tracking batch ({start}, {end}) request")
-            logger.error(request_error, exc_info=True)
+            logger.warning("Failed to prepare tracking batch request", batch_range=(start, end), error=str(request_error))
+            logger.exception("Tracking batch request preparation error", batch_range=(start, end))
 
         end += 10
         start += 10
@@ -110,21 +108,22 @@ def create_request_batches(
 
 def fetch_tracking_info(request_batch: RequestBatches) -> BatchResponse:
     gateway, request, delay, trackers = request_batch
-    logger.debug(f"fetching batch {[t.tracking_number for t in trackers]}")
+    tracking_numbers = [t.tracking_number for t in trackers]
+    logger.debug("Fetching tracking batch", tracking_numbers=tracking_numbers, delay_seconds=delay)
     time.sleep(delay)  # apply delay before request
 
     try:
         return utils.identity(lambda: request.from_(gateway).parse())
     except Exception as request_error:
-        logger.warning("batch request failed")
-        logger.error(request_error, exc_info=True)
+        logger.warning("Tracking batch request failed", tracking_numbers=tracking_numbers, error=str(request_error))
+        logger.exception("Tracking batch request error", tracking_numbers=tracking_numbers)
 
     return []
 
 
 @utils.error_wrapper
 def save_tracing_records(request_batches: typing.List[RequestBatches]):
-    logger.info("> saving tracing records...")
+    logger.info("Saving tracing records", batch_count=len(request_batches))
 
     try:
         for request_batch in request_batches:
@@ -136,20 +135,19 @@ def save_tracing_records(request_batches: typing.List[RequestBatches]):
             context = serializers.get_object_context(trackers[0])
             tracing.bulk_save_tracing_records(gateway.tracer, context=context)
     except Exception as error:
-        print(error)
-        logger.warning("Failed failed saving tracing record...")
-        logger.error(error, exc_info=True)
+        logger.warning("Failed to save tracing records", error=str(error))
+        logger.exception("Tracing record save error")
 
 
 def save_updated_trackers(
     responses: typing.List[BatchResponse], trackers: typing.List[models.Tracking]
 ):
-    logger.info("> saving updated trackers")
+    logger.info("Saving updated trackers", tracker_count=len(trackers))
 
     for tracking_details, _ in responses:
         for details in tracking_details or []:
             try:
-                logger.debug(f"update tracking info for {details.tracking_number}")
+                logger.debug("Updating tracking info", tracking_number=details.tracking_number)
                 related_trackers = [
                     t for t in trackers if t.tracking_number == details.tracking_number
                 ]
@@ -214,14 +212,10 @@ def save_updated_trackers(
                     if any(changes):
                         tracker.save(update_fields=changes)
                         serializers.update_shipment_tracker(tracker)
-                        logger.debug(
-                            f"tracking info {details.tracking_number} updated successfully"
-                        )
+                        logger.debug("Tracking info updated successfully", tracking_number=details.tracking_number, changes=changes)
                     else:
-                        logger.debug(f"no changes detect")
+                        logger.debug("No changes detected", tracking_number=details.tracking_number)
 
             except Exception as update_error:
-                logger.warning(
-                    f"failed to update tracker with tracking number: {details.tracking_number}"
-                )
-                logger.error(update_error, exc_info=True)
+                logger.warning("Failed to update tracker", tracking_number=details.tracking_number, error=str(update_error))
+                logger.exception("Tracker update error", tracking_number=details.tracking_number)

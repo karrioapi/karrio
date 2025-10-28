@@ -1,17 +1,15 @@
 import typing
-import logging
 import traceback
 from rest_framework.response import Response
 from rest_framework import status, exceptions
 from rest_framework.views import exception_handler
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import gettext_lazy as _
+from karrio.server.core.logging import logger
 
 import karrio.lib as lib
 import karrio.core.errors as sdk
 from karrio.server.core.datatypes import Error, Message
-
-logger = logging.getLogger(__name__)
 
 
 class ValidationError(exceptions.ValidationError, sdk.ValidationError):
@@ -47,7 +45,7 @@ class APIExceptions(APIException):
 
 
 def custom_exception_handler(exc, context):
-    logging.error(exc)
+    logger.error("Exception in request", exception=str(exc), exception_type=type(exc).__name__)
 
     response = exception_handler(exc, context)
     detail = getattr(exc, "detail", None)

@@ -1,7 +1,6 @@
 import yaml
 import pydoc
 import typing
-import logging
 from django.db import models
 from django.conf import empty, settings
 from django.db import transaction
@@ -10,8 +9,8 @@ from django.forms.models import model_to_dict
 from drf_spectacular.types import OpenApiTypes
 
 import karrio.lib as lib
+from karrio.server.core.logging import logger
 
-logger = logging.getLogger(__name__)
 T = typing.TypeVar("T")
 
 
@@ -196,7 +195,7 @@ def owned_model_serializer(serializer: typing.Type[Serializer]):
                 instance = super().create(payload, context=self.__context)
                 link_org(instance, self.__context)  # Link to organization if supported
             except Exception as e:
-                logger.exception(e)
+                logger.exception("Failed to create model instance", model=self.Meta.model.__name__, error=str(e))
                 raise e
 
             return instance

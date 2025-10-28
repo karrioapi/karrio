@@ -1,12 +1,12 @@
 import uuid
 import typing
-import logging
 import datetime
 
 from django.db.models import Q
 from django.conf import settings
 from rest_framework import status
 from rest_framework.exceptions import NotFound
+from karrio.server.core.logging import logger
 
 import karrio.lib as lib
 import karrio.sdk as karrio
@@ -19,8 +19,6 @@ import karrio.server.core.exceptions as exceptions
 import karrio.server.providers.models as providers
 import karrio.server.serializers as base_serializers
 import karrio.server.core.serializers as serializers
-
-logger = logging.getLogger(__name__)
 
 
 class Carriers:

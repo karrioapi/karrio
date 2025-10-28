@@ -1,11 +1,10 @@
-import logging
 import pydoc
 import typing
 from rest_framework import permissions, exceptions
+from karrio.server.core.logging import logger
 
 import karrio.server.conf as conf
 
-logger = logging.getLogger(__name__)
 PERMISSION_CHECKS = getattr(
     conf.settings, "PERMISSION_CHECKS", ["karrio.server.core.permissions.check_feature_flags"]
 )

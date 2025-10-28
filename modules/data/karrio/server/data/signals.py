@@ -1,19 +1,17 @@
-import logging
 from django.db.models import signals
 
 from karrio.server.conf import settings
+from karrio.server.core.logging import logger
 import karrio.server.core.utils as utils
 import karrio.server.data.models as models
 import karrio.server.events.tasks as tasks
 import karrio.server.data.serializers as serializers
 
-logger = logging.getLogger(__name__)
-
 
 def register_all():
     signals.post_save.connect(batch_operation_updated, sender=models.BatchOperation)
 
-    logger.info("karrio.data signals registered...")
+    logger.info("Signal registration complete", module="karrio.data")
 
 
 @utils.disable_for_loaddata

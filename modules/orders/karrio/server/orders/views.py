@@ -1,5 +1,3 @@
-import logging
-
 from django.urls import path
 from rest_framework import status
 from rest_framework.request import Request
@@ -24,11 +22,10 @@ from karrio.server.orders.serializers.order import (
     can_mutate_order,
 )
 from karrio.server.orders.filters import OrderFilters
+from karrio.server.core.logging import logger
 import karrio.server.orders.models as models
 import karrio.server.core.views.api as api
 import karrio.server.openapi as openapi
-
-logger = logging.getLogger(__name__)
 ENDPOINT_ID = "&&&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 Orders = PaginatedResult("OrderList", Order)
 

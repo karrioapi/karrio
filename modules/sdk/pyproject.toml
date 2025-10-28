@@ -29,6 +29,7 @@ dependencies = [
     "python-barcode",
     "PyPDF2",
     "toml",
+    "loguru",
 ]
 
 [project.urls]

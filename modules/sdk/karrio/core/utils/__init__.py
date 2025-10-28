@@ -13,3 +13,4 @@ from karrio.core.utils.tracing import Tracer, Record, Trace
 from karrio.core.utils.transformer import to_multi_piece_rates, to_multi_piece_shipment
 from karrio.core.utils.caching import Cache
 from karrio.core.utils.functional import typed
+from karrio.core.utils.logger import logger, configure_logger, intercept_standard_logging

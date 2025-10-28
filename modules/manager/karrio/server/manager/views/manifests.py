@@ -1,6 +1,5 @@
 import io
 import base64
-import logging
 import django_downloadview
 import django.urls as urls
 import django.core.files.base as base
@@ -11,6 +10,7 @@ import rest_framework.pagination as pagination
 import rest_framework.throttling as throttling
 import django_filters.rest_framework as django_filters
 
+from karrio.server.core.logging import logger
 import karrio.server.openapi as openapi
 import karrio.server.core.views.api as api
 import karrio.server.core.filters as filters
@@ -19,7 +19,6 @@ import karrio.server.manager.router as router
 import karrio.server.manager.serializers as serializers
 
 ENDPOINT_ID = "$$$$&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
-logger = logging.getLogger(__name__)
 Manifests = serializers.PaginatedResult("ManifestList", serializers.Manifest)
 
 

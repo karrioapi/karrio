@@ -1,4 +1,3 @@
-import logging
 from constance import config
 from django.urls import reverse
 from rest_framework.request import Request
@@ -30,8 +29,6 @@ CARRIER_HUBS = list(sorted(REFERENCE_MODELS["carrier_hubs"].keys()))
 NON_HUBS_CARRIERS = [
     carrier_name for carrier_name in CARRIER_NAMES if carrier_name not in CARRIER_HUBS
 ]
-
-LOGGER = logging.getLogger(__name__)
 
 
 def contextual_metadata(request: Request):

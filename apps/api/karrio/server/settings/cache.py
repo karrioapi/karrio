@@ -2,6 +2,7 @@
 from decouple import config
 from karrio.server.settings.base import *
 from karrio.server.settings.apm import HEALTH_CHECK_APPS
+from karrio.server.core.logging import logger
 
 
 CACHE_TTL = 60 * 15
@@ -60,4 +61,4 @@ if REDIS_HOST is not None:
             "KEY_PREFIX": REDIS_PREFIX,
         }
     }
-    print(f"Redis connection initialized at: {REDIS_CONNECTION_URL}")
+    logger.info("Redis connection initialized", redis_url=REDIS_CONNECTION_URL)

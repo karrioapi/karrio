@@ -1,6 +1,5 @@
 import io
 import base64
-import logging
 import django_downloadview
 
 from django.db.models import Q
@@ -13,6 +12,7 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
 
+from karrio.server.core.logging import logger
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.manager.router import router
 import karrio.server.manager.serializers as serializers
@@ -22,7 +22,6 @@ import karrio.server.core.filters as filters
 import karrio.server.openapi as openapi
 
 ENDPOINT_ID = "$$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
-logger = logging.getLogger(__name__)
 Trackers = serializers.PaginatedResult("TrackerList", serializers.TrackingStatus)
 
 

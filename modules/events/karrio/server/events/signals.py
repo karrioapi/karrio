@@ -1,14 +1,12 @@
-import logging
 from django.db.models import signals
 
 from karrio.server.core import utils
+from karrio.server.core.logging import logger
 from karrio.server.conf import settings
 from karrio.server.events.serializers import EventTypes
 import karrio.server.core.serializers as serializers
 import karrio.server.manager.models as models
 import karrio.server.events.tasks as tasks
-
-logger = logging.getLogger(__name__)
 
 
 def register_signals():
@@ -16,7 +14,7 @@ def register_signals():
     signals.post_delete.connect(shipment_cancelled, sender=models.Shipment)
     signals.post_save.connect(tracker_updated, sender=models.Tracking)
 
-    logger.info("karrio.events signals registered...")
+    logger.info("Karrio events signals registered")
 
 
 @utils.disable_for_loaddata

@@ -4,7 +4,6 @@ karrio server graph module urls
 
 import pydoc
 import typing
-import logging
 from django.urls import path
 from django.conf import settings
 from rest_framework import exceptions
@@ -17,8 +16,7 @@ import strawberry.http as http
 import karrio.lib as lib
 import karrio.server.conf as conf
 import karrio.server.graph.schema as schema
-
-logger = logging.getLogger(__name__)
+from karrio.server.core.logging import logger
 ACCESS_METHOD = getattr(
     settings,
     "SESSION_ACCESS_MIXIN",

@@ -2,14 +2,12 @@
 
 import attr
 import typing
-import logging
 import functools
 import karrio.lib as lib
 import karrio.core.errors as errors
 import karrio.core.models as models
 import karrio.api.gateway as gateway
-
-logger = logging.getLogger(__name__)
+from karrio.core.utils.logger import logger
 
 T = typing.TypeVar("T")
 S = typing.TypeVar("S")
@@ -65,7 +63,7 @@ def fail_safe(gateway: gateway.Gateway):
             try:
                 return func(*args, **kwargs)
             except Exception as error:
-                logger.exception(error)
+                logger.exception("Operation failed", carrier=gateway.settings.carrier_name)
 
                 return IDeserialize(
                     functools.partial(abort, gateway=gateway, error=error)
@@ -157,7 +155,7 @@ class Address:
         Returns:
             IRequestFrom: a lazy request dataclass instance
         """
-        logger.debug(f"validate an address. payload: {lib.to_json(args)}")
+        logger.debug("Validating address", payload=lib.to_dict(args))
         payload = lib.to_object(models.AddressValidationRequest, lib.to_dict(args))
 
         def action(gateway: gateway.Gateway) -> IDeserialize:
@@ -192,7 +190,7 @@ class Pickup:
         Returns:
             IRequestWith: a lazy request dataclass instance
         """
-        logger.debug(f"book a pickup. payload: {lib.to_json(args)}")
+        logger.debug("Scheduling pickup", payload=lib.to_dict(args))
         payload = lib.to_object(models.PickupRequest, lib.to_dict(args))
 
         def action(gateway: gateway.Gateway):
@@ -221,7 +219,7 @@ class Pickup:
         Returns:
             IRequestFrom: a lazy request dataclass instance
         """
-        logger.debug(f"cancel a pickup. payload: {lib.to_json(args)}")
+        logger.debug("Canceling pickup", payload=lib.to_dict(args))
         payload = lib.to_object(models.PickupCancelRequest, lib.to_dict(args))
 
         def action(gateway: gateway.Gateway):
@@ -252,7 +250,7 @@ class Pickup:
         Returns:
             IRequestFrom: a lazy request dataclass instance
         """
-        logger.debug(f"update a pickup. payload: {lib.to_json(args)}")
+        logger.debug("Updating pickup", payload=lib.to_dict(args))
         payload = lib.to_object(models.PickupUpdateRequest, lib.to_dict(args))
 
         def action(gateway: gateway.Gateway):
@@ -287,7 +285,7 @@ class Rating:
         Returns:
             IRequestFromMany: a lazy request dataclass instance
         """
-        logger.debug(f"fetch shipment rates. payload: {lib.to_json(args)}")
+        logger.debug("Fetching shipment rates", payload=lib.to_dict(args))
         payload = lib.to_object(models.RateRequest, lib.to_dict(args))
 
         def action(gateways: typing.List[gateway.Gateway]):
@@ -360,7 +358,7 @@ class Shipment:
         Returns:
             IRequestWith: a lazy request dataclass instance
         """
-        logger.debug(f"create a shipment. payload: {lib.to_json(args)}")
+        logger.debug("Creating shipment", payload=lib.to_dict(args))
         payload = lib.to_object(models.ShipmentRequest, lib.to_dict(args))
 
         def action(gateway: gateway.Gateway):
@@ -393,7 +391,7 @@ class Shipment:
         Returns:
             IRequestFrom: a lazy request dataclass instance
         """
-        logger.debug(f"void a shipment. payload: {lib.to_json(args)}")
+        logger.debug("Canceling shipment", payload=lib.to_dict(args))
         payload = lib.to_object(models.ShipmentCancelRequest, lib.to_dict(args))
 
         def action(gateway: gateway.Gateway):
@@ -428,7 +426,7 @@ class Tracking:
         Returns:
             IRequestFrom: a lazy request dataclass instance
         """
-        logger.debug(f"track a shipment. payload: {lib.to_json(args)}")
+        logger.debug("Tracking shipment", payload=lib.to_dict(args))
         payload = lib.to_object(models.TrackingRequest, lib.to_dict(args))
 
         def action(gateway: gateway.Gateway) -> IDeserialize:
@@ -462,7 +460,7 @@ class Document:
         Returns:
             IRequestWith: a lazy request dataclass instance
         """
-        logger.debug(f"upload a document. payload: {lib.to_json(args)}")
+        logger.debug("Uploading document", payload=lib.to_dict(args))
         payload = lib.to_object(models.DocumentUploadRequest, lib.to_dict(args))
 
         def action(gateway: gateway.Gateway):
@@ -501,7 +499,7 @@ class Manifest:
         Returns:
             IRequestWith: a lazy request dataclass instance
         """
-        logger.debug(f"create a manifest. payload: {lib.to_json(args)}")
+        logger.debug("Creating manifest", payload=lib.to_dict(args))
         payload = lib.to_object(models.ManifestRequest, lib.to_dict(args))
 
         def action(gateway: gateway.Gateway):

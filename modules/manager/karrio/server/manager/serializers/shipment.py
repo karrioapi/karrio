@@ -1,5 +1,4 @@
 import typing
-import logging
 import rest_framework.status as status
 import django.db.transaction as transaction
 from rest_framework.reverse import reverse
@@ -15,6 +14,7 @@ import karrio.server.core.datatypes as datatypes
 import karrio.server.core.exceptions as exceptions
 import karrio.server.providers.models as providers
 import karrio.server.core.validators as validators
+from karrio.server.core.logging import logger
 from karrio.server.serializers import (
     Serializer,
     CharField,
@@ -48,8 +48,6 @@ from karrio.server.manager.serializers.customs import CustomsSerializer
 from karrio.server.manager.serializers.parcel import ParcelSerializer
 from karrio.server.manager.serializers.rate import RateSerializer
 import karrio.server.manager.models as models
-
-logger = logging.getLogger(__name__)
 DEFAULT_CARRIER_FILTER: typing.Any = dict(active=True, capability="shipping")
 
 
@@ -794,9 +792,9 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
             )
             tracker.save()
             link_org(tracker, context)
-            logger.info(f"Successfully added a tracker to the shipment {shipment.id}")
+            logger.info("Successfully added a tracker to the shipment", shipment_id=shipment.id)
         except Exception as e:
-            logger.exception("Failed to create new label tracker", e)
+            logger.exception("Failed to create new label tracker", error=str(e), shipment_id=shipment.id)
 
         # Update shipment tracking url if different from the current one
         try:
@@ -817,7 +815,7 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
                 shipment.tracking_url = tracking_url
                 shipment.save(update_fields=["tracking_url"])
         except Exception as e:
-            logger.exception("Failed to update shipment tracking url", e)
+            logger.exception("Failed to update shipment tracking url", error=str(e), shipment_id=shipment.id, tracking_number=shipment.tracking_number)
 
 
 def generate_custom_invoice(template: str, shipment: models.Shipment, **kwargs):
@@ -831,7 +829,7 @@ def generate_custom_invoice(template: str, shipment: models.Shipment, **kwargs):
 
     # Check if carrier and shipment support ETD and document url is provided
     if conf.settings.DOCUMENTS_MANAGEMENT is False:
-        logger.info("document generation not supported!")
+        logger.info("Document generation not supported", documents_management=False)
         return
 
     # generate invoice document
@@ -845,7 +843,7 @@ def generate_custom_invoice(template: str, shipment: models.Shipment, **kwargs):
         shipment.invoice = document["doc_file"]
         shipment.save(update_fields=["invoice"])
 
-    logger.info("> custom document successfully generated.")
+    logger.info("Custom document successfully generated", shipment_id=shipment.id, template=template)
 
     return document
 
