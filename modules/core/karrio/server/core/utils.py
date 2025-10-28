@@ -1,7 +1,6 @@
 import sys
 import typing
 import inspect
-import logging
 import functools
 from string import Template
 from concurrent import futures
@@ -13,13 +12,13 @@ from django.utils.translation import gettext_lazy as _
 import django_email_verification.confirm as confirm
 import rest_framework_simplejwt.tokens as jwt
 import rest_framework.status as status
+from karrio.server.core.logging import logger
 
 import karrio.lib as lib
 from karrio.core.utils import DP, DF
 from karrio.server.core import datatypes, serializers, exceptions
 
 T = TypeVar("T")
-logger = logging.getLogger(__name__)
 
 
 def identity(value: Union[Any, Callable]) -> Any:
@@ -40,7 +39,7 @@ def failsafe(callable: Callable[[], T], warning: str = None) -> T:
         return callable()
     except Exception as e:
         if warning:
-            logger.warning(Template(warning).substitute(error=e))
+            logger.warning(warning, error=str(e))
         return None
 
 

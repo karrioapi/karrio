@@ -1,4 +1,3 @@
-import logging
 import django.urls as urls
 import rest_framework.status as status
 import rest_framework.request as request
@@ -13,8 +12,7 @@ import karrio.server.core.filters as filters
 import karrio.server.core.gateway as gateway
 import karrio.server.providers.models as models
 import karrio.server.providers.serializers as serializers
-
-logger = logging.getLogger(__name__)
+from karrio.server.core.logging import logger
 ENDPOINT_ID = "&&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 CarrierConnectionList = serializers.PaginatedResult(
     "CarrierConnectionList", serializers.CarrierConnection

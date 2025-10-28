@@ -1,10 +1,10 @@
 import typing
-import logging
 from django.utils import timezone
 
 import karrio.lib as lib
 import karrio.server.serializers as serializers
 import karrio.server.core.utils as utils
+from karrio.server.core.logging import logger
 from karrio.server.core.gateway import Shipments, Carriers
 from karrio.server.core.serializers import (
     TrackingDetails,
@@ -15,8 +15,6 @@ from karrio.server.core.serializers import (
 )
 
 import karrio.server.manager.models as models
-
-logger = logging.getLogger(__name__)
 DEFAULT_CARRIER_FILTER: typing.Any = dict(active=True, capability="tracking")
 
 
@@ -247,4 +245,4 @@ def update_shipment_tracker(tracker: models.Tracking):
             tracker.shipment.status = status
             tracker.shipment.save(update_fields=["status"])
     except Exception as e:
-        logger.exception("Failed to update the tracked shipment", e)
+        logger.exception("Failed to update the tracked shipment", error=str(e), tracker_id=tracker.id, tracking_number=tracker.tracking_number)

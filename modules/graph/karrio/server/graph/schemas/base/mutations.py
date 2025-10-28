@@ -1,6 +1,5 @@
 import strawberry
 import typing
-import logging
 import datetime
 from strawberry.types import Info
 from rest_framework import exceptions
@@ -18,6 +17,7 @@ from karrio.server.serializers import (
     save_many_to_many_data,
     process_dictionaries_mutations,
 )
+from karrio.server.core.logging import logger
 import karrio.server.providers.serializers as providers_serializers
 import karrio.server.manager.serializers as manager_serializers
 import karrio.server.graph.schemas.base.inputs as inputs
@@ -34,8 +34,6 @@ import karrio.server.user.models as auth
 import karrio.server.iam.models as iam
 import karrio.server.core.models as core
 import karrio.lib as lib
-
-logger = logging.getLogger(__name__)
 
 
 @strawberry.type
@@ -212,7 +210,7 @@ class RequestEmailChangeMutation(utils.BaseMutation):
                 expiry=(datetime.datetime.now() + datetime.timedelta(hours=2)),
             )
         except Exception as e:
-            logger.exception(e)
+            logger.exception("Email change request failed", user_id=info.context.request.user.id, error=str(e))
             raise e
 
         return RequestEmailChangeMutation(user=info.context.request.user)  # type:ignore
@@ -272,7 +270,7 @@ class RegisterUserMutation(utils.BaseMutation):
 
             return RegisterUserMutation(user=user)  # type:ignore
         except Exception as e:
-            logger.exception(e)
+            logger.exception("User registration failed", email=input.get('email'), error=str(e))
             raise e
 
 
@@ -287,7 +285,7 @@ class ConfirmEmailMutation(utils.BaseMutation):
 
             return ConfirmEmailMutation(success=success)  # type:ignore
         except Exception as e:
-            logger.exception(e)
+            logger.exception("Email confirmation failed", error=str(e))
             raise e
 
 
@@ -635,7 +633,7 @@ class UpdateRateSheetZoneCellMutation(utils.BaseMutation):
                 zone_id=input["zone_id"], field=input["field"], value=input["value"]
             )
         except ValueError as e:
-            logger.error(f"Invalid zone id: {e}")
+            logger.error("Invalid zone ID", zone_id=input["zone_id"], error=str(e))
             raise exceptions.ValidationError({"zone_id": "invalid zone id"})
 
         return UpdateRateSheetZoneCellMutation(rate_sheet=rate_sheet)
@@ -687,7 +685,7 @@ class BatchUpdateRateSheetCellsMutation(utils.BaseMutation):
             try:
                 rate_sheet.batch_update_service_rates(all_updates)
             except Exception as e:
-                logger.error(f"Invalid zone id: {e}")
+                logger.error("Failed to batch update rate sheet", rate_sheet_id=input["id"], error=str(e))
                 raise exceptions.ValidationError(
                     {"rate_sheet": "failed to update rate sheet"}
                 )
@@ -698,7 +696,7 @@ class BatchUpdateRateSheetCellsMutation(utils.BaseMutation):
                     service = rate_sheet.services.get(id=service_id)
                     service.batch_update_cells(updates)
                 except ValueError as e:
-                    logger.error(f"Invalid zone id: {e}")
+                    logger.error("Failed to update service", service_id=service_id, error=str(e))
                     raise exceptions.ValidationError(
                         {"service_id": "failed to update service"}
                     )
@@ -757,7 +755,7 @@ class PartialShipmentMutation(utils.BaseMutation):
 
             return PartialShipmentMutation(errors=None, shipment=update)  # type:ignore
         except Exception as e:
-            logger.exception(e)
+            logger.exception("Shipment mutation failed", shipment_id=input.get("id"), error=str(e))
             raise e
 
 
