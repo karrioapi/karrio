@@ -353,7 +353,7 @@ if config("DATABASE_URL", default=None):
     DATABASES["default"].update(db_from_env)
 
 # Configure workers database for SQLite storage when Redis is not available
-if not config("REDIS_HOST", default=None):
+if not config("REDIS_URL", default=None) and not config("REDIS_HOST", default=None):
     _WORKER_DB_DIR = config("WORKER_DB_DIR", default=WORK_DIR)
     _WORKER_DB_FILE_NAME = os.path.join(_WORKER_DB_DIR, "tasks.sqlite3")
     DATABASES["workers"] = {
