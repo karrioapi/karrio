@@ -28,7 +28,7 @@ const CustomDrawerContent = React.forwardRef<
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed z-50 flex flex-col border-t bg-[#0f0c24] w-full left-0 right-0 bottom-0 top-[1vh] h-[calc(100vh-1vh)]",
+        "fixed z-50 grid grid-rows-[auto,1fr] border-t bg-[#0f0c24] w-full left-0 right-0 top-[9vh] bottom-0",
         // Force dark mode for this drawer only (scoped) and crisp rendering
         "dark antialiased [text-rendering:optimizeLegibility] [backface-visibility:hidden]",
         className
@@ -88,6 +88,7 @@ export function DeveloperToolsDrawer() {
   const { isOpen, currentView, closeDeveloperTools, setCurrentView } = useDeveloperTools();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
+
   // Emit state changes for floating button
   React.useEffect(() => {
     const event = new CustomEvent('developer-tools-state-change', {
@@ -106,6 +107,8 @@ export function DeveloperToolsDrawer() {
   };
 
 
+  // Use CSS sizing (100dvh - offset) to size the main area
+
   return (
     <Drawer open={isOpen} onOpenChange={(open) => {
       if (!open) {
@@ -113,7 +116,7 @@ export function DeveloperToolsDrawer() {
         setIsMobileSidebarOpen(false);
       }
     }}>
-      <CustomDrawerContent className={cn("h-full max-h-full flex flex-col overflow-hidden")}>
+      <CustomDrawerContent className={cn("h-full max-h-full overflow-hidden")}>
         {/* Header */}
         <DrawerHeader className="relative z-50 flex-shrink-0 border-b border-neutral-800 !bg-[#0b0a1a] px-2 sm:px-4 py-2 text-white">
           <div className="flex items-center justify-between">
@@ -143,7 +146,7 @@ export function DeveloperToolsDrawer() {
         </DrawerHeader>
 
         {/* Main Content */}
-        <div className="flex-1 flex overflow-hidden relative min-h-0">
+        <div className="row-start-2 min-h-0 h-[calc(100dvh-11vh)] box-border flex overflow-hidden">
           <Tabs
             value={currentView}
             onValueChange={handleTabChange}
@@ -197,8 +200,10 @@ export function DeveloperToolsDrawer() {
                     value={viewKey}
                     className="h-full min-h-0 m-0 p-0 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col"
                   >
-                    <div className="flex-1 overflow-auto min-h-0">
-                      <Component />
+                    <div className="relative h-full min-h-0">
+                      <div className="absolute inset-0 min-h-0 overflow-auto pb-6">
+                        <Component />
+                      </div>
                     </div>
                   </TabsContent>
                 );

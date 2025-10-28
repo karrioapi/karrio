@@ -80,13 +80,13 @@ export function GraphiQLModule() {
     };
   }, []);
 
+  // Layout sizing handled by the drawer; no additional measurements needed
+
   return (
     <div className="h-full w-full overflow-hidden">
       <div className="h-full relative">
         <style jsx global>{`
-          .graphiql-container {
-            height: 100% !important;
-          }
+          .graphiql-container { height: 100% !important; }
           
           /* Force GraphiQL modals to use the portal container */
           .graphiql-dialog-overlay {
@@ -122,19 +122,13 @@ export function GraphiQLModule() {
           /* Ensure proper text rendering in GraphiQL editors */
           .graphiql-editor,
           .graphiql-editor .CodeMirror,
-          .graphiql-editor .CodeMirror-scroll {
-            height: 100% !important;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
-          }
+          .graphiql-editor .CodeMirror-scroll { height: 100% !important; }
           
           /* Fix text visibility issues */
           .graphiql-editor .CodeMirror,
           .graphiql-editor .CodeMirror-code,
           .graphiql-editor .CodeMirror-lines,
-          .graphiql-editor .CodeMirror-line {
-            color: #141414 !important;
-            background: transparent !important;
-          }
+          .graphiql-editor .CodeMirror-line { background: transparent !important; }
           
           .graphiql-editor .CodeMirror-cursor {
             border-left: 1px solid #141414 !important;
@@ -153,11 +147,9 @@ export function GraphiQLModule() {
           .graphiql-editor-tools,
           .graphiql-query-editor,
           .graphiql-variable-editor,
-          .graphiql-result {
-            flex: 1 !important;
-            display: flex !important;
-            flex-direction: column !important;
-          }
+          .graphiql-result { flex: 1 !important; display: flex !important; flex-direction: column !important; min-height: 0 !important; }
+          .graphiql-main, .graphiql-editors { display:flex !important; flex:1 1 auto !important; min-height:0 !important; }
+          .graphiql-editor .CodeMirror, .graphiql-editor .CodeMirror-scroll { height:100% !important; }
           
           
           .graphiql-dialog {
