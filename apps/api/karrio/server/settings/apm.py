@@ -164,7 +164,7 @@ if OTEL_ENABLED and OTEL_EXPORTER_OTLP_ENDPOINT:
             pass  # Psycopg2 might not be installed
     
     # Instrument Redis if configured
-    if config("REDIS_HOST", default=None):
+    if config("REDIS_URL", default=None) or config("REDIS_HOST", default=None):
         try:
             RedisInstrumentor().instrument()
         except Exception:

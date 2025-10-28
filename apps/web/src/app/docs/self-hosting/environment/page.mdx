@@ -29,26 +29,52 @@ These variables configure the PostgreSQL database connection.
 
 ## Redis Configuration
 
-Redis is used for caching and background task management.
+Redis is used for caching and background task management. You can configure Redis using either a connection URL (recommended) or individual parameters.
 
-| Variable         | Description                  | Default | Required |
-| ---------------- | ---------------------------- | ------- | -------- |
-| `REDIS_HOST`     | Redis host                   | `redis` | Yes      |
-| `REDIS_PORT`     | Redis port                   | `6379`  | Yes      |
-| `REDIS_PASSWORD` | Redis password (if required) | None    | No       |
-| `REDIS_DB`       | Redis database number        | `1`     | No       |
+| Variable         | Description                                                          | Default   | Required |
+| ---------------- | -------------------------------------------------------------------- | --------- | -------- |
+| `REDIS_URL`      | Complete Redis connection URL (e.g., `redis://user:pass@host:port`) | None      | No       |
+| `REDIS_HOST`     | Redis host (used if `REDIS_URL` not set)                             | None      | No       |
+| `REDIS_PORT`     | Redis port (used if `REDIS_URL` not set)                             | `6379`    | No       |
+| `REDIS_PASSWORD` | Redis password (used if `REDIS_URL` not set)                         | None      | No       |
+| `REDIS_USERNAME` | Redis username (used if `REDIS_URL` not set)                         | `default` | No       |
+| `REDIS_SSL`      | Enable SSL/TLS for Redis connection                                  | `False`   | No       |
+| `REDIS_PREFIX`   | Key prefix for cached data                                           | `karrio`  | No       |
+
+> **Note:** `REDIS_URL` takes precedence over individual parameters. If `REDIS_URL` is set, it will supersede all individual Redis parameters (`REDIS_HOST`, `REDIS_PORT`, etc.). Use `rediss://` scheme in the URL for SSL connections.
+>
+> **Examples:**
+> - Without SSL: `REDIS_URL=redis://localhost:6379`
+> - With SSL: `REDIS_URL=rediss://user:password@redis-host:6380/0`
+> - With individual params: `REDIS_HOST=localhost REDIS_PORT=6379 REDIS_SSL=True`
 
 ## API Configuration
 
 These variables configure the Karrio API server.
 
-| Variable             | Description                  | Default                 | Required             |
-| -------------------- | ---------------------------- | ----------------------- | -------------------- |
-| `KARRIO_HTTP_PORT`   | HTTP port for the API server | `5002`                  | No                   |
-| `KARRIO_PUBLIC_URL`  | Public URL for the API       | `http://localhost:5002` | Yes (for production) |
-| `KARRIO_WORKERS`     | Number of API workers        | `2`                     | No                   |
-| `BACKGROUND_WORKERS` | Number of background workers | `2`                     | No                   |
-| `DETACHED_WORKER`    | Run worker in detached mode  | `False`                 | No                   |
+| Variable            | Description                  | Default                 | Required             |
+| ------------------- | ---------------------------- | ----------------------- | -------------------- |
+| `KARRIO_HTTP_PORT`  | HTTP port for the API server | `5002`                  | No                   |
+| `KARRIO_PUBLIC_URL` | Public URL for the API       | `http://localhost:5002` | Yes (for production) |
+| `KARRIO_WORKERS`    | Number of API workers        | `2`                     | No                   |
+
+## Background Workers & Tasks Configuration
+
+These variables configure Huey background workers for async task processing (shipment tracking, webhooks, etc.).
+
+| Variable                       | Description                                                       | Default | Required |
+| ------------------------------ | ----------------------------------------------------------------- | ------- | -------- |
+| `BACKGROUND_WORKERS`           | Number of background worker processes                             | `2`     | No       |
+| `DETACHED_WORKER`              | Run workers in detached mode (separate from API process)          | `False` | No       |
+| `WORKER_IMMEDIATE_MODE`        | Execute tasks immediately (useful for testing)                    | `False` | No       |
+| `WORKER_DB_DIR`                | Directory for SQLite task database (when Redis not available)    | `/data` | No       |
+| `TRACKING_PULSE`               | Interval in seconds for automatic shipment tracking updates       | `7200`  | No       |
+| `DEFAULT_SCHEDULER_RUN_INTERVAL` | Interval in seconds for scheduled task checks                   | `3600`  | No       |
+
+> **Background Worker Modes:**
+> - **Redis Mode** (recommended for production): When Redis is configured, Huey uses Redis for task queue management. This allows multiple worker processes to share tasks.
+> - **SQLite Mode** (development/single instance): When Redis is not configured, Huey uses SQLite for task storage. This mode is suitable for development or single-instance deployments.
+> - **Immediate Mode**: When `WORKER_IMMEDIATE_MODE=True`, tasks execute synchronously in the same process. Useful for debugging.
 
 ## Dashboard Configuration
 
@@ -143,15 +169,24 @@ DATABASE_PASSWORD=your_secure_db_password
 DATABASE_HOST=db
 DATABASE_PORT=5432
 
-# Redis settings
-REDIS_HOST=redis
-REDIS_PORT=6379
+# Redis settings (Option 1: Using REDIS_URL - recommended)
+REDIS_URL=redis://redis:6379
+
+# Redis settings (Option 2: Individual parameters - alternative)
+# REDIS_HOST=redis
+# REDIS_PORT=6379
+# REDIS_SSL=False
+# REDIS_PASSWORD=your_redis_password  # if required
+# REDIS_USERNAME=default              # if required
 
 # API settings
 KARRIO_PUBLIC_URL=https://api.yourdomain.com
 KARRIO_WORKERS=4
+
+# Background worker settings
 BACKGROUND_WORKERS=2
 DETACHED_WORKER=True
+TRACKING_PULSE=7200  # 2 hours in seconds
 
 # Dashboard settings
 DASHBOARD_URL=https://app.yourdomain.com
@@ -177,6 +212,40 @@ USPS_USERNAME=your_usps_username
 USPS_PASSWORD=your_usps_password
 USPS_TEST_MODE=False
 ```
+
+## Redis SSL/TLS Configuration Examples
+
+For secure Redis connections (common with managed Redis services like AWS ElastiCache, Azure Cache, or Redis Enterprise), use these configurations:
+
+### Using REDIS_URL with SSL
+
+```bash
+# AWS ElastiCache example (rediss:// scheme for SSL)
+REDIS_URL=rediss://master.your-cluster.cache.amazonaws.com:6380/0
+
+# Azure Cache for Redis example with password
+REDIS_URL=rediss://:your_access_key@your-cache.redis.cache.windows.net:6380/0
+
+# Redis Enterprise Cloud example with username and password
+REDIS_URL=rediss://default:your_password@redis-endpoint.cloud.redislabs.com:12345/0
+```
+
+### Using Individual Parameters with SSL
+
+```bash
+# Managed Redis with SSL enabled
+REDIS_HOST=master.your-cluster.cache.amazonaws.com
+REDIS_PORT=6380
+REDIS_SSL=True
+REDIS_PASSWORD=your_redis_password
+REDIS_USERNAME=default
+```
+
+> **Important Notes:**
+> - Most managed Redis services use port `6380` for SSL connections and port `6379` for non-SSL
+> - The `rediss://` scheme (with double 's') in `REDIS_URL` automatically enables SSL
+> - When using individual parameters, set `REDIS_SSL=True` to enable SSL
+> - Some providers (like Azure) require authentication - include credentials in the URL or via separate parameters
 
 ## Environment Variables in Docker
 
