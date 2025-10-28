@@ -150,6 +150,20 @@ export function CarrierConnectionDialog({
     const credentials = watch("credentials");
     const fields = references?.connection_fields?.[carrierName] || {};
 
+    // For generic (custom) carriers, display_name and custom_carrier_name are always required
+    if (carrierName === "generic") {
+      const displayName = credentials?.display_name;
+      const customCarrierName = credentials?.custom_carrier_name;
+
+      if (!displayName || displayName.trim() === "") {
+        return false;
+      }
+
+      if (!customCarrierName || customCarrierName.trim() === "") {
+        return false;
+      }
+    }
+
     // Check account_country_code separately if required
     const accountCountryCodeField = fields["account_country_code"];
     if (accountCountryCodeField?.required) {
@@ -263,7 +277,7 @@ export function CarrierConnectionDialog({
             <FormItem>
               <FormLabel>
                 {key === "display_name" ? "Display Name" : "Slug"}
-                {field.required && <span className="text-destructive">*</span>}
+                {(field.required || carrierName === "generic") && <span className="text-destructive">*</span>}
               </FormLabel>
               <FormControl>
                 <Input
