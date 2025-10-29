@@ -28,14 +28,33 @@ const CustomDrawerContent = React.forwardRef<
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed z-50 grid grid-rows-[auto,1fr] border-t bg-[#0f0c24] w-full left-0 right-0 top-[9vh] bottom-0",
+        "fixed z-50 grid grid-rows-[1fr,auto] lg:grid-rows-[auto,1fr] border-t bg-[#0f0c24] w-full left-0 right-0 top-0 lg:top-[9vh] bottom-0",
         // Force dark mode for this drawer only (scoped) and crisp rendering
         "dark antialiased [text-rendering:optimizeLegibility] [backface-visibility:hidden]",
         className
       )}
+      style={{ ...(props as any)?.style }}
+      onPointerDownCapture={(e) => {
+        if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+          const strip = (e.currentTarget as HTMLElement).querySelector('#devtools-drag-strip');
+          if (strip && (strip === e.target || strip.contains(e.target as Node))) {
+            return; // allow drag start from handle
+          }
+          e.stopPropagation(); // prevent drag start elsewhere so scrolling works
+        }
+      }}
+      onTouchStartCapture={(e) => {
+        if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+          const strip = (e.currentTarget as HTMLElement).querySelector('#devtools-drag-strip');
+          if (strip && (strip === e.target || strip.contains(e.target as Node))) {
+            return;
+          }
+          e.stopPropagation();
+        }
+      }}
       {...props}
     >
-      <div className="mx-auto mt-2 h-1 w-[100px] rounded-full bg-purple-900/40 lg:hidden" />
+      {/* drag strip handled in parent component */}
       {children}
     </DrawerPrimitive.Content>
   </DrawerPortal>
@@ -87,6 +106,7 @@ const VIEW_CONFIG = {
 export function DeveloperToolsDrawer() {
   const { isOpen, currentView, closeDeveloperTools, setCurrentView } = useDeveloperTools();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const dragInfoRef = React.useRef<{ startY: number; startTime: number; dragging: boolean } | null>(null);
 
 
   // Emit state changes for floating button
@@ -116,9 +136,68 @@ export function DeveloperToolsDrawer() {
         setIsMobileSidebarOpen(false);
       }
     }}>
-      <CustomDrawerContent className={cn("h-full max-h-full overflow-hidden")}>
+      <CustomDrawerContent className={cn("h-full max-h-full lg:overflow-hidden")}>
+        {/* Top drag strip - mobile only; independent from content scrolling */}
+        <div
+          id="devtools-drag-strip"
+          className="absolute top-0 left-0 right-0 h-7 lg:hidden z-[70]"
+          onPointerDown={(e) => {
+            if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+              try { (e.currentTarget as HTMLElement).setPointerCapture((e as any).pointerId); } catch (_) { }
+              dragInfoRef.current = { startY: e.pageY, startTime: Date.now(), dragging: true };
+              e.stopPropagation();
+            }
+          }}
+          onPointerMove={(e) => {
+            const info = dragInfoRef.current;
+            if (!info || !info.dragging) return;
+            // Optional: we could show feedback; we simply track movement
+            e.stopPropagation();
+          }}
+          onPointerUp={(e) => {
+            const info = dragInfoRef.current;
+            if (!info) return;
+            const deltaY = e.pageY - info.startY;
+            const dt = Math.max(1, Date.now() - info.startTime);
+            const velocity = deltaY / dt; // px per ms
+            dragInfoRef.current = null;
+            e.stopPropagation();
+            // Thresholds: distance 48px OR fast swipe (>0.6 px/ms ~ 600px/s)
+            if (deltaY > 48 || velocity > 0.6) {
+              closeDeveloperTools();
+            }
+          }}
+          onTouchStart={(e) => {
+            if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+              const t = e.touches[0];
+              dragInfoRef.current = { startY: t.pageY, startTime: Date.now(), dragging: true };
+              e.stopPropagation();
+            }
+          }}
+          onTouchMove={(e) => {
+            const info = dragInfoRef.current;
+            if (!info || !info.dragging) return;
+            e.stopPropagation();
+          }}
+          onTouchEnd={(e) => {
+            const info = dragInfoRef.current;
+            if (!info) return;
+            const t = (e.changedTouches && e.changedTouches[0]) || ({} as any);
+            const deltaY = (t.pageY ?? info.startY) - info.startY;
+            const dt = Math.max(1, Date.now() - info.startTime);
+            const velocity = deltaY / dt;
+            dragInfoRef.current = null;
+            e.stopPropagation();
+            if (deltaY > 48 || velocity > 0.6) {
+              closeDeveloperTools();
+            }
+          }}
+          style={{ WebkitTapHighlightColor: 'transparent' }}
+        />
         {/* Header */}
-        <DrawerHeader className="relative z-50 flex-shrink-0 border-b border-neutral-800 !bg-[#0b0a1a] px-2 sm:px-4 py-2 text-white">
+        <DrawerHeader
+          className="relative z-50 flex-shrink-0 border-b border-neutral-800 !bg-[#0b0a1a] px-2 sm:px-4 py-2 lg:py-2 text-white row-start-2 lg:row-start-1"
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3">
               {/* Mobile menu button */}
@@ -127,6 +206,8 @@ export function DeveloperToolsDrawer() {
                 size="sm"
                 onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
                 className="h-10 w-10 p-0 lg:hidden"
+                aria-expanded={isMobileSidebarOpen}
+                aria-controls="devtools-mobile-nav"
               >
                 <Menu className="h-6 w-6" />
               </Button>
@@ -146,7 +227,9 @@ export function DeveloperToolsDrawer() {
         </DrawerHeader>
 
         {/* Main Content */}
-        <div className="row-start-2 min-h-0 h-[calc(100dvh-11vh)] box-border flex overflow-hidden">
+        <div
+          className="row-start-1 lg:row-start-2 min-h-0 h-full lg:h-[calc(100dvh-11vh)] box-border flex relative lg:overflow-hidden"
+        >
           <Tabs
             value={currentView}
             onValueChange={handleTabChange}
@@ -156,14 +239,14 @@ export function DeveloperToolsDrawer() {
             {/* Mobile Sidebar Overlay */}
             {isMobileSidebarOpen && (
               <div
-                className="absolute inset-0 bg-blue-900/30 z-5 lg:hidden"
+                className="absolute inset-0 bg-black/50 backdrop-blur-[1px] z-40 lg:hidden"
                 onClick={() => setIsMobileSidebarOpen(false)}
               />
             )}
 
             {/* Sidebar Navigation */}
-            <div className={cn(
-              "flex-shrink-0 border-r border-neutral-800 bg-[#0b0a1a] transition-transform duration-200 ease-in-out z-10",
+            <div id="devtools-mobile-nav" className={cn(
+              "flex-shrink-0 border-r border-neutral-800 bg-[#0b0a1a] transition-transform duration-200 ease-in-out z-50 lg:z-10",
               // Mobile: slide in from left, hidden by default
               "absolute lg:relative inset-y-0 left-0",
               "w-52 sm:w-56 lg:w-52",
@@ -191,17 +274,21 @@ export function DeveloperToolsDrawer() {
             </div>
 
             {/* Main Content Area */}
-            <div className="flex-1 overflow-hidden lg:ml-0 bg-[#0f0c24] min-h-0 pl-0 lg:pl-0">
+            <div className="flex-1 lg:ml-0 bg-[#0f0c24] min-h-0 pl-0 lg:pl-0 lg:overflow-hidden">
               {Object.entries(VIEW_CONFIG).map(([viewKey, config]) => {
                 const Component = config.component;
                 return (
                   <TabsContent
                     key={viewKey}
                     value={viewKey}
-                    className="h-full min-h-0 m-0 p-0 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col"
+                    className="h-full min-h-0 m-0 p-0 data-[state=active]:flex data-[state=active]:flex-col lg:overflow-hidden"
                   >
                     <div className="relative h-full min-h-0">
-                      <div className="absolute inset-0 min-h-0 overflow-auto pb-6">
+                      <div
+                        className="absolute inset-0 min-h-0 overflow-auto pb-6"
+                        style={{ touchAction: 'pan-y', WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}
+                        data-vaul-no-drag
+                      >
                         <Component />
                       </div>
                     </div>
