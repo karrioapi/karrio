@@ -259,15 +259,15 @@ export function DeveloperToolsDrawer() {
           </div>
         </DrawerHeader>
 
-        {/* Main Content */}
+        {/* Main Content - unified container (desktop and mobile) */}
         <div
-          className="row-start-1 lg:row-start-2 min-h-0 h-full lg:h-[calc(100dvh-11vh)] box-border flex relative lg:overflow-hidden"
+          className="row-start-1 lg:row-start-2 min-h-0 h-full box-border flex relative overflow-hidden lg:overflow-hidden"
         >
           <Tabs
             value={currentView}
             onValueChange={handleTabChange}
             orientation="vertical"
-            className="flex h-full w-full min-h-0"
+            className="flex h-full w-full min-h-0 lg:flex-1"
           >
             {/* Mobile Sidebar Overlay */}
             {isMobileSidebarOpen && (
@@ -314,11 +314,11 @@ export function DeveloperToolsDrawer() {
                   <TabsContent
                     key={viewKey}
                     value={viewKey}
-                    className="h-full min-h-0 m-0 p-0 data-[state=active]:flex data-[state=active]:flex-col lg:overflow-hidden"
+                    className="h-full min-h-0 m-0 p-0 data-[state=active]:flex data-[state=active]:flex-col lg:flex-1 lg:min-h-0 lg:overflow-hidden"
                   >
-                    <div className="relative h-full min-h-0">
+                    <div className="relative h-full min-h-0 lg:flex lg:flex-col lg:flex-1 lg:min-h-0">
                       <div
-                        className="absolute inset-0 min-h-0 overflow-auto lg:pb-6"
+                        className="absolute inset-0 min-h-0 overflow-auto lg:static lg:flex-1 lg:min-h-0 lg:overflow-auto lg:pb-20"
                         style={{ touchAction: 'pan-y', WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}
                         data-vaul-no-drag
                       >
@@ -331,6 +331,7 @@ export function DeveloperToolsDrawer() {
             </div>
           </Tabs>
         </div>
+
       </CustomDrawerContent>
     </Drawer>
   );

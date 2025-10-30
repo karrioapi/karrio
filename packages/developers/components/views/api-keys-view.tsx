@@ -233,7 +233,7 @@ export function ApiKeysView() {
           </div>
         ) : (
           <div className="border-b border-border text-foreground overflow-x-auto sm:overflow-x-visible" style={{ touchAction: 'pan-x', WebkitOverflowScrolling: 'touch', overscrollBehaviorX: 'contain' }}>
-            <div className="inline-block min-w-[900px] sm:min-w-0 align-top">
+            <div className="inline-block w-full min-w-[900px] sm:min-w-0 align-top">
               <Table className="w-full table-auto">
                 <TableHeader>
                   <TableRow>
