@@ -83,10 +83,10 @@ export function OAuthAppConfig({ app, onClose, onSave }: OAuthAppConfigProps) {
   };
 
   return (
-    <div className="h-full flex flex-col bg-[#0f0c24] text-neutral-200">
-      <SheetHeader className="sticky top-0 z-10 bg-[#0f0c24] px-4 py-3 border-b border-neutral-800">
+    <div className="h-full flex flex-col bg-background text-foreground">
+      <SheetHeader className="sticky top-0 z-10 bg-popover px-4 py-3 border-b border-border">
         <div className="flex items-center justify-between">
-          <SheetTitle className="text-lg font-semibold text-neutral-100">
+          <SheetTitle className="text-lg font-semibold text-foreground">
             Configure OAuth App
           </SheetTitle>
         </div>
@@ -103,10 +103,10 @@ export function OAuthAppConfig({ app, onClose, onSave }: OAuthAppConfigProps) {
               {app.display_name?.charAt(0) || 'A'}
             </div>
             <div className="flex-1 min-w-0">
-              <h2 className="text-xl font-semibold text-white mb-1">
+              <h2 className="text-xl font-semibold text-foreground mb-1">
                 {app.display_name}
               </h2>
-              <p className="text-sm text-neutral-400 mb-2">
+              <p className="text-sm text-muted-foreground mb-2">
                 OAuth Application
               </p>
             </div>
@@ -115,22 +115,22 @@ export function OAuthAppConfig({ app, onClose, onSave }: OAuthAppConfigProps) {
 
         {/* OAuth Credentials */}
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-neutral-200 mb-4">OAuth Credentials</h3>
+          <h3 className="text-sm font-semibold text-foreground mb-4">OAuth Credentials</h3>
 
           {/* Client ID */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-neutral-300">Client ID</Label>
+            <Label className="text-sm font-medium text-muted-foreground">Client ID</Label>
             <div className="flex gap-2">
               <Input
                 value={app.client_id}
                 readOnly
-                className="font-mono text-sm bg-neutral-900 border-neutral-800 text-neutral-200"
+                className="font-mono text-sm bg-input border-border text-foreground"
               />
               <Button
                 size="sm"
                 variant="outline"
                 onClick={() => copyToClipboard(app.client_id, "Client ID")}
-                className="!text-white !bg-[#0b0a1a] !border-neutral-800 hover:!bg-primary/10 hover:!border-primary hover:!text-primary"
+                className="!text-foreground !bg-card !border-border hover:!bg-primary/10 hover:!border-primary hover:!text-primary"
               >
                 <Copy className="w-4 h-4" />
               </Button>
@@ -140,19 +140,19 @@ export function OAuthAppConfig({ app, onClose, onSave }: OAuthAppConfigProps) {
           {/* Client Secret - only show if available */}
           {app.client_secret && (
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-neutral-300">Client Secret</Label>
+              <Label className="text-sm font-medium text-muted-foreground">Client Secret</Label>
               <div className="flex gap-2">
                 <Input
                   value={app.client_secret}
                   readOnly
                   type="password"
-                  className="font-mono text-sm bg-neutral-900 border-neutral-800 text-neutral-200"
+                  className="font-mono text-sm bg-input border-border text-foreground"
                 />
                 <Button
                   size="sm"
                   variant="outline"
                   onClick={() => copyToClipboard(app.client_secret as string, "Client Secret")}
-                  className="!text-white !bg-[#0b0a1a] !border-neutral-800 hover:!bg-primary/10 hover:!border-primary hover:!text-primary"
+                  className="!text-foreground !bg-card !border-border hover:!bg-primary/10 hover:!border-primary hover:!text-primary"
                 >
                   <Copy className="w-4 h-4" />
                 </Button>
@@ -181,7 +181,7 @@ export function OAuthAppConfig({ app, onClose, onSave }: OAuthAppConfigProps) {
           className="space-y-6"
         >
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-neutral-200">App Configuration</h3>
+            <h3 className="text-sm font-semibold text-foreground">App Configuration</h3>
 
             <updateForm.Field
               name="display_name"
@@ -191,7 +191,7 @@ export function OAuthAppConfig({ app, onClose, onSave }: OAuthAppConfigProps) {
               }}
               children={(field) => (
                 <div className="space-y-2">
-                  <Label htmlFor={field.name} className="text-neutral-300">App Name</Label>
+                  <Label htmlFor={field.name} className="text-muted-foreground">App Name</Label>
                   <Input
                     id={field.name}
                     name={field.name}
@@ -199,7 +199,7 @@ export function OAuthAppConfig({ app, onClose, onSave }: OAuthAppConfigProps) {
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
                     placeholder="My Integration App"
-                    className="bg-neutral-900 border-neutral-800 text-neutral-200 placeholder:text-neutral-500"
+                    className="bg-input border-border text-foreground placeholder:text-muted-foreground"
                   />
                   {field.state.meta.errors && (
                     <span className="text-sm text-red-400">
@@ -214,7 +214,7 @@ export function OAuthAppConfig({ app, onClose, onSave }: OAuthAppConfigProps) {
               name="description"
               children={(field) => (
                 <div className="space-y-2">
-                  <Label htmlFor={field.name} className="text-neutral-300">Description</Label>
+                  <Label htmlFor={field.name} className="text-muted-foreground">Description</Label>
                   <Textarea
                     id={field.name}
                     name={field.name}
@@ -223,7 +223,7 @@ export function OAuthAppConfig({ app, onClose, onSave }: OAuthAppConfigProps) {
                     onChange={(e) => field.handleChange(e.target.value)}
                     placeholder="Brief description of your app..."
                     rows={3}
-                    className="bg-neutral-900 border-neutral-800 text-neutral-200 placeholder:text-neutral-500"
+                    className="bg-input border-border text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
               )}
@@ -237,7 +237,7 @@ export function OAuthAppConfig({ app, onClose, onSave }: OAuthAppConfigProps) {
               }}
               children={(field) => (
                 <div className="space-y-2">
-                  <Label htmlFor={field.name} className="text-neutral-300">Launch URL</Label>
+                  <Label htmlFor={field.name} className="text-muted-foreground">Launch URL</Label>
                   <Input
                     id={field.name}
                     name={field.name}
@@ -245,7 +245,7 @@ export function OAuthAppConfig({ app, onClose, onSave }: OAuthAppConfigProps) {
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
                     placeholder="https://yourapp.com"
-                    className="bg-neutral-900 border-neutral-800 text-neutral-200 placeholder:text-neutral-500"
+                    className="bg-input border-border text-foreground placeholder:text-muted-foreground"
                   />
                   {field.state.meta.errors && (
                     <span className="text-sm text-red-400">
@@ -264,7 +264,7 @@ export function OAuthAppConfig({ app, onClose, onSave }: OAuthAppConfigProps) {
               }}
               children={(field) => (
                 <div className="space-y-2">
-                  <Label htmlFor={field.name} className="text-neutral-300">Redirect URI</Label>
+                  <Label htmlFor={field.name} className="text-muted-foreground">Redirect URI</Label>
                   <Input
                     id={field.name}
                     name={field.name}
@@ -272,7 +272,7 @@ export function OAuthAppConfig({ app, onClose, onSave }: OAuthAppConfigProps) {
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
                     placeholder="https://yourapp.com/auth/callback"
-                    className="bg-neutral-900 border-neutral-800 text-neutral-200 placeholder:text-neutral-500"
+                    className="bg-input border-border text-foreground placeholder:text-muted-foreground"
                   />
                   {field.state.meta.errors && (
                     <span className="text-sm text-red-400">
@@ -297,13 +297,13 @@ export function OAuthAppConfig({ app, onClose, onSave }: OAuthAppConfigProps) {
       </div>
 
       {/* Floating Action Buttons */}
-      <div className="sticky bottom-0 z-10 bg-[#0f0c24] border-t border-neutral-800 px-4 py-4">
+      <div className="sticky bottom-0 z-10 bg-popover border-t border-border px-4 py-4">
         <div className="flex items-center justify-end gap-3">
           <Button
             variant="outline"
             size="sm"
             onClick={onClose}
-            className="!text-white !bg-[#0b0a1a] !border-neutral-800 hover:!bg-primary/10 hover:!border-primary hover:!text-primary"
+            className="!text-foreground !bg-card !border-border hover:!bg-primary/10 hover:!border-primary hover:!text-primary"
           >
             Cancel
           </Button>

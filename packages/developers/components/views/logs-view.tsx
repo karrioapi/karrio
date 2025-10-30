@@ -473,10 +473,10 @@ const LogListItem = ({
   };
 
   const getStatusIcon = (statusCode: number | null) => {
-    if (!statusCode) return <AlertCircle className="h-4 w-4 text-[#8B5CF6]" />;
-    if (statusCode >= 200 && statusCode < 300) return <CheckCircle className="h-4 w-4 text-[#8B5CF6]" />;
-    if (statusCode >= 400) return <AlertCircle className="h-4 w-4 text-[#8B5CF6]" />;
-    return <Activity className="h-4 w-4 text-[#8B5CF6]" />;
+    if (!statusCode) return <AlertCircle className="h-4 w-4 text-primary" />;
+    if (statusCode >= 200 && statusCode < 300) return <CheckCircle className="h-4 w-4 text-primary" />;
+    if (statusCode >= 400) return <AlertCircle className="h-4 w-4 text-primary" />;
+    return <Activity className="h-4 w-4 text-primary" />;
   };
 
   return (
@@ -584,85 +584,85 @@ const LogsFilterDropdown = ({ context }: { context: ReturnType<typeof useLogs> }
       {isOpen && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
-          <div className="absolute right-0 top-full mt-1 w-80 bg-[#0f0c24] border border-neutral-800 rounded-md shadow-lg z-20 text-white">
+          <div className="absolute right-0 top-full mt-1 w-80 bg-popover border border-border rounded-md shadow-lg z-20 text-foreground">
             <div className="p-4">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-medium text-sm text-neutral-200">Filter Logs</h3>
+                <h3 className="font-medium text-sm text-foreground">Filter Logs</h3>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsOpen(false)}
-                  className="h-6 w-6 p-0 text-white hover:bg-neutral-800/40"
+                  className="h-6 w-6 p-0 text-foreground hover:bg-primary/10"
                 >
-                  <X className="h-4 w-4 text-white" />
+                  <X className="h-4 w-4" />
                 </Button>
               </div>
 
               <div className="space-y-4">
                 {/* Search */}
                 <div>
-                  <Label htmlFor="search" className="text-sm font-medium text-neutral-300">Search</Label>
+                  <Label htmlFor="search" className="text-sm font-medium text-muted-foreground">Search</Label>
                   <Input
                     id="search"
                     placeholder="Search logs..."
                     value={tempFilters.query || ""}
                     onChange={(e) => handleTempFilterChange('query', e.target.value)}
-                    className="mt-1 bg-[#0f0c24] text-neutral-200 placeholder:text-neutral-500"
+                    className="mt-1 bg-input text-foreground border-border placeholder:text-muted-foreground"
                   />
                 </div>
 
                 {/* Status Code */}
                 <div>
-                  <Label htmlFor="status" className="text-sm font-medium text-neutral-300">Status Code</Label>
+                  <Label htmlFor="status" className="text-sm font-medium text-muted-foreground">Status Code</Label>
                   <Select
                     value={tempFilters.status_code?.toString() || "all"}
                     onValueChange={(value) => handleTempFilterChange('status_code', value === 'all' ? undefined : parseInt(value))}
                   >
-                    <SelectTrigger className="w-full mt-1 text-white">
+                    <SelectTrigger className="w-full mt-1 text-foreground">
                       <SelectValue placeholder="All status codes" />
                     </SelectTrigger>
-                    <SelectContent className="bg-[#0f0c24] text-white border-neutral-800">
-                      <SelectItem value="all" className="text-white focus:bg-purple-900/20 focus:text-white">All status codes</SelectItem>
-                      <SelectItem value="200" className="text-white focus:bg-purple-900/20 focus:text-white">200 - OK</SelectItem>
-                      <SelectItem value="201" className="text-white focus:bg-purple-900/20 focus:text-white">201 - Created</SelectItem>
-                      <SelectItem value="400" className="text-white focus:bg-purple-900/20 focus:text-white">400 - Bad Request</SelectItem>
-                      <SelectItem value="401" className="text-white focus:bg-purple-900/20 focus:text-white">401 - Unauthorized</SelectItem>
-                      <SelectItem value="404" className="text-white focus:bg-purple-900/20 focus:text-white">404 - Not Found</SelectItem>
-                      <SelectItem value="500" className="text-white focus:bg-purple-900/20 focus:text-white">500 - Server Error</SelectItem>
+                    <SelectContent className="devtools-theme dark bg-popover text-foreground border-border">
+                      <SelectItem value="all" className="text-foreground focus:bg-primary/20 focus:text-foreground">All status codes</SelectItem>
+                      <SelectItem value="200" className="text-foreground focus:bg-primary/20 focus:text-foreground">200 - OK</SelectItem>
+                      <SelectItem value="201" className="text-foreground focus:bg-primary/20 focus:text-foreground">201 - Created</SelectItem>
+                      <SelectItem value="400" className="text-foreground focus:bg-primary/20 focus:text-foreground">400 - Bad Request</SelectItem>
+                      <SelectItem value="401" className="text-foreground focus:bg-primary/20 focus:text-foreground">401 - Unauthorized</SelectItem>
+                      <SelectItem value="404" className="text-foreground focus:bg-primary/20 focus:text-foreground">404 - Not Found</SelectItem>
+                      <SelectItem value="500" className="text-foreground focus:bg-primary/20 focus:text-foreground">500 - Server Error</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 {/* Method */}
                 <div>
-                  <Label htmlFor="method" className="text-sm font-medium text-neutral-300">HTTP Method</Label>
+                  <Label htmlFor="method" className="text-sm font-medium text-muted-foreground">HTTP Method</Label>
                   <Select
                     value={tempFilters.method || "all"}
                     onValueChange={(value) => handleTempFilterChange('method', value === 'all' ? undefined : value)}
                   >
-                    <SelectTrigger className="w-full mt-1 text-white">
+                    <SelectTrigger className="w-full mt-1 text-foreground">
                       <SelectValue placeholder="All methods" />
                     </SelectTrigger>
-                    <SelectContent className="bg-[#0f0c24] text-white border-neutral-800">
-                      <SelectItem value="all" className="text-white focus:bg-purple-900/20 focus:text-white">All methods</SelectItem>
-                      <SelectItem value="GET" className="text-white focus:bg-purple-900/20 focus:text-white">GET</SelectItem>
-                      <SelectItem value="POST" className="text-white focus:bg-purple-900/20 focus:text-white">POST</SelectItem>
-                      <SelectItem value="PUT" className="text-white focus:bg-purple-900/20 focus:text-white">PUT</SelectItem>
-                      <SelectItem value="DELETE" className="text-white focus:bg-purple-900/20 focus:text-white">DELETE</SelectItem>
-                      <SelectItem value="PATCH" className="text-white focus:bg-purple-900/20 focus:text-white">PATCH</SelectItem>
+                    <SelectContent className="devtools-theme dark bg-popover text-foreground border-border">
+                      <SelectItem value="all" className="text-foreground focus:bg-primary/20 focus:text-foreground">All methods</SelectItem>
+                      <SelectItem value="GET" className="text-foreground focus:bg-primary/20 focus:text-foreground">GET</SelectItem>
+                      <SelectItem value="POST" className="text-foreground focus:bg-primary/20 focus:text-foreground">POST</SelectItem>
+                      <SelectItem value="PUT" className="text-foreground focus:bg-primary/20 focus:text-foreground">PUT</SelectItem>
+                      <SelectItem value="DELETE" className="text-foreground focus:bg-primary/20 focus:text-foreground">DELETE</SelectItem>
+                      <SelectItem value="PATCH" className="text-foreground focus:bg-primary/20 focus:text-foreground">PATCH</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
               </div>
 
-              <div className="flex items-center justify-between mt-6 pt-4 border-t border-neutral-800">
+              <div className="flex items-center justify-between mt-6 pt-4 border-t border-border">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleClear}
                   disabled={!hasActiveFilters() && Object.keys(tempFilters).length === 0}
-                  className="text-white border-neutral-800 hover:bg-neutral-800/40"
+                  className="text-foreground border-border hover:bg-primary/10"
                 >
                   Clear All
                 </Button>
@@ -671,7 +671,7 @@ const LogsFilterDropdown = ({ context }: { context: ReturnType<typeof useLogs> }
                     variant="ghost"
                     size="sm"
                     onClick={() => setIsOpen(false)}
-                    className="text-white hover:bg-neutral-800/40"
+                    className="text-foreground hover:bg-primary/10"
                   >
                     Cancel
                   </Button>
@@ -679,7 +679,7 @@ const LogsFilterDropdown = ({ context }: { context: ReturnType<typeof useLogs> }
                     size="sm"
                     onClick={handleApply}
                     disabled={query.isLoading}
-                    className="text-white border-neutral-800"
+                    className="text-foreground border-border hover:bg-primary/10"
                   >
                     {query.isLoading ? 'Applying...' : 'Apply'}
                   </Button>
@@ -724,13 +724,13 @@ export function LogsView() {
   };
 
   return (
-    <div className="h-full flex overflow-hidden bg-[#0f0c24]">
+    <div className="h-full flex overflow-hidden bg-background">
       {/* Left Panel - Logs List */}
-      <div className="w-1/2 border-r flex flex-col lg:flex hidden h-full">
+      <div className="w-1/2 border-r border-border flex flex-col lg:flex hidden h-full">
         {/* Header */}
-        <div className="border-b px-4 py-3 flex-shrink-0">
+        <div className="border-b border-border px-4 py-3 flex-shrink-0">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold text-white">API Logs</h2>
+            <h2 className="text-lg font-semibold text-foreground">API Logs</h2>
             <div className="flex items-center gap-2">
               {/* Use the custom LogsFilterDropdown component */}
               <LogsFilterDropdown context={logsContext} />
@@ -739,9 +739,9 @@ export function LogsView() {
                 size="sm"
                 onClick={handleRefresh}
                 disabled={query.isFetching}
-                className="text-white border-neutral-800 hover:bg-neutral-800/40"
+                className="text-foreground border-border hover:bg-primary/10"
               >
-                <RefreshCw className={`h-4 w-4 text-white ${query.isFetching ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`h-4 w-4 ${query.isFetching ? 'animate-spin' : ''}`} />
               </Button>
             </div>
           </div>
@@ -770,16 +770,16 @@ export function LogsView() {
         <div className="flex-1 overflow-y-auto">
           {query.isFetching && (
             <div className="flex items-center justify-center py-8">
-              <RefreshCw className="h-6 w-6 animate-spin text-gray-400" />
+              <RefreshCw className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
           )}
 
           {!query.isFetching && logs.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-muted-foreground">
               <Activity className="h-8 w-8 mx-auto mb-2 opacity-50" />
               <p>No logs found</p>
               {hasActiveFilters() && (
-                <p className="text-xs mt-1">Try adjusting your filters</p>
+                <p className="text-xs mt-1 text-muted-foreground">Try adjusting your filters</p>
               )}
             </div>
           )}
@@ -800,8 +800,8 @@ export function LogsView() {
 
         {/* Pagination */}
         {logs.length > 0 && (
-          <div className="border-t px-4 py-2 flex items-center justify-between text-sm flex-shrink-0">
-            <span className="text-gray-500">
+          <div className="border-t border-border px-4 py-2 flex items-center justify-between text-sm flex-shrink-0">
+            <span className="text-muted-foreground">
               Showing {((filter.offset as number) || 0) + 1}-{((filter.offset as number) || 0) + logs.length}
               {query.data?.logs?.page_info.has_next_page && " of many"}
             </span>
@@ -811,7 +811,7 @@ export function LogsView() {
                 size="sm"
                 onClick={() => updateFilter({ offset: Math.max(0, ((filter.offset as number) || 0) - 20) })}
                 disabled={(filter.offset as number) === 0 || filter.offset === undefined}
-                className="h-7 px-2 text-xs text-white border-neutral-800 hover:bg-neutral-800/40"
+                className="h-7 px-2 text-xs text-foreground border-border hover:bg-primary/10"
               >
                 Previous
               </Button>
@@ -820,7 +820,7 @@ export function LogsView() {
                 size="sm"
                 onClick={() => updateFilter({ offset: ((filter.offset as number) || 0) + 20 })}
                 disabled={!query.data?.logs?.page_info.has_next_page}
-                className="h-7 px-2 text-xs text-white border-neutral-800 hover:bg-neutral-800/40"
+                className="h-7 px-2 text-xs text-foreground border-border hover:bg-primary/10"
               >
                 Next
               </Button>
@@ -838,7 +838,7 @@ export function LogsView() {
       <div className="lg:hidden w-full">
         {selectedLog ? (
           <div className="h-full flex flex-col">
-            <div className="border-b px-4 py-2 flex items-center gap-2 text-[#8B5CF6]">
+            <div className="border-b border-border px-4 py-2 flex items-center gap-2 text-primary">
               <Button
                 variant="ghost"
                 size="default"
@@ -846,7 +846,7 @@ export function LogsView() {
               >
                 ← Back
               </Button>
-              <span className="text-sm font-medium text-white">Log Details</span>
+              <span className="text-sm font-medium text-foreground">Log Details</span>
             </div>
             <div className="flex-1">
               <LogDetailViewer log={selectedLog} />
@@ -855,9 +855,9 @@ export function LogsView() {
         ) : (
           <div className="h-full flex flex-col">
             {/* Mobile Header */}
-            <div className="border-b px-4 py-3">
+            <div className="border-b border-border px-4 py-3">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg font-semibold text-white">API Logs</h2>
+                <h2 className="text-lg font-semibold text-foreground">API Logs</h2>
                 <div className="flex items-center gap-2">
                   {/* Use the custom LogsFilterDropdown component for mobile */}
                   <LogsFilterDropdown context={logsContext} />
@@ -867,7 +867,7 @@ export function LogsView() {
                     onClick={handleRefresh}
                     disabled={query.isFetching}
                   >
-                    <RefreshCw className={`h-4 w-4 text-white ${query.isFetching ? 'animate-spin' : ''}`} />
+                    <RefreshCw className={`h-4 w-4 ${query.isFetching ? 'animate-spin' : ''}`} />
                   </Button>
                 </div>
               </div>
@@ -901,11 +901,11 @@ export function LogsView() {
               )}
 
               {!query.isFetching && logs.length === 0 && (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-muted-foreground">
                   <Activity className="h-8 w-8 mx-auto mb-2 opacity-50" />
                   <p>No logs found</p>
                   {hasActiveFilters() && (
-                    <p className="text-xs mt-1 text-white">Try adjusting your filters</p>
+                    <p className="text-xs mt-1 text-muted-foreground">Try adjusting your filters</p>
                   )}
                 </div>
               )}
@@ -926,8 +926,8 @@ export function LogsView() {
 
             {/* Mobile Pagination */}
             {logs.length > 0 && (
-              <div className="border-t px-4 py-2 flex items-center justify-between text-sm">
-                <span className="text-gray-600">
+              <div className="border-t border-border px-4 py-2 flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">
                   Showing {((filter.offset as number) || 0) + 1}-{((filter.offset as number) || 0) + logs.length}
                   {query.data?.logs?.page_info.has_next_page && " of many"}
                 </span>
@@ -937,7 +937,7 @@ export function LogsView() {
                     size="sm"
                     onClick={() => updateFilter({ offset: Math.max(0, ((filter.offset as number) || 0) - 20) })}
                     disabled={(filter.offset as number) === 0 || filter.offset === undefined}
-                    className="h-7 px-2 text-xs text-white border-neutral-800 hover:bg-neutral-800/40"
+                    className="h-7 px-2 text-xs text-foreground border-border hover:bg-primary/10"
                   >
                     Previous
                   </Button>
@@ -946,7 +946,7 @@ export function LogsView() {
                     size="sm"
                     onClick={() => updateFilter({ offset: ((filter.offset as number) || 0) + 20 })}
                     disabled={!query.data?.logs?.page_info.has_next_page}
-                    className="h-7 px-2 text-xs text-white border-neutral-800 hover:bg-neutral-800/40"
+                    className="h-7 px-2 text-xs text-foreground border-border hover:bg-primary/10"
                   >
                     Next
                   </Button>

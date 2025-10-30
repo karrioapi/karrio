@@ -28,7 +28,7 @@ const CustomDrawerContent = React.forwardRef<
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed z-50 grid grid-rows-[1fr,auto] lg:grid-rows-[auto,1fr] border-t bg-[#0f0c24] w-full left-0 right-0 top-0 lg:top-[9vh] bottom-0",
+        "fixed z-50 grid grid-rows-[1fr,auto] lg:grid-rows-[auto,1fr] border-t bg-background w-full left-0 right-0 top-0 lg:top-[9vh] bottom-0",
         // Force dark mode for this drawer only (scoped) and crisp rendering
         "dark antialiased [text-rendering:optimizeLegibility] [backface-visibility:hidden]",
         className
@@ -117,6 +117,23 @@ export function DeveloperToolsDrawer() {
     window.dispatchEvent(event);
   }, [isOpen]);
 
+  // Create a dedicated portal container for DevTools overlays with scoped dark theme
+  React.useEffect(() => {
+    if (!isOpen || typeof document === 'undefined') return;
+    const existing = document.getElementById('devtools-portal');
+    if (existing) return;
+    const portal = document.createElement('div');
+    portal.id = 'devtools-portal';
+    portal.className = 'devtools-theme dark';
+    portal.style.position = 'fixed';
+    portal.style.inset = '0';
+    portal.style.zIndex = '9999';
+    document.body.appendChild(portal);
+    return () => {
+      try { document.body.removeChild(portal); } catch (_) { /* ignore */ }
+    };
+  }, [isOpen]);
+
 
   // Revert any transform clearing; use only position-based animations when we re-implement
 
@@ -136,7 +153,23 @@ export function DeveloperToolsDrawer() {
         setIsMobileSidebarOpen(false);
       }
     }}>
-      <CustomDrawerContent className={cn("h-full max-h-full lg:overflow-hidden")}>
+      <CustomDrawerContent className={cn("dark devtools-theme h-full max-h-full lg:overflow-hidden")}>
+        <style jsx global>{`
+          .devtools-theme.dark {
+            --background: 248 44% 11%;
+            --card: 248 40% 8%;
+            --foreground: 0 0% 100%;
+            --muted: 222 47% 11%;
+            --muted-foreground: 217 12% 65%;
+            --border: 0 0% 15%;
+            --input: 248 44% 11%;
+            --ring: 258 90% 67%;
+            --primary: 258 90% 67%;
+            --primary-foreground: 0 0% 100%;
+            --popover: 248 40% 8%;
+            --popover-foreground: 220 14% 94%;
+          }
+        `}</style>
         {/* Top drag strip - mobile only; independent from content scrolling */}
         <div
           id="devtools-drag-strip"
@@ -196,7 +229,7 @@ export function DeveloperToolsDrawer() {
         />
         {/* Header */}
         <DrawerHeader
-          className="relative z-50 flex-shrink-0 border-b border-neutral-800 !bg-[#0b0a1a] px-2 sm:px-4 py-2 lg:py-2 text-white row-start-2 lg:row-start-1"
+          className="relative z-50 flex-shrink-0 border-b border-border bg-card px-2 sm:px-4 py-2 lg:py-2 text-foreground row-start-2 lg:row-start-1"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3">
@@ -211,15 +244,15 @@ export function DeveloperToolsDrawer() {
               >
                 <Menu className="h-6 w-6" />
               </Button>
-              <Terminal className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
-              <DrawerTitle className="text-base sm:text-lg font-semibold text-white">Developer Tools</DrawerTitle>
+              <Terminal className="h-6 w-6 sm:h-7 sm:w-7 text-foreground" />
+              <DrawerTitle className="text-base sm:text-lg font-semibold text-foreground">Developer Tools</DrawerTitle>
               <DrawerDescription className="sr-only">Developer tools drawer</DrawerDescription>
             </div>
             <Button
               variant="ghost"
               size="sm"
               onClick={closeDeveloperTools}
-              className="h-10 w-10 p-0 text-neutral-300 hover:text-white hover:bg-neutral-800/40"
+              className="h-10 w-10 p-0 text-muted-foreground hover:text-foreground hover:bg-primary/10"
             >
               <X className="h-6 w-6" />
             </Button>
@@ -246,7 +279,7 @@ export function DeveloperToolsDrawer() {
 
             {/* Sidebar Navigation */}
             <div id="devtools-mobile-nav" className={cn(
-              "flex-shrink-0 border-r border-neutral-800 bg-[#0b0a1a] transition-transform duration-200 ease-in-out z-50 lg:z-10",
+              "flex-shrink-0 border-r border-border bg-card transition-transform duration-200 ease-in-out z-50 lg:z-10",
               // Mobile: slide in from left, hidden by default
               "absolute lg:relative inset-y-0 left-0",
               "w-52 sm:w-56 lg:w-52",
@@ -261,11 +294,11 @@ export function DeveloperToolsDrawer() {
                       value={viewKey}
                       className={cn(
                         "w-full justify-start gap-3 px-3 py-3 text-sm font-medium transition-all rounded-md",
-                        "text-white hover:bg-purple-900/10",
-                        "data-[state=active]:bg-purple-900/20 data-[state=active]:text-white data-[state=active]:shadow-sm border border-transparent data-[state=active]:border-neutral-700"
+                        "text-foreground hover:bg-primary/10",
+                        "data-[state=active]:bg-primary/20 data-[state=active]:text-foreground data-[state=active]:shadow-sm border border-transparent data-[state=active]:border-border"
                       )}
                     >
-                      <Icon className="h-5 w-5 flex-shrink-0 text-[#8B5CF6]" />
+                      <Icon className="h-5 w-5 flex-shrink-0 text-primary" />
                       <span className="truncate">{config.label}</span>
                     </TabsTrigger>
                   );
@@ -274,7 +307,7 @@ export function DeveloperToolsDrawer() {
             </div>
 
             {/* Main Content Area */}
-            <div className="flex-1 lg:ml-0 bg-[#0f0c24] min-h-0 pl-0 lg:pl-0 lg:overflow-hidden">
+            <div className="flex-1 lg:ml-0 bg-background min-h-0 pl-0 lg:pl-0 lg:overflow-hidden">
               {Object.entries(VIEW_CONFIG).map(([viewKey, config]) => {
                 const Component = config.component;
                 return (
@@ -285,7 +318,7 @@ export function DeveloperToolsDrawer() {
                   >
                     <div className="relative h-full min-h-0">
                       <div
-                        className="absolute inset-0 min-h-0 overflow-auto pb-6"
+                        className="absolute inset-0 min-h-0 overflow-auto lg:pb-6"
                         style={{ touchAction: 'pan-y', WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}
                         data-vaul-no-drag
                       >

@@ -28,28 +28,21 @@ Swagger UI Custom Styling for Karrio
 /* Import Karrio brand font */
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap");
 
-/* Brand Colors */
-:root {
-    --karrio-primary: #8B5CF6;
-    /* purple-400 */
+/* Brand Colors mapped to drawer theme tokens */
+.devtools-theme.dark {
+    --karrio-primary: hsl(var(--primary));
     --karrio-secondary: #79e5dd;
     --karrio-accent: #ff4800;
-    --karrio-white: #0f0c24;
-    /* base dark */
-    --karrio-light-grey: #0b0a1a;
-    /* dark surface */
-    --karrio-border-grey: #262626;
-    /* neutral-800 */
-    --karrio-dark-grey: #e5e7eb;
-    /* text light */
+    --karrio-white: hsl(var(--background));
+    --karrio-light-grey: hsl(var(--card));
+    --karrio-border-grey: hsl(var(--border));
+    --karrio-dark-grey: hsl(var(--foreground));
     --karrio-blue-grey: #cbd5e1;
-    /* secondary text */
-    --karrio-muted-grey: #94a3b8;
-    /* muted */
+    --karrio-muted-grey: hsl(var(--muted-foreground));
 }
 
 /* Override Swagger UI Container */
-.swagger-ui {
+.devtools-theme.dark .swagger-ui {
     font-family: "Open Sans", sans-serif !important;
     font-size: 14px;
     background: var(--karrio-white);
@@ -665,27 +658,27 @@ Swagger UI Custom Styling for Karrio
 }
 
 /* Scrollbar styling */
-.swagger-ui ::-webkit-scrollbar {
+.devtools-theme.dark .swagger-ui ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
 }
 
-.swagger-ui ::-webkit-scrollbar-track {
+.devtools-theme.dark .swagger-ui ::-webkit-scrollbar-track {
     background: var(--karrio-light-grey);
     border-radius: 4px;
 }
 
-.swagger-ui ::-webkit-scrollbar-thumb {
+.devtools-theme.dark .swagger-ui ::-webkit-scrollbar-thumb {
     background: var(--karrio-muted-grey);
     border-radius: 4px;
 }
 
-.swagger-ui ::-webkit-scrollbar-thumb:hover {
+.devtools-theme.dark .swagger-ui ::-webkit-scrollbar-thumb:hover {
     background: var(--karrio-primary);
 }
 
 /* Custom container styling */
-.swagger-ui-container {
+.devtools-theme.dark .swagger-ui-container {
     max-width: 1500px;
     margin: 0 auto;
     background: transparent;

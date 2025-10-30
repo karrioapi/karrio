@@ -72,24 +72,24 @@ export function ActivityView() {
   const recentErrors = logs?.edges?.slice(0, 3) || [];
 
   return (
-    <div className="h-full overflow-auto bg-[#0f0c24]">
+    <div className="h-full overflow-auto bg-background">
       <div className="p-2 sm:p-4 space-y-4 sm:space-y-6">
         {/* Top Row: API Requests Chart + API Keys */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
           {/* API Requests Chart - Full width on mobile, 2/3 on desktop */}
           <div className="lg:col-span-2">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-white">API requests</h3>
+              <h3 className="text-sm font-semibold text-foreground">API requests</h3>
               <Select
                 value={JSON.stringify(filter)}
                 onValueChange={(value) => setFilter(JSON.parse(value))}
               >
-                <SelectTrigger className="w-auto min-w-[4rem] h-7 text-xs text-white [&>span]:line-clamp-none">
+                <SelectTrigger className="w-auto min-w-[4rem] h-7 text-xs text-foreground border-border [&>span]:line-clamp-none">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-[#0f0c24] text-white border-neutral-800">
+                <SelectContent className="devtools-theme dark bg-popover text-foreground border-border">
                   {Object.entries(USAGE_FILTERS).map(([key, value]) => (
-                    <SelectItem key={key} value={JSON.stringify(value)} className="text-white focus:bg-purple-900/20 focus:text-white">
+                    <SelectItem key={key} value={JSON.stringify(value)} className="text-foreground focus:bg-primary/20 focus:text-foreground">
                       {key}
                     </SelectItem>
                   ))}
@@ -156,12 +156,12 @@ export function ActivityView() {
               <Button
                 variant="link"
                 size="sm"
-                className="text-xs sm:text-sm text-[#8B5CF6]  hover:text-purple-200 p-0 h-auto"
+                className="text-xs sm:text-sm text-primary hover:text-primary/80 p-0 h-auto"
                 onClick={handleViewAllRequests}
               >
                 View all requests
               </Button>
-              <span className="text-xs text-neutral-400 ml-2 sm:ml-3">
+              <span className="text-xs text-muted-foreground ml-2 sm:ml-3">
                 Updated today {new Date().toLocaleTimeString('en-US', {
                   hour: 'numeric',
                   minute: '2-digit',
@@ -174,23 +174,23 @@ export function ActivityView() {
           {/* API Keys Section */}
           <div className="lg:col-span-1">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-neutral-200">API keys</h3>
+              <h3 className="text-sm font-semibold text-foreground">API keys</h3>
               <Button
                 variant="link"
                 size="sm"
-                className="text-xs sm:text-sm text-[#8B5CF6] hover:text-purple-200 p-0 h-auto"
+                className="text-xs sm:text-sm text-primary hover:text-primary/80 p-0 h-auto"
                 onClick={handleManageAPIKeys}
               >
                 Manage API keys
               </Button>
             </div>
             <div className="space-y-2">
-              <div className="text-xs text-neutral-400 mb-1">Standard keys</div>
+              <div className="text-xs text-muted-foreground mb-1">Standard keys</div>
               <div className="space-y-1">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-neutral-400 text-xs sm:text-sm">Publishable key</span>
+                  <span className="text-muted-foreground text-xs sm:text-sm">Publishable key</span>
                   <div className="flex items-center gap-1 sm:gap-2">
-                    <code className="text-xs bg-neutral-900 border border-neutral-800 text-neutral-200 px-1 sm:px-2 py-1 rounded truncate max-w-[100px] sm:max-w-none">{publicKey}</code>
+                    <code className="text-xs bg-muted border border-border text-foreground px-1 sm:px-2 py-1 rounded truncate max-w-[100px] sm:max-w-none">{publicKey}</code>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -202,9 +202,9 @@ export function ActivityView() {
                   </div>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-neutral-400 text-xs sm:text-sm">Secret key</span>
+                  <span className="text-muted-foreground text-xs sm:text-sm">Secret key</span>
                   <div className="flex items-center gap-1 sm:gap-2">
-                    <code className="text-xs bg-neutral-900 border border-neutral-800 text-neutral-200 px-1 sm:px-2 py-1 rounded truncate max-w-[100px] sm:max-w-none">
+                    <code className="text-xs bg-muted border border-border text-foreground px-1 sm:px-2 py-1 rounded truncate max-w-[100px] sm:max-w-none">
                       {showSecretKey ? secretKey : `${secretKey.slice(0, 7)}...`}
                     </code>
                     <Button
@@ -234,7 +234,7 @@ export function ActivityView() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
           {/* Recent Errors - Full width on mobile, 2/3 on desktop */}
           <div className="lg:col-span-2">
-            <h3 className="text-sm font-semibold text-neutral-200 mb-3">Recent errors</h3>
+            <h3 className="text-sm font-semibold text-foreground mb-3">Recent errors</h3>
             {recentErrors.length > 0 ? (
               <div className="space-y-2">
                 {recentErrors.map(({ node: log }) => (
@@ -269,8 +269,8 @@ export function ActivityView() {
                     <span className="text-neutral-50 text-xs">✓</span>
                   </div>
                 </div>
-                <p className="text-xs sm:text-sm font-medium text-neutral-200">Your integration is running smoothly</p>
-                <p className="text-xs text-neutral-400 mt-1">
+                <p className="text-xs sm:text-sm font-medium text-foreground">Your integration is running smoothly</p>
+                <p className="text-xs text-muted-foreground mt-1">
                   Come back here to see recent errors and recommendations
                 </p>
               </div>
@@ -279,28 +279,28 @@ export function ActivityView() {
 
           {/* API Details */}
           <div className="lg:col-span-1">
-            <h3 className="text-sm font-semibold text-neutral-200 mb-3">API Details</h3>
+            <h3 className="text-sm font-semibold text-foreground mb-3">API Details</h3>
             <div className="space-y-3">
               {/* API Version */}
               <div>
-                <div className="text-xs text-neutral-400 mb-1">API Version</div>
-                <code className="text-xs sm:text-sm bg-neutral-900 border border-neutral-800 text-neutral-200 px-2 py-1 rounded">{references?.VERSION}</code>
+                <div className="text-xs text-muted-foreground mb-1">API Version</div>
+                <code className="text-xs sm:text-sm bg-muted border border-border text-foreground px-2 py-1 rounded">{references?.VERSION}</code>
               </div>
 
               {/* API Endpoints */}
               <div className="space-y-2">
                 <div>
-                  <div className="text-xs text-neutral-400 mb-1">REST API</div>
+                  <div className="text-xs text-muted-foreground mb-1">REST API</div>
                   <CopiableLink
-                    className="text-xs font-mono bg-neutral-900 border border-neutral-800 text-neutral-200 px-2 py-1 rounded block hover:bg-neutral-400 truncate"
+                    className="text-xs font-mono bg-muted border border-border text-foreground px-2 py-1 rounded block truncate"
                     text={references?.HOST}
                     title={references?.HOST}
                   />
                 </div>
                 <div>
-                  <div className="text-xs text-neutral-400 mb-1">GraphQL API</div>
+                  <div className="text-xs text-muted-foreground mb-1">GraphQL API</div>
                   <CopiableLink
-                    className="text-xs font-mono bg-neutral-900 border border-neutral-800 text-neutral-200 px-2 py-1 rounded block hover:bg-neutral-400 truncate"
+                    className="text-xs font-mono bg-muted border border-border text-foreground px-2 py-1 rounded block truncate"
                     text={references?.GRAPHQL}
                     title={references?.GRAPHQL}
                   />

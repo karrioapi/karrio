@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@karrio/ui/components/ui/dialog";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@karrio/ui/components/ui/dropdown-menu";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogPortal } from "@karrio/ui/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuPortal } from "@karrio/ui/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@karrio/ui/components/ui/tooltip";
 import { Trash2, Plus, Copy, Settings, Eye, EyeOff, CheckCircle, XCircle, MoreHorizontal } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@karrio/ui/components/ui/table";
@@ -154,12 +154,12 @@ export function WebhooksView() {
   ];
 
   return (
-    <div className="h-full flex flex-col bg-[#0f0c24]">
-      <div className="px-4 py-3 border-b border-neutral-800">
+    <div className="h-full flex flex-col bg-background">
+      <div className="px-4 py-3 border-b border-border">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg font-semibold text-neutral-200">Webhooks</h2>
-            <p className="text-sm text-neutral-400 mt-1">
+            <h2 className="text-lg font-semibold text-foreground">Webhooks</h2>
+            <p className="text-sm text-muted-foreground mt-1">
               Manage webhook endpoints and event subscriptions
             </p>
           </div>
@@ -170,95 +170,97 @@ export function WebhooksView() {
                 Create Webhook
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-[#0f0c24] border-neutral-800 text-neutral-200">
-              <DialogHeader className="bg-[#0f0c24] border-b border-neutral-800 px-4 py-3">
-                <DialogTitle className="text-neutral-100">Create New Webhook</DialogTitle>
-                <DialogDescription className="text-neutral-400">
-                  Add a new webhook endpoint to receive event notifications
-                </DialogDescription>
-              </DialogHeader>
-              <form onSubmit={handleCreateSubmit} className="space-y-4 p-4 pb-8">
-                <div>
-                  <Label htmlFor="url" className="text-neutral-300">Endpoint URL</Label>
-                  <Input
-                    id="url"
-                    type="url"
-                    placeholder="https://your-domain.com/webhook"
-                    value={formData.url}
-                    onChange={(e) => setFormData(prev => ({ ...prev, url: e.target.value }))}
-                    required
-                    className="bg-transparent border-primary text-neutral-200 placeholder:text-neutral-500"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="description" className="text-neutral-300">Description</Label>
-                  <Input
-                    id="description"
-                    placeholder="Optional description"
-                    value={formData.description}
-                    onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                    className="bg-transparent border-primary text-neutral-200 placeholder:text-neutral-500"
-                  />
-                </div>
-                <div>
-                  <Label className="text-neutral-300">Events to Subscribe</Label>
-                  <div className="grid grid-cols-2 gap-2 mt-2">
-                    {eventTypeOptions.map((option) => (
-                      <div key={option.value} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={option.value}
-                          checked={formData.enabled_events.includes(option.value)}
-                          onCheckedChange={(checked) => {
-                            if (checked) {
-                              setFormData(prev => ({
-                                ...prev,
-                                enabled_events: [...prev.enabled_events, option.value]
-                              }));
-                            } else {
-                              setFormData(prev => ({
-                                ...prev,
-                                enabled_events: prev.enabled_events.filter(e => e !== option.value)
-                              }));
-                            }
-                          }}
-                        />
-                        <Label htmlFor={option.value} className="text-sm text-neutral-300">
-                          {option.label}
-                        </Label>
-                      </div>
-                    ))}
+            <DialogPortal container={typeof document !== 'undefined' ? document.getElementById('devtools-portal') as any : undefined}>
+              <DialogContent className="devtools-theme dark bg-popover border-border text-foreground">
+                <DialogHeader className="bg-popover border-b border-border px-4 py-3">
+                  <DialogTitle className="text-foreground">Create New Webhook</DialogTitle>
+                  <DialogDescription className="text-muted-foreground">
+                    Add a new webhook endpoint to receive event notifications
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleCreateSubmit} className="space-y-4 p-4 pb-8">
+                  <div>
+                    <Label htmlFor="url" className="text-muted-foreground">Endpoint URL</Label>
+                    <Input
+                      id="url"
+                      type="url"
+                      placeholder="https://your-domain.com/webhook"
+                      value={formData.url}
+                      onChange={(e) => setFormData(prev => ({ ...prev, url: e.target.value }))}
+                      required
+                      className="bg-input border-border text-foreground placeholder:text-muted-foreground"
+                    />
                   </div>
-                </div>
-                <div>
-                  <Label htmlFor="secret" className="text-neutral-300">Secret (Optional)</Label>
-                  <Input
-                    id="secret"
-                    placeholder="Webhook secret for signature validation"
-                    value={formData.secret}
-                    onChange={(e) => setFormData(prev => ({ ...prev, secret: e.target.value }))}
-                    className="bg-transparent border-primary text-neutral-200 placeholder:text-neutral-500"
-                  />
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="disabled"
-                    checked={formData.disabled}
-                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, disabled: !!checked }))}
-                  />
-                  <Label htmlFor="disabled" className="text-sm text-neutral-300">
-                    Create as disabled
-                  </Label>
-                </div>
-                <div className="flex justify-end space-x-2">
-                  <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)} className="!text-white !bg-[#0b0a1a] !border-neutral-800 hover:!bg-primary/10 hover:!border-primary hover:!text-primary">
-                    Cancel
-                  </Button>
-                  <Button type="submit" disabled={createWebhook.isLoading}>
-                    {createWebhook.isLoading ? "Creating..." : "Create Webhook"}
-                  </Button>
-                </div>
-              </form>
-            </DialogContent>
+                  <div>
+                    <Label htmlFor="description" className="text-muted-foreground">Description</Label>
+                    <Input
+                      id="description"
+                      placeholder="Optional description"
+                      value={formData.description}
+                      onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                      className="bg-input border-border text-foreground placeholder:text-muted-foreground"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-muted-foreground">Events to Subscribe</Label>
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      {eventTypeOptions.map((option) => (
+                        <div key={option.value} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={option.value}
+                            checked={formData.enabled_events.includes(option.value)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setFormData(prev => ({
+                                  ...prev,
+                                  enabled_events: [...prev.enabled_events, option.value]
+                                }));
+                              } else {
+                                setFormData(prev => ({
+                                  ...prev,
+                                  enabled_events: prev.enabled_events.filter(e => e !== option.value)
+                                }));
+                              }
+                            }}
+                          />
+                          <Label htmlFor={option.value} className="text-sm text-muted-foreground">
+                            {option.label}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="secret" className="text-muted-foreground">Secret (Optional)</Label>
+                    <Input
+                      id="secret"
+                      placeholder="Webhook secret for signature validation"
+                      value={formData.secret}
+                      onChange={(e) => setFormData(prev => ({ ...prev, secret: e.target.value }))}
+                      className="bg-input border-border text-foreground placeholder:text-muted-foreground"
+                    />
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="disabled"
+                      checked={formData.disabled}
+                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, disabled: !!checked }))}
+                    />
+                    <Label htmlFor="disabled" className="text-sm text-muted-foreground">
+                      Create as disabled
+                    </Label>
+                  </div>
+                  <div className="flex justify-end space-x-2">
+                    <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)} className="!text-foreground !bg-card !border-border hover:!bg-primary/10 hover:!border-primary hover:!text-primary">
+                      Cancel
+                    </Button>
+                    <Button type="submit" disabled={createWebhook.isLoading}>
+                      {createWebhook.isLoading ? "Creating..." : "Create Webhook"}
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </DialogPortal>
           </Dialog>
         </div>
       </div>
@@ -270,239 +272,245 @@ export function WebhooksView() {
           </div>
         ) : webhooks.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-neutral-500 mb-4">
+            <div className="text-muted-foreground mb-4">
               <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-neutral-200 mb-2">No webhooks configured</h3>
-            <p className="text-neutral-400 mb-4">Create your first webhook to start receiving event notifications.</p>
+            <h3 className="text-lg font-medium text-foreground mb-2">No webhooks configured</h3>
+            <p className="text-muted-foreground mb-4">Create your first webhook to start receiving event notifications.</p>
             <Button onClick={() => setIsCreateOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Create Webhook
             </Button>
           </div>
         ) : (
-          <div className="border-b border-neutral-800">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-neutral-200">Endpoint</TableHead>
-                  <TableHead className="text-neutral-200">Status</TableHead>
-                  <TableHead className="text-neutral-200">Events</TableHead>
-                  <TableHead className="text-neutral-200">Created</TableHead>
-                  <TableHead className="w-12 text-neutral-200"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {webhooks.map((webhook) => (
-                  <TableRow key={webhook.id}>
-                    <TableCell className="font-medium">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          {getStatusIcon(webhook)}
-                          <span className="truncate text-sm text-white">{webhook.url}</span>
+          <div className="border-b border-border overflow-x-auto sm:overflow-x-visible" style={{ touchAction: 'pan-x', WebkitOverflowScrolling: 'touch', overscrollBehaviorX: 'contain' }}>
+            <div className="inline-block min-w-[900px] sm:min-w-0 align-top">
+              <Table className="w-full table-auto">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-foreground">Endpoint</TableHead>
+                    <TableHead className="text-foreground">Status</TableHead>
+                    <TableHead className="text-foreground">Events</TableHead>
+                    <TableHead className="text-foreground">Created</TableHead>
+                    <TableHead className="w-12 text-foreground"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {webhooks.map((webhook) => (
+                    <TableRow key={webhook.id}>
+                      <TableCell className="font-medium">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            {getStatusIcon(webhook)}
+                            <span className="truncate text-sm text-foreground">{webhook.url}</span>
+                          </div>
+                          {webhook.description && (
+                            <p className="text-xs text-muted-foreground truncate">
+                              {webhook.description}
+                            </p>
+                          )}
                         </div>
-                        {webhook.description && (
-                          <p className="text-xs text-neutral-300 truncate">
-                            {webhook.description}
-                          </p>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={webhook.disabled ? "destructive" : "default"}>
-                        {webhook.disabled ? "Disabled" : "Active"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="max-w-md">
-                        {webhook.enabled_events && webhook.enabled_events.length > 0 ? (
-                          <div className="flex flex-wrap gap-1">
-                            {webhook.enabled_events.slice(0, 2).map((event: EventTypes) => (
-                              <Badge key={event} variant="secondary" className="text-xs">
-                                {event}
-                              </Badge>
-                            ))}
-                            {webhook.enabled_events.length > 2 && (
-                              <>
-                                {/* Desktop hover tooltip */}
-                                <div className="hidden sm:block">
-                                  <TooltipProvider>
-                                    <Tooltip>
-                                      <TooltipTrigger asChild>
-                                        <Badge variant="secondary" className="text-xs cursor-default">
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={webhook.disabled ? "destructive" : "default"}>
+                          {webhook.disabled ? "Disabled" : "Active"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="max-w-md">
+                          {webhook.enabled_events && webhook.enabled_events.length > 0 ? (
+                            <div className="flex flex-wrap gap-1">
+                              {webhook.enabled_events.slice(0, 2).map((event: EventTypes) => (
+                                <Badge key={event} variant="secondary" className="text-xs">
+                                  {event}
+                                </Badge>
+                              ))}
+                              {webhook.enabled_events.length > 2 && (
+                                <>
+                                  <div className="hidden sm:block">
+                                    <TooltipProvider>
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <Badge variant="secondary" className="text-xs cursor-default">
+                                            +{webhook.enabled_events.length - 2}
+                                          </Badge>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="bottom" sideOffset={6} className="bg-popover text-foreground border border-border">
+                                          <div className="max-w-xs text-xs space-y-1">
+                                            {webhook.enabled_events.slice(2).map((event: EventTypes) => (
+                                              <div key={event}>{event}</div>
+                                            ))}
+                                          </div>
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    </TooltipProvider>
+                                  </div>
+                                  <div className="sm:hidden">
+                                    <DropdownMenu>
+                                      <DropdownMenuTrigger asChild>
+                                        <Badge variant="secondary" className="text-xs cursor-pointer">
                                           +{webhook.enabled_events.length - 2}
                                         </Badge>
-                                      </TooltipTrigger>
-                                      <TooltipContent side="bottom" sideOffset={6} className="bg-[#0f0c24] text-white border border-neutral-800">
-                                        <div className="max-w-xs text-xs space-y-1">
-                                          {webhook.enabled_events.slice(2).map((event: EventTypes) => (
-                                            <div key={event}>{event}</div>
-                                          ))}
-                                        </div>
-                                      </TooltipContent>
-                                    </Tooltip>
-                                  </TooltipProvider>
-                                </div>
-                                {/* Mobile click dropdown */}
-                                <div className="sm:hidden">
-                                  <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                      <Badge variant="secondary" className="text-xs cursor-pointer">
-                                        +{webhook.enabled_events.length - 2}
-                                      </Badge>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent side="bottom" align="start" className="bg-[#0f0c24] text-white border-neutral-800">
-                                      <div className="max-w-xs text-xs space-y-1 px-2 py-1">
-                                        {webhook.enabled_events.slice(2).map((event: EventTypes) => (
-                                          <div key={event}>{event}</div>
-                                        ))}
-                                      </div>
-                                    </DropdownMenuContent>
-                                  </DropdownMenu>
-                                </div>
-                              </>
-                            )}
-                          </div>
-                        ) : (
-                          <span className="text-xs text-muted-foreground">No events</span>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm text-muted-foreground">
-                        {formatDateTimeLong(webhook.created_at)}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 p-0 text-neutral-300">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="bg-[#0f0c24] text-white border-neutral-800">
-                          <DropdownMenuItem onClick={() => handleEdit(webhook)} className="text-white focus:bg-purple-900/20 focus:text-white">
-                            <Settings className="h-4 w-4 mr-2" />
-                            Configure
-                          </DropdownMenuItem>
-                          {webhook.secret && (
-                            <DropdownMenuItem onClick={() => copyToClipboard(webhook.secret || "")} className="text-white focus:bg-purple-900/20 focus:text-white">
-                              <Copy className="h-4 w-4 mr-2" />
-                              Copy Secret
-                            </DropdownMenuItem>
+                                      </DropdownMenuTrigger>
+                                      <DropdownMenuPortal container={typeof document !== 'undefined' ? document.getElementById('devtools-portal') as any : undefined}>
+                                        <DropdownMenuContent side="bottom" align="start" className="devtools-theme dark bg-popover text-foreground border-border">
+                                          <div className="max-w-xs text-xs space-y-1 px-2 py-1">
+                                            {webhook.enabled_events.slice(2).map((event: EventTypes) => (
+                                              <div key={event}>{event}</div>
+                                            ))}
+                                          </div>
+                                        </DropdownMenuContent>
+                                      </DropdownMenuPortal>
+                                    </DropdownMenu>
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">No events</span>
                           )}
-                          <DropdownMenuItem onClick={() => copyToClipboard(webhook.url || "")} className="text-white focus:bg-purple-900/20 focus:text-white">
-                            <Copy className="h-4 w-4 mr-2" />
-                            Copy URL
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleDeleteConfirmed()}
-                            className="text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm text-muted-foreground">
+                          {formatDateTimeLong(webhook.created_at)}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 p-0 text-muted-foreground">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuPortal container={typeof document !== 'undefined' ? document.getElementById('devtools-portal') as any : undefined}>
+                            <DropdownMenuContent align="end" className="devtools-theme dark bg-popover text-foreground border-border">
+                              <DropdownMenuItem onClick={() => handleEdit(webhook)} className="text-foreground focus:bg-primary/20 focus:text-foreground">
+                                <Settings className="h-4 w-4 mr-2" />
+                                Configure
+                              </DropdownMenuItem>
+                              {webhook.secret && (
+                                <DropdownMenuItem onClick={() => copyToClipboard(webhook.secret || "")} className="text-foreground focus:bg-primary/20 focus:text-foreground">
+                                  <Copy className="h-4 w-4 mr-2" />
+                                  Copy Secret
+                                </DropdownMenuItem>
+                              )}
+                              <DropdownMenuItem onClick={() => copyToClipboard(webhook.url || "")} className="text-foreground focus:bg-primary/20 focus:text-foreground">
+                                <Copy className="h-4 w-4 mr-2" />
+                                Copy URL
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => handleDeleteConfirmed()}
+                                className="text-destructive"
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenuPortal>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </div>
         )}
       </div>
 
       {/* Edit Webhook Dialog */}
       <Dialog open={!!editingWebhook} onOpenChange={() => setEditingWebhook(null)}>
-        <DialogContent className="bg-[#0f0c24] border-neutral-800 text-neutral-200">
-          <DialogHeader className="bg-[#0f0c24] border-b border-neutral-800 px-4 py-3">
-            <DialogTitle className="text-neutral-100">Edit Webhook</DialogTitle>
-            <DialogDescription className="text-neutral-400">
-              Update webhook endpoint configuration
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleUpdateSubmit} className="space-y-4 p-4 pb-8">
-            <div>
-              <Label htmlFor="edit-url" className="text-neutral-300">Endpoint URL</Label>
-              <Input
-                id="edit-url"
-                type="url"
-                value={formData.url}
-                onChange={(e) => setFormData(prev => ({ ...prev, url: e.target.value }))}
-                required
-                className="bg-transparent border-primary text-neutral-200 placeholder:text-neutral-500"
-              />
-            </div>
-            <div>
-              <Label htmlFor="edit-description" className="text-neutral-300">Description</Label>
-              <Input
-                id="edit-description"
-                value={formData.description}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                className="bg-transparent border-primary text-neutral-200 placeholder:text-neutral-500"
-              />
-            </div>
-            <div>
-              <Label className="text-neutral-300">Events to Subscribe</Label>
-              <div className="grid grid-cols-2 gap-2 mt-2">
-                {eventTypeOptions.map((option) => (
-                  <div key={option.value} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`edit-${option.value}`}
-                      checked={formData.enabled_events.includes(option.value)}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          setFormData(prev => ({
-                            ...prev,
-                            enabled_events: [...prev.enabled_events, option.value]
-                          }));
-                        } else {
-                          setFormData(prev => ({
-                            ...prev,
-                            enabled_events: prev.enabled_events.filter(e => e !== option.value)
-                          }));
-                        }
-                      }}
-                    />
-                    <Label htmlFor={`edit-${option.value}`} className="text-sm text-neutral-300">
-                      {option.label}
-                    </Label>
-                  </div>
-                ))}
+        <DialogPortal container={typeof document !== 'undefined' ? document.getElementById('devtools-portal') as any : undefined}>
+          <DialogContent className="devtools-theme dark bg-popover border-border text-foreground">
+            <DialogHeader className="bg-popover border-b border-border px-4 py-3">
+              <DialogTitle className="text-foreground">Edit Webhook</DialogTitle>
+              <DialogDescription className="text-muted-foreground">
+                Update webhook endpoint configuration
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleUpdateSubmit} className="space-y-4 p-4 pb-8">
+              <div>
+                <Label htmlFor="edit-url" className="text-muted-foreground">Endpoint URL</Label>
+                <Input
+                  id="edit-url"
+                  type="url"
+                  value={formData.url}
+                  onChange={(e) => setFormData(prev => ({ ...prev, url: e.target.value }))}
+                  required
+                  className="bg-input border-border text-foreground placeholder:text-muted-foreground"
+                />
               </div>
-            </div>
-            <div>
-              <Label htmlFor="edit-secret" className="text-neutral-300">Secret</Label>
-              <Input
-                id="edit-secret"
-                value={formData.secret}
-                onChange={(e) => setFormData(prev => ({ ...prev, secret: e.target.value }))}
-                className="bg-transparent border-primary text-neutral-200 placeholder:text-neutral-500"
-              />
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="edit-disabled"
-                checked={formData.disabled}
-                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, disabled: !!checked }))}
-              />
-              <Label htmlFor="edit-disabled" className="text-sm text-neutral-300">
-                Disabled
-              </Label>
-            </div>
-            <div className="flex justify-end space-x-2">
-              <Button type="button" variant="outline" onClick={() => setEditingWebhook(null)} className="!text-white !bg-[#0b0a1a] !border-neutral-800 hover:!bg-primary/10 hover:!border-primary hover:!text-primary">
-                Cancel
-              </Button>
-              <Button type="submit" disabled={updateWebhook.isLoading}>
-                {updateWebhook.isLoading ? "Updating..." : "Update Webhook"}
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
+              <div>
+                <Label htmlFor="edit-description" className="text-muted-foreground">Description</Label>
+                <Input
+                  id="edit-description"
+                  value={formData.description}
+                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                  className="bg-input border-border text-foreground placeholder:text-muted-foreground"
+                />
+              </div>
+              <div>
+                <Label className="text-muted-foreground">Events to Subscribe</Label>
+                <div className="grid grid-cols-2 gap-2 mt-2">
+                  {eventTypeOptions.map((option) => (
+                    <div key={option.value} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`edit-${option.value}`}
+                        checked={formData.enabled_events.includes(option.value)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setFormData(prev => ({
+                              ...prev,
+                              enabled_events: [...prev.enabled_events, option.value]
+                            }));
+                          } else {
+                            setFormData(prev => ({
+                              ...prev,
+                              enabled_events: prev.enabled_events.filter(e => e !== option.value)
+                            }));
+                          }
+                        }}
+                      />
+                      <Label htmlFor={`edit-${option.value}`} className="text-sm text-muted-foreground">
+                        {option.label}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="edit-secret" className="text-muted-foreground">Secret</Label>
+                <Input
+                  id="edit-secret"
+                  value={formData.secret}
+                  onChange={(e) => setFormData(prev => ({ ...prev, secret: e.target.value }))}
+                  className="bg-input border-border text-foreground placeholder:text-muted-foreground"
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="edit-disabled"
+                  checked={formData.disabled}
+                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, disabled: !!checked }))}
+                />
+                <Label htmlFor="edit-disabled" className="text-sm text-muted-foreground">
+                  Disabled
+                </Label>
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button type="button" variant="outline" onClick={() => setEditingWebhook(null)} className="!text-foreground !bg-card !border-border hover:!bg-primary/10 hover:!border-primary hover:!text-primary">
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={updateWebhook.isLoading}>
+                  {updateWebhook.isLoading ? "Updating..." : "Update Webhook"}
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </DialogPortal>
       </Dialog>
     </div>
   );
