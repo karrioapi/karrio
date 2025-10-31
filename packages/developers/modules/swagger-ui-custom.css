@@ -1,3 +1,26 @@
+/* Dark-mode friendly inline badge/label chips (e.g., Accept header chip) */
+.swagger-ui .response-content-type .content-type>label,
+.swagger-ui .response-col_description .response-controls .response-controls-header>label,
+.swagger-ui .opblock .opblock-body label,
+.swagger-ui .model-title__text>label,
+.swagger-ui .parameter__in,
+.swagger-ui .parameter__name .renderedMarkdown p code,
+.swagger-ui .parameter__name code,
+.swagger-ui .response-control-media-type__accept-message,
+.swagger-ui .response-control-media-type__accept-message code,
+.swagger-ui .response-control-media-type__title,
+.swagger-ui .response-control-media-type__title code,
+.swagger-ui .model .property-row__name code {
+    background: rgba(139, 92, 246, 0.12) !important;
+    /* subtle purple tint */
+    color: #e5e7eb !important;
+    /* neutral-200 text */
+    border: 1px solid #4b5563 !important;
+    /* neutral-600 border */
+    border-radius: 6px !important;
+    padding: 2px 6px !important;
+}
+
 /* ==========================================================================
 Swagger UI Custom Styling for Karrio
 ========================================================================== */
@@ -5,21 +28,21 @@ Swagger UI Custom Styling for Karrio
 /* Import Karrio brand font */
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap");
 
-/* Brand Colors */
-:root {
-    --karrio-primary: #5722cc;
+/* Brand Colors mapped to drawer theme tokens */
+.devtools-theme.dark {
+    --karrio-primary: hsl(var(--primary));
     --karrio-secondary: #79e5dd;
     --karrio-accent: #ff4800;
-    --karrio-white: #fff;
-    --karrio-light-grey: #eff4f7;
-    --karrio-border-grey: #ccc;
-    --karrio-dark-grey: #344258;
-    --karrio-blue-grey: #444f60;
-    --karrio-muted-grey: #999;
+    --karrio-white: hsl(var(--background));
+    --karrio-light-grey: hsl(var(--card));
+    --karrio-border-grey: hsl(var(--border));
+    --karrio-dark-grey: hsl(var(--foreground));
+    --karrio-blue-grey: #cbd5e1;
+    --karrio-muted-grey: hsl(var(--muted-foreground));
 }
 
 /* Override Swagger UI Container */
-.swagger-ui {
+.devtools-theme.dark .swagger-ui {
     font-family: "Open Sans", sans-serif !important;
     font-size: 14px;
     background: var(--karrio-white);
@@ -55,10 +78,38 @@ Swagger UI Custom Styling for Karrio
 }
 
 .swagger-ui .info .description {
-    color: var(--karrio-muted-grey) !important;
+    color: #d1d5db !important;
+    /* neutral-300 */
     font-size: 1.1rem;
     line-height: 1.6;
     margin: 15px 0;
+}
+
+/* Ensure playground intro text (markdown) uses neutral-300 */
+.swagger-ui .info .description .markdown,
+.swagger-ui .info .description .markdown p,
+.swagger-ui .info .markdown,
+.swagger-ui .info .markdown p,
+.swagger-ui .info .description p {
+    color: #d1d5db !important;
+    /* neutral-300 */
+}
+
+/* Headings inside the description should be neutral-500 */
+.swagger-ui .info .description h1,
+.swagger-ui .info .description h2,
+.swagger-ui .info .description h3,
+.swagger-ui .info .description h4,
+.swagger-ui .info .description h5,
+.swagger-ui .info .description h6,
+.swagger-ui .info .description .markdown h1,
+.swagger-ui .info .description .markdown h2,
+.swagger-ui .info .description .markdown h3,
+.swagger-ui .info .description .markdown h4,
+.swagger-ui .info .description .markdown h5,
+.swagger-ui .info .description .markdown h6 {
+    color: #a78bfa !important;
+    /* neutral-400 */
 }
 
 /* Version Badge Styling */
@@ -141,7 +192,7 @@ Swagger UI Custom Styling for Karrio
     margin-bottom: 8px !important;
     font-size: 1.5rem !important;
     font-weight: 600 !important;
-    color: var(--karrio-dark-grey) !important;
+    color: #ffffff !important;
     margin-top: 0 !important;
 }
 
@@ -151,21 +202,72 @@ Swagger UI Custom Styling for Karrio
     margin: 0 !important;
     padding: 0 !important;
     font-size: 1rem !important;
-    color: var(--karrio-muted-grey) !important;
+    color: #e5e7eb !important;
     line-height: 1.5 !important;
     font-weight: 400 !important;
     max-width: 100% !important;
+}
+
+/* Ensure collapsible tag titles (API, Auth) and descriptions are colored even if class differs */
+.swagger-ui .opblock-tag .opblock-tag-section-header h4 {
+    color: #ffffff !important;
+}
+
+.swagger-ui .opblock-tag .opblock-tag-section-header p,
+.swagger-ui .opblock-tag .opblock-tag-section-header small,
+.swagger-ui .opblock-tag .opblock-tag-section-header .markdown {
+    color: #e5e7eb !important;
+    /* neutral-200 */
+}
+
+/* Broader tag header targeting (API/Auth titles and descriptions) */
+.swagger-ui .opblock-tag a,
+.swagger-ui .opblock-tag a span,
+.swagger-ui .opblock-tag h3,
+.swagger-ui .opblock-tag h4 {
+    color: #ffffff !important;
+}
+
+.swagger-ui .opblock-tag small,
+.swagger-ui .opblock-tag p,
+.swagger-ui .opblock-tag .markdown {
+    color: #e5e7eb !important;
+    /* neutral-200 */
+}
+
+/* Collapsible arrow icon color */
+.swagger-ui .opblock-tag .opblock-tag-section-header svg,
+.swagger-ui .opblock-tag .opblock-tag-section-header-a svg {
+    fill: #525252 !important;
+    /* neutral-600 */
+    stroke: #525252 !important;
+}
+
+/* Also target nested shapes and expand/collapse controls */
+.swagger-ui .opblock-tag .opblock-tag-section-header svg path,
+.swagger-ui .opblock-tag .opblock-tag-section-header svg polygon,
+.swagger-ui .opblock-tag .opblock-tag-section-header-a svg path,
+.swagger-ui .opblock-tag .opblock-tag-section-header-a svg polygon,
+.swagger-ui .opblock-tag .expand-operation svg,
+.swagger-ui .opblock-tag .expand-operation svg path,
+.swagger-ui .opblock-tag .expand-operation svg polygon,
+.swagger-ui .opblock-tag .expand-operation {
+    color: #525252 !important;
+    /* neutral-600 */
+    fill: #525252 !important;
+    stroke: #525252 !important;
 }
 
 /* Improve the overall tag section appearance */
 .swagger-ui .opblock-tag-section {
     padding: 10px !important;
     margin: 10px 0 !important;
-    border: 1px solid var(--karrio-border-grey) !important;
+    border: 1px solid #a3a3a3 !important;
+    /* neutral-400 */
     border-radius: 8px !important;
-    background: var(--karrio-white) !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
-    transition: box-shadow 0.3s ease !important;
+    background: var(--karrio-light-grey) !important;
+    box-shadow: none !important;
+    transition: background 0.3s ease !important;
 }
 
 .swagger-ui .opblock-tag-section:hover {
@@ -181,7 +283,8 @@ Swagger UI Custom Styling for Karrio
     border: 1px solid var(--karrio-border-grey);
     border-radius: 8px;
     margin: 15px 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: none;
+    background: var(--karrio-light-grey);
     transition: all 0.3s ease;
 }
 
@@ -191,11 +294,11 @@ Swagger UI Custom Styling for Karrio
 }
 
 .swagger-ui .opblock.opblock-post {
-    border-color: var(--karrio-accent);
+    border-color: #caffba;
 }
 
 .swagger-ui .opblock.opblock-post .opblock-summary {
-    border-color: var(--karrio-accent);
+    border-color: #caffba;
 }
 
 .swagger-ui .opblock.opblock-get {
@@ -207,11 +310,11 @@ Swagger UI Custom Styling for Karrio
 }
 
 .swagger-ui .opblock.opblock-put {
-    border-color: var(--karrio-primary);
+    border-color: #ffd88f;
 }
 
 .swagger-ui .opblock.opblock-put .opblock-summary {
-    border-color: var(--karrio-primary);
+    border-color: #ffd88f;
 }
 
 .swagger-ui .opblock.opblock-delete {
@@ -240,29 +343,116 @@ Swagger UI Custom Styling for Karrio
 }
 
 .swagger-ui .opblock-summary:hover {
-    background: rgba(87, 34, 204, 0.05);
+    background: rgba(139, 92, 246, 0.08);
 }
 
-.swagger-ui .opblock-summary-path {
+.swagger-ui .opblock .opblock-summary .opblock-summary-path {
     font-weight: 600;
-    color: var(--karrio-dark-grey);
+    color: #a3a3a3 !important;
+    /* neutral-400 */
 }
 
-.swagger-ui .opblock-summary-description {
-    color: var(--karrio-muted-grey);
+.swagger-ui .opblock .opblock-summary .opblock-summary-description {
+    color: #a3a3a3 !important;
+    /* neutral-400 */
     font-weight: 400;
+}
+
+/* Fallback: color the summary container text itself */
+.swagger-ui .opblock .opblock-summary {
+    color: #a3a3a3 !important;
+    /* neutral-400 */
+}
+
+/* Expanded operation content: set text to neutral-400 */
+.swagger-ui .opblock .opblock-body,
+.swagger-ui .opblock .opblock-section,
+.swagger-ui .opblock .opblock-description-wrapper,
+.swagger-ui .opblock .parameters,
+.swagger-ui .opblock .responses-wrapper,
+.swagger-ui .opblock .responses-inner {
+    color: #a3a3a3 !important;
+    /* neutral-400 */
+}
+
+/* Ensure all nested text inside expanded operations inherits neutral-400 */
+.swagger-ui .opblock .opblock-body p,
+.swagger-ui .opblock .opblock-body li,
+.swagger-ui .opblock .opblock-body span,
+.swagger-ui .opblock .opblock-body code,
+.swagger-ui .opblock .opblock-body pre,
+.swagger-ui .opblock .opblock-body td,
+.swagger-ui .opblock .opblock-body th,
+.swagger-ui .opblock .opblock-body small,
+.swagger-ui .opblock .opblock-body div,
+.swagger-ui .opblock .opblock-body a {
+    color: #a3a3a3 !important;
+}
+
+/* Remove light gray blocks inside expanded operations */
+.swagger-ui .opblock .opblock-section,
+.swagger-ui .opblock .opblock-description-wrapper,
+.swagger-ui .opblock .responses-inner,
+.swagger-ui .opblock .parameters,
+.swagger-ui .opblock table,
+.swagger-ui .opblock table tr,
+.swagger-ui .opblock table td,
+.swagger-ui .opblock table th,
+.swagger-ui .model,
+.swagger-ui .model-container {
+    background: transparent !important;
+}
+
+/* Also clear content tabs and meta bars */
+.swagger-ui .opblock .tab,
+.swagger-ui .opblock .content-type,
+.swagger-ui .opblock .response-meta {
+    background: transparent !important;
+    color: #a3a3a3 !important;
+}
+
+/* Tame table borders to dark theme */
+.swagger-ui .opblock table,
+.swagger-ui .opblock table td,
+.swagger-ui .opblock table th {
+    border-color: #262626 !important;
+    /* neutral-800 */
+}
+
+/* Operation expand/collapse arrow icons (POST/GET/etc) */
+.swagger-ui .opblock .opblock-summary svg,
+.swagger-ui .opblock .opblock-summary svg path,
+.swagger-ui .opblock .opblock-summary svg polygon,
+.swagger-ui .opblock .opblock-summary .expand-operation,
+.swagger-ui .opblock .opblock-summary .expand-operation svg,
+.swagger-ui .opblock .opblock-summary .expand-operation svg path,
+.swagger-ui .opblock .opblock-summary-control svg,
+.swagger-ui .opblock .opblock-summary-control svg path,
+.swagger-ui .opblock .opblock-summary-control svg polygon {
+    color: #525252 !important;
+    /* neutral-600 */
+    fill: #525252 !important;
+    stroke: #525252 !important;
 }
 
 /* Parameters and Responses */
 .swagger-ui .parameters-container {
-    background: rgba(239, 244, 247, 0.5);
+    background: #111827 !important;
+    /* neutral-900 solid */
+    border: 1px solid #262626 !important;
+    /* neutral-800 */
+    /* neutral-800 */
     border-radius: 6px;
     padding: 20px;
     margin: 15px 0;
 }
 
 .swagger-ui .responses-wrapper {
-    background: rgba(239, 244, 247, 0.3);
+    background: #111827 !important;
+    /* neutral-900 solid */
+    border: 1px solid #262626 !important;
+    /* neutral-800 */
+    /* neutral-800 */
     border-radius: 6px;
     padding: 20px;
     margin: 15px 0;
@@ -272,7 +462,8 @@ Swagger UI Custom Styling for Karrio
 .swagger-ui .btn.try-out__btn {
     background: var(--karrio-secondary) !important;
     border-color: var(--karrio-secondary) !important;
-    color: var(--karrio-dark-grey) !important;
+    color: #374151 !important;
+    /* neutral-700 - dark grey text */
     font-weight: 600;
     border-radius: 4px;
     padding: 8px 16px;
@@ -281,7 +472,8 @@ Swagger UI Custom Styling for Karrio
 .swagger-ui .btn.try-out__btn:hover {
     background: var(--karrio-primary) !important;
     border-color: var(--karrio-primary) !important;
-    color: white !important;
+    color: #374151 !important;
+    /* keep text dark on hover */
 }
 
 /* Execute button */
@@ -349,7 +541,9 @@ Swagger UI Custom Styling for Karrio
 .swagger-ui input[type="email"],
 .swagger-ui textarea,
 .swagger-ui select {
-    border: 2px solid var(--karrio-border-grey) !important;
+    background: transparent !important;
+    color: var(--karrio-dark-grey) !important;
+    border: 2px solid var(--karrio-primary) !important;
     border-radius: 4px !important;
     padding: 8px 12px !important;
     font-family: "Open Sans", sans-serif !important;
@@ -367,10 +561,54 @@ Swagger UI Custom Styling for Karrio
 
 /* Response section */
 .swagger-ui .responses-inner {
-    background: var(--karrio-white);
-    border: 1px solid var(--karrio-border-grey);
+    background: #111827 !important;
+    /* neutral-900 solid */
+    border: 1px solid #262626 !important;
+    /* neutral-800 */
+    /* neutral-800 */
     border-radius: 6px;
     padding: 15px;
+}
+
+/* Section header bars inside operation blocks */
+.swagger-ui .opblock-section-header,
+.swagger-ui .opblock-section-header h4,
+.swagger-ui .opblock-section-header label {
+    background: #111827 !important;
+    /* neutral-900 */
+    color: #e5e7eb !important;
+    /* neutral-200 */
+}
+
+/* Ensure readable text on dark blocks */
+.swagger-ui .parameters-container *,
+.swagger-ui .responses-wrapper *,
+.swagger-ui .responses-inner * {
+    color: #e5e7eb !important;
+    /* neutral-200 */
+}
+
+/* Make section header titles (e.g., "Parameters") a lighter grey for readability */
+.swagger-ui .opblock-section-header h4,
+.swagger-ui .opblock-section-header h4 span,
+.swagger-ui .opblock-section-header h4 a {
+    color: #f3f4f6 !important;
+    /* neutral-100 */
+}
+
+/* Ensure Parameters header text uses lighter grey across structures */
+.swagger-ui .opblock .parameters .opblock-section-header h4,
+.swagger-ui .opblock .parameters .opblock-section-header h4 span,
+.swagger-ui .opblock .parameters .opblock-section-header label {
+    color: #f3f4f6 !important;
+    /* neutral-100 */
+}
+
+/* Explicitly target SwaggerUI h4.opblock-title within tab-header hierarchy */
+.swagger-ui .opblock-section-header .tab-header h4.opblock-title,
+.swagger-ui .opblock-section-header .tab-header h4.opblock-title span {
+    color: #f3f4f6 !important;
+    /* neutral-100 */
 }
 
 .swagger-ui .response-col_status {
@@ -379,11 +617,18 @@ Swagger UI Custom Styling for Karrio
 
 /* Code blocks */
 .swagger-ui .highlight-code {
-    background: var(--karrio-dark-grey) !important;
-    color: #f8f8f2 !important;
+    background: var(--karrio-light-grey) !important;
+    color: var(--karrio-dark-grey) !important;
     border-radius: 6px;
     padding: 15px;
     font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+}
+
+/* Keep rendered JSON/code text purple for emphasis */
+/* Reset code text color to default */
+.swagger-ui .highlight-code pre,
+.swagger-ui .highlight-code code {
+    color: inherit !important;
 }
 
 /* Schema styles */
@@ -413,30 +658,30 @@ Swagger UI Custom Styling for Karrio
 }
 
 /* Scrollbar styling */
-.swagger-ui ::-webkit-scrollbar {
+.devtools-theme.dark .swagger-ui ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
 }
 
-.swagger-ui ::-webkit-scrollbar-track {
+.devtools-theme.dark .swagger-ui ::-webkit-scrollbar-track {
     background: var(--karrio-light-grey);
     border-radius: 4px;
 }
 
-.swagger-ui ::-webkit-scrollbar-thumb {
+.devtools-theme.dark .swagger-ui ::-webkit-scrollbar-thumb {
     background: var(--karrio-muted-grey);
     border-radius: 4px;
 }
 
-.swagger-ui ::-webkit-scrollbar-thumb:hover {
+.devtools-theme.dark .swagger-ui ::-webkit-scrollbar-thumb:hover {
     background: var(--karrio-primary);
 }
 
 /* Custom container styling */
-.swagger-ui-container {
+.devtools-theme.dark .swagger-ui-container {
     max-width: 1500px;
     margin: 0 auto;
-    background: var(--karrio-white);
+    background: transparent;
     min-height: 100%;
     padding: 0;
 }

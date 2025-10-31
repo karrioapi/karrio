@@ -15,24 +15,24 @@ import { EventTypes, EVENT_TYPES } from "@karrio/types";
 import { cn } from "@karrio/ui/lib/utils";
 
 const EVENT_TYPE_COLORS = {
-  [EventTypes.order_created]: "bg-indigo-100 text-indigo-800",
-  [EventTypes.order_updated]: "bg-cyan-100 text-cyan-800",
-  [EventTypes.order_fulfilled]: "bg-emerald-100 text-emerald-800",
-  [EventTypes.order_cancelled]: "bg-red-100 text-red-800",
-  [EventTypes.shipment_purchased]: "bg-blue-100 text-blue-800",
-  [EventTypes.shipment_cancelled]: "bg-red-100 text-red-800",
-  [EventTypes.shipment_fulfilled]: "bg-purple-100 text-purple-800",
-  [EventTypes.tracker_created]: "bg-orange-100 text-orange-800",
-  [EventTypes.tracker_updated]: "bg-yellow-100 text-yellow-800",
-  default: "bg-slate-100 text-slate-800",
+  [EventTypes.order_created]: "bg-indigo-900/30 text-indigo-200",
+  [EventTypes.order_updated]: "bg-cyan-900/30 text-cyan-200",
+  [EventTypes.order_fulfilled]: "bg-emerald-900/30 text-emerald-200",
+  [EventTypes.order_cancelled]: "bg-red-900/30 text-red-200",
+  [EventTypes.shipment_purchased]: "bg-blue-900/30 text-blue-200",
+  [EventTypes.shipment_cancelled]: "bg-red-900/30 text-red-200",
+  [EventTypes.shipment_fulfilled]: "bg-purple-900/30 text-purple-200",
+  [EventTypes.tracker_created]: "bg-orange-900/30 text-orange-200",
+  [EventTypes.tracker_updated]: "bg-yellow-900/30 text-yellow-200",
+  default: "bg-slate-900/30 text-slate-200",
 };
 
 const EVENT_TYPE_ICONS = {
-  shipment: <Package className="h-4 w-4" />,
-  tracker: <Truck className="h-4 w-4" />,
-  order: <Calendar className="h-4 w-4" />,
-  webhook: <Webhook className="h-4 w-4" />,
-  default: <AlertCircle className="h-4 w-4" />,
+  shipment: <Package className="h-4 w-4 text-primary" />,
+  tracker: <Truck className="h-4 w-4 text-primary" />,
+  order: <Calendar className="h-4 w-4 text-primary" />,
+  webhook: <Webhook className="h-4 w-4 text-primary" />,
+  default: <AlertCircle className="h-4 w-4 text-primary" />,
 };
 
 const EventDetailViewer = ({ event }: { event: any }) => {
@@ -42,7 +42,7 @@ const EventDetailViewer = ({ event }: { event: any }) => {
 
   if (!event) {
     return (
-      <div className="flex items-center justify-center h-64 text-gray-500">
+      <div className="flex items-center justify-center h-64 text-neutral-400">
         <div className="text-center">
           <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
           <p>Select an event to view details</p>
@@ -63,9 +63,9 @@ const EventDetailViewer = ({ event }: { event: any }) => {
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col bg-background">
       {/* Header */}
-      <div className="border-b px-4 py-3 flex-shrink-0">
+      <div className="border-b border-border px-4 py-3 flex-shrink-0">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             {getEventTypeIcon(event.type as EventTypes | null)}
@@ -73,14 +73,14 @@ const EventDetailViewer = ({ event }: { event: any }) => {
               {event.type}
             </Badge>
           </div>
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-muted-foreground">
             {formatDateTimeLong(event.created_at)}
           </div>
         </div>
-        <div className="text-sm font-medium truncate">
+        <div className="text-sm font-medium truncate text-foreground">
           Event: {event.type}
         </div>
-        <div className="text-xs text-gray-500 mt-1">
+        <div className="text-xs text-muted-foreground mt-1">
           ID: {event.id} • Test: {event.test_mode ? "Yes" : "No"}
         </div>
       </div>
@@ -91,21 +91,21 @@ const EventDetailViewer = ({ event }: { event: any }) => {
           {event.data && (
             <div className="mb-3">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-700">Event Data</span>
+                <span className="text-sm font-medium text-muted-foreground">Event Data</span>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => copyToClipboard(JSON.stringify(event.data, null, 2))}
-                  className="h-7 px-2"
+                  className="h-7 px-2 border-border text-muted-foreground hover:bg-primary/20"
                 >
                   <Copy className="h-3 w-3" />
                 </Button>
               </div>
-              <div className="border rounded-md overflow-hidden">
+              <div className="border border-border rounded-md overflow-hidden">
                 <CodeMirror
                   value={JSON.stringify(event.data, null, 2)}
                   extensions={[json()]}
-                  theme="light"
+                  theme="dark"
                   className="text-xs"
                   readOnly
                   basicSetup={{
@@ -152,8 +152,8 @@ const EventListItem = ({
   return (
     <div
       className={cn(
-        "p-4 border-b border-gray-200 cursor-pointer transition-all duration-150 hover:bg-gray-50",
-        isSelected ? "bg-gray-50 border-l-4 border-l-gray-400" : "border-l-4 border-l-transparent"
+        "p-4 border-b border-neutral-800 cursor-pointer transition-all duration-150 hover:bg-primary/10",
+        isSelected ? "bg-primary/20 border-l-4 border-l-primary/60" : "border-l-4 border-l-transparent"
       )}
       onClick={() => onSelect(event)}
     >
@@ -166,19 +166,19 @@ const EventListItem = ({
                 {event.type}
               </Badge>
               {event.pending_webhooks > 0 && (
-                <span className="text-xs text-orange-500">
+                <span className="text-xs text-orange-300">
                   {event.pending_webhooks} pending
                 </span>
               )}
             </div>
-            <div className="text-sm text-slate-900 truncate font-mono">
+            <div className="text-sm text-neutral-200 truncate font-mono">
               {event.type}
             </div>
-            <div className="text-xs text-slate-500 truncate">
+            <div className="text-xs text-neutral-400 truncate">
               ID: {event.id} • Test: {event.test_mode ? "Yes" : "No"}
             </div>
           </div>
-          <div className="text-xs text-slate-500 flex-shrink-0">
+          <div className="text-xs text-neutral-400 flex-shrink-0">
             {formatDateTimeLong(event.created_at)}
           </div>
         </div>
@@ -237,9 +237,9 @@ const EventsFilterDropdown = ({ context }: { context: ReturnType<typeof useEvent
         variant="outline"
         size="sm"
         onClick={() => setIsOpen(!isOpen)}
-        className="h-8"
+        className="h-8 text-foreground border-border hover:bg-primary/10"
       >
-        <Filter className="h-4 w-4 mr-2" />
+        <Filter className="h-4 w-4 mr-2 text-foreground" />
         Filters
         {hasActiveFilters() && (
           <Badge variant="secondary" className="ml-2 h-5 px-1.5 text-xs">
@@ -251,15 +251,15 @@ const EventsFilterDropdown = ({ context }: { context: ReturnType<typeof useEvent
       {isOpen && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
-          <div className="absolute right-0 top-full mt-1 w-80 bg-white border border-gray-200 rounded-md shadow-lg z-20">
+          <div className="absolute right-0 top-full mt-1 w-80 bg-popover border border-border rounded-md shadow-lg z-20 text-foreground">
             <div className="p-4">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-medium text-sm">Filter Events</h3>
+                <h3 className="font-medium text-sm text-foreground">Filter Events</h3>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsOpen(false)}
-                  className="h-6 w-6 p-0"
+                  className="h-6 w-6 p-0 text-foreground hover:bg-primary/10"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -268,30 +268,30 @@ const EventsFilterDropdown = ({ context }: { context: ReturnType<typeof useEvent
               <div className="space-y-4">
                 {/* Search */}
                 <div>
-                  <Label htmlFor="search" className="text-sm font-medium">Search</Label>
+                  <Label htmlFor="search" className="text-sm font-medium text-muted-foreground">Search</Label>
                   <Input
                     id="search"
                     placeholder="Search events..."
                     value={tempFilters.query || ""}
                     onChange={(e) => handleTempFilterChange('query', e.target.value)}
-                    className="mt-1"
+                    className="mt-1 bg-input border-border text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
 
                 {/* Event Type */}
                 <div>
-                  <Label htmlFor="type" className="text-sm font-medium">Event Type</Label>
+                  <Label htmlFor="type" className="text-sm font-medium text-muted-foreground">Event Type</Label>
                   <Select
                     value={tempFilters.type?.[0] || "all"}
                     onValueChange={(value) => handleTempFilterChange('type', value === 'all' ? undefined : [value])}
                   >
-                    <SelectTrigger className="w-full mt-1">
+                    <SelectTrigger className="w-full mt-1 text-foreground">
                       <SelectValue placeholder="All event types" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All event types</SelectItem>
+                    <SelectContent className="devtools-theme dark bg-popover text-foreground border-border">
+                      <SelectItem value="all" className="text-foreground focus:bg-primary/20 focus:text-foreground"></SelectItem>
                       {EVENT_TYPES.map((type) => (
-                        <SelectItem key={type} value={type}>{type}</SelectItem>
+                        <SelectItem key={type} value={type} className="text-foreground focus:bg-primary/20 focus:text-foreground">{type}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -299,24 +299,25 @@ const EventsFilterDropdown = ({ context }: { context: ReturnType<typeof useEvent
 
                 {/* Entity ID */}
                 <div>
-                  <Label htmlFor="entity_id" className="text-sm font-medium">Related Object ID</Label>
+                  <Label htmlFor="entity_id" className="text-sm font-medium text-muted-foreground">Related Object ID</Label>
                   <Input
                     id="entity_id"
                     placeholder="e.g: shp_123456"
                     value={tempFilters.entity_id || ""}
                     onChange={(e) => handleTempFilterChange('entity_id', e.target.value)}
-                    className="mt-1"
+                    className="mt-1 bg-input border-border text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
 
               </div>
 
-              <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
+              <div className="flex items-center justify-between mt-6 pt-4 border-t border-border">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleClear}
                   disabled={!hasActiveFilters() && Object.keys(tempFilters).length === 0}
+                  className="text-foreground border-border hover:bg-primary/10"
                 >
                   Clear All
                 </Button>
@@ -325,6 +326,7 @@ const EventsFilterDropdown = ({ context }: { context: ReturnType<typeof useEvent
                     variant="ghost"
                     size="sm"
                     onClick={() => setIsOpen(false)}
+                    className="text-foreground hover:bg-primary/10"
                   >
                     Cancel
                   </Button>
@@ -332,6 +334,7 @@ const EventsFilterDropdown = ({ context }: { context: ReturnType<typeof useEvent
                     size="sm"
                     onClick={handleApply}
                     disabled={query.isLoading}
+                    className="text-foreground border-border hover:bg-primary/10"
                   >
                     {query.isLoading ? 'Applying...' : 'Apply'}
                   </Button>
@@ -376,13 +379,13 @@ export function EventsView() {
   };
 
   return (
-    <div className="h-full flex overflow-hidden">
+    <div className="h-full flex overflow-hidden bg-background">
       {/* Left Panel - Events List */}
-      <div className="w-1/2 border-r flex flex-col lg:flex hidden h-full">
+      <div className="w-1/2 border-r border-border flex flex-col lg:flex hidden h-full">
         {/* Header */}
-        <div className="border-b px-4 py-3 flex-shrink-0">
+        <div className="border-b border-border px-4 py-3 flex-shrink-0">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold">Events</h2>
+            <h2 className="text-lg font-semibold text-foreground">Events</h2>
             <div className="flex items-center gap-2">
               {/* Use the custom EventsFilterDropdown component */}
               <EventsFilterDropdown context={eventsContext} />
@@ -391,6 +394,7 @@ export function EventsView() {
                 size="sm"
                 onClick={handleRefresh}
                 disabled={query.isFetching}
+                className="text-foreground border-border hover:bg-primary/10"
               >
                 <RefreshCw className={`h-4 w-4 ${query.isFetching ? 'animate-spin' : ''}`} />
               </Button>
@@ -421,16 +425,16 @@ export function EventsView() {
         <div className="flex-1 overflow-y-auto">
           {query.isFetching && (
             <div className="flex items-center justify-center py-8">
-              <RefreshCw className="h-6 w-6 animate-spin text-gray-400" />
+              <RefreshCw className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
           )}
 
           {!query.isFetching && events.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-muted-foreground">
               <Activity className="h-8 w-8 mx-auto mb-2 opacity-50" />
               <p>No events found</p>
               {hasActiveFilters() && (
-                <p className="text-xs mt-1">Try adjusting your filters</p>
+                <p className="text-xs mt-1 text-muted-foreground">Try adjusting your filters</p>
               )}
             </div>
           )}
@@ -451,8 +455,8 @@ export function EventsView() {
 
         {/* Pagination */}
         {events.length > 0 && (
-          <div className="border-t px-4 py-2 flex items-center justify-between text-sm flex-shrink-0">
-            <span className="text-gray-600">
+          <div className="border-t border-border px-4 py-2 flex items-center justify-between text-sm flex-shrink-0">
+            <span className="text-muted-foreground">
               Showing {((filter.offset as number) || 0) + 1}-{((filter.offset as number) || 0) + events.length}
               {query.data?.events?.page_info.has_next_page && " of many"}
             </span>
@@ -462,7 +466,7 @@ export function EventsView() {
                 size="sm"
                 onClick={() => updateFilter({ offset: Math.max(0, ((filter.offset as number) || 0) - 20) })}
                 disabled={(filter.offset as number) === 0 || filter.offset === undefined}
-                className="h-7 px-2 text-xs"
+                className="h-7 px-2 text-xs text-foreground border-border hover:bg-primary/10"
               >
                 Previous
               </Button>
@@ -471,7 +475,7 @@ export function EventsView() {
                 size="sm"
                 onClick={() => updateFilter({ offset: ((filter.offset as number) || 0) + 20 })}
                 disabled={!query.data?.events?.page_info.has_next_page}
-                className="h-7 px-2 text-xs"
+                className="h-7 px-2 text-xs text-foreground border-border hover:bg-primary/10"
               >
                 Next
               </Button>
@@ -489,15 +493,16 @@ export function EventsView() {
       <div className="lg:hidden w-full">
         {selectedEvent ? (
           <div className="h-full flex flex-col">
-            <div className="border-b px-4 py-2 flex items-center gap-2">
+            <div className="border-b border-border px-4 py-2 flex items-center gap-2">
               <Button
                 variant="ghost"
-                size="sm"
+                size="default"
                 onClick={() => setSelectedEvent(null)}
+                className="text-primary"
               >
                 ← Back
               </Button>
-              <span className="text-sm font-medium">Event Details</span>
+              <span className="text-sm font-medium text-foreground">Event Details</span>
             </div>
             <div className="flex-1">
               <EventDetailViewer event={selectedEvent} />
@@ -506,9 +511,9 @@ export function EventsView() {
         ) : (
           <div className="h-full flex flex-col">
             {/* Mobile Header */}
-            <div className="border-b px-4 py-3">
+            <div className="border-b border-border px-4 py-3">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg font-semibold">Events</h2>
+                <h2 className="text-lg font-semibold text-foreground">Events</h2>
                 <div className="flex items-center gap-2">
                   {/* Use the custom EventsFilterDropdown component for mobile */}
                   <EventsFilterDropdown context={eventsContext} />
@@ -517,6 +522,7 @@ export function EventsView() {
                     size="sm"
                     onClick={handleRefresh}
                     disabled={query.isFetching}
+                    className="text-foreground border-border hover:bg-primary/10"
                   >
                     <RefreshCw className={`h-4 w-4 ${query.isFetching ? 'animate-spin' : ''}`} />
                   </Button>
@@ -547,16 +553,16 @@ export function EventsView() {
             <div className="flex-1 overflow-auto">
               {query.isFetching && (
                 <div className="flex items-center justify-center py-8">
-                  <RefreshCw className="h-6 w-6 animate-spin text-gray-400" />
+                  <RefreshCw className="h-6 w-6 animate-spin text-neutral-500" />
                 </div>
               )}
 
               {!query.isFetching && events.length === 0 && (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-muted-foreground">
                   <Activity className="h-8 w-8 mx-auto mb-2 opacity-50" />
                   <p>No events found</p>
                   {hasActiveFilters() && (
-                    <p className="text-xs mt-1">Try adjusting your filters</p>
+                    <p className="text-xs mt-1 text-muted-foreground">Try adjusting your filters</p>
                   )}
                 </div>
               )}
@@ -577,8 +583,8 @@ export function EventsView() {
 
             {/* Mobile Pagination */}
             {events.length > 0 && (
-              <div className="border-t px-4 py-2 flex items-center justify-between text-sm">
-                <span className="text-gray-600">
+              <div className="border-t border-border px-4 py-2 flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">
                   Showing {((filter.offset as number) || 0) + 1}-{((filter.offset as number) || 0) + events.length}
                   {query.data?.events?.page_info.has_next_page && " of many"}
                 </span>
@@ -588,7 +594,7 @@ export function EventsView() {
                     size="sm"
                     onClick={() => updateFilter({ offset: Math.max(0, ((filter.offset as number) || 0) - 20) })}
                     disabled={(filter.offset as number) === 0 || filter.offset === undefined}
-                    className="h-7 px-2 text-xs"
+                    className="h-7 px-2 text-xs text-foreground border-border hover:bg-primary/10"
                   >
                     Previous
                   </Button>
@@ -597,7 +603,7 @@ export function EventsView() {
                     size="sm"
                     onClick={() => updateFilter({ offset: ((filter.offset as number) || 0) + 20 })}
                     disabled={!query.data?.events?.page_info.has_next_page}
-                    className="h-7 px-2 text-xs"
+                    className="h-7 px-2 text-xs text-foreground border-border hover:bg-primary/10"
                   >
                     Next
                   </Button>
