@@ -337,7 +337,7 @@ export function WebhooksView() {
                                             +{webhook.enabled_events.length - 2}
                                           </Badge>
                                         </TooltipTrigger>
-                                        <TooltipContent side="bottom" sideOffset={6} className="bg-popover text-foreground border border-border">
+                                        <TooltipContent side="bottom" sideOffset={6} className="devtools-theme dark bg-popover text-foreground border border-border">
                                           <div className="max-w-xs text-xs space-y-1">
                                             {webhook.enabled_events.slice(2).map((event: EventTypes) => (
                                               <div key={event}>{event}</div>
@@ -355,7 +355,7 @@ export function WebhooksView() {
                                         </Button>
                                       </DropdownMenuTrigger>
                                       <DropdownMenuPortal container={typeof document !== 'undefined' ? document.getElementById('devtools-portal') as any : undefined}>
-                                        <DropdownMenuContent side="bottom" align="start" className="devtools-theme dark bg-popover text-foreground border-border">
+                                        <DropdownMenuContent side="bottom" align="start" className="devtools-theme dark bg-popover text-foreground border border-border">
                                           <div className="max-w-xs text-xs space-y-1 px-2 py-1">
                                             {webhook.enabled_events.slice(2).map((event: EventTypes) => (
                                               <div key={event}>{event}</div>

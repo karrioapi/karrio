@@ -289,7 +289,7 @@ export function ApiKeysView() {
                                             +{apiKey.permissions.length - 2}
                                           </Badge>
                                         </TooltipTrigger>
-                                        <TooltipContent side="bottom" sideOffset={6} className="bg-popover text-foreground border border-border">
+                                        <TooltipContent side="bottom" sideOffset={6} className="devtools-theme dark bg-popover text-foreground border border-border">
                                           <div className="max-w-xs text-xs space-y-1">
                                             {apiKey.permissions.slice(2).map((permission: string) => (
                                               <div key={permission}>{formatPermissionName(permission)}</div>
@@ -307,7 +307,7 @@ export function ApiKeysView() {
                                         </Button>
                                       </DropdownMenuTrigger>
                                       <DropdownMenuPortal container={typeof document !== 'undefined' ? document.getElementById('devtools-portal') as any : undefined}>
-                                        <DropdownMenuContent side="bottom" align="start" className="devtools-theme dark bg-popover text-foreground border-border">
+                                        <DropdownMenuContent side="bottom" align="start" className="devtools-theme dark bg-popover text-foreground border border-border">
                                           <div className="max-w-xs text-xs space-y-1 px-2 py-1">
                                             {apiKey.permissions.slice(2).map((permission: string) => (
                                               <div key={permission}>{formatPermissionName(permission)}</div>
