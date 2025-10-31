@@ -100,6 +100,15 @@ export function GraphiQLModule() {
           .devtools-theme.dark .graphiql-toolbar input { color: hsl(var(--foreground)) !important; border-color: hsl(var(--border)) !important; background: hsl(var(--input)) !important; }
           .devtools-theme.dark .graphiql-dialog { background: hsl(var(--popover)) !important; color: hsl(var(--popover-foreground)) !important; }
           
+          /* Toolbar layout and sizing */
+          .devtools-theme.dark .graphiql-toolbar { display: flex !important; flex-wrap: nowrap !important; gap: 8px !important; align-items: center !important; }
+          .devtools-theme.dark .graphiql-execute { display: flex !important; align-items: center !important; }
+          .devtools-theme.dark .graphiql-toolbar button,
+          .devtools-theme.dark .graphiql-execute button { height: 40px !important; padding: 0 12px !important; border-radius: 8px !important; font-size: 15px !important; }
+          .devtools-theme.dark .graphiql-toolbar button svg { width: 24px !important; height: 24px !important; }
+          .devtools-theme.dark .graphiql-execute button { display: inline-flex !important; align-items: center !important; justify-content: center !important; }
+          .devtools-theme.dark .graphiql-execute button svg { width: 16px !important; height: 16px !important; }
+          
           /* Force GraphiQL modals to use the portal container */
           .graphiql-dialog-overlay {
             position: fixed !important;
@@ -164,7 +173,11 @@ export function GraphiQLModule() {
           
           .graphiql-dialog { border-radius: 6px !important; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important; max-width: 90vw !important; max-height: 90vh !important; overflow: auto !important; }
         `}</style>
-        <GraphiQL fetcher={fetcher as any} />
+        <div className="h-full w-full overflow-x-auto lg:overflow-x-hidden" style={{ WebkitOverflowScrolling: 'touch', overscrollBehaviorX: 'contain', touchAction: 'pan-x' as any }}>
+          <div className="h-full w-[1200px] lg:w-full">
+            <GraphiQL fetcher={fetcher as any} />
+          </div>
+        </div>
       </div>
     </div>
   );

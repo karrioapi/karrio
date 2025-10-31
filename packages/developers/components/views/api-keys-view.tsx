@@ -302,9 +302,9 @@ export function ApiKeysView() {
                                   <div className="sm:hidden">
                                     <DropdownMenu>
                                       <DropdownMenuTrigger asChild>
-                                        <Badge variant="secondary" className="text-xs cursor-pointer">
+                                        <Button variant="secondary" size="sm" className="h-5 px-2 text-xs">
                                           +{apiKey.permissions.length - 2}
-                                        </Badge>
+                                        </Button>
                                       </DropdownMenuTrigger>
                                       <DropdownMenuPortal container={typeof document !== 'undefined' ? document.getElementById('devtools-portal') as any : undefined}>
                                         <DropdownMenuContent side="bottom" align="start" className="devtools-theme dark bg-popover text-foreground border-border">
