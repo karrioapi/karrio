@@ -1,0 +1,42 @@
+{
+  "rateRequest": {
+    "shipper": {
+      "addressLine1": "123 Main St",
+      "city": "Anytown",
+      "postalCode": "12345",
+      "countryCode": "US",
+      "stateCode": "CA",
+      "personName": "John Doe",
+      "companyName": "ACME Corp",
+      "phoneNumber": "555-123-4567",
+      "email": "john@example.com"
+    },
+    "recipient": {
+      "addressLine1": "456 Oak St",
+      "city": "Somewhere",
+      "postalCode": "67890",
+      "countryCode": "US",
+      "stateCode": "NY",
+      "personName": "Jane Smith",
+      "companyName": "XYZ Inc",
+      "phoneNumber": "555-987-6543",
+      "email": "jane@example.com"
+    },
+    "packages": [
+      {
+        "weight": 10.5,
+        "weightUnit": "KG",
+        "length": 20.0,
+        "width": 15.0,
+        "height": 10.0,
+        "dimensionUnit": "CM",
+        "packagingType": "BOX"
+      }
+    ],
+    "services": ["EXPRESS", "GROUND"],
+    "options": {
+      "insurance": true,
+      "signature_required": false
+    }
+  }
+}

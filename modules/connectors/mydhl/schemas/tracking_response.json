@@ -1,0 +1,28 @@
+{
+  "trackingResponse": {
+    "trackingInfo": [
+      {
+        "trackingNumber": "1Z999999999999999",
+        "status": "in_transit",
+        "statusDetails": "Package is in transit",
+        "estimatedDelivery": "2024-04-15",
+        "events": [
+          {
+            "date": "2024-04-12",
+            "time": "14:30:00",
+            "code": "PU",
+            "description": "Package picked up",
+            "location": "San Francisco, CA"
+          },
+          {
+            "date": "2024-04-13",
+            "time": "09:15:00",
+            "code": "IT",
+            "description": "In transit",
+            "location": "Los Angeles, CA"
+          }
+        ]
+      }
+    ]
+  }
+}

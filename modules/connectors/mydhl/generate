@@ -1,0 +1,21 @@
+SCHEMAS=./schemas
+LIB_MODULES=./karrio/schemas/mydhl
+find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
+touch "${LIB_MODULES}/__init__.py"
+
+kcli codegen generate "${SCHEMAS}/error_response.json" "${LIB_MODULES}/error_response.py"
+kcli codegen generate "${SCHEMAS}/address_validation_request.json" "${LIB_MODULES}/address_validation_request.py"
+kcli codegen generate "${SCHEMAS}/address_validation_response.json" "${LIB_MODULES}/address_validation_response.py"
+kcli codegen generate "${SCHEMAS}/rate_request.json" "${LIB_MODULES}/rate_request.py"
+kcli codegen generate "${SCHEMAS}/rate_response.json" "${LIB_MODULES}/rate_response.py"
+kcli codegen generate "${SCHEMAS}/pickup_create_request.json" "${LIB_MODULES}/pickup_create_request.py"
+kcli codegen generate "${SCHEMAS}/pickup_create_response.json" "${LIB_MODULES}/pickup_create_response.py"
+kcli codegen generate "${SCHEMAS}/pickup_update_request.json" "${LIB_MODULES}/pickup_update_request.py"
+kcli codegen generate "${SCHEMAS}/pickup_update_response.json" "${LIB_MODULES}/pickup_update_response.py"
+kcli codegen generate "${SCHEMAS}/pickup_cancel_request.json" "${LIB_MODULES}/pickup_cancel_request.py"
+kcli codegen generate "${SCHEMAS}/pickup_cancel_response.json" "${LIB_MODULES}/pickup_cancel_response.py"
+kcli codegen generate "${SCHEMAS}/shipment_request.json" "${LIB_MODULES}/shipment_request.py"
+kcli codegen generate "${SCHEMAS}/shipment_response.json" "${LIB_MODULES}/shipment_response.py"
+kcli codegen generate "${SCHEMAS}/tracking_request.json" "${LIB_MODULES}/tracking_request.py"
+kcli codegen generate "${SCHEMAS}/tracking_response.json" "${LIB_MODULES}/tracking_response.py"
+
