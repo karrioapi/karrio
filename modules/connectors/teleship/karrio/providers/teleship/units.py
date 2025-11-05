@@ -57,6 +57,26 @@ def shipping_options_initializer(
     return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
 
 
+class CustomsContentType(lib.StrEnum):
+    """Teleship customs content types"""
+
+    # Teleship-specific values (PascalCase)
+    teleship_documents = "Documents"
+    teleship_gift = "Gift"
+    teleship_sample = "Sample"
+    teleship_other = "Other"
+    teleship_commercial_goods = "CommercialGoods"
+    teleship_return_of_goods = "ReturnOfGoods"
+
+    """ Unified content type mapping """
+    documents = teleship_documents
+    gift = teleship_gift
+    sample = teleship_sample
+    other = teleship_other
+    merchandise = teleship_commercial_goods
+    returned_goods = teleship_return_of_goods
+
+
 class CustomsOption(lib.Enum):
     """Teleship customs identifiers"""
 

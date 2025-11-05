@@ -59,7 +59,7 @@ def _extract_details(
     return models.RateDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        service=service.code or "",
+        service=provider_units.ShippingService.map(service.code or "").name_or_key,
         total_charge=lib.to_money(rate.price),
         currency=rate.currency or "USD",
         transit_days=rate.transit if rate.transit else None,
@@ -161,7 +161,7 @@ def rate_request(
         customs=lib.identity(
             teleship_req.CustomsType(
                 EORI=lib.failsafe(lambda: customs.options.eori_number.state),
-                contentType=customs.content_type,
+                contentType=provider_units.CustomsContentType.map(customs.content_type or "other").value,
                 invoiceDate=customs.invoice_date,
                 invoiceNumber=customs.invoice,
             ) if payload.customs else None

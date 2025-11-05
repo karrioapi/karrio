@@ -179,7 +179,7 @@ def shipment_request(
         customs=lib.identity(
             teleship_req.CustomsType(
                 EORI=lib.failsafe(lambda: customs.options.eori_number.state),
-                contentType=customs.content_type,
+                contentType=provider_units.CustomsContentType.map(customs.content_type or "other").value,
                 invoiceDate=customs.invoice_date,
                 invoiceNumber=customs.invoice,
             ) if payload.customs else None
