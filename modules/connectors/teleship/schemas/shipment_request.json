@@ -1,0 +1,64 @@
+{
+  "serviceCode": "TELESHIP-EXPEDITED-DROPOFF",
+  "customerReference": "#1001",
+  "packageType": "parcel",
+  "shipTo": {
+    "name": "Fanny Dadin",
+    "email": "fanny@teleship.com",
+    "phone": "+1 213-601-6000",
+    "address": {
+      "city": "Los Angeles",
+      "line1": "1300 Eunice Avenue",
+      "state": "CA",
+      "country": "US",
+      "postcode": "90001"
+    }
+  },
+  "shipFrom": {
+    "name": "London Store",
+    "address": {
+      "city": "London",
+      "line1": "Flat 4, 24 Upper Tachbrook Street",
+      "state": "England",
+      "country": "GB",
+      "postcode": "SW1V 1SW"
+    },
+    "company": "TELESHIP LIMITED"
+  },
+  "weight": {
+    "unit": "kg",
+    "value": 0.48
+  },
+  "dimensions": {
+    "unit": "cm",
+    "width": 25,
+    "height": 14,
+    "length": 35
+  },
+  "commodities": [
+    {
+      "sku": "stock-1",
+      "title": "Tetras Small Earrings - One& Only Kea...",
+      "value": {
+        "amount": 134,
+        "currency": "GBP"
+      },
+      "quantity": 1,
+      "unitWeight": {
+        "unit": "kg",
+        "value": 0.18
+      },
+      "description": "Enjoy these beautiful earrings manufactured in Greece. Worn by Adele and other stars.",
+      "countryOfOrigin": "GR"
+    }
+  ],
+  "metadata": {
+    "fulfillmentOrderId": "gid://shopify/FulfillmentOrder/7617080492296"
+  },
+  "customs": {
+    "EORI": "GB078617476000",
+    "contentType": "CommercialGoods",
+    "invoiceDate": "2025-10-31T19:53:09.821Z",
+    "invoiceNumber": "#1001"
+  }
+}

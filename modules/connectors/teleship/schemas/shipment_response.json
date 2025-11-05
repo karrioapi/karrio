@@ -1,0 +1,65 @@
+{
+  "shipment": {
+    "shipmentId": "TELE-UK-US-123456789",
+    "trackingNumber": "TELE987654321GB",
+    "status": "created",
+    "customerReference": "#1001",
+    "serviceCode": "TELESHIP-EXPEDITED-DROPOFF",
+    "serviceName": "Teleship Hub Direct (for bundling packages, shipper delivers to Teleship hub)",
+    "shipDate": "2025-11-03T00:00:00.000Z",
+    "estimatedDelivery": "2025-11-10T00:00:00.000Z",
+    "labelUrl": "https://api.teleship.com/labels/TELE-UK-US-123456789.pdf",
+    "labelFormat": "PDF",
+    "packageType": "parcel",
+    "weight": {
+      "value": 0.48,
+      "unit": "kg"
+    },
+    "dimensions": {
+      "length": 35,
+      "width": 25,
+      "height": 14,
+      "unit": "cm"
+    },
+    "shipTo": {
+      "name": "Fanny Dadin",
+      "email": "fanny@teleship.com",
+      "phone": "+1 213-601-6000",
+      "address": {
+        "line1": "1300 Eunice Avenue",
+        "city": "Los Angeles",
+        "state": "CA",
+        "postcode": "90001",
+        "country": "US"
+      }
+    },
+    "shipFrom": {
+      "name": "London Store",
+      "company": "TELESHIP LIMITED",
+      "address": {
+        "line1": "Flat 4, 24 Upper Tachbrook Street",
+        "city": "London",
+        "state": "England",
+        "postcode": "SW1V 1SW",
+        "country": "GB"
+      }
+    },
+    "charges": [
+      {
+        "name": "base",
+        "amount": 15.65,
+        "currency": "GBP"
+      },
+      {
+        "name": "VAT",
+        "amount": 2.97,
+        "currency": "GBP"
+      }
+    ],
+    "totalCharge": {
+      "amount": 18.62,
+      "currency": "GBP"
+    }
+  },
+  "messages": []
+}
