@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCHEMAS="${ROOT}/schemas"
+LIB_MODULES="${ROOT}/karrio/schemas/dpd_group"
+
+# Clean and prepare schema directory
+find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
+mkdir -p "${LIB_MODULES}"
+touch "${LIB_MODULES}/__init__.py"
+
+# Generate Python data classes from JSON schemas
+generate_schema() {
+    echo "Generating $1..."
+    "${ROOT}/../../../bin/cli" codegen generate "$1" "$2" --no-nice-property-names
+}
+
+# Generate schemas (using camelCase as API uses camelCase field names)
+generate_schema "${SCHEMAS}/error_response.json" "${LIB_MODULES}/error_response.py"
+generate_schema "${SCHEMAS}/shipment_request.json" "${LIB_MODULES}/shipment_request.py"
+generate_schema "${SCHEMAS}/shipment_response.json" "${LIB_MODULES}/shipment_response.py"
+generate_schema "${SCHEMAS}/tracking_response.json" "${LIB_MODULES}/tracking_response.py"
+
+echo "Schema generation complete!"

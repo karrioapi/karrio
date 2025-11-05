@@ -1,0 +1,44 @@
+{
+  "shipperAddress": {
+    "name": "Acme Corporation",
+    "street": "Main Street",
+    "houseNumber": "123",
+    "postalCode": "12345",
+    "city": "Berlin",
+    "country": "DE",
+    "email": "shipper@example.com",
+    "phone": "+49301234567"
+  },
+  "receiverAddress": {
+    "name": "John Doe",
+    "company": "Doe Enterprises",
+    "street": "Oak Avenue",
+    "houseNumber": "456",
+    "postalCode": "54321",
+    "city": "Munich",
+    "country": "DE",
+    "email": "receiver@example.com",
+    "phone": "+49891234567"
+  },
+  "parcels": [
+    {
+      "weight": 5.0,
+      "length": 30,
+      "width": 20,
+      "height": 15,
+      "content": "Electronics",
+      "customerReferenceNumber1": "REF123456"
+    }
+  ],
+  "productCode": "CL",
+  "orderNumber": "ORDER-12345",
+  "shipmentDate": "2024-01-15",
+  "labelFormat": "PDF",
+  "services": {
+    "saturdayDelivery": false,
+    "insurance": {
+      "value": 500.0,
+      "currency": "EUR"
+    }
+  }
+}
