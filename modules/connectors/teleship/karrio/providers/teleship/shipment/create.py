@@ -147,37 +147,35 @@ def shipment_request(
         weight=lib.identity(
             teleship_req.WeightType(
                 value=package.weight.value,
-                unit=package.weight.unit,
+                unit=package.weight.unit.lower(),
             ) if package else None
         ),
         dimensions=lib.identity(
             teleship_req.DimensionsType(
-                unit=package.dimension_unit or "CM",
+                unit=(package.dimension_unit or "CM").lower(),
                 length=int(package.length.value) if package.length else None,
                 width=int(package.width.value) if package.width else None,
                 height=int(package.height.value) if package.height else None,
             ) if package and all([package.length, package.width, package.height]) else None
         ),
-        commodities=lib.identity(
-            [
-                teleship_req.CommodityType(
-                    sku=commodity.sku,
-                    title=commodity.title or commodity.description,
-                    value=teleship_req.ValueType(
-                        amount=int(commodity.value_amount or 0),
-                        currency=commodity.value_currency or "USD",
-                    ),
-                    quantity=commodity.quantity or 1,
-                    unitWeight=teleship_req.WeightType(
-                        value=commodity.weight,
-                        unit=commodity.weight_unit or "KG",
-                    ),
-                    description=commodity.description,
-                    countryOfOrigin=commodity.origin_country,
-                )
-                for commodity in (customs.commodities or [])
-            ] if payload.customs and any(customs.commodities or []) else None
-        ),
+        commodities=[
+            teleship_req.CommodityType(
+                sku=commodity.sku,
+                title=commodity.title or commodity.description,
+                value=teleship_req.ValueType(
+                    amount=int(commodity.value_amount or 0),
+                    currency=commodity.value_currency or "USD",
+                ),
+                quantity=commodity.quantity or 1,
+                unitWeight=teleship_req.WeightType(
+                    value=commodity.weight,
+                    unit=(commodity.weight_unit or "KG").lower(),
+                ),
+                description=commodity.description,
+                countryOfOrigin=commodity.origin_country,
+            )
+            for commodity in (customs.commodities or [])
+        ] if payload.customs and any(customs.commodities or []) else [],
         customs=lib.identity(
             teleship_req.CustomsType(
                 EORI=lib.failsafe(lambda: customs.options.eori_number.state),

@@ -21,7 +21,7 @@ class Settings(core.Settings):
     @property
     def server_url(self):
         return (
-            "https://sandbox-api.teleship.com"
+            "https://sandbox.teleship.com"
             if self.test_mode
             else "https://api.teleship.com"
         )
