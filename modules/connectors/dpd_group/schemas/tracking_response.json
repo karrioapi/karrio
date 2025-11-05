@@ -1,0 +1,52 @@
+{
+  "trackingNumber": "05300000011267",
+  "shipmentId": "SHIP123456789",
+  "status": "DELIVERED",
+  "statusDescription": "Package has been delivered",
+  "events": [
+    {
+      "timestamp": "2024-01-20T14:30:00Z",
+      "status": "DELIVERED",
+      "description": "Package delivered to recipient",
+      "location": {
+        "city": "Munich",
+        "country": "DE",
+        "postalCode": "54321"
+      },
+      "signedBy": "John Doe"
+    },
+    {
+      "timestamp": "2024-01-20T08:15:00Z",
+      "status": "OUT_FOR_DELIVERY",
+      "description": "Out for delivery",
+      "location": {
+        "city": "Munich",
+        "country": "DE"
+      }
+    },
+    {
+      "timestamp": "2024-01-19T22:45:00Z",
+      "status": "IN_TRANSIT",
+      "description": "Arrived at delivery depot",
+      "location": {
+        "city": "Munich",
+        "country": "DE"
+      }
+    },
+    {
+      "timestamp": "2024-01-15T16:20:00Z",
+      "status": "PICKED_UP",
+      "description": "Package picked up from sender",
+      "location": {
+        "city": "Berlin",
+        "country": "DE"
+      }
+    }
+  ],
+  "estimatedDelivery": "2024-01-20",
+  "recipient": {
+    "name": "John Doe",
+    "city": "Munich",
+    "country": "DE"
+  }
+}
