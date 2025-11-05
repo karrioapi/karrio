@@ -1,10 +1,6 @@
 {
-  "pickupUpdateResponse": {
-    "confirmationNumber": "PICKUP123456",
-    "pickupDate": "2023-06-01",
-    "readyTime": "10:00",
-    "closingTime": "18:00",
-    "status": "modified",
-    "requestId": "REQ123456"
-  }
+  "dispatchConfirmationNumber": "PRG999999999999",
+  "readyByTime": "11:00",
+  "nextPickupDate": "2024-11-06",
+  "warnings": []
 }

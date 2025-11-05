@@ -1,23 +1,76 @@
 {
-  "pickupRequest": {
-    "accountNumber": "123456",
-    "pickupDate": "2023-06-01",
-    "readyTime": "09:00",
-    "closingTime": "17:00",
-    "instruction": "Please knock loudly",
-    "address": {
-      "companyName": "ACME Corp",
-      "personName": "John Doe",
-      "street": "123 Main St",
-      "city": "Anytown",
-      "state": "CA",
-      "postalCode": "12345",
-      "country": "US",
-      "phone": "555-123-4567",
-      "email": "john@example.com"
+  "plannedPickupDateAndTime": "2024-11-06T10:00:00 GMT+00:00",
+  "closeTime": "18:00",
+  "location": "reception",
+  "locationType": "business",
+  "accounts": [
+    {
+      "typeCode": "shipper",
+      "number": "123456789"
+    }
+  ],
+  "specialInstructions": [
+    {
+      "value": "Please ring doorbell",
+      "typeCode": "TBD"
+    }
+  ],
+  "remark": "Two packages ready for pickup",
+  "customerDetails": {
+    "shipperDetails": {
+      "postalAddress": {
+        "postalCode": "14800",
+        "cityName": "Prague",
+        "countryCode": "CZ",
+        "addressLine1": "V Parku 2308/10"
+      },
+      "contactInformation": {
+        "email": "shipper@example.com",
+        "phone": "+1234567890",
+        "mobilePhone": "+1234567890",
+        "companyName": "Acme Corp",
+        "fullName": "John Doe"
+      }
     },
-    "parcelCount": 3,
-    "weight": 10.5,
-    "weightUnit": "KG"
-  }
+    "receiverDetails": {
+      "postalAddress": {
+        "postalCode": "10001",
+        "cityName": "New York",
+        "countryCode": "US",
+        "addressLine1": "123 Main Street"
+      },
+      "contactInformation": {
+        "email": "receiver@example.com",
+        "phone": "+19876543210",
+        "mobilePhone": "+19876543210",
+        "companyName": "Customer Inc",
+        "fullName": "Jane Smith"
+      }
+    }
+  },
+  "shipmentDetails": [
+    {
+      "productCode": "P",
+      "localProductCode": "P",
+      "accounts": [
+        {
+          "typeCode": "shipper",
+          "number": "123456789"
+        }
+      ],
+      "packages": [
+        {
+          "typeCode": "2BP",
+          "weight": 5.0,
+          "dimensions": {
+            "length": 15,
+            "width": 15,
+            "height": 15
+          }
+        }
+      ],
+      "isCustomsDeclarable": false,
+      "unitOfMeasurement": "metric"
+    }
+  ]
 }

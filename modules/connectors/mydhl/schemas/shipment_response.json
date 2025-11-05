@@ -1,14 +1,17 @@
 {
-  "shipmentResponse": {
-    "trackingNumber": "1Z999999999999999",
-    "shipmentIdentifier": "SHIP123456",
-    "labelType": "PDF",
-    "label": "base64_encoded_label_data",
-    "documents": {
-      "invoice": "base64_encoded_invoice_data"
-    },
-    "meta": {
-      "serviceCode": "EXPRESS"
+  "shipmentTrackingNumber": "1234567890",
+  "trackingUrl": "https://expressapi.dhl.com/mydhlapi/shipments/1234567890/tracking",
+  "packages": [
+    {
+      "referenceNumber": 1,
+      "trackingNumber": "JD014600001234567890",
+      "trackingUrl": "https://expressapi.dhl.com/mydhlapi/shipments/1234567890/tracking?pieceTrackingNumber=JD014600001234567890"
     }
-  }
+  ],
+  "documents": [
+    {
+      "imageFormat": "PDF",
+      "content": "JVBERi0xLjQKJeLjz9MK..."
+    }
+  ]
 }

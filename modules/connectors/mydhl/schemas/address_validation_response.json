@@ -1,17 +1,17 @@
-
 {
-  "isValid": true,
-  "normalizedAddress": {
-    "streetAddress": "123 Main St",
-    "cityLocality": "City Name",
-    "postalCode": "12345",
-    "countryCode": "US",
-    "stateProvince": "CA"
-  },
-  "validationMessages": [
+  "warnings": [],
+  "address": [
     {
-      "message": "Address is valid",
-      "code": "SUCCESS"
+      "postalCode": "10001",
+      "cityName": "NEW YORK",
+      "countryCode": "US",
+      "countyName": "NEW YORK",
+      "serviceArea": {
+        "code": "NYC",
+        "description": "NEW YORK",
+        "facilityCode": "NYC",
+        "inboundSortCode": "NYC"
+      }
     }
   ]
 }

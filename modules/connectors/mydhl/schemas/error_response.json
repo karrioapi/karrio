@@ -1,11 +1,7 @@
 {
-  "errorResponse": {
-    "errors": [
-      {
-        "code": "ERROR_CODE",
-        "message": "Error message description",
-        "details": "Additional error details"
-      }
-    ]
-  }
+  "instance": "/expressapi/shipments",
+  "detail": "The account number is not found or invalid. Please check the account number and retry.",
+  "title": "Bad request",
+  "message": "Bad request",
+  "status": "400"
 }

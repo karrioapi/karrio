@@ -1,7 +1,4 @@
 {
-  "pickupCancelResponse": {
-    "status": "cancelled",
-    "confirmationNumber": "PICKUP123456",
-    "statusMessage": "Pickup successfully cancelled"
-  }
+  "dispatchConfirmationNumber": "PRG999999999999",
+  "status": "cancelled"
 }

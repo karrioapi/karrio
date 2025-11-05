@@ -1,9 +1,3 @@
 {
-  "trackingRequest": {
-    "trackingNumbers": [
-      "1Z999999999999999"
-    ],
-    "languageCode": "en",
-    "reference": "ORDER123"
-  }
+  "shipmentTrackingNumber": "1234567890"
 }

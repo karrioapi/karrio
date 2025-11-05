@@ -1,6 +1,5 @@
 {
-  "shipmentCancelResponse": {
-    "success": true,
-    "message": "Shipment successfully cancelled"
-  }
+  "shipmentTrackingNumber": "1234567890",
+  "status": "cancelled",
+  "message": "Shipment cancelled successfully"
 }

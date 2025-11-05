@@ -1,20 +1,63 @@
 {
-  "rateResponse": {
-    "rates": [
-      {
-        "serviceCode": "EXPRESS",
-        "serviceName": "Express Shipping",
-        "totalCharge": 25.99,
-        "currency": "USD",
-        "transitDays": 2
+  "products": [
+    {
+      "productName": "EXPRESS WORLDWIDE",
+      "productCode": "P",
+      "localProductCode": "P",
+      "localProductCountryCode": "CZ",
+      "networkTypeCode": "TD",
+      "isCustomerAgreement": false,
+      "weight": {
+        "volumetric": 3.38,
+        "provided": 5.0,
+        "unitOfMeasurement": "metric"
       },
-      {
-        "serviceCode": "GROUND",
-        "serviceName": "Ground Shipping",
-        "totalCharge": 12.99,
-        "currency": "USD",
-        "transitDays": 5
+      "totalPrice": [
+        {
+          "currencyType": "BILLC",
+          "priceCurrency": "EUR",
+          "price": 89.25
+        }
+      ],
+      "totalPriceBreakdown": [
+        {
+          "currencyType": "BILLC",
+          "priceCurrency": "EUR",
+          "priceBreakdown": [
+            {
+              "typeCode": "SDRATE",
+              "price": 65.5
+            },
+            {
+              "typeCode": "FUEL",
+              "price": 23.75
+            }
+          ]
+        }
+      ],
+      "detailedPriceBreakdown": [
+        {
+          "currencyType": "BILLC",
+          "priceCurrency": "EUR",
+          "breakdown": [
+            {
+              "name": "Base Rate",
+              "serviceCode": "SDRATE",
+              "price": 65.5
+            }
+          ]
+        }
+      ],
+      "pickupCapabilities": {
+        "nextBusinessDay": true,
+        "localCutoffDateAndTime": "2024-11-05T16:00:00"
+      },
+      "deliveryCapabilities": {
+        "deliveryTypeCode": "QDDC",
+        "estimatedDeliveryDateAndTime": "2024-11-07T18:00:00",
+        "destinationServiceAreaCode": "NYC",
+        "destinationFacilityAreaCode": "NYC"
       }
-    ]
-  }
+    }
+  ]
 }

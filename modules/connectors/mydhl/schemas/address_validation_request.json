@@ -1,8 +1,6 @@
-
 {
-  "streetAddress": "123 Main St",
-  "cityLocality": "City Name",
-  "postalCode": "12345",
+  "type": "delivery",
   "countryCode": "US",
-  "stateProvince": "CA"
+  "postalCode": "10001",
+  "cityName": "New York"
 }
