@@ -33,26 +33,13 @@ class Settings(core.Settings):
         """Retrieve the access_token using the client_id|client_secret pair
         or collect it from the cache if an unexpired access_token exist.
         """
-        # Check if connection_cache is available
-        if not hasattr(self, 'connection_cache') or self.connection_cache is None:
-            # Directly get a new token without caching
-            auth = login(self)
-            return auth["access_token"]
-
         cache_key = f"{self.carrier_name}|{self.client_id}|{self.client_secret}"
-        now = datetime.datetime.now() + datetime.timedelta(minutes=30)
 
-        auth = self.connection_cache.get(cache_key) or {}
-        token = auth.get("access_token")
-        expiry = lib.to_date(auth.get("expiry"), current_format="%Y-%m-%d %H:%M:%S")
-
-        if token is not None and expiry is not None and expiry > now:
-            return token
-
-        self.connection_cache.set(cache_key, lambda: login(self))
-        new_auth = self.connection_cache.get(cache_key)
-
-        return new_auth["access_token"]
+        return self.connection_cache.thread_safe(
+            refresh_func=lambda: login(self),
+            cache_key=cache_key,
+            buffer_minutes=30,
+        ).get_state()
 
     @property
     def connection_config(self) -> lib.units.Options:
@@ -72,6 +59,7 @@ def login(settings: Settings):
 
     result = lib.request(
         url=settings.auth_url,
+        trace=settings.trace_as("json"),
         method="POST",
         headers={
             "Content-Type": "application/x-www-form-urlencoded",
@@ -84,7 +72,7 @@ def login(settings: Settings):
     messages = error.parse_error_response(response, settings)
 
     if any(messages):
-        raise errors.ParsedMessagesError(messages)
+        raise errors.ParsedMessagesError(messages=messages)
 
     expiry = datetime.datetime.now() + datetime.timedelta(
         seconds=float(response.get("expires_in", 0))
