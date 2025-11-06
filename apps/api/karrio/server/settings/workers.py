@@ -45,10 +45,16 @@ else:
 
 # Configure HUEY based on available Redis configuration
 if REDIS_HOST is not None:
+    # Calculate max connections based on environment
+    # Each worker replica needs: 2 (scheduler) + 4 (consumers) + 2 (periodic) = ~8 connections
+    # Formula: (worker_replicas * threads_per_worker) + api_connections + buffer
+    # Default: 100 connections = (5 replicas * 8 threads) + 40 API + 20 buffer
+    REDIS_MAX_CONNECTIONS = decouple.config("REDIS_MAX_CONNECTIONS", default=100, cast=int)
+
     pool = redis.ConnectionPool(
         host=REDIS_HOST,
         port=REDIS_PORT,
-        max_connections=20,
+        max_connections=REDIS_MAX_CONNECTIONS,
         **({"ssl": REDIS_SSL} if REDIS_SSL else {}),
         **({"password": REDIS_PASSWORD} if REDIS_PASSWORD else {}),
         **({"username": REDIS_USERNAME} if REDIS_USERNAME else {}),
