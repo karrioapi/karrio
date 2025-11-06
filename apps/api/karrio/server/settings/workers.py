@@ -52,18 +52,18 @@ if REDIS_HOST is not None:
     # Example: 100 connections = (5 replicas * (8 workers + 1 scheduler)) + 40 API + 15 buffer
     REDIS_MAX_CONNECTIONS = decouple.config("REDIS_MAX_CONNECTIONS", default=100, cast=int)
 
-    # Connection pool configuration with timeouts and health checks
+    # Connection pool configuration with timeouts
+    # Use BlockingConnectionPool to wait for available connections instead of failing immediately
     pool_kwargs = {
         "host": REDIS_HOST,
         "port": REDIS_PORT,
         "max_connections": REDIS_MAX_CONNECTIONS,
+        "timeout": 20,  # Wait up to 20 seconds for an available connection
         # Timeout settings to prevent hung connections
-        "socket_timeout": 5,  # Command execution timeout (seconds)
-        "socket_connect_timeout": 5,  # Connection establishment timeout (seconds)
+        "socket_timeout": 10,  # Command execution timeout (seconds)
+        "socket_connect_timeout": 10,  # Connection establishment timeout (seconds)
         # Keep connections alive to prevent closure by firewalls/load balancers
         "socket_keepalive": True,
-        # Health checks to detect stale connections
-        "health_check_interval": 30,  # Check every 30 seconds
         # Retry on transient failures
         "retry_on_timeout": True,
     }
@@ -90,7 +90,8 @@ if REDIS_HOST is not None:
     if REDIS_USERNAME:
         pool_kwargs["username"] = REDIS_USERNAME
 
-    pool = redis.ConnectionPool(**pool_kwargs)
+    # Use BlockingConnectionPool to wait for connections instead of raising errors immediately
+    pool = redis.BlockingConnectionPool(**pool_kwargs)
 
     HUEY = huey.RedisHuey(
         "default",
