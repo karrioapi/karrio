@@ -62,16 +62,22 @@ if REDIS_HOST is not None:
         "socket_connect_timeout": 5,  # Connection establishment timeout (seconds)
         # Keep connections alive to prevent closure by firewalls/load balancers
         "socket_keepalive": True,
-        "socket_keepalive_options": {
-            socket.TCP_KEEPIDLE: 60,  # Start keepalive after 60s idle
-            socket.TCP_KEEPINTVL: 10,  # Keepalive interval
-            socket.TCP_KEEPCNT: 3,  # Keepalive probes before timeout
-        },
         # Health checks to detect stale connections
         "health_check_interval": 30,  # Check every 30 seconds
         # Retry on transient failures
         "retry_on_timeout": True,
     }
+
+    # Add TCP keepalive options if available (Linux/Unix only)
+    try:
+        pool_kwargs["socket_keepalive_options"] = {
+            socket.TCP_KEEPIDLE: 60,  # Start keepalive after 60s idle
+            socket.TCP_KEEPINTVL: 10,  # Keepalive interval
+            socket.TCP_KEEPCNT: 3,  # Keepalive probes before timeout
+        }
+    except AttributeError:
+        # TCP keepalive constants not available on this platform
+        pass
 
     # Add SSL/TLS configuration if enabled
     if REDIS_SSL:
@@ -89,13 +95,8 @@ if REDIS_HOST is not None:
     HUEY = huey.RedisHuey(
         "default",
         connection_pool=pool,
-        blocking=True,  # Use BRPOP for efficient polling
-        read_timeout=1,  # BRPOP timeout (re-polls after 1 second)
         **({"immediate": WORKER_IMMEDIATE_MODE} if WORKER_IMMEDIATE_MODE else {}),
     )
-
-    print(f"Huey worker configured with Redis pool: max_connections={REDIS_MAX_CONNECTIONS}, "
-          f"host={REDIS_HOST}:{REDIS_PORT}, ssl={REDIS_SSL}")
 
 else:
     # No Redis configured, use SQLite
