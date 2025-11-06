@@ -49,13 +49,22 @@ if REDIS_HOST is not None:
     HEALTH_CHECK_APPS += ["health_check.contrib.redis"]
     INSTALLED_APPS += ["health_check.contrib.redis"]
 
+    # Configure connection pool with max_connections to prevent exhaustion
+    # Default: 50 connections per process (2 Gunicorn workers = 100 total)
+    # Azure Redis Basic: 256 max connections total
+    REDIS_CACHE_MAX_CONNECTIONS = config("REDIS_CACHE_MAX_CONNECTIONS", default=50, cast=int)
+
+    pool_kwargs = {"max_connections": REDIS_CACHE_MAX_CONNECTIONS}
+    if REDIS_SSL:
+        pool_kwargs["ssl_cert_reqs"] = None
+
     CACHES = {
         "default": {
             "BACKEND": "django_redis.cache.RedisCache",
             "LOCATION": REDIS_CONNECTION_URL,
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                **({"CONNECTION_POOL_KWARGS": {"ssl_cert_reqs": None}} if REDIS_SSL else {}),
+                "CONNECTION_POOL_KWARGS": pool_kwargs,
             },
             "KEY_PREFIX": REDIS_PREFIX,
         }
