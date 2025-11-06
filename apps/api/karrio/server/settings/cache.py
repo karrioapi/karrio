@@ -1,10 +1,21 @@
 # type: ignore
+import sys
 from decouple import config
 from karrio.server.settings.base import *
 from karrio.server.settings.apm import HEALTH_CHECK_APPS
 
 
 CACHE_TTL = 60 * 15
+
+# Check if worker is running in detached mode (separate from API server)
+DETACHED_WORKER = config("DETACHED_WORKER", default=False, cast=bool)
+
+# Detect if running as a worker process (via run_huey command)
+IS_WORKER_PROCESS = any("run_huey" in arg for arg in sys.argv)
+
+# Skip default Redis cache configuration if in worker mode
+# Workers only need HUEY Redis, not the default Django cache
+SKIP_DEFAULT_CACHE = DETACHED_WORKER or IS_WORKER_PROCESS
 
 # Redis configuration - REDIS_URL takes precedence and supersedes granular env vars
 REDIS_URL = config("REDIS_URL", default=None)
@@ -44,8 +55,8 @@ else:
         REDIS_SCHEME = "rediss" if REDIS_SSL else "redis"
         REDIS_CONNECTION_URL = f'{REDIS_SCHEME}://{REDIS_AUTH}{REDIS_HOST}:{REDIS_PORT or "6379"}/1'
 
-# Configure Django cache if Redis is available
-if REDIS_HOST is not None:
+# Configure Django cache if Redis is available and not in worker mode
+if REDIS_HOST is not None and not SKIP_DEFAULT_CACHE:
     HEALTH_CHECK_APPS += ["health_check.contrib.redis"]
     INSTALLED_APPS += ["health_check.contrib.redis"]
 
@@ -69,4 +80,6 @@ if REDIS_HOST is not None:
             "KEY_PREFIX": REDIS_PREFIX,
         }
     }
-    print(f"Redis connection initialized at: {REDIS_CONNECTION_URL}")
+    print(f"Redis cache connection initialized at: {REDIS_CONNECTION_URL}")
+elif SKIP_DEFAULT_CACHE:
+    print("Skipping default Redis cache configuration (worker mode - only HUEY Redis needed)")

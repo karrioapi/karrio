@@ -96,16 +96,17 @@ else:
             # TCP keepalive constants not available on this platform
             pass
 
-        # Add SSL/TLS configuration if enabled
-        if REDIS_SSL:
-            pool_kwargs["ssl"] = True
-            pool_kwargs["ssl_cert_reqs"] = None  # For Azure Redis compatibility
-
         # Add authentication if provided
         if REDIS_PASSWORD:
             pool_kwargs["password"] = REDIS_PASSWORD
         if REDIS_USERNAME:
             pool_kwargs["username"] = REDIS_USERNAME
+
+        # Add SSL/TLS configuration if enabled
+        if REDIS_SSL:
+            # Use SSLConnection class for SSL/TLS connections
+            pool_kwargs["connection_class"] = redis.SSLConnection
+            pool_kwargs["ssl_cert_reqs"] = None  # For Azure Redis compatibility
 
         # Use BlockingConnectionPool to wait for connections instead of raising errors immediately
         pool = redis.BlockingConnectionPool(**pool_kwargs)
