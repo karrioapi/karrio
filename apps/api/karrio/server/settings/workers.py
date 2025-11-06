@@ -1,5 +1,6 @@
 # type: ignore
 import os
+import sys
 import socket
 import huey
 import redis
@@ -20,12 +21,19 @@ WORKER_IMMEDIATE_MODE = decouple.config(
     "WORKER_IMMEDIATE_MODE", default=False, cast=bool
 )
 
-# Skip Huey configuration if running in detached worker mode
-# In production, workers run separately and API server doesn't need Huey
-if DETACHED_WORKER:
-    # Provide a dummy HUEY object to prevent import errors
+# Detect if running as a worker process (via run_huey command)
+# Workers always need Huey configured regardless of DETACHED_WORKER setting
+IS_WORKER_PROCESS = any("run_huey" in arg for arg in sys.argv)
+
+# Skip Huey configuration only if:
+# 1. Running in detached worker mode (DETACHED_WORKER=True)
+# 2. AND not running as a worker process (IS_WORKER_PROCESS=False)
+# This ensures workers always get Huey configured, but API servers don't when detached
+if DETACHED_WORKER and not IS_WORKER_PROCESS:
+    # API server in detached mode - skip Huey configuration
     HUEY = None
 else:
+    # Either: worker process, or API server with embedded workers
     # Redis configuration - REDIS_URL takes precedence and supersedes granular env vars
     REDIS_URL = decouple.config("REDIS_URL", default=None)
 
