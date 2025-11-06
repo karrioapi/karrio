@@ -19,6 +19,14 @@ class DimensionsType:
 
 
 @attr.s(auto_attribs=True)
+class DocumentType:
+    type: typing.Optional[str] = None
+    format: typing.Optional[str] = None
+    url: typing.Optional[str] = None
+    base64String: typing.Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
 class AddressType:
     line1: typing.Optional[str] = None
     city: typing.Optional[str] = None
@@ -64,9 +72,8 @@ class ShipmentType:
     serviceName: typing.Optional[str] = None
     shipDate: typing.Optional[str] = None
     estimatedDelivery: typing.Optional[str] = None
-    labelUrl: typing.Optional[str] = None
-    labelFormat: typing.Optional[str] = None
     packageType: typing.Optional[str] = None
+    documents: typing.Optional[typing.List[DocumentType]] = jstruct.JList[DocumentType]
     weight: typing.Optional[WeightType] = jstruct.JStruct[WeightType]
     dimensions: typing.Optional[DimensionsType] = jstruct.JStruct[DimensionsType]
     shipTo: typing.Optional[ShipToType] = jstruct.JStruct[ShipToType]

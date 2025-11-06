@@ -68,13 +68,21 @@ def _extract_details(
         else None
     )
 
+    # Extract label document from documents array
+    label_doc = lib.identity(
+        next(
+            (doc for doc in (shipment.documents or []) if doc.type == "LABEL"),
+            None
+        )
+    )
+
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         tracking_number=shipment.trackingNumber or "",
         shipment_identifier=shipment.shipmentId or "",
-        label_type=shipment.labelFormat or "PDF",
-        docs=models.Documents(label=shipment.labelUrl or ""),
+        label_type=label_doc.format if label_doc else "PDF",
+        docs=models.Documents(label=label_doc.base64String if label_doc else ""),
         selected_rate=selected_rate,
         meta=dict(
             service_code=shipment.serviceCode,

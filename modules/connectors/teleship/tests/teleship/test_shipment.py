@@ -217,9 +217,15 @@ ShipmentResponse = """{
         "serviceName": "Teleship Expedited Drop-off",
         "shipDate": "2025-01-15",
         "estimatedDelivery": "2025-01-20",
-        "labelUrl": "https://labels.teleship.com/SHP-UK-US-98765.pdf",
-        "labelFormat": "PDF",
         "packageType": "parcel",
+        "documents": [
+            {
+                "type": "LABEL",
+                "format": "PDF",
+                "url": "https://labels.teleship.com/SHP-UK-US-98765.pdf",
+                "base64String": "JVBERi0xLjcKJeLjz9MK..."
+            }
+        ],
         "weight": {
             "value": 1.2,
             "unit": "KG"

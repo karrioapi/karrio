@@ -8,9 +8,20 @@
     "serviceName": "Teleship Hub Direct (for bundling packages, shipper delivers to Teleship hub)",
     "shipDate": "2025-11-03T00:00:00.000Z",
     "estimatedDelivery": "2025-11-10T00:00:00.000Z",
-    "labelUrl": "https://api.teleship.com/labels/TELE-UK-US-123456789.pdf",
-    "labelFormat": "PDF",
     "packageType": "parcel",
+    "documents": [
+      {
+        "type": "LABEL",
+        "format": "PDF",
+        "url": "https://api.teleship.com/labels/TELE-UK-US-123456789.pdf",
+        "base64String": "JVBERi0xLjcKJeLjz9MK..."
+      },
+      {
+        "type": "INVOICE",
+        "format": "PDF",
+        "url": "https://api.teleship.com/invoices/TELE-UK-US-123456789.pdf"
+      }
+    ],
     "weight": {
       "value": 0.48,
       "unit": "kg"
