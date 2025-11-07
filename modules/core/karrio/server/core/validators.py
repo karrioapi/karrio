@@ -157,26 +157,34 @@ class PresetSerializer(serializers.Serializer):
         dimensions_required_together(data)
 
         if data is not None and "package_preset" in data:
+            package_presets = dataunits.REFERENCE_MODELS.get("package_presets", {})
+            preset_name = data["package_preset"]
+
+            # Find the preset across all carriers
             preset = next(
                 (
-                    presets[data["package_preset"]]
-                    for _, presets in dataunits.REFERENCE_MODELS[
-                        "package_presets"
-                    ].items()
-                    if data["package_preset"] in presets
+                    presets[preset_name]
+                    for carrier_id, presets in package_presets.items()
+                    if preset_name in presets
                 ),
-                {},
+                None,
             )
+
+            if preset is None:
+                logger.warning(
+                    "Package preset not found",
+                    preset_name=preset_name,
+                    available_carriers=list(package_presets.keys()),
+                )
+                preset = {}
 
             data.update(
                 {
                     **data,
-                    "width": data.get("width", preset.get("width")),
-                    "length": data.get("length", preset.get("length")),
-                    "height": data.get("height", preset.get("height")),
-                    "dimension_unit": data.get(
-                        "dimension_unit", preset.get("dimension_unit")
-                    ),
+                    "width": data.get("width") or preset.get("width"),
+                    "length": data.get("length") or preset.get("length"),
+                    "height": data.get("height") or preset.get("height"),
+                    "dimension_unit": data.get("dimension_unit") or preset.get("dimension_unit"),
                 }
             )
 
