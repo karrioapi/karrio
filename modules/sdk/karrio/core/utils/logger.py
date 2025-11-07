@@ -35,7 +35,7 @@ def get_log_format() -> str:
         "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | "
         "<level>{level: <8}</level> | "
         "<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | "
-        "<level>{message}</level>"
+        "<level>{message}</level>",
     )
 
 
@@ -86,10 +86,18 @@ def configure_logger(
     log_format = get_log_format()
 
     if diagnose is None:
-        diagnose = os.getenv("KARRIO_LOG_DIAGNOSE", "False").lower() in ("true", "1", "yes")
+        diagnose = os.getenv("KARRIO_LOG_DIAGNOSE", "False").lower() in (
+            "true",
+            "1",
+            "yes",
+        )
 
     if backtrace is None:
-        backtrace = os.getenv("KARRIO_LOG_BACKTRACE", "True").lower() in ("true", "1", "yes")
+        backtrace = os.getenv("KARRIO_LOG_BACKTRACE", "True").lower() in (
+            "true",
+            "1",
+            "yes",
+        )
 
     # Add console handler
     _logger.add(
@@ -136,6 +144,7 @@ def intercept_standard_logging():
     class InterceptHandler(logging.Handler):
         def emit(self, record: logging.LogRecord) -> None:
             # Get corresponding Loguru level if it exists
+            level: str | int
             try:
                 level = _logger.level(record.levelname).name
             except ValueError:
