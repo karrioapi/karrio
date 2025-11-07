@@ -1,4 +1,5 @@
 import json
+import unittest
 from typing import Tuple
 from unittest.mock import ANY, patch
 from django.http.response import HttpResponse
@@ -31,6 +32,7 @@ class TestOrders(TestOrderFixture):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertDictEqual(response_data, ORDER_RESPONSE)
 
+    @unittest.skip("Duplicate order detection disabled - see PR #872")
     def test_duplicate_order_creation(self):
         # Create the first order successfully
         response1, _ = self.create_order()
@@ -61,6 +63,7 @@ class TestOrders(TestOrderFixture):
         # Verify all three orders exist
         self.assertEqual(models.Order.objects.count(), 3)
 
+    @unittest.skip("Duplicate order detection disabled - see PR #872")
     def test_same_order_id_different_sources_allowed(self):
         # Create first order with shopify source
         response1, _ = self.create_order()

@@ -3,6 +3,7 @@ import strawberry
 from strawberry.types import Info
 import django.utils.timezone as timezone
 import django.db.transaction as transaction
+from django.db.models import F
 
 import karrio.lib as lib
 import karrio.server.graph.utils as utils
@@ -25,12 +26,30 @@ class CreateOrderMutation(utils.BaseMutation):
         info: Info, **input: inputs.CreateOrderMutationInput
     ) -> "CreateOrderMutation":
         test_mode = info.context.request.test_mode
-        order_id = "1" + str(
-            models.Order.access_by(info.context.request).filter(source="draft").count()
-            + 1
-        ).zfill(
-            5
-        )  # TODO: make this grow beyond 2 million
+
+        # Generate order_id using atomic counter
+        org_id = info.context.request.org.id
+
+        with transaction.atomic():
+            # Get or create counter with immediate lock to prevent any race condition
+            counter_obj, created = models.OrderCounter.objects.select_for_update().get_or_create(
+                org_id=org_id,
+                test_mode=test_mode,
+                defaults={'counter': 0}
+            )
+
+            # Increment counter atomically at database level using F() expression
+            models.OrderCounter.objects.filter(id=counter_obj.id).update(
+                counter=F('counter') + 1,
+                updated_at=timezone.now()
+            )
+
+            # Refresh to get the updated counter value
+            counter_obj.refresh_from_db()
+            counter_value = counter_obj.counter
+
+            # Generate sequential order_id
+            order_id = "1" + str(counter_value).zfill(5)
 
         serializer = model_serializers.OrderSerializer(
             context=info.context.request,

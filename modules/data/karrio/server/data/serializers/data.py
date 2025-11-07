@@ -1,15 +1,13 @@
 import tablib
-import logging
 from django.db import transaction
 
 from karrio.server.conf import settings
+from karrio.server.core.logging import logger
 import karrio.server.core.exceptions as exceptions
 import karrio.server.data.models as models
 import karrio.server.data.resources as resources
 import karrio.server.data.serializers as serializers
 import karrio.server.data.serializers.batch as batch
-
-logger = logging.getLogger(__name__)
 
 
 @serializers.owned_model_serializer

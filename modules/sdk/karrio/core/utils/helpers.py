@@ -6,7 +6,6 @@ import string
 import base64
 import PyPDF2
 import asyncio
-import logging
 import datetime
 import urllib.parse
 import PIL.Image
@@ -16,8 +15,7 @@ from urllib.error import HTTPError
 from urllib.request import urlopen, Request, ProxyHandler, build_opener, install_opener
 from typing import List, TypeVar, Callable, Optional, Any, cast
 from concurrent.futures import ThreadPoolExecutor, as_completed
-
-logger = logging.getLogger(__name__)
+from karrio.core.utils.logger import logger
 ssl._create_default_https_context = ssl._create_unverified_context  # type: ignore
 PIL.ImageFile.LOAD_TRUNCATED_IMAGES = True
 T = TypeVar("T")
@@ -198,9 +196,9 @@ def process_request(
         opener = build_opener(proxy_handler)
         opener.addheaders = [("Proxy-Authorization", f"Basic {auth_encoded}")]
         install_opener(opener)
-        logger.info(f"Proxy set to: {proxy_url} with credentials")
+        logger.info("Proxy configured", proxy_url=proxy_url)
 
-    logger.info(f"Request URL:: {_request.full_url}")
+    logger.info("HTTP request prepared", url=_request.full_url)
 
     return _request
 
@@ -233,7 +231,7 @@ def process_error(
     on_error: Callable[[HTTPError], str] = None,
     trace: Callable[[Any, str], Any] = None,
 ) -> str:
-    logger.error(error, exc_info=False)
+    logger.error("HTTP request failed", request_id=request_id, error_code=error.code, error_msg=str(error))
 
     if on_error is not None:
         _error = on_error(error)
@@ -243,7 +241,7 @@ def process_error(
     if trace:
         trace({"request_id": request_id, "error": _error}, "error")
 
-    logger.debug(f"Error content:: {error}")
+    logger.debug("HTTP error details", request_id=request_id, error=str(error))
 
     return _error
 
@@ -264,7 +262,7 @@ def request(
     """
 
     _request_id = str(uuid.uuid4())
-    logger.debug(f"sending request ({_request_id})...")
+    logger.debug("Sending HTTP request", request_id=_request_id)
 
     try:
         _request = process_request(_request_id, trace, proxy, **kwargs)

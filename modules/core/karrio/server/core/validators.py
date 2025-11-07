@@ -1,10 +1,10 @@
 import re
 import typing
-import logging
 import requests  # type: ignore
 import phonenumbers
 from constance import config
 from datetime import datetime
+from karrio.server.core.logging import logger
 
 import karrio.lib as lib
 import karrio.core.units as units
@@ -17,7 +17,6 @@ try:
 except ImportError:
     references = None
 
-logger = logging.getLogger(__name__)
 DIMENSIONS = ["width", "height", "length"]
 
 
@@ -98,7 +97,7 @@ def valid_base64(prop: str, max_size: int = 5242880):
                 error = f"Error: file size exceeds {max_size} bytes."
 
         except Exception as e:
-            logger.exception(e)
+            logger.error("Invalid base64 file content", error=str(e))
             error = "Invalid base64 file content"
             raise serializers.ValidationError(
                 error,
@@ -158,26 +157,34 @@ class PresetSerializer(serializers.Serializer):
         dimensions_required_together(data)
 
         if data is not None and "package_preset" in data:
+            package_presets = dataunits.REFERENCE_MODELS.get("package_presets", {})
+            preset_name = data["package_preset"]
+
+            # Find the preset across all carriers
             preset = next(
                 (
-                    presets[data["package_preset"]]
-                    for _, presets in dataunits.REFERENCE_MODELS[
-                        "package_presets"
-                    ].items()
-                    if data["package_preset"] in presets
+                    presets[preset_name]
+                    for carrier_id, presets in package_presets.items()
+                    if preset_name in presets
                 ),
-                {},
+                None,
             )
+
+            if preset is None:
+                logger.warning(
+                    "Package preset not found",
+                    preset_name=preset_name,
+                    available_carriers=list(package_presets.keys()),
+                )
+                preset = {}
 
             data.update(
                 {
                     **data,
-                    "width": data.get("width", preset.get("width")),
-                    "length": data.get("length", preset.get("length")),
-                    "height": data.get("height", preset.get("height")),
-                    "dimension_unit": data.get(
-                        "dimension_unit", preset.get("dimension_unit")
-                    ),
+                    "width": data.get("width") or preset.get("width"),
+                    "length": data.get("length") or preset.get("length"),
+                    "height": data.get("height") or preset.get("height"),
+                    "dimension_unit": data.get("dimension_unit") or preset.get("dimension_unit"),
                 }
             )
 
@@ -233,7 +240,7 @@ class AugmentedAddressSerializer(serializers.Serializer):
                     }
                 )
             except Exception as e:
-                logger.warning(e)
+                logger.warning("Invalid phone number format", error=str(e))
                 raise serializers.ValidationError(
                     {"phone_number": "Invalid phone number format"}
                 )
@@ -318,7 +325,11 @@ class Address:
                 if hasattr(module, "METADATA"):
                     validator_class = module.METADATA.Validator
             except (ImportError, AttributeError) as e:
-                logger.warning(f"Could not import validator {validator_name}: {e}")
+                logger.warning(
+                    "Could not import validator",
+                    validator_name=validator_name,
+                    error=str(e),
+                )
 
             if validator_class is not None:
                 # Return validator info with is_enabled=True
@@ -394,7 +405,11 @@ class Address:
                 if hasattr(module, "METADATA"):
                     return module.METADATA.Validator
             except (ImportError, AttributeError) as e:
-                logger.warning(f"Could not import validator {validator_name}: {e}")
+                logger.warning(
+                    "Could not import validator",
+                    validator_name=validator_name,
+                    error=str(e),
+                )
 
         # Fall back to legacy validator
         return Address._get_legacy_validator()

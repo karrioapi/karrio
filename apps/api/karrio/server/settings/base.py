@@ -31,9 +31,11 @@ config = decouple.AutoConfig(search_path=Path().resolve())
 
 if not config("SECRET_KEY", default=None):
     try:
+        # Note: Using print here intentionally as logging isn't configured yet
         print("> fallback .env.sample...")
         config = decouple.Config(decouple.RepositoryEnv(".env.sample"))
     except Exception as e:
+        # Note: Using print here intentionally as logging isn't configured yet
         print(f"> error: {e}")
 
 
@@ -581,54 +583,91 @@ LOG_FILE_DIR = config("LOG_DIR", default=WORK_DIR)
 LOG_FILE_NAME = os.path.join(LOG_FILE_DIR, "debug.log")
 DRF_TRACKING_ADMIN_LOG_READONLY = True
 
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "verbose": {
-            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
-            "style": "{",
+# Option to use Loguru (default: True)
+USE_LOGURU = config("USE_LOGURU", default=True, cast=bool)
+
+if USE_LOGURU:
+    # Minimal LOGGING config - will be intercepted by Loguru
+    LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "handlers": {
+            "console": {
+                "class": "logging.StreamHandler",
+            },
         },
-        "simple": {
-            "format": "{levelname} {filename} {lineno} {message}",
-            "style": "{",
-        },
-    },
-    "handlers": {
-        "file": {
-            "level": "DEBUG",
-            "class": "logging.handlers.TimedRotatingFileHandler",
-            "formatter": "verbose",
-            "filename": LOG_FILE_NAME,
-            "when": "D",
-            "interval": 1,
-            "backupCount": 20,
-        },
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "simple",
-        },
-    },
-    "loggers": {
-        "oauth2_provider": {
-            "level": "DEBUG",
+        "root": {
             "handlers": ["console"],
-            "propagate": True,
+            "level": "INFO",
         },
-        "django": {
-            "handlers": ["file", "console"],
-            "level": DJANGO_LOG_LEVEL,
-            "propagate": False,
+    }
+else:
+    # Traditional Django logging configuration
+    LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "formatters": {
+            "verbose": {
+                "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+                "style": "{",
+            },
+            "simple": {
+                "format": "{levelname} {filename} {lineno} {message}",
+                "style": "{",
+            },
         },
-        "karrio": {
-            "handlers": ["file", "console"],
-            "level": LOG_LEVEL,
-            "propagate": False,
+        "handlers": {
+            "file": {
+                "level": "DEBUG",
+                "class": "logging.handlers.TimedRotatingFileHandler",
+                "formatter": "verbose",
+                "filename": LOG_FILE_NAME,
+                "when": "D",
+                "interval": 1,
+                "backupCount": 20,
+            },
+            "console": {
+                "class": "logging.StreamHandler",
+                "formatter": "simple",
+            },
         },
-        "karrio.server.core.exceptions": {
-            "handlers": ["file", "console"],
-            "level": "DEBUG",
-            "propagate": False,
+        "loggers": {
+            "oauth2_provider": {
+                "level": "DEBUG",
+                "handlers": ["console"],
+                "propagate": True,
+            },
+            "django": {
+                "handlers": ["file", "console"],
+                "level": DJANGO_LOG_LEVEL,
+                "propagate": False,
+            },
+            "karrio": {
+                "handlers": ["file", "console"],
+                "level": LOG_LEVEL,
+                "propagate": False,
+            },
+            "karrio.server.core.exceptions": {
+                "handlers": ["file", "console"],
+                "level": "DEBUG",
+                "propagate": False,
+            },
         },
-    },
-}
+    }
+
+# Initialize Loguru if enabled
+if USE_LOGURU:
+    try:
+        from karrio.server.core.logging import setup_django_loguru, logger
+
+        setup_django_loguru(
+            level=LOG_LEVEL,
+            log_file=LOG_FILE_NAME,
+            intercept_django=True,
+            enqueue=True,  # Thread-safe async logging
+        )
+    except ImportError as e:
+        # Note: Using print here as Loguru failed to load
+        print(f"Warning: Failed to initialize Loguru: {e}")
+        print("Falling back to standard Django logging")
+        USE_LOGURU = False

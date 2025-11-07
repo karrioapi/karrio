@@ -154,9 +154,8 @@ class CustomOAuth2Validator(OAuth2Validator):
         super().save_authorization_code(client_id, code, request, *args, **kwargs)
 
         # Log OAuth events for audit purposes
-        import logging
-        logger = logging.getLogger('karrio.server.oauth')
-        logger.info(f"Authorization code granted for client {client_id}")
+        from karrio.server.core.logging import logger
+        logger.info("Authorization code granted", client_id=client_id)
 
     def authenticate_user(self, request):
         """

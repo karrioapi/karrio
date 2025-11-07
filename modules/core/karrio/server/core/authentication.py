@@ -1,6 +1,5 @@
 import yaml  # type: ignore
 import pydoc
-import logging
 import functools
 from django.db.utils import ProgrammingError
 from django.conf import settings
@@ -23,8 +22,8 @@ from oauth2_provider.contrib.rest_framework import (
     OAuth2Authentication as BaseOAuth2Authentication,
 )
 from django_otp.middleware import OTPMiddleware
+from karrio.server.core.logging import logger
 
-logger = logging.getLogger(__name__)
 UserModel = get_user_model()
 AUTHENTICATION_CLASSES = getattr(settings, "AUTHENTICATION_CLASSES", [])
 

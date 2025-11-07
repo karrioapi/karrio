@@ -1,5 +1,4 @@
 import base64
-import logging
 import django.urls as urls
 from rest_framework import status
 from rest_framework.request import Request
@@ -12,9 +11,9 @@ import karrio.server.core.views.api as api
 import karrio.server.documents.models as models
 import karrio.server.documents.generator as generator
 import karrio.server.documents.serializers as serializers
+from karrio.server.core.logging import logger
 
 ENDPOINT_ID = "&&&&$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
-logger = logging.getLogger(__name__)
 DocumentTemplates = serializers.PaginatedResult(
     "DocumentTemplateList", serializers.DocumentTemplate
 )
@@ -217,20 +216,20 @@ class DocumentGenerator(api.APIView):
                     status=status.HTTP_404_NOT_FOUND,
                 )
             except Exception as e:
-                logger.exception(f"Unexpected error during document generation: {e}")
+                logger.exception("Document generation failed", template_id=data.get('template_id'), error=str(e))
                 return Response(
                     {"errors": [{"message": f"Document generation failed: {str(e)}"}]},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
 
         except serializers.ValidationError as e:
-            logger.error(f"Validation error: {e}")
+            logger.error("Document validation error", error=str(e))
             return Response(
                 {"errors": [{"message": "Invalid input data"}]},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
-            logger.exception(f"Unexpected error in document generator: {e}")
+            logger.exception("Unexpected error in document generator", error=str(e))
             return Response(
                 {"errors": [{"message": "Internal server error"}]},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

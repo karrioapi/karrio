@@ -1,17 +1,15 @@
-import logging
 from django.db.models import signals
 
+from karrio.server.core.logging import logger
 import karrio.server.core.utils as utils
 import karrio.server.user.models as user
 import karrio.server.iam.models as models
-
-logger = logging.getLogger(__name__)
 
 
 def register_all():
     signals.post_delete.connect(context_object_deleted, sender=user.Token)
 
-    logger.info("karrio.iam signals registered...")
+    logger.info("Signal registration complete", module="karrio.iam")
 
 
 @utils.disable_for_loaddata
