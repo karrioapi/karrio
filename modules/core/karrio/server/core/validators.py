@@ -317,7 +317,11 @@ class Address:
                 if hasattr(module, "METADATA"):
                     validator_class = module.METADATA.Validator
             except (ImportError, AttributeError) as e:
-                logger.warning("Could not import validator", validator_name=validator_name, error=str(e))
+                logger.warning(
+                    "Could not import validator",
+                    validator_name=validator_name,
+                    error=str(e),
+                )
 
             if validator_class is not None:
                 # Return validator info with is_enabled=True
@@ -393,7 +397,11 @@ class Address:
                 if hasattr(module, "METADATA"):
                     return module.METADATA.Validator
             except (ImportError, AttributeError) as e:
-                logger.warning("Could not import validator", validator_name=validator_name, error=str(e))
+                logger.warning(
+                    "Could not import validator",
+                    validator_name=validator_name,
+                    error=str(e),
+                )
 
         # Fall back to legacy validator
         return Address._get_legacy_validator()

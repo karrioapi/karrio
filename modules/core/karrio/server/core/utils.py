@@ -345,27 +345,76 @@ def process_events(
         return current_events
 
     new_events = lib.to_dict(response_events)
+
+    # If no current events, return new events as-is (already sorted by SDK)
     if not any(current_events):
-        return sorted(
-            new_events,
-            key=lambda e: f"{e.get('date', '')} {e.get('time', '')}",
-            reverse=True,
+        return new_events
+
+    # Merge events: add only new non-duplicate events to existing ones
+    current_hashes = {lib.to_json(event) for event in current_events}
+    unique_new_events = [
+        event for event in new_events
+        if lib.to_json(event) not in current_hashes
+    ]
+
+    # If no new unique events, return current events unchanged
+    if not any(unique_new_events):
+        return current_events
+
+    # When merging, we need to re-sort because new events may have timestamps
+    # that fall between existing events. We must parse datetimes properly
+    # (not use string comparison) to handle 12-hour AM/PM format correctly.
+    def try_parse_datetime(value: str, fmt: str) -> typing.Optional[datetime]:
+        """Safely attempt to parse a datetime string with a given format."""
+        return failsafe(lambda: datetime.strptime(value, fmt))
+
+    def parse_date(event: dict) -> typing.Optional[datetime]:
+        """Parse date from event using multiple format attempts."""
+        date_str = event.get("date", "")
+        date_formats = ["%Y-%m-%d", "%m/%d/%Y", "%-m/%d/%Y"]
+        return (
+            functools.reduce(
+                lambda acc, fmt: acc or try_parse_datetime(date_str, fmt),
+                date_formats,
+                None,
+            )
+            if date_str
+            else None
         )
 
-    # Create hash for comparison using lib.to_json
-    event_hashes = {lib.to_json(event): event for event in current_events}
+    def parse_time(event: dict) -> typing.Optional[datetime.time]:
+        """Parse time from event using multiple format attempts."""
+        time_str = event.get("time", "")
+        time_formats = ["%I:%M %p", "%H:%M:%S", "%H:%M", "%I:%M"]
+        parsed = (
+            functools.reduce(
+                lambda acc, fmt: acc or try_parse_datetime(time_str, fmt),
+                time_formats,
+                None,
+            )
+            if time_str
+            else None
+        )
+        return parsed.time() if parsed else None
 
-    for event in new_events:
-        event_hash = lib.to_json(event)
-        if event_hash not in event_hashes:
-            event_hashes[event_hash] = event
+    def parse_event_datetime(event: dict) -> typing.Optional[datetime]:
+        """Parse complete datetime from event date and time."""
+        parsed_date = parse_date(event)
+        parsed_time = parse_time(event) if parsed_date else None
+        return (
+            datetime.combine(parsed_date.date(), parsed_time)
+            if parsed_date and parsed_time
+            else parsed_date
+        )
 
-    # Sort events by date and time in descending order (latest first)
-    return sorted(
-        event_hashes.values(),
-        key=lambda e: f"{e.get('date', '')} {e.get('time', '')}",
-        reverse=True,
-    )
+    def create_sort_key(event: dict) -> tuple:
+        """Create sort key: dated events first (by datetime desc), undated last (by original order)."""
+        dt = parse_event_datetime(event)
+        return (0 if dt else 1, dt if dt else datetime.min)
+
+    # Merge and sort all events
+    merged_events = current_events + unique_new_events
+    return sorted(merged_events, key=create_sort_key, reverse=True)
 
 
 def apply_rate_selection(payload: typing.Union[dict, typing.Any], **kwargs):
