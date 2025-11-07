@@ -60,6 +60,8 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = list(default_headers) + [
     "x-test-mode",
     "x-org-id",
+    "x-tenant-id",
+    "x-request-id",
 ]
 
 # HTTPS configuration
