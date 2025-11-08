@@ -10,8 +10,9 @@ from karrio.core.utils.caching import ThreadSafeTokenManager
 class Settings(core.Settings):
     """MyDHL connection settings."""
 
-    # Add carrier specific api connection properties here
-    api_key: str
+    # MyDHL API uses Basic Authentication
+    username: str
+    password: str
     account_number: str = None
 
     @property
@@ -21,15 +22,20 @@ class Settings(core.Settings):
     @property
     def server_url(self):
         return (
-            "https://carrier.api"
+            "https://express.api.dhl.com/mydhlapi/test"
             if self.test_mode
-            else "https://sandbox.carrier.api"
+            else "https://express.api.dhl.com/mydhlapi"
         )
 
-    # """uncomment the following code block to expose a carrier tracking url."""
-    # @property
-    # def tracking_url(self):
-    #     return "https://www.carrier.com/tracking?tracking-id={}"
+    @property
+    def tracking_url(self):
+        return "https://www.dhl.com/en/express/tracking.html?AWB={}&brand=DHL"
+
+    @property
+    def authorization(self):
+        """Generate Basic Auth header."""
+        pair = f"{self.username}:{self.password}"
+        return base64.b64encode(pair.encode("utf-8")).decode("ascii")
 
     
 
