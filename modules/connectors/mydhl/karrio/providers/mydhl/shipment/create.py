@@ -171,7 +171,7 @@ def shipment_request(
         # Add service code
         serviceCode=service,
         # Add account information
-        customerNumber=settings.customer_number,
+        customerNumber=settings.account_number,
         # Add label details
         labelFormat=payload.label_type or "PDF",
         # Add any other required fields for this carrier's API

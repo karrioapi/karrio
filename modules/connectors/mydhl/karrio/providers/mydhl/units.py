@@ -135,6 +135,18 @@ class MeasurementUnit(lib.StrEnum):
     imperial = "imperial"
 
 
+class WeightUnit(lib.StrEnum):
+    """ Weight unit """
+    KG = "kg"
+    LB = "lb"
+
+
+class DimensionUnit(lib.StrEnum):
+    """ Dimension unit """
+    CM = "cm"
+    IN = "in"
+
+
 def shipping_options_initializer(
     options: dict,
     package_options: units.ShippingOptions = None,

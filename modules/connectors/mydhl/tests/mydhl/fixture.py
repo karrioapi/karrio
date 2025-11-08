@@ -9,6 +9,7 @@ gateway = karrio.gateway["mydhl"].create(
         test_mode=True,
         carrier_id="mydhl",
         account_number="123456789",
-        api_key="TEST_API_KEY",
+        username="TEST_USERNAME",
+        password="TEST_PASSWORD",
     )
 )
