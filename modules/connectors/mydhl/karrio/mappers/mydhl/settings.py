@@ -8,8 +8,9 @@ import karrio.providers.mydhl.utils as provider_utils
 class Settings(provider_utils.Settings):
     """MyDHL connection settings."""
 
-    # Add carrier specific API connection properties here
-    api_key: str
+    # MyDHL API uses Basic Authentication
+    username: str
+    password: str
     account_number: str = None
 
     # generic properties
