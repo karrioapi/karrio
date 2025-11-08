@@ -18,12 +18,14 @@ class TestMyDHLRating(unittest.TestCase):
 
     def test_create_rate_request(self):
         request = gateway.mapper.create_rate_request(self.RateRequest)
+        print(f"Generated request: {lib.to_dict(request.serialize())}")
         self.assertEqual(lib.to_dict(request.serialize()), RateRequest)
 
     def test_get_rates(self):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
             mock.return_value = "{}"
             karrio.Rating.fetch(self.RateRequest).from_(gateway)
+            print(f"Called URL: {mock.call_args[1]['url']}")
             self.assertEqual(
                 mock.call_args[1]["url"],
                 f"{gateway.settings.server_url}/rates"
@@ -37,6 +39,7 @@ class TestMyDHLRating(unittest.TestCase):
                 .from_(gateway)
                 .parse()
             )
+            print(f"Parsed response: {lib.to_dict(parsed_response)}")
             self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
 
     def test_parse_error_response(self):
@@ -47,6 +50,7 @@ class TestMyDHLRating(unittest.TestCase):
                 .from_(gateway)
                 .parse()
             )
+            print(f"Error response: {lib.to_dict(parsed_response)}")
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
@@ -89,66 +93,98 @@ RatePayload = {
 }
 
 RateRequest = {
-    "shipper": {
-        "addressLine1": "123 Test Street",
-        "city": "Test City",
-        "postalCode": "12345",
-        "countryCode": "US",
-        "stateCode": "CA",
-        "personName": "Test Person",
-        "companyName": "Test Company",
-        "phoneNumber": "1234567890",
-        "email": "test@example.com"
+    "customerDetails": {
+        "shipperDetails": {
+            "postalCode": "12345",
+            "cityName": "Test City",
+            "countryCode": "US"
+        },
+        "receiverDetails": {
+            "postalCode": "12345",
+            "cityName": "Test City",
+            "countryCode": "US"
+        }
     },
-    "recipient": {
-        "addressLine1": "123 Test Street",
-        "city": "Test City",
-        "postalCode": "12345",
-        "countryCode": "US",
-        "stateCode": "CA",
-        "personName": "Test Person",
-        "companyName": "Test Company",
-        "phoneNumber": "1234567890",
-        "email": "test@example.com"
-    },
+    "accounts": [
+        {
+            "typeCode": "shipper",
+            "number": 123456789
+        }
+    ],
+    "productCode": None,
+    "plannedShippingDateAndTime": ANY,
+    "unitOfMeasurement": "metric",
+    "isCustomsDeclarable": False,
     "packages": [
         {
+            "typeCode": None,
             "weight": 10.0,
-            "weightUnit": "KG",
-            "length": 10.0,
-            "width": 10.0,
-            "height": 10.0,
-            "dimensionUnit": "CM",
-            "packagingType": "BOX"
+            "dimensions": {
+                "length": 10,
+                "width": 10,
+                "height": 10
+            }
         }
     ]
 }
 
 RateResponse = """{
-  "rates": [
+  "products": [
     {
-      "serviceCode": "express",
-      "serviceName": "Express Service",
-      "totalCharge": 25.99,
-      "currency": "USD",
-      "transitDays": 2
+      "productName": "EXPRESS WORLDWIDE",
+      "productCode": "P",
+      "localProductCode": "P",
+      "networkTypeCode": "TD",
+      "isCustomerAgreement": false,
+      "totalPrice": [
+        {
+          "currencyType": "BILLC",
+          "priceCurrency": "USD",
+          "price": 25.99
+        }
+      ],
+      "totalPriceBreakdown": [
+        {
+          "currencyType": "BILLC",
+          "priceCurrency": "USD",
+          "priceBreakdown": [
+            {
+              "typeCode": "SPRQT",
+              "price": 23.50
+            }
+          ]
+        }
+      ],
+      "deliveryCapabilities": {
+        "deliveryTypeCode": "QDDC",
+        "estimatedDeliveryDateAndTime": "2024-01-15T17:00:00"
+      }
     },
     {
-      "serviceCode": "ground",
-      "serviceName": "Ground Service",
-      "totalCharge": 12.99,
-      "currency": "USD",
-      "transitDays": 5
+      "productName": "EXPRESS 12:00",
+      "productCode": "Y",
+      "localProductCode": "Y",
+      "networkTypeCode": "TD",
+      "isCustomerAgreement": false,
+      "totalPrice": [
+        {
+          "currencyType": "BILLC",
+          "priceCurrency": "USD",
+          "price": 35.99
+        }
+      ],
+      "deliveryCapabilities": {
+        "estimatedDeliveryDateAndTime": "2024-01-14T12:00:00"
+      }
     }
   ]
 }"""
 
 ErrorResponse = """{
-  "error": {
-    "code": "rate_error",
-    "message": "Unable to get rates",
-    "details": "Invalid address provided"
-  }
+  "status": 400,
+  "title": "Bad Request",
+  "detail": "Invalid postal code provided",
+  "instance": "/rates"
 }"""
 
 ParsedRateResponse = [
@@ -156,23 +192,35 @@ ParsedRateResponse = [
         {
             "carrier_id": "mydhl",
             "carrier_name": "mydhl",
-            "service": "express",
+            "service": "P",
             "currency": "USD",
-            "total_charge": 25.99,
-            "transit_days": 2,
+            "total_charge": "25.99",
+            "transit_days": ANY,
+            "extra_charges": [
+                {
+                    "name": "SPRQT",
+                    "amount": "23.50",
+                    "currency": "USD"
+                }
+            ],
             "meta": {
-                "service_name": "Express Service"
+                "service_name": "EXPRESS WORLDWIDE",
+                "network_type_code": "TD",
+                "local_product_code": "P"
             }
         },
         {
             "carrier_id": "mydhl",
             "carrier_name": "mydhl",
-            "service": "ground",
+            "service": "Y",
             "currency": "USD",
-            "total_charge": 12.99,
-            "transit_days": 5,
+            "total_charge": "35.99",
+            "transit_days": ANY,
+            "extra_charges": None,
             "meta": {
-                "service_name": "Ground Service"
+                "service_name": "EXPRESS 12:00",
+                "network_type_code": "TD",
+                "local_product_code": "Y"
             }
         }
     ],
@@ -185,10 +233,11 @@ ParsedErrorResponse = [
         {
             "carrier_id": "mydhl",
             "carrier_name": "mydhl",
-            "code": "rate_error",
-            "message": "Unable to get rates",
+            "code": "400",
+            "message": "Invalid postal code provided",
             "details": {
-                "details": "Invalid address provided"
+                "instance": "/rates",
+                "title": "Bad Request"
             }
         }
     ]
