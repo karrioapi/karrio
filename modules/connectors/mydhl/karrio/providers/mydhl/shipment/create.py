@@ -28,78 +28,55 @@ def parse_shipment_response(
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
 
-    # Check if we have valid shipment data
-    
-    has_shipment = "shipment" in response if hasattr(response, 'get') else False
-    
+    shipment_response = lib.to_object(mydhl_res.ShipmentResponseType, response)
 
-    shipment = _extract_details(response, settings) if has_shipment else None
+    details = _extract_details(shipment_response, settings)
 
-    return shipment, messages
+    return details, messages
 
 
 def _extract_details(
-    data: dict,
+    shipment: mydhl_res.ShipmentResponseType,
     settings: provider_utils.Settings,
 ) -> models.ShipmentDetails:
     """
-    Extract shipment details from carrier response data
+    Extract shipment details from MyDHL shipment response
 
-    data: The carrier-specific shipment data structure
+    shipment: The MyDHL ShipmentResponseType object
     settings: The carrier connection settings
 
     Returns a ShipmentDetails object with extracted shipment information
     """
-    # Convert the carrier data to a proper object for easy attribute access
-    
-    # For JSON APIs, convert dict to proper response object
-    response_obj = lib.to_object(mydhl_res.ShipmentResponseType, data)
+    # Extract tracking number (MyDHL returns as integer)
+    tracking_number = str(shipment.shipmentTrackingNumber) if shipment.shipmentTrackingNumber else ""
 
-    # Access the shipment data
-    shipment = response_obj.shipment if hasattr(response_obj, 'shipment') else None
-
-    if shipment:
-        # Extract tracking info
-        tracking_number = shipment.trackingNumber if hasattr(shipment, 'trackingNumber') else ""
-        shipment_id = shipment.shipmentId if hasattr(shipment, 'shipmentId') else ""
-
-        # Extract label info
-        label_data = shipment.labelData if hasattr(shipment, 'labelData') else None
-        label_format = label_data.format if label_data and hasattr(label_data, 'format') else "PDF"
-        label_base64 = label_data.image if label_data and hasattr(label_data, 'image') else ""
-
-        # Extract optional invoice
-        invoice_base64 = shipment.invoiceImage if hasattr(shipment, 'invoiceImage') else ""
-
-        # Extract service code for metadata
-        service_code = shipment.serviceCode if hasattr(shipment, 'serviceCode') else ""
-    else:
-        tracking_number = ""
-        shipment_id = ""
-        label_format = "PDF"
-        label_base64 = ""
-        invoice_base64 = ""
-        service_code = ""
-    
-
-    documents = models.Documents(
-        label=label_base64,
+    # Extract label document from documents array using functional pattern
+    label_doc = next(
+        (doc for doc in (shipment.documents or []) if doc and doc.content),
+        None
     )
 
-    # Add invoice if present
-    if invoice_base64:
-        documents.invoice = invoice_base64
+    # Get label content and format
+    label = label_doc.content if label_doc else ""
+    label_format = label_doc.imageFormat if label_doc else "PDF"
+
+    # Extract package tracking numbers for metadata
+    package_tracking_numbers = [
+        pkg.trackingNumber
+        for pkg in (shipment.packages or [])
+        if pkg and pkg.trackingNumber
+    ]
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         tracking_number=tracking_number,
-        shipment_identifier=shipment_id,
+        shipment_identifier=tracking_number,
         label_type=label_format,
-        docs=documents,
+        docs=models.Documents(label=label),
         meta=dict(
-            service_code=service_code,
-            # Add any other relevant metadata from the carrier's response
+            tracking_url=shipment.trackingUrl if shipment.trackingUrl else "",
+            package_tracking_numbers=package_tracking_numbers,
         ),
     )
 
@@ -109,7 +86,7 @@ def shipment_request(
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
     """
-    Create a shipment request for the carrier API
+    Create a shipment request for MyDHL API
 
     payload: The standardized ShipmentRequest from karrio
     settings: The carrier connection settings
@@ -120,16 +97,14 @@ def shipment_request(
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels)
-    service = provider_units.ShippingService.map(payload.service).value_or_key
+    service = lib.to_services(payload.service, provider_units.ShippingService).first
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
 
-    # Create the carrier-specific request object
-    
-    # For JSON API request
+    # Create the MyDHL shipment request object
     request = mydhl_req.ShipmentRequestType(
         # Map shipper details
         shipper={
@@ -169,13 +144,11 @@ def shipment_request(
             for package in packages
         ],
         # Add service code
-        serviceCode=service,
+        serviceCode=service.value_or_key,
         # Add account information
         customerNumber=settings.account_number,
         # Add label details
         labelFormat=payload.label_type or "PDF",
-        # Add any other required fields for this carrier's API
     )
-    
 
     return lib.Serializable(request, lib.to_dict)
