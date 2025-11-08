@@ -11,6 +11,7 @@ import karrio.providers.mydhl.utils as utils
 # when loaded through Python entrypoints or local plugin directories.
 # The entrypoint is defined in pyproject.toml under [project.entry-points."karrio.plugins"]
 METADATA = PluginMetadata(
+    status="development",
     id="mydhl",
     label="MyDHL",
     description="MyDHL shipping integration for Karrio",
@@ -20,10 +21,10 @@ METADATA = PluginMetadata(
     Settings=Settings,
     # Data Units
     is_hub=False,
-    # options=units.ShippingOption,
-    # services=units.ShippingService,
+    options=units.ShippingOption,
+    services=units.ShippingService,
     connection_configs=utils.ConnectionConfig,
     # Extra info
-    website="",
-    documentation="",
+    website="https://www.dhl.com",
+    documentation="https://developer.dhl.com/api-reference/mydhl-express",
 )
